@@ -120,6 +120,15 @@ final class SimpleChecks {
             boolean predicate = !isLogMessage && isPredicate(catalog, lines, i, lineIndent);
             checkText(errors, catalog, simpleText, lineNum, predicate, isLogMessage,
                     hasAncestorEip(lines, i, lineIndent, "aggregate"));
+            // resolveResource: true loads the resource the result names, so there a resource: value is right
+            if (!predicate && !isLogMessage
+                    && !"true".equals(findSiblingValue(lines, textLine, countLeadingSpaces(lines[textLine]),
+                            "resolveResource"))) {
+                String resource = resourceAsAValue(simpleText);
+                if (resource != null) {
+                    errors.add("Line " + lineNum + ": " + resource);
+                }
+            }
         }
         // ${property.x}: the hint of the parser, with where the route keeps x
         return HeaderPropertyMixups.withWhereKept(errors, content);
@@ -482,6 +491,16 @@ final class SimpleChecks {
         // the expression itself, rewritten: with only an example, models wrote the same top-level ternary up to 20
         // times in a row (a step of the local-model benchmark)
         String rewritten = ternaryInsideOneFunction(text, question, colon);
+        if (rewritten != null && rewritten.startsWith("resource:") && !text.startsWith("resource:")) {
+            // the resource: of the values went before the function: say why, or the model writes it inside again (r27
+            // of the local-model benchmark: the body was the text resource:file:order.json, then a JsonParseException)
+            String scheme = rewritten.substring(0, rewritten.indexOf("${"));
+            return "Simple has no top-level ternary: the ? at index " + (question + 1)
+                   + " and its : are outside ${...}, so they are literal text and the operator is never evaluated."
+                   + " Write the whole ternary inside one function, and " + scheme + " before it: " + rewritten
+                   + " (a function's result is never loaded as a resource: with " + scheme + " inside the function,"
+                   + " the body is the text " + unquoted(text.substring(question + 3, colon).trim()) + ", not the file)";
+        }
         return "Simple has no top-level ternary: the ? at index " + (question + 1)
                + " and its : are outside ${...}, so they are literal text and the operator is never evaluated."
                + (rewritten != null
@@ -501,7 +520,7 @@ final class SimpleChecks {
      * order-bad-email.json</tt> is <tt>resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' :
      * 'order-bad-email.json'}</tt>, and so is
      * <tt>${exchangeProperty.CamelTimerCounter} == 1 ? resource:file:order.json :
-     * resource:file:order-bad-email.json</tt>.
+     * resource:file:order-bad-email.json</tt>, with the values quoted or not.
      */
     static String ternaryInsideOneFunction(String text, int question, int colon) {
         // the functions at the top level before the ?, as {start, end} with end the index of the closing brace
@@ -534,19 +553,109 @@ final class SimpleChecks {
         String second = text.substring(colon + 3).trim();
         // resource: is read only at the start of the expression: inside the function, 'resource:file:order.json' is the
         // text the body becomes, so a resource: both values start with goes before the function (the local-model
-        // benchmark: the body was the text resource:file:order.json, and the next step failed to parse it as JSON)
-        Matcher scheme = RESOURCE_SCHEME.matcher(first);
-        if (prefix.isEmpty() && scheme.lookingAt() && second.startsWith(scheme.group())
-                && first.length() > scheme.end() && second.length() > scheme.end()) {
+        // benchmark: the body was the text resource:file:order.json, and the next step failed to parse it as JSON).
+        // The values may be quoted already, as r27 wrote them: 'resource:file:order.json'
+        String firstText = unquoted(first);
+        String secondText = unquoted(second);
+        Matcher scheme = RESOURCE_SCHEME.matcher(firstText);
+        if (prefix.isEmpty() && scheme.lookingAt() && secondText.startsWith(scheme.group())
+                && firstText.length() > scheme.end() && secondText.length() > scheme.end()) {
             prefix = scheme.group();
-            first = first.substring(scheme.end());
-            second = second.substring(scheme.end());
+            first = firstText.substring(scheme.end());
+            second = secondText.substring(scheme.end());
         }
         return prefix + "${" + condition + " ? " + quoted(first) + " : " + quoted(second) + "}";
     }
 
+    /** A value of the ternary without the quotes of a quoted literal: 'order.json' is order.json. */
+    private static String unquoted(String value) {
+        if (value.length() > 1 && (value.startsWith("'") && value.endsWith("'")
+                || value.startsWith("\"") && value.endsWith("\""))) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
+    }
+
     /** The resource: and its scheme a value starts with, such as <tt>resource:file:</tt>. */
     private static final Pattern RESOURCE_SCHEME = Pattern.compile("resource:[a-z]+:");
+
+    /** A quoted literal of a resource: and its scheme, as a whole value: 'resource:file:order.json'. */
+    private static final Pattern QUOTED_RESOURCE = Pattern.compile("(['\"])(resource:[a-z]+:)(.+)\\1");
+
+    /**
+     * A resource: written as a value a function gives: a value of a ternary or an elvis inside ${...}. The value is the
+     * text, such as resource:file:order.json, and nothing loads it: resource: is read only at the start of the
+     * expression. r27 of the local-model benchmark wrote
+     * <tt>${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'}</tt>,
+     * the write was accepted, and the next step failed to parse that text as JSON (12 errors in a run). Not said for an
+     * expression that starts with resource:, whose location is loaded, nor for an elvis after a function, which a route
+     * that worked had as a step whose body the next step replaced.
+     *
+     * @param  text the simple text, used as an expression
+     * @return      the message, or null when no value is a resource:
+     */
+    static String resourceAsAValue(String text) {
+        if (text == null || text.startsWith("resource:") || !text.contains("resource:") || !text.contains("${")) {
+            return null;
+        }
+        // the values of a ternary and of an elvis inside each function, the nested ones too
+        for (int open = text.indexOf("${"); open >= 0; open = text.indexOf("${", open + 2)) {
+            int close = closingBrace(text, open);
+            if (close < 0) {
+                continue;
+            }
+            String inner = text.substring(open + 2, close);
+            List<String> values = new ArrayList<>();
+            int question = indexOfTopLevel(inner, " ? ", 0);
+            int colon = question < 0 ? -1 : indexOfTopLevel(inner, " : ", question + 3);
+            if (colon > 0) {
+                values.add(inner.substring(question + 3, colon).trim());
+                values.add(inner.substring(colon + 3).trim());
+            }
+            int elvis = indexOfTopLevel(inner, " ?: ", 0);
+            if (elvis > 0) {
+                values.add(inner.substring(elvis + 4).trim());
+            }
+            // the condition, for the rewrite: only when the function is the whole expression
+            String condition = colon > 0 && open == 0 && close == text.length() - 1 ? inner.substring(0, question) : null;
+            String message = resourceValueMessage(text.substring(open, close + 1), values, condition);
+            if (message != null) {
+                return message;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The message for the values of an expression of which one is a quoted resource:, with resource: before the
+     * function when both values of the ternary of the condition are of the same scheme; null when none is a resource:.
+     */
+    private static String resourceValueMessage(String written, List<String> values, String condition) {
+        List<Matcher> resources = new ArrayList<>();
+        for (String value : values) {
+            Matcher m = QUOTED_RESOURCE.matcher(value);
+            if (m.matches()) {
+                resources.add(m);
+            }
+        }
+        if (resources.isEmpty()) {
+            return null;
+        }
+        String scheme = resources.get(0).group(2);
+        StringBuilder sb = new StringBuilder("`").append(written).append("` gives the text ").append(scheme)
+                .append(resources.get(0).group(3)).append(", not the file: a function's result is never loaded as a")
+                .append(" resource, only a resource: at the start of the expression is.");
+        if (condition != null && values.size() == 2 && resources.size() == 2
+                && scheme.equals(resources.get(1).group(2))) {
+            sb.append(" Write ").append(scheme).append(" before the function: ").append(scheme).append("${")
+                    .append(condition).append(" ? ").append(quoted(resources.get(0).group(3))).append(" : ")
+                    .append(quoted(resources.get(1).group(3))).append("}");
+        } else {
+            sb.append(" Write ").append(scheme).append(" at the start of the expression, and a function only for the")
+                    .append(" part of the name that changes, as in ").append(scheme).append("order-${header.id}.json");
+        }
+        return sb.toString();
+    }
 
     /** The index of the brace that closes the function opened at the index, or -1. */
     private static int closingBrace(String text, int open) {

@@ -987,6 +987,41 @@ class SourceValidatorEndpointTest {
         assertThat(msgs).isEmpty();
     }
 
+    /** r27l-4 transform-groovy step 3: resource:file:order-${body[CamelTimerCounter]}.json loaded order-.json. */
+    @Test
+    void aTimerExchangePropertyReadOnTheBodyIsReported() {
+        List<String> msgs = SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:orders?repeatCount=2&includeMetadata=true
+                    steps:
+                      - setBody:
+                          simple: "resource:file:order-${body[CamelTimerCounter]}.json"
+                      - log: "${body.CamelTimerName} ${body[CamelTimerCounter]}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).isEqualTo("Line 5: ${body[CamelTimerCounter]} reads a field of the body, and the body has"
+                                          + " no field CamelTimerCounter: CamelTimerCounter is an exchange property of the"
+                                          + " timer, write ${exchangeProperty.CamelTimerCounter}");
+        assertThat(msgs.get(1)).startsWith("Line 6: ${body.CamelTimerName} reads a field of the body");
+        // without includeMetadata the timer does not set it, which the message says too
+        assertThat(SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: timer:orders?repeatCount=2
+                    steps:
+                      - setBody:
+                          simple: "resource:file:order-${body.CamelTimerCounter}.json"
+                """, catalog)).singleElement().asString()
+                .endsWith("write ${exchangeProperty.CamelTimerCounter} (the timer sets it only with includeMetadata=true"
+                          + " on the endpoint)");
+        // a field of the body with a name of Camel that no component of the route sets as an exchange property
+        assertThat(SourceValidator.validateKnownHeaders("""
+                - from:
+                    uri: file:orders
+                    steps:
+                      - log: "${body[CamelTimerCounter]}"
+                """, catalog)).isEmpty();
+    }
+
     @Test
     void withIncludeMetadataTheHeadersMapStillHasNoSuchHeader() {
         List<String> msgs = SourceValidator.validateKnownHeaders("""

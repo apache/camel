@@ -481,8 +481,12 @@ class SourceValidatorSimpleTest {
 
     private static String rewritten(String text) {
         String message = SimpleChecks.topLevelTernary(text);
-        assertThat(message).contains("Write the whole ternary inside one function: ");
-        return message.substring(message.indexOf("inside one function: ") + "inside one function: ".length());
+        assertThat(message).containsPattern("Write the whole ternary inside one function(, and resource:\\w+: before it)?: ");
+        String start = message.contains(" before it: ") ? " before it: " : "inside one function: ";
+        String rewrite = message.substring(message.indexOf(start) + start.length());
+        // the reason a resource: goes before the function follows the rewrite
+        int reason = rewrite.indexOf(" (a function's result is never loaded");
+        return reason > 0 ? rewrite.substring(0, reason) : rewrite;
     }
 
     @Test
@@ -512,6 +516,107 @@ class SourceValidatorSimpleTest {
                 .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'}");
         assertThat(rewritten("${header.a} == 1 ? resource:file:order.json : none"))
                 .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'none'}");
+    }
+
+    /**
+     * r27 transform-groovy step 3: the values quoted, as two runs wrote them. The hint kept them inside the function,
+     * so the body was the text resource:file:order.json, and the next step failed with a JsonParseException (12
+     * errors).
+     */
+    @Test
+    void aResourceInBothQuotedValuesGoesBeforeTheFunctionAndTheMessageSaysWhy() {
+        String message = SimpleChecks.topLevelTernary(
+                "${exchangeProperty.CamelTimerCounter} == 0 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'");
+        assertThat(message).contains("Write the whole ternary inside one function, and resource:file: before it:"
+                                     + " resource:file:${exchangeProperty.CamelTimerCounter == 0 ? 'order.json' :"
+                                     + " 'order-bad-email.json'} (a function's result is never loaded as a resource:"
+                                     + " with resource:file: inside the function, the body is the text"
+                                     + " resource:file:order.json, not the file)");
+        // r27l-4 wrote the timer's counter as a field of the body, and double quotes
+        assertThat(rewritten(
+                "${body[CamelTimerCounter]} == 1 ? \"resource:file:order.json\" : \"resource:file:order-bad-email.json\""))
+                .isEqualTo("resource:file:${body[CamelTimerCounter] == 1 ? 'order.json' : 'order-bad-email.json'}");
+        // the resource: before the condition already: as before, with no reason to give
+        assertThat(SimpleChecks.topLevelTernary(
+                "resource:file:${exchangeProperty.CamelTimerCounter} == 0 ? 'order.json' : 'order-bad-email.json'"))
+                .endsWith("Write the whole ternary inside one function:"
+                          + " resource:file:${exchangeProperty.CamelTimerCounter == 0 ? 'order.json' : 'order-bad-email.json'}");
+        // quoted values of two schemes stay as they are
+        assertThat(rewritten("${header.a} == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'"))
+                .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'}");
+    }
+
+    /**
+     * r27 transform-groovy step 3: the rewrite of the old hint, written as told, passed the write and failed at
+     * runtime. The value is the text, which nothing loads; the same for the value of an elvis inside the function.
+     */
+    @Test
+    void aResourceAsTheValueOfAFunctionIsReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:orders?repeatCount=2&includeMetadata=true
+                            steps:
+                              - setBody:
+                                  expression:
+                                    simple:
+                                      expression: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'}"
+                              - setHeader:
+                                  name: fileUri
+                                  simple: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'x'}"
+                              - setBody:
+                                  simple: "${header.file ?: 'resource:file:order.json'}"
+                        """,
+                catalog);
+        assertThat(msgs).hasSize(3);
+        assertThat(msgs.get(0)).isEqualTo("Line 7: `${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' :"
+                                          + " 'resource:file:order-bad-email.json'}` gives the text resource:file:order.json,"
+                                          + " not the file: a function's result is never loaded as a resource, only a"
+                                          + " resource: at the start of the expression is. Write resource:file: before"
+                                          + " the function: resource:file:${exchangeProperty.CamelTimerCounter == 1 ?"
+                                          + " 'order.json' : 'order-bad-email.json'}");
+        assertThat(msgs.get(1)).startsWith("Line 10: `${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json'"
+                                           + " : 'x'}` gives the text resource:file:order.json, not the file")
+                .endsWith("Write resource:file: at the start of the expression, and a function only for the part of the"
+                          + " name that changes, as in resource:file:order-${header.id}.json");
+        assertThat(msgs.get(2)).startsWith("Line 12: `${header.file ?: 'resource:file:order.json'}` gives the text"
+                                           + " resource:file:order.json, not the file");
+        // the rewrite is accepted
+        assertThat(SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:orders?repeatCount=2&includeMetadata=true
+                            steps:
+                              - setBody:
+                                  simple: "resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}"
+                        """,
+                catalog)).isEmpty();
+    }
+
+    @Test
+    void aResourceThatIsLoadedOrNotAValueIsNotReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:orders?repeatCount=2&includeMetadata=true
+                            steps:
+                              - setBody:
+                                  simple:
+                                    expression: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'resource:file:b.json'}"
+                                    resolveResource: true
+                              - setBody:
+                                  simple: "resource:file:order-${exchangeProperty.CamelTimerCounter}.json"
+                              - setBody:
+                                  simple: "${header.uri.replace('resource:file:', '')}"
+                              - filter:
+                                  simple: "${header.uri} == 'resource:file:order.json'"
+                              - log:
+                                  message: "Loading ${header.uri} ?: 'resource:file:order.json'"
+                              - setBody:
+                                  simple: "${body} ?: 'resource:file:order.json'"
+                        """,
+                catalog);
+        assertThat(msgs).isEmpty();
     }
 
     @Test
