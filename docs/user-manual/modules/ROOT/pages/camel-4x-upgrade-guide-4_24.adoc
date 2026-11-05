@@ -333,6 +333,12 @@ let such a failure skip the dead letter channel or `onException` as before; a pl
 same handling. Better, fix the processor to set the exception on the exchange and call the callback, as an
 `AsyncProcessor` must.
 
+=== camel-core - Aggregate EIP no longer completes the groups when the route is suspended
+
+With `forceCompletionOnStop` or `completeAllOnStop`, suspending the route no longer completes the aggregated groups.
+They are kept and completed when the route or Camel is stopped. To send them out before a suspend, use
+`forceCompletionOfAllGroups` (`AggregateController` or JMX), or stop the route instead.
+
 === camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
 
 The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
