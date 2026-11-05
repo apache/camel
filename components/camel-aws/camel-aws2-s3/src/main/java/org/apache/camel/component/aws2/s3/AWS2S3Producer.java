@@ -679,15 +679,16 @@ public class AWS2S3Producer extends DefaultProducer {
         if (getConfiguration().isPojoRequest()) {
             Object payload = exchange.getIn().getMandatoryBody();
             if (payload instanceof GetObjectRequest req) {
-                ResponseInputStream<GetObjectResponse> res
-                        = s3Client.getObject(req, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 if (getConfiguration().isIgnoreBody()) {
-                    IOHelper.close(res);
+                    // a HEAD request returns the same metadata, without downloading the content of the object
+                    populateMetadata(s3Client.headObject(AWS2S3Utils.toHeadObjectRequest(req)), message);
                 } else {
+                    ResponseInputStream<GetObjectResponse> res
+                            = s3Client.getObject(req, ResponseTransformer.toInputStream());
                     message.setBody(res);
+                    populateMetadata(res, message);
                 }
-                populateMetadata(res, message);
             } else {
                 throw new IllegalArgumentException(
                         "getObject operation requires GetObjectRequest in POJO mode");
@@ -726,15 +727,16 @@ public class AWS2S3Producer extends DefaultProducer {
                     req.sseCustomerAlgorithm(getConfiguration().getCustomerAlgorithm());
                 }
             }
-            ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
-
             Message message = getMessageForResponse(exchange);
             if (getConfiguration().isIgnoreBody()) {
-                IOHelper.close(res);
+                // a HEAD request returns the same metadata, without downloading the content of the object
+                populateMetadata(s3Client.headObject(AWS2S3Utils.toHeadObjectRequest(req.build())), message);
             } else {
+                ResponseInputStream<GetObjectResponse> res
+                        = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
                 message.setBody(res);
+                populateMetadata(res, message);
             }
-            populateMetadata(res, message);
             message.setHeader(AWS2S3Constants.PRODUCED_KEY, keyName);
             message.setHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME, bucketName);
         }
@@ -1567,6 +1569,22 @@ public class AWS2S3Producer extends DefaultProducer {
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, res.response().storageClass());
         message.setHeader(AWS2S3Constants.METADATA, res.response().metadata());
         populateHttpResponseCode(res.response(), message);
+    }
+
+    private static void populateMetadata(HeadObjectResponse res, Message message) {
+        message.setHeader(AWS2S3Constants.E_TAG, res.eTag());
+        message.setHeader(AWS2S3Constants.VERSION_ID, res.versionId());
+        message.setHeader(AWS2S3Constants.CONTENT_TYPE, res.contentType());
+        message.setHeader(AWS2S3Constants.CONTENT_LENGTH, res.contentLength());
+        message.setHeader(AWS2S3Constants.CONTENT_ENCODING, res.contentEncoding());
+        message.setHeader(AWS2S3Constants.CONTENT_DISPOSITION, res.contentDisposition());
+        message.setHeader(AWS2S3Constants.CACHE_CONTROL, res.cacheControl());
+        message.setHeader(AWS2S3Constants.SERVER_SIDE_ENCRYPTION, res.serverSideEncryption());
+        message.setHeader(AWS2S3Constants.EXPIRATION_TIME, res.expiration());
+        message.setHeader(AWS2S3Constants.REPLICATION_STATUS, res.replicationStatus());
+        message.setHeader(AWS2S3Constants.STORAGE_CLASS, res.storageClass());
+        message.setHeader(AWS2S3Constants.METADATA, res.metadata());
+        populateHttpResponseCode(res, message);
     }
 
     private static void populateHttpResponseCode(AwsResponse response, Message message) {

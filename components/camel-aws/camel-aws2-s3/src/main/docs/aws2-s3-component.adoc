@@ -59,6 +59,15 @@ This allows you, for instance, to know how many messages exist in this
 batch and for instance, let the Aggregator
 aggregate this number of messages.
 
+The consumer lists the objects of a poll, and gets each of them right before its exchange is routed, so that only the
+objects of the exchanges in flight are in memory, or hold a connection of the HTTP client (with `includeBody=false`).
+With `ignoreBody=true` it sends a HEAD request instead, which returns the metadata of the object without its content.
+
+NOTE: The batch properties count the listed objects. If an object is skipped when it is got (it was deleted after the
+listing, for example by another consumer; it cannot be got; or it is a folder and `includeFolders` is `false`),
+`CamelBatchSize` is higher than the number of exchanges routed for the batch, and possibly no exchange has
+`CamelBatchComplete` set to `true`.
+
 === S3 Producer operations
 
 Camel-AWS2-S3 component provides the following operation on the producer side:
