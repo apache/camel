@@ -215,6 +215,11 @@ from("mina-sftp://user@host/path?password=secret&keyExchangeProtocols=mlkem768x2
     .to("file:local");
 ----
 
+With Bouncy Castle on the classpath, Apache MINA SSHD also registers it as the security provider of all its
+cryptography, not only of the key exchange: key factories, key pair generation, key agreement, signatures and digests
+come from Bouncy Castle rather than from the JDK providers, which matters on a JVM configured for FIPS. The
+registration is switched off with the `-Dorg.apache.sshd.security.provider.BC.enabled=false` system property.
+
 === Available Key Exchange Protocols
 
 [cols="2,3,1"]
