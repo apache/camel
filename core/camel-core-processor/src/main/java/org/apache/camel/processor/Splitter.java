@@ -418,7 +418,9 @@ public class Splitter extends MulticastProcessor {
                         }
                         // if we share unit of work, we need to prepare the child exchange
                         if (isShareUnitOfWork()) {
-                            prepareSharedUnitOfWork(newExchange, copy);
+                            // share the unit of work of the original exchange (a pooled copy reused from the pool
+                            // does not hold it)
+                            prepareSharedUnitOfWork(newExchange, original);
                         }
                         if (part instanceof Message message) {
                             newExchange.setIn(message);
@@ -460,6 +462,11 @@ public class Splitter extends MulticastProcessor {
         @Override
         public void close() throws IOException {
             if (copy != null) {
+                if (processorExchangeFactory.isPooled()) {
+                    // the copy may hold the unit of work of the exchange it was copied from, which releasing the
+                    // copy would reset (removing the on completions of that exchange, such as its consumer's commit)
+                    copy.getExchangeExtension().setUnitOfWork(null);
+                }
                 processorExchangeFactory.release(copy);
                 // null copy to avoid releasing it back again as close may be called multiple times
                 copy = null;
