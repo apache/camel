@@ -64,6 +64,8 @@ include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
 
+== Usage
+
 The consumer polls a calendar and sends each event as a message, with its id in the `CamelGoogleCalendarEventId` header.
 With `syncFlow=false` and `considerLastUpdate=true`, each poll reads all result pages. In this mode,
 `maxResults` controls the API page size rather than the total number of events delivered by a poll.
