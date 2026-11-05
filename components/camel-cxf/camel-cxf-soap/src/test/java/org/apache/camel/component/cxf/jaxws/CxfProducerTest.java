@@ -38,8 +38,11 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -134,6 +137,24 @@ public class CxfProducerTest {
     @Timeout(value = 30, threadMode = ThreadMode.SEPARATE_THREAD)
     public void setUp() throws Exception {
         camelContext = new DefaultCamelContext();
+        camelContext.getRegistry().bind("wrongServerConfigurer", new CxfConfigurer() {
+            @Override
+            public void configure(AbstractWSDLBasedEndpointFactory factoryBean) {
+            }
+
+            @Override
+            public void configureClient(Client client) {
+                HTTPConduit conduit = (HTTPConduit) client.getConduit();
+                HTTPClientPolicy policy = new HTTPClientPolicy();
+                policy.setConnectionTimeout(3000);
+                policy.setReceiveTimeout(3000);
+                conduit.setClient(policy);
+            }
+
+            @Override
+            public void configureServer(Server server) {
+            }
+        });
         camelContext.start();
         template = camelContext.createProducerTemplate();
     }
@@ -143,6 +164,9 @@ public class CxfProducerTest {
     public void tearDown() throws Exception {
         template.stop();
         camelContext.stop();
+        if (wrongPort != null) {
+            wrongPort.release();
+        }
     }
 
     @Test
@@ -212,7 +236,9 @@ public class CxfProducerTest {
     }
 
     protected String getWrongEndpointUri() {
-        return "cxf://" + getWrongServerAddress() + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+        return "cxf://" + getWrongServerAddress()
+               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+               + "&cxfConfigurer=#wrongServerConfigurer";
     }
 
     protected Exchange sendSimpleMessage() {
