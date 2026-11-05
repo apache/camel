@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -190,7 +191,75 @@ final class SimpleChecks {
             if (elvis != null) {
                 errors.add("Line " + lineNum + ": " + elvis);
             }
+            String unknown = unknownFunctionWithNested(text, catalog);
+            if (unknown != null) {
+                errors.add("Line " + lineNum + ": " + unknown);
+            }
         }
+    }
+
+    /** The name a function starts with: size of ${size:${body}}. */
+    private static final Pattern FUNCTION_NAME = Pattern.compile("[A-Za-z][\\w-]*");
+
+    /**
+     * A function whose name Simple does not have, with a function nested in it: ${size:${body}}. The parser takes such
+     * a function as a whole only when it evaluates it, so the expression passes the check and fails on the first
+     * message with "Unknown function: size:${body}" (r27 rest-code-first step 1: 4 errors before ${body.size()}). The
+     * catalog is asked with the nested functions as plain text, and only its "Unknown function" of that name counts.
+     *
+     * @param  text    the simple text
+     * @param  catalog the catalog that parses it
+     * @return         the message, or null
+     */
+    static String unknownFunctionWithNested(String text, CamelCatalog catalog) {
+        if (text == null || catalog == null || !text.contains("${")) {
+            return null;
+        }
+        for (int open = text.indexOf("${"); open >= 0; open = text.indexOf("${", open + 2)) {
+            int close = closingBrace(text, open);
+            if (close < 0) {
+                continue;
+            }
+            String inner = text.substring(open + 2, close);
+            int nested = inner.indexOf("${");
+            Matcher name = FUNCTION_NAME.matcher(inner);
+            if (nested <= 0 || !name.lookingAt() || name.end() > nested) {
+                continue;
+            }
+            // ${maskEmail(${header.email})} can call a custom function (a SimpleFunction in the registry), which the
+            // catalog does not know: only a name that is not followed by ( is never one
+            if (name.end() < inner.length() && inner.charAt(name.end()) == '(') {
+                continue;
+            }
+            // the nested functions as a plain value
+            StringBuilder plain = new StringBuilder();
+            int from = 0;
+            for (int n = inner.indexOf("${"); n >= 0; n = inner.indexOf("${", from)) {
+                int end = closingBrace(inner, n);
+                if (end < 0) {
+                    break;
+                }
+                plain.append(inner, from, n).append('x');
+                from = end + 1;
+            }
+            plain.append(inner.substring(from));
+            String error;
+            try {
+                LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${" + plain + "}");
+                error = result.isSuccess() ? null : result.getShortError() != null ? result.getShortError() : result.getError();
+            } catch (Exception e) {
+                error = null;
+            }
+            if (error == null || !error.startsWith("Unknown function: " + name.group())) {
+                continue;
+            }
+            String function = text.substring(open, close + 1);
+            String written = name.group() + (name.end() < inner.length() ? String.valueOf(inner.charAt(name.end())) : "");
+            boolean size = Set.of("size", "count", "length").contains(name.group());
+            return "Simple has no function " + written + ", so " + function + " fails when the route runs (Unknown"
+                   + " function: " + inner + ")" + (size ? ": the number of elements of the body is ${body.size()}" : "");
+        }
+        return null;
     }
 
     /** The functions whose text in parentheses is another language: ${jsonpath($[?(@.sku == 'A')])} is right. */
@@ -224,6 +293,10 @@ final class SimpleChecks {
      * <tt>${bodyAs(List).?[orderId == '${header.id}'].size()}</tt> failed with "ClassNotFoundException: List" and
      * "Method with name: ? not found", and <tt>${body[?(@.orderId == '${header.id}')].size()}</tt> with "Key
      * ?(@.orderId == 'ORD-1001') not found". The message gives the jsonpath step that does it, as YAML lines.
+     * <p/>
+     * The same for a filter written right after the function, <tt>${body}?.?[orderId == '${header.id}']</tt> (r27
+     * rest-code-first step 1): text there, which the parser refused in a predicate with "operators and values must be
+     * separated by a space", and took as literal text in an expression.
      *
      * @param  text the simple text
      * @return      the message, or null when no function has such a filter
@@ -239,9 +312,18 @@ final class SimpleChecks {
                 continue;
             }
             String inner = text.substring(open + 2, close);
-            int at = OTHER_LANGUAGE.matcher(inner).lookingAt() ? -1 : filterIndex(inner);
+            if (OTHER_LANGUAGE.matcher(inner).lookingAt()) {
+                continue;
+            }
+            int at = filterIndex(inner);
             if (at >= 0) {
-                return filterMessage(inner, at);
+                return filterMessage(inner, at, null);
+            }
+            // a filter right after the closing brace, after a null-safe ?. or not
+            String after = text.substring(close + 1);
+            after = after.startsWith("?.") ? after.substring(1) : after;
+            if (filterIndex(after) == 0) {
+                return filterMessage(inner + after, inner.length(), text.substring(open, close + 1));
             }
         }
         return null;
@@ -276,14 +358,21 @@ final class SimpleChecks {
         return -1;
     }
 
-    /** The message for a filter at the index of the text of a function, with the jsonpath step that picks it. */
-    private static String filterMessage(String inner, int at) {
+    /**
+     * The message for a filter at the index of the text of a function, with the jsonpath step that picks it; the
+     * function is the one the filter was written after, or null when it is inside it.
+     */
+    private static String filterMessage(String inner, int at, String function) {
         boolean spel = inner.charAt(at) == '.';
         String written = spel ? inner.substring(at, at + 3) + "...]" : inner.startsWith("@.", at) ? "@." : "[?(...)]";
         StringBuilder sb = new StringBuilder("Simple has no ")
                 .append(spel && inner.charAt(at + 1) == '!' ? "projection" : "filter").append(": ").append(written)
-                .append(spel ? " is SpEL" : " is JsonPath").append(", which Simple reads as a ")
-                .append(spel ? "method" : "key").append(", so it fails at runtime. ");
+                .append(spel ? " is SpEL" : " is JsonPath");
+        if (function != null) {
+            sb.append(", and after ").append(function).append(" it is text, not a part of the function. ");
+        } else {
+            sb.append(", which Simple reads as a ").append(spel ? "method" : "key").append(", so it fails at runtime. ");
+        }
         // the path to the List the filter is on, and where it is when not in the body
         String root = "$";
         String source = null;

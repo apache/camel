@@ -877,6 +877,114 @@ class SourceValidatorSimpleTest {
                 .contains(".^[...] is SpEL").endsWith(PICK_BY_ID.substring(PICK_BY_ID.indexOf("        expression")));
     }
 
+    /**
+     * r27 rest-code-first step 1 (r27n-4): the filter written after the function. In a predicate the parser said only
+     * that operators and values must be separated by a space; in an expression it was text after the body.
+     */
+    @Test
+    void aFilterWrittenAfterTheFunctionIsReportedWithTheJsonPathStep() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setHeader:
+                          name: foundOrder
+                          expression:
+                            simple:
+                              expression: "${body}?.?[orderId == '${header.id}']"
+                      - choice:
+                          when:
+                            - simple: "${header.id} != null && ${body}?.?[orderId == '${header.id}'] != null"
+                              steps:
+                                - setBody:
+                                    simple: "${body}[?(@.orderId == '${header.id}')]"
+                """, catalog);
+        String pick = " To pick the element whose orderId is '${header.id}', set the body with jsonpath before this step;"
+                      + " the body is then that element, or null when none or several match (test that with ${body} =="
+                      + " null):\n" + PICK_BY_ID;
+        assertThat(msgs).hasSize(3);
+        assertThat(msgs.get(0)).isEqualTo("Line 8: Simple has no filter: .?[...] is SpEL, and after ${body} it is text, not"
+                                          + " a part of the function." + pick);
+        assertThat(msgs.get(1)).isEqualTo("Line 11: Simple has no filter: .?[...] is SpEL, and after ${body} it is text,"
+                                          + " not a part of the function." + pick);
+        assertThat(msgs.get(2)).isEqualTo("Line 14: Simple has no filter: [?(...)] is JsonPath, and after ${body} it is"
+                                          + " text, not a part of the function." + pick);
+        // from a header, as r27n-4 kept the list in one
+        assertThat(SimpleChecks.filterInFunction("${header.orders}?.?[orderId == '${header.id}']"))
+                .contains("after ${header.orders} it is text").endsWith("        source: header:orders\n"
+                                                                        + "        resultType: java.util.Map");
+        // text after a function that is no filter
+        for (String text : List.of("${header.name}.json", "order-${header.id}.csv", "${body}?.x", "${body} [?]")) {
+            assertThat(SimpleChecks.filterInFunction(text)).as(text).isNull();
+        }
+    }
+
+    /**
+     * r27 rest-code-first step 1 (r27n-7): ${size:${body}} passed the check and failed at runtime with "Unknown
+     * function: size:${body}", 4 errors before ${body.size()}. A nested function makes the parser read the outer one
+     * only when it runs.
+     */
+    @Test
+    void anUnknownFunctionWithANestedFunctionIsReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - choice:
+                          when:
+                            - simple: "${body} == null || ${size:${body}} == 0"
+                              steps:
+                                - setBody:
+                                    simple: "${foo:${header.id}}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).isEqualTo("Line 6: Simple has no function size:, so ${size:${body}} fails when the route"
+                                          + " runs (Unknown function: size:${body}): the number of elements of the body"
+                                          + " is ${body.size()}");
+        assertThat(msgs.get(1)).isEqualTo("Line 9: Simple has no function foo:, so ${foo:${header.id}} fails when the"
+                                          + " route runs (Unknown function: foo:${header.id})");
+        // functions that take a nested function
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setBody:
+                          simple: "${header.${header.name}} ${variable.${header.key}} ${bean:${header.bean}?method=find}"
+                      - setBody:
+                          simple: "${date:header.${header.field}:yyyy} ${properties:${header.key}} ${size(${body})}"
+                      - setBody:
+                          simple: "${body[${header.index}]} ${exchangeProperty.${header.p}}"
+                """, catalog)).isEmpty();
+        // a custom function (a SimpleFunction bean, as in the simple-advanced documentation) is not in the catalog
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:contact
+                    steps:
+                      - setBody:
+                          simple: "Contact: ${maskEmail(${header.customerEmail})}"
+                """, catalog)).isEmpty();
+    }
+
+    /**
+     * r27 rest-code-first step 2 (r27n-6): the method after the function, told only that a space is missing; the parser
+     * says now that it goes inside the braces, and the write check shows that.
+     */
+    @Test
+    void aMethodAfterTheFunctionSaysItGoesInside() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:list-orders
+                    steps:
+                      - filter:
+                          simple: "${body.lines} != null && ${body.lines}.size() > 0"
+                          steps:
+                            - log: "${body}"
+                """, catalog);
+        assertThat(msgs).singleElement().asString().startsWith("Line 5: Simple syntax error:")
+                .contains("the method .size() is outside the function, as text after its closing brace: write it inside"
+                          + " the braces, ${body.lines.size()}");
+    }
+
     @Test
     void whatIsNotAFilterOfAnotherLanguageIsNotReported() {
         // the jsonpath function of Simple, null-safe navigation, an index, and the syntax in a literal or outside ${...}
