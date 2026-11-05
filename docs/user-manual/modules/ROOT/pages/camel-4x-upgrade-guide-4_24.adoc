@@ -4193,6 +4193,18 @@ A shard created by a split or a merge while the consumer is running is now read 
 `iteratorType`. Previously, with `LATEST`, the records stored in the new shard before the consumer listed it were
 skipped. The shards that exist when the consumer starts are read from the configured `iteratorType`, as before.
 
+=== camel-aws2-kinesis - the consumer fetches up to 1000 records per shard in each poll
+
+The default of `maxResultsPerRequest` is now `1000` (it was `1`). In each poll the consumer asks each shard for up to
+that many records, so with the default `delay` of 500 ms it can read up to about 2000 records per second from a shard
+(within the Kinesis quota of 2 MiB per second), instead of about 2. A poll now routes more records, and holds up to
+1000 records per shard in memory while they are routed. The KCL consumer (`useKclConsumers=true`) does not use this
+option.
+
+To keep the previous behaviour, set `maxResultsPerRequest=1`. See the
+xref:components::aws2-kinesis-component.adoc[AWS Kinesis component] for how `maxResultsPerRequest`, `delay` and
+`greedy` relate to the Kinesis read quotas of a shard.
+
 === camel-graphql - the credentials are only sent to the authority of httpUri
 
 The `accessToken` (with its `jwtAuthorizationType`) is now added to a request only when the request goes to the

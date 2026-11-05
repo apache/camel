@@ -170,11 +170,13 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records fetched from each shard in each poll: the
+         * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
+         * consumer (useKclConsumers).
          * 
          * The option is a: <code>int</code> type.
          * 
-         * Default: 1
+         * Default: 1000
          * Group: consumer
          * 
          * @param maxResultsPerRequest the value to set
@@ -185,11 +187,13 @@ public interface Kinesis2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records fetched from each shard in each poll: the
+         * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
+         * consumer (useKclConsumers).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
-         * Default: 1
+         * Default: 1000
          * Group: consumer
          * 
          * @param maxResultsPerRequest the value to set

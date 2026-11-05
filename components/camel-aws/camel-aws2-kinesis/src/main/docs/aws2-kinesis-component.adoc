@@ -66,6 +66,38 @@ all available shards (multiple shards consumption) of Amazon Kinesis, therefore,
 property in the DSL configuration empty, then it'll consume all available shards
 otherwise only the specified shard corresponding to the shardId will be consumed.
 
+=== Consumer throughput and the Kinesis read quotas
+
+In each poll the consumer sends one `GetRecords` request to each shard it reads. The request asks for up to
+`maxResultsPerRequest` records (1000 by default; Kinesis accepts 1 to 10,000), so a poll routes up to
+`maxResultsPerRequest` records per shard.
+
+Kinesis limits the reads of each shard:
+
+* 5 `GetRecords` requests per second;
+* 2 MiB of data per second;
+* at most 10,000 records or 10 MiB in one response.
+
+A request over these quotas fails with a `ProvisionedThroughputExceededException`. After a response of 10 MiB, the
+requests of the next 5 seconds to that shard fail too.
+
+The scheduler options decide how often a shard is read:
+
+* With `greedy=false` (the default), the next poll starts `delay` milliseconds (500 by default) after the previous one
+  ended. A shard then gets at most about 2 requests per second, so up to about twice `maxResultsPerRequest` records
+  per second.
+* With `greedy=true`, the next poll starts at once after a poll that routed records, and `delay` applies only after a
+  poll that routed none. With a backlog and a fast route, the consumer can then send more than 5 requests per second to
+  a shard.
+
+To keep up with a shard, choose `maxResultsPerRequest` and `delay` so that the records of a poll times the polls per
+second stay within 2 MiB per second. For example, 1000 records of 1 KiB every 500 ms is about 2 MiB per second. For
+larger records, lower `maxResultsPerRequest` or raise `delay`. While the records of a response are routed, the
+consumer holds that response in memory, one for each shard of the poll.
+
+These options apply to the polling consumer only. The KCL consumer (`useKclConsumers=true`) fetches the records with
+the settings of the Kinesis Client Library and does not use `maxResultsPerRequest`, `delay` or `greedy`.
+
 === Custom Resume Action
 
 The consumer supports a custom `KinesisResumeAction` for controlling where each shard starts reading
