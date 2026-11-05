@@ -24,6 +24,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(locations = { "/SpringTest.xml" })
 public class UndertowHttpsSpringTest {
 
-    private Integer port;
+    private AvailablePortFinder.Port port;
 
     @Produce
     private ProducerTemplate template;
@@ -60,19 +61,16 @@ public class UndertowHttpsSpringTest {
     public void testSSLConsumer() throws Exception {
         mockEndpoint.expectedBodiesReceived("Hello World");
 
-        String out = template.requestBody("undertow:https://localhost:" + port + "/spring?sslContextParameters=#sslClient",
+        String out = template.requestBody(
+                "undertow:https://localhost:" + port.getPort() + "/spring?sslContextParameters=#sslClient",
                 "Hello World", String.class);
         assertEquals("Bye World", out);
 
         mockEndpoint.assertIsSatisfied();
     }
 
-    public Integer getPort() {
-        return port;
-    }
-
     @Resource(name = "dynaPort")
-    public void setPort(Integer port) {
+    public void setPort(AvailablePortFinder.Port port) {
         this.port = port;
     }
 
