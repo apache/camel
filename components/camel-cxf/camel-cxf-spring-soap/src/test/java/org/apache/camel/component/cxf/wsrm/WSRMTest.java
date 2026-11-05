@@ -19,11 +19,13 @@ package org.apache.camel.component.cxf.wsrm;
 import java.net.URL;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +38,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 public class WSRMTest {
 
-    protected static int port1 = CXFTestSupport.getPort2();
-    protected static int port2 = CXFTestSupport.getPort3();
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+
+    @BeforeAll
+    static void allocateWSRMTestPorts() {
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("WSRMTest.port2", PORT2.toString());
+        PORT3 = AvailablePortFinder.find();
+        System.setProperty("WSRMTest.port3", PORT3.toString());
+        port1 = PORT2.getPort();
+        port2 = PORT3.getPort();
+    }
+
+    @AfterAll
+    static void releaseWSRMTestPorts() {
+        System.clearProperty("WSRMTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        System.clearProperty("WSRMTest.port3");
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+    }
+
+    protected static int port1;
+    protected static int port2;
 
     @Autowired
     protected CamelContext context;

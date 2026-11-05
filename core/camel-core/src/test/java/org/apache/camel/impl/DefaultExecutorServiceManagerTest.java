@@ -42,8 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
-                          disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
     @Test
@@ -145,6 +143,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testDefaultThreadPool() {
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
         assertFalse(myPool.isShutdown());
@@ -161,6 +161,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testDefaultUnboundedQueueThreadPool() {
         ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setPoolSize(10);
@@ -186,6 +188,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testDefaultNoMaxQueueThreadPool() {
         ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setPoolSize(10);
@@ -211,6 +215,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testCustomDefaultThreadPool() {
         ThreadPoolProfile custom = new ThreadPoolProfile("custom");
         custom.setKeepAliveTime(20L);
@@ -279,6 +285,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testGetThreadPoolProfileInheritDefaultValues() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
         ThreadPoolProfile foo = new ThreadPoolProfile("foo");
@@ -296,6 +304,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testGetThreadPoolProfileInheritCustomDefaultValues() {
         ThreadPoolProfile newDefault = new ThreadPoolProfile("newDefault");
         newDefault.setKeepAliveTime(30L);
@@ -323,6 +333,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testGetThreadPoolProfileInheritCustomDefaultValues2() {
         ThreadPoolProfile newDefault = new ThreadPoolProfile("newDefault");
         // just change the max pool as the default profile should then inherit
@@ -347,6 +359,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testNewThreadPoolProfile() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
@@ -371,6 +385,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testNewThreadPoolProfileById() {
         assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
 
@@ -397,6 +413,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testNewThreadPoolMinMax() {
         ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", 5, 10);
         assertNotNull(pool);
@@ -413,6 +431,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testNewFixedThreadPool() {
         ExecutorService pool = context.getExecutorServiceManager().newFixedThreadPool(this, "Cool", 5);
         assertNotNull(pool);
@@ -481,6 +501,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "camel.threads.virtual.enabled", matches = "true",
+                              disabledReason = "In case of Virtual Threads, ThreadPerTaskExecutor is created instead of ThreadPoolExecutor")
     public void testNewCachedThreadPool() {
         ExecutorService pool = context.getExecutorServiceManager().newCachedThreadPool(this, "Cool");
         assertNotNull(pool);

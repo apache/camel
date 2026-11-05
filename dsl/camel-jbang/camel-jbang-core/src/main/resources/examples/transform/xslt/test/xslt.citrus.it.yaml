@@ -1,0 +1,23 @@
+name: xslt-test
+description: The xslt example logs what its README promises
+actions:
+  - camel:
+      cli:
+        run:
+          integration:
+            name: "xslt"
+            file: "../xslt.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "packing-slip.xsl"
+  - camel:
+      cli:
+        verify:
+          integration: "xslt"
+          logMessage: "<packingSlip order=\"ORD-1001\""
+  - camel:
+      cli:
+        verify:
+          integration: "xslt"
+          logMessage: "<pieces>3</pieces>"

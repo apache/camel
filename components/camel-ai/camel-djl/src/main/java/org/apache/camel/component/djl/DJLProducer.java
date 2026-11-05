@@ -38,6 +38,12 @@ public class DJLProducer extends DefaultProducer {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.predictor.start();
+    }
+
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         this.predictor.close();

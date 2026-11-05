@@ -109,6 +109,154 @@ public class YamlValidatorPropertyHintTest {
         }
     }
 
+    /**
+     * An errorHandler under from: gets both of its places: under the route for that route, a top-level item for every
+     * route. Told only "a top-level entry", r21 and r25 of the local-model benchmark moved a noErrorHandler meant for
+     * one route to the top level.
+     */
+    @Test
+    public void testErrorHandlerUnderFromGetsBothPlaces() throws Exception {
+        String yaml = """
+                - route:
+                    id: payment-provider
+                    from:
+                      uri: direct:charge
+                      errorHandler:
+                        noErrorHandler: {}
+                      steps:
+                        - log:
+                            message: "charged"
+                """;
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate(yaml);
+            assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                    .contains("property 'errorHandler' is not defined")
+                    .endsWith("(errorHandler: is a key of the route, not of from:. For this route only, write it under"
+                              + " the route at the same level as from:, as in route: {errorHandler: {noErrorHandler: {}},"
+                              + " from: {uri: ..., steps: [...]}}. For every route, write it as a top-level item instead:"
+                              + " - errorHandler: {noErrorHandler: {}})")
+                    .doesNotContain("is a top-level entry");
+            assertThat(YamlValidator.describeAll(yaml, errors)).singleElement().asString().startsWith("Line 5: ");
+        }
+        // the handler as written, its options in flow style
+        List<Error> errors = validator.validate(yaml.replace("""
+                        noErrorHandler: {}
+                """, """
+                        deadLetterChannel:
+                          deadLetterUri: direct:parked
+                          redeliveryPolicy:
+                            maximumRedeliveries: 2
+                """));
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("as in route: {errorHandler: {deadLetterChannel: {deadLetterUri: \"direct:parked\","
+                          + " redeliveryPolicy: {maximumRedeliveries: 2}}}, from: {uri: ..., steps: [...]}}");
+        // noErrorHandler: true (r21) is shown in its form, with a map
+        errors = validator.validate(yaml.replace("noErrorHandler: {}", "noErrorHandler: true"));
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("as in route: {errorHandler: {noErrorHandler: {}}, from:")
+                .doesNotContain("true");
+        // a - from: item has no place for it
+        errors = validator.validate("""
+                - from:
+                    uri: direct:charge
+                    errorHandler:
+                      noErrorHandler: {}
+                    steps:
+                      - log: "charged"
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("write the route as - route: with errorHandler: at the same level as from:, as in - route:"
+                          + " {errorHandler: {noErrorHandler: {}}, from: {uri: ..., steps: [...]}}");
+        // where it belongs, nothing is reported
+        assertThat(validator.validate("""
+                - route:
+                    id: payment-provider
+                    errorHandler:
+                      noErrorHandler: {}
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - log: "charged"
+                """)).isEmpty();
+    }
+
+    /**
+     * A second top-level errorHandler replaces the first for every route, without a word (r22 to r25 of the local-model
+     * benchmark: a noErrorHandler meant for the route below it, and the dead letter channel was lost).
+     */
+    @Test
+    public void testASecondTopLevelErrorHandlerIsReported() throws Exception {
+        String yaml = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - route:
+                    id: checkout
+                    from:
+                      uri: direct:checkout
+                      steps:
+                        - to: direct:charge
+                - errorHandler:
+                    noErrorHandler: {}
+                - route:
+                    id: payment-provider
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - log: "charged"
+                - route:
+                    id: parked
+                    from:
+                      uri: direct:parked
+                      steps:
+                        - log: "parked"
+                """;
+        List<Error> errors = validator.validate(yaml);
+        assertThat(YamlValidator.describeAll(yaml, errors)).singleElement().asString()
+                .isEqualTo("Line 10: /2: a second top-level errorHandler: Camel uses one top-level errorHandler for"
+                           + " all routes, and line 1 already sets one, so this one replaces it for every route, not only"
+                           + " for the route payment-provider below it. For the route payment-provider only, write"
+                           + " errorHandler: under that route at the same level as from:, as in route: {id:"
+                           + " payment-provider, errorHandler: {noErrorHandler: {}}, from: {uri: ..., steps: [...]}}");
+        // at the end of the file, with no route below it
+        String last = """
+                - errorHandler:
+                    deadLetterChannel:
+                      deadLetterUri: direct:parked
+                - route:
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - log: "charged"
+                - errorHandler:
+                    defaultErrorHandler: {}
+                """;
+        assertThat(validator.validate(last)).singleElement().extracting(Error::getMessage).asString()
+                .contains("so this one replaces it for every route. For one route only, write errorHandler: under"
+                          + " that route at the same level as from:, as in route: {errorHandler: {defaultErrorHandler:"
+                          + " {}}, from: {uri: ..., steps: [...]}}");
+        // one top-level errorHandler, and one under the route: nothing to report
+        String routeLevel = yaml.replace("""
+                - errorHandler:
+                    noErrorHandler: {}
+                - route:
+                    id: payment-provider
+                """, """
+                - route:
+                    id: payment-provider
+                    errorHandler:
+                      noErrorHandler: {}
+                """);
+        assertThat(validator.validate(routeLevel)).isEmpty();
+        // the error handler of a routeConfiguration is for the routes that use it
+        assertThat(validator.validate(routeLevel + """
+                - routeConfiguration:
+                    id: no-retries
+                    errorHandler:
+                      noErrorHandler: {}
+                """)).isEmpty();
+    }
+
     /** CAMEL-24888: the shapes the local model wrote on the HTTP rungs, each with the form to write. */
     @Test
     public void testHttpRungShapesGetTheForm() throws Exception {
@@ -972,6 +1120,462 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage()).startsWith("line 5: the value of message continues after its closing quote")
                 .contains("no concatenation");
+    }
+
+    @Test
+    public void testALineWithNoKeyIsNamed() throws Exception {
+        // r24 ai-ticket-classifier step 2: a setHeader with the bare line directory (meant as name: directory), told 15
+        // times that the key below it was in the wrong column
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - choice:
+                            when:
+                                - simple: "${header.kind} == 'shipping'"
+                                  steps:
+                                    - setHeader:
+                                        directory
+                                        simple: "tickets-out/shipping"
+                """;
+        List<Error> errors = validator.validate(yaml);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 10: directory has no colon, so it is not a key")
+                .endsWith("every line of setHeader is a key with its value - here write name: directory")
+                .doesNotContain("every key of a mapping must start in the same column"));
+        // the same at the top of the steps
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setHeader:
+                          CamelFileName
+                          simple: "${header.id}.json"
+                """);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 5: CamelFileName has no colon").endsWith("here write name: CamelFileName"));
+    }
+
+    @Test
+    public void testAnExceptionClassWithNoKeyIsAListItemOfException() throws Exception {
+        // r25 openapi-server step 3: the class as a bare line under onException, told to write it as a key with a value
+        String yaml = """
+                - onException:
+                    org.apache.camel.support.processor.PredicateValidationException
+                    handled: true
+                    steps:
+                      - log: "invalid"
+                """;
+        assertThat(validator.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 2: org.apache.camel.support.processor.PredicateValidationException has no colon, so it"
+                            + " is not a key")
+                .endsWith("the exception classes of onException are a list under exception: - write line 2 as these"
+                          + " two lines:\n    exception:\n      - org.apache.camel.support.processor"
+                          + ".PredicateValidationException"));
+        // a class with no package, and a word that is no class, which is a key with its value
+        assertThat(validator.validate(yaml.replace("org.apache.camel.support.processor.", ""))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage()).endsWith("\n      - PredicateValidationException"));
+        assertThat(validator.validate(yaml.replace("org.apache.camel.support.processor.PredicateValidationException",
+                "continued"))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith("every line of onException is a key with its value - here write continued: <value>"));
+        // in a doCatch: next to the other keys of its item, and under doCatch itself
+        String doCatch = """
+                - from:
+                    uri: direct:in
+                    steps:
+                      - doTry:
+                          steps:
+                            - to: direct:out
+                          doCatch:
+                            - onWhen:
+                                simple: "${exception.message} contains 'stock'"
+                              java.io.IOException
+                              steps:
+                                - log: "failed"
+                """;
+        assertThat(validator.validate(doCatch)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 10: java.io.IOException has no colon")
+                .endsWith("the exception classes of doCatch are a list under exception: - write line 10 as these two"
+                          + " lines:\n              exception:\n                - java.io.IOException"));
+        assertThat(validator.validate(doCatch.replace("""
+                            - onWhen:
+                                simple: "${exception.message} contains 'stock'"
+                              java.io.IOException
+                              steps:
+                                - log: "failed"
+                """, """
+                              java.io.IOException
+                              steps:
+                                - log: "failed"
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .contains("the exception classes of doCatch are a list under exception:"));
+        // the class as the list item itself, with the steps of the doCatch below it
+        assertThat(validator.validate(doCatch.replace("""
+                            - onWhen:
+                                simple: "${exception.message} contains 'stock'"
+                              java.io.IOException
+                """, """
+                            - java.io.IOException
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 8: java.io.IOException has no key")
+                .endsWith("write line 8 as these two lines:\n            - exception:\n                - java.io.IOException"));
+        // the class after the other keys of onException
+        assertThat(validator.validate(yaml.replace("""
+                    org.apache.camel.support.processor.PredicateValidationException
+                    handled: true
+                """, """
+                    handled: true
+                    org.apache.camel.support.processor.PredicateValidationException
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("line 3: org.apache.camel.support.processor.PredicateValidationException has no colon")
+                .contains("the exception classes of onException are a list under exception:"));
+    }
+
+    @Test
+    public void testAColonAfterTheClosingQuoteIsNamed() throws Exception {
+        // r24 rest-code-first step 1: the jsonpath line copied with the colon of a key after it, told 5 times that a
+        // YAML value has no concatenation
+        List<Error> errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - setBody:
+                          jsonpath:
+                            expression: "$[?(@.orderId == '${header.orderId}')]":
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .startsWith("line 6: the value of expression ends with a : after its closing quote")
+                .endsWith("write the line as expression: \"$[?(@.orderId == '${header.orderId}')]\"")
+                .doesNotContain("concatenation");
+    }
+
+    @Test
+    public void testTwoGetsWithTheSamePathInOneRest() throws Exception {
+        // r24 rest-code-first step 1: a second get with no path:, which Camel refuses when it loads the routes
+        String yaml = """
+                - rest:
+                    path: /orders
+                    get:
+                      - to: direct:list-orders
+                      - to: direct:get-order
+                - route:
+                    from:
+                      uri: direct:list-orders
+                      steps:
+                        - log: "list"
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - log: "one"
+                """;
+        List<Error> errors = validator.validate(yaml);
+        assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .contains("rest: a second get with no path:").contains("Duplicate verb detected in rest-dsl")
+                .contains("path: /{id}"));
+        String oneOrder = "      - to: direct:get-order";
+        String withPath = "      - path: /{id}\n        to: direct:get-order";
+        assertThat(validator.validate(yaml.replace(oneOrder, withPath))).isEmpty();
+        // the same path twice
+        assertThat(validator.validate(yaml.replace(oneOrder, withPath).replace("      - to: direct:list-orders",
+                "      - path: /{id}\n        to: direct:list-orders"))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage()).contains("a second get with the path /{id}"));
+        // a get and a post with no path are two verbs, which is fine
+        assertThat(validator.validate(yaml.replace(oneOrder, "    post:\n" + oneOrder))).isEmpty();
+    }
+
+    @Test
+    public void testTextAfterAJsonPathIsNamed() throws Exception {
+        // r25 rest-code-first step 1: the words of a message copied into the text of the path, so that every request
+        // failed with "InvalidPathException: Could not parse token starting at position 29"
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.orderId}')] {resultType: java.util.Map}"
+                """;
+        assertThat(validator.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("the path ends at position 38, and the text after it is not part of a path:"
+                            + " {resultType: java.util.Map}. The runtime reads the whole text as the path and fails"
+                            + " with InvalidPathException. resultType is an option of jsonpath")
+                .endsWith(" as:\njsonpath:\n  expression: \"$[?(@.orderId == '${header.orderId}')]\"\n"
+                          + "  resultType: java.util.Map"));
+        // the short form, and text that is no option: the line without it
+        assertThat(validator.validate(yaml.replace("""
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.orderId}')] {resultType: java.util.Map}"
+                """, """
+                              jsonpath: "$.orders[0] as the first order"
+                """))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("the path ends at position 11, and the text after it is not part of a path: as the first"
+                            + " order.")
+                .endsWith("Write the line as:\njsonpath: \"$.orders[0]\""));
+        // a bracket or a quote that is not closed
+        assertThat(validator.validate(yaml.replace("')] {resultType: java.util.Map}", "')")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .startsWith("the [ at position 1 has no closing ], so the text is not a path"));
+        assertThat(validator.validate(yaml.replace("${header.orderId}')] {resultType: java.util.Map}", "ORD-1)]")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .startsWith("the ' at position 17 has no closing '"));
+        // the JSON answer of a 404 written as jsonpath, which failed on a null body
+        String text = "$[?(@.orderId == '${header.orderId}')] {resultType: java.util.Map}";
+        String json = yaml.replace("\"" + text + "\"", "'{\"error\": \"unknown order ${header.id}\"}'");
+        assertThat(validator.validate(json)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .startsWith("the text is a JSON text, not a path")
+                .endsWith("as:\nsimple:\n  expression: '{\"error\": \"unknown order ${header.id}\"}'"));
+        // what a path has: spaces and inlined simple in a filter, a regular expression with brackets, a function, a
+        // placeholder, and in a when the easy predicate syntax with an operator after the path
+        for (String path : List.of(
+                "$[?(@.orderId == '${header.orderId}' && @.status != 'paid')]",
+                "$.store.book[?(@.price < ${header.max})]", "$.store.book[?(@.author =~ /[(]REES/i)].title",
+                "$.lines.length()", "$['first name']", "$.{{field}}", "$.a)", "  $.lines[*].sku  ", "$.status == 'paid'",
+                "store.qty > 10", "$[?(@.qty > 1)] && $[?(@.qty < 5)]")) {
+            assertThat(validator.validate(yaml.replace(text, path.replace("\"", "\\\"")))).as(path).isEmpty();
+        }
+    }
+
+    @Test
+    public void testAPathParameterWrittenAsTextIsNamed() throws Exception {
+        // r25 rest-code-first step 1: '{id}' for the path parameter, so every id was answered with 404 "unknown order
+        // {id}"
+        String yaml = """
+                - rest:
+                    path: /orders
+                    get:
+                      - path: "{id}"
+                        to:
+                          uri: direct:get-order
+                - route:
+                    id: get-order
+                    from:
+                      uri: direct
+                      parameters:
+                        name: get-order
+                      steps:
+                        - setBody:
+                            constant: "resource:file:orders.json"
+                        - unmarshal:
+                            json: {}
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '{id}')]"
+                                resultType: java.util.Map
+                        - filter:
+                            simple: "${body} == null"
+                            steps:
+                              - setBody:
+                                  simple: '{"error": "unknown order {id}"}'
+                """;
+        String said = "{id} is the literal text; the path parameter is the header ${header.id}. Write the line as:\n";
+        assertThat(validator.validate(yaml)).extracting(Error::getMessage).containsExactly(
+                said + "expression: \"$[?(@.orderId == '${header.id}')]\"",
+                said + "simple: '{\"error\": \"unknown order ${header.id}\"}'");
+        // a constant evaluates nothing: the lines with simple
+        String constant = yaml.replace("""
+                              - setBody:
+                                  simple: '{"error": "unknown order {id}"}'
+                """, """
+                              - setBody:
+                                  constant:
+                                    expression: '{"error": "unknown order {id}"}'
+                """).replace("{id}')]", "${header.id}')]");
+        assertThat(validator.validate(constant)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                .isEqualTo("{id} is the literal text; the path parameter is the header ${header.id}, and constant does"
+                           + " not evaluate it, simple does. Write the lines as:\nsimple:\n"
+                           + "  expression: '{\"error\": \"unknown order ${header.id}\"}'"));
+        // what is not the path parameter: a property placeholder, a simple function, a path in a log message, a name
+        // that is no path parameter, and a route that no operation reaches
+        String right = yaml.replace("'{id}')]", "'${header.id}')]")
+                .replace("unknown order {id}", "unknown order {{shop.name}} ${id} for GET /orders/{id} {sku}");
+        assertThat(validator.validate(right)).isEmpty();
+        String unreached = yaml.replace("uri: direct:get-order", "uri: direct:other")
+                           + "- route:\n    from:\n      uri: direct:other\n      steps:\n        - log: \"other\"\n";
+        assertThat(validator.validate(unreached)).isEmpty();
+    }
+
+    @Test
+    public void testJsonAsALanguageSaysItIsADataFormat() throws Exception {
+        // r25 rest-code-first step 1: the JSON answer of a 404 under json:, told "did you mean 'js'?" 4 times in a row
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              json:
+                                library: Jackson
+                                expression: '{"error": "unknown order ${header.id}"}'
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .startsWith("json is a data format, not a language (marshal: json writes a Map or a List as"
+                                + " JSON). Set a JSON text with simple, as it has ${...}, and set the header"
+                                + " Content-Type to application/json if the caller needs it.")
+                    .endsWith(" as:\nsimple:\n  expression: '{\"error\": \"unknown order ${header.id}\"}'")
+                    .doesNotContain("did you mean"));
+        }
+        // a text with no ${...} is a constant
+        assertThat(validator.validate(yaml.replace("unknown order ${header.id}", "unknown order")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith(" as:\nconstant:\n  expression: '{\"error\": \"unknown order\"}'"));
+    }
+
+    @Test
+    public void testFileAsALanguageSaysToReadTheFileWithConstant() throws Exception {
+        // r20 to r26 connect-service-jms-request-reply step 3: stock.json read with file: under expression (5 of 7 runs
+        // in r26), told only that file is not defined in the schema
+        String yaml = """
+                - route:
+                    from:
+                      uri: jms:queue:stock
+                      steps:
+                        - setVariable:
+                            name: stock
+                            expression:
+                              file:
+                                filePath: stock.json
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .isEqualTo("file is not a language. To read a data file the route needs, such as a lookup table, use"
+                               + " the constant language with resource:file: (the value is the text of the file). Write"
+                               + " file: and the lines under it as:\nconstant:\n  expression: \"resource:file:stock.json\""));
+        }
+        // the file as the value of file:, and file: as the language key of the EIP itself
+        assertThat(validator.validate(yaml.replace("file:\n                filePath: stock.json",
+                "file: stock.json"))).singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith("as:\nconstant:\n  expression: \"resource:file:stock.json\""));
+        assertThat(validator.validate("""
+                - route:
+                    from:
+                      uri: jms:queue:stock
+                      steps:
+                        - setBody:
+                            file: "stock.json"
+                """)).anySatisfy(e -> assertThat(e.getMessage())
+                .endsWith("as:\nexpression:\n  constant:\n    expression: \"resource:file:stock.json\""));
+        // the file of the script EIP is a script to run, not data
+        assertThat(validator.validate(yaml.replace("- setVariable:\n            name: stock\n", "- script:\n")))
+                .isNotEmpty().allSatisfy(e -> assertThat(e.getMessage()).doesNotContain("file is not a language"));
+    }
+
+    @Test
+    public void testFileNameWithSimpleIsReadWithAPollEnrichThatReturns() throws Exception {
+        // a file name with ${...}, which constant does not evaluate. The pollEnrich polls the file again for the next
+        // message (noop=true alone makes the endpoint idempotent), ends the wait for a missing file, and keeps the body
+        // as setVariable does (review of #29147: the variable was null, and the second call never returned)
+        String yaml = """
+                - route:
+                    from:
+                      uri: jms:queue:stock
+                      steps:
+                        - setVariable:
+                            name: stock
+                            expression:
+                              file:
+                                filePath: orders/${header.orderId}.json
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .endsWith("A file name with ${...} is read with pollEnrich instead, as constant does not evaluate it."
+                              + " Write this setVariable as: pollEnrich: {expression: {simple: {expression:"
+                              + " \"file:orders?fileName=${header.orderId}.json&noop=true&idempotent=false\"}},"
+                              + " timeout: 5000, variableReceive: stock}. variableReceive keeps the body as it is,"
+                              + " idempotent=false reads the file again for the next message (noop=true alone reads each"
+                              + " file once), and the timeout ends the wait when there is no file (the variable is then"
+                              + " null)."));
+        }
+        // setBody sets the body with the file
+        assertThat(validator.validate(yaml.replace("- setVariable:\n            name: stock\n", "- setBody:\n")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .contains("Write this setBody as: pollEnrich: {expression: {simple: {expression:"
+                                  + " \"file:orders?fileName=${header.orderId}.json&noop=true&idempotent=false\"}},"
+                                  + " timeout: 5000}.")
+                        .endsWith("(the body is then null).").doesNotContain("variableReceive"));
+        // another EIP reads the file in a variable before it
+        assertThat(validator
+                .validate(yaml.replace("setVariable:\n            name: stock", "setHeader:\n            name: stock")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .contains("Read the file in a step before this one: pollEnrich: {expression: {simple: {expression:"
+                                  + " \"file:orders?fileName=${header.orderId}.json&noop=true&idempotent=false\"}},"
+                                  + " timeout: 5000, variableReceive: data}, and use ${variable.data} here."));
+    }
+
+    @Test
+    public void testFileInTheExpressionOfAnEndpointIsNoResource() throws Exception {
+        // review of #29147: there the expression is the uri, so the text of resource:file:stock.json would be the uri
+        // ("Failed to resolve endpoint: {"apples": 3}"), and a missing file would stop the route from starting
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:reserve
+                      steps:
+                        - pollEnrich:
+                            expression:
+                              file:
+                                filePath: stock.json
+                """;
+        for (YamlValidator v : bothModes()) {
+            assertThat(v.validate(yaml)).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .isEqualTo("file is not a language. The expression of pollEnrich is the uri of the endpoint to poll,"
+                               + " such as a file: uri with fileName. Set timeout: 5000 on the pollEnrich too:"
+                               + " idempotent=false reads the file again for the next message (noop=true alone reads each"
+                               + " file once), and the timeout ends the wait when there is no file. Write file: and the"
+                               + " lines under it as:\nconstant:\n  expression:"
+                               + " \"file:.?fileName=stock.json&noop=true&idempotent=false\""));
+        }
+        assertThat(validator.validate(yaml.replace("filePath: stock.json", "filePath: data/${header.sku}.json")))
+                .singleElement().satisfies(e -> assertThat(e.getMessage())
+                        .endsWith("as:\nsimple:\n  expression: \"file:data?fileName=${header.sku}.json&noop=true"
+                                  + "&idempotent=false\""));
+        assertThat(validator.validate(yaml.replace("pollEnrich:", "enrich:"))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage())
+                        .startsWith("file is not a language. The expression of enrich is the uri of the endpoint to call,"
+                                    + " and a file: uri there writes the message to a file. To read a file, use pollEnrich"
+                                    + " in place of enrich: pollEnrich: {expression: {constant: {expression:"
+                                    + " \"file:.?fileName=stock.json&noop=true&idempotent=false\"}}, timeout: 5000}.")
+                        .doesNotContain("resource:"));
+        for (String eip : List.of("recipientList", "routingSlip")) {
+            String expected = "file is not a language. The expression of " + eip + " gives the uris of the endpoints to"
+                              + " send to, as text (constant, or simple when it has ${...}): a file: uri there writes the"
+                              + " message to a file, and does not read one.";
+            assertThat(validator.validate(yaml.replace("pollEnrich:", eip + ":"))).singleElement()
+                    .satisfies(e -> assertThat(e.getMessage()).isEqualTo(expected));
+        }
+        assertThat(validator.validate(yaml.replace("pollEnrich:", "dynamicRouter:"))).singleElement()
+                .satisfies(e -> assertThat(e.getMessage())
+                        .isEqualTo("file is not a language. The expression of dynamicRouter gives the uri of the next"
+                                   + " endpoint each time it is called, and null when the routing is done: a file: uri"
+                                   + " there writes the message to a file, and does not read one."));
+    }
+
+    @Test
+    public void testStepsUnderChoiceSaysWhenAndOtherwise() throws Exception {
+        // r26 contracts-openapi-server step 4: told that choice is an EIP that owns steps:, a model wrote it 6 times
+        for (YamlValidator v : bothModes()) {
+            List<Error> errors = v.validate("""
+                    - route:
+                        from:
+                          uri: direct:reserve
+                          steps:
+                            - choice:
+                                steps:
+                                  - log:
+                                      message: hi
+                    """);
+            assertThat(errors).singleElement().satisfies(e -> assertThat(e.getMessage())
+                    .contains("choice has no steps: of its own: write the steps under a when: (next to its expression:) or"
+                              + " under otherwise:")
+                    .doesNotContain("owns a pipeline"));
+        }
     }
 
     @Test

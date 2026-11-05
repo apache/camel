@@ -27,15 +27,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.export.common.PathUtils;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.PathUtils;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
 
 @CommandLine.Command(name = "sbom",
                      description = "Generate a CycloneDX or SPDX SBOM for a specific project", sortOptions = false,
@@ -205,7 +205,7 @@ public class SBOMGenerator extends Export {
         // use temporary export dir
         exportDir = EXPORT_DIR;
         if (gav == null) {
-            gav = "org.example.project:camel-jbang-export:1.0";
+            gav = "org.example.project:camel-jbang-run:1.0";
         }
         if (runtime == null) {
             runtime = RuntimeType.main;

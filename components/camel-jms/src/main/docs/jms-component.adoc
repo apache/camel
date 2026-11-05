@@ -615,12 +615,16 @@ following JMS message types:
 |Body Type |JMS Message |Comment
 |`String` |`jakarta.jms.TextMessage` | 
 
+|`CharSequence` |`jakarta.jms.TextMessage` |Other text, such as a `StringBuilder` or a Groovy GString, is converted
+to `String`.
+
 |`org.w3c.dom.Node` |`jakarta.jms.TextMessage` |The DOM will be converted
 to `String`.
 
 |`Map` |`jakarta.jms.MapMessage` | 
 
-|`java.io.Serializable` |`jakarta.jms.ObjectMessage` | 
+|`java.io.Serializable` |`jakarta.jms.ObjectMessage` |Only with `objectMessageEnabled=true`. Otherwise sending fails,
+and the error names the class of the body.
 
 |`byte[]` |`jakarta.jms.BytesMessage` | 
 
@@ -635,7 +639,15 @@ to `String`.
 |`org.apache.camel.StreamCache` |`jakarta.jms.BytesMessage` |
 
 |`java.nio.ByteBuffer` |`jakarta.jms.BytesMessage` |
+
+|`null` |`jakarta.jms.Message` |A message without a body.
 |=======================================================================
+
+A body of any other type is first converted to a `java.io.File` or `java.io.InputStream` and sent as a
+`jakarta.jms.BytesMessage`. When no conversion fits (for example a POJO that is not `Serializable`), sending fails
+with a `jakarta.jms.MessageFormatException` that names the class of the body, so the body is not lost. Implement
+`java.io.Serializable` (and enable `objectMessageEnabled`), force a type with the `jmsMessageType` option, or marshal
+the body (for example to JSON) before sending it.
 
 NOTE: When the `streamMessageTypeEnabled` option is enabled, bodies of type
 `java.io.File`, `java.io.Reader`, `java.io.InputStream`,

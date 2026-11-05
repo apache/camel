@@ -21,7 +21,9 @@ import java.util.Map;
 
 import javax.cache.Cache;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,7 +31,10 @@ import org.apache.camel.test.junit6.TestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JCacheProducerPutTest extends JCacheComponentTestSupport {
@@ -144,6 +149,23 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         for (Map.Entry<Object, Object> entry : values.entrySet()) {
             assertTrue(cache.containsKey(entry.getKey()));
             assertEquals(entry.getValue(), cache.get(entry.getKey()));
+        }
+    }
+
+    @Test
+    void testPutAllWithBodyThatIsNotAMapFails() {
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put(JCacheConstants.ACTION, "PUTALL");
+
+        for (Object body : new Object[] { "not a map", null }) {
+            CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                    () -> template.requestBodyAndHeaders("direct:put", body, headers));
+
+            InvalidPayloadException cause = assertInstanceOf(InvalidPayloadException.class, e.getCause());
+            assertEquals(Map.class, cause.getType());
+            assertTrue(cause.getMessage().contains("action PUTALL needs a Map"), cause.getMessage());
+            // the message names the type of the body, never its content
+            assertFalse(cause.getMessage().contains("not a map"), cause.getMessage());
         }
     }
 

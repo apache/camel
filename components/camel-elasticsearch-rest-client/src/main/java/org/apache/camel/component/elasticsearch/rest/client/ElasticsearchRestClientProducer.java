@@ -247,9 +247,10 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Generate the Request for operation GET_BY_ID
      */
     private Request getById(String indexName, Exchange exchange) {
-        var id = exchange.getMessage().getBody(String.class);
+        // the id of the header, as for the other operations, else the one of the body
+        var id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID, String.class);
         if (ObjectHelper.isEmpty(id)) {
-            id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID, String.class);
+            id = exchange.getMessage().getBody(String.class);
             if (ObjectHelper.isEmpty(id)) {
                 throw new IllegalArgumentException(
                         "id value is mandatory when performing GET_BY_ID operation");
@@ -263,9 +264,10 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Generate the Request for DELETE
      */
     private Request delete(String indexName, Exchange exchange) {
-        var id = exchange.getMessage().getBody(String.class);
+        // the id of the header, as for the other operations, else the one of the body
+        var id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID, String.class);
         if (ObjectHelper.isEmpty(id)) {
-            id = exchange.getMessage().getHeader(ElasticSearchRestClientConstant.ID, String.class);
+            id = exchange.getMessage().getBody(String.class);
             if (ObjectHelper.isEmpty(id)) {
                 throw new IllegalArgumentException(
                         "id value is mandatory when performing DELETE operation");
@@ -293,6 +295,12 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
             if (ObjectHelper.isNotEmpty(queryParameters)) {
                 var jsonRequest = createQueryFromMap(queryParameters);
                 request.setJsonEntity(jsonRequest);
+            } else if (queryParameters == null) {
+                // else the body is the JSON query, as the header would be
+                var jsonQuery = exchange.getMessage().getBody(String.class);
+                if (ObjectHelper.isNotEmpty(jsonQuery)) {
+                    request.setJsonEntity(jsonQuery);
+                }
             }
         }
 
@@ -347,12 +355,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * Extract Document from response
      */
     String extractDocument(JsonObject doc) {
-        // check if document exists
-        Boolean found = doc.getBoolean("found");
-        if (!found) {
-            return null;
-        }
-        // if it exists extract document
+        // the document exists: for a missing document the server answers 404, which fails the request before
         Map<String, Object> map = doc.getMap("_source");
         JsonObject jsonObject = new JsonObject(map);
 

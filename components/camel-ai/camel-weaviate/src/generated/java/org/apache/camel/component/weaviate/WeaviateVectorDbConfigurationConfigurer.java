@@ -2,6 +2,7 @@
 package org.apache.camel.component.weaviate;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration target = (org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": target.setAction(property(camelContext, org.apache.camel.component.weaviate.WeaviateVectorDbAction.class, value)); return true;
         case "apikey":
         case "apiKey": target.setApiKey(property(camelContext, java.lang.String.class, value)); return true;
@@ -39,7 +40,7 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return org.apache.camel.component.weaviate.WeaviateVectorDbAction.class;
         case "apikey":
         case "apiKey": return java.lang.String.class;
@@ -57,7 +58,7 @@ public class WeaviateVectorDbConfigurationConfigurer extends org.apache.camel.su
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration target = (org.apache.camel.component.weaviate.WeaviateVectorDbConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "action": return target.getAction();
         case "apikey":
         case "apiKey": return target.getApiKey();

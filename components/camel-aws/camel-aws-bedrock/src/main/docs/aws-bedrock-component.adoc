@@ -77,8 +77,8 @@ Camel-AWS Bedrock component provides the following operation on the producer sid
 - invokeImageModel
 - invokeEmbeddingsModel
 - invokeTextModelStreaming
-- invokeImageModelStreaming
-- invokeEmbeddingsModelStreaming
+- invokeImageModelStreaming (deprecated)
+- invokeEmbeddingsModelStreaming (deprecated)
 - converse
 - converseStream
 - applyGuardrail
@@ -89,9 +89,28 @@ models (for example `amazon.titan-image-generator-v1`, `amazon.nova-canvas-v1:0`
 `invokeEmbeddingsModel`. Invoking `invokeTextModel` with an image, embedding, rerank or video/speech model fails fast
 with an `IllegalArgumentException` that names the model and points to the operation to use instead.
 
+The operation is set with the `operation` option or the `CamelAwsBedrockOperation` header: with neither, the producer
+fails with an `IllegalArgumentException`.
+
+The invoke operations send the message body as the request of the model, in the format the model expects (usually
+JSON), with the `CamelAwsBedrockContentType` and `CamelAwsBedrockAcceptContentType` headers. A String, a byte[], an
+InputStream or a file is sent as it is, and a `Map` or a Jackson `JsonNode` is marshalled to JSON. Marshal another POJO
+to JSON first. A message with no body fails with an `InvalidPayloadException`.
+
+With `pojoRequest=true`, the body is the request of the AWS SDK, and the model of the request is used to read the
+response, so the `modelId` option is not needed.
+
 === Streaming Support
 
 The streaming operations (`invokeTextModelStreaming`, `invokeImageModelStreaming`, `invokeEmbeddingsModelStreaming`) enable real-time streaming of model responses, providing lower latency and better user experience for interactive applications.
+
+The streaming operations give the generated text. The image generation and embedding models do not stream their
+response, so the three streaming operations work the same way, and an image or embedding model fails with an
+`IllegalArgumentException` that points to `invokeImageModel` or `invokeEmbeddingsModel`.
+
+NOTE: The `invokeImageModelStreaming` and `invokeEmbeddingsModelStreaming` operations are deprecated and will be removed
+in a later release. Use `invokeImageModel` or `invokeEmbeddingsModel` with an image generation or embedding model, and
+`invokeTextModelStreaming` to stream the text of a text model.
 
 ==== Streaming Output Modes
 
@@ -123,6 +142,10 @@ All text generation models support streaming:
 - Mistral AI (all models)
 - Cohere Command models
 - Amazon Nova models
+- AI21 Labs Jamba models
+
+A cross-region inference profile id (for example `us.anthropic.claude-3-haiku-20240307-v1:0`) or an inference profile
+ARN can be used as the model id, as with `invokeTextModel`.
 
 === Converse API Support
 
@@ -170,7 +193,8 @@ When a conversation completes, the following headers are set:
 
 - `CamelAwsBedrockConverseStopReason`: Why the model stopped (e.g., "end_turn", "max_tokens")
 - `CamelAwsBedrockConverseUsage`: TokenUsage object with input/output token counts
-- `CamelAwsBedrockConverseOutputMessage`: The complete Message object from the model
+- `CamelAwsBedrockConverseOutputMessage`: The complete Message object from the model (converse only)
+- `CamelAwsBedrockGuardrailTrace`: The GuardrailTraceAssessment, when a guardrail with trace enabled is applied
 - `CamelAwsBedrockChunkCount`: (streaming only) Number of chunks received
 
 ==== Supported Models for Converse API
@@ -207,7 +231,7 @@ The Camel AWS Bedrock component provides comprehensive support for guardrails th
 
 *Message-level Configuration* (per-message override via headers):
 
-- `CamelAwsBedrockGuardrailConfig`: GuardrailConfiguration object for converse operations
+- `CamelAwsBedrockGuardrailConfig`: GuardrailConfiguration object for converse operations (converseStream also takes a GuardrailStreamConfiguration)
 - `CamelAwsBedrockGuardrailIdentifier`: Guardrail identifier String for the applyGuardrail operation (overrides the endpoint `guardrailIdentifier`)
 - `CamelAwsBedrockGuardrailContent`: Content blocks for applyGuardrail operation
 - `CamelAwsBedrockGuardrailSource`: Source type - "INPUT" or "OUTPUT" for applyGuardrail

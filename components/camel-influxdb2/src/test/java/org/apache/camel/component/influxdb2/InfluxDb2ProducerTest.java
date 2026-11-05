@@ -78,7 +78,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
             }
         });
 
-        Point point = Point.measurement("temperature");
+        Point point = Point.measurement("temperature").addField("value", 60.0);
 
         TestSupport.sendBody(template, "direct:test", point);
 
@@ -174,7 +174,7 @@ public class InfluxDb2ProducerTest extends AbstractInfluxDbTest {
         });
         ArrayList<Point> points = new ArrayList<>() {
             {
-                add(Point.measurement("temperature"));
+                add(Point.measurement("temperature").addField("value", 60.0));
             }
         };
 

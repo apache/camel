@@ -24,9 +24,9 @@ import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxws.CxfConfigurer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
@@ -34,6 +34,7 @@ import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.apache.hello_world_soap_http.Greeter;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
@@ -45,13 +46,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Isolated
 public class CxfTimeoutTest extends CamelSpringTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+
+    private static void allocateCxfTimeoutTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfTimeoutTest.port1", PORT1.toString());
+        JAXWS_SERVER_ADDRESS = "http://localhost:" + PORT1.getPort() + "/CxfTimeoutTest/SoapContext/SoapPort";
+    }
+
+    @AfterAll
+    static void releaseCxfTimeoutTestPorts() {
+        System.clearProperty("CxfTimeoutTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String JAXWS_SERVER_ADDRESS
-            = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfTimeoutTest/SoapContext/SoapPort";
+    protected static String JAXWS_SERVER_ADDRESS;
 
     @BeforeAll
     public static void startService() {
+        allocateCxfTimeoutTestPorts();
         Greeter implementor = new GreeterImplWithSleep();
         Endpoint.publish(JAXWS_SERVER_ADDRESS, implementor);
     }

@@ -443,8 +443,8 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
-         * This parameter allows the caller to upload data in parallel and
-         * control the order in which it is appended to the file.
+         * The final length of the file, including previously committed data,
+         * used by flushToFile.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -458,8 +458,8 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
-         * This parameter allows the caller to upload data in parallel and
-         * control the order in which it is appended to the file.
+         * The final length of the file, including previously committed data,
+         * used by flushToFile.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -1869,8 +1869,8 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
-         * This parameter allows the caller to upload data in parallel and
-         * control the order in which it is appended to the file.
+         * The final length of the file, including previously committed data,
+         * used by flushToFile.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -1884,8 +1884,8 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
-         * This parameter allows the caller to upload data in parallel and
-         * control the order in which it is appended to the file.
+         * The final length of the file, including previously committed data,
+         * used by flushToFile.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
@@ -2731,8 +2731,8 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
-         * This parameter allows the caller to upload data in parallel and
-         * control the order in which it is appended to the file.
+         * The final length of the file, including previously committed data,
+         * used by flushToFile.
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
@@ -2746,8 +2746,8 @@ public interface DataLakeEndpointBuilderFactory {
             return this;
         }
         /**
-         * This parameter allows the caller to upload data in parallel and
-         * control the order in which it is appended to the file.
+         * The final length of the file, including previously committed data,
+         * used by flushToFile.
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 

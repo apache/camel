@@ -76,6 +76,10 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     private CamelWebSocketHandler webSocketHandler;
     private boolean rest;
     private volatile boolean suspended;
+    // what doStart registered, so doStop undoes only that: a consumer that never started, or whose start failed, must
+    // not unregister the path of another consumer, nor unset the consumer of a shared WebSocket handler
+    private boolean registered;
+    private boolean webSocketConsumerSet;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -115,9 +119,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
              */
             this.webSocketHandler = (CamelWebSocketHandler) endpoint.getComponent().registerEndpoint(this,
                     endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext(), new CamelWebSocketHandler());
+            this.registered = true;
             // the access log and the custom handlers run before the upgrade, as they run before an HTTP request
             this.webSocketHandler.setConsumer(this,
                     wrapWithAccessLogAndHandlers(this.webSocketHandler.getUpgradeHandler(), endpoint));
+            this.webSocketConsumerSet = true;
         } else {
             // allow for HTTP 1.1 continue
             // form fields of a request that declares no charset are UTF-8 (as browsers send them), not the
@@ -135,6 +141,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                     Handlers.httpContinueRead(
                             // wrap with EagerFormParsingHandler to enable undertow form parsers
                             httpHandler));
+            this.registered = true;
         }
     }
 
@@ -163,11 +170,16 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
     protected void doStop() throws Exception {
         this.suspended = false;
         super.doStop();
-        if (this.webSocketHandler != null) {
+        if (this.webSocketConsumerSet) {
+            this.webSocketConsumerSet = false;
             this.webSocketHandler.setConsumer(null);
         }
-        UndertowEndpoint endpoint = getEndpoint();
-        endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(), endpoint.getSslContext());
+        if (this.registered) {
+            this.registered = false;
+            UndertowEndpoint endpoint = getEndpoint();
+            endpoint.getComponent().unregisterEndpoint(this, endpoint.getHttpHandlerRegistrationInfo(),
+                    endpoint.getSslContext());
+        }
     }
 
     @Override
@@ -230,6 +242,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
             getProcessor().process(camelExchange);
             sendResponse(httpExchange, camelExchange);
         } catch (Exception e) {
+            if (!httpExchange.isResponseStarted()) {
+                // the reply could not be written, such as a body that cannot be converted: answer 500 rather than end
+                // the exchange with the status code of the reply and an empty body
+                httpExchange.setStatusCode(StatusCodes.INTERNAL_SERVER_ERROR);
+                httpExchange.getResponseHeaders().remove(Headers.CONTENT_TYPE);
+                httpExchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, 0);
+                httpExchange.endExchange();
+            }
             getExceptionHandler().handleException(e);
         } finally {
             doneUoW(camelExchange);
@@ -287,15 +307,14 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Su
                 IOHelper.copy(input, output, IOHelper.DEFAULT_BUFFER_SIZE, true);
             }
         } else {
-            ByteBuffer bodyAsByteBuffer = null;
-            if (body instanceof String text) {
-                // write the text in the charset that the response Content-Type declares, if any
-                bodyAsByteBuffer = UndertowHelper.toByteBuffer(text,
-                        httpExchange.getResponseHeaders().getFirst(Headers.CONTENT_TYPE));
-            }
+            // write text in the charset that the response Content-Type declares, if any, and a number as its text
+            String contentType = httpExchange.getResponseHeaders().getFirst(Headers.CONTENT_TYPE);
+            TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
+            ByteBuffer bodyAsByteBuffer = UndertowHelper.toByteBuffer(tc, body, contentType);
             if (bodyAsByteBuffer == null) {
-                TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
-                bodyAsByteBuffer = tc.mandatoryConvertTo(ByteBuffer.class, body);
+                // a Map, a List or an object must be marshalled first
+                throw new NoTypeConversionAvailableException(
+                        UndertowHelper.notAnHttpBody(camelExchange, "response", contentType), body, ByteBuffer.class);
             }
             httpExchange.getResponseSender().send(bodyAsByteBuffer);
         }

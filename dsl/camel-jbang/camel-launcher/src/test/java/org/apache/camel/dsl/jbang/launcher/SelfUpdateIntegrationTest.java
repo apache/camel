@@ -34,10 +34,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.InstallScriptFetcher;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.ManifestFetcher;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.SelfUpdateCommand;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

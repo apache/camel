@@ -54,6 +54,10 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
 
     @Override
     protected ZendeskApiName getApiName(String apiNameStr) {
+        // zendesk has a single API (DEFAULT) with an empty name, so zendesk:methodName has no API name in the path
+        if (apiNameStr == null || apiNameStr.isEmpty()) {
+            return ZendeskApiName.DEFAULT;
+        }
         return getCamelContext().getTypeConverter().convertTo(ZendeskApiName.class, apiNameStr);
     }
 

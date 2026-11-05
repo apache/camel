@@ -1,0 +1,24 @@
+name: groovy-test
+description: The groovy example logs what its README promises
+actions:
+  - camel:
+      cli:
+        run:
+          integration:
+            name: "groovy"
+            file: "../groovy.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "order.json"
+            - "order-bad-email.json"
+  - camel:
+      cli:
+        verify:
+          integration: "groovy"
+          logMessage: "Order ORD-1001 accepted"
+  - camel:
+      cli:
+        verify:
+          integration: "groovy"
+          logMessage: "Order ORD-1002 rejected"

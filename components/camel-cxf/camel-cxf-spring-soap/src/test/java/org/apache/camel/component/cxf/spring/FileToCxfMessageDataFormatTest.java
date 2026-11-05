@@ -19,11 +19,13 @@ package org.apache.camel.component.cxf.spring;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.HelloService;
 import org.apache.camel.component.cxf.HelloServiceImpl;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +37,26 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateFileToCxfMessageDataFormatTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("FileToCxfMessageDataFormatTest.port1", PORT1.toString());
+        port1 = PORT1.getPort();
+    }
+
+    @AfterAll
+    static void releaseFileToCxfMessageDataFormatTestPorts() {
+        System.clearProperty("FileToCxfMessageDataFormatTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(FileToCxfMessageDataFormatTest.class);
-    private static int port1 = CXFTestSupport.getPort1();
+    private static int port1;
 
     private Server server;
 

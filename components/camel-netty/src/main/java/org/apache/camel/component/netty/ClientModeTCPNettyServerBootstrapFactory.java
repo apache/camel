@@ -18,8 +18,13 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -31,6 +36,7 @@ import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.ScheduledFuture;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -48,8 +54,14 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
     private NettyServerBootstrapConfiguration configuration;
     private ChannelInitializer<Channel> pipelineFactory;
     private Bootstrap clientBootstrap;
-    private Channel channel;
     private EventLoopGroup workerGroup;
+    // guards the fields below: the lifecycle thread and the event loops (reconnect) use them
+    private final Lock reconnectLock = new ReentrantLock();
+    private Channel channel;
+    private ChannelFuture pendingConnect;
+    private ScheduledFuture<?> reconnectTask;
+    private boolean stopping;
+    private int generation;
 
     public ClientModeTCPNettyServerBootstrapFactory() {
     }
@@ -134,6 +146,14 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
 
         LOG.debug("Created ClientBootstrap {}", clientBootstrap);
         clientBootstrap.handler(pipelineFactory);
+        reconnectLock.lock();
+        try {
+            // a new start: callbacks of an earlier start do nothing
+            stopping = false;
+            generation++;
+        } finally {
+            reconnectLock.unlock();
+        }
         ChannelFuture channelFuture
                 = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
 
@@ -141,12 +161,54 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
                 configuration.getHost(), configuration.getPort(), clientBootstrap);
 
         LOG.info("ClientModeServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-        channel = openChannel(channelFuture);
+        Channel answer = openChannel(channelFuture);
+        reconnectLock.lock();
+        try {
+            if (answer != null && channel == null) {
+                channel = answer;
+            }
+        } finally {
+            reconnectLock.unlock();
+        }
     }
 
     protected void stopServerBootstrap() {
         // close all channels
         LOG.info("ClientModeServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
+
+        // the worker group may be shared (workerGroup option), so the channel, a connect in progress and a
+        // scheduled reconnect must be closed and cancelled here and not left to the shutdown of the group
+        List<Channel> channels = new ArrayList<>(2);
+        reconnectLock.lock();
+        try {
+            stopping = true;
+            if (reconnectTask != null) {
+                reconnectTask.cancel(false);
+                reconnectTask = null;
+            }
+            if (pendingConnect != null) {
+                channels.add(pendingConnect.channel());
+                pendingConnect = null;
+            }
+            if (channel != null) {
+                channels.add(channel);
+                channel = null;
+            }
+        } finally {
+            reconnectLock.unlock();
+        }
+        for (Channel ch : channels) {
+            try {
+                ChannelFuture closeFuture = ch.close();
+                // cannot wait on the event loop of the channel (a route stopped from its own processing)
+                if (!ch.eventLoop().inEventLoop()) {
+                    closeFuture.awaitUninterruptibly(configuration.getShutdownTimeout());
+                }
+            } catch (RuntimeException e) {
+                // a channel that never got an event loop (its creation or registration failed) has nothing to close
+                LOG.debug("Cannot close channel {} due to {}. This exception is ignored.", ch, e.getMessage(), e);
+            }
+        }
 
         if (workerGroup != null) {
             workerGroup.shutdownGracefully();
@@ -154,12 +216,54 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         }
     }
 
+    /**
+     * Connects again if the channel is not active and the consumer is not stopping. Does not wait for the connect (it
+     * may run on an event loop): the outcome is handled by a listener.
+     */
     protected void doReconnectIfNeeded() throws Exception {
-        if (channel == null || !channel.isActive()) {
+        doReconnectIfNeeded(currentGeneration());
+    }
+
+    private void doReconnectIfNeeded(int gen) {
+        // resolve the address before taking the lock (may do a DNS lookup)
+        InetSocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+        reconnectLock.lock();
+        try {
+            // a stopped or restarted consumer, or a connect already in progress, does not connect again
+            if (stopping || gen != generation || pendingConnect != null || (channel != null && channel.isActive())) {
+                return;
+            }
             LOG.debug("ClientModeServerBootstrap re-connect to {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture connectFuture
-                    = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            channel = openChannel(connectFuture);
+            final ChannelFuture connectFuture = clientBootstrap.connect(address);
+            pendingConnect = connectFuture;
+            connectFuture.addListener((ChannelFutureListener) f -> onReconnectComplete(f, gen));
+        } finally {
+            reconnectLock.unlock();
+        }
+    }
+
+    private void onReconnectComplete(ChannelFuture connectFuture, int gen) {
+        reconnectLock.lock();
+        try {
+            if (pendingConnect == connectFuture) {
+                pendingConnect = null;
+            }
+            if (stopping || gen != generation) {
+                // the consumer was stopped or restarted while connecting
+                connectFuture.channel().close();
+                return;
+            }
+            if (connectFuture.isSuccess()) {
+                channel = connectFuture.channel();
+                LOG.debug("ClientModeServerBootstrap re-connected to {}", configuration.getAddress());
+                closeFutureReconnect(channel, gen);
+            } else {
+                LOG.debug("Re-connect to {} failed. Will attempt again in {} millis.", configuration.getAddress(),
+                        configuration.getReconnectInterval(), connectFuture.cause());
+                scheduleReconnect(eventLoopOf(connectFuture.channel()), gen);
+            }
+        } finally {
+            reconnectLock.unlock();
         }
     }
 
@@ -172,10 +276,11 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
         // wait for the channel to be open (see io.netty.channel.ChannelFuture javadoc for example/recommendation)
         channelFuture.awaitUninterruptibly();
 
+        int gen = currentGeneration();
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             //check if reconnect is enabled and schedule a reconnect, if from handler then don't schedule a reconnect
             if (configuration.isReconnect()) {
-                scheduleReconnect(channelFuture);
+                scheduleReconnect(eventLoopOf(channelFuture.channel()), gen);
                 return null;
             } else {
                 ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
@@ -191,31 +296,53 @@ public class ClientModeTCPNettyServerBootstrapFactory extends ServiceSupport imp
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
         }
 
-        // schedule a reconnect to happen when the channel closes
-        if (configuration.isReconnect()) {
-            answer.closeFuture().addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    scheduleReconnect(channelFuture);
-                }
-            });
-        }
-
+        closeFutureReconnect(answer, gen);
         return answer;
     }
 
-    private void scheduleReconnect(final ChannelFuture channelFuture) {
-        final EventLoop loop = channelFuture.channel().eventLoop();
-        loop.schedule(() -> {
-            try {
-                LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
-                doReconnectIfNeeded();
-            } catch (Exception e) {
-                LOG.warn("Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
-                        configuration.getAddress(), configuration.getReconnectInterval(),
-                        e);
+    private void closeFutureReconnect(Channel answer, int gen) {
+        // schedule a reconnect to happen when the channel closes
+        if (configuration.isReconnect()) {
+            answer.closeFuture().addListener((ChannelFutureListener) f -> scheduleReconnect(answer.eventLoop(), gen));
+        }
+    }
+
+    private void scheduleReconnect(final EventLoop loop, final int gen) {
+        reconnectLock.lock();
+        try {
+            if (stopping || gen != generation) {
+                return;
             }
-        }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);
+            reconnectTask = loop.schedule(() -> {
+                try {
+                    LOG.trace("Re-connecting to {} if needed", configuration.getAddress());
+                    doReconnectIfNeeded(gen);
+                } catch (Exception e) {
+                    LOG.warn("Error during re-connect to {}. Will attempt again in {} millis. This exception is ignored.",
+                            configuration.getAddress(), configuration.getReconnectInterval(),
+                            e);
+                    scheduleReconnect(loop, gen);
+                }
+            }, configuration.getReconnectInterval(), TimeUnit.MILLISECONDS);
+        } catch (RejectedExecutionException e) {
+            LOG.debug("Cannot schedule a re-connect to {} as the event loop is shutting down", configuration.getAddress());
+        } finally {
+            reconnectLock.unlock();
+        }
+    }
+
+    private EventLoop eventLoopOf(Channel ch) {
+        // a channel whose registration failed has no event loop
+        return ch.isRegistered() ? ch.eventLoop() : clientBootstrap.config().group().next();
+    }
+
+    private int currentGeneration() {
+        reconnectLock.lock();
+        try {
+            return generation;
+        } finally {
+            reconnectLock.unlock();
+        }
     }
 
 }

@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.google.drive.internal;
 
+import org.apache.camel.spi.Metadata;
+
 /**
  * Constants for GoogleDrive component.
  */
 public final class GoogleDriveConstants {
 
-    // suffix for parameters when passed as exchange header properties
+    // prefix for parameters when passed as exchange header properties
+    @Metadata(description = "The prefix of the headers that carry the parameters of the API method and of its request:"
+                            + " the header CamelGoogleDrive.fileId holds the fileId parameter, and CamelGoogleDrive.alt"
+                            + " set to media gives the content of a file with drive-files/get and drive-revisions/get.",
+              javaType = "Object")
     public static final String PROPERTY_PREFIX = "CamelGoogleDrive.";
 
     // thread profile name for this component

@@ -22,9 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,6 +34,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerProviderTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port port1;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port1 != null) {
+            port1.release();
+        }
+    }
 
     protected static final String REQUEST_MESSAGE
             = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
@@ -45,7 +60,7 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
     protected static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
 
     protected final String simpleEndpointAddress = "http://localhost:"
-                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+                                                   + port1.getPort() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
                                                + "?serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider";
 

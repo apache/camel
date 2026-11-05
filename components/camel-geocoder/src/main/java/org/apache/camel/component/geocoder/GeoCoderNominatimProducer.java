@@ -129,19 +129,32 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
             exchange.getIn().setBody(place);
         }
 
+        if (place != null) {
+            place = place.trim();
+            // search answers an array, of one place as we ask for limit=1, and [] when nothing is found
+            if (place.startsWith("[") && place.endsWith("]")) {
+                place = place.substring(1, place.length() - 1).trim();
+            }
+        }
         if (place == null || place.isEmpty()) {
             exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.ZERO_RESULTS);
             return;
         }
-        exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
 
-        if (place.startsWith("[") && place.endsWith("]")) {
-            place = place.substring(1, place.length() - 1);
-        }
-
-        // additional details
         final Configuration conf = Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS);
         final DocumentContext doc = JsonPath.using(conf).parse(place);
+
+        Object error = doc.read("$['error']");
+        if (error instanceof String) {
+            // reverse answers {"error":"Unable to geocode"} when there is no place at the latitude and longitude
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.ZERO_RESULTS);
+            return;
+        } else if (error != null) {
+            // an error answer such as {"error":{"code":400,"message":"..."}}
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.ERROR);
+            return;
+        }
+        exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
 
         exchange.getIn().setHeader(GeoCoderConstants.ADDRESS, doc.read("$['display_name']"));
 

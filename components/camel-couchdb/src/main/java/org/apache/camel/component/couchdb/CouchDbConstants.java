@@ -32,7 +32,11 @@ public interface CouchDbConstants {
     String HEADER_DOC_ID = "CamelCouchDbId";
     @Metadata(description = "The couchdb document revision", javaType = "String")
     String HEADER_DOC_REV = "CamelCouchDbRev";
-    @Metadata(description = "The method (delete / update)", javaType = "String")
+    @Metadata(description = "The method. The consumer sets UPDATE for an insert or an update, and DELETE for a delete."
+                            + " The producer saves the document of the body without this header or with UPDATE, deletes it"
+                            + " with DELETE, reads the document of the CamelCouchDbId header with GET, and fails with any"
+                            + " other method.",
+              javaType = "String")
     String HEADER_METHOD = "CamelCouchDbMethod";
 
     @Metadata(label = "consumer", description = "The resume action to execute when resuming.", javaType = "String")

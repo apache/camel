@@ -21,6 +21,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -101,7 +104,7 @@ public final class YamlSupport {
                     // if the uri is expressed as simple scheme, then we can use the
                     // discovered EndpointUriFactory to build the uri
                     //
-                    answer = factory.buildUri(scheme, parameters, false);
+                    answer = buildUri(factory, scheme, parameters);
                 } else {
                     //
                     // otherwise we have to compose it but we can still leverage the
@@ -119,6 +122,8 @@ public final class YamlSupport {
                             }
                         }
                     }
+                    // keep a value with & whole (a secret option is in RAW already)
+                    options.replaceAll((key, value) -> rawValue(value));
 
                     // flatten multiValue map parameters, where the map parameter is written
                     Map<String, String> prefixes = factory.multiValuePrefixes();
@@ -139,13 +144,78 @@ public final class YamlSupport {
                     answer += "?" + URISupport.createQueryString(flat, false);
                 }
             } else {
-                answer += "?" + URISupport.createQueryString(parameters, false);
+                answer += "?" + createQueryString(parameters);
             }
         } catch (URISyntaxException e) {
             throw new InvalidEndpointException(node, "Error creating query", e);
         }
 
         return answer;
+    }
+
+    /**
+     * Creates the query of an endpoint uri from the parameters, not encoded and in the order they are written. A value
+     * with & is put in RAW to keep it whole.
+     */
+    public static String createQueryString(Map<String, Object> parameters) {
+        Map<String, Object> options = new LinkedHashMap<>(parameters);
+        options.replaceAll((key, value) -> rawValue(value));
+        return URISupport.createQueryString(options, false);
+    }
+
+    /**
+     * Builds the uri with the factory, which puts the path parameters in the path and the other parameters in the
+     * query. A value with & is put in RAW to keep it whole in the query. In the path an & does no harm, and RAW would
+     * become part of the value, so a parameter that the factory puts in the path is built again as it is written.
+     */
+    private static String buildUri(EndpointUriFactory factory, String scheme, Map<String, Object> parameters)
+            throws URISyntaxException {
+        // in the same order: as written, or sorted when the parameters have no order (as the factory does)
+        Map<String, Object> options
+                = parameters instanceof LinkedHashMap ? new LinkedHashMap<>(parameters) : new TreeMap<>(parameters);
+        // the factory puts a secret option in RAW itself
+        Set<String> secrets = factory.secretPropertyNames();
+        options.replaceAll((key, value) -> secrets.contains(key) ? value : rawValue(value));
+        String answer = factory.buildUri(scheme, options, false);
+
+        boolean path = false;
+        for (Map.Entry<String, Object> option : options.entrySet()) {
+            Object value = parameters.get(option.getKey());
+            if (!Objects.equals(option.getValue(), value) && !isInQuery(answer, option.getKey(), option.getValue())) {
+                option.setValue(value);
+                path = true;
+            }
+        }
+        return path ? factory.buildUri(scheme, options, false) : answer;
+    }
+
+    /**
+     * Whether the option is in the query of the uri, written as the factory writes it.
+     */
+    private static boolean isInQuery(String uri, String key, Object value) {
+        String option = URISupport.createQueryString(Map.of(key, value), false);
+        return uri.contains("?" + option) || uri.contains("&" + option);
+    }
+
+    /**
+     * The value in RAW when it is a text with &, as the & would end the value in the query of the uri. This is
+     * RAW(value), or RAW{value} when the value has )& which would end RAW(value) too soon.
+     * <p/>
+     * Other values are returned as they are, and so is a bean reference (#name), a value in RAW already, and a value
+     * that no RAW form can keep whole: it has both )& and }&, or it has )& and starts with { (RAW{{ is the start of a
+     * property placeholder).
+     */
+    private static Object rawValue(Object value) {
+        if (value instanceof String s && s.indexOf('&') != -1 && !s.startsWith("#") && !s.startsWith("RAW(")
+                && !s.startsWith("RAW{")) {
+            // a RAW value ends at the first closing bracket that is followed by & or the end of the uri
+            if (!s.contains(")&")) {
+                return "RAW(" + s + ")";
+            } else if (!s.contains("}&") && !s.startsWith("{")) {
+                return "RAW{" + s + "}";
+            }
+        }
+        return value;
     }
 
     public static Node setProperty(Node node, String key, Object value) {

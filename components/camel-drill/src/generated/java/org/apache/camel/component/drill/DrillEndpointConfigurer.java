@@ -2,6 +2,7 @@
 package org.apache.camel.component.drill;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DrillEndpoint target = (DrillEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clusterid":
         case "clusterId": target.setClusterId(property(camelContext, java.lang.String.class, value)); return true;
         case "directory": target.setDirectory(property(camelContext, java.lang.String.class, value)); return true;
@@ -36,7 +37,7 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clusterid":
         case "clusterId": return java.lang.String.class;
         case "directory": return java.lang.String.class;
@@ -51,7 +52,7 @@ public class DrillEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DrillEndpoint target = (DrillEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "clusterid":
         case "clusterId": return target.getClusterId();
         case "directory": return target.getDirectory();

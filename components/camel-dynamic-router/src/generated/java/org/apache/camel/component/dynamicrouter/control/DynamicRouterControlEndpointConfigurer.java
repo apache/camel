@@ -2,6 +2,7 @@
 package org.apache.camel.component.dynamicrouter.control;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class DynamicRouterControlEndpointConfigurer extends PropertyConfigurerSu
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DynamicRouterControlEndpoint target = (DynamicRouterControlEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowpredicatefrommessage":
         case "allowPredicateFromMessage": target.getConfiguration().setAllowPredicateFromMessage(property(camelContext, boolean.class, value)); return true;
         case "destinationuri":
@@ -45,7 +46,7 @@ public class DynamicRouterControlEndpointConfigurer extends PropertyConfigurerSu
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowpredicatefrommessage":
         case "allowPredicateFromMessage": return boolean.class;
         case "destinationuri":
@@ -69,7 +70,7 @@ public class DynamicRouterControlEndpointConfigurer extends PropertyConfigurerSu
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DynamicRouterControlEndpoint target = (DynamicRouterControlEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowpredicatefrommessage":
         case "allowPredicateFromMessage": return target.getConfiguration().isAllowPredicateFromMessage();
         case "destinationuri":

@@ -22,6 +22,7 @@ public class DfdlUnparseException extends Exception {
     private final UnparseResult result;
 
     public DfdlUnparseException(UnparseResult result) {
+        super(DfdlParseException.diagnosticsMessage("DFDL unparse failed", result));
         this.result = result;
     }
 

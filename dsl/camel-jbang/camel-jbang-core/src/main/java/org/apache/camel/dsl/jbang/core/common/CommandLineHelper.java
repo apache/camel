@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
-import org.apache.camel.dsl.jbang.export.common.CamelHome;
-import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.CamelHome;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.OrderedProperties;
 import picocli.CommandLine;
 
@@ -208,40 +208,6 @@ public final class CommandLineHelper {
     }
 
     /**
-     * The arguments of a command line typed as one text, such as <tt>--jvm-args</tt>: split at whitespace outside
-     * double or single quotes, which are removed, and a backslash escapes the next character (outside single quotes).
-     */
-    public static List<String> splitArguments(String line) {
-        List<String> answer = new ArrayList<>();
-        StringBuilder current = new StringBuilder();
-        boolean token = false;
-        char quote = 0;
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-            if (quote == 0 && Character.isWhitespace(c)) {
-                if (token) {
-                    answer.add(current.toString());
-                    current.setLength(0);
-                    token = false;
-                }
-            } else if (c == '\\' && quote != '\'' && i + 1 < line.length()) {
-                current.append(line.charAt(++i));
-                token = true;
-            } else if ((c == '"' || c == '\'') && (quote == 0 || quote == c)) {
-                quote = quote == 0 ? c : 0;
-                token = true;
-            } else {
-                current.append(c);
-                token = true;
-            }
-        }
-        if (token) {
-            answer.add(current.toString());
-        }
-        return answer;
-    }
-
-    /**
      * Adjust basic home directory where user properties and other settings will be stored. Unit tests may set this in
      * order to create stable and independent tests.
      *
@@ -271,12 +237,16 @@ public final class CommandLineHelper {
 
     private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {
 
+        private final Properties properties;
+
         public CamelUserConfigDefaultValueProvider(Path file) {
             super(file.toFile());
+            this.properties = null;
         }
 
         public CamelUserConfigDefaultValueProvider(Properties properties) {
             super(properties);
+            this.properties = properties;
         }
 
         @Override
@@ -286,7 +256,44 @@ public final class CommandLineHelper {
             if (parent != null && parent.name().equals("plugin")) {
                 return null;
             }
+            if (properties != null && argSpec instanceof CommandLine.Model.OptionSpec option) {
+                return optionDefaultValue(option);
+            }
             return super.defaultValue(argSpec);
+        }
+
+        // picocli only looks up the longest name of an option, so dev=true would not set --reload,--dev:
+        // look up every long name, first for the command (camel.run.dev) and then for all commands (dev)
+        private String optionDefaultValue(CommandLine.Model.OptionSpec option) {
+            List<String> names = new ArrayList<>();
+            names.add(option.longestName());
+            for (String name : option.names()) {
+                if (name.startsWith("--") && !names.contains(name)) {
+                    names.add(name);
+                }
+            }
+            String command = option.command().qualifiedName(".");
+            for (String name : names) {
+                String value = properties.getProperty(command + "." + stripPrefix(name));
+                if (value != null) {
+                    return value;
+                }
+            }
+            for (String name : names) {
+                String value = properties.getProperty(stripPrefix(name));
+                if (value != null) {
+                    return value;
+                }
+            }
+            return null;
+        }
+
+        private static String stripPrefix(String name) {
+            int i = 0;
+            while (i < name.length() && !Character.isJavaIdentifierPart(name.charAt(i))) {
+                i++;
+            }
+            return name.substring(i);
         }
     }
 

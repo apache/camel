@@ -56,11 +56,12 @@ import org.apache.camel.support.DefaultEndpoint;
                                           @BodyType.When(option = "action", value = "DROP_TABLE", carriers = Carrier.ANY),
                                           @BodyType.When(option = "action", value = "DELETE", carriers = Carrier.ANY) },
                                   description = "By the action in the action option or the CamelPgVectorAction header: the vector as a"
-                                                + " List of Float or a float array for UPSERT and SIMILARITY_SEARCH, with the id, text and"
-                                                + " metadata of UPSERT in headers. CREATE_TABLE, CREATE_INDEX, DROP_TABLE and DELETE do not"
-                                                + " read the body, DELETE takes the id from the CamelPgVectorRecordId header. Another body"
-                                                + " fails, a List of Double too: the pgvector:embeddings data type transformer builds the"
-                                                + " vector from the output of langchain4j-embeddings"),
+                                                + " List of numbers, such as the List of Double a JSON array unmarshals to, or a float or"
+                                                + " double array for UPSERT and SIMILARITY_SEARCH, with the id, text and metadata of UPSERT"
+                                                + " in headers. CREATE_TABLE, CREATE_INDEX, DROP_TABLE and DELETE do not read the body,"
+                                                + " DELETE takes the id from the CamelPgVectorRecordId header. Another body fails: the"
+                                                + " pgvector:embeddings data type transformer builds the vector from the output of"
+                                                + " langchain4j-embeddings"),
            producerOut = @BodyType(value = { Carrier.VALUE, Carrier.TEXT, Carrier.LIST },
                                    byOption = {
                                            @BodyType.When(option = "action", value = "CREATE_TABLE", carriers = Carrier.VALUE,

@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
@@ -70,6 +71,7 @@ public class MinaConsumer extends DefaultConsumer {
     private SocketAddress address;
     private IoAcceptor acceptor;
     private final MinaConfiguration configuration;
+    private final CamelLogger noReplyLogger;
     private ExecutorService workerPool;
     // the acceptor or connector and the worker pool were released by doStop, and are created again on start
     private boolean released;
@@ -77,6 +79,7 @@ public class MinaConsumer extends DefaultConsumer {
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.configuration = endpoint.getConfiguration();
+        this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
         //
         // All mina endpoints are InOut. The endpoints are asynchronous.
         // Endpoints can send "n" messages and receive "m" messages.
@@ -491,34 +494,44 @@ public class MinaConsumer extends DefaultConsumer {
             }
 
             try {
-                //
-                // If there's a response to send, send it.
-                //
                 boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
-                Object response;
-                if (exchange.hasOut()) {
-                    response = MinaPayloadHelper.getOut(getEndpoint(), exchange);
-                } else {
-                    response = MinaPayloadHelper.getIn(getEndpoint(), exchange);
-                }
-
-                boolean failed = exchange.isFailed();
-                if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
-                    if (exchange.getException() != null) {
-                        response = getEndpoint().getConfiguration().isMuteException()
-                                ? mutedException() : exchange.getException();
+                // only reply when sync is enabled (request-reply); with sync=false the endpoint is one-way
+                if (configuration.isSync()) {
+                    Object response;
+                    if (exchange.hasOut()) {
+                        response = MinaPayloadHelper.getOut(getEndpoint(), exchange);
                     } else {
-                        // failed and no exception, must be a fault
-                        response = exchange.getOut().getBody();
+                        response = MinaPayloadHelper.getIn(getEndpoint(), exchange);
                     }
-                }
 
-                if (response != null) {
-                    LOG.debug("Writing body: {}", response);
-                    MinaHelper.writeBody(session, response, exchange, configuration.getWriteTimeout());
-                } else {
-                    LOG.debug("Writing no response");
-                    disconnect = Boolean.TRUE;
+                    boolean failed = exchange.isFailed();
+                    if (failed && !getEndpoint().getConfiguration().isTransferExchange()) {
+                        if (exchange.getException() != null) {
+                            response = getEndpoint().getConfiguration().isMuteException()
+                                    ? mutedException() : exchange.getException();
+                        } else {
+                            // failed and no exception, must be a fault
+                            response = exchange.getOut().getBody();
+                        }
+                    }
+
+                    if (response != null) {
+                        // if textline enabled then convert to a String which must be used for textline
+                        // (the text line encoder would otherwise write a byte[] or a stream with its toString)
+                        if (configuration.isTextline()) {
+                            response = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class,
+                                    exchange, response);
+                        }
+                        LOG.debug("Writing body: {}", response);
+                        MinaHelper.writeBody(session, response, exchange, configuration.getWriteTimeout());
+                    } else {
+                        noReplyLogger.log("No payload to send as reply for exchange: " + exchange);
+                        if (configuration.isDisconnectOnNoReply()) {
+                            // must close session if no data to write otherwise client will never receive a response
+                            // and wait forever (if not timing out)
+                            disconnect = true;
+                        }
+                    }
                 }
 
                 // should session be closed after complete?

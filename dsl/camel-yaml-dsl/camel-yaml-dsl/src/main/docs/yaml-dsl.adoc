@@ -320,6 +320,33 @@ To define an endpoint with the YAML dsl you have two options:
               authorizationToken: "XXX"
 ----
 
+=== Values with an & in parameters
+
+*Available as of Camel 4.24*
+
+A value under `parameters` is added to the query of the endpoint uri. When the value has an `&`, Camel puts it in
+`RAW(...)`, as it does for a secret option, so the `&` does not end the value. For example a file filter:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: "file:inbox"
+      parameters:
+        filterFile: "${file:name} contains 'R&D' && ${file:size} > 0"
+      steps:
+        - to:
+            uri: "log:rd"
+----
+
+The value is then taken as it is written, so a `+` in it stays a `+`. In a value without an `&`, a `+` is read as a
+space, as in a uri. Camel does not change a value that starts with `#` (a bean reference), a value in `RAW(...)` or
+`RAW{...}` already, and a path parameter, such as `directoryName` when the `uri` is only `file`.
+
+NOTE: Camel sees the `&` only when it is written in the YAML as the value of an option. When it comes from a property
+placeholder, or is in a value of a map option (see below), write the value in RAW yourself, such as
+`+RAW({{filter}})+`.
+
 === Map values for parameters
 
 *Available as of Camel 4.15*

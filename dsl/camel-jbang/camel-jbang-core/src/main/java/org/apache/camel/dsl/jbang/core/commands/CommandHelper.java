@@ -21,8 +21,8 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.jline.terminal.Terminal;
 
 public final class CommandHelper {

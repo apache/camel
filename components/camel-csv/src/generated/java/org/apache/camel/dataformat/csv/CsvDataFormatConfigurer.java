@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.csv;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -54,7 +55,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CsvDataFormat target = (CsvDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowmissingcolumnnames":
         case "allowMissingColumnNames": target.setAllowMissingColumnNames(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "captureheaderrecord":
@@ -112,7 +113,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowmissingcolumnnames":
         case "allowMissingColumnNames": return java.lang.Boolean.class;
         case "captureheaderrecord":
@@ -166,7 +167,7 @@ public class CsvDataFormatConfigurer extends org.apache.camel.support.component.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CsvDataFormat target = (CsvDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowmissingcolumnnames":
         case "allowMissingColumnNames": return target.getAllowMissingColumnNames();
         case "captureheaderrecord":

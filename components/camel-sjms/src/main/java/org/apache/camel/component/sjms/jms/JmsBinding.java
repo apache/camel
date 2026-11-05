@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.jms;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputFilter;
 import java.io.Reader;
@@ -56,7 +57,8 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.DeserializationFilterHelper;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,6 +132,23 @@ public class JmsBinding {
         return new IllegalStateException(
                 "JMS ObjectMessage is disabled by default for security reasons (" + operation + ")."
                                          + " Set objectMessageEnabled=true on the SJMS endpoint or component to enable it.");
+    }
+
+    /**
+     * The error for a body that would be sent as an ObjectMessage. It names the class of the body, and says how to send
+     * the body as text or JSON, so a body that is meant as text is not sent as a serialized Java object.
+     */
+    private static IllegalStateException objectMessageDisabledForBody(Object body) {
+        if (body == null) {
+            return objectMessageDisabled("creating ObjectMessage");
+        }
+        return new IllegalStateException(
+                "JMS ObjectMessage is disabled by default for security reasons (creating ObjectMessage for the message body"
+                                         + " of class: " + body.getClass().getName() + ")."
+                                         + " To send the body as text, convert it to a String before sending (convertBodyTo"
+                                         + " with type String), or marshal it (for example to JSON)."
+                                         + " To send it as a serialized Java object, set objectMessageEnabled=true on the SJMS"
+                                         + " endpoint or component.");
     }
 
     /**
@@ -477,17 +496,18 @@ public class JmsBinding {
             throw new JMSException("Cannot send message as message body is null, and option allowNullBody is false.");
         }
 
-        // warn if the body could not be mapped
-        if (body != null && LOG.isWarnEnabled()) {
-            LOG.warn("Cannot determine specific JmsMessage type to use from body class."
-                     + " Will use generic JmsMessage."
-                     + " Body class: {}"
-                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
-                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.",
-                    ObjectHelper.classCanonicalName(body));
+        // fail if the body could not be mapped, as sending an empty message would lose the body
+        if (body != null) {
+            throw new MessageFormatException(
+                    "Cannot determine which JMS message type to use for the message body of class: "
+                                             + body.getClass().getName()
+                                             + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
+                                             + " (and enable the objectMessageEnabled option)"
+                                             + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint"
+                                             + ", or you can marshal the body (for example to JSON or XML) before sending.");
         }
 
-        // return a default message
+        // return a default message for a null body
         Message answer = session.createMessage();
         // ensure default delivery mode is used by default
         answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
@@ -503,7 +523,8 @@ public class JmsBinding {
             Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) {
         JmsMessageType type = null;
         // let body determine the type
-        if (body instanceof Node || body instanceof String) {
+        if (body instanceof Node || body instanceof CharSequence) {
+            // any text (such as a StringBuilder or a Groovy GString) is sent as text, not as a serialized Java object
             type = JmsMessageType.Text;
         } else if (body instanceof byte[] || body instanceof WrappedFile || body instanceof File || body instanceof Reader
                 || body instanceof InputStream || body instanceof ByteBuffer || body instanceof StreamCache) {
@@ -523,7 +544,8 @@ public class JmsBinding {
      *
      * Create the {@link Message}
      *
-     * @return jmsMessage or null if the mapping was not successfully
+     * @return              jmsMessage
+     * @throws JMSException if the message cannot be created, or the type is not supported
      */
     protected Message createJmsMessageForType(
             Exchange exchange, Object body, Session session, CamelContext context,
@@ -554,9 +576,9 @@ public class JmsBinding {
                 }
                 return message;
             }
-            case Object:
+            case Object: {
                 if (!isObjectMessageEnabled()) {
-                    throw objectMessageDisabled("creating ObjectMessage");
+                    throw objectMessageDisabledForBody(body);
                 }
                 ObjectMessage message = session.createObjectMessage();
                 if (body != null) {
@@ -572,10 +594,34 @@ public class JmsBinding {
                     }
                 }
                 return message;
+            }
+            case Stream: {
+                StreamMessage message = session.createStreamMessage();
+                if (body != null) {
+                    InputStream is = null;
+                    try {
+                        is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, body);
+                        byte[] buffer = new byte[FileUtil.BUFFER_SIZE];
+                        int len;
+                        while ((len = is.read(buffer)) >= 0) {
+                            message.writeBytes(buffer, 0, len);
+                        }
+                    } catch (NoTypeConversionAvailableException | IOException e) {
+                        // cannot convert to inputstream then thrown an exception to avoid sending a null message
+                        JMSException cause = new MessageFormatException(e.getMessage());
+                        cause.initCause(e);
+                        throw cause;
+                    } finally {
+                        IOHelper.close(is);
+                    }
+                }
+                return message;
+            }
             default:
                 break;
         }
-        return null;
+        throw new JMSException(
+                "Cannot create JMS message of type " + type + ". Supported types are: Bytes, Map, Object, Stream, Text.");
     }
 
     /**
@@ -586,7 +632,10 @@ public class JmsBinding {
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());
             if (keyString != null) {
-                message.setObject(keyString, entry.getValue());
+                Object value = entry.getValue();
+                // JMS takes only primitive wrappers, String and byte[] in a MapMessage, so text such as a
+                // StringBuilder or a Groovy GString goes in as a String
+                message.setObject(keyString, value instanceof CharSequence cs ? cs.toString() : value);
             }
         }
     }

@@ -27,12 +27,12 @@
     ">
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfPayloadProviderRouterTest/CamelContext/RouterPort">
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfPayloadProviderRouterTest.port2}/CxfPayloadProviderRouterTest/CamelContext/RouterPort">
     <cxf:properties>
       <entry key="jaxws.provider.interpretNullAsOneway" value="true"/>
     </cxf:properties>
   </cxf:cxfEndpoint>
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfPayLoadProviderRouterTest/SoapContext/SoapPort"/>
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfPayloadProviderRouterTest.port1}/CxfPayLoadProviderRouterTest/SoapContext/SoapPort"/>
 
 </beans>

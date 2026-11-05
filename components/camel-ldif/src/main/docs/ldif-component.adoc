@@ -76,7 +76,17 @@ By default, such a body is rejected.
 === Result
 
 The result is returned in the Out body as a `ArrayList<java.lang.String>` object.
-This contains either `success` or the error message for each LDIF entry.
+This contains a status for each LDIF entry: either `success`, or for a failed change the LDAP result code,
+the DN of the entry and the message from the server, such as:
+
+----
+entryAlreadyExists (68) on uid=test1,ou=test,dc=example,dc=org
+noSuchObject (32) on uid=test2,ou=test,dc=example,dc=org: no such entry
+----
+
+The message is left out when the server sends none (OpenLDAP sends none for an entry that already exists).
+
+An empty or null body is not sent to the server, and the result is an empty String.
 
 === LdapConnection
 
@@ -85,6 +95,10 @@ The URI, `ldif:ldapConnectionName`, references a bean with the ID,
 `LdapConnectionConfig` bean. Note that the scope must have a scope of
 `prototype` to avoid the connection being shared or picking up a
 stale connection.
+
+The component closes the connection after each message. When the bean is not a prototype,
+the next message uses the same connection: the component then binds it again,
+with the name and credentials of its `LdapConnectionConfig`, before the changes are applied.
 
 The `LdapConnection` bean may be defined as follows in Spring XML:
 
@@ -123,9 +137,9 @@ In YAML, a Groovy script can make the connection:
         new org.apache.directory.ldap.client.api.DefaultLdapConnectionFactory(config).newLdapConnection()
 ----
 
-A YAML bean is created once, and the component closes the connection after each message.
-The YAML route in the examples below therefore binds the connection again before each message.
-This works when the route processes one message at a time.
+A YAML bean is created once, and the component closes the connection after each message,
+and binds it again for the next message.
+As the connection is shared, this works when the route processes one message at a time.
 
 == Examples
 
@@ -157,10 +171,6 @@ and logs the result:
     from:
       uri: file:ldif
       steps:
-        # the component closes the connection after each message, so bind it again
-        - bean:
-            ref: ldapConnection
-            method: "bind()"
         - to:
             uri: ldif:ldapConnection
         - log:

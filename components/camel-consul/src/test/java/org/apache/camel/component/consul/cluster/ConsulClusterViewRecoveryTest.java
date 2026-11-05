@@ -23,6 +23,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import okhttp3.Request;
@@ -31,6 +33,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,8 +59,11 @@ import org.kiwiproject.consul.option.QueryOptions;
 import retrofit2.Call;
 import retrofit2.Response;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,12 +74,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
  * The cluster view must keep taking part in the leader election after Consul could not be reached and after Consul
- * invalidated its session, as it happens when the Consul agent restarts. Consul is simulated by mocked clients.
+ * invalidated its session, as it happens when the Consul agent restarts, and a stopped view must not be leader. Consul
+ * is simulated by mocked clients.
  */
 class ConsulClusterViewRecoveryTest {
 
@@ -82,10 +97,13 @@ class ConsulClusterViewRecoveryTest {
     private final Set<String> sessions = ConcurrentHashMap.newKeySet();
     private final AtomicInteger createdSessions = new AtomicInteger();
     private volatile boolean reachable = true;
+    private volatile boolean unreachableAfterCreatingASession;
+    private volatile boolean lockCannotBeReleased;
     private volatile boolean keyExists;
     private volatile String lockHolder;
 
     private ConsulClusterConfiguration configuration;
+    private ConsulClusterService service;
     private CamelContext context;
     private CamelClusterView view;
 
@@ -104,7 +122,7 @@ class ConsulClusterViewRecoveryTest {
         };
         configuration.setSessionRefreshInterval(1);
 
-        ConsulClusterService service = new ConsulClusterService(configuration);
+        service = new ConsulClusterService(configuration);
         service.setId("node-1");
 
         context = new DefaultCamelContext();
@@ -170,7 +188,7 @@ class ConsulClusterViewRecoveryTest {
             otherContext.addService(service);
             otherContext.start();
 
-            // the session cannot be created: the view fails to start, and a failed view is not stopped
+            // the session cannot be created: the view fails to start
             reachable = false;
             assertThrows(Exception.class, () -> service.getView(NAMESPACE));
 
@@ -214,11 +232,187 @@ class ConsulClusterViewRecoveryTest {
         assertTrue(view.getLocalMember().isLeader());
     }
 
+    @Test
+    void givesUpTheLeadershipWhenStoppedWhileConsulCannotBeReached() throws Exception {
+        // the view is stopped while the agent cannot be reached: the lock cannot be released nor the session destroyed
+        reachable = false;
+        assertDoesNotThrow(() -> service.stopView(NAMESPACE));
+
+        // the stopped view is not leader anymore
+        assertFalse(view.getLocalMember().isLeader());
+        assertFalse(service.isLeader(NAMESPACE));
+
+        // Consul invalidates the session once its TTL expired, as it is not renewed anymore, and releases the lock
+        sessions.clear();
+        lockHolder = null;
+
+        // the agent is back and the view is started again: it takes part in the leader election with a new session
+        reachable = true;
+        service.startView(NAMESPACE);
+        assertEquals("session-2", lockHolder);
+        assertTrue(view.getLocalMember().isLeader());
+        verify(keyValueClient, times(2)).getValue(eq(PATH), any(QueryOptions.class), any());
+    }
+
+    @Test
+    void destroysTheSessionWhenTheLockCannotBeReleased() throws Exception {
+        lockCannotBeReleased = true;
+        assertDoesNotThrow(() -> service.stopView(NAMESPACE));
+
+        // Consul releases the lock of the destroyed session
+        verify(sessionClient).destroySession("session-1");
+        assertNull(lockHolder);
+        assertFalse(view.getLocalMember().isLeader());
+    }
+
+    @Test
+    void createsANewSessionWhenStartedAgainAfterAFailedStart() throws Exception {
+        CamelContext otherContext = new DefaultCamelContext();
+        try {
+            ConsulClusterService otherService = new ConsulClusterService(configuration);
+            otherService.setId("node-2");
+            otherContext.addService(otherService);
+            otherContext.start();
+
+            // the agent goes away right after the session was created: the view fails to start, and is stopped
+            unreachableAfterCreatingASession = true;
+            assertThrows(Exception.class, () -> otherService.getView(NAMESPACE));
+            assertEquals(2, createdSessions.get());
+
+            // the agent is back: a new start takes part in the leader election with a new session
+            unreachableAfterCreatingASession = false;
+            reachable = true;
+            otherService.startView(NAMESPACE);
+            CamelClusterView otherView = otherService.getView(NAMESPACE);
+            assertEquals("session-3", otherView.getLocalMember().getId());
+            assertFalse(otherView.getLocalMember().isLeader());
+            verify(keyValueClient, times(2)).getValue(eq(PATH), any(QueryOptions.class), any());
+        } finally {
+            unreachableAfterCreatingASession = false;
+            reachable = true;
+            otherContext.stop();
+        }
+    }
+
+    @Test
+    void ignoresTheFailureOfAQueryFromBeforeARestart() throws Exception {
+        ConsulResponseCallback<Optional<Value>> queryOfFirstStart = lastQuery();
+
+        service.stopView(NAMESPACE);
+        service.startView(NAMESPACE);
+        assertTrue(view.getLocalMember().isLeader());
+
+        // the query of the first start fails only now: the restarted view keeps the leadership of its own session
+        deliver(() -> queryOfFirstStart.onFailure(notReachable()));
+        assertTrue(view.getLocalMember().isLeader());
+    }
+
+    @Test
+    void ignoresTheAnswerOfAQueryFromBeforeARestart() throws Exception {
+        // Consul answered the query of the first start (the key is held by session-1), but the answer is handled
+        // only after the view was restarted
+        ConsulResponseCallback<Optional<Value>> queryOfFirstStart = lastQuery();
+        ConsulResponse<Optional<Value>> answer = keyValue();
+
+        service.stopView(NAMESPACE);
+        service.startView(NAMESPACE);
+        assertEquals("session-2", lockHolder);
+        assertTrue(view.getLocalMember().isLeader());
+        int queriesAfterRestart = queries.size();
+
+        // the answer is about a session of the first start: it must neither change the leadership of the restarted
+        // view nor keep the watch of the first start going next to the one of the restart
+        deliver(() -> queryOfFirstStart.onComplete(answer));
+        assertTrue(view.getLocalMember().isLeader());
+        assertEquals(queriesAfterRestart, queries.size());
+    }
+
+    @Test
+    void doesNotTakeTheLeadershipAfterTheViewWasStopped() throws Exception {
+        // another node holds the lock
+        lockHolder = "session-of-another-node";
+        deliver(() -> lastQuery().onComplete(keyValue()));
+        assertFalse(view.getLocalMember().isLeader());
+
+        // the other node releases the lock, and the view is stopped while it handles that answer: right after it
+        // acquired the lock (it logs the result), and before it took the leadership
+        lockHolder = null;
+        ConsulResponseCallback<Optional<Value>> query = lastQuery();
+        ConsulResponse<Optional<Value>> answer = keyValue();
+        Thread stop = new Thread(() -> {
+            try {
+                service.stopView(NAMESPACE);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }, "stop-view");
+        Thread callback = new Thread(() -> deliver(() -> query.onComplete(answer)), "consul-callback");
+
+        onDebugMessage("Try to acquire lock", () -> {
+            stop.start();
+            // until the view is stopped, or the stop waits for this callback
+            await().atMost(10, TimeUnit.SECONDS).until(
+                    () -> stop.getState() == Thread.State.TERMINATED
+                            || stop.getState() == Thread.State.WAITING && ((ServiceSupport) view).isStopping());
+        }, () -> {
+            callback.start();
+            callback.join(TimeUnit.SECONDS.toMillis(10));
+            stop.join(TimeUnit.SECONDS.toMillis(10));
+        });
+        assertFalse(callback.isAlive());
+        assertFalse(stop.isAlive());
+
+        // the view is stopped and gave up its session: it is not leader, and the lock it acquired is free again
+        assertFalse(view.getLocalMember().isLeader());
+        assertFalse(service.isLeader(NAMESPACE));
+        assertNull(lockHolder);
+    }
+
+    /**
+     * Runs the action with a hook that runs on the thread that logs a debug message of the view starting with the given
+     * text, the first time.
+     */
+    private static void onDebugMessage(String prefix, Runnable hook, ThrowingRunnable action) throws Exception {
+        String name = ConsulClusterView.class.getName();
+        AtomicBoolean done = new AtomicBoolean();
+        AbstractAppender appender = new AbstractAppender("hook", null, null, false, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                if (event.getMessage().getFormattedMessage().startsWith(prefix) && done.compareAndSet(false, true)) {
+                    hook.run();
+                }
+            }
+        };
+        appender.start();
+        LoggerContext loggerContext = LoggerContext.getContext(false);
+        Configuration config = loggerContext.getConfiguration();
+        LoggerConfig loggerConfig = new LoggerConfig(name, Level.DEBUG, false);
+        loggerConfig.addAppender(appender, Level.DEBUG, null);
+        config.addLogger(name, loggerConfig);
+        loggerContext.updateLoggers();
+        try {
+            action.run();
+        } finally {
+            config.removeLogger(name);
+            loggerContext.updateLoggers();
+            appender.stop();
+        }
+        assertTrue(done.get(), "the hook did not run");
+    }
+
+    @FunctionalInterface
+    private interface ThrowingRunnable {
+        void run() throws Exception;
+    }
+
     private void simulateConsul() {
         doAnswer(inv -> {
             ensureReachable();
             String id = "session-" + createdSessions.incrementAndGet();
             sessions.add(id);
+            if (unreachableAfterCreatingASession) {
+                reachable = false;
+            }
             return ImmutableSessionCreatedResponse.builder().id(id).build();
         }).when(sessionClient).createSession(any(Session.class));
 
@@ -251,12 +445,26 @@ class ConsulClusterViewRecoveryTest {
 
         doAnswer(inv -> {
             ensureReachable();
+            if (lockCannotBeReleased) {
+                throw new ConsulException("Permission denied", new IllegalStateException("403"));
+            }
             if (PATH.equals(inv.getArgument(0)) && inv.getArgument(1).equals(lockHolder)) {
                 lockHolder = null;
                 return true;
             }
             return false;
         }).when(keyValueClient).releaseLock(anyString(), anyString());
+
+        doAnswer(inv -> {
+            ensureReachable();
+            // Consul releases the locks of a destroyed session
+            String id = inv.getArgument(0);
+            sessions.remove(id);
+            if (id.equals(lockHolder)) {
+                lockHolder = null;
+            }
+            return null;
+        }).when(sessionClient).destroySession(anyString());
 
         doAnswer(inv -> {
             ensureReachable();

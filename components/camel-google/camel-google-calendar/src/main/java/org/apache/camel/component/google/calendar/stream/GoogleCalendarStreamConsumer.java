@@ -140,7 +140,19 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
                 LOG.info("Sync complete.");
             }
         } else {
-            c = request.setOrderBy("updated").execute();
+            // Keep the same filters while paging. Moving updatedMin between pages can skip events,
+            // and requesting only the first page can leave it full of already delivered boundary events.
+            List<Event> events = new ArrayList<>();
+            request.setOrderBy("updated");
+            do {
+                c = request.execute();
+                if (c != null && c.getItems() != null) {
+                    events.addAll(c.getItems());
+                }
+                request.setPageToken(c != null ? c.getNextPageToken() : null);
+            } while (getConfiguration().isConsiderLastUpdate() && ObjectHelper.isNotEmpty(request.getPageToken()));
+            // Only move the cursor after every page succeeded, so a failed listing can be retried.
+            c = new Events().setItems(events);
         }
 
         if (c != null && c.getItems() != null) {

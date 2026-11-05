@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.mime.multipart;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -33,7 +34,7 @@ public class MimeMultipartDataFormatConfigurer extends org.apache.camel.support.
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         MimeMultipartDataFormat target = (MimeMultipartDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "binarycontent":
         case "binaryContent": target.setBinaryContent(property(camelContext, boolean.class, value)); return true;
         case "headersinline":
@@ -55,7 +56,7 @@ public class MimeMultipartDataFormatConfigurer extends org.apache.camel.support.
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "binarycontent":
         case "binaryContent": return boolean.class;
         case "headersinline":
@@ -73,7 +74,7 @@ public class MimeMultipartDataFormatConfigurer extends org.apache.camel.support.
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         MimeMultipartDataFormat target = (MimeMultipartDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "binarycontent":
         case "binaryContent": return target.isBinaryContent();
         case "headersinline":

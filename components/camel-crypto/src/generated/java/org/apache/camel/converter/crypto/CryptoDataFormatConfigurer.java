@@ -2,6 +2,7 @@
 package org.apache.camel.converter.crypto;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -37,7 +38,7 @@ public class CryptoDataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CryptoDataFormat target = (CryptoDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": target.setAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "algorithmparameterspec":
         case "algorithmParameterSpec": target.setAlgorithmParameterSpec(property(camelContext, java.security.spec.AlgorithmParameterSpec.class, value)); return true;
@@ -64,7 +65,7 @@ public class CryptoDataFormatConfigurer extends org.apache.camel.support.compone
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return java.lang.String.class;
         case "algorithmparameterspec":
         case "algorithmParameterSpec": return java.security.spec.AlgorithmParameterSpec.class;
@@ -87,7 +88,7 @@ public class CryptoDataFormatConfigurer extends org.apache.camel.support.compone
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CryptoDataFormat target = (CryptoDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "algorithm": return target.getAlgorithm();
         case "algorithmparameterspec":
         case "algorithmParameterSpec": return target.getAlgorithmParameterSpec();

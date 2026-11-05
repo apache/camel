@@ -50,7 +50,7 @@ public final class LangChain4jEmbeddings {
         public static final String VECTOR = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR;
 
         @Metadata(description = "A TextSegment representation of the vector embedding input text",
-                  javaType = " dev.langchain4j.data.segment.TextSegment")
+                  javaType = "dev.langchain4j.data.segment.TextSegment")
         public static final String TEXT_SEGMENT = CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_TEXT_SEGMENT;
     }
 }

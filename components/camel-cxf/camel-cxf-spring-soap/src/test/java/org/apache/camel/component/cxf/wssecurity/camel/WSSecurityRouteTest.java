@@ -20,14 +20,15 @@ import java.net.URL;
 
 import jakarta.xml.ws.BindingProvider;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.wssecurity.server.CxfServer;
 import org.apache.camel.hello_world_soap_http.Greeter;
 import org.apache.camel.hello_world_soap_http.GreeterService;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -36,11 +37,36 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class WSSecurityRouteTest extends CamelSpringTestSupport {
-    static final int PORT = CXFTestSupport.getPort1();
+
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    private static void allocateWSSecurityRouteTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("WSSecurityRouteTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("WSSecurityRouteTest.port2", PORT2.toString());
+        PORT = PORT1.getPort();
+    }
+
+    @AfterAll
+    static void releaseWSSecurityRouteTestPorts() {
+        System.clearProperty("WSSecurityRouteTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("WSSecurityRouteTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
+    static int PORT;
     static CxfServer cxfServer;
 
     @BeforeAll
     public static void setupContext() throws Exception {
+        allocateWSSecurityRouteTestPorts();
         cxfServer = new CxfServer();
     }
 
@@ -63,7 +89,7 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
 
         ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
+                "http://localhost:" + PORT2.getPort()
                                                            + "/WSSecurityRouteTest/GreeterSignaturePort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
@@ -83,7 +109,7 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
 
         ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
+                "http://localhost:" + PORT2.getPort()
                                                            + "/WSSecurityRouteTest/GreeterUsernameTokenPort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
@@ -103,7 +129,7 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
 
         ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
+                "http://localhost:" + PORT2.getPort()
                                                            + "/WSSecurityRouteTest/GreeterEncryptionPort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");
@@ -123,7 +149,7 @@ public class WSSecurityRouteTest extends CamelSpringTestSupport {
 
         ((BindingProvider) greeter).getRequestContext().put(
                 BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                "http://localhost:" + CXFTestSupport.getPort2()
+                "http://localhost:" + PORT2.getPort()
                                                            + "/WSSecurityRouteTest/GreeterSecurityPolicyPort");
 
         assertEquals("Hello Security", greeter.greetMe("Security"), "Get a wrong response");

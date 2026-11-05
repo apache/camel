@@ -86,9 +86,18 @@ public class CamelMethodHandler implements HttpHandler {
         HttpHandler result = null;
         methodMapLock.lock(); // we lock to get a reliable sum of refCounts in remove(String)
         try {
-            for (String method : splitMethods(methods)) {
-                MethodEntry en = methodMap.computeIfAbsent(method, m -> new MethodEntry());
-                result = en.addRef(handler, method);
+            final String[] split = splitMethods(methods);
+            for (int i = 0; i < split.length; i++) {
+                MethodEntry en = methodMap.computeIfAbsent(split[i], m -> new MethodEntry());
+                try {
+                    result = en.addRef(handler, split[i]);
+                } catch (IllegalArgumentException e) {
+                    // all or nothing, as a failed registration is not unregistered
+                    for (int j = 0; j < i; j++) {
+                        methodMap.get(split[j]).removeRef();
+                    }
+                    throw e;
+                }
             }
         } finally {
             methodMapLock.unlock();

@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.support.DefaultProducer;
@@ -151,12 +152,12 @@ public class ODataProducer extends DefaultProducer {
             case CREATE -> {
                 httpExchange.getMessage().setHeader(HttpConstants.HTTP_METHOD, "POST");
                 httpExchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
-                httpExchange.getMessage().setBody(ODataHelper.toJson(exchange.getMessage().getBody()));
+                httpExchange.getMessage().setBody(toJsonPayload(exchange, operation));
             }
             case UPDATE -> {
                 httpExchange.getMessage().setHeader(HttpConstants.HTTP_METHOD, "PATCH");
                 httpExchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/json");
-                httpExchange.getMessage().setBody(ODataHelper.toJson(exchange.getMessage().getBody()));
+                httpExchange.getMessage().setBody(toJsonPayload(exchange, operation));
             }
             case DELETE -> {
                 httpExchange.getMessage().setHeader(HttpConstants.HTTP_METHOD, "DELETE");
@@ -200,22 +201,25 @@ public class ODataProducer extends DefaultProducer {
             return;
         }
 
-        Map<String, Object> response = ODataHelper.parseJsonObject(body);
+        Object response = ODataHelper.parseJson(body);
 
-        Object count = response.get("@odata.count");
-        if (count instanceof Number number) {
-            exchange.getMessage().setHeader(ODataConstants.COUNT, number.longValue());
-        }
+        // a JSON array or a plain value is the body as it is: only a JSON object has the OData annotations
+        if (response instanceof Map<?, ?> map) {
+            Object count = map.get("@odata.count");
+            if (count instanceof Number number) {
+                exchange.getMessage().setHeader(ODataConstants.COUNT, number.longValue());
+            }
 
-        Object nextLink = response.get("@odata.nextLink");
-        if (nextLink != null) {
-            exchange.getMessage().setHeader(ODataConstants.NEXT_LINK, nextLink.toString());
-        }
+            Object nextLink = map.get("@odata.nextLink");
+            if (nextLink != null) {
+                exchange.getMessage().setHeader(ODataConstants.NEXT_LINK, nextLink.toString());
+            }
 
-        if (responseEtag == null) {
-            Object odataEtag = response.get("@odata.etag");
-            if (odataEtag != null) {
-                responseEtag = odataEtag.toString();
+            if (responseEtag == null) {
+                Object odataEtag = map.get("@odata.etag");
+                if (odataEtag != null) {
+                    responseEtag = odataEtag.toString();
+                }
             }
         }
 
@@ -224,6 +228,26 @@ public class ODataProducer extends DefaultProducer {
         }
 
         exchange.getMessage().setBody(response);
+    }
+
+    /**
+     * The JSON of the entity that CREATE and UPDATE send: JSON text as bytes, a stream or a file is sent as it is, as a
+     * String is, and a Map or a List is serialized to JSON. These operations need an entity, so an empty body fails.
+     */
+    private static String toJsonPayload(Exchange exchange, ODataOperation operation) throws InvalidPayloadException {
+        Object body = exchange.getMessage().getBody();
+        String json;
+        if (ODataHelper.isPayload(body)) {
+            json = exchange.getMessage().getMandatoryBody(String.class);
+        } else {
+            json = ODataHelper.toJson(body);
+        }
+        if (json == null || json.isBlank()) {
+            throw new IllegalArgumentException(
+                    "The " + operation + " operation needs the JSON of the entity as the body, but the body is empty:"
+                                               + " set the body to {} to send an empty JSON object");
+        }
+        return json;
     }
 
     private String buildTargetUri(Exchange exchange, ODataOperation operation) throws Exception {

@@ -25,6 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -194,30 +196,71 @@ final class TextBodyFlow {
         String format();
     }
 
-    /** Parsed data: the Map or the List an unmarshal makes of the text; list when it is known to be a List. */
-    record Parsed(String origin, String format, boolean list) implements Body {
+    /**
+     * Parsed data: the Map or the List an unmarshal makes of the text; list when it is known to be a List; the fields
+     * of the JSON data it was parsed from, when the files of the project say them; and when it was parsed from what a
+     * pollEnrich polled, the data that was the body before it.
+     */
+    record Parsed(String origin, String format, boolean list, ProjectFacts.JsonFields fields, Replaced replaced)
+            implements
+                Body {
 
         Parsed(String origin, String format) {
-            this(origin, format, false);
+            this(origin, format, false, null, null);
+        }
+
+        Parsed(String origin, String format, boolean list) {
+            this(origin, format, list, null, null);
+        }
+
+        Parsed(String origin, String format, boolean list, ProjectFacts.JsonFields fields) {
+            this(origin, format, list, fields, null);
         }
     }
 
     /**
-     * Text: the payload as it was read or written; marshalled when a marshal wrote it from parsed data; the resource it
-     * was loaded from (file:orders.json) when a setBody with constant: resource: loaded it.
+     * The data a pollEnrich (or a poll) replaced with what it polled, whose fields a read after it may mean (r25 enrich
+     * step 2: ${body[orderId]} of the order, after a pollEnrich of the customer file), the step, and the variable to
+     * keep what it polls in instead, so the data stays the body.
      */
-    record Text(String origin, String format, boolean file, boolean marshalled, String resource) implements Body {
+    record Replaced(Parsed data, String step, String variable) {
+    }
+
+    /** How a setBody emptied the body: to null (${null}), or to empty text (constant ""). */
+    enum Emptied {
+        TO_NULL,
+        TO_EMPTY_TEXT
+    }
+
+    /**
+     * Text: the payload as it was read or written; marshalled when a marshal wrote it from parsed data; the resource it
+     * was loaded from (file:orders.json) when a setBody with constant: resource: loaded it; emptied when a setBody set
+     * it to null or to empty text, which has no field to read; and when a pollEnrich polled it, the data that was the
+     * body before it.
+     */
+    record Text(String origin, String format, boolean file, boolean marshalled, String resource, Emptied emptied,
+            Replaced replaced)
+            implements
+                Body {
 
         Text(String origin, String format) {
-            this(origin, format, false, false, null);
+            this(origin, format, false, false, null, null, null);
         }
 
         Text(String origin, String format, boolean file) {
-            this(origin, format, file, false, null);
+            this(origin, format, file, false, null, null, null);
         }
 
         Text(String origin, String format, boolean file, boolean marshalled) {
-            this(origin, format, file, marshalled, null);
+            this(origin, format, file, marshalled, null, null, null);
+        }
+
+        Text(String origin, String format, boolean file, boolean marshalled, String resource) {
+            this(origin, format, file, marshalled, resource, null, null);
+        }
+
+        Text(String origin, String format, boolean file, boolean marshalled, String resource, Emptied emptied) {
+            this(origin, format, file, marshalled, resource, emptied, null);
         }
 
         /** The names that can be read from this body without parsing it. */
@@ -235,13 +278,14 @@ final class TextBodyFlow {
      * What a walk knows besides the body: the route, the routes of the file, where reports go (null for a route a step
      * calls, which reports from its own walk), whether an http producer sends the body with POST, the verbs of the
      * OpenAPI operations a rest-openapi call can be judged by (empty when a REST binding may write the body), with the
-     * fields their JSON requests need, the body types of the catalog, and what is known about the variables of the
-     * message.
+     * fields their JSON requests need, the body types of the catalog, what is known about the variables of the message,
+     * and the path parameters of the REST operations that reach the route, which are headers of its message.
      */
     private record Walk(String routeId, Map<String, JsonNode> byFrom, List<Error> errors, Set<String> seen, boolean post,
             Map<String, Map<String, String>> operations, Map<String, Map<String, List<String>>> requestFields,
             Map<String, ProjectFacts.Observed> observed, CatalogBodyTypes bodyTypes,
-            Map<String, ProjectFacts.KameletDataTypes> kamelets, Map<String, Body> variables, Set<String> jsonArrays) {
+            Map<String, ProjectFacts.KameletDataTypes> kamelets, Map<String, Body> variables, Set<String> jsonArrays,
+            Map<String, ProjectFacts.JsonFields> jsonFields, Map<String, List<Body>> sent, Set<String> pathParameters) {
 
         /**
          * The walk of a route a step calls: for its outcome alone, and the variables of the message it changes. The
@@ -250,15 +294,19 @@ final class TextBodyFlow {
         Walk called() {
             return new Walk(
                     null, byFrom, null, seen, false, operations, requestFields, observed, bodyTypes, kamelets, variables,
-                    jsonArrays);
+                    jsonArrays, jsonFields, sent, pathParameters);
         }
 
         /** The walk of the steps of a block: what a branch puts in a variable stays in the branch. */
         Walk branch() {
             return new Walk(
                     routeId, byFrom, errors, seen, post, operations, requestFields, observed, bodyTypes, kamelets,
-                    new HashMap<>(variables), jsonArrays);
+                    new HashMap<>(variables), jsonArrays, jsonFields, sent, pathParameters);
         }
+    }
+
+    /** A direct: or seda: route whose body at the start is not known, to walk again with what the file sends to it. */
+    private record Unknown(String uri, String routeId, JsonNode steps, NodePath at, boolean post) {
     }
 
     static void check(JsonNode target, NodePath path, List<Error> errors, ProjectFacts facts, CatalogBodyTypes bodyTypes) {
@@ -273,6 +321,13 @@ final class TextBodyFlow {
         Map<String, ProjectFacts.Observed> observed = facts != null ? facts.observed() : Map.of();
         Map<String, ProjectFacts.KameletDataTypes> kamelets = facts != null ? facts.kamelets() : Map.of();
         Set<String> jsonArrays = facts != null ? facts.jsonArrays() : Set.of();
+        Map<String, ProjectFacts.JsonFields> jsonFields = facts != null ? facts.jsonFields() : Map.of();
+        // the path parameters of the REST operations that reach each route, which say the header of its own message
+        Map<String, Set<String>> pathParameters
+                = RouteGraph.pathParameters(target, facts != null ? facts.pathParameters() : Map.of());
+        // the bodies the routes send to each direct: or seda: endpoint, and the routes whose start is not known
+        Map<String, List<Body>> sent = new HashMap<>();
+        List<Unknown> unknown = new ArrayList<>();
         Map<String, JsonNode> byFrom = new HashMap<>();
         for (JsonNode entry : target) {
             JsonNode from = from(entry);
@@ -320,9 +375,13 @@ final class TextBodyFlow {
                 // the message the consumer receives is in the variable
                 put(variables, received, consumerBody(uri, from, bodyTypes, "from: " + normalize(uri) + " gives it"));
             }
+            if (start == null && !variable && INTERNAL.contains(consumer)) {
+                unknown.add(new Unknown(normalize(uri), id, steps, at, post));
+            }
             Body end = walk(steps, start, at, new Walk(
                     id, byFrom, errors, new HashSet<>(), post, operations,
-                    requestFields, observed, bodyTypes, kamelets, variables, jsonArrays));
+                    requestFields, observed, bodyTypes, kamelets, variables, jsonArrays, jsonFields, sent,
+                    pathParameters.getOrDefault(normalize(uri), Set.of())));
             // the body at the end of the route of a consumer that replies with text (platform-http), or of the route of
             // a REST call, is the reply
             boolean rest = uri != null && restReplies.contains(normalize(uri));
@@ -338,7 +397,37 @@ final class TextBodyFlow {
                         parsed));
             }
         }
+        // a direct: or seda: route that every call of the file sends the same JSON data to: what it reads of that data
+        // is checked against its fields (r24 route-filter-and-multicast step 2: ${body[lineCount]} in the route the
+        // multicast sends the order to). Only those reports: the route was walked already
+        for (Unknown route : unknown) {
+            List<Body> bodies = sent.get(route.uri());
+            if (bodies == null || bodies.isEmpty() || !(bodies.get(0) instanceof Parsed first) || first.fields() == null
+                    || first.list()
+                    || bodies.stream().anyMatch(b -> !(b instanceof Parsed p) || !first.fields().equals(p.fields()))) {
+                continue;
+            }
+            List<Error> found = new ArrayList<>();
+            walk(route.steps(), new Parsed(
+                    "every call of " + route.uri() + " in the file sends it", first.format(), false,
+                    first.fields()), route.at(),
+                    new Walk(
+                            route.routeId(), byFrom, found, new HashSet<>(), route.post(), operations, requestFields,
+                            observed, bodyTypes, kamelets, new HashMap<>(), jsonArrays, jsonFields, new HashMap<>(),
+                            pathParameters.getOrDefault(route.uri(), Set.of())));
+            for (Error e : found) {
+                if (String.valueOf(e.getMessage()).contains(NO_FIELD)) {
+                    errors.add(e);
+                }
+            }
+        }
     }
+
+    /** The components a route of the file is reached through, with the body of its caller. */
+    private static final Set<String> INTERNAL = Set.of("direct", "seda", "direct-vm");
+
+    /** What a report of a field the JSON data does not have says. */
+    private static final String NO_FIELD = ", but the data here has no field ";
 
     /**
      * Whether the steps set or read an HTTP control header (CamelHttpMethod, CamelHttpQuery...), which can make an http
@@ -366,9 +455,9 @@ final class TextBodyFlow {
             return null;
         }
         if (out.payload()) {
-            // the file as read has the format of the files it reads
+            // the file as read has the format of the files it reads, and the data of the files in its directory
             return out.file()
-                    ? new Text(consumer, fileFormat(from), true)
+                    ? new Text(consumer, fileFormat(from), true, false, directoryKey(uri, from))
                     : new Text(consumer + " as " + out.inWords(), out.dataFormat());
         }
         return out.data() ? new Parsed(consumer + " as " + out.inWords(), out.dataFormat()) : null;
@@ -438,6 +527,10 @@ final class TextBodyFlow {
             String name = step.fieldNames().next();
             JsonNode value = step.get(name);
             NodePath here = at.append(j).append(name);
+            if (w.errors() != null) {
+                recordSend(name, value, body, w);
+            }
+            boolean splitWalked = false;
             if (w.errors() != null && parsesData(name, value, body, here, w)) {
                 // the unmarshal fails at runtime, so what comes after it is not run: one report
                 body = null;
@@ -447,22 +540,39 @@ final class TextBodyFlow {
                 if (w.bodyTypes().stepsHaveTheBody(name, value)) {
                     walkBlock(value, body, here, w.branch());
                 } else if (body instanceof Text text) {
-                    String read = readIn(value, text.readable());
+                    // after a pollEnrich, a read of a field of the data it replaced is the one to report
+                    String read = text.replaced() != null
+                            ? replacedRead(name, value, text, polled(text, w))
+                            : null;
+                    if (read == null) {
+                        read = readIn(value, text.readable());
+                    }
                     if (read == null) {
                         read = templateRead(name, value, text.readable());
                     }
                     if (read != null) {
-                        w.errors().add(error(here, w.routeId(), read, text));
+                        w.errors().add(error(here, w.routeId(), read, text, polled(text, w), fieldsRead(name, value)));
+                    } else if (text.emptied() == Emptied.TO_EMPTY_TEXT) {
+                        String post = postOfEmptyText(name, value, w);
+                        if (post != null) {
+                            w.errors().add(emptyPostError(here, w.routeId(), post, text));
+                        }
                     }
                 } else if (body instanceof Parsed parsed && parsed.list()
                         && (listRead(value) != null || templateRead(name, value, LIST_PROPERTIES) != null)) {
                     String read = listRead(value);
-                    w.errors().add(listError(here, w.routeId(),
+                    w.errors().add(listError(here, w,
                             read != null ? read : templateRead(name, value, LIST_PROPERTIES), parsed));
                     // the read fails at runtime, so what comes after it is not run with this body: one report
                     body = null;
                     continue;
                 } else if (body instanceof Parsed parsed) {
+                    String unknownField = parsed.list() || parsed.fields() == null
+                            ? null : unknownField(name, value, parsed.fields());
+                    if (unknownField != null) {
+                        // a field that is not there is null, and the route goes on
+                        w.errors().add(fieldError(here, w, unknownField, parsed, fieldsRead(name, value)));
+                    }
                     Need need = needsText(name, value, w);
                     Parsed element = "split".equals(name) ? splitElement(value, parsed, w.bodyTypes()) : null;
                     if (need != null) {
@@ -475,8 +585,14 @@ final class TextBodyFlow {
                         }
                     } else if (element != null) {
                         walk(value.get("steps"), element, here.append("steps"), w.branch());
+                        splitWalked = true;
                     }
                 }
+            }
+            if ("split".equals(name) && !splitWalked && w.errors() != null && value != null && value.isObject()) {
+                // an element that is not known: what the steps of the split set themselves still is, such as the
+                // empty text a GET is then sent with (r24 connect-http-client)
+                walk(value.get("steps"), null, here.append("steps"), w.branch());
             }
             if (w.errors() != null) {
                 readsOfVariables(name, value, here, w);
@@ -518,12 +634,17 @@ final class TextBodyFlow {
             } else if (body instanceof Text text) {
                 String read = readEntry(key, child, text.readable());
                 if (read != null) {
-                    w.errors().add(error(at.append(key), w.routeId(), read, text));
+                    w.errors().add(error(at.append(key), w.routeId(), read, text, polled(text, w), fieldsRead(key, child)));
                 }
             } else if (body instanceof Parsed parsed && parsed.list()) {
                 String read = listEntry(key, child);
                 if (read != null) {
-                    w.errors().add(listError(at.append(key), w.routeId(), read, parsed));
+                    w.errors().add(listError(at.append(key), w, read, parsed));
+                }
+            } else if (body instanceof Parsed parsed && parsed.fields() != null) {
+                String read = unknownField(key, child, parsed.fields());
+                if (read != null) {
+                    w.errors().add(fieldError(at.append(key), w, read, parsed, fieldsRead(key, child)));
                 }
             }
         }
@@ -548,12 +669,20 @@ final class TextBodyFlow {
             }
             case "unmarshal" -> {
                 Parsed parsed = unmarshalled(value, w.bodyTypes());
+                ProjectFacts.JsonFields fields = parsed != null && "json".equals(parsed.format())
+                        && body instanceof Text text && text.resource() != null
+                                ? w.jsonFields().get(text.resource()) : null;
                 if (parsed != null && "json".equals(parsed.format()) && body instanceof Text text
                         && text.resource() != null && w.jsonArrays().contains(text.resource())) {
                     String file = text.resource().substring(text.resource().indexOf(':') + 1);
-                    return new Parsed("unmarshal: json turns the JSON array of " + file + " into a List", "json", true);
+                    return new Parsed(
+                            "unmarshal: json turns the JSON array of " + file + " into a List", "json", true, fields);
                 }
-                return parsed;
+                Parsed answer = fields != null ? new Parsed(parsed.origin(), "json", fields.list(), fields) : parsed;
+                // what a pollEnrich polled, parsed: the data it replaced is still what a field read may mean
+                return answer != null && body instanceof Text text && text.replaced() != null && !value.has("variableSend")
+                        ? new Parsed(answer.origin(), answer.format(), answer.list(), answer.fields(), text.replaced())
+                        : answer;
             }
             case "marshal" -> {
                 return marshalled(value, body);
@@ -573,6 +702,22 @@ final class TextBodyFlow {
                     return body;
                 }
                 return producerBody(out, "transformDataType: " + toTypeOf(value) + " makes it");
+            }
+            case "pollEnrich", "poll" -> {
+                // with no variableReceive and no aggregation strategy the polled message is the body: a file as it was
+                // read (r24 enrich step 2: ${body[name]} after a pollEnrich of the customer file, which the validator
+                // took for unknown)
+                String uri = sendUri(name, value);
+                Body polled = uri != null && !mergesTheReply(value)
+                        ? consumerBody(uri, endpointNode(uri), w.bodyTypes(), name + ": " + normalize(uri) + " gives it")
+                        : null;
+                // and the data it replaced, which a field read after it may mean (r25 enrich step 2: ${body[orderId]}
+                // of the order, told to unmarshal the customer file, which lost the order)
+                return polled instanceof Text t && body instanceof Parsed data
+                        ? new Text(
+                                t.origin(), t.format(), t.file(), t.marshalled(), t.resource(), t.emptied(),
+                                new Replaced(data, name, variableFor(t.resource())))
+                        : polled;
             }
             case "kamelet" -> {
                 // what the Kamelet leaves, as the transformer of its out data type says
@@ -681,6 +826,16 @@ final class TextBodyFlow {
         String expression = expressionText(node.get(language));
         if (expression == null) {
             return null;
+        }
+        // r24 connect-http-client: a setBody ${null} before the split of the lines, and a constant "" before a GET
+        if (("constant".equals(language) && expression.isEmpty())
+                || ("simple".equals(language) && expression.trim().isEmpty())) {
+            return new Text(
+                    "setBody with " + language + " \"\" sets empty text", null, false, false, null,
+                    Emptied.TO_EMPTY_TEXT);
+        }
+        if ("simple".equals(language) && "${null}".equals(expression.trim())) {
+            return new Text("setBody with ${null} empties it", null, false, false, null, Emptied.TO_NULL);
         }
         if ("constant".equals(language)) {
             String origin = expression.startsWith("resource:")
@@ -830,10 +985,46 @@ final class TextBodyFlow {
                     ? producerBody(w.bodyTypes().producerOut(uri, "enrich".equals(name) ? endpointNode(uri) : value),
                             name + ": " + normalize(uri) + " returns it")
                     : null;
-            case "unmarshal" -> unmarshalled(value, w.bodyTypes());
+            case "unmarshal" -> {
+                // with the fields of the JSON files it parses, such as the customer file a pollEnrich put in the
+                // variable, for the report of a field the body does not have
+                Parsed parsed = unmarshalled(value, w.bodyTypes());
+                String send = fixedName(value.get("variableSend"));
+                Body input = send != null ? w.variables().get(send) : value.has("variableSend") ? null : body;
+                ProjectFacts.JsonFields fields = parsed != null && "json".equals(parsed.format())
+                        && input instanceof Text text && text.resource() != null
+                                ? w.jsonFields().get(text.resource()) : null;
+                yield fields != null ? new Parsed(parsed.origin(), "json", fields.list(), fields) : parsed;
+            }
             case "marshal" -> marshalled(value, body);
             default -> null;
         };
+    }
+
+    /**
+     * The name of the variable to keep a polled file in instead of the body: customer for the files in customers/, as
+     * the pollEnrich sample of the catalog names it; polled when the directory gives no name.
+     */
+    private static String variableFor(String resource) {
+        String dir = resource != null && resource.startsWith("dir:") ? resource.substring("dir:".length()) : "";
+        String name = dir.substring(dir.lastIndexOf('/') + 1);
+        if (name.length() > 3 && name.endsWith("s") && !name.endsWith("ss") && !name.endsWith("us")) {
+            name = name.substring(0, name.length() - 1);
+        }
+        return name.matches("[A-Za-z_]\\w*") ? name : "polled";
+    }
+
+    /** Whether a pollEnrich merges the polled message with the message, so the body after it is not known. */
+    private static boolean mergesTheReply(JsonNode value) {
+        if (value == null || !value.isObject()) {
+            return false;
+        }
+        for (var it = value.fieldNames(); it.hasNext();) {
+            if (it.next().startsWith("aggregationStrategy")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** What a setVariable sets: the body for simple ${body}, text for a constant or a simple template. */
@@ -1083,7 +1274,7 @@ final class TextBodyFlow {
             if (readIn(step.get(name), TEXT_PROPERTIES) != null || readsAFieldWithJsonPath(step.get(name))) {
                 return new Parsed(
                         parsed.origin() + ", and split " + expression.trim() + " gives its elements as data",
-                        parsed.format());
+                        parsed.format(), false, "simple".equals(language) ? elementFields(parsed, expression) : null);
             }
             if (!bodyTypes.keepsTheBody(name, step.get(name))) {
                 return null;
@@ -1448,20 +1639,36 @@ final class TextBodyFlow {
         return "groovy".equals(key) ? null : listRead(child);
     }
 
-    private static Error listError(NodePath at, String routeId, String read, Parsed parsed) {
+    /**
+     * A field read on a List, with the jsonpath step that picks one element, as YAML lines: given in words, it was
+     * copied with a stray : (r24) and with the words "resultType java.util.Map" inside the text of the path (r25,
+     * rest-code-first step 1). The value to match is the header of the path parameter of the REST operation that
+     * reaches the route, when one has the name of the field (id for orderId): the field's name as a header was copied
+     * too, with a setHeader added for it.
+     */
+    private static Error listError(NodePath at, Walk w, String read, Parsed parsed) {
         Matcher m = FIELD_READ.matcher(read);
         String field = m.find() ? m.group(1) : "id";
+        String lower = field.toLowerCase(Locale.ROOT);
+        List<String> named = w.pathParameters().stream()
+                .filter(p -> lower.endsWith(p.toLowerCase(Locale.ROOT)) || p.toLowerCase(Locale.ROOT).endsWith(lower))
+                .toList();
+        String header = named.contains(field) || named.size() != 1 ? field : named.get(0);
+        String value = named.contains(header)
+                ? "is the path parameter " + header
+                : "has a given value, such as the header " + header;
         return Error.builder()
                 .keyword("type")
                 .instanceLocation(at)
                 .messageKey("type")
                 .format(new MessageFormat("{0}"))
-                .arguments((routeId != null ? "route " + routeId + ": " : "") + read
+                .arguments((w.routeId() != null ? "route " + w.routeId() + ": " : "") + read
                            + ", but the body here is a List, not one element, and a List has no field " + field
-                           + " - " + parsed.origin() + ": to pick the element whose " + field
-                           + " has a given value, use jsonpath: \"$[?(@." + field + " == '${header." + field + "}')]\" with"
-                           + " resultType java.util.Map (the element, or null when none or several match); ${body[0]."
-                           + field + "} reads the first element; or split it")
+                           + " - " + parsed.origin() + ". ${body[0]." + field + "} reads the first element, or split"
+                           + " the List. To pick the element whose " + field + " " + value + ", set the body with"
+                           + " jsonpath before this step; the body is then that element, or null when none or several"
+                           + " match:\n- setBody:\n    expression:\n      jsonpath:\n        expression: \"$[?(@." + field
+                           + " == '${header." + header + "}')]\"\n        resultType: java.util.Map")
                 .build();
     }
 
@@ -1590,7 +1797,64 @@ final class TextBodyFlow {
         return null;
     }
 
+    /**
+     * A field read on text, with the fix: parse it; after a pollEnrich that replaced data, keep that data as the body
+     * when the field is one of its own, or offer both when the fields do not tell.
+     *
+     * @param polled the fields of the JSON files a pollEnrich polled, or null
+     * @param fields the fields the step reads on the body
+     */
+    private static Error error(
+            NodePath at, String routeId, String read, Text text, ProjectFacts.JsonFields polled, List<String> fields) {
+        Matcher m = FIELD_READ.matcher(read);
+        Meant meant = text.replaced() != null && text.emptied() == null && m.find()
+                ? meant(m.group(1), text.replaced(), polled) : Meant.POLLED;
+        if (meant == Meant.POLLED) {
+            return error(at, routeId, read, text);
+        }
+        String field = m.group(1);
+        Replaced replaced = text.replaced();
+        ProjectFacts.JsonFields had = replaced.data().fields();
+        String variable = replaced.variable();
+        String what = text.file() ? "the file" : "what it polls";
+        String format = text.format() != null ? text.format() : "json";
+        String keep = "add variableReceive: " + variable + " to the " + replaced.step() + ", so " + what
+                      + " goes into the variable " + variable + ", then parse it in place with unmarshal: {" + format
+                      + ": {}, variableSend: " + variable + ", variableReceive: " + variable + "} after the "
+                      + replaced.step() + ", and read its fields as ${variable." + variable + "["
+                      + polledField(fields, replaced, polled) + "]}";
+        String fix = meant == Meant.REPLACED
+                ? "the " + replaced.step() + " replaced the body, and " + field + " is a field of the body before it"
+                  + (had != null ? " (" + had.where() + ")" : "") + ". To keep that body, " + keep
+                : "to read " + what + ", add unmarshal: " + format + " before this step; if " + field
+                  + " is a field of the body before the " + replaced.step() + ", keep that body instead: " + keep;
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((routeId != null ? "route " + routeId + ": " : "") + read
+                           + (text.file()
+                                   ? ", but the body here is the file as it was read (a GenericFile), not parsed data - "
+                                   : ", but the body here is still text, not parsed data - ")
+                           + text.origin() + ": " + fix)
+                .build();
+    }
+
     private static Error error(NodePath at, String routeId, String read, Text text) {
+        if (text.emptied() != null) {
+            return Error.builder()
+                    .keyword("type")
+                    .instanceLocation(at)
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments((routeId != null ? "route " + routeId + ": " : "") + read + ", but the body here is "
+                               + (text.emptied() == Emptied.TO_NULL ? "null" : "empty text") + " - " + text.origin()
+                               + ": empty the body later, right before the step that needs no body (such as an http"
+                               + " GET, and inside the split when the call is made for each element), so the fields"
+                               + " are read before that")
+                    .build();
+        }
         String format = text.format();
         String fix;
         if (text.marshalled()) {
@@ -1622,6 +1886,290 @@ final class TextBodyFlow {
                                    ? ", but the body here is the file as it was read (a GenericFile), not parsed data - "
                                    : ", but the body here is still text, not parsed data - ")
                            + text.origin() + ": " + fix)
+                .build();
+    }
+
+    /** The key of the JSON data in the directory a file consumer reads, or null for any other consumer. */
+    private static String directoryKey(String uri, JsonNode from) {
+        if (!"file".equals(scheme(uri))) {
+            return null;
+        }
+        String path = uri.indexOf(':') > 0 ? normalize(uri).substring(uri.indexOf(':') + 1) : null;
+        if ((path == null || path.isBlank()) && from != null && from.isObject() && from.get("parameters") != null
+                && from.get("parameters").get("directoryName") != null) {
+            path = from.get("parameters").get("directoryName").asText();
+        }
+        return path != null && !path.isBlank() ? ProjectFacts.directoryKey(path) : null;
+    }
+
+    /** Remembers the body a step sends to a direct: or seda: endpoint, for the route of the file that consumes it. */
+    private static void recordSend(String name, JsonNode value, Body body, Walk w) {
+        if (!SENDS_THE_BODY.contains(name)) {
+            return;
+        }
+        String uri = sendUri(name, value);
+        if (uri != null && INTERNAL.contains(scheme(uri)) && !uri.contains("${")) {
+            w.sent().computeIfAbsent(normalize(uri), k -> new ArrayList<>()).add(body);
+        }
+    }
+
+    /** ${body.lines}, ${body[lines]} or ${body['lines']}: one field of the body, and nothing else. */
+    private static final Pattern ONE_FIELD
+            = Pattern.compile("\\$\\{body(?:\\??\\.([A-Za-z_]\\w*)|\\[\\s*['\"]?([A-Za-z_]\\w*)['\"]?\\s*])}");
+
+    /** The names a field read may be that are not fields of the data: what a Map or a List has itself. */
+    private static final Set<String> COLLECTION_PROPERTIES = Set.of("size", "empty", "class", "length", "isEmpty",
+            "keySet", "values", "entrySet");
+
+    /**
+     * The first read of a field of the body that the JSON data does not have, in the simple expressions and templates
+     * of a step (not of its nested steps), as written; null when the data has every field read.
+     */
+    private static String unknownField(String name, JsonNode value, ProjectFacts.JsonFields fields) {
+        List<String> texts = new ArrayList<>();
+        if ("simple".equals(name)) {
+            texts.add(expressionText(value));
+        } else {
+            simpleExpressions(value, texts);
+            templates(name, value).forEach(t -> texts.add(t.text()));
+        }
+        for (String text : texts) {
+            Matcher m = text != null ? FIELD_READ.matcher(text) : null;
+            while (m != null && m.find()) {
+                String field = m.group(1);
+                boolean call = m.end() < text.length() && text.charAt(m.end()) == '(';
+                if (!call && !COLLECTION_PROPERTIES.contains(field) && !fields.fields().contains(field)) {
+                    int end = text.indexOf('}', m.start());
+                    return end > 0 ? text.substring(m.start(), end + 1) : m.group();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The fields a step reads on the body in its simple expressions and templates (not of its nested steps), in order.
+     */
+    private static List<String> fieldsRead(String name, JsonNode value) {
+        List<String> texts = new ArrayList<>();
+        if ("simple".equals(name)) {
+            texts.add(expressionText(value));
+        } else {
+            simpleExpressions(value, texts);
+            templates(name, value).forEach(t -> texts.add(t.text()));
+        }
+        List<String> answer = new ArrayList<>();
+        for (String text : texts) {
+            Matcher m = text != null ? FIELD_READ.matcher(text) : null;
+            while (m != null && m.find()) {
+                boolean call = m.end() < text.length() && text.charAt(m.end()) == '(';
+                if (!call && !COLLECTION_PROPERTIES.contains(m.group(1)) && !answer.contains(m.group(1))) {
+                    answer.add(m.group(1));
+                }
+            }
+        }
+        return answer;
+    }
+
+    /** Whose field a read after a pollEnrich means: of the data it replaced, of what it polled, or either. */
+    private enum Meant {
+        REPLACED,
+        POLLED,
+        EITHER
+    }
+
+    /**
+     * Whose field it is, as the fields of the replaced data and of the polled files say: a field only the replaced data
+     * has is its own, and so is one the polled files do not have when the replaced data's are not known; one the
+     * replaced data does not have, or only the polled files have, is theirs.
+     */
+    private static Meant meant(String field, Replaced replaced, ProjectFacts.JsonFields polled) {
+        Boolean ofReplaced = replaced.data().fields() != null ? replaced.data().fields().fields().contains(field) : null;
+        Boolean ofPolled = polled != null ? polled.fields().contains(field) : null;
+        if (Boolean.FALSE.equals(ofReplaced) || Boolean.TRUE.equals(ofPolled) && !Boolean.TRUE.equals(ofReplaced)) {
+            return Meant.POLLED;
+        }
+        if (Boolean.TRUE.equals(ofReplaced) && !Boolean.TRUE.equals(ofPolled)
+                || ofReplaced == null && Boolean.FALSE.equals(ofPolled)) {
+            return Meant.REPLACED;
+        }
+        return Meant.EITHER;
+    }
+
+    /** The fields of the JSON files a pollEnrich polled, when the text is what it polled and the files are known. */
+    private static ProjectFacts.JsonFields polled(Text text, Walk w) {
+        return text.replaced() != null && text.resource() != null ? w.jsonFields().get(text.resource()) : null;
+    }
+
+    /**
+     * The first read of a step of a field of the data a pollEnrich replaced, as a report says it (the log message reads
+     * a field of the body (${body[orderId]})); null when the step reads none. Not what the polled text has itself, such
+     * as ${body.fileName} of a file.
+     */
+    private static String replacedRead(String name, JsonNode value, Text text, ProjectFacts.JsonFields polled) {
+        List<Template> texts = new ArrayList<>();
+        if ("simple".equals(name)) {
+            texts.add(new Template("simple", expressionText(value)));
+        } else {
+            List<String> expressions = new ArrayList<>();
+            simpleExpressions(value, expressions);
+            expressions.forEach(e -> texts.add(new Template("simple", e)));
+            texts.addAll(templates(name, value));
+        }
+        for (Template t : texts) {
+            Matcher m = t.text() != null ? FIELD_READ.matcher(t.text()) : null;
+            while (m != null && m.find()) {
+                boolean call = m.end() < t.text().length() && t.text().charAt(m.end()) == '(';
+                int end = t.text().indexOf('}', m.start());
+                String read = end > 0 ? t.text().substring(m.start(), end + 1) : m.group();
+                if (!call && !COLLECTION_PROPERTIES.contains(m.group(1)) && simpleRead(read, text.readable()) != null
+                        && meant(m.group(1), text.replaced(), polled) == Meant.REPLACED) {
+                    return t.where() + " reads a field of the body (" + read + ")";
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * A field of the polled files to show in ${variable.customer[name]}: one the step reads that the replaced data does
+     * not have, else the first of the polled files, else name.
+     */
+    private static String polledField(List<String> fields, Replaced replaced, ProjectFacts.JsonFields polled) {
+        for (String field : fields) {
+            if (meant(field, replaced, polled) == Meant.POLLED) {
+                return field;
+            }
+        }
+        return polled != null && !polled.fields().isEmpty() ? new TreeSet<>(polled.fields()).first() : "name";
+    }
+
+    /**
+     * The fields of the elements a simple split of a field of the data gives: ${body[lines]} of an order gives its
+     * lines; ${body} of a list its elements. Null when not known.
+     */
+    private static ProjectFacts.JsonFields elementFields(Parsed parsed, String expression) {
+        ProjectFacts.JsonFields fields = parsed.fields();
+        String e = expression.trim();
+        if (fields == null || !THE_BODY.matcher(e).matches()) {
+            return null;
+        }
+        if ("${body}".equals(e)) {
+            return fields.list()
+                    ? new ProjectFacts.JsonFields(
+                            "one element of " + fields.where(), fields.fields(), fields.elementFields(), false, null)
+                    : null;
+        }
+        Matcher m = ONE_FIELD.matcher(e);
+        String field = !fields.list() && m.matches() ? m.group(1) != null ? m.group(1) : m.group(2) : null;
+        Set<String> element = field != null ? fields.elementFields().get(field) : null;
+        return element != null
+                ? new ProjectFacts.JsonFields(
+                        "one of the " + field + " of " + fields.where(), element, Map.of(), false, fields.fields())
+                : null;
+    }
+
+    /**
+     * A field the JSON data does not have, with what to read instead: the field before the split, the body a pollEnrich
+     * replaced, a variable that has the field, or one of the fields the data has.
+     *
+     * @param fields the fields the step reads on the body
+     */
+    private static Error fieldError(NodePath at, Walk w, String read, Parsed parsed, List<String> fields) {
+        ProjectFacts.JsonFields data = parsed.fields();
+        Matcher m = FIELD_READ.matcher(read);
+        String field = m.find() ? m.group(1) : read;
+        Replaced replaced = parsed.replaced() != null && meant(field, parsed.replaced(), data) == Meant.REPLACED
+                ? parsed.replaced() : null;
+        String variable = data.outer().contains(field) || replaced != null ? null : variableWith(field, w);
+        String advice;
+        if (data.outer().contains(field)) {
+            advice = field + " is a field of the data that was split, not of its element: read it before the split,"
+                     + " into a variable (setVariable), and write ${variable." + field + "} in the split";
+        } else if (replaced != null) {
+            // r25 enrich step 2: the customer file parsed in the body, and ${body[orderId]} of the order read after it
+            ProjectFacts.JsonFields had = replaced.data().fields();
+            String v = replaced.variable();
+            advice = "the " + replaced.step() + " replaced the body, and " + field + " is a field of the body before it"
+                     + (had != null ? " (" + had.where() + ")" : "") + ". To keep that body, add variableReceive: " + v
+                     + " to the " + replaced.step() + ", and write the unmarshal after it as unmarshal: {"
+                     + parsed.format() + ": {}, variableSend: " + v + ", variableReceive: " + v
+                     + "}, which parses the variable in place; then read its fields as ${variable." + v + "["
+                     + polledField(fields, replaced, data) + "]}";
+        } else if (variable != null) {
+            // r25 enrich step 2: ${body[name]} of the customer, which a pollEnrich put in a variable
+            String instead = "${variable." + variable + "[" + field + "]}";
+            advice = w.variables().get(variable) instanceof Text text
+                    ? field + " is a field of the file in the variable " + variable + " (" + text.origin() + "), not of"
+                      + " the body: parse the variable in place with unmarshal: {json: {}, variableSend: " + variable
+                      + ", variableReceive: " + variable + "} before this step, and read " + instead
+                    : field + " is a field of the variable " + variable + ", not of the body: read " + instead;
+        } else {
+            String list = data.elementFields().keySet().stream().sorted().findFirst().orElse(null);
+            advice = "read one of those"
+                     + (list != null ? " (the number of " + list + " is ${body[" + list + "].size()})" : "");
+        }
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((w.routeId() != null ? "route " + w.routeId() + ": " : "") + "simple reads " + read + NO_FIELD
+                           + field + " (the fields of " + data.where() + ": "
+                           + String.join(", ", new TreeSet<>(data.fields())) + "): " + advice)
+                .build();
+    }
+
+    /**
+     * The variable whose data has the field, as the JSON files say: one that holds parsed data with that field, or the
+     * file as read from a directory of such files (a pollEnrich with variableReceive). Null when none, or more than
+     * one.
+     */
+    private static String variableWith(String field, Walk w) {
+        String answer = null;
+        for (Map.Entry<String, Body> e : new TreeMap<>(w.variables()).entrySet()) {
+            ProjectFacts.JsonFields fields = e.getValue() instanceof Parsed p && !p.list() ? p.fields()
+                    : e.getValue() instanceof Text t && t.file() && t.resource() != null ? w.jsonFields().get(t.resource())
+                    : null;
+            if (fields != null && !fields.list() && fields.fields().contains(field)) {
+                if (answer != null) {
+                    return null;
+                }
+                answer = e.getKey();
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * An http call that sends empty text as a POST: the http producer sends a POST for any body that is not null, and
+     * empty text is a body (HttpMethodHelper). r24 connect-http-client: a setBody with constant "" before a GET of the
+     * stock service gave 87 times 405 Method Not Allowed. Null when the step is no such call.
+     */
+    private static String postOfEmptyText(String name, JsonNode value, Walk w) {
+        if (!w.post() || !SENDS_THE_BODY.contains(name) || w.bodyTypes().needsNoBody(name, value)) {
+            return null;
+        }
+        String uri = sendUri(name, value);
+        String scheme = scheme(uri);
+        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+            return null;
+        }
+        return sendsTheBody(uri, "enrich".equals(name) ? endpointNode(uri) : value)
+                ? name + ": " + scheme + " sends the body as the request, and empty text is still a body, so the call"
+                  + " is a POST"
+                : null;
+    }
+
+    private static Error emptyPostError(NodePath at, String routeId, String post, Text text) {
+        return Error.builder()
+                .keyword("type")
+                .instanceLocation(at)
+                .messageKey("type")
+                .format(new MessageFormat("{0}"))
+                .arguments((routeId != null ? "route " + routeId + ": " : "") + post + " - " + text.origin()
+                           + ": set the body to null for a call with no body (setBody with simple: ${null}), or set"
+                           + " httpMethod: GET")
                 .build();
     }
 

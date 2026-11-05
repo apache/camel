@@ -18,13 +18,15 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngine;
 import org.apache.cxf.transport.http_undertow.UndertowHTTPServerEngineFactory;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -34,8 +36,25 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled
 public class CxfCustomerStartStopTest {
-    static final int PORT1 = CXFTestSupport.getPort1();
-    static final int PORT2 = CXFTestSupport.getPort1();
+
+    private static AvailablePortFinder.Port port;
+
+    static int PORT1;
+    static int PORT2;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port = AvailablePortFinder.find();
+        PORT1 = port.getPort();
+        PORT2 = port.getPort();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port != null) {
+            port.release();
+        }
+    }
 
     @Test
     public void startAndStopService() throws Exception {

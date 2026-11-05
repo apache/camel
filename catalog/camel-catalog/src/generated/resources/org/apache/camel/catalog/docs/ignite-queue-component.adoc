@@ -16,6 +16,9 @@
 
 The Ignite Queue endpoint is one of camel-ignite endpoints that allow you to interact with https://apacheignite.readme.io/docs/queue-and-set[Ignite Queue data structures].
 
+`ADD`, `OFFER`, `PUT`, `CONTAINS`, `REMOVE` and `RETAIN_ALL` use the body as the element, and fail without a body.
+The operation is the `operation` option, or the `CamelIgniteQueueOperation` header; without either, the producer fails.
+
 // component options: START
 include::partial$component-configure-options.adoc[]
 include::partial$component-endpoint-options.adoc[]

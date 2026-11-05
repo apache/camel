@@ -29,6 +29,11 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 
 public class SpringAiVectorStoreProducer extends DefaultProducer {
+
+    // The headers of the spring-ai-embeddings component with the text of the embedding(s) in the body
+    private static final String INPUT_TEXT = "CamelSpringAiEmbeddingInputText";
+    private static final String INPUT_TEXTS = "CamelSpringAiEmbeddingInputTexts";
+
     public SpringAiVectorStoreProducer(SpringAiVectorStoreEndpoint endpoint) {
         super(endpoint);
     }
@@ -67,68 +72,58 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
     private void processAdd(Exchange exchange, VectorStore vectorStore) {
         final Message message = exchange.getMessage();
         List<Document> documents = new ArrayList<>();
-
-        // Check if the message contains text and embedding from the embeddings component
-        String inputText = message.getHeader("CamelSpringAiEmbeddingInputText", String.class);
         Object body = message.getBody();
 
-        if (inputText != null && body instanceof float[] floats) {
+        // The input text headers of the embeddings component belong to the vector(s) in the body: a leftover
+        // header must not replace a Document or text body
+        if (body instanceof float[] floats) {
+            String inputText = message.getHeader(INPUT_TEXT, String.class);
+            if (inputText == null) {
+                throw new IllegalArgumentException(
+                        "ADD of a float[] body needs the " + INPUT_TEXT + " header with the text of the embedding");
+            }
             // Create document from embedding component output with pre-computed embedding
-            Document doc = createDocumentWithEmbedding(inputText, floats);
+            documents.add(createDocumentWithEmbedding(inputText, floats));
+        } else if (body instanceof List<?> list && !list.isEmpty() && list.get(0) instanceof float[]) {
+            List<String> inputTexts = message.getHeader(INPUT_TEXTS, List.class);
+            if (inputTexts == null || inputTexts.size() != list.size()) {
+                throw new IllegalArgumentException(
+                        "ADD of a List of float[] body needs the " + INPUT_TEXTS
+                                                   + " header with one text per embedding, got "
+                                                   + (inputTexts == null ? "no header" : inputTexts.size() + " texts")
+                                                   + " for " + list.size() + " embeddings");
+            }
+            // Create documents with pre-computed embeddings
+            for (int i = 0; i < list.size(); i++) {
+                if (!(list.get(i) instanceof float[] floats)) {
+                    throw new IllegalArgumentException(
+                            "ADD of a List of float[] body has an element of type " + typeName(list.get(i))
+                                                       + " at index " + i);
+                }
+                documents.add(createDocumentWithEmbedding(inputTexts.get(i), floats));
+            }
+        } else if (body instanceof Document doc) {
             documents.add(doc);
-        } else if (inputText != null) {
-            // Create document from embedding component output (text only, vector store will embed)
-            Document doc = new Document(inputText);
-            documents.add(doc);
+        } else if (body instanceof List<?> list) {
+            for (Object item : list) {
+                if (item instanceof Document doc) {
+                    documents.add(doc);
+                } else if (item instanceof String str) {
+                    // Create document from text (vector store will generate embeddings)
+                    documents.add(new Document(str));
+                } else {
+                    throw new IllegalArgumentException(
+                            "ADD of a List body takes Document or String elements, not " + typeName(item));
+                }
+            }
         } else {
-            // Check for batch texts and embeddings
-            List<String> inputTexts = message.getHeader("CamelSpringAiEmbeddingInputTexts", List.class);
-
-            if (inputTexts != null && !inputTexts.isEmpty() && body instanceof List<?> bodyList) {
-                // Check if body contains float arrays (pre-computed embeddings)
-                if (!bodyList.isEmpty() && bodyList.get(0) instanceof float[]) {
-                    // Create documents with pre-computed embeddings
-                    List<float[]> embeddings = (List<float[]>) bodyList;
-                    for (int i = 0; i < inputTexts.size() && i < embeddings.size(); i++) {
-                        Document doc = createDocumentWithEmbedding(inputTexts.get(i), embeddings.get(i));
-                        documents.add(doc);
-                    }
-                } else {
-                    // Create documents without embeddings
-                    for (String text : inputTexts) {
-                        Document doc = new Document(text);
-                        documents.add(doc);
-                    }
-                }
-            } else if (inputTexts != null && !inputTexts.isEmpty()) {
-                // Create documents from texts only
-                for (String text : inputTexts) {
-                    Document doc = new Document(text);
-                    documents.add(doc);
-                }
+            String str = message.getBody(String.class);
+            if (str != null) {
+                documents.add(new Document(str));
             } else {
-                // Try to get documents directly from body
-                if (body instanceof Document doc) {
-                    documents.add(doc);
-                } else if (body instanceof List<?> list) {
-                    for (Object item : list) {
-                        if (item instanceof Document doc) {
-                            documents.add(doc);
-                        } else if (item instanceof String str) {
-                            // Create document from text (vector store will generate embeddings)
-                            documents.add(new Document(str));
-                        }
-                    }
-                } else {
-                    String str = message.getBody(String.class);
-                    if (str != null) {
-                        documents.add(new Document(str));
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Message body must be a Document, List<Document>, String, List<String>, " +
-                                                           "float[], or List<float[]>, or embeddings must be present in headers");
-                    }
-                }
+                throw new IllegalArgumentException(
+                        "Message body must be a Document, List<Document>, String, List<String>, " +
+                                                   "float[], or List<float[]>, or embeddings must be present in headers");
             }
         }
 
@@ -141,6 +136,10 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
                 .map(Document::getId)
                 .toList();
         message.setHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, documentIds);
+    }
+
+    private static String typeName(Object value) {
+        return value == null ? "null" : value.getClass().getName();
     }
 
     /**
@@ -160,19 +159,11 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
     private void processDelete(Exchange exchange, VectorStore vectorStore) {
         final Message message = exchange.getMessage();
 
-        // Get document IDs from header or body
-        List<String> documentIds = message.getHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, List.class);
-
-        if (documentIds == null) {
-            Object body = message.getBody();
-            if (body instanceof List) {
-                documentIds = (List<String>) body;
-            } else {
-                String str = message.getBody(String.class);
-                if (str != null) {
-                    documentIds = List.of(str);
-                }
-            }
+        // Get document IDs from the body, else from the header. The body comes first, as ADD and SIMILARITY_SEARCH
+        // set the header to their own output ids
+        List<String> documentIds = documentIdsFromBody(message);
+        if (documentIds.isEmpty()) {
+            documentIds = message.getHeader(SpringAiVectorStoreHeaders.DOCUMENT_IDS, List.class);
         }
 
         if (documentIds != null && !documentIds.isEmpty()) {
@@ -198,11 +189,50 @@ public class SpringAiVectorStoreProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * The ids of the documents to delete in the body: an id, a Document, or a List of ids or Documents (such as the
+     * result of SIMILARITY_SEARCH).
+     */
+    private static List<String> documentIdsFromBody(Message message) {
+        Object body = message.getBody();
+        if (body == null) {
+            return List.of();
+        }
+        if (body instanceof Document doc) {
+            return List.of(doc.getId());
+        }
+        if (body instanceof List<?> list) {
+            List<String> ids = new ArrayList<>(list.size());
+            for (Object item : list) {
+                if (item instanceof Document doc) {
+                    ids.add(doc.getId());
+                } else if (item instanceof String str) {
+                    ids.add(str);
+                } else {
+                    throw new IllegalArgumentException(
+                            "DELETE of a List body takes String ids or Documents, not " + typeName(item));
+                }
+            }
+            return ids;
+        }
+        String str = message.getBody(String.class);
+        return str == null || str.isEmpty() ? List.of() : List.of(str);
+    }
+
     private void processSimilaritySearch(Exchange exchange, VectorStore vectorStore) {
         final Message message = exchange.getMessage();
 
-        // Get search parameters
-        String query = message.getBody(String.class);
+        // Get search parameters. After spring-ai-embeddings the body is the vector of the text, so search for its text
+        String query;
+        if (message.getBody() instanceof float[]) {
+            query = message.getHeader(INPUT_TEXT, String.class);
+            if (query == null) {
+                throw new IllegalArgumentException(
+                        "SIMILARITY_SEARCH of a float[] body needs the " + INPUT_TEXT + " header with the query text");
+            }
+        } else {
+            query = message.getBody(String.class);
+        }
         if (query == null || query.isEmpty()) {
             throw new IllegalArgumentException("Query text is required for SIMILARITY_SEARCH operation");
         }

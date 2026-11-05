@@ -18,20 +18,40 @@ package org.apache.camel.component.cxf.jaxws;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfSimpleRouterTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port routerPort;
+    private static AvailablePortFinder.Port servicePort;
+
+    @BeforeAll
+    static void allocatePorts() {
+        routerPort = AvailablePortFinder.find();
+        servicePort = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (routerPort != null) {
+            routerPort.release();
+        }
+        if (servicePort != null) {
+            servicePort.release();
+        }
+    }
 
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
 
@@ -40,11 +60,11 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
 
     protected String getRouterAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/router";
+        return "http://localhost:" + routerPort.getPort() + "/" + getClass().getSimpleName() + "/router";
     }
 
     protected String getServiceAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/helloworld";
+        return "http://localhost:" + servicePort.getPort() + "/" + getClass().getSimpleName() + "/helloworld";
     }
 
     protected void configureFactory(ServerFactoryBean svrBean) {

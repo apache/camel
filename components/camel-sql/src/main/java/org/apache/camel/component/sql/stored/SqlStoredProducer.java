@@ -17,7 +17,9 @@
 package org.apache.camel.component.sql.stored;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.SqlHelper;
@@ -46,11 +48,18 @@ public class SqlStoredProducer extends DefaultProducer {
             public void execute(StatementWrapper ps) throws SQLException, DataAccessException {
                 // transfer incoming message body data to prepared statement parameters, if necessary
                 if (getEndpoint().isBatch()) {
-                    Iterator<?> iterator;
+                    Object items;
                     if (getEndpoint().isUseMessageBodyForTemplate()) {
-                        iterator = exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_PARAMETERS, Iterator.class);
+                        items = exchange.getIn().getHeader(SqlStoredConstants.SQL_STORED_PARAMETERS);
                     } else {
-                        iterator = exchange.getIn().getBody(Iterator.class);
+                        items = exchange.getIn().getBody();
+                    }
+                    Iterator<?> iterator;
+                    if (items instanceof Map) {
+                        // a single Map is one batch item (converting it to an Iterator would iterate its entries)
+                        iterator = Collections.singletonList(items).iterator();
+                    } else {
+                        iterator = exchange.getContext().getTypeConverter().convertTo(Iterator.class, exchange, items);
                     }
 
                     if (iterator == null) {
@@ -75,7 +84,11 @@ public class SqlStoredProducer extends DefaultProducer {
                     int[] updateCounts = ps.executeBatch();
                     int total = 0;
                     for (int count : updateCounts) {
-                        total += count;
+                        // a driver may return a negative value such as Statement.SUCCESS_NO_INFO (-2)
+                        // when the count of an item is unknown, so only add the known counts
+                        if (count > 0) {
+                            total += count;
+                        }
                     }
                     exchange.getIn().setHeader(SqlStoredConstants.SQL_STORED_UPDATE_COUNT, total);
                 } else {

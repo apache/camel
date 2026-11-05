@@ -98,7 +98,7 @@ class PQCKemConcurrentExtractionIsolationTest extends CamelTestSupport {
                             PQCKeyEncapsulationAlgorithms.MLKEM.getBcProvider());
                     int matching = 0;
                     for (int i = 0; i < MESSAGES_PER_THREAD; i++) {
-                        sender.init(new KEMGenerateSpec(keyPair.getPublic(), "AES", 128), new SecureRandom());
+                        sender.init(new KEMGenerateSpec(keyPair.getPublic(), "AES", 256), new SecureRandom());
                         SecretKeyWithEncapsulation sent = (SecretKeyWithEncapsulation) sender.generateKey();
                         SecretKeyWithEncapsulation extracted
                                 = template.requestBody("direct:extract", sent, SecretKeyWithEncapsulation.class);

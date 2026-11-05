@@ -44,16 +44,16 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.TraitHelper;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Container;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.model.Traits;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.Exporter;
-import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.MavenResolverMixinSpec;
-import org.apache.camel.dsl.jbang.export.common.QuarkusPlatformMixinSpec;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.export.common.Source;
-import org.apache.camel.dsl.jbang.export.common.SourceHelper;
+import org.apache.camel.dsl.jbang.run.RunPipeline;
+import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.MavenResolverMixinSpec;
+import org.apache.camel.dsl.jbang.run.common.QuarkusPlatformMixinSpec;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.Source;
+import org.apache.camel.dsl.jbang.run.common.SourceHelper;
+import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
@@ -176,8 +176,6 @@ public class KubernetesExport extends Export {
         exportDir = configurer.exportDir;
         packageName = configurer.packageName;
         buildProperties = configurer.buildProperties;
-        symbolicLink = configurer.symbolicLink;
-        javaLiveReload = configurer.javaLiveReload;
         ignoreLoadingError = configurer.ignoreLoadingError;
         mavenWrapper = configurer.mavenWrapper;
         camelWrapper = configurer.camelWrapper;
@@ -251,7 +249,7 @@ public class KubernetesExport extends Export {
 
         List<Source> sources;
         try {
-            addFile(Run.RUN_JAVA_SH);
+            addFile(RunPipeline.RUN_JAVA_SH);
             sources = SourceHelper.resolveSources(files);
         } catch (Exception e) {
             printer().printf("Project export failed: %s - %s%n", e.getMessage(),
@@ -316,7 +314,7 @@ public class KubernetesExport extends Export {
         Traits traitsSpec = getTraitSpec(applicationProfileProperties, applicationProperties);
 
         // Map properties to env variables (where needed)
-        var propsMap = Exporter.propertiesMap(printer(), applicationProfileProperties, applicationProperties);
+        var propsMap = ExportHelper.propertiesMap(printer(), applicationProfileProperties, applicationProperties);
         if (propsMap.containsKey("ssl.truststore.certificates")) {
             addEnvVar("SSL_TRUSTSTORE_CERTIFICATES", propsMap.get("ssl.truststore.certificates"));
         }
@@ -383,8 +381,8 @@ public class KubernetesExport extends Export {
         }
 
         Path settingsPath = CommandLineHelper.getWorkDir().resolve(Run.RUN_SETTINGS_FILE);
-        var jkubeVersion = Exporter.jkubeMavenPluginVersion(settingsPath, Exporter.mapBuildProperties(buildProperties));
-        var managementPort = Exporter.httpManagementPort(settingsPath);
+        var jkubeVersion = ExportHelper.jkubeMavenPluginVersion(settingsPath, ExportHelper.mapBuildProperties(buildProperties));
+        var managementPort = ExportHelper.httpManagementPort(settingsPath);
         buildProperties.add("jkube.version=%s".formatted(jkubeVersion));
 
         boolean cronJobEnabled = traitsSpec.getCronjob() != null
@@ -653,8 +651,6 @@ public class KubernetesExport extends Export {
             String exportDir,
             String packageName,
             List<String> buildProperties,
-            boolean symbolicLink,
-            boolean javaLiveReload,
             boolean ignoreLoadingError,
             boolean mavenWrapper,
             boolean camelWrapper,

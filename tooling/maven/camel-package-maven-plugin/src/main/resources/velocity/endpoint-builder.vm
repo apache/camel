@@ -329,7 +329,7 @@ public interface ${builderName}Factory {
 
         #foreach( $header in $model.endpointHeaders )
             #set( $headerName = $header.name )
-            #if( $headerName.toLowerCase().startsWith("camel") )
+            #if( $headerName.toLowerCase($rootLocale).startsWith("camel") )
                 #set( $headerName = $headerName.substring(5) )
             #end
             #set( $name = $mojo.headerNameMethodName($headerName) )

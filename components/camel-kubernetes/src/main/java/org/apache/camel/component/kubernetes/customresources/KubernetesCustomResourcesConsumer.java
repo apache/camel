@@ -84,7 +84,7 @@ public class KubernetesCustomResourcesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
+            if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 LOG.error("namespace is not specified.");
             }
             String namespace = getEndpoint().getKubernetesConfiguration().getNamespace();

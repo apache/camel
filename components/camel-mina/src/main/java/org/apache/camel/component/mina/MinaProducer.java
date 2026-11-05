@@ -198,10 +198,13 @@ public class MinaProducer extends DefaultProducer {
         if (session == null) {
             return;
         }
-        if (configuration.isDisconnectOnNoReply()) {
-            LOG.debug("Closing session when timed out at address: {}", address);
-            closeSessionIfNeededAndAwaitCloseInHandler(session);
-        }
+        // Always close the session of a producer that timed out waiting for a reply. A sync producer is
+        // non-singleton and is returned to the pool for reuse by later exchanges; if the session stayed open
+        // the late reply to this exchange could arrive on it and be handed to the next exchange that reuses
+        // this producer. disconnectOnNoReply is not consulted here, and has no effect anywhere since the
+        // consumer never consulted it either.
+        LOG.debug("Closing session when timed out at address: {}", address);
+        closeSessionIfNeededAndAwaitCloseInHandler(session);
     }
 
     protected void maybeDisconnectOnDone(Exchange exchange) throws InterruptedException {
@@ -209,13 +212,9 @@ public class MinaProducer extends DefaultProducer {
             return;
         }
 
-        // should session be closed after complete?
-        Boolean close;
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-        } else {
-            close = exchange.getIn().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
-        }
+        // should session be closed after complete? (use getMessage as there is no out message with sync=false,
+        // and calling getOut would replace the message with an empty one)
+        Boolean close = exchange.getMessage().getHeader(MinaConstants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
 
         // should we disconnect, the header can override the configuration
         boolean disconnect = getEndpoint().getConfiguration().isDisconnect();

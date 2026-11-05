@@ -17,20 +17,37 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CxfRsEndpointTest extends CamelTestSupport {
-    private static final String CTX = CXFTestSupport.getPort1() + "/CxfRsEndpointTest";
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        CTX = PORT.getPort() + "/CxfRsEndpointTest";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    private static String CTX;
 
     @Test
     public void testCreateCxfRsEndpoint() throws Exception {

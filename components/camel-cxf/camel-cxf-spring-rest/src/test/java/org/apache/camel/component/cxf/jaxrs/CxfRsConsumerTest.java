@@ -39,11 +39,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
@@ -53,6 +53,8 @@ import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,25 +62,44 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CxfRsConsumerTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        CXT = PORT.getPort() + "/CxfRsConsumerTest";
+        CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT
+                              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+        CXF_RS_ENDPOINT_URI2 = "cxfrs://http://localhost:" + CXT
+                               + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+        CXF_RS_ENDPOINT_URI3 = "cxfrs://http://localhost:" + CXT + "/rest3?"
+                               + "resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceNoAnnotations&"
+                               + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceModel.xml";
+        CXF_RS_ENDPOINT_URI4 = "cxfrs://http://localhost:" + CXT + "/rest4?"
+                               + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
+        CXF_RS_ENDPOINT_URI5 = "cxfrs://http://localhost:" + CXT + "/rest5?"
+                               + "propagateContexts=true&"
+                               + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
+        CXF_RS_ENDPOINT_URI6 = "cxfrs://http://localhost:" + CXT + "/rest6?"
+                               + "performInvocation=true&serviceBeans=#myServiceBean";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
-    private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
+    private static String CXT;
     // START SNIPPET: example
-    private static final String CXF_RS_ENDPOINT_URI
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
-    private static final String CXF_RS_ENDPOINT_URI2
-            = "cxfrs://http://localhost:" + CXT
-              + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
-    private static final String CXF_RS_ENDPOINT_URI3 = "cxfrs://http://localhost:" + CXT + "/rest3?"
-                                                       + "resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceNoAnnotations&"
-                                                       + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceModel.xml";
-    private static final String CXF_RS_ENDPOINT_URI4 = "cxfrs://http://localhost:" + CXT + "/rest4?"
-                                                       + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
-    private static final String CXF_RS_ENDPOINT_URI5 = "cxfrs://http://localhost:" + CXT + "/rest5?"
-                                                       + "propagateContexts=true&"
-                                                       + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
-    private static final String CXF_RS_ENDPOINT_URI6 = "cxfrs://http://localhost:" + CXT + "/rest6?"
-                                                       + "performInvocation=true&serviceBeans=#myServiceBean";
+    private static String CXF_RS_ENDPOINT_URI;
+    private static String CXF_RS_ENDPOINT_URI2;
+    private static String CXF_RS_ENDPOINT_URI3;
+    private static String CXF_RS_ENDPOINT_URI4;
+    private static String CXF_RS_ENDPOINT_URI5;
+    private static String CXF_RS_ENDPOINT_URI6;
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {

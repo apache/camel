@@ -2,6 +2,7 @@
 package org.apache.camel.component.micrometer.prometheus;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": target.setBaseEndpointURIExchangeEventNotifier(property(camelContext, boolean.class, value)); return true;
         case "binders": target.setBinders(property(camelContext, java.lang.String.class, value)); return true;
@@ -49,6 +50,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "namingstrategy":
         case "namingStrategy": target.setNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "path": target.setPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": target.setRecordLastExchangeTimestamp(property(camelContext, boolean.class, value)); return true;
         case "routepolicylevel":
         case "routePolicyLevel": target.setRoutePolicyLevel(property(camelContext, java.lang.String.class, value)); return true;
         case "skipcamelinfo":
@@ -61,7 +64,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return boolean.class;
         case "binders": return java.lang.String.class;
@@ -88,6 +91,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "namingstrategy":
         case "namingStrategy": return java.lang.String.class;
         case "path": return java.lang.String.class;
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": return boolean.class;
         case "routepolicylevel":
         case "routePolicyLevel": return java.lang.String.class;
         case "skipcamelinfo":
@@ -101,7 +106,7 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus target = (org.apache.camel.component.micrometer.prometheus.MicrometerPrometheus) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "baseendpointuriexchangeeventnotifier":
         case "baseEndpointURIExchangeEventNotifier": return target.isBaseEndpointURIExchangeEventNotifier();
         case "binders": return target.getBinders();
@@ -128,6 +133,8 @@ public class MicrometerPrometheusConfigurer extends org.apache.camel.support.com
         case "namingstrategy":
         case "namingStrategy": return target.getNamingStrategy();
         case "path": return target.getPath();
+        case "recordlastexchangetimestamp":
+        case "recordLastExchangeTimestamp": return target.isRecordLastExchangeTimestamp();
         case "routepolicylevel":
         case "routePolicyLevel": return target.getRoutePolicyLevel();
         case "skipcamelinfo":

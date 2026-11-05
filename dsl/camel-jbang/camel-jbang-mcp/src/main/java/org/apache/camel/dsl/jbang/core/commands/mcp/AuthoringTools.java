@@ -342,7 +342,7 @@ public class AuthoringTools {
     public JsonObject camel_run(
             @ToolArg(description = "Project directory to run in (absolute path)", required = true) String directory,
             @ToolArg(description = "Source files to run, comma-separated (default: every route file in the"
-                                   + " directory)",
+                                   + " directory); not a Citrus test, which camel test run runs",
                      required = false) String files,
             @ToolArg(description = "Integration name (default: from the first file)", required = false) String name,
             @ToolArg(description = "Dev mode with reload on file change (default true)", required = false) Boolean dev) {

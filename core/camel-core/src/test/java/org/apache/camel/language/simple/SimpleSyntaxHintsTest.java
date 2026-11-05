@@ -96,6 +96,17 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
     }
 
     @Test
+    public void testUnknownOperatorListsEveryOperator() {
+        // the hint lists every binary operator of the tokenizer, including the negated and the text-only ones
+        String message = predicateError("${body} = 'x'");
+        String operators = message.substring(message.indexOf("Operators are ") + 14, message.indexOf(" at location"));
+        List<String> listed = List.of(operators.split(", | and "));
+        assertThat(listed).containsExactlyInAnyOrder("==", "=~", "!=", "!=~", "<", "<=", ">", ">=", "equals", "!equals",
+                "contains", "!contains", "~~", "!~~", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range",
+                "startsWith", "!startsWith", "endsWith", "!endsWith", "&&", "||");
+    }
+
+    @Test
     public void testQuotes() {
         assertThat(predicateError("${body} == 'it''s'")).contains("double quotes");
     }
@@ -441,6 +452,28 @@ public class SimpleSyntaxHintsTest extends ExchangeTestSupport {
                 .contains("Unknown file language syntax")
                 .contains("they do not read a file")
                 .contains("poll EIP");
+    }
+
+    @Test
+    public void testFileFunctionWrittenAnotherWaySaysDidYouMean() {
+        // r26 of the local-model benchmark (connect-sftp-transfer step 3): the receipt named like the batch, but .txt
+        assertThat(expressionError("${file:noext}.txt"))
+                .contains("Unknown file language syntax: noext (did you mean ${file:name.noext}, the file name without"
+                          + " its extension? ${file:onlyname.noext} also leaves out its folders. The file: functions"
+                          + " describe the file being consumed: ${file:name}, ${file:name.noext}, ${file:onlyname},")
+                .doesNotContain("they do not read a file");
+        assertThat(expressionError("${file:name:noext}.txt"))
+                .contains("Unknown file language syntax: name:noext (did you mean ${file:name.noext}? The file:"
+                          + " functions describe");
+        // the case, the separators and a letter off
+        assertThat(expressionError("${file:onlyName}")).contains("(did you mean ${file:onlyname}?");
+        assertThat(expressionError("${file:nameNoExt}")).contains("(did you mean ${file:name.noext}?");
+        assertThat(expressionError("${file:absolute_path}")).contains("(did you mean ${file:absolute.path}?");
+        assertThat(expressionError("${file:nmae}")).contains("(did you mean ${file:name}?");
+        // a name that is no function: the functions there are
+        assertThat(expressionError("${file:cheese}"))
+                .contains("Unknown file language syntax: cheese (the file: functions describe the file being consumed:")
+                .doesNotContain("did you mean").doesNotContain("they do not read a file");
     }
 
     @Test

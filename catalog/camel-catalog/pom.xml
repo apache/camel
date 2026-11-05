@@ -179,6 +179,8 @@
                             <goal>update-simple-helper</goal>
                             <!-- update test-infra metadata -->
                             <goal>update-test-infra-metadata</goal>
+                            <!-- update the table of DST worlds in camel-test-dst from the catalog -->
+                            <goal>update-dst-worlds-doc</goal>
                         </goals>
                         <phase>generate-resources</phase>
                     </execution>

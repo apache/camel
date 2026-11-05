@@ -38,6 +38,7 @@ import org.smooks.engine.lookup.LifecycleManagerLookup;
 import org.smooks.engine.resource.config.DefaultResourceConfig;
 import org.smooks.testkit.MockApplicationContext;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -69,6 +70,52 @@ public class BeanRouterTest extends CamelTestSupport {
         when(beanContext.getBean(BEAN_ID)).thenReturn(null);
         assertThrows(SmooksException.class,
                 () -> createBeanRouter(BEAN_ID, END_POINT_URI).visitAfter(null, smooksExecutionContext));
+    }
+
+    @Test
+    public void testFailureOfEndpointIsThrown() {
+        endpoint.whenAnyExchangeReceived(exchange -> {
+            throw new IllegalStateException("Forced");
+        });
+        SmooksException e = assertThrows(SmooksException.class,
+                () -> createBeanRouter(BEAN_ID, END_POINT_URI).visitAfter(null, smooksExecutionContext));
+        assertInstanceOf(IllegalStateException.class, rootCause(e));
+    }
+
+    @Test
+    public void testFailureOfEndpointWithCorrelationIdIsThrown() {
+        endpoint.whenAnyExchangeReceived(exchange -> {
+            throw new IllegalStateException("Forced");
+        });
+        BeanRouter beanRouter = createBeanRouter(BEAN_ID, END_POINT_URI);
+        beanRouter.setCorrelationIdName("orderId");
+        beanRouter.setCorrelationIdPattern("order-1");
+        SmooksException e = assertThrows(SmooksException.class,
+                () -> beanRouter.visitAfter(null, smooksExecutionContext));
+        assertInstanceOf(IllegalStateException.class, rootCause(e));
+    }
+
+    @Test
+    public void testBeanRouterWithCorrelationIdAddsCamelSmooksExecutionContextHeader() throws Exception {
+        endpoint.setExpectedMessageCount(1);
+        endpoint.expectedBodiesReceived(myBean);
+        endpoint.expectedHeaderReceived("orderId", "order-1");
+        endpoint.expectedHeaderReceived(SmooksConstants.SMOOKS_EXECUTION_CONTEXT, smooksExecutionContext);
+
+        BeanRouter beanRouter = createBeanRouter(BEAN_ID, END_POINT_URI);
+        beanRouter.setCorrelationIdName("orderId");
+        beanRouter.setCorrelationIdPattern("order-1");
+        beanRouter.visitAfter(null, smooksExecutionContext);
+
+        endpoint.assertIsSatisfied();
+    }
+
+    private static Throwable rootCause(Throwable throwable) {
+        Throwable cause = throwable;
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+        }
+        return cause;
     }
 
     @Test

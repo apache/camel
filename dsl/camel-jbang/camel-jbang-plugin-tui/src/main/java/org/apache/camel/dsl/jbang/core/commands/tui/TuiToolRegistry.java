@@ -44,7 +44,7 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolExecutionException;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolRegistry;
 import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDensity;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
-import org.apache.camel.dsl.jbang.export.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;

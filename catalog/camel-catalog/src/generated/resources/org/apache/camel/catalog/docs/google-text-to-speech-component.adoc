@@ -116,7 +116,9 @@ For the `synthesize` operation, the message body should contain the text to synt
 
 For the `listVoices` operation, the message body is ignored.
 
-When `pojoRequest=true`, the body should be a `com.google.cloud.texttospeech.v1.SynthesizeSpeechRequest` instance instead.
+When `pojoRequest=true`, the body should be the request of the Google Cloud SDK for the operation instead: a
+`com.google.cloud.texttospeech.v1.SynthesizeSpeechRequest` for `synthesize`, and a
+`com.google.cloud.texttospeech.v1.ListVoicesRequest` for `listVoices`. Another body fails with an `InvalidPayloadException`.
 
 === Google Cloud Text-to-Speech Producer operations
 
@@ -126,7 +128,8 @@ Google Cloud Text-to-Speech component provides the following operations on the p
 - listVoices
 
 The operation is specified as part of the endpoint URI (e.g., `google-text-to-speech://synthesize`).
-You can override the operation at runtime by setting the `GoogleCloudTextToSpeechOperation` message header.
+You can override the operation at runtime by setting the `CamelGoogleCloudTextToSpeechOperation` message header,
+also when `pojoRequest=true`.
 
 === Advanced component configuration
 
@@ -328,7 +331,9 @@ YAML::
 ----
 ====
 
-This operation will return a `List<Voice>` with the available voices for the specified language.
+This operation will return a `List<Voice>` with the available voices for the language in the `languageCode` option.
+Without the `languageCode` option, it returns the voices of all languages: the default value of the option (`en-US`)
+applies to `synthesize` only.
 
 - Using POJO request for full control:
 
@@ -361,6 +366,27 @@ from("direct:start")
 ----
 
 When using `pojoRequest=true`, the body should be a `SynthesizeSpeechRequest` and the audio bytes are returned as body.
+
+- Using POJO request to list voices:
+
+._Java-only: Google Cloud SDK ListVoicesRequest builder_
+
+[source,java]
+----
+from("direct:start")
+    .process(exchange -> {
+        ListVoicesRequest request = ListVoicesRequest.newBuilder()
+            .setLanguageCode("fr-FR")
+            .build();
+        exchange.getIn().setBody(request);
+    })
+    .to("google-text-to-speech://listVoices?serviceAccountKey=/home/user/Downloads/my-key.json&pojoRequest=true")
+    .log("body:${body}")
+    .to("mock:result");
+----
+
+When using `pojoRequest=true` with `listVoices`, the body should be a `ListVoicesRequest` and the `List<Voice>` is returned as body.
+The `languageCode` option is not used then: the request says which voices to list.
 
 - Overriding the operation at runtime via header:
 

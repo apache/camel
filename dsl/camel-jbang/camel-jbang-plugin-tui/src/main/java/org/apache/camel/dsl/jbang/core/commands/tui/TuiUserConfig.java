@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.Printer;
 
 /**
  * Central read/write for the Camel TUI's per-user preferences ({@code camel.tui.*}) across the Camel CLI configuration

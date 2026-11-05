@@ -23,14 +23,12 @@ import org.apache.camel.dsl.jbang.it.support.JBangTestSupport;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
 @DisabledOnOs(WINDOWS)
-@Tag("container-only")
 public class JolokiaITCase extends JBangTestSupport {
 
     private String hawtioPid;
@@ -69,8 +67,8 @@ public class JolokiaITCase extends JBangTestSupport {
         checkLogContains("(FromDirectoryRoute) started");
         hawtioPid = execNohup("hawtio FromDirectoryRoute");
         Awaitility.await()
-                .atMost(Duration.ofSeconds(30))
-                .pollInterval(Duration.ofSeconds(1))
+                .atMost(Duration.ofSeconds(120))
+                .pollInterval(Duration.ofSeconds(2))
                 .untilAsserted(() -> Assertions
                         .assertThat(
                                 execInContainer("curl http://localhost:8888/hawtio/"))

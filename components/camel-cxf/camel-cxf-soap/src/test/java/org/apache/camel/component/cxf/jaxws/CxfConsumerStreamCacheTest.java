@@ -24,11 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,6 +39,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //Modified from https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
 public class CxfConsumerStreamCacheTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port port1;
+
+    @BeforeAll
+    static void allocatePorts() {
+        port1 = AvailablePortFinder.find();
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (port1 != null) {
+            port1.release();
+        }
+    }
 
     protected static final String REQUEST_MESSAGE
             = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser=\"test/service\">"
@@ -50,7 +65,7 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
     protected static final String RESPONSE = "<pong xmlns=\"test/service\"/>";
 
     protected final String simpleEndpointAddress = "http://localhost:"
-                                                   + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+                                                   + port1.getPort() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
                                                + "?synchronous=" + isSynchronous()
                                                + "&serviceClass=org.apache.camel.component.cxf.jaxws.ServiceProvider&dataFormat=PAYLOAD";

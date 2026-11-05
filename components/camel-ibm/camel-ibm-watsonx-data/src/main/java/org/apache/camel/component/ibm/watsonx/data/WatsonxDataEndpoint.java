@@ -46,9 +46,12 @@ import org.apache.camel.util.ObjectHelper;
              headersClass = WatsonxDataConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = @BodyType.When(option = "operation", value = "updateTable",
-                                                            carriers = Carrier.MAP),
-                                  description = "Only updateTable reads the body: the patch of the table as a Map, sent as JSON."
-                                                + " JSON text, bytes or no body fail: unmarshal the JSON to a Map first. The other"
+                                                            carriers = {
+                                                                    Carrier.MAP, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM,
+                                                                    Carrier.FILE }),
+                                  description = "Only updateTable reads the body: the patch of the table, as a Map or as a JSON"
+                                                + " object in text, bytes, a stream or a file, sent as a JSON merge patch. No"
+                                                + " body, an empty patch or a body that is not a JSON object fails. The other"
                                                 + " operations take their input from the options and headers"),
            producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = {

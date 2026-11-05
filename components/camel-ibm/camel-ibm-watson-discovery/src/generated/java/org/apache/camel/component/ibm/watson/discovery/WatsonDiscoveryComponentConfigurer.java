@@ -2,6 +2,7 @@
 package org.apache.camel.component.ibm.watson.discovery;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class WatsonDiscoveryComponentConfigurer extends PropertyConfigurerSuppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         WatsonDiscoveryComponent target = (WatsonDiscoveryComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": getOrCreateConfiguration(target).setApiKey(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -51,7 +52,7 @@ public class WatsonDiscoveryComponentConfigurer extends PropertyConfigurerSuppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return java.lang.String.class;
         case "autowiredenabled":
@@ -74,7 +75,7 @@ public class WatsonDiscoveryComponentConfigurer extends PropertyConfigurerSuppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         WatsonDiscoveryComponent target = (WatsonDiscoveryComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apikey":
         case "apiKey": return getOrCreateConfiguration(target).getApiKey();
         case "autowiredenabled":

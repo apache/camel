@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.WebServiceException;
 
@@ -29,13 +30,15 @@ import javax.xml.namespace.QName;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
+import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,14 +46,42 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
-    static int port1 = CXFTestSupport.getPort1();
+    private static AvailablePortFinder.Port port1;
+    private static AvailablePortFinder.Port port2;
+    private static String portPropertyPrefix;
+    private static Endpoint personEndpoint;
 
     public static int getPort1() {
-        return port1;
+        return port1.getPort();
     }
 
     public static int getPort2() {
-        return CXFTestSupport.getPort2();
+        return port2.getPort();
+    }
+
+    /**
+     * Allocates the ports, publishes them as system properties named "&lt;prefix&gt;.port1" and "&lt;prefix&gt;.port2"
+     * for the Spring XML and publishes the PersonService on port1. Must be called before the Spring context is created.
+     */
+    protected static void startPersonService(String prefix) {
+        portPropertyPrefix = prefix;
+        port1 = AvailablePortFinder.find();
+        System.setProperty(prefix + ".port1", port1.toString());
+        port2 = AvailablePortFinder.find();
+        System.setProperty(prefix + ".port2", port2.toString());
+        personEndpoint = Endpoint.publish("http://localhost:" + port1.getPort() + "/" + prefix + "/PersonService/",
+                new PersonImpl());
+    }
+
+    @AfterAll
+    public static void stopPersonService() {
+        if (personEndpoint != null) {
+            personEndpoint.stop();
+        }
+        System.clearProperty(portPropertyPrefix + ".port1");
+        System.clearProperty(portPropertyPrefix + ".port2");
+        port1.release();
+        port2.release();
     }
 
     @Test

@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.aws2.bedrock.agentruntime;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -35,11 +39,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeClient;
 import software.amazon.awssdk.services.bedrockagentruntime.model.KnowledgeBaseRetrievalResult;
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrievalResultContent;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateOutput;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateRequest;
+import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGenerateResponse;
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveRequest;
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveResponse;
 import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -47,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BedrockAgentRuntimeProducerRetrieveTest {
@@ -57,10 +66,18 @@ public class BedrockAgentRuntimeProducerRetrieveTest {
     private CamelContext camelContext;
     private ProducerTemplate template;
     private AtomicReference<RetrieveRequest> capturedRequest;
+    private AtomicReference<RetrieveAndGenerateRequest> capturedGenerateRequest;
 
     @BeforeEach
     public void setup() throws Exception {
         capturedRequest = new AtomicReference<>();
+        capturedGenerateRequest = new AtomicReference<>();
+        lenient().doAnswer(invocation -> {
+            capturedGenerateRequest.set(invocation.getArgument(0, RetrieveAndGenerateRequest.class));
+            return RetrieveAndGenerateResponse.builder()
+                    .output(RetrieveAndGenerateOutput.builder().text("generated answer").build())
+                    .build();
+        }).when(syncClient).retrieveAndGenerate(any(RetrieveAndGenerateRequest.class));
         // Capture the request, return a small synthetic response so the producer's response-handling path is also
         // exercised (results in body + RETRIEVED_RESULTS header, optional nextToken header). lenient(): one of the
         // tests verifies a producer-side validation that throws before reaching the client.
@@ -87,6 +104,16 @@ public class BedrockAgentRuntimeProducerRetrieveTest {
                             + "?bedrockAgentRuntimeClient=#syncClient"
                             + "&operation=retrieve"
                             + "&knowledgeBaseId=kb-1"
+                            + "&region=us-east-1"
+                            + "&accessKey=unused"
+                            + "&secretKey=unused");
+
+                from("direct:retrieve-and-generate")
+                        .to("aws-bedrock-agent-runtime://label4"
+                            + "?bedrockAgentRuntimeClient=#syncClient"
+                            + "&operation=retrieveAndGenerate"
+                            + "&knowledgeBaseId=kb-1"
+                            + "&modelId=model-1"
                             + "&region=us-east-1"
                             + "&accessKey=unused"
                             + "&secretKey=unused");
@@ -159,6 +186,83 @@ public class BedrockAgentRuntimeProducerRetrieveTest {
         assertSame(body, header, "Header and body should reference the same result list");
 
         assertEquals("page-2-token", result.getMessage().getHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN));
+    }
+
+    @Test
+    public void retrieveClearsNextTokenOnLastPage() {
+        assertLastPageClearsNextToken(null);
+    }
+
+    @Test
+    public void retrieveClearsEmptyNextTokenOnLastPage() {
+        assertLastPageClearsNextToken("");
+    }
+
+    private void assertLastPageClearsNextToken(String nextToken) {
+        KnowledgeBaseRetrievalResult chunk = KnowledgeBaseRetrievalResult.builder()
+                .content(RetrievalResultContent.builder().text("last chunk").build())
+                .score(0.87)
+                .build();
+        when(syncClient.retrieve(any(RetrieveRequest.class))).thenAnswer(invocation -> {
+            capturedRequest.set(invocation.getArgument(0, RetrieveRequest.class));
+            return RetrieveResponse.builder().retrievalResults(chunk).nextToken(nextToken).guardrailAction("NONE").build();
+        });
+
+        Exchange result = template.send("direct:retrieve", exchange -> {
+            exchange.getMessage().setBody("what is camel?");
+            exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN, "last-page-token");
+            exchange.getMessage().setHeader("correlationId", "request-1");
+        });
+
+        assertNull(result.getException());
+        assertEquals("last-page-token", capturedRequest.get().nextToken());
+        assertFalse(result.getMessage().getHeaders().containsKey(BedrockAgentRuntimeConstants.NEXT_TOKEN));
+        assertEquals(List.of(chunk), result.getMessage().getBody());
+        assertSame(result.getMessage().getBody(),
+                result.getMessage().getHeader(BedrockAgentRuntimeConstants.RETRIEVED_RESULTS));
+        assertEquals("NONE", result.getMessage().getHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION));
+        assertEquals("request-1", result.getMessage().getHeader("correlationId"));
+    }
+
+    @Test
+    public void retrieveClearsAbsentGuardrailAction() {
+        when(syncClient.retrieve(any(RetrieveRequest.class))).thenReturn(
+                RetrieveResponse.builder().nextToken("next-page-token").build());
+
+        Exchange result = template.send("direct:retrieve", exchange -> {
+            exchange.getMessage().setBody("what is camel?");
+            exchange.getMessage().setHeader(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION, "INTERVENED");
+            exchange.getMessage().setHeader("correlationId", "request-1");
+        });
+
+        assertNull(result.getException());
+        assertFalse(result.getMessage().getHeaders().containsKey(BedrockAgentRuntimeConstants.RETRIEVE_GUARDRAIL_ACTION));
+        assertEquals("next-page-token", result.getMessage().getHeader(BedrockAgentRuntimeConstants.NEXT_TOKEN));
+        assertEquals(List.of(), result.getMessage().getBody());
+        assertSame(result.getMessage().getBody(),
+                result.getMessage().getHeader(BedrockAgentRuntimeConstants.RETRIEVED_RESULTS));
+        assertEquals("request-1", result.getMessage().getHeader("correlationId"));
+    }
+
+    @Test
+    public void retrieveSendsMapBodyAsJson() {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("question", "what is camel?");
+        body.put("limit", 3);
+        Exchange result = template.send("direct:retrieve", exchange -> exchange.getMessage().setBody(body));
+
+        assertNull(result.getException(), "Exchange should not fail");
+        assertEquals("{\"question\":\"what is camel?\",\"limit\":3}", capturedRequest.get().retrievalQuery().text());
+    }
+
+    @Test
+    public void retrieveAndGenerateSendsJsonNodeBodyAsJson() {
+        ObjectNode body = new ObjectMapper().createObjectNode().put("question", "what is camel?");
+        Exchange result = template.send("direct:retrieve-and-generate", exchange -> exchange.getMessage().setBody(body));
+
+        assertNull(result.getException(), "Exchange should not fail");
+        assertEquals("{\"question\":\"what is camel?\"}", capturedGenerateRequest.get().input().text());
+        assertEquals("generated answer", result.getMessage().getBody());
     }
 
     @Test

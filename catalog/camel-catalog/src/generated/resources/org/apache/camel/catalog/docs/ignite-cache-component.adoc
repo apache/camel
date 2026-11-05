@@ -18,9 +18,13 @@ The Ignite Cache endpoint is one of camel-ignite endpoints that allow you to int
 This offers both a Producer (to invoke cache operations on an Ignite cache) and a Consumer (to consume changes from a continuous query).
 
 The cache value is the body of the message, and the cache key is in the `CamelIgniteCacheKey` message header.
-GET and REMOVE take the key from the body when that header is not set, and a PUT of a `Map` body puts all its entries.
+GET and REMOVE take the key from the body when that header is not set.
+A PUT of a `Map` body without that header puts all its entries; with the header, or with `treatCollectionsAsCacheObjects=true`, the `Map` is stored as one value.
 
 Even if you configure a fixed operation in the endpoint URI, you can vary it per-exchange by setting the `CamelIgniteCacheOperation` message header.
+Without either, the producer fails.
+
+With `fireExistingQueryResults=true`, the consumer first sends the entries that the initial query finds, each with the value as the body and the key in the `CamelIgniteCacheKey` header, like the events that follow.
 
 // component options: START
 include::partial$component-configure-options.adoc[]

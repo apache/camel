@@ -248,6 +248,23 @@ class ToolConfirmsTest {
     }
 
     @Test
+    void aChaosRuleFromCamelAskIsAsked() {
+        // a rule can name any public Throwable class (exception=), and turns on faults in the integration
+        ToolConfirms.Call add = ToolConfirms.cliCommand(
+                new String[] { "cmd", "chaos-add", "orders", "--rule=endpoint=* error exception=java.sql.SQLException" });
+
+        assertThat(add.title()).isEqualTo("run camel cmd");
+        assertThat(add.target())
+                .isEqualTo("camel cmd chaos-add orders --rule=endpoint=* error exception=java.sql.SQLException");
+        assertThat(ToolConfirms.cliCommand(new String[] { "cmd", "chaos-change", "orders", "--id=r1", "--rule=x" }))
+                .isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "cmd", "chaos-remove", "orders", "--id=r1" })).isNotNull();
+        assertThat(ToolConfirms.cliCommand(new String[] { "cmd", "chaos-clear" })).isNotNull();
+        // the rules and the report only read
+        assertThat(ToolConfirms.cliCommand(new String[] { "get", "chaos", "orders", "--report" })).isNull();
+    }
+
+    @Test
     void stoppingTheIntegrationOrItsRoutesIsAsked() {
         assertThat(ToolConfirms.control("stop", "orders").title()).isEqualTo("stop the integration");
         assertThat(ToolConfirms.control("KILL", "orders")).isNotNull();
@@ -266,5 +283,25 @@ class ToolConfirmsTest {
         assertThat(ToolConfirms.browse("kafka:orders?groupId=shop&brokers=localhost:9092", ENDPOINTS)).isNull();
         assertThat(ToolConfirms.browse("file:/Users/me/.ssh", ENDPOINTS).title())
                 .isEqualTo("browse an endpoint the integration does not have");
+    }
+
+    @Test
+    void addingOrChangingAChaosRuleIsAskedWithTheRule() {
+        ToolConfirms.Call add = ToolConfirms.chaos("add", "orders", null, "endpoint=* error exception=java.sql.SQLException");
+        assertThat(add.title()).isEqualTo("add a chaos rule to orders");
+        assertThat(add.target()).isEqualTo("endpoint=* error exception=java.sql.SQLException");
+        assertThat(add.reason()).contains("fail, wait or get lost", "exception=");
+
+        ToolConfirms.Call change = ToolConfirms.chaos("change", null, "r1", "endpoint=* drop");
+        assertThat(change.title()).isEqualTo("change chaos rule r1 of the selected integration");
+        assertThat(change.target()).isEqualTo("endpoint=* drop");
+
+        // removing and clearing only take faults away
+        assertThat(ToolConfirms.chaos("remove", "orders", "r1", null)).isNull();
+        assertThat(ToolConfirms.chaos("clear", "orders", null, null)).isNull();
+        assertThat(ToolConfirms.chaos(null, "orders", null, null)).isNull();
+        // without a rule the tool refuses the call, so there is nothing to ask
+        assertThat(ToolConfirms.chaos("add", "orders", null, " ")).isNull();
+        assertThat(ToolConfirms.chaos("change", "orders", null, "endpoint=* drop")).isNull();
     }
 }

@@ -26,11 +26,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.camel.dsl.yaml.validator.ProjectFacts;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 /**
  * What the YAML validator cannot read from a route file, read from the files beside it (CAMEL-25762): the operations of
@@ -67,7 +74,108 @@ final class ValidatorFacts {
         return new ProjectFacts(
                 OpenApiVerbs.bodylessEndpoints(content, directory), OpenApiVerbs.operations(content, directory),
                 restBindingMode(directory), OpenApiVerbs.requestFields(content, directory),
-                ObservedBodies.read(fileName, directory), kamelets, jsonArrays(content, directory));
+                ObservedBodies.read(fileName, directory), kamelets, jsonArrays(content, directory),
+                jsonFields(content, directory), pathParameters(fileName, content, directory));
+    }
+
+    /** The YAML files of a project beyond this many are not read for their REST operations. */
+    private static final int MAX_YAML_FILES = 50;
+
+    /** A path parameter of a REST or an OpenAPI path: id in /orders/{id} (OpenApiVerbs reads it too). */
+    static final Pattern PATH_PARAMETER = Pattern.compile("\\{([A-Za-z_][\\w.-]*)}");
+
+    /** The verbs of the REST DSL. */
+    private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
+
+    /**
+     * The path parameters of the REST operations the validator does not see in the file, by the endpoint each operation
+     * calls: of the rest: of the other YAML files of the project, beside the file or in src/main/resources, and of the
+     * operations of the OpenAPI specifications the files bind to. In the route of that endpoint each one is a header,
+     * and r25 of the local-model benchmark wrote {id} for it.
+     */
+    static Map<String, Set<String>> pathParameters(String fileName, String content, Path directory) {
+        Map<String, Set<String>> answer = new HashMap<>();
+        OpenApiVerbs.pathParameters(content, directory)
+                .forEach((uri, names) -> answer.computeIfAbsent(uri, k -> new TreeSet<>()).addAll(names));
+        Path self = fileName != null ? directory.resolve(fileName).normalize() : null;
+        List<Path> files = new ArrayList<>();
+        for (Path dir : List.of(directory, directory.resolve("src/main/resources"))) {
+            if (Files.isDirectory(dir)) {
+                try (Stream<Path> walk = dir.equals(directory) ? Files.list(dir) : Files.walk(dir)) {
+                    walk.filter(f -> f.getFileName().toString().matches(".+\\.ya?ml") && Files.isRegularFile(f))
+                            .filter(f -> !f.normalize().equals(self)).sorted().forEach(files::add);
+                } catch (IOException e) {
+                    // a directory that is not readable: nothing is known from it
+                }
+            }
+        }
+        for (Path file : files.subList(0, Math.min(files.size(), MAX_YAML_FILES))) {
+            String text;
+            try {
+                text = Files.readString(file);
+            } catch (IOException e) {
+                continue;
+            }
+            if (text.contains("rest")) {
+                restPathParameters(text, answer);
+                OpenApiVerbs.pathParameters(text, directory)
+                        .forEach((uri, names) -> answer.computeIfAbsent(uri, k -> new TreeSet<>()).addAll(names));
+            }
+        }
+        return answer;
+    }
+
+    /** The path parameters of the operations of the rest: entries of a YAML file, by the endpoint each one calls. */
+    private static void restPathParameters(String text, Map<String, Set<String>> answer) {
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(text);
+        } catch (Exception e) {
+            return;
+        }
+        if (!(doc instanceof List<?> entries)) {
+            return;
+        }
+        for (Object entry : entries) {
+            if (!(entry instanceof Map<?, ?> map) || !(map.get("rest") instanceof Map<?, ?> rest)) {
+                continue;
+            }
+            for (String verb : REST_VERBS) {
+                Object value = rest.get(verb);
+                for (Object operation : value instanceof List<?> list ? list : value != null ? List.of(value) : List.of()) {
+                    if (!(operation instanceof Map<?, ?> op)) {
+                        continue;
+                    }
+                    String uri = endpoint(op.get("to"));
+                    Set<String> names = new TreeSet<>();
+                    for (Object path : new Object[] { rest.get("path"), op.get("path") }) {
+                        Matcher m = PATH_PARAMETER.matcher(path instanceof String s ? s : "");
+                        while (m.find()) {
+                            names.add(m.group(1));
+                        }
+                    }
+                    if (uri != null && !names.isEmpty()) {
+                        answer.computeIfAbsent(uri, k -> new TreeSet<>()).addAll(names);
+                    }
+                }
+            }
+        }
+    }
+
+    /** The endpoint of a to: as text or as a map, without its options: direct:get-order. */
+    private static String endpoint(Object to) {
+        String uri = null;
+        if (to instanceof String s) {
+            uri = s;
+        } else if (to instanceof Map<?, ?> map && map.get("uri") instanceof String s) {
+            uri = s.indexOf(':') < 0 && map.get("parameters") instanceof Map<?, ?> parameters
+                    && parameters.get("name") instanceof String name ? s + ":" + name : s;
+        }
+        if (uri == null) {
+            return null;
+        }
+        int options = uri.indexOf('?');
+        return options > 0 ? uri.substring(0, options) : uri.trim();
     }
 
     /** resource:file:orders.json or resource:classpath:data/orders.json in a route file. */
@@ -98,6 +206,192 @@ final class ValidatorFacts {
             }
         }
         return answer;
+    }
+
+    /** The JSON files of one directory beyond this many are not read. */
+    private static final int MAX_JSON_FILES = 50;
+
+    /**
+     * The fields of the JSON data the routes read (r24 of the local-model benchmark: ${body[lineCount]} on an order
+     * that has lines, and ${body[orderId]} inside the split of its lines): of the file a resource: loads, and of the
+     * files in the directory a file consumer reads. Data whose files do not all have one shape is left out.
+     */
+    static Map<String, ProjectFacts.JsonFields> jsonFields(String content, Path directory) {
+        Map<String, ProjectFacts.JsonFields> answer = new HashMap<>();
+        Matcher m = JSON_RESOURCE.matcher(content);
+        while (m.find()) {
+            String resource = m.group(1);
+            String file = resource.substring(resource.indexOf(':') + 1);
+            List<Path> candidates = resource.startsWith("file:")
+                    ? List.of(directory.resolve(file))
+                    : List.of(directory.resolve(file), directory.resolve("src/main/resources").resolve(file));
+            for (Path path : candidates) {
+                ProjectFacts.JsonFields fields = jsonFields(List.of(path), file);
+                if (fields != null) {
+                    answer.put(resource, fields);
+                    break;
+                }
+            }
+        }
+        for (String consumed : fileConsumerDirectories(content)) {
+            Path dir = directory.resolve(consumed);
+            if (!Files.isDirectory(dir)) {
+                continue;
+            }
+            try (Stream<Path> files = Files.list(dir)) {
+                List<Path> json = files.filter(f -> f.getFileName().toString().endsWith(".json")).sorted().toList();
+                // all of them or none: a field may be in a file not read
+                ProjectFacts.JsonFields fields = json.isEmpty() || json.size() > MAX_JSON_FILES
+                        ? null : jsonFields(json, "the files in " + ProjectFacts.directoryKey(consumed).substring(4) + "/");
+                if (fields != null) {
+                    answer.put(ProjectFacts.directoryKey(consumed), fields);
+                }
+            } catch (IOException e) {
+                // the directory is not readable: nothing is known
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The directories the file consumers of a YAML route file read: from: file:orders, or directoryName: orders; and
+     * the directory a pollEnrich or a poll reads a file from (file:customers?fileName=${body[customer]}.json), whose
+     * fields say whose field a read after it is (r25 enrich step 2).
+     */
+    static List<String> fileConsumerDirectories(String content) {
+        List<String> answer = new ArrayList<>();
+        Object doc;
+        try {
+            doc = new Yaml(new SafeConstructor(new LoaderOptions())).load(content);
+        } catch (Exception e) {
+            return answer;
+        }
+        if (!(doc instanceof List<?> entries)) {
+            return answer;
+        }
+        for (Object entry : entries) {
+            Object from = entry instanceof Map<?, ?> map
+                    ? map.get("route") instanceof Map<?, ?> route ? route.get("from") : map.get("from")
+                    : null;
+            if (!(from instanceof Map<?, ?> f) || !(f.get("uri") instanceof String uri)) {
+                continue;
+            }
+            String dir = null;
+            if (uri.startsWith("file:")) {
+                dir = directoryOf(uri);
+            } else if ("file".equals(uri) && f.get("parameters") instanceof Map<?, ?> parameters
+                    && parameters.get("directoryName") instanceof String name) {
+                dir = name;
+            }
+            addDirectory(dir, answer);
+        }
+        polledDirectories(doc, answer);
+        return answer;
+    }
+
+    /** The directories of the file endpoints the pollEnrich and poll steps under the node read from. */
+    private static void polledDirectories(Object node, List<String> answer) {
+        if (node instanceof Map<?, ?> m) {
+            for (Map.Entry<?, ?> e : m.entrySet()) {
+                if ("pollEnrich".equals(e.getKey()) || "poll".equals(e.getKey())) {
+                    String uri = polledUri(e.getValue());
+                    if (uri != null && uri.startsWith("file:")) {
+                        addDirectory(directoryOf(uri), answer);
+                    }
+                }
+                polledDirectories(e.getValue(), answer);
+            }
+        } else if (node instanceof List<?> list) {
+            list.forEach(o -> polledDirectories(o, answer));
+        }
+    }
+
+    /**
+     * The endpoint a pollEnrich or a poll reads from: the uri of a poll, or the constant or simple expression of a
+     * pollEnrich, in its short or its long form.
+     */
+    private static String polledUri(Object step) {
+        if (step instanceof String uri) {
+            return uri.trim();
+        }
+        if (!(step instanceof Map<?, ?> m)) {
+            return null;
+        }
+        if (m.get("uri") instanceof String uri) {
+            return uri.trim();
+        }
+        Object expression = m.get("expression") instanceof Map<?, ?> e ? e : m;
+        for (String language : List.of("constant", "simple")) {
+            Object value = expression instanceof Map<?, ?> e ? e.get(language) : null;
+            if (value instanceof Map<?, ?> v) {
+                value = v.get("expression");
+            }
+            if (value instanceof String uri) {
+                return uri.trim();
+            }
+        }
+        return null;
+    }
+
+    /** The directory of a file: uri, the part before its options. */
+    private static String directoryOf(String uri) {
+        String dir = uri.substring("file:".length());
+        int options = dir.indexOf('?');
+        return options >= 0 ? dir.substring(0, options) : dir;
+    }
+
+    /** Adds a directory of the project once: not one an expression or a placeholder names, nor an absolute one. */
+    private static void addDirectory(String dir, List<String> answer) {
+        if (dir != null && !dir.isBlank() && !dir.contains("{{") && !dir.contains("${") && !dir.startsWith("/")
+                && !answer.contains(dir.trim())) {
+            answer.add(dir.trim());
+        }
+    }
+
+    /**
+     * The fields of the JSON in these files: the keys of their objects (of the elements of a list), and for a field
+     * that holds a list of objects, the keys of those. Null when a file is not read, is not JSON, or the files differ
+     * in shape (an object in one, a list in another).
+     */
+    static ProjectFacts.JsonFields jsonFields(List<Path> files, String where) {
+        Set<String> fields = new TreeSet<>();
+        Map<String, Set<String>> elementFields = new HashMap<>();
+        Boolean list = null;
+        for (Path path : files) {
+            Object json;
+            try {
+                if (!Files.isRegularFile(path) || Files.size(path) > MAX_JSON_FILE) {
+                    return null;
+                }
+                json = Jsoner.deserialize(Files.readString(path));
+            } catch (Exception e) {
+                return null;
+            }
+            List<JsonObject> objects = new ArrayList<>();
+            if (json instanceof JsonObject o) {
+                objects.add(o);
+            } else if (json instanceof JsonArray a && !a.isEmpty() && a.stream().allMatch(JsonObject.class::isInstance)) {
+                a.forEach(e -> objects.add((JsonObject) e));
+            } else {
+                return null;
+            }
+            boolean isList = json instanceof JsonArray;
+            if (list != null && list != isList) {
+                return null;
+            }
+            list = isList;
+            for (JsonObject o : objects) {
+                fields.addAll(o.keySet());
+                for (Map.Entry<String, Object> e : o.entrySet()) {
+                    if (e.getValue() instanceof JsonArray a && !a.isEmpty()
+                            && a.stream().allMatch(JsonObject.class::isInstance)) {
+                        Set<String> keys = elementFields.computeIfAbsent(e.getKey(), k -> new TreeSet<>());
+                        a.forEach(x -> keys.addAll(((JsonObject) x).keySet()));
+                    }
+                }
+            }
+        }
+        return list == null ? null : new ProjectFacts.JsonFields(where, fields, elementFields, list, null);
     }
 
     private static boolean isJsonArray(Path path) {

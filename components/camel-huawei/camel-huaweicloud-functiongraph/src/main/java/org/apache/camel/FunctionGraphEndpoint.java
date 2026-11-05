@@ -38,15 +38,19 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "3.11.0", scheme = "hwcloud-functiongraph", title = "Huawei FunctionGraph",
              syntax = "hwcloud-functiongraph:operation",
              category = { Category.CLOUD, Category.SERVERLESS }, producerOnly = true)
-@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT },
-                                  description = "The event of the function, as a Map or a JSON object as text. Bytes, a stream,"
-                                                + " a file, a JSON array, a POJO or no body fail: convert the body to a String or"
-                                                + " a Map first"),
+@BodyTypes(producerIn = @BodyType(value = { Carrier.MAP, Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                  description = "The event of the function, which FunctionGraph takes as a JSON object: a Map,"
+                                                + " or a JSON object as text, bytes, a stream or a file. A JSON array or another"
+                                                + " JSON value fails: wrap it in a JSON object. A POJO fails unless its text is"
+                                                + " JSON: marshal it to JSON first. No body fails"),
            producerOut = @BodyType(value = { Carrier.TEXT, Carrier.NULL },
-                                   description = "The body field of the result of the function as text: a string as it is, an"
-                                                 + " object or an array as JSON. No body when the result has no body field. With"
-                                                 + " the CamelHwCloudFgXCffLogType exchange property set, the log of the call is in"
-                                                 + " the CamelHwCloudFgXCffLogs exchange property"))
+                                   description = "The result of the function as text. When the result is a JSON object with a"
+                                                 + " top-level body field, such as the result of a function behind an API Gateway"
+                                                 + " trigger, the body field: a string as it is, an object or an array as JSON,"
+                                                 + " and no body when the field is null. Otherwise the whole result as it is. No"
+                                                 + " body when the function gives no result. With the CamelHwCloudFgXCffLogType"
+                                                 + " exchange property set, the log of the call is in the CamelHwCloudFgXCffLogs"
+                                                 + " exchange property"))
 public class FunctionGraphEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Operation to be performed", displayName = "Operation", label = "producer")

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.docker.consumer;
 
+import java.util.concurrent.TimeUnit;
+
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.EventsCmd;
 import org.apache.camel.CamelContext;
@@ -27,10 +29,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 
 /**
@@ -58,6 +62,17 @@ public class DockerEventsConsumerTest extends CamelTestSupport {
     void testEvent() {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+    }
+
+    @Test
+    void sinceIsInSeconds() {
+        ArgumentCaptor<String> since = ArgumentCaptor.forClass(String.class);
+        Mockito.verify(eventsCmd).withSince(since.capture());
+
+        // the Docker API takes the since time in seconds, not in milliseconds
+        long now = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+        long value = Long.parseLong(since.getValue());
+        assertTrue(value <= now && value > now - 60, "since " + value + " is not near " + now);
     }
 
     @Override

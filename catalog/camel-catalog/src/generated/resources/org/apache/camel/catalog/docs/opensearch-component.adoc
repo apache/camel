@@ -50,37 +50,44 @@ Set an endpoint URI option or exchange header with a key of "operation"
 and a value set to one of the following. Some operations also require
 other parameters or the message body to be set.
 
+A request of the OpenSearch client in the message body, such as an `IndexRequest`, a `GetRequest` or a `SearchRequest`,
+sets the operation by its type, whatever the option or header say, and is sent as it is: its index, id and the rest are
+not changed by the headers or options.
+
 [width="100%",cols="10%,10%,80%",options="header",]
 |===
 |operation |message body |description
 
-|`Index` |`Map`, `String`, `byte[]`, `Reader`, `InputStream` or `IndexRequest.Builder` content to index |Adds content to an index and returns the content's indexId in the body.
+|`Index` |`Map`, `String`, `byte[]`, `Reader`, `InputStream`, a file (`java.io.File`, `Path` or the file of the file component), `IndexRequest` or `IndexRequest.Builder` content to index |Adds content to an index and returns the content's indexId in the body.
+A file is read as the JSON of the document, and a null body fails.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the indexId by setting the message header with
 the key "indexId".
 
-|`GetById` |`String` or `GetRequest.Builder` index id of content to retrieve |Retrieves the document corresponding to the given index id and returns a GetResponse object in the body.
+|`GetById` |`String`, `GetRequest` or `GetRequest.Builder` index id of content to retrieve |Retrieves the document corresponding to the given index id and returns a GetResponse object in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the type of document by setting the message header with
 the key "documentClass".
 
-|`Delete` |`String` or `DeleteRequest.Builder` index id of content to delete |Deletes the specified indexName and returns a Result object in the body.
+|`Delete` |`String`, `DeleteRequest` or `DeleteRequest.Builder` index id of content to delete |Deletes the specified indexName and returns a Result object in the body.
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|`DeleteIndex` |`String` (its text is not used) or `DeleteIndexRequest.Builder` |Deletes the index named by the indexName header or option, not the one in a `String` body, and returns a `Boolean` in the body that is true when the deletion is acknowledged.
+|`DeleteIndex` |`String` name of the index, `DeleteIndexRequest` or `DeleteIndexRequest.Builder` |Deletes the index named by the indexName header or option, or else the one named by a `String` body, and returns a `Boolean` in the body that is true when the deletion is acknowledged.
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|`Bulk` |`Iterable` or `BulkRequest.Builder` of any type that is already accepted (DeleteOperation.Builder for delete operation, UpdateOperation.Builder for update operation, CreateOperation.Builder for create operation, byte[], InputStream, String, Reader, Map or any document type for index operation) | Adds/Updates/Deletes content from/to an index and returns a List<BulkResponseItem> object in the body
+|`Bulk` |`Iterable`, `BulkRequest` or `BulkRequest.Builder` of any type that is already accepted (DeleteOperation.Builder for delete operation, UpdateOperation.Builder for update operation, CreateOperation.Builder for create operation, byte[], InputStream, String, Reader, Map or any document type for index operation) | Adds/Updates/Deletes content from/to an index and returns a List<BulkResponseItem> object in the body
 You can set the name of the target index by setting the message header with the key "indexName".
 
-|`Search` |`Map`, `String` or `SearchRequest.Builder` |Search the content with the map of query string.
+|`Search` |`Map`, `String`, `SearchRequest` or `SearchRequest.Builder` |Search the content with the search request as a JSON `String` or a `Map`: its query, size, from, sort, aggregations, _source and the rest are used.
+A JSON object with a single member other than query, such as `{"match": {...}}`, is the query alone.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the number of hits to return by setting the message header with the key "size".
 You can set the starting document offset by setting the message header with the key "from".
+The size and from headers or options, when set, override those of the body.
 
-|`MultiSearch` |`MsearchRequest.Builder` |Multiple search in one
+|`MultiSearch` |`MsearchRequest` or `MsearchRequest.Builder` |Multiple search in one
 
-|`MultiGet` |`Iterable<String>` or `MgetRequest.Builder` the id of the document to retrieve |Multiple get in one
+|`MultiGet` |`Iterable<String>`, `MgetRequest` or `MgetRequest.Builder` the id of the document to retrieve |Multiple get in one
 
 You can set the name of the target index by setting the message header with the key "indexName".
 
@@ -88,7 +95,8 @@ You can set the name of the target index by setting the message header with the 
 
 You must set the name of the target index by setting the message header with the key "indexName".
 
-|`Update` |`byte[]`, `InputStream`, `String`, `Reader`, `Map` or any document type content to update |Updates content to an index and returns the content's indexId in the body.
+|`Update` |`byte[]`, `InputStream`, `String`, `Reader`, `Map`, a file, `UpdateRequest`, `UpdateRequest.Builder` or any document type content to update |Updates content to an index and returns the content's indexId in the body.
+A file is read as JSON, and a null body fails.
 You can set the name of the target index by setting the message header with the key "indexName".
 You can set the indexId by setting the message header with
 the key "indexId".
@@ -122,6 +130,31 @@ opensearchComponent.setPassword("secure!!");
 camelContext.addComponent("opensearch", opensearchComponent);
 ----
 
+
+=== Custom clients per endpoint
+
+Use the `openSearchClient` endpoint option to reference an
+`org.opensearch.client.opensearch.OpenSearchClient` in the Camel registry.
+Each endpoint can use a different client, allowing a single route to connect to
+different OpenSearch services with their own authentication and transport settings.
+
+[source,java]
+----
+camelContext.getRegistry().bind("firstClient", firstClient);
+camelContext.getRegistry().bind("secondClient", secondClient);
+
+from("direct:ping")
+    .to("opensearch:first?operation=Ping&openSearchClient=#bean:firstClient")
+    .to("opensearch:second?operation=Ping&openSearchClient=#bean:secondClient");
+----
+
+The endpoint client takes precedence over the component's `openSearchClient` and
+`client` options. Without an endpoint override, the component's client configuration
+continues to apply. Configure connection and authentication settings on the supplied
+client; `hostAddresses` is not required when supplying a client.
+
+The application owns supplied clients and must close them when they are no longer
+needed. Camel does not close them when a route stops or when `disconnect=true`.
 
 === Document type
 
@@ -187,7 +220,8 @@ String indexId = template.requestBody("direct:index", map, String.class);
 === Search Example
 
 Searching on specific field(s) and value use the Operation ´Search´.
-Pass in the query JSON String or the Map
+Pass in the search request as a JSON String or a Map: its size, sort, aggregations and the other members
+are used with its query.
 
 [tabs]
 ====
@@ -228,7 +262,7 @@ YAML::
 ._Java-only: Java test API (ProducerTemplate)_
 [source,java]
 ----
-String query = "{\"query\":{\"match\":{\"doc.content\":\"new release of ApacheCamel\"}}}";
+String query = "{\"query\":{\"match\":{\"doc.content\":\"new release of ApacheCamel\"}},\"size\":5}";
 HitsMetadata<?> response = template.requestBody("direct:search", query, HitsMetadata.class);
 
 ----

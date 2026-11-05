@@ -47,12 +47,13 @@ import org.apache.camel.util.ObjectHelper;
                                   byOption = {
                                           @BodyType.When(option = "operation", value = "INSERT", carriers = Carrier.LIST),
                                           @BodyType.When(option = "operation", value = "COPY",
-                                                         carriers = { Carrier.FILE, Carrier.TEXT }),
+                                                         carriers = { Carrier.FILE, Carrier.TEXT, Carrier.BYTES }),
                                           @BodyType.When(option = "operation", value = "PING", carriers = Carrier.ANY) },
                                   description = "The SQL statement as text, or bytes, a stream or a file of it; the query"
                                                 + " option or the CamelDuckDbQuery header takes its place. Insert takes a List"
                                                 + " of Maps of the column names and their values (a Map alone fails), copy a"
-                                                + " File or the path of the csv, parquet or json file to load"),
+                                                + " File, a Path or the path (as text or bytes) of the csv, parquet or json"
+                                                + " file to load"),
            producerOut = @BodyType(value = Carrier.VALUE, javaType = "java.lang.Long",
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "QUERY", carriers = Carrier.LIST,
@@ -84,7 +85,8 @@ public class DuckDbEndpoint extends DefaultEndpoint {
     private String jdbcUrl;
     @UriParam(defaultValue = "EXECUTE", description = "The operation to perform: execute, query, insert, copy or ping.")
     private DuckDbOperation operation = DuckDbOperation.EXECUTE;
-    @UriParam(description = "Static SQL for query when the message body is empty.")
+    @UriParam(description = "Static SQL for the execute and query operations. When set, it is used instead of the"
+                            + " message body; the CamelDuckDbQuery header takes precedence over it.")
     private String query;
     @UriParam(defaultValue = "0",
               description = "Batch size for insert when the body is a List. 0 inserts all rows in one JDBC batch.")
@@ -99,6 +101,13 @@ public class DuckDbEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "LIST_MAP",
               description = "How query results are returned: LIST_MAP (List of Map) or JSON array string.")
     private DuckDbResultFormat resultFormat = DuckDbResultFormat.LIST_MAP;
+    @UriParam(defaultValue = "false", label = "producer,security", security = "insecure:dev", insecureValue = "true",
+              description = "Whether to allow overriding the database of the endpoint with the CamelDuckDbDatabasePath"
+                            + " header, which opens a short-lived connection to the DuckDB file at that path (DuckDB"
+                            + " creates the file when it does not exist) instead of using the databasePath, jdbcUrl or"
+                            + " DataSource of the endpoint. Disabled by default; enable it only when the header source is"
+                            + " trusted, since it lets a message choose the database file.")
+    private boolean allowDatabasePathFromHeader;
 
     public DuckDbEndpoint() {
     }
@@ -120,10 +129,10 @@ public class DuckDbEndpoint extends DefaultEndpoint {
     /**
      * Opens a connection scope for one producer invocation.
      * <p>
-     * When {@code databasePathOverride} is set (from the {@code CamelDuckDbDatabasePath} header), a short-lived
-     * connection to that path is opened and closed after use. Otherwise the endpoint-owned shared connection is used
-     * under a lock so concurrent exchanges do not share a JDBC connection unsafely. DataSource connections are also
-     * short-lived and closed after use.
+     * When {@code databasePathOverride} is set (from the {@code CamelDuckDbDatabasePath} header, which the producer
+     * only reads when {@code allowDatabasePathFromHeader} is enabled), a short-lived connection to that path is opened
+     * and closed after use. Otherwise the endpoint-owned shared connection is used under a lock so concurrent exchanges
+     * do not share a JDBC connection unsafely. DataSource connections are also short-lived and closed after use.
      */
     DuckDbConnectionScope openConnectionScope(String databasePathOverride) throws Exception {
         if (ObjectHelper.isNotEmpty(databasePathOverride)) {
@@ -261,6 +270,14 @@ public class DuckDbEndpoint extends DefaultEndpoint {
 
     public void setResultFormat(DuckDbResultFormat resultFormat) {
         this.resultFormat = resultFormat;
+    }
+
+    public boolean isAllowDatabasePathFromHeader() {
+        return allowDatabasePathFromHeader;
+    }
+
+    public void setAllowDatabasePathFromHeader(boolean allowDatabasePathFromHeader) {
+        this.allowDatabasePathFromHeader = allowDatabasePathFromHeader;
     }
 
     String resolvedJdbcUrl() {

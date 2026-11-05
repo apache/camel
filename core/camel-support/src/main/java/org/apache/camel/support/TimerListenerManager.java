@@ -17,8 +17,8 @@
 package org.apache.camel.support;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +44,8 @@ import org.slf4j.LoggerFactory;
 public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerListenerManager.class);
-    private final Set<TimerListener> listeners = new LinkedHashSet<>();
+    // listeners are added and removed by other threads while the timer thread iterates them
+    private final Set<TimerListener> listeners = new CopyOnWriteArraySet<>();
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
     private volatile ScheduledFuture<?> task;

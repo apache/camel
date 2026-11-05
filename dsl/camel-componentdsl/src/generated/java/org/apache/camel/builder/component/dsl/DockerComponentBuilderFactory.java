@@ -83,7 +83,11 @@ public interface DockerComponentBuilderFactory {
     
         
         /**
-         * Docker host.
+         * Docker host. In socket mode (socket=true), the path of the unix
+         * socket of the Docker daemon, where the default localhost means
+         * /var/run/docker.sock. A host with a tcp:// or unix:// scheme (such as
+         * tcp://myhost:2376 or unix:///var/run/docker.sock) is used as is, and
+         * then the port and socket options are not used.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -326,11 +330,14 @@ public interface DockerComponentBuilderFactory {
     
         
         /**
-         * Socket connection mode.
+         * Socket connection mode. When enabled, connects to the unix socket of
+         * the Docker daemon, whose path is given by the host option (the
+         * default localhost means /var/run/docker.sock), and the port is not
+         * used. When disabled, connects over TCP to the host and port.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: advanced
          * 
          * @param socket the value to set

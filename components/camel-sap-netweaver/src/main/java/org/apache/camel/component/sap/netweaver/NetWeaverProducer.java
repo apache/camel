@@ -78,14 +78,27 @@ public class NetWeaverProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword="
-                     + getEndpoint().getPassword() + "&authMethod=Basic";
+        String url = getEndpoint().getUrl();
+        // the url may already have query parameters, and the credentials use RAW so characters such as & and + are kept
+        url += (url.indexOf('?') != -1 ? "&" : "?")
+               + "authUsername=" + raw(getEndpoint().getUsername()) + "&authPassword=" + raw(getEndpoint().getPassword())
+               + "&authMethod=Basic";
         if (LOG.isInfoEnabled()) {
             LOG.info("Creating NetWeaverProducer using url: {}", URISupport.sanitizeUri(url));
         }
 
         http = getEndpoint().getCamelContext().getEndpoint(url).createProducer();
         ServiceHelper.startService(http);
+    }
+
+    private static String raw(String value) {
+        // RAW(...) ends at a ) followed by &, so a value with a ) uses the RAW{...} form instead
+        // a value with both a ) followed by & and a } fits neither RAW form (a limit of the RAW syntax),
+        // and is cut short at the )&
+        if (value != null && value.indexOf(')') != -1 && value.indexOf('}') == -1) {
+            return "RAW{" + value + "}";
+        }
+        return "RAW(" + value + ")";
     }
 
     @Override

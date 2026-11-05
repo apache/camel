@@ -17,9 +17,11 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.component.cxf.jaxws.CxfEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +37,41 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 public class ServiceClassRefTest {
 
-    static {
-        CXFTestSupport.getPort1();
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+    private static AvailablePortFinder.Port PORT3;
+    private static AvailablePortFinder.Port PORT4;
+
+    @BeforeAll
+    static void allocateServiceClassRefTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("ServiceClassRefTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("ServiceClassRefTest.port2", PORT2.toString());
+        PORT3 = AvailablePortFinder.find();
+        System.setProperty("ServiceClassRefTest.port3", PORT3.toString());
+        PORT4 = AvailablePortFinder.find();
+        System.setProperty("ServiceClassRefTest.port4", PORT4.toString());
+    }
+
+    @AfterAll
+    static void releaseServiceClassRefTestPorts() {
+        System.clearProperty("ServiceClassRefTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("ServiceClassRefTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+        System.clearProperty("ServiceClassRefTest.port3");
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+        System.clearProperty("ServiceClassRefTest.port4");
+        if (PORT4 != null) {
+            PORT4.release();
+        }
     }
 
     @Autowired

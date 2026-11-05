@@ -23,12 +23,14 @@ import org.w3c.dom.Text;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.interceptor.Fault;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,6 +40,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfSpringCustomizedExceptionTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+
+    @BeforeAll
+    static void allocateCxfSpringCustomizedExceptionTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfSpringCustomizedExceptionTest.port1", PORT1.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfSpringCustomizedExceptionTestPorts() {
+        System.clearProperty("CxfSpringCustomizedExceptionTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+    }
+
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
     private static final SoapFault SOAP_FAULT;
@@ -54,7 +73,6 @@ public class CxfSpringCustomizedExceptionTest extends CamelSpringTestSupport {
 
     @Override
     public void setupResources() {
-        CXFTestSupport.getPort1();
     }
 
     @Override

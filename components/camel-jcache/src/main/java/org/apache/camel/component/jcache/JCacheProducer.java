@@ -25,6 +25,7 @@ import javax.cache.Cache;
 import javax.cache.processor.EntryProcessor;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
@@ -94,6 +95,11 @@ public class JCacheProducer extends DefaultProducer {
         PUTALL {
             @Override
             void validate(Cache<Object, Object> cache, Exchange exchange) throws Exception {
+                if (exchange.getIn().getBody(Map.class) == null) {
+                    throw new InvalidPayloadException(
+                            exchange, Map.class, exchange.getIn(),
+                            "action " + name() + " needs a Map of the keys and values to put in the message body");
+                }
             }
 
             @Override

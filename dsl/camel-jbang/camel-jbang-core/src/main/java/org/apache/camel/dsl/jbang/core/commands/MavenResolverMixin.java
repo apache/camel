@@ -19,9 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 
-import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
-import org.apache.camel.dsl.jbang.export.common.MavenResolver;
-import org.apache.camel.dsl.jbang.export.common.MavenResolverMixinSpec;
+import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.MavenResolver;
+import org.apache.camel.dsl.jbang.run.common.MavenResolverMixinSpec;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import picocli.CommandLine;
 

@@ -105,6 +105,7 @@
         <module>camel-camunda</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
+        <module>camel-chaos</module>
         <module>camel-chunk</module>
         <module>camel-clickhouse</module>
         <module>camel-clickup</module>

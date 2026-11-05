@@ -28,7 +28,8 @@ import org.apache.camel.dsl.jbang.core.commands.ai.ToolGroups;
  * The AI panel's side of {@link ToolGroups} (CAMEL-24834): the tui_* tools each group adds to the core set, and the
  * guidance line in the panel's words. Only SQL and HTTP need tools of their own; the spans, the traced messages, the
  * metrics and the circuit breakers are read with core tools (tui_get_spans, tui_get_history, tui_get_table), so those
- * groups only add the line that tells a small model where to look.
+ * groups only add the line that tells a small model where to look. The chaos group adds no tool either: its line says
+ * whether camel-chaos may be injecting faults.
  */
 final class TuiToolGroups {
 
@@ -118,6 +119,12 @@ final class TuiToolGroups {
                                + " rate; OPEN means the fallback runs.";
             case HTTP -> "HTTP: " + ToolGroups.describeHttp(f) + "; " + HTTP_REQUEST_TOOL + " calls it, "
                          + HTTP_ENDPOINTS_TOOL + " lists the operations.";
+            // the panel has no chaos tools (camel ask and camel-jbang-mcp have them): it only learns that faults may be
+            // injected on purpose, so it does not hunt for a bug behind them
+            case CHAOS -> f.chaosOn()
+                    ? "Chaos: camel-chaos is on, so some failures and delays may be injected on purpose; tui_get_status"
+                      + " section 'chaos' has the rules."
+                    : "Chaos: camel-chaos is in the integration but off, so it injects no faults.";
         };
     }
 }

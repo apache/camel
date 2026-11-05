@@ -141,47 +141,48 @@ public final class ExampleHelper {
         return names;
     }
 
+    /**
+     * The examples whose name, title, description, level or tags have every word of the filter (case-insensitive), each
+     * word in any of them: "csv-to-json test" finds the example and its test. An example with a Citrus test is found by
+     * citrus, test and its test file as well.
+     */
     public static List<JsonObject> filterExamples(List<JsonObject> catalog, String filter) {
-        if (filter == null || filter.isEmpty()) {
+        if (filter == null || filter.isBlank()) {
             return catalog;
         }
-        String lowerFilter = filter.toLowerCase();
+        List<String> words = List.of(filter.toLowerCase(Locale.ROOT).trim().split("\\s+"));
         List<JsonObject> result = new ArrayList<>();
         for (JsonObject entry : catalog) {
-            if (matches(entry, lowerFilter)) {
+            List<String> texts = searchTexts(entry);
+            if (words.stream().allMatch(w -> texts.stream().anyMatch(t -> t.contains(w)))) {
                 result.add(entry);
             }
         }
         return result;
     }
 
+    /** What a filter searches in an example, in lower case. */
     @SuppressWarnings("unchecked")
-    private static boolean matches(JsonObject entry, String filter) {
-        String name = entry.getString("name");
-        if (name != null && name.toLowerCase().contains(filter)) {
-            return true;
-        }
-        String title = entry.getString("title");
-        if (title != null && title.toLowerCase().contains(filter)) {
-            return true;
-        }
-        String desc = entry.getString("description");
-        if (desc != null && desc.toLowerCase().contains(filter)) {
-            return true;
-        }
-        String level = entry.getString("level");
-        if (level != null && level.toLowerCase().contains(filter)) {
-            return true;
+    private static List<String> searchTexts(JsonObject entry) {
+        List<String> texts = new ArrayList<>();
+        for (String key : new String[] { "name", "title", "description", "level" }) {
+            String text = entry.getString(key);
+            if (text != null) {
+                texts.add(text.toLowerCase(Locale.ROOT));
+            }
         }
         Collection<String> tags = (Collection<String>) entry.get("tags");
         if (tags != null) {
             for (String tag : tags) {
-                if (tag.toLowerCase().contains(filter)) {
-                    return true;
-                }
+                texts.add(tag.toLowerCase(Locale.ROOT));
             }
         }
-        return false;
+        if (hasCitrusTests(entry)) {
+            // the catalog has a flag for the test, not its file: a search for citrus found no example
+            texts.add("citrus tests");
+            texts.addAll(getTestFiles(entry));
+        }
+        return texts;
     }
 
     /**
@@ -449,6 +450,19 @@ public final class ExampleHelper {
     public static boolean hasCitrusTests(JsonObject entry) {
         Boolean citrus = entry.getBoolean("hasCitrusTests");
         return citrus != null && citrus;
+    }
+
+    /**
+     * The Citrus test of an example, run with camel test run: test/name.citrus.it.yaml, the name camel-jbang-examples
+     * gives it (its AGENTS.md). Empty for an example without one. The files of the catalog are those the example runs
+     * with, so they leave out its test.
+     */
+    public static List<String> getTestFiles(JsonObject entry) {
+        String name = entry.getString("name");
+        if (!hasCitrusTests(entry) || name == null) {
+            return List.of();
+        }
+        return List.of("test/" + name.substring(name.lastIndexOf('/') + 1) + ".citrus.it.yaml");
     }
 
     /**

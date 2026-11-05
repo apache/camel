@@ -2,6 +2,7 @@
 package org.apache.camel.component.splunkhec;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyonly":
         case "bodyOnly": target.getConfiguration().setBodyOnly(property(camelContext, boolean.class, value)); return true;
         case "headersonly":
@@ -49,7 +50,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyonly":
         case "bodyOnly": return boolean.class;
         case "headersonly":
@@ -77,7 +78,7 @@ public class SplunkHECEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SplunkHECEndpoint target = (SplunkHECEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyonly":
         case "bodyOnly": return target.getConfiguration().isBodyOnly();
         case "headersonly":

@@ -2,6 +2,7 @@
 package org.apache.camel.model;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -56,7 +57,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "asynchronous": target.setAsynchronous(property(camelContext, java.lang.String.class, value)); return true;
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": target.setAutomaticTransitionFromOpenToHalfOpenEnabled(property(camelContext, java.lang.String.class, value)); return true;
@@ -121,7 +122,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "asynchronous": return java.lang.String.class;
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": return java.lang.String.class;
@@ -182,7 +183,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.model.Resilience4jConfigurationDefinition target = (org.apache.camel.model.Resilience4jConfigurationDefinition) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "asynchronous": return target.getAsynchronous();
         case "automatictransitionfromopentohalfopenenabled":
         case "automaticTransitionFromOpenToHalfOpenEnabled": return target.getAutomaticTransitionFromOpenToHalfOpenEnabled();
@@ -242,7 +243,7 @@ public class Resilience4jConfigurationDefinitionConfigurer extends org.apache.ca
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "ignoreexceptions":
         case "ignoreExceptions": return java.lang.String.class;
         case "recordexceptions":

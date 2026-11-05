@@ -26,9 +26,9 @@ public class OpenTelemetryConstants {
     public static final String HEADER_TIMER_ACTION = HEADER_PREFIX + "TimerAction";
     @Metadata(description = "Override histogram value in URI", javaType = "long")
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PREFIX + "HistogramValue";
-    @Metadata(description = "Override decrement value in URI", javaType = "Double")
+    @Metadata(description = "Override decrement value in URI", javaType = "long")
     public static final String HEADER_COUNTER_DECREMENT = HEADER_PREFIX + "CounterDecrement";
-    @Metadata(description = "Override increment value in URI", javaType = "Double")
+    @Metadata(description = "Override increment value in URI", javaType = "long")
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PREFIX + "CounterIncrement";
     @Metadata(description = "Override name value in URI", javaType = "String")
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";

@@ -144,6 +144,77 @@ from("direct:protected")
     .to("mock:result");
 ----
 
+=== JWKS Public Key Resolution and Cache Options
+
+When using local JWT signature verification (the default when token introspection is not enabled), `KeycloakSecurityPolicy` automatically resolves and caches public keys from Keycloak's JWKS endpoint (`+{serverUrl}/realms/{realm}/protocol/openid-connect/certs+`).
+
+Keys are cached in memory and refreshed periodically or on demand when key rotation occurs. To protect the Keycloak authorization server against cache stampedes and excessive load caused by requests with unknown or forged key IDs (`kid`), the resolver enforces a minimum cooldown interval between consecutive refresh attempts.
+
+[cols="1,1,2,1",options="header"]
+|===
+| Option | Type | Description | Default
+| `autoFetchPublicKey` | `boolean` | Whether to automatically fetch public keys from the Keycloak JWKS endpoint. Set to `false` when providing a static `publicKey`. | `true`
+| `jwksRefreshInterval` | `long` | Periodic cache refresh interval in seconds. After this interval elapses, cached keys are refreshed from the JWKS endpoint. | `300` (5 minutes)
+| `minJwksRefreshInterval` | `long` | Minimum cooldown interval in seconds between consecutive JWKS refresh attempts. When an incoming token references an unknown `kid` (such as during key rotation), the resolver refreshes keys at most once within this window. | `10` (10 seconds)
+| `publicKey` | `PublicKey` | A static RSA public key to use for signature verification instead of fetching keys from the JWKS endpoint. |
+|===
+
+==== Rate Limiting on Key Rotation
+
+When a token arrives with an unknown `kid`, it may be because Keycloak has rotated its signing keys. `KeycloakSecurityPolicy` triggers an on-demand refresh of the JWKS keys. However, if multiple requests arrive concurrently or if tokens carry unknown or invalid `kid` headers, refreshing on every miss would overload the Keycloak server.
+
+The `minJwksRefreshInterval` parameter guarantees that:
+
+* Consecutive refresh attempts are rate-limited to at most once per cooldown period (10 seconds by default).
+* Failed refresh attempts also reset the cooldown timer, preventing hammering of a temporarily unreachable Keycloak server.
+* Concurrent requests for unknown keys re-check cached keys under lock instead of triggering multiple simultaneous network calls.
+* A token whose `kid` is still unknown while the cooldown suppresses the refresh is rejected; it is not validated against the cached keys. It is accepted once a refresh has run and found the key.
+* The refresh runs on the request that needs it. There is no background refresh: the keys are also re-fetched on a request once they are older than `jwksRefreshInterval`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy(
+    "http://localhost:8080", "my-realm", "my-client", "client-secret");
+
+// Configure periodic refresh every 10 minutes, with a 15-second cooldown for unknown keys
+policy.setJwksRefreshInterval(600);
+policy.setMinJwksRefreshInterval(15);
+
+from("direct:protected")
+    .policy(policy)
+    .to("mock:result");
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:protected
+      steps:
+        - policy:
+            ref: keycloakPolicy
+        - to:
+            uri: mock:result
+
+- beans:
+  - name: keycloakPolicy
+    type: org.apache.camel.component.keycloak.security.KeycloakSecurityPolicy
+    properties:
+      serverUrl: "http://localhost:8080"
+      realm: "my-realm"
+      clientId: "my-client"
+      clientSecret: "client-secret"
+      jwksRefreshInterval: 600
+      minJwksRefreshInterval: 15
+----
+====
+
 === Role-based Authorization
 
 [tabs]

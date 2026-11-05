@@ -19,6 +19,8 @@ package org.apache.camel.component.asterisk;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.asteriskjava.manager.ResponseEvents;
+import org.asteriskjava.manager.action.EventGeneratingAction;
 import org.asteriskjava.manager.action.ManagerAction;
 import org.asteriskjava.manager.response.ManagerResponse;
 import org.slf4j.Logger;
@@ -35,10 +37,14 @@ public class AsteriskProducer extends DefaultProducer {
     private final AsteriskConnection connection;
 
     public AsteriskProducer(AsteriskEndpoint endpoint) {
+        this(endpoint, new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword()));
+    }
+
+    AsteriskProducer(AsteriskEndpoint endpoint, AsteriskConnection connection) {
         super(endpoint);
 
         this.endpoint = endpoint;
-        this.connection = new AsteriskConnection(endpoint.getHostname(), endpoint.getUsername(), endpoint.getPassword());
+        this.connection = connection;
     }
 
     @Override
@@ -70,9 +76,15 @@ public class AsteriskProducer extends DefaultProducer {
         LOG.debug("Send action {}", action);
 
         ManagerAction managerAction = action.apply(exchange);
-        ManagerResponse managerResponse = connection.sendAction(managerAction);
-
-        exchange.getIn().setBody(managerResponse);
+        if (managerAction instanceof EventGeneratingAction eventGeneratingAction) {
+            // such as QUEUE_STATUS and SIP_PEERS: the response only says that the
+            // list will follow, the data comes as events until the complete event
+            ResponseEvents responseEvents = connection.sendEventGeneratingAction(eventGeneratingAction);
+            exchange.getIn().setBody(responseEvents);
+        } else {
+            ManagerResponse managerResponse = connection.sendAction(managerAction);
+            exchange.getIn().setBody(managerResponse);
+        }
     }
 
 }

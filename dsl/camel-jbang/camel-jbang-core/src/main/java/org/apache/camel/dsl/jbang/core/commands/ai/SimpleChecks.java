@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.spi.SimpleLanguageFunctionFactory;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.StringHelper;
@@ -104,6 +104,13 @@ final class SimpleChecks {
             if (simpleText == null || simpleText.isEmpty()) {
                 continue;
             }
+            // a filter of JsonPath or SpEL inside a function: said with the jsonpath step to write, in place of the
+            // parser's error when it has one
+            String filter = filterInFunction(simpleText);
+            if (filter != null) {
+                errors.add("Line " + lineNum + ": " + filter);
+                continue;
+            }
             // Skip what the catalog cannot validate because a placeholder is unresolved
             if (hasPlaceholderAsLogicalOperand(simpleText)) {
                 continue;
@@ -114,7 +121,8 @@ final class SimpleChecks {
             checkText(errors, catalog, simpleText, lineNum, predicate, isLogMessage,
                     hasAncestorEip(lines, i, lineIndent, "aggregate"));
         }
-        return errors;
+        // ${property.x}: the hint of the parser, with where the route keeps x
+        return HeaderPropertyMixups.withWhereKept(errors, content);
     }
 
     /**
@@ -174,6 +182,158 @@ final class SimpleChecks {
                 errors.add("Line " + lineNum + ": " + elvis);
             }
         }
+    }
+
+    /** The functions whose text in parentheses is another language: ${jsonpath($[?(@.sku == 'A')])} is right. */
+    private static final Pattern OTHER_LANGUAGE = Pattern.compile("(jsonpath|jq|xpath)\\s*\\(");
+
+    /** [?(@.orderId == '${header.id}')]: a JsonPath filter that compares a field. */
+    private static final Pattern JSONPATH_FILTER = Pattern.compile(
+            "\\[\\?\\(\\s*@\\.([A-Za-z_]\\w*)\\s*(==|!=|<=|>=|<|>)\\s*(.+?)\\s*\\)\\s*]");
+
+    /** .?[orderId == '${header.id}']: a SpEL selection that compares a field (.^[ the first match, .$[ the last). */
+    private static final Pattern SPEL_SELECTION = Pattern.compile(
+            "\\.[?^$]\\[\\s*(?:#this\\.)?([A-Za-z_]\\w*)\\s*(==|!=|<=|>=|<|>)\\s*(.+?)\\s*]");
+
+    /** .![orderId]: a SpEL projection of a field. */
+    private static final Pattern SPEL_PROJECTION = Pattern.compile("\\.!\\[\\s*(?:#this\\.)?([A-Za-z_]\\w*)\\s*]");
+
+    /**
+     * What a function reads the filter on: the body (as written, or bodyAs a type), or a header, a variable or an
+     * exchange property, then fields; a field of the body is a step of the path, the others the source of jsonpath.
+     */
+    private static final Pattern FILTERED = Pattern.compile(
+            "(body|(?:mandatoryB|b)odyAs\\([^)]*\\)|(header|headers|variable|variables|exchangeProperty)[.:]([\\w-]+))"
+                                                            + "((?:\\??\\.[A-Za-z_]\\w*|\\[\\s*'?[A-Za-z_]\\w*'?\\s*])*)\\.?");
+
+    /** One field of what a function reads: .lines, ?.lines, [lines] or ['lines']. */
+    private static final Pattern FIELD = Pattern.compile("[A-Za-z_]\\w*");
+
+    /**
+     * A filter or a projection of another language inside a function, which the parser reads as a key or a method: the
+     * expression passes and fails on the first message. r25 rest-code-first step 1:
+     * <tt>${bodyAs(List).?[orderId == '${header.id}'].size()}</tt> failed with "ClassNotFoundException: List" and
+     * "Method with name: ? not found", and <tt>${body[?(@.orderId == '${header.id}')].size()}</tt> with "Key
+     * ?(@.orderId == 'ORD-1001') not found". The message gives the jsonpath step that does it, as YAML lines.
+     *
+     * @param  text the simple text
+     * @return      the message, or null when no function has such a filter
+     */
+    static String filterInFunction(String text) {
+        if (text == null || !text.contains("${")) {
+            return null;
+        }
+        // every function, the nested ones too: each is read without the functions nested in it
+        for (int open = text.indexOf("${"); open >= 0; open = text.indexOf("${", open + 2)) {
+            int close = closingBrace(text, open);
+            if (close < 0) {
+                continue;
+            }
+            String inner = text.substring(open + 2, close);
+            int at = OTHER_LANGUAGE.matcher(inner).lookingAt() ? -1 : filterIndex(inner);
+            if (at >= 0) {
+                return filterMessage(inner, at);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * The index of the first filter or projection of the text of a function, outside its quoted literals and nested
+     * functions: [?( or @. of JsonPath, .?[ .^[ .$[ or .![ of SpEL; -1 when it has none.
+     */
+    private static int filterIndex(String inner) {
+        char quote = 0;
+        for (int i = 0; i < inner.length(); i++) {
+            char ch = inner.charAt(i);
+            if (quote != 0) {
+                if (ch == quote) {
+                    quote = 0;
+                }
+            } else if (ch == '\'' || ch == '"') {
+                quote = ch;
+            } else if (inner.startsWith("${", i)) {
+                int close = closingBrace(inner, i);
+                if (close < 0) {
+                    return -1;
+                }
+                i = close;
+            } else if (inner.startsWith("[?(", i) || inner.startsWith("@.", i)
+                    || ch == '.' && i + 2 < inner.length() && "?^$!".indexOf(inner.charAt(i + 1)) >= 0
+                            && inner.charAt(i + 2) == '[') {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** The message for a filter at the index of the text of a function, with the jsonpath step that picks it. */
+    private static String filterMessage(String inner, int at) {
+        boolean spel = inner.charAt(at) == '.';
+        String written = spel ? inner.substring(at, at + 3) + "...]" : inner.startsWith("@.", at) ? "@." : "[?(...)]";
+        StringBuilder sb = new StringBuilder("Simple has no ")
+                .append(spel && inner.charAt(at + 1) == '!' ? "projection" : "filter").append(": ").append(written)
+                .append(spel ? " is SpEL" : " is JsonPath").append(", which Simple reads as a ")
+                .append(spel ? "method" : "key").append(", so it fails at runtime. ");
+        // the path to the List the filter is on, and where it is when not in the body
+        String root = "$";
+        String source = null;
+        Matcher filtered = FILTERED.matcher(inner.substring(0, at));
+        if (filtered.matches()) {
+            Matcher field = FIELD.matcher(filtered.group(4));
+            StringBuilder fields = new StringBuilder();
+            while (field.find()) {
+                fields.append('.').append(field.group());
+            }
+            root += fields;
+            if (filtered.group(2) != null) {
+                String kind = filtered.group(2);
+                source = (kind.startsWith("header") ? "header" : kind.startsWith("variable") ? "variable" : "property")
+                         + ":" + filtered.group(3);
+            }
+        }
+        String path;
+        boolean one = false;
+        Matcher m = (spel ? SPEL_SELECTION : JSONPATH_FILTER).matcher(inner.substring(at));
+        Matcher projection = SPEL_PROJECTION.matcher(inner.substring(at));
+        if (m.lookingAt()) {
+            String value = m.group(3);
+            if (value.startsWith("\"") && value.endsWith("\"") && value.length() > 1) {
+                value = "'" + value.substring(1, value.length() - 1) + "'";
+            } else if (value.startsWith("${") && value.endsWith("}")) {
+                value = "'" + value + "'";
+            } else if (!value.matches("'.*'|-?\\d+(\\.\\d+)?|true|false|null")) {
+                // a name of the other language, such as headers.id in SpEL: here the value is a header
+                value = "'${header.id}'";
+            }
+            one = "==".equals(m.group(2));
+            path = root + "[?(@." + m.group(1) + " " + m.group(2) + " " + value + ")]";
+            sb.append(one
+                    ? "To pick the element whose " + m.group(1) + " is " + value
+                      + ", set the body with jsonpath before this step; the body is then that element, or null when"
+                      + " none or several match (test that with ${body} == null):"
+                    : "To keep the elements whose " + m.group(1) + " " + m.group(2) + " " + value
+                      + ", set the body with jsonpath before this step; the body is then a List of them:");
+        } else if (spel && projection.lookingAt()) {
+            path = root + "[*]." + projection.group(1);
+            sb.append("To get the ").append(projection.group(1)).append(" of each element, set the body with jsonpath")
+                    .append(" before this step; the body is then a List of them:");
+        } else {
+            one = true;
+            path = root + "[?(@.field == '${header.id}')]";
+            sb.append("To pick the element whose field has a given value, such as the header id, set the body with")
+                    .append(" jsonpath before this step; the body is then that element, or null when none or several")
+                    .append(" match:");
+        }
+        sb.append("\n- setBody:\n    expression:\n      jsonpath:\n        expression: ")
+                .append(path.contains("\"") ? "'" + path.replace("'", "''") + "'" : "\"" + path + "\"");
+        if (source != null) {
+            sb.append("\n        source: ").append(source);
+        }
+        if (one) {
+            sb.append("\n        resultType: java.util.Map");
+        }
+        return sb.toString();
     }
 
     /** The Camel version from which the elvis operator may be written inside ${...} (CAMEL-26401). */

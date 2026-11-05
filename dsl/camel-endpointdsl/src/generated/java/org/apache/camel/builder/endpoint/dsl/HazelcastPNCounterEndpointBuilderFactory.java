@@ -214,6 +214,20 @@ public interface HazelcastPNCounterEndpointBuilderFactory {
          * Since: 4.19
          * Maven coordinates: org.apache.camel:camel-hazelcast
          * 
+         * @return the dsl builder for the headers' name.
+         */
+        default HazelcastPNCounterHeaderNameBuilder hazelcastPncounter() {
+            return HazelcastPNCounterHeaderNameBuilder.INSTANCE;
+        }
+        /**
+         * Hazelcast PN Counter (camel-hazelcast)
+         * Increment, decrement, get, etc. operations on a Hazelcast PN Counter
+         * (CRDT counter).
+         * 
+         * Category: cache,clustering
+         * Since: 4.19
+         * Maven coordinates: org.apache.camel:camel-hazelcast
+         * 
          * Syntax: <code>hazelcast-pncounter:cacheName</code>
          * 
          * Path parameter: cacheName (required)
@@ -248,6 +262,29 @@ public interface HazelcastPNCounterEndpointBuilderFactory {
             return HazelcastPNCounterEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
 
+    }
+    /**
+     * The builder of headers' name for the Hazelcast PN Counter component.
+     */
+    public static class HazelcastPNCounterHeaderNameBuilder {
+        /**
+         * The internal instance of the builder used to access to all the
+         * methods representing the name of headers.
+         */
+        public static final HazelcastPNCounterHeaderNameBuilder INSTANCE = new HazelcastPNCounterHeaderNameBuilder();
+
+        /**
+         * The operation to perform.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code HazelcastOperationType}.
+         */
+        public String hazelcastOperationType() {
+            return "CamelHazelcastOperationType";
+        }
     }
     static HazelcastPNCounterEndpointBuilder endpointBuilder(String componentName, String path) {
         class HazelcastPNCounterEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastPNCounterEndpointBuilder, AdvancedHazelcastPNCounterEndpointBuilder {

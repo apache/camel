@@ -266,16 +266,16 @@ import org.web3j.quorum.Quorum;
                                                           carriers = { Carrier.POJO, Carrier.NULL },
                                                           javaType = "org.web3j.protocol.core.methods.response.Transaction"),
                                            @BodyType.When(option = "operation", value = "ETH_GET_TRANSACTION_RECEIPT",
-                                                          carriers = Carrier.POJO,
-                                                          javaType = "java.util.Optional<org.web3j.protocol.core.methods.response.TransactionReceipt>"),
+                                                          carriers = { Carrier.POJO, Carrier.NULL },
+                                                          javaType = "org.web3j.protocol.core.methods.response.TransactionReceipt"),
                                            @BodyType.When(option = "operation", value = "QUORUM_NODE_INFO",
                                                           carriers = Carrier.POJO,
                                                           javaType = "org.web3j.protocol.core.methods.response.admin.AdminNodeInfo.NodeInfo") },
                                    description = "The result of the JSON-RPC call of the operation, selected by the"
                                                  + " CamelWeb3jOperation header or the operation option: a String for a"
                                                  + " hash, an address or hex data, a BigInteger for a quantity, a Boolean, a"
-                                                 + " List, or a web3j object such as an EthBlock.Block, a Transaction (null"
-                                                 + " when not found) or an Optional of a TransactionReceipt. On a JSON-RPC"
+                                                 + " List, or a web3j object such as an EthBlock.Block, a Transaction or a"
+                                                 + " TransactionReceipt (null when not found). On a JSON-RPC"
                                                  + " error the body is unchanged and the exchange fails, with the"
                                                  + " CamelWeb3jErrorCode, CamelWeb3jErrorData and CamelWeb3jErrorMessage headers"))
 public class Web3jEndpoint extends DefaultEndpoint implements EndpointServiceLocation {

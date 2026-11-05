@@ -33,22 +33,22 @@ import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
-import org.apache.camel.dsl.jbang.export.ExportContext;
-import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.Exporter;
-import org.apache.camel.dsl.jbang.export.ProjectExporter;
-import org.apache.camel.dsl.jbang.export.common.HawtioVersion;
-import org.apache.camel.dsl.jbang.export.common.MavenResolver;
-import org.apache.camel.dsl.jbang.export.common.Printer;
-import org.apache.camel.dsl.jbang.export.common.PropertyResolver;
-import org.apache.camel.dsl.jbang.export.common.QuarkusPlatform;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
+import org.apache.camel.dsl.jbang.run.common.MavenResolver;
+import org.apache.camel.dsl.jbang.run.common.Printer;
+import org.apache.camel.dsl.jbang.run.common.PropertyResolver;
+import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.run.export.ExportContext;
+import org.apache.camel.dsl.jbang.run.export.ExportRequest;
+import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 import org.apache.camel.tooling.maven.MavenGav;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 
-import static org.apache.camel.dsl.jbang.export.common.CamelJBangConstants.*;
+import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
 
 public abstract class ExportBaseCommand extends CamelCommand {
 
@@ -263,10 +263,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
                         description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
     protected String hawtioVersion;
 
-    // set by camel kubernetes run, but not passed on to the exporter (as before the export API)
-    protected boolean symbolicLink;
-    protected boolean javaLiveReload;
-
     protected ExportBaseCommand(CamelJBangMain main) {
         super(main);
     }
@@ -373,7 +369,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
      * --clean-dir.
      */
     static boolean isCurrentDirOrParent(String dir) {
-        return Exporter.isCurrentDirOrParent(dir);
+        return ExportHelper.isCurrentDirOrParent(dir);
     }
 
     /**
@@ -382,14 +378,9 @@ public abstract class ExportBaseCommand extends CamelCommand {
      */
     protected Integer exportRuntime(Path exportBaseDir) throws Exception {
         ExportRequest request = toRequest();
-        request.exportBaseDir = exportBaseDir;
+        request.baseDir = exportBaseDir;
         applySystemProperties(request);
-        Exporter exporter = new ProjectExporter(exportContext()).createExporter(request);
-        if (exporter == null) {
-            printer().printErr("Unknown runtime: " + runtime);
-            return 1;
-        }
-        return exporter.export();
+        return new ProjectExporter(exportContext()).export(exportBaseDir, request);
     }
 
     /**
@@ -415,7 +406,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
     }
 
     public Comparator<MavenGav> mavenGavComparator() {
-        return Exporter.mavenGavComparator();
+        return ExportHelper.mavenGavComparator();
     }
 
     /**
@@ -423,7 +414,7 @@ public abstract class ExportBaseCommand extends CamelCommand {
      */
     protected ExportRequest toRequest() {
         ExportRequest request = new ExportRequest();
-        request.exportBaseDir = this.exportBaseDir;
+        request.baseDir = this.exportBaseDir;
         request.files = this.files;
         request.dependencies = this.dependencies;
         request.runtime = this.runtime;

@@ -50,24 +50,26 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 @BodyTypes(consumerOut = @BodyType(value = Carrier.STREAM,
                                    byOption = {
                                            @BodyType.When(option = "methodName", value = "collection",
-                                                          carriers = Carrier.ITERATOR),
+                                                          carriers = Carrier.MAP),
                                            @BodyType.When(option = "apiName", value = "RESOURCE_TABLES",
                                                           carriers = Carrier.NULL) },
-                                   description = "One message per poll with the return value of the method: the JSON"
-                                                 + " response of get/resource as a stream; get/collection gives an Iterator"
-                                                 + " of Dhis2Resource, which are Maps of the JSON fields, in one message,"
-                                                 + " not split: split the body to get one message per item"),
-           producerIn = @BodyType(value = { Carrier.TEXT, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
+                                   description = "The return value of the method: one message per poll with the JSON"
+                                                 + " response of get/resource as a stream; get/collection gives one"
+                                                 + " message per item, a Dhis2Resource, which is a Map of the JSON fields"),
+           producerIn = @BodyType(value = {
+                   Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.MAP, Carrier.LIST, Carrier.POJO,
+                   Carrier.NULL },
                                   byOption = {
                                           @BodyType.When(option = "apiName", value = "GET", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "apiName", value = "DELETE", carriers = Carrier.ANY),
                                           @BodyType.When(option = "apiName", value = "RESOURCE_TABLES",
                                                          carriers = Carrier.ANY) },
-                                  description = "post, put and delete send the body as the JSON resource of the request,"
-                                                + " also without inBody: text as it is, and a Map, a List or a POJO, such as"
-                                                + " a DHIS2 model class, serialized to JSON by Jackson; no body sends none."
-                                                + " Bytes and a file are serialized as a JSON string and a stream fails:"
-                                                + " convertBodyTo String first. A body left by an earlier step is sent too,"
-                                                + " also by delete. get and resourceTables do not use the body"),
+                                  description = "post and put send the body as the JSON resource of the request, also"
+                                                + " without inBody: text, bytes, a stream or a file as the JSON it holds,"
+                                                + " and a Map, a List or a POJO, such as a DHIS2 model class, serialized to"
+                                                + " JSON by Jackson; no body sends none. delete sends a resource only when"
+                                                + " given by inBody=resource or the CamelDhis2.resource header. get and"
+                                                + " resourceTables do not use the body"),
            producerOut = @BodyType(value = Carrier.STREAM,
                                    byOption = {
                                            @BodyType.When(option = "methodName", value = "collection",

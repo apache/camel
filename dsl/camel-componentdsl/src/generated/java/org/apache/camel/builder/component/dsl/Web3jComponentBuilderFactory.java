@@ -149,7 +149,13 @@ public interface Web3jComponentBuilderFactory {
     
         
         /**
-         * Operation to use.
+         * Operation to use. The producer needs an operation, set with this
+         * option or the CamelWeb3jOperation header. The consumer needs one of
+         * the observable operations: ETH_LOG_OBSERVABLE,
+         * ETH_BLOCK_HASH_OBSERVABLE, ETH_PENDING_TRANSACTION_HASH_OBSERVABLE,
+         * TRANSACTION_OBSERVABLE, PENDING_TRANSACTION_OBSERVABLE,
+         * BLOCK_OBSERVABLE, REPLAY_BLOCKS_OBSERVABLE or
+         * REPLAY_TRANSACTIONS_OBSERVABLE.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

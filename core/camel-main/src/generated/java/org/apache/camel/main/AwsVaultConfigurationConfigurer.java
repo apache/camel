@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.vault.AwsVaultConfiguration target = (org.apache.camel.vault.AwsVaultConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": target.setAccessKey(property(camelContext, java.lang.String.class, value)); return true;
         case "awsvaultconfiguration":
@@ -71,7 +72,7 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return java.lang.String.class;
         case "awsvaultconfiguration":
@@ -121,7 +122,7 @@ public class AwsVaultConfigurationConfigurer extends org.apache.camel.support.co
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.vault.AwsVaultConfiguration target = (org.apache.camel.vault.AwsVaultConfiguration) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "accesskey":
         case "accessKey": return target.getAccessKey();
         case "awsvaultconfiguration":

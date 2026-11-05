@@ -33,7 +33,7 @@
 
   <!-- Defined the real JAXRS back end service  -->
   <jaxrs:server id="restService"
-		        address="http://localhost:${CXFTestSupport.port2}/CxfOperationExceptionTest/rest" 
+		        address="http://localhost:${CxfOperationExceptionTest.port2}/CxfOperationExceptionTest/rest" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -45,11 +45,11 @@
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
    
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
-  <cxf:rsServer id="rsServer" address="http://localhost:${CXFTestSupport.port1}/CxfOperationExceptionTest/route"
+  <cxf:rsServer id="rsServer" address="http://localhost:${CxfOperationExceptionTest.port1}/CxfOperationExceptionTest/route"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 
   <!-- Defined the client endpoint to create the cxf-rs producer -->
-  <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port1}/CxfOperationExceptionTest/rest"
+  <cxf:rsClient id="rsClient" address="http://localhost:${CxfOperationExceptionTest.port1}/CxfOperationExceptionTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
   
   <!-- The camel route context -->

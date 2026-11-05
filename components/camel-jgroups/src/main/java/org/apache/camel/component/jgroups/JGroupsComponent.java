@@ -17,11 +17,9 @@
 package org.apache.camel.component.jgroups;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -30,12 +28,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.jgroups.JChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Component providing support for messages multicasted from- or to JGroups channels ({@code org.jgroups.Channel}).
  */
 @Component("jgroups")
 public class JGroupsComponent extends DefaultComponent {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsComponent.class);
 
     @Metadata
     private JChannel channel;
@@ -66,8 +68,6 @@ public class JGroupsComponent extends DefaultComponent {
     // the connected producers and consumers of each channel that the endpoints did not create (such as the channel of
     // this component), as several endpoints use such a channel
     private final Map<JChannel, Integer> sharedChannelUsers = new IdentityHashMap<>();
-    // the channels that the endpoints did not create and connected, closed when this component stops
-    private final Set<JChannel> sharedChannels = Collections.newSetFromMap(new IdentityHashMap<>());
     private final Lock sharedChannelLock = new ReentrantLock();
 
     public JGroupsComponent() {
@@ -158,7 +158,6 @@ public class JGroupsComponent extends DefaultComponent {
         try {
             sharedChannel.connect(clusterName);
             sharedChannelUsers.merge(sharedChannel, 1, Integer::sum);
-            sharedChannels.add(sharedChannel);
         } finally {
             sharedChannelLock.unlock();
         }
@@ -188,22 +187,25 @@ public class JGroupsComponent extends DefaultComponent {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        List<JChannel> channels;
+        List<JChannel> connected;
         sharedChannelLock.lock();
         try {
-            channels = new ArrayList<>(sharedChannels);
+            connected = new ArrayList<>(sharedChannelUsers.keySet());
             sharedChannelUsers.clear();
-            sharedChannels.clear();
         } finally {
             sharedChannelLock.unlock();
         }
-        // the channel of the component is used by all its endpoints, so it is closed with the component, as is a
-        // channel given to an endpoint
-        if (channel != null && !channels.contains(channel)) {
-            channels.add(channel);
-        }
-        for (JChannel sharedChannel : channels) {
-            sharedChannel.close();
+        // the channels that the endpoints did not create (the channel of this component, or a channel given to an
+        // endpoint) belong to the user, who closes them: a closed JChannel cannot be connected again, so they are only
+        // disconnected, and the routes can connect them again when Camel starts again. A channel is still connected
+        // here when a producer that Camel does not stop (such as one that the application created and started itself)
+        // still uses it; it is disconnected, as the node must leave the cluster when Camel stops
+        for (JChannel sharedChannel : connected) {
+            try {
+                sharedChannel.disconnect();
+            } catch (Exception e) {
+                LOG.warn("Error disconnecting the JGroups channel {}: {}", sharedChannel, e.getMessage(), e);
+            }
         }
     }
 

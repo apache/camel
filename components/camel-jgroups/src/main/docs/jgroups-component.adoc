@@ -183,6 +183,13 @@ Using `jgroups` component on the producer side of the route will forward
 body of the Camel exchanges to the `JChannel` instance managed by the
 endpoint.
 
+The body is Java-serialized into the JGroups message, so it must be `Serializable`.
+A stream body (such as an `InputStream`, a `Reader` or a stream cache), a file
+from the `file` component and a `java.nio.file.Path` are read and sent as a `byte[]`
+of their content. A `java.io.File` is `Serializable` and is sent as is. Any other
+body that is not `Serializable` fails with an `InvalidPayloadException` that says to
+convert it first, for example to a `String` or a `byte[]`.
+
 [tabs]
 ====
 Java::

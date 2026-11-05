@@ -52,8 +52,8 @@ public class ${cn} implements InvokeOnHeaderStrategy {
         #else
             #set( $ret = "callback" )
         #end
-        #if( $option.key.toLowerCase() != $option.key )
-        case "${option.key.toLowerCase()}":
+        #if( $option.key.toLowerCase($rootLocale) != $option.key )
+        case "${option.key.toLowerCase($rootLocale)}":
         #end
         #if( !$sync || $option.returnType == "VOID" )
         case "${option.key}": target.${option.methodName}(${args}); return ${ret};

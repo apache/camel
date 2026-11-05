@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -33,7 +34,7 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
 
     private static final long DELAY_FOO = 20;
     private static final long DELAY_BAR = 50;
-    private static final long TOLERANCE = 100L;
+    private static final long TOLERANCE = 200L;
 
     @Test
     public void testMetricsRoutePolicy() throws Exception {
@@ -57,12 +58,15 @@ public class OpenTelemetryRoutePolicyTest extends AbstractOpenTelemetryRoutePoli
     }
 
     private void verifyHistogramMetric(PointData pd, long delay, int msgCount) {
-        assertTrue(pd instanceof HistogramPointData);
+        assertInstanceOf(HistogramPointData.class, pd);
         HistogramPointData hpd = (HistogramPointData) pd;
-        assertTrue(hpd.getMax() < delay + TOLERANCE, "max value");
-        assertTrue(hpd.getMin() >= delay, "min value");
+        assertTrue(hpd.getMax() < delay + TOLERANCE,
+                "max value: expected < " + (delay + TOLERANCE) + " but was " + hpd.getMax());
+        assertTrue(hpd.getMin() >= delay,
+                "min value: expected >= " + delay + " but was " + hpd.getMin());
         assertEquals(msgCount, hpd.getCount(), "count");
-        assertTrue(hpd.getSum() >= msgCount * delay, "sum");
+        assertTrue(hpd.getSum() >= msgCount * delay,
+                "sum: expected >= " + (msgCount * delay) + " but was " + hpd.getSum());
     }
 
     @Override

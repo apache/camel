@@ -27,7 +27,7 @@ import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.UsageErrorHandl
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 

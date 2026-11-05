@@ -27,7 +27,6 @@ import ai.djl.modality.Output;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
 
@@ -126,9 +125,7 @@ public class ZeroShotClassificationPredictor extends AbstractTaskPredictor {
     @Override
     protected void processOutput(Exchange exchange, Output output) throws Exception {
         String result = output.getAsString("data");
-        if (result.contains("\"error\"")) {
-            throw new RuntimeCamelException("Python inference failed: " + result);
-        }
+        failOnPythonError(result);
         exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, result);
         if (config.isAutoSelect()) {
             exchange.getMessage().setBody(result);

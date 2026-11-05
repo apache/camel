@@ -26,14 +26,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.common.DataFormat;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,11 +43,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CxfConsumerTest extends CamelTestSupport {
-    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:"
-                                                            + CXFTestSupport.getPort1() + "/CxfConsumerTest/test";
-    protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
-                                                        + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
-                                                        + "&publishedEndpointUrl=http://www.simple.com/services/test";
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        SIMPLE_ENDPOINT_ADDRESS = "http://localhost:"
+                                  + PORT.getPort() + "/CxfConsumerTest/test";
+        SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
+                              + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+                              + "&publishedEndpointUrl=http://www.simple.com/services/test";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    protected static String SIMPLE_ENDPOINT_ADDRESS;
+    protected static String SIMPLE_ENDPOINT_URI;
 
     private static final String ECHO_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                + "<soap:Body><ns1:echo xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"

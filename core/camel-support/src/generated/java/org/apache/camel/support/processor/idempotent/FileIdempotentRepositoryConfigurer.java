@@ -2,6 +2,7 @@
 package org.apache.camel.support.processor.idempotent;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.support.processor.idempotent.FileIdempotentRepository target = (org.apache.camel.support.processor.idempotent.FileIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachesize":
         case "cacheSize": target.setCacheSize(property(camelContext, int.class, value)); return true;
         case "dropoldestfilestore":
@@ -37,7 +38,7 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachesize":
         case "cacheSize": return int.class;
         case "dropoldestfilestore":
@@ -53,7 +54,7 @@ public class FileIdempotentRepositoryConfigurer extends org.apache.camel.support
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.support.processor.idempotent.FileIdempotentRepository target = (org.apache.camel.support.processor.idempotent.FileIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "cachesize":
         case "cacheSize": return target.getCacheSize();
         case "dropoldestfilestore":

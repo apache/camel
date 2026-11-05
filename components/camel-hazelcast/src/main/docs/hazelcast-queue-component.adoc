@@ -419,6 +419,10 @@ YAML::
 ----
 ====
 
+The message body is the `java.util.function.Predicate` that selects the items to remove, and after the call the body
+is `true` when an item was removed. A Hazelcast queue cannot remove through its iterator, so the producer tests the
+items the queue holds and then removes the matching ones in one call: the operation is not atomic.
+
 === Example for *drain to*:
 
 [tabs]
@@ -460,6 +464,9 @@ YAML::
             uri: hazelcast-queue:bar
 ----
 ====
+
+The *CamelHazelcastDrainToCollection* header must hold the `Collection` the items are moved into: without it the
+producer fails. After the call the body is the number of items moved.
 
 === Example for *take*:
 

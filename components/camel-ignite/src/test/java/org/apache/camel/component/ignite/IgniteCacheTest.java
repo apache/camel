@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ignite;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,8 @@ import javax.cache.Cache.Entry;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.camel.CamelException;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ignite.cache.IgniteCacheComponent;
 import org.apache.camel.component.ignite.cache.IgniteCacheOperation;
 import org.apache.camel.util.ObjectHelper;
@@ -256,6 +259,71 @@ public class IgniteCacheTest extends AbstractIgniteTest {
         Assertions.assertThat(ignite().cache(resourceUid).get("abcd")).isEqualTo("1234");
 
         Assertions.assertThat(result).isNull();
+    }
+
+    @Test
+    void testPutMapWithKeyStoresTheMapAsOneValue() {
+        Map<String, String> map = new HashMap<>();
+        map.put("abcd", "1234");
+        map.put("efgh", "5678");
+
+        Object result = template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=PUT", map,
+                IgniteConstants.IGNITE_CACHE_KEY, "orders");
+
+        Assertions.assertThat(ignite().cache(resourceUid).size(CachePeekMode.ALL)).isEqualTo(1);
+        Assertions.assertThat(ignite().cache(resourceUid).get("orders")).isEqualTo(map);
+        Assertions.assertThat(result).isEqualTo(map);
+    }
+
+    @Test
+    void testPutMapTreatCollectionsAsCacheObjectsStoresTheMapAsOneValue() {
+        Map<String, String> map = new HashMap<>();
+        map.put("abcd", "1234");
+        map.put("efgh", "5678");
+
+        template.requestBodyAndHeader("ignite-cache:" + resourceUid + "?operation=PUT&treatCollectionsAsCacheObjects=true",
+                map, IgniteConstants.IGNITE_CACHE_KEY, "orders");
+
+        Assertions.assertThat(ignite().cache(resourceUid).size(CachePeekMode.ALL)).isEqualTo(1);
+        Assertions.assertThat(ignite().cache(resourceUid).get("orders")).isEqualTo(map);
+
+        // without a key there is no entry to store the Map in
+        Assertions
+                .assertThatThrownBy(() -> template.requestBody(
+                        "ignite-cache:" + resourceUid + "?operation=PUT&treatCollectionsAsCacheObjects=true", map))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause().isInstanceOf(RuntimeCamelException.class)
+                .hasMessageContaining(IgniteConstants.IGNITE_CACHE_KEY);
+        Assertions.assertThat(ignite().cache(resourceUid).size(CachePeekMode.ALL)).isEqualTo(1);
+    }
+
+    @Test
+    void testPutMapEntriesPropagatesTheBody() {
+        Map<String, String> map = new HashMap<>();
+        map.put("abcd", "1234");
+        map.put("efgh", "5678");
+
+        Object result = template.requestBody("ignite-cache:" + resourceUid + "?operation=PUT", map);
+
+        Assertions.assertThat(ignite().cache(resourceUid).size(CachePeekMode.ALL)).isEqualTo(2);
+        Assertions.assertThat(result).isEqualTo(map);
+
+        result = template.requestBody(
+                "ignite-cache:" + resourceUid + "?operation=PUT&propagateIncomingBodyIfNoReturnValue=false", map);
+
+        Assertions.assertThat(ignite().cache(resourceUid).size(CachePeekMode.ALL)).isEqualTo(2);
+        Assertions.assertThat(result).isNull();
+    }
+
+    @Test
+    void testNoOperationFails() {
+        Assertions
+                .assertThatThrownBy(() -> template.requestBodyAndHeader("ignite-cache:" + resourceUid, "1234",
+                        IgniteConstants.IGNITE_CACHE_KEY, "abcd"))
+                .isInstanceOf(CamelExecutionException.class)
+                .cause().isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("operation option")
+                .hasMessageContaining(IgniteConstants.IGNITE_CACHE_OPERATION);
     }
 
     @AfterEach

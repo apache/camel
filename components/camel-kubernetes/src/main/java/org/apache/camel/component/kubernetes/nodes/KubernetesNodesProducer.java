@@ -94,6 +94,10 @@ public class KubernetesNodesProducer extends DefaultProducer {
 
     protected void doListNodesByLabels(Exchange exchange) {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
+        if (ObjectHelper.isEmpty(labels)) {
+            LOG.error("Get nodes by labels require specify a labels set");
+            throw new IllegalArgumentException("Get nodes by labels require specify a labels set");
+        }
         NodeList nodeList = getEndpoint().getKubernetesClient()
                 .nodes()
                 .withLabels(labels)
@@ -133,7 +137,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     String.format("%s a specific node require specify a node spec bean", operationName));
         }
-        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, Map.class);
+        Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
         Node nodeCreating = new NodeBuilder().withNewMetadata().withName(nodeName).withLabels(labels).endMetadata()
                 .withSpec(nodeSpec).build();
         Node node = operation.apply(getEndpoint().getKubernetesClient().nodes().resource(nodeCreating));

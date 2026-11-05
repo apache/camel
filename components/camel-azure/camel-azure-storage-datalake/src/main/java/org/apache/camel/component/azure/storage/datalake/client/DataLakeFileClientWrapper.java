@@ -35,6 +35,7 @@ import com.azure.storage.file.datalake.models.PathHttpHeaders;
 import com.azure.storage.file.datalake.models.PathInfo;
 import com.azure.storage.file.datalake.models.PathProperties;
 import com.azure.storage.file.datalake.options.DataLakeFileAppendOptions;
+import com.azure.storage.file.datalake.options.DataLakeFileInputStreamOptions;
 import com.azure.storage.file.datalake.options.FileParallelUploadOptions;
 import com.azure.storage.file.datalake.options.FileQueryOptions;
 import com.azure.storage.file.datalake.sas.DataLakeServiceSasSignatureValues;
@@ -64,6 +65,12 @@ public class DataLakeFileClientWrapper {
 
     public InputStream openInputStream() {
         return client.openInputStream().getInputStream();
+    }
+
+    public InputStream openInputStream(final FileRange range, final DataLakeRequestConditions requestConditions) {
+        return client
+                .openInputStream(new DataLakeFileInputStreamOptions().setRange(range).setRequestConditions(requestConditions))
+                .getInputStream();
     }
 
     public Response<InputStream> openQueryInputStreamWithResponse(final FileQueryOptions queryOptions) {

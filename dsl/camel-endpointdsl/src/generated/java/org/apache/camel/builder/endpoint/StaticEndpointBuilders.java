@@ -6525,9 +6525,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 13 enums and the value can be one of: copy, delete, get,
-     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
-     * watch
+     * There are 17 enums and the value can be one of: copy, create, delete,
+     * download, emptyTrash, export, generateIds, get, getStartPageToken, hide,
+     * list, listLabels, modifyLabels, stop, unhide, update, watch
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6553,9 +6553,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 13 enums and the value can be one of: copy, delete, get,
-     * getIdForEmail, insert, list, patch, stop, touch, trash, untrash, update,
-     * watch
+     * There are 17 enums and the value can be one of: copy, create, delete,
+     * download, emptyTrash, export, generateIds, get, getStartPageToken, hide,
+     * list, listLabels, modifyLabels, stop, unhide, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6662,9 +6662,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 16 enums and the value can be one of: attachments, create,
-     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
-     * stop, trash, untrash, update, watch
+     * There are 17 enums and the value can be one of: batchDelete, batchModify,
+     * create, delete, get, getProfile, gmailImport, insert, list, modify,
+     * patch, send, stop, trash, untrash, update, watch
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6689,9 +6689,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 16 enums and the value can be one of: attachments, create,
-     * delete, get, getProfile, gmailImport, insert, list, modify, patch, send,
-     * stop, trash, untrash, update, watch
+     * There are 17 enums and the value can be one of: batchDelete, batchModify,
+     * create, delete, get, getProfile, gmailImport, insert, list, modify,
+     * patch, send, stop, trash, untrash, update, watch
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -6845,8 +6845,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 6 enums and the value can be one of: create, get, update,
-     * append, batchUpdate, clear
+     * There are 12 enums and the value can be one of: append, batchClear,
+     * batchClearByDataFilter, batchGet, batchGetByDataFilter, batchUpdate,
+     * batchUpdateByDataFilter, clear, create, get, getByDataFilter, update
      * 
      * @param path apiName/methodName
      * @return the dsl builder
@@ -6870,8 +6871,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
-     * There are 6 enums and the value can be one of: create, get, update,
-     * append, batchUpdate, clear
+     * There are 12 enums and the value can be one of: append, batchClear,
+     * batchClearByDataFilter, batchGet, batchGetByDataFilter, batchUpdate,
+     * batchUpdateByDataFilter, clear, create, get, getByDataFilter, update
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11417,10 +11419,11 @@ public class StaticEndpointBuilders {
      * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
      * is either a Hashtable or Map then a new javax.naming.directory.DirContext
      * instance is created for each use. If the bean is a
-     * javax.naming.directory.DirContext then the bean is used as given. The
-     * latter may not be possible in all situations where the
-     * javax.naming.directory.DirContext must not be shared, and in those
-     * situations it can be better to use java.util.Hashtable or Map instead.
+     * javax.naming.directory.DirContext then the bean is used as given, and it
+     * is closed after each use, so the bean must be prototype scoped (a new
+     * instance for each lookup). A singleton
+     * javax.naming.directory.InitialDirContext bean works for one exchange
+     * only, so in those situations use java.util.Hashtable or Map instead.
      * 
      * @param path dirContextName
      * @return the dsl builder
@@ -11443,10 +11446,11 @@ public class StaticEndpointBuilders {
      * java.util.Hashtable, or Map bean to lookup in the registry. If the bean
      * is either a Hashtable or Map then a new javax.naming.directory.DirContext
      * instance is created for each use. If the bean is a
-     * javax.naming.directory.DirContext then the bean is used as given. The
-     * latter may not be possible in all situations where the
-     * javax.naming.directory.DirContext must not be shared, and in those
-     * situations it can be better to use java.util.Hashtable or Map instead.
+     * javax.naming.directory.DirContext then the bean is used as given, and it
+     * is closed after each use, so the bean must be prototype scoped (a new
+     * instance for each lookup). A singleton
+     * javax.naming.directory.InitialDirContext bean works for one exchange
+     * only, so in those situations use java.util.Hashtable or Map instead.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -11469,7 +11473,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param path ldapConnectionName
      * @return the dsl builder
@@ -11490,7 +11496,9 @@ public class StaticEndpointBuilders {
      * Path parameter: ldapConnectionName (required)
      * The name of the LdapConnection bean to pull from the registry. Note that
      * this must be of scope prototype to avoid it being shared among threads or
-     * using a connection that has timed out.
+     * using a connection that has timed out. The connection is closed after
+     * each message, and bound again with its configured name and credentials
+     * when it is used for the next message.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -17615,8 +17623,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-     * MENTIONS, LIST, UNKNOWN
+     * There are 4 enums and the value can be one of: HOME, USER, MENTIONS, LIST
      * 
      * @param path timelineType
      * @return the dsl builder
@@ -17636,8 +17643,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: timelineType (required)
      * The timeline type to produce/consume.
-     * There are 6 enums and the value can be one of: PUBLIC, HOME, USER,
-     * MENTIONS, LIST, UNKNOWN
+     * There are 4 enums and the value can be one of: HOME, USER, MENTIONS, LIST
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
@@ -18503,8 +18509,11 @@ public class StaticEndpointBuilders {
      * Default value: 5222
      * 
      * Path parameter: participant
-     * JID (Jabber ID) of person to receive messages. room parameter has
-     * precedence over participant.
+     * JID (Jabber ID) of the person to chat with: the producer sends the
+     * messages to this person, and the consumer only routes the chat messages
+     * from this person (without a participant, the consumer routes the chat
+     * messages of every sender). room parameter has precedence over
+     * participant.
      * 
      * @param path host:port/participant
      * @return the dsl builder
@@ -18530,8 +18539,11 @@ public class StaticEndpointBuilders {
      * Default value: 5222
      * 
      * Path parameter: participant
-     * JID (Jabber ID) of person to receive messages. room parameter has
-     * precedence over participant.
+     * JID (Jabber ID) of the person to chat with: the producer sends the
+     * messages to this person, and the consumer only routes the chat messages
+     * from this person (without a participant, the consumer routes the chat
+     * messages of every sender). room parameter has precedence over
+     * participant.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name

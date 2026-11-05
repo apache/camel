@@ -33,7 +33,7 @@
 
   <!-- Defined the real JAXRS back end service  -->
   <jaxrs:server id="restService"
-		        address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest" 
+		        address="http://localhost:${CxfRsRouterTest.port2}/CxfRsRouterTest/rest" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -45,7 +45,7 @@
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
    
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
-  <cxf:rsServer id="rsServer" address="http://localhost:${CXFTestSupport.port1}/CxfRsRouterTest/route"
+  <cxf:rsServer id="rsServer" address="http://localhost:${CxfRsRouterTest.port1}/CxfRsRouterTest/route"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" 
     loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="true">
     <cxf:providers>
@@ -54,7 +54,7 @@
   </cxf:rsServer>
 
   <!-- Defined the client endpoint to create the cxf-rs producer -->
-  <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest"
+  <cxf:rsClient id="rsClient" address="http://localhost:${CxfRsRouterTest.port2}/CxfRsRouterTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
     loggingFeatureEnabled="true" skipFaultLogging="true">
     <cxf:providers>

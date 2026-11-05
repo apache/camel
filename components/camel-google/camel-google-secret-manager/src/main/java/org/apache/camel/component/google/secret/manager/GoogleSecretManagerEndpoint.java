@@ -48,14 +48,17 @@ import org.apache.camel.util.ObjectHelper;
                                           @BodyType.When(option = "operation", value = "getSecretVersion",
                                                          carriers = Carrier.ANY),
                                           @BodyType.When(option = "operation", value = "deleteSecret", carriers = Carrier.ANY),
-                                          @BodyType.When(option = "operation", value = "listSecrets", carriers = Carrier.ANY) },
+                                          @BodyType.When(option = "operation", value = "listSecrets", carriers = Carrier.ANY),
+                                          @BodyType.When(option = "pojoRequest", value = "true", carriers = Carrier.POJO) },
                                   description = "The value of the secret for createSecret, the default operation, as text: bytes,"
                                                 + " a stream or a file are read as text, a Map or a POJO is stored as its"
-                                                + " toString(), so marshal it first, and no body fails. The other operations take"
-                                                + " the secret id from the CamelGoogleSecretManagerSecretId header. With"
-                                                + " pojoRequest=true the body is the request of the Google SDK for the operation,"
-                                                + " such as an AddSecretVersionRequest"),
-           producerOut = @BodyType(value = Carrier.POJO, javaType = "com.google.cloud.secretmanager.v1.SecretVersion",
+                                                + " toString(), so marshal it first, and no body fails before the secret is"
+                                                + " created. The other operations take the secret id from the"
+                                                + " CamelGoogleSecretManagerSecretId header. With pojoRequest=true the body is the"
+                                                + " request of the Google SDK for the operation: for createSecret a"
+                                                + " CreateSecretRequest, which creates the secret without a version, or an"
+                                                + " AddSecretVersionRequest, which adds a version to a secret that exists"),
+           producerOut = @BodyType(value = Carrier.POJO,
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "getSecretVersion",
                                                           carriers = Carrier.TEXT, javaType = "java.lang.String"),
@@ -63,8 +66,9 @@ import org.apache.camel.util.ObjectHelper;
                                                           carriers = Carrier.UNCHANGED),
                                            @BodyType.When(option = "operation", value = "listSecrets",
                                                           carriers = Carrier.POJO) },
-                                   description = "The SecretVersion of the Google SDK that createSecret added. The value of the"
-                                                 + " secret as text for getSecretVersion: unmarshal a JSON secret to read its"
+                                   description = "The SecretVersion of the Google SDK that createSecret added, or with"
+                                                 + " pojoRequest=true and a CreateSecretRequest the Secret it created. The value of"
+                                                 + " the secret as text for getSecretVersion: unmarshal a JSON secret to read its"
                                                  + " fields. A ListSecretsPagedResponse for listSecrets, whose iterateAll() gives"
                                                  + " the Secrets; deleteSecret leaves the body unchanged"))
 public class GoogleSecretManagerEndpoint extends DefaultEndpoint implements EndpointServiceLocation {

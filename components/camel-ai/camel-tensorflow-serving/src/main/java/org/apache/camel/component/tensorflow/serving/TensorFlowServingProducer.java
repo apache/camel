@@ -21,6 +21,7 @@ import java.util.Optional;
 import com.google.protobuf.GeneratedMessage;
 import com.google.protobuf.Int64Value;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import tensorflow.serving.Classification;
@@ -33,6 +34,12 @@ import tensorflow.serving.PredictionServiceGrpc;
 import tensorflow.serving.RegressionOuterClass;
 
 public class TensorFlowServingProducer extends DefaultProducer {
+
+    /** The end of the error of an api that reads its request from the body. */
+    private static final String BUILD_THE_REQUEST = ": build the protobuf request before the endpoint";
+    /** The end of the error of an api that needs no body. */
+    private static final String OR_NO_BODY
+            = ", and builds the request from the options and headers when there is no body, or an empty one";
 
     private final String api;
     private final ModelServiceGrpc.ModelServiceBlockingStub modelService;
@@ -92,9 +99,35 @@ public class TensorFlowServingProducer extends DefaultProducer {
         return builder;
     }
 
-    private GetModelStatus.GetModelStatusResponse modelStatus(Exchange exchange) {
+    /**
+     * The body as the request of the api. No body, or an empty one, gives null: the request is then built from the
+     * options and headers only. Another body that is not the request and does not convert to it, such as text, JSON,
+     * bytes or a Map, fails instead of being dropped, as the request would be sent without it.
+     */
+    private <T> T requestOf(Exchange exchange, Class<T> type, String reads) throws InvalidPayloadException {
         Message message = exchange.getMessage();
-        GetModelStatus.GetModelStatusRequest request = message.getBody(GetModelStatus.GetModelStatusRequest.class);
+        if (isEmpty(message.getBody())) {
+            return null;
+        }
+        T request = message.getBody(type);
+        if (request == null) {
+            throw new InvalidPayloadException(exchange, type, message, "the " + api + " api reads " + reads);
+        }
+        return request;
+    }
+
+    /**
+     * No body, or an empty one that an earlier step can leave, such as a blank String or an empty byte array.
+     */
+    private static boolean isEmpty(Object body) {
+        return body == null
+                || (body instanceof String text && text.isBlank())
+                || (body instanceof byte[] bytes && bytes.length == 0);
+    }
+
+    private GetModelStatus.GetModelStatusResponse modelStatus(Exchange exchange) throws InvalidPayloadException {
+        GetModelStatus.GetModelStatusRequest request = requestOf(exchange, GetModelStatus.GetModelStatusRequest.class,
+                "a GetModelStatusRequest or its Builder" + OR_NO_BODY);
         GetModelStatus.GetModelStatusRequest.Builder builder = GetModelStatus.GetModelStatusRequest.newBuilder()
                 .setModelSpec(modelSpec(exchange));
         if (request != null) {
@@ -103,21 +136,26 @@ public class TensorFlowServingProducer extends DefaultProducer {
         return modelService.getModelStatus(builder.build());
     }
 
-    private GetModelMetadata.GetModelMetadataResponse modelMetadata(Exchange exchange) {
-        Message message = exchange.getMessage();
-        GetModelMetadata.GetModelMetadataRequest request = message.getBody(GetModelMetadata.GetModelMetadataRequest.class);
+    private GetModelMetadata.GetModelMetadataResponse modelMetadata(Exchange exchange) throws InvalidPayloadException {
+        GetModelMetadata.GetModelMetadataRequest request = requestOf(exchange,
+                GetModelMetadata.GetModelMetadataRequest.class,
+                "a GetModelMetadataRequest or its Builder" + OR_NO_BODY);
         GetModelMetadata.GetModelMetadataRequest.Builder builder = GetModelMetadata.GetModelMetadataRequest.newBuilder()
-                .setModelSpec(modelSpec(exchange))
-                .addMetadataField("signature_def");
+                .setModelSpec(modelSpec(exchange));
         if (request != null) {
             builder.mergeFrom(request);
+        }
+        // the metadata fields of the request, or else signature_def, the only field TensorFlow Serving supports
+        // (merging appends a repeated field, so adding it before the merge would ask for it twice)
+        if (builder.getMetadataFieldCount() == 0) {
+            builder.addMetadataField("signature_def");
         }
         return predictionService.getModelMetadata(builder.build());
     }
 
-    private Classification.ClassificationResponse classify(Exchange exchange) {
-        Message message = exchange.getMessage();
-        Classification.ClassificationRequest request = message.getBody(Classification.ClassificationRequest.class);
+    private Classification.ClassificationResponse classify(Exchange exchange) throws InvalidPayloadException {
+        Classification.ClassificationRequest request = requestOf(exchange, Classification.ClassificationRequest.class,
+                "a ClassificationRequest, an Input, or the Builder of one" + BUILD_THE_REQUEST);
         Classification.ClassificationRequest.Builder builder = Classification.ClassificationRequest.newBuilder()
                 .setModelSpec(modelSpec(exchange));
         if (request != null) {
@@ -126,9 +164,10 @@ public class TensorFlowServingProducer extends DefaultProducer {
         return predictionService.classify(builder.build());
     }
 
-    private RegressionOuterClass.RegressionResponse regress(Exchange exchange) {
-        Message message = exchange.getMessage();
-        RegressionOuterClass.RegressionRequest request = message.getBody(RegressionOuterClass.RegressionRequest.class);
+    private RegressionOuterClass.RegressionResponse regress(Exchange exchange) throws InvalidPayloadException {
+        RegressionOuterClass.RegressionRequest request = requestOf(
+                exchange, RegressionOuterClass.RegressionRequest.class,
+                "a RegressionRequest, an Input, or the Builder of one" + BUILD_THE_REQUEST);
         RegressionOuterClass.RegressionRequest.Builder builder = RegressionOuterClass.RegressionRequest.newBuilder()
                 .setModelSpec(modelSpec(exchange));
         if (request != null) {
@@ -137,9 +176,9 @@ public class TensorFlowServingProducer extends DefaultProducer {
         return predictionService.regress(builder.build());
     }
 
-    private Predict.PredictResponse predict(Exchange exchange) {
-        Message message = exchange.getMessage();
-        Predict.PredictRequest request = message.getBody(Predict.PredictRequest.class);
+    private Predict.PredictResponse predict(Exchange exchange) throws InvalidPayloadException {
+        Predict.PredictRequest request = requestOf(exchange, Predict.PredictRequest.class,
+                "a PredictRequest or its Builder" + BUILD_THE_REQUEST);
         Predict.PredictRequest.Builder builder = Predict.PredictRequest.newBuilder()
                 .setModelSpec(modelSpec(exchange));
         if (request != null) {

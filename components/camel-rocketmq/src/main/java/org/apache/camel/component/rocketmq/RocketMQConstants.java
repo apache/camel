@@ -22,53 +22,53 @@ import org.apache.camel.spi.Metadata;
 public final class RocketMQConstants {
 
     @Metadata(label = "consumer", description = "Topic of message", javaType = "String")
-    public static final String TOPIC = "CamelRockerMQTopic";
+    public static final String TOPIC = "CamelRocketMQTopic";
     @Metadata(label = "consumer", description = "Tag of message", javaType = "String")
-    public static final String TAG = "CamelRockerMQTag";
+    public static final String TAG = "CamelRocketMQTag";
     @Metadata(label = "consumer", description = "Key of message", javaType = "String", important = true)
-    public static final String KEY = "CamelRockerMQKey";
+    public static final String KEY = "CamelRocketMQKey";
     @Metadata(label = "producer",
               description = "If this header is set, the message will be routed to the topic specified by this header\n" +
                             "instead of the origin topic in endpoint.",
               javaType = "String")
-    public static final String OVERRIDE_TOPIC_NAME = "CamelRockerMQOverrideTopicName";
+    public static final String OVERRIDE_TOPIC_NAME = "CamelRocketMQOverrideTopicName";
     @Metadata(label = "producer",
               description = "If this header is set, the message's tag will be set to value specified by this header\n" +
                             "instead of the sendTag defined in endpoint.",
               javaType = "String")
-    public static final String OVERRIDE_TAG = "CamelRockerMQOverrideTag";
+    public static final String OVERRIDE_TAG = "CamelRocketMQOverrideTag";
     @Metadata(label = "producer", description = "Set keys for the message. When using in-out pattern,\n" +
                                                 "the value will be prepended to the generated keys",
               javaType = "String")
-    public static final String OVERRIDE_MESSAGE_KEY = "CamelRockerMQOverrideMessageKey";
+    public static final String OVERRIDE_MESSAGE_KEY = "CamelRocketMQOverrideMessageKey";
     @Metadata(label = "consumer", description = "Broker name", javaType = "String")
-    public static final String BROKER_NAME = "CamelRockerMQBrokerName";
+    public static final String BROKER_NAME = "CamelRocketMQBrokerName";
     @Metadata(label = "consumer", description = "Queue ID", javaType = "int")
-    public static final String QUEUE_ID = "CamelRockerMQQueueId";
+    public static final String QUEUE_ID = "CamelRocketMQQueueId";
     @Metadata(label = "consumer", description = "Store size", javaType = "int")
-    public static final String STORE_SIZE = "CamelRockerMQStoreSize";
+    public static final String STORE_SIZE = "CamelRocketMQStoreSize";
     @Metadata(label = "consumer", description = "Queue offset", javaType = "long")
-    public static final String QUEUE_OFFSET = "CamelRockerMQQueueOffset";
+    public static final String QUEUE_OFFSET = "CamelRocketMQQueueOffset";
     @Metadata(label = "consumer", description = "Sys flag", javaType = "int")
-    public static final String SYS_FLAG = "CamelRockerMQSysFlag";
+    public static final String SYS_FLAG = "CamelRocketMQSysFlag";
     @Metadata(label = "consumer", description = "Born timestamp", javaType = "long")
-    public static final String BORN_TIMESTAMP = "CamelRockerMQBornTimestamp";
+    public static final String BORN_TIMESTAMP = "CamelRocketMQBornTimestamp";
     @Metadata(label = "consumer", description = "Born host", javaType = "java.net.SocketAddress")
-    public static final String BORN_HOST = "CamelRockerMQBornHost";
+    public static final String BORN_HOST = "CamelRocketMQBornHost";
     @Metadata(label = "consumer", description = "Store timestamp", javaType = "long")
-    public static final String STORE_TIMESTAMP = "CamelRockerMQStoreTimestamp";
+    public static final String STORE_TIMESTAMP = "CamelRocketMQStoreTimestamp";
     @Metadata(label = "consumer", description = "Store host", javaType = "java.net.SocketAddress")
-    public static final String STORE_HOST = "CamelRockerMQStoreHost";
+    public static final String STORE_HOST = "CamelRocketMQStoreHost";
     @Metadata(label = "consumer", description = "Msg ID", javaType = "String")
-    public static final String MSG_ID = "CamelRockerMQMsgId";
+    public static final String MSG_ID = "CamelRocketMQMsgId";
     @Metadata(label = "consumer", description = "Commit log offset", javaType = "long")
-    public static final String COMMIT_LOG_OFFSET = "CamelRockerMQCommitLogOffset";
+    public static final String COMMIT_LOG_OFFSET = "CamelRocketMQCommitLogOffset";
     @Metadata(label = "consumer", description = "Body CRC", javaType = "int")
-    public static final String BODY_CRC = "CamelRockerMQBodyCrc";
+    public static final String BODY_CRC = "CamelRocketMQBodyCrc";
     @Metadata(label = "consumer", description = "Reconsume times", javaType = "int")
-    public static final String RECONSUME_TIMES = "CamelRockerMQReconsumeTimes";
+    public static final String RECONSUME_TIMES = "CamelRocketMQReconsumeTimes";
     @Metadata(label = "consumer", description = "Prepard transaction offset", javaType = "long")
-    public static final String PREPARED_TRANSACTION_OFFSET = "CamelRockerMQPreparedTransactionOffset";
+    public static final String PREPARED_TRANSACTION_OFFSET = "CamelRocketMQPreparedTransactionOffset";
 
     private RocketMQConstants() {
     }

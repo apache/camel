@@ -2,6 +2,7 @@
 package org.apache.camel.component.file.azure;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FilesEndpoint target = (FilesEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
         case "antexclude":
@@ -204,7 +205,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": return boolean.class;
         case "antexclude":
@@ -387,7 +388,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FilesEndpoint target = (FilesEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
         case "antexclude":
@@ -569,7 +570,7 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "exclusivereadlockstrategy":
         case "exclusiveReadLockStrategy": return com.azure.storage.file.share.models.ShareFileItem.class;
         case "filter": return com.azure.storage.file.share.models.ShareFileItem.class;

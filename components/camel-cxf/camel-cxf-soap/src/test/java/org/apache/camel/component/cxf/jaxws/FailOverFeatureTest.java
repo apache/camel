@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.clustering.FailoverFeature;
@@ -32,22 +31,46 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FailOverFeatureTest {
+    private static AvailablePortFinder.Port SERVICE_PORT;
+    private static AvailablePortFinder.Port PAYLOAD_PROXY_PORT;
+    private static AvailablePortFinder.Port POJO_PROXY_PORT;
+    private static AvailablePortFinder.Port NONE_EXIST_PORT;
 
-    private static int port1 = CXFTestSupport.getPort1();
-    private static int port2 = CXFTestSupport.getPort2();
-    private static int port3 = CXFTestSupport.getPort3();
-    @RegisterExtension
-    static AvailablePortFinder.Port port4 = AvailablePortFinder.find();
+    private static void allocatePorts() {
+        SERVICE_PORT = AvailablePortFinder.find();
+        PAYLOAD_PROXY_PORT = AvailablePortFinder.find();
+        POJO_PROXY_PORT = AvailablePortFinder.find();
+        NONE_EXIST_PORT = AvailablePortFinder.find();
+        SERVICE_ADDRESS = "http://localhost:" + SERVICE_PORT.getPort() + "/FailOverFeatureTest";
+        PAYLOAD_PROXY_ADDRESS = "http://localhost:" + PAYLOAD_PROXY_PORT.getPort() + "/FailOverFeatureTest/proxy";
+        POJO_PROXY_ADDRESS = "http://localhost:" + POJO_PROXY_PORT.getPort() + "/FailOverFeatureTest/proxy";
+        NONE_EXIST_ADDRESS = "http://localhost:" + NONE_EXIST_PORT.getPort() + "/FailOverFeatureTest";
+    }
 
-    private static final String SERVICE_ADDRESS = "http://localhost:" + port1 + "/FailOverFeatureTest";
-    private static final String PAYLOAD_PROXY_ADDRESS = "http://localhost:" + port2 + "/FailOverFeatureTest/proxy";
-    private static final String POJO_PROXY_ADDRESS = "http://localhost:" + port3 + "/FailOverFeatureTest/proxy";
-    private static final String NONE_EXIST_ADDRESS = "http://localhost:" + port4.getPort() + "/FailOverFeatureTest";
+    @AfterAll
+    static void releasePorts() {
+        if (SERVICE_PORT != null) {
+            SERVICE_PORT.release();
+        }
+        if (PAYLOAD_PROXY_PORT != null) {
+            PAYLOAD_PROXY_PORT.release();
+        }
+        if (POJO_PROXY_PORT != null) {
+            POJO_PROXY_PORT.release();
+        }
+        if (NONE_EXIST_PORT != null) {
+            NONE_EXIST_PORT.release();
+        }
+    }
+
+    private static String SERVICE_ADDRESS;
+    private static String PAYLOAD_PROXY_ADDRESS;
+    private static String POJO_PROXY_ADDRESS;
+    private static String NONE_EXIST_ADDRESS;
     private static Server server;
     private DefaultCamelContext context1;
     private DefaultCamelContext context2;
@@ -74,6 +97,7 @@ public class FailOverFeatureTest {
 
     @BeforeAll
     public static void init() {
+        allocatePorts();
 
         // publish a web-service
         ServerFactoryBean factory = new ServerFactoryBean();

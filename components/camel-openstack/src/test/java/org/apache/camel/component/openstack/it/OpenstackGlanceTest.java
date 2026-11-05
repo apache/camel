@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.glance.GlanceConstants;
 import org.junit.jupiter.api.Test;
@@ -37,6 +39,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class OpenstackGlanceTest extends OpenstackWiremockTestSupport {
 
     private static final String URI_FORMAT = "openstack-glance://%s?username=user&password=secret&project=project&operation=%s";
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                // the producer is created when the route starts, and called from the seda consumer thread
+                from("seda:upload")
+                        .to(String.format(URI_FORMAT, url(), GlanceConstants.UPLOAD));
+            }
+        };
+    }
 
     @Test
     void createShouldSucceed() {
@@ -58,6 +72,22 @@ public class OpenstackGlanceTest extends OpenstackWiremockTestSupport {
         assertEquals(DiskFormat.QCOW2, out.getDiskFormat());
         assertEquals(0L, out.getMinDisk());
         assertEquals(0L, out.getMinRam());
+    }
+
+    @Test
+    void uploadTextFromAnotherThreadShouldSucceed() {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(OpenstackConstants.NAME, "amphora-x64-haproxy");
+        headers.put(OpenstackConstants.ID, "4b434528-032b-4467-946c-b5880ce15c06");
+        headers.put(GlanceConstants.DISK_FORMAT, DiskFormat.QCOW2);
+        headers.put(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.BARE);
+        headers.put(GlanceConstants.MIN_DISK, 0L);
+        headers.put(GlanceConstants.MIN_RAM, 0L);
+
+        Image out = template.requestBodyAndHeaders("seda:upload", "image data", headers, Image.class);
+
+        assertNotNull(out);
+        assertEquals("4b434528-032b-4467-946c-b5880ce15c06", out.getId());
     }
 
     @Test

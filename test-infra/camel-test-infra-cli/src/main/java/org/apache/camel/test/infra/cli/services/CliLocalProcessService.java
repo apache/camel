@@ -308,7 +308,13 @@ public class CliLocalProcessService implements CliService {
     @Override
     public void copyFileInternally(String source, String destination) {
         try {
-            Files.copy(Path.of(source), Path.of(destination), StandardCopyOption.REPLACE_EXISTING);
+            Path src = Path.of(source);
+            Path dst = Path.of(destination);
+            // Mirror `cp` semantics: if destination is an existing directory, copy into it
+            if (Files.isDirectory(dst)) {
+                dst = dst.resolve(src.getFileName());
+            }
+            Files.copy(src, dst, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             Assertions.fail(String.format("unable to copy file %s to %s", source, destination), e);
         }
@@ -525,7 +531,7 @@ public class CliLocalProcessService implements CliService {
 
     private void createMavenSettingsFile() {
         try {
-            mavenSettingsFile = Files.createTempFile(workDir, "maven-settings", ".xml");
+            mavenSettingsFile = Files.createTempFile("camel-jbang-maven-settings", ".xml");
             String settingsContent = String.format(
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>%n"
                                                    + "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"%n"
@@ -551,6 +557,11 @@ public class CliLocalProcessService implements CliService {
     @Override
     public String getSshPassword() {
         throw new UnsupportedOperationException("SSH is not supported for local process service");
+    }
+
+    @Override
+    public String getCommandWorkDir() {
+        return workDir.toAbsolutePath().toString();
     }
 
 }

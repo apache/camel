@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -231,6 +232,11 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
             resolver.addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
         }
         return resolver;
+    }
+
+    @Override
+    public Lock getModelLock() {
+        return model.getModelLock();
     }
 
     @Override

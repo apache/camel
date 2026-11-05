@@ -19,6 +19,9 @@ package org.apache.camel;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import org.apache.camel.constants.FunctionGraphConstants;
 import org.apache.camel.models.ClientConfigurations;
 
 public final class FunctionGraphUtils {
@@ -39,7 +42,40 @@ public final class FunctionGraphUtils {
         if (root == null) {
             return null;
         }
-        JsonElement field = root.get(fieldName);
+        return fieldAsString(root.get(fieldName));
+    }
+
+    /**
+     * Gets the body of the message from the result of a function. When the result is a JSON object with a top-level
+     * body field, such as the result of a function behind an API Gateway trigger, this is that field: a string as it
+     * is, an object or an array as JSON, and null when the field is null. Otherwise this is the whole result as it is,
+     * such as a JSON object without a body field, a JSON array or plain text, and null when there is no result.
+     *
+     * @param  result the result of the function
+     * @return        the body of the message
+     */
+    public static String extractResultBody(String result) {
+        if (result == null) {
+            return null;
+        }
+        JsonElement root;
+        try {
+            root = JsonParser.parseString(result);
+        } catch (JsonParseException e) {
+            // not JSON, such as plain text: keep the whole result
+            return result;
+        }
+        if (root.isJsonNull()) {
+            // an empty result or a JSON null
+            return null;
+        }
+        if (root.isJsonObject() && root.getAsJsonObject().has(FunctionGraphConstants.RESPONSE_BODY)) {
+            return fieldAsString(root.getAsJsonObject().get(FunctionGraphConstants.RESPONSE_BODY));
+        }
+        return result;
+    }
+
+    private static String fieldAsString(JsonElement field) {
         if (field == null || field.isJsonNull()) {
             return null;
         }

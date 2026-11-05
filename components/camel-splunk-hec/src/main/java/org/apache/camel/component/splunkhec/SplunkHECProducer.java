@@ -17,7 +17,12 @@
 package org.apache.camel.component.splunkhec;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,8 +30,10 @@ import javax.net.ssl.SSLContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -38,7 +45,7 @@ import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
 import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.config.RegistryBuilder;
-import org.apache.hc.core5.http.io.entity.EntityTemplate;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
@@ -102,10 +109,9 @@ public class SplunkHECProducer extends DefaultProducer {
                                          + endpoint.getSplunkURL() + endpoint.getConfiguration().getSplunkEndpoint());
         httppost.addHeader("Authorization", " Splunk " + endpoint.getConfiguration().getToken());
 
-        EntityTemplate entityTemplate = new EntityTemplate(
-                -1, ContentType.APPLICATION_JSON, null, outputStream -> MAPPER.writer().writeValue(outputStream, payload));
-
-        httppost.setEntity(entityTemplate);
+        // write the JSON before sending, so a payload that cannot be written fails before any request is made
+        byte[] json = MAPPER.writeValueAsBytes(payload);
+        httppost.setEntity(new ByteArrayEntity(json, ContentType.APPLICATION_JSON));
         httpClient.execute(
                 httppost,
                 response -> {
@@ -130,23 +136,35 @@ public class SplunkHECProducer extends DefaultProducer {
         }
     }
 
-    Map<String, Object> createPayload(Message message) {
-        Object body = message.getBody();
+    Map<String, Object> createPayload(Message message) throws InvalidPayloadException {
         Map<String, Object> payload = new HashMap<>();
         buildPayload(message, payload);
 
         if (endpoint.getConfiguration().isBodyOnly()) {
-            payload.put("event", body);
+            payload.put("event", eventBody(message));
         } else if (endpoint.getConfiguration().isHeadersOnly()) {
             payload.put("event", message.getHeaders());
         } else {
             Map<String, Object> eventPayload = new HashMap<>();
-            eventPayload.put("body", body);
+            eventPayload.put("body", eventBody(message));
             eventPayload.put("headers", message.getHeaders());
             payload.put("event", eventPayload);
         }
 
         return payload;
+    }
+
+    /**
+     * The body to write as JSON in the event. Jackson writes a byte array as base64 and a File as its path, and fails
+     * half way on a stream, so these bodies (and the file of the file consumer) are converted to text.
+     */
+    private static Object eventBody(Message message) throws InvalidPayloadException {
+        Object body = message.getBody();
+        if (body instanceof byte[] || body instanceof InputStream || body instanceof Reader || body instanceof File
+                || body instanceof Path || body instanceof WrappedFile || body instanceof ByteBuffer) {
+            return message.getMandatoryBody(String.class);
+        }
+        return body;
     }
 
     private void buildPayload(Message message, Map<String, Object> payload) {

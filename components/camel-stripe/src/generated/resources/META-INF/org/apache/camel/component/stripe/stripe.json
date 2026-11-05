@@ -30,12 +30,12 @@
     "apiKey": { "index": 3, "kind": "property", "displayName": "Api Key", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": true, "security": "secret", "description": "The Stripe API key for authentication" }
   },
   "headers": {
-    "CamelStripeOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform", "constantName": "org.apache.camel.component.stripe.StripeConstants#OPERATION_HEADER" },
+    "CamelStripeOperation": { "index": 0, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The operation to perform, such as customers or paymentIntents. Overrides the operation of the endpoint.", "constantName": "org.apache.camel.component.stripe.StripeConstants#OPERATION_HEADER" },
     "CamelStripeMethod": { "index": 1, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The method to invoke (create, retrieve, update, delete, list, cancel, capture)", "constantName": "org.apache.camel.component.stripe.StripeConstants#METHOD_HEADER" },
     "CamelStripeObjectId": { "index": 2, "kind": "header", "displayName": "", "group": "producer", "label": "", "required": false, "javaType": "String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The ID of the object to retrieve, update, or delete", "constantName": "org.apache.camel.component.stripe.StripeConstants#OBJECT_ID" }
   },
   "bodyTypes": {
-    "producerIn": { "carriers": [ "map", "text", "null" ], "description": "The request parameters of the call: a Map, or a JSON object as text; null for none. Bytes, a stream or a POJO fails: convert it to a String first. retrieve, delete and cancel ignore the body; they and update and capture take the id of the object from the CamelStripeObjectId header" },
+    "producerIn": { "carriers": [ "map", "text", "bytes", "stream", "null" ], "description": "The request parameters of the call: a Map, or a JSON object as text, bytes or a stream; null for none. A POJO fails. retrieve, delete and cancel ignore the body; they and update and capture take the id of the object from the CamelStripeObjectId header" },
     "producerOut": { "carriers": [ "pojo" ], "description": "The Stripe object the call returns, such as a com.stripe.model.Customer; list gives a collection of them, such as a CustomerCollection, with the objects in its data" }
   },
   "properties": {

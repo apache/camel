@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.jgroups.raft;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -50,26 +51,35 @@ import org.slf4j.LoggerFactory;
                                                  + " headers"),
            producerIn = @BodyType(value = { Carrier.BYTES, Carrier.TEXT, Carrier.STREAM, Carrier.FILE },
                                   description = "The bytes to set() in the replicated log: a byte array, or text, a stream or"
-                                                + " a file converted to bytes. A null body, a Map, a number or a POJO has no"
-                                                + " conversion to bytes and is skipped without an error: nothing is set"),
+                                                + " a file converted to bytes. A null body is skipped: nothing is set. A Map,"
+                                                + " a List, a number or a POJO has no conversion to bytes and fails with an"
+                                                + " InvalidPayloadException"),
            producerOut = @BodyType(value = { Carrier.BYTES, Carrier.UNCHANGED },
                                    description = "The byte array the state machine returns for the set (an empty array with"
                                                  + " the default NopStateMachine), with the state of the raft in the headers. A"
-                                                 + " body that was skipped is left as it was"))
+                                                 + " null body is left as it was"))
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 
-    private AtomicInteger connectCount = new AtomicInteger();
+    // the producers and consumers connected to the handle this endpoint created, guarded by connectLock
+    private int connectCount;
+    private final Lock connectLock = new ReentrantLock();
 
-    private RaftHandle raftHandle;
     private RaftHandle resolvedRaftHandle;
-    private StateMachine stateMachine;
-    private String raftId;
-    private String channelProperties;
 
     @UriPath
     @Metadata(required = true)
     private String clusterName;
+    @UriParam
+    private String raftId;
+    @UriParam
+    @Metadata(defaultValue = "raft.xml")
+    private String channelProperties;
+    @UriParam
+    private RaftHandle raftHandle;
+    @UriParam
+    @Metadata(defaultValue = "NopStateMachine")
+    private StateMachine stateMachine;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean enableRoleChangeEvents;
 
@@ -109,7 +119,17 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         LOG.info("Resolving JGroupsraft handle {}", getEndpointUri());
         super.doStart();
-        resolvedRaftHandle = resolveHandle();
+        connectLock.lock();
+        try {
+            // the handle this endpoint created is kept when the endpoint was stopped while producers or consumers
+            // still used it (such as when another route that consumes from this endpoint was removed)
+            if (resolvedRaftHandle == null || !isOwnHandle() || resolvedRaftHandle.channel() == null
+                    || resolvedRaftHandle.channel().isClosed()) {
+                resolvedRaftHandle = resolveHandle();
+            }
+        } finally {
+            connectLock.unlock();
+        }
     }
 
     @Override
@@ -117,25 +137,53 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         // a handle this endpoint did not create (such as the raftHandle of the component) is used by other endpoints,
         // and is closed by the component
         if (resolvedRaftHandle != null && isOwnHandle()) {
-            LOG.info("Closing JGroupsraft Channel {}", getEndpointUri());
+            connectLock.lock();
+            try {
+                // the endpoint is stopped when a route that consumes from it is removed, also when the producers and
+                // consumers of other routes still use its handle: then the last of them that disconnects closes it.
+                // When Camel stops, the consumers of all routes have stopped and their in-flight exchanges are done,
+                // so the handle is closed also when a producer that Camel does not stop (such as one that the
+                // application created and started itself) still uses it
+                if (connectCount == 0 || getCamelContext().isStopping()) {
+                    closeOwnHandle();
+                }
+            } finally {
+                connectLock.unlock();
+            }
+        }
+        super.doStop();
+    }
+
+    private void closeOwnHandle() {
+        // the channel and the log are each closed, also when closing the other one fails (as the component does)
+        LOG.info("Closing JGroupsraft Channel {}", getEndpointUri());
+        try {
             if (resolvedRaftHandle.channel() != null) {
                 resolvedRaftHandle.channel().close();
                 LOG.info("Closed JGroupsraft Channel {}", getEndpointUri());
             }
-            LOG.info("Closing Log {}", getEndpointUri());
+        } catch (Exception e) {
+            LOG.warn("Error closing the JGroupsraft channel of {}: {}", getEndpointUri(), e.getMessage(), e);
+        }
+        LOG.info("Closing Log {}", getEndpointUri());
+        try {
             if (resolvedRaftHandle.log() != null) {
                 resolvedRaftHandle.log().close();
                 LOG.info("Closed Log Channel {}", getEndpointUri());
             }
+        } catch (Exception e) {
+            LOG.warn("Error closing the JGroupsraft log of {}: {}", getEndpointUri(), e.getMessage(), e);
         }
-        super.doStop();
     }
 
     private boolean isOwnHandle() {
         return raftHandle == null;
     }
 
-    private RaftHandle resolveHandle() throws Exception {
+    /**
+     * The handle of the endpoint: the raftHandle option, or a handle it creates. Package-private for tests.
+     */
+    RaftHandle resolveHandle() throws Exception {
         if (raftHandle != null) {
             LOG.trace("Raft Handle resolved as passed by Component: {}", raftHandle);
             return raftHandle;
@@ -169,8 +217,14 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             ((JGroupsRaftComponent) getComponent()).connectSharedHandle(resolvedRaftHandle, clusterName);
             return;
         }
-        connectCount.incrementAndGet();
-        resolvedRaftHandle.channel().connect(clusterName);
+        connectLock.lock();
+        try {
+            resolvedRaftHandle.channel().connect(clusterName);
+            // counted after a successful connect, as a producer or consumer whose connect failed does not disconnect
+            connectCount++;
+        } finally {
+            connectLock.unlock();
+        }
     }
 
     /**
@@ -181,9 +235,22 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
             ((JGroupsRaftComponent) getComponent()).disconnectSharedHandle(resolvedRaftHandle);
             return;
         }
-        if (connectCount.decrementAndGet() == 0) {
-            LOG.trace("Disconnecting JGroupsraft Channel {}", getEndpointUri());
-            resolvedRaftHandle.channel().disconnect();
+        connectLock.lock();
+        try {
+            if (--connectCount == 0) {
+                LOG.trace("Disconnecting JGroupsraft Channel {}", getEndpointUri());
+                try {
+                    resolvedRaftHandle.channel().disconnect();
+                } catch (Exception e) {
+                    LOG.warn("Error disconnecting the JGroupsraft channel of {}: {}", getEndpointUri(), e.getMessage(), e);
+                }
+                if (isStoppingOrStopped()) {
+                    // the endpoint was stopped while this producer or consumer still used the handle
+                    closeOwnHandle();
+                }
+            }
+        } finally {
+            connectLock.unlock();
         }
     }
 
@@ -214,6 +281,10 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return channelProperties;
     }
 
+    /**
+     * Specifies configuration properties of the RaftHandle JChannel used by the endpoint (ignored if raftHandle ref is
+     * provided). Overrides the option of the component.
+     */
     public void setChannelProperties(String channelProperties) {
         this.channelProperties = channelProperties;
     }
@@ -222,6 +293,9 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return raftId;
     }
 
+    /**
+     * Unique raftId to use. Overrides the option of the component.
+     */
     public void setRaftId(String raftId) {
         this.raftId = raftId;
     }
@@ -230,6 +304,9 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return raftHandle;
     }
 
+    /**
+     * RaftHandle to use. Overrides the option of the component.
+     */
     public void setRaftHandle(RaftHandle raftHandle) {
         this.raftHandle = raftHandle;
     }
@@ -238,6 +315,9 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
         return stateMachine;
     }
 
+    /**
+     * StateMachine to use (ignored if raftHandle ref is provided). Overrides the option of the component.
+     */
     public void setStateMachine(StateMachine stateMachine) {
         this.stateMachine = stateMachine;
     }

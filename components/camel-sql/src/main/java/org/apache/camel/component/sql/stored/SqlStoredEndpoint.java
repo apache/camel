@@ -50,13 +50,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
                                   byOption = {
                                           @BodyType.When(option = "batch", value = "true",
-                                                         carriers = { Carrier.LIST, Carrier.ITERATOR }),
+                                                         carriers = { Carrier.LIST, Carrier.ITERATOR, Carrier.MAP }),
                                           @BodyType.When(option = "useMessageBodyForTemplate", value = "true",
                                                          carriers = Carrier.TEXT) },
                                   description = "What the expressions of the IN parameters read: a :#name parameter takes"
                                                 + " its value from a Map body, or else from the header. With batch, a List or"
-                                                + " an Iterator of such bodies, one batch item each (a single Map is not a"
-                                                + " batch); with useMessageBodyForTemplate, the template as text, with the"
+                                                + " an Iterator of such bodies, one batch item each (a single Map is one"
+                                                + " batch item); with useMessageBodyForTemplate, the template as text, with the"
                                                 + " parameters in the CamelSqlStoredParameters header"),
            producerOut = @BodyType(value = Carrier.MAP, javaType = "java.util.Map<String, Object>",
                                    dependsOn = "outputHeader",
@@ -68,7 +68,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
                                                  + " and the update count under #update-count-1, which is also in the"
                                                  + " CamelSqlStoredUpdateCount header. With outputHeader the Map is in that"
                                                  + " header and the body is unchanged; batch leaves the body unchanged, with"
-                                                 + " the total update count in the header"))
+                                                 + " the total of the known update counts in the header"))
 public class SqlStoredEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     private CallableStatementWrapperFactory wrapperFactory;

@@ -24,8 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
@@ -39,7 +39,9 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -53,8 +55,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the requests in flight complete.
  */
 class CxfConsumerSuspendTest extends CamelTestSupport {
+    private static AvailablePortFinder.Port PORT;
 
-    private static final String ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfConsumerSuspendTest/test";
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        ADDRESS = "http://localhost:" + PORT.getPort() + "/CxfConsumerSuspendTest/test";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    private static String ADDRESS;
 
     private final AtomicInteger processed = new AtomicInteger();
     private final CountDownLatch entered = new CountDownLatch(1);

@@ -120,6 +120,19 @@ public class KeycloakSecurityPolicyTest extends CamelTestSupport {
         assertTrue(policy.isUseResourceOwnerPasswordCredentials());
     }
 
+    @Test
+    void testJwksRefreshIntervalConfiguration() {
+        KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();
+        assertEquals(300, policy.getJwksRefreshInterval());
+        assertEquals(10, policy.getMinJwksRefreshInterval());
+
+        policy.setJwksRefreshInterval(600);
+        policy.setMinJwksRefreshInterval(30);
+
+        assertEquals(600, policy.getJwksRefreshInterval());
+        assertEquals(30, policy.getMinJwksRefreshInterval());
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         final KeycloakSecurityPolicy policy = new KeycloakSecurityPolicy();

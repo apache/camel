@@ -2,6 +2,7 @@
 package org.apache.camel.main;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -38,7 +39,7 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.main.ErrorRegistryConfigurationProperties target = (org.apache.camel.main.ErrorRegistryConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyincludefiles":
         case "bodyIncludeFiles": target.setBodyIncludeFiles(property(camelContext, boolean.class, value)); return true;
         case "bodyincludestreams":
@@ -69,7 +70,7 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyincludefiles":
         case "bodyIncludeFiles": return boolean.class;
         case "bodyincludestreams":
@@ -96,7 +97,7 @@ public class ErrorRegistryConfigurationPropertiesConfigurer extends org.apache.c
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.main.ErrorRegistryConfigurationProperties target = (org.apache.camel.main.ErrorRegistryConfigurationProperties) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bodyincludefiles":
         case "bodyIncludeFiles": return target.isBodyIncludeFiles();
         case "bodyincludestreams":

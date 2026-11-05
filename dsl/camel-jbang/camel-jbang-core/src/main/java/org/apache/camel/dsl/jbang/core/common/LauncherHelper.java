@@ -67,9 +67,18 @@ public final class LauncherHelper {
         }
 
         // 2. Try to detect from code source location
+        return getJarPath(LauncherHelper.class);
+    }
+
+    /**
+     * Gets the path to the JAR file that has the class: the fat JAR when the class is in one.
+     *
+     * @param  type the class
+     * @return      the path, or {@code null} when it cannot be detected
+     */
+    public static String getJarPath(Class<?> type) {
         try {
-            URL location = LauncherHelper.class.getProtectionDomain()
-                    .getCodeSource().getLocation();
+            URL location = type.getProtectionDomain().getCodeSource().getLocation();
             if (location != null) {
                 return parseJarPath(location.toString());
             }

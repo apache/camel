@@ -657,7 +657,9 @@ public interface GoogleVertexAIEndpointBuilderFactory {
             return "CamelGoogleVertexAIPrompt";
         }
         /**
-         * The chat messages for chat generation.
+         * The chat messages for chat generation. Deprecation note: Not used:
+         * the producer does not read this header, and generateChat sends the
+         * prompt only, without a conversation history.
          * 
          * The option is a: {@code
          * java.util.List<com.google.cloud.aiplatform.v1.Content>} type.
@@ -666,11 +668,13 @@ public interface GoogleVertexAIEndpointBuilderFactory {
          * 
          * @return the name of the header {@code GoogleVertexAIChatMessages}.
          */
+        @Deprecated
         public String googleVertexAIChatMessages() {
             return "CamelGoogleVertexAIChatMessages";
         }
         /**
-         * The system instruction for the model.
+         * The system instruction for the model, for generateText, generateChat,
+         * generateChatStreaming, generateCode and generateMultimodal.
          * 
          * The option is a: {@code String} type.
          * 
@@ -683,10 +687,12 @@ public interface GoogleVertexAIEndpointBuilderFactory {
             return "CamelGoogleVertexAISystemInstruction";
         }
         /**
-         * The safety settings for content filtering.
+         * The safety settings for content filtering, for generateText,
+         * generateChat, generateChatStreaming, generateCode and
+         * generateMultimodal.
          * 
          * The option is a: {@code
-         * java.util.List<com.google.cloud.aiplatform.v1.SafetySetting>} type.
+         * java.util.List<com.google.genai.types.SafetySetting>} type.
          * 
          * Group: producer
          * 
@@ -746,10 +752,11 @@ public interface GoogleVertexAIEndpointBuilderFactory {
             return "CamelGoogleVertexAITotalTokenCount";
         }
         /**
-         * The safety ratings from the response.
+         * The safety ratings of the first candidate of the response, or of the
+         * prompt when it was blocked.
          * 
          * The option is a: {@code
-         * java.util.List<com.google.cloud.aiplatform.v1.SafetyRating>} type.
+         * java.util.List<com.google.genai.types.SafetyRating>} type.
          * 
          * Group: producer
          * 
@@ -759,7 +766,9 @@ public interface GoogleVertexAIEndpointBuilderFactory {
             return "CamelGoogleVertexAISafetyRatings";
         }
         /**
-         * Whether the content was blocked by safety filters.
+         * Whether the prompt was blocked by the safety filters: the response
+         * then has no text, and the body is null. A response that a safety
+         * filter stops fails the exchange.
          * 
          * The option is a: {@code Boolean} type.
          * 
@@ -913,7 +922,9 @@ public interface GoogleVertexAIEndpointBuilderFactory {
             return "CamelGoogleVertexAIRawResponse";
         }
         /**
-         * Anthropic API version for Claude models.
+         * Anthropic API version for Claude models, for rawPredict and
+         * streamRawPredict with publisher anthropic: added to a request that
+         * has no anthropic_version, in place of the anthropicVersion option.
          * 
          * The option is a: {@code String} type.
          * 

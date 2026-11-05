@@ -22,6 +22,7 @@
 *** xref:camel-jbang-ai.adoc[AI Tools]
 **** xref:camel-jbang-ai-providers.adoc[AI Providers and Local Models]
 *** xref:camel-jbang-projects.adoc[Export to Maven]
+**** xref:camel-jbang-java-api.adoc[Java API for Export and Run]
 *** xref:camel-jbang-kubernetes.adoc[Camel Kubernetes Plugin]
 **** xref:camel-jbang-kubernetes-advanced.adoc[Advanced Options]
 *** xref:camel-jbang-test.adoc[Camel Testing Plugin]

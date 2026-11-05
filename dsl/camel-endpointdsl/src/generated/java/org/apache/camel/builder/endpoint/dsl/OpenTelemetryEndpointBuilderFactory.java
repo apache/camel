@@ -349,7 +349,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
         /**
          * Override decrement value in URI.
          * 
-         * The option is a: {@code Double} type.
+         * The option is a: {@code long} type.
          * 
          * Group: producer
          * 
@@ -361,7 +361,7 @@ public interface OpenTelemetryEndpointBuilderFactory {
         /**
          * Override increment value in URI.
          * 
-         * The option is a: {@code Double} type.
+         * The option is a: {@code long} type.
          * 
          * Group: producer
          * 

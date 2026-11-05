@@ -32,7 +32,7 @@ import java.util.Stack;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.common.CamelJBangConstants;
+import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;

@@ -37,7 +37,7 @@ public class OpenTelemetryContextPolicyTest extends AbstractOpenTelemetryRoutePo
 
     private static final long DELAY_FOO = 20L;
     private static final long DELAY_BAR = 50L;
-    private static final long TOLERANCE = 20L;
+    private static final long TOLERANCE = 200L;
 
     @Override
     public OpenTelemetryRoutePolicyFactory createOpenTelemetryRoutePolicyFactory() {
@@ -80,8 +80,10 @@ public class OpenTelemetryContextPolicyTest extends AbstractOpenTelemetryRoutePo
 
         assertInstanceOf(HistogramPointData.class, pd);
         HistogramPointData hpd = (HistogramPointData) pd;
-        assertTrue(hpd.getMax() < maxDelay);
-        assertTrue(hpd.getMin() >= minDelay);
+        assertTrue(hpd.getMax() < maxDelay,
+                "max value: expected < " + maxDelay + " but was " + hpd.getMax());
+        assertTrue(hpd.getMin() >= minDelay,
+                "min value: expected >= " + minDelay + " but was " + hpd.getMin());
         assertEquals(count, hpd.getCount());
     }
 

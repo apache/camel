@@ -228,7 +228,7 @@ public class YamlValidator {
         }
         try {
             var target = mapper.readTree(content);
-            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly);
+            List<Error> errors = validate(target, facts != null ? facts : ProjectFacts.NONE, routesOnly, content);
             if (routesOnly) {
                 return errors;
             }
@@ -304,6 +304,11 @@ public class YamlValidator {
                     String message = "\"".equals(tail)
                             ? "line " + last + ": the value of " + key + " ends with two double quotes; remove the"
                               + " extra one and write the line as " + t.strip().substring(0, t.strip().length() - 1)
+                            // a line copied with the colon of the next key: expression: "$[?(@.id == 'a')]": (r24)
+                            : ":".equals(tail)
+                                    ? "line " + last + ": the value of " + key + " ends with a : after its closing quote;"
+                                      + " remove it and write the line as "
+                                      + t.strip().substring(0, t.strip().length() - 1).stripTrailing()
                             : "line " + last + ": the value of " + key + " continues after its closing quote"
                               + " (\"...\" + ...): a YAML value is one string, there is no concatenation; a"
                               + " log message is a simple expression, write it as one quoted text such as"
@@ -412,6 +417,10 @@ public class YamlValidator {
             return listItemColumn(problem, lines);
         }
         if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
+            Error bare = bareLineAbove(problem.line(), lines);
+            if (bare != null) {
+                return bare;
+            }
             return marks.size() > 1 ? mappingKeyColumn(marks.get(0), problem, lines) : null;
         }
         // a key in the column of the dashes of a list: '?' is the parser's name for a key
@@ -426,6 +435,10 @@ public class YamlValidator {
         }
         if (msg.contains("expected <block end>, but found '<scalar>'") && !marks.isEmpty()) {
             return unclosedQuote(marks.get(0), lines);
+        }
+        // a bare line after other keys, which the parser reads as a key with no colon: an exception class of a doCatch
+        if (msg.contains("could not find expected ':'")) {
+            return bareLineAbove(problem.line(), lines, true);
         }
         return null;
     }
@@ -592,6 +605,10 @@ public class YamlValidator {
             return null;
         }
         if (colon == text.indexOf(':')) {
+            Error bare = bareLineAbove(problem.line(), lines);
+            if (bare != null) {
+                return bare;
+            }
             String stripped = text.stripLeading();
             int indent = text.length() - stripped.length();
             Mark mapping = enclosingMapping(problem.line(), indent, lines);
@@ -605,6 +622,111 @@ public class YamlValidator {
         String quoted = value.contains("\"") ? "'" + value + "'" : "\"" + value + "\"";
         return hint("line " + problem.line() + ": the value of " + keyName(text) + " holds a colon (" + quoted
                     + "): a colon followed by a space starts a new key, so the value must be quoted");
+    }
+
+    /** The EIPs whose first key is name:, the name of what they set or remove. */
+    private static final Set<String> NAMED_EIPS = Set.of("setHeader", "setProperty", "setVariable", "removeHeader",
+            "removeProperty", "removeVariable");
+
+    private static final Pattern BARE_WORD = Pattern.compile("[A-Za-z_][\\w.-]*");
+
+    /** The EIPs whose exception classes are a list under exception:. */
+    private static final Set<String> CATCHES = Set.of("onException", "doCatch");
+
+    /** A Java class name, with or without its package: java.io.IOException. */
+    private static final Pattern CLASS_NAME = Pattern.compile("(?:[A-Za-z_]\\w*\\.)*[A-Z]\\w*");
+
+    /**
+     * A bare word on the line above the key the parser stopped at, such as directory under - setHeader:, meant as name:
+     * directory: with no colon it is not a key, and the parser reads it with the line below as one text. The column of
+     * the key below then looked wrong, and a local model was told so 15 times (r24 ai-ticket-classifier step 2). Null
+     * when the line above is anything else.
+     */
+    private static Error bareLineAbove(int line, String[] lines) {
+        return bareLineAbove(line, lines, false);
+    }
+
+    /**
+     * As {@link #bareLineAbove(int, String[])}; with classOnly, only for an exception class among the keys of an
+     * onException or a doCatch.
+     */
+    private static Error bareLineAbove(int line, String[] lines, boolean classOnly) {
+        if (line < 2 || line > lines.length) {
+            return null;
+        }
+        String key = lines[line - 1];
+        int keyIndent = key.length() - key.stripLeading().length();
+        for (int i = line - 2; i >= 0; i--) {
+            String stripped = lines[i].strip();
+            if (stripped.isEmpty() || stripped.startsWith("#")) {
+                continue;
+            }
+            int indent = lines[i].length() - lines[i].stripLeading().length();
+            if (indent + 2 == keyIndent && stripped.startsWith("- ")
+                    && CLASS_NAME.matcher(stripped.substring(2).strip()).matches()
+                    && "doCatch".equals(catcher(i, keyIndent, lines))) {
+                // - java.io.IOException with the steps: of the doCatch below it: a list item whose key is missing
+                String margin = lines[i].substring(0, indent);
+                return hint("line " + (i + 1) + ": " + stripped.substring(2).strip() + " has no key, and the parser reads"
+                            + " it together with the line below as one text; the exception classes of doCatch are a"
+                            + " list under exception: - write line " + (i + 1) + " as these two lines:\n" + margin
+                            + "- exception:\n" + margin + "    - " + stripped.substring(2).strip());
+            }
+            if (indent != keyIndent || !BARE_WORD.matcher(stripped).matches()) {
+                return null;
+            }
+            String owner = null;
+            for (int j = i - 1; j >= 0 && owner == null; j--) {
+                String above = lines[j].stripLeading();
+                if (!above.isEmpty() && !above.startsWith("#") && lines[j].length() - above.length() < indent) {
+                    owner = keyName(above.startsWith("- ") ? above.substring(2) : above);
+                }
+            }
+            String start = "line " + (i + 1) + ": " + stripped + " has no colon, so it is not a key, and the parser"
+                           + " reads it together with the line below as one text; ";
+            String catcher = CLASS_NAME.matcher(stripped).matches() ? catcher(i, indent, lines) : null;
+            if (catcher != null) {
+                // r25 openapi-server step 3: the class under onException, which was told to be a key with a value
+                String margin = lines[i].substring(0, indent);
+                return hint(start + "the exception classes of " + catcher + " are a list under exception: - write line "
+                            + (i + 1) + " as these two lines:\n" + margin + "exception:\n" + margin + "  - " + stripped);
+            }
+            if (classOnly) {
+                return null;
+            }
+            String fix = owner != null && NAMED_EIPS.contains(owner) ? "name: " + stripped : stripped + ": <value>";
+            return hint(start + "every line of " + (owner != null ? owner : "a mapping") + " is a key with its value -"
+                        + " here write " + fix);
+        }
+        return null;
+    }
+
+    /**
+     * The onException or doCatch whose keys the line is among, or null: the key on the nearest line above that is
+     * indented less, with nothing after its colon, or for a key of a list item, the doCatch that holds the list.
+     */
+    private static String catcher(int line, int indent, String[] lines) {
+        for (int j = line - 1; j >= 0; j--) {
+            String above = lines[j].stripLeading();
+            int aboveIndent = lines[j].length() - above.length();
+            if (above.isEmpty() || above.startsWith("#") || aboveIndent >= indent) {
+                continue;
+            }
+            String item = above.startsWith("- ") ? above.substring(2) : null;
+            if (item != null && aboveIndent + 2 + item.length() - item.stripLeading().length() == indent) {
+                // a key of the same list item: the list is the one of doCatch
+                for (int k = j - 1; k >= 0; k--) {
+                    String holder = lines[k].stripLeading();
+                    if (!holder.isEmpty() && !holder.startsWith("#") && lines[k].length() - holder.length() < aboveIndent) {
+                        return "doCatch:".equals(holder.strip()) ? "doCatch" : null;
+                    }
+                }
+                return null;
+            }
+            String name = keyName(item != null ? item : above);
+            return CATCHES.contains(name) && (item != null ? item : above).strip().equals(name + ":") ? name : null;
+        }
+        return null;
     }
 
     /** The mapping an over-indented key was meant to join: the first key of the nearest shallower run of keys. */
@@ -823,7 +945,7 @@ public class YamlValidator {
         return kind != null && kind.isTextual() && "Kamelet".equals(kind.asText());
     }
 
-    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly) {
+    private List<Error> validate(JsonNode target, ProjectFacts facts, boolean routesOnly, String content) {
         Schema against = isKamelet(target) ? kameletSchema : schema;
         // A branch only matches after scalar conversion if it has no other errors, including missing required fields.
         var errors = filterOneOfNoise(new ArrayList<>(against.validate(target)));
@@ -855,7 +977,8 @@ public class YamlValidator {
             errors = SchemaHints.apply(SchemaHints.COMPACT, errors, this);
         }
         errors = SchemaHints.apply(SchemaHints.EXPRESSION, errors, this);
-        errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this);
+        // file: as a language reads the setVariable around its expression:
+        errors = SchemaHints.apply(SchemaHints.PROPERTY, errors, this, target);
         errors = SchemaHints.apply(SchemaHints.LIST, errors, this);
         // before the step hints, which rewrite the error without its instance node
         errors = SchemaHints.dropMisplacedOptionRepeats(errors, this);
@@ -891,6 +1014,10 @@ public class YamlValidator {
             checkSimpleSyntaxInScripts(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkDynamicUri(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
             checkVariableSendOfAHeader(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkDuplicateRestVerbs(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkTopLevelErrorHandlers(camelOnly, new NodePath(PathType.JSON_POINTER), content, errors);
+            checkJsonPathText(camelOnly, new NodePath(PathType.JSON_POINTER), errors);
+            checkLiteralPathParameters(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts);
             // where the body comes from, across the routes of the file (CAMEL-24844)
             BodyTypeFlow.check(camelOnly, new NodePath(PathType.JSON_POINTER), errors, facts.bodylessEndpoints(),
                     bodyTypes());
@@ -1133,6 +1260,227 @@ public class YamlValidator {
         }
     }
 
+    /**
+     * A second top-level errorHandler. The YAML DSL sets a top-level errorHandler on the CamelContext, which has one
+     * for all the routes without their own (ErrorHandlerDeserializer, global), so a second one replaces the first for
+     * every route, without a word: when the routes start, and in dev mode at the reload after the one that adds it
+     * (that reload keeps the handler of the version before). r22 to r25 of the local-model benchmark: a noErrorHandler
+     * meant for the route below it was written as a second top-level item, and the dead letter channel was lost.
+     */
+    void checkTopLevelErrorHandlers(JsonNode target, NodePath path, String content, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        int first = -1;
+        Node root = null;
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode handler = target.get(i).get("errorHandler");
+            if (handler == null) {
+                continue;
+            }
+            if (first < 0) {
+                first = i;
+                continue;
+            }
+            if (root == null) {
+                root = YamlPointerLines.root(content);
+            }
+            int line = YamlPointerLines.line(root, "/" + first, null);
+            // the route below it is the one it was meant for
+            JsonNode next = i + 1 < target.size() ? target.get(i + 1).get("route") : null;
+            String id = next != null && next.path("id").isTextual() ? next.get("id").asText() : null;
+            errors.add(Error.builder()
+                    .keyword("type")
+                    .instanceLocation(path.append(i))
+                    .messageKey("type")
+                    .format(new MessageFormat("{0}"))
+                    .arguments("a second top-level errorHandler: Camel uses one top-level errorHandler for all routes,"
+                               + " and " + (line > 0 ? "line " + line : "the errorHandler above") + " already sets one,"
+                               + " so this one replaces it for every route"
+                               + (id != null ? ", not only for the route " + id + " below it" : "") + ". For "
+                               + (id != null ? "the route " + id : "one route") + " only, write errorHandler: under that"
+                               + " route at the same level as from:, as in route: {" + (id != null ? "id: " + id + ", " : "")
+                               + "errorHandler: " + SchemaHints.errorHandlerText(handler)
+                               + ", from: {uri: ..., steps: [...]}}")
+                    .build());
+        }
+    }
+
+    /** The verbs of the rest DSL, each a list of operations under rest:. */
+    private static final List<String> REST_VERBS = List.of("get", "post", "put", "delete", "patch", "head");
+
+    /**
+     * Two operations of one rest with the same verb and the same path: Camel stops loading the routes with "Duplicate
+     * verb detected in rest-dsl" (RestDefinition.validateUniquePaths), which the schema cannot see. r24 rest-code-first
+     * step 1: a second get with no path: was added for one order, and the reload failed.
+     */
+    void checkDuplicateRestVerbs(JsonNode target, NodePath path, List<Error> errors) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode rest = target.get(i).get("rest");
+            if (rest == null || !rest.isObject()) {
+                continue;
+            }
+            for (String verb : REST_VERBS) {
+                JsonNode operations = rest.get(verb);
+                if (operations == null || !operations.isArray()) {
+                    continue;
+                }
+                Set<String> paths = new HashSet<>();
+                for (int j = 0; j < operations.size(); j++) {
+                    JsonNode p = operations.get(j).get("path");
+                    // as RestDefinition: the verb alone when there is no path
+                    String key = p != null && p.isValueNode() ? ":" + p.asText() : "";
+                    if (!paths.add(key)) {
+                        String what = key.isEmpty() ? "no path:" : "the path " + p.asText();
+                        errors.add(Error.builder()
+                                .keyword("type")
+                                .instanceLocation(path.append(i).append("rest").append(verb).append(j))
+                                .messageKey("type")
+                                .format(new MessageFormat("{0}"))
+                                .arguments("rest: a second " + verb + " with " + what + ", like one before it -"
+                                           + " Camel stops loading the routes with \"Duplicate verb detected in"
+                                           + " rest-dsl\"; give each " + verb + " its own path, such as path: /{id}"
+                                           + " for one element (its value is then in ${header.id})")
+                                .build());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * The text of a jsonpath expression that is not a path, which the runtime refuses with InvalidPathException on
+     * every message: text after the path, a bracket or a quote that is not closed, or a JSON text
+     * ({@link JsonPathText}).
+     */
+    void checkJsonPathText(JsonNode node, NodePath path, List<Error> errors) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                checkJsonPathText(node.get(i), path.append(i), errors);
+            }
+            return;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String name = it.next();
+            JsonNode value = node.get(name);
+            if ("jsonpath".equals(name)) {
+                JsonNode text = value.isTextual() ? value : value.path("expression");
+                String problem = text.isTextual()
+                        ? JsonPathText.problem(text.asText(), value.isTextual() ? name : "expression") : null;
+                if (problem != null) {
+                    errors.add(Error.builder()
+                            .keyword("type")
+                            .instanceLocation(path.append(name))
+                            .messageKey("type")
+                            .format(new MessageFormat("{0}"))
+                            .arguments(problem)
+                            .build());
+                }
+            }
+            checkJsonPathText(value, path.append(name), errors);
+        }
+    }
+
+    /** The languages in which {id} means nothing but the text {id}. */
+    private static final Set<String> TEXT_LANGUAGES = Set.of("simple", "constant", "jsonpath");
+
+    /**
+     * {id}, not part of a {{...}} property placeholder or of ${...}, and not after a / (a path told in a log message).
+     */
+    private static final Pattern BRACED_NAME = Pattern.compile("(?<![{$/])\\{([A-Za-z_][\\w.-]*)}(?!})");
+
+    /**
+     * {id} in an expression of a route that a REST operation with the path parameter id reaches: it is the text {id} as
+     * written, as the path parameter is the header id. r25 rest-code-first step 1: jsonpath $[?(@.orderId == '{id}')]
+     * matched no order, and every id was answered with 404 "unknown order {id}". Only the texts of simple, constant and
+     * jsonpath, and log messages, are read: in Groovy or jq, {id} is code.
+     */
+    void checkLiteralPathParameters(JsonNode target, NodePath path, List<Error> errors, ProjectFacts facts) {
+        if (target == null || !target.isArray()) {
+            return;
+        }
+        Map<String, Set<String>> parameters = RouteGraph.pathParameters(target, facts.pathParameters());
+        if (parameters.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < target.size(); i++) {
+            JsonNode from = RouteGraph.from(target.get(i));
+            Set<String> names = from != null ? parameters.get(RouteGraph.normalize(RouteGraph.endpointOf(from))) : null;
+            if (names != null) {
+                literalPathParameters(target.get(i), path.append(i), names, errors);
+            }
+        }
+    }
+
+    private static void literalPathParameters(JsonNode node, NodePath path, Set<String> names, List<Error> errors) {
+        if (node == null || !node.isContainerNode()) {
+            return;
+        }
+        if (node.isArray()) {
+            for (int i = 0; i < node.size(); i++) {
+                literalPathParameters(node.get(i), path.append(i), names, errors);
+            }
+            return;
+        }
+        for (var it = node.fieldNames(); it.hasNext();) {
+            String name = it.next();
+            JsonNode value = node.get(name);
+            boolean language = TEXT_LANGUAGES.contains(name);
+            if (language || "log".equals(name)) {
+                // the short form holds the text itself, the long form under expression: (message: for a log)
+                String key = value.isTextual() ? name : language ? "expression" : "message";
+                JsonNode text = value.isTextual() ? value : value.path(key);
+                String message = text.isTextual() ? literalPathParameter(name, key, text.asText(), names) : null;
+                if (message != null) {
+                    errors.add(Error.builder()
+                            .keyword("type")
+                            .instanceLocation(path.append(name))
+                            .messageKey("type")
+                            .format(new MessageFormat("{0}"))
+                            .arguments(message)
+                            .build());
+                }
+            }
+            literalPathParameters(value, path.append(name), names, errors);
+        }
+    }
+
+    /**
+     * The message for a text with {id} where id is one of the path parameters, with the line to write: each such {id}
+     * as ${header.id}, and a constant as simple, which evaluates it. Null when the text has none.
+     */
+    private static String literalPathParameter(String language, String key, String text, Set<String> names) {
+        Matcher m = BRACED_NAME.matcher(text);
+        StringBuilder fixed = new StringBuilder();
+        String first = null;
+        int last = 0;
+        while (m.find()) {
+            if (names.contains(m.group(1))) {
+                first = first != null ? first : m.group(1);
+                fixed.append(text, last, m.start()).append("${header.").append(m.group(1)).append('}');
+                last = m.end();
+            }
+        }
+        if (first == null) {
+            return null;
+        }
+        fixed.append(text.substring(last));
+        String said = "{" + first + "} is the literal text; the path parameter is the header ${header." + first + "}";
+        if ("constant".equals(language)) {
+            return said + ", and constant does not evaluate it, simple does. Write "
+                   + (key.equals("expression")
+                           ? "the lines as:\nsimple:\n  expression: " : "the line as:\nsimple: ")
+                   + yamlQuoted(fixed.toString());
+        }
+        return said + ". Write the line as:\n" + key + ": " + yamlQuoted(fixed.toString());
+    }
+
     private static void reportVariableSend(
             JsonNode node, NodePath path, Set<String> headers, Set<String> variables, String routeId, List<Error> errors) {
         if (node == null || !node.isContainerNode()) {
@@ -1230,10 +1578,138 @@ public class YamlValidator {
                                        + " is fixed when the route starts, so it is sent as text: write toD: to build"
                                        + " the uri for each message")
                             .build());
+                } else {
+                    String option = staticOptionWithExpression(uri, value);
+                    if (option != null) {
+                        errors.add(Error.builder()
+                                .keyword("type")
+                                .instanceLocation(at)
+                                .messageKey("type")
+                                .format(new MessageFormat("{0}"))
+                                .arguments("to: " + option)
+                                .build());
+                    }
                 }
             }
             checkDynamicUri(value, path.append(name), errors);
         }
+    }
+
+    /**
+     * An option of a to: with a simple expression that the component does not evaluate, said with the header to set
+     * instead; null when there is none. The options of a to: are fixed when the route starts: r24
+     * connect-service-kafka-orders step 3 wrote key: "${header.orderId}" on a to: kafka, and every record got that text
+     * as its key. Only an option with a header of its own for each message (CamelKafkaKey for the key of kafka) is
+     * reported: some components evaluate their options themselves (openfga, the method of bean), and the catalog marks
+     * only some of them (the fileName of file), or says so in the description.
+     */
+    private String staticOptionWithExpression(String uri, JsonNode to) {
+        if (uri == null) {
+            return null;
+        }
+        int colon = uri.indexOf(':');
+        int question = uri.indexOf('?');
+        String component = colon > 0 && (question < 0 || colon < question) ? uri.substring(0, colon)
+                : question > 0 ? uri.substring(0, question) : uri;
+        Map<String, String> options = new LinkedHashMap<>();
+        if (question > 0) {
+            for (String pair : uri.substring(question + 1).split("&")) {
+                int eq = pair.indexOf('=');
+                if (eq > 0) {
+                    options.put(pair.substring(0, eq), pair.substring(eq + 1));
+                }
+            }
+        }
+        JsonNode parameters = to != null && to.isObject() ? to.get("parameters") : null;
+        if (parameters != null && parameters.isObject()) {
+            for (var it = parameters.fieldNames(); it.hasNext();) {
+                String name = it.next();
+                if (parameters.get(name).isValueNode()) {
+                    options.put(name, parameters.get(name).asText());
+                }
+            }
+        }
+        ComponentModel model;
+        try {
+            model = catalog().componentModel(component);
+        } catch (Exception e) {
+            LOG.debug("Cannot read the catalog model of component {}: its options are left alone", component, e);
+            return null;
+        }
+        if (model == null) {
+            return null;
+        }
+        Set<String> prefixes = headerPrefixes(component, model);
+        for (Map.Entry<String, String> option : options.entrySet()) {
+            String text = option.getValue();
+            int start = text.indexOf("${");
+            if (start < 0 || start >= 2 && text.startsWith(":#", start - 2)) {
+                continue;
+            }
+            var known = model.getEndpointParameterOptions().stream()
+                    .filter(o -> o.getName().equals(option.getKey()))
+                    .findFirst();
+            String description = known.map(o -> String.valueOf(o.getDescription()).toLowerCase(Locale.ROOT)).orElse("");
+            if (known.isEmpty() || known.get().isSupportSimpleExpression() || description.contains("expression")
+                    || description.contains("simple")) {
+                continue;
+            }
+            // the header the producer reads for each message, such as CamelKafkaKey for the key of kafka, or
+            // CamelAwsSqsDelaySeconds for the delaySeconds of aws2-sqs (a header only the consumer sets is left alone)
+            String header = model.getEndpointHeaders().stream()
+                    .filter(h -> !"consumer".equals(h.getLabel()))
+                    .map(BaseOptionModel::getName)
+                    .filter(h -> h.equalsIgnoreCase(component + "." + option.getKey())
+                            || prefixes.stream().anyMatch(p -> h.equalsIgnoreCase(p + option.getKey())))
+                    .findFirst()
+                    .orElse(null);
+            if (header == null) {
+                continue;
+            }
+            String expression = text.indexOf('}', start) > 0 ? text.substring(start, text.indexOf('}', start) + 1) : text;
+            return "the option " + option.getKey() + " holds an expression (" + expression + "), but the options of"
+                   + " a to: are fixed when the route starts, so it is sent as the text it is - remove the option and"
+                   + " set the header " + header + " before this step (setHeader with simple: " + expression
+                   + "), which the producer reads for each message";
+        }
+        return null;
+    }
+
+    /**
+     * How the headers of a component start: Camel and the scheme with no dashes, with and without its digits
+     * (CamelInfluxDB2 for influxdb2, CamelAwsSqs for aws2-sqs), and the start that all its Camel headers share
+     * (CamelKubernetes for kubernetes-pods, CamelOpenAI for llm).
+     */
+    static Set<String> headerPrefixes(String component, ComponentModel model) {
+        Set<String> prefixes = new LinkedHashSet<>();
+        prefixes.add("Camel" + component.replace("-", ""));
+        prefixes.add("Camel" + component.replaceAll("[^A-Za-z]", ""));
+        List<String> names = model.getEndpointHeaders().stream()
+                .map(BaseOptionModel::getName)
+                .filter(n -> n.startsWith("Camel"))
+                .toList();
+        if (names.size() > 1) {
+            String shared = names.get(0);
+            for (String name : names) {
+                int i = 0;
+                while (i < shared.length() && i < name.length() && shared.charAt(i) == name.charAt(i)) {
+                    i++;
+                }
+                shared = shared.substring(0, i);
+            }
+            // back to where a word starts in every header: CamelAwsS3 and not CamelAwsS3B when they all start with B
+            while (shared.length() > "Camel".length() && !atWordStart(names, shared.length())) {
+                shared = shared.substring(0, shared.length() - 1);
+            }
+            if (shared.length() > "Camel".length()) {
+                prefixes.add(shared);
+            }
+        }
+        return prefixes;
+    }
+
+    private static boolean atWordStart(List<String> names, int index) {
+        return names.stream().allMatch(n -> n.length() == index || !Character.isLowerCase(n.charAt(index)));
     }
 
     /**
@@ -1354,9 +1830,10 @@ public class YamlValidator {
      * Filters noise from {@code oneOf} validation. When a {@code oneOf} has N branches and none match, the validator
      * reports errors from ALL branches — producing dozens of "required property 'X' not found" messages for branches
      * the user never intended. This method keeps only the errors from the branch that matched the user's YAML most
-     * closely (deepest structural match) and drops the rest.
+     * closely (deepest structural match) and drops the rest. Public for the validation of other YAML against its
+     * schema, such as a Citrus test.
      */
-    static List<Error> filterOneOfNoise(List<Error> errors) {
+    public static List<Error> filterOneOfNoise(List<Error> errors) {
         if (errors.size() <= 1) {
             return errors;
         }

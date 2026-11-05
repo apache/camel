@@ -17,13 +17,15 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -33,16 +35,39 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfSpringRouterTest extends CamelSpringTestSupport {
 
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT2;
+
+    @BeforeAll
+    static void allocateCxfSpringRouterTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CxfSpringRouterTest.port1", PORT1.toString());
+        PORT2 = AvailablePortFinder.find();
+        System.setProperty("CxfSpringRouterTest.port2", PORT2.toString());
+    }
+
+    @AfterAll
+    static void releaseCxfSpringRouterTestPorts() {
+        System.clearProperty("CxfSpringRouterTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CxfSpringRouterTest.port2");
+        if (PORT2 != null) {
+            PORT2.release();
+        }
+    }
+
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
 
     protected Server server;
 
     protected String getRouterAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/router";
+        return "http://localhost:" + PORT1.getPort() + "/" + getClass().getSimpleName() + "/router";
     }
 
     protected String getServiceAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/helloworld";
+        return "http://localhost:" + PORT2.getPort() + "/" + getClass().getSimpleName() + "/helloworld";
     }
 
     protected void configureFactory(ServerFactoryBean svrBean) {
@@ -70,7 +95,6 @@ public class CxfSpringRouterTest extends CamelSpringTestSupport {
 
     @Override
     public void setupResources() {
-        CXFTestSupport.getPort1();
     }
 
     @Override

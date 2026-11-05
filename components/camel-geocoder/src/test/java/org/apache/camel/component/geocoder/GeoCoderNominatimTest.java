@@ -18,19 +18,21 @@ package org.apache.camel.component.geocoder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class GeoCoderNominatimTest extends CamelTestSupport {
+public class GeoCoderNominatimTest extends GeoCoderNominatimTestSupport {
 
     @Test
     public void testGeoCoder() throws Exception {
+        answerFromResource("reverse", "reverse-sevilla.json");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(GeoCoderConstants.STATUS, GeocoderStatus.OK);
         mock.expectedHeaderReceived(GeoCoderConstants.COUNTRY_SHORT, "ES");
         mock.expectedHeaderReceived(GeoCoderConstants.CITY, "Sevilla");
+        mock.expectedHeaderReceived(GeoCoderConstants.LATLNG, "37.38618880, -5.99255350");
 
-        // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Test");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -41,7 +43,7 @@ public class GeoCoderNominatimTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").to(
-                        "geocoder:latlng:37.38619,-5.99255?type=NOMINATIM&serverUrl=RAW(https://nominatim.openstreetmap.org)")
+                        "geocoder:latlng:37.38619,-5.99255?type=NOMINATIM&serverUrl=RAW(" + serverUrl() + ")")
                         .to("log:result")
                         .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng}"
                              + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")

@@ -153,9 +153,10 @@ public class LangChain4jIngestConfiguration implements Cloneable {
                             + " MIME table (the x- audio variants rewritten to their registered form): wav, mp3,"
                             + " flac, ogg, opus, m4a, aac, aiff, png, jpg, gif, webp, mp4, mov, webm (video), pdf"
                             + " and every other extension the table knows. A document whose type cannot be"
-                            + " determined, whose type is no medium (text/plain, say), or whose medium the model"
-                            + " does not declare, fails the exchange before its dedup claim and before its body is"
-                            + " read. Only valid with modality=media - with"
+                            + " determined is answered with a filtered result; one whose type is no medium"
+                            + " (text/plain, say), or whose medium the model does not declare, fails the exchange."
+                            + " Both happen before the dedup claim and before the body is read."
+                            + " Only valid with modality=media - with"
                             + " modality=text the endpoint refuses to start, the option being a sign that"
                             + " modality=media was forgotten.")
     private String contentType;

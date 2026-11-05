@@ -54,6 +54,8 @@ mode in use (`address` vs. `latlng`).
 
 Camel will deliver the body as a String with the JSON response of Nominatim (the `jsonv2` format):
 an array with one place for an address, and an object for a latitude and longitude.
+When Nominatim finds no place (an empty array for an address, or `{"error":"Unable to geocode"}` for a latitude and longitude),
+the `CamelGeoCoderStatus` header is `ZERO_RESULTS`, and when it answers with an error, the header is `ERROR`.
 
 === Body using a Google Server
 

@@ -2,6 +2,7 @@
 package org.apache.camel.component.influxdb2;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class InfluxDb2EndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         InfluxDb2Endpoint target = (InfluxDb2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreatebucket":
         case "autoCreateBucket": target.setAutoCreateBucket(property(camelContext, boolean.class, value)); return true;
         case "autocreateorg":
@@ -42,7 +43,7 @@ public class InfluxDb2EndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreatebucket":
         case "autoCreateBucket": return boolean.class;
         case "autocreateorg":
@@ -63,7 +64,7 @@ public class InfluxDb2EndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         InfluxDb2Endpoint target = (InfluxDb2Endpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "autocreatebucket":
         case "autoCreateBucket": return target.isAutoCreateBucket();
         case "autocreateorg":

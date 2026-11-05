@@ -2,6 +2,7 @@
 package org.apache.camel.component.rest.postman;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         RestPostmanComponent target = (RestPostmanComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": getOrCreateConfiguration(target).setApiContextPath(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
@@ -97,7 +98,7 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return java.lang.String.class;
         case "autowiredenabled":
@@ -166,7 +167,7 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         RestPostmanComponent target = (RestPostmanComponent) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "apicontextpath":
         case "apiContextPath": return getOrCreateConfiguration(target).getApiContextPath();
         case "autowiredenabled":
@@ -234,7 +235,7 @@ public class RestPostmanComponentConfigurer extends PropertyConfigurerSupport im
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "variables": return java.lang.Object.class;
         default: return null;
         }

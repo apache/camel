@@ -359,9 +359,10 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Which runtime tool groups the Camel application needs, from what it has: sql (datasources, \
-                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer) and resilience (circuit \
-                  breakers). Returns the core tools, each group's tools with one line of guidance, and a fingerprint \
-                  that changes only when the groups do. A client for a small model offers the core tools plus these.""")
+                  SQL endpoints), tracing (OpenTelemetry, message tracing, Micrometer), resilience (circuit \
+                  breakers), http (the endpoints it serves) and chaos (camel-chaos). Returns the core tools, each \
+                  group's tools with one line of guidance, and a fingerprint that changes only when the groups do. \
+                  A client for a small model offers the core tools plus these.""")
     public JsonObject camel_runtime_tool_groups(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("get_tool_groups", nameOrPid, Map.of());
@@ -1060,5 +1061,85 @@ public class RuntimeTools {
             args.put("limit", limit.toString());
         }
         return delegateToRegistry("browse_endpoint", nameOrPid, args);
+    }
+
+    // ---- camel-chaos (the chaos tool group): the rules and the report, and the chaos action of the CLI connector ----
+    // add and change are destructive (a rule makes messages fail, wait or get lost) and the clients ask first
+    // (ToolConfirms.chaos); remove and clear change the integration only back towards normal, and the report keeps
+    // the removed rules, so they are not destructive, as trace start and stop are not
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  List the chaos rules of the Camel application (camel-chaos, development only): id, version, the \
+                  rule, state (active or ended), where it fires, matches, faults fired, time left and the expectation; \
+                  or why chaos is off. The rules come from the status of the application, written every second.""")
+    public JsonObject camel_runtime_chaos_list(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateToRegistry("chaos_list", nameOrPid, Map.of());
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Get the chaos report of the Camel application: the verdict (PASS or FAIL) and whether it is final, \
+                  the seed, every version of every rule with what it fired, the expectations (a pending one is not \
+                  decided yet) and the counts per route; or why chaos is off.""")
+    public JsonObject camel_runtime_chaos_report(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateToRegistry("chaos_report", nameOrPid, Map.of());
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Add a chaos rule to the Camel application, in the one-line form of camel.chaos.rules, e.g. \
+                  'endpoint=kafka:orders* error rate=0.1 until=5m'. Returns the id of the rule. Chaos must be on in \
+                  the application; a rule that is not valid is refused with the reason.""")
+    public JsonObject camel_runtime_chaos_add(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The rule in its one-line text form, as one entry of camel.chaos.rules") String rule) {
+        requireArg("rule", rule);
+        return delegateToRegistry("chaos_add", nameOrPid, Map.of("rule", rule));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Change a chaos rule of the Camel application: the rule with the id gets the new one-line rule and \
+                  one more version; the report keeps the version it replaces. Returns the id and the new version.""")
+    public JsonObject camel_runtime_chaos_change(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The id of the rule, such as r1 (camel_runtime_chaos_list shows them)") String id,
+            @ToolArg(description = "The new rule in its one-line text form") String rule) {
+        requireArg("id", id);
+        requireArg("rule", rule);
+        return delegateToRegistry("chaos_change", nameOrPid, Map.of("id", id, "rule", rule));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = "Remove a chaos rule of the Camel application: its faults stop, and the report keeps what it did.")
+    public JsonObject camel_runtime_chaos_remove(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The id of the rule, such as r1 (camel_runtime_chaos_list shows them)") String id) {
+        requireArg("id", id);
+        return delegateToRegistry("chaos_remove", nameOrPid, Map.of("id", id));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Remove all chaos rules of the Camel application: no more faults, and the report keeps what they \
+                  did. Returns how many were removed.""")
+    public JsonObject camel_runtime_chaos_clear(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateToRegistry("chaos_clear", nameOrPid, Map.of());
+    }
+
+    private static void requireArg(String name, String value) {
+        if (value == null || value.isBlank()) {
+            throw new ToolCallException(name + " is required", null);
+        }
     }
 }

@@ -13,6 +13,32 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.5 to 4.18.6
 
+=== camel-as2 - server/listen - signature and MIC over the message as received
+
+The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
+MIME headers and its body in the transfer encoding the sender used (RFC 1847, section 2.1), and the `Received-Content-MIC`
+of the MDN is computed over the same bytes (RFC 4130, section 7.1). Previously both were computed over a
+re-serialisation of the parsed part, which matches the sender's bytes only when the part is `binary`, `7bit` or
+`8bit` and its headers are formatted the way camel-as2 writes them: a `base64` or `quoted-printable` part from another
+AS2 implementation, encoded with a different line length or escaping, or a part with folded headers or no space after
+the colon, was refused with `authentication-failed` although correctly signed, and the MDN carried a MIC the sender
+could not match. Messages from camel-as2's own client are not affected. `MultipartSignedEntity.getSignedDataRaw()`
+returns the part as received, `getSignedDataContent()` the bytes a signature is verified against.
+
+The text of a body part now ends exactly where the boundary delimiter begins: the line break before the delimiter
+line is removed as the sender wrote it, CRLF or a bare LF. Before, two characters were always removed, so a part
+framed with bare line feeds (as `openssl cms -sign` writes them without `-crlfeol`) lost its last byte.
+
+=== camel-as2 - the asynchronous MDN allow-list matches the host and port
+
+The `asyncMdnAllowedHosts` option now matches the full authority - host and port - of the asynchronous MDN delivery
+address, rather than the host alone. Each entry is a host with an optional port in `host:port` form (IPv6 literals use
+bracket notation, for example `[::1]` or `[::1]:8080`). A bare-host entry (for example `partner.example`) now matches
+only the default port of `http` (80); to deliver to another port, list it explicitly (for example
+`partner.example:8080`).
+
+A deployment that lists a bare host and receives asynchronous MDNs on a non-default port must add the port to the entry.
+
 === camel-azure-eventhubs - per-partition checkpoint counters and timer; checkpoint window boundary fix
 
 Several fixes from 4.22.x have been brought forward to 4.18.6 to give this change a sound base.
@@ -190,6 +216,16 @@ exception of the route. With an encoder that accepts any object, the serialised 
 message, cause or stack trace of the exception of the route. Set `muteException=false` to write the exception as before.
 `transferExchange=true` is not affected.
 
+=== camel-netty - with transferExchange the consumer keeps its own connection headers
+
+With `transferExchange=true` the connection headers `CamelNettyRemoteAddress`, `CamelNettyLocalAddress`,
+`CamelNettyChannelHandlerContext`, `CamelNettySSLSession` and the `CamelNettySSLClientCert*` headers (and the
+`CamelNettyRemoteAddress` and `CamelNettyChannel` exchange properties) are now always the ones of the receiving side:
+the connection it accepted is the source of truth. Before, the headers of the transferred exchange replaced them. Such
+a header in the transferred exchange is no longer used, also when the receiving side has no value for it (for example
+the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
+the producer receives. Send any such value of the sender under a header name of your own.
+
 === camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
 
 `OAuthBearerTokenProcessor` no longer creates or updates the OAuth session, and no longer sets the
@@ -232,6 +268,15 @@ expanded, and the declaration itself is not passed on to Smooks.
 
 Set `allowExternalEntities=true` on the endpoint or on the data format for documents that rely on external entities or
 an external DTD.
+
+=== camel-flowable - xml inbound channels parse the event with the Camel XML settings
+
+The `flowable` producer now parses the event of an inbound channel of type `camel` with `deserializerType` set to
+`xml` with the XML parser settings that Camel uses, which are also the settings of Flowable 8: external DTDs are not
+loaded, external general and parameter entities are not included, entity references are kept as entity reference
+nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed the event with the JDK defaults.
+An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
+`deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
 === camel-chunk - message data printed with a direct tag is rendered literally
 
@@ -547,6 +592,96 @@ the static directory prefix configured before the first expression token (`/tmp/
 When `downloadFileName` is fully dynamic and has no static directory prefix (for example
 `downloadFileName=${file:name}`), a relative destination must stay within the working directory. An absolute
 destination that comes from the route's own expression is not confined.
+
+=== camel-xslt-saxon - external resource access is restricted for a Source message body
+
+`XsltSaxonAggregationStrategy` now configures its Saxon `TransformerFactory` the same way the `xslt-saxon`
+endpoint configures the factory it creates: `FEATURE_SECURE_PROCESSING` is enabled and `ACCESS_EXTERNAL_DTD`
+and `ACCESS_EXTERNAL_STYLESHEET` are set to an empty string. Previously the strategy used the Saxon defaults,
+so the same stylesheet ran with different settings depending on whether it was used from the endpoint or from
+the strategy. On Saxon PE/EE, `FEATURE_SECURE_PROCESSING` also disables reflexive Java extension functions in the
+stylesheet.
+
+In addition, both the strategy and the `xslt-saxon` endpoint now parse a message body that is already a
+`javax.xml.transform.Source` still to be parsed, for example a `StreamSource` or the body after a
+`convertBodyTo(Source.class)`, with a reader that does not resolve references to external resources declared
+in the document. A `DOMSource`, a `StAXSource`, or a `Source` that already carries its own reader is left
+unchanged, and a declaration internal to the document is still applied. The other body types (`String`,
+`byte[]`, `InputStream`) are unaffected, as they already reach the transformer through Camel's StAX/SAX
+conversion.
+
+On the `xslt-saxon` endpoint, `secureProcessing` now controls both: setting `secureProcessing=false` (for example so
+a Saxon PE/EE stylesheet can call Java extension functions) also restores the previous, unrestricted parsing of a
+`Source` body. `XsltSaxonAggregationStrategy` has no switch for the `Source` parsing: `setTransformerFactory(...)`
+replaces the factory, but the strategy's `XsltSaxonBuilder` keeps `secureProcessing=true`, so the body is still
+parsed with the restricted reader.
+
+On 4.18.x the `xslt-saxon` endpoint factory configuration changes as well, as it did in 4.22.0: `secureProcessing`
+(default `true`) is now applied to the Saxon `TransformerFactory` also when no `saxonExtensionFunctions` are
+configured, including a factory set with the `transformerFactory` option, and a factory the endpoint creates itself
+now has `ACCESS_EXTERNAL_DTD` and `ACCESS_EXTERNAL_STYLESHEET` set to an empty string. A Saxon PE/EE stylesheet that
+calls Java extension functions now needs `secureProcessing=false`.
+
+=== camel-openstack - the remaining Swift header constants follow the Camel naming convention
+
+The four remaining Exchange header constants of `SwiftConstants` have been renamed to follow the Camel naming
+convention used by the rest of the component, completing the rename done in 4.18.3. The Java field names are
+unchanged; only the header string values have changed.
+
+[options="header"]
+|===
+| Constant | Previous value | New value
+| `SwiftConstants.CONTAINER_METADATA_PREFIX` | `X-Container-Meta-` | `CamelOpenstackSwiftContainerMetadata`
+| `SwiftConstants.VERSIONS_LOCATION` | `X-Versions-Location` | `CamelOpenstackSwiftVersionsLocation`
+| `SwiftConstants.CONTAINER_READ` | `X-Container-Read` | `CamelOpenstackSwiftContainerRead`
+| `SwiftConstants.CONTAINER_WRITE` | `X-Container-Write` | `CamelOpenstackSwiftContainerWrite`
+|===
+
+The previous values were kept in 4.18.3 on the understanding that they were part of the Swift HTTP contract. They are
+not: the container producer passes the values to the openstack4j `CreateUpdateContainerOptions`, which builds the
+`X-Container-Meta-`, `X-Versions-Location`, `X-Container-Read` and `X-Container-Write` names of the Swift request
+itself. The request Camel sends to Swift is therefore unchanged by this rename.
+
+Routes that reference the constants symbolically (for example `setHeader(SwiftConstants.CONTAINER_READ, ...)`)
+continue to work without changes. Routes that set one of these headers by its literal string value (for example
+`setHeader("X-Container-Read", ...)` in an XML or YAML route) must be updated to the new value
+(`setHeader("CamelOpenstackSwiftContainerRead", ...)`); the previous names are no longer read.
+
+The generated Endpoint DSL header accessors on the Swift `HeaderNameBuilder` are renamed accordingly
+(`xContainerMeta()` -> `openstackSwiftContainerMetadata()`, `xVersionsLocation()` ->
+`openstackSwiftVersionsLocation()`, `xContainerRead()` -> `openstackSwiftContainerRead()`, `xContainerWrite()` ->
+`openstackSwiftContainerWrite()`).
+
+=== camel-telemetry, camel-tracing - the http.url, url.path and server.address span attributes are presented like camel.uri
+
+This applies to `camel-opentelemetry2`, `camel-micrometer-observability`, `camel-telemetry-dev`, `camel-opentelemetry`
+and `camel-observation`. The `http.url`, `url.path` and `server.address` attributes of a span are now presented the same
+way as the `camel.uri` attribute, which shows the endpoint URI as `Endpoint.toString()` does:
+
+* `http.url`, when the message has neither a `CamelHttpUrl` nor a `CamelHttpUri` header, is now the HTTP address the
+  endpoint sends to, with the query parameters it sends but without the Camel endpoint options. Before, it was the
+  endpoint URI from the last `http:` onwards, with all the endpoint options. A `camel-http` endpoint with an `https`
+  address now sets the attribute as well, and for a `camel-vertx-http` endpoint with an `https` address the value no
+  longer starts with `http://https://`.
+* `url.path` no longer includes the user info in front of the host of the endpoint URI.
+* `server.address`, and `http.url` taken from the `CamelHttpUrl` or `CamelHttpUri` header, are presented as `camel.uri`
+  is.
+
+Dashboards or queries that use the old values may need a change.
+
+=== camel-netty-http - endpoints that differ only in their options are distinct endpoints
+
+Two `netty-http` endpoints whose URIs differ only in their endpoint options, for example
+`netty-http:http://localhost:8080/foo` and `netty-http:http://localhost:8080/foo?throwExceptionOnFailure=false`, are no
+longer equal. Each of them now gets its own producer when a `ProducerTemplate`, `toD` or another EIP with a dynamic URI
+sends to them. Before, these endpoints used the producer of the endpoint that was used first, with the options of that
+endpoint.
+
+The endpoint URI does not change: it is still the HTTP address, such as `http://localhost:8080/foo`, so JMX names,
+auto-mock names, tracing and metrics are the same as before.
+
+Two routes that consume from the same address with different endpoint options are no longer rejected at startup as
+"Multiple consumers for the same endpoint is not allowed". Use one consumer per address.
 
 == Upgrading from 4.18.4 to 4.18.5
 
@@ -1797,7 +1932,7 @@ their previous values (`X-Container-Meta-`, `X-Versions-Location`,
 `X-Container-Read`, `X-Container-Write`) in this release.
 
 NOTE: These four constants have since been renamed to follow the Camel naming
-convention; see CAMEL-25895 for the releases that carry the change. They are
+convention, in 4.18.6, 4.22.3 and 4.24.0 (CAMEL-25895). They are
 Exchange header keys only: openstack4j builds the `X-Container-*` wire headers
 itself from `CreateUpdateContainerOptions`, so the Camel header name never
 reaches Swift.

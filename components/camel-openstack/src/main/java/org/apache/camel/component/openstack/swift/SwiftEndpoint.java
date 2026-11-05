@@ -38,9 +38,9 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_SWIFT, title = "OpenStack Swift", syntax = "openstack-swift:host",
              category = { Category.CONTAINER }, producerOnly = true, headersClass = SwiftConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY,
-                                  description = "For create of an object the content: an InputStream, a File, a URL or a Payload of openstack4j; "
-                                                + "text, bytes or the file of the file consumer fail: convert it to a File or an InputStream first. "
-                                                + "createUpdateMetadata and deleteMetadata take the metadata as a Map. The containers take a "
+                                  description = "For create of an object the content: an InputStream, a File, a URL or a Payload of openstack4j, "
+                                                + "or else a body that converts to an InputStream such as text, bytes or the file of the file "
+                                                + "consumer. createUpdateMetadata and deleteMetadata take the metadata as a Map. The containers take a "
                                                 + "CreateUpdateContainerOptions or ContainerListOptions of openstack4j, or else headers"),
            producerOut = @BodyType(value = {
                    Carrier.TEXT, Carrier.POJO, Carrier.LIST, Carrier.MAP, Carrier.NULL, Carrier.UNCHANGED },

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
@@ -123,6 +124,63 @@ public class TypeConverterLookupCacheTest {
         IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, e.getCause());
         assertEquals("Enum class " + MyTypeEnum.class + " does not have any constant with value: unknown",
                 cause.getMessage());
+    }
+
+    @Test
+    public void testCachedLookupFromInterfaceAndSuperClassIsDeterministic() {
+        // CAMEL-25231: like CachedCxfPayload (a CxfPayload that implements StreamCache), both the interface and the super
+        // class have a type converter. The interface is nearer, so lookup and convertTo must both choose its converter,
+        // whatever the order the type converters were added in, and the cached lookup must keep that choice
+        for (boolean interfaceFirst : List.of(true, false)) {
+            AtomicInteger fromCacheCalls = new AtomicInteger();
+            AtomicInteger fromPayloadCalls = new AtomicInteger();
+            TypeConverter fromCache = new CountingFooConverter(fromCacheCalls);
+            TypeConverter fromPayload = new CountingFooConverter(fromPayloadCalls);
+
+            DefaultTypeConverter fresh = new DefaultTypeConverter(
+                    new DefaultPackageScanClassResolver(), new DefaultInjector(new DefaultCamelContext()), true, false);
+            ServiceHelper.startService(fresh);
+            try {
+                if (interfaceFirst) {
+                    fresh.addTypeConverter(Foo.class, Cache.class, fromCache);
+                    fresh.addTypeConverter(Foo.class, Payload.class, fromPayload);
+                } else {
+                    fresh.addTypeConverter(Foo.class, Payload.class, fromPayload);
+                    fresh.addTypeConverter(Foo.class, Cache.class, fromCache);
+                }
+
+                assertSame(fromCache, fresh.lookup(Foo.class, CachedPayload.class));
+                assertNotNull(fresh.convertTo(Foo.class, new CachedPayload()));
+                assertEquals(1, fromCacheCalls.get());
+                assertEquals(0, fromPayloadCalls.get());
+                assertSame(fromCache, fresh.lookup(Foo.class, CachedPayload.class));
+            } finally {
+                ServiceHelper.stopService(fresh);
+            }
+        }
+    }
+
+    private interface Cache {
+    }
+
+    private static class Payload {
+    }
+
+    private static final class CachedPayload extends Payload implements Cache {
+    }
+
+    private static final class CountingFooConverter extends TypeConverterSupport {
+        private final AtomicInteger calls;
+
+        private CountingFooConverter(AtomicInteger calls) {
+            this.calls = calls;
+        }
+
+        @Override
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+            calls.incrementAndGet();
+            return type == Foo.class ? type.cast(new Foo()) : null;
+        }
     }
 
     @Test

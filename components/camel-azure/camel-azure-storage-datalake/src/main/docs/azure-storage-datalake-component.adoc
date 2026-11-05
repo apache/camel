@@ -414,6 +414,14 @@ from("direct:start")
 
 -  `getFile`
 
+The `CamelAzureStorageDataLakeFileRange` header selects the byte range to read. Otherwise, set both
+`fileOffset` and `dataCount` on the endpoint to select a range. This applies whether the operation
+returns an `InputStream` or writes to an `OutputStream` supplied as the message body.
+The `CamelAzureStorageDataLakeRequestCondition` header applies request conditions, such as an ETag
+or lease, to both download paths, including streaming reads without a range.
+Consumers without `fileDir` also use the streaming path and honor the endpoint `fileOffset` and
+`dataCount` options. Remove these options to consume the entire file.
+
 This can be done in two ways. We can either set an `OutputStream` in the exchange body:
 
 ._Java-only: sets an `OutputStream` for the file content to be written to_
@@ -560,6 +568,11 @@ from("direct:start")
 
 -  `flushToFile`
 
+Set `position` or the `CamelAzureStorageDataLakePosition` header to the final file length in bytes,
+including any previously committed data. For example, after appending 20 bytes to a 100-byte file,
+set the position to `120`. The header overrides the endpoint option. If neither is set, the operation
+uses the current committed file length; set the final position explicitly to commit newly appended data.
+
 [tabs]
 ====
 Java::
@@ -567,7 +580,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-    .setHeader("CamelAzureStorageDataLakePosition", constant(0))
+    .setHeader("CamelAzureStorageDataLakePosition", constant(120))
     .to("azure-storage-datalake:cameltesting/filesystem?operation=flushToFile&fileName=test.txt&serviceClient=#serviceClient")
     .to("mock:results");
 ----
@@ -579,7 +592,7 @@ XML::
 <route>
   <from uri="direct:start"/>
   <setHeader name="CamelAzureStorageDataLakePosition">
-    <constant>0</constant>
+    <constant>120</constant>
   </setHeader>
   <to uri="azure-storage-datalake:cameltesting/filesystem?operation=flushToFile&amp;fileName=test.txt&amp;serviceClient=#serviceClient"/>
   <to uri="mock:results"/>
@@ -596,7 +609,7 @@ YAML::
       steps:
         - setHeader:
             name: CamelAzureStorageDataLakePosition
-            constant: 0
+            constant: 120
         - to:
             uri: azure-storage-datalake:cameltesting/filesystem
             parameters:

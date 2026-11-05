@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -27,6 +29,14 @@ class LauncherHelperTest {
     // jar:nested: — Spring Boot 3.2+/4.x loader
     // Real URL form: jar:nested:/outer.jar/!BOOT-INF/lib/inner.jar!/
     // The outer-jar boundary is /! (slash-bang), not !/ (bang-slash).
+
+    @Test
+    void theJarOfAClassIsTheJarThatHasIt() throws Exception {
+        // the launcher JAR of the distribution has the main class only, the classes of the CLI are in the other JARs
+        Path jar = Path.of(Test.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+
+        assertThat(LauncherHelper.getJarPath(Test.class)).isEqualTo(jar.toString());
+    }
 
     @Test
     void parsesNestedJarUrlOnLinux() {

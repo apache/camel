@@ -97,6 +97,36 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         }
     }
 
+    @Override
+    protected boolean isValidFile(
+            Exchange dynamic,
+            Supplier<GenericFile<File>> file, String name, String absoluteFilePath,
+            Supplier<String> relativeFilePath, boolean isDirectory, File[] files) {
+        if (!super.isValidFile(dynamic, file, name, absoluteFilePath, relativeFilePath, isDirectory, files)) {
+            return false;
+        }
+        if (isDirectory) {
+            return true;
+        }
+        // CAMEL-25778: TOCTOU guard — after super.isValidFile() added the file to the
+        // in-progress repository, a concurrent async-commit thread may have already moved
+        // the file away (e.g. to .camel). Use a plain File.exists() check (no network cost)
+        // to detect this; if the file is gone, undo the in-progress claim and drop the
+        // eagerly-added idempotent key so the file is not routed a second time.
+        if (!new File(absoluteFilePath).exists()) {
+            LOG.debug("Skipping file as it no longer exists (already committed by another thread): {}", name);
+            getEndpoint().getInProgressRepository().remove(absoluteFilePath);
+            // Drop the eager idempotent key so a future file with the same name is not
+            // permanently blacklisted (mirrors the key resolution in notUnique()).
+            if (Boolean.TRUE.equals(getEndpoint().isIdempotent()) && getEndpoint().isIdempotentEager()
+                    && getEndpoint().getIdempotentRepository() != null) {
+                removeExcessiveIdempotentFile(file.get(), dynamic);
+            }
+            return false;
+        }
+        return true;
+    }
+
     private boolean pollDirectory(Exchange dynamic, File directory, List<GenericFile<File>> fileList, int depth) {
         depth++;
 
@@ -465,8 +495,6 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
                 startScheduler();
             }
         }
-
-        super.doStart();
     }
 
     private void tryCreateDirectory(File file) throws FileNotFoundException {

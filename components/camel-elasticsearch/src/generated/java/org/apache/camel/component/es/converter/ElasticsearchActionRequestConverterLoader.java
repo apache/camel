@@ -84,6 +84,14 @@ public final class ElasticsearchActionRequestConverterLoader implements TypeConv
                 }
                 return answer;
             });
+        addTypeConverter(registry, co.elastic.clients.elasticsearch.core.MsearchRequest.Builder.class, java.lang.Object.class, false,
+            (type, exchange, value) -> {
+                Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toMsearchRequestBuilder(value, exchange);
+                if (false && answer == null) {
+                    answer = Void.class;
+                }
+                return answer;
+            });
         addTypeConverter(registry, co.elastic.clients.elasticsearch.core.SearchRequest.Builder.class, java.lang.Object.class, false,
             (type, exchange, value) -> {
                 Object answer = org.apache.camel.component.es.converter.ElasticsearchActionRequestConverter.toSearchRequestBuilder(value, exchange);

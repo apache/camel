@@ -2,6 +2,7 @@
 package org.apache.camel.component.grpc;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GrpcEndpoint target = (GrpcEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationtype":
         case "authenticationType": target.getConfiguration().setAuthenticationType(property(camelContext, org.apache.camel.component.grpc.GrpcAuthType.class, value)); return true;
         case "autodiscoverclientinterceptors":
@@ -113,7 +114,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationtype":
         case "authenticationType": return org.apache.camel.component.grpc.GrpcAuthType.class;
         case "autodiscoverclientinterceptors":
@@ -205,7 +206,7 @@ public class GrpcEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GrpcEndpoint target = (GrpcEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authenticationtype":
         case "authenticationType": return target.getConfiguration().getAuthenticationType();
         case "autodiscoverclientinterceptors":

@@ -22,10 +22,10 @@ import jakarta.xml.ws.Service;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
 import org.apache.camel.cxf.multipart.types.ObjectFactory;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit6.CamelSpringTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -37,6 +37,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class CXFMultiPartTest extends CamelSpringTestSupport {
+
+    private static AvailablePortFinder.Port PORT1;
+    private static AvailablePortFinder.Port PORT3;
+
+    private static void allocateCXFMultiPartTestPorts() {
+        PORT1 = AvailablePortFinder.find();
+        System.setProperty("CXFMultiPartTest.port1", PORT1.toString());
+        PORT3 = AvailablePortFinder.find();
+        System.setProperty("CXFMultiPartTest.port3", PORT3.toString());
+    }
+
+    @AfterAll
+    static void releaseCXFMultiPartTestPorts() {
+        System.clearProperty("CXFMultiPartTest.port1");
+        if (PORT1 != null) {
+            PORT1.release();
+        }
+        System.clearProperty("CXFMultiPartTest.port3");
+        if (PORT3 != null) {
+            PORT3.release();
+        }
+    }
+
     public static final QName SERVICE_NAME = new QName(
             "http://camel.apache.org/cxf/multipart",
             "MultiPartInvokeService");
@@ -48,8 +71,9 @@ public class CXFMultiPartTest extends CamelSpringTestSupport {
 
     @BeforeAll
     public static void startService() {
+        allocateCXFMultiPartTestPorts();
         Object implementor = new MultiPartInvokeImpl();
-        String address = "http://localhost:" + CXFTestSupport.getPort1() + "/CXFMultiPartTest/SoapContext/SoapPort";
+        String address = "http://localhost:" + PORT1.getPort() + "/CXFMultiPartTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
 
     }
@@ -63,7 +87,7 @@ public class CXFMultiPartTest extends CamelSpringTestSupport {
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
-        String reply = invokeMultiPartService("http://localhost:" + CXFTestSupport.getPort3()
+        String reply = invokeMultiPartService("http://localhost:" + PORT3.getPort()
                                               + "/CXFMultiPartTest/CamelContext/RouterPort",
                 "in0", "in1");
         assertNotNull(reply, "No response received from service");

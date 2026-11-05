@@ -2,6 +2,7 @@
 package org.apache.camel.groovy.xml;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,7 +30,7 @@ public class GroovyXmlDataFormatConfigurer extends org.apache.camel.support.comp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         GroovyXmlDataFormat target = (GroovyXmlDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "attributemapping":
         case "attributeMapping": target.setAttributeMapping(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -43,7 +44,7 @@ public class GroovyXmlDataFormatConfigurer extends org.apache.camel.support.comp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "attributemapping":
         case "attributeMapping": return boolean.class;
         default: return null;
@@ -53,7 +54,7 @@ public class GroovyXmlDataFormatConfigurer extends org.apache.camel.support.comp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         GroovyXmlDataFormat target = (GroovyXmlDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "attributemapping":
         case "attributeMapping": return target.isAttributeMapping();
         default: return null;

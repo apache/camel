@@ -2,6 +2,7 @@
 package org.apache.camel.component.azure.functions;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         FunctionsEndpoint target = (FunctionsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": target.getConfiguration().setAppServiceManager(property(camelContext, com.azure.resourcemanager.appservice.AppServiceManager.class, value)); return true;
         case "clientid":
@@ -56,6 +57,8 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "subscriptionId": target.getConfiguration().setSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
         case "tenantid":
         case "tenantId": target.getConfiguration().setTenantId(property(camelContext, java.lang.String.class, value)); return true;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": target.getConfiguration().setThrowExceptionOnFailure(property(camelContext, boolean.class, value)); return true;
         case "tokencredential":
         case "tokenCredential": target.getConfiguration().setTokenCredential(property(camelContext, com.azure.core.credential.TokenCredential.class, value)); return true;
         default: return false;
@@ -69,7 +72,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return com.azure.resourcemanager.appservice.AppServiceManager.class;
         case "clientid":
@@ -103,6 +106,8 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "subscriptionId": return java.lang.String.class;
         case "tenantid":
         case "tenantId": return java.lang.String.class;
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return boolean.class;
         case "tokencredential":
         case "tokenCredential": return com.azure.core.credential.TokenCredential.class;
         default: return null;
@@ -112,7 +117,7 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         FunctionsEndpoint target = (FunctionsEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "appservicemanager":
         case "appServiceManager": return target.getConfiguration().getAppServiceManager();
         case "clientid":
@@ -146,6 +151,8 @@ public class FunctionsEndpointConfigurer extends PropertyConfigurerSupport imple
         case "subscriptionId": return target.getConfiguration().getSubscriptionId();
         case "tenantid":
         case "tenantId": return target.getConfiguration().getTenantId();
+        case "throwexceptiononfailure":
+        case "throwExceptionOnFailure": return target.getConfiguration().isThrowExceptionOnFailure();
         case "tokencredential":
         case "tokenCredential": return target.getConfiguration().getTokenCredential();
         default: return null;

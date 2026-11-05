@@ -426,6 +426,217 @@ class SourceValidatorEndpointTest {
     }
 
     @Test
+    void aSimpleMistakeInAFileNameOptionIsReportedAtWriteTime() {
+        // r26 connect-sftp-transfer step 3, a receipt named like the batch: the write was accepted, and the route then
+        // failed to reload on "Unknown file language syntax: noext"
+        String yaml = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: sftp:localhost:2222/receipts
+                            parameters:
+                              username: admin
+                              fileName: "${file:noext}.txt"
+                        - to:
+                            uri: "file:receipts?fileName=${file:name:noext}.txt"
+                """;
+        List<String> msgs = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).startsWith("Line 9: sftp: fileName=${file:noext}.txt has a Simple syntax error: Unknown"
+                                           + " file language syntax: noext (did you mean ${file:name.noext}, the file"
+                                           + " name without its extension?");
+        assertThat(msgs.get(1)).startsWith("Line 11: file: fileName=${file:name:noext}.txt has a Simple syntax error:"
+                                           + " Unknown file language syntax: name:noext (did you mean"
+                                           + " ${file:name.noext}?");
+        // the functions as written in the file component's doc, with a date, a header and a property placeholder
+        String right = yaml.replace("${file:noext}.txt", "{{receipt.prefix}}${file:name.noext}-${date:now:yyyyMMdd}.txt")
+                .replace("${file:name:noext}.txt", "${header.CamelFileName}.done&tempFileName=${file:onlyname}.tmp");
+        assertThat(SourceValidator.validateYamlEndpoints(right, catalog)).isEmpty();
+    }
+
+    @Test
+    void aFileOptionTheRuntimeAcceptsIsNotRefused() {
+        // review of #29147: the check of the file language options refused routes that run fine: a placeholder as an
+        // operand of ||, a RAW value with & in it (in the uri and under parameters:), a single-quoted value with '' in
+        // it, and + for a space in a uri
+        String yaml = """
+                - route:
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: inbox
+                        filterFile: "${file:size} > 1000 || {{extra.filter}}"
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: "file:archive?filterFile=RAW(${file:name} contains 'R&D')"
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: research
+                        filterFile: "RAW(${file:onlyname} contains 'R&D')"
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: plans
+                        filterFile: '${file:name} contains ''plan'''
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: "file:big?filterFile=${file:size}+>+1000"
+                      steps:
+                        - log: "${file:name}"
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(yaml, catalog)).isEmpty();
+        // a mistake is still reported, in RAW and in single quotes
+        String wrong = yaml.replace("RAW(${file:name} contains 'R&D')", "RAW(${file:noext} contains 'R&D')")
+                .replace("'${file:name} contains ''plan'''", "'${file:name:noext} contains ''plan'''");
+        assertThat(SourceValidator.validateYamlEndpoints(wrong, catalog)).satisfiesExactly(
+                m -> assertThat(m).startsWith("Line 11: file: filterFile=${file:noext} contains 'R&D' has a Simple syntax"
+                                              + " error: Unknown file language syntax: noext"),
+                m -> assertThat(m).startsWith("Line 27: file: filterFile=${file:name:noext} contains 'plan' has a Simple"
+                                              + " syntax error: Unknown file language syntax: name:noext"));
+    }
+
+    @Test
+    void anAmpersandInAParameterValueIsAccepted() {
+        // CAMEL-26594: the YAML DSL keeps a value with an & whole (in RAW), so filterFile: "${file:name} contains 'R&D'"
+        // runs, where the & cut the value before (CAMEL-26591). So does a secret option, and a path option, where an & is
+        // a character like any other
+        String yaml = """
+                - route:
+                    from:
+                      uri: file:inbox
+                      parameters:
+                        filterFile: "${file:name} contains 'R&D'"
+                        noop: true
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: file
+                      parameters:
+                        directoryName: R&D
+                        filterFile: "${file:size} > 1000 && ${file:name} ends with '.csv'"
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: sftp:localhost:2222/inbox
+                      parameters:
+                        username: admin
+                        password: "s3cr&t"
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: log:audit
+                            parameters:
+                              marker: "f(x)&g(y)"
+                """;
+        assertThat(SourceValidator.validateYamlEndpoints(yaml, catalog)).isEmpty();
+        // the value is checked whole, as the runtime reads it: a mistake in it is reported with the whole value
+        String wrong = yaml.replace("${file:name} contains 'R&D'", "${file:noext} contains 'R&D'");
+        assertThat(SourceValidator.validateYamlEndpoints(wrong, catalog)).satisfiesExactly(
+                m -> assertThat(m).startsWith("Line 5: file: filterFile=${file:noext} contains 'R&D' has a Simple syntax"
+                                              + " error: Unknown file language syntax: noext"));
+    }
+
+    @Test
+    void anAmpersandIsReportedWhereTheYamlDslStillCutsTheValue() {
+        // CAMEL-26594: the YAML DSL adds a value of a map option, a value that starts with # and a value that no RAW form
+        // can keep whole to the uri as they are, so there the & still cuts the value. A secret option is put in RAW(...)
+        // only, which ends at )&
+        String yaml = """
+                - route:
+                    from:
+                      uri: once
+                      parameters:
+                        name: hello
+                        headers:
+                          dept: "R&D"
+                      steps:
+                        - log: "${body}"
+                - route:
+                    from:
+                      uri: file:inbox
+                      parameters:
+                        filter: "#my&Filter"
+                      steps:
+                        - log: "${file:name}"
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - to:
+                            uri: log:audit
+                            parameters:
+                              marker: "f(x)&g{y}&z"
+                        - to:
+                            uri: log:audit2
+                            parameters:
+                              marker: "{x})&y"
+                - route:
+                    from:
+                      uri: sftp:localhost:2222/inbox
+                      parameters:
+                        username: admin
+                        password: "s3c)&t"
+                      steps:
+                        - log: "${file:name}"
+                """;
+        String noRawForm = " No RAW form can keep this value whole: RAW(...) ends at a ) followed by &, and RAW{...} ends"
+                           + " at a } followed by & (and RAW{{ is the start of a property placeholder). So the YAML DSL"
+                           + " adds the value to the uri as it is.";
+        List<String> msgs = SourceValidator.validateYamlEndpoints(yaml, catalog);
+        assertThat(msgs).hasSize(5);
+        assertThat(msgs.get(0)).isEqualTo("Line 7: once: dept of headers has an & in its value. The YAML DSL adds the"
+                                          + " values of a map option to the uri as they are. An & starts a new option, so"
+                                          + " Camel reads dept=R and takes the rest as another option. Write the value in"
+                                          + " RAW(...), which Camel keeps as it is: dept: \"RAW(R&D)\"");
+        assertThat(msgs.get(1)).isEqualTo("Line 14: file: filter has an & in its value. The YAML DSL keeps a value with"
+                                          + " an & whole, but it adds a value that starts with # (a reference) to the uri"
+                                          + " as it is. An & starts a new option, so Camel reads filter=#my and takes the"
+                                          + " rest as another option. Write the value in RAW(...), which Camel keeps as it"
+                                          + " is, and the reference still works: filter: \"RAW(#my&Filter)\"");
+        assertThat(msgs.get(2)).isEqualTo("Line 24: log: marker has an & in its value." + noRawForm
+                                          + " An & starts a new option, so Camel reads marker=f(x) and takes the rest as"
+                                          + " another option. Put the value in a property and refer to it with #property:"
+                                          + " marker: \"#property:marker\", with marker=f(x)&g{y}&z in"
+                                          + " application.properties");
+        assertThat(msgs.get(3)).isEqualTo("Line 28: log: marker has an & in its value." + noRawForm
+                                          + " An & starts a new option, so Camel reads marker={x}) and takes the rest as"
+                                          + " another option. Put the value in a property and refer to it with #property:"
+                                          + " marker: \"#property:marker\", with marker={x})&y in application.properties");
+        assertThat(msgs.get(4)).isEqualTo("Line 34: sftp: password has an & in its value. The YAML DSL puts a secret"
+                                          + " option in RAW(...), and RAW(...) ends at a ) followed by &. An & starts a new"
+                                          + " option, so Camel reads password=s3c and takes the rest as another option. Put"
+                                          + " the value in a property and refer to it with #property: password:"
+                                          + " \"#property:password\", and set password in application.properties");
+
+        // the fixes the messages give are accepted
+        String fixed = yaml.replace("dept: \"R&D\"", "dept: \"RAW(R&D)\"")
+                .replace("\"#my&Filter\"", "\"RAW(#my&Filter)\"")
+                .replace("\"f(x)&g{y}&z\"", "\"#property:marker\"")
+                .replace("\"{x})&y\"", "\"#property:marker\"")
+                .replace("\"s3c)&t\"", "\"#property:password\"");
+        assertThat(SourceValidator.validateYamlEndpoints(fixed, catalog)).isEmpty();
+    }
+
+    @Test
     void severalEndpointsInOneToAreNamed() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
                 - from:

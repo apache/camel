@@ -29,7 +29,7 @@
    
    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
    
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/PayLoadConvertToPOJOTest/CamelContext/RouterPort"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${PayLoadConvertToPOJOTest.port1}/PayLoadConvertToPOJOTest/CamelContext/RouterPort"
     		serviceClass="org.apache.camel.non_wrapper.Person"/>
   
 

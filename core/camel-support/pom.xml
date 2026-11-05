@@ -96,4 +96,31 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <!-- the type of thread is decided once per JVM -->
+                        <id>virtual-threads</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/DefaultThreadPoolFactoryVirtualThreadsTest.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <camel.threads.virtual.enabled>true</camel.threads.virtual.enabled>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

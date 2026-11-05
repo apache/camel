@@ -25,12 +25,14 @@ import jakarta.xml.ws.Holder;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.wsdl_first.PersonMultiPartImpl;
 import org.apache.camel.wsdl_first.PersonMultiPartPortType;
 import org.apache.camel.wsdl_first.PersonMultiPartService;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -40,14 +42,36 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit test that verifies multi part SOAP message functionality
  */
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
-    protected static int port1 = CXFTestSupport.getPort1();
-    protected static int port2 = CXFTestSupport.getPort2();
+    private static AvailablePortFinder.Port PORT;
+    private static AvailablePortFinder.Port PORT_2;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        PORT_2 = AvailablePortFinder.find();
+        port1 = PORT.getPort();
+        port2 = PORT_2.getPort();
+        SERVICE_ADDRESS = "http://localhost:" + port1
+                          + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+        if (PORT_2 != null) {
+            PORT_2.release();
+        }
+    }
+
+    protected static int port1;
+    protected static int port2;
 
     protected static final String SERVICE_NAME_PROP = "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}PersonMultiPartPort";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" + port1
-                                                    + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
+    protected static String SERVICE_ADDRESS;
     protected Endpoint endpoint;
 
     @BeforeEach

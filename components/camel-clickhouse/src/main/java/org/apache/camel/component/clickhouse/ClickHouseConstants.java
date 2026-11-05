@@ -23,15 +23,21 @@ public final class ClickHouseConstants {
     @Metadata(description = "Overrides the operation configured on the endpoint (insert, query or ping).",
               javaType = "String")
     public static final String OPERATION = "CamelClickHouseOperation";
-    @Metadata(description = "Overrides the target database configured on the endpoint.", javaType = "String")
+    @Metadata(description = "Overrides the target database configured on the endpoint. This header is ignored unless the"
+                            + " endpoint enables allowDatabaseAndTableFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String DATABASE = "CamelClickHouseDatabase";
-    @Metadata(description = "Overrides the target table configured on the endpoint.", javaType = "String")
+    @Metadata(description = "Overrides the target table configured on the endpoint. This header is ignored unless the"
+                            + " endpoint enables allowDatabaseAndTableFromHeaders=true (disabled by default).",
+              javaType = "String")
     public static final String TABLE = "CamelClickHouseTable";
     @Metadata(description = "Overrides the data format configured on the endpoint.", javaType = "String")
     public static final String FORMAT = "CamelClickHouseFormat";
     @Metadata(description = "The number of rows written by an insert operation.", javaType = "long")
     public static final String WRITTEN_ROWS = "CamelClickHouseWrittenRows";
-    @Metadata(description = "The number of rows read by a query operation.", javaType = "long")
+    @Metadata(description = "The number of rows the server read (scanned) to run a query operation. This is not the"
+                            + " number of rows in the result: with a WHERE or a LIMIT it is usually more.",
+              javaType = "long")
     public static final String READ_ROWS = "CamelClickHouseReadRows";
     @Metadata(description = "The boolean result of a ping operation.", javaType = "boolean")
     public static final String PING_OK = "CamelClickHousePingOk";

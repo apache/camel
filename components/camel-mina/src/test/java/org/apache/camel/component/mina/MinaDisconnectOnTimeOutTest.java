@@ -47,12 +47,13 @@ public class MinaDisconnectOnTimeOutTest extends BaseMinaTest {
     }
 
     @Test
-    public void testSecondRequestReturnsWrongResult() {
+    public void testSecondRequestReturnsCorrectResultWithoutDisconnectOnNoReply() {
         int tooLong = 350;
         int fastEnough = 150;
         assertThrowable(ExchangeTimedOutException.class, () -> requestWithDelay(tooLong, false));
-        // YIKES! The response from the first query is returned for the second query. Better leave disconnectOnNoReply on true!
-        assertEquals(response(tooLong), requestWithDelay(fastEnough, false));
+        // The first request timed out, so the producer closed its session instead of reusing it. The second
+        // request opens a new session and receives its own reply rather than the late reply to the first request.
+        assertEquals(response(fastEnough), requestWithDelay(fastEnough, false));
     }
 
     @Override

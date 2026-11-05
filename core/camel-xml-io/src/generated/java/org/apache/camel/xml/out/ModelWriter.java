@@ -2650,7 +2650,7 @@ public class ModelWriter extends BaseWriter {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("keyEncapsulationAlgorithm", def.getKeyEncapsulationAlgorithm(), "MLKEM");
         doWriteAttribute("symmetricKeyAlgorithm", def.getSymmetricKeyAlgorithm(), "AES");
-        doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "128");
+        doWriteAttribute("symmetricKeyLength", def.getSymmetricKeyLength(), "256");
         doWriteAttribute("keyPair", def.getKeyPair(), null);
         doWriteAttribute("provider", def.getProvider(), null);
         doWriteAttribute("keyGenerator", def.getKeyGenerator(), null);

@@ -24,9 +24,12 @@ import org.junit.jupiter.api.Test;
 public class LocalKameletsITCase extends JBangTestSupport {
     @Test
     public void localKameletRunTest() throws IOException {
+        // Copy the kamelet definition and the consumer route to the data folder
         copyResourceInDataFolder(TestResources.USER_SOURCE_KAMELET);
+        copyResourceInDataFolder(TestResources.USER_SOURCE_CONSUMER);
+        // Run the consumer route, telling Camel where to find the local kamelet
         executeBackground(
-                String.format("run --local-kamelet-dir=%s %s/user-source.kamelet.yaml", mountPoint(), mountPoint()));
-        checkLogContains("Apache Camel " + version() + " (user-source) started");
+                String.format("run --local-kamelet-dir=%s %s/user-source-consumer.camel.yaml", mountPoint(), mountPoint()));
+        checkLogContains("Apache Camel " + version() + " (user-source-consumer) started");
     }
 }

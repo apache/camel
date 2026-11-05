@@ -2,6 +2,7 @@
 package org.apache.camel.component.huggingface;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class HuggingFaceEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         HuggingFaceEndpoint target = (HuggingFaceEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtoken":
         case "authToken": target.getConfiguration().setAuthToken(property(camelContext, java.lang.String.class, value)); return true;
         case "autoselect":
@@ -30,6 +31,10 @@ public class HuggingFaceEndpointConfigurer extends PropertyConfigurerSupport imp
         case "device": target.getConfiguration().setDevice(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxchathistories":
+        case "maxChatHistories": target.getConfiguration().setMaxChatHistories(property(camelContext, int.class, value)); return true;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": target.getConfiguration().setMaxHistoryMessages(property(camelContext, int.class, value)); return true;
         case "maxtokens":
         case "maxTokens": target.getConfiguration().setMaxTokens(property(camelContext, int.class, value)); return true;
         case "memoryidheader":
@@ -63,7 +68,7 @@ public class HuggingFaceEndpointConfigurer extends PropertyConfigurerSupport imp
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtoken":
         case "authToken": return java.lang.String.class;
         case "autoselect":
@@ -71,6 +76,10 @@ public class HuggingFaceEndpointConfigurer extends PropertyConfigurerSupport imp
         case "device": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxchathistories":
+        case "maxChatHistories": return int.class;
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return int.class;
         case "maxtokens":
         case "maxTokens": return int.class;
         case "memoryidheader":
@@ -105,7 +114,7 @@ public class HuggingFaceEndpointConfigurer extends PropertyConfigurerSupport imp
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         HuggingFaceEndpoint target = (HuggingFaceEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "authtoken":
         case "authToken": return target.getConfiguration().getAuthToken();
         case "autoselect":
@@ -113,6 +122,10 @@ public class HuggingFaceEndpointConfigurer extends PropertyConfigurerSupport imp
         case "device": return target.getConfiguration().getDevice();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxchathistories":
+        case "maxChatHistories": return target.getConfiguration().getMaxChatHistories();
+        case "maxhistorymessages":
+        case "maxHistoryMessages": return target.getConfiguration().getMaxHistoryMessages();
         case "maxtokens":
         case "maxTokens": return target.getConfiguration().getMaxTokens();
         case "memoryidheader":

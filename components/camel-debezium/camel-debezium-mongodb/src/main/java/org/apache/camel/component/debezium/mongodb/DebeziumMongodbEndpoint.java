@@ -18,10 +18,13 @@ package org.apache.camel.component.debezium.mongodb;
 
 import java.util.Map;
 
-import io.debezium.data.Envelope;
+import io.debezium.connector.mongodb.MongoDbFieldName;
 import org.apache.camel.Category;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.debezium.DebeziumConstants;
+import org.apache.camel.component.debezium.DebeziumConsumer;
 import org.apache.camel.component.debezium.DebeziumEndpoint;
+import org.apache.camel.component.debezium.DebeziumTypeConverter;
 import org.apache.camel.component.debezium.mongodb.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -29,7 +32,8 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.kafka.connect.data.Schema;
+import org.apache.kafka.connect.data.Struct;
+import org.apache.kafka.connect.source.SourceRecord;
 
 /**
  * Capture changes from a MongoDB database.
@@ -43,7 +47,8 @@ import org.apache.kafka.connect.data.Schema;
                                                  + " unmarshal it to work with its fields. No body for a delete or a tombstone,"
                                                  + " nor for an update when captureMode does not look up the full document or the"
                                                  + " document is gone by then;"
-                                                 + " the operation and the key are in headers"))
+                                                 + " the operation and the key are in headers, and the changed fields of an"
+                                                 + " update in the CamelDebeziumUpdateDescription header"))
 public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConnectorEmbeddedDebeziumConfiguration>
         implements EndpointServiceLocation {
 
@@ -88,14 +93,15 @@ public final class DebeziumMongodbEndpoint extends DebeziumEndpoint<MongoDbConne
     }
 
     @Override
-    protected Object extractBodyValueFromValueStruct(Schema schema, Object value) {
-        // according to DBZ docs, `after` field only presents on the create events, however for updates there is field `patch`
-        // https://debezium.io/documentation/reference/0.10/connectors/mongodb.html
-        // hence first we test for `after`, if null we return `patch` instead
-        final Object after = extractFieldValueFromValueStruct(schema, value, Envelope.FieldName.AFTER);
-        if (after != null) {
-            return after;
+    public Exchange createDbzExchange(final DebeziumConsumer consumer, final SourceRecord sourceRecord) {
+        final Exchange exchange = super.createDbzExchange(consumer, sourceRecord);
+        // an update has the changed fields in updateDescription, and no `after` value unless captureMode looks up the
+        // full document
+        final Object updateDescription = extractValueFromValueStruct(sourceRecord.valueSchema(), sourceRecord.value(),
+                MongoDbFieldName.UPDATE_DESCRIPTION);
+        if (updateDescription instanceof Struct struct) {
+            exchange.getIn().setHeader(DebeziumConstants.HEADER_UPDATE_DESCRIPTION, DebeziumTypeConverter.toMap(struct));
         }
-        return extractFieldValueFromValueStruct(schema, value, "patch");
+        return exchange;
     }
 }

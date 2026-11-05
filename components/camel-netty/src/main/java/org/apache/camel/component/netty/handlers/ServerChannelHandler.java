@@ -18,12 +18,14 @@ package org.apache.camel.component.netty.handlers;
 
 import java.net.SocketAddress;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
@@ -130,7 +132,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         // must be prototype scoped (not pooled) so we create the exchange via endpoint
         Exchange exchange = consumer.createExchange(false);
         consumer.getEndpoint().updateMessageHeader(exchange.getIn(), ctx);
-        NettyPayloadHelper.setIn(exchange, message);
+        NettyPayloadHelper.setIn(consumer.getEndpoint(), exchange, message);
         return exchange;
     }
 
@@ -179,7 +181,23 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     private void sendResponse(ChannelHandlerContext ctx, Exchange exchange) throws Exception {
-        Object body = getResponseBody(exchange);
+        Object body;
+        try {
+            body = getResponseBody(exchange);
+            if (body != null) {
+                body = convertResponseBody(exchange, body);
+            }
+        } catch (Exception e) {
+            if (consumer.getConfiguration().isTcp()) {
+                // no reply can be written, so close the channel, otherwise the client waits for a reply forever
+                // (if not timing out)
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Closing channel as the reply cannot be written at address: {}", ctx.channel().remoteAddress());
+                }
+                NettyHelper.close(ctx.channel());
+            }
+            throw e;
+        }
 
         if (body == null) {
             noReplyLogger.log("No payload to send as reply for exchange: " + exchange);
@@ -192,12 +210,6 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
                 NettyHelper.close(ctx.channel());
             }
         } else {
-            // if textline enabled then covert to a String which must be used for textline
-            if (consumer.getConfiguration().isTextline()) {
-                body = NettyHelper.getTextlineBody(body, exchange, consumer.getConfiguration().getDelimiter(),
-                        consumer.getConfiguration().isAutoAppendDelimiter());
-            }
-
             // we got a body to write
             ChannelFutureListener listener = createResponseFutureListener(consumer, exchange, ctx.channel().remoteAddress());
             if (consumer.getConfiguration().isTcp()) {
@@ -208,6 +220,24 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
                         listener);
             }
         }
+    }
+
+    private Object convertResponseBody(Exchange exchange, Object body) throws Exception {
+        NettyConfiguration configuration = consumer.getConfiguration();
+        // if textline enabled then covert to a String which must be used for textline
+        if (configuration.isTextline()) {
+            return NettyHelper.getTextlineBody(body, exchange, configuration.getDelimiter(),
+                    configuration.isAutoAppendDelimiter());
+        }
+        // the default codec only writes a String (or a ByteBuf as-is), so convert the reply to a String as textline does,
+        // otherwise the write fails and the client gets no reply. Only the pipeline of camel-netty itself has the
+        // default codec, not one built by a custom ServerInitializerFactory.
+        if (configuration.isDefaultStringCodec() && configuration.getServerInitializerFactory() == null
+                && !configuration.isTransferExchange()
+                && !(body instanceof CharSequence) && !(body instanceof ByteBuf)) {
+            return exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, body);
+        }
+        return body;
     }
 
     /**

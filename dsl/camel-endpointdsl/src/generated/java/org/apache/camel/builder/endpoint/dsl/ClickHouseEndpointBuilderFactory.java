@@ -212,7 +212,8 @@ public interface ClickHouseEndpointBuilderFactory {
         /**
          * The target table for insert operations. Can also be given in the path
          * as database.table or overridden per message with the
-         * CamelClickHouseTable header.
+         * CamelClickHouseTable header when allowDatabaseAndTableFromHeaders is
+         * enabled.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -257,6 +258,44 @@ public interface ClickHouseEndpointBuilderFactory {
          */
         default ClickHouseEndpointBuilder waitForAsyncInsert(String waitForAsyncInsert) {
             doSetProperty("waitForAsyncInsert", waitForAsyncInsert);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the database and the table of the
+         * endpoint with the CamelClickHouseDatabase and CamelClickHouseTable
+         * headers. Disabled by default; enable it only when the header source
+         * is trusted, since it lets a message choose the database that an
+         * insert or a query runs in and the table that an insert writes to.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowDatabaseAndTableFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default ClickHouseEndpointBuilder allowDatabaseAndTableFromHeaders(boolean allowDatabaseAndTableFromHeaders) {
+            doSetProperty("allowDatabaseAndTableFromHeaders", allowDatabaseAndTableFromHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the database and the table of the
+         * endpoint with the CamelClickHouseDatabase and CamelClickHouseTable
+         * headers. Disabled by default; enable it only when the header source
+         * is trusted, since it lets a message choose the database that an
+         * insert or a query runs in and the table that an insert writes to.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowDatabaseAndTableFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default ClickHouseEndpointBuilder allowDatabaseAndTableFromHeaders(String allowDatabaseAndTableFromHeaders) {
+            doSetProperty("allowDatabaseAndTableFromHeaders", allowDatabaseAndTableFromHeaders);
             return this;
         }
         /**
@@ -463,7 +502,9 @@ public interface ClickHouseEndpointBuilderFactory {
             return "CamelClickHouseOperation";
         }
         /**
-         * Overrides the target database configured on the endpoint.
+         * Overrides the target database configured on the endpoint. This header
+         * is ignored unless the endpoint enables
+         * allowDatabaseAndTableFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -475,7 +516,9 @@ public interface ClickHouseEndpointBuilderFactory {
             return "CamelClickHouseDatabase";
         }
         /**
-         * Overrides the target table configured on the endpoint.
+         * Overrides the target table configured on the endpoint. This header is
+         * ignored unless the endpoint enables
+         * allowDatabaseAndTableFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -511,7 +554,9 @@ public interface ClickHouseEndpointBuilderFactory {
             return "CamelClickHouseWrittenRows";
         }
         /**
-         * The number of rows read by a query operation.
+         * The number of rows the server read (scanned) to run a query
+         * operation. This is not the number of rows in the result: with a WHERE
+         * or a LIMIT it is usually more.
          * 
          * The option is a: {@code long} type.
          * 

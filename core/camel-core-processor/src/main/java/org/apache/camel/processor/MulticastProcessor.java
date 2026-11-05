@@ -55,6 +55,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
+import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.IdAware;
@@ -680,7 +681,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                     StopWatch watch = beforeSend(pair);
 
                     AsyncCallback taskCallback = (doneSync) -> {
-                        afterSend(pair, watch);
+                        afterSend(pair, watch, original);
 
                         // Decide whether to continue with the multicast or not; similar logic to the Pipeline
                         // remember to test for stop on exception and aggregate before copying back results
@@ -703,6 +704,18 @@ public class MulticastProcessor extends BaseProcessorSupport
                             // and do the done work
                             doDone(exchange, true);
                             return;
+                        }
+
+                        // Propagate the interrupted flag and the cut-off-WARN-logged marker from the
+                        // sub-exchange to the original exchange immediately, before the outer error handler's
+                        // callback fires. Only propagate when a stopped error handler in a nested EIP
+                        // (e.g. split inside multicast) already logged the cut-off WARN -- identified by
+                        // the CUTOFF_WARN_LOGGED property set by RedeliveryErrorHandler.runNotAllowed().
+                        // If interrupted was set by DirectProducer without logging a WARN, we must NOT
+                        // propagate: the outer error handler must still log its WARN for this cut-off.
+                        if (exchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
+                            original.getExchangeExtension().setInterrupted(true);
+                            original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
                         }
 
                         exchangeResult.accept(exchange);
@@ -813,7 +826,7 @@ public class MulticastProcessor extends BaseProcessorSupport
             } catch (Exception e) {
                 exchange.setException(e);
             } finally {
-                afterSend(pair, watch);
+                afterSend(pair, watch, original);
             }
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
@@ -833,6 +846,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                     // this is similar to what the pipeline does, so we should do the same to not surprise end users
                     // so we should set the failed exchange as the result and be done
                     result.set(exchange);
+                }
+                // Propagate the interrupted flag and the cut-off-WARN-logged marker from the
+                // sub-exchange to the original before doDone() fires.
+                if (exchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
+                    original.getExchangeExtension().setInterrupted(true);
+                    original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
                 }
                 // and do the done work
                 doDone(exchange, true);
@@ -875,6 +894,19 @@ public class MulticastProcessor extends BaseProcessorSupport
         return !stopOnException;
     }
 
+    /**
+     * Whether processing was stopped because {@link #shouldContinueOnFailure(Exchange, Exchange, int)} returned
+     * {@code false} for a failed sub-exchange although {@code stopOnException} is not enabled (e.g., the Splitter
+     * reached its error threshold). The original exchange is then kept and only gets the exception, the same as with
+     * {@code stopOnException}.
+     *
+     * @param  original the original exchange
+     * @return          {@code true} if processing was stopped on a failure
+     */
+    protected boolean isStoppedOnFailure(Exchange original) {
+        return false;
+    }
+
     protected ScheduledFuture<?> schedule(Executor executor, Runnable runnable, long delay, TimeUnit unit) {
         if (executor instanceof ScheduledExecutorService scheduledExecutorService) {
             return scheduledExecutorService.schedule(runnable, delay, unit);
@@ -906,6 +938,18 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         // return the watch
         return watch;
+    }
+
+    /**
+     * Called when an item was sent.
+     *
+     * @param pair     the pair of the item
+     * @param watch    the watch from {@link #beforeSend(ProcessorExchangePair)}
+     * @param original the exchange that was split or multicasted. Properties should be read from this exchange, as an
+     *                 item can have inherited them from an outer split, or a nested split can have changed them.
+     */
+    protected void afterSend(ProcessorExchangePair pair, StopWatch watch, Exchange original) {
+        afterSend(pair, watch);
     }
 
     protected void afterSend(ProcessorExchangePair pair, StopWatch watch) {
@@ -946,7 +990,8 @@ public class MulticastProcessor extends BaseProcessorSupport
         // cleanup any per exchange aggregation strategy
         removeAggregationStrategyFromExchange(original);
 
-        // we need to know if there was an exception, and if the stopOnException option was enabled
+        // we need to know if there was an exception, and if we stopped on it (the stopOnException option, or a failure
+        // policy such as the error threshold of the Splitter)
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
@@ -954,7 +999,7 @@ public class MulticastProcessor extends BaseProcessorSupport
                 && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
-            stoppedOnException = isStopOnException();
+            stoppedOnException = isStopOnException() || isStoppedOnFailure(original);
             exception = true;
         }
 
@@ -972,6 +1017,15 @@ public class MulticastProcessor extends BaseProcessorSupport
                     original.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
                 }
             }
+            // Propagate the interrupted flag and the cut-off-WARN-logged marker from the sub-exchange to
+            // the original. Only propagate when a stopped error handler in a nested EIP already logged the
+            // cut-off WARN (identified by CUTOFF_WARN_LOGGED set by RedeliveryErrorHandler.runNotAllowed()).
+            // DirectProducer sets interrupted without logging, so its interruption must NOT be forwarded here
+            // -- the outer handler must log the WARN for this cut-off.
+            if (subExchange.getProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, false, Boolean.class)) {
+                original.getExchangeExtension().setInterrupted(true);
+                original.setProperty(RedeliveryErrorHandler.CUTOFF_WARN_LOGGED, Boolean.TRUE);
+            }
         }
 
         if (processorExchangeFactory != null && pairs instanceof Collection) {
@@ -979,8 +1033,16 @@ public class MulticastProcessor extends BaseProcessorSupport
             // (only when the pairs are a collection, as iterating a streaming iterable would read, prepare and create
             // exchanges for all the remaining parts, such as after stopOnException or a timeout)
             try {
+                boolean pooled = processorExchangeFactory.isPooled();
+                UnitOfWork parentUnitOfWork = original.getUnitOfWork();
                 for (ProcessorExchangePair pair : pairs) {
-                    processorExchangeFactory.release(pair.getExchange());
+                    Exchange part = pair.getExchange();
+                    if (pooled && parentUnitOfWork != null && part.getUnitOfWork() == parentUnitOfWork) {
+                        // the part shares the unit of work of the parent (shareUnitOfWork), which releasing the part
+                        // would reset (removing the on completions of the parent, such as its consumer's commit)
+                        part.getExchangeExtension().setUnitOfWork(null);
+                    }
+                    processorExchangeFactory.release(part);
                 }
             } catch (Exception e) {
                 LOG.warn("Error releasing exchange due to {}. This exception is ignored.", e.getMessage(), e);
@@ -1212,8 +1274,13 @@ public class MulticastProcessor extends BaseProcessorSupport
                 // and wrap in unit of work processor so the copy exchange also can run under UoW
                 answer = createUnitOfWorkProcessor(route, processor, exchange);
 
-                // must start the error handler
-                ServiceHelper.startService(answer);
+                // Start before publishing to the cache: a second exchange to the same new recipient
+                // can take the cache-hit path and use the wrapper before it is started.
+                // isRunAllowed() covers STARTING/STARTED/SUSPENDING/SUSPENDED phases; during doInit()
+                // (INITIALIZING) it is false, so wrappers built there are deferred to doStart().
+                if (isRunAllowed()) {
+                    ServiceHelper.startService(answer);
+                }
 
                 if (errorHandlers != null) {
                     errorHandlers.putIfAbsent(cacheKey, answer);
@@ -1297,6 +1364,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         }
         CamelContextAware.trySetCamelContext(aggregationStrategy, camelContext);
         ServiceHelper.startService(aggregationStrategy, processors, processorExchangeFactory);
+        // start any error handlers that were pre-built during doInit() but not yet started
+        // (they were deferred to avoid starting producers before CamelContext is fully started)
+        if (errorHandlers != null) {
+            ServiceHelper.startService(errorHandlers.values());
+        }
     }
 
     /**
@@ -1318,12 +1390,16 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopService(
+                processors, errorHandlers != null ? errorHandlers.values() : null,
+                aggregationStrategy, processorExchangeFactory);
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors, errorHandlers, aggregationStrategy, processorExchangeFactory);
+        ServiceHelper.stopAndShutdownServices(
+                processors, errorHandlers != null ? errorHandlers.values() : null,
+                aggregationStrategy, processorExchangeFactory);
         // only clear error handlers when shutting down
         if (errorHandlers != null) {
             errorHandlers.clear();

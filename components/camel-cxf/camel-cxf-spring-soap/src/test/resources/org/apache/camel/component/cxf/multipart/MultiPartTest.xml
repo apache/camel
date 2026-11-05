@@ -30,7 +30,7 @@
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
   
     <cxf:cxfEndpoint id="routerEndpoint"
-        address="http://localhost:${CXFTestSupport.port3}/CXFMultiPartTest/CamelContext/RouterPort" 
+        address="http://localhost:${CXFMultiPartTest.port3}/CXFMultiPartTest/CamelContext/RouterPort" 
         wsdlURL="classpath:/MultiPartTest.wsdl"
         endpointName="s:MultiPartInvokePort"
         serviceName="s:MultiPartInvokeService"
@@ -42,7 +42,7 @@
    </cxf:cxfEndpoint>
   
     <cxf:cxfEndpoint id="serviceEndpoint" 
-        address="http://localhost:${CXFTestSupport.port1}/CXFMultiPartTest/SoapContext/SoapPort"
+        address="http://localhost:${CXFMultiPartTest.port1}/CXFMultiPartTest/SoapContext/SoapPort"
         wsdlURL="classpath:MultiPartTest.wsdl"
         endpointName="s:MultiPartInvokePort"
         serviceName="s:MultiPartInvokeService"

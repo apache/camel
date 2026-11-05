@@ -2,6 +2,7 @@
 package org.apache.camel.dataformat.ocsf;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,7 +36,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         OcsfDataFormat target = (OcsfDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": target.setAllowUnmarshallType(property(camelContext, boolean.class, value)); return true;
         case "collectiontype":
@@ -61,7 +62,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return boolean.class;
         case "collectiontype":
@@ -83,7 +84,7 @@ public class OcsfDataFormatConfigurer extends org.apache.camel.support.component
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         OcsfDataFormat target = (OcsfDataFormat) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowunmarshalltype":
         case "allowUnmarshallType": return target.isAllowUnmarshallType();
         case "collectiontype":

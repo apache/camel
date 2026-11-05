@@ -2,6 +2,7 @@
 package org.apache.camel.component.cxf.jaxws;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         CxfEndpoint target = (CxfEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowstreaming":
         case "allowStreaming": target.setAllowStreaming(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "bindingid":
@@ -97,7 +98,7 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowstreaming":
         case "allowStreaming": return java.lang.Boolean.class;
         case "bindingid":
@@ -173,7 +174,7 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         CxfEndpoint target = (CxfEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "allowstreaming":
         case "allowStreaming": return target.getAllowStreaming();
         case "bindingid":
@@ -248,7 +249,7 @@ public class CxfEndpointConfigurer extends PropertyConfigurerSupport implements 
 
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "properties": return java.lang.Object.class;
         case "serviceclass":
         case "serviceClass": return java.lang.Object.class;

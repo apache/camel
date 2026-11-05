@@ -2,6 +2,7 @@
 package org.apache.camel.processor.idempotent.kafka;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository target = (org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bootstrapservers":
         case "bootstrapServers": target.setBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
         case "groupid":
@@ -40,7 +41,7 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bootstrapservers":
         case "bootstrapServers": return java.lang.String.class;
         case "groupid":
@@ -59,7 +60,7 @@ public class KafkaIdempotentRepositoryConfigurer extends org.apache.camel.suppor
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository target = (org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "bootstrapservers":
         case "bootstrapServers": return target.getBootstrapServers();
         case "groupid":

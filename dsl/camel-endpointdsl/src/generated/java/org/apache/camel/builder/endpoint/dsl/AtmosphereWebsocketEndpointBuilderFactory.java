@@ -212,7 +212,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -227,7 +230,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -712,9 +718,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
+         * If this option is true then the HTTP request body is mapped to the IN
+         * message body. If this option is false then the request body is not
+         * read and the message body is null, and no attachments, Java
+         * serialized objects or form fields are mapped.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -729,9 +736,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * If this option is true then IN exchange Body of the exchange will be
-         * mapped to HTTP body. Setting this to false will avoid the HTTP
-         * mapping.
+         * If this option is true then the HTTP request body is mapped to the IN
+         * message body. If this option is false then the request body is not
+         * read and the message body is null, and no attachments, Java
+         * serialized objects or form fields are mapped.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1058,7 +1066,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1073,7 +1084,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1425,7 +1439,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1440,7 +1457,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To enable streaming to send data as multiple text fragments.
+         * Whether the consumer receives messages as a stream: a text message as
+         * a java.io.Reader and a binary message as a java.io.InputStream,
+         * instead of a String or a byte array. The producer does not use this
+         * option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.opensearch.converter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.nio.file.Path;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -28,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.opensearch.OpensearchConstants;
 import org.apache.camel.util.ObjectHelper;
 import org.opensearch.client.json.JsonData;
@@ -39,6 +42,7 @@ import org.opensearch.client.opensearch.core.DeleteRequest;
 import org.opensearch.client.opensearch.core.GetRequest;
 import org.opensearch.client.opensearch.core.IndexRequest;
 import org.opensearch.client.opensearch.core.MgetRequest;
+import org.opensearch.client.opensearch.core.MsearchRequest;
 import org.opensearch.client.opensearch.core.SearchRequest;
 import org.opensearch.client.opensearch.core.UpdateRequest;
 import org.opensearch.client.opensearch.core.bulk.BulkOperation;
@@ -95,6 +99,11 @@ public final class OpensearchActionRequestConverter {
             }
             return builder;
         }
+        if (document instanceof IndexRequest<?> indexRequest) {
+            // a built request is sent as it is, as a builder body is: the producer gets a builder body without
+            // converting it, so the header rules of the builder above do not apply to it either
+            return indexRequest.toBuilder();
+        }
         JacksonJsonpMapper mapper = createMapper();
         IndexRequest.Builder<Object> builder = new IndexRequest.Builder<>();
         if (document instanceof byte[] byteArray) {
@@ -105,6 +114,10 @@ public final class OpensearchActionRequestConverter {
             builder.document(JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(string)), mapper).toJson());
         } else if (document instanceof Reader reader) {
             builder.document(JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper).toJson());
+        } else if (isFile(document)) {
+            try (InputStream inputStream = readFile(document, exchange)) {
+                builder.document(JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper).toJson());
+            }
         } else {
             builder.document(document);
         }
@@ -128,6 +141,10 @@ public final class OpensearchActionRequestConverter {
             }
             return builder;
         }
+        if (document instanceof UpdateRequest<?, ?> updateRequest) {
+            // a built request is sent as it is, as a builder body is
+            return updateRequest.toBuilder();
+        }
         JacksonJsonpMapper mapper = createMapper();
         UpdateRequest.Builder<?, Object> builder = new UpdateRequest.Builder<>();
         if (document instanceof byte[] byteArray) {
@@ -141,6 +158,10 @@ public final class OpensearchActionRequestConverter {
             document = JsonData.of(mapper.objectMapper().reader().readTree(reader), mapper).to(JsonNode.class);
         } else if (document instanceof Map<?, ?> map) {
             document = mapper.objectMapper().convertValue(map, JsonNode.class);
+        } else if (isFile(document)) {
+            try (InputStream inputStream = readFile(document, exchange)) {
+                document = JsonData.of(mapper.objectMapper().reader().readTree(inputStream), mapper).to(JsonNode.class);
+            }
         }
 
         if (document instanceof JsonNode jsonNode) {
@@ -167,6 +188,10 @@ public final class OpensearchActionRequestConverter {
         if (document instanceof GetRequest.Builder getReqBuilder) {
             return getReqBuilder;
         }
+        if (document instanceof GetRequest getRequest) {
+            // a built request is sent as it is, as a builder body is
+            return getRequest.toBuilder();
+        }
         if (document instanceof String string) {
             return new GetRequest.Builder()
                     .index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class))
@@ -179,6 +204,10 @@ public final class OpensearchActionRequestConverter {
     public static DeleteRequest.Builder toDeleteRequestBuilder(Object document, Exchange exchange) {
         if (document instanceof DeleteRequest.Builder deleteReqBuilder) {
             return deleteReqBuilder;
+        }
+        if (document instanceof DeleteRequest deleteRequest) {
+            // a built request is sent as it is, as a builder body is
+            return deleteRequest.toBuilder();
         }
         if (document instanceof String string) {
             return new DeleteRequest.Builder()
@@ -193,9 +222,22 @@ public final class OpensearchActionRequestConverter {
         if (document instanceof DeleteIndexRequest.Builder deleteIdxReqBuilder) {
             return deleteIdxReqBuilder;
         }
-        if (document instanceof String) {
-            return new DeleteIndexRequest.Builder()
-                    .index(exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class));
+        if (document instanceof DeleteIndexRequest deleteIndexRequest) {
+            // a built request is sent as it is, as a builder body is
+            return deleteIndexRequest.toBuilder();
+        }
+        if (document instanceof String string) {
+            // the index of the header or of the indexName option, else the one named by the body
+            String indexName = exchange.getIn().getHeader(OpensearchConstants.PARAM_INDEX_NAME, String.class);
+            if (ObjectHelper.isEmpty(indexName)) {
+                indexName = string;
+            }
+            DeleteIndexRequest.Builder builder = new DeleteIndexRequest.Builder();
+            if (ObjectHelper.isNotEmpty(indexName)) {
+                builder.index(indexName);
+            }
+            // with no name at all, the request fails when it is built, as the index is required
+            return builder;
         }
         return null;
     }
@@ -204,6 +246,10 @@ public final class OpensearchActionRequestConverter {
     public static MgetRequest.Builder toMgetRequestBuilder(Object documents, Exchange exchange) {
         if (documents instanceof MgetRequest.Builder mgetReqBuilder) {
             return mgetReqBuilder;
+        }
+        if (documents instanceof MgetRequest mgetRequest) {
+            // a built request is sent as it is, as a builder body is
+            return mgetRequest.toBuilder();
         }
         if (documents instanceof Iterable<?> documentIterable) {
             MgetRequest.Builder builder = new MgetRequest.Builder();
@@ -233,33 +279,20 @@ public final class OpensearchActionRequestConverter {
             }
             return searchReqBuilder;
         }
-        SearchRequest.Builder builder = new SearchRequest.Builder();
-
-        // Only set up the indexName if the message header has the
-        // setting
+        if (queryObject instanceof SearchRequest searchRequest) {
+            // a built request is sent as it is, as a builder body is
+            return searchRequest.toBuilder();
+        }
 
         Integer size = exchange.getIn().getHeader(OpensearchConstants.PARAM_SIZE, Integer.class);
         Integer from = exchange.getIn().getHeader(OpensearchConstants.PARAM_FROM, Integer.class);
-        if (ObjectHelper.isNotEmpty(indexName)) {
-            builder.index(indexName);
-        }
 
+        JacksonJsonpMapper mapper = createMapper();
+        JsonNode json;
         if (queryObject instanceof Map<?, ?> mapQuery) {
-            // Remove 'query' prefix from the query object for backward
-            // compatibility with Elasticsearch
-            if (mapQuery.containsKey(OPENSEARCH_QUERY_DSL_PREFIX)) {
-                mapQuery = (Map<?, ?>) mapQuery.get(OPENSEARCH_QUERY_DSL_PREFIX);
-            }
-            queryObject = mapQuery;
+            json = mapper.objectMapper().valueToTree(mapQuery);
         } else if (queryObject instanceof String queryString) {
-            JacksonJsonpMapper mapper = createMapper();
-            JsonNode jsonTextObject = mapper.objectMapper().readValue(queryString, JsonNode.class);
-            JsonNode parentJsonNode = jsonTextObject.get(OPENSEARCH_QUERY_DSL_PREFIX);
-            if (parentJsonNode != null) {
-                queryString = parentJsonNode.toString();
-            }
-            mapper.objectMapper().reader().readTree(new StringReader(queryString));
-            queryObject = JsonData.of(mapper.objectMapper().reader().readTree(new StringReader(queryString)), mapper).toJson();
+            json = mapper.objectMapper().readValue(queryString, JsonNode.class);
         } else {
             // Cannot convert the queryObject into SearchRequest
             LOG.warn(
@@ -267,6 +300,22 @@ public final class OpensearchActionRequestConverter {
                     queryObject == null ? "null" : queryObject.getClass().getName());
             return null;
         }
+
+        SearchRequest.Builder builder;
+        if (json != null && json.isObject() && json.size() == 1 && !json.has(OPENSEARCH_QUERY_DSL_PREFIX)) {
+            // a query alone, such as {"match": {...}}: an object with a single member, other than query
+            builder = new SearchRequest.Builder().query(JsonData.of(json, mapper).to(Query.class));
+        } else {
+            // the body of a search request: its query, size, from, sort, aggregations, _source and the rest
+            builder = JsonData.of(json, mapper).to(SearchRequest.class).toBuilder();
+        }
+
+        // Only set up the indexName if the message header has the
+        // setting
+        if (ObjectHelper.isNotEmpty(indexName)) {
+            builder.index(indexName);
+        }
+        // the size and from of the headers or of the options, when set, override those of the body
         if (size != null) {
             builder.size(size);
         }
@@ -274,15 +323,29 @@ public final class OpensearchActionRequestConverter {
             builder.from(from);
         }
 
-        builder.query(JsonData.of(queryObject, createMapper()).to(Query.class));
-
         return builder;
+    }
+
+    @Converter
+    public static MsearchRequest.Builder toMsearchRequestBuilder(Object queryObject, Exchange exchange) {
+        if (queryObject instanceof MsearchRequest.Builder msearchReqBuilder) {
+            return msearchReqBuilder;
+        }
+        if (queryObject instanceof MsearchRequest msearchRequest) {
+            // a built request is sent as it is, as a builder body is
+            return msearchRequest.toBuilder();
+        }
+        return null;
     }
 
     @Converter
     public static BulkRequest.Builder toBulkRequestBuilder(Object documents, Exchange exchange) throws IOException {
         if (documents instanceof BulkRequest.Builder bulkReqBuilder) {
             return bulkReqBuilder;
+        }
+        if (documents instanceof BulkRequest bulkRequest) {
+            // a built request is sent as it is, as a builder body is
+            return bulkRequest.toBuilder();
         }
         if (documents instanceof Iterable<?> documentIterable) {
             BulkRequest.Builder builder = new BulkRequest.Builder();
@@ -309,6 +372,26 @@ public final class OpensearchActionRequestConverter {
         }
 
         return null;
+    }
+
+    /**
+     * Whether the document is a file, a java.io.File, a Path or the file of the file component, whose content is the
+     * JSON of the document.
+     */
+    private static boolean isFile(Object document) {
+        return document instanceof File || document instanceof Path || document instanceof WrappedFile;
+    }
+
+    /**
+     * Opens the content of the file, to read as JSON.
+     */
+    private static InputStream readFile(Object file, Exchange exchange) {
+        InputStream inputStream = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file);
+        if (inputStream == null) {
+            throw new IllegalArgumentException(
+                    "Cannot read the file of type " + file.getClass().getName() + " as the JSON of the document");
+        }
+        return inputStream;
     }
 
     private static JacksonJsonpMapper createMapper() {

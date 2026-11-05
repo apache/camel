@@ -22,7 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

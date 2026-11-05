@@ -27,12 +27,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.dsl.jbang.export.ExportContext;
-import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.ProjectExporter;
-import org.apache.camel.dsl.jbang.export.common.ExportHelper;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.StringPrinter;
+import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
+import org.apache.camel.dsl.jbang.run.common.ExportHelper;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.StringPrinter;
+import org.apache.camel.dsl.jbang.run.export.ExportContext;
+import org.apache.camel.dsl.jbang.run.export.ExportRequest;
+import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -41,12 +42,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.awaitility.Awaitility.await;
 
 /**
- * Exports through the Java API with the dependency resolver of camel-jbang-core (the silent run), as an application
- * that embeds the export does: the export keeps to its work directory, leaves the logging and the system properties of
- * the JVM as they are, and releases its silent run.
+ * Exports through the Java API with the default dependency resolver (the silent run), as an application that embeds the
+ * export does: the export keeps to its work directory, leaves the logging and the system properties of the JVM as they
+ * are, and releases its silent run.
  */
 class ExportApiTest {
 
@@ -74,7 +76,7 @@ class ExportApiTest {
         assertThat(exit).as(printer.getOutput()).isZero();
         assertThat(Files.readString(dir.resolve("export0/pom.xml"))).contains("<artifactId>camel-timer</artifactId>");
         // the silent run writes its settings to the work directory of the request (the export tests in
-        // camel-jbang-export check that the current directory is left alone, which the forks of this module share)
+        // camel-jbang-run check that the current directory is left alone, which the forks of this module share)
         assertThat(request.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE)).content()
                 .contains("camel.main.routesIncludePattern=", "hello.camel.yaml");
 
@@ -107,7 +109,10 @@ class ExportApiTest {
             System.gc();
             assertThat(contexts).allSatisfy(ref -> assertThat(ref.get()).isNull());
         });
-        assertThat(Thread.getAllStackTraces().keySet()).allSatisfy(t -> assertThat(threads).contains(t));
+        // except the thread of Awaitility itself, which can still be stopping after the await above
+        assertThat(Thread.getAllStackTraces().keySet())
+                .filteredOn(t -> !t.getName().startsWith("awaitility"))
+                .allSatisfy(t -> assertThat(threads).contains(t));
     }
 
     private ExportRequest request(int i) {
@@ -119,6 +124,40 @@ class ExportApiTest {
         request.mavenWrapper = false;
         request.quiet = true;
         return request;
+    }
+
+    @Test
+    void aYamlRouteThatDoesNotLoadIsReportedAsCamelRunDoes() throws Exception {
+        Files.writeString(route, """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - pollEnrich:
+                            uri: file:./order.json
+                """);
+        // the start failure listener of camel export, as camel run has it, which logs the report of camel validate yaml
+        // (CAMEL-24851); the test records what it is called with, rather than reading the log, which an earlier test in
+        // the same JVM may have reconfigured
+        List<Exception> failures = new CopyOnWriteArrayList<>();
+        List<List<String>> failedFiles = new CopyOnWriteArrayList<>();
+        ExportContext cli = CliExportContext.create(new CamelJBangMain(), new StringPrinter(), true);
+        ExportContext context = CliExportContext.create(new CamelJBangMain(), new StringPrinter(), true)
+                .withStartFailureListener((failure, files) -> {
+                    failures.add(failure);
+                    failedFiles.add(files);
+                    cli.onStartFailure(failure, files);
+                });
+        assertThatThrownBy(() -> new ProjectExporter(context).export(request(0))).isNotNull();
+
+        assertThat(failures).singleElement()
+                .satisfies(failure -> assertThat(YamlLoadFailureReport.isYamlLoadFailure(failure))
+                        .as("a YAML load failure: %s", failure).isTrue());
+        // the report that camel export logs for the files of the run
+        List<String> report = YamlLoadFailureReport.report(YamlLoadFailureReport.yamlFiles(failedFiles.get(0)));
+        assertThat(String.join(System.lineSeparator(), report))
+                .startsWith("The route file did not load. camel validate yaml says what to write:")
+                .contains("hello.camel.yaml", "pollEnrich");
     }
 
     private void export(int i) throws Exception {

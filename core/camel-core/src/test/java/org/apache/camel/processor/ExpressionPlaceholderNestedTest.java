@@ -20,12 +20,9 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
 
@@ -54,16 +51,22 @@ public class ExpressionPlaceholderNestedTest extends ContextTestSupport {
 
     @Test
     public void testPlaceholderOn() throws Exception {
-        FailedToCreateRouteException exception
-                = assertThrows(FailedToCreateRouteException.class, () -> context.addRoutes(new RouteBuilder() {
-                    @Override
-                    public void configure() {
-                        from("direct:on")
-                                .setBody().constant("{{query?nested=true}}")
-                                .to("mock:result");
-                    }
-                }));
-        assertIsInstanceOf(IllegalArgumentException.class, exception.getCause());
+        // the value has no {{, so the }} at its end is text
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:on")
+                        .setBody().constant("{{query?nested=true}}")
+                        .to("mock:result");
+            }
+        });
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("{\"query\":{\"match_all\":{}}}");
+
+        template.sendBody("direct:on", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Test

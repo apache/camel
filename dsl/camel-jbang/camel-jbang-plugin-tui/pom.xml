@@ -31,7 +31,7 @@
     <artifactId>camel-jbang-plugin-tui</artifactId>
 
     <name>Camel :: JBang :: Plugin :: TUI</name>
-    <description>Camel CLI TUI Plugin - Terminal UI dashboards for monitoring Camel integrations</description>
+    <description>Camel CLI TUI Plugin - Terminal UI for developing and understanding Camel integrations</description>
 
     <properties>
         <firstVersion>4.20.0</firstVersion>
@@ -107,6 +107,13 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jbang-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>

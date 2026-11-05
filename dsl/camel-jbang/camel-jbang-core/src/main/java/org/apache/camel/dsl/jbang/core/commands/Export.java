@@ -18,8 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
-import org.apache.camel.dsl.jbang.export.ExportRequest;
-import org.apache.camel.dsl.jbang.export.ProjectExporter;
+import org.apache.camel.dsl.jbang.run.export.ExportRequest;
+import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 import picocli.CommandLine.Command;
 
 @Command(name = "export",

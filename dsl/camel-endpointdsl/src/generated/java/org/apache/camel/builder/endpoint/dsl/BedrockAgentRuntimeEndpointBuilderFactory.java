@@ -45,11 +45,11 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
         }
 
         /**
-         * Define the Knowledge Base Id we are going to use.
+         * Define the Knowledge Base Id we are going to use (used by the
+         * retrieve and retrieveAndGenerate operations).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param knowledgeBaseId the value to set
@@ -60,11 +60,11 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the model Id we are going to use.
+         * Define the model Id we are going to use (used by the
+         * retrieveAndGenerate operation).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param modelId the value to set
@@ -837,7 +837,8 @@ public interface BedrockAgentRuntimeEndpointBuilderFactory {
          * When retrieving and generating a response, this header will contain
          * the citations.
          * 
-         * The option is a: {@code String} type.
+         * The option is a: {@code
+         * java.util.List<software.amazon.awssdk.services.bedrockagentruntime.model.Citation>} type.
          * 
          * Group: producer
          * 

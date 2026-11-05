@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.EndpointInject;
@@ -45,11 +46,14 @@ import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -113,6 +117,9 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     @RegisterExtension
     AvailablePortFinder.Port disposedRelayPort = AvailablePortFinder.find();
 
+    @RegisterExtension
+    AvailablePortFinder.Port reportRelayPort = AvailablePortFinder.find();
+
     private final TcpRelay relay = new TcpRelay();
 
     private final TcpRelay lateRelay = new TcpRelay();
@@ -120,6 +127,8 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
     private final TcpRelay reconnectTimeoutRelay = new TcpRelay();
 
     private final TcpRelay disposedRelay = new TcpRelay();
+
+    private final TcpRelay reportRelay = new TcpRelay();
 
     @Override
     protected RoutesBuilder createRouteBuilder() {
@@ -166,6 +175,7 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
         lateRelay.stop();
         reconnectTimeoutRelay.stop();
         disposedRelay.stop();
+        reportRelay.stop();
     }
 
     @Test
@@ -385,6 +395,58 @@ public class CommunicationLossTest extends AbstractMiloServerTest {
                 assertGoodValue("Foo").accept(otherValues.get(otherValues.size() - 1));
             });
         } finally {
+            manager.dispose();
+            reconnectExecutor.shutdownNow();
+            executor.shutdownNow();
+        }
+    }
+
+    /**
+     * The report of a consumer that starts while the server cannot be reached runs its route, which can wait for a
+     * request of the same connection, here a write once the connection is up, as a redelivery does. The outcome of the
+     * request does not wait for the thread that delivers the report, also when the pool that completes the requests has
+     * a single thread, as on a machine with one processor.
+     */
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void consumerThatWaitsForAWriteOnItsLossReportCompletesWithOneThread() throws Exception {
+        producer1.sendBody("Foo");
+
+        final MiloClientEndpoint endpoint = context.getEndpoint(
+                resolve(MILO_CLIENT_ITEM_1).replace("@@relay@@", Integer.toString(reportRelayPort.getPort())),
+                MiloClientEndpoint.class);
+        final ScheduledExecutorService reconnectExecutor = Executors.newSingleThreadScheduledExecutor();
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        // the relay is down: the manager cannot connect
+        final SubscriptionManager manager
+                = new SubscriptionManager(endpoint.getConfiguration(), reconnectExecutor, executor, 200);
+        final CountDownLatch connected = new CountDownLatch(1);
+        final CompletableFuture<Object> write = new CompletableFuture<>();
+        try {
+            final ExpandedNodeId item = ExpandedNodeId.parse(endpoint.getNode());
+            manager.registerItems(Map.of(item, value -> {
+                if (value.getStatusCode().getValue() != StatusCodes.Bad_NoCommunication || write.isDone()) {
+                    return;
+                }
+                try {
+                    if (!connected.await(30, TimeUnit.SECONDS)) {
+                        throw new TimeoutException("The connection did not come up");
+                    }
+                    write.complete(manager.write(item, new DataValue(new Variant("Bar"))).get(10, TimeUnit.SECONDS));
+                } catch (final Exception e) {
+                    write.completeExceptionally(e);
+                }
+            }), 50.0, null, new MonitorFilterConfiguration());
+
+            reportRelay.start(reportRelayPort.getPort(), getServerPort());
+            await().atMost(30, TimeUnit.SECONDS).until(() -> manager.getOpcUaClient() != null);
+            connected.countDown();
+
+            final Object status = assertDoesNotThrow(() -> write.get(30, TimeUnit.SECONDS),
+                    "The write of the consumer did not complete: its outcome waits for the thread that delivers the report");
+            assertEquals(StatusCode.GOOD, status);
+        } finally {
+            connected.countDown();
             manager.dispose();
             reconnectExecutor.shutdownNow();
             executor.shutdownNow();

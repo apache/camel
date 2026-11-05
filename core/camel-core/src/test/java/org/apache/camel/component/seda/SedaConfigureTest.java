@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.Locale;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -58,5 +59,23 @@ public class SedaConfigureTest extends ContextTestSupport {
         assertEquals(1, endpoint.getConcurrentConsumers(), "concurrentConsumers: wrong default");
         assertEquals(SedaConstants.QUEUE_SIZE, endpoint.getSize(), "size (remainingCapacity): wrong default");
         assertEquals(30000L, endpoint.getTimeout(), "timeout: wrong default");
+    }
+
+    @Test
+    public void testConfigureIgnoreCaseLocaleIndependent() {
+        // the Turkish locale lower-cases I to a dotless i, which must not break the lower-case option lookup
+        Locale oldLocale = Locale.getDefault();
+        Locale.setDefault(Locale.of("tr", "TR"));
+        try {
+            SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo", SedaEndpoint.class);
+            SedaEndpointConfigurer configurer = new SedaEndpointConfigurer();
+
+            assertTrue(configurer.configure(context, endpoint, "failIfNoConsumers", true, true));
+            assertTrue(endpoint.isFailIfNoConsumers(), "failIfNoConsumers");
+            assertEquals(boolean.class, configurer.getOptionType("failIfNoConsumers", true));
+            assertEquals(true, configurer.getOptionValue(endpoint, "failIfNoConsumers", true));
+        } finally {
+            Locale.setDefault(oldLocale);
+        }
     }
 }

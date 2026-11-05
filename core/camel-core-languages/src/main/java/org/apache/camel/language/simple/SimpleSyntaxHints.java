@@ -28,8 +28,9 @@ import java.util.Set;
  */
 public final class SimpleSyntaxHints {
 
-    public static final String OPERATORS = "==, =~, !=, <, <=, >, >=, contains, !contains, ~~, !~~, regex, !regex, in, !in, "
-                                           + "is, !is, range, !range, startsWith, endsWith, && and ||";
+    public static final String OPERATORS = "==, =~, !=, !=~, <, <=, >, >=, equals, !equals, contains, !contains, ~~, !~~, "
+                                           + "regex, !regex, in, !in, is, !is, range, !range, startsWith, !startsWith, "
+                                           + "endsWith, !endsWith, && and ||";
 
     /** The value forms an operator accepts on its right hand side. */
     public static final String VALUE_FORMS = "a quoted literal 'x', a number, true, false, null, or a function ${...}";
@@ -80,9 +81,20 @@ public final class SimpleSyntaxHints {
             Map.entry("avg", "average"),
             Map.entry("count", "size"));
 
+    /** The functions of the file language, as written after file:: name.noext is ${file:name.noext}. */
+    static final List<String> FILE_FUNCTIONS = List.of("name", "name.noext", "name.noext.single", "name.ext",
+            "name.ext.single", "ext", "onlyname", "onlyname.noext", "onlyname.noext.single", "parent", "path", "absolute",
+            "absolute.path", "length", "size", "modified");
+
+    /** The file functions a hint lists, after "the" or "The". */
+    private static final String FILE_FUNCTIONS_TEXT = "file: functions describe the file being consumed: ${file:name},"
+                                                      + " ${file:name.noext}, ${file:onlyname}, ${file:onlyname.noext},"
+                                                      + " ${file:ext}, ${file:parent}, ${file:size} and ${file:modified}";
+
     private static final String[] OPERATOR_WORDS = {
             "==", "!=", ">=", "<=", ">", "<", "=~", "!=~", "~~", "!~~", "contains",
-            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "endsWith", "&&", "||" };
+            "!contains", "regex", "!regex", "in", "!in", "is", "!is", "range", "!range", "startsWith", "!startsWith",
+            "endsWith", "!endsWith", "equals", "!equals", "&&", "||" };
 
     private SimpleSyntaxHints() {
     }
@@ -187,7 +199,7 @@ public final class SimpleSyntaxHints {
             " >= ", " <= ", " > ", " < ", " == ", " != ", " =~ ", " !=~ ",
             " contains ", " !contains ", " ~~ ", " !~~ ", " regex ", " !regex ",
             " in ", " !in ", " is ", " !is ", " range ", " !range ",
-            " startsWith ", " !startsWith ", " endsWith ", " !endsWith " };
+            " startsWith ", " !startsWith ", " endsWith ", " !endsWith ", " equals ", " !equals " };
 
     /**
      * Wraps the function references of a predicate written inside {@code ${ }} so that it can be parsed as one:
@@ -378,7 +390,10 @@ public final class SimpleSyntaxHints {
         int best = -1;
         String bestOp = null;
         for (String op : OPERATOR_WORDS) {
-            int i = function.indexOf(" " + op + " ");
+            // an operator inside quotes belongs to a literal, such as the argument of ${uppercase('a') == 'A'}: the
+            // first one outside quotes, brackets and parentheses is the operator, so a function with a quoted argument
+            // can be compared
+            int i = indexOutsideQuotes(function, " " + op + " ");
             if (i > 0 && (best < 0 || i < best)) {
                 best = i;
                 bestOp = op;
@@ -387,24 +402,9 @@ public final class SimpleSyntaxHints {
         if (bestOp == null) {
             return null;
         }
+        // an operator inside an argument list that may hold a predicate (iif, filter, forEach), or inside a key such as
+        // ${header[order in progress]}, is not at the top level, so indexOutsideQuotes has skipped it
         String head = function.substring(0, best);
-        if (head.contains("'") || head.contains("\"")) {
-            return null;
-        }
-        int open = 0;
-        for (int i = 0; i < head.length(); i++) {
-            char c = head.charAt(i);
-            if (c == '(' || c == '[') {
-                open++;
-            } else if (c == ')' || c == ']') {
-                open--;
-            }
-        }
-        if (open > 0) {
-            // the operator is inside an argument list that may hold a predicate (iif, filter, forEach),
-            // or inside a key such as ${header[order in progress]}
-            return null;
-        }
         if (head.startsWith("properties:") && head.indexOf(':', 11) > 0) {
             // the operator word is in the default value: ${properties:msg:value is not set}
             return null;
@@ -480,6 +480,61 @@ public final class SimpleSyntaxHints {
             return "did you mean ${" + closest + rest + "}?";
         }
         return "the functions are documented on the simple language page (functions)";
+    }
+
+    /**
+     * The hint for a file: function the file language does not have: the function meant, such as ${file:name.noext} for
+     * ${file:noext} or ${file:name:noext}, and the usual ones. A path, such as ${file:data/stock.json}, is a file to
+     * read, which the file: functions do not do.
+     *
+     * @param remainder the text after file:, such as noext
+     */
+    public static String unknownFileFunction(String remainder) {
+        String text = remainder != null ? remainder.strip() : "";
+        // name:noext, name_noext, Name.NoExt: the separators and the case of a function name written another way
+        String normalized = text.toLowerCase(Locale.ROOT).replaceAll("[:_\\- ]+", ".").replaceAll("\\.{2,}", ".")
+                .replaceAll("^\\.|\\.$", "");
+        if ("noext".equals(normalized)) {
+            // the name without the extension: ${file:name.noext} has the folders below the starting directory too
+            return "did you mean ${file:name.noext}, the file name without its extension? ${file:onlyname.noext} also"
+                   + " leaves out its folders. The " + FILE_FUNCTIONS_TEXT;
+        }
+        String meant = closestFileFunction(normalized);
+        if (meant != null) {
+            return "did you mean ${file:" + meant + "}? The " + FILE_FUNCTIONS_TEXT;
+        }
+        if (text.contains("/") || text.contains("\\") || text.matches(".+\\.[A-Za-z0-9]{1,5}")) {
+            return "the " + FILE_FUNCTIONS_TEXT + "; they do not read a file. To read a file into the body use the poll"
+                   + " EIP with a file: endpoint";
+        }
+        return "the " + FILE_FUNCTIONS_TEXT;
+    }
+
+    /** The file function a name written another way means: nameNoExt, absolutepath, a letter or two off; or null. */
+    private static String closestFileFunction(String normalized) {
+        if (normalized.isEmpty()) {
+            return null;
+        }
+        if (FILE_FUNCTIONS.contains(normalized)) {
+            return normalized;
+        }
+        String compact = normalized.replace(".", "");
+        for (String f : FILE_FUNCTIONS) {
+            if (f.replace(".", "").equals(compact)) {
+                return f;
+            }
+        }
+        String best = null;
+        int bestDistance = Integer.MAX_VALUE;
+        int threshold = Math.max(2, normalized.length() / 3);
+        for (String f : FILE_FUNCTIONS) {
+            int d = distance(normalized, f);
+            if (d <= threshold && d < bestDistance) {
+                best = f;
+                bestDistance = d;
+            }
+        }
+        return best;
     }
 
     /** The did-you-mean for a function whose argument was written after a colon instead of in parentheses. */

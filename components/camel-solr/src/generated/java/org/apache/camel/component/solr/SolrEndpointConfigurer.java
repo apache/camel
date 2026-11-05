@@ -2,6 +2,7 @@
 package org.apache.camel.component.solr;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         SolrEndpoint target = (SolrEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "async": target.getConfiguration().setAsync(property(camelContext, boolean.class, value)); return true;
         case "autocommit":
         case "autoCommit": target.getConfiguration().setAutoCommit(property(camelContext, boolean.class, value)); return true;
@@ -56,7 +57,7 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "async": return boolean.class;
         case "autocommit":
         case "autoCommit": return boolean.class;
@@ -91,7 +92,7 @@ public class SolrEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         SolrEndpoint target = (SolrEndpoint) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "async": return target.getConfiguration().isAsync();
         case "autocommit":
         case "autoCommit": return target.getConfiguration().isAutoCommit();

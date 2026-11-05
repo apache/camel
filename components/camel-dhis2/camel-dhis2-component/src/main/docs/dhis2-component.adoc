@@ -47,6 +47,16 @@ producers, strip these internal headers at the trust boundary -- for example wit
 override the API call. See xref:manual::security-model.adoc[the Camel security model] for details.
 ====
 
+== Message body
+
+`post/resource` and `put/resource` send the message body as the JSON resource of the request: text, bytes, a stream
+or a file as the JSON they hold, and a `Map`, a `List` or a POJO, such as a DHIS2 model class, serialized to JSON.
+`delete/resource` does not send the message body: set `inBody=resource` or the `CamelDhis2.resource` header to send a
+resource with the delete.
+
+The `get/collection` consumer sends one message per item of the collection, a `Dhis2Resource`, which is a `Map` of
+the JSON fields of the item.
+
 == Examples
 
 * Fetch an organisation unit by ID:

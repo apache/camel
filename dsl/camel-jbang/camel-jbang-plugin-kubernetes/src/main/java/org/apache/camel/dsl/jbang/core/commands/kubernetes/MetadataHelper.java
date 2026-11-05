@@ -37,10 +37,10 @@ import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubComponent
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubDataFormatResolver;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubLanguageResolver;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.support.StubTransformerResolver;
-import org.apache.camel.dsl.jbang.export.common.QuarkusHelper;
-import org.apache.camel.dsl.jbang.export.common.RuntimeType;
-import org.apache.camel.dsl.jbang.export.common.Source;
-import org.apache.camel.dsl.jbang.export.common.VersionHelper;
+import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
+import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.camel.dsl.jbang.run.common.Source;
+import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultModelReifierFactory;
 import org.apache.camel.java.in.LwJavaParser;

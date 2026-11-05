@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +48,7 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
+import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.security.LoginSecurityContext;
@@ -67,6 +69,28 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
     @Override
     public Object populateCxfRsResponseFromExchange(
+            Exchange camelExchange,
+            org.apache.cxf.message.Exchange cxfExchange)
+            throws Exception {
+        Object o = doPopulateCxfRsResponseFromExchange(camelExchange, cxfExchange);
+        if (o instanceof MessageContentsList mcl && mcl.size() <= 1 && !isCollectionReturnType(cxfExchange)) {
+            // the request parameters are still the body (the route did not set a reply), and CXF has no
+            // message body writer for a MessageContentsList: reply with its single element, or no content
+            return mcl.isEmpty() ? null : mcl.get(0);
+        }
+        return o;
+    }
+
+    private static boolean isCollectionReturnType(org.apache.cxf.message.Exchange cxfExchange) {
+        // a resource method that returns a collection writes the MessageContentsList as that collection
+        OperationResourceInfo ori = cxfExchange != null ? cxfExchange.get(OperationResourceInfo.class) : null;
+        return ori != null && Collection.class.isAssignableFrom(ori.getMethodToInvoke().getReturnType());
+    }
+
+    /**
+     * Populates the CXF exchange from the Camel response message and returns its body as is.
+     */
+    protected Object doPopulateCxfRsResponseFromExchange(
             Exchange camelExchange,
             org.apache.cxf.message.Exchange cxfExchange)
             throws Exception {
@@ -209,8 +233,9 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
     /**
      * This method call Message.getBody({@link MessageContentsList}) to allow an appropriate converter to kick in even
-     * through we only read the first element off the MessageContextList. If that returns null, we check the body to see
-     * if it is a List or an array and then return the first element. If that fails, we will simply return the object.
+     * through we only read the first element off the MessageContextList (no body when it is empty). Any other List is
+     * the request entity as a whole. If the body is an array of objects, we return its first element; an array of
+     * primitives (such as byte[]) is the request entity as a whole. Otherwise, we will simply return the object.
      */
     @Override
     public Object bindCamelMessageBodyToRequestBody(Message camelMessage, Exchange camelExchange)
@@ -218,16 +243,13 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
         Object request = camelMessage.getBody(MessageContentsList.class);
         if (request instanceof MessageContentsList mcl) {
-            return mcl.get(0);
+            return mcl.isEmpty() ? null : mcl.get(0);
         }
 
         request = camelMessage.getBody();
-        if (request instanceof List) {
-            request = ((List<?>) request).get(0);
-        } else if (request instanceof byte[] byteArray) {
-            return byteArray;
-        } else if (request != null && request.getClass().isArray()) {
-            request = ((Object[]) request)[0];
+        if (request instanceof Object[] array && array.length > 0) {
+            // like a MessageContentsList, an array of objects carries the entity first
+            request = array[0];
         }
 
         return request;

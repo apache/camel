@@ -19,20 +19,38 @@ package org.apache.camel.component.cxf.holder;
 import jakarta.xml.ws.Holder;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.CXFTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CxfHolderConsumerTest extends CamelTestSupport {
-    protected static final String ADDRESS = "http://localhost:"
-                                            + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
-    protected static final String CXF_ENDPOINT_URI = "cxf://" + ADDRESS
-                                                     + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
-                                                     + "&loggingFeatureEnabled=true";
+    private static AvailablePortFinder.Port PORT;
+
+    @BeforeAll
+    static void allocatePorts() {
+        PORT = AvailablePortFinder.find();
+        ADDRESS = "http://localhost:"
+                  + PORT.getPort() + "/CxfHolderConsumerTest/test";
+        CXF_ENDPOINT_URI = "cxf://" + ADDRESS
+                           + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint"
+                           + "&loggingFeatureEnabled=true";
+    }
+
+    @AfterAll
+    static void releasePorts() {
+        if (PORT != null) {
+            PORT.release();
+        }
+    }
+
+    protected static String ADDRESS;
+    protected static String CXF_ENDPOINT_URI;
 
     @Override
     protected RouteBuilder createRouteBuilder() {

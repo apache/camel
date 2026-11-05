@@ -1,0 +1,40 @@
+# command
+${run-dir}/mvnw
+--quiet
+--file
+${run-dir}/pom.xml
+-Dspring-boot.run.workingDirectory=${basedir}
+spring-boot:run
+
+
+# project files
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+AGENTS.md
+mvnw
+mvnw.cmd
+pom.xml
+readme.md
+src/main/docker/Dockerfile
+src/main/java/org/example/project/cameljbang/CamelApplication.java
+src/main/resources/application.properties
+src/main/resources/camel/hello.camel.yaml
+src/main/resources/logback.xml
+
+# pom.xml
+org.example.project:CamelJBang:1.0-SNAPSHOT
+properties: [java.version, project.build.outputTimestamp]
+dependency org.springframework.boot:spring-boot-starter-actuator
+dependency org.apache.camel.springboot:camel-spring-boot-starter
+dependency org.apache.camel.springboot:camel-cli-connector-starter
+dependency org.apache.camel.springboot:camel-log-starter
+dependency org.apache.camel.springboot:camel-timer-starter
+dependency org.apache.camel.springboot:camel-yaml-dsl-starter
+dependency org.springframework.boot:spring-boot-starter-test (test)
+dependency org.apache.camel:camel-test-spring-junit6 (test)
+plugin org.springframework.boot:spring-boot-maven-plugin
+
+# application.properties
+camel.main.name=hello
+camel.main.run-controller=true
+camel.main.profile=dev

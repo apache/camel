@@ -31,7 +31,7 @@
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
    <cxf:cxfEndpoint id="serviceEndpoint" xmlns:s="http://apache.org/hello_world_soap_http"
-		   address="http://localhost:${CXFTestSupport.port1}/CxfDispatchMessageTest/SoapContext/GreeterPort"
+		   address="http://localhost:${CxfDispatchMessageTest.port1}/CxfDispatchMessageTest/SoapContext/GreeterPort"
 		   bus="#cxf">
 
       <cxf:properties>

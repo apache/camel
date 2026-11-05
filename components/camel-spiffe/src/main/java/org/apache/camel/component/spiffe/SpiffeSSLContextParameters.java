@@ -33,6 +33,7 @@ import io.spiffe.workloadapi.X509Source;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
+import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
@@ -57,6 +58,14 @@ import org.apache.camel.util.ObjectHelper;
  * The underlying {@code X509Source} is created lazily on the first call, closed when the {@link CamelContext} shuts
  * down, and the cached context is invalidated at the same time so a restarted context rebuilds a fresh source.
  */
+@Metadata(label = "bean",
+          description = "SSLContextParameters whose SSLContext is backed by the SPIFFE Workload API: the X.509-SVID and"
+                        + " the trust bundles are fetched live and rotated automatically, giving mutual TLS to any"
+                        + " component that accepts an sslContextParameters reference. Set acceptedSpiffeIds or"
+                        + " acceptAnySpiffeId; the inherited options, such as serverParameters.clientAuthentication,"
+                        + " still apply.",
+          annotations = { "interfaceName=org.apache.camel.support.jsse.SSLContextParameters" })
+@Configurer(metadataOnly = true)
 public class SpiffeSSLContextParameters extends SSLContextParameters {
 
     private static final String DEFAULT_PROTOCOL = "TLSv1.3";

@@ -41,7 +41,8 @@ import org.apache.camel.util.ObjectHelper;
              headersClass = StitchConstants.class)
 @BodyTypes(producerIn = @BodyType(value = { Carrier.POJO, Carrier.MAP, Carrier.LIST },
                                   description = "A StitchRequestBody, a StitchMessage, a Map of the Stitch batch JSON"
-                                                + " (table_name, schema, messages, key_names as a list), or a List of"
+                                                + " (table_name, schema, messages, key_names as a list or a comma separated"
+                                                + " String), or a List of"
                                                 + " StitchMessage, Map of a message, StitchRequestBody, Message or Exchange."
                                                 + " Text, bytes, a stream or no body fails. The tableName, keyNames and schema"
                                                 + " options or headers set the rest of the batch"),

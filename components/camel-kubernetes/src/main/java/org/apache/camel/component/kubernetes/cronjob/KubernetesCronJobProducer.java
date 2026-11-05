@@ -35,6 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.kubernetes.KubernetesHelper.extractNamespace;
 import static org.apache.camel.component.kubernetes.KubernetesHelper.prepareOutboundMessage;
 
 public class KubernetesCronJobProducer extends DefaultProducer {
@@ -92,7 +93,7 @@ public class KubernetesCronJobProducer extends DefaultProducer {
     }
 
     protected void doList(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         CronJobList cronJobList;
 
         if (ObjectHelper.isEmpty(namespace)) {
@@ -105,7 +106,7 @@ public class KubernetesCronJobProducer extends DefaultProducer {
     }
 
     protected void doListCronJobByLabel(Exchange exchange) {
-        String namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespace = extractNamespace(getEndpoint(), exchange);
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_LABELS, Map.class);
         CronJobList cronJobList;
 
@@ -127,7 +128,7 @@ public class KubernetesCronJobProducer extends DefaultProducer {
 
     protected void doGetCronJob(Exchange exchange) {
         String cronjobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(cronjobName)) {
             throw new IllegalArgumentException("Get a specific cronjob require specify a cronnjob name");
         }
@@ -151,7 +152,7 @@ public class KubernetesCronJobProducer extends DefaultProducer {
     private void doCreateOrUpdateCronJob(
             Exchange exchange, String operationName, Function<Resource<CronJob>, Object> operation) {
         String cronjobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         CronJobSpec cronjobSpec = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_SPEC, CronJobSpec.class);
         HashMap<String, String> annotations
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_ANNOTATIONS, HashMap.class);
@@ -185,7 +186,7 @@ public class KubernetesCronJobProducer extends DefaultProducer {
 
     protected void doDeleteCronJob(Exchange exchange) {
         String cronjobName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRON_JOB_NAME, String.class);
-        String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
+        String namespaceName = extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(cronjobName)) {
             throw new IllegalArgumentException("Delete a specific cronjob require specify a cronjob name");
         }
