@@ -17,6 +17,7 @@
 package org.apache.camel.opentelemetry.metrics;
 
 import java.util.Collection;
+import java.util.Map;
 
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -36,6 +37,7 @@ import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEAD
 import static org.apache.camel.opentelemetry.metrics.OpenTelemetryConstants.HEADER_METRIC_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CounterRouteTest extends CamelTestSupport {
 
@@ -75,6 +77,10 @@ public class CounterRouteTest extends CamelTestSupport {
                 from("direct:in6")
                         .setHeader(OpenTelemetryConstants.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
                         .to("opentelemetry-metrics:counter:F")
+                        .to("mock:result");
+
+                from("direct:in7")
+                        .to("opentelemetry-metrics:counter:J?attributes.a=${body.length}&attributes.b=uri")
                         .to("mock:result");
             }
         };
@@ -223,6 +229,40 @@ public class CounterRouteTest extends CamelTestSupport {
         template.sendBody("direct:in6", message);
 
         assertEquals(message.length(), getMetric("F").getValue());
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testHeaderAttributesAreUsedAsGiven() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(1);
+        template.sendBodyAndHeaders("direct:in7", "Hello", Map.of(
+                "k", "key",
+                HEADER_METRIC_ATTRIBUTES, Attributes.of(
+                        AttributeKey.stringKey("c"), "${body}",
+                        AttributeKey.stringKey("${header.k}"), "d")));
+
+        Attributes attributes = getMetric("J").getAttributes();
+        // the attributes from the uri are resolved per exchange
+        assertEquals("5", attributes.get(AttributeKey.stringKey("a")));
+        assertEquals("uri", attributes.get(AttributeKey.stringKey("b")));
+        // the attributes from the header are not
+        assertEquals("${body}", attributes.get(AttributeKey.stringKey("c")));
+        assertEquals("d", attributes.get(AttributeKey.stringKey("${header.k}")));
+        assertNull(attributes.get(AttributeKey.stringKey("key")));
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    public void testHeaderAttributeOverridesUriAttributeWithSameKey() throws Exception {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:in7", "Hello", HEADER_METRIC_ATTRIBUTES,
+                Attributes.of(AttributeKey.stringKey("b"), "header"));
+
+        Attributes attributes = getMetric("J").getAttributes();
+        assertEquals("5", attributes.get(AttributeKey.stringKey("a")));
+        assertEquals("header", attributes.get(AttributeKey.stringKey("b")));
         MockEndpoint.assertIsSatisfied(context);
     }
 
