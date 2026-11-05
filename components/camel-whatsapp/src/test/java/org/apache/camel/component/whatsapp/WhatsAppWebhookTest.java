@@ -17,6 +17,12 @@
 package org.apache.camel.component.whatsapp;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HexFormat;
+import java.util.Map;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -29,6 +35,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class WhatsAppWebhookTest extends WhatsAppTestSupport {
+
+    private static final String WEBHOOK_SECRET = "my-app-secret";
 
     private int port;
 
@@ -72,17 +80,42 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
                 = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
         String url = config.computeFullExternalUrl();
 
-        try (InputStream content = getClass().getClassLoader().getResourceAsStream("webhook-request.json")) {
-            MockEndpoint mock = getMockEndpoint("mock:endpoint");
-            mock.expectedMinimumMessageCount(1);
-
-            template().sendBodyAndHeader("netty-http:" + url, content, Exchange.CONTENT_TYPE, "application/json");
-            mock.assertIsSatisfied();
+        byte[] content;
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream("webhook-request.json")) {
+            content = in.readAllBytes();
         }
         MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedMinimumMessageCount(1);
+
+        String reply = template().requestBodyAndHeaders("netty-http:" + url, content,
+                Map.of(Exchange.CONTENT_TYPE, "application/json", "X-Hub-Signature-256", sign(content)), String.class);
 
         mock.assertIsSatisfied();
         Assertions.assertThat(mock.getExchanges().get(0).getIn().getBody(String.class)).contains("\"type\": \"text\"");
+        Assertions.assertThat(reply).isNullOrEmpty();
+    }
+
+    @Test
+    public void testWebhookEventWithoutSignatureIsRejected() throws Exception {
+        WebhookConfiguration config
+                = ((WebhookEndpoint) context().getRoute("webhook").getConsumer().getEndpoint()).getConfiguration();
+        String url = config.computeFullExternalUrl();
+
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedMessageCount(0);
+
+        Assertions
+                .assertThatThrownBy(() -> template().sendBodyAndHeader("netty-http:" + url,
+                        "{\"object\":\"whatsapp_business_account\"}", Exchange.CONTENT_TYPE, "application/json"))
+                .rootCause()
+                .hasMessageContaining("statusCode: 403");
+        mock.assertIsSatisfied();
+    }
+
+    private static String sign(byte[] payload) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(WEBHOOK_SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        return "sha256=" + HexFormat.of().formatHex(mac.doFinal(payload));
     }
 
     @Override
@@ -101,7 +134,8 @@ public class WhatsAppWebhookTest extends WhatsAppTestSupport {
             public void configure() {
                 restConfiguration().host("localhost").port(port);
 
-                from("webhook:whatsapp:" + phoneNumberId + "?webhookAutoRegister=false").id("webhook")
+                from("webhook:whatsapp:" + phoneNumberId + "?webhookAutoRegister=false&webhookSecret=" + WEBHOOK_SECRET)
+                        .id("webhook")
                         .convertBodyTo(String.class).to("mock:endpoint");
             }
         };

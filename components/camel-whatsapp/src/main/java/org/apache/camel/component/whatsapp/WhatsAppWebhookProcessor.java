@@ -18,6 +18,7 @@ package org.apache.camel.component.whatsapp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
@@ -34,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,10 +59,19 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         String content;
+        boolean event = !"GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class));
 
-        if ("GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD).toString())) {
+        if (!event) {
             // Parse params from the webhook verification request
-            Map<String, String> queryParams = parseQueryParam(exchange);
+            Map<String, String> queryParams;
+            try {
+                queryParams = parseQueryParam(exchange);
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Rejecting WhatsApp webhook verification request with an invalid query: {}", e.getMessage());
+                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 400);
+                callback.done(true);
+                return true;
+            }
 
             String mode = queryParams.get(MODE_QUERY_PARAM);
             String token = queryParams.get(VERIFY_TOKEN_QUERY_PARAM);
@@ -82,19 +93,19 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
         } else {
             byte[] requestBody;
             try (InputStream body = exchange.getIn().getBody(InputStream.class)) {
-                requestBody = body.readAllBytes();
+                requestBody = body != null ? body.readAllBytes() : new byte[0];
             } catch (IOException e) {
                 exchange.setException(e);
                 callback.done(true);
                 return true;
             }
 
-            // When a webhook secret is configured, verify the X-Hub-Signature-256 payload signature
-            String webhookSecret = configuration.getWebhookSecret();
-            if (webhookSecret != null && !isValidSignature(requestBody,
-                    exchange.getIn().getHeader(HUB_SIGNATURE_HEADER, String.class), webhookSecret)) {
+            // verify the X-Hub-Signature-256 payload signature, unless verification is turned off
+            if (configuration.isWebhookVerification() && !isValidSignature(requestBody,
+                    exchange.getIn().getHeader(HUB_SIGNATURE_HEADER, String.class), configuration.getWebhookSecret())) {
                 LOG.warn("Rejecting WhatsApp webhook event with missing or invalid {} signature", HUB_SIGNATURE_HEADER);
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+                exchange.getMessage().setBody(null);
                 callback.done(true);
                 return true;
             }
@@ -105,7 +116,15 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
         exchange.getMessage().setBody(content);
 
         return next.process(exchange, doneSync -> {
-            exchange.getMessage().setBody(content);
+            if (event) {
+                // an event is answered with an empty 200
+                exchange.getMessage().setBody(null);
+                if (!exchange.isFailed() && exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE) == null) {
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                }
+            } else {
+                exchange.getMessage().setBody(content);
+            }
 
             callback.done(doneSync);
         });
@@ -116,7 +135,7 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
      * configured webhook secret, using a constant-time comparison.
      */
     static boolean isValidSignature(byte[] payload, String signatureHeader, String secret) {
-        if (signatureHeader == null) {
+        if (signatureHeader == null || ObjectHelper.isEmpty(secret)) {
             return false;
         }
         try {
@@ -131,15 +150,30 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
         }
     }
 
-    private Map<String, String> parseQueryParam(Exchange exchange) {
+    /**
+     * Parses the query parameters of the webhook verification request. The raw query is preferred (netty-http provides
+     * the decoded query in {@link Exchange#HTTP_QUERY}), and every key and value is URL decoded once. A parameter with
+     * an empty value or without {@code =} gets an empty value.
+     *
+     * @throws IllegalArgumentException if the query has an invalid URL encoding
+     */
+    static Map<String, String> parseQueryParam(Exchange exchange) {
         Map<String, String> queryParams = new HashMap<>();
 
-        if (exchange.getIn().getHeader(Exchange.HTTP_QUERY) != null) {
-            String[] pairs = exchange.getIn().getHeader(Exchange.HTTP_QUERY).toString().split("&");
-            for (String pair : pairs) {
-                String[] keyValuePair = pair.split("=");
-
-                queryParams.put(keyValuePair[0], keyValuePair[1]);
+        String query = exchange.getIn().getHeader(Exchange.HTTP_RAW_QUERY, String.class);
+        if (query == null) {
+            query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        }
+        if (query != null) {
+            for (String pair : query.split("&")) {
+                if (pair.isEmpty()) {
+                    continue;
+                }
+                int pos = pair.indexOf('=');
+                String key = pos == -1 ? pair : pair.substring(0, pos);
+                String value = pos == -1 ? "" : pair.substring(pos + 1);
+                queryParams.put(URLDecoder.decode(key, StandardCharsets.UTF_8),
+                        URLDecoder.decode(value, StandardCharsets.UTF_8));
             }
         }
 
