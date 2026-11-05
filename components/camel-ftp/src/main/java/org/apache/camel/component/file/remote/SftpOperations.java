@@ -45,6 +45,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Proxy;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.SocketFactory;
 import com.jcraft.jsch.UIKeyboardInteractive;
@@ -1413,47 +1414,134 @@ public class SftpOperations
             if (endpoint.isFastExistsCheck()) {
                 return fastExistsFile(name);
             }
-            // check whether a file already exists
-            String directory = FileUtil.onlyPath(name);
-            if (directory == null) {
-                // assume current dir if no path could be extracted
-                directory = ".";
-            }
-            String onlyName = FileUtil.stripPath(name);
-
-            try {
-                @SuppressWarnings("rawtypes")
-                List files = channel.ls(directory);
-                // can return either null or an empty list depending on FTP servers
-                if (files == null) {
-                    return false;
-                }
-                for (Object file : files) {
-                    ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
-                    String existing = entry.getFilename();
-                    LOG.trace("Existing file: {}, target file: {}", existing, name);
-                    existing = FileUtil.stripPath(existing);
-                    if (existing != null && existing.equals(onlyName)) {
-                        return true;
-                    }
-                }
-                return false;
-            } catch (SftpException e) {
-                // or an exception can be thrown with id 2 which means file does not
-                // exists
-                if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
-                    return false;
-                }
-                // otherwise its a more serious error so rethrow
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
-            }
+            return getFileAttributes(name) != null;
         } finally {
             lock.unlock();
         }
     }
 
+    /**
+     * Gets the attributes of a file with a single request, whatever the number of files in its directory.
+     * <p/>
+     * These are the attributes of the path itself, as in a directory listing: a symbolic link is not followed, so for a
+     * link they are the size and modification time of the link, and a dangling link exists. When the server does not
+     * answer that request for the path, as it does not permit or support it, or answers with the generic failure, the
+     * attributes are taken from a listing of the directory of the file instead.
+     *
+     * @param  name                                the name of the file, with its directory if any
+     * @return                                     the attributes, or {@code null} if there is no such file
+     * @throws GenericFileOperationFailedException if the attributes cannot be read
+     */
+    public SftpATTRS getFileAttributes(String name) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            try {
+                return lstat(name);
+            } catch (SftpException e) {
+                if (!isLstatUnanswered(e)) {
+                    throw new GenericFileOperationFailedException(e.getMessage(), e);
+                }
+                LOG.debug("Cannot get the attributes of: {} due to: {}. Listing its directory instead.", name,
+                        e.getMessage());
+            }
+            return listFileAttributes(name);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Gets the attributes of a file with a single LSTAT request.
+     *
+     * @param  name          the name of the file, with its directory if any
+     * @return               the attributes, or {@code null} if there is no such file
+     * @throws SftpException if the server answers with another status, or the request fails
+     */
+    private SftpATTRS lstat(String name) throws SftpException {
+        // the directory ends at the last separator, either '/' or '\\', as in the store and in the listing of the
+        // directory, while the server only takes '/'
+        String directory = FileUtil.onlyPath(name);
+        String onlyName = FileUtil.stripPath(name);
+        String path;
+        if (directory == null) {
+            path = onlyName;
+        } else if (directory.endsWith("/")) {
+            path = directory + onlyName;
+        } else {
+            path = directory + "/" + onlyName;
+        }
+        try {
+            return channel.lstat(quotePathForJsch(path));
+        } catch (SftpException e) {
+            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                return null;
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Whether the server answered an LSTAT request with a status that does not tell whether the path exists, so that
+     * the directory is listed instead, as before: a server may not permit or support the request on a path that it
+     * lists, or answer with the generic failure for a path that does not exist.
+     */
+    private static boolean isLstatUnanswered(SftpException e) {
+        // JSch reports a status sent by the server as an SftpException without a cause, and wraps an I/O or session
+        // failure as an SftpException (SSH_FX_FAILURE) with that failure as its cause
+        return e.getCause() == null
+                && (e.id == ChannelSftp.SSH_FX_PERMISSION_DENIED || e.id == ChannelSftp.SSH_FX_OP_UNSUPPORTED
+                        || e.id == ChannelSftp.SSH_FX_FAILURE);
+    }
+
+    /**
+     * Gets the attributes of a file from a listing of its directory, comparing the names of the listed files.
+     */
+    private SftpATTRS listFileAttributes(String name) throws GenericFileOperationFailedException {
+        String directory = FileUtil.onlyPath(name);
+        if (directory == null) {
+            // assume current dir if no path could be extracted
+            directory = ".";
+        }
+        String onlyName = FileUtil.stripPath(name);
+
+        try {
+            @SuppressWarnings("rawtypes")
+            List files = channel.ls(directory);
+            // can return either null or an empty list depending on FTP servers
+            if (files == null) {
+                return null;
+            }
+            for (Object file : files) {
+                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
+                String existing = entry.getFilename();
+                LOG.trace("Existing file: {}, target file: {}", existing, name);
+                existing = FileUtil.stripPath(existing);
+                if (existing != null && existing.equals(onlyName)) {
+                    return entry.getAttrs();
+                }
+            }
+            return null;
+        } catch (SftpException e) {
+            // or an exception can be thrown with id 2 which means file does not
+            // exists
+            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
+                return null;
+            }
+            // otherwise its a more serious error so rethrow
+            throw new GenericFileOperationFailedException(e.getMessage(), e);
+        }
+    }
+
     protected boolean fastExistsFile(String name) throws GenericFileOperationFailedException {
         LOG.trace("fastExistsFile({})", name);
+        try {
+            return lstat(name) != null;
+        } catch (SftpException e) {
+            if (!isLstatUnanswered(e)) {
+                throw new GenericFileOperationFailedException(e.getMessage(), e);
+            }
+            LOG.debug("Cannot get the attributes of: {} due to: {}. Listing it instead.", name, e.getMessage());
+        }
         try {
             @SuppressWarnings("rawtypes")
             List files = channel.ls(name);

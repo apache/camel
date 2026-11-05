@@ -140,6 +140,25 @@ Apache MINA SSHD leaves it off by default, so a small request, such as one that 
 listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
 property no longer applies to the connections of `mina-sftp`.
 
+=== camel-ftp - sftp checks whether a file exists with one lstat request
+
+The `sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,
+`tempPrefix`, a producer `doneFileName`), and reads the size and modification time of the file for `readLock=changed`,
+with a single `lstat` request instead of a listing of the directory. Each check is one request, whatever the number of
+files in the directory, and `fastExistsCheck` no longer makes a difference for these checks. The answer can differ from
+before in two cases:
+
+* A dangling symbolic link now exists also with `fastExistsCheck=true`, as it already did without that option: the
+  link itself is checked, not its target.
+* On a server with a case-insensitive file system, such as one backed by Windows or macOS, a file whose name differs
+  only in case now exists: before, the names of the listing were compared case-sensitively. For example, with
+  `fileExist=Fail`, sending `REPORT.TXT` to a directory that holds `report.txt` now fails, where before it replaced
+  `report.txt`.
+
+When the server does not permit or support `lstat` on the path, or answers with a generic failure, the component lists
+the directory as before. `readLock=changed` keeps comparing the size and modification time of a symbolic link itself,
+as the directory listing reported them. See the xref:components::sftp-component.adoc[SFTP component].
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.
