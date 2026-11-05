@@ -108,6 +108,16 @@ In YAML, a route that polls the share and logs the content of each file looks li
 The consumer leaves the files on the share by default, and reads them again on the next poll.
 Set `move` (as above), `delete` or `noop`, so that each file is read once.
 
+=== Polling large directories
+
+With `maxMessagesPerPoll`, the consumer stops reading the directory once it has the files of the poll, rather than
+listing the whole directory first. It reads the whole directory when `preSort` or `doneFileName` is used, or with
+`eagerMaxMessagesPerPoll=false`.
+
+It also reads the whole directory when the server supports SMB 3 directory leases, such as Samba and Windows, and no
+`searchPattern` is set: the SMB client then serves a repeat listing from its cache while it holds the lease, which
+costs less than reading the start of the directory again.
+
 === Polling files (advanced)
 
 

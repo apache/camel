@@ -605,6 +605,27 @@ IMPORTANT: The maximum recommended buffer size is `126976` bytes (~124KB). Large
 
 The deprecated `bulkRequests` parameter is still accepted for backward compatibility but new configurations should use `readBufferSize` and `writeBufferSize` directly.
 
+== TCP_NODELAY
+
+Apache MINA SSHD does not set `TCP_NODELAY` on its connections by default. A small request, such as one that reads the
+next part of a directory listing or deletes a file, can then wait for the server to acknowledge the previous reply
+(Nagle's algorithm and delayed acknowledgements). A consumer sends many such requests: an OpenSSH server returns about
+100 entries per directory listing request. The JSch-based `sftp` component sets `TCP_NODELAY`.
+
+To set it, start the JVM with this system property:
+
+[source,bash]
+----
+-Dorg.apache.sshd.config.tcp-nodelay=true
+----
+
+The property applies to every Apache MINA SSHD client and server in the JVM.
+
+In a benchmark against an OpenSSH server on the same host, with `maxMessagesPerPoll=1000`:
+
+* one poll of a directory of 10,000 files took 66 ms without the property and 18 ms with it;
+* consuming and deleting 5,000 files took 2.1 s without it and 1.5 s with it.
+
 == File and Directory Permissions (chmod)
 
 Set POSIX file permissions on uploaded files and created directories:

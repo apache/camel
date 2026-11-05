@@ -47,6 +47,8 @@ import org.slf4j.LoggerFactory;
 public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformation> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbConsumer.class);
+    // the files of the directory, when it is read one entry at a time (only used to look up done files)
+    private static final FileIdBothDirectoryInformation[] NO_FILES = new FileIdBothDirectoryInformation[0];
 
     /**
      * Remote paths always use {@code /}, regardless of the platform Camel runs on.
@@ -97,6 +99,9 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
             Exchange dynamic, String path, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth) {
         depth++;
         path = (path == null) ? "" : path;
+        if (canStopListingAtLimit()) {
+            return pollDirectoryLazily(dynamic, path, fileList, depth);
+        }
         FileIdBothDirectoryInformation[] files = getSmbFiles(path);
 
         if (files.length == 0) {
@@ -109,24 +114,60 @@ public class SmbConsumer extends GenericFileConsumer<FileIdBothDirectoryInformat
         }
 
         for (FileIdBothDirectoryInformation file : files) {
-            if (file.getFileName().equals(".") || file.getFileName().equals("..")) {
-                continue;
-            }
-            if (!canPollMoreFiles(fileList)) {
-                return false;
-            }
-
-            String fullFilePath = file.getFileName();
-            if (!path.isEmpty()) {
-                fullFilePath
-                        = path + (path.endsWith("/") ? "" : "/") + file.getFileName();
-            }
-
-            if (handleSmbEntries(dynamic, fullFilePath, fileList, depth, files, file)) {
+            if (!pollFile(dynamic, path, file, fileList, depth, files)) {
                 return false;
             }
         }
         return true;
+    }
+
+    /**
+     * Polls the directory reading it one entry at a time, and stops reading it once the maxMessagesPerPoll limit is
+     * hit, rather than listing the whole directory first.
+     */
+    private boolean pollDirectoryLazily(
+            Exchange dynamic, String path, List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth) {
+        LOG.trace("Polling directory: {}", path);
+        boolean[] canPollMore = { true };
+        RuntimeException[] failure = { null };
+        getOperations().listFiles(path, configuration.getSearchPattern(), file -> {
+            try {
+                canPollMore[0] = pollFile(dynamic, path, file, fileList, depth, NO_FILES);
+                return canPollMore[0];
+            } catch (RuntimeException e) {
+                // thrown after the listing, as a failure to poll an entry rather than to list the directory
+                failure[0] = e;
+                return false;
+            }
+        });
+        if (failure[0] != null) {
+            throw failure[0];
+        }
+        return canPollMore[0];
+    }
+
+    /**
+     * Polls a listed file or directory.
+     *
+     * @return <tt>false</tt> to stop polling, as the maxMessagesPerPoll limit is hit
+     */
+    private boolean pollFile(
+            Exchange dynamic, String path, FileIdBothDirectoryInformation file,
+            List<GenericFile<FileIdBothDirectoryInformation>> fileList, int depth, FileIdBothDirectoryInformation[] files) {
+        if (file.getFileName().equals(".") || file.getFileName().equals("..")) {
+            return true;
+        }
+        if (!canPollMoreFiles(fileList)) {
+            return false;
+        }
+
+        String fullFilePath = file.getFileName();
+        if (!path.isEmpty()) {
+            fullFilePath
+                    = path + (path.endsWith("/") ? "" : "/") + file.getFileName();
+        }
+
+        return !handleSmbEntries(dynamic, fullFilePath, fileList, depth, files, file);
     }
 
     private FileIdBothDirectoryInformation[] getSmbFiles(String dir) {
