@@ -1588,6 +1588,15 @@ as soon as the encoding changed a byte, a body read with another charset (such a
 characters. The checksum is now calculated from the bytes written to the file, and the body is decoded as it is
 without `checksumFileAlgorithm`. Checksums of such files differ from the ones written before.
 
+=== camel-file - path separator normalization for getFile/directory consistency
+
+On Linux and macOS, a backslash in the `file:` URI path (e.g. `file:target\subdir`) is now normalized
+to a forward slash, so that `getFile().getPath()` and `getConfiguration().getDirectory()` return the
+same value. Previously, `getFile()` preserved the backslash while `getDirectory()` replaced it with `/`,
+which could cause the producer to create a spurious directory with a backslash in its name and the
+consumer to miss files in a backslash-named directory. On Windows, where `java.io.File` already
+normalizes both separators to `\`, this change has no effect.
+
 === camel-flatpack - with splitRows each message has its own row, and a failing row fails the producer
 
 With `splitRows=true` (the default), every row message shared the one parsed `DataSet`, so the next row moved the row
