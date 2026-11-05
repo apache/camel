@@ -59,10 +59,10 @@ public class CyberArkVaultConfiguration implements Cloneable {
     @UriParam(label = "security", security = "secret")
     private String authToken;
 
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "security", defaultValue = "true", security = "insecure:ssl", insecureValue = "false")
     private boolean verifySsl = true;
 
-    @UriParam
+    @UriParam(label = "security")
     private String certificatePath;
 
     @UriParam
@@ -172,7 +172,8 @@ public class CyberArkVaultConfiguration implements Cloneable {
     }
 
     /**
-     * Whether to verify SSL certificates when connecting to CyberArk Conjur
+     * Whether to verify the SSL certificate and the host name of the CyberArk Conjur server. Setting it to false trusts
+     * any server, so use it only for testing.
      */
     public void setVerifySsl(boolean verifySsl) {
         this.verifySsl = verifySsl;
@@ -183,7 +184,9 @@ public class CyberArkVaultConfiguration implements Cloneable {
     }
 
     /**
-     * Path to the SSL certificate for verification
+     * Path of a file with the SSL certificate to trust when connecting to CyberArk Conjur, for example the certificate
+     * of a private CA, in PEM or DER format. The certificates in the file are trusted instead of the default trust
+     * store of the JVM. Not used when verifySsl is false.
      */
     public void setCertificatePath(String certificatePath) {
         this.certificatePath = certificatePath;

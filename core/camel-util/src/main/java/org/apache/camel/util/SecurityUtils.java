@@ -328,6 +328,7 @@ public final class SecurityUtils {
         owners.put("validateauth", Set.of(
                 "component:a2a"));
         owners.put("verifyssl", Set.of(
+                "component:cyberarkvault",
                 "component:ibmwatsonxai"));
         owners.put("webhooksecrettokenenabled", Set.of(
                 "component:telegram"));

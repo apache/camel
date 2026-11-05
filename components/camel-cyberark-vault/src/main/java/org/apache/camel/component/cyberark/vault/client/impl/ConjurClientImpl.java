@@ -26,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.component.cyberark.vault.client.ConjurClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,15 +50,29 @@ public class ConjurClientImpl implements ConjurClient {
     public ConjurClientImpl(
                             String url, String account, String username,
                             String password, String apiKey, String authToken) {
+        this(url, account, username, password, apiKey, authToken, null);
+    }
+
+    /**
+     * Creates a client that uses the given SSL context for HTTPS connections.
+     *
+     * @param sslContext the SSL context, or null to use the default SSL context of the JVM
+     */
+    public ConjurClientImpl(
+                            String url, String account, String username,
+                            String password, String apiKey, String authToken, SSLContext sslContext) {
         this.url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
         this.account = account;
         this.username = username;
         this.password = password;
         this.apiKey = apiKey;
         this.authToken = authToken;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10));
+        if (sslContext != null) {
+            builder.sslContext(sslContext);
+        }
+        this.httpClient = builder.build();
     }
 
     @Override
@@ -84,7 +100,7 @@ public class ConjurClientImpl implements ConjurClient {
                     url, account, encodedSecretId);
 
             if (version != null && !version.isEmpty()) {
-                secretsUrl += "?version=" + version;
+                secretsUrl += "?version=" + URLEncoder.encode(version, StandardCharsets.UTF_8);
             }
 
             HttpRequest request = HttpRequest.newBuilder()

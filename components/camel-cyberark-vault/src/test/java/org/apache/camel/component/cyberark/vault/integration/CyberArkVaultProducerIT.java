@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CyberArkVaultProducerIT extends CyberArkTestSupport {
 
@@ -86,8 +87,9 @@ class CyberArkVaultProducerIT extends CyberArkTestSupport {
         String secretId = exchange.getMessage().getHeader(CyberArkVaultConstants.SECRET_ID, String.class);
         assertEquals("test/secret", secretId);
 
-        String secretValue = exchange.getMessage().getHeader(CyberArkVaultConstants.SECRET_VALUE, String.class);
-        assertEquals("mySecretValue", secretValue);
+        // the secret is only in the body
+        assertEquals("mySecretValue", exchange.getMessage().getBody(String.class));
+        assertNull(exchange.getMessage().getHeader(CyberArkVaultConstants.SECRET_VALUE));
     }
 
     @Override

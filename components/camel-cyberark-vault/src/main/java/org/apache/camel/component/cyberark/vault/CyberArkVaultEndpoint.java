@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cyberark.vault;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -50,9 +52,8 @@ import org.apache.camel.util.ObjectHelper;
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
                                    byOption = @BodyType.When(option = "operation", value = "createSecret",
                                                              carriers = Carrier.UNCHANGED),
-                                   description = "The value of the secret as text for getSecret, also in the"
-                                                 + " CamelCyberArkVaultSecretValue header: unmarshal a JSON secret to read its"
-                                                 + " fields. createSecret leaves the body unchanged"))
+                                   description = "The value of the secret as text for getSecret: unmarshal a JSON secret to"
+                                                 + " read its fields. createSecret leaves the body unchanged"))
 public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -96,13 +97,15 @@ public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointSe
             String apiKey = configuration.getApiKey();
             String username = configuration.getUsername();
             String password = configuration.getPassword();
+            SSLContext sslContext
+                    = ConjurClientFactory.createSslContext(configuration.isVerifySsl(), configuration.getCertificatePath());
 
             if (ObjectHelper.isNotEmpty(authToken)) {
-                conjurClient = ConjurClientFactory.createWithToken(url, account, authToken);
+                conjurClient = ConjurClientFactory.createWithToken(url, account, authToken, sslContext);
             } else if (ObjectHelper.isNotEmpty(apiKey)) {
-                conjurClient = ConjurClientFactory.createWithApiKey(url, account, username, apiKey);
+                conjurClient = ConjurClientFactory.createWithApiKey(url, account, username, apiKey, sslContext);
             } else if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(password)) {
-                conjurClient = ConjurClientFactory.createWithCredentials(url, account, username, password);
+                conjurClient = ConjurClientFactory.createWithCredentials(url, account, username, password, sslContext);
             }
         }
     }

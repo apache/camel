@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.net.ssl.SSLContext;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -125,16 +127,21 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
         this.account = account;
 
         if (ObjectHelper.isNotEmpty(url) && ObjectHelper.isNotEmpty(account)) {
+            // the SSL settings are only in the vault configuration (camel.vault.cyberark.verifySsl and certificatePath)
+            CyberArkVaultConfiguration sslConfiguration = getCamelContext().getVaultConfiguration().cyberark();
+            SSLContext sslContext = ConjurClientFactory.createSslContext(sslConfiguration.isVerifySsl(),
+                    sslConfiguration.getCertificatePath());
+
             // Create Conjur client based on authentication method
             if (ObjectHelper.isNotEmpty(authToken)) {
                 // Use pre-authenticated token
-                client = ConjurClientFactory.createWithToken(url, account, authToken);
+                client = ConjurClientFactory.createWithToken(url, account, authToken, sslContext);
             } else if (ObjectHelper.isNotEmpty(apiKey)) {
                 // Use API key authentication
-                client = ConjurClientFactory.createWithApiKey(url, account, username, apiKey);
+                client = ConjurClientFactory.createWithApiKey(url, account, username, apiKey, sslContext);
             } else if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(password)) {
                 // Use username/password authentication
-                client = ConjurClientFactory.createWithCredentials(url, account, username, password);
+                client = ConjurClientFactory.createWithCredentials(url, account, username, password, sslContext);
             } else {
                 throw new RuntimeCamelException(
                         "Using the CyberArk Conjur Vault Properties Function requires authentication credentials (authToken, apiKey, or username/password)");
