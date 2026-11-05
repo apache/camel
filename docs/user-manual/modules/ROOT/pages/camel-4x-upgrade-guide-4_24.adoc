@@ -4337,9 +4337,17 @@ skipped when the route was resumed. They are now routed after the resume. A cons
 When the `X-Content-Class` exchange property is not set, the `application-json` data type transformer now writes a
 `Map` body as a JSON object and a `List` (or another `Collection`) body as a JSON array, and reads text, bytes or a
 stream (an `InputStream`, a `Reader` or the stream cache) as text: a JSON object or array is kept as it is, and any
-other text becomes a JSON string, so `Hello` becomes `"Hello"`. These bodies failed before. With the `X-Content-Class`
-exchange property set, the transformer still writes only a body of that class, or JSON object or array text. A `Map`
-entry with a null or empty value is left out, as the transformer already did for the properties of a POJO.
+other text becomes a JSON string, so `Hello` becomes `"Hello"`. This includes text that is a JSON number, boolean, null
+or quoted string: `42` becomes `"42"`, `true` becomes `"true"`, and `"Hello"` with its quotes becomes `"\"Hello\""`.
+These bodies failed before. With the `X-Content-Class` exchange property set, the transformer still writes only a body
+of that class, or JSON object or array text. A `Map` entry with a null or empty value is left out, as the transformer
+already did for the properties of a POJO.
+
+Bytes and a stream are read as text with the charset of the exchange (the `CamelCharsetName` header or exchange
+property, else UTF-8), and the JSON is written in UTF-8. A payload that is not text, such as Avro binary or an image,
+therefore becomes a JSON string with replacement characters. Encode such a payload first, for example in Base64, or
+give it a content class: a `byte[]` body with the `X-Content-Class` exchange property set to `byte[]` is written as a
+Base64 JSON string.
 
 The `avro-x-struct` data type transformer now reads a JSON object or array given as text as JSON, as
 `protobuf-x-struct` does. Before, it read the text as Avro binary, which failed or gave a wrong `JsonNode`.

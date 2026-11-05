@@ -40,15 +40,19 @@ import org.apache.camel.spi.Transformer;
 /**
  * Data type uses Jackson data format to marshal given Exchange payload to a Json (binary byte array representation).
  * Json text is kept, other text becomes a Json string, and a Map, a List, a JsonNode or a POJO is written as Json.
+ * Bytes and a stream are read as text with the charset of the exchange.
  */
 @DataTypeTransformer(name = "application-json",
                      description = "Transforms from JSon to binary (byte array) using Jackson")
 @BodyTypes(transformerIn = @BodyType(value = {
         Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.MAP, Carrier.LIST, Carrier.POJO, Carrier.NULL },
-                                     description = "A Json object or array as text, bytes or a stream, other text as a Json"
-                                                   + " string, a Map, a List, a JsonNode or a POJO; with the X-Content-Class"
-                                                   + " exchange property only a Json object or array as text or a body of"
-                                                   + " that class; a null body becomes null"),
+                                     description = "A Json object or array as text, bytes or a stream, a Map, a List, a"
+                                                   + " JsonNode or a POJO; other text, also a Json number, boolean, null or"
+                                                   + " quoted string, becomes a Json string; bytes and a stream are read as"
+                                                   + " text with the exchange charset, so a payload that is not text must be"
+                                                   + " encoded first, such as in Base64, or given a content class; with the"
+                                                   + " X-Content-Class exchange property only a Json object or array as text"
+                                                   + " or a body of that class; a null body becomes null"),
            transformerOut = @BodyType(value = Carrier.BYTES, javaType = "byte[]", format = "json"))
 public class JsonDataTypeTransformer extends Transformer {
 
@@ -64,7 +68,8 @@ public class JsonDataTypeTransformer extends Transformer {
                 // a Map or a List has no class to write it as: it becomes a Json object or array
                 marshalled = Json.mapper().writeValueAsBytes(body);
             } else if (!hasContentClass && isText(body)) {
-                // read as text: a Json object or array is kept, and other text becomes a Json string
+                // read as text with the exchange charset: a Json object or array is kept, and any other text, also a
+                // Json number, boolean, null or quoted string, becomes a Json string
                 String text = message.getMandatoryBody(String.class);
                 marshalled = Json.isJson(text) ? text.getBytes(StandardCharsets.UTF_8) : Json.mapper().writeValueAsBytes(text);
             } else {

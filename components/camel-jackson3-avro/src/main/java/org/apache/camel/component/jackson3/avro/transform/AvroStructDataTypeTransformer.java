@@ -66,7 +66,7 @@ public class AvroStructDataTypeTransformer extends Transformer {
                 unmarshalled = Avro.mapper().reader().forType(JsonNode.class).with(schema)
                         .readValue(Avro.mapper().writerFor(contentType).with(schema).writeValueAsBytes(message.getBody()));
             } else if (message.getBody() instanceof String jsonString && Json.isJson(jsonString)) {
-                unmarshalled = Json.mapper().readTree(getBodyAsStream(message));
+                unmarshalled = Json.mapper().readTree(jsonString);
             } else {
                 unmarshalled = Avro.mapper().reader().forType(JsonNode.class).with(schema).readValue(getBodyAsStream(message));
             }

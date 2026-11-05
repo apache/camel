@@ -19,6 +19,7 @@ package org.apache.camel.component.jackson.avro.transform;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -90,6 +91,21 @@ class AvroStructDataTypeTransformerTest {
 
         Assertions.assertThrows(CamelExecutionException.class,
                 () -> transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY));
+    }
+
+    @Test
+    void shouldReadJsonStringWhateverTheExchangeCharset() throws Exception {
+        // CAMEL-26300: Json text is read as the String it is, so a non-ASCII character works with any exchange charset
+        Exchange exchange = new DefaultExchange(camelContext);
+
+        exchange.setProperty(SchemaHelper.CONTENT_SCHEMA, getSchema());
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+        exchange.getMessage().setBody("{ \"name\": \"Jos\u00e9\", \"age\": 32 }");
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        JsonNode body = exchange.getMessage().getBody(JsonNode.class);
+        Assertions.assertEquals("Jos\u00e9", body.get("name").asText());
+        Assertions.assertEquals(32, body.get("age").asInt());
     }
 
     @Test

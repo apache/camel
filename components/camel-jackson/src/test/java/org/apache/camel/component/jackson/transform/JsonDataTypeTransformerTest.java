@@ -163,6 +163,57 @@ class JsonDataTypeTransformerTest {
     }
 
     @Test
+    void shouldWriteJsonScalarTextAsJsonString() throws Exception {
+        // CAMEL-26300: only a Json object or array is kept as Json text, so a Json number, boolean, null or quoted
+        // string given as text becomes a Json string
+        Map<String, String> expected = new LinkedHashMap<>();
+        expected.put("42", "\"42\"");
+        expected.put("true", "\"true\"");
+        expected.put("null", "\"null\"");
+        expected.put("\"Hello\"", "\"\\\"Hello\\\"\"");
+        for (Map.Entry<String, String> entry : expected.entrySet()) {
+            Exchange exchange = new DefaultExchange(camelContext);
+            exchange.getMessage().setBody(entry.getKey());
+            transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+            Assertions.assertEquals(entry.getValue(), exchange.getMessage().getBody(String.class), entry.getKey());
+            Assertions.assertEquals(entry.getKey(),
+                    Json.mapper().readTree(exchange.getMessage().getBody(byte[].class)).asText());
+        }
+    }
+
+    @Test
+    void shouldReadBytesWithTheExchangeCharset() throws Exception {
+        // CAMEL-26300: bytes are read as text with the charset of the exchange, and the Json is written in UTF-8
+        String json = "{\"name\":\"Jos\u00e9\"}";
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+        exchange.getMessage().setBody(json.getBytes(StandardCharsets.ISO_8859_1));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertArrayEquals(json.getBytes(StandardCharsets.UTF_8), exchange.getMessage().getBody(byte[].class));
+
+        exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+        exchange.getMessage().setBody("caf\u00e9".getBytes(StandardCharsets.ISO_8859_1));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertArrayEquals("\"caf\u00e9\"".getBytes(StandardCharsets.UTF_8),
+                exchange.getMessage().getBody(byte[].class));
+    }
+
+    @Test
+    void shouldWriteBytesInBase64WithTheByteArrayContentClass() throws Exception {
+        // CAMEL-26300: a payload that is not text can be given the content class byte[], which Jackson writes in Base64
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(SchemaHelper.CONTENT_CLASS, "byte[]");
+        exchange.getMessage().setBody(new byte[] { 0, 1, 2, (byte) 0xFF });
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+
+        Assertions.assertEquals("\"AAEC/w==\"", exchange.getMessage().getBody(String.class));
+    }
+
+    @Test
     void theBodyTypesSayTheBody() throws Exception {
         // CAMEL-25928: Json as text, bytes or a stream, other text, a Map, a List, a JsonNode, a POJO or a null body,
         // as transformerIn says, and the Json bytes transformerOut says

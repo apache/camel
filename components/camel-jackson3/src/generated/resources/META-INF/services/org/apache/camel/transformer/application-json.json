@@ -21,7 +21,7 @@
         "pojo",
         "null"
       ],
-      "description": "A Json object or array as text, bytes or a stream, other text as a Json string, a Map, a List, a JsonNode or a POJO; with the X-Content-Class exchange property only a Json object or array as text or a body of that class; a null body becomes null"
+      "description": "A Json object or array as text, bytes or a stream, a Map, a List, a JsonNode or a POJO; other text, also a Json number, boolean, null or quoted string, becomes a Json string; bytes and a stream are read as text with the exchange charset, so a payload that is not text must be encoded first, such as in Base64, or given a content class; with the X-Content-Class exchange property only a Json object or array as text or a body of that class; a null body becomes null"
     },
     "transformerOut": {
       "carriers": [
