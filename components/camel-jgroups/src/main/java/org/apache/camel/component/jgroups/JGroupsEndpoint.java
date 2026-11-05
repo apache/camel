@@ -190,7 +190,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         // a channel this endpoint did not create (such as the channel of the component) is used by other endpoints,
-        // and is closed by the component
+        // and is disconnected by its last user or by the component, but not closed (it belongs to the user)
         if (resolvedChannel != null && isOwnChannel()) {
             connectLock.lock();
             try {
