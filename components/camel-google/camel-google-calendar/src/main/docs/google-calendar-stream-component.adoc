@@ -73,4 +73,21 @@ With `considerLastUpdate=false`, non-sync polling continues to read only one pag
 
 With `considerLastUpdate`, each poll starts from the last update of the events it has already seen:
 
+[source,yaml]
+----
+- route:
+    from:
+      uri: google-calendar-stream:events
+      parameters:
+        calendarId: primary
+        considerLastUpdate: true
+        clientId: "{{google.clientId}}"
+        clientSecret: "{{google.clientSecret}}"
+        refreshToken: "{{google.refreshToken}}"
+        applicationName: camel-example
+      steps:
+        - log:
+            message: "Event ${header.CamelGoogleCalendarEventId}: ${body.summary}"
+----
+
 include::spring-boot:partial$starter.adoc[]
