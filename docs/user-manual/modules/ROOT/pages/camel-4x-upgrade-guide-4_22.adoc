@@ -416,6 +416,15 @@ If you replaced these dependencies to use another HTTP client implementation, na
 `software.amazon.awssdk.http.service.impl` (synchronous clients) or `software.amazon.awssdk.http.async.service.impl`
 (asynchronous clients): Camel then leaves the choice of the HTTP client to the AWS SDK.
 
+=== camel-aws-bedrock - retrieval pagination
+
+The `retrieve` operation of `aws-bedrock-agent-runtime` now removes the
+`CamelAwsBedrockAgentRuntimeNextToken` header when the response has no continuation token.
+Previously, an incoming token could remain on the final page. Pagination loops should stop
+when this header is absent.
+The `CamelAwsBedrockAgentRuntimeRetrieveGuardrailAction` header is also removed when the response
+has no guardrail action, so an action from an earlier page cannot survive.
+
 === camel-wordpress - requests and responses are no longer logged
 
 The WordPress client no longer logs every HTTP request and response it exchanges with the WordPress server at `INFO`
