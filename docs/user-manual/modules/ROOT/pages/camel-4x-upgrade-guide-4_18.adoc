@@ -748,6 +748,11 @@ left a directory named after the part before it. A NUL character failed the exch
 OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
 or in the `fileName` option before the message reaches the producer.
 
+=== camel-azure-storage-blob - copyBlob validates the source account and container name
+
+`copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
+and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-azure-eventhubs
