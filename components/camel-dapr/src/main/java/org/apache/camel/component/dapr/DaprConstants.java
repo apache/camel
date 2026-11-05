@@ -73,7 +73,10 @@ public class DaprConstants {
     @Metadata(label = "producer", description = "Consistency level to use with state operations",
               javaType = "io.dapr.client.domain.StateOptions.Consistency")
     public static final String CONSISTENCY = HEADER_PREFIX + "Consistency";
-    @Metadata(label = "producer", description = "Additional key-value pairs to be passed to the state store",
+    @Metadata(label = "producer",
+              description = "Additional key-value pairs to be passed to the Dapr building block, in place of the"
+                            + " metadata option. For the secret operation, this header is ignored unless the endpoint"
+                            + " enables allowSecretStoreAndKeyFromHeaders=true (disabled by default).",
               javaType = "Map<String, String>")
     public static final String METADATA = HEADER_PREFIX + "Metadata";
     @Metadata(label = "producer", description = "List of states for bulk save operation", javaType = "List<State<?>>")

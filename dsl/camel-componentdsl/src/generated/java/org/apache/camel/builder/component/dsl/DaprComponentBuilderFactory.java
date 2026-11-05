@@ -425,6 +425,26 @@ public interface DaprComponentBuilderFactory {
         }
     
         /**
+         * Additional key-value pairs to pass to the Dapr building block, such
+         * as metadata.namespace=production. The CamelDaprMetadata header takes
+         * the place of these for one message, except for the secret operation
+         * unless allowSecretStoreAndKeyFromHeaders is enabled. This is a
+         * multi-value option with prefix: metadata.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param metadata the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder metadata(java.util.Map<java.lang.String, java.lang.String> metadata) {
+            doSetProperty("metadata", metadata);
+            return this;
+        }
+    
+        /**
          * The name of the method or route to invoke on the target service.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -722,11 +742,12 @@ public interface DaprComponentBuilderFactory {
     
         
         /**
-         * Whether to allow overriding the secret store and the key of the
-         * endpoint with the CamelDaprSecretStore and CamelDaprKey headers for
-         * the secret operation. Disabled by default; enable it only when the
-         * header source is trusted, since it lets a message choose the secret
-         * store and the secret that the secret operation reads.
+         * Whether to allow overriding the secret store, the key and the
+         * metadata of the endpoint with the CamelDaprSecretStore, CamelDaprKey
+         * and CamelDaprMetadata headers for the secret operation. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the secret store and the secret that the secret
+         * operation reads.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -783,6 +804,7 @@ public interface DaprComponentBuilderFactory {
             case "lazyStartProducer": ((DaprComponent) component).setLazyStartProducer((boolean) value); return true;
             case "lockOperation": getOrCreateConfiguration((DaprComponent) component).setLockOperation((org.apache.camel.component.dapr.LockOperation) value); return true;
             case "lockOwner": getOrCreateConfiguration((DaprComponent) component).setLockOwner((java.lang.String) value); return true;
+            case "metadata": getOrCreateConfiguration((DaprComponent) component).setMetadata((java.util.Map) value); return true;
             case "methodToInvoke": getOrCreateConfiguration((DaprComponent) component).setMethodToInvoke((java.lang.String) value); return true;
             case "reason": getOrCreateConfiguration((DaprComponent) component).setReason((java.lang.String) value); return true;
             case "resourceId": getOrCreateConfiguration((DaprComponent) component).setResourceId((java.lang.String) value); return true;

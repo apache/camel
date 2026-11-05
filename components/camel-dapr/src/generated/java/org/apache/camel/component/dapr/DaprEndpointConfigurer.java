@@ -64,6 +64,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lockOperation": target.getConfiguration().setLockOperation(property(camelContext, org.apache.camel.component.dapr.LockOperation.class, value)); return true;
         case "lockowner":
         case "lockOwner": target.getConfiguration().setLockOwner(property(camelContext, java.lang.String.class, value)); return true;
+        case "metadata": target.getConfiguration().setMetadata(property(camelContext, java.util.Map.class, value)); return true;
         case "methodtoinvoke":
         case "methodToInvoke": target.getConfiguration().setMethodToInvoke(property(camelContext, java.lang.String.class, value)); return true;
         case "previewclient":
@@ -150,6 +151,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lockOperation": return org.apache.camel.component.dapr.LockOperation.class;
         case "lockowner":
         case "lockOwner": return java.lang.String.class;
+        case "metadata": return java.util.Map.class;
         case "methodtoinvoke":
         case "methodToInvoke": return java.lang.String.class;
         case "previewclient":
@@ -232,6 +234,7 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lockOperation": return target.getConfiguration().getLockOperation();
         case "lockowner":
         case "lockOwner": return target.getConfiguration().getLockOwner();
+        case "metadata": return target.getConfiguration().getMetadata();
         case "methodtoinvoke":
         case "methodToInvoke": return target.getConfiguration().getMethodToInvoke();
         case "previewclient":
@@ -266,6 +269,14 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
         case "workflowStartTime": return target.getConfiguration().getWorkflowStartTime();
         case "workflowversion":
         case "workflowVersion": return target.getConfiguration().getWorkflowVersion();
+        default: return null;
+        }
+    }
+
+    @Override
+    public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "metadata": return java.lang.String.class;
         default: return null;
         }
     }

@@ -42,7 +42,7 @@ public class DaprSecretHandler implements DaprOperationHandler {
     public DaprOperationResponse handle(Exchange exchange) {
         String secretStore = configurationOptionsProxy.getSecretStore(exchange);
         String key = configurationOptionsProxy.getSecretKey(exchange);
-        Map<String, String> metadata = configurationOptionsProxy.getMetadata(exchange);
+        Map<String, String> metadata = configurationOptionsProxy.getSecretMetadata(exchange);
         DaprClient client = endpoint.getClient();
 
         Object response;

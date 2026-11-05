@@ -24,7 +24,7 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(42);
+        Set<String> props = new HashSet<>(43);
         props.add("allowSecretStoreAndKeyFromHeaders");
         props.add("bindingName");
         props.add("bindingOperation");
@@ -47,6 +47,7 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("lazyStartProducer");
         props.add("lockOperation");
         props.add("lockOwner");
+        props.add("metadata");
         props.add("methodToInvoke");
         props.add("operation");
         props.add("previewClient");
@@ -72,7 +73,9 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
         Set<String> identityProps = new HashSet<>(1);
         identityProps.add("topic");
         ENDPOINT_IDENTITY_PROPERTY_NAMES = Collections.unmodifiableSet(identityProps);
-        MULTI_VALUE_PREFIXES = Collections.emptyMap();
+        Map<String, String> prefixes = new HashMap<>(1);
+        prefixes.put("metadata", "metadata.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableMap(prefixes);
     }
 
     @Override
