@@ -6607,14 +6607,6 @@ The return type of the protected method `JpaEndpoint.createTransactionStrategy()
 of `DefaultTransactionStrategy`. A subclass that overrides it must be recompiled: compiled against the old return type,
 its method is no longer called.
 
-=== camel-support - RebalancingCamelClusterService releases the views it looks at
-
-`RebalancingCamelClusterService` no longer keeps a reference on the views of its delegate: each rebalancing pass
-releases the views it takes, and only balances the namespaces whose view is in use (held by a clustered route or
-any other caller of `getView`). So the view of a removed clustered route is now stopped, as without the rebalancing
-service, and a released view is not started again by the next pass. To keep a namespace in the election without a
-route, keep a reference on its view with `getView` and do not release it.
-
 === camel-jbang - the export to Quarkus keeps camel-quarkus-microprofile-health
 
 `camel export --runtime=quarkus`, and `camel run --runtime=quarkus`, which exports the same way, now write
