@@ -103,6 +103,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     @Override
     public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(session, "session");
+        // before the channel is opened, so nothing is sent for a name that is refused
+        checkFileName(name);
         ScpConfiguration cfg = endpoint.getConfiguration();
 
         int timeout = cfg.getConnectTimeout();
@@ -162,6 +164,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        checkFileName(name);
         ByteArrayInputStream bis = null;
         try {
             bis = new ByteArrayInputStream(payload.getBytes());
@@ -500,6 +503,23 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 readAck(is);
             } finally {
                 IOHelper.close(buffer);
+            }
+        }
+    }
+
+    /**
+     * Refuses a file name with a control character, such as a line feed, a carriage return or a NUL character. The scp
+     * protocol sends the name of each directory and of the file on a line that ends with a line feed, so a line feed in
+     * the name would end the protocol line early. The message gives the character and its index, not the name.
+     */
+    private static void checkFileName(String name) {
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (Character.isISOControl(ch)) {
+                throw new GenericFileOperationFailedException(
+                        String.format("Cannot write file: the file name has the control character U+%04X at index %d,"
+                                      + " which the scp protocol cannot send in a file name",
+                                (int) ch, i));
             }
         }
     }
