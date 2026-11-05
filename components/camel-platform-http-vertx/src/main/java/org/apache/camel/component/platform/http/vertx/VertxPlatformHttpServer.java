@@ -259,7 +259,7 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         if (cause != null) {
             throw new RuntimeCamelException(
                     "Failed to start Vert.x HttpServer on " + configuration.getBindHost() + ":" + configuration.getBindPort()
-                                            + ", reason: " + cause.getMessage(),
+                                            + ", reason: " + cause,
                     cause);
         }
     }
