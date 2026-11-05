@@ -19,13 +19,19 @@ package org.apache.camel.component.aws2.kinesis;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,6 +65,8 @@ public class Kinesis2ProducerTest {
 
     private final CamelContext context = new DefaultCamelContext();
     private final Kinesis2Component component = new Kinesis2Component(context);
+    private final List<PutRecordsRequest> requests = new ArrayList<>();
+    private final List<PutRecordsRequestEntry> written = new ArrayList<>();
     private Kinesis2Producer producer;
 
     @BeforeEach
@@ -175,6 +183,81 @@ public class Kinesis2ProducerTest {
     }
 
     @Test
+    public void batchSendsAgainOnlyTheFailedRecordAndThenTheNextRequests() throws Exception {
+        // the first record of the second request fails once
+        Set<String> failedOnce = new HashSet<>();
+        stubPutRecords(entry -> entry.data().asUtf8String().equals("r500") && failedOnce.add("r500"));
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "key");
+        exchange.getIn().setBody(records(1200));
+
+        producer.process(exchange);
+
+        assertEquals(List.of(500, 500, 1, 200), requestSizes());
+        assertEquals(List.of("r500"), data(requests.get(2).records()));
+        // every record is written once
+        assertEquals(1200, written.size());
+        assertEquals(new HashSet<>(records(1200)), new HashSet<>(data(written)));
+        assertEquals(1200, exchange.getMessage().getHeader(Kinesis2Constants.RECORD_COUNT, Integer.class));
+        assertEquals(0, exchange.getMessage().getHeader(Kinesis2Constants.FAILED_RECORD_COUNT, Integer.class));
+    }
+
+    @Test
+    public void batchWithARecordThatKeepsFailingThrowsAfterTheOtherRequestsAreSent() {
+        stubPutRecords(entry -> entry.data().asUtf8String().equals("r100"));
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "key");
+        exchange.getIn().setBody(records(600));
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> producer.process(exchange));
+
+        // the failed record is sent again 3 times, then the second request is sent
+        assertEquals(List.of(500, 1, 1, 1, 100), requestSizes());
+        assertEquals(599, written.size());
+        assertEquals(600, exchange.getMessage().getHeader(Kinesis2Constants.RECORD_COUNT, Integer.class));
+        assertEquals(1, exchange.getMessage().getHeader(Kinesis2Constants.FAILED_RECORD_COUNT, Integer.class));
+        assertTrue(e.getMessage().contains("Failed to send 1 of 600 records"), e.getMessage());
+        assertTrue(e.getMessage().contains("599 records were written"), e.getMessage());
+        assertTrue(e.getMessage().contains("ProvisionedThroughputExceededException"), e.getMessage());
+    }
+
+    @Test
+    public void batchIsSplitAtTheRequestSizeLimit() throws Exception {
+        stubPutRecords(entry -> false);
+
+        // with its partition key of 2 bytes a record is 1 MiB, so 10 records fill a request of 10 MiB
+        List<byte[]> body = new ArrayList<>();
+        for (int i = 0; i < 21; i++) {
+            body.add(new byte[1024 * 1024 - 2]);
+        }
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "pk");
+        exchange.getIn().setBody(body);
+
+        producer.process(exchange);
+
+        assertEquals(List.of(10, 10, 1), requestSizes());
+        assertEquals(21, written.size());
+        assertEquals(21, exchange.getMessage().getHeader(Kinesis2Constants.RECORD_COUNT, Integer.class));
+    }
+
+    @Test
+    public void batchWithARecordAboveTheRecordLimitFailsBeforeAnyRequestIsSent() {
+        // 10 MiB of data and a partition key of 2 bytes
+        List<Object> body = List.of("r0", new byte[10 * 1024 * 1024]);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "pk");
+        exchange.getIn().setBody(body);
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
+
+        assertTrue(e.getMessage().contains("The record at index 1 of the batch is 10485762 bytes"), e.getMessage());
+        verify(kinesisClient, never()).putRecords(any(PutRecordsRequest.class));
+    }
+
+    @Test
     public void pathBodyIsSentAsSingleRecordWithTheFileContent(@TempDir Path dir) throws Exception {
         when(kinesisClient.putRecord(any(PutRecordRequest.class)))
                 .thenReturn(PutRecordResponse.builder().sequenceNumber("1").shardId("shard-1").build());
@@ -204,5 +287,46 @@ public class Kinesis2ProducerTest {
         InvalidPayloadException e = assertThrows(InvalidPayloadException.class, () -> producer.process(exchange));
         assertTrue(e.getMessage().contains("java.util."), e.getMessage());
         verify(kinesisClient, never()).putRecord(any(PutRecordRequest.class));
+    }
+
+    /**
+     * Kinesis writes the records of a PutRecords request, except the records the predicate selects: their result has an
+     * error code, as in a partly failed request.
+     */
+    private void stubPutRecords(Predicate<PutRecordsRequestEntry> fails) {
+        when(kinesisClient.putRecords(any(PutRecordsRequest.class))).thenAnswer(invocation -> {
+            PutRecordsRequest request = invocation.getArgument(0);
+            requests.add(request);
+            List<PutRecordsResultEntry> results = new ArrayList<>();
+            int failed = 0;
+            for (PutRecordsRequestEntry entry : request.records()) {
+                if (fails.test(entry)) {
+                    failed++;
+                    results.add(PutRecordsResultEntry.builder()
+                            .errorCode("ProvisionedThroughputExceededException")
+                            .errorMessage("Rate exceeded for shard shardId-000000000000")
+                            .build());
+                } else {
+                    written.add(entry);
+                    results.add(PutRecordsResultEntry.builder()
+                            .shardId("shardId-000000000000")
+                            .sequenceNumber(String.valueOf(written.size()))
+                            .build());
+                }
+            }
+            return PutRecordsResponse.builder().failedRecordCount(failed).records(results).build();
+        });
+    }
+
+    private List<Integer> requestSizes() {
+        return requests.stream().map(request -> request.records().size()).toList();
+    }
+
+    private static List<String> records(int count) {
+        return IntStream.range(0, count).mapToObj(i -> "r" + i).toList();
+    }
+
+    private static List<String> data(List<PutRecordsRequestEntry> entries) {
+        return entries.stream().map(entry -> entry.data().asUtf8String()).toList();
     }
 }
