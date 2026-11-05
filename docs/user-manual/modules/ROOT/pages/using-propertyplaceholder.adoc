@@ -424,7 +424,7 @@ In the example above the query of the search is the body, and the _myQuery_ plac
 myQuery = {"query":{"match":{"body":"Hello {{name}}"}}}
 ----
 
-Notice how the JSON query searches for the text `{{name}}`, which interferes with the Camel property placeholder syntax.
+Notice how the JSON query searches for the text `+{{name}}+`, which interferes with the Camel property placeholder syntax.
 
 Nested placeholders can also be turned off globally on the xref:components::properties-component.adoc[Properties] component, such as:
 
@@ -434,16 +434,16 @@ CamelContext context = ...
 context.getPropertiesComponent().setNestedPlaceholder(false);
 ----
 
-In the situation with the JSON query with `{{` which clashes with Camels property placeholder syntax, then its also possible
+In the situation with the JSON query with `{{` which clashes with Camel's property placeholder syntax, then it's also possible
 to use escaping as explained in the following section.
 
 ==== Escaping a property placeholder
 
-The property placeholder can be problematic if the double curly brackets are used by a third party library like for example a Mustache template, such as `Hello {{name}}`.
+The property placeholder can be problematic if the double curly brackets are used by a third party library like for example a Mustache template, such as `+Hello {{name}}+`.
 
 To work around that it is possible to escape the double curly brackets with a backslash character like for example `\{{ property-name \}}`. This way, it won't be interpreted as a property placeholder to resolve and will be resolved as `{{ property-name }}`.
 
-The previous example can then use escaping (see how `{{name}}` is written as `\\{{name\\}}`)
+The previous example can then use escaping (see how `+{{name}}+` is written as `+\\{{name\\}}+`)
 
 [source,properties]
 ----
