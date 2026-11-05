@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import static org.apache.camel.builder.Builder.constant;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * An {@link AggregationStrategy} whose {@code onCompletion} throws, in a multicast, split or recipient list: the
@@ -90,24 +92,36 @@ class MulticastOnCompletionThrowsTest extends ContextTestSupport {
      * direct:start): the second fails with the exception from onCompletion, and both are done as many times.
      */
     private Exchange assertFailsOnce(Eip eip, String okOutcome, String thrownOutcome) throws Exception {
+        return assertFailsOnce(eip, new Strategy(true), false, okOutcome, thrownOutcome);
+    }
+
+    private Exchange assertFailsOnce(
+            Eip eip, AggregationStrategy throwing, boolean transacted, String okOutcome, String thrownOutcome)
+            throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
                 from("direct:slow").process(e -> release.await(20, TimeUnit.SECONDS));
                 eip.configure(from("direct:ok"), new Strategy(false)).to("mock:ok-result");
-                eip.configure(from("direct:start"), new Strategy(true)).to("mock:start-result");
+                eip.configure(from("direct:start"), throwing).to("mock:start-result");
             }
         });
         context.start();
 
         // the exchanges done (with the copies of a multicast): a second continuation would complete one again
         AtomicInteger done = countDoneExchanges();
-        Exchange ok = template.asyncSend("direct:ok", e -> e.getMessage().setBody("a,b")).get(10, TimeUnit.SECONDS);
+        Exchange ok = template.asyncSend("direct:ok", e -> {
+            e.getExchangeExtension().setTransacted(transacted);
+            e.getMessage().setBody("a,b");
+        }).get(10, TimeUnit.SECONDS);
         assertEquals(okOutcome, outcome(ok, "ok"), "the strategy that does not throw");
         await().atMost(10, TimeUnit.SECONDS).until(() -> done.get() >= 1);
         int okDone = done.getAndSet(0);
 
-        Exchange out = template.asyncSend("direct:start", e -> e.getMessage().setBody("a,b")).get(10, TimeUnit.SECONDS);
+        Exchange out = template.asyncSend("direct:start", e -> {
+            e.getExchangeExtension().setTransacted(transacted);
+            e.getMessage().setBody("a,b");
+        }).get(10, TimeUnit.SECONDS);
         assertEquals(thrownOutcome, outcome(out, "start"), "the strategy that throws from onCompletion");
         await().atMost(10, TimeUnit.SECONDS).until(() -> done.get() >= okDone);
         assertEquals(okDone, done.get(), "the exchanges done, as with the strategy that does not throw");
@@ -134,12 +148,30 @@ class MulticastOnCompletionThrowsTest extends ContextTestSupport {
         Exception e = out.getException();
         // the message of a CamelExchangeException ends with the exchange, which differs between the routes
         String message = e == null ? null : e.getMessage().replaceAll("\\. Exchange\\[.*", "");
+        if (e instanceof CamelExecutionException && e.getCause() instanceof Error error) {
+            // setException wraps an Error: show the Error
+            message = error.getClass().getSimpleName() + ":" + error.getMessage();
+        }
         return "exception=" + (e == null ? "none" : e.getClass().getSimpleName() + ":" + message)
                + " result=" + getMockEndpoint("mock:" + id + "-result").getReceivedCounter();
     }
 
     private static final String OK = "exception=none result=1";
     private static final String FAILED = "exception=IllegalStateException:onCompletion result=0";
+    private static final String ERROR_FAILED
+            = "exception=CamelExecutionException:NoClassDefFoundError:onCompletion result=0";
+
+    /**
+     * A strategy whose onCompletion throws an Error, such as user code that misses a class.
+     */
+    private static Strategy throwsError() {
+        return new Strategy(false) {
+            @Override
+            public void onCompletion(Exchange exchange, Exchange inputExchange) {
+                throw new NoClassDefFoundError("onCompletion");
+            }
+        };
+    }
 
     @Test
     void multicast() throws Exception {
@@ -172,6 +204,38 @@ class MulticastOnCompletionThrowsTest extends ContextTestSupport {
         // the multicast is done by the timeout, while the second output still waits
         assertFailsOnce((r, s) -> r.multicast(s).parallelProcessing().timeout(100).to("mock:a", "direct:slow").end(), OK,
                 FAILED);
+    }
+
+    @Test
+    void multicastTransacted() throws Exception {
+        // the MulticastTransactedTask path
+        assertFailsOnce((r, s) -> r.multicast(s).to("mock:a", "mock:b").end(), new Strategy(true), true, OK, FAILED);
+    }
+
+    @Test
+    void multicastError() throws Exception {
+        // an Error from onCompletion fails the exchange too (wrapped by setException), instead of hanging it
+        Exchange out = assertFailsOnce((r, s) -> r.multicast(s).to("mock:a", "mock:b").end(), throwsError(), false, OK,
+                ERROR_FAILED);
+        assertInstanceOf(NoClassDefFoundError.class, out.getException().getCause());
+    }
+
+    @Test
+    void multicastParallelError() throws Exception {
+        // done on a thread of the multicast pool, from aggregateCompleted
+        assertFailsOnce((r, s) -> r.multicast(s).parallelProcessing().to("mock:a", "mock:b").end(), throwsError(), false,
+                OK, ERROR_FAILED);
+    }
+
+    @Test
+    void multicastTransactedError() throws Exception {
+        assertFailsOnce((r, s) -> r.multicast(s).to("mock:a", "mock:b").end(), throwsError(), true, OK, ERROR_FAILED);
+    }
+
+    @Test
+    void recipientListError() throws Exception {
+        assertFailsOnce((r, s) -> r.recipientList(constant("mock:a,mock:b")).aggregationStrategy(s).end(), throwsError(),
+                false, OK, ERROR_FAILED);
     }
 
     @Test

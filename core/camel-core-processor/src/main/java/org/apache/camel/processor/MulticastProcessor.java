@@ -983,11 +983,11 @@ public class MulticastProcessor extends BaseProcessorSupport
 
         AggregationStrategy strategy = getAggregationStrategy(subExchange);
         // invoke the on completion callback
-        Exception completionFailure = null;
+        Throwable completionFailure = null;
         if (strategy != null) {
             try {
                 strategy.onCompletion(subExchange, original);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 // the task is already done: fail the exchange below, and still call the callback, or the exchange hangs
                 completionFailure = e;
             }
@@ -1035,6 +1035,7 @@ public class MulticastProcessor extends BaseProcessorSupport
         }
         if (completionFailure != null) {
             // after copyResults, which would overwrite it; an exchange that has failed already keeps its exception
+            // (an Error, such as a NoClassDefFoundError, is wrapped by setException)
             Exception cause = original.getException();
             if (cause == null) {
                 original.setException(completionFailure);
