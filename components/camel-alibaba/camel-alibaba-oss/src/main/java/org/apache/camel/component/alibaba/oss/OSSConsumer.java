@@ -65,13 +65,14 @@ public class OSSConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
-        this.ossClient = this.endpoint.initClient();
-
         if (ObjectHelper.isEmpty(endpoint.getBucketName())) {
             throw new IllegalArgumentException("Bucket name is mandatory to consume objects");
         }
+
+        // the client must be set before super.doStart() starts the scheduler, which may poll right away
+        this.ossClient = this.endpoint.initClient();
+
+        super.doStart();
     }
 
     @Override
