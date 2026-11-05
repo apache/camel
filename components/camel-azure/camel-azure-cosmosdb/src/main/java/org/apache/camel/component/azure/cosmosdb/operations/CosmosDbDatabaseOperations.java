@@ -68,8 +68,8 @@ public class CosmosDbDatabaseOperations {
             return applyToDatabase(database -> database.createContainerIfNotExists(cosmosProp,
                     throughputProperties));
         } else {
-            return applyToDatabase(database -> database.createContainerIfNotExists(containerId, containerPartitionKeyPath,
-                    throughputProperties));
+            return applyToDatabase(database -> database.createContainerIfNotExists(containerId,
+                    enhancedContainerPartitionKeyPath, throughputProperties));
         }
     }
 
