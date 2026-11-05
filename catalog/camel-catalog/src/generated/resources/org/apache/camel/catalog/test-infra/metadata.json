@@ -34,6 +34,314 @@
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSTSLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "sts" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "2.4.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
+  "description" : "Apache Kafka, Distributed event streaming platform",
+  "implementation" : "org.apache.camel.test.infra.kafka.services.ConfluentInfraService",
+  "alias" : [ "kafka" ],
+  "aliasImplementation" : [ "confluent" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-kafka",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "8.4.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSKMSLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "kms" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "2.4.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
+  "description" : "PostgreSQL is an open source object-relational database",
+  "implementation" : "org.apache.camel.test.infra.postgres.services.PostgresLocalContainerInfraService",
+  "alias" : [ "postgres" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-postgres",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "17.11-alpine",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
+  "description" : "HashiCorp Vault is a tool for securely accessing secrets",
+  "implementation" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultLocalContainerInfraService",
+  "alias" : [ "hashicorp" ],
+  "aliasImplementation" : [ "vault" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-hashicorp-vault",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "2.2.1",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSNSLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "sns" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "2.4.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.keycloak.services.KeycloakInfraService",
+  "description" : "Keycloak is an open source identity and access management solution",
+  "implementation" : "org.apache.camel.test.infra.keycloak.services.KeycloakLocalContainerInfraService",
+  "alias" : [ "keycloak" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-keycloak",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "26.8.1",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.azure.key.vault.services.AzureKeyVaultInfraService",
+  "description" : "Local Azure Key Vault service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.key.vault.services.AzureKeyVaultLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "key-vault" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-key-vault",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.openfga.services.OpenFgaInfraService",
+  "description" : "OpenFGA, a relationship-based fine-grained authorization engine",
+  "implementation" : "org.apache.camel.test.infra.openfga.services.OpenFgaLocalContainerInfraService",
+  "alias" : [ "openfga" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-openfga",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "v1.22.1",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSS3LocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "s3" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "2.4.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.openldap.services.OpenldapInfraService",
+  "description" : "OpenLDAP is an implementation of the Lightweight Directory Access Protocol",
+  "implementation" : "org.apache.camel.test.infra.openldap.services.OpenldapLocalContainerInfraService",
+  "alias" : [ "openldap" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-openldap",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "1.5.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.xmpp.services.XmppInfraService",
+  "description" : "XMPP is an open communication protocol for messaging",
+  "implementation" : "org.apache.camel.test.infra.xmpp.services.XmppLocalContainerInfraService",
+  "alias" : [ "xmpp" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-xmpp",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.3",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
+  "description" : "CyberArk Conjur is an open source secrets management solution",
+  "implementation" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultLocalContainerInfraService",
+  "alias" : [ "cyberark" ],
+  "aliasImplementation" : [ "conjur" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-cyberark-vault",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "1.24.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQInfraService",
+  "description" : "RabbitMQ is an open source message and streaming broker",
+  "implementation" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQLocalContainerInfraService",
+  "alias" : [ "rabbitmq" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-rabbitmq",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "4.3.6-management",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.neo4j.services.Neo4jInfraService",
+  "description" : "Neo4j is a graph database management system",
+  "implementation" : "org.apache.camel.test.infra.neo4j.services.Neo4jLocalContainerInfraService",
+  "alias" : [ "neo4j" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-neo4j",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "2026.10-community-ubi10",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.rocketmq.services.RocketMQInfraService",
+  "description" : "Apache RocketMQ is a distributed messaging and streaming platform",
+  "implementation" : "org.apache.camel.test.infra.rocketmq.services.RocketMQContainerInfraService",
+  "alias" : [ "rocketmq" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-rocketmq",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "5.3.3",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
+  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSecretsManagerLocalContainerInfraService",
+  "alias" : [ "aws" ],
+  "aliasImplementation" : [ "secrets-manager" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-aws-v2",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "2.4.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.apicurio.registry.services.ApicurioRegistryInfraService",
+  "description" : "Apicurio Registry is an API/Schema registry",
+  "implementation" : "org.apache.camel.test.infra.apicurio.registry.services.ApicurioRegistryLocalContainerInfraService",
+  "alias" : [ "apicurio-registry" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-apicurio-registry",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "3.3.3",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
+  "description" : "Apache Kafka, Distributed event streaming platform",
+  "implementation" : "org.apache.camel.test.infra.kafka.services.ContainerLocalKafkaInfraService",
+  "alias" : [ "kafka" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-kafka",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "4.4.0",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
+  "description" : "Local Azure services with Azurite",
+  "implementation" : "org.apache.camel.test.infra.azure.storage.queue.services.AzureStorageQueueLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "storage-queue" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-storage-queue",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "3.37.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsInfraService",
+  "description" : "Local Azure Event Hubs service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "event-hubs" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-eventhubs",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
+  "description" : "Infinispan is a distributed in-memory key/value data store",
+  "implementation" : "org.apache.camel.test.infra.infinispan.services.InfinispanLocalContainerInfraService",
+  "alias" : [ "infinispan" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-infinispan",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "16.3",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.qdrant.services.QdrantInfraService",
+  "description" : "Qdrant is a vector similarity search engine and database",
+  "implementation" : "org.apache.camel.test.infra.qdrant.services.QdrantLocalContainerInfraService",
+  "alias" : [ "qdrant" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-qdrant",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "v1.20.0-unprivileged",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
+  "description" : "Embedded FTPS Server",
+  "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedInfraService",
+  "alias" : [ "ftps" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-ftp",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "1.2.1",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
+  "description" : "Local Azure services with Azurite",
+  "implementation" : "org.apache.camel.test.infra.azure.storage.blob.services.AzureStorageBlobLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "storage-blob" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-storage-blob",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "3.37.0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.docling.services.DoclingInfraService",
+  "description" : "Docling is a document processing and conversion toolkit",
+  "implementation" : "org.apache.camel.test.infra.docling.services.DoclingLocalContainerInfraService",
+  "alias" : [ "docling" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-docling",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "v1.38.2",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.fhir.services.FhirInfraService",
+  "description" : "HAPI FHIR RESTful test server",
+  "implementation" : "org.apache.camel.test.infra.fhir.services.FhirLocalContainerInfraService",
+  "alias" : [ "fhir" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-fhir",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "v8.12.0-2",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.mongodb.services.MongoDBInfraService",
+  "description" : "MongoDB is a document-oriented NoSQL database",
+  "implementation" : "org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerInfraService",
+  "alias" : [ "mongodb" ],
+  "aliasImplementation" : [ ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-mongodb",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "7.0.31-jammy",
+  "uiSupported" : true
+}, {
+  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
+  "description" : "Local AWS Services with LocalStack",
   "implementation" : "org.apache.camel.test.infra.aws2.services.AWSCloudWatchLocalContainerInfraService",
   "alias" : [ "aws" ],
   "aliasImplementation" : [ "cloud-watch" ],
@@ -76,17 +384,6 @@
   "serviceVersion" : "3.9.5",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
-  "description" : "Local AWS Services with LocalStack",
-  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSTSLocalContainerInfraService",
-  "alias" : [ "aws" ],
-  "aliasImplementation" : [ "sts" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-aws-v2",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
-  "uiSupported" : false
-}, {
   "service" : "org.apache.camel.test.infra.redis.services.RedisInfraService",
   "description" : "Redis is an open source in-memory data store",
   "implementation" : "org.apache.camel.test.infra.redis.services.RedisLocalContainerInfraService",
@@ -120,17 +417,6 @@
   "serviceVersion" : "0.51.0-kafka-4.2.0",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
-  "description" : "Apache Kafka, Distributed event streaming platform",
-  "implementation" : "org.apache.camel.test.infra.kafka.services.ConfluentInfraService",
-  "alias" : [ "kafka" ],
-  "aliasImplementation" : [ "confluent" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-kafka",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "8.4.0",
-  "uiSupported" : false
-}, {
   "service" : "org.apache.camel.test.infra.nats.services.NatsInfraService",
   "description" : "NATS is a high-performance messaging system for cloud native applications",
   "implementation" : "org.apache.camel.test.infra.nats.services.NatsLocalContainerInfraService",
@@ -142,28 +428,6 @@
   "serviceVersion" : "2.15.1",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
-  "description" : "Local AWS Services with LocalStack",
-  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSKMSLocalContainerInfraService",
-  "alias" : [ "aws" ],
-  "aliasImplementation" : [ "kms" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-aws-v2",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
-  "description" : "PostgreSQL is an open source object-relational database",
-  "implementation" : "org.apache.camel.test.infra.postgres.services.PostgresLocalContainerInfraService",
-  "alias" : [ "postgres" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-postgres",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "17.11-alpine",
-  "uiSupported" : true
-}, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
   "description" : "Apache Kafka, Distributed event streaming platform",
   "implementation" : "org.apache.camel.test.infra.kafka.services.RedpandaInfraService",
@@ -173,28 +437,6 @@
   "artifactId" : "camel-test-infra-kafka",
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "v26.2.6",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultInfraService",
-  "description" : "HashiCorp Vault is a tool for securely accessing secrets",
-  "implementation" : "org.apache.camel.test.infra.hashicorp.vault.services.HashicorpVaultLocalContainerInfraService",
-  "alias" : [ "hashicorp" ],
-  "aliasImplementation" : [ "vault" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-hashicorp-vault",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.2.1",
-  "uiSupported" : true
-}, {
-  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
-  "description" : "Local AWS Services with LocalStack",
-  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSNSLocalContainerInfraService",
-  "alias" : [ "aws" ],
-  "aliasImplementation" : [ "sns" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-aws-v2",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
@@ -274,17 +516,6 @@
   "serviceVersion" : "3.5.3",
   "uiSupported" : true
 }, {
-  "service" : "org.apache.camel.test.infra.keycloak.services.KeycloakInfraService",
-  "description" : "Keycloak is an open source identity and access management solution",
-  "implementation" : "org.apache.camel.test.infra.keycloak.services.KeycloakLocalContainerInfraService",
-  "alias" : [ "keycloak" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-keycloak",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "26.8.1",
-  "uiSupported" : true
-}, {
   "service" : "org.apache.camel.test.infra.hivemq.services.HiveMQInfraService",
   "description" : "HiveMQ is an MQTT-based messaging platform for IoT",
   "implementation" : "org.apache.camel.test.infra.hivemq.services.LocalHiveMQInfraService",
@@ -294,28 +525,6 @@
   "artifactId" : "camel-test-infra-hivemq",
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "2026.5",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.azure.key.vault.services.AzureKeyVaultInfraService",
-  "description" : "Local Azure Key Vault service with Floci AZ",
-  "implementation" : "org.apache.camel.test.infra.azure.key.vault.services.AzureKeyVaultLocalContainerInfraService",
-  "alias" : [ "azure" ],
-  "aliasImplementation" : [ "key-vault" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-azure-key-vault",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "0.16.0",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.openfga.services.OpenFgaInfraService",
-  "description" : "OpenFGA, a relationship-based fine-grained authorization engine",
-  "implementation" : "org.apache.camel.test.infra.openfga.services.OpenFgaLocalContainerInfraService",
-  "alias" : [ "openfga" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-openfga",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.22.1",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ibmmq.services.IbmMQInfraService",
@@ -329,17 +538,6 @@
   "serviceVersion" : "10.0.1.0-r1",
   "uiSupported" : true
 }, {
-  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
-  "description" : "Local AWS Services with LocalStack",
-  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSS3LocalContainerInfraService",
-  "alias" : [ "aws" ],
-  "aliasImplementation" : [ "s3" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-aws-v2",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
-  "uiSupported" : false
-}, {
   "service" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
   "description" : "Samba provides file sharing services using the SMB protocol",
   "implementation" : "org.apache.camel.test.infra.smb.services.SmbLocalContainerInfraService",
@@ -351,28 +549,6 @@
   "serviceVersion" : "0.15.0",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.openldap.services.OpenldapInfraService",
-  "description" : "OpenLDAP is an implementation of the Lightweight Directory Access Protocol",
-  "implementation" : "org.apache.camel.test.infra.openldap.services.OpenldapLocalContainerInfraService",
-  "alias" : [ "openldap" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-openldap",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "1.5.0",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.xmpp.services.XmppInfraService",
-  "description" : "XMPP is an open communication protocol for messaging",
-  "implementation" : "org.apache.camel.test.infra.xmpp.services.XmppLocalContainerInfraService",
-  "alias" : [ "xmpp" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-xmpp",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "0.3",
-  "uiSupported" : false
-}, {
   "service" : "org.apache.camel.test.infra.opa.services.OpaInfraService",
   "description" : "Open Policy Agent, a policy engine evaluating Rego policies",
   "implementation" : "org.apache.camel.test.infra.opa.services.OpaLocalContainerInfraService",
@@ -382,17 +558,6 @@
   "artifactId" : "camel-test-infra-opa",
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "1.22.0-static",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultInfraService",
-  "description" : "CyberArk Conjur is an open source secrets management solution",
-  "implementation" : "org.apache.camel.test.infra.cyberark.vault.services.CyberArkVaultLocalContainerInfraService",
-  "alias" : [ "cyberark" ],
-  "aliasImplementation" : [ "conjur" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-cyberark-vault",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "1.24.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.opensearch.services.OpenSearchInfraService",
@@ -505,17 +670,6 @@
   "serviceVersion" : "2.18.0",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQInfraService",
-  "description" : "RabbitMQ is an open source message and streaming broker",
-  "implementation" : "org.apache.camel.test.infra.rabbitmq.services.RabbitMQLocalContainerInfraService",
-  "alias" : [ "rabbitmq" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-rabbitmq",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "4.3.6-management",
-  "uiSupported" : true
-}, {
   "service" : "org.apache.camel.test.infra.mosquitto.services.MosquittoInfraService",
   "description" : "Mosquitto is a message broker that implements MQTT protocol",
   "implementation" : "org.apache.camel.test.infra.mosquitto.services.MosquittoLocalContainerInfraService",
@@ -525,28 +679,6 @@
   "artifactId" : "camel-test-infra-mosquitto",
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "2.0.22",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.neo4j.services.Neo4jInfraService",
-  "description" : "Neo4j is a graph database management system",
-  "implementation" : "org.apache.camel.test.infra.neo4j.services.Neo4jLocalContainerInfraService",
-  "alias" : [ "neo4j" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-neo4j",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2026.10-community-ubi10",
-  "uiSupported" : true
-}, {
-  "service" : "org.apache.camel.test.infra.rocketmq.services.RocketMQInfraService",
-  "description" : "Apache RocketMQ is a distributed messaging and streaming platform",
-  "implementation" : "org.apache.camel.test.infra.rocketmq.services.RocketMQContainerInfraService",
-  "alias" : [ "rocketmq" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-rocketmq",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "5.3.3",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
@@ -565,17 +697,6 @@
   "implementation" : "org.apache.camel.test.infra.aws2.services.AWSEventBridgeLocalContainerInfraService",
   "alias" : [ "aws" ],
   "aliasImplementation" : [ "event-bridge" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-aws-v2",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "2.4.0",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
-  "description" : "Local AWS Services with LocalStack",
-  "implementation" : "org.apache.camel.test.infra.aws2.services.AWSSecretsManagerLocalContainerInfraService",
-  "alias" : [ "aws" ],
-  "aliasImplementation" : [ "secrets-manager" ],
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
@@ -626,17 +747,6 @@
   "serviceVersion" : "camel",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.apicurio.registry.services.ApicurioRegistryInfraService",
-  "description" : "Apicurio Registry is an API/Schema registry",
-  "implementation" : "org.apache.camel.test.infra.apicurio.registry.services.ApicurioRegistryLocalContainerInfraService",
-  "alias" : [ "apicurio-registry" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-apicurio-registry",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "3.3.3",
-  "uiSupported" : false
-}, {
   "service" : "org.apache.camel.test.infra.postgres.services.PostgresInfraService",
   "description" : "PostgreSQL with pgvector extension for vector similarity search",
   "implementation" : "org.apache.camel.test.infra.postgres.services.PostgresVectorLocalContainerInfraService",
@@ -669,28 +779,6 @@
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "RELEASE.2025-09-07T16-13-09Z-cpuv1",
   "uiSupported" : true
-}, {
-  "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
-  "description" : "Apache Kafka, Distributed event streaming platform",
-  "implementation" : "org.apache.camel.test.infra.kafka.services.ContainerLocalKafkaInfraService",
-  "alias" : [ "kafka" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-kafka",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "4.4.0",
-  "uiSupported" : true
-}, {
-  "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
-  "description" : "Local Azure services with Azurite",
-  "implementation" : "org.apache.camel.test.infra.azure.storage.queue.services.AzureStorageQueueLocalContainerInfraService",
-  "alias" : [ "azure" ],
-  "aliasImplementation" : [ "storage-queue" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-azure-storage-queue",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "3.37.0",
-  "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded SFTP Server",
@@ -725,17 +813,6 @@
   "serviceVersion" : "0.16.0",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
-  "description" : "Infinispan is a distributed in-memory key/value data store",
-  "implementation" : "org.apache.camel.test.infra.infinispan.services.InfinispanLocalContainerInfraService",
-  "alias" : [ "infinispan" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-infinispan",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "16.3",
-  "uiSupported" : true
-}, {
   "service" : "org.apache.camel.test.infra.spiffe.services.SpiffeInfraService",
   "description" : "SPIFFE/SPIRE server and agent exposing the Workload API",
   "implementation" : "org.apache.camel.test.infra.spiffe.services.SpiffeLocalContainerInfraService",
@@ -769,28 +846,6 @@
   "serviceVersion" : "2.1.0",
   "uiSupported" : true
 }, {
-  "service" : "org.apache.camel.test.infra.qdrant.services.QdrantInfraService",
-  "description" : "Qdrant is a vector similarity search engine and database",
-  "implementation" : "org.apache.camel.test.infra.qdrant.services.QdrantLocalContainerInfraService",
-  "alias" : [ "qdrant" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-qdrant",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.20.0-unprivileged",
-  "uiSupported" : true
-}, {
-  "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
-  "description" : "Embedded FTPS Server",
-  "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.FtpsEmbeddedInfraService",
-  "alias" : [ "ftps" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-ftp",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "1.2.1",
-  "uiSupported" : false
-}, {
   "service" : "org.apache.camel.test.infra.clickhouse.services.ClickHouseInfraService",
   "description" : "ClickHouse is a high-performance columnar OLAP database",
   "implementation" : "org.apache.camel.test.infra.clickhouse.services.ClickHouseLocalContainerInfraService",
@@ -813,28 +868,6 @@
   "serviceVersion" : "0.40.13",
   "uiSupported" : false
 }, {
-  "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
-  "description" : "Local Azure services with Azurite",
-  "implementation" : "org.apache.camel.test.infra.azure.storage.blob.services.AzureStorageBlobLocalContainerInfraService",
-  "alias" : [ "azure" ],
-  "aliasImplementation" : [ "storage-blob" ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-azure-storage-blob",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "3.37.0",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.docling.services.DoclingInfraService",
-  "description" : "Docling is a document processing and conversion toolkit",
-  "implementation" : "org.apache.camel.test.infra.docling.services.DoclingLocalContainerInfraService",
-  "alias" : [ "docling" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-docling",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v1.38.2",
-  "uiSupported" : false
-}, {
   "service" : "org.apache.camel.test.infra.aws.common.services.AWSInfraService",
   "description" : "Local AWS Services with LocalStack",
   "implementation" : "org.apache.camel.test.infra.aws2.services.AWSIAMLocalContainerInfraService",
@@ -844,17 +877,6 @@
   "artifactId" : "camel-test-infra-aws-v2",
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "2.4.0",
-  "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.fhir.services.FhirInfraService",
-  "description" : "HAPI FHIR RESTful test server",
-  "implementation" : "org.apache.camel.test.infra.fhir.services.FhirLocalContainerInfraService",
-  "alias" : [ "fhir" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-fhir",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "v8.12.0-2",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.pinecone.services.PineconeInfraService",
@@ -878,15 +900,4 @@
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "1.2.1",
   "uiSupported" : false
-}, {
-  "service" : "org.apache.camel.test.infra.mongodb.services.MongoDBInfraService",
-  "description" : "MongoDB is a document-oriented NoSQL database",
-  "implementation" : "org.apache.camel.test.infra.mongodb.services.MongoDBLocalContainerInfraService",
-  "alias" : [ "mongodb" ],
-  "aliasImplementation" : [ ],
-  "groupId" : "org.apache.camel",
-  "artifactId" : "camel-test-infra-mongodb",
-  "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "7.0.31-jammy",
-  "uiSupported" : true
 } ]
