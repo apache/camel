@@ -1458,8 +1458,8 @@ public class SftpOperations
      * @throws SftpException if the server answers with another status, or the request fails
      */
     private SftpATTRS lstat(String name) throws SftpException {
-        // the directory ends at the last separator, either '/' or '\\', as in the store and in the listing of the
-        // directory, while the server only takes '/'
+        // the name starts after the last separator, either '/' or '\\', as in the store and in the listing of the
+        // directory, and is joined to the directory with '/'. The directory itself is sent as it is given
         String directory = FileUtil.onlyPath(name);
         String onlyName = FileUtil.stripPath(name);
         String path;
