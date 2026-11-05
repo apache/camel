@@ -1726,12 +1726,18 @@ public abstract class AbstractCamelContext extends BaseService
             DefaultRouteError.reset(this, routeId);
 
             try {
+                RouteService routeService = routeServices.get(routeId);
+                if (routeService != null && !routeService.getStatus().isStarted()) {
+                    // only a started route is suspended: a route that is stopped (or not auto started) must stay
+                    // stopped, as starting or resuming a suspended route only resumes its consumer
+                    LOG.debug("Route: {} is not suspended as its status is: {}", routeId, routeService.getStatus());
+                    return;
+                }
                 if (!routeSupportsSuspension(routeId)) {
                     stopRoute(routeId, timeout, timeUnit);
                     return;
                 }
 
-                RouteService routeService = routeServices.get(routeId);
                 if (routeService != null) {
                     List<RouteStartupOrder> routeList = new ArrayList<>(1);
                     Route route = routeService.getRoute();
