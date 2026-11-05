@@ -1379,14 +1379,6 @@ the initial state (`camel.health.initial-state`, DOWN by default) while the firs
 the change feed processor cannot start, with the failure of the last attempt; before, it was UP. To leave
 the check out, as before, set `camel.health.exclude-pattern=consumer:<routeId>`.
 
-=== camel-test-infra-azure - the azure.container property holds the Floci AZ image
-
-The Azure test-infra runs its new local Data Lake Storage Gen2 service (`camel infra run azure storage-datalake`) on
-https://github.com/floci-io/floci-az[Floci AZ], and the `azure.container` property of `camel-test-infra-azure-common`
-now holds the Floci AZ image. The Blob and Queue services still run on Azurite, whose image is now set with the
-`azure.storage.blob.container` and `azure.storage.queue.container` properties: to run them on another Azurite image,
-set these instead of `azure.container`.
-
 === camel-vertx-websocket - consumers on the same host and port must use the same SSLContextParameters
 
 All `vertx-websocket` consumers on the same host and port are served by one HTTP server, which is created from the

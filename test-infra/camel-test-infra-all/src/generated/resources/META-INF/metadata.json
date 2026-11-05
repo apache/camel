@@ -285,6 +285,17 @@
   "serviceVersion" : "2026.5",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.azure.key.vault.services.AzureKeyVaultInfraService",
+  "description" : "Local Azure Key Vault service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.key.vault.services.AzureKeyVaultLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "key-vault" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-key-vault",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.openfga.services.OpenFgaInfraService",
   "description" : "OpenFGA, a relationship-based fine-grained authorization engine",
   "implementation" : "org.apache.camel.test.infra.openfga.services.OpenFgaLocalContainerInfraService",
