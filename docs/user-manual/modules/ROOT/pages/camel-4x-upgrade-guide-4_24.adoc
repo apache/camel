@@ -2759,6 +2759,18 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-whatsapp - webhook events are verified by default
+
+In webhook mode (`webhook:whatsapp:...`), the `X-Hub-Signature-256` signature of every event that WhatsApp posts is
+now verified with the `webhookSecret` option, the app secret from the Meta app dashboard. A webhook route without
+`webhookSecret` now fails to start. Set `webhookSecret` to the app secret, or set the new `webhookVerification` option
+to `false` to accept the events without verifying their signature, for example in development. An event without a
+valid signature is answered with HTTP 403 and does not reach the route. A client that posts events to the webhook
+endpoint directly, for example in a test, must sign them too.
+
+An event that reaches the route is now answered with HTTP 200 and an empty body. Before, the reply carried the event
+back to the caller. The reply to the verification request (`GET`) is still the `hub.challenge`.
+
 === camel-paho-mqtt5 - a failed message with manualAcksEnabled is delivered again or acknowledged
 
 With `manualAcksEnabled=true`, a message whose exchange failed was left unacknowledged. For a QoS 1 message the

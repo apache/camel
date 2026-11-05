@@ -109,6 +109,7 @@ public final class SecurityUtils {
         map.put("validateauth", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("verifyssl", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("webhooksecrettokenenabled", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
+        map.put("webhookverification", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("x509hostnameverifier", new SecurityOption(INSECURE_SSL, ""));
         // SECURITY-OPTIONS: END
         SECURITY_OPTIONS = Collections.unmodifiableMap(map);
@@ -336,6 +337,8 @@ public final class SecurityUtils {
                 "component:ibmwatsonxai"));
         owners.put("webhooksecrettokenenabled", Set.of(
                 "component:telegram"));
+        owners.put("webhookverification", Set.of(
+                "component:whatsapp"));
         owners.put("x509hostnameverifier", Set.of(
                 "component:http",
                 "component:https"));
