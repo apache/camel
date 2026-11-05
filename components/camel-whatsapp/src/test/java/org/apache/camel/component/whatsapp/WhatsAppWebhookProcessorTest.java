@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.whatsapp;
 
+import java.nio.charset.StandardCharsets;
+import java.util.HexFormat;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
@@ -32,17 +39,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WhatsAppWebhookProcessorTest {
 
     private static final String VERIFY_TOKEN = "my token&more";
+    private static final String SECRET = "my-app-secret";
+    private static final String EVENT = "{\"object\":\"whatsapp_business_account\"}";
 
     private CamelContext context;
     private WhatsAppWebhookProcessor processor;
     private final AtomicInteger calls = new AtomicInteger();
+    private final AtomicReference<Object> routed = new AtomicReference<>();
+    private final Processor route = exchange -> {
+        calls.incrementAndGet();
+        routed.set(exchange.getMessage().getBody());
+    };
 
     @BeforeEach
     void setUp() {
         context = new DefaultCamelContext();
         WhatsAppConfiguration configuration = new WhatsAppConfiguration();
         configuration.setWebhookVerifyToken(VERIFY_TOKEN);
-        processor = new WhatsAppWebhookProcessor(exchange -> calls.incrementAndGet(), configuration);
+        configuration.setWebhookSecret(SECRET);
+        processor = new WhatsAppWebhookProcessor(route, configuration);
         context.start();
     }
 
@@ -126,27 +141,139 @@ class WhatsAppWebhookProcessorTest {
     }
 
     @Test
-    void missingHttpMethodIsAnEvent() {
+    void missingHttpMethodIsAnEvent() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody("{\"object\":\"whatsapp_business_account\"}");
+        exchange.getIn().setBody(EVENT);
+        exchange.getIn().setHeader("X-Hub-Signature-256", sign(EVENT, SECRET));
 
         process(exchange);
 
         assertThat(exchange.getException()).isNull();
-        assertThat(exchange.getMessage().getBody()).isEqualTo("{\"object\":\"whatsapp_business_account\"}");
+        assertThat(routed).hasValue(EVENT);
         assertThat(calls).hasValue(1);
     }
 
     @Test
-    void eventWithoutBody() {
+    void eventWithoutBody() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
+        exchange.getIn().setHeader("X-Hub-Signature-256", sign("", SECRET));
 
         process(exchange);
 
         assertThat(exchange.getException()).isNull();
-        assertThat(exchange.getMessage().getBody()).isEqualTo("");
+        assertThat(routed).hasValue("");
         assertThat(calls).hasValue(1);
+    }
+
+    @Test
+    void eventWithValidSignatureIsRouted() throws Exception {
+        Exchange exchange = event(EVENT, sign(EVENT, SECRET));
+
+        process(exchange);
+
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(200);
+        assertThat(routed).hasValue(EVENT);
+        assertThat(calls).hasValue(1);
+    }
+
+    @Test
+    void eventWithoutSignatureIsRejectedWith403AndNotRouted() {
+        Exchange exchange = event(EVENT, null);
+
+        process(exchange);
+
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(403);
+        assertThat(exchange.getMessage().getBody()).isNull();
+        assertThat(calls).hasValue(0);
+    }
+
+    @Test
+    void eventWithSignatureOfAnotherSecretIsRejectedWith403AndNotRouted() throws Exception {
+        Exchange exchange = event(EVENT, sign(EVENT, "another-secret"));
+
+        process(exchange);
+
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(403);
+        assertThat(calls).hasValue(0);
+    }
+
+    @Test
+    void eventIsRejectedWith403WhenTheSecretIsMissing() {
+        // the endpoint refuses to create the handler without a secret; the processor does not route either
+        WhatsAppWebhookProcessor withoutSecret = new WhatsAppWebhookProcessor(route, new WhatsAppConfiguration());
+        Exchange exchange = event(EVENT, "sha256=");
+
+        withoutSecret.process(exchange, doneSync -> {
+        });
+
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(403);
+        assertThat(calls).hasValue(0);
+    }
+
+    @Test
+    void eventIsRoutedWithoutSignatureWhenVerificationIsDisabled() throws Exception {
+        WhatsAppEndpoint endpoint = context.getEndpoint(
+                "whatsapp:123?authorizationToken=token&webhookVerification=false", WhatsAppEndpoint.class);
+        Processor withoutVerification = endpoint.createWebhookHandler(route);
+        Exchange exchange = event(EVENT, null);
+
+        withoutVerification.process(exchange);
+
+        assertThat(exchange.getException()).isNull();
+        assertThat(routed).hasValue(EVENT);
+        assertThat(calls).hasValue(1);
+    }
+
+    @Test
+    void eventReplyHasEmptyBody() throws Exception {
+        WhatsAppWebhookProcessor replying = new WhatsAppWebhookProcessor(
+                exchange -> exchange.getMessage().setBody("the result of the route"), configurationWithSecret());
+        Exchange exchange = event(EVENT, sign(EVENT, SECRET));
+
+        replying.process(exchange, doneSync -> {
+        });
+
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(200);
+        assertThat(exchange.getMessage().getBody()).isNull();
+    }
+
+    @Test
+    void eventReplyKeepsTheResponseCodeOfTheRoute() throws Exception {
+        WhatsAppWebhookProcessor replying = new WhatsAppWebhookProcessor(
+                exchange -> exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 202), configurationWithSecret());
+        Exchange exchange = event(EVENT, sign(EVENT, SECRET));
+
+        replying.process(exchange, doneSync -> {
+        });
+
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(202);
+        assertThat(exchange.getMessage().getBody()).isNull();
+    }
+
+    private static WhatsAppConfiguration configurationWithSecret() {
+        WhatsAppConfiguration configuration = new WhatsAppConfiguration();
+        configuration.setWebhookSecret(SECRET);
+        return configuration;
+    }
+
+    private Exchange event(String body, String signature) {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
+        exchange.getIn().setBody(body);
+        if (signature != null) {
+            exchange.getIn().setHeader("X-Hub-Signature-256", signature);
+        }
+        return exchange;
+    }
+
+    private static String sign(String payload, String secret) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        return "sha256=" + HexFormat.of().formatHex(mac.doFinal(payload.getBytes(StandardCharsets.UTF_8)));
     }
 
     private Exchange verificationRequest(String header, String query) {

@@ -47,11 +47,17 @@ public class WhatsAppConfiguration {
     private String webhookPath = "camel-whatsapp/webhook";
 
     @UriParam(description = "The app secret used to verify the X-Hub-Signature-256 signature of inbound webhook event"
-                            + " payloads (from the Meta/WhatsApp app dashboard). When set, event callbacks with a missing"
-                            + " or invalid signature are rejected with HTTP 403; when not set, no signature verification"
-                            + " is performed.",
+                            + " payloads (from the Meta/WhatsApp app dashboard). An event callback with a missing or invalid"
+                            + " signature is rejected with HTTP 403. Required in webhook mode, unless webhookVerification is"
+                            + " false.",
               label = "security", secret = true)
     private String webhookSecret;
+
+    @UriParam(description = "Whether, in webhook mode, the X-Hub-Signature-256 signature of every event callback is verified"
+                            + " with webhookSecret. When true, the webhook route fails to start without webhookSecret. Set it to"
+                            + " false to accept event callbacks without verifying their signature, for example in development.",
+              label = "security", defaultValue = "true")
+    private boolean webhookVerification = true;
 
     public WhatsAppConfiguration() {
     }
@@ -110,6 +116,14 @@ public class WhatsAppConfiguration {
 
     public void setWebhookSecret(String webhookSecret) {
         this.webhookSecret = webhookSecret;
+    }
+
+    public boolean isWebhookVerification() {
+        return webhookVerification;
+    }
+
+    public void setWebhookVerification(boolean webhookVerification) {
+        this.webhookVerification = webhookVerification;
     }
 
     @Override
