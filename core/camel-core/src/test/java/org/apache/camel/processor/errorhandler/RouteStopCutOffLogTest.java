@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +48,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * CAMEL-25484: an exchange that a route stop or a dev mode reload cuts off is logged as one WARN line, not as an
  * exhausted failure with message history and stack trace; CAMEL-25502: and is not recorded in the error registry.
  */
+// both RouteStopCutOffLog tests replace and remove the appender of the DefaultErrorHandler logger
+@ResourceLock("DefaultErrorHandlerLogger")
 public class RouteStopCutOffLogTest extends ContextTestSupport {
 
     private static final String LOGGER = DefaultErrorHandler.class.getName();
