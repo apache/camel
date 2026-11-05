@@ -67,6 +67,7 @@ public class Resequencer extends BaseProcessorSupport
     public static final int DEFAULT_BATCH_SIZE = 100;
 
     private static final Logger LOG = LoggerFactory.getLogger(Resequencer.class);
+    private static final long PREVIOUS_SENDER_WARN_TIMEOUT = 10000;
 
     private String id;
     private String routeId;
@@ -87,6 +88,8 @@ public class Resequencer extends BaseProcessorSupport
     private final Collection<Exchange> collection;
     private ExceptionHandler exceptionHandler;
     private BatchSender sender;
+    // the sender of the last start, which may still be delivering an exchange when the route is started again
+    private BatchSender stoppedSender;
 
     public Resequencer(CamelContext camelContext, Processor processor, Expression expression) {
         this(camelContext, processor, createSet(expression, false, false), expression);
@@ -350,13 +353,15 @@ public class Resequencer extends BaseProcessorSupport
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
-        sender = new BatchSender();
+        sender = new BatchSender(stoppedSender);
+        stoppedSender = null;
         sender.start();
     }
 
     @Override
     protected void doStop() throws Exception {
         if (sender != null) {
+            stoppedSender = sender;
             try {
                 sender.cancel();
             } catch (Exception e) {
@@ -427,14 +432,25 @@ public class Resequencer extends BaseProcessorSupport
         private final AtomicBoolean exchangeEnqueued = new AtomicBoolean();
         private final Queue<String> completionPredicateMatched = new ConcurrentLinkedQueue<>();
         private final Condition exchangeEnqueuedCondition = queueLock.newCondition();
+        private volatile boolean cancelled;
+        private BatchSender previous;
 
-        BatchSender() {
+        BatchSender(BatchSender previous) {
             super(camelContext.getExecutorServiceManager().resolveThreadName("Batch Sender"));
             this.queue = new LinkedList<>();
+            this.previous = previous;
         }
 
         @Override
         public void run() {
+            // the previous sender may still be sending from the shared collection, so wait for it to end
+            if (previous != null) {
+                awaitPrevious();
+            }
+            if (cancelled) {
+                return;
+            }
+
             // Wait until one of either:
             // * an exchange being queued;
             // * the batch timeout expiring; or
@@ -512,7 +528,7 @@ public class Resequencer extends BaseProcessorSupport
                         break;
                     }
 
-                } while (isRunAllowed());
+                } while (isRunAllowed() && !cancelled);
 
             } finally {
                 queueLock.unlock();
@@ -543,7 +559,31 @@ public class Resequencer extends BaseProcessorSupport
             }
         }
 
+        private void awaitPrevious() {
+            boolean interrupted = false;
+            boolean logged = false;
+            while (previous.isAlive()) {
+                try {
+                    previous.join(PREVIOUS_SENDER_WARN_TIMEOUT);
+                    if (!logged && previous.isAlive()) {
+                        logged = true;
+                        LOG.warn("Route: {} waiting for previous batch sender: {} to complete sending its batch", routeId,
+                                previous.getName());
+                    }
+                } catch (InterruptedException e) {
+                    // keep waiting, as a sender started later waits for this one
+                    interrupted = true;
+                }
+            }
+            previous = null;
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         public void cancel() {
+            // also end on a flag, as the processing may clear the interrupt status
+            cancelled = true;
             interrupt();
         }
 
