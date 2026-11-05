@@ -3118,6 +3118,15 @@ an `Integer`, `Long`, `Short`, `Float` or `Double` was written in its binary for
 now also written in the charset of the response `Content-Type`, as a `String` is, rather than in the charset of the
 exchange. To send the binary form of a number, convert the body to `byte[]` first.
 
+=== camel-platform-http-vertx - the HTTP server fails to start when it cannot listen on its port
+
+The Vert.x HTTP server of platform-http now fails to start when it cannot listen on its port, for example because
+another process already uses the port, and so Camel fails to start, with the bind error as the cause. This also applies
+to the HTTP server and the HTTP management server of camel-platform-http-main (`camel.server.*` and
+`camel.management.*`), which `camel run` uses: a second `camel run` with the same `--port` now fails to start. Before,
+the failure was only logged at WARN, and Camel started, with its platform-http routes reported as started, although
+nothing listened on the port.
+
 === camel-quickfix - an InOut consumer replies only to application messages, and an InOut producer needs CorrelationCriteria
 
 A consumer with `exchangePattern=InOut` now sends a reply only for an `AppMessageReceived` event, with the body the
