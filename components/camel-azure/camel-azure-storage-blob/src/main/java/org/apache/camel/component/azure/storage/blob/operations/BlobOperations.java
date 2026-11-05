@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.core.http.rest.Response;
@@ -78,6 +79,10 @@ import org.slf4j.LoggerFactory;
 public class BlobOperations {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlobOperations.class);
+    // Azure naming rules for storage accounts and containers ($root and $web are the reserved containers)
+    private static final Pattern ACCOUNT_NAME_PATTERN = Pattern.compile("[a-z0-9]{3,24}");
+    private static final Pattern CONTAINER_NAME_PATTERN
+            = Pattern.compile("\\$root|\\$web|(?=.{3,63}$)[a-z0-9]+(-[a-z0-9]+)*");
     public static final String MISSING_EXCHANGE = "exchange cannot be null";
 
     private final BlobClientWrapper client;
@@ -439,6 +444,15 @@ public class BlobOperations {
         String sourceContainerName = exchange.getMessage().getHeader(BlobConstants.SOURCE_BLOB_CONTAINER_NAME, String.class);
         if (ObjectHelper.isEmpty(sourceAccountName)) {
             throw new IllegalArgumentException("Source Container Name must be specified for copyBlob Operation");
+        }
+        if (!ACCOUNT_NAME_PATTERN.matcher(sourceAccountName).matches()) {
+            throw new IllegalArgumentException(
+                    "Invalid Source Account Name for copyBlob Operation: it must have 3 to 24 lowercase letters or digits");
+        }
+        if (!CONTAINER_NAME_PATTERN.matcher(sourceContainerName).matches()) {
+            throw new IllegalArgumentException(
+                    "Invalid Source Container Name for copyBlob Operation: it must have 3 to 63 lowercase letters, digits"
+                                               + " or single hyphens, and start and end with a letter or digit, or be $root or $web");
         }
         final String response
                 = client.copyBlob(sourceBlobName, sourceAccountName, sourceContainerName,
