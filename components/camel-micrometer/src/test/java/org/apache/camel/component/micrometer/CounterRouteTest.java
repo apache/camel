@@ -21,6 +21,7 @@ import java.util.Map;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
@@ -39,9 +40,11 @@ import org.springframework.context.support.AbstractApplicationContext;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @CamelSpringTest
@@ -73,6 +76,9 @@ public class CounterRouteTest extends CamelSpringTestSupport {
 
     @Produce("direct:in-8")
     private ProducerTemplate producer8;
+
+    @Produce("direct:in-9")
+    private ProducerTemplate producer9;
 
     @BindToRegistry(METRICS_REGISTRY_NAME)
     private MeterRegistry registry = new SimpleMeterRegistry();
@@ -118,6 +124,10 @@ public class CounterRouteTest extends CamelSpringTestSupport {
 
                 from("direct:in-8")
                         .to("micrometer:counter:H?decrement=${body}")
+                        .to("mock:out");
+
+                from("direct:in-9")
+                        .to("micrometer:counter:I?tags.a=${body.length}&tags.b=uri")
                         .to("mock:out");
             }
         };
@@ -236,6 +246,34 @@ public class CounterRouteTest extends CamelSpringTestSupport {
         producer7.sendBody(new Object());
         producer7.sendBody(null);
         assertEquals(2.0D, registry.find("G").counter().count(), 0.01D);
+        endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testHeaderTagsAreUsedAsGiven() throws Exception {
+        endpoint.expectedMessageCount(1);
+        producer9.sendBodyAndHeaders("Hello", Map.of(
+                "k", "key",
+                HEADER_METRIC_TAGS, Tags.of("c", "${body}", "${header.k}", "d")));
+        Counter counter = registry.find("I").counter();
+        assertEquals(1.0D, counter.count(), 0.01D);
+        // the tags from the uri are resolved per exchange
+        assertEquals("5", counter.getId().getTag("a"));
+        assertEquals("uri", counter.getId().getTag("b"));
+        // the tags from the header are not
+        assertEquals("${body}", counter.getId().getTag("c"));
+        assertEquals("d", counter.getId().getTag("${header.k}"));
+        assertNull(counter.getId().getTag("key"));
+        endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testHeaderTagOverridesUriTagWithSameKey() throws Exception {
+        endpoint.expectedMessageCount(1);
+        producer9.sendBodyAndHeader("Hello", HEADER_METRIC_TAGS, Tags.of("b", "header"));
+        Counter counter = registry.find("I").counter();
+        assertEquals("5", counter.getId().getTag("a"));
+        assertEquals("header", counter.getId().getTag("b"));
         endpoint.assertIsSatisfied();
     }
 

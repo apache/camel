@@ -37,7 +37,9 @@ public final class MicrometerConstants {
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
     @Metadata(description = "Override description value in URI", javaType = "String")
     public static final String HEADER_METRIC_DESCRIPTION = HEADER_PREFIX + "Description";
-    @Metadata(description = "To augment meter tags defined as URI parameters", javaType = "java.lang.Iterable<Tag>")
+    @Metadata(description = "To augment meter tags defined as URI parameters. The tags from the header are used as given;"
+                            + " use the tags URI parameters for Simple expressions.",
+              javaType = "java.lang.Iterable<Tag>")
     public static final String HEADER_METRIC_TAGS = HEADER_PREFIX + "Tags";
 
     public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "camel.message.history";
