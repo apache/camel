@@ -35,6 +35,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +59,9 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         String content;
+        boolean event = !"GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class));
 
-        if ("GET".equalsIgnoreCase(exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class))) {
+        if (!event) {
             // Parse params from the webhook verification request
             Map<String, String> queryParams;
             try {
@@ -98,12 +100,12 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
                 return true;
             }
 
-            // When a webhook secret is configured, verify the X-Hub-Signature-256 payload signature
-            String webhookSecret = configuration.getWebhookSecret();
-            if (webhookSecret != null && !isValidSignature(requestBody,
-                    exchange.getIn().getHeader(HUB_SIGNATURE_HEADER, String.class), webhookSecret)) {
+            // verify the X-Hub-Signature-256 payload signature, unless verification is turned off
+            if (configuration.isWebhookVerification() && !isValidSignature(requestBody,
+                    exchange.getIn().getHeader(HUB_SIGNATURE_HEADER, String.class), configuration.getWebhookSecret())) {
                 LOG.warn("Rejecting WhatsApp webhook event with missing or invalid {} signature", HUB_SIGNATURE_HEADER);
                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+                exchange.getMessage().setBody(null);
                 callback.done(true);
                 return true;
             }
@@ -114,7 +116,15 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
         exchange.getMessage().setBody(content);
 
         return next.process(exchange, doneSync -> {
-            exchange.getMessage().setBody(content);
+            if (event) {
+                // an event is answered with an empty 200
+                exchange.getMessage().setBody(null);
+                if (!exchange.isFailed() && exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE) == null) {
+                    exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                }
+            } else {
+                exchange.getMessage().setBody(content);
+            }
 
             callback.done(doneSync);
         });
@@ -125,7 +135,7 @@ public class WhatsAppWebhookProcessor extends AsyncProcessorSupport {
      * configured webhook secret, using a constant-time comparison.
      */
     static boolean isValidSignature(byte[] payload, String signatureHeader, String secret) {
-        if (signatureHeader == null) {
+        if (signatureHeader == null || ObjectHelper.isEmpty(secret)) {
             return false;
         }
         try {

@@ -31,6 +31,7 @@ import org.apache.camel.component.whatsapp.service.WhatsAppServiceRestAPIAdapter
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,16 @@ public class WhatsAppEndpoint extends ScheduledPollEndpoint implements WebhookCa
 
     @Override
     public Processor createWebhookHandler(Processor next) {
+        if (!configuration.isWebhookVerification()) {
+            LOG.warn("Webhook signature verification is disabled (webhookVerification=false): the events posted to {} are"
+                     + " not verified",
+                    this);
+        } else if (ObjectHelper.isEmpty(configuration.getWebhookSecret())) {
+            throw new IllegalArgumentException(
+                    "webhookSecret must be configured in webhook mode: it is the app secret of the Meta app dashboard, used to"
+                                               + " verify the X-Hub-Signature-256 signature of the events. Set"
+                                               + " webhookVerification=false to accept the events without verifying them");
+        }
         return new WhatsAppWebhookProcessor(next, configuration);
     }
 
