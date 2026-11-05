@@ -19,6 +19,7 @@ package org.apache.camel.component.platform.http.vertx;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -29,6 +30,7 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -224,6 +226,9 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
         executor = context.getExecutorServiceManager().newSingleThreadExecutor(this, "platform-http-service");
         server = vertx.createHttpServer(options);
 
+        // the result of listen is handled on a Vert.x thread: an exception thrown there does not reach this thread,
+        // so keep the failure and throw it from here, or the server (and the CamelContext) starts with nothing listening
+        AtomicReference<Throwable> failure = new AtomicReference<>();
         CompletableFuture.runAsync(
                 () -> {
                     CountDownLatch latch = new CountDownLatch(1);
@@ -231,16 +236,11 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                             .onComplete(result -> {
                                 try {
                                     if (result.failed()) {
-                                        LOGGER.warn("Failed to start Vert.x HttpServer on {}:{}, reason: {}",
-                                                configuration.getBindHost(),
-                                                configuration.getBindPort(),
-                                                result.cause().getMessage());
-
-                                        throw new RuntimeException(result.cause());
+                                        failure.set(result.cause());
+                                    } else {
+                                        LOGGER.info("Vert.x HttpServer started on {}:{}", configuration.getBindHost(),
+                                                server.actualPort());
                                     }
-
-                                    LOGGER.info("Vert.x HttpServer started on {}:{}", configuration.getBindHost(),
-                                            server.actualPort());
                                 } finally {
                                     latch.countDown();
                                 }
@@ -254,6 +254,14 @@ public class VertxPlatformHttpServer extends ServiceSupport implements CamelCont
                     }
                 },
                 executor).toCompletableFuture().join();
+
+        Throwable cause = failure.get();
+        if (cause != null) {
+            throw new RuntimeCamelException(
+                    "Failed to start Vert.x HttpServer on " + configuration.getBindHost() + ":" + configuration.getBindPort()
+                                            + ", reason: " + cause,
+                    cause);
+        }
     }
 
     protected void stopServer() {
