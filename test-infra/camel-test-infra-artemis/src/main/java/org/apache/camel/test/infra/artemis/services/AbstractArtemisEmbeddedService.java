@@ -45,8 +45,8 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractArtemisEmbeddedService.class);
     private static final AtomicInteger BROKER_COUNT = new AtomicInteger();
 
-    protected final EmbeddedActiveMQ embeddedBrokerService;
-    private final Configuration artemisConfiguration;
+    protected EmbeddedActiveMQ embeddedBrokerService;
+    private Configuration artemisConfiguration;
     private Consumer<Configuration> customConfigurator;
     private final int port;
 
@@ -175,7 +175,15 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     @Override
     public synchronized void initialize() {
         try {
-            if (embeddedBrokerService.getActiveMQServer() == null || !embeddedBrokerService.getActiveMQServer().isStarted()) {
+            ActiveMQServer existingServer = embeddedBrokerService.getActiveMQServer();
+            if (existingServer == null || !existingServer.isStarted()) {
+                if (existingServer != null) {
+                    // The service was already started and then stopped (e.g. when the tests are re-run after a failure).
+                    // EmbeddedActiveMQ would reuse the stopped server with its previous configuration, which does not
+                    // match the new broker id/address computed by configure(), so start from a clean state.
+                    embeddedBrokerService = new EmbeddedActiveMQ();
+                    artemisConfiguration = new ConfigurationImpl();
+                }
                 embeddedBrokerService.setConfiguration(configure(port));
 
                 embeddedBrokerService.start();

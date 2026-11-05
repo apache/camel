@@ -47,6 +47,7 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
     private static final String ROUTE_ID_CLIENT_ACK = "client-ack";
     private static final String ROUTE_ID_AUTO_ACK = "auto-ack";
     private static final String SJMS_CONNECTION_FACTORY = "countingConnectionFactory";
+    private static final int LONG_BATCH_INTERVAL = 60000;
 
     private BatchTestHelper.TrackedConnectionFactory trackedConnectionFactory;
 
@@ -115,6 +116,10 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
 
+        // make sure both messages are buffered by the consumer before simulating the failure
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> trackedConnectionFactory.messages(queueName) == 2);
+
         int connectionsBefore = trackedConnectionFactory.getCreateCount();
         triggerConnectionFailure(context, ROUTE_ID_SESSION_TX);
         await().atMost(30, TimeUnit.SECONDS)
@@ -123,9 +128,10 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         mock.assertIsSatisfied();
         mock.reset();
 
-        // we want to test with 1 complete (incl. the messages prior to reconnect) and 1 incomplete batch
+        // we want to test with 2 complete batches (the first one incl. the messages prior to reconnect);
+        // the batch interval is very long so that batches are only completed by size, not by timing
         mock.expectedMessageCount(2);
-        sendMessagesWithText(template, endpointUri, 7, "After!");
+        sendMessagesWithText(template, endpointUri, 8, "After!");
 
         mock.assertIsSatisfied();
         // first batch
@@ -133,8 +139,9 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         assertEquals(List.of("Before!", "Before!", "After!", "After!", "After!"),
                 getBatchBodiesAsString(mock.getExchanges().get(0)));
         // second batch
-        assertEquals(4, getBatchExchanges(mock.getExchanges().get(1)).size());
-        assertEquals(List.of("After!", "After!", "After!", "After!"), getBatchBodiesAsString(mock.getExchanges().get(1)));
+        assertEquals(5, getBatchExchanges(mock.getExchanges().get(1)).size());
+        assertEquals(List.of("After!", "After!", "After!", "After!", "After!"),
+                getBatchBodiesAsString(mock.getExchanges().get(1)));
     }
 
     @Test
@@ -146,6 +153,10 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
         mock.expectedMessageCount(0);
 
         sendMessagesWithText(template, endpointUri, 2, "Before!");
+
+        // make sure both messages are buffered by the consumer before simulating the failure
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> trackedConnectionFactory.messages(queueName) == 2);
 
         int connectionsBefore = trackedConnectionFactory.getCreateCount();
         triggerConnectionFailure(context, ROUTE_ID_CLIENT_ACK);
@@ -165,11 +176,13 @@ public class BatchConsumerReconnectTest extends JmsExclusiveTestSupport {
     }
 
     protected RoutesBuilder[] createRouteBuilders() {
+        // the session-tx and client-ack routes use a very long batch interval, so that the batches are only
+        // completed by size and the tests do not depend on timing (slow CI, time taken by the reconnection)
         return new RoutesBuilder[] {
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5, 1000,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_SESSION_TX, 5, LONG_BATCH_INTERVAL,
                         true, null, 1,
                         new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY),
-                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK, 5, 1000,
+                createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_CLIENT_ACK, 5, LONG_BATCH_INTERVAL,
                         false, "CLIENT_ACKNOWLEDGE", 1,
                         new BatchTestHelper.DoNothingProcessor(), "#" + SJMS_CONNECTION_FACTORY),
                 createBatchRoute(QUEUE_NAME_TEMPLATE, ROUTE_ID_AUTO_ACK, 5, 1000,
