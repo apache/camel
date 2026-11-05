@@ -607,24 +607,20 @@ The deprecated `bulkRequests` parameter is still accepted for backward compatibi
 
 == TCP_NODELAY
 
-Apache MINA SSHD does not set `TCP_NODELAY` on its connections by default. A small request, such as one that reads the
-next part of a directory listing or deletes a file, can then wait for the server to acknowledge the previous reply
-(Nagle's algorithm and delayed acknowledgements). A consumer sends many such requests: an OpenSSH server returns about
-100 entries per directory listing request. The JSch-based `sftp` component sets `TCP_NODELAY`.
+The component sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.
 
-To set it, start the JVM with this system property:
-
-[source,bash]
-----
--Dorg.apache.sshd.config.tcp-nodelay=true
-----
-
-The property applies to every Apache MINA SSHD client and server in the JVM.
+Apache MINA SSHD leaves `TCP_NODELAY` off by default. A small request, such as one that reads the next part of a
+directory listing or deletes a file, would then wait for the server to acknowledge the previous reply (Nagle's
+algorithm and delayed acknowledgements). A consumer sends many such requests: an OpenSSH server returns about 100
+entries per directory listing request.
 
 In a benchmark against an OpenSSH server on the same host, with `maxMessagesPerPoll=1000`:
 
-* one poll of a directory of 10,000 files took 66 ms without the property and 18 ms with it;
-* consuming and deleting 5,000 files took 2.1 s without it and 1.5 s with it.
+* one poll of a directory of 10,000 files took 66 ms with `TCP_NODELAY` off and 18 ms with it on;
+* consuming and deleting 5,000 files took 2.1 s with it off and 1.5 s with it on.
+
+The `org.apache.sshd.config.tcp-nodelay` system property of Apache MINA SSHD does not apply to the connections of
+this component.
 
 == File and Directory Permissions (chmod)
 

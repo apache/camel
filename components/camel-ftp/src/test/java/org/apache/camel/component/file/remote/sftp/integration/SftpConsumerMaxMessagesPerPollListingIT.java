@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.ftp.services.embedded.ListingCountingSftpEmbeddedService;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,7 @@ class SftpConsumerMaxMessagesPerPollListingIT extends CamelTestSupport {
     private static final int FILES = 1000;
 
     @RegisterExtension
-    ListingCountingSftpService service = new ListingCountingSftpService();
+    ListingCountingSftpEmbeddedService service = new ListingCountingSftpEmbeddedService();
 
     private Path base;
 

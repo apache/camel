@@ -247,6 +247,10 @@ public class MinaSftpOperations
     private SshClient createAndConfigureSshClient(MinaSftpConfiguration sftpConfig) {
         SshClient client = SshClient.setUpDefaultClient();
 
+        // Send each request at once, as JSch does: Apache MINA SSHD leaves TCP_NODELAY off, so a small request, such as
+        // one that reads the next part of a directory listing, would wait for the server to acknowledge the previous reply
+        CoreModuleProperties.TCP_NODELAY.set(client, true);
+
         // Configure host key verification
         ServerKeyVerifier verifier = createServerKeyVerifier(sftpConfig);
         client.setServerKeyVerifier(verifier);

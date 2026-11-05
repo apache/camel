@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.mina.integration;
+package org.apache.camel.test.infra.ftp.services.embedded;
 
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.test.infra.ftp.services.embedded.SftpEmbeddedService;
 import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.sftp.server.DirectoryHandle;
 import org.apache.sshd.sftp.server.Handle;
@@ -29,9 +28,9 @@ import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 
 /**
  * The embedded SFTP server, counting the directory entries it sends to the clients, and the directories they open and
- * close.
+ * close: to check how much of a directory a consumer reads.
  */
-class ListingCountingSftpService extends SftpEmbeddedService {
+public class ListingCountingSftpEmbeddedService extends SftpEmbeddedService {
 
     private final AtomicInteger entriesListed = new AtomicInteger();
     private final AtomicInteger directoriesOpened = new AtomicInteger();
@@ -64,15 +63,24 @@ class ListingCountingSftpService extends SftpEmbeddedService {
         });
     }
 
-    int entriesListed() {
+    /**
+     * The directory entries sent to the clients, in the replies to their directory listing requests.
+     */
+    public int entriesListed() {
         return entriesListed.get();
     }
 
-    int directoriesOpened() {
+    /**
+     * The directories the clients opened to list them.
+     */
+    public int directoriesOpened() {
         return directoriesOpened.get();
     }
 
-    int directoriesClosed() {
+    /**
+     * The directories the clients closed.
+     */
+    public int directoriesClosed() {
         return directoriesClosed.get();
     }
 }
