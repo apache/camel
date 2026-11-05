@@ -539,20 +539,27 @@ The camel.vault.kubernetescm supports 2 options, which are listed below.
 
 
 === Camel Hashicorp Vault configurations
-The camel.vault.hashicorp supports 9 options, which are listed below.
+The camel.vault.hashicorp supports 16 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| `camel.vault.hashicorp.authentication` | How to log in to hashicorp vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the service account token of the pod) or jwt (a JWT, such as a workload identity token). Camel renews the token before it expires, and logs in again when the token can no longer be renewed. | token | String
+| `camel.vault.hashicorp.authMountPath` | The path the login method is mounted at in hashicorp vault (without auth/), when it is not the default path of the login method: approle, kubernetes or jwt |  | String
 | `camel.vault.hashicorp.cloud` | Determine if the Hashicorp Vault is deployed on Hashicorp Cloud or not | false | boolean
 | `camel.vault.hashicorp.host` | Host to access hashicorp vault |  | String
+| `camel.vault.hashicorp.jwt` | The JWT to log in with, for the jwt and kubernetes logins. For a JWT that is replaced over time, such as a projected service account token, use jwtFile instead. |  | String
+| `camel.vault.hashicorp.jwtFile` | The file to read the JWT from at every login, for the jwt and kubernetes logins. The kubernetes login reads /var/run/secrets/kubernetes.io/serviceaccount/token when neither jwt nor jwtFile is set. |  | String
 | `camel.vault.hashicorp.namespace` | If the Hashicorp Vault instance is deployed on Hashicorp Cloud, this field will determine the namespace |  | String
 | `camel.vault.hashicorp.port` | Port to access hashicorp vault |  | String
 | `camel.vault.hashicorp.refreshEnabled` | Whether to automatically reload Camel upon secrets being updated in Hashicorp Vault. | false | boolean
 | `camel.vault.hashicorp.refreshPeriod` | The period (millis) between checking Hashicorp Vault for updated secrets. | 60000 | long
+| `camel.vault.hashicorp.role` | The hashicorp vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the login method has a default role. |  | String
+| `camel.vault.hashicorp.roleId` | The role ID of the AppRole, for the approle login |  | String
 | `camel.vault.hashicorp.scheme` | Scheme to access hashicorp vault |  | String
+| `camel.vault.hashicorp.secretId` | The secret ID of the AppRole, for the approle login |  | String
 | `camel.vault.hashicorp.secrets` | Specify the secret names (or pattern) to check for updates. Multiple secrets can be separated by comma. |  | String
-| `camel.vault.hashicorp.token` | Token to access hashicorp vault |  | String
+| `camel.vault.hashicorp.token` | Token to access hashicorp vault, for the token login |  | String
 |===
 
 

@@ -1144,6 +1144,27 @@ exchange. Before, a message without a body wrote a new, empty version of the sec
 The `CamelHashicorpVaultSecretVersion` header of `getSecret` must be a version number; any other value now fails the
 exchange with an `IllegalArgumentException`.
 
+=== camel-hashicorp-vault - the token is renewed, and requests to Vault time out
+
+The `hashicorp-vault` endpoint, the `hashicorp:` properties function and the secret refresh task now renew their token
+before it expires. With a token, Camel now looks the token up in Vault (`auth/token/lookup-self`) at its first request,
+and renews it (`auth/token/renew-self`) when the token is renewable and has a time to live. Vault's `default` policy
+allows both. A token that cannot look itself up logs a warning, and is used as before, without renewal. Camel never
+revokes a token it is given; a token it gets from one of the new logins, chosen with the `authentication` option, is
+revoked when the endpoint, the function or the task stops.
+
+Requests to Vault now time out after 5 seconds to connect, and after 15 seconds to read the response, which are the
+defaults of Spring Vault. Before, a request could wait forever.
+
+The `hashicorp:` properties function now uses the `VaultTemplate` it is created with. Before, it replaced it with a
+client of the `camel.vault.hashicorp` configuration, and failed to start when that configuration had no token. A
+`hashicorp-vault` endpoint without a `vaultTemplate` now fails when it is created if its host, port or scheme is
+missing, or a setting of its login is missing. Before, a missing host failed only at the first request to Vault. The
+`camel.vault.hashicorp.token` option is no longer marked as required, as only the token login uses it.
+
+The `hashicorp-secrets` dev console now shows the login (`Token`, `AppRole`, `Kubernetes` or `JWT`) instead of
+`OAuth Token`.
+
 === camel-hivemq - a body that does not convert to a byte array fails the exchange
 
 The `hivemq` producer published a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a

@@ -26,6 +26,8 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.hashicorp.vault.HashicorpVaultClient;
+import org.apache.camel.component.hashicorp.vault.HashicorpVaultClientSettings;
 import org.apache.camel.component.hashicorp.vault.HashicorpVaultPropertiesFunction;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.spi.PropertiesComponent;
@@ -37,8 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.vault.HashicorpVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.vault.authentication.TokenAuthentication;
-import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
 
@@ -48,19 +48,13 @@ import org.springframework.vault.support.VaultResponse;
 @PeriodicTask("hashicorp-secret-refresh")
 public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements CamelContextAware, Runnable {
 
-    private static final String CAMEL_HASHICORP_VAULT_TOKEN_ENV = "CAMEL_HASHICORP_VAULT_TOKEN";
-    private static final String CAMEL_HASHICORP_VAULT_HOST_ENV = "CAMEL_HASHICORP_VAULT_HOST";
-    private static final String CAMEL_HASHICORP_VAULT_PORT_ENV = "CAMEL_HASHICORP_VAULT_PORT";
-    private static final String CAMEL_HASHICORP_VAULT_SCHEME_ENV = "CAMEL_HASHICORP_VAULT_SCHEME";
-    private static final String CAMEL_HASHICORP_VAULT_CLOUD_ENV = "CAMEL_HASHICORP_VAULT_CLOUD";
-    private static final String CAMEL_HASHICORP_VAULT_NAMESPACE_ENV = "CAMEL_HASHICORP_VAULT_NAMESPACE";
-
     private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultReloadTriggerTask.class);
 
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
     private String secrets;
-    private VaultTemplate client;
+    private volatile VaultTemplate client;
+    private HashicorpVaultClient vaultClient;
     private HashicorpVaultPropertiesFunction propertiesFunction;
     private volatile Instant lastCheckTime;
     private volatile Instant lastReloadTime;
@@ -132,43 +126,28 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
             throw new IllegalArgumentException("Secrets must be configured on Hashicorp vault configuration");
         }
 
-        String token = System.getenv(CAMEL_HASHICORP_VAULT_TOKEN_ENV);
-        String host = System.getenv(CAMEL_HASHICORP_VAULT_HOST_ENV);
-        String port = System.getenv(CAMEL_HASHICORP_VAULT_PORT_ENV);
-        String scheme = System.getenv(CAMEL_HASHICORP_VAULT_SCHEME_ENV);
-        if (System.getenv(CAMEL_HASHICORP_VAULT_CLOUD_ENV) != null) {
-            cloud = Boolean.parseBoolean(System.getenv(CAMEL_HASHICORP_VAULT_CLOUD_ENV));
-        }
-        namespace = System.getenv(CAMEL_HASHICORP_VAULT_NAMESPACE_ENV);
-
-        if (ObjectHelper.isEmpty(token) && ObjectHelper.isEmpty(host)
-                && ObjectHelper.isEmpty(port) && ObjectHelper.isEmpty(scheme) && ObjectHelper.isEmpty(namespace)) {
-            if (ObjectHelper.isNotEmpty(hashicorpVaultConfiguration)) {
-                token = hashicorpVaultConfiguration.getToken();
-                host = hashicorpVaultConfiguration.getHost();
-                port = hashicorpVaultConfiguration.getPort();
-                scheme = hashicorpVaultConfiguration.getScheme();
-                cloud = hashicorpVaultConfiguration.isCloud();
-                if (hashicorpVaultConfiguration.isCloud()) {
-                    namespace = hashicorpVaultConfiguration.getNamespace();
-                }
-            }
-        }
-
-        if (ObjectHelper.isNotEmpty(token) && ObjectHelper.isNotEmpty(host)
-                && ObjectHelper.isNotEmpty(port) && ObjectHelper.isNotEmpty(scheme)) {
-            VaultEndpoint vaultEndpoint = new VaultEndpoint();
-            vaultEndpoint.setHost(host);
-            vaultEndpoint.setPort(Integer.parseInt(port));
-            vaultEndpoint.setScheme(scheme);
-
-            client = new VaultTemplate(
-                    vaultEndpoint,
-                    new TokenAuthentication(token));
-        } else {
+        HashicorpVaultClientSettings settings
+                = HashicorpVaultClientSettings.fromEnvironmentOrConfiguration(hashicorpVaultConfiguration);
+        cloud = settings.isCloud();
+        namespace = settings.getNamespace();
+        try {
+            vaultClient = HashicorpVaultClient.create(camelContext, this, settings);
+        } catch (IllegalArgumentException e) {
             throw new RuntimeCamelException(
-                    "Using the Hashicorp Vault Secrets Refresh Task requires setting Token, Host, port and scheme properties");
+                    "Cannot use the Hashicorp Vault Secrets Refresh Task: " + e.getMessage(), e);
         }
+        client = vaultClient.getVaultTemplate();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (vaultClient != null) {
+            // stop renewing the token, and revoke the token of the login
+            vaultClient.close();
+            vaultClient = null;
+        }
+        client = null;
+        super.doStop();
     }
 
     @Override
@@ -182,6 +161,11 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
 
     @Override
     public void run() {
+        VaultTemplate vault = client;
+        if (vault == null) {
+            // stopped
+            return;
+        }
         lastCheckTime = Instant.now();
         boolean triggerReloading = false;
 
@@ -201,7 +185,7 @@ public class HashicorpVaultReloadTriggerTask extends ServiceSupport implements C
                     try {
                         // Query metadata endpoint to get current version
                         String metadataPath = buildMetadataPath(secretName);
-                        VaultResponse response = client.read(metadataPath);
+                        VaultResponse response = vault.read(metadataPath);
 
                         if (response != null && response.getData() != null) {
                             Object currentVersionObj = response.getData().get("current_version");

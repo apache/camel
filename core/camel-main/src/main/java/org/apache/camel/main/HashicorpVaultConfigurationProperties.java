@@ -58,6 +58,62 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
     }
 
     /**
+     * How to log in to Hashicorp Vault: token, approle, kubernetes or jwt
+     */
+    public HashicorpVaultConfigurationProperties withAuthentication(String authentication) {
+        setAuthentication(authentication);
+        return this;
+    }
+
+    /**
+     * The role ID of the AppRole, for the approle login
+     */
+    public HashicorpVaultConfigurationProperties withRoleId(String roleId) {
+        setRoleId(roleId);
+        return this;
+    }
+
+    /**
+     * The secret ID of the AppRole, for the approle login
+     */
+    public HashicorpVaultConfigurationProperties withSecretId(String secretId) {
+        setSecretId(secretId);
+        return this;
+    }
+
+    /**
+     * The Hashicorp Vault role to log in as, for the kubernetes and jwt logins
+     */
+    public HashicorpVaultConfigurationProperties withRole(String role) {
+        setRole(role);
+        return this;
+    }
+
+    /**
+     * The JWT to log in with, for the jwt and kubernetes logins
+     */
+    public HashicorpVaultConfigurationProperties withJwt(String jwt) {
+        setJwt(jwt);
+        return this;
+    }
+
+    /**
+     * The file to read the JWT from at every login, for the jwt and kubernetes logins
+     */
+    public HashicorpVaultConfigurationProperties withJwtFile(String jwtFile) {
+        setJwtFile(jwtFile);
+        return this;
+    }
+
+    /**
+     * The path the login method is mounted at (without auth/), when it is not the default path of the login method
+     */
+    public HashicorpVaultConfigurationProperties withAuthMountPath(String authMountPath) {
+        setAuthMountPath(authMountPath);
+        return this;
+    }
+
+    /**
      * The Hashicorp Vault host
      */
     public HashicorpVaultConfigurationProperties withHost(String host) {
