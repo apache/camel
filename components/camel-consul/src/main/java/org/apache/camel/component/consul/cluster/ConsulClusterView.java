@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -341,6 +342,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
                         // If the key is not held by any session (or does not exist, for
                         // example after Consul lost its data), try acquire a lock (become leader)
                         boolean lock = acquireLock();
+                        // ConsulClusterViewRecoveryTest#doesNotTakeTheLeadershipAfterTheViewWasStopped hooks on this text
                         LOGGER.debug("Try to acquire lock on path '{}' with id '{}', result '{}'", path, sessionId.get(), lock);
 
                         localMember.setMaster(lock);
@@ -387,7 +389,13 @@ final class ConsulClusterView extends AbstractCamelClusterView {
             // cannot be reached is not queried in a loop
             ScheduledExecutorService executor = executorService;
             if (isCurrent() && executor != null) {
-                executor.schedule(this::watch, Math.max(1, configuration.getSessionRefreshInterval()), TimeUnit.SECONDS);
+                try {
+                    executor.schedule(this::watch, Math.max(1, configuration.getSessionRefreshInterval()),
+                            TimeUnit.SECONDS);
+                } catch (RejectedExecutionException e) {
+                    // the view stopped meanwhile
+                    LOGGER.debug("Not watching path '{}' again, the view is stopping", path);
+                }
             }
         }
 
