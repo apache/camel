@@ -91,6 +91,7 @@ public final class SecurityUtils {
         map.put("validatecertificates", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("verifyssl", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("webhooksecrettokenenabled", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
+        map.put("webhookverification", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("x509hostnameverifier", new SecurityOption(INSECURE_SSL, ""));
         // SECURITY-OPTIONS: END
         SECURITY_OPTIONS = Collections.unmodifiableMap(map);
