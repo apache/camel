@@ -18,8 +18,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private static final String LABEL_NAME = "consumer,mongodb";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
     private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private long streamingDelayMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean notificationHttpAllowPrivateNetworks = false;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
     @UriParam(label = LABEL_NAME)
@@ -27,34 +27,22 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, secret = true)
     @Metadata(required = true)
     private String mongodbPassword;
-    @UriParam(label = LABEL_NAME)
-    private String openlineageIntegrationJobNamespace;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private int queryFetchSize = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
+    private int notificationHttpTimeoutMs = 5000;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
     private String signalEnabledChannels = "source";
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean legacySnapshotMaxThreads = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean mongodbSslEnabled = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private long signalEmitFailureBackoffMs = 10000;
     @UriParam(label = LABEL_NAME, javaType = "java.time.Duration")
     private int cursorMaxAwaitTimeMs;
-    @UriParam(label = LABEL_NAME)
-    private String fieldRenames;
     @UriParam(label = LABEL_NAME, defaultValue = "30s", javaType = "java.time.Duration")
     private int mongodbServerSelectionTimeoutMs = 30000;
-    @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
-    private long pollIntervalMs = 500;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private int guardrailCollectionsMax = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "deployment")
+    private String captureScope = "deployment";
     @UriParam(label = LABEL_NAME)
     private String signalDataCollection;
     @UriParam(label = LABEL_NAME)
     private String converters;
-    @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
-    private String heartbeatTopicsPrefix = "__debezium-heartbeat";
-    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
-    private int mongodbConnectTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME)
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME, defaultValue = "1")
@@ -63,95 +51,60 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME, defaultValue = "30s", javaType = "java.time.Duration")
     private long mongodbPollIntervalMs = 30000;
-    @UriParam(label = LABEL_NAME, defaultValue = "INSERT_INSERT")
-    private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
-    @UriParam(label = LABEL_NAME)
-    private String mongodbUser;
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
-    @UriParam(label = LABEL_NAME)
-    private String snapshotCollectionFilterOverrides;
+    private boolean incrementalSnapshotAllowSchemaChanges = false;
     @UriParam(label = LABEL_NAME)
     private String fieldExcludeList;
-    @UriParam(label = LABEL_NAME, defaultValue = "-1")
-    private int errorsMaxRetries = -1;
     @UriParam(label = LABEL_NAME)
     private String databaseExcludeList;
+    @UriParam(label = LABEL_NAME)
+    private String notificationHttpUrl;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String eventConvertingFailureHandlingMode = "warn";
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
-    @UriParam(label = LABEL_NAME, defaultValue = "t")
-    private String skippedOperations = "t";
-    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
-    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.schema.SchemaTopicNamingStrategy")
     private String topicNamingStrategy = "io.debezium.schema.SchemaTopicNamingStrategy";
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotData = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "true")
-    private boolean extendedHeadersEnabled = true;
-    @UriParam(label = LABEL_NAME, defaultValue = "8192")
-    private int maxQueueSize = 8192;
-    @UriParam(label = LABEL_NAME, defaultValue = "warn")
-    private String guardrailCollectionsLimitAction = "warn";
-    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
-    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
-    @UriParam(label = LABEL_NAME)
-    private String collectionIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "1024")
+    private int incrementalSnapshotChunkSize = 1024;
     @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationJobOwners;
     @UriParam(label = LABEL_NAME, defaultValue = "./openlineage.yml")
     private String openlineageIntegrationConfigFilePath = "./openlineage.yml";
-    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
-    private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "change_streams_update_full")
     private String captureMode = "change_streams_update_full";
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private long retriableRestartConnectorWaitMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "4s", javaType = "java.time.Duration")
     private long executorShutdownTimeoutMs = 4000;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean provideTransactionMetadata = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnDataError = false;
     @UriParam(label = LABEL_NAME)
     private String schemaHistoryInternalFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
-    @UriParam(label = LABEL_NAME)
-    @Metadata(required = true)
-    private String topicPrefix;
-    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.mongodb.MongoDbSourceInfoStructMaker")
-    private String sourceinfoStructMaker = "io.debezium.connector.mongodb.MongoDbSourceInfoStructMaker";
-    @UriParam(label = LABEL_NAME, defaultValue = "admin")
-    private String mongodbAuthsource = "admin";
+    @UriParam(label = LABEL_NAME, defaultValue = "bytes")
+    private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME)
     private String openlineageIntegrationDatasetKafkaBootstrapServers;
     @UriParam(label = LABEL_NAME)
     private String collectionExcludeList;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedStartStream = false;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean statisticsMetricsEnabled = true;
-    @UriParam(label = LABEL_NAME, defaultValue = "0")
-    private long maxQueueSizeInBytes = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
     @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
     private long signalPollIntervalMs = 5000;
     @UriParam(label = LABEL_NAME)
-    private String postProcessors;
-    @UriParam(label = LABEL_NAME)
     private String notificationEnabledChannels;
-    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
-    private int mongodbSocketTimeoutMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "1")
@@ -162,14 +115,91 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String snapshotModeCustomName;
     @UriParam(label = LABEL_NAME, defaultValue = "none")
     private String schemaNameAdjustmentMode = "none";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean skipMessagesWithoutChange = false;
+    @UriParam(label = LABEL_NAME)
+    private String databaseIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "none")
+    private String fieldNameAdjustmentMode = "none";
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private long streamingDelayMs = 0;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobNamespace;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int queryFetchSize = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean legacySnapshotMaxThreads = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean mongodbSslEnabled = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "legacy")
+    private String jsonSerializationMode = "legacy";
+    @UriParam(label = LABEL_NAME)
+    private String fieldRenames;
+    @UriParam(label = LABEL_NAME, defaultValue = "500ms", javaType = "java.time.Duration")
+    private long pollIntervalMs = 500;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int guardrailCollectionsMax = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "__debezium-heartbeat")
+    private String heartbeatTopicsPrefix = "__debezium-heartbeat";
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private int mongodbConnectTimeoutMs = 10000;
+    @UriParam(label = LABEL_NAME, defaultValue = "INSERT_INSERT")
+    private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
+    @UriParam(label = LABEL_NAME)
+    private String mongodbUser;
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private int heartbeatIntervalMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
+    @UriParam(label = LABEL_NAME)
+    private String snapshotCollectionFilterOverrides;
+    @UriParam(label = LABEL_NAME, defaultValue = "-1")
+    private int errorsMaxRetries = -1;
+    @UriParam(label = LABEL_NAME)
+    private String captureTarget;
+    @UriParam(label = LABEL_NAME, defaultValue = "t")
+    private String skippedOperations = "t";
+    @UriParam(label = LABEL_NAME, defaultValue = "Debezium change data capture job")
+    private String openlineageIntegrationJobDescription = "Debezium change data capture job";
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean extendedHeadersEnabled = true;
+    @UriParam(label = LABEL_NAME, defaultValue = "8192")
+    private int maxQueueSize = 8192;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String guardrailCollectionsLimitAction = "warn";
+    @UriParam(label = LABEL_NAME, defaultValue = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$")
+    private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
+    @UriParam(label = LABEL_NAME)
+    private String collectionIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean provideTransactionMetadata = false;
+    @UriParam(label = LABEL_NAME)
+    @Metadata(required = true)
+    private String topicPrefix;
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.mongodb.MongoDbSourceInfoStructMaker")
+    private String sourceinfoStructMaker = "io.debezium.connector.mongodb.MongoDbSourceInfoStructMaker";
+    @UriParam(label = LABEL_NAME, defaultValue = "admin")
+    private String mongodbAuthsource = "admin";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean openlineageIntegrationEnabled = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private long maxQueueSizeInBytes = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int signalEmitFailureMaxRetries = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
+    @UriParam(label = LABEL_NAME)
+    private String postProcessors;
+    @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
+    private int mongodbSocketTimeoutMs = 0;
+    @UriParam(label = LABEL_NAME, defaultValue = "2")
+    private int notificationHttpRetries = 2;
     @UriParam(label = LABEL_NAME, defaultValue = "false", security = "insecure:ssl")
     private boolean mongodbSslInvalidHostnameAllowed = false;
     @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
     private int mongodbHeartbeatFrequencyMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectionValidationTimeoutMs = 60000;
-    @UriParam(label = LABEL_NAME)
-    private String databaseIncludeList;
 
     /**
      * Class to make transaction context & transaction struct/schemas
@@ -183,22 +213,23 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * A delay period after the snapshot is completed and the streaming begins,
-     * given in milliseconds. Defaults to 0 ms.
+     * When true, the SSRF guard permits notification URLs that resolve to
+     * loopback, site-local or link-local addresses (e.g. an in-cluster
+     * Service). Defaults to false so only public addresses are allowed.
      */
-    public void setStreamingDelayMs(long streamingDelayMs) {
-        this.streamingDelayMs = streamingDelayMs;
+    public void setNotificationHttpAllowPrivateNetworks(
+            boolean notificationHttpAllowPrivateNetworks) {
+        this.notificationHttpAllowPrivateNetworks = notificationHttpAllowPrivateNetworks;
     }
 
-    public long getStreamingDelayMs() {
-        return streamingDelayMs;
+    public boolean isNotificationHttpAllowPrivateNetworks() {
+        return notificationHttpAllowPrivateNetworks;
     }
 
     /**
-     * The custom metric tags will accept key-value pairs to customize the MBean
-     * object name which should be appended the end of regular name, each key
-     * would represent a tag for the MBean object name, and the corresponding
-     * value would be the value of that tag the key is. For example: k1=v1,k2=v2
+     * A comma-separated list of key-value pairs that are appended to the MBean
+     * object name. Keys must be valid JMX ObjectName property keys. For
+     * example: k1=v1,k2=v2
      */
     public void setCustomMetricTags(String customMetricTags) {
         this.customMetricTags = customMetricTags;
@@ -231,27 +262,15 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The job's namespace emitted by Debezium
+     * Connect and read timeout, in milliseconds, for HTTP notification
+     * delivery.
      */
-    public void setOpenlineageIntegrationJobNamespace(
-            String openlineageIntegrationJobNamespace) {
-        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
+    public void setNotificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+        this.notificationHttpTimeoutMs = notificationHttpTimeoutMs;
     }
 
-    public String getOpenlineageIntegrationJobNamespace() {
-        return openlineageIntegrationJobNamespace;
-    }
-
-    /**
-     * The maximum number of records that should be loaded into memory while
-     * streaming. A value of '0' uses the default JDBC fetch size.
-     */
-    public void setQueryFetchSize(int queryFetchSize) {
-        this.queryFetchSize = queryFetchSize;
-    }
-
-    public int getQueryFetchSize() {
-        return queryFetchSize;
+    public int getNotificationHttpTimeoutMs() {
+        return notificationHttpTimeoutMs;
     }
 
     /**
@@ -267,28 +286,15 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * When enabled, uses the legacy table-per-thread parallel snapshot
-     * algorithm. When set to false (the default), tables are split into chunks
-     * and processed across all snapshot threads, allowing for higher
-     * concurrency for snapshots.
+     * Duration to sleep for after encountering an error emitting a window
+     * event, given in milliseconds. Defaults to 10 seconds.
      */
-    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
-        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
+    public void setSignalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+        this.signalEmitFailureBackoffMs = signalEmitFailureBackoffMs;
     }
 
-    public boolean isLegacySnapshotMaxThreads() {
-        return legacySnapshotMaxThreads;
-    }
-
-    /**
-     * Should connector use SSL to connect to MongoDB instances
-     */
-    public void setMongodbSslEnabled(boolean mongodbSslEnabled) {
-        this.mongodbSslEnabled = mongodbSslEnabled;
-    }
-
-    public boolean isMongodbSslEnabled() {
-        return mongodbSslEnabled;
+    public long getSignalEmitFailureBackoffMs() {
+        return signalEmitFailureBackoffMs;
     }
 
     /**
@@ -301,23 +307,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public int getCursorMaxAwaitTimeMs() {
         return cursorMaxAwaitTimeMs;
-    }
-
-    /**
-     * A comma-separated list of the fully-qualified replacements of fields that
-     * should be used to rename fields in change event message values.
-     * Fully-qualified replacements for fields are of the form
-     * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName,
-     * where databaseName and collectionName may contain the wildcard (*) which
-     * matches any characters, the colon character (:) is used to determine
-     * rename mapping of field.
-     */
-    public void setFieldRenames(String fieldRenames) {
-        this.fieldRenames = fieldRenames;
-    }
-
-    public String getFieldRenames() {
-        return fieldRenames;
     }
 
     /**
@@ -334,29 +323,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Time to wait for new change events to appear after receiving no events,
-     * given in milliseconds. Defaults to 500 ms.
+     * The scope of captured changes. Options include: 'deployment' (the
+     * default) to capture changes from the entire MongoDB deployment;
+     * 'database' to capture changes from a specific MongoDB
+     * database'collection' to capture changes from a specific MongoDB
+     * collection
      */
-    public void setPollIntervalMs(long pollIntervalMs) {
-        this.pollIntervalMs = pollIntervalMs;
+    public void setCaptureScope(String captureScope) {
+        this.captureScope = captureScope;
     }
 
-    public long getPollIntervalMs() {
-        return pollIntervalMs;
-    }
-
-    /**
-     * The maximum number of collections or tables that can be captured by the
-     * connector. When this limit is exceeded, the action specified by
-     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
-     * this guardrail.
-     */
-    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
-        this.guardrailCollectionsMax = guardrailCollectionsMax;
-    }
-
-    public int getGuardrailCollectionsMax() {
-        return guardrailCollectionsMax;
+    public String getCaptureScope() {
+        return captureScope;
     }
 
     /**
@@ -384,30 +362,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getConverters() {
         return converters;
-    }
-
-    /**
-     * The prefix that is used to name heartbeat topics.Defaults to
-     * __debezium-heartbeat.
-     */
-    public void setHeartbeatTopicsPrefix(String heartbeatTopicsPrefix) {
-        this.heartbeatTopicsPrefix = heartbeatTopicsPrefix;
-    }
-
-    public String getHeartbeatTopicsPrefix() {
-        return heartbeatTopicsPrefix;
-    }
-
-    /**
-     * The connection timeout, given in milliseconds. Defaults to 10 seconds
-     * (10,000 ms).
-     */
-    public void setMongodbConnectTimeoutMs(int mongodbConnectTimeoutMs) {
-        this.mongodbConnectTimeoutMs = mongodbConnectTimeoutMs;
-    }
-
-    public int getMongodbConnectTimeoutMs() {
-        return mongodbConnectTimeoutMs;
     }
 
     /**
@@ -464,73 +418,22 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Specify the strategy used for watermarking during an incremental
-     * snapshot: 'insert_insert' both open and close signal is written into
-     * signal data collection (default); 'insert_delete' only open signal is
-     * written on signal data collection, the close will delete the relative
-     * open signal;
+     * Detect schema change during an incremental snapshot and re-select a
+     * current chunk to avoid locking DDLs. Note that changes to a primary key
+     * are not supported and can cause incorrect results if performed during an
+     * incremental snapshot. Another limitation is that if a schema change
+     * affects only columns' default values, then the change won't be detected
+     * until the DDL is processed from the binlog stream. This doesn't affect
+     * the snapshot events' values, but the schema of snapshot events may have
+     * outdated defaults.
      */
-    public void setIncrementalSnapshotWatermarkingStrategy(
-            String incrementalSnapshotWatermarkingStrategy) {
-        this.incrementalSnapshotWatermarkingStrategy = incrementalSnapshotWatermarkingStrategy;
+    public void setIncrementalSnapshotAllowSchemaChanges(
+            boolean incrementalSnapshotAllowSchemaChanges) {
+        this.incrementalSnapshotAllowSchemaChanges = incrementalSnapshotAllowSchemaChanges;
     }
 
-    public String getIncrementalSnapshotWatermarkingStrategy() {
-        return incrementalSnapshotWatermarkingStrategy;
-    }
-
-    /**
-     * Database user for connecting to MongoDB, if necessary.
-     */
-    public void setMongodbUser(String mongodbUser) {
-        this.mongodbUser = mongodbUser;
-    }
-
-    public String getMongodbUser() {
-        return mongodbUser;
-    }
-
-    /**
-     * Length of an interval in milli-seconds in in which the connector
-     * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
-     * disable heartbeat messages. Disabled by default.
-     */
-    public void setHeartbeatIntervalMs(int heartbeatIntervalMs) {
-        this.heartbeatIntervalMs = heartbeatIntervalMs;
-    }
-
-    public int getHeartbeatIntervalMs() {
-        return heartbeatIntervalMs;
-    }
-
-    /**
-     * When 'snapshot.mode' is set as configuration_based, this setting permits
-     * to specify whenever the schema should be snapshotted or not in case of
-     * error.
-     */
-    public void setSnapshotModeConfigurationBasedSnapshotOnSchemaError(
-            boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
-        this.snapshotModeConfigurationBasedSnapshotOnSchemaError = snapshotModeConfigurationBasedSnapshotOnSchemaError;
-    }
-
-    public boolean isSnapshotModeConfigurationBasedSnapshotOnSchemaError() {
-        return snapshotModeConfigurationBasedSnapshotOnSchemaError;
-    }
-
-    /**
-     * This property contains a comma-separated list of
-     * <dbName>.<collectionName>, for which  the initial snapshot may be a
-     * subset of data present in the data source. The subset would be defined by
-     * mongodb filter query specified as value for property
-     * snapshot.collection.filter.override.<dbname>.<collectionName>
-     */
-    public void setSnapshotCollectionFilterOverrides(
-            String snapshotCollectionFilterOverrides) {
-        this.snapshotCollectionFilterOverrides = snapshotCollectionFilterOverrides;
-    }
-
-    public String getSnapshotCollectionFilterOverrides() {
-        return snapshotCollectionFilterOverrides;
+    public boolean isIncrementalSnapshotAllowSchemaChanges() {
+        return incrementalSnapshotAllowSchemaChanges;
     }
 
     /**
@@ -546,18 +449,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The maximum number of retries on connection errors before failing (-1 =
-     * no limit, 0 = disabled, > 0 = num of retries).
-     */
-    public void setErrorsMaxRetries(int errorsMaxRetries) {
-        this.errorsMaxRetries = errorsMaxRetries;
-    }
-
-    public int getErrorsMaxRetries() {
-        return errorsMaxRetries;
-    }
-
-    /**
      * A comma-separated list of regular expressions or literals that match the
      * database names for which changes are to be excluded
      */
@@ -570,6 +461,36 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The URL to which notifications are POSTed as JSON. Required when 'http'
+     * is in the list of enabled channels.
+     */
+    public void setNotificationHttpUrl(String notificationHttpUrl) {
+        this.notificationHttpUrl = notificationHttpUrl;
+    }
+
+    public String getNotificationHttpUrl() {
+        return notificationHttpUrl;
+    }
+
+    /**
+     * Specify how failures during converting of event should be handled,
+     * including: 'fail' throw an exception that the column of event conversion
+     * is failed with unmatched schema type, causing the connector to be
+     * stopped. it could need schema recovery to covert successfully; 'warn'
+     * (the default) the value of column of event that conversion failed will be
+     * null and be logged with warn level; 'skip' the value of column of event
+     * that conversion failed will be null and be logged with debug level.
+     */
+    public void setEventConvertingFailureHandlingMode(
+            String eventConvertingFailureHandlingMode) {
+        this.eventConvertingFailureHandlingMode = eventConvertingFailureHandlingMode;
+    }
+
+    public String getEventConvertingFailureHandlingMode() {
+        return eventConvertingFailureHandlingMode;
+    }
+
+    /**
      * Maximum size of each batch of source records. Defaults to 2048.
      */
     public void setMaxBatchSize(int maxBatchSize) {
@@ -578,32 +499,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public int getMaxBatchSize() {
         return maxBatchSize;
-    }
-
-    /**
-     * The comma-separated list of operations to skip during streaming, defined
-     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
-     * truncates, and 'none' to indicate nothing skipped. By default, only
-     * truncate operations will be skipped.
-     */
-    public void setSkippedOperations(String skippedOperations) {
-        this.skippedOperations = skippedOperations;
-    }
-
-    public String getSkippedOperations() {
-        return skippedOperations;
-    }
-
-    /**
-     * The job's description emitted by Debezium
-     */
-    public void setOpenlineageIntegrationJobDescription(
-            String openlineageIntegrationJobDescription) {
-        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
-    }
-
-    public String getOpenlineageIntegrationJobDescription() {
-        return openlineageIntegrationJobDescription;
     }
 
     /**
@@ -651,68 +546,15 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Enable/Disable Debezium context headers that provides essential metadata
-     * for tracking and identifying the source of CDC events in downstream
-     * processing systems.
+     * The maximum size of chunk (number of documents/rows) for incremental
+     * snapshotting
      */
-    public void setExtendedHeadersEnabled(boolean extendedHeadersEnabled) {
-        this.extendedHeadersEnabled = extendedHeadersEnabled;
+    public void setIncrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
+        this.incrementalSnapshotChunkSize = incrementalSnapshotChunkSize;
     }
 
-    public boolean isExtendedHeadersEnabled() {
-        return extendedHeadersEnabled;
-    }
-
-    /**
-     * Maximum size of the queue for change events read from the database log
-     * but not yet recorded or forwarded. Defaults to 8192, and should always be
-     * larger than the maximum batch size.
-     */
-    public void setMaxQueueSize(int maxQueueSize) {
-        this.maxQueueSize = maxQueueSize;
-    }
-
-    public int getMaxQueueSize() {
-        return maxQueueSize;
-    }
-
-    /**
-     * Specify the action to take when a guardrail collections limit is
-     * exceeded: 'warn' (the default) logs a warning message and continues
-     * processing; 'fail' stops the connector with an error.
-     */
-    public void setGuardrailCollectionsLimitAction(
-            String guardrailCollectionsLimitAction) {
-        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
-    }
-
-    public String getGuardrailCollectionsLimitAction() {
-        return guardrailCollectionsLimitAction;
-    }
-
-    /**
-     * Regular expression identifying configuration keys whose values should be
-     * masked. When set, this custom pattern replaces Debeziums default password
-     * masking pattern.
-     */
-    public void setCustomSanitizePattern(String customSanitizePattern) {
-        this.customSanitizePattern = customSanitizePattern;
-    }
-
-    public String getCustomSanitizePattern() {
-        return customSanitizePattern;
-    }
-
-    /**
-     * A comma-separated list of regular expressions or literals that match the
-     * collection names for which changes are to be captured
-     */
-    public void setCollectionIncludeList(String collectionIncludeList) {
-        this.collectionIncludeList = collectionIncludeList;
-    }
-
-    public String getCollectionIncludeList() {
-        return collectionIncludeList;
+    public int getIncrementalSnapshotChunkSize() {
+        return incrementalSnapshotChunkSize;
     }
 
     /**
@@ -742,19 +584,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Time to wait before restarting connector after retriable exception
-     * occurs. Defaults to 10000ms.
-     */
-    public void setRetriableRestartConnectorWaitMs(
-            long retriableRestartConnectorWaitMs) {
-        this.retriableRestartConnectorWaitMs = retriableRestartConnectorWaitMs;
-    }
-
-    public long getRetriableRestartConnectorWaitMs() {
-        return retriableRestartConnectorWaitMs;
-    }
-
-    /**
      * The method used to capture changes from MongoDB server. Options include:
      * 'change_streams' to capture changes via MongoDB Change Streams, update
      * events do not contain full documents; 'change_streams_update_full' (the
@@ -767,6 +596,19 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getCaptureMode() {
         return captureMode;
+    }
+
+    /**
+     * Time to wait before restarting connector after retriable exception
+     * occurs. Defaults to 10000ms.
+     */
+    public void setRetriableRestartConnectorWaitMs(
+            long retriableRestartConnectorWaitMs) {
+        this.retriableRestartConnectorWaitMs = retriableRestartConnectorWaitMs;
+    }
+
+    public long getRetriableRestartConnectorWaitMs() {
+        return retriableRestartConnectorWaitMs;
     }
 
     /**
@@ -790,17 +632,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public long getExecutorShutdownTimeoutMs() {
         return executorShutdownTimeoutMs;
-    }
-
-    /**
-     * Enables transaction metadata extraction together with event counting
-     */
-    public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
-        this.provideTransactionMetadata = provideTransactionMetadata;
-    }
-
-    public boolean isProvideTransactionMetadata() {
-        return provideTransactionMetadata;
     }
 
     /**
@@ -846,41 +677,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Topic prefix that identifies and provides a namespace for the particular
-     * database server/cluster is capturing changes. The topic prefix should be
-     * unique across all other connectors, since it is used as a prefix for all
-     * Kafka topic names that receive events emitted by this connector. Only
-     * alphanumeric characters, hyphens, dots and underscores must be accepted.
+     * Specify how binary (blob, binary, etc.) columns should be represented in
+     * change events, including: 'bytes' represents binary data as byte array
+     * (default); 'base64' represents binary data as base64-encoded string;
+     * 'base64-url-safe' represents binary data as base64-url-safe-encoded
+     * string; 'hex' represents binary data as hex-encoded (base16) string
      */
-    public void setTopicPrefix(String topicPrefix) {
-        this.topicPrefix = topicPrefix;
+    public void setBinaryHandlingMode(String binaryHandlingMode) {
+        this.binaryHandlingMode = binaryHandlingMode;
     }
 
-    public String getTopicPrefix() {
-        return topicPrefix;
-    }
-
-    /**
-     * The name of the SourceInfoStructMaker class that returns SourceInfo
-     * schema and struct.
-     */
-    public void setSourceinfoStructMaker(String sourceinfoStructMaker) {
-        this.sourceinfoStructMaker = sourceinfoStructMaker;
-    }
-
-    public String getSourceinfoStructMaker() {
-        return sourceinfoStructMaker;
-    }
-
-    /**
-     * Database containing user credentials.
-     */
-    public void setMongodbAuthsource(String mongodbAuthsource) {
-        this.mongodbAuthsource = mongodbAuthsource;
-    }
-
-    public String getMongodbAuthsource() {
-        return mongodbAuthsource;
+    public String getBinaryHandlingMode() {
+        return binaryHandlingMode;
     }
 
     /**
@@ -905,18 +713,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getCollectionExcludeList() {
         return collectionExcludeList;
-    }
-
-    /**
-     * Enable Debezium to emit data lineage metadata through OpenLineage API
-     */
-    public void setOpenlineageIntegrationEnabled(
-            boolean openlineageIntegrationEnabled) {
-        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
-    }
-
-    public boolean isOpenlineageIntegrationEnabled() {
-        return openlineageIntegrationEnabled;
     }
 
     /**
@@ -959,32 +755,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Maximum size of the queue in bytes for change events read from the
-     * database log but not yet recorded or forwarded. Defaults to 0. Mean the
-     * feature is not enabled
-     */
-    public void setMaxQueueSizeInBytes(long maxQueueSizeInBytes) {
-        this.maxQueueSizeInBytes = maxQueueSizeInBytes;
-    }
-
-    public long getMaxQueueSizeInBytes() {
-        return maxQueueSizeInBytes;
-    }
-
-    /**
-     * When 'snapshot.mode' is set as configuration_based, this setting permits
-     * to specify whenever the schema should be snapshotted or not.
-     */
-    public void setSnapshotModeConfigurationBasedSnapshotSchema(
-            boolean snapshotModeConfigurationBasedSnapshotSchema) {
-        this.snapshotModeConfigurationBasedSnapshotSchema = snapshotModeConfigurationBasedSnapshotSchema;
-    }
-
-    public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
-        return snapshotModeConfigurationBasedSnapshotSchema;
-    }
-
-    /**
      * Interval for looking for new signals in registered channels, given in
      * milliseconds. Defaults to 5 seconds.
      */
@@ -997,19 +767,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Optional list of post processors. The processors are defined using
-     * '<post.processor.prefix>.type' config option and configured using options
-     * '<post.processor.prefix.<option>'
-     */
-    public void setPostProcessors(String postProcessors) {
-        this.postProcessors = postProcessors;
-    }
-
-    public String getPostProcessors() {
-        return postProcessors;
-    }
-
-    /**
      * List of notification channels names that are enabled.
      */
     public void setNotificationEnabledChannels(
@@ -1019,17 +776,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getNotificationEnabledChannels() {
         return notificationEnabledChannels;
-    }
-
-    /**
-     * The socket timeout, given in milliseconds. Defaults to 0 ms.
-     */
-    public void setMongodbSocketTimeoutMs(int mongodbSocketTimeoutMs) {
-        this.mongodbSocketTimeoutMs = mongodbSocketTimeoutMs;
-    }
-
-    public int getMongodbSocketTimeoutMs() {
-        return mongodbSocketTimeoutMs;
     }
 
     /**
@@ -1105,6 +851,518 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable to skip publishing messages when there is no change in included
+     * columns.This would essentially filter messages to be sent when there is
+     * no change in columns included as per
+     * column.include.list/column.exclude.list.For Postgres - this would require
+     * REPLICA IDENTITY of table to be FULL.
+     */
+    public void setSkipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+        this.skipMessagesWithoutChange = skipMessagesWithoutChange;
+    }
+
+    public boolean isSkipMessagesWithoutChange() {
+        return skipMessagesWithoutChange;
+    }
+
+    /**
+     * A comma-separated list of regular expressions or literals that match the
+     * database names for which changes are to be captured
+     */
+    public void setDatabaseIncludeList(String databaseIncludeList) {
+        this.databaseIncludeList = databaseIncludeList;
+    }
+
+    public String getDatabaseIncludeList() {
+        return databaseIncludeList;
+    }
+
+    /**
+     * Specify how field names should be adjusted for compatibility with the
+     * message converter used by the connector, including: 'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore;
+     * 'avro_unicode' replaces the underscore or characters that cannot be used
+     * in the Avro type name with corresponding unicode like _uxxxx. Note: _ is
+     * an escape sequence like backslash in Java;'none' does not apply any
+     * adjustment (default)
+     */
+    public void setFieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+        this.fieldNameAdjustmentMode = fieldNameAdjustmentMode;
+    }
+
+    public String getFieldNameAdjustmentMode() {
+        return fieldNameAdjustmentMode;
+    }
+
+    /**
+     * A delay period after the snapshot is completed and the streaming begins,
+     * given in milliseconds. Defaults to 0 ms.
+     */
+    public void setStreamingDelayMs(long streamingDelayMs) {
+        this.streamingDelayMs = streamingDelayMs;
+    }
+
+    public long getStreamingDelayMs() {
+        return streamingDelayMs;
+    }
+
+    /**
+     * The job's namespace emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobNamespace(
+            String openlineageIntegrationJobNamespace) {
+        this.openlineageIntegrationJobNamespace = openlineageIntegrationJobNamespace;
+    }
+
+    public String getOpenlineageIntegrationJobNamespace() {
+        return openlineageIntegrationJobNamespace;
+    }
+
+    /**
+     * The maximum number of records that should be loaded into memory while
+     * streaming. A value of '0' uses the default JDBC fetch size.
+     */
+    public void setQueryFetchSize(int queryFetchSize) {
+        this.queryFetchSize = queryFetchSize;
+    }
+
+    public int getQueryFetchSize() {
+        return queryFetchSize;
+    }
+
+    /**
+     * When enabled, uses the legacy table-per-thread parallel snapshot
+     * algorithm. When set to false (the default), tables are split into chunks
+     * and processed across all snapshot threads, allowing for higher
+     * concurrency for snapshots.
+     */
+    public void setLegacySnapshotMaxThreads(boolean legacySnapshotMaxThreads) {
+        this.legacySnapshotMaxThreads = legacySnapshotMaxThreads;
+    }
+
+    public boolean isLegacySnapshotMaxThreads() {
+        return legacySnapshotMaxThreads;
+    }
+
+    /**
+     * Should connector use SSL to connect to MongoDB instances
+     */
+    public void setMongodbSslEnabled(boolean mongodbSslEnabled) {
+        this.mongodbSslEnabled = mongodbSslEnabled;
+    }
+
+    public boolean isMongodbSslEnabled() {
+        return mongodbSslEnabled;
+    }
+
+    /**
+     * Controls the Extended JSON serialization mode used for MongoDB event
+     * payload fields. Options include: 'legacy' (the default) uses MongoDB
+     * Extended JSON v1 strict mode for full document fields and MongoDB
+     * Extended JSON v2 relaxed mode for update fields. 'strict' uses MongoDB
+     * Extended JSON v1 strict mode. 'extended' uses MongoDB Extended JSON v2
+     * canonical mode. 'relaxed' uses MongoDB Extended JSON v2 relaxed mode.
+     */
+    public void setJsonSerializationMode(String jsonSerializationMode) {
+        this.jsonSerializationMode = jsonSerializationMode;
+    }
+
+    public String getJsonSerializationMode() {
+        return jsonSerializationMode;
+    }
+
+    /**
+     * A comma-separated list of the fully-qualified replacements of fields that
+     * should be used to rename fields in change event message values.
+     * Fully-qualified replacements for fields are of the form
+     * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName,
+     * where databaseName and collectionName may contain the wildcard (*) which
+     * matches any characters, the colon character (:) is used to determine
+     * rename mapping of field.
+     */
+    public void setFieldRenames(String fieldRenames) {
+        this.fieldRenames = fieldRenames;
+    }
+
+    public String getFieldRenames() {
+        return fieldRenames;
+    }
+
+    /**
+     * Time to wait for new change events to appear after receiving no events,
+     * given in milliseconds. Defaults to 500 ms. Values will be capped at 5000
+     * ms.
+     */
+    public void setPollIntervalMs(long pollIntervalMs) {
+        this.pollIntervalMs = pollIntervalMs;
+    }
+
+    public long getPollIntervalMs() {
+        return pollIntervalMs;
+    }
+
+    /**
+     * The maximum number of collections or tables that can be captured by the
+     * connector. When this limit is exceeded, the action specified by
+     * 'guardrail.collections.limit.action' will be taken. Set to 0 to disable
+     * this guardrail.
+     */
+    public void setGuardrailCollectionsMax(int guardrailCollectionsMax) {
+        this.guardrailCollectionsMax = guardrailCollectionsMax;
+    }
+
+    public int getGuardrailCollectionsMax() {
+        return guardrailCollectionsMax;
+    }
+
+    /**
+     * The prefix that is used to name heartbeat topics.Defaults to
+     * __debezium-heartbeat.
+     */
+    public void setHeartbeatTopicsPrefix(String heartbeatTopicsPrefix) {
+        this.heartbeatTopicsPrefix = heartbeatTopicsPrefix;
+    }
+
+    public String getHeartbeatTopicsPrefix() {
+        return heartbeatTopicsPrefix;
+    }
+
+    /**
+     * The connection timeout, given in milliseconds. Defaults to 10 seconds
+     * (10,000 ms).
+     */
+    public void setMongodbConnectTimeoutMs(int mongodbConnectTimeoutMs) {
+        this.mongodbConnectTimeoutMs = mongodbConnectTimeoutMs;
+    }
+
+    public int getMongodbConnectTimeoutMs() {
+        return mongodbConnectTimeoutMs;
+    }
+
+    /**
+     * Specify the strategy used for watermarking during an incremental
+     * snapshot: 'insert_insert' both open and close signal is written into
+     * signal data collection (default); 'insert_delete' only open signal is
+     * written on signal data collection, the close will delete the relative
+     * open signal;
+     */
+    public void setIncrementalSnapshotWatermarkingStrategy(
+            String incrementalSnapshotWatermarkingStrategy) {
+        this.incrementalSnapshotWatermarkingStrategy = incrementalSnapshotWatermarkingStrategy;
+    }
+
+    public String getIncrementalSnapshotWatermarkingStrategy() {
+        return incrementalSnapshotWatermarkingStrategy;
+    }
+
+    /**
+     * Database user for connecting to MongoDB, if necessary.
+     */
+    public void setMongodbUser(String mongodbUser) {
+        this.mongodbUser = mongodbUser;
+    }
+
+    public String getMongodbUser() {
+        return mongodbUser;
+    }
+
+    /**
+     * Length of an interval in milli-seconds in in which the connector
+     * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
+     * disable heartbeat messages. Disabled by default.
+     */
+    public void setHeartbeatIntervalMs(int heartbeatIntervalMs) {
+        this.heartbeatIntervalMs = heartbeatIntervalMs;
+    }
+
+    public int getHeartbeatIntervalMs() {
+        return heartbeatIntervalMs;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the schema should be snapshotted or not in case of
+     * error.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotOnSchemaError(
+            boolean snapshotModeConfigurationBasedSnapshotOnSchemaError) {
+        this.snapshotModeConfigurationBasedSnapshotOnSchemaError = snapshotModeConfigurationBasedSnapshotOnSchemaError;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotOnSchemaError() {
+        return snapshotModeConfigurationBasedSnapshotOnSchemaError;
+    }
+
+    /**
+     * This property contains a comma-separated list of
+     * <dbName>.<collectionName>, for which  the initial snapshot may be a
+     * subset of data present in the data source. The subset would be defined by
+     * mongodb filter query specified as value for property
+     * snapshot.collection.filter.override.<dbname>.<collectionName>
+     */
+    public void setSnapshotCollectionFilterOverrides(
+            String snapshotCollectionFilterOverrides) {
+        this.snapshotCollectionFilterOverrides = snapshotCollectionFilterOverrides;
+    }
+
+    public String getSnapshotCollectionFilterOverrides() {
+        return snapshotCollectionFilterOverrides;
+    }
+
+    /**
+     * The maximum number of retries on connection errors before failing (-1 =
+     * no limit, 0 = disabled, > 0 = num of retries).
+     */
+    public void setErrorsMaxRetries(int errorsMaxRetries) {
+        this.errorsMaxRetries = errorsMaxRetries;
+    }
+
+    public int getErrorsMaxRetries() {
+        return errorsMaxRetries;
+    }
+
+    /**
+     * The target to capture changes from. For 'database' scope, this is the
+     * database name. For 'collection' scope, this is the collection name as
+     * <databaseName>.<collectionName>.
+     */
+    public void setCaptureTarget(String captureTarget) {
+        this.captureTarget = captureTarget;
+    }
+
+    public String getCaptureTarget() {
+        return captureTarget;
+    }
+
+    /**
+     * The comma-separated list of operations to skip during streaming, defined
+     * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
+     * truncates, and 'none' to indicate nothing skipped. By default, only
+     * truncate operations will be skipped.
+     */
+    public void setSkippedOperations(String skippedOperations) {
+        this.skippedOperations = skippedOperations;
+    }
+
+    public String getSkippedOperations() {
+        return skippedOperations;
+    }
+
+    /**
+     * The job's description emitted by Debezium
+     */
+    public void setOpenlineageIntegrationJobDescription(
+            String openlineageIntegrationJobDescription) {
+        this.openlineageIntegrationJobDescription = openlineageIntegrationJobDescription;
+    }
+
+    public String getOpenlineageIntegrationJobDescription() {
+        return openlineageIntegrationJobDescription;
+    }
+
+    /**
+     * Enable/Disable Debezium context headers that provides essential metadata
+     * for tracking and identifying the source of CDC events in downstream
+     * processing systems.
+     */
+    public void setExtendedHeadersEnabled(boolean extendedHeadersEnabled) {
+        this.extendedHeadersEnabled = extendedHeadersEnabled;
+    }
+
+    public boolean isExtendedHeadersEnabled() {
+        return extendedHeadersEnabled;
+    }
+
+    /**
+     * Maximum size of the queue for change events read from the database log
+     * but not yet recorded or forwarded. Defaults to 8192, and should always be
+     * larger than the maximum batch size.
+     */
+    public void setMaxQueueSize(int maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
+
+    public int getMaxQueueSize() {
+        return maxQueueSize;
+    }
+
+    /**
+     * Specify the action to take when a guardrail collections limit is
+     * exceeded: 'warn' (the default) logs a warning message and continues
+     * processing; 'fail' stops the connector with an error.
+     */
+    public void setGuardrailCollectionsLimitAction(
+            String guardrailCollectionsLimitAction) {
+        this.guardrailCollectionsLimitAction = guardrailCollectionsLimitAction;
+    }
+
+    public String getGuardrailCollectionsLimitAction() {
+        return guardrailCollectionsLimitAction;
+    }
+
+    /**
+     * Regular expression identifying configuration keys whose values should be
+     * masked. When set, this custom pattern replaces Debeziums default password
+     * masking pattern.
+     */
+    public void setCustomSanitizePattern(String customSanitizePattern) {
+        this.customSanitizePattern = customSanitizePattern;
+    }
+
+    public String getCustomSanitizePattern() {
+        return customSanitizePattern;
+    }
+
+    /**
+     * A comma-separated list of regular expressions or literals that match the
+     * collection names for which changes are to be captured
+     */
+    public void setCollectionIncludeList(String collectionIncludeList) {
+        this.collectionIncludeList = collectionIncludeList;
+    }
+
+    public String getCollectionIncludeList() {
+        return collectionIncludeList;
+    }
+
+    /**
+     * Enables transaction metadata extraction together with event counting
+     */
+    public void setProvideTransactionMetadata(boolean provideTransactionMetadata) {
+        this.provideTransactionMetadata = provideTransactionMetadata;
+    }
+
+    public boolean isProvideTransactionMetadata() {
+        return provideTransactionMetadata;
+    }
+
+    /**
+     * Topic prefix that identifies and provides a namespace for the particular
+     * database server/cluster is capturing changes. The topic prefix should be
+     * unique across all other connectors, since it is used as a prefix for all
+     * Kafka topic names that receive events emitted by this connector. Only
+     * alphanumeric characters, hyphens, dots and underscores must be accepted.
+     */
+    public void setTopicPrefix(String topicPrefix) {
+        this.topicPrefix = topicPrefix;
+    }
+
+    public String getTopicPrefix() {
+        return topicPrefix;
+    }
+
+    /**
+     * The name of the SourceInfoStructMaker class that returns SourceInfo
+     * schema and struct.
+     */
+    public void setSourceinfoStructMaker(String sourceinfoStructMaker) {
+        this.sourceinfoStructMaker = sourceinfoStructMaker;
+    }
+
+    public String getSourceinfoStructMaker() {
+        return sourceinfoStructMaker;
+    }
+
+    /**
+     * Database containing user credentials.
+     */
+    public void setMongodbAuthsource(String mongodbAuthsource) {
+        this.mongodbAuthsource = mongodbAuthsource;
+    }
+
+    public String getMongodbAuthsource() {
+        return mongodbAuthsource;
+    }
+
+    /**
+     * Enable Debezium to emit data lineage metadata through OpenLineage API
+     */
+    public void setOpenlineageIntegrationEnabled(
+            boolean openlineageIntegrationEnabled) {
+        this.openlineageIntegrationEnabled = openlineageIntegrationEnabled;
+    }
+
+    public boolean isOpenlineageIntegrationEnabled() {
+        return openlineageIntegrationEnabled;
+    }
+
+    /**
+     * Maximum size of the queue in bytes for change events read from the
+     * database log but not yet recorded or forwarded. Defaults to 0. Mean the
+     * feature is not enabled
+     */
+    public void setMaxQueueSizeInBytes(long maxQueueSizeInBytes) {
+        this.maxQueueSizeInBytes = maxQueueSizeInBytes;
+    }
+
+    public long getMaxQueueSizeInBytes() {
+        return maxQueueSizeInBytes;
+    }
+
+    /**
+     * The maximum number of retries after encountering an error emitting a
+     * window event (-1 = no limit, 0 = disabled, > 0 = num of retries).
+     * Defaults to 0.
+     */
+    public void setSignalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+        this.signalEmitFailureMaxRetries = signalEmitFailureMaxRetries;
+    }
+
+    public int getSignalEmitFailureMaxRetries() {
+        return signalEmitFailureMaxRetries;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the schema should be snapshotted or not.
+     */
+    public void setSnapshotModeConfigurationBasedSnapshotSchema(
+            boolean snapshotModeConfigurationBasedSnapshotSchema) {
+        this.snapshotModeConfigurationBasedSnapshotSchema = snapshotModeConfigurationBasedSnapshotSchema;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
+        return snapshotModeConfigurationBasedSnapshotSchema;
+    }
+
+    /**
+     * Optional list of post processors. The processors are defined using
+     * '<post.processor.prefix>.type' config option and configured using options
+     * '<post.processor.prefix.<option>'
+     */
+    public void setPostProcessors(String postProcessors) {
+        this.postProcessors = postProcessors;
+    }
+
+    public String getPostProcessors() {
+        return postProcessors;
+    }
+
+    /**
+     * The socket timeout, given in milliseconds. Defaults to 0 ms.
+     */
+    public void setMongodbSocketTimeoutMs(int mongodbSocketTimeoutMs) {
+        this.mongodbSocketTimeoutMs = mongodbSocketTimeoutMs;
+    }
+
+    public int getMongodbSocketTimeoutMs() {
+        return mongodbSocketTimeoutMs;
+    }
+
+    /**
+     * Number of retries after the first failed HTTP notification delivery
+     * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are always
+     * retried at least 3 times.
+     */
+    public void setNotificationHttpRetries(int notificationHttpRetries) {
+        this.notificationHttpRetries = notificationHttpRetries;
+    }
+
+    public int getNotificationHttpRetries() {
+        return notificationHttpRetries;
+    }
+
+    /**
      * Whether invalid host names are allowed when using SSL. If true the
      * connection will not prevent man-in-the-middle attacks
      */
@@ -1142,98 +1400,101 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         return connectionValidationTimeoutMs;
     }
 
-    /**
-     * A comma-separated list of regular expressions or literals that match the
-     * database names for which changes are to be captured
-     */
-    public void setDatabaseIncludeList(String databaseIncludeList) {
-        this.databaseIncludeList = databaseIncludeList;
-    }
-
-    public String getDatabaseIncludeList() {
-        return databaseIncludeList;
-    }
-
     @Override
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
         
         addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
-        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
+        addPropertyIfNotNull(configBuilder, "notification.http.allow.private.networks", notificationHttpAllowPrivateNetworks);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
         addPropertyIfNotNull(configBuilder, "mongodb.connection.string", mongodbConnectionString);
         addPropertyIfNotNull(configBuilder, "mongodb.password", mongodbPassword);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
-        addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "notification.http.timeout.ms", notificationHttpTimeoutMs);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
-        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
-        addPropertyIfNotNull(configBuilder, "mongodb.ssl.enabled", mongodbSslEnabled);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.backoff.ms", signalEmitFailureBackoffMs);
         addPropertyIfNotNull(configBuilder, "cursor.max.await.time.ms", cursorMaxAwaitTimeMs);
-        addPropertyIfNotNull(configBuilder, "field.renames", fieldRenames);
         addPropertyIfNotNull(configBuilder, "mongodb.server.selection.timeout.ms", mongodbServerSelectionTimeoutMs);
-        addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
-        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
+        addPropertyIfNotNull(configBuilder, "capture.scope", captureScope);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
         addPropertyIfNotNull(configBuilder, "converters", converters);
-        addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
-        addPropertyIfNotNull(configBuilder, "mongodb.connect.timeout.ms", mongodbConnectTimeoutMs);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads.multiplier", snapshotMaxThreadsMultiplier);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "mongodb.poll.interval.ms", mongodbPollIntervalMs);
-        addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
-        addPropertyIfNotNull(configBuilder, "mongodb.user", mongodbUser);
-        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
-        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.schema.error", snapshotModeConfigurationBasedSnapshotOnSchemaError);
-        addPropertyIfNotNull(configBuilder, "snapshot.collection.filter.overrides", snapshotCollectionFilterOverrides);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.allow.schema.changes", incrementalSnapshotAllowSchemaChanges);
         addPropertyIfNotNull(configBuilder, "field.exclude.list", fieldExcludeList);
-        addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
         addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
+        addPropertyIfNotNull(configBuilder, "notification.http.url", notificationHttpUrl);
+        addPropertyIfNotNull(configBuilder, "event.converting.failure.handling.mode", eventConvertingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
-        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.data", snapshotModeConfigurationBasedSnapshotData);
-        addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
-        addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
-        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
-        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
-        addPropertyIfNotNull(configBuilder, "collection.include.list", collectionIncludeList);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.chunk.size", incrementalSnapshotChunkSize);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.owners", openlineageIntegrationJobOwners);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.config.file.path", openlineageIntegrationConfigFilePath);
-        addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "capture.mode", captureMode);
+        addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "executor.shutdown.timeout.ms", executorShutdownTimeoutMs);
-        addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
-        addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
-        addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
-        addPropertyIfNotNull(configBuilder, "mongodb.authsource", mongodbAuthsource);
+        addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "collection.exclude.list", collectionExcludeList);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "statistics.metrics.enabled", statisticsMetricsEnabled);
-        addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
-        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
-        addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
-        addPropertyIfNotNull(configBuilder, "mongodb.socket.timeout.ms", mongodbSocketTimeoutMs);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
+        addPropertyIfNotNull(configBuilder, "skip.messages.without.change", skipMessagesWithoutChange);
+        addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
+        addPropertyIfNotNull(configBuilder, "field.name.adjustment.mode", fieldNameAdjustmentMode);
+        addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
+        addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
+        addPropertyIfNotNull(configBuilder, "legacy.snapshot.max.threads", legacySnapshotMaxThreads);
+        addPropertyIfNotNull(configBuilder, "mongodb.ssl.enabled", mongodbSslEnabled);
+        addPropertyIfNotNull(configBuilder, "json.serialization.mode", jsonSerializationMode);
+        addPropertyIfNotNull(configBuilder, "field.renames", fieldRenames);
+        addPropertyIfNotNull(configBuilder, "poll.interval.ms", pollIntervalMs);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.max", guardrailCollectionsMax);
+        addPropertyIfNotNull(configBuilder, "heartbeat.topics.prefix", heartbeatTopicsPrefix);
+        addPropertyIfNotNull(configBuilder, "mongodb.connect.timeout.ms", mongodbConnectTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
+        addPropertyIfNotNull(configBuilder, "mongodb.user", mongodbUser);
+        addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.schema.error", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+        addPropertyIfNotNull(configBuilder, "snapshot.collection.filter.overrides", snapshotCollectionFilterOverrides);
+        addPropertyIfNotNull(configBuilder, "errors.max.retries", errorsMaxRetries);
+        addPropertyIfNotNull(configBuilder, "capture.target", captureTarget);
+        addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.description", openlineageIntegrationJobDescription);
+        addPropertyIfNotNull(configBuilder, "extended.headers.enabled", extendedHeadersEnabled);
+        addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
+        addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
+        addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
+        addPropertyIfNotNull(configBuilder, "collection.include.list", collectionIncludeList);
+        addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
+        addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
+        addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
+        addPropertyIfNotNull(configBuilder, "mongodb.authsource", mongodbAuthsource);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
+        addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.max.retries", signalEmitFailureMaxRetries);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
+        addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
+        addPropertyIfNotNull(configBuilder, "mongodb.socket.timeout.ms", mongodbSocketTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "notification.http.retries", notificationHttpRetries);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.invalid.hostname.allowed", mongodbSslInvalidHostnameAllowed);
         addPropertyIfNotNull(configBuilder, "mongodb.heartbeat.frequency.ms", mongodbHeartbeatFrequencyMs);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);
-        addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
         
         return configBuilder.build();
     }

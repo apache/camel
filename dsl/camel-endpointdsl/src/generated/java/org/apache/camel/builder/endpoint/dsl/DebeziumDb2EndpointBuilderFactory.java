@@ -439,11 +439,9 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -490,6 +488,21 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * A comma-separated list of regular expressions that match database
+         * names to be excluded from monitoring.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: db2
+         * 
+         * @param databaseExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder databaseExcludeList(String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
+            return this;
+        }
+        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -501,6 +514,20 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder databaseHostname(String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
+            return this;
+        }
+        /**
+         * The databases for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: db2
+         * 
+         * @param databaseIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder databaseIncludeList(String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
         /**
@@ -547,6 +574,38 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder databasePort(String databasePort) {
             doSetProperty("databasePort", databasePort);
+            return this;
+        }
+        /**
+         * Time to wait for a query to execute, given in milliseconds. Defaults
+         * to 600 seconds (600,000 ms); zero means there is no limit.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10m
+         * Group: db2
+         * 
+         * @param databaseQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder databaseQueryTimeoutMs(int databaseQueryTimeoutMs) {
+            doSetProperty("databaseQueryTimeoutMs", databaseQueryTimeoutMs);
+            return this;
+        }
+        /**
+         * Time to wait for a query to execute, given in milliseconds. Defaults
+         * to 600 seconds (600,000 ms); zero means there is no limit.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10m
+         * Group: db2
+         * 
+         * @param databaseQueryTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder databaseQueryTimeoutMs(String databaseQueryTimeoutMs) {
+            doSetProperty("databaseQueryTimeoutMs", databaseQueryTimeoutMs);
             return this;
         }
         /**
@@ -653,6 +712,28 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: warn
+         * Group: db2
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder eventConvertingFailureHandlingMode(String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
+            return this;
+        }
+        /**
          * Specify how failures during processing of events (i.e. when
          * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
@@ -736,6 +817,27 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder extendedHeadersEnabled(String extendedHeadersEnabled) {
             doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: none
+         * Group: db2
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder fieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
             return this;
         }
         /**
@@ -1143,6 +1245,121 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder notificationHttpAllowPrivateNetworks(String notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: db2
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: db2
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder notificationHttpRetries(String notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: db2
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: db2
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder notificationHttpTimeoutMs(String notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: db2
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder notificationHttpUrl(String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+        /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
@@ -1281,7 +1498,8 @@ public interface DebeziumDb2EndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1297,7 +1515,8 @@ public interface DebeziumDb2EndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1455,6 +1674,22 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls how Debezium deduplicates identical schema objects (tables,
+         * columns, attributes) in memory using an interner.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: off
+         * Group: db2
+         * 
+         * @param schemaHistoryInternalMemoryOptimization the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder schemaHistoryInternalMemoryOptimization(String schemaHistoryInternalMemoryOptimization) {
+            doSetProperty("schemaHistoryInternalMemoryOptimization", schemaHistoryInternalMemoryOptimization);
+            return this;
+        }
+        /**
          * Controls the action Debezium will take when it meets a DDL statement
          * in binlog, that it cannot parse.By default the connector will stop
          * operating but by changing the setting it can ignore the statements
@@ -1607,6 +1842,72 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: db2
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: db2
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder signalEmitFailureBackoffMs(String signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: db2
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: db2
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder signalEmitFailureMaxRetries(String signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -1652,6 +1953,44 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder signalPollIntervalMs(String signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder skipMessagesWithoutChange(String skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
         /**
@@ -1747,6 +2086,57 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder snapshotIncludeCollectionList(String snapshotIncludeCollectionList) {
             doSetProperty("snapshotIncludeCollectionList", snapshotIncludeCollectionList);
+            return this;
+        }
+        /**
+         * Controls which transaction isolation level is used and how long the
+         * connector locks the monitored tables. The default is
+         * 'repeatable_read', which means that repeatable read isolation level
+         * is used. In addition, exclusive locks are taken only during schema
+         * snapshot. Using a value of 'exclusive' ensures that the connector
+         * holds the exclusive lock (and thus prevents any reads and updates)
+         * for all monitored tables during the entire snapshot duration. In
+         * 'read_committed' mode no table locks or any long-lasting row-level
+         * locks are acquired, but connector does not guarantee snapshot
+         * consistency.In 'read_uncommitted' mode neither table nor row-level
+         * locks are acquired, but connector does not guarantee snapshot
+         * consistency.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: repeatable_read
+         * Group: db2
+         * 
+         * @param snapshotIsolationMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder snapshotIsolationMode(String snapshotIsolationMode) {
+            doSetProperty("snapshotIsolationMode", snapshotIsolationMode);
+            return this;
+        }
+        /**
+         * Controls how the connector holds locks on tables while performing the
+         * schema snapshot when snapshot.isolation.mode is REPEATABLE_READ or
+         * EXCLUSIVE. The 'exclusive' which means the connector will hold a
+         * table lock for exclusive table access for just the initial portion of
+         * the snapshot while the database schemas and other metadata are being
+         * read. The remaining work in a snapshot involves selecting all rows
+         * from each table, and this is done using a flashback query that
+         * requires no locks. However, in some cases it may be desirable to
+         * avoid locks entirely which can be done by specifying 'none'. This
+         * mode is only safe to use if no schema changes are happening while the
+         * snapshot is taken.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: exclusive
+         * Group: db2
+         * 
+         * @param snapshotLockingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder snapshotLockingMode(String snapshotLockingMode) {
+            doSetProperty("snapshotLockingMode", snapshotLockingMode);
             return this;
         }
         /**
@@ -2158,6 +2548,42 @@ public interface DebeziumDb2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum number of seconds for a streaming query to include that
+         * query's result set, starting from the earliest row in this query.
+         * Used to limit the size of queries when the change table is large to
+         * avoid excessive resource usage. If 0, no timespan limit will apply.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: db2
+         * 
+         * @param streamingQueryTimespanSeconds the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder streamingQueryTimespanSeconds(int streamingQueryTimespanSeconds) {
+            doSetProperty("streamingQueryTimespanSeconds", streamingQueryTimespanSeconds);
+            return this;
+        }
+        /**
+         * The maximum number of seconds for a streaming query to include that
+         * query's result set, starting from the earliest row in this query.
+         * Used to limit the size of queries when the change table is large to
+         * avoid excessive resource usage. If 0, no timespan limit will apply.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: db2
+         * 
+         * @param streamingQueryTimespanSeconds the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder streamingQueryTimespanSeconds(String streamingQueryTimespanSeconds) {
+            doSetProperty("streamingQueryTimespanSeconds", streamingQueryTimespanSeconds);
+            return this;
+        }
+        /**
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
@@ -2226,7 +2652,9 @@ public interface DebeziumDb2EndpointBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision;
          * 'isostring' represents time, date, and timestamp values as ISO-8601
-         * formatted strings at the UTC time zone; 'microseconds' always
+         * formatted strings at the UTC time zone; 'structured' represents time,
+         * date, timestamp, and datetime values as Kafka Connect structs with
+         * separate calendar and clock components; 'microseconds' always
          * represents time, date, and timestamp values using microsecond
          * precision; 'nanoseconds' always represents time, date, and timestamp
          * values using nanosecond precision.
@@ -2332,6 +2760,209 @@ public interface DebeziumDb2EndpointBuilderFactory {
          */
         default DebeziumDb2EndpointBuilder transactionMetadataFactory(String transactionMetadataFactory) {
             doSetProperty("transactionMetadataFactory", transactionMetadataFactory);
+            return this;
+        }
+        /**
+         * The apply_qual name that represents the apply agent (this instance)
+         * to the subscription set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneApplyQual the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneApplyQual(String updateCaptureTablePruneApplyQual) {
+            doSetProperty("updateCaptureTablePruneApplyQual", updateCaptureTablePruneApplyQual);
+            return this;
+        }
+        /**
+         * A switch to control if the connector instance is responsible for
+         * updating the prune table (usually done by IBM Apply agent) which will
+         * cause the IBM Capture agent to prune read data from the change
+         * tables. default false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneInd the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneInd(boolean updateCaptureTablePruneInd) {
+            doSetProperty("updateCaptureTablePruneInd", updateCaptureTablePruneInd);
+            return this;
+        }
+        /**
+         * A switch to control if the connector instance is responsible for
+         * updating the prune table (usually done by IBM Apply agent) which will
+         * cause the IBM Capture agent to prune read data from the change
+         * tables. default false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneInd the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneInd(String updateCaptureTablePruneInd) {
+            doSetProperty("updateCaptureTablePruneInd", updateCaptureTablePruneInd);
+            return this;
+        }
+        /**
+         * An switch to decrement the prune lsn/syncpoint by one to avoid
+         * allowing the last lsn processed to get pruned to avoid the risk of an
+         * unnecessary snapshot due to the last processed lsn not being present
+         * in the change table.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneLsnDecrement the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneLsnDecrement(boolean updateCaptureTablePruneLsnDecrement) {
+            doSetProperty("updateCaptureTablePruneLsnDecrement", updateCaptureTablePruneLsnDecrement);
+            return this;
+        }
+        /**
+         * An switch to decrement the prune lsn/syncpoint by one to avoid
+         * allowing the last lsn processed to get pruned to avoid the risk of an
+         * unnecessary snapshot due to the last processed lsn not being present
+         * in the change table.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneLsnDecrement the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneLsnDecrement(String updateCaptureTablePruneLsnDecrement) {
+            doSetProperty("updateCaptureTablePruneLsnDecrement", updateCaptureTablePruneLsnDecrement);
+            return this;
+        }
+        /**
+         * The minimum number of milliseconds between the connector instance's
+         * update of the prune point for the subscription set. Default is 10000
+         * (10 seconds).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 10s
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneMinIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneMinIntervalMs(int updateCaptureTablePruneMinIntervalMs) {
+            doSetProperty("updateCaptureTablePruneMinIntervalMs", updateCaptureTablePruneMinIntervalMs);
+            return this;
+        }
+        /**
+         * The minimum number of milliseconds between the connector instance's
+         * update of the prune point for the subscription set. Default is 10000
+         * (10 seconds).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 10s
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneMinIntervalMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneMinIntervalMs(String updateCaptureTablePruneMinIntervalMs) {
+            doSetProperty("updateCaptureTablePruneMinIntervalMs", updateCaptureTablePruneMinIntervalMs);
+            return this;
+        }
+        /**
+         * The name of a prepared statement in the database that will be used
+         * instead of direct sql to allow for DBA control of the update code
+         * where needed.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneProcedureOverrideName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneProcedureOverrideName(String updateCaptureTablePruneProcedureOverrideName) {
+            doSetProperty("updateCaptureTablePruneProcedureOverrideName", updateCaptureTablePruneProcedureOverrideName);
+            return this;
+        }
+        /**
+         * If set to update the prune table, this will identify the prune set
+         * name that should be used when updating the table for this instance.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneSetName the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneSetName(String updateCaptureTablePruneSetName) {
+            doSetProperty("updateCaptureTablePruneSetName", updateCaptureTablePruneSetName);
+            return this;
+        }
+        /**
+         * The target_server name that represents the apply agent's target
+         * (where the data is going) for the subscription set.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: db2
+         * 
+         * @param updateCaptureTablePruneTargetServer the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder updateCaptureTablePruneTargetServer(String updateCaptureTablePruneTargetServer) {
+            doSetProperty("updateCaptureTablePruneTargetServer", updateCaptureTablePruneTargetServer);
+            return this;
+        }
+        /**
+         * If true, causes the connector to ignore the stop LSN value from the
+         * IBMSNAP_REGISTER.CD_OLD_SYNCHPOINT column when polling. Apply this if
+         * events are getting dropped due to the stop LSN being smaller than the
+         * current range of LSNs. Only applies to z/OS platform.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param zStopLsnIgnore the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder zStopLsnIgnore(boolean zStopLsnIgnore) {
+            doSetProperty("zStopLsnIgnore", zStopLsnIgnore);
+            return this;
+        }
+        /**
+         * If true, causes the connector to ignore the stop LSN value from the
+         * IBMSNAP_REGISTER.CD_OLD_SYNCHPOINT column when polling. Apply this if
+         * events are getting dropped due to the stop LSN being smaller than the
+         * current range of LSNs. Only applies to z/OS platform.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: db2
+         * 
+         * @param zStopLsnIgnore the value to set
+         * @return the dsl builder
+         */
+        default DebeziumDb2EndpointBuilder zStopLsnIgnore(String zStopLsnIgnore) {
+            doSetProperty("zStopLsnIgnore", zStopLsnIgnore);
             return this;
         }
     }

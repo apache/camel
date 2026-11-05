@@ -22,10 +22,16 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String messageKeyColumns;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory")
     private String transactionMetadataFactory = "io.debezium.pipeline.txmetadata.DefaultTransactionMetadataFactory";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean notificationHttpAllowPrivateNetworks = false;
     @UriParam(label = LABEL_NAME)
     private String customMetricTags;
+    @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
+    private int notificationHttpTimeoutMs = 5000;
     @UriParam(label = LABEL_NAME, defaultValue = "source")
     private String signalEnabledChannels = "source";
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private long signalEmitFailureBackoffMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean includeSchemaChanges = true;
     @UriParam(label = LABEL_NAME, defaultValue = "com.mysql.cj.jdbc.Driver")
@@ -42,16 +48,16 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private int snapshotFetchSize;
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreadsMultiplier = 1;
-    @UriParam(label = LABEL_NAME)
-    private String openlineageIntegrationJobTags;
-    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
-    private long snapshotLockTimeoutMs = 10000;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean useNongracefulDisconnect = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "disabled")
-    private String snapshotTablesOrderByRowCount = "disabled";
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private long snapshotLockTimeoutMs = 10000;
+    @UriParam(label = LABEL_NAME)
+    private String openlineageIntegrationJobTags;
     @UriParam(label = LABEL_NAME)
     private String gtidSourceExcludes;
+    @UriParam(label = LABEL_NAME, defaultValue = "disabled")
+    private String snapshotTablesOrderByRowCount = "disabled";
     @UriParam(label = LABEL_NAME)
     private String snapshotSelectStatementOverrides;
     @UriParam(label = LABEL_NAME)
@@ -68,6 +74,10 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String databaseExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean gtidSourceFilterDmlEvents = true;
+    @UriParam(label = LABEL_NAME)
+    private String notificationHttpUrl;
+    @UriParam(label = LABEL_NAME, defaultValue = "warn")
+    private String eventConvertingFailureHandlingMode = "warn";
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.schema.SchemaTopicNamingStrategy")
@@ -98,6 +108,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String schemaHistoryInternalFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "bytes")
+    private String binaryHandlingMode = "bytes";
     @UriParam(label = LABEL_NAME, defaultValue = "precise")
     private String decimalHandlingMode = "precise";
     @UriParam(label = LABEL_NAME)
@@ -108,14 +120,16 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean tableIgnoreBuiltin = true;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean snapshotModeConfigurationBasedStartStream = false;
     @UriParam(label = LABEL_NAME, defaultValue = "long")
     private String bigintUnsignedHandlingMode = "long";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedStartStream = false;
     @UriParam(label = LABEL_NAME, defaultValue = "true")
     private boolean statisticsMetricsEnabled = true;
     @UriParam(label = LABEL_NAME)
     private long databaseServerId;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int connectKeepAliveMaxReconnectAttempts = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "5s", javaType = "java.time.Duration")
     private long signalPollIntervalMs = 5000;
     @UriParam(label = LABEL_NAME)
@@ -124,6 +138,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String eventProcessingFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreads = 1;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean resolveCreateTableLikeSchema = false;
     @UriParam(label = LABEL_NAME)
     private String notificationSinkTopicName;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
@@ -138,12 +154,16 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String memoryManagementSchemasClass = "io.debezium.relational.ConcurrentMapTableMappingStorage";
     @UriParam(label = LABEL_NAME, defaultValue = "1m", javaType = "java.time.Duration")
     private long connectKeepAliveIntervalMs = 60000;
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean skipMessagesWithoutChange = false;
     @UriParam(label = LABEL_NAME)
     private String tableIncludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean includeQuery = false;
     @UriParam(label = LABEL_NAME)
     private String databaseIncludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "none")
+    private String fieldNameAdjustmentMode = "none";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long streamingDelayMs = 0;
     @UriParam(label = LABEL_NAME)
@@ -176,10 +196,10 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String incrementalSnapshotWatermarkingStrategy = "INSERT_INSERT";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
-    @UriParam(label = LABEL_NAME, secret = true)
-    private String databaseSslTruststorePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean snapshotModeConfigurationBasedSnapshotOnSchemaError = false;
+    @UriParam(label = LABEL_NAME, secret = true)
+    private String databaseSslTruststorePassword;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean schemaHistoryInternalSkipUnparseableDdl = false;
     @UriParam(label = LABEL_NAME)
@@ -211,12 +231,12 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String customSanitizePattern = ".*secret$|.*password$|.*sasl\\.jaas\\.config$|.*basic\\.auth\\.user\\.info|.*registry\\.auth\\.client-secret|.*credentials\\.json$|.*connectionstring$|.*connection\\.string$";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
-    @UriParam(label = LABEL_NAME, defaultValue = "select_all")
-    private String snapshotQueryMode = "select_all";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl = false;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "select_all")
+    private String snapshotQueryMode = "select_all";
     @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String topicPrefix;
@@ -224,14 +244,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private boolean includeSchemaComments = false;
     @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.connector.mysql.MySqlSourceInfoStructMaker")
     private String sourceinfoStructMaker = "io.debezium.connector.mysql.MySqlSourceInfoStructMaker";
+    @UriParam(label = LABEL_NAME, defaultValue = "off")
+    private String schemaHistoryInternalMemoryOptimization = "off";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean openlineageIntegrationEnabled = false;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private int signalEmitFailureMaxRetries = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive_time_microseconds")
     private String timePrecisionMode = "adaptive_time_microseconds";
+    @UriParam(label = LABEL_NAME, defaultValue = "false")
+    private boolean snapshotModeConfigurationBasedSnapshotSchema = false;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventDeserializationFailureHandlingMode = "fail";
     @UriParam(label = LABEL_NAME)
@@ -248,6 +272,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String schemaHistoryInternal = "io.debezium.storage.kafka.history.KafkaSchemaHistory";
     @UriParam(label = LABEL_NAME)
     private String columnExcludeList;
+    @UriParam(label = LABEL_NAME, defaultValue = "2")
+    private int notificationHttpRetries = 2;
     @UriParam(label = LABEL_NAME)
     private String databaseHostname;
     @UriParam(label = LABEL_NAME, defaultValue = "10000")
@@ -311,10 +337,23 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The custom metric tags will accept key-value pairs to customize the MBean
-     * object name which should be appended the end of regular name, each key
-     * would represent a tag for the MBean object name, and the corresponding
-     * value would be the value of that tag the key is. For example: k1=v1,k2=v2
+     * When true, the SSRF guard permits notification URLs that resolve to
+     * loopback, site-local or link-local addresses (e.g. an in-cluster
+     * Service). Defaults to false so only public addresses are allowed.
+     */
+    public void setNotificationHttpAllowPrivateNetworks(
+            boolean notificationHttpAllowPrivateNetworks) {
+        this.notificationHttpAllowPrivateNetworks = notificationHttpAllowPrivateNetworks;
+    }
+
+    public boolean isNotificationHttpAllowPrivateNetworks() {
+        return notificationHttpAllowPrivateNetworks;
+    }
+
+    /**
+     * A comma-separated list of key-value pairs that are appended to the MBean
+     * object name. Keys must be valid JMX ObjectName property keys. For
+     * example: k1=v1,k2=v2
      */
     public void setCustomMetricTags(String customMetricTags) {
         this.customMetricTags = customMetricTags;
@@ -322,6 +361,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getCustomMetricTags() {
         return customMetricTags;
+    }
+
+    /**
+     * Connect and read timeout, in milliseconds, for HTTP notification
+     * delivery.
+     */
+    public void setNotificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+        this.notificationHttpTimeoutMs = notificationHttpTimeoutMs;
+    }
+
+    public int getNotificationHttpTimeoutMs() {
+        return notificationHttpTimeoutMs;
     }
 
     /**
@@ -334,6 +385,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getSignalEnabledChannels() {
         return signalEnabledChannels;
+    }
+
+    /**
+     * Duration to sleep for after encountering an error emitting a window
+     * event, given in milliseconds. Defaults to 10 seconds.
+     */
+    public void setSignalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+        this.signalEmitFailureBackoffMs = signalEmitFailureBackoffMs;
+    }
+
+    public long getSignalEmitFailureBackoffMs() {
+        return signalEmitFailureBackoffMs;
     }
 
     /**
@@ -450,16 +513,15 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The job's tags emitted by Debezium. A comma-separated list of key-value
-     * pairs.For example: k1=v1,k2=v2
+     * Whether to use `socket.setSoLinger(true, 0)` when BinaryLogClient
+     * keepalive thread triggers a disconnect for a stale connection.
      */
-    public void setOpenlineageIntegrationJobTags(
-            String openlineageIntegrationJobTags) {
-        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
+    public void setUseNongracefulDisconnect(boolean useNongracefulDisconnect) {
+        this.useNongracefulDisconnect = useNongracefulDisconnect;
     }
 
-    public String getOpenlineageIntegrationJobTags() {
-        return openlineageIntegrationJobTags;
+    public boolean isUseNongracefulDisconnect() {
+        return useNongracefulDisconnect;
     }
 
     /**
@@ -476,15 +538,28 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Whether to use `socket.setSoLinger(true, 0)` when BinaryLogClient
-     * keepalive thread triggers a disconnect for a stale connection.
+     * The job's tags emitted by Debezium. A comma-separated list of key-value
+     * pairs.For example: k1=v1,k2=v2
      */
-    public void setUseNongracefulDisconnect(boolean useNongracefulDisconnect) {
-        this.useNongracefulDisconnect = useNongracefulDisconnect;
+    public void setOpenlineageIntegrationJobTags(
+            String openlineageIntegrationJobTags) {
+        this.openlineageIntegrationJobTags = openlineageIntegrationJobTags;
     }
 
-    public boolean isUseNongracefulDisconnect() {
-        return useNongracefulDisconnect;
+    public String getOpenlineageIntegrationJobTags() {
+        return openlineageIntegrationJobTags;
+    }
+
+    /**
+     * The source UUIDs used to exclude GTID ranges when determine the starting
+     * position in the MySQL server's binlog.
+     */
+    public void setGtidSourceExcludes(String gtidSourceExcludes) {
+        this.gtidSourceExcludes = gtidSourceExcludes;
+    }
+
+    public String getGtidSourceExcludes() {
+        return gtidSourceExcludes;
     }
 
     /**
@@ -500,18 +575,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getSnapshotTablesOrderByRowCount() {
         return snapshotTablesOrderByRowCount;
-    }
-
-    /**
-     * The source UUIDs used to exclude GTID ranges when determine the starting
-     * position in the MySQL server's binlog.
-     */
-    public void setGtidSourceExcludes(String gtidSourceExcludes) {
-        this.gtidSourceExcludes = gtidSourceExcludes;
-    }
-
-    public String getGtidSourceExcludes() {
-        return gtidSourceExcludes;
     }
 
     /**
@@ -627,6 +690,36 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isGtidSourceFilterDmlEvents() {
         return gtidSourceFilterDmlEvents;
+    }
+
+    /**
+     * The URL to which notifications are POSTed as JSON. Required when 'http'
+     * is in the list of enabled channels.
+     */
+    public void setNotificationHttpUrl(String notificationHttpUrl) {
+        this.notificationHttpUrl = notificationHttpUrl;
+    }
+
+    public String getNotificationHttpUrl() {
+        return notificationHttpUrl;
+    }
+
+    /**
+     * Specify how failures during converting of event should be handled,
+     * including: 'fail' throw an exception that the column of event conversion
+     * is failed with unmatched schema type, causing the connector to be
+     * stopped. it could need schema recovery to covert successfully; 'warn'
+     * (the default) the value of column of event that conversion failed will be
+     * null and be logged with warn level; 'skip' the value of column of event
+     * that conversion failed will be null and be logged with debug level.
+     */
+    public void setEventConvertingFailureHandlingMode(
+            String eventConvertingFailureHandlingMode) {
+        this.eventConvertingFailureHandlingMode = eventConvertingFailureHandlingMode;
+    }
+
+    public String getEventConvertingFailureHandlingMode() {
+        return eventConvertingFailureHandlingMode;
     }
 
     /**
@@ -839,6 +932,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Specify how binary (blob, binary, etc.) columns should be represented in
+     * change events, including: 'bytes' represents binary data as byte array
+     * (default); 'base64' represents binary data as base64-encoded string;
+     * 'base64-url-safe' represents binary data as base64-url-safe-encoded
+     * string; 'hex' represents binary data as hex-encoded (base16) string
+     */
+    public void setBinaryHandlingMode(String binaryHandlingMode) {
+        this.binaryHandlingMode = binaryHandlingMode;
+    }
+
+    public String getBinaryHandlingMode() {
+        return binaryHandlingMode;
+    }
+
+    /**
      * Specify how DECIMAL and NUMERIC columns should be represented in change
      * events, including: 'precise' (the default) uses java.math.BigDecimal to
      * represent values, which are encoded in the change events using a binary
@@ -908,19 +1016,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * When 'snapshot.mode' is set as configuration_based, this setting permits
-     * to specify whenever the stream should start or not after snapshot.
-     */
-    public void setSnapshotModeConfigurationBasedStartStream(
-            boolean snapshotModeConfigurationBasedStartStream) {
-        this.snapshotModeConfigurationBasedStartStream = snapshotModeConfigurationBasedStartStream;
-    }
-
-    public boolean isSnapshotModeConfigurationBasedStartStream() {
-        return snapshotModeConfigurationBasedStartStream;
-    }
-
-    /**
      * Specify how BIGINT UNSIGNED columns should be represented in change
      * events, including: 'precise' uses java.math.BigDecimal to represent
      * values, which are encoded in the change events using a binary
@@ -935,6 +1030,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getBigintUnsignedHandlingMode() {
         return bigintUnsignedHandlingMode;
+    }
+
+    /**
+     * When 'snapshot.mode' is set as configuration_based, this setting permits
+     * to specify whenever the stream should start or not after snapshot.
+     */
+    public void setSnapshotModeConfigurationBasedStartStream(
+            boolean snapshotModeConfigurationBasedStartStream) {
+        this.snapshotModeConfigurationBasedStartStream = snapshotModeConfigurationBasedStartStream;
+    }
+
+    public boolean isSnapshotModeConfigurationBasedStartStream() {
+        return snapshotModeConfigurationBasedStartStream;
     }
 
     /**
@@ -962,6 +1070,22 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public long getDatabaseServerId() {
         return databaseServerId;
+    }
+
+    /**
+     * Number of consecutive attempts the keep alive thread makes to restore a
+     * lost binlog connection before the connector fails. A connection that can
+     * never be restored otherwise leaves the connector running without emitting
+     * any change events. Defaults to 0, meaning the keep alive thread retries
+     * indefinitely.
+     */
+    public void setConnectKeepAliveMaxReconnectAttempts(
+            int connectKeepAliveMaxReconnectAttempts) {
+        this.connectKeepAliveMaxReconnectAttempts = connectKeepAliveMaxReconnectAttempts;
+    }
+
+    public int getConnectKeepAliveMaxReconnectAttempts() {
+        return connectKeepAliveMaxReconnectAttempts;
     }
 
     /**
@@ -1015,6 +1139,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public int getSnapshotMaxThreads() {
         return snapshotMaxThreads;
+    }
+
+    /**
+     * When a CREATE TABLE ... LIKE statement reference a table whose schema is
+     * not in the internal cache(e.g., excluded by table filters), automatically
+     * fetch the reference table's schema via SHOW CREATE TABLE and retry DDL
+     * parsing. Default: false.
+     */
+    public void setResolveCreateTableLikeSchema(
+            boolean resolveCreateTableLikeSchema) {
+        this.resolveCreateTableLikeSchema = resolveCreateTableLikeSchema;
+    }
+
+    public boolean isResolveCreateTableLikeSchema() {
+        return resolveCreateTableLikeSchema;
     }
 
     /**
@@ -1120,6 +1259,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Enable to skip publishing messages when there is no change in included
+     * columns.This would essentially filter messages to be sent when there is
+     * no change in columns included as per
+     * column.include.list/column.exclude.list.For Postgres - this would require
+     * REPLICA IDENTITY of table to be FULL.
+     */
+    public void setSkipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+        this.skipMessagesWithoutChange = skipMessagesWithoutChange;
+    }
+
+    public boolean isSkipMessagesWithoutChange() {
+        return skipMessagesWithoutChange;
+    }
+
+    /**
      * The tables for which changes are to be captured
      */
     public void setTableIncludeList(String tableIncludeList) {
@@ -1157,6 +1311,23 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public String getDatabaseIncludeList() {
         return databaseIncludeList;
+    }
+
+    /**
+     * Specify how field names should be adjusted for compatibility with the
+     * message converter used by the connector, including: 'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore;
+     * 'avro_unicode' replaces the underscore or characters that cannot be used
+     * in the Avro type name with corresponding unicode like _uxxxx. Note: _ is
+     * an escape sequence like backslash in Java;'none' does not apply any
+     * adjustment (default)
+     */
+    public void setFieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+        this.fieldNameAdjustmentMode = fieldNameAdjustmentMode;
+    }
+
+    public String getFieldNameAdjustmentMode() {
+        return fieldNameAdjustmentMode;
     }
 
     /**
@@ -1260,7 +1431,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Time to wait for new change events to appear after receiving no events,
-     * given in milliseconds. Defaults to 500 ms.
+     * given in milliseconds. Defaults to 500 ms. Values will be capped at 5000
+     * ms.
      */
     public void setPollIntervalMs(long pollIntervalMs) {
         this.pollIntervalMs = pollIntervalMs;
@@ -1366,19 +1538,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The password for the trust store file. Used to check the integrity of the
-     * truststore, and unlock the truststore.
-     */
-    public void setDatabaseSslTruststorePassword(
-            String databaseSslTruststorePassword) {
-        this.databaseSslTruststorePassword = databaseSslTruststorePassword;
-    }
-
-    public String getDatabaseSslTruststorePassword() {
-        return databaseSslTruststorePassword;
-    }
-
-    /**
      * When 'snapshot.mode' is set as configuration_based, this setting permits
      * to specify whenever the schema should be snapshotted or not in case of
      * error.
@@ -1390,6 +1549,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isSnapshotModeConfigurationBasedSnapshotOnSchemaError() {
         return snapshotModeConfigurationBasedSnapshotOnSchemaError;
+    }
+
+    /**
+     * The password for the trust store file. Used to check the integrity of the
+     * truststore, and unlock the truststore.
+     */
+    public void setDatabaseSslTruststorePassword(
+            String databaseSslTruststorePassword) {
+        this.databaseSslTruststorePassword = databaseSslTruststorePassword;
+    }
+
+    public String getDatabaseSslTruststorePassword() {
+        return databaseSslTruststorePassword;
     }
 
     /**
@@ -1590,17 +1762,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Controls query used during the snapshot
-     */
-    public void setSnapshotQueryMode(String snapshotQueryMode) {
-        this.snapshotQueryMode = snapshotQueryMode;
-    }
-
-    public String getSnapshotQueryMode() {
-        return snapshotQueryMode;
-    }
-
-    /**
      * Controls what DDL will Debezium store in database schema history. By
      * default (false) Debezium will store all incoming DDL statements. If set
      * to true, then only DDL that manipulates a captured table will be stored.
@@ -1627,6 +1788,17 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl() {
         return schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
+    }
+
+    /**
+     * Controls query used during the snapshot
+     */
+    public void setSnapshotQueryMode(String snapshotQueryMode) {
+        this.snapshotQueryMode = snapshotQueryMode;
+    }
+
+    public String getSnapshotQueryMode() {
+        return snapshotQueryMode;
     }
 
     /**
@@ -1673,6 +1845,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Controls how Debezium deduplicates identical schema objects (tables,
+     * columns, attributes) in memory using an interner.
+     */
+    public void setSchemaHistoryInternalMemoryOptimization(
+            String schemaHistoryInternalMemoryOptimization) {
+        this.schemaHistoryInternalMemoryOptimization = schemaHistoryInternalMemoryOptimization;
+    }
+
+    public String getSchemaHistoryInternalMemoryOptimization() {
+        return schemaHistoryInternalMemoryOptimization;
+    }
+
+    /**
      * Enable Debezium to emit data lineage metadata through OpenLineage API
      */
     public void setOpenlineageIntegrationEnabled(
@@ -1698,6 +1883,40 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The maximum number of retries after encountering an error emitting a
+     * window event (-1 = no limit, 0 = disabled, > 0 = num of retries).
+     * Defaults to 0.
+     */
+    public void setSignalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+        this.signalEmitFailureMaxRetries = signalEmitFailureMaxRetries;
+    }
+
+    public int getSignalEmitFailureMaxRetries() {
+        return signalEmitFailureMaxRetries;
+    }
+
+    /**
+     * Time, date and timestamps can be represented with different kinds of
+     * precisions, including: 'adaptive_time_microseconds': the precision of
+     * date and timestamp values is based the database column's precision; but
+     * time fields always use microseconds precision; 'connect': always
+     * represents time, date and timestamp values using Kafka Connect's built-in
+     * representations for Time, Date, and Timestamp, which uses millisecond
+     * precision regardless of the database columns' precision; 'isostring':
+     * represents time, date, and datetime values as ISO-8601 formatted strings
+     * at the UTC time zone; 'structured': represents time, date, timestamp, and
+     * datetime values as Kafka Connect structs with separate calendar and clock
+     * components.
+     */
+    public void setTimePrecisionMode(String timePrecisionMode) {
+        this.timePrecisionMode = timePrecisionMode;
+    }
+
+    public String getTimePrecisionMode() {
+        return timePrecisionMode;
+    }
+
+    /**
      * When 'snapshot.mode' is set as configuration_based, this setting permits
      * to specify whenever the schema should be snapshotted or not.
      */
@@ -1708,23 +1927,6 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     public boolean isSnapshotModeConfigurationBasedSnapshotSchema() {
         return snapshotModeConfigurationBasedSnapshotSchema;
-    }
-
-    /**
-     * Time, date and timestamps can be represented with different kinds of
-     * precisions, including: 'adaptive_time_microseconds': the precision of
-     * date and timestamp values is based the database column's precision; but
-     * time fields always use microseconds precision; 'connect': always
-     * represents time, date and timestamp values using Kafka Connect's built-in
-     * representations for Time, Date, and Timestamp, which uses millisecond
-     * precision regardless of the database columns' precision.
-     */
-    public void setTimePrecisionMode(String timePrecisionMode) {
-        this.timePrecisionMode = timePrecisionMode;
-    }
-
-    public String getTimePrecisionMode() {
-        return timePrecisionMode;
     }
 
     /**
@@ -1832,6 +2034,19 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * Number of retries after the first failed HTTP notification delivery
+     * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are always
+     * retried at least 3 times.
+     */
+    public void setNotificationHttpRetries(int notificationHttpRetries) {
+        this.notificationHttpRetries = notificationHttpRetries;
+    }
+
+    public int getNotificationHttpRetries() {
+        return notificationHttpRetries;
+    }
+
+    /**
      * Resolvable hostname or IP address of the database server.
      */
     public void setDatabaseHostname(String databaseHostname) {
@@ -1876,8 +2091,11 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.locking.mode", snapshotLockingMode);
         addPropertyIfNotNull(configBuilder, "message.key.columns", messageKeyColumns);
         addPropertyIfNotNull(configBuilder, "transaction.metadata.factory", transactionMetadataFactory);
+        addPropertyIfNotNull(configBuilder, "notification.http.allow.private.networks", notificationHttpAllowPrivateNetworks);
         addPropertyIfNotNull(configBuilder, "custom.metric.tags", customMetricTags);
+        addPropertyIfNotNull(configBuilder, "notification.http.timeout.ms", notificationHttpTimeoutMs);
         addPropertyIfNotNull(configBuilder, "signal.enabled.channels", signalEnabledChannels);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.backoff.ms", signalEmitFailureBackoffMs);
         addPropertyIfNotNull(configBuilder, "include.schema.changes", includeSchemaChanges);
         addPropertyIfNotNull(configBuilder, "database.jdbc.driver", databaseJdbcDriver);
         addPropertyIfNotNull(configBuilder, "signal.data.collection", signalDataCollection);
@@ -1886,11 +2104,11 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "binlog.net.write.timeout", binlogNetWriteTimeout);
         addPropertyIfNotNull(configBuilder, "snapshot.fetch.size", snapshotFetchSize);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads.multiplier", snapshotMaxThreadsMultiplier);
-        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
-        addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "use.nongraceful.disconnect", useNongracefulDisconnect);
-        addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
+        addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
+        addPropertyIfNotNull(configBuilder, "openlineage.integration.job.tags", openlineageIntegrationJobTags);
         addPropertyIfNotNull(configBuilder, "gtid.source.excludes", gtidSourceExcludes);
+        addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore", databaseSslKeystore);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.allow.schema.changes", incrementalSnapshotAllowSchemaChanges);
@@ -1899,6 +2117,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "table.exclude.list", tableExcludeList);
         addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
         addPropertyIfNotNull(configBuilder, "gtid.source.filter.dml.events", gtidSourceFilterDmlEvents);
+        addPropertyIfNotNull(configBuilder, "notification.http.url", notificationHttpUrl);
+        addPropertyIfNotNull(configBuilder, "event.converting.failure.handling.mode", eventConvertingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
@@ -1914,19 +2134,22 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.data.error", snapshotModeConfigurationBasedSnapshotOnDataError);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
+        addPropertyIfNotNull(configBuilder, "binary.handling.mode", binaryHandlingMode);
         addPropertyIfNotNull(configBuilder, "decimal.handling.mode", decimalHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.query.mode.custom.name", snapshotQueryModeCustomName);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.dataset.kafka.bootstrap.servers", openlineageIntegrationDatasetKafkaBootstrapServers);
         addPropertyIfNotNull(configBuilder, "table.ignore.builtin", tableIgnoreBuiltin);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
-        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "bigint.unsigned.handling.mode", bigintUnsignedHandlingMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.start.stream", snapshotModeConfigurationBasedStartStream);
         addPropertyIfNotNull(configBuilder, "statistics.metrics.enabled", statisticsMetricsEnabled);
         addPropertyIfNotNull(configBuilder, "database.server.id", databaseServerId);
+        addPropertyIfNotNull(configBuilder, "connect.keep.alive.max.reconnect.attempts", connectKeepAliveMaxReconnectAttempts);
         addPropertyIfNotNull(configBuilder, "signal.poll.interval.ms", signalPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "notification.enabled.channels", notificationEnabledChannels);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
+        addPropertyIfNotNull(configBuilder, "resolve.create.table.like.schema", resolveCreateTableLikeSchema);
         addPropertyIfNotNull(configBuilder, "notification.sink.topic.name", notificationSinkTopicName);
         addPropertyIfNotNull(configBuilder, "gtid.ignore.on.recovery", gtidIgnoreOnRecovery);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.custom.name", snapshotModeCustomName);
@@ -1934,9 +2157,11 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "memory.management.schemas.class", memoryManagementSchemasClass);
         addPropertyIfNotNull(configBuilder, "connect.keep.alive.interval.ms", connectKeepAliveIntervalMs);
+        addPropertyIfNotNull(configBuilder, "skip.messages.without.change", skipMessagesWithoutChange);
         addPropertyIfNotNull(configBuilder, "table.include.list", tableIncludeList);
         addPropertyIfNotNull(configBuilder, "include.query", includeQuery);
         addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
+        addPropertyIfNotNull(configBuilder, "field.name.adjustment.mode", fieldNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "streaming.delay.ms", streamingDelayMs);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.job.namespace", openlineageIntegrationJobNamespace);
         addPropertyIfNotNull(configBuilder, "database.query.timeout.ms", databaseQueryTimeoutMs);
@@ -1953,8 +2178,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
         addPropertyIfNotNull(configBuilder, "incremental.snapshot.watermarking.strategy", incrementalSnapshotWatermarkingStrategy);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
-        addPropertyIfNotNull(configBuilder, "database.ssl.truststore.password", databaseSslTruststorePassword);
         addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.on.schema.error", snapshotModeConfigurationBasedSnapshotOnSchemaError);
+        addPropertyIfNotNull(configBuilder, "database.ssl.truststore.password", databaseSslTruststorePassword);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.skip.unparseable.ddl", schemaHistoryInternalSkipUnparseableDdl);
         addPropertyIfNotNull(configBuilder, "column.include.list", columnIncludeList);
         addPropertyIfNotNull(configBuilder, "enable.time.adjuster", enableTimeAdjuster);
@@ -1970,16 +2195,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "guardrail.collections.limit.action", guardrailCollectionsLimitAction);
         addPropertyIfNotNull(configBuilder, "custom.sanitize.pattern", customSanitizePattern);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
-        addPropertyIfNotNull(configBuilder, "snapshot.query.mode", snapshotQueryMode);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
+        addPropertyIfNotNull(configBuilder, "snapshot.query.mode", snapshotQueryMode);
         addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "include.schema.comments", includeSchemaComments);
         addPropertyIfNotNull(configBuilder, "sourceinfo.struct.maker", sourceinfoStructMaker);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.memory.optimization", schemaHistoryInternalMemoryOptimization);
         addPropertyIfNotNull(configBuilder, "openlineage.integration.enabled", openlineageIntegrationEnabled);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
-        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
+        addPropertyIfNotNull(configBuilder, "signal.emit.failure.max.retries", signalEmitFailureMaxRetries);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.mode.configuration.based.snapshot.schema", snapshotModeConfigurationBasedSnapshotSchema);
         addPropertyIfNotNull(configBuilder, "event.deserialization.failure.handling.mode", eventDeserializationFailureHandlingMode);
         addPropertyIfNotNull(configBuilder, "post.processors", postProcessors);
         addPropertyIfNotNull(configBuilder, "binlog.net.read.timeout", binlogNetReadTimeout);
@@ -1988,6 +2215,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore.password", databaseSslKeystorePassword);
         addPropertyIfNotNull(configBuilder, "schema.history.internal", schemaHistoryInternal);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
+        addPropertyIfNotNull(configBuilder, "notification.http.retries", notificationHttpRetries);
         addPropertyIfNotNull(configBuilder, "database.hostname", databaseHostname);
         addPropertyIfNotNull(configBuilder, "database.server.id.offset", databaseServerIdOffset);
         addPropertyIfNotNull(configBuilder, "connection.validation.timeout.ms", connectionValidationTimeoutMs);

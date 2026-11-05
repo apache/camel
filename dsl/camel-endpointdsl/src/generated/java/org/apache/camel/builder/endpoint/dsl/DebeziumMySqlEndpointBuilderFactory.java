@@ -335,6 +335,26 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including: 'bytes' represents binary data as byte
+         * array (default); 'base64' represents binary data as base64-encoded
+         * string; 'base64-url-safe' represents binary data as
+         * base64-url-safe-encoded string; 'hex' represents binary data as
+         * hex-encoded (base16) string.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: bytes
+         * Group: mysql
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder binaryHandlingMode(String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+        /**
          * The size of a look-ahead buffer used by the binlog reader to decide
          * whether the transaction in progress is going to be committed or
          * rolled back. Use 0 to disable look-ahead buffering. Defaults to 0
@@ -584,6 +604,44 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Number of consecutive attempts the keep alive thread makes to restore
+         * a lost binlog connection before the connector fails. A connection
+         * that can never be restored otherwise leaves the connector running
+         * without emitting any change events. Defaults to 0, meaning the keep
+         * alive thread retries indefinitely.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param connectKeepAliveMaxReconnectAttempts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder connectKeepAliveMaxReconnectAttempts(int connectKeepAliveMaxReconnectAttempts) {
+            doSetProperty("connectKeepAliveMaxReconnectAttempts", connectKeepAliveMaxReconnectAttempts);
+            return this;
+        }
+        /**
+         * Number of consecutive attempts the keep alive thread makes to restore
+         * a lost binlog connection before the connector fails. A connection
+         * that can never be restored otherwise leaves the connector running
+         * without emitting any change events. Defaults to 0, meaning the keep
+         * alive thread retries indefinitely.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param connectKeepAliveMaxReconnectAttempts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder connectKeepAliveMaxReconnectAttempts(String connectKeepAliveMaxReconnectAttempts) {
+            doSetProperty("connectKeepAliveMaxReconnectAttempts", connectKeepAliveMaxReconnectAttempts);
+            return this;
+        }
+        /**
          * Maximum time to wait after trying to connect to the database before
          * timing out, given in milliseconds. Defaults to 30 seconds (30,000
          * ms).
@@ -634,11 +692,9 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1136,6 +1192,28 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: warn
+         * Group: mysql
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder eventConvertingFailureHandlingMode(String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
+            return this;
+        }
+        /**
          * Specify how failures during deserialization of binlog events (i.e.
          * when encountering a corrupted event) should be handled, including:
          * 'fail' (the default) an exception indicating the problematic event
@@ -1240,6 +1318,27 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder extendedHeadersEnabled(String extendedHeadersEnabled) {
             doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: none
+         * Group: mysql
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder fieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
             return this;
         }
         /**
@@ -1944,6 +2043,121 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder notificationHttpAllowPrivateNetworks(String notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: mysql
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: mysql
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder notificationHttpRetries(String notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: mysql
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: mysql
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder notificationHttpTimeoutMs(String notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: mysql
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder notificationHttpUrl(String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+        /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
@@ -2082,7 +2296,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -2098,7 +2313,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -2190,6 +2406,42 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * When a CREATE TABLE ... LIKE statement reference a table whose schema
+         * is not in the internal cache(e.g., excluded by table filters),
+         * automatically fetch the reference table's schema via SHOW CREATE
+         * TABLE and retry DDL parsing. Default: false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param resolveCreateTableLikeSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder resolveCreateTableLikeSchema(boolean resolveCreateTableLikeSchema) {
+            doSetProperty("resolveCreateTableLikeSchema", resolveCreateTableLikeSchema);
+            return this;
+        }
+        /**
+         * When a CREATE TABLE ... LIKE statement reference a table whose schema
+         * is not in the internal cache(e.g., excluded by table filters),
+         * automatically fetch the reference table's schema via SHOW CREATE
+         * TABLE and retry DDL parsing. Default: false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param resolveCreateTableLikeSchema the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder resolveCreateTableLikeSchema(String resolveCreateTableLikeSchema) {
+            doSetProperty("resolveCreateTableLikeSchema", resolveCreateTableLikeSchema);
+            return this;
+        }
+        /**
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
@@ -2251,6 +2503,22 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder schemaHistoryInternalFileFilename(String schemaHistoryInternalFileFilename) {
             doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
+            return this;
+        }
+        /**
+         * Controls how Debezium deduplicates identical schema objects (tables,
+         * columns, attributes) in memory using an interner.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: off
+         * Group: mysql
+         * 
+         * @param schemaHistoryInternalMemoryOptimization the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder schemaHistoryInternalMemoryOptimization(String schemaHistoryInternalMemoryOptimization) {
+            doSetProperty("schemaHistoryInternalMemoryOptimization", schemaHistoryInternalMemoryOptimization);
             return this;
         }
         /**
@@ -2406,6 +2674,72 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: mysql
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: mysql
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder signalEmitFailureBackoffMs(String signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: mysql
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder signalEmitFailureMaxRetries(String signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -2451,6 +2785,44 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          */
         default DebeziumMySqlEndpointBuilder signalPollIntervalMs(String signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: mysql
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder skipMessagesWithoutChange(String skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
         /**
@@ -3130,7 +3502,11 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * but time fields always use microseconds precision; 'connect': always
          * represents time, date and timestamp values using Kafka Connect's
          * built-in representations for Time, Date, and Timestamp, which uses
-         * millisecond precision regardless of the database columns' precision.
+         * millisecond precision regardless of the database columns' precision;
+         * 'isostring': represents time, date, and datetime values as ISO-8601
+         * formatted strings at the UTC time zone; 'structured': represents
+         * time, date, timestamp, and datetime values as Kafka Connect structs
+         * with separate calendar and clock components.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

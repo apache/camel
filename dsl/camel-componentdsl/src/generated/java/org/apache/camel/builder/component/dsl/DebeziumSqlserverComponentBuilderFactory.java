@@ -417,11 +417,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -456,6 +454,22 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
     
         /**
+         * A comma-separated list of regular expressions that match database
+         * names to be excluded from monitoring.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param databaseExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder databaseExcludeList(java.lang.String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
+            return this;
+        }
+    
+        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -467,6 +481,21 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder databaseHostname(java.lang.String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
+            return this;
+        }
+    
+        /**
+         * The databases for which changes are to be captured.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param databaseIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder databaseIncludeList(java.lang.String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
     
@@ -649,6 +678,30 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: sqlserver
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder eventConvertingFailureHandlingMode(java.lang.String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
+            return this;
+        }
+    
+        
+        /**
          * Specify how failures during processing of events (i.e. when
          * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
@@ -703,6 +756,29 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
             doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: sqlserver
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder fieldNameAdjustmentMode(java.lang.String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
             return this;
         }
     
@@ -1094,6 +1170,78 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+    
+        
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: sqlserver
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+    
+        
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: sqlserver
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+    
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder notificationHttpUrl(java.lang.String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+    
         /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
@@ -1229,7 +1377,8 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1274,6 +1423,25 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder provideTransactionMetadata(boolean provideTransactionMetadata) {
             doSetProperty("provideTransactionMetadata", provideTransactionMetadata);
+            return this;
+        }
+    
+        
+        /**
+         * The maximum number of records that should be loaded into memory while
+         * streaming. A value of '0' uses the default JDBC fetch size. The
+         * default value is '10000'.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10000
+         * Group: sqlserver
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder queryFetchSize(int queryFetchSize) {
+            doSetProperty("queryFetchSize", queryFetchSize);
             return this;
         }
     
@@ -1327,6 +1495,24 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder schemaHistoryInternalFileFilename(java.lang.String schemaHistoryInternalFileFilename) {
             doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
+            return this;
+        }
+    
+        
+        /**
+         * Controls how Debezium deduplicates identical schema objects (tables,
+         * columns, attributes) in memory using an interner.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: off
+         * Group: sqlserver
+         * 
+         * @param schemaHistoryInternalMemoryOptimization the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder schemaHistoryInternalMemoryOptimization(java.lang.String schemaHistoryInternalMemoryOptimization) {
+            doSetProperty("schemaHistoryInternalMemoryOptimization", schemaHistoryInternalMemoryOptimization);
             return this;
         }
     
@@ -1436,6 +1622,41 @@ public interface DebeziumSqlserverComponentBuilderFactory {
     
         
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: sqlserver
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+    
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+    
+        
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -1467,6 +1688,27 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          */
         default DebeziumSqlserverComponentBuilder signalPollIntervalMs(long signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+    
+        
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
     
@@ -1955,7 +2197,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision;
          * 'isostring' represents time, date, and timestamp values as ISO-8601
-         * formatted strings at the UTC time zone; 'microseconds' always
+         * formatted strings at the UTC time zone; 'structured' represents time,
+         * date, timestamp, and datetime values as Kafka Connect structs with
+         * separate calendar and clock components; 'microseconds' always
          * represents time, date, and timestamp values using microsecond
          * precision; 'nanoseconds' always represents time, date, and timestamp
          * values using nanosecond precision.
@@ -2093,7 +2337,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "converters": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setConverters((java.lang.String) value); return true;
             case "customMetricTags": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setCustomMetricTags((java.lang.String) value); return true;
             case "customSanitizePattern": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setCustomSanitizePattern((java.lang.String) value); return true;
+            case "databaseExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHostname((java.lang.String) value); return true;
+            case "databaseIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "databaseInstance": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseInstance((java.lang.String) value); return true;
             case "databaseNames": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseNames((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePassword((java.lang.String) value); return true;
@@ -2104,9 +2350,11 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setErrorsMaxRetries((int) value); return true;
+            case "eventConvertingFailureHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setEventConvertingFailureHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
+            case "fieldNameAdjustmentMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setFieldNameAdjustmentMode((java.lang.String) value); return true;
             case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
             case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
@@ -2127,6 +2375,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "memoryManagementTablesClass": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMemoryManagementTablesClass((java.lang.String) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationHttpAllowPrivateNetworks": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationHttpAllowPrivateNetworks((boolean) value); return true;
+            case "notificationHttpRetries": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationHttpRetries((int) value); return true;
+            case "notificationHttpTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationHttpTimeoutMs((int) value); return true;
+            case "notificationHttpUrl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationHttpUrl((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
             case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
@@ -2138,16 +2390,21 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPollIntervalMs((long) value); return true;
             case "postProcessors": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setPostProcessors((java.lang.String) value); return true;
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setProvideTransactionMetadata((boolean) value); return true;
+            case "queryFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "schemaHistoryInternal": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternal((java.lang.String) value); return true;
             case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
+            case "schemaHistoryInternalMemoryOptimization": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalMemoryOptimization((java.lang.String) value); return true;
             case "schemaHistoryInternalSkipUnparseableDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalSkipUnparseableDdl((boolean) value); return true;
             case "schemaHistoryInternalStoreOnlyCapturedDatabasesDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl((boolean) value); return true;
             case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEmitFailureBackoffMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSignalEmitFailureBackoffMs((long) value); return true;
+            case "signalEmitFailureMaxRetries": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSignalEmitFailureMaxRetries((int) value); return true;
             case "signalEnabledChannels": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
             case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSignalPollIntervalMs((long) value); return true;
+            case "skipMessagesWithoutChange": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSkipMessagesWithoutChange((boolean) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotDelayMs((long) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotFetchSize((int) value); return true;

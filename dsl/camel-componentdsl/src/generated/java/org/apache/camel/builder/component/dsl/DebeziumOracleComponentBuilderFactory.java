@@ -472,11 +472,9 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -549,6 +547,22 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
     
         /**
+         * A comma-separated list of regular expressions that match database
+         * names to be excluded from monitoring.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param databaseExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder databaseExcludeList(java.lang.String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
+            return this;
+        }
+    
+        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -560,6 +574,21 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder databaseHostname(java.lang.String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
+            return this;
+        }
+    
+        /**
+         * The databases for which changes are to be captured.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param databaseIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder databaseIncludeList(java.lang.String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
     
@@ -724,6 +753,30 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: oracle
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder eventConvertingFailureHandlingMode(java.lang.String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
+            return this;
+        }
+    
+        
+        /**
          * Specify how failures during processing of events (i.e. when
          * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
@@ -778,6 +831,29 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder extendedHeadersEnabled(boolean extendedHeadersEnabled) {
             doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+    
+        
+        /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: oracle
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder fieldNameAdjustmentMode(java.lang.String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
             return this;
         }
     
@@ -912,6 +988,48 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder includeSchemaComments(boolean includeSchemaComments) {
             doSetProperty("includeSchemaComments", includeSchemaComments);
+            return this;
+        }
+    
+        
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder incrementalSnapshotAllowSchemaChanges(boolean incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+    
+        
+        /**
+         * The maximum size of chunk (number of documents/rows) for incremental
+         * snapshotting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1024
+         * Group: oracle
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder incrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
             return this;
         }
     
@@ -1892,6 +2010,78 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+    
+        
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: oracle
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+    
+        
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: oracle
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+    
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder notificationHttpUrl(java.lang.String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+    
         /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
@@ -2073,7 +2263,8 @@ public interface DebeziumOracleComponentBuilderFactory {
         
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -2205,6 +2396,24 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder schemaHistoryInternalFileFilename(java.lang.String schemaHistoryInternalFileFilename) {
             doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
+            return this;
+        }
+    
+        
+        /**
+         * Controls how Debezium deduplicates identical schema objects (tables,
+         * columns, attributes) in memory using an interner.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: off
+         * Group: oracle
+         * 
+         * @param schemaHistoryInternalMemoryOptimization the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder schemaHistoryInternalMemoryOptimization(java.lang.String schemaHistoryInternalMemoryOptimization) {
+            doSetProperty("schemaHistoryInternalMemoryOptimization", schemaHistoryInternalMemoryOptimization);
             return this;
         }
     
@@ -2378,6 +2587,41 @@ public interface DebeziumOracleComponentBuilderFactory {
     
         
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: oracle
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+    
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+    
+        
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -2409,6 +2653,27 @@ public interface DebeziumOracleComponentBuilderFactory {
          */
         default DebeziumOracleComponentBuilder signalPollIntervalMs(long signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+    
+        
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
     
@@ -2877,7 +3142,9 @@ public interface DebeziumOracleComponentBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision;
          * 'isostring' represents time, date, and timestamp values as ISO-8601
-         * formatted strings at the UTC time zone; 'microseconds' always
+         * formatted strings at the UTC time zone; 'structured' represents time,
+         * date, timestamp, and datetime values as Kafka Connect structs with
+         * separate calendar and clock components; 'microseconds' always
          * represents time, date, and timestamp values using microsecond
          * precision; 'nanoseconds' always represents time, date, and timestamp
          * values using nanosecond precision.
@@ -3054,7 +3321,9 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "customSanitizePattern": getOrCreateConfiguration((DebeziumOracleComponent) component).setCustomSanitizePattern((java.lang.String) value); return true;
             case "databaseConnectionAdapter": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseConnectionAdapter((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseDbname((java.lang.String) value); return true;
+            case "databaseExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHostname((java.lang.String) value); return true;
+            case "databaseIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePdbName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePdbName((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePort((int) value); return true;
@@ -3064,9 +3333,11 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setErrorsMaxRetries((int) value); return true;
+            case "eventConvertingFailureHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setEventConvertingFailureHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumOracleComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
+            case "fieldNameAdjustmentMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setFieldNameAdjustmentMode((java.lang.String) value); return true;
             case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumOracleComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
             case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumOracleComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatActionQuery": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatActionQuery((java.lang.String) value); return true;
@@ -3074,6 +3345,8 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
             case "includeSchemaChanges": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncludeSchemaChanges((boolean) value); return true;
             case "includeSchemaComments": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncludeSchemaComments((boolean) value); return true;
+            case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncrementalSnapshotAllowSchemaChanges((boolean) value); return true;
+            case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
             case "intervalHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setIntervalHandlingMode((java.lang.String) value); return true;
             case "legacyDecimalHandlingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setLegacyDecimalHandlingStrategy((boolean) value); return true;
@@ -3126,6 +3399,10 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "memoryManagementTablesClass": getOrCreateConfiguration((DebeziumOracleComponent) component).setMemoryManagementTablesClass((java.lang.String) value); return true;
             case "messageKeyColumns": getOrCreateConfiguration((DebeziumOracleComponent) component).setMessageKeyColumns((java.lang.String) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationHttpAllowPrivateNetworks": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationHttpAllowPrivateNetworks((boolean) value); return true;
+            case "notificationHttpRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationHttpRetries((int) value); return true;
+            case "notificationHttpTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationHttpTimeoutMs((int) value); return true;
+            case "notificationHttpUrl": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationHttpUrl((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumOracleComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
             case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumOracleComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
@@ -3145,6 +3422,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "schemaHistoryInternal": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternal((java.lang.String) value); return true;
             case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
+            case "schemaHistoryInternalMemoryOptimization": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalMemoryOptimization((java.lang.String) value); return true;
             case "schemaHistoryInternalSkipUnparseableDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalSkipUnparseableDdl((boolean) value); return true;
             case "schemaHistoryInternalStoreOnlyCapturedDatabasesDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl((boolean) value); return true;
             case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
@@ -3154,8 +3432,11 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "secondaryPort": getOrCreateConfiguration((DebeziumOracleComponent) component).setSecondaryPort((int) value); return true;
             case "secondaryUrl": getOrCreateConfiguration((DebeziumOracleComponent) component).setSecondaryUrl((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEmitFailureBackoffMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalEmitFailureBackoffMs((long) value); return true;
+            case "signalEmitFailureMaxRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalEmitFailureMaxRetries((int) value); return true;
             case "signalEnabledChannels": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
             case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalPollIntervalMs((long) value); return true;
+            case "skipMessagesWithoutChange": getOrCreateConfiguration((DebeziumOracleComponent) component).setSkipMessagesWithoutChange((boolean) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumOracleComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDatabaseErrorsMaxRetries": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDatabaseErrorsMaxRetries((int) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotDelayMs((long) value); return true;

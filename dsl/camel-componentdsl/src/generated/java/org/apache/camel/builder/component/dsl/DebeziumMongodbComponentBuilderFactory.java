@@ -313,6 +313,28 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         
         /**
+         * Specify how binary (blob, binary, etc.) columns should be represented
+         * in change events, including: 'bytes' represents binary data as byte
+         * array (default); 'base64' represents binary data as base64-encoded
+         * string; 'base64-url-safe' represents binary data as
+         * base64-url-safe-encoded string; 'hex' represents binary data as
+         * hex-encoded (base16) string.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: bytes
+         * Group: mongodb
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder binaryHandlingMode(java.lang.String binaryHandlingMode) {
+            doSetProperty("binaryHandlingMode", binaryHandlingMode);
+            return this;
+        }
+    
+        
+        /**
          * The method used to capture changes from MongoDB server. Options
          * include: 'change_streams' to capture changes via MongoDB Change
          * Streams, update events do not contain full documents;
@@ -329,6 +351,44 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder captureMode(java.lang.String captureMode) {
             doSetProperty("captureMode", captureMode);
+            return this;
+        }
+    
+        
+        /**
+         * The scope of captured changes. Options include: 'deployment' (the
+         * default) to capture changes from the entire MongoDB deployment;
+         * 'database' to capture changes from a specific MongoDB
+         * database'collection' to capture changes from a specific MongoDB
+         * collection.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: deployment
+         * Group: mongodb
+         * 
+         * @param captureScope the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder captureScope(java.lang.String captureScope) {
+            doSetProperty("captureScope", captureScope);
+            return this;
+        }
+    
+        /**
+         * The target to capture changes from. For 'database' scope, this is the
+         * database name. For 'collection' scope, this is the collection name as
+         * ..
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param captureTarget the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder captureTarget(java.lang.String captureTarget) {
+            doSetProperty("captureTarget", captureTarget);
             return this;
         }
     
@@ -416,11 +476,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
     
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -506,6 +564,30 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         
         /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: warn
+         * Group: mongodb
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder eventConvertingFailureHandlingMode(java.lang.String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
+            return this;
+        }
+    
+        
+        /**
          * Specify how failures during processing of events (i.e. when
          * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
@@ -576,6 +658,29 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder fieldExcludeList(java.lang.String fieldExcludeList) {
             doSetProperty("fieldExcludeList", fieldExcludeList);
+            return this;
+        }
+    
+        
+        /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
+         * Group: mongodb
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder fieldNameAdjustmentMode(java.lang.String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
             return this;
         }
     
@@ -673,6 +778,48 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         
         /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder incrementalSnapshotAllowSchemaChanges(boolean incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+    
+        
+        /**
+         * The maximum size of chunk (number of documents/rows) for incremental
+         * snapshotting.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1024
+         * Group: mongodb
+         * 
+         * @param incrementalSnapshotChunkSize the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder incrementalSnapshotChunkSize(int incrementalSnapshotChunkSize) {
+            doSetProperty("incrementalSnapshotChunkSize", incrementalSnapshotChunkSize);
+            return this;
+        }
+    
+        
+        /**
          * Specify the strategy used for watermarking during an incremental
          * snapshot: 'insert_insert' both open and close signal is written into
          * signal data collection (default); 'insert_delete' only open signal is
@@ -689,6 +836,29 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder incrementalSnapshotWatermarkingStrategy(java.lang.String incrementalSnapshotWatermarkingStrategy) {
             doSetProperty("incrementalSnapshotWatermarkingStrategy", incrementalSnapshotWatermarkingStrategy);
+            return this;
+        }
+    
+        
+        /**
+         * Controls the Extended JSON serialization mode used for MongoDB event
+         * payload fields. Options include: 'legacy' (the default) uses MongoDB
+         * Extended JSON v1 strict mode for full document fields and MongoDB
+         * Extended JSON v2 relaxed mode for update fields. 'strict' uses
+         * MongoDB Extended JSON v1 strict mode. 'extended' uses MongoDB
+         * Extended JSON v2 canonical mode. 'relaxed' uses MongoDB Extended JSON
+         * v2 relaxed mode.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: legacy
+         * Group: mongodb
+         * 
+         * @param jsonSerializationMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder jsonSerializationMode(java.lang.String jsonSerializationMode) {
+            doSetProperty("jsonSerializationMode", jsonSerializationMode);
             return this;
         }
     
@@ -966,6 +1136,78 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+    
+        
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 2
+         * Group: mongodb
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+    
+        
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: mongodb
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+    
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder notificationHttpUrl(java.lang.String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+    
         /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
@@ -1101,7 +1343,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
         
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1242,6 +1485,41 @@ public interface DebeziumMongodbComponentBuilderFactory {
     
         
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+    
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+    
+        
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -1273,6 +1551,27 @@ public interface DebeziumMongodbComponentBuilderFactory {
          */
         default DebeziumMongodbComponentBuilder signalPollIntervalMs(long signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+    
+        
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: mongodb
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
     
@@ -1709,7 +2008,10 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "offsetStorageReplicationFactor": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageReplicationFactor((int) value); return true;
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumMongodbComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "binaryHandlingMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
             case "captureMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCaptureMode((java.lang.String) value); return true;
+            case "captureScope": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCaptureScope((java.lang.String) value); return true;
+            case "captureTarget": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCaptureTarget((java.lang.String) value); return true;
             case "collectionExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionExcludeList((java.lang.String) value); return true;
             case "collectionIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionIncludeList((java.lang.String) value); return true;
             case "connectionValidationTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectionValidationTimeoutMs((long) value); return true;
@@ -1720,16 +2022,21 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "errorsMaxRetries": getOrCreateConfiguration((DebeziumMongodbComponent) component).setErrorsMaxRetries((int) value); return true;
+            case "eventConvertingFailureHandlingMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setEventConvertingFailureHandlingMode((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "executorShutdownTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setExecutorShutdownTimeoutMs((long) value); return true;
             case "extendedHeadersEnabled": getOrCreateConfiguration((DebeziumMongodbComponent) component).setExtendedHeadersEnabled((boolean) value); return true;
             case "fieldExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldExcludeList((java.lang.String) value); return true;
+            case "fieldNameAdjustmentMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldNameAdjustmentMode((java.lang.String) value); return true;
             case "fieldRenames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldRenames((java.lang.String) value); return true;
             case "guardrailCollectionsLimitAction": getOrCreateConfiguration((DebeziumMongodbComponent) component).setGuardrailCollectionsLimitAction((java.lang.String) value); return true;
             case "guardrailCollectionsMax": getOrCreateConfiguration((DebeziumMongodbComponent) component).setGuardrailCollectionsMax((int) value); return true;
             case "heartbeatIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatIntervalMs((int) value); return true;
             case "heartbeatTopicsPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setHeartbeatTopicsPrefix((java.lang.String) value); return true;
+            case "incrementalSnapshotAllowSchemaChanges": getOrCreateConfiguration((DebeziumMongodbComponent) component).setIncrementalSnapshotAllowSchemaChanges((boolean) value); return true;
+            case "incrementalSnapshotChunkSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setIncrementalSnapshotChunkSize((int) value); return true;
             case "incrementalSnapshotWatermarkingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setIncrementalSnapshotWatermarkingStrategy((java.lang.String) value); return true;
+            case "jsonSerializationMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setJsonSerializationMode((java.lang.String) value); return true;
             case "legacySnapshotMaxThreads": getOrCreateConfiguration((DebeziumMongodbComponent) component).setLegacySnapshotMaxThreads((boolean) value); return true;
             case "maxBatchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxBatchSize((int) value); return true;
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
@@ -1746,6 +2053,10 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "mongodbSslInvalidHostnameAllowed": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbSslInvalidHostnameAllowed((boolean) value); return true;
             case "mongodbUser": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbUser((java.lang.String) value); return true;
             case "notificationEnabledChannels": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationEnabledChannels((java.lang.String) value); return true;
+            case "notificationHttpAllowPrivateNetworks": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationHttpAllowPrivateNetworks((boolean) value); return true;
+            case "notificationHttpRetries": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationHttpRetries((int) value); return true;
+            case "notificationHttpTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationHttpTimeoutMs((int) value); return true;
+            case "notificationHttpUrl": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationHttpUrl((java.lang.String) value); return true;
             case "notificationSinkTopicName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setNotificationSinkTopicName((java.lang.String) value); return true;
             case "openlineageIntegrationConfigFilePath": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationConfigFilePath((java.lang.String) value); return true;
             case "openlineageIntegrationDatasetKafkaBootstrapServers": getOrCreateConfiguration((DebeziumMongodbComponent) component).setOpenlineageIntegrationDatasetKafkaBootstrapServers((java.lang.String) value); return true;
@@ -1762,8 +2073,11 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalDataCollection((java.lang.String) value); return true;
+            case "signalEmitFailureBackoffMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalEmitFailureBackoffMs((long) value); return true;
+            case "signalEmitFailureMaxRetries": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalEmitFailureMaxRetries((int) value); return true;
             case "signalEnabledChannels": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalEnabledChannels((java.lang.String) value); return true;
             case "signalPollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalPollIntervalMs((long) value); return true;
+            case "skipMessagesWithoutChange": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkipMessagesWithoutChange((boolean) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotCollectionFilterOverrides": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotCollectionFilterOverrides((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotDelayMs((long) value); return true;

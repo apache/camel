@@ -68,6 +68,13 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
     private List<String> requiredFields = Collections.emptyList();
 
     /**
+     * Names of public static {@code Field} constants of the connector's config class to add as options, for fields the
+     * connector still reads but no longer publishes in its config definition, e.g: 'DDL_PARSER_TYPE'
+     */
+    @Parameter(property = "camel.debezium.additional.fields")
+    private List<String> additionalFields = Collections.emptyList();
+
+    /**
      * Package where the generated classes will be placed. If not set,
      * {@code org.apache.camel.component.debezium.configuration} will be used for backward compatibility reasons.
      */
@@ -86,7 +93,8 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
 
         try {
             final ConnectorConfigGenerator connectorConfigGenerator
-                    = ConnectorConfigGenerator.create(getConnector(), configClazz, packageName, requiredFields, overrideFields);
+                    = ConnectorConfigGenerator.create(getConnector(), configClazz, packageName, requiredFields, overrideFields,
+                            additionalFields);
             final File parentPath = new File(generatedSrcDir, connectorConfigGenerator.getPackageName().replace(".", "/"));
             final File connectorConfigClassFile = new File(parentPath, connectorConfigGenerator.getClassName() + ".java");
             if (!connectorConfigClassFile.exists()) {
@@ -122,6 +130,10 @@ public class GenerateConnectorConfigMojo extends AbstractMojo {
 
     public void setRequiredFields(List<String> requiredFields) {
         this.requiredFields = requiredFields;
+    }
+
+    public void setAdditionalFields(List<String> additionalFields) {
+        this.additionalFields = additionalFields;
     }
 
     public Set<String> getRequiredFields() {

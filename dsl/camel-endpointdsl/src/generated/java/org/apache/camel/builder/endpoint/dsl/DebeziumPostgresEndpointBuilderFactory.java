@@ -427,11 +427,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The custom metric tags will accept key-value pairs to customize the
-         * MBean object name which should be appended the end of regular name,
-         * each key would represent a tag for the MBean object name, and the
-         * corresponding value would be the value of that tag the key is. For
-         * example: k1=v1,k2=v2.
+         * A comma-separated list of key-value pairs that are appended to the
+         * MBean object name. Keys must be valid JMX ObjectName property keys.
+         * For example: k1=v1,k2=v2.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -478,6 +476,21 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * A comma-separated list of regular expressions that match database
+         * names to be excluded from monitoring.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         * 
+         * @param databaseExcludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder databaseExcludeList(String databaseExcludeList) {
+            doSetProperty("databaseExcludeList", databaseExcludeList);
+            return this;
+        }
+        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -489,6 +502,20 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          */
         default DebeziumPostgresEndpointBuilder databaseHostname(String databaseHostname) {
             doSetProperty("databaseHostname", databaseHostname);
+            return this;
+        }
+        /**
+         * The databases for which changes are to be captured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         * 
+         * @param databaseIncludeList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder databaseIncludeList(String databaseIncludeList) {
+            doSetProperty("databaseIncludeList", databaseIncludeList);
             return this;
         }
         /**
@@ -808,6 +835,28 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specify how failures during converting of event should be handled,
+         * including: 'fail' throw an exception that the column of event
+         * conversion is failed with unmatched schema type, causing the
+         * connector to be stopped. it could need schema recovery to covert
+         * successfully; 'warn' (the default) the value of column of event that
+         * conversion failed will be null and be logged with warn level; 'skip'
+         * the value of column of event that conversion failed will be null and
+         * be logged with debug level.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: warn
+         * Group: postgres
+         * 
+         * @param eventConvertingFailureHandlingMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder eventConvertingFailureHandlingMode(String eventConvertingFailureHandlingMode) {
+            doSetProperty("eventConvertingFailureHandlingMode", eventConvertingFailureHandlingMode);
+            return this;
+        }
+        /**
          * Specify how failures during processing of events (i.e. when
          * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
@@ -891,6 +940,27 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          */
         default DebeziumPostgresEndpointBuilder extendedHeadersEnabled(String extendedHeadersEnabled) {
             doSetProperty("extendedHeadersEnabled", extendedHeadersEnabled);
+            return this;
+        }
+        /**
+         * Specify how field names should be adjusted for compatibility with the
+         * message converter used by the connector, including: 'avro' replaces
+         * the characters that cannot be used in the Avro type name with
+         * underscore; 'avro_unicode' replaces the underscore or characters that
+         * cannot be used in the Avro type name with corresponding unicode like
+         * _uxxxx. Note: _ is an escape sequence like backslash in Java;'none'
+         * does not apply any adjustment (default).
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Default: none
+         * Group: postgres
+         * 
+         * @param fieldNameAdjustmentMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder fieldNameAdjustmentMode(String fieldNameAdjustmentMode) {
+            doSetProperty("fieldNameAdjustmentMode", fieldNameAdjustmentMode);
             return this;
         }
         /**
@@ -1101,6 +1171,50 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          */
         default DebeziumPostgresEndpointBuilder includeUnknownDatatypes(String includeUnknownDatatypes) {
             doSetProperty("includeUnknownDatatypes", includeUnknownDatatypes);
+            return this;
+        }
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder incrementalSnapshotAllowSchemaChanges(boolean incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
+            return this;
+        }
+        /**
+         * Detect schema change during an incremental snapshot and re-select a
+         * current chunk to avoid locking DDLs. Note that changes to a primary
+         * key are not supported and can cause incorrect results if performed
+         * during an incremental snapshot. Another limitation is that if a
+         * schema change affects only columns' default values, then the change
+         * won't be detected until the DDL is processed from the binlog stream.
+         * This doesn't affect the snapshot events' values, but the schema of
+         * snapshot events may have outdated defaults.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param incrementalSnapshotAllowSchemaChanges the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder incrementalSnapshotAllowSchemaChanges(String incrementalSnapshotAllowSchemaChanges) {
+            doSetProperty("incrementalSnapshotAllowSchemaChanges", incrementalSnapshotAllowSchemaChanges);
             return this;
         }
         /**
@@ -1486,6 +1600,121 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder notificationHttpAllowPrivateNetworks(boolean notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * When true, the SSRF guard permits notification URLs that resolve to
+         * loopback, site-local or link-local addresses (e.g. an in-cluster
+         * Service). Defaults to false so only public addresses are allowed.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param notificationHttpAllowPrivateNetworks the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder notificationHttpAllowPrivateNetworks(String notificationHttpAllowPrivateNetworks) {
+            doSetProperty("notificationHttpAllowPrivateNetworks", notificationHttpAllowPrivateNetworks);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: postgres
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder notificationHttpRetries(int notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Number of retries after the first failed HTTP notification delivery
+         * attempt. Terminal notifications (COMPLETED/ABORTED/SKIPPED) are
+         * always retried at least 3 times.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 2
+         * Group: postgres
+         * 
+         * @param notificationHttpRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder notificationHttpRetries(String notificationHttpRetries) {
+            doSetProperty("notificationHttpRetries", notificationHttpRetries);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: postgres
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder notificationHttpTimeoutMs(int notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * Connect and read timeout, in milliseconds, for HTTP notification
+         * delivery.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 5s
+         * Group: postgres
+         * 
+         * @param notificationHttpTimeoutMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder notificationHttpTimeoutMs(String notificationHttpTimeoutMs) {
+            doSetProperty("notificationHttpTimeoutMs", notificationHttpTimeoutMs);
+            return this;
+        }
+        /**
+         * The URL to which notifications are POSTed as JSON. Required when
+         * 'http' is in the list of enabled channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: postgres
+         * 
+         * @param notificationHttpUrl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder notificationHttpUrl(String notificationHttpUrl) {
+            doSetProperty("notificationHttpUrl", notificationHttpUrl);
+            return this;
+        }
+        /**
          * The name of the topic for the notifications. This is required in case
          * 'sink' is in the list of enabled channels.
          * 
@@ -1641,7 +1870,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -1657,7 +1887,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Time to wait for new change events to appear after receiving no
-         * events, given in milliseconds. Defaults to 500 ms.
+         * events, given in milliseconds. Defaults to 500 ms. Values will be
+         * capped at 5000 ms.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -1994,6 +2225,72 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: postgres
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder signalEmitFailureBackoffMs(long signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * Duration to sleep for after encountering an error emitting a window
+         * event, given in milliseconds. Defaults to 10 seconds.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Default: 10s
+         * Group: postgres
+         * 
+         * @param signalEmitFailureBackoffMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder signalEmitFailureBackoffMs(String signalEmitFailureBackoffMs) {
+            doSetProperty("signalEmitFailureBackoffMs", signalEmitFailureBackoffMs);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: postgres
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder signalEmitFailureMaxRetries(int signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
+         * The maximum number of retries after encountering an error emitting a
+         * window event (-1 = no limit, 0 = disabled, 0 = num of retries).
+         * Defaults to 0.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Default: 0
+         * Group: postgres
+         * 
+         * @param signalEmitFailureMaxRetries the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder signalEmitFailureMaxRetries(String signalEmitFailureMaxRetries) {
+            doSetProperty("signalEmitFailureMaxRetries", signalEmitFailureMaxRetries);
+            return this;
+        }
+        /**
          * List of channels names that are enabled. Source channel is enabled by
          * default.
          * 
@@ -2039,6 +2336,44 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          */
         default DebeziumPostgresEndpointBuilder signalPollIntervalMs(String signalPollIntervalMs) {
             doSetProperty("signalPollIntervalMs", signalPollIntervalMs);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder skipMessagesWithoutChange(boolean skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
+            return this;
+        }
+        /**
+         * Enable to skip publishing messages when there is no change in
+         * included columns.This would essentially filter messages to be sent
+         * when there is no change in columns included as per
+         * column.include.list/column.exclude.list.For Postgres - this would
+         * require REPLICA IDENTITY of table to be FULL.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: postgres
+         * 
+         * @param skipMessagesWithoutChange the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder skipMessagesWithoutChange(String skipMessagesWithoutChange) {
+            doSetProperty("skipMessagesWithoutChange", skipMessagesWithoutChange);
             return this;
         }
         /**
@@ -2954,7 +3289,9 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision;
          * 'isostring' represents time, date, and timestamp values as ISO-8601
-         * formatted strings at the UTC time zone; 'microseconds' always
+         * formatted strings at the UTC time zone; 'structured' represents time,
+         * date, timestamp, and datetime values as Kafka Connect structs with
+         * separate calendar and clock components; 'microseconds' always
          * represents time, date, and timestamp values using microsecond
          * precision; 'nanoseconds' always represents time, date, and timestamp
          * values using nanosecond precision.
