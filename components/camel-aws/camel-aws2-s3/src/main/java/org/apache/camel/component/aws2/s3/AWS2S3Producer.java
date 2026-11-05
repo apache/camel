@@ -1568,6 +1568,7 @@ public class AWS2S3Producer extends DefaultProducer {
         message.setHeader(AWS2S3Constants.REPLICATION_STATUS, res.response().replicationStatus());
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, res.response().storageClass());
         message.setHeader(AWS2S3Constants.METADATA, res.response().metadata());
+        populateLastModified(res.response().lastModified(), message);
         populateHttpResponseCode(res.response(), message);
     }
 
@@ -1584,7 +1585,18 @@ public class AWS2S3Producer extends DefaultProducer {
         message.setHeader(AWS2S3Constants.REPLICATION_STATUS, res.replicationStatus());
         message.setHeader(AWS2S3Constants.STORAGE_CLASS, res.storageClass());
         message.setHeader(AWS2S3Constants.METADATA, res.metadata());
+        populateLastModified(res.lastModified(), message);
         populateHttpResponseCode(res, message);
+    }
+
+    /**
+     * Sets the last modified time of the object, and the message timestamp, as the consumer does.
+     */
+    private static void populateLastModified(Instant lastModified, Message message) {
+        if (lastModified != null) {
+            message.setHeader(AWS2S3Constants.LAST_MODIFIED, lastModified);
+            message.setHeader(AWS2S3Constants.MESSAGE_TIMESTAMP, lastModified.getEpochSecond() * 1000);
+        }
     }
 
     private static void populateHttpResponseCode(AwsResponse response, Message message) {

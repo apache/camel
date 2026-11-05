@@ -4205,11 +4205,11 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3Metadata";
         }
         /**
-         * The timestamp of the message.
+         * The timestamp of the message: the last modified time of the object.
          * 
          * The option is a: {@code long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code MessageTimestamp}.
          */

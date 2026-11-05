@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.s3;
 
 import java.io.InputStream;
+import java.time.Instant;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -37,6 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * and sets the same headers as with a GET.
  */
 class AWS2S3ProducerGetObjectIgnoreBodyTest extends CamelTestSupport {
+
+    // the Last-Modified header that the fake sends for every object
+    private static final Instant LAST_MODIFIED = Instant.parse("2026-10-09T00:00:00Z");
 
     private FakeS3Server s3;
 
@@ -87,6 +91,8 @@ class AWS2S3ProducerGetObjectIgnoreBodyTest extends CamelTestSupport {
         assertEquals(200, message.getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("a.txt", message.getHeader(AWS2S3Constants.PRODUCED_KEY));
         assertEquals("bkt", message.getHeader(AWS2S3Constants.PRODUCED_BUCKET_NAME));
+        assertEquals(LAST_MODIFIED, message.getHeader(AWS2S3Constants.LAST_MODIFIED));
+        assertEquals(LAST_MODIFIED.toEpochMilli(), message.getHeader(AWS2S3Constants.MESSAGE_TIMESTAMP));
     }
 
     @Test
@@ -102,6 +108,8 @@ class AWS2S3ProducerGetObjectIgnoreBodyTest extends CamelTestSupport {
         assertSame(request, message.getBody());
         assertEquals(3L, message.getHeader(AWS2S3Constants.CONTENT_LENGTH));
         assertEquals(200, message.getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals(LAST_MODIFIED, message.getHeader(AWS2S3Constants.LAST_MODIFIED));
+        assertEquals(LAST_MODIFIED.toEpochMilli(), message.getHeader(AWS2S3Constants.MESSAGE_TIMESTAMP));
     }
 
     @Test
@@ -124,5 +132,8 @@ class AWS2S3ProducerGetObjectIgnoreBodyTest extends CamelTestSupport {
             assertEquals("abc", context.getTypeConverter().convertTo(String.class, body));
         }
         assertEquals(3L, exchange.getMessage().getHeader(AWS2S3Constants.CONTENT_LENGTH));
+        // the same as with ignoreBody=true
+        assertEquals(LAST_MODIFIED, exchange.getMessage().getHeader(AWS2S3Constants.LAST_MODIFIED));
+        assertEquals(LAST_MODIFIED.toEpochMilli(), exchange.getMessage().getHeader(AWS2S3Constants.MESSAGE_TIMESTAMP));
     }
 }

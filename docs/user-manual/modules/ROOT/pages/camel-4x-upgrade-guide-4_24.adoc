@@ -4126,6 +4126,10 @@ not restored, is now consumed (or returned by `getObject`) instead of failing.
 * The response to a failed HEAD request has no body: the `S3Exception` has the HTTP status code, but no S3 error code,
 except `NoSuchKey` for an object that does not exist.
 
+The `getObject` operation of the producer now also sets the `CamelAwsS3LastModified` and `CamelMessageTimestamp`
+headers, with or without `ignoreBody`, as the consumer does. A `CamelMessageTimestamp` header that the message had
+before the operation is replaced.
+
 === camel-minio - the producer stores the whole body when the content-length header is stale
 
 When the length of the body is known without reading it (a file, `byte[]`, `String`, `Path` or cached stream), the
