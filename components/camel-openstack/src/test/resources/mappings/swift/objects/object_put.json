@@ -1,0 +1,20 @@
+{
+  "id" : "8d0c4c8e-5b8e-4a0f-9f3e-2f6d1c7a9b10",
+  "name" : "object_put.json",
+  "request" : {
+    "url" : "/12345321ae80457abc3728fa1e6feb78/test-container/test-file",
+    "method" : "PUT",
+    "bodyPatterns" : [ {
+      "equalTo" : "Hello Swift"
+    } ]
+  },
+  "response" : {
+    "headers" : {
+      "ETag" : "d8b3a3e8f1b7c9a2e4f6a8b0c2d4e6f8"
+    },
+    "status" : 201
+  },
+  "uuid" : "8d0c4c8e-5b8e-4a0f-9f3e-2f6d1c7a9b10",
+  "persistent" : true,
+  "insertionIndex" : 1
+}

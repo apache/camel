@@ -38,7 +38,7 @@ public class ProjectProducer extends AbstractKeystoneProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    protected void doProcess(Exchange exchange) throws Exception {
         final String operation = getOperation(exchange);
         switch (operation) {
             case OpenstackConstants.CREATE:

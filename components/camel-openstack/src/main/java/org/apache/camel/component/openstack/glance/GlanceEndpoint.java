@@ -36,11 +36,13 @@ import static org.apache.camel.component.openstack.common.OpenstackConstants.SCH
 @UriEndpoint(firstVersion = "2.19.0", scheme = SCHEME_GLANCE, title = "OpenStack Glance", syntax = "openstack-glance:host",
              category = { Category.CONTAINER }, producerOnly = true, headersClass = GlanceConstants.class)
 @BodyTypes(producerIn = @BodyType(value = Carrier.ANY, byOption = {
-        @BodyType.When(option = "operation", value = "create", carriers = { Carrier.STREAM, Carrier.FILE, Carrier.POJO }),
-        @BodyType.When(option = "operation", value = "upload", carriers = { Carrier.STREAM, Carrier.FILE, Carrier.POJO }) },
+        @BodyType.When(option = "operation", value = "create",
+                       carriers = { Carrier.STREAM, Carrier.FILE, Carrier.TEXT, Carrier.BYTES, Carrier.POJO }),
+        @BodyType.When(option = "operation", value = "upload",
+                       carriers = { Carrier.STREAM, Carrier.FILE, Carrier.TEXT, Carrier.BYTES, Carrier.POJO }) },
                                   description = "For create and upload the image data: an InputStream, a File, a URL or a Payload of "
-                                                + "openstack4j; text, bytes or the file of the file consumer fail: convert it to a File or "
-                                                + "an InputStream first. reserve and update take an Image of openstack4j, or else the fields from "
+                                                + "openstack4j, or else a body that converts to an InputStream such as text, bytes or "
+                                                + "the file of the file consumer. reserve and update take an Image of openstack4j, or else the fields from "
                                                 + "headers such as CamelOpenstackName"),
            producerOut = @BodyType(value = { Carrier.POJO, Carrier.LIST, Carrier.NULL, Carrier.UNCHANGED }, byOption = {
                    @BodyType.When(option = "operation", value = "reserve", carriers = Carrier.POJO),
