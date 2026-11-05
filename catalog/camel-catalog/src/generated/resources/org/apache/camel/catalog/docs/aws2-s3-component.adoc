@@ -66,7 +66,12 @@ With `ignoreBody=true` it sends a HEAD request instead, which returns the metada
 NOTE: The batch properties count the listed objects. If an object is skipped when it is got (it was deleted after the
 listing, for example by another consumer; it cannot be got; or it is a folder and `includeFolders` is `false`),
 `CamelBatchSize` is higher than the number of exchanges routed for the batch, and possibly no exchange has
-`CamelBatchComplete` set to `true`.
+`CamelBatchComplete` set to `true`. An aggregator with `completionFromBatchConsumer` then does not complete the group of
+the poll: the group waits for the exchanges of the next poll, and is completed with some of them. When objects can be
+skipped, for example with `includeFolders=false` and folders in the bucket, or with several consumers of the same
+bucket (such as several pods of the same application), use `completionTimeout` instead of `completionFromBatchConsumer`
+(not both): a timeout longer than the time between two exchanges of a poll, and shorter than the `delay` of the consumer
+minus the `completionTimeoutCheckerInterval` (1 second by default), completes one group per poll.
 
 === S3 Producer operations
 
