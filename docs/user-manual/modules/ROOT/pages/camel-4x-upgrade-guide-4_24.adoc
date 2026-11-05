@@ -133,6 +133,13 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-mina-sftp - TCP_NODELAY is set on the connections
+
+The `mina-sftp` component now sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.
+Apache MINA SSHD leaves it off by default, so a small request, such as one that reads the next part of a directory
+listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
+property no longer applies to the connections of `mina-sftp`.
+
 === Java
 
 *Breaking change:* Camel 4.24 requires *Java 21* as the minimum runtime version.

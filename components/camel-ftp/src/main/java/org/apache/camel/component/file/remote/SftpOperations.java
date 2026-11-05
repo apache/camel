@@ -37,6 +37,7 @@ import java.util.Vector;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import com.jcraft.jsch.ChannelSftp;
@@ -57,6 +58,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileHelper;
+import org.apache.camel.component.file.GenericFileListingOperations;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.ResourceHelper;
@@ -79,7 +81,9 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * <p/>
  * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
  */
-public class SftpOperations implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations {
+public class SftpOperations
+        implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations,
+        GenericFileListingOperations<SftpRemoteFile> {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private static final int OK_STATUS = 0;
@@ -937,6 +941,42 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile>, Sft
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public void listFiles(String path, Predicate<SftpRemoteFile> visitor) throws GenericFileOperationFailedException {
+        lock.lock();
+        String dir = ObjectHelper.isEmpty(path) ? "." : path;
+        try {
+            LOG.trace("Listing remote files from path {} one at a time", dir);
+            RuntimeException[] failure = { null };
+            channel.ls(dir, entry -> {
+                try {
+                    return visitor.test(new SftpRemoteFileJCraft(entry))
+                            ? ChannelSftp.LsEntrySelector.CONTINUE : ChannelSftp.LsEntrySelector.BREAK;
+                } catch (RuntimeException e) {
+                    // thrown once the listing is over, as the channel is in the middle of reading a reply here
+                    failure[0] = e;
+                    return ChannelSftp.LsEntrySelector.BREAK;
+                }
+            });
+            if (failure[0] != null) {
+                throw failure[0];
+            }
+        } catch (SftpException e) {
+            throw new GenericFileOperationFailedException("Cannot list directory: " + dir, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * JSch calls the visitor in the middle of reading a reply to the listing, in the buffer that every request uses, so
+     * no other request can be sent until the listing is over.
+     */
+    @Override
+    public boolean isReentrantListing() {
+        return false;
     }
 
     @Override

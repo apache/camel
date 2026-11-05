@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.function.Predicate;
 
 import com.hierynomus.msdtyp.AccessMask;
 import com.hierynomus.msfscc.FileAttributes;
@@ -36,8 +38,10 @@ import com.hierynomus.smbj.auth.AuthenticationContext;
 import com.hierynomus.smbj.common.SMBRuntimeException;
 import com.hierynomus.smbj.connection.Connection;
 import com.hierynomus.smbj.session.Session;
+import com.hierynomus.smbj.share.Directory;
 import com.hierynomus.smbj.share.DiskShare;
 import com.hierynomus.smbj.share.File;
+import com.hierynomus.smbj.share.LeasedDirectoryCache;
 import com.hierynomus.smbj.utils.SmbFiles;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -620,6 +624,53 @@ public class SmbOperations implements SmbFileOperations {
         connectIfNecessary();
         try {
             return share.list(path, searchPattern).toArray(FileIdBothDirectoryInformation[]::new);
+        } catch (SMBRuntimeException smbre) {
+            safeDisconnect(smbre);
+            throw smbre;
+        }
+    }
+
+    /**
+     * Lists the entries of a directory one at a time, and stops reading the directory as soon as the visitor returns
+     * {@code false}.
+     * <p/>
+     * When the server supports directory leases (SMB 3, such as Samba and Windows), the whole directory is listed
+     * instead: smbj then serves a repeat listing from its cache while the lease is held, which costs less than reading
+     * the start of the directory again.
+     *
+     * @param path          the directory
+     * @param searchPattern the pattern the names of the entries must match, or {@code null} for all the entries
+     * @param visitor       called with each entry, returns {@code false} to stop the listing
+     */
+    public void listFiles(String path, String searchPattern, Predicate<FileIdBothDirectoryInformation> visitor)
+            throws GenericFileOperationFailedException {
+        connectIfNecessary();
+        try {
+            if (connection.getConnectionContext().supportsDirectoryLeasing()
+                    && LeasedDirectoryCache.isCacheable(searchPattern)) {
+                for (FileIdBothDirectoryInformation entry : share.list(path, searchPattern)) {
+                    if (!visitor.test(entry)) {
+                        break;
+                    }
+                }
+                return;
+            }
+            // opened as DiskShare.list(path, searchPattern) does
+            Directory directory = share.openDirectory(path,
+                    EnumSet.of(AccessMask.FILE_LIST_DIRECTORY, AccessMask.FILE_READ_ATTRIBUTES, AccessMask.FILE_READ_EA),
+                    null, SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
+            try {
+                // queries the next batch of entries only when the previous one is used up
+                Iterator<FileIdBothDirectoryInformation> entries
+                        = directory.iterator(FileIdBothDirectoryInformation.class, searchPattern);
+                while (entries.hasNext()) {
+                    if (!visitor.test(entries.next())) {
+                        break;
+                    }
+                }
+            } finally {
+                directory.closeSilently();
+            }
         } catch (SMBRuntimeException smbre) {
             safeDisconnect(smbre);
             throw smbre;
