@@ -18,10 +18,15 @@ package org.apache.camel.component.azure.storage.datalake.operations;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.OffsetDateTime;
 
 import com.azure.core.http.HttpHeaders;
@@ -30,6 +35,9 @@ import com.azure.storage.file.datalake.DataLakeFileClient;
 import com.azure.storage.file.datalake.models.DataLakeFileOpenInputStreamResult;
 import com.azure.storage.file.datalake.models.DataLakeRequestConditions;
 import com.azure.storage.file.datalake.models.FileRange;
+import com.azure.storage.file.datalake.models.FileReadAsyncResponse;
+import com.azure.storage.file.datalake.models.FileReadHeaders;
+import com.azure.storage.file.datalake.models.FileReadResponse;
 import com.azure.storage.file.datalake.models.PathInfo;
 import com.azure.storage.file.datalake.models.PathProperties;
 import com.azure.storage.file.datalake.options.DataLakeFileInputStreamOptions;
@@ -37,12 +45,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConstants;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeFileClientWrapper;
+import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -54,8 +64,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -64,6 +77,9 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class DataLakeFileOperationTest extends CamelTestSupport {
+
+    private static final String LOCAL_CONTENT = "local file content";
+    private static final String REMOTE_CONTENT = "remote file content";
 
     private DataLakeConfiguration configuration;
 
@@ -102,6 +118,79 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         assertNotNull(secondResponse);
         assertNotNull(secondResponse.getBody());
         assertNotNull(secondResponse.getHeaders());
+    }
+
+    @Test
+    void testGetFileWithFileBodyDoesNotWriteIntoTheFile(@TempDir Path dir) throws IOException {
+        // a File body converts to an OutputStream, but only an OutputStream body is written to
+        final Path file = Files.writeString(dir.resolve("local.txt"), LOCAL_CONTENT);
+
+        assertGetFileDoesNotWriteIntoTheFile(file.toFile(), file);
+    }
+
+    @Test
+    void testGetFileWithPathBodyDoesNotWriteIntoTheFile(@TempDir Path dir) throws IOException {
+        final Path file = Files.writeString(dir.resolve("local.txt"), LOCAL_CONTENT);
+
+        assertGetFileDoesNotWriteIntoTheFile(file, file);
+    }
+
+    @Test
+    void testGetFileWithGenericFileBodyDoesNotWriteIntoTheFile(@TempDir Path dir) throws IOException {
+        // the body of an exchange of a file consumer
+        final Path file = Files.writeString(dir.resolve("local.txt"), LOCAL_CONTENT);
+
+        assertGetFileDoesNotWriteIntoTheFile(FileConsumer.asGenericFile(dir.toString(), file.toFile(), null, false), file);
+    }
+
+    private void assertGetFileDoesNotWriteIntoTheFile(Object body, Path file) throws IOException {
+        when(client.openInputStream()).thenReturn(new ByteArrayInputStream(REMOTE_CONTENT.getBytes(StandardCharsets.UTF_8)));
+        // a stream over the file given to the download would get the remote content
+        lenient().when(client.downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any()))
+                .thenAnswer(invocation -> download(invocation.getArgument(0)));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(body);
+
+        final DataLakeOperationResponse response = new DataLakeFileOperations(configuration, client).getFile(exchange);
+
+        assertEquals(LOCAL_CONTENT, Files.readString(file));
+        assertEquals(REMOTE_CONTENT,
+                new String(((InputStream) response.getBody()).readAllBytes(), StandardCharsets.UTF_8));
+        verify(client, never()).downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any());
+    }
+
+    @Test
+    void testGetFileWithOutputStreamBodyWritesIntoTheStream() throws IOException {
+        final ByteArrayOutputStream body = new ByteArrayOutputStream();
+        when(client.downloadWithResponse(same(body), any(), any(), any(), anyBoolean(), any()))
+                .thenAnswer(invocation -> download(invocation.getArgument(0)));
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(body);
+
+        final DataLakeOperationResponse response = new DataLakeFileOperations(configuration, client).getFile(exchange);
+
+        assertSame(body, response.getBody());
+        assertEquals(REMOTE_CONTENT, body.toString(StandardCharsets.UTF_8));
+        verify(client, never()).openInputStream();
+    }
+
+    @Test
+    void testGetFileWithoutBodyReturnsAnInputStream() throws IOException {
+        when(client.openInputStream()).thenReturn(new ByteArrayInputStream(REMOTE_CONTENT.getBytes(StandardCharsets.UTF_8)));
+
+        final DataLakeOperationResponse response
+                = new DataLakeFileOperations(configuration, client).getFile(new DefaultExchange(context));
+
+        assertEquals(REMOTE_CONTENT,
+                new String(((InputStream) response.getBody()).readAllBytes(), StandardCharsets.UTF_8));
+        verify(client, never()).downloadWithResponse(any(), any(), any(), any(), anyBoolean(), any());
+    }
+
+    private static FileReadResponse download(OutputStream outputStream) throws IOException {
+        outputStream.write(REMOTE_CONTENT.getBytes(StandardCharsets.UTF_8));
+        return new FileReadResponse(new FileReadAsyncResponse(null, 200, new HttpHeaders(), null, new FileReadHeaders()));
     }
 
     @Test

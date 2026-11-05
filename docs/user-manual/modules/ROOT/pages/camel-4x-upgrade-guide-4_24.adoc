@@ -5065,6 +5065,14 @@ Remove the range header and options if your route needs the entire file.
 The streaming path also honors the `CamelAzureStorageDataLakeRequestCondition` header, whether or not a range
 is set. An ETag mismatch or an invalid lease can now fail a streaming read that previously ignored the condition.
 
+=== camel-azure-storage-datalake - getFile writes only into an OutputStream body
+
+The getFile operation now writes the file into the message body only when the body is an `OutputStream`. A body that
+only converts to one, such as a `java.io.File`, a `java.nio.file.Path` or the file of a file consumer, is replaced by an
+`InputStream` of the file, as any other body is. Previously such a file was overwritten with the remote file, also with
+`noop=true` on the file consumer. To save a file locally, use the downloadToFile operation, or a `file` endpoint after
+getFile.
+
 === camel-chatscript - the first message of a conversation is sent, and the headers are kept
 
 The first message of a ChatScript endpoint, and every message with `resetChat=true`, used to start the conversation
