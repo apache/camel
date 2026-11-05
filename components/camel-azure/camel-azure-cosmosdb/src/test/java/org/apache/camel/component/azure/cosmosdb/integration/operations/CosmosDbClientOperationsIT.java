@@ -16,15 +16,12 @@
  */
 package org.apache.camel.component.azure.cosmosdb.integration.operations;
 
-import java.util.Properties;
-
-import com.azure.cosmos.CosmosAsyncClient;
-import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.models.CosmosDatabaseProperties;
 import com.azure.cosmos.models.CosmosDatabaseResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
 import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
+import org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,33 +29,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
-})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbClientOperationsIT {
+
+    @RegisterExtension
+    static AzureCosmosDbService service = CosmosDbTestUtils.createService();
 
     private CosmosAsyncClientWrapper clientWrapper;
 
     @BeforeAll
-    void prepare() throws Exception {
-        final Properties properties = CosmosDbTestUtils.loadAzureAccessFromJvmEnv();
-
-        final CosmosAsyncClient client = new CosmosClientBuilder()
-                .key(properties.getProperty("access_key"))
-                .endpoint(properties.getProperty("endpoint"))
-                .buildAsyncClient();
-
-        clientWrapper = new CosmosAsyncClientWrapper(client);
+    void prepare() {
+        clientWrapper = new CosmosAsyncClientWrapper(CosmosDbTestUtils.createAsyncClient());
     }
 
     @AfterEach
@@ -121,6 +109,12 @@ class CosmosDbClientOperationsIT {
     }
 
     @Test
+    @EnabledIfSystemProperties({
+            @EnabledIfSystemProperty(named = "endpoint", matches = ".+",
+                                     disabledReason = "Floci AZ does not emulate the queries of the databases: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey="),
+            @EnabledIfSystemProperty(named = "accessKey", matches = ".+",
+                                     disabledReason = "Floci AZ does not emulate the queries of the databases: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey=")
+    })
     void testQueryAndReadAllDatabases() {
         // create bunch of databases
         final String prefixDatabaseNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
