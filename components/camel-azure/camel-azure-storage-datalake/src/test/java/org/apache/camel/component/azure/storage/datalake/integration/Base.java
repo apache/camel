@@ -37,7 +37,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-//@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class Base extends CamelTestSupport {
 
@@ -59,6 +58,10 @@ public class Base extends CamelTestSupport {
         return context;
     }
 
+    /*
+     * The tests run against a local Floci AZ container, unless the accountName and accountKey properties are set: then
+     * they run against that storage account.
+     */
     static void initCredentials() {
         String accountName = System.getProperty("accountName");
         String accessKey = System.getProperty("accountKey");
@@ -66,6 +69,7 @@ public class Base extends CamelTestSupport {
         if (StringUtils.isNotEmpty(accountName) && StringUtils.isNotEmpty(accessKey)) {
             System.setProperty(AzureConfigs.ACCOUNT_NAME, accountName);
             System.setProperty(AzureConfigs.ACCOUNT_KEY, accessKey);
+            System.setProperty("azure.instance.type", "remote");
         }
     }
 
