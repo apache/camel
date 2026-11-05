@@ -2524,6 +2524,17 @@ marked rollback only, so the commit of the outer block fails (in Camel Quarkus w
 to commit, as with camel-spring (`UnexpectedRollbackException`). To roll back only the inner block, use
 `PROPAGATION_REQUIRES_NEW` for it.
 
+=== camel-keycloak - the CamelKeycloakOperation header needs the allowOperationHeader option
+
+The `CamelKeycloakOperation` header took the place of the `operation` of the `keycloak` endpoint, so a message could
+make the endpoint run another operation than the one it is configured with. The header is now ignored unless the
+endpoint sets the new `allowOperationHeader=true` option (disabled by default), and the endpoint runs its configured
+`operation`. A route that picks the operation with the header must set `allowOperationHeader=true` on the endpoint, or
+on the component (`camel.component.keycloak.allowOperationHeader=true`) for all its endpoints.
+
+An endpoint without an `operation`, which took the operation from the header, now fails with an
+`IllegalArgumentException` that asks for the operation, unless it sets `allowOperationHeader=true`.
+
 === camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
 
 * A consumer configured with `negotiationType=SSL` and the default `synchronous=false` now fails to start. It used to

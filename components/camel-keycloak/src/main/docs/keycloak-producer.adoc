@@ -132,6 +132,17 @@ All producer operations follow the same pattern: set the operation name in the U
 template.sendBodyAndHeaders("keycloak:admin?operation=<operationName>", null, headers);
 ----
 
+=== Choosing the operation with a header
+
+The endpoint runs its `operation`. The `CamelKeycloakOperation` header is ignored unless the endpoint sets
+`allowOperationHeader=true` (disabled by default). With that option, the header takes the place of the `operation` of
+the endpoint for one message, so the message chooses what the endpoint does with its admin client, such as
+`deleteRealm` on an endpoint configured for `getUser`. Enable it only on routes that set the header themselves or whose
+messages come from a trusted source. The option can also be set on the component, for all its endpoints.
+
+When the messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers,
+remove these headers with `removeHeaders("CamelKeycloak*")` before the `keycloak` endpoint.
+
 === Representation bodies
 
 With `pojoRequest=true`, the create and update operations take the Keycloak representation as the body, such as a

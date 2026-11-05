@@ -147,6 +147,7 @@ public final class SecurityUtils {
         owners.put("allowlocalwebhookurls", Set.of(
                 "component:a2a"));
         owners.put("allowoperationheader", Set.of(
+                "component:keycloak",
                 "component:spiffe"));
         owners.put("allowpredicatefrommessage", Set.of(
                 "component:dynamicroutercontrol"));
