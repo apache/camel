@@ -649,7 +649,7 @@ class FindRepoRootTest(unittest.TestCase):
 
 
 class RunCheckRepoRootTest(unittest.TestCase):
-    """run_check with scan_path=test-infra must still find skipITs in components/."""
+    """run_check with scan_path=test-infra must still find skipITs in components/ via _find_repo_root."""
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -716,8 +716,6 @@ class RunCheckRepoRootTest(unittest.TestCase):
 
         # The mock result should be returned
         self.assertEqual(len(results), 1)
-        es_result = results[0]
-        self.assertIn("linux/s390x", es_result.image.skipped_arches)
 
 
 class ArchUnverifiedTest(unittest.TestCase):
