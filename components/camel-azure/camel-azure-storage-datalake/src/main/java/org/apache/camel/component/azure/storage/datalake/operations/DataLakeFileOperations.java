@@ -65,12 +65,9 @@ public class DataLakeFileOperations {
 
     public DataLakeOperationResponse getFile(final Exchange exchange) throws IOException {
         final Message message = DataLakeUtils.getInMessage(exchange);
-        final OutputStream outputStream;
-        if (ObjectHelper.isEmpty(message)) {
-            outputStream = null;
-        } else {
-            outputStream = message.getBody(OutputStream.class);
-        }
+        // only an OutputStream body is written to, not a body that converts to one (such as a File, which would be emptied)
+        final OutputStream outputStream
+                = message != null && message.getBody() instanceof OutputStream os ? os : null;
 
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
         final FileRange fileRange = configurationProxy.getFileRange(exchange);
