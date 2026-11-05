@@ -20,6 +20,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
@@ -38,6 +39,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * The hybrid KEM must stamp the JCE algorithm name on the secret key it returns, as the non-hybrid operations do, so
@@ -118,10 +120,10 @@ class HybridKEMKeyLabelTest {
                 KeyAgreement.getInstance("X25519", "BC"), KeyGenerator.getInstance("ML-KEM", "BC"),
                 "DESede", 192, "HKDF-SHA256");
 
-        org.junit.jupiter.api.Assertions.assertFalse(
-                java.util.Arrays.equals(viaConfigured.sharedSecret().getEncoded(), viaJceName.getEncoded()),
+        assertFalse(
+                Arrays.equals(viaConfigured.sharedSecret().getEncoded(), viaJceName.getEncoded()),
                 "the HKDF info must still be the configured name: if remapping it made these equal, the wire format"
-                                                                                                             + " would have changed and older encapsulations would no longer decrypt");
+                                                                                                   + " would have changed and older encapsulations would no longer decrypt");
     }
 
     @Test

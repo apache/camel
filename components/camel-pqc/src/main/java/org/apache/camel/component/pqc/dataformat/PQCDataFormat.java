@@ -266,7 +266,7 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
         // Fail fast if the configured symmetric algorithm cannot provide authenticated encryption. Per-message
         // overrides via the CamelPQCSymmetricAlgorithm header are validated at marshal/unmarshal time.
         if (symmetricKeyAlgorithm != null) {
-            checkAeadSupported(toJceAlgorithm(symmetricKeyAlgorithm));
+            checkAeadSupported(PQCSymmetricAlgorithms.toJceName(symmetricKeyAlgorithm));
         }
 
         if (keyEncapsulationAlgorithm != null && keyGenerator == null) {
@@ -335,21 +335,9 @@ public class PQCDataFormat extends ServiceSupport implements DataFormat, DataFor
     private String getSymmetricAlgorithm(Exchange exchange) {
         String alg = exchange.getIn().getHeader(SYMMETRIC_ALGORITHM, String.class);
         if (alg != null) {
-            return toJceAlgorithm(alg);
+            return PQCSymmetricAlgorithms.toJceName(alg);
         }
-        return toJceAlgorithm(this.symmetricKeyAlgorithm);
-    }
-
-    /**
-     * Maps a {@link PQCSymmetricAlgorithms} enum name to its JCE algorithm name, returning the input unchanged when it
-     * is not an enum constant (e.g. it is already a JCE name).
-     */
-    private static String toJceAlgorithm(String algorithm) {
-        try {
-            return PQCSymmetricAlgorithms.valueOf(algorithm).getAlgorithm();
-        } catch (IllegalArgumentException e) {
-            return algorithm;
-        }
+        return PQCSymmetricAlgorithms.toJceName(this.symmetricKeyAlgorithm);
     }
 
     /**
