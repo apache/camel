@@ -125,6 +125,13 @@ such an entry: `@revoked` and `@cert-authority` entries do not list a host.
 Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
 endpoint is configured with.
 
+=== camel-google-calendar-stream
+
+With `syncFlow=false` and `considerLastUpdate=true`, the consumer now follows all result pages in each poll.
+Previously it only read the first page, which could prevent later events from ever being delivered.
+In this mode, `maxResults` controls the API page size; a poll can now deliver more events than this value.
+Non-sync polling with `considerLastUpdate=false` continues to read only one page per poll.
+
 === camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint
 
 The `google-mail`, `google-mail-stream`, `google-drive`, `google-calendar`, `google-calendar-stream`, `google-sheets`
