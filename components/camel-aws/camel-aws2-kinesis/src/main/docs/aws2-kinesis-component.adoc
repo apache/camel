@@ -105,6 +105,10 @@ requests of the batch.
 After the last request, the `CamelAwsKinesisRecordCount` header has the number of records of the batch, and the
 `CamelAwsKinesisFailedRecordCount` header the number of records that are still not written. When that number is not
 0, the exchange fails with an exception that gives both numbers and the first error code.
+When a `PutRecords` call throws, for example an `InvalidArgumentException`, a KMS error, or an error of the AWS SDK
+client after its own retries, the exchange fails at once with that exception, and the next requests of the batch are
+not sent. Both headers are set in that case too: the records of that call and of the requests that were not sent are
+counted as not written, even if the call may have written some of them (for example after a timeout).
 
 A failure does not undo the records that are already written. A redelivery of the exchange, by the error handler of
 the route or by the source of the message (for example a transacted JMS or an SQS consumer), sends the whole batch

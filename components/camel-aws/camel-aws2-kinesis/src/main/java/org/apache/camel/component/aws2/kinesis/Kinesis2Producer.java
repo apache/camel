@@ -105,35 +105,39 @@ public class Kinesis2Producer extends DefaultProducer {
         List<List<PutRecordsRequestEntry>> requestBatchList
                 = createRequestBatchList(exchange, partitionKey, partitionKeys);
         int totalRecordCount = 0;
-        int totalFailedCount = 0;
-        PutRecordsResultEntry firstFailure = null;
-        // the next requests are sent even when records of an earlier one could not be written
         for (List<PutRecordsRequestEntry> requestBatch : requestBatchList) {
-            List<PutRecordsResultEntry> failures = sendRequestBatch(requestBatch);
             totalRecordCount += requestBatch.size();
-            totalFailedCount += failures.size();
-            if (firstFailure == null && !failures.isEmpty()) {
-                firstFailure = failures.get(0);
-            }
         }
-        Message message = exchange.getMessage();
-        message.setHeader(Kinesis2Constants.RECORD_COUNT, totalRecordCount);
-        message.setHeader(Kinesis2Constants.FAILED_RECORD_COUNT, totalFailedCount);
-        if (firstFailure != null) {
+        BatchProgress progress = new BatchProgress();
+        try {
+            // the next requests are sent even when records of an earlier one could not be written
+            for (List<PutRecordsRequestEntry> requestBatch : requestBatchList) {
+                sendRequestBatch(requestBatch, progress);
+            }
+        } finally {
+            // also set when a PutRecords call throws: the records that Kinesis did not report as written, those of the
+            // requests that were not sent included, are counted as failed
+            Message message = exchange.getMessage();
+            message.setHeader(Kinesis2Constants.RECORD_COUNT, totalRecordCount);
+            message.setHeader(Kinesis2Constants.FAILED_RECORD_COUNT, totalRecordCount - progress.writtenCount);
+        }
+        if (progress.firstFailure != null) {
             throw new RuntimeCamelException(
-                    "Failed to send " + totalFailedCount + " of " + totalRecordCount + " records to the Kinesis stream "
+                    "Failed to send " + (totalRecordCount - progress.writtenCount) + " of " + totalRecordCount
+                                            + " records to the Kinesis stream "
                                             + getEndpoint().getConfiguration().getStreamName() + " after " + MAX_RETRIES
-                                            + " retries, " + (totalRecordCount - totalFailedCount)
-                                            + " records were written. First error: " + firstFailure.errorCode() + ": "
-                                            + firstFailure.errorMessage());
+                                            + " retries, " + progress.writtenCount
+                                            + " records were written. First error: " + progress.firstFailure.errorCode()
+                                            + ": " + progress.firstFailure.errorMessage());
         }
     }
 
     /**
      * Sends the records of one PutRecords request, then sends again the records that failed, at most
-     * {@link #MAX_RETRIES} times. Returns the results of the records that are still not written.
+     * {@link #MAX_RETRIES} times. Adds the records that are written, and the first failure of a record that is still
+     * not written, to the progress of the batch.
      */
-    private List<PutRecordsResultEntry> sendRequestBatch(List<PutRecordsRequestEntry> requestBatch) {
+    private void sendRequestBatch(List<PutRecordsRequestEntry> requestBatch, BatchProgress progress) {
         String streamName = getEndpoint().getConfiguration().getStreamName();
         List<PutRecordsRequestEntry> pending = requestBatch;
         for (int retry = 0;; retry++) {
@@ -153,8 +157,12 @@ public class Kinesis2Producer extends DefaultProducer {
                     failures.add(results.get(i));
                 }
             }
+            progress.writtenCount += pending.size() - failures.size();
             if (failures.isEmpty() || retry == MAX_RETRIES) {
-                return failures;
+                if (progress.firstFailure == null && !failures.isEmpty()) {
+                    progress.firstFailure = failures.get(0);
+                }
+                return;
             }
             long delay = retryDelayMillis(retry);
             LOG.debug("{} of {} records were not written to the Kinesis stream {} ({}), sending them again in {} ms",
@@ -266,5 +274,13 @@ public class Kinesis2Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(partitionKey)) {
             throw new IllegalArgumentException("Partition key must be specified");
         }
+    }
+
+    /**
+     * How many records of a batch Kinesis wrote, and the first failure of a record that is still not written.
+     */
+    private static final class BatchProgress {
+        private int writtenCount;
+        private PutRecordsResultEntry firstFailure;
     }
 }

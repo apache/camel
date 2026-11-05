@@ -42,6 +42,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import software.amazon.awssdk.services.kinesis.KinesisClient;
+import software.amazon.awssdk.services.kinesis.model.KmsThrottlingException;
 import software.amazon.awssdk.services.kinesis.model.PutRecordRequest;
 import software.amazon.awssdk.services.kinesis.model.PutRecordResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsRequest;
@@ -50,6 +51,7 @@ import software.amazon.awssdk.services.kinesis.model.PutRecordsResponse;
 import software.amazon.awssdk.services.kinesis.model.PutRecordsResultEntry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -224,6 +226,34 @@ public class Kinesis2ProducerTest {
     }
 
     @Test
+    public void batchSetsTheCountsWhenAPutRecordsCallThrows() {
+        // a record of the second request fails, and the call that sends it again throws
+        KmsThrottlingException failure = KmsThrottlingException.builder().message("Rate exceeded").build();
+        when(kinesisClient.putRecords(any(PutRecordsRequest.class))).thenAnswer(invocation -> {
+            PutRecordsRequest request = invocation.getArgument(0);
+            if (requests.size() == 2) {
+                requests.add(request);
+                throw failure;
+            }
+            return respond(request, entry -> entry.data().asUtf8String().equals("r600"));
+        });
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "key");
+        exchange.getIn().setBody(records(1200));
+
+        KmsThrottlingException e = assertThrows(KmsThrottlingException.class, () -> producer.process(exchange));
+
+        // the exception of the call fails the exchange as it is, and the last request is not sent
+        assertSame(failure, e);
+        assertEquals(List.of(500, 500, 1), requestSizes());
+        assertEquals(999, written.size());
+        // the record of the call that threw and the 200 records of the request that was not sent are not written
+        assertEquals(1200, exchange.getMessage().getHeader(Kinesis2Constants.RECORD_COUNT, Integer.class));
+        assertEquals(201, exchange.getMessage().getHeader(Kinesis2Constants.FAILED_RECORD_COUNT, Integer.class));
+    }
+
+    @Test
     public void retryDelayDoublesAndHasARandomPart() {
         for (int retry = 0; retry < 3; retry++) {
             long base = 100L << retry;
@@ -309,28 +339,30 @@ public class Kinesis2ProducerTest {
      * error code, as in a partly failed request.
      */
     private void stubPutRecords(Predicate<PutRecordsRequestEntry> fails) {
-        when(kinesisClient.putRecords(any(PutRecordsRequest.class))).thenAnswer(invocation -> {
-            PutRecordsRequest request = invocation.getArgument(0);
-            requests.add(request);
-            List<PutRecordsResultEntry> results = new ArrayList<>();
-            int failed = 0;
-            for (PutRecordsRequestEntry entry : request.records()) {
-                if (fails.test(entry)) {
-                    failed++;
-                    results.add(PutRecordsResultEntry.builder()
-                            .errorCode("ProvisionedThroughputExceededException")
-                            .errorMessage("Rate exceeded for shard shardId-000000000000")
-                            .build());
-                } else {
-                    written.add(entry);
-                    results.add(PutRecordsResultEntry.builder()
-                            .shardId("shardId-000000000000")
-                            .sequenceNumber(String.valueOf(written.size()))
-                            .build());
-                }
+        when(kinesisClient.putRecords(any(PutRecordsRequest.class)))
+                .thenAnswer(invocation -> respond(invocation.getArgument(0), fails));
+    }
+
+    private PutRecordsResponse respond(PutRecordsRequest request, Predicate<PutRecordsRequestEntry> fails) {
+        requests.add(request);
+        List<PutRecordsResultEntry> results = new ArrayList<>();
+        int failed = 0;
+        for (PutRecordsRequestEntry entry : request.records()) {
+            if (fails.test(entry)) {
+                failed++;
+                results.add(PutRecordsResultEntry.builder()
+                        .errorCode("ProvisionedThroughputExceededException")
+                        .errorMessage("Rate exceeded for shard shardId-000000000000")
+                        .build());
+            } else {
+                written.add(entry);
+                results.add(PutRecordsResultEntry.builder()
+                        .shardId("shardId-000000000000")
+                        .sequenceNumber(String.valueOf(written.size()))
+                        .build());
             }
-            return PutRecordsResponse.builder().failedRecordCount(failed).records(results).build();
-        });
+        }
+        return PutRecordsResponse.builder().failedRecordCount(failed).records(results).build();
     }
 
     private List<Integer> requestSizes() {

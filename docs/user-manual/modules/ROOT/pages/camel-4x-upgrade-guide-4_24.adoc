@@ -887,7 +887,9 @@ batch. Before, the exchange failed at once and
 the next requests were not sent. If records are still not written, the exchange fails after the last request, with a
 `RuntimeCamelException` (a `RuntimeException`, as before) whose message gives the number of records written and not
 written. The `CamelAwsKinesisRecordCount` and `CamelAwsKinesisFailedRecordCount` headers are now also set when the
-exchange fails. A redelivery of the exchange still sends the whole batch again: see the Batch Producer section of
+exchange fails, including when a `PutRecords` call throws: the exchange then fails with the exception of the call, as
+before, and the records of that call and of the requests that were not sent are counted as not written.
+A redelivery of the exchange still sends the whole batch again: see the Batch Producer section of
 xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 
 === camel-stitch - a response with an empty body, and the default sequence of a message
