@@ -497,6 +497,33 @@ class ComponentSkipItsMapTest(unittest.TestCase):
         self.assertIn("linux/s390x", result.get("camel-test-infra-es", []))
         self.assertNotIn("linux/ppc64le", result.get("camel-test-infra-es", []))
 
+    def test_test_infra_all_pom_is_ignored(self):
+        """test-infra/camel-test-infra-all/pom.xml references every module but must be skipped."""
+        # Component pom that legitimately skips s390x
+        self._write_pom(
+            self.base / "components" / "camel-elasticsearch" / "pom.xml",
+            """<project><properties>
+                <skipITs.s390x>true</skipITs.s390x>
+            </properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-elasticsearch</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        # test-infra-all aggregator pom — references every module, no skipITs
+        self._write_pom(
+            self.base / "test-infra" / "camel-test-infra-all" / "pom.xml",
+            """<project><modules>
+                <module>../camel-test-infra-elasticsearch</module>
+            </modules>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-elasticsearch</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
+        # The -all pom should be ignored; only the component pom counts
+        self.assertIn("camel-test-infra-elasticsearch", result)
+        self.assertIn("linux/s390x", result["camel-test-infra-elasticsearch"])
+
     def test_consumer_without_skip_its_clears_exemption(self):
         """A consumer pom with no skipITs.* should clear all exemptions via intersection."""
         # Consumer A skips both arches; consumer B has no skipITs at all
@@ -590,10 +617,6 @@ class BearerTokenChallengeTest(unittest.TestCase):
         self.assertEqual('', token)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class FindRepoRootTest(unittest.TestCase):
     """_find_repo_root must walk up to the directory containing components/ or .git."""
 
@@ -665,9 +688,25 @@ class RunCheckRepoRootTest(unittest.TestCase):
         )
 
         checker = ContainerVersionChecker(skip_arch_check=True)
-        # Scan only test-infra — _find_repo_root should walk up to self.root
-        scan_path = str(self.root / "test-infra")
-        results = checker.run_check(scan_path, quiet=True)
+        # Patch check_image_versions to keep the test offline
+        fake_result = VersionCheckResult(
+            image=make_image(
+                registry="docker.elastic.co",
+                namespace="elasticsearch",
+                name="elasticsearch",
+                current_version="8.17.3",
+                property_name="elasticsearch.container",
+                skipped_arches=["linux/s390x", "linux/ppc64le"],
+            ),
+            available_versions=["8.17.3"],
+            latest_version="8.17.3",
+            newer_versions=[],
+            is_latest=True,
+        )
+        with patch.object(checker, 'check_image_versions', return_value=fake_result):
+            # Scan only test-infra — _find_repo_root should walk up to self.root
+            scan_path = str(self.root / "test-infra")
+            results = checker.run_check(scan_path, quiet=True)
 
         # The skipITs map should have been built from components/
         self.assertIn("camel-test-infra-elasticsearch", checker._component_skip_its_map)
@@ -675,11 +714,10 @@ class RunCheckRepoRootTest(unittest.TestCase):
         self.assertIn("linux/s390x", skipped)
         self.assertIn("linux/ppc64le", skipped)
 
-        # The images parsed should have the skipped_arches populated
-        if results:
-            es_results = [r for r in results if "elasticsearch" in r.image.property_name]
-            if es_results:
-                self.assertIn("linux/s390x", es_results[0].image.skipped_arches)
+        # The mock result should be returned
+        self.assertEqual(len(results), 1)
+        es_result = results[0]
+        self.assertIn("linux/s390x", es_result.image.skipped_arches)
 
 
 class ArchUnverifiedTest(unittest.TestCase):
@@ -737,3 +775,7 @@ class ArchUnverifiedTest(unittest.TestCase):
         json_str = checker_mod.output_json([result])
         data = json.loads(json_str)
         self.assertFalse(data[0]["arch_unverified"])
+
+
+if __name__ == "__main__":
+    unittest.main()
