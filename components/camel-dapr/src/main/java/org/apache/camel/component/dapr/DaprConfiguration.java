@@ -75,6 +75,12 @@ public class DaprConfiguration implements Cloneable {
     @UriParam(label = "producer",
               description = "The key used to identify the state/secret object within the specified state/secret store")
     private String key;
+    @UriParam(label = "producer,security", defaultValue = "false", security = "insecure:dev", insecureValue = "true",
+              description = "Whether to allow overriding the secret store and the key of the endpoint with the"
+                            + " CamelDaprSecretStore and CamelDaprKey headers for the secret operation. Disabled by"
+                            + " default; enable it only when the header source is trusted, since it lets a message"
+                            + " choose the secret store and the secret that the secret operation reads.")
+    private boolean allowSecretStoreAndKeyFromHeaders;
     @UriParam(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations")
     private String eTag;
     @UriParam(label = "producer", description = "Concurrency mode to use with state operations",
@@ -296,6 +302,18 @@ public class DaprConfiguration implements Cloneable {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    /**
+     * Whether the <b>CamelDaprSecretStore</b> and <b>CamelDaprKey</b> headers may override the secret store and the key
+     * of the endpoint for the secret operation.
+     */
+    public boolean isAllowSecretStoreAndKeyFromHeaders() {
+        return allowSecretStoreAndKeyFromHeaders;
+    }
+
+    public void setAllowSecretStoreAndKeyFromHeaders(boolean allowSecretStoreAndKeyFromHeaders) {
+        this.allowSecretStoreAndKeyFromHeaders = allowSecretStoreAndKeyFromHeaders;
     }
 
     /**

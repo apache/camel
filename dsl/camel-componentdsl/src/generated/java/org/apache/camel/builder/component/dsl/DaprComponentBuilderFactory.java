@@ -719,6 +719,27 @@ public interface DaprComponentBuilderFactory {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
+    
+        
+        /**
+         * Whether to allow overriding the secret store and the key of the
+         * endpoint with the CamelDaprSecretStore and CamelDaprKey headers for
+         * the secret operation. Disabled by default; enable it only when the
+         * header source is trusted, since it lets a message choose the secret
+         * store and the secret that the secret operation reads.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSecretStoreAndKeyFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DaprComponentBuilder allowSecretStoreAndKeyFromHeaders(boolean allowSecretStoreAndKeyFromHeaders) {
+            doSetProperty("allowSecretStoreAndKeyFromHeaders", allowSecretStoreAndKeyFromHeaders);
+            return this;
+        }
     }
 
     class DaprComponentBuilderImpl
@@ -780,6 +801,7 @@ public interface DaprComponentBuilderFactory {
             case "workflowVersion": getOrCreateConfiguration((DaprComponent) component).setWorkflowVersion((java.lang.String) value); return true;
             case "autowiredEnabled": ((DaprComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "headerFilterStrategy": ((DaprComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "allowSecretStoreAndKeyFromHeaders": getOrCreateConfiguration((DaprComponent) component).setAllowSecretStoreAndKeyFromHeaders((boolean) value); return true;
             default: return false;
             }
         }

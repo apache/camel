@@ -49,4 +49,26 @@ public class DaprConfigurationOptionsProxyTest extends CamelTestSupport {
 
         assertNull(configurationOptionsProxy.getMethodToInvoke(exchange));
     }
+
+    @Test
+    void secretStoreAndKeyHeadersApplyToTheSecretOperationOnlyWhenAllowed() {
+        final DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setSecretStore("configStore");
+        configuration.setKey("configKey");
+        final DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(DaprConstants.SECRET_STORE, "headerStore");
+        exchange.getIn().setHeader(DaprConstants.KEY, "headerKey");
+
+        // by default, the secret operation uses the endpoint, and the state operations still use the key header
+        assertEquals("configStore", configurationOptionsProxy.getSecretStore(exchange));
+        assertEquals("configKey", configurationOptionsProxy.getSecretKey(exchange));
+        assertEquals("headerKey", configurationOptionsProxy.getKey(exchange));
+
+        configuration.setAllowSecretStoreAndKeyFromHeaders(true);
+
+        assertEquals("headerStore", configurationOptionsProxy.getSecretStore(exchange));
+        assertEquals("headerKey", configurationOptionsProxy.getSecretKey(exchange));
+    }
 }

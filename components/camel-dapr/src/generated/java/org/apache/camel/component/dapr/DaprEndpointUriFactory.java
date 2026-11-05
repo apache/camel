@@ -24,7 +24,8 @@ public class DaprEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(41);
+        Set<String> props = new HashSet<>(42);
+        props.add("allowSecretStoreAndKeyFromHeaders");
         props.add("bindingName");
         props.add("bindingOperation");
         props.add("bridgeErrorHandler");

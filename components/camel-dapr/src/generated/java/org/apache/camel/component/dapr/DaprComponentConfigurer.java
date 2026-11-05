@@ -31,6 +31,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprComponent target = (DaprComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": getOrCreateConfiguration(target).setAllowSecretStoreAndKeyFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bindingname":
@@ -114,6 +116,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bindingname":
@@ -193,6 +197,8 @@ public class DaprComponentConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprComponent target = (DaprComponent) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": return getOrCreateConfiguration(target).isAllowSecretStoreAndKeyFromHeaders();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bindingname":

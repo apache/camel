@@ -49,7 +49,9 @@ public class DaprConstants {
               javaType = "String")
     public static final String STATE_STORE = HEADER_PREFIX + "StateStore";
     @Metadata(label = "producer",
-              description = "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config",
+              description = "The name of the Dapr secret store to interact with, defined in local-secret-store.yaml config."
+                            + " For the secret operation, this header is ignored unless the endpoint enables"
+                            + " allowSecretStoreAndKeyFromHeaders=true (disabled by default).",
               javaType = "String")
     public static final String SECRET_STORE = HEADER_PREFIX + "SecretStore";
     @Metadata(label = "producer",
@@ -57,7 +59,9 @@ public class DaprConstants {
               javaType = "String")
     public static final String CONFIG_STORE = HEADER_PREFIX + "ConfigStore";
     @Metadata(label = "producer",
-              description = "The key used to identify the state/secret object within the specified state/secret store",
+              description = "The key used to identify the state/secret object within the specified state/secret store."
+                            + " For the secret operation, this header is ignored unless the endpoint enables"
+                            + " allowSecretStoreAndKeyFromHeaders=true (disabled by default).",
               javaType = "String")
     public static final String KEY = HEADER_PREFIX + "Key";
     @Metadata(label = "producer", description = "The eTag for optimistic concurrency during state save or delete operations",

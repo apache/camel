@@ -999,6 +999,22 @@ as a quoted, escaped JSON string; a stream body failed. A route that relied on t
 it wants, for example with `marshal().json()`. Other bodies, such as a `Map` or a POJO, are still serialized as JSON.
 The workflow operations give the body to the workflow client as before.
 
+=== camel-dapr - the secret store and key headers need the allowSecretStoreAndKeyFromHeaders option
+
+The `secret` operation of the `dapr` producer took the secret store and the key from the `CamelDaprSecretStore` and
+`CamelDaprKey` headers when they were set, over the `secretStore` and `key` options of the endpoint, so a message could
+read another secret, or use another secret store, than the endpoint is configured with. For the `secret` operation,
+these headers are now ignored unless the endpoint sets the new `allowSecretStoreAndKeyFromHeaders=true` option
+(disabled by default), or the component sets `camel.component.dapr.allowSecretStoreAndKeyFromHeaders=true`. A route
+that relies on them must set this option.
+
+A `secret` endpoint without a `key`, which took the key from the `CamelDaprKey` header, now fails with an error that
+names the option, instead of reading all the secrets of the store. A `secret` endpoint without a `secretStore`, which
+took it from the `CamelDaprSecretStore` header, now fails because the secret store is missing.
+
+The other operations do not change: the `state` operations still take the key from the `CamelDaprKey` header, and the
+other `CamelDapr*` headers still take the place of the options of the endpoint, as before.
+
 === camel-consul - no Optional in the body, and the CamelConsulResult header of every action
 
 The `GET_SESSIONS` action of `consul:kv`, the `RENEW` action of `consul:session` and the `GET` action of

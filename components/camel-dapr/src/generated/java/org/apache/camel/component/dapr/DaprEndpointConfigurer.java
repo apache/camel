@@ -24,6 +24,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": target.getConfiguration().setAllowSecretStoreAndKeyFromHeaders(property(camelContext, boolean.class, value)); return true;
         case "bindingname":
         case "bindingName": target.getConfiguration().setBindingName(property(camelContext, java.lang.String.class, value)); return true;
         case "bindingoperation":
@@ -108,6 +110,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": return boolean.class;
         case "bindingname":
         case "bindingName": return java.lang.String.class;
         case "bindingoperation":
@@ -188,6 +192,8 @@ public class DaprEndpointConfigurer extends PropertyConfigurerSupport implements
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         DaprEndpoint target = (DaprEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsecretstoreandkeyfromheaders":
+        case "allowSecretStoreAndKeyFromHeaders": return target.getConfiguration().isAllowSecretStoreAndKeyFromHeaders();
         case "bindingname":
         case "bindingName": return target.getConfiguration().getBindingName();
         case "bindingoperation":

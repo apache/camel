@@ -1070,6 +1070,44 @@ public interface DaprEndpointBuilderFactory {
             doSetProperty("workflowVersion", workflowVersion);
             return this;
         }
+        /**
+         * Whether to allow overriding the secret store and the key of the
+         * endpoint with the CamelDaprSecretStore and CamelDaprKey headers for
+         * the secret operation. Disabled by default; enable it only when the
+         * header source is trusted, since it lets a message choose the secret
+         * store and the secret that the secret operation reads.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSecretStoreAndKeyFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder allowSecretStoreAndKeyFromHeaders(boolean allowSecretStoreAndKeyFromHeaders) {
+            doSetProperty("allowSecretStoreAndKeyFromHeaders", allowSecretStoreAndKeyFromHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the secret store and the key of the
+         * endpoint with the CamelDaprSecretStore and CamelDaprKey headers for
+         * the secret operation. Disabled by default; enable it only when the
+         * header source is trusted, since it lets a message choose the secret
+         * store and the secret that the secret operation reads.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSecretStoreAndKeyFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder allowSecretStoreAndKeyFromHeaders(String allowSecretStoreAndKeyFromHeaders) {
+            doSetProperty("allowSecretStoreAndKeyFromHeaders", allowSecretStoreAndKeyFromHeaders);
+            return this;
+        }
     }
 
     /**
@@ -1523,7 +1561,9 @@ public interface DaprEndpointBuilderFactory {
         }
         /**
          * The name of the Dapr secret store to interact with, defined in
-         * local-secret-store.yaml config.
+         * local-secret-store.yaml config. For the secret operation, this header
+         * is ignored unless the endpoint enables
+         * allowSecretStoreAndKeyFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1549,7 +1589,9 @@ public interface DaprEndpointBuilderFactory {
         }
         /**
          * The key used to identify the state/secret object within the specified
-         * state/secret store.
+         * state/secret store. For the secret operation, this header is ignored
+         * unless the endpoint enables allowSecretStoreAndKeyFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
