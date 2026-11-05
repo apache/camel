@@ -42,6 +42,7 @@ public class McpServerConfiguration {
     private List<McpServerIcon> serverIcons;
     private long sessionKeepAliveInterval = McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL;
     private long sessionIdleTtl = McpServerConstants.DEFAULT_SESSION_IDLE_TTL;
+    private String allowedOrigins;
 
     /**
      * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports
@@ -184,5 +185,21 @@ public class McpServerConfiguration {
 
     public void setSessionIdleTtl(long sessionIdleTtl) {
         this.sessionIdleTtl = sessionIdleTtl;
+    }
+
+    /**
+     * Comma-separated list of origins allowed to call the MCP endpoint, such as {@code https://app.example.com} or
+     * {@code http://localhost:*} (any port). A request without an {@code Origin} header is always served; a request
+     * with an {@code Origin} header that is not allowed is rejected with HTTP 403. When not set, only loopback origins
+     * are allowed. Engine-owned: ignored by native engines.
+     *
+     * @since 4.24
+     */
+    public String getAllowedOrigins() {
+        return allowedOrigins;
+    }
+
+    public void setAllowedOrigins(String allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
     }
 }

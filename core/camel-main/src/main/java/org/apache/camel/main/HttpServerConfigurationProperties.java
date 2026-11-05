@@ -88,6 +88,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     @Metadata(defaultValue = "300000")
     private long mcpSessionIdleTtl = 300000;
     @Metadata
+    private String mcpAllowedOrigins;
+    @Metadata
     private String mcpServerName;
     @Metadata
     private String mcpServerTitle;
@@ -520,6 +522,20 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.mcpSessionIdleTtl = mcpSessionIdleTtl;
     }
 
+    public String getMcpAllowedOrigins() {
+        return mcpAllowedOrigins;
+    }
+
+    /**
+     * Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. Each entry
+     * is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. A request
+     * without an Origin header is always served; a request with an Origin header that is not allowed is rejected with
+     * HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any port).
+     */
+    public void setMcpAllowedOrigins(String mcpAllowedOrigins) {
+        this.mcpAllowedOrigins = mcpAllowedOrigins;
+    }
+
     /**
      * Whether embedded HTTP server is enabled. By default, the server is not enabled.
      */
@@ -816,6 +832,15 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpSessionIdleTtl(long mcpSessionIdleTtl) {
         this.mcpSessionIdleTtl = mcpSessionIdleTtl;
+        return this;
+    }
+
+    /**
+     * Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. When not
+     * set, only loopback origins are allowed.
+     */
+    public HttpServerConfigurationProperties withMcpAllowedOrigins(String mcpAllowedOrigins) {
+        this.mcpAllowedOrigins = mcpAllowedOrigins;
         return this;
     }
 

@@ -133,6 +133,18 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-mcp-server - the Origin header is checked on /mcp
+
+On Camel Main and Camel JBang, the streamable HTTP MCP endpoint now checks the `Origin` header on every request
+(`POST`, the SSE `GET` and `DELETE`), as the MCP streamable HTTP transport requires. A request without an `Origin`
+header is served as before; MCP clients that run as a process send none. A request with an `Origin` header is served
+only when the origin is allowed, and gets HTTP 403 otherwise.
+
+By default only loopback origins are allowed (`localhost`, `127.0.0.1` and `[::1]`, on any port). A browser-based
+client served from another origin must now be listed in the new `camel.server.mcp-allowed-origins` option, for example
+`+camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*+`. The list replaces the loopback
+default. Stdio mode is not affected, and neither are the Spring Boot and Quarkus engines.
+
 === camel-mina-sftp - TCP_NODELAY is set on the connections
 
 The `mina-sftp` component now sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.

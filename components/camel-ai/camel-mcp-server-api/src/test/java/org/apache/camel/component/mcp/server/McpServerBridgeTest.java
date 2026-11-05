@@ -220,6 +220,37 @@ class McpServerBridgeTest extends CamelTestSupport {
     }
 
     @Test
+    void testAllowedOriginsPassedToEngine() throws Exception {
+        CamelContext originContext = new DefaultCamelContext();
+        RecordingMcpServerEngine originEngine = new RecordingMcpServerEngine();
+        originContext.getRegistry().bind("mcpServerEngine", originEngine);
+        McpServerConfiguration configuration = new McpServerConfiguration();
+        configuration.setTags("crm");
+        configuration.setAllowedOrigins(" https://app.example.com/ ,, http://localhost:* ");
+        McpServerBridge originBridge = new McpServerBridge(configuration);
+        originContext.addService(originBridge);
+        originContext.start();
+        originBridge.start();
+
+        try {
+            assertThat(originEngine.info().allowedOrigins())
+                    .containsExactly("https://app.example.com", "http://localhost:*");
+        } finally {
+            originBridge.stop();
+            originContext.stop();
+        }
+    }
+
+    @Test
+    void testAllowedOriginsNotSetLeavesTheEngineDefault() {
+        assertThat(engine.info().allowedOrigins()).isNull();
+        assertThat(McpServerBridge.parseAllowedOrigins(null)).isNull();
+        assertThat(McpServerBridge.parseAllowedOrigins(" ")).isNull();
+        // a value with no origin in it allows none
+        assertThat(McpServerBridge.parseAllowedOrigins(",")).isEmpty();
+    }
+
+    @Test
     void testNameCollisionIsRefused() throws Exception {
         McpServerTool published = engine.tools().get("query_db");
 

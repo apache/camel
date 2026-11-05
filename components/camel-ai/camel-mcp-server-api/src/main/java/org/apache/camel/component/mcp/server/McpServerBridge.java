@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.mcp.server;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -137,12 +139,17 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 configuration.getSessionKeepAliveInterval(), configuration.getSessionIdleTtl(),
                 configuration.getServerTitle(), configuration.getServerDescription(),
                 configuration.getServerWebsiteUrl(), configuration.getInstructions(),
-                configuration.getServerIcons()));
+                configuration.getServerIcons(), parseAllowedOrigins(configuration.getAllowedOrigins())));
 
         if (!engine.consumesServingConfiguration()) {
             if (!McpServerConstants.DEFAULT_PATH.equals(configuration.getPath())) {
                 LOG.warn("The MCP path option is ignored by engine {}: the runtime's native MCP server configuration "
                          + "decides the endpoint path",
+                        engine.getClass().getSimpleName());
+            }
+            if (isSet(configuration.getAllowedOrigins())) {
+                LOG.warn("The MCP allowed origins option is ignored by engine {}: the runtime's native MCP server "
+                         + "configuration decides which origins are allowed",
                         engine.getClass().getSimpleName());
             }
             if (hasServerMetadataConfiguration()) {
@@ -208,6 +215,27 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 || isSet(configuration.getServerWebsiteUrl())
                 || isSet(configuration.getInstructions())
                 || (configuration.getServerIcons() != null && !configuration.getServerIcons().isEmpty());
+    }
+
+    /**
+     * Splits the comma-separated allowed origins into a list, trimming each entry and dropping a trailing {@code /}.
+     * Returns {@code null} when not set, so the engine applies its default (loopback origins only).
+     */
+    static List<String> parseAllowedOrigins(String allowedOrigins) {
+        if (!isSet(allowedOrigins)) {
+            return null;
+        }
+        List<String> answer = new ArrayList<>();
+        for (String origin : allowedOrigins.split(",")) {
+            String value = origin.trim();
+            while (value.endsWith("/")) {
+                value = value.substring(0, value.length() - 1);
+            }
+            if (!value.isEmpty()) {
+                answer.add(value);
+            }
+        }
+        return answer;
     }
 
     private static boolean isSet(String value) {
