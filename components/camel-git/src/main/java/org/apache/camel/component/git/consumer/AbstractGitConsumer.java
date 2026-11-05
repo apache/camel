@@ -36,6 +36,8 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
     private final GitEndpoint endpoint;
     private Repository repo;
     private Git git;
+    // whether the last poll found items to deliver, consumed or not
+    private boolean lastPollFoundItems;
 
     protected AbstractGitConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -68,10 +70,18 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
         return git;
     }
 
+    /**
+     * Hands the exchanges of a poll to the route.
+     *
+     * @return the number of items marked consumed. A failed item, or one that was not handed to the route, is not
+     *         counted: a poll whose items all failed does not make a greedy consumer poll again at once, and the
+     *         backoff options count it as an idle poll.
+     */
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
-        int answer = total;
+        int consumed = 0;
+        lastPollFoundItems = total > 0;
         if (this.maxMessagesPerPoll > 0 && total > this.maxMessagesPerPoll) {
             LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
                     this.maxMessagesPerPoll, total);
@@ -90,6 +100,7 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
                 // next poll
                 if (processExchange(exchange)) {
                     onProcessed(exchange, value);
+                    consumed++;
                 }
             } finally {
                 releaseExchange(exchange, false);
@@ -102,7 +113,15 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
             releaseExchange(remaining, false);
         }
 
-        return answer;
+        return consumed;
+    }
+
+    @Override
+    protected void processEmptyMessage() throws Exception {
+        // a poll whose items all failed counts no item, but it found and delivered them, so it is not idle
+        if (!lastPollFoundItems) {
+            super.processEmptyMessage();
+        }
     }
 
     /**

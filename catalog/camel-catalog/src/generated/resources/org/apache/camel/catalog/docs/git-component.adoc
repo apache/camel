@@ -109,8 +109,14 @@ items that it has not delivered yet, so raise `delay` for a large repository tha
 
 A commit, tag or branch is marked consumed only when the route processed it without a failure. When the exchange
 fails, the failure is reported to the exception handler of the consumer, and the item is delivered again on the next
-poll. When an item keeps failing, handle the failure in the route, for example with a dead letter channel or a
-handled `onException`, so that the item is marked consumed.
+poll. It then comes after the items that followed it in the same poll, which were already delivered: the commits come
+from the newest to the oldest, and the tags and the branches in the order of their names.
+
+A poll counts only the items that it marked consumed. After a poll whose items all failed, a `greedy` consumer does
+not poll again at once and `sendEmptyMessageWhenIdle` sends no empty message, while `backoffIdleThreshold` and
+`backoffMultiplier` count it as an idle poll, so they can slow down the retries of an item that keeps failing. When an
+item keeps failing, handle the failure in the route, for example with a dead letter channel or a handled
+`onException`, so that the item is marked consumed.
 
 === Shallow Clone
 
