@@ -72,7 +72,7 @@ public interface ExchangeExtension {
     /**
      * Sets the unit of work of a parent exchange, which this exchange shares (the shareUnitOfWork option of the Split,
      * Multicast and Recipient List EIPs).
-     * <p/>
+     * <p>
      * The exchange uses that unit of work, but when it hands over its on completions (such as when it is sent to an
      * asynchronous endpoint like seda) it only hands over the on completions it added with
      * {@link #addOnCompletion(Synchronization)}. The other on completions of the shared unit of work (such as the

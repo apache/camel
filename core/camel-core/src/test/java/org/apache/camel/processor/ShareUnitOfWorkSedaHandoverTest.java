@@ -145,6 +145,22 @@ class ShareUnitOfWorkSedaHandoverTest extends ContextTestSupport {
     }
 
     @Test
+    void testOnCompletionAddedToTheUnitOfWorkStaysWithTheParent() throws Exception {
+        // added to the shared unit of work directly, as a route onCompletion that the part reaches does
+        // (OnCompletionProcessor): it is done with the shared unit of work, when the split is done, as for a part that
+        // does not send to seda
+        NotifyBuilder seda = new NotifyBuilder(context).fromRoute("seda").whenDone(1).create();
+        getMockEndpoint("mock:seda").expectedMessageCount(1);
+
+        Exchange out = template.send("direct:uow", e -> e.getIn().setBody("a"));
+
+        assertFalse(out.isFailed());
+        assertTrue(seda.matches(20, TimeUnit.SECONDS));
+        assertMockEndpointsSatisfied();
+        assertEquals(List.of("uow:complete:" + out.getExchangeId()), events);
+    }
+
+    @Test
     void testPartSendsToSedaTwice() throws Exception {
         NotifyBuilder seda = new NotifyBuilder(context).fromRoute("seda").whenDone(2).create();
         getMockEndpoint("mock:seda").expectedMessageCount(2);
@@ -258,6 +274,12 @@ class ShareUnitOfWorkSedaHandoverTest extends ContextTestSupport {
                 from("direct:own")
                         .split(body().tokenize(",")).shareUnitOfWork()
                             .process(e -> e.getExchangeExtension().addOnCompletion(new Recorder("part")))
+                            .to("seda:line")
+                        .end();
+
+                from("direct:uow")
+                        .split(body().tokenize(",")).shareUnitOfWork()
+                            .process(e -> e.getUnitOfWork().addSynchronization(new Recorder("uow")))
                             .to("seda:line")
                         .end();
 

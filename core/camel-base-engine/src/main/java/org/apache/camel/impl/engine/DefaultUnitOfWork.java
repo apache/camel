@@ -313,8 +313,8 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
 
         // at first done the synchronizations (on a copy taken under the lock, as other threads may add or hand over
-        // synchronizations)
-        UnitOfWorkHelper.doneSynchronizations(exchange, copySynchronizations());
+        // synchronizations; the copy is ours, so the helper orders it in place instead of copying it again)
+        UnitOfWorkHelper.doneSynchronizations(exchange, copySynchronizations(), false);
 
         // unregister from inflight registry, before signalling we are done
         inflightRepository.remove(exchange);
@@ -366,9 +366,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
             log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
                     exchange);
         }
+        // the copy is ours, so the helper orders it in place instead of copying it again
         final List<Synchronization> copy = copySynchronizations();
         if (copy != null) {
-            UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, copy, log);
+            UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, copy, log, false);
         }
     }
 
@@ -378,9 +379,10 @@ public class DefaultUnitOfWork implements UnitOfWork {
             log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(),
                     exchange);
         }
+        // the copy is ours, so the helper orders it in place instead of copying it again
         final List<Synchronization> copy = copySynchronizations();
         if (copy != null) {
-            UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, copy, log);
+            UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, copy, log, false);
         }
     }
 

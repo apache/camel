@@ -93,10 +93,8 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     private AsyncCallback defaultConsumerCallback;
     private UnitOfWork unitOfWork;
     private List<Synchronization> onCompletions;
-    // the unit of work of a parent exchange this exchange shares (shareUnitOfWork),
-    // and the on completions this exchange added to it
-    private UnitOfWork sharedUnitOfWork;
-    private List<Synchronization> sharedUnitOfWorkCompletions;
+    // set only on an exchange that shares the unit of work of a parent exchange (shareUnitOfWork)
+    private SharedUnitOfWork sharedUnitOfWork;
     private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
     protected AbstractExchange(CamelContext context, EnumMap<ExchangePropertyKey, Object> internalProperties,
@@ -121,9 +119,9 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         this.fromEndpoint = parent.getFromEndpoint();
         this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
-        if (parent instanceof AbstractExchange ae) {
+        if (parent instanceof AbstractExchange ae && ae.sharedUnitOfWork != null) {
             // a copy that keeps the shared unit of work does not own the on completions of the parent exchange either
-            this.sharedUnitOfWork = ae.sharedUnitOfWork;
+            this.sharedUnitOfWork = new SharedUnitOfWork(ae.sharedUnitOfWork.unitOfWork);
         }
     }
 
@@ -138,7 +136,9 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         this.unitOfWork = parent.getUnitOfWork();
         // a copy that keeps the shared unit of work does not own the on completions of the parent exchange either
         // (nor those of the exchange it copies: it hands over only the on completions it adds itself)
-        this.sharedUnitOfWork = parent.sharedUnitOfWork;
+        if (parent.sharedUnitOfWork != null) {
+            this.sharedUnitOfWork = new SharedUnitOfWork(parent.sharedUnitOfWork.unitOfWork);
+        }
 
         setIn(parent.getIn().copy());
 
@@ -799,17 +799,10 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
             onCompletions.add(onCompletion);
         } else {
             unitOfWork.addSynchronization(onCompletion);
-            if (unitOfWork == sharedUnitOfWork) {
-                addSharedUnitOfWorkCompletion(onCompletion);
+            if (sharedUnitOfWork != null && unitOfWork == sharedUnitOfWork.unitOfWork) {
+                sharedUnitOfWork.add(onCompletion);
             }
         }
-    }
-
-    private void addSharedUnitOfWorkCompletion(Synchronization onCompletion) {
-        if (sharedUnitOfWorkCompletions == null) {
-            sharedUnitOfWorkCompletions = new ArrayList<>(2);
-        }
-        sharedUnitOfWorkCompletions.add(onCompletion);
     }
 
     @Override
@@ -881,13 +874,13 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
             onCompletions.clear();
             onCompletions = null;
         } else if (unitOfWork != null) {
-            if (unitOfWork != sharedUnitOfWork) {
+            if (sharedUnitOfWork == null || unitOfWork != sharedUnitOfWork.unitOfWork) {
                 unitOfWork.handoverSynchronization(target);
-            } else if (sharedUnitOfWorkCompletions != null) {
+            } else if (sharedUnitOfWork.completions != null) {
                 // the unit of work is shared with the parent exchange (shareUnitOfWork), so hand over only the on
                 // completions this exchange added, and not those of the parent exchange (such as its consumer's commit)
-                final List<Synchronization> own = sharedUnitOfWorkCompletions;
-                sharedUnitOfWorkCompletions = null;
+                final List<Synchronization> own = sharedUnitOfWork.completions;
+                sharedUnitOfWork.completions = null;
                 unitOfWork.handoverSynchronization(target, s -> containsInstance(own, s));
             }
         }
@@ -916,16 +909,15 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
     @Override
     public void setUnitOfWork(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
-        if (unitOfWork != sharedUnitOfWork) {
+        if (sharedUnitOfWork != null && unitOfWork != sharedUnitOfWork.unitOfWork) {
             // no longer uses the shared unit of work (such as a copy routed on its own)
             sharedUnitOfWork = null;
-            sharedUnitOfWorkCompletions = null;
         }
         if (unitOfWork != null && onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {
                 unitOfWork.addSynchronization(onCompletion);
-                if (unitOfWork == sharedUnitOfWork) {
-                    addSharedUnitOfWorkCompletion(onCompletion);
+                if (sharedUnitOfWork != null) {
+                    sharedUnitOfWork.add(onCompletion);
                 }
             }
             onCompletions.clear();
@@ -935,9 +927,29 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
 
     @Override
     public void setSharedUnitOfWork(UnitOfWork unitOfWork) {
-        this.sharedUnitOfWork = unitOfWork;
-        this.sharedUnitOfWorkCompletions = null;
+        this.sharedUnitOfWork = unitOfWork != null ? new SharedUnitOfWork(unitOfWork) : null;
         setUnitOfWork(unitOfWork);
+    }
+
+    /**
+     * The unit of work of a parent exchange that this exchange shares (shareUnitOfWork), and the on completions this
+     * exchange added to it, which are the only ones it hands over. Created only for such an exchange, so other
+     * exchanges keep a single (null) field.
+     */
+    private static final class SharedUnitOfWork {
+        private final UnitOfWork unitOfWork;
+        private List<Synchronization> completions;
+
+        private SharedUnitOfWork(UnitOfWork unitOfWork) {
+            this.unitOfWork = unitOfWork;
+        }
+
+        private void add(Synchronization onCompletion) {
+            if (completions == null) {
+                completions = new ArrayList<>(2);
+            }
+            completions.add(onCompletion);
+        }
     }
 
     @Override
@@ -1142,7 +1154,6 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
             onCompletions.clear();
         }
         sharedUnitOfWork = null;
-        sharedUnitOfWorkCompletions = null;
         if (variableRepository != null) {
             variableRepository.clear();
         }
