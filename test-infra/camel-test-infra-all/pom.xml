@@ -78,6 +78,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-azure-servicebus</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-azure-storage-blob</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -427,6 +432,12 @@
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-azure-key-vault</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-azure-servicebus</artifactId>
                                     </dependency>
                                 </fileSet>
                                 <fileSet>
