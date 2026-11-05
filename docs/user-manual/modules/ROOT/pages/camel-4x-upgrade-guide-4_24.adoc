@@ -1133,9 +1133,10 @@ trust store of the JVM was always used.
 The `getSecret` operation now sets the secret only as the message body, and no longer sets the
 `CamelCyberArkVaultSecretValue` header. Before, a `createSecret` later in the same exchange stored the value of that
 header instead of its own body. A route that reads the secret from the `CamelCyberArkVaultSecretValue` header after
-`getSecret` has to read the body instead, or copy the body into a header of its own name right after `getSecret`, for
-example with `.setHeader("mySecret", body())`. The `createSecret` operation still stores the
-`CamelCyberArkVaultSecretValue` header when the route sets it.
+`getSecret` has to read the body instead, or copy the body into a variable right after `getSecret`, for example with
+`.setVariable("mySecret", body())`, and read it later with `${variable.mySecret}`. A variable stays in the exchange,
+while producers such as HTTP, JMS or Kafka send the headers on to the next system. The `createSecret` operation still
+stores the `CamelCyberArkVaultSecretValue` header when the route sets it.
 
 === camel-rocketmq - the headers are named CamelRocketMQ, and waitForSendResult is true by default
 
