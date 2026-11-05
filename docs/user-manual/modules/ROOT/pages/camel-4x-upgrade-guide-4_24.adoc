@@ -734,6 +734,8 @@ for the other changes.
 * The `kubernetes-custom-resources` producer uses the `crdName`, `crdGroup`, `crdScope`, `crdVersion` and
   `crdPlural` endpoint options. Before, it checked them but then built the custom resource definition from the
   headers only.
+* The `kubernetes-custom-resources` producer takes the namespace from the `CamelKubernetesNamespaceName` header,
+  or else from the `namespace` endpoint option, like the other producers. Before, the option won over the header.
 * `createCustomResource` and `updateCustomResource` fail the exchange with the `KubernetesClientException` of a
   409 Conflict (the instance already exists, or the update is based on an old resource version). Before, the
   conflict was logged at INFO and the body was an empty `GenericKubernetesResource`.
