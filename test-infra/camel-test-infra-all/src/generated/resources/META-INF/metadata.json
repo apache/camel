@@ -395,6 +395,17 @@
   "serviceVersion" : "5.0.1",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.azure.common.services.AzureInfraService",
+  "description" : "Local Azure Data Lake Storage Gen2 service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.storage.datalake.services.AzureStorageDataLakeLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "storage-datalake" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-storage-datalake",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.artemis.services.ArtemisInfraService",
   "description" : "Apache Artemis is an open source message broker",
   "implementation" : "org.apache.camel.test.infra.artemis.services.ArtemisAllInfraService",

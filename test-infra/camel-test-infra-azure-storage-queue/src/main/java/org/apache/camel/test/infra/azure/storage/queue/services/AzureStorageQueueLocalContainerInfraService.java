@@ -20,14 +20,20 @@ package org.apache.camel.test.infra.azure.storage.queue.services;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.azure.common.AzureConfigs;
 import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
+import org.apache.camel.test.infra.azure.common.AzureProperties;
 import org.apache.camel.test.infra.azure.common.services.AzureInfraService;
 import org.apache.camel.test.infra.azure.common.services.AzureServices;
 import org.apache.camel.test.infra.azure.common.services.AzureStorageInfraService;
+import org.apache.camel.test.infra.common.LocalPropertyResolver;
 
 @InfraService(service = AzureInfraService.class,
               description = "Local Azure services with Azurite",
               serviceAlias = "azure", serviceImplementationAlias = "storage-queue")
 public class AzureStorageQueueLocalContainerInfraService extends AzureStorageInfraService {
+
+    public AzureStorageQueueLocalContainerInfraService() {
+        super(LocalPropertyResolver.getProperty(AzureStorageInfraService.class, AzureProperties.AZURE_STORAGE_QUEUE_CONTAINER));
+    }
 
     @Override
     public void registerProperties() {

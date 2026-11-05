@@ -28,11 +28,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeProducerIT extends Base {
 
     private String fileName;
@@ -55,7 +53,6 @@ public class DataLakeProducerIT extends Base {
                     null,
                     List.class);
 
-            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).isNotEmpty();
             Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).doesNotContain(fileSystemName);
         }
 
@@ -100,7 +97,6 @@ public class DataLakeProducerIT extends Base {
                     null,
                     List.class);
 
-            Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).isNotEmpty();
             Assertions.assertThat(filesystems.stream().map(FileSystemItem::getName)).doesNotContain(fileSystemName);
         }
 

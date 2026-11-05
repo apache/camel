@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -42,14 +41,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote")
 public class DataLakeConsumerIT extends Base {
 
     @TempDir
@@ -118,8 +115,6 @@ public class DataLakeConsumerIT extends Base {
 
     @Test
     void testPollingToFile() throws Exception {
-        Files.deleteIfExists(new File(testDir + "/" + fileName).toPath());
-
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
