@@ -101,12 +101,18 @@ In Java DSL:
 ._Java-only: uses fromF with string formatting_
 [source,java]
 ----
-fromF("webhook:whatsapp:%s?authorizationToken=%s&webhookVerifyToken=%s", "<phoneNumberId>", "<AuthorizationToken>", "<webhookVerifyToken>").log("${body}")
+fromF("webhook:whatsapp:%s?authorizationToken=%s&webhookVerifyToken=%s&webhookSecret=%s", "<phoneNumberId>", "<AuthorizationToken>", "<webhookVerifyToken>", "<appSecret>").log("${body}")
 ----
 
 You can follow the
 https://developers.facebook.com/docs/whatsapp/cloud-api/guides/set-up-webhooks[set up webhooks guide]
 to enable and configure the webhook.
 The webhook component will expose an endpoint that can be used into the whatsapp administration console.
+
+WhatsApp signs every event it posts to the webhook with the app secret of the Meta app, in the `X-Hub-Signature-256`
+header. Set `webhookSecret` to that app secret (from the Meta app dashboard): an event without a valid signature is
+answered with HTTP 403 and does not reach the route, and an event that reaches the route is answered with an empty
+HTTP 200. A webhook route without `webhookSecret` fails to start. To accept the events without verifying their
+signature, for example in development, set `webhookVerification` to `false`.
 
 Refer to the xref:webhook-component.adoc[camel-webhook component] documentation for instructions on how to set it.
