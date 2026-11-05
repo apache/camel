@@ -16,10 +16,19 @@
  */
 package org.apache.camel.component.cyberark.vault;
 
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import com.sun.net.httpserver.HttpServer;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -27,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * An endpoint without usable credentials fails to start, with a message that names the options to set, instead of
- * failing on the first message.
+ * failing on the first message. An endpoint with an authToken uses only that token.
  */
 class CyberArkVaultEndpointCredentialsTest extends CamelTestSupport {
 
@@ -67,6 +76,39 @@ class CyberArkVaultEndpointCredentialsTest extends CamelTestSupport {
             assertNotNull(endpoint.getConjurClient());
         } finally {
             endpoint.stop();
+        }
+    }
+
+    @Test
+    void authTokenTakesPrecedenceOverTheLoginCredentials() throws Exception {
+        AtomicInteger logins = new AtomicInteger();
+        HttpServer conjur = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        conjur.createContext("/authn/", exchange -> {
+            logins.incrementAndGet();
+            exchange.getRequestBody().readAllBytes();
+            byte[] token = "new-token".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, token.length);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write(token);
+            }
+        });
+        conjur.createContext("/secrets/", exchange -> {
+            exchange.sendResponseHeaders(401, -1);
+            exchange.close();
+        });
+        conjur.start();
+        try {
+            String uri = "cyberark-vault:secret?secretId=db/password&url=http://localhost:" + conjur.getAddress().getPort()
+                         + "&account=myaccount&authToken=my-token&username=host/myapp&apiKey=my-api-key";
+
+            // the endpoint uses only the token, so the 401 fails at once, without a login with the API key
+            CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                    () -> template.requestBody(uri, null, String.class));
+            String message = e.getCause().getCause().getMessage();
+            assertTrue(message.contains("HTTP 401"), message);
+            assertEquals(0, logins.get());
+        } finally {
+            conjur.stop(0);
         }
     }
 

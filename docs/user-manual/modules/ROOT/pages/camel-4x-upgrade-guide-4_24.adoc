@@ -563,8 +563,9 @@ message failed with a `NullPointerException`.
 When CyberArk Conjur answers HTTP 401, the endpoint and the CyberArk Conjur Vault Property Function authenticate again
 and retry the call once, and only when they have an `apiKey` or a `password` to authenticate with. With only an
 `authToken`, the call now fails with the 401 response, instead of retrying with the same token until a
-`StackOverflowError`. Configure the `username` with an `apiKey` or a `password` to let the component get a new token
-when the current one expires.
+`StackOverflowError`. Configure the `username` with an `apiKey` or a `password`, instead of an `authToken`, to let the
+component get a new token when the current one expires: when the `authToken` is set, the component uses only that
+token.
 
 === camel-main - a failure to start is logged
 

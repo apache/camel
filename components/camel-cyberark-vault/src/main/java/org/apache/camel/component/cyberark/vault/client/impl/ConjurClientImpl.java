@@ -42,7 +42,7 @@ public class ConjurClientImpl implements ConjurClient {
     private final String username;
     private final String password;
     private final String apiKey;
-    private String authToken;
+    private volatile String authToken;
     private final HttpClient httpClient;
 
     public ConjurClientImpl(
