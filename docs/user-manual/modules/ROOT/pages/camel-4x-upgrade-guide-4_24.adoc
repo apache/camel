@@ -4201,6 +4201,12 @@ that many records, so with the default `delay` of 500 ms it can read up to about
 1000 records per shard in memory while they are routed. The KCL consumer (`useKclConsumers=true`) does not use this
 option.
 
+A graceful shutdown waits until the consumer has routed all the records of the poll that is running. With 1000 records
+per shard and a route that takes 50 ms per record, a poll takes about 50 seconds, which is more than the default
+xref:graceful-shutdown.adoc[shutdown timeout] of 45 seconds. The shutdown is then forced, and the records of the poll
+that are not routed yet fail with a `RouteStoppingException`. Before, a poll held one record per shard. Lower
+`maxResultsPerRequest`, or raise the shutdown timeout, so that the records of a poll are routed within the timeout.
+
 To keep the previous behaviour, set `maxResultsPerRequest=1`. See the
 xref:components::aws2-kinesis-component.adoc[AWS Kinesis component] for how `maxResultsPerRequest`, `delay` and
 `greedy` relate to the Kinesis read quotas of a shard.

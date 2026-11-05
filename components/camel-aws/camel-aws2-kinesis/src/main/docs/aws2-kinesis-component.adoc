@@ -95,6 +95,11 @@ second stay within 2 MiB per second. For example, 1000 records of 1 KiB every 50
 larger records, lower `maxResultsPerRequest` or raise `delay`. While the records of a response are routed, the
 consumer holds that response in memory, one for each shard of the poll.
 
+A xref:manual::graceful-shutdown.adoc[graceful shutdown] waits until the consumer has routed all the records of the
+poll that is running. Choose `maxResultsPerRequest` so that the route handles the records of a poll within the shutdown
+timeout (45 seconds by default). Otherwise the shutdown is forced, and the records of the poll that are not routed yet
+fail with a `RouteStoppingException`.
+
 These options apply to the polling consumer only. The KCL consumer (`useKclConsumers=true`) fetches the records with
 the settings of the Kinesis Client Library and does not use `maxResultsPerRequest`, `delay` or `greedy`.
 
