@@ -1553,6 +1553,31 @@ values such as `AES`, which are pure ASCII. A deployment running on a JVM whose 
 name identically to UTF-8 would, however, derive a different key than the previous version, and could not decrypt
 material produced by it.
 
+=== camel-pqc - a stateful signature key is claimed for one process
+
+XMSS, XMSSMT, LMS and HSS are one-time-signature schemes: signing twice from the same index breaks the key. The index
+lives inside the private key, so two processes that load the same key from a shared store - two pods on one volume,
+two replicas reading one vault secret - each advance their own copy and hand out the same index.
+
+Before it first signs with a stateful key, the `pqc` producer now claims it from the configured
+`KeyLifecycleManager`, through the new `KeyLifecycleManager.claimStatefulKey(String)` and
+`releaseStatefulKey(String)` methods. Both have a default implementation, so a custom manager still compiles; the
+default grants no claim.
+
+* `FileBasedKeyLifecycleManager` takes an exclusive `FileLock` on a `<keyId>.lock` file in the key directory, so a
+  second process reading that directory is refused.
+* `InMemoryKeyLifecycleManager` grants the claim - its keys never leave the process.
+* The vault-backed managers (AWS Secrets Manager, Azure Key Vault, Hashicorp Vault) cannot offer a lease Camel can
+  take, so they do not grant it. **An endpoint signing with a stateful key through one of them now fails**, with a
+  message naming the key.
+
+Set the new `allowSharedStatefulKey=true` option on the endpoint to sign anyway, when a single signer is guaranteed
+outside Camel (one replica, an external lock, a leader election). A warning is logged once per key.
+
+Nothing changes for the stateless signature algorithms (ML-DSA, SLH-DSA, Falcon and the rest), for the KEM
+operations, or for an endpoint that signs with a stateful key and no `KeyLifecycleManager` - that case persists no
+index at all and keeps the warning it already had.
+
 === camel-pqc - the BouncyCastle providers stay registered when an endpoint stops
 
 Stopping a `pqc` endpoint no longer removes the `BC` and `BCPQC` providers from `java.security.Security`.

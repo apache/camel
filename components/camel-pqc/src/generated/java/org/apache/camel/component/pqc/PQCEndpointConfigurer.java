@@ -24,6 +24,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         PQCEndpoint target = (PQCEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsharedstatefulkey":
+        case "allowSharedStatefulKey": target.getConfiguration().setAllowSharedStatefulKey(property(camelContext, boolean.class, value)); return true;
         case "classicalkemalgorithm":
         case "classicalKEMAlgorithm": target.getConfiguration().setClassicalKEMAlgorithm(property(camelContext, java.lang.String.class, value)); return true;
         case "classicalkeyagreement":
@@ -80,6 +82,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsharedstatefulkey":
+        case "allowSharedStatefulKey": return boolean.class;
         case "classicalkemalgorithm":
         case "classicalKEMAlgorithm": return java.lang.String.class;
         case "classicalkeyagreement":
@@ -132,6 +136,8 @@ public class PQCEndpointConfigurer extends PropertyConfigurerSupport implements 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         PQCEndpoint target = (PQCEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
+        case "allowsharedstatefulkey":
+        case "allowSharedStatefulKey": return target.getConfiguration().isAllowSharedStatefulKey();
         case "classicalkemalgorithm":
         case "classicalKEMAlgorithm": return target.getConfiguration().getClassicalKEMAlgorithm();
         case "classicalkeyagreement":
