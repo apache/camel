@@ -133,7 +133,7 @@ class GoogleCalendarStreamConsumerPaginationTest {
         assertEquals(1, consumer.poll());
         assertEquals(1, requests.size());
         assertEquals(List.of("a"), delivered);
-        assertNull(requests.getFirst().getFirst("updatedMin"));
+        assertNull(requests.get(0).getFirst("updatedMin"));
     }
 
     private GoogleCalendarStreamConsumer consumer(boolean syncFlow) {
@@ -153,7 +153,7 @@ class GoogleCalendarStreamConsumerPaginationTest {
                     @Override
                     public LowLevelHttpResponse execute() throws IOException {
                         requests.add(new GenericUrl(url));
-                        String response = responses.removeFirst();
+                        String response = responses.remove(0);
                         if (response == null) {
                             throw new IOException("Cannot read the next page");
                         }
