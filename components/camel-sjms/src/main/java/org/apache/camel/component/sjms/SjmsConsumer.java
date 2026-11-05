@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.sjms;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import jakarta.jms.Connection;
 
 import org.apache.camel.Endpoint;
@@ -35,6 +38,8 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(SjmsConsumer.class);
 
     private volatile boolean initialized;
+    // serializes the start and the stop of the listener container by doStart and the asynchronous start and stop tasks
+    private final Lock listenerContainerLock = new ReentrantLock();
     private final MessageListenerContainer listenerContainer;
 
     public SjmsConsumer(Endpoint endpoint, Processor processor, MessageListenerContainer listenerContainer) {
@@ -56,7 +61,7 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
                 @Override
                 public void run() {
                     try {
-                        prepareAndStartListenerContainer();
+                        startListenerContainerAsync();
                     } catch (Exception e) {
                         LOG.warn("Error starting listener container on destination: {}. This exception will be ignored.",
                                 getDestinationName(), e);
@@ -69,7 +74,13 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
                 }
             });
         } else {
-            prepareAndStartListenerContainer();
+            // after an asynchronous stop task that is still stopping the listener container
+            listenerContainerLock.lock();
+            try {
+                prepareAndStartListenerContainer();
+            } finally {
+                listenerContainerLock.unlock();
+            }
         }
 
         // mark as initialized for the first time
@@ -85,7 +96,7 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
                     @Override
                     public void run() {
                         try {
-                            stopAndDestroyListenerContainer();
+                            stopListenerContainerAsync();
                         } catch (Exception e) {
                             LOG.warn("Error stopping listener container on destination: {}. This exception will be ignored.",
                                     getDestinationName(), e);
@@ -103,6 +114,50 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
         }
 
         super.doStop();
+    }
+
+    /**
+     * Run by the asynchronous start task, which may run after this consumer was stopped (and started again).
+     */
+    private void startListenerContainerAsync() {
+        // startListenerContainer takes the lock of the consumer while this holds listenerContainerLock. doStart takes
+        // them in the other order, but only without asyncStartListener, so never next to this task
+        listenerContainerLock.lock();
+        try {
+            if (!isRunAllowed()) {
+                LOG.debug("Consumer stopped before its listener container on destination: {} was started. Not starting it.",
+                        getDestinationName());
+                return;
+            }
+            prepareAndStartListenerContainer();
+            if (!isRunAllowed()) {
+                // stopped while the listener container was starting (the stop found nothing to stop yet)
+                LOG.debug("Consumer stopped while its listener container on destination: {} was starting. Stopping it.",
+                        getDestinationName());
+                stopAndDestroyListenerContainer();
+            }
+        } finally {
+            listenerContainerLock.unlock();
+        }
+    }
+
+    /**
+     * Run by the asynchronous stop task, which may run after this consumer was started again.
+     */
+    private void stopListenerContainerAsync() {
+        // not under the lock of the consumer, so that a route stop does not wait for this task
+        listenerContainerLock.lock();
+        try {
+            if (isRunAllowed()) {
+                LOG.debug("Consumer started again before its listener container on destination: {} was stopped."
+                          + " Keeping it.",
+                        getDestinationName());
+                return;
+            }
+            stopAndDestroyListenerContainer();
+        } finally {
+            listenerContainerLock.unlock();
+        }
     }
 
     @Override
