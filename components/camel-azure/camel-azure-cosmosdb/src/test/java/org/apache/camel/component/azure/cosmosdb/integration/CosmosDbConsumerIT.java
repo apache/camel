@@ -33,10 +33,10 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
+        @EnabledIfSystemProperty(named = "endpoint", matches = ".+",
+                                 disabledReason = "Floci AZ does not emulate the change feed: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey="),
+        @EnabledIfSystemProperty(named = "accessKey", matches = ".+",
+                                 disabledReason = "Floci AZ does not emulate the change feed: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey=")
 })
 class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
 

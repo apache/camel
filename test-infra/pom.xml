@@ -51,6 +51,7 @@
         <module>camel-test-infra-mongodb</module>
         <module>camel-test-infra-rabbitmq</module>
         <module>camel-test-infra-azure-common</module>
+        <module>camel-test-infra-azure-cosmosdb</module>
         <module>camel-test-infra-azure-eventgrid</module>
         <module>camel-test-infra-azure-key-vault</module>
         <module>camel-test-infra-azure-servicebus</module>
