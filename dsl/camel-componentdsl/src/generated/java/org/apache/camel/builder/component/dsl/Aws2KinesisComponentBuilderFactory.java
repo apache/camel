@@ -270,6 +270,30 @@ public interface Aws2KinesisComponentBuilderFactory {
     
         
         /**
+         * If we want to use a KCL Consumer and keep the checkpoint of a shard
+         * before the first record whose exchange fails, so the next holder of
+         * the lease of the shard (the route started again, or another worker)
+         * consumes the records from that one on again. The consumer goes on
+         * routing the shard, so these records can be routed twice and out of
+         * order. By default a failed record is reported to the exception
+         * handler and checkpointed with its batch. See the KCL consumer section
+         * of the docs.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param kclStopCheckpointOnFailure the value to set
+         * @return the dsl builder
+         */
+        default Aws2KinesisComponentBuilder kclStopCheckpointOnFailure(boolean kclStopCheckpointOnFailure) {
+            doSetProperty("kclStopCheckpointOnFailure", kclStopCheckpointOnFailure);
+            return this;
+        }
+    
+        
+        /**
          * The interval in milliseconds to wait between shard polling.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -720,6 +744,7 @@ public interface Aws2KinesisComponentBuilderFactory {
             case "sequenceNumber": getOrCreateConfiguration((Kinesis2Component) component).setSequenceNumber((java.lang.String) value); return true;
             case "shardClosed": getOrCreateConfiguration((Kinesis2Component) component).setShardClosed((org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum) value); return true;
             case "shardId": getOrCreateConfiguration((Kinesis2Component) component).setShardId((java.lang.String) value); return true;
+            case "kclStopCheckpointOnFailure": getOrCreateConfiguration((Kinesis2Component) component).setKclStopCheckpointOnFailure((boolean) value); return true;
             case "shardMonitorInterval": getOrCreateConfiguration((Kinesis2Component) component).setShardMonitorInterval((long) value); return true;
             case "lazyStartProducer": ((Kinesis2Component) component).setLazyStartProducer((boolean) value); return true;
             case "amazonKinesisAsyncClient": getOrCreateConfiguration((Kinesis2Component) component).setAmazonKinesisAsyncClient((software.amazon.awssdk.services.kinesis.KinesisAsyncClient) value); return true;

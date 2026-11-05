@@ -874,6 +874,16 @@ closed that client for every other endpoint.
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
 
+=== camel-aws2-kinesis - failed records of the KCL consumer
+
+With `useKclConsumers=true`, a record whose exchange fails (the route ends with an exception) is now reported to the
+exception handler of the consumer, as the other consumers do. It is still checkpointed with its batch, so it is not
+consumed again: handle it in the route, for example with a dead letter channel.
+
+The new option `kclStopCheckpointOnFailure` (default `false`) keeps the checkpoint of a shard before the first failed
+record instead, so the next holder of the lease of the shard consumes the records from that one on again. See the
+component documentation for its cost: the records after the failed one can be routed twice.
+
 === camel-stitch - a response with an empty body, and the default sequence of a message
 
 A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`
