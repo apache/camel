@@ -21,6 +21,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -142,7 +143,13 @@ public class GroovyExpression extends ExpressionSupport {
                        + "'), or call it from the route with"
                        + " - bean: {ref: " + name + "}";
             } else {
-                hint = "the script variables are " + SCRIPT_VARIABLES_HINT;
+                // JsonOutput.toJson(body) with no import: a class Groovy reads as a variable (r27 of the local-model
+                // benchmark wrote such classes without their import)
+                List<String> classes = GroovyLanguage.notImported(name, script.getClass().getClassLoader());
+                hint = !classes.isEmpty()
+                        ? name + " is the class " + classes.get(0) + ", which the script does not import: add import "
+                          + classes.get(0) + " at the top of the script, or write " + classes.get(0)
+                        : "the script variables are " + SCRIPT_VARIABLES_HINT;
             }
             throw new groovy.lang.MissingPropertyException(
                     e.getMessageWithoutLocationText() + " (" + hint + ")", name, e.getType());
@@ -187,7 +194,7 @@ public class GroovyExpression extends ExpressionSupport {
                     return name != null
                             ? shell.getClassLoader().parseClass(text, name) : shell.getClassLoader().parseClass(text);
                 } catch (CompilationFailedException e) {
-                    throw GroovyLanguage.compileFailure(e);
+                    throw GroovyLanguage.compileFailure(e, shell.getClassLoader());
                 }
             });
             c = new CompiledScript(r.context, r.language, generation, fileName, scriptClass, constructor(scriptClass));
