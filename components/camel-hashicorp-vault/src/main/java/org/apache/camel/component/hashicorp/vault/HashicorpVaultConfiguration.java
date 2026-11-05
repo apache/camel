@@ -39,8 +39,22 @@ public class HashicorpVaultConfiguration implements Cloneable {
     private String scheme = "https";
     @UriParam
     private String secretPath;
+    @UriParam(label = "security", defaultValue = "token", enums = "token,approle,kubernetes,jwt")
+    private String authentication = "token";
     @UriParam(label = "security", security = "secret")
     private String token;
+    @UriParam(label = "security", security = "secret")
+    private String roleId;
+    @UriParam(label = "security", security = "secret")
+    private String secretId;
+    @UriParam(label = "security")
+    private String role;
+    @UriParam(label = "security", security = "secret")
+    private String jwt;
+    @UriParam(label = "security")
+    private String jwtFile;
+    @UriParam(label = "security")
+    private String authMountPath;
     @UriParam
     private boolean cloud;
     @UriParam
@@ -72,7 +86,20 @@ public class HashicorpVaultConfiguration implements Cloneable {
     }
 
     /**
-     * Token to be used
+     * How to log in to HashiCorp Vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the
+     * service account token of the pod) or jwt (a JWT, such as a workload identity token). The token is renewed before
+     * it expires, and the endpoint logs in again when the token can no longer be renewed.
+     */
+    public String getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(String authentication) {
+        this.authentication = authentication;
+    }
+
+    /**
+     * Token to be used, for the token login
      */
     public String getToken() {
         return token;
@@ -80,6 +107,76 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    /**
+     * The role ID of the AppRole, for the approle login
+     */
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
+
+    /**
+     * The secret ID of the AppRole, for the approle login
+     */
+    public String getSecretId() {
+        return secretId;
+    }
+
+    public void setSecretId(String secretId) {
+        this.secretId = secretId;
+    }
+
+    /**
+     * The HashiCorp Vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the
+     * login method has a default role.
+     */
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    /**
+     * The JWT to log in with, for the jwt and kubernetes logins. For a JWT that is replaced over time, such as a
+     * projected service account token, use jwtFile instead.
+     */
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
+
+    /**
+     * The file to read the JWT from at every login, for the jwt and kubernetes logins. The kubernetes login reads
+     * /var/run/secrets/kubernetes.io/serviceaccount/token when neither jwt nor jwtFile is set.
+     */
+    public String getJwtFile() {
+        return jwtFile;
+    }
+
+    public void setJwtFile(String jwtFile) {
+        this.jwtFile = jwtFile;
+    }
+
+    /**
+     * The path the login method is mounted at in HashiCorp Vault (without auth/), when it is not the default path of
+     * the login method: approle, kubernetes or jwt
+     */
+    public String getAuthMountPath() {
+        return authMountPath;
+    }
+
+    public void setAuthMountPath(String authMountPath) {
+        this.authMountPath = authMountPath;
     }
 
     /**

@@ -82,6 +82,7 @@ public final class SensitiveUtils {
                     "functionkey",
                     "hostkey",
                     "httpproxypassword",
+                    "jwt",
                     "kerberosauthticket",
                     "keypassword",
                     "keystorePassword",
@@ -114,12 +115,14 @@ public final class SensitiveUtils {
                     "queueownerawsaccountid",
                     "realm",
                     "refreshtoken",
+                    "roleid",
                     "sascredential",
                     "sasljaasconfig",
                     "saslpassword",
                     "sassignature",
                     "sastoken",
                     "secret",
+                    "secretid",
                     "secretkey",
                     "securerandom",
                     "serviceinstanceid",
@@ -194,6 +197,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qfunctionkey\\E"
                                                     + "|\\Qhostkey\\E"
                                                     + "|\\Qhttpproxypassword\\E"
+                                                    + "|\\Qjwt\\E"
                                                     + "|\\Qkerberosauthticket\\E"
                                                     + "|\\Qkeypassword\\E"
                                                     + "|\\QkeystorePassword\\E"
@@ -226,12 +230,14 @@ public final class SensitiveUtils {
                                                     + "|\\Qqueueownerawsaccountid\\E"
                                                     + "|\\Qrealm\\E"
                                                     + "|\\Qrefreshtoken\\E"
+                                                    + "|\\Qroleid\\E"
                                                     + "|\\Qsascredential\\E"
                                                     + "|\\Qsasljaasconfig\\E"
                                                     + "|\\Qsaslpassword\\E"
                                                     + "|\\Qsassignature\\E"
                                                     + "|\\Qsastoken\\E"
                                                     + "|\\Qsecret\\E"
+                                                    + "|\\Qsecretid\\E"
                                                     + "|\\Qsecretkey\\E"
                                                     + "|\\Qsecurerandom\\E"
                                                     + "|\\Qserviceinstanceid\\E"

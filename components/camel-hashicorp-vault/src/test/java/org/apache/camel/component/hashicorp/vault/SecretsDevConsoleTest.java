@@ -61,6 +61,17 @@ public class SecretsDevConsoleTest extends CamelTestSupport {
         assertEquals("localhost", out.getString("host"));
         assertEquals("8200", out.getString("port"));
         assertEquals("http", out.getString("scheme"));
-        assertTrue(out.getString("login").contains("OAuth"));
+        assertEquals("Token", out.getString("login"));
+    }
+
+    @Test
+    void testSecretsConsoleShowsTheLogin() {
+        context.getVaultConfiguration().getHashicorpVaultConfiguration().setAuthentication("approle");
+        DevConsole con = PluginHelper.getDevConsoleResolver(context).resolveDevConsole("hashicorp-secrets");
+
+        JsonObject out = (JsonObject) con.call(DevConsole.MediaType.JSON);
+        assertEquals("AppRole", out.getString("login"));
+        String text = (String) con.call(DevConsole.MediaType.TEXT);
+        assertTrue(text.contains("Login: AppRole"), text);
     }
 }

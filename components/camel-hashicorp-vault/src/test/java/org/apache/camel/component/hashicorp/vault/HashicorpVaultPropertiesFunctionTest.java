@@ -27,6 +27,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.vault.authentication.TokenAuthentication;
 import org.springframework.vault.client.VaultEndpoint;
@@ -126,6 +128,21 @@ class HashicorpVaultPropertiesFunctionTest {
 
         assertEquals("pw", function.apply("secret:api#password@2"));
         assertEquals(List.of("admin/secret/data/api?version=2"), vault.reads);
+    }
+
+    @Test
+    void keepsTheClientItIsGiven() throws Exception {
+        FakeVaultTemplate vault = new FakeVaultTemplate(Map.of("secret/data/api", Map.of("password", "pw")));
+        HashicorpVaultPropertiesFunction function = new HashicorpVaultPropertiesFunction(vault);
+        try (CamelContext context = new DefaultCamelContext()) {
+            function.setCamelContext(context);
+            // no vault configuration: the function uses the client it is given, rather than failing to create one
+            function.start();
+
+            assertEquals("pw", function.apply("api#password"));
+            assertEquals(List.of("secret/data/api"), vault.reads);
+            function.stop();
+        }
     }
 
     @Test

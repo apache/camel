@@ -28,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
-import org.springframework.vault.authentication.TokenAuthentication;
-import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultTemplate;
 
 /**
@@ -67,6 +65,8 @@ import org.springframework.vault.core.VaultTemplate;
 public class HashicorpVaultEndpoint extends DefaultEndpoint {
 
     private VaultTemplate vaultTemplate;
+    // the client the endpoint created, which it closes on shutdown (a vaultTemplate that was set is not closed)
+    private HashicorpVaultClient vaultClient;
 
     @UriParam
     private HashicorpVaultConfiguration configuration;
@@ -80,23 +80,43 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
     @Override
     public void doInit() throws Exception {
         super.doInit();
-        vaultTemplate = configuration.getVaultTemplate() != null
-                ? configuration.getVaultTemplate() : createVaultTemplate();
+        if (configuration.getVaultTemplate() != null) {
+            vaultTemplate = configuration.getVaultTemplate();
+        } else {
+            vaultClient = HashicorpVaultClient.create(getCamelContext(), this, clientSettings());
+            vaultTemplate = vaultClient.getVaultTemplate();
+        }
     }
 
-    private VaultTemplate createVaultTemplate() {
-        VaultTemplate vaultTemplate;
+    @Override
+    protected void doShutdown() throws Exception {
+        if (vaultClient != null) {
+            // stop renewing the token, and revoke the token of the login
+            vaultClient.close();
+            vaultClient = null;
+        }
+        super.doShutdown();
+    }
 
-        VaultEndpoint vaultEndpoint = new VaultEndpoint();
-        vaultEndpoint.setHost(configuration.getHost());
-        vaultEndpoint.setPort(Integer.parseInt(configuration.getPort()));
-        vaultEndpoint.setScheme(configuration.getScheme());
-
-        vaultTemplate = new VaultTemplate(
-                vaultEndpoint,
-                new TokenAuthentication(configuration.getToken()));
-
-        return vaultTemplate;
+    /**
+     * Where Vault is and how to log in to it, as configured on the endpoint
+     */
+    HashicorpVaultClientSettings clientSettings() {
+        HashicorpVaultClientSettings settings = new HashicorpVaultClientSettings();
+        settings.setHost(configuration.getHost());
+        settings.setPort(configuration.getPort());
+        settings.setScheme(configuration.getScheme());
+        settings.setCloud(configuration.isCloud());
+        settings.setNamespace(configuration.getNamespace());
+        settings.setAuthentication(configuration.getAuthentication());
+        settings.setToken(configuration.getToken());
+        settings.setRoleId(configuration.getRoleId());
+        settings.setSecretId(configuration.getSecretId());
+        settings.setRole(configuration.getRole());
+        settings.setJwt(configuration.getJwt());
+        settings.setJwtFile(configuration.getJwtFile());
+        settings.setAuthMountPath(configuration.getAuthMountPath());
+        return settings;
     }
 
     @Override

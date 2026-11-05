@@ -54,10 +54,9 @@ public class HashicorpVaultComponent extends DefaultComponent {
         final HashicorpVaultEndpoint endpoint = new HashicorpVaultEndpoint(uri, this, epConfiguration);
         setProperties(endpoint, parameters);
 
-        if (epConfiguration.getVaultTemplate() == null
-                && epConfiguration.getToken() == null) {
-            throw new IllegalArgumentException(
-                    "Vault Template or token must be specified");
+        if (epConfiguration.getVaultTemplate() == null) {
+            // without a vault template the endpoint logs in itself, with the login it is configured with
+            HashicorpVaultClient.validate(endpoint.clientSettings());
         }
 
         return endpoint;

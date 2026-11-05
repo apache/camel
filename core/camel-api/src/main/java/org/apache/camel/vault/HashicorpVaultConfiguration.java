@@ -26,8 +26,22 @@ import org.jspecify.annotations.Nullable;
  */
 public class HashicorpVaultConfiguration extends VaultConfiguration {
 
-    @Metadata(required = true, security = "secret")
+    @Metadata(defaultValue = "token", enums = "token,approle,kubernetes,jwt")
+    private @Nullable String authentication = "token";
+    @Metadata(security = "secret")
     private @Nullable String token;
+    @Metadata(security = "secret")
+    private @Nullable String roleId;
+    @Metadata(security = "secret")
+    private @Nullable String secretId;
+    @Metadata
+    private @Nullable String role;
+    @Metadata(security = "secret")
+    private @Nullable String jwt;
+    @Metadata
+    private @Nullable String jwtFile;
+    @Metadata
+    private @Nullable String authMountPath;
     @Metadata(required = true)
     private @Nullable String host;
     @Metadata(required = true)
@@ -50,10 +64,128 @@ public class HashicorpVaultConfiguration extends VaultConfiguration {
     }
 
     /**
-     * Token to access hashicorp vault
+     * Token to access hashicorp vault, for the token login
      */
     public void setToken(@Nullable String token) {
         this.token = token;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAuthentication() {
+        return authentication;
+    }
+
+    /**
+     * How to log in to hashicorp vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the
+     * service account token of the pod) or jwt (a JWT, such as a workload identity token). Camel renews the token
+     * before it expires, and logs in again when the token can no longer be renewed.
+     *
+     * @since 4.24
+     */
+    public void setAuthentication(@Nullable String authentication) {
+        this.authentication = authentication;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getRoleId() {
+        return roleId;
+    }
+
+    /**
+     * The role ID of the AppRole, for the approle login
+     *
+     * @since 4.24
+     */
+    public void setRoleId(@Nullable String roleId) {
+        this.roleId = roleId;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getSecretId() {
+        return secretId;
+    }
+
+    /**
+     * The secret ID of the AppRole, for the approle login
+     *
+     * @since 4.24
+     */
+    public void setSecretId(@Nullable String secretId) {
+        this.secretId = secretId;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getRole() {
+        return role;
+    }
+
+    /**
+     * The hashicorp vault role to log in as, for the kubernetes and jwt logins. The jwt login can leave it out when the
+     * login method has a default role.
+     *
+     * @since 4.24
+     */
+    public void setRole(@Nullable String role) {
+        this.role = role;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getJwt() {
+        return jwt;
+    }
+
+    /**
+     * The JWT to log in with, for the jwt and kubernetes logins. For a JWT that is replaced over time, such as a
+     * projected service account token, use jwtFile instead.
+     *
+     * @since 4.24
+     */
+    public void setJwt(@Nullable String jwt) {
+        this.jwt = jwt;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getJwtFile() {
+        return jwtFile;
+    }
+
+    /**
+     * The file to read the JWT from at every login, for the jwt and kubernetes logins. The kubernetes login reads
+     * /var/run/secrets/kubernetes.io/serviceaccount/token when neither jwt nor jwtFile is set.
+     *
+     * @since 4.24
+     */
+    public void setJwtFile(@Nullable String jwtFile) {
+        this.jwtFile = jwtFile;
+    }
+
+    /**
+     * @since 4.24
+     */
+    public @Nullable String getAuthMountPath() {
+        return authMountPath;
+    }
+
+    /**
+     * The path the login method is mounted at in hashicorp vault (without auth/), when it is not the default path of
+     * the login method: approle, kubernetes or jwt
+     *
+     * @since 4.24
+     */
+    public void setAuthMountPath(@Nullable String authMountPath) {
+        this.authMountPath = authMountPath;
     }
 
     public @Nullable String getHost() {
