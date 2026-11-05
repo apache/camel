@@ -16,17 +16,25 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.dsl.yaml.validator.ProjectFacts;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
 
 /**
  * A route that keeps a value in one place (a header, an exchange property or a variable) and reads it from another gets
@@ -37,6 +45,9 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
  * Quiet where the name can come from elsewhere: a route that consumes from an endpoint that can carry headers (only
  * timer, scheduler, cron, quartz and file cannot), a path parameter {X} of a rest or platform-http path, and a name the
  * route sets in both forms.
+ * <p/>
+ * In the same routes, a header copied to itself that nothing sets before ({@code setHeader: sku} with
+ * {@code ${header.sku}}) is null too, see {@link #selfCopies(String, ProjectFacts)}.
  */
 final class HeaderPropertyMixups {
 
@@ -209,6 +220,20 @@ final class HeaderPropertyMixups {
 
     /** The problems, each "Line N: message". */
     static List<String> validate(String content) {
+        return validate(content, ProjectFacts.NONE);
+    }
+
+    /**
+     * The problems, each "Line N: message", with the fields of the JSON data of the project for a header copied to
+     * itself.
+     */
+    static List<String> validate(String content, ProjectFacts facts) {
+        List<String> answer = mixups(content);
+        answer.addAll(selfCopies(content, facts));
+        return answer;
+    }
+
+    private static List<String> mixups(String content) {
         List<String> answer = new ArrayList<>();
         if (content == null || !content.contains("${")) {
             return answer;
@@ -342,5 +367,373 @@ final class HeaderPropertyMixups {
     private static String scheme(String uri) {
         int colon = uri.indexOf(':');
         return colon > 0 ? uri.substring(0, colon) : uri;
+    }
+
+    /** ${header.sku}, ${headers.sku}, ${in.header.sku} or ${header[sku]}: one header and nothing else. */
+    private static final Pattern ONE_HEADER = Pattern.compile(
+            "\\$\\{(?:in\\.)?headers?(?:\\.([A-Za-z_][\\w-]*)|\\[['\"]?([A-Za-z_][\\w-]*)['\"]?])}");
+
+    /**
+     * The steps that set no header other than the ones they name, and the EIPs whose steps are walked: any other step
+     * (a to:, an enrich, a process, a bean...) may set a header of any name.
+     */
+    private static final Set<String> QUIET_STEPS = Set.of("log", "setBody", "transform", "setHeader", "setHeaders",
+            "setProperty", "setVariable", "setVariables", "removeHeader", "removeHeaders", "removeProperty",
+            "removeProperties", "removeVariable", "unmarshal", "marshal", "convertBodyTo", "convertHeaderTo",
+            "convertVariableTo", "delay", "throttle", "stop", "filter", "choice", "split", "loop", "step", "pipeline",
+            "doTry", "idempotentConsumer", "validate", "setExchangePattern");
+
+    /** The languages that run code, which can set a header of any name. */
+    private static final Set<String> SCRIPTS = Set.of("groovy", "js", "javascript", "python", "java", "joor", "jsh",
+            "mvel", "ognl", "spel", "jactl", "quickjs", "method", "bean", "csimple", "datasonnet", "wasm");
+
+    /** split: ${body[lines]}, ${body.lines} or the jsonpath $.lines: the field of the data whose elements it gives. */
+    private static final Pattern SPLIT_FIELD = Pattern.compile(
+            "\\$\\{body(?:\\??\\.|\\[\\s*['\"]?)([A-Za-z_]\\w*)['\"]?\\s*]?}|\\$\\.([A-Za-z_]\\w*)(?:\\[\\*])?");
+
+    /** What the walk of a route knows at a step: the names set before it, and whether a step may set any header. */
+    private static final class Seen {
+        final Set<String> headers = new LinkedHashSet<>();
+        final Set<String> variables = new LinkedHashSet<>();
+        final Set<String> properties = new LinkedHashSet<>();
+        boolean anyHeader;
+
+        Seen copy() {
+            Seen s = new Seen();
+            s.headers.addAll(headers);
+            s.variables.addAll(variables);
+            s.properties.addAll(properties);
+            s.anyHeader = anyHeader;
+            return s;
+        }
+
+        void merge(Seen inner) {
+            headers.addAll(inner.headers);
+            variables.addAll(inner.variables);
+            properties.addAll(inner.properties);
+            anyHeader |= inner.anyHeader;
+        }
+    }
+
+    /**
+     * A setHeader whose value is one header that nothing set before it: the line, the name set, the name read, the
+     * field the split it is in gives the elements of, and where the route keeps the name read instead (a variable or an
+     * exchange property), or null.
+     */
+    private record UnsetCopy(int line, String name, String read, String split, Kind kept) {
+    }
+
+    /**
+     * A setHeader that copies a header to itself, setHeader sku with ${header.sku}, when nothing sets that header
+     * before it: the route consumes from an endpoint that carries no header of its own (timer, scheduler, cron, quartz,
+     * file), and no step before it sets the header. The header is null, and stays null, with no error. r23 to r27
+     * connect-http-client step 2 (10 runs): in a split over the lines of an order, the HTTP call had no sku, 98 errors
+     * of 404 before the model found ${body[sku]}. Only a header that a later step of the route reads, as the toD did. A
+     * step that may set a header the check does not see (a to:, a process, a bean, a script) makes it say nothing after
+     * it. A path parameter of a rest in the file is a header of the route the rest calls, not of these routes.
+     * <p/>
+     * Only a copy to itself is reported; a copy from another header that nothing sets (needed with ${header.qty}) is
+     * named in the same message.
+     */
+    static List<String> selfCopies(String content, ProjectFacts facts) {
+        List<String> answer = new ArrayList<>();
+        if (content == null || !content.contains("header")) {
+            return answer;
+        }
+        List<Node> roots = new ArrayList<>();
+        try {
+            for (Node n : new Yaml(new SafeConstructor(new LoaderOptions())).composeAll(new StringReader(content))) {
+                roots.add(n);
+            }
+        } catch (RuntimeException e) {
+            // not YAML: the schema check says so
+            return answer;
+        }
+        String[] lines = content.split("\n", -1);
+        try {
+            for (Node root : roots) {
+                if (!(root instanceof SequenceNode entries)) {
+                    continue;
+                }
+                for (Node entry : entries.getValue()) {
+                    MappingNode route = mapping(value(entry, "route"));
+                    MappingNode from = mapping(route != null ? value(route, "from") : value(entry, "from"));
+                    String uri = from != null ? scalar(value(from, "uri")) : null;
+                    if (uri == null || !PLAIN_CONSUMERS.contains(scheme(uri))) {
+                        continue;
+                    }
+                    List<UnsetCopy> copies = new ArrayList<>();
+                    walk(value(from, "steps"), new Seen(), null, copies);
+                    // only a header that a later step reads: a copy nothing reads is harmless (a route that worked had
+                    // one, with the value read from a variable)
+                    int end = from.getEndMark().getLine() + 1;
+                    copies.removeIf(c -> !readAfter(lines, c.line(), end, c.name()));
+                    ProjectFacts.JsonFields data = consumedData(uri, from, facts);
+                    for (UnsetCopy copy : copies) {
+                        if (copy.name().equals(copy.read())) {
+                            answer.add(selfCopyMessage(copy, copies, data));
+                        }
+                    }
+                }
+            }
+        } catch (RuntimeException e) {
+            // a shape the walk does not know: a check must never fail the validation
+        }
+        return answer;
+    }
+
+    /** Whether a line after the given one, up to the end line (1-based, inclusive), reads the header in Simple. */
+    private static boolean readAfter(String[] lines, int line, int end, String name) {
+        for (int i = line; i < Math.min(end, lines.length); i++) {
+            Matcher m = HEADER_READ.matcher(lines[i]);
+            while (m.find()) {
+                if (name.equals(m.group(1) != null ? m.group(1) : m.group(2))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Walks the steps in order, with what was set before each one, collecting the copies of unset headers. */
+    private static void walk(Node steps, Seen seen, String split, List<UnsetCopy> copies) {
+        if (!(steps instanceof SequenceNode list)) {
+            return;
+        }
+        for (Node item : list.getValue()) {
+            if (!(item instanceof MappingNode step) || step.getValue().size() != 1) {
+                seen.anyHeader = true;
+                continue;
+            }
+            String eip = scalar(step.getValue().get(0).getKeyNode());
+            Node body = step.getValue().get(0).getValueNode();
+            if (!QUIET_STEPS.contains(eip) || runsCode(body)) {
+                seen.anyHeader = true;
+                continue;
+            }
+            switch (eip) {
+                case "setHeader" -> setHeader(body, seen, split, copies);
+                case "setHeaders" -> namesOf(value(body, "headers"), seen.headers);
+                case "setVariable" -> name(body, seen.variables);
+                case "setVariables" -> namesOf(value(body, "variables"), seen.variables);
+                case "setProperty" -> name(body, seen.properties);
+                case "split" -> {
+                    // each element starts from what was set before the split
+                    Seen inner = seen.copy();
+                    walk(value(body, "steps"), inner, split == null ? splitField(body) : null, copies);
+                    seen.merge(inner);
+                }
+                case "loop" -> {
+                    // a pass of the loop sees what the passes before it set
+                    Seen first = seen.copy();
+                    walk(value(body, "steps"), first, split, new ArrayList<>());
+                    Seen inner = seen.copy();
+                    inner.merge(first);
+                    walk(value(body, "steps"), inner, split, copies);
+                    seen.merge(inner);
+                }
+                default -> nested(body, seen, split, copies);
+            }
+            variableReceive(body, seen);
+        }
+    }
+
+    /** The steps of the EIPs that hold some: when and otherwise of a choice, doCatch and doFinally of a doTry. */
+    private static void nested(Node body, Seen seen, String split, List<UnsetCopy> copies) {
+        if (!(body instanceof MappingNode map)) {
+            return;
+        }
+        List<Seen> branches = new ArrayList<>();
+        for (NodeTuple t : map.getValue()) {
+            String key = scalar(t.getKeyNode());
+            if ("steps".equals(key)) {
+                Seen inner = seen.copy();
+                walk(t.getValueNode(), inner, split, copies);
+                branches.add(inner);
+            } else if ("when".equals(key) || "doCatch".equals(key)) {
+                if (t.getValueNode() instanceof SequenceNode items) {
+                    for (Node branch : items.getValue()) {
+                        Seen inner = seen.copy();
+                        walk(value(branch, "steps"), inner, split, copies);
+                        branches.add(inner);
+                    }
+                }
+            } else if ("otherwise".equals(key) || "doFinally".equals(key)) {
+                Seen inner = seen.copy();
+                walk(value(t.getValueNode(), "steps"), inner, split, copies);
+                branches.add(inner);
+            }
+        }
+        branches.forEach(seen::merge);
+    }
+
+    private static void setHeader(Node body, Seen seen, String split, List<UnsetCopy> copies) {
+        String name = scalar(value(body, "name"));
+        if (name == null) {
+            return;
+        }
+        Node simple = value(body, "simple");
+        if (simple == null && value(body, "expression") instanceof MappingNode expression) {
+            simple = value(expression, "simple");
+        }
+        if (simple instanceof MappingNode m) {
+            simple = value(m, "expression");
+        }
+        Matcher m = simple instanceof ScalarNode s ? ONE_HEADER.matcher(s.getValue().trim()) : null;
+        if (m != null && m.matches() && !seen.anyHeader) {
+            String read = m.group(1) != null ? m.group(1) : m.group(2);
+            if (!read.startsWith("Camel") && !seen.headers.contains(read)) {
+                Kind kept = seen.variables.contains(read)
+                        ? Kind.VARIABLE : seen.properties.contains(read) ? Kind.PROPERTY : null;
+                copies.add(new UnsetCopy(simple.getStartMark().getLine() + 1, name, read, split, kept));
+            }
+        }
+        seen.headers.add(name);
+    }
+
+    /** Whether a step runs code of its own, outside the steps it holds: a script language can set any header. */
+    private static boolean runsCode(Node node) {
+        if (node instanceof MappingNode map) {
+            for (NodeTuple t : map.getValue()) {
+                String key = scalar(t.getKeyNode());
+                if (SCRIPTS.contains(key)
+                        || "simple".equals(key) && scalar(t.getValueNode()) != null
+                                && scalar(t.getValueNode()).contains("setHeader(")) {
+                    return true;
+                }
+                if (!"steps".equals(key) && !"when".equals(key) && !"otherwise".equals(key) && !"doCatch".equals(key)
+                        && !"doFinally".equals(key) && runsCode(t.getValueNode())) {
+                    return true;
+                }
+            }
+        } else if (node instanceof SequenceNode seq) {
+            for (Node n : seq.getValue()) {
+                if (runsCode(n)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** The field of the data a split gives the elements of, such as lines, or null when it is not one. */
+    private static String splitField(Node body) {
+        String text = null;
+        Node expression = value(body, "expression");
+        Node language = expression instanceof MappingNode e ? e : body;
+        for (String key : List.of("simple", "jsonpath")) {
+            Node n = value(language, key);
+            if (n instanceof MappingNode m) {
+                n = value(m, "expression");
+            }
+            if (scalar(n) != null) {
+                text = scalar(n).trim();
+            }
+        }
+        Matcher m = text != null ? SPLIT_FIELD.matcher(text) : null;
+        return m != null && m.matches() ? m.group(1) != null ? m.group(1) : m.group(2) : null;
+    }
+
+    /** The JSON data of the files the route consumes, as the project facts have them, or null. */
+    private static ProjectFacts.JsonFields consumedData(String uri, MappingNode from, ProjectFacts facts) {
+        if (facts == null || !"file".equals(scheme(uri))) {
+            return null;
+        }
+        String directory = uri.length() > "file:".length() ? uri.substring("file:".length()) : null;
+        if (directory != null && directory.contains("?")) {
+            directory = directory.substring(0, directory.indexOf('?'));
+        }
+        if (directory == null || directory.isBlank()) {
+            directory = scalar(value(value(from, "parameters"), "directoryName"));
+        }
+        return directory != null ? facts.jsonFields().get(ProjectFacts.directoryKey(directory)) : null;
+    }
+
+    private static String selfCopyMessage(UnsetCopy copy, List<UnsetCopy> copies, ProjectFacts.JsonFields data) {
+        String name = copy.name();
+        StringBuilder sb = new StringBuilder("Line ").append(copy.line()).append(": ${header.").append(name)
+                .append("} is null here: no step before this line sets the header ").append(name)
+                .append(", so setHeader ").append(name).append(" copies null to itself. ")
+                .append(copy.kept() != null
+                        ? "The route keeps " + name + " in " + copy.kept().what + ": write ${" + copy.kept().read + name
+                          + "}"
+                        : whereTheValueIs(name, copy.split(), data));
+        // the other headers the same route copies before anything sets them, such as needed with ${header.qty}
+        for (UnsetCopy other : copies) {
+            if (other != copy && !other.name().equals(other.read())) {
+                sb.append("; the same for ${header.").append(other.read()).append("} on line ").append(other.line())
+                        .append(": ").append(other.kept() != null
+                                ? "${" + other.kept().read + other.read() + "}"
+                                : readInstead(other.read(), other.split(), data));
+            }
+        }
+        return sb.toString();
+    }
+
+    /** What to write for a value the route has not set as a header: a field of the split element, or of the data. */
+    private static String whereTheValueIs(String name, String split, ProjectFacts.JsonFields data) {
+        Set<String> element = split != null && data != null ? data.elementFields().get(split) : null;
+        if (element != null && element.contains(name)) {
+            return "In the split the body is one of the " + split + " of " + data.where() + " ("
+                   + String.join(", ", new TreeSet<>(element)) + "): write ${body[" + name + "]}";
+        }
+        if (element != null && data.fields().contains(name)) {
+            return name + " is a field of the data that was split, not of one of the " + split + ": read it before the"
+                   + " split, into a variable (setVariable), and write ${variable." + name + "} in the split";
+        }
+        if (split != null) {
+            return "In the split the body is the element: a field of it is ${body[" + name + "]}";
+        }
+        return "Set it from where the value is, such as a field of the body (${body[" + name + "]}) or a variable"
+               + " (${variable." + name + "})";
+    }
+
+    /** The read to write instead of a header nothing sets, for the tail of the message. */
+    private static String readInstead(String name, String split, ProjectFacts.JsonFields data) {
+        Set<String> element = split != null && data != null ? data.elementFields().get(split) : null;
+        if (element != null && !element.contains(name) && data.fields().contains(name)) {
+            return "${variable." + name + "}, set before the split";
+        }
+        return "${body[" + name + "]}";
+    }
+
+    /** A variableReceive of a step: the variable it sets. */
+    private static void variableReceive(Node body, Seen seen) {
+        String v = scalar(value(body, "variableReceive"));
+        if (v != null) {
+            seen.variables.add(v);
+        }
+    }
+
+    private static void name(Node body, Set<String> into) {
+        String n = scalar(value(body, "name"));
+        if (n != null) {
+            into.add(n);
+        }
+    }
+
+    private static void namesOf(Node items, Set<String> into) {
+        if (items instanceof SequenceNode list) {
+            list.getValue().forEach(item -> name(item, into));
+        }
+    }
+
+    private static Node value(Node node, String key) {
+        if (node instanceof MappingNode map) {
+            for (NodeTuple t : map.getValue()) {
+                if (key.equals(scalar(t.getKeyNode()))) {
+                    return t.getValueNode();
+                }
+            }
+        }
+        return null;
+    }
+
+    private static MappingNode mapping(Node node) {
+        return node instanceof MappingNode m ? m : null;
+    }
+
+    private static String scalar(Node node) {
+        return node instanceof ScalarNode s ? s.getValue() : null;
     }
 }
