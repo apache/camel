@@ -21,11 +21,13 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystemException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -41,7 +43,9 @@ import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.sftp.common.SftpConstants;
 import org.apache.sshd.sftp.server.DirectoryHandle;
 import org.apache.sshd.sftp.server.SftpEventListener;
+import org.apache.sshd.sftp.server.SftpFileSystemAccessor;
 import org.apache.sshd.sftp.server.SftpSubsystemFactory;
+import org.apache.sshd.sftp.server.SftpSubsystemProxy;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -121,6 +125,26 @@ class SftpExistsFileIT extends CamelTestSupport {
             assertEquals(2, service.requests(SftpConstants.SSH_FXP_LSTAT));
             // the existing file was found in a listing of its directory, as before
             assertTrue(service.requests(SftpConstants.SSH_FXP_OPENDIR) >= 1, "requests: " + service.requests);
+        } finally {
+            operations.disconnect();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void listsDirectoryWhenServerAnswersNeitherLstatNorStatOfFile(boolean fastExistsCheck) throws Exception {
+        createFiles(base.resolve("inbox"), 10);
+        // a server that does not permit LSTAT on a path does not permit STAT either, while it lists the directory
+        service.refuseAttributesOf(path -> !Files.isDirectory(path));
+
+        SftpOperations operations = connect(fastExistsCheck);
+        try {
+            service.reset();
+            assertTrue(operations.existsFile(remotePath("inbox/file-0005.txt")));
+            assertFalse(operations.existsFile(remotePath("inbox/missing.txt")));
+            assertEquals(2, service.requests(SftpConstants.SSH_FXP_LSTAT));
+            // both were looked up in a listing of their directory
+            assertEquals(2, service.requests(SftpConstants.SSH_FXP_OPENDIR), "requests: " + service.requests);
         } finally {
             operations.disconnect();
         }
@@ -288,7 +312,8 @@ class SftpExistsFileIT extends CamelTestSupport {
 
     /**
      * The embedded SFTP server, counting the requests it receives and the directory entries it sends, and running a
-     * hook before it answers an LSTAT request: a hook that throws makes the server answer with an error status.
+     * hook before it answers an LSTAT request: a hook that throws makes the server answer with an error status. It can
+     * also refuse the LSTAT and STAT requests on some paths only.
      */
     static class CountingSftpEmbeddedService extends SftpEmbeddedService {
 
@@ -296,11 +321,26 @@ class SftpExistsFileIT extends CamelTestSupport {
         private final Map<String, AtomicInteger> requests = new ConcurrentHashMap<>();
         private final AtomicInteger entriesListed = new AtomicInteger();
         private volatile ThrowingRunnable<IOException> onLstat;
+        private volatile Predicate<Path> refuseAttributesOf;
 
         @Override
         public void setUpServer() throws Exception {
             super.setUpServer();
             SftpSubsystemFactory factory = (SftpSubsystemFactory) sshd.getSubsystemFactories().get(0);
+            factory.setFileSystemAccessor(new SftpFileSystemAccessor() {
+                @Override
+                public LinkOption[] resolveFileAccessLinkOptions(
+                        SftpSubsystemProxy subsystem, Path file, int cmd, String extension, boolean followLinks)
+                        throws IOException {
+                    Predicate<Path> refused = refuseAttributesOf;
+                    if ((cmd == SftpConstants.SSH_FXP_LSTAT || cmd == SftpConstants.SSH_FXP_STAT) && refused != null
+                            && refused.test(file)) {
+                        throw new AccessDeniedException(file.toString());
+                    }
+                    return SftpFileSystemAccessor.super.resolveFileAccessLinkOptions(
+                            subsystem, file, cmd, extension, followLinks);
+                }
+            });
             factory.addSftpEventListener(new SftpEventListener() {
                 @Override
                 public void received(ServerSession session, int type, int id) throws IOException {
@@ -322,6 +362,13 @@ class SftpExistsFileIT extends CamelTestSupport {
 
         void onLstat(ThrowingRunnable<IOException> hook) {
             this.onLstat = hook;
+        }
+
+        /**
+         * Answers the LSTAT and STAT requests on the paths that match with PERMISSION_DENIED.
+         */
+        void refuseAttributesOf(Predicate<Path> paths) {
+            this.refuseAttributesOf = paths;
         }
 
         void reset() {

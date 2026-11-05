@@ -1534,30 +1534,10 @@ public class SftpOperations
 
     protected boolean fastExistsFile(String name) throws GenericFileOperationFailedException {
         LOG.trace("fastExistsFile({})", name);
-        try {
-            return lstat(name) != null;
-        } catch (SftpException e) {
-            if (!isLstatUnanswered(e)) {
-                throw new GenericFileOperationFailedException(e.getMessage(), e);
-            }
-            LOG.debug("Cannot get the attributes of: {} due to: {}. Listing it instead.", name, e.getMessage());
-        }
-        try {
-            @SuppressWarnings("rawtypes")
-            List files = channel.ls(name);
-            if (files == null) {
-                return false;
-            }
-            return !files.isEmpty();
-        } catch (SftpException e) {
-            // or an exception can be thrown with id 2 which means file does not
-            // exists
-            if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
-                return false;
-            }
-            // otherwise its a more serious error so rethrow
-            throw new GenericFileOperationFailedException(e.getMessage(), e);
-        }
+        // the same as without fastExistsCheck, also when the server does not answer the LSTAT: JSch ls(name) starts
+        // with a STAT of the path, which such a server would most likely not answer either, and then lists the whole
+        // directory of an existing file anyway
+        return getFileAttributes(name) != null;
     }
 
     @Override
