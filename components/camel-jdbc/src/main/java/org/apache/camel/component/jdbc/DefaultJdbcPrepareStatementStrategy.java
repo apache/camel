@@ -18,6 +18,7 @@ package org.apache.camel.component.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -55,19 +56,19 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
             final String query, final String preparedQuery, final int expectedParams,
             final Exchange exchange, final Object value)
             throws SQLException {
-        Map<?, ?> map = null;
-        if (exchange.getIn().hasHeaders()) {
-            if (exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS) != null) {
-                // header JDBC_PARAMETERS takes precedence over regular headers
-                map = exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS, Map.class);
-            } else {
-                map = exchange.getIn().getHeaders();
-            }
-        }
-
-        final Map<?, ?> headerMap = map;
-
         if (hasNamedParameters(query)) {
+            Map<?, ?> map = null;
+            if (exchange.getIn().hasHeaders()) {
+                if (exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS) != null) {
+                    // header JDBC_PARAMETERS takes precedence over regular headers
+                    map = exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS, Map.class);
+                } else {
+                    map = exchange.getIn().getHeaders();
+                }
+            }
+
+            final Map<?, ?> headerMap = map;
+
             // create an iterator that returns the value in the named order
             try {
 
@@ -118,9 +119,32 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
             }
 
         } else {
-            // just use a regular iterator
-            return exchange.getContext().getTypeConverter().convertTo(Iterator.class,
-                    headerMap != null ? headerMap.values() : null);
+            // plain ? placeholders are bound by position, so the values are only taken from the JDBC_PARAMETERS header
+            // (and not from all the message headers, as their order does not relate to the query)
+            return createPositionalIterator(query, exchange);
+        }
+    }
+
+    private Iterator<?> createPositionalIterator(String query, Exchange exchange) {
+        Object parameters = exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS);
+        if (parameters instanceof Map<?, ?> map) {
+            return map.values().iterator();
+        } else if (parameters instanceof Iterable<?> iterable) {
+            return iterable.iterator();
+        } else if (parameters instanceof Object[] array) {
+            return Arrays.asList(array).iterator();
+        } else if (parameters == null) {
+            throw new RuntimeExchangeException(
+                    "Cannot set the ? placeholders in query [" + query + "]: set their values, in order, as a List in the "
+                                               + JdbcConstants.JDBC_PARAMETERS
+                                               + " header, or use named parameters (:?name)",
+                    exchange);
+        } else {
+            throw new RuntimeExchangeException(
+                    "Cannot set the ? placeholders in query [" + query + "]: the " + JdbcConstants.JDBC_PARAMETERS
+                                               + " header must be a List or a Map with their values, in order, but was "
+                                               + parameters.getClass().getName(),
+                    exchange);
         }
     }
 
