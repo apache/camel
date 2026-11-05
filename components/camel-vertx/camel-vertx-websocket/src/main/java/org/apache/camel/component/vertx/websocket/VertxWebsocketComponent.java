@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -41,6 +43,9 @@ import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.cr
 public class VertxWebsocketComponent extends DefaultComponent implements SSLContextParametersAware {
 
     private final Map<VertxWebsocketHostKey, VertxWebsocketHost> vertxHostRegistry = new ConcurrentHashMap<>();
+    // connect and disconnect of the consumers of one host and port run one at a time (route policies start and stop
+    // consumers without the CamelContext lock); a lock is kept after its host goes, so a new host gets the same lock
+    private final Map<VertxWebsocketHostKey, Lock> hostLocks = new ConcurrentHashMap<>();
     private boolean managedVertx;
 
     @Metadata(label = "advanced")
@@ -162,6 +167,32 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     }
 
     public void connectConsumer(VertxWebsocketConsumer consumer) {
+        // without the lock, a disconnect between the lookup and the connect could remove the host from the registry
+        Lock lock = hostLock(consumer);
+        lock.lock();
+        try {
+            doConnectConsumer(consumer);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void disconnectConsumer(VertxWebsocketConsumer consumer) {
+        Lock lock = hostLock(consumer);
+        lock.lock();
+        try {
+            doDisconnectConsumer(consumer);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private Lock hostLock(VertxWebsocketConsumer consumer) {
+        VertxWebsocketHostKey hostKey = createHostKey(consumer.getEndpoint().getConfiguration().getWebsocketURI());
+        return hostLocks.computeIfAbsent(hostKey, key -> new ReentrantLock());
+    }
+
+    private void doConnectConsumer(VertxWebsocketConsumer consumer) {
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
         VertxWebsocketHostKey hostKey = createHostKey(configuration.getWebsocketURI());
@@ -213,7 +244,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         }
     }
 
-    public void disconnectConsumer(VertxWebsocketConsumer consumer) {
+    private void doDisconnectConsumer(VertxWebsocketConsumer consumer) {
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
         VertxWebsocketHostKey hostKey = createHostKey(configuration.getWebsocketURI());
@@ -223,9 +254,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
             vertxWebsocketHost.disconnect(consumer);
 
             // every consumer on this host and port shares the one host, which stops its server as its last
-            // consumer goes. Forgetting it any earlier would leave the consumers still on it unable to disconnect.
-            // computeIfPresent decides that against the same key connectConsumer computes on, so a consumer
-            // connecting at this moment either keeps the host or gets a fresh one, never a forgotten one
+            // consumer goes. Forgetting it any earlier would leave the consumers still on it unable to disconnect
             vertxHostRegistry.computeIfPresent(hostKey, (key, host) -> host.isServingConsumers() ? host : null);
         }
     }
