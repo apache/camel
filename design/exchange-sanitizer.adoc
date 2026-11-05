@@ -1,0 +1,726 @@
+---
+title: Exchange sanitizer
+authors:
+  - "@allthingssecurity"
+reviewers: ["@davsclaus"]
+approvers: []
+creation-date: 2026-11-05
+last-updated: 2026-11-05
+status: proposed
+see-also:
+  - "CAMEL-26630"
+  - "CAMEL-26338"
+  - "CAMEL-26330"
+  - "CAMEL-25095"
+  - "CAMEL-25122"
+  - "CAMEL-26464"
+  - "CAMEL-26576"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+The exchange sanitizer is a checker for development and tests. It watches the exchanges of a running Camel application
+and reports, when it happens, that the contracts of `AsyncProcessor` and of on completions are broken: a
+callback called twice, a processor that throws instead of calling its callback, a consumer's commit that runs twice,
+is taken by the wrong exchange or never runs, and an exchange used by two threads at the same time. It also lists the
+tasks an executor drops when it is shut down. The name comes from the sanitizers of other runtimes (ThreadSanitizer,
+the kernel's KCSAN): cheap bookkeeping at a few points, one simple rule checked at each of them, and a report with the
+stacks that matter.
+
+It checks the code of Camel users as much as Camel's own: a custom `AsyncProcessor`, a custom component (a consumer
+that commits with an on completion, a producer that calls its callback from another thread), an `AggregationStrategy`,
+a bean or a route policy. A developer adds the test dependency and one annotation to the tests they already have, and
+a test that runs a broken path fails with a report that names their class and the step. It checks the paths the tests
+run; it does not find untested ones. Authors of components outside Apache Camel get the same check on their own test
+suites.
+
+It is switched on like `camel-chaos`: with its JAR and profile `dev`, or `camel.sanitizer.enabled=true`, and never with
+profile `prod`. The test dependency and two system properties switch it on for an existing test suite, so a CI
+pipeline can run its tests with it.
+
+It needs two small listener SPIs in camel-api, one for the calls of the steps of a route and one for the on
+completions of an exchange. More than one listener can be installed, and they are separate from the `StepHook` that
+chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
+installed, the routes are built as today and a step costs nothing more.
+
+Everything in this document is design. Nothing is built yet.
+
+== Motivation
+
+Several of the concurrency bugs found in Camel this year share one property: when they hit, nothing fails at the place
+of the bug, and nothing in the log says which rule was broken. At most a WARN appears elsewhere: the reactive executor
+logs an exception it ignores, or a request timeout is logged. The exchange completes twice and fails later far from the
+cause, or it never completes, or the consumer commits a message that failed.
+
+The strongest case is an exchange completed twice: thread A completes it, and thread B calls the same callback again.
+
+* CAMEL-25095 (camel-jms, fixed in 4.23.0): InOut. When the send fails after the request timeout or the reply already
+  completed the exchange, the send failure completes it a second time.
+* CAMEL-25122 (camel-sjms, fixed in 4.23.0): InOut. When the send fails, the reply handler stays registered, and the
+  request timeout completes the exchange a second time.
+* CAMEL-26446 (camel-core, #29040): with the `RedeliveryErrorHandler`, a processor that throws on the first delivery
+  skipped redelivery, the dead letter channel and `onException`, and the exchange could be continued twice.
+
+A second call of a callback continues an exchange that another thread already continued, so the symptom shows up
+wherever the two paths meet, not where the second call was made.
+
+The other cases: a processor that throws instead of calling its callback, so the exchange never completes, and the
+consumer's commit with a shared unit of work:
+
+[cols="2,3,1"]
+|===
+|Ticket |What broke |Rule
+
+|CAMEL-26430 (#28785), CAMEL-26445 (#28808)
+|An `AsyncProcessor` that throws from `process(exchange, callback)` under the `RedeliveryErrorHandler`, on a
+redelivery or with no redelivery: the exchange hangs.
+|R1
+
+|CAMEL-26461 (#29041), CAMEL-26464 (#29127)
+|The same under `noErrorHandler()` and in the steps of `doTry` and `onException`.
+|R1
+
+|CAMEL-26601 (in progress)
+|The same for a recipient of a recipient list inside `doTry`. A recipient is not a step, so the sanitizer sees the
+recipient list step that never completes.
+|R1 (pending call)
+
+|CAMEL-26575 (#29200, open)
+|An `AggregationStrategy` whose `onCompletion` throws in a multicast or split: the exchange hangs.
+|R1 (pending call)
+
+|CAMEL-26569, CAMEL-26576 (#29203, open)
+|Parallel `shareUnitOfWork`: the handover of the on completions fails with a `ConcurrentModificationException`, and a
+part sent to `seda` takes the consumer's commit, which then runs with the outcome of the seda copy.
+|R2
+
+|CAMEL-26578 (#29194)
+|A `ProducerTemplate` stopped while async requests are queued: their futures never complete.
+|R4 (listed only)
+|===
+
+CAMEL-26575, CAMEL-26601, CAMEL-26569 and CAMEL-26576 are not merged yet; the others are.
+
+These are Camel's own bugs, but user code breaks the same contracts in the same way: a custom `AsyncProcessor` that
+throws before it calls its callback, or calls it from a timeout thread and again from a reply thread; a custom consumer
+whose commit runs twice; an `AggregationStrategy` that throws. Today a user who hits one of these sees a hung request,
+a file that never moves, or a message processed twice, and has no way to tell where it comes from. The sanitizer names
+the exchange, the route, the step, the class and the threads, with the stacks.
+
+== What Camel has today
+
+* The `InflightRepository` and the `inflight` dev console (`camel get inflight`) show every exchange in flight, how
+  long it has been there and at which node. They answer "is something stuck", not "why", and they say nothing about an
+  exchange completed twice.
+* The shutdown strategy logs the exchanges still in flight when it gives up waiting.
+* `EventNotifier` publishes exchange created, completed and failed events.
+* Since CAMEL-26464, the channel of a step without an error handler logs a WARN when the callback of its processor is
+  called when it is no longer awaited (`CamelInternalProcessor.AsyncAfterTask.done`). That covers one kind of channel,
+  and the log has no stack of the first call.
+* `StepHook` (CAMEL-26338), asked by the error handler of each step (or by its channel when there is no such error
+  handler) before it calls the processor of the step, outside the `InterceptStrategy` wrappers, can delay or fail the
+  step. There is one per `CamelContext`.
+
+The sanitizer builds on these and does not replace them.
+
+== Goals
+
+* Report the broken rules below when they break (for a commit that never runs or a pending call, when that is
+  known), with the exchange, route, step, class, threads and stacks.
+* Check user code (processors, components, aggregation strategies, beans, route policies) as well as Camel's, in the
+  tests users already have, with no change to the tests other than the annotation; on the paths those tests run.
+* On in development (profile `dev`) and in tests, never in production.
+* A JUnit extension that fails the test on the first violation, and a way to run an existing test suite with the
+  sanitizer on (a system property for any build, a Maven profile in the Camel build).
+* Quiet on correct code: no report on the camel-core test suite and the test suites of the async components on main,
+  except in the tests that break a rule on purpose, which say so (see Using it).
+* No cost per step when it is not switched on. Per on completion added, handed over or run, one check of an empty
+  list of listeners, measured with JMH before it is merged.
+
+== Non-goals
+
+* Production use. It is a development and test tool, and stays off with profile `prod`.
+* Pooled exchanges (`exchangeFactory=pooled`). They are deprecated since 4.23, so the sanitizer does not support them:
+  it stays off and logs a WARN when they are used. CAMEL-26579 (#29195), a pooled-exchange bug, is out of scope for
+  that reason.
+* A general data race detector for user code. R3 watches the exchange as the routing engine uses it, not the fields
+  of user objects.
+* A component that answers its own client twice, outside Camel's callbacks, such as CAMEL-25247 (camel-thrift: the
+  Camel callback was called once, and Thrift's own `AsyncMethodCallback` twice). The sanitizer does not see it.
+* Changing what Camel does. The sanitizer only reports; it does not stop a second callback or complete a hung exchange.
+  The one exception is the sampling of R3, which pauses a thread for a short time on purpose (see R3).
+* MCP tools in the first version. The dev console and `camel get sanitizer` are enough to read the report, and the
+  camel-jbang MCP server should not grow until it has tool profiles (CAMEL-25537).
+* The models and the scripts used to find the bugs above. They stay on the prototype branch.
+
+== The rules
+
+Each rule is something the routing engine relies on. The Javadoc of `AsyncProcessor` and `AsyncCallback` states part of
+it: the callback is called when the exchange is done, and synchronously when `process` returns `true`. That it is called
+exactly once, that `process` does not throw (it sets the exception and calls the callback), that the callback's
+`doneSync` equals the return value, and the rules of R2 for on completions are not written down today; the 4.24 upgrade
+guide only says "as an `AsyncProcessor` must". The first pull request adds them to the Javadoc of `AsyncProcessor`,
+`AsyncCallback` and `Synchronization`, so a report can point at them. A violation is a bug in the code that broke the
+rule, whether that is Camel's or the user's. The rules are checked where the routing engine already passes: the call of
+the processor of each step, the callback of that call, and the on completions of the exchange.
+
+=== R1: the callback of a step is called exactly once
+
+A step is any node of a route with its node id (`to`, `process`, `split`, ...), the same steps the `StepHook` sees. Each
+time the processor of a step is called (each attempt, also each redelivery), its callback must be called exactly once,
+and `process` must not throw. R1 reports:
+
+. *Completed twice.* The callback of a call is called a second time. The report is logged at the second call, before
+  that call continues the exchange. It has the stack and thread of the first call of the callback, kept from when it
+  happened, and the stack and thread of the second call.
+. *Threw before calling the callback.* `process(exchange, callback)` throws and the callback has not been called. Since
+  the fixes above Camel catches this in most places and fails the exchange, but the processor still breaks the
+  contract of `AsyncProcessor`, and on older Camel versions the exchange hangs. The report names the step, the
+  processor and the exception. A processor that throws after it called its callback is reported too.
+. *Callback after the processor threw.* The callback comes after `process` threw. Camel then schedules a takeover that
+  fails the exchange with the exception, and whichever of the two runs first continues the exchange; the other is
+  ignored (the takeover) or, before the fixes, continued it a second time (CAMEL-26446). The listener cannot see which
+  won, so this is its own kind, not "completed twice".
+. *Still pending.* A call whose callback has not come after `camel.sanitizer.pendingTimeout`. This is not a violation,
+  as a slow endpoint looks the same; it is a warning that adds to the `inflight` console what it cannot know: which
+  step's callback the exchange waits for, and whether that step threw. Only the innermost pending call of an exchange
+  is reported, timed from the last call or callback of that exchange, so a long split or a `to("direct:...")` that
+  waits for its children is not. When the context stops, the calls still pending are listed.
+
+The check is at the processor of a step. A processor that is not a step, such as the producer of a recipient of a
+recipient list (CAMEL-26601), is seen through its step: the recipient list that does not complete.
+
+An example. Route `from("direct:start").to("jms:queue:req?requestTimeout=500")`, with a broker that stops answering a
+send. An exchange calls the `to1` step. After 500 ms the request timeout completes it on a thread of the reply
+manager's timeout pool, and the route goes on. Then the send fails on the caller thread, and `JmsProducer.process`
+calls the callback again (CAMEL-25095 before its fix). At that second call the sanitizer logs a report like this
+(illustrative; the format is decided with the prototype):
+
+[source,text]
+----
+Exchange sanitizer: callback called twice (R1)
+  exchange <id>, route route1, step to1 (jms://queue:req)
+  first call:  thread ... JmsReplyManagerOnTimeout[req], at ReplyManagerSupport.processReply(...) ...
+  second call: thread main, at JmsProducer.process(...) ...
+----
+
+Today the same run logs the timeout, and the second continuation shows later, wherever the two paths meet.
+
+=== R2: each consumer commit runs exactly once, for the unit of work that owns it
+
+*Commit* here means the consumer's on completion: a `Synchronization` that the consumer adds to the exchange before it
+routes it (`exchange.getExchangeExtension().addOnCompletion(...)`), to commit or roll back its message when the
+exchange is done. The file and FTP consumers do this to move or delete the file, as do other consumers, Camel's and
+third-party ones. A commit is not `UnitOfWork.done`: the unit of work is done once for each exchange, while a commit
+can move:
+
+* it is handed over to a copy that is routed on its own, such as an `InOnly` exchange sent to `seda`
+  (`ExchangeHelper.createCorrelatedCopy` with handover); the copy then holds it, and it runs when the copy is done, with
+  the outcome of the copy;
+* with `shareUnitOfWork`, the parts of a split, multicast or recipient list use the unit of work of the parent, so the
+  commit stays in that unit of work and runs when the parent is done.
+
+So the owner of a commit is not an exchange but the place it is in: the unit of work it was added to, or, before an
+exchange has a unit of work, the exchange's own list. Each unit of work was created for one exchange (the
+`DefaultUnitOfWork` constructor takes it), and other exchanges may share it.
+
+In the code, the commits of an exchange are the on completions it holds when it gets a unit of work that was created
+for it (they move into the unit of work in `setUnitOfWork`). On completions added later, such as the tracer's or the
+one that deletes a stream cache spool file, are not commits. The prototype checks this against the consumers of the
+test runs.
+
+The rule: each commit runs `onComplete` or `onFailure` exactly once, in the place that holds it at the end, and it
+moves only by a handover made by the exchange its unit of work was created for. R2 reports:
+
+. a commit that runs a second time;
+. a commit that is handed over through a unit of work by an exchange that it was not created for, such as a part that
+  shares the unit of work of its parent and sends to `seda` (CAMEL-26576). This is reported at the handover, before the
+  commit runs with the wrong outcome;
+. two handovers through the same unit of work from two threads that overlap in time, seen with a watch window on the
+  unit of work, as R3 does for exchanges (CAMEL-26569);
+. a commit that never runs: the exchange its unit of work was created for is done (its completed or failed event), and
+  the commit was neither run, handed over nor taken; or the context stops while a commit waits in a copy that was never
+  routed (such as a `seda` queue that is dropped).
+
+The records are per add, not per `Synchronization` instance: one instance can be on many exchanges (a consumer may add
+the same object to every exchange), and can be taken and added again. On completions that are taken out as a list
+(`handoverCompletions()` without a target, used by the aggregator, the enrichers and `onCompletion`) and run by
+another exchange are followed for "runs once" only.
+
+R2 covers consumers that commit with an on completion. A consumer that commits in its own code after the callback
+(such as JMS with a transacted session) is covered by R1 only.
+
+=== R3: one thread at a time
+
+An exchange can move between threads, but it is never used by two threads at the same time. Camel has no single API
+for the moment it moves: an asynchronous processor returns `false` from `process`, and each component hands the
+exchange to its own thread in its own way. So R3 does not look for a handover. It checks two things that hold whatever
+the threads are:
+
+. *The contract of `AsyncProcessor`* at the call of each step: the value the callback is called with (`doneSync`)
+  equals the value `process` returns. For a caller that uses the return value, a processor that returns `true` while
+  its callback was called with `false` on another thread lets two threads continue the same exchange, and one that
+  returns `true` before its callback was called leaves the exchange with no thread. Many callers in core continue
+  through the callback and ignore the return value (the `Pipeline`, the `RedeliveryErrorHandler`), so there a mismatch
+  is harmless today; it still breaks the contract, and the same processor breaks under a caller that uses it. (The
+  channel itself always continues the exchange through the reactive executor, so its own `doneSync` says nothing; R3
+  checks the processor of the step itself.) Whether every processor of the core EIPs keeps this today is the first
+  thing the camel-core run shows; a processor that does not is fixed with its own JIRA, or the rule is narrowed with
+  the reason written down, before R3 is proposed.
+. *Accesses that overlap in time*, as KCSAN does in the Linux kernel. The routing engine uses the exchange at known
+  points: a step starts, its callback continues the exchange, an on completion runs. At a small sample of these points
+  the sanitizer opens a short watch window on the exchange, during which that thread pauses. If another thread uses
+  the same exchange at one of these points during the window, both are reported with their stacks. A thread that is
+  only waiting (such as the caller of a circuit breaker that waits for its task) uses nothing, so it is not reported.
+  The return of `process` is not such a point: after an asynchronous processor handed the exchange on, its caller
+  only unwinds, and the thread that got the exchange may already call the callback.
+
+The pause makes a rare overlap more likely, which is the point, but it changes the timing of the application, and a
+paused I/O thread (such as a Netty event loop) serves nothing else while it waits. The sampling is therefore off by
+default in profile `dev` and on in the JUnit extension and the CI switch, where it should run on the test suites of the
+async components (netty, netty-http, vertx-http, JMS request/reply), not only on camel-core. A test that fails only
+because of the pauses (a short timeout, a throttler) fails with its own assertion, not with a sanitizer report, so the
+two can be told apart; such a test class turns the sampling off for itself (see Using it). The pauses and
+`pendingTimeout` use the system clock, not `TimeSource`, so a virtual clock of camel-test-dst does not stretch them.
+
+=== R4: tasks dropped at shutdown
+
+When an executor of the `ExecutorServiceManager` is shut down, `shutdownNow` returns the tasks it never ran. R4 lists
+them in the report, with the executor and its source, at WARN. It does not report them as violations, because the
+sanitizer cannot tell whether someone waits for their result. CAMEL-26578 shows why: before its fix the template
+submitted a lambda, so `shutdownNow` returned the `FutureTask` of the executor, while the caller waited on another
+`CompletableFuture`; since the fix the template runs its own task class and completes the caller's future itself when
+it stops. In both cases the list shows what was dropped, and a person can see whether a caller was left waiting.
+
+R4 is the least important rule and comes last in the order of work.
+
+== Checking your own processors and components
+
+The rules are what every `AsyncProcessor`, `AsyncCallback` and `Synchronization` must keep, so the sanitizer checks a
+user's code the same way it checks Camel's. Take a custom processor that calls a slow service and has a timeout of
+its own:
+
+[source,java]
+----
+public class PriceLookup extends AsyncProcessorSupport {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        ScheduledFuture<?> timeout = scheduler.schedule(() -> {
+            exchange.setException(new TimeoutException());
+            callback.done(false);
+        }, 2, SECONDS);
+        client.lookup(exchange.getMessage().getBody(String.class))
+                .whenComplete((price, error) -> {
+                    timeout.cancel(false);   // too late if the timeout already ran
+                    ...
+                    callback.done(false);
+                });
+        return false;
+    }
+}
+----
+
+When the service answers after the timeout, the callback is called twice: in production a message continues twice when
+the service is slow. A test whose stub answers after 3 s, and that waits for that answer, fails with the R1 report: step
+`process1`, class `PriceLookup` (the report looks through any delegate Camel may put around a processor, such as the
+`DelegateAsyncProcessor` that `.process(...)` uses for an `AsyncProcessor` that is not a `Service`), the stack of the
+timer thread that completed first and of the reply thread that completed second. A test whose stub always answers at
+once does not run that path, and the sanitizer cannot report it. A processor that throws from `process` instead of
+calling the callback fails any test that runs it with "threw before calling the callback", naming the class and the
+exception.
+
+What the user adds to the test they already have is the test dependency and one annotation:
+
+[source,java]
+----
+@CamelSanitizer   // the only change
+class PriceRouteTest extends CamelTestSupport {
+    ...
+}
+----
+
+or, for a whole suite in CI, the test dependency and two system properties, with no change to the tests (see Using it).
+The same holds for a custom component: a consumer whose commit runs twice or never fails R2, a producer that calls its
+callback from two threads fails R1, and one that returns `true` from `process` after handing the callback to another
+thread fails R3. Component authors outside Apache Camel get the same check by adding the extension to their own test
+suites.
+
+The report points at the class that broke the rule, and says in one line what the usual fix is: for "completed
+twice", let only the first path call the callback (a `compareAndSet` on the outcome); for "threw before calling the
+callback", catch, set the exception on the exchange and call the callback; for a `doneSync` mismatch, return what the
+callback was called with. It does not change the code. When the test also fails on its own, the sanitizer's failure is
+added to it as a suppressed exception, so neither is lost.
+
+== Proposal
+
+=== The listener SPIs
+
+Two new SPIs in camel-api (`@since 4.24`, or the release they land in), one per kind of event, because they are called
+from different places at different times: a listener for steps only should not make every exchange report its on
+completions. A listener only observes: it cannot change the exchange or the routing. All methods have an empty default.
+
+[source,java]
+----
+public interface StepListener {
+
+    // the processor of a step is about to be called; the returned state is passed to the methods below for this call
+    default @Nullable Object onStepCall(Exchange exchange, String routeId, String nodeId) { return null; }
+
+    // process(exchange, callback) returned
+    default void onStepReturn(@Nullable Object state, boolean doneSync) { }
+
+    // process(exchange, callback) threw
+    default void onStepThrow(@Nullable Object state, Throwable cause) { }
+
+    // the callback of this call is called (each time it is called), before it continues the exchange
+    default void onStepCallback(@Nullable Object state, boolean doneSync) { }
+}
+
+public interface OnCompletionListener {
+
+    // an exchange gets a unit of work; moved are the on completions it held until then
+    default void onUnitOfWork(Exchange exchange, UnitOfWork unitOfWork, List<Synchronization> moved) { }
+
+    // an on completion is added to a unit of work
+    default void onCompletionAdded(UnitOfWork unitOfWork, Synchronization onCompletion) { }
+
+    // on completions are handed over from one exchange (and its unit of work, if any) to another exchange
+    default void onCompletionHandover(
+            Exchange from, @Nullable UnitOfWork fromUnitOfWork, Exchange to, List<Synchronization> moved) { }
+
+    // on completions are taken out of an exchange as a list, to be run by someone else
+    default void onCompletionTaken(Exchange from, List<Synchronization> taken) { }
+
+    // an on completion is about to run onComplete (failure false) or onFailure (failure true)
+    default void onCompletionRun(Exchange exchange, Synchronization onCompletion, boolean failure) { }
+}
+----
+
+The state of a step call works as the state of a `CamelInternalProcessorAdvice`: `onStepCall` returns it, and the other
+step methods get it back (one slot per listener). It is held by the wrapped callback of the call, so a listener keeps
+its record of the call there, and the record lives as long as anything can still call the callback. That is how the
+sanitizer keeps the stack of the first call of a callback for a second call that comes much later, without a table to
+clean up. The state holds ids, names, threads and stacks, never the exchange, so a callback that a broken component
+keeps forever does not keep the exchange and its body alive.
+
+Only `onStepCall`, and the on completion methods on the thread that makes the change, may read the exchange. The other
+step methods run on threads that may not own the exchange (even its id is created on first use, without
+synchronization), so they get only the state; `onStepCall` gets the route id from the channel for the same reason. The
+names do not reuse `StepHook.beforeStep`, so one class can implement both.
+
+Exchange created, completed and failed come from the `EventNotifier` that exists, so they are not in the listeners.
+
+They are installed through `ExtendedCamelContext`, as the `StepHook` is, with default methods: `addStepListener`,
+`removeStepListener`, `getStepListeners`, and the same for `OnCompletionListener`. The step methods come first (step 1
+of the order of work); the on completion listener comes with R2 (step 3).
+
+The API changes in short: the two interfaces; the six methods on `ExtendedCamelContext`; and, for R2, a new default
+method on `UnitOfWork` that hands over and returns what moved (`handoverSynchronization(Exchange from, Exchange
+target, Predicate<Synchronization> filter)`), as today only `DefaultUnitOfWork` knows which on completions a
+`SynchronizationVetoable` kept, and only the exchange knows that it is the one handing over.
+
+Rules for listeners, in the Javadoc:
+
+* Many can be installed, each kind in a copy-on-write array on the context extension (the getter returns a cached
+  unmodifiable view, so a call site checks `isEmpty()` without copying; the same instance twice is ignored). They are
+  called in the order they were added, on the thread of the event, by many threads at once: they must be thread-safe
+  and quick (the R3 pauses are a deliberate exception of the sanitizer), and must not depend on the order.
+* A call of a step reads the listeners when it starts and keeps them for its callback, so a listener removed meanwhile
+  still gets the callback of a call it saw start. The on completion places read them at each event.
+* A listener can never change the routing, also when it fails. Each call of a listener is in its own `try` with a
+  `catch (Throwable)`, logged at WARN once per listener. The processor is called whatever `onStepCall` did, the real
+  callback is called in a `finally`, the processor's own exception is thrown on unchanged, and a listener whose
+  `onStepCall` threw gets no more events for that call. So a failing listener cannot look like a failing processor to
+  the error handler, which would take over and continue the exchange a second time.
+* Step listeners are looked at when a route is created, so they are added before (`onContextInitializing`, as chaos
+  does); a route created while none was installed is not seen until it is created again (as a reload in dev mode
+  does).
+
+=== Where they are called
+
+*Steps.* When a route is created and at least one step listener is installed, `DefaultChannel` (only it, not channels
+of a custom `InternalProcessorFactory`) wraps the processor of the step in one small `DelegateAsyncProcessor` that
+calls the listeners. Code that unwraps processors (`Navigate`) still finds the processor, and
+`Channel.getNextProcessor()` still returns it, so the debugger and the `DisabledAware` check are unchanged.
+
+The wrapper is the `target` the `InterceptStrategy` loop starts with, so each strategy wraps it and it stays innermost.
+The `next` the strategies get and the `InterceptableProcessor` skip check are still computed from the processor of the
+step, so they do not change; a strategy that looks at its `target` gets the wrapper, which implements `Navigate`. The
+error handler of the step calls it (through those wrappers) for each attempt, and the channel calls it for a step
+without such an error handler; with JMX and redelivery the order is error handler, JMX instrumentation, the `StepHook`
+processor, the interceptor wrappers, the listener wrapper, the processor. It does not ask `canIntercept()`, so the steps
+inside `doTry`, `doCatch` and `doFinally` are seen. Not seen are a user `InterceptStrategy` wrapper and the interception
+pipeline of `intercept()` (the steps of the intercept route are seen).
+
+The wrapper reads the listeners, calls `onStepCall`, wraps the callback once per call, calls the processor, and then
+`onStepReturn` or `onStepThrow`; the wrapped callback calls `onStepCallback` and then the real callback. The
+transacted path calls `process(exchange)` of the same wrapper, through the await manager.
+
+With no step listener installed when the route is created, there is no wrapper, so a step costs nothing more than
+today: not a check, not a volatile read. With listeners, each step call costs the calls of the listeners and one
+wrapped callback; that is a development cost, measured before the first pull request is merged (see Validation).
+
+*On completions.* The on completion listener is called where Camel changes or runs on completions today:
+
+* `onUnitOfWork` in `setUnitOfWork` of the exchange (in `AbstractExchange` and `ExtendedExchangeExtension`), with the
+  on completions it moves into the unit of work;
+* `onCompletionAdded` in `DefaultUnitOfWork.addSynchronization`. An add that is part of a move or of a handover is
+  reported there too. The listener tells them apart: `onUnitOfWork` is fired before the move, and `onCompletionHandover`
+  right after the handover, on the same thread, so the adds in between belong to them. Adds to an exchange's own list
+  (before it has a unit of work) are not reported; they show up in the move;
+* `onCompletionHandover` in `handoverCompletions(target)` of the exchange, which knows the exchange that hands over and,
+  through the new `UnitOfWork` method, what moved;
+* `onCompletionTaken` in `handoverCompletions()` without a target;
+* `onCompletionRun` in `UnitOfWorkHelper.doneSynchronizations`, before each on completion runs.
+
+These calls are per exchange, not per step. With no on completion listener installed, each place checks `isEmpty()`
+of the cached view it gets from the context extension, and goes on. The JMH run shows whether that is visible.
+
+*Executors.* R4 needs the list of tasks that `ExecutorServiceManager.shutdownNow` drops. That is a small hook on the
+`ExecutorServiceManager`, next to its `ThreadFactoryListener`, and is designed with R4, last.
+
+=== Relation to StepHook
+
+`StepHook` (CAMEL-26338) acts: it can delay or fail a step, before the processor is called. There is one per
+`CamelContext`, because two hooks that act on the same step need a rule for how they combine (chaos logs a WARN and does
+not fire at steps when another hook is installed). The step listener only observes, also after the call (R1 and R3 are
+about what happens after it), so any number can be installed with no rule for combining them. The hook is asked first,
+outside the `InterceptStrategy` wrappers; if it fails the step, the processor is not called and the listeners see no
+call (`StepHelper` calls the callback, which R1 does not check). The `StepHook` stays as it is: it cannot be expressed
+on a listener, which cannot act. A later version could let chaos count its faults through a listener; that is not
+proposed here.
+
+=== The sanitizer module
+
+The sanitizer is a module, `camel-sanitizer`, with a `ContextServicePlugin`, as `camel-chaos` has. When the context
+initializes, before the routes are created, the plugin reads the profile and the options:
+
+* it installs only with profile `dev`, `camel.sanitizer.enabled=true`, or for a context built by a test that the JUnit
+  extension marked (see Using it), and never with profile `prod` (checked first, so no option of the sanitizer can stop
+  an application in prod); with no profile it stays off unless enabled, as for chaos;
+* when it installs, it logs a WARN that the sanitizer is on and costs time per step (in tests, once per JVM at WARN
+  and then at DEBUG, so a suite's log is not filled with it);
+* it adds its step listener, its on completion listener, an `EventNotifier` for exchange created, completed and
+  failed (it ignores the other events), and the R4 hook;
+* it keeps its records of step calls in their state (see above), and a bounded map of the pending calls per exchange,
+  with weak keys, for R1 "still pending" and R3; its R2 records hold the on completion and ids, not the exchanges.
+
+It changes nothing else: no route policies, no interceptors, no changed components.
+
+The module depends on camel-api and camel-support, and on the JUnit Jupiter API as an optional dependency for its
+extension. Proposed location: `components/camel-sanitizer`, next to `camel-chaos`. A module whose own tests need
+camel-core cannot also be a dependency of camel-core, as Maven would see a cycle; so, as for `camel-seda` and
+`camel-direct`, the module has no tests of its own, its tests live in camel-core, and camel-core can depend on it in
+test scope and run its own suite with it.
+
+=== Options
+
+[cols="1,1,3"]
+|===
+|Option |Default |Description
+
+|`camel.sanitizer.enabled` |`false`, `true` with profile `dev` or a test marked by the JUnit extension |Install the
+sanitizer. Ignored with profile `prod`.
+|`camel.sanitizer.checks` |`callback,commit,threads,tasks` |The checks to run: R1, R2, R3, R4.
+|`camel.sanitizer.stackDepth` |`32` |Frames kept of each stack; `0` keeps only the thread name, which costs least.
+|`camel.sanitizer.overlapSampling` |`0`, `100` in the JUnit extension |R3 watch windows: every Nth point (a counter,
+not random, so a rerun samples the same points of the same run); `0` is off.
+|`camel.sanitizer.overlapWindow` |`1ms` |How long a sampled thread waits for an overlapping access.
+|`camel.sanitizer.pendingTimeout` |`60s` |When a pending callback is reported as still pending (R1).
+|`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops.
+|===
+
+The defaults are a starting point, to be set from what the prototype measures. They are a
+`SanitizerConfigurationProperties` group in camel-main, as `ChaosConfigurationProperties` is for `camel.chaos.*`.
+None of them is marked `insecure`: the sanitizer stays off with profile `prod`, and apart from the R3 pauses it only
+reports. That differs from chaos on purpose: chaos marks `camel.chaos.rules` `insecure:dev`, so `prod` refuses to
+start with rules, while the sanitizer is ignored in `prod`.
+
+The report holds ids, names, threads, stacks, and the class and message of an exception; never bodies or headers. An
+exception message can carry message data, so the report is for development. It is in the log, in the `sanitizer` dev
+console (read-only, and served over HTTP only when the `insecure:dev` option `camel.management.devConsoleEnabled` is
+set), and in `camel get sanitizer`.
+
+=== Using it
+
+*In development.* `camel run --sanitizer` adds the dependency, as `--chaos` does; `--dep camel:sanitizer` works too.
+With profile `dev`, the default of `camel run`, it is on. Violations are logged at WARN when they happen; a `sanitizer`
+dev console (`@DevConsole(readOnly = true)`) and `camel get sanitizer` show the report: the violations with their
+stacks, the calls still pending, and the counts per rule.
+
+*Spring Boot and Quarkus.* The plugin works with any `CamelContext`. A Spring Boot application turns it on in
+development with the Camel profile `dev` (`camel.main.profile=dev`, for example in a Spring `dev` profile file) or
+`camel.sanitizer.enabled=true`; a Quarkus application with `%dev.camel.sanitizer.enabled=true`. The options are read
+through the properties component, so `application.properties` works, but their tooling metadata is in camel-main only.
+`camel run --sanitizer` is refused with `--runtime=spring-boot` or `quarkus` for now, as `--chaos` is. (When no profile
+is set, the Javadoc of `camel.main.profile` calls the default `prod`; either way the sanitizer is off.)
+
+*In a test.* Add the `camel-sanitizer` dependency in test scope and `@CamelSanitizer`, as shown in "Checking your own
+processors and components". `@CamelSanitizer` is meta-annotated with `@ExtendWith(CamelSanitizerExtension.class)`, as
+`@CamelMainTest` and `@DstTest` are, and its attributes tune it (`checks`, `overlapSampling`). The JUnit types live in
+`org.apache.camel.sanitizer.junit`.
+
+The extension marks the test on its thread in `beforeAll` and `beforeEach`, before any `beforeEach` of other extensions
+(such as the one of `@CamelMainTest`, which builds the context there), so the order of the annotations does not matter.
+The plugin runs on the thread that builds the context, so a context built for the test class gets the sanitizer, with R3
+sampling on, and is tied to that class; profile `prod` still wins. A violation is charged to the test of its context,
+and the extension fails that test after it ran, with the first violation and the full report. A violation that comes
+after the test ended, such as a late second callback, fails the test class at its end. Nothing is set for the whole JVM,
+so test classes that run in parallel in one JVM (the camel-core build sets `camel.surefire.parallel=true`) do not see
+each other's violations. It uses only the JUnit Jupiter extension API, so it works with `camel-test-junit5` and
+`camel-test-junit6`, and with tests that do not use them, such as the camel-core tests. The pending warnings of R1 do
+not fail a test.
+
+A context that is still running when the class it is tied to ends, such as a Spring test context that is cached and
+reused by later classes, is untied then. From then on, and for a context that was never tied (an application started
+once for the suite on another thread), violations fail the test classes that run when they happen (at the end of each
+class); in a parallel run that can name more than one class, and the report names the context, route and step, so the
+reader can tell. `@QuarkusTest` runs the application in its own class loader, where the mark of the extension is not
+visible; there the first version only logs the violations, unless the prototype shows the mark can be passed. In a
+suite without JUnit Jupiter (TestNG, a plain `main`) the violations are logged and in the shutdown report, and no test
+fails.
+
+Some tests break a rule on purpose, such as the tests of the fixes above, whose processors throw from `process`. They
+say so, and the extension then checks that the violation was reported instead of failing the test:
+
+[source,java]
+----
+@Test
+@ExpectSanitizerViolation(value = Violation.THREW_BEFORE_CALLBACK, step = "process1")
+void aProcessorThatThrowsFailsTheExchange() { ... }
+----
+
+A test class with timing that the R3 pauses would break turns the sampling off for itself with
+`@CamelSanitizer(overlapSampling = 0)`.
+
+*In CI.* The module registers the extension for JUnit's automatic detection. A pipeline adds the test dependency and
+runs the existing suite with
+
+[source,bash]
+----
+mvn test -Djunit.jupiter.extensions.autodetection.enabled=true \
+    -Djunit.jupiter.extensions.autodetection.include=org.apache.camel.sanitizer.junit.* \
+    -Dcamel.sanitizer.enabled=true -Dsurefire.rerunFailingTestsCount=0
+----
+
+and every test fails on its first violation, without a change to the tests. The include pattern keeps JUnit from
+turning on other extensions found on the classpath. Reruns are turned off because a violation that happens now and
+then would pass a rerun and be reported as a flaky test; the extension also writes every violation to
+`target/camel-sanitizer/` so a rerun cannot hide it. (Surefire passes `-D` options to the forked test JVM; Gradle needs
+`systemProperty` in its `test` task.) Here `camel.sanitizer.enabled` is a system property, so every context of the run
+gets the sanitizer; each violation is still charged as described above. In the Camel build, a Maven profile
+`sanitizer` in camel-core and in the async components does the same (`mvn test -Psanitizer`), with
+`<systemPropertyVariables>` rather than the `<configurationParameters>` block of the parent, which it would replace.
+
+=== Validation
+
+Each step below is done before the code it validates is proposed for merge, and its result goes in the pull request.
+
+. *R1 first.* A prototype with the step listener and R1 only.
+. *The real bugs.* Run the tests of each fix above on the commit before the fix, with the sanitizer on, and show that
+  it reports each one at the right step: CAMEL-25095 and CAMEL-25122 as completed twice; CAMEL-26430, CAMEL-26445,
+  CAMEL-26446, CAMEL-26461 and CAMEL-26464 as threw before calling the callback, and CAMEL-26446 also as a callback
+  after the throw. Then R2 with CAMEL-26576 and CAMEL-26569, and, with "still pending", CAMEL-26575 at the multicast
+  and CAMEL-26601 at the recipient list (with a short `pendingTimeout`), each in the step of the order of work that adds
+  the rule.
+. *User code.* Tests with a custom `AsyncProcessor` that calls its callback twice, one that throws, a custom consumer
+  whose commit runs twice, and an `AggregationStrategy` that throws, each failing with the report that names its class;
+  with `CamelTestSupport`, `@CamelMainTest` and a Spring Boot test with a cached context.
+. *Quiet on main.* Run the camel-core test suite and the test suites of netty, netty-http, vertx-http and the JMS
+  request/reply tests with the sanitizer on, R3 sampling included, and show that it reports nothing on today's main.
+  Each report there is either a bug, which gets its own JIRA, or a false report, which is fixed in the sanitizer before
+  it is proposed. A false report would make people switch it off. The tests that break a rule on purpose carry
+  `@ExpectSanitizerViolation`.
+. *Together with the others.* One test runs a route with a chaos step rule, the tracer, JMX, the backlog debugger and
+  the sanitizer all on, and shows that each still works and the sanitizer reports only what it should (a step failed
+  by the hook is not a call of the processor).
+. *Cost.* A JMH benchmark in the camel-performance-tests repository: a route with several steps, a consumer commit and
+  an `InOnly` send to `seda` with handover; with no listener (it must not differ from main), and with the sanitizer on,
+  with and without stacks. No number is claimed before that run.
+. *The side table.* The records of the sanitizer are concurrent code too: callbacks arrive on many threads. Stress
+  tests with many threads check it, and a small TLA+ model of it (a first callback, a second callback, a throw and an
+  overlap on different threads) must show no false report and no missed violation in any interleaving, before R1 and
+  R3 are proposed.
+
+The rules are the properties that were checked when these bugs were hunted, with TLA+ and SPIN models, Fray and
+deterministic tests: "the callback is called once" for the error handlers and `NoErrorHandler`, "the commit runs once,
+for its owner" for the shared unit of work, and "a waited-for task is completed" for the `ProducerTemplate`.
+
+=== Order of work
+
+Each step is its own pull request after this document:
+
+. camel-core: the step listener SPI in camel-api, the Javadoc of the contracts of `AsyncProcessor`, `AsyncCallback`
+  and `Synchronization`, the step wrapper built only when a listener is installed, and the JMH benchmark (in
+  camel-performance-tests) that shows no change without a listener.
+. The module, the plugin, the options, R1 (without "still pending"), the report in the log, the JUnit extension and
+  the CI switch, with the runs on the commits before the fixes, on user-code tests and on main.
+. camel-core: the on completion listener SPI, the new `UnitOfWork` method and the calls, with the JMH run; then R2.
+. R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites.
+. The dev console, `camel get sanitizer` and `camel run --sanitizer`.
+. R1 "still pending".
+. R4 and its hook on the `ExecutorServiceManager`, if the earlier steps show it is still wanted.
+
+== Alternatives considered
+
+* *An `InterceptStrategy`.* It needs no camel-core change. But it is the SPI users configure for their own wrappers, its
+  order against the user's strategies comes from `Ordered`, and the steps of `doTry`, `doCatch` and `doFinally` opt out
+  of it. The listener wrapper is built by the channel, only when a listener is installed, and sees those steps.
+* *A `CamelInternalProcessorAdvice`.* An advice runs `before` and, through the after task of the channel, `after`, but
+  around the error handler: it sees one callback for all attempts, after the guards of the channel, and not the
+  processor's own return value or a second call of its callback.
+* *The `StepHook`.* One per context, and before the call only (see Relation to StepHook).
+* *Listener calls in `StepHelper`, next to the hook.* Every step already reads the `stepHook` field there, so holding
+  the hook and the listeners in one field would add no read per step, and would see listeners added after the routes
+  were built. It sits outside the `InterceptStrategy` wrappers, though, so a report would name the outermost wrapper
+  rather than the processor that broke the contract, and it changes the field that the `StepHook` reads. The innermost
+  wrapper names the processor and leaves the `StepHook` alone; this choice is open (see Open questions).
+* *`EventNotifier` only.* It has the exchange events, but not the call of a processor, its return value, its throw or
+  a second call of a callback.
+* *A `UnitOfWorkFactory` for R2.* It is pluggable today and sees `addSynchronization`, `handoverSynchronization` and
+  `done` of the unit of work. It cannot tell which exchange asked for a handover: a part with `shareUnitOfWork` calls
+  the unit of work of its parent, so CAMEL-26576 looks like a handover by the owner.
+* *Log analysis after the fact.* It cannot see a callback that was never called, nor the stack of a first call.
+
+== Compatibility
+
+Without the JAR nothing changes. Without a step listener the routes are built as today. The on completion places check
+an empty list (measured by the JMH run). The SPIs are new; `ExtendedCamelContext` and `UnitOfWork` gain default
+methods, so existing implementations still compile and behave as before. A custom `UnitOfWork` that does not override
+the new method hands over as today and reports no moved list, so R2 is weaker with it. The options are in a new group.
+
+== Risks
+
+* *False reports.* They would make people switch it off. Mitigations: the TLA+ model and stress tests of the side
+  table, the quiet runs on camel-core and the async components before each rule is proposed, and R1 "still pending" as
+  a warning only.
+* *The JAR left in a production build.* It stays off with profile `prod` and with no profile unless enabled, and logs
+  a WARN when it is on.
+* *Timing and cost.* A stack kept for every call of a step is the main cost when it is on; `stackDepth=0` keeps only
+  the thread names for long runs. R3 changes the timing on purpose, which is why its sampling is off by default in
+  `dev`.
+
+== Open questions
+
+Each has a proposed answer; the maintainers decide.
+
+* The names of the SPIs. Proposed: `StepListener` and `OnCompletionListener`, next to `StepHook`.
+* Where the step listener is called. Proposed: the innermost wrapper, built by the channel, so a report names the
+  processor itself. The other choice is `StepHelper`, next to the hook (see Alternatives).
+* Module location. Proposed: `components/camel-sanitizer`, next to `camel-chaos`, with its tests in camel-core;
+  `core/camel-sanitizer` is the other choice, as it checks the routing engine.
+* Should the Maven `sanitizer` profile go in the parent pom for every module? Proposed: start with camel-core and the
+  async components, and widen it once those runs are quiet.
+* Should R2 cover every on completion, not only the consumer's commit? Proposed: the commit only in the first version.
+  Other on completions are added by many places with other rules, and a false report costs more than a missed one.
+
+== Related tickets
+
+The bugs the rules come from are in the table of Motivation. Others:
+
+* CAMEL-26630: this feature.
+* CAMEL-26338: the `StepHook`.
+* CAMEL-26330: camel-chaos, whose switch the sanitizer follows.
+* CAMEL-25247: a thrift call answered twice, in Thrift's own callback, which the sanitizer does not see.
+* CAMEL-25537: tool profiles for the camel-jbang MCP server, before any sanitizer MCP tool.
