@@ -1007,13 +1007,14 @@ class ContainerVersionChecker:
             base = Path(scan_path).resolve()
             exclude_dirs = {'target', 'build', '.git', '__pycache__'}
             for pom_file in base.rglob('pom.xml'):
-                if any(e in pom_file.parts for e in exclude_dirs):
+                rel_parts = pom_file.relative_to(base).parts
+                if any(e in rel_parts for e in exclude_dirs):
                     continue
                 # Skip test-infra module poms — they are NOT consumer poms.
                 # e.g. test-infra/camel-test-infra-all/pom.xml declares every
                 # camel-test-infra-* artifact but has no skipITs, which would
                 # veto every exemption via the intersection logic.
-                if any(part.startswith('camel-test-infra-') for part in pom_file.parts):
+                if any(part.startswith('camel-test-infra-') for part in rel_parts):
                     continue
                 try:
                     content = pom_file.read_text(encoding='utf-8', errors='replace')
