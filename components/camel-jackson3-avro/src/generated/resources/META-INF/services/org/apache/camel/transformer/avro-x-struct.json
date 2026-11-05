@@ -13,12 +13,13 @@
   "bodyTypes": {
     "transformerIn": {
       "carriers": [
+        "text",
         "bytes",
         "stream",
         "file",
         "pojo"
       ],
-      "description": "Needs the Avro schema in the X-Content-Schema exchange property: Avro binary, a JsonNode or a POJO; Json text, a Map or a null body fail"
+      "description": "Needs the Avro schema in the X-Content-Schema exchange property: a Json object or array as text, Avro binary, a JsonNode or a POJO; a Map or a null body fail"
     },
     "transformerOut": {
       "carriers": [

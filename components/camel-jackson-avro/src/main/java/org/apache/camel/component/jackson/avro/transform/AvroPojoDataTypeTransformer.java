@@ -39,10 +39,11 @@ import org.apache.camel.spi.DataTypeTransformer;
 @DataTypeTransformer(name = "avro-x-java-object",
                      description = "Transforms from JSon to Java object using Jackson Avro (supports content schema)")
 @BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
-                                     description = "Json text, or Avro binary with the Avro schema in the X-Content-Schema"
-                                                   + " exchange property, read into the class of the X-Content-Class exchange"
-                                                   + " property, which a body other than a POJO needs: a POJO of that class,"
-                                                   + " or any POJO without it, is kept, and a Map or a null body fail"),
+                                     description = "Json text or a JsonNode, or Avro binary with the Avro schema in the"
+                                                   + " X-Content-Schema exchange property, read into the class of the"
+                                                   + " X-Content-Class exchange property, which a body other than a POJO"
+                                                   + " needs: a POJO of that class, or any POJO without it, is kept, and a"
+                                                   + " Map or a null body fail"),
            transformerOut = @BodyType(value = Carrier.UNKNOWN,
                                       description = "An object of the class of the X-Content-Class exchange property"))
 public class AvroPojoDataTypeTransformer extends JsonPojoDataTypeTransformer {
@@ -60,8 +61,9 @@ public class AvroPojoDataTypeTransformer extends JsonPojoDataTypeTransformer {
                         "Missing proper Avro schema for Java object data type processing", message.getExchange());
             }
 
-            if (message.getBody() instanceof JsonNode) {
-                return Avro.mapper().reader().forType(contentType).with(schema).readValue(message.getBody(JsonNode.class));
+            if (message.getBody() instanceof JsonNode jsonNode) {
+                // the parser of a JsonNode takes no Avro schema
+                return Avro.mapper().reader().forType(contentType).readValue(jsonNode);
             }
 
             return Avro.mapper().reader().forType(contentType).with(schema).readValue(getBodyAsStream(message));

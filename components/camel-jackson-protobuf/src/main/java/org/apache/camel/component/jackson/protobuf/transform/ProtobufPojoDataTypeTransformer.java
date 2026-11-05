@@ -39,8 +39,8 @@ import org.apache.camel.spi.DataTypeTransformer;
 @DataTypeTransformer(name = "protobuf-x-java-object",
                      description = "Transforms from JSon to Java object using Jackson Protobuf (supports content schema)")
 @BodyTypes(transformerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.POJO },
-                                     description = "Json text, or Protobuf binary with the Protobuf schema in the"
-                                                   + " X-Content-Schema exchange property, read into the class of the"
+                                     description = "Json text or a JsonNode, or Protobuf binary with the Protobuf schema"
+                                                   + " in the X-Content-Schema exchange property, read into the class of the"
                                                    + " X-Content-Class exchange property, which a body other than a POJO"
                                                    + " needs: a POJO of that class, or any POJO without it, is kept, and a"
                                                    + " Map or a null body fail"),
@@ -61,8 +61,9 @@ public class ProtobufPojoDataTypeTransformer extends JsonPojoDataTypeTransformer
                         "Missing proper Protobuf schema for Java object data type processing", message.getExchange());
             }
 
-            if (message.getBody() instanceof JsonNode) {
-                return Protobuf.mapper().reader().forType(contentType).with(schema).readValue(message.getBody(JsonNode.class));
+            if (message.getBody() instanceof JsonNode jsonNode) {
+                // the parser of a JsonNode takes no Protobuf schema
+                return Protobuf.mapper().reader().forType(contentType).readValue(jsonNode);
             }
 
             return Protobuf.mapper().reader().forType(contentType).with(schema).readValue(getBodyAsStream(message));
