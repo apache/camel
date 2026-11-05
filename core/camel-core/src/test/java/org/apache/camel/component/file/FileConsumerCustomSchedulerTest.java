@@ -30,7 +30,6 @@ import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
@@ -53,9 +52,10 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // the scheduler is only run once, and we can configure its properties
-        // (camel may run the scheduler once during startup so the value is +1)
-        assertTrue(scheduler.getCounter() <= 2);
+        // the scheduler is only scheduled, started and run once, and we can configure its properties
+        assertEquals(1, scheduler.getScheduled());
+        assertEquals(1, scheduler.getStarted());
+        assertEquals(1, scheduler.getCounter());
         assertEquals("bar", scheduler.getFoo());
     }
 
@@ -75,6 +75,8 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         private CamelContext camelContext;
         private TimerTask timerTask;
         private final LongAdder counter = new LongAdder();
+        private final LongAdder scheduled = new LongAdder();
+        private final LongAdder started = new LongAdder();
         private String foo;
 
         @Override
@@ -84,6 +86,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         @Override
         public void scheduleTask(final Runnable task) {
+            scheduled.increment();
             this.timerTask = new TimerTask() {
                 @Override
                 public void run() {
@@ -102,6 +105,14 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
             return counter.intValue();
         }
 
+        public int getScheduled() {
+            return scheduled.intValue();
+        }
+
+        public int getStarted() {
+            return started.intValue();
+        }
+
         public String getFoo() {
             return foo;
         }
@@ -112,6 +123,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         @Override
         public void startScheduler() {
+            started.increment();
             Timer timer = new Timer();
             timer.schedule(timerTask, 10);
         }

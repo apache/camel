@@ -482,8 +482,6 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
                 startScheduler();
             }
         }
-
-        super.doStart();
     }
 
     private void tryCreateDirectory(File file) throws FileNotFoundException {
