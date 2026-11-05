@@ -2530,13 +2530,14 @@ public abstract class AbstractCamelContext extends BaseService
         // has started (here at the end)
         EventHelper.notifyCamelContextStarted(this);
 
-        // now call the startup listeners where the routes has been started
-        for (StartupListener startup : startupListeners) {
-            try {
+        // now call the startup listeners where the routes has been started, with the TCCL as during the lifecycle
+        // callbacks, as they may start routes or create the threads of consumers (supervising route controller, kafka)
+        try (AutoCloseable ignored = doLifecycleChange()) {
+            for (StartupListener startup : startupListeners) {
                 startup.onCamelContextFullyStarted(this, isStarted());
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeException(e);
             }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeException(e);
         }
     }
 

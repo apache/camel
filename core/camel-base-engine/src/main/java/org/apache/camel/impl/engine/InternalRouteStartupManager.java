@@ -172,7 +172,9 @@ final class InternalRouteStartupManager {
             Collection<RouteService> routeServices)
             throws Exception {
         lock.lock();
-        try {
+        // the TCCL is only set during the lifecycle callbacks of CamelContext, routes also start after them (supervising
+        // route controller, manual start), and the threads a consumer creates inherit it
+        try (AutoCloseable ignored = camelContext.doLifecycleChange()) {
             // list of inputs to start when all the routes have been prepared for
             // starting
             // we use a tree map so the routes will be ordered according to startup
