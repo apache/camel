@@ -6939,3 +6939,14 @@ The `git` consumer (`type=commit`, `tag` and `branch`) now applies the scheduler
 `exceptionHandler` options. Before, it ignored them and always polled with an initial delay of 1 second and a delay of
 500 milliseconds. A route that sets one of these options now gets what it configured: for example, `delay=60000` now
 polls once a minute.
+
+=== camel-git - a failed commit, tag or branch is delivered again on the next poll
+
+The `git` consumer now marks a commit, tag or branch consumed only when its exchange completes without a failure. A
+failed exchange (an exception that the route did not handle) is reported to the exception handler of the consumer,
+which logs it at WARN by default, and the item is delivered again on the next poll. Before, the item was marked
+consumed whether the route succeeded or not, so a failed item was never delivered again.
+
+An item that fails every time is now routed again at every poll. Handle the failure in the route, for example with a
+dead letter channel or a handled `onException`, so that the item is marked consumed, or raise `delay` to retry it
+less often.

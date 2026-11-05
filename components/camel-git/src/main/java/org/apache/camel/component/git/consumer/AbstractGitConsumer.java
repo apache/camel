@@ -85,11 +85,46 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
             exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
             this.pendingExchanges = total - index - 1;
             Object value = onPreProcessed(exchange);
-            getProcessor().process(exchange);
-            onProcessed(exchange, value);
+            try {
+                // only an item the route accepted is marked consumed, so a failed one is delivered again on the
+                // next poll
+                if (processExchange(exchange)) {
+                    onProcessed(exchange, value);
+                }
+            } finally {
+                releaseExchange(exchange, false);
+            }
+        }
+
+        // release the exchanges that were not handed to the route, when the consumer stops in the middle of a batch
+        Exchange remaining;
+        while ((remaining = (Exchange) exchanges.poll()) != null) {
+            releaseExchange(remaining, false);
         }
 
         return answer;
+    }
+
+    /**
+     * Hands the exchange to the route and reports a failure through the exception handler of the consumer.
+     * <p/>
+     * A route that fails does not throw from {@code process()}: the failure is left on the exchange, so it is read
+     * there. The exchange is created with {@code createExchange(false)}, so it is not reset before its outcome is read.
+     *
+     * @return {@code true} if the route processed the exchange without a failure
+     */
+    private boolean processExchange(Exchange exchange) {
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        Exception cause = exchange.getException();
+        if (cause != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, cause);
+            return false;
+        }
+        return true;
     }
 
     public abstract Object onPreProcessed(Exchange exchange);
