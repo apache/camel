@@ -408,6 +408,72 @@ class SourceValidatorEndpointTest {
         assertThat(QuickFixes.fixFor(msgs.get(0), "    uri: cron:cron?cron=0/10 * * * * ?")).isNull();
     }
 
+    /**
+     * r27n-5 connect-service-jms-request-reply step 2: told to keep the message with variableReceive, the model put it
+     * under parameters: of the to:, and pattern before it. Both are keys of the to:, next to uri:.
+     */
+    @Test
+    void anOptionOfTheEipUnderParametersSaysItIsAKeyOfTheEip() {
+        List<String> msgs = SourceValidator.validateYamlEndpoints("""
+                - route:
+                    id: reserve-order
+                    from:
+                      uri: jms
+                      parameters:
+                        destinationType: queue
+                        destinationName: orders
+                        variableReceive: order
+                      steps:
+                        - to:
+                            uri: jms
+                            parameters:
+                              destinationType: queue
+                              destinationName: stock
+                              exchangePattern: InOut
+                              variableReceive: stockReply
+                        - to:
+                            uri: jms
+                            parameters:
+                              destinationName: stock
+                              pattern: InOut
+                        - to: "jms:queue:stock?variableReceive=stockReply"
+                """, catalog);
+        assertThat(msgs).hasSize(4);
+        assertThat(msgs.get(0)).isEqualTo("Line 8: jms: Unknown option 'variableReceive' (variableReceive is a key of the"
+                                          + " from:, next to uri:, not an option of the jms endpoint: from: {uri: jms,"
+                                          + " parameters: {...}, variableReceive: order})");
+        assertThat(msgs.get(1)).isEqualTo("Line 16: jms: Unknown option 'variableReceive' (variableReceive is a key of"
+                                          + " the to:, next to uri:, not an option of the jms endpoint: to: {uri: jms,"
+                                          + " parameters: {...}, variableReceive: stockReply})");
+        assertThat(msgs.get(2)).isEqualTo("Line 21: jms: Unknown option 'pattern' (pattern is a key of the to:, next to"
+                                          + " uri:, not an option of the jms endpoint: to: {uri: jms, parameters: {...},"
+                                          + " pattern: InOut})");
+        assertThat(msgs.get(3)).isEqualTo("Line 22: jms: Unknown option 'variableReceive' (variableReceive is a key of"
+                                          + " the to:, next to uri:, not an option of the jms endpoint: to: {uri:"
+                                          + " \"jms:queue:stock\", variableReceive: stockReply})");
+        // the keys where they go, and an option that is neither the endpoint's nor the EIP's
+        assertThat(SourceValidator.validateYamlEndpoints("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - to:
+                          uri: jms
+                          parameters:
+                            destinationName: stock
+                          pattern: InOut
+                          variableReceive: stockReply
+                      - to:
+                          uri: jms
+                          parameters:
+                            destinatonName: stock
+                """, catalog)).anySatisfy(m -> assertThat(m).contains("Unknown option 'destinatonName'. Did you mean"))
+                .noneMatch(m -> m.contains("is a key of"));
+        // the Java and XML DSLs write the options in the uri
+        assertThat(EndpointChecks.optionOfTheEip(catalog, "to", "variableReceive", "jms",
+                "jms:queue:stock?variableReceive=stockReply", true, false))
+                .isEqualTo("variableReceive is an option of the to, not of the jms endpoint: set it on the to, not in the uri");
+    }
+
     @Test
     void aWildcardInTheFileIncludeOptionIsNamedAsNotARegex() {
         List<String> msgs = SourceValidator.validateYamlEndpoints("""
