@@ -4145,6 +4145,16 @@ became `cafÃ©` in the headers and the body map. A charset that the request or 
 that sends ISO-8859-1 form data without declaring a charset now gets U+FFFD replacement characters instead of its
 text, and must declare its charset (for example `application/x-www-form-urlencoded; charset=ISO-8859-1`).
 
+=== camel-milvus, camel-neo4j, camel-qdrant, camel-weaviate - the embeddings transformers without the embedding header, and the text of neo4j:rag
+
+The `milvus:embeddings`, `neo4j:embeddings`, `qdrant:embeddings` and `weaviate:embeddings` data type transformers now
+fail with an `IllegalArgumentException` that names the `CamelLangChain4jEmbeddingsVector` header when the message does
+not have it, as `pgvector:embeddings` does. Before, they failed with a `NullPointerException`.
+
+The `neo4j:rag` data type transformer now converts a `text` value that is not a `String`, such as a number, to a
+`String`, and gives an empty String for a `null` text, as for a row without text. Before, a value of another type
+failed with a `ClassCastException`, and a `null` text gave a `null` element.
+
 === camel-undertow - rest-dsl and plain consumers on the same port are both served
 
 When rest-dsl consumers and plain `undertow:` consumers use the same port, both kinds are now served. Before, only the
