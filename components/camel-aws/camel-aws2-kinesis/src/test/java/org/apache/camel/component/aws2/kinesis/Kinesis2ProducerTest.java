@@ -254,6 +254,31 @@ public class Kinesis2ProducerTest {
     }
 
     @Test
+    public void batchSendsAgainARecordWithoutResultInTheResponse() throws Exception {
+        // the first response has no result for the last record of the request
+        when(kinesisClient.putRecords(any(PutRecordsRequest.class))).thenAnswer(invocation -> {
+            PutRecordsRequest request = invocation.getArgument(0);
+            if (requests.isEmpty()) {
+                PutRecordsResponse response = respond(request, entry -> entry.data().asUtf8String().equals("r2"));
+                return response.toBuilder().failedRecordCount(0).records(response.records().subList(0, 2)).build();
+            }
+            return respond(request, entry -> false);
+        });
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(Kinesis2Constants.PARTITION_KEY, "key");
+        exchange.getIn().setBody(records(3));
+
+        producer.process(exchange);
+
+        assertEquals(List.of(3, 1), requestSizes());
+        assertEquals(List.of("r2"), data(requests.get(1).records()));
+        assertEquals(records(3), data(written));
+        assertEquals(3, exchange.getMessage().getHeader(Kinesis2Constants.RECORD_COUNT, Integer.class));
+        assertEquals(0, exchange.getMessage().getHeader(Kinesis2Constants.FAILED_RECORD_COUNT, Integer.class));
+    }
+
+    @Test
     public void retryDelayDoublesAndHasARandomPart() {
         for (int retry = 0; retry < 3; retry++) {
             long base = 100L << retry;

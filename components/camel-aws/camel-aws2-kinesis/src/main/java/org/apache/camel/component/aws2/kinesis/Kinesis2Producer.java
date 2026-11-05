@@ -54,6 +54,12 @@ public class Kinesis2Producer extends DefaultProducer {
     // throttled at the same time do not all send again at the same time.
     private static final int MAX_RETRIES = 3;
     private static final long RETRY_DELAY_MILLIS = 100;
+    // The failure of a record that has no result in the PutRecords response. Kinesis returns a result for every record,
+    // but a record without one is not known to be written, so it is sent again like a failed record.
+    private static final PutRecordsResultEntry MISSING_RESULT = PutRecordsResultEntry.builder()
+            .errorCode("MissingResult")
+            .errorMessage("The PutRecords response has no result for this record")
+            .build();
 
     private KinesisConnection connection;
 
@@ -151,10 +157,11 @@ public class Kinesis2Producer extends DefaultProducer {
             List<PutRecordsResultEntry> results = putRecordsResponse.records();
             List<PutRecordsRequestEntry> failedEntries = new ArrayList<>();
             List<PutRecordsResultEntry> failures = new ArrayList<>();
-            for (int i = 0; i < pending.size() && i < results.size(); i++) {
-                if (results.get(i).errorCode() != null) {
+            for (int i = 0; i < pending.size(); i++) {
+                PutRecordsResultEntry result = i < results.size() ? results.get(i) : MISSING_RESULT;
+                if (result.errorCode() != null) {
                     failedEntries.add(pending.get(i));
-                    failures.add(results.get(i));
+                    failures.add(result);
                 }
             }
             progress.writtenCount += pending.size() - failures.size();
