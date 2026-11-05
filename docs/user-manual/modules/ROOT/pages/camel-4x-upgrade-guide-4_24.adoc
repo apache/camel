@@ -553,6 +553,20 @@ A route that relies on a regular expression as token, such as `\s+` or `(\W+)\s*
 In the XML and YAML DSL, a token with the escapes `\n`, `\r` or `\t` (for example `\r\n`) is turned into the new line,
 carriage return and tab characters, so it works as before. Before, only a leading `\n` was turned into a new line.
 
+=== camel-cyberark-vault - credentials are checked at endpoint start, and a rejected token is retried only once
+
+A `cyberark-vault` endpoint now fails to start when it has no usable credentials, with a message that names the
+options to set: the `authToken` option, the `username` and `apiKey` options, or the `username` and `password` options,
+unless the endpoint has a `conjurClient`. Before, an endpoint with an `apiKey` and no `username` started, and its first
+message failed with a `NullPointerException`.
+
+When CyberArk Conjur answers HTTP 401, the endpoint and the CyberArk Conjur Vault Property Function authenticate again
+and retry the call once, and only when they have an `apiKey` or a `password` to authenticate with. With only an
+`authToken`, the call now fails with the 401 response, instead of retrying with the same token until a
+`StackOverflowError`. Configure the `username` with an `apiKey` or a `password`, instead of an `authToken`, to let the
+component get a new token when the current one expires: when the `authToken` is set, the component uses only that
+token.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,
