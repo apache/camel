@@ -395,7 +395,9 @@ public interface OpenTelemetryEndpointBuilderFactory {
             return "CamelMetricsDescription";
         }
         /**
-         * To augment meter attributes defined as URI parameters.
+         * To augment meter attributes defined as URI parameters. The attributes
+         * from the header are used as given; use the attributes URI parameters
+         * for Simple expressions.
          * 
          * The option is a: {@code io.opentelemetry.api.common.Attributes} type.
          * 
