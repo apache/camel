@@ -621,7 +621,9 @@ public interface STS2EndpointBuilderFactory {
             return "CamelAwsStsAccessKeyId";
         }
         /**
-         * The temporary secret access key.
+         * The temporary secret access key. Deprecation note: The producer no
+         * longer sets this header. Take the secret access key from the body,
+         * such as ${body.credentials().secretAccessKey()}.
          * 
          * The option is a: {@code String} type.
          * 
@@ -629,11 +631,14 @@ public interface STS2EndpointBuilderFactory {
          * 
          * @return the name of the header {@code AwsStsSecretKey}.
          */
+        @Deprecated
         public String awsStsSecretKey() {
             return "CamelAwsStsSecretKey";
         }
         /**
-         * The temporary session token.
+         * The temporary session token. Deprecation note: The producer no longer
+         * sets this header. Take the session token from the body, such as
+         * ${body.credentials().sessionToken()}.
          * 
          * The option is a: {@code String} type.
          * 
@@ -641,6 +646,7 @@ public interface STS2EndpointBuilderFactory {
          * 
          * @return the name of the header {@code AwsStsSessionToken}.
          */
+        @Deprecated
         public String awsStsSessionToken() {
             return "CamelAwsStsSessionToken";
         }

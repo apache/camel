@@ -1067,6 +1067,16 @@ will be removed in a later release. The image generation and embedding models do
 operations fail for such a model, and with a text model they are the same as `invokeTextModelStreaming`. Use
 `invokeImageModel`, `invokeEmbeddingsModel` or `invokeTextModelStreaming` instead.
 
+=== camel-aws2-sts - the secret access key and the session token are no longer copied into headers
+
+The `assumeRole`, `getSessionToken` and `getFederationToken` operations of `aws2-sts` no longer set the
+`CamelAwsStsSecretKey` and `CamelAwsStsSessionToken` headers. The body is the response of the AWS SDK, such as an
+`AssumeRoleResponse`, and its `credentials()` hold them: use `${body.credentials().secretAccessKey()}` and
+`${body.credentials().sessionToken()}` instead of the headers. The `CamelAwsStsAccessKeyId`, `CamelAwsStsExpiration` and
+`CamelAwsStsAssumedRoleArn` headers are still set.
+
+The `STS2Constants.SECRET_KEY_ID` and `STS2Constants.SESSION_TOKEN` constants are deprecated.
+
 === camel-weather - the CamelWeatherLocation header is the location that is queried
 
 The latitude and longitude of the current geolocation (a location of `current`, or no location) are no longer written
