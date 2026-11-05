@@ -103,6 +103,10 @@ YAML::
 ----
 ====
 
+The consumer polls the repository with the scheduler options of the endpoint, such as `delay` (500 milliseconds by
+default) and `initialDelay`. Each poll walks the history of the branch, or lists the tags or the branches, to find the
+items that it has not delivered yet, so raise `delay` for a large repository that changes seldom.
+
 === Shallow Clone
 
 Use the `depth` option to perform a shallow clone, fetching only a limited number of commits. This reduces clone time and disk usage for large repositories when full history is not needed.

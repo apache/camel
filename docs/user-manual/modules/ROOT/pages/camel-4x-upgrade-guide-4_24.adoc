@@ -6931,3 +6931,11 @@ contains neither the extension nor `camel-quarkus-observability-services`, which
 A project that lists the dependency but does not want the health extension in the Quarkus export must remove it.
 Without the dependency nothing changes: the health extension then only comes with `--observe` (which
 `camel kubernetes export` always sets), as part of `camel-quarkus-observability-services`.
+
+=== camel-git - the consumer applies the scheduler and error handler options
+
+The `git` consumer (`type=commit`, `tag` and `branch`) now applies the scheduler options of the endpoint, such as
+`delay`, `initialDelay`, `startScheduler`, `greedy` and the `backoff` options, and the `bridgeErrorHandler` and
+`exceptionHandler` options. Before, it ignored them and always polled with an initial delay of 1 second and a delay of
+500 milliseconds. A route that sets one of these options now gets what it configured: for example, `delay=60000` now
+polls once a minute.
