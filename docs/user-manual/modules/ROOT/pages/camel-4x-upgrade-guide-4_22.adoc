@@ -142,6 +142,18 @@ to the HTTP server and the HTTP management server of camel-platform-http-main (`
 the failure was only logged at WARN, and Camel started, with its platform-http routes reported as started, although
 nothing listened on the port.
 
+=== camel-whatsapp - webhook events are verified by default
+
+In webhook mode (`webhook:whatsapp:...`), the `X-Hub-Signature-256` signature of every event that WhatsApp posts is now
+verified with the `webhookSecret` option, the app secret from the Meta app dashboard. Before, the signature was only
+verified when `webhookSecret` was set. A webhook route without `webhookSecret` now fails to start. Set `webhookSecret`
+to the app secret, or set the new `webhookVerification` option to `false` to accept the events without verifying their
+signature, for example in development. An event without a valid signature is answered with HTTP 403 and does not reach
+the route. A client that posts events to the webhook endpoint directly, for example in a test, must sign them too.
+
+An event that reaches the route is now answered with HTTP 200 and an empty body. Before, the reply carried the event
+back to the caller. The reply to the verification request (`GET`) is still the `hub.challenge`.
+
 === camel-elasticsearch - the credentials are only sent to the nodes of the cluster
 
 The `user` and `password` are now offered only to the nodes the client talks to: the hosts of `hostAddresses` and,
