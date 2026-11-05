@@ -16,9 +16,14 @@
  */
 package org.apache.camel.component.micrometer;
 
+import java.util.List;
+import java.util.Map;
+
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -35,26 +40,26 @@ import org.springframework.context.support.AbstractApplicationContext;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_DECREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_COUNTER_INCREMENT;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
+import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_TAGS;
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+    @Produce("direct:in-5")
+    private ProducerTemplate producer5;
 
-@CamelSpringTest
-public class CounterRouteTest extends CamelSpringTestSupport {
+    @Produce("direct:in-6")
+    private ProducerTemplate producer6;
 
-    @EndpointInject("mock:out")
-    private MockEndpoint endpoint;
+    @Produce("direct:in-7")
+    private ProducerTemplate producer7;
 
-    @Produce("direct:in-1")
-    private ProducerTemplate producer1;
+    @Produce("direct:in-8")
+    private ProducerTemplate producer8;
 
-    @Produce("direct:in-2")
-    private ProducerTemplate producer2;
-
-    @Produce("direct:in-3")
-    private ProducerTemplate producer3;
-
-    @Produce("direct:in-4")
-    private ProducerTemplate producer4;
+    @Produce("direct:in-9")
+    private ProducerTemplate producer9;
 
     @BindToRegistry(METRICS_REGISTRY_NAME)
     private MeterRegistry registry = new SimpleMeterRegistry();
@@ -85,55 +90,108 @@ public class CounterRouteTest extends CamelSpringTestSupport {
                 from("direct:in-4")
                         .to("micrometer:counter:D?increment=${body.length}&tags.a=${body.length}")
                         .to("mock:out");
-            }
-        };
-    }
-
-    @Override
-    public void doPostTearDown() {
-        endpoint.reset();
-    }
 
     @Test
-    public void testOverrideMetricsName() throws Exception {
+    public void testIncrementFromBody() throws Exception {
         endpoint.expectedMessageCount(1);
-        producer1.sendBodyAndHeader(new Object(), HEADER_METRIC_NAME, "A1");
-        assertEquals(5.0D, registry.find("A1").counter().count(), 0.01D);
+        producer5.sendBody("42");
+        assertEquals(42.0D, registry.find("E").counter().count(), 0.01D);
         endpoint.assertIsSatisfied();
     }
 
     @Test
-    public void testOverrideIncrement() throws Exception {
-        endpoint.expectedMessageCount(1);
-        producer1.sendBodyAndHeader(new Object(), HEADER_COUNTER_INCREMENT, 14.0D);
-        assertEquals(14.0D, registry.find("A").counter().count(), 0.01D);
+    public void testIncrementFromBodyNotNumber() throws Exception {
+        endpoint.expectedMessageCount(0);
+
+        assertIncrementFails(Map.of("count", 5));
+        assertIncrementFails(List.of(new Object()));
+        assertIncrementFails(new Object());
+        assertIncrementFails(null);
+
+        // the counter is not updated (the exchange fails with IllegalArgumentException)
+        assertEquals(0.0D, registry.find("E").counter().count(), 0.01D);
         endpoint.assertIsSatisfied();
     }
 
     @Test
-    public void testOverrideDecrement() throws Exception {
-        endpoint.expectedMessageCount(1);
-        producer2.sendBodyAndHeader(new Object(), HEADER_COUNTER_DECREMENT, 7.0D);
-        assertEquals(-7.0D, registry.find("B").counter().count(), 0.01D);
+    public void testIncrementOrDecrementFromHeader() throws Exception {
+        endpoint.expectedMessageCount(2);
+        producer6.sendBodyAndHeader(null, "inc", 10.0D);
+        producer6.sendBodyAndHeader(null, "dec", 3.0D);
+        assertEquals(7.0D, registry.find("F").counter().count(), 0.01D);
         endpoint.assertIsSatisfied();
     }
 
     @Test
-    public void testOverrideUsingConstantValue() throws Exception {
-        endpoint.expectedMessageCount(1);
-        producer3.sendBody(new Object());
-        assertEquals(417.0D, registry.find("C").counter().count(), 0.01D);
+    public void testIncrementOrDecrementFromHeaderMissing() throws Exception {
+        endpoint.expectedMessageCount(0);
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> producer6.sendBody("Hello"));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The increment (${header.inc}) and decrement (${header.dec}) of counter F did not evaluate to a number",
+                e.getCause().getMessage());
+
+        assertEquals(0.0D, registry.find("F").counter().count(), 0.01D);
         endpoint.assertIsSatisfied();
     }
 
     @Test
-    public void testUsingScriptEvaluation() throws Exception {
-        endpoint.expectedMessageCount(1);
-        String message = "Hello from Camel Metrics!";
-        producer4.sendBody(message);
-        Counter counter = registry.find("D").counter();
-        assertEquals(message.length(), counter.count(), 0.01D);
-        assertEquals(Integer.toString(message.length()), counter.getId().getTag("a"));
+    public void testDecrementFromBodyNotNumber() throws Exception {
+        endpoint.expectedMessageCount(0);
+
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> producer8.sendBody(Map.of("count", 5)));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The decrement (${body}) of counter H did not evaluate to a number",
+                e.getCause().getMessage());
+
+        assertEquals(0.0D, registry.find("H").counter().count(), 0.01D);
         endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testNoIncrementOrDecrement() throws Exception {
+        endpoint.expectedMessageCount(2);
+        producer7.sendBody(new Object());
+        producer7.sendBody(null);
+        assertEquals(2.0D, registry.find("G").counter().count(), 0.01D);
+        endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testHeaderTagsAreUsedAsGiven() throws Exception {
+        endpoint.expectedMessageCount(1);
+        producer9.sendBodyAndHeaders("Hello", Map.of(
+                "k", "key",
+                HEADER_METRIC_TAGS, Tags.of("c", "${body}", "${header.k}", "d")));
+        Counter counter = registry.find("I").counter();
+        assertEquals(1.0D, counter.count(), 0.01D);
+        // the tags from the uri are resolved per exchange
+        assertEquals("5", counter.getId().getTag("a"));
+        assertEquals("uri", counter.getId().getTag("b"));
+        // the tags from the header are not
+        assertEquals("${body}", counter.getId().getTag("c"));
+        assertEquals("d", counter.getId().getTag("${header.k}"));
+        assertNull(counter.getId().getTag("key"));
+        endpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testHeaderTagOverridesUriTagWithSameKey() throws Exception {
+        endpoint.expectedMessageCount(1);
+        producer9.sendBodyAndHeader("Hello", HEADER_METRIC_TAGS, Tags.of("b", "header"));
+        Counter counter = registry.find("I").counter();
+        assertEquals("5", counter.getId().getTag("a"));
+        assertEquals("header", counter.getId().getTag("b"));
+        endpoint.assertIsSatisfied();
+    }
+
+    private void assertIncrementFails(Object body) {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> producer5.sendBody(body));
+        assertInstanceOf(IllegalArgumentException.class, e.getCause());
+        assertEquals("The increment (${body}) of counter E did not evaluate to a number",
+                e.getCause().getMessage());
     }
 }
