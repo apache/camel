@@ -286,6 +286,7 @@ class VersionCheckResult:
     is_latest: bool
     error: Optional[str] = None
     arch_missing: Optional[List[str]] = None  # Architectures absent from the manifest list of latest_version
+    arch_unverified: bool = False  # True when the multi-arch check could not be performed (network error, unknown format)
 
     def __post_init__(self):
         if self.arch_missing is None:
@@ -400,17 +401,18 @@ class ContainerRegistryAPI:
             pass
         return ''
 
-    def check_architectures(self, image: ContainerImage, tag: str) -> List[str]:
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
         """Return the list of REQUIRED_ARCHITECTURES that are absent from the manifest for *tag*.
 
         Uses the Docker Registry v2 manifest list API
         (``GET /v2/<repo>/manifests/<tag>`` with
         ``Accept: application/vnd.docker.distribution.manifest.list.v2+json``
         or its OCI equivalent).  Returns an empty list when all required
-        architectures are present or when the check cannot be performed (network
-        error, unrecognised format).  Returns the full set of required arches when
-        the response is a single-arch manifest (no ``manifests`` key), because a
-        single-arch image is by definition not multi-arch.
+        architectures are present.  Returns ``None`` when the check cannot be
+        performed (network error, unrecognised format, non-200 after token
+        retry).  Returns the full set of required arches when the response is
+        a single-arch manifest (no ``manifests`` key), because a single-arch
+        image is by definition not multi-arch.
         """
         try:
             registry = self.normalize_registry_url(image.registry)
@@ -418,21 +420,21 @@ class ContainerRegistryAPI:
             url = f"https://{registry}/v2/{repo}/manifests/{tag}"
             data = self._fetch_manifest(url)
             if data is None:
-                # Cannot verify (network error, 401 without challenge, …) — allow the upgrade.
-                return []
+                # Cannot verify (network error, 401 without challenge, …).
+                return None
             present = self._parse_manifest_list(data)
             if present is None:
                 # Single-arch manifest: the image is definitely not multi-arch.
                 return list(REQUIRED_ARCHITECTURES)
             return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
         except Exception:
-            # Unexpected format or error — allow the upgrade.
-            return []
+            # Unexpected format or error — cannot verify.
+            return None
 
 class DockerHubAPI(ContainerRegistryAPI):
     """Docker Hub registry API implementation."""
 
-    def check_architectures(self, image: ContainerImage, tag: str) -> List[str]:
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
         """Check architectures via registry-1.docker.io, obtaining a Bearer token first."""
         try:
             if not image.namespace or image.namespace == "library":
@@ -451,14 +453,14 @@ class DockerHubAPI(ContainerRegistryAPI):
             url = f"https://registry-1.docker.io/v2/{repo_name}/manifests/{tag}"
             data = self._fetch_manifest(url, token=token)
             if data is None:
-                return []
+                return None
             present = self._parse_manifest_list(data)
             if present is None:
                 # Single-arch manifest: the image is not multi-arch.
                 return list(REQUIRED_ARCHITECTURES)
             return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
         except Exception:
-            return []
+            return None
 
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from Docker Hub."""
@@ -505,21 +507,21 @@ class DockerHubAPI(ContainerRegistryAPI):
 class QuayAPI(ContainerRegistryAPI):
     """Quay.io registry API implementation."""
 
-    def check_architectures(self, image: ContainerImage, tag: str) -> List[str]:
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
         """Check architectures using the Quay.io distribution-spec manifest endpoint."""
         try:
             repo_name = self._repo_name(image)
             url = f"https://quay.io/v2/{repo_name}/manifests/{tag}"
             data = self._fetch_manifest(url)
             if data is None:
-                return []
+                return None
             present = self._parse_manifest_list(data)
             if present is None:
                 # Single-arch manifest: the image is not multi-arch.
                 return list(REQUIRED_ARCHITECTURES)
             return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
         except Exception:
-            return []
+            return None
 
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from Quay.io."""
@@ -561,7 +563,7 @@ class QuayAPI(ContainerRegistryAPI):
 class GCRAPI(ContainerRegistryAPI):
     """Google Container Registry API implementation."""
 
-    def check_architectures(self, image: ContainerImage, tag: str) -> List[str]:
+    def check_architectures(self, image: ContainerImage, tag: str) -> Optional[List[str]]:
         """Check architectures using the original registry URL.
 
         ``mirror.gcr.io`` answers manifest requests anonymously (200) while
@@ -573,13 +575,13 @@ class GCRAPI(ContainerRegistryAPI):
             url = f"https://{image.registry}/v2/{repo}/manifests/{tag}"
             data = self._fetch_manifest(url)
             if data is None:
-                return []
+                return None
             present = self._parse_manifest_list(data)
             if present is None:
                 return list(REQUIRED_ARCHITECTURES)
             return [arch for arch in REQUIRED_ARCHITECTURES if arch not in present]
         except Exception:
-            return []
+            return None
 
     def get_available_versions(self, image: ContainerImage) -> List[str]:
         """Get available versions from GCR."""
@@ -981,6 +983,14 @@ class ContainerVersionChecker:
         (e.g. ``camel-test-infra-elasticsearch``) to a list of platform strings
         (e.g. ``['linux/s390x']``).
 
+        The logic uses **intersection** across all consumer modules: an arch is
+        only considered skipped for a test-infra module when **every** consumer
+        pom that references that module sets ``skipITs.<arch>=true``.  This
+        prevents exempting an arch just because one consumer skips it while
+        others still need it (e.g. ``camel-pgvector`` skips s390x but
+        ``camel-sql`` does not, so ``camel-test-infra-postgres`` should still
+        be checked for s390x).
+
         This handles the case where the skipITs property lives in a *component*
         pom (e.g. ``components/camel-elasticsearch-rest-client/pom.xml``) rather
         than in the test-infra module pom itself.
@@ -990,7 +1000,9 @@ class ContainerVersionChecker:
             'skipITs.s390x': 'linux/s390x',
             'skipITs.aarch64': 'linux/arm64',
         }
-        result_map: Dict[str, List[str]] = {}
+        # First pass: collect per-consumer skipped arches for each test-infra module.
+        # consumers_map: {artifact_id: [set_of_skipped_arches_for_consumer_1, …]}
+        consumers_map: Dict[str, List[set]] = {}
         try:
             base = Path(scan_path).resolve()
             exclude_dirs = {'target', 'build', '.git', '__pycache__'}
@@ -1005,24 +1017,45 @@ class ContainerVersionChecker:
                 deps = re.findall(r'<artifactId>(camel-test-infra-[^<]+)</artifactId>', content)
                 if not deps:
                     continue
+                # Identify the pom's own artifactId to filter it out: a test-infra
+                # module pom declares its own artifactId which is NOT a dependency
+                # reference.  We detect this by looking for an <artifactId> that
+                # appears directly after <project> or inside the top-level block.
+                # As a heuristic, exclude artifacts whose name matches a directory
+                # component of the pom's path (the module directory is usually named
+                # after the artifactId).
+                pom_dir_name = pom_file.parent.name
+                # Filter: only keep deps that are actual dependency references,
+                # not the pom's own artifactId declaration.
+                consumer_deps = [d.strip() for d in deps if d.strip() != pom_dir_name]
+                if not consumer_deps:
+                    continue
                 # Read skipped arches for this pom
-                skipped: List[str] = []
+                skipped: set = set()
                 for prop, platform in SKIP_ITS_PLATFORMS.items():
                     tag = prop.replace('.', r'\.')
                     m = re.search(rf'<{tag}>\s*(true)\s*</{tag}>', content, re.IGNORECASE)
                     if m:
-                        skipped.append(platform)
-                if not skipped:
-                    continue
-                for dep in deps:
+                        skipped.add(platform)
+                for dep in consumer_deps:
                     dep = dep.strip()
-                    if dep not in result_map:
-                        result_map[dep] = []
-                    for arch in skipped:
-                        if arch not in result_map[dep]:
-                            result_map[dep].append(arch)
+                    if dep not in consumers_map:
+                        consumers_map[dep] = []
+                    consumers_map[dep].append(skipped)
         except Exception:
             pass
+
+        # Second pass: intersect — an arch is only skipped when ALL consumers skip it.
+        result_map: Dict[str, List[str]] = {}
+        for artifact_id, consumer_sets in consumers_map.items():
+            if not consumer_sets:
+                continue
+            # Start with the first consumer's skipped set, intersect with the rest
+            common = consumer_sets[0]
+            for s in consumer_sets[1:]:
+                common = common & s
+            if common:
+                result_map[artifact_id] = sorted(common)
         return result_map
 
     def parse_properties_file(self, file_path: str) -> List[ContainerImage]:
@@ -1276,6 +1309,7 @@ class ContainerVersionChecker:
             # (image.skipped_arches) are removed from the required set before checking,
             # so the check is precise rather than all-or-nothing.
             arch_missing: List[str] = []
+            arch_unverified = False
             if (
                 not self.skip_arch_check
                 and newer_versions
@@ -1292,17 +1326,23 @@ class ContainerVersionChecker:
                     if self.verbose:
                         print(f"      Checking multi-arch manifest for {image.full_name}:{candidate}...")
                     raw_missing = api.check_architectures(image, candidate)
-                    # Only report arches we still need to check (not exempted ones).
-                    arch_missing = [a for a in raw_missing if a in arches_to_check]
-                    if arch_missing:
+                    if raw_missing is None:
+                        # The check could not be performed (network error, auth failure, etc.)
+                        arch_unverified = True
                         if self.verbose:
-                            print(f"      ⚠ Missing architectures in {candidate}: {', '.join(arch_missing)}")
-                        # Remove versions that lack the required architectures from the
-                        # candidate list so the bot does not propose them as upgrades.
-                        # We only check the top candidate; if it fails we conservatively
-                        # treat the whole newer_versions list as unavailable.
-                        newer_versions = []
-                        is_latest = True  # Suppress the "outdated" classification
+                            print(f"      ⚠ Multi-arch check could not be performed for {candidate}")
+                    else:
+                        # Only report arches we still need to check (not exempted ones).
+                        arch_missing = [a for a in raw_missing if a in arches_to_check]
+                        if arch_missing:
+                            if self.verbose:
+                                print(f"      ⚠ Missing architectures in {candidate}: {', '.join(arch_missing)}")
+                            # Remove versions that lack the required architectures from the
+                            # candidate list so the bot does not propose them as upgrades.
+                            # We only check the top candidate; if it fails we conservatively
+                            # treat the whole newer_versions list as unavailable.
+                            newer_versions = []
+                            is_latest = True  # Suppress the "outdated" classification
 
             return VersionCheckResult(
                 image=image,
@@ -1310,7 +1350,8 @@ class ContainerVersionChecker:
                 latest_version=latest_version,
                 newer_versions=newer_versions[:5],  # Limit to top 5 newer
                 is_latest=is_latest,
-                arch_missing=arch_missing
+                arch_missing=arch_missing,
+                arch_unverified=arch_unverified,
             )
 
         except Exception as e:
@@ -1322,6 +1363,24 @@ class ContainerVersionChecker:
                 is_latest=False,
                 error=str(e)
             )
+
+    @staticmethod
+    def _find_repo_root(scan_path: str) -> str:
+        """Walk up from *scan_path* to find the repository root.
+
+        The root is the first ancestor directory that contains a ``components/``
+        sub-directory (which is where the component poms live) **or** a ``.git``
+        marker.  Falls back to *scan_path* if neither is found.
+        """
+        current = Path(scan_path).resolve()
+        for _ in range(20):  # safety bound
+            if (current / 'components').is_dir() or (current / '.git').exists():
+                return str(current)
+            parent = current.parent
+            if parent == current:
+                break
+            current = parent
+        return scan_path
 
     def run_check(self, scan_path: str, quiet: bool = False) -> List[VersionCheckResult]:
         """Run the version check on all container.properties files."""
@@ -1341,9 +1400,13 @@ class ContainerVersionChecker:
         # Pre-build the component skipITs map so parse_properties_file can use it.
         # This handles the common case where skipITs.ppc64le/s390x lives in a component
         # pom rather than in the test-infra module pom.
-        self._component_skip_its_map = self._build_component_skip_its_map(scan_path)
+        # We scan from the repository root (not just scan_path) because the component
+        # poms that set skipITs.* are typically under components/, which may be outside
+        # the scan_path (e.g. when scan_path is 'test-infra').
+        repo_root = self._find_repo_root(scan_path)
+        self._component_skip_its_map = self._build_component_skip_its_map(repo_root)
         if self.verbose and self._component_skip_its_map:
-            print(f"  Built skipITs map for {len(self._component_skip_its_map)} test-infra modules from component poms")
+            print(f"  Built skipITs map for {len(self._component_skip_its_map)} test-infra modules from component poms (scanned {repo_root})")
 
         all_images = []
 
@@ -1397,6 +1460,7 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
     # Separate results into categories
     outdated = [r for r in results if not r.is_latest and not r.error and r.newer_versions]
     arch_blocked = [r for r in results if r.arch_missing and not r.error]
+    arch_unverified = [r for r in results if r.arch_unverified and not r.error]
     up_to_date = [r for r in results if r.is_latest and not r.error and not r.arch_missing]
     errors = [r for r in results if r.error]
 
@@ -1408,6 +1472,8 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
     print(f"{Fore.YELLOW}⚠️  Outdated: {len(outdated)}{Style.RESET_ALL}")
     if arch_blocked:
         print(f"{Fore.MAGENTA}🏗️  Arch-incomplete (upgrade blocked): {len(arch_blocked)}{Style.RESET_ALL}")
+    if arch_unverified:
+        print(f"{Fore.YELLOW}⚠️  Multi-arch not verified: {len(arch_unverified)}{Style.RESET_ALL}")
     print(f"{Fore.RED}❌ Errors: {len(errors)}{Style.RESET_ALL}")
 
     if outdated:
@@ -1444,6 +1510,21 @@ def print_results(results: List[VersionCheckResult], verbose: bool = False):
             print(f"  Latest:  {Fore.MAGENTA}{result.latest_version}{Style.RESET_ALL}")
             print(f"  Missing: {Fore.MAGENTA}{', '.join(result.arch_missing or [])}{Style.RESET_ALL}")
 
+    if arch_unverified:
+        print(f"\n{Style.BRIGHT}{Fore.YELLOW}⚠️  MULTI-ARCH NOT VERIFIED{Style.RESET_ALL}")
+        print("-" * 50)
+        print(f"  The multi-arch manifest check could not be performed for these images")
+        print(f"  (network error, authentication failure, or unsupported registry format).")
+        print(f"  Upgrades were still proposed but multi-arch availability is unconfirmed.")
+
+        for result in arch_unverified:
+            image = result.image
+            print(f"\n{Fore.CYAN}{image.property_name}{Style.RESET_ALL}")
+            print(f"  File:    {os.path.relpath(image.file_path)}")
+            print(f"  Current: {Fore.YELLOW}{image.current_version}{Style.RESET_ALL}")
+            if result.latest_version:
+                print(f"  Latest:  {Fore.YELLOW}{result.latest_version}{Style.RESET_ALL}")
+
     if errors:
         print(f"\n{Style.BRIGHT}{Fore.RED}❌ ERRORS{Style.RESET_ALL}")
         print("-" * 15)
@@ -1474,7 +1555,8 @@ def output_json(results: List[VersionCheckResult]) -> str:
             'newer_versions': result.newer_versions,
             'is_latest': result.is_latest,
             'error': result.error,
-            'arch_missing': result.arch_missing or []
+            'arch_missing': result.arch_missing or [],
+            'arch_unverified': result.arch_unverified,
         }
         json_results.append(json_result)
 

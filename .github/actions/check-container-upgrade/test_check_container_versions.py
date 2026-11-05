@@ -119,13 +119,13 @@ class ContainerRegistryAPICheckArchitecturesTest(unittest.TestCase):
         self.assertIn("linux/s390x", missing)
         self.assertIn("linux/ppc64le", missing)
 
-    def test_returns_empty_on_non_200(self):
+    def test_returns_none_on_non_200(self):
         api = self._api()
         image = make_image()
         with patch.object(api.session, "get",
                           return_value=self._mock_response({}, status=404)):
             missing = api.check_architectures(image, "17.1")
-        self.assertEqual([], missing)
+        self.assertIsNone(missing)
 
     def test_returns_missing_arches_on_single_arch_manifest(self):
         """A single-arch manifest (no 'manifests' key) must count as arch-missing, not pass."""
@@ -139,12 +139,12 @@ class ContainerRegistryAPICheckArchitecturesTest(unittest.TestCase):
         self.assertIn("linux/s390x", missing)
         self.assertIn("linux/ppc64le", missing)
 
-    def test_returns_empty_on_exception(self):
+    def test_returns_none_on_exception(self):
         api = self._api()
         image = make_image()
         with patch.object(api.session, "get", side_effect=Exception("network error")):
             missing = api.check_architectures(image, "17.1")
-        self.assertEqual([], missing)
+        self.assertIsNone(missing)
 
 
 class DockerHubAPICheckArchitecturesTest(unittest.TestCase):
@@ -450,8 +450,11 @@ class ComponentSkipItsMapTest(unittest.TestCase):
         result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
         self.assertNotIn("camel-test-infra-kafka", result)
 
-    def test_merges_arches_from_multiple_poms(self):
-        # Two component poms each skip a different arch for the same test-infra module
+    def test_intersection_across_consumers_not_union(self):
+        """When multiple consumers reference the same test-infra module, an arch is only
+        exempt when ALL consumers skip it (intersection), not when any one does (union)."""
+        # Consumer A skips s390x only; consumer B skips ppc64le only.
+        # Intersection is empty → nothing should be exempted.
         self._write_pom(
             self.base / "components" / "camel-es-a" / "pom.xml",
             """<project><properties><skipITs.s390x>true</skipITs.s390x></properties>
@@ -467,8 +470,56 @@ class ComponentSkipItsMapTest(unittest.TestCase):
             </dependency></dependencies></project>"""
         )
         result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
+        # Intersection of {s390x} and {ppc64le} is empty
+        self.assertEqual(result.get("camel-test-infra-es", []), [])
+
+    def test_intersection_all_consumers_skip_same_arch(self):
+        """When ALL consumers skip the same arch, it appears in the result."""
+        self._write_pom(
+            self.base / "components" / "camel-es-a" / "pom.xml",
+            """<project><properties>
+                <skipITs.s390x>true</skipITs.s390x>
+                <skipITs.ppc64le>true</skipITs.ppc64le>
+            </properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-es</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        self._write_pom(
+            self.base / "components" / "camel-es-b" / "pom.xml",
+            """<project><properties><skipITs.s390x>true</skipITs.s390x></properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-es</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
+        # Intersection: both skip s390x, only one skips ppc64le
         self.assertIn("linux/s390x", result.get("camel-test-infra-es", []))
-        self.assertIn("linux/ppc64le", result.get("camel-test-infra-es", []))
+        self.assertNotIn("linux/ppc64le", result.get("camel-test-infra-es", []))
+
+    def test_consumer_without_skip_its_clears_exemption(self):
+        """A consumer pom with no skipITs.* should clear all exemptions via intersection."""
+        # Consumer A skips both arches; consumer B has no skipITs at all
+        self._write_pom(
+            self.base / "components" / "camel-pg-a" / "pom.xml",
+            """<project><properties>
+                <skipITs.s390x>true</skipITs.s390x>
+                <skipITs.ppc64le>true</skipITs.ppc64le>
+            </properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-postgres</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        self._write_pom(
+            self.base / "components" / "camel-pg-b" / "pom.xml",
+            """<project>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-postgres</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        result = ContainerVersionChecker._build_component_skip_its_map(str(self.base))
+        # Intersection of {s390x, ppc64le} and {} is empty
+        self.assertEqual(result.get("camel-test-infra-postgres", []), [])
 
 
 
@@ -541,3 +592,148 @@ class BearerTokenChallengeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FindRepoRootTest(unittest.TestCase):
+    """_find_repo_root must walk up to the directory containing components/ or .git."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name) / "repo"
+        self.root.mkdir()
+
+    def test_finds_root_by_components_dir(self):
+        (self.root / "components").mkdir()
+        test_infra = self.root / "test-infra"
+        test_infra.mkdir()
+        result = ContainerVersionChecker._find_repo_root(str(test_infra))
+        self.assertEqual(str(self.root), result)
+
+    def test_finds_root_by_git_marker(self):
+        (self.root / ".git").mkdir()
+        test_infra = self.root / "test-infra" / "sub"
+        test_infra.mkdir(parents=True)
+        result = ContainerVersionChecker._find_repo_root(str(test_infra))
+        self.assertEqual(str(self.root), result)
+
+    def test_falls_back_to_scan_path(self):
+        # No components/ or .git above — falls back to scan_path itself
+        deep = self.root / "a" / "b" / "c"
+        deep.mkdir(parents=True)
+        result = ContainerVersionChecker._find_repo_root(str(deep))
+        self.assertEqual(str(deep), result)
+
+
+class RunCheckRepoRootTest(unittest.TestCase):
+    """run_check with scan_path=test-infra must still find skipITs in components/."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+
+    def _write(self, relpath, content):
+        p = self.root / relpath
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(content)
+
+    def test_skip_its_found_from_components_when_scanning_test_infra(self):
+        """When scan_path is test-infra, skipITs in components/ must be discovered."""
+        # Create the repo structure with components/ at root
+        (self.root / "components").mkdir()
+        # Component pom that skips s390x and references camel-test-infra-elasticsearch
+        self._write(
+            "components/camel-elasticsearch/pom.xml",
+            """<project><properties>
+                <skipITs.s390x>true</skipITs.s390x>
+                <skipITs.ppc64le>true</skipITs.ppc64le>
+            </properties>
+            <dependencies><dependency>
+                <artifactId>camel-test-infra-elasticsearch</artifactId>
+            </dependency></dependencies></project>"""
+        )
+        # Create test-infra module with container.properties
+        self._write(
+            "test-infra/camel-test-infra-elasticsearch/src/main/resources/container.properties",
+            "elasticsearch.container=docker.elastic.co/elasticsearch/elasticsearch:8.17.3\n"
+        )
+        # Create a pom.xml in the test-infra module
+        self._write(
+            "test-infra/camel-test-infra-elasticsearch/pom.xml",
+            "<project><artifactId>camel-test-infra-elasticsearch</artifactId></project>"
+        )
+
+        checker = ContainerVersionChecker(skip_arch_check=True)
+        # Scan only test-infra — _find_repo_root should walk up to self.root
+        scan_path = str(self.root / "test-infra")
+        results = checker.run_check(scan_path, quiet=True)
+
+        # The skipITs map should have been built from components/
+        self.assertIn("camel-test-infra-elasticsearch", checker._component_skip_its_map)
+        skipped = checker._component_skip_its_map["camel-test-infra-elasticsearch"]
+        self.assertIn("linux/s390x", skipped)
+        self.assertIn("linux/ppc64le", skipped)
+
+        # The images parsed should have the skipped_arches populated
+        if results:
+            es_results = [r for r in results if "elasticsearch" in r.image.property_name]
+            if es_results:
+                self.assertIn("linux/s390x", es_results[0].image.skipped_arches)
+
+
+class ArchUnverifiedTest(unittest.TestCase):
+    """check_image_versions must set arch_unverified when check_architectures returns None."""
+
+    def setUp(self):
+        self.checker = ContainerVersionChecker(skip_arch_check=False)
+        self.mock_api = MagicMock()
+        self.checker.registry_apis["gcr.io"] = self.mock_api
+        self.checker.registry_apis["mirror.gcr.io"] = self.mock_api
+
+    def test_arch_unverified_set_when_check_returns_none(self):
+        image = make_image(current_version="17.0", has_arch_override=False)
+        self.mock_api.get_available_versions.return_value = ["17.1", "17.0"]
+        self.mock_api.check_architectures.return_value = None  # could not verify
+
+        result = self.checker.check_image_versions(image)
+
+        self.assertTrue(result.arch_unverified,
+                        "arch_unverified should be True when check_architectures returns None")
+        # Upgrade should still be proposed (not blocked)
+        self.assertEqual(["17.1"], result.newer_versions)
+        self.assertFalse(result.is_latest)
+
+    def test_arch_unverified_false_when_check_succeeds(self):
+        image = make_image(current_version="17.0", has_arch_override=False)
+        self.mock_api.get_available_versions.return_value = ["17.1", "17.0"]
+        self.mock_api.check_architectures.return_value = []  # all arches present
+
+        result = self.checker.check_image_versions(image)
+
+        self.assertFalse(result.arch_unverified)
+
+    def test_arch_unverified_in_json_output(self):
+        result = VersionCheckResult(
+            image=make_image(),
+            available_versions=["17.1", "17.0"],
+            latest_version="17.1",
+            newer_versions=["17.1"],
+            is_latest=False,
+            arch_unverified=True,
+        )
+        json_str = checker_mod.output_json([result])
+        data = json.loads(json_str)
+        self.assertTrue(data[0]["arch_unverified"])
+
+    def test_arch_unverified_false_in_json_by_default(self):
+        result = VersionCheckResult(
+            image=make_image(),
+            available_versions=["17.1"],
+            latest_version="17.1",
+            newer_versions=[],
+            is_latest=True,
+        )
+        json_str = checker_mod.output_json([result])
+        data = json.loads(json_str)
+        self.assertFalse(data[0]["arch_unverified"])
