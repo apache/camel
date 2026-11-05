@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.sqs.transform;
 
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -75,6 +77,26 @@ class AWS2SQSCloudEventDataTypeTransformerRouteTest extends CamelTestSupport {
 
         new AWS2SQSCloudEventDataTypeTransformer().transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
         assertEquals("aws.sqs.queue.MyArnQueue", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE));
+    }
+
+    @Test
+    void theSourceIsTheQueueOfTheQueueUrl() throws Exception {
+        // the queueUrl option names the queue that is read, and the other options that name a queue are ignored then
+        for (String queueUrl : List.of("https://sqs.eu-west-1.amazonaws.com/123456789012/OtherQueue",
+                "http://localhost:4566/000000000000/OtherQueue/")) {
+            Sqs2Endpoint endpoint = context.getEndpoint(
+                    "aws2-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&queueUrl=RAW(" + queueUrl + ")", Sqs2Endpoint.class);
+            Sqs2Consumer consumer = (Sqs2Consumer) endpoint.createConsumer(exchange -> {
+            });
+            Exchange exchange = consumer.createExchange(
+                    Message.builder().body("Hello").messageId("1234").receiptHandle("AQEBwJnKyrHigUMZj6rYigCgxlaS3SLy0a")
+                            .build());
+            assertEquals("OtherQueue", exchange.getMessage().getHeader(Sqs2Constants.QUEUE_NAME), queueUrl);
+
+            new AWS2SQSCloudEventDataTypeTransformer().transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+            assertEquals("aws.sqs.queue.OtherQueue", exchange.getMessage().getHeader(CloudEvent.CAMEL_CLOUD_EVENT_SOURCE),
+                    queueUrl);
+        }
     }
 
     @Override

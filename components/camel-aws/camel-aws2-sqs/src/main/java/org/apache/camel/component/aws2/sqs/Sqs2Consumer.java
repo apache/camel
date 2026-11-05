@@ -62,7 +62,9 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.io.function.IOConsumer;
 import org.slf4j.Logger;
@@ -96,10 +98,28 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     private ScheduledExecutorService scheduledExecutor;
     private PollingTask pollingTask;
     private final String sqsConsumerToString;
+    // the name of the queue the consumer reads, for the CamelAwsSqsQueueName header
+    private final String readQueueName;
 
     public Sqs2Consumer(Sqs2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
         sqsConsumerToString = "SqsConsumer[%s]".formatted(URISupport.sanitizeUri(endpoint.getEndpointUri()));
+        readQueueName = queueNameOf(endpoint.getConfiguration());
+    }
+
+    /**
+     * The name of the queue the consumer reads: the last part of the path of the queueUrl option when it is set, as the
+     * other options that name the queue are ignored then, else the queue name of the endpoint.
+     */
+    private static String queueNameOf(Sqs2Configuration configuration) {
+        String queueUrl = configuration.getQueueUrl();
+        if (ObjectHelper.isNotEmpty(queueUrl)) {
+            String name = StringHelper.afterLast(FileUtil.stripTrailingSeparator(queueUrl), "/");
+            if (ObjectHelper.isNotEmpty(name)) {
+                return name;
+            }
+        }
+        return configuration.getQueueName();
     }
 
     @Override
@@ -311,7 +331,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         message.setHeader(Sqs2Constants.MESSAGE_ID, msg.messageId());
         message.setHeader(Sqs2Constants.MD5_OF_BODY, msg.md5OfBody());
         message.setHeader(Sqs2Constants.RECEIPT_HANDLE, msg.receiptHandle());
-        message.setHeader(Sqs2Constants.QUEUE_NAME, getConfiguration().getQueueName());
+        message.setHeader(Sqs2Constants.QUEUE_NAME, readQueueName);
         message.setHeader(Sqs2Constants.ATTRIBUTES, msg.attributes());
         message.setHeader(Sqs2Constants.MESSAGE_ATTRIBUTES, msg.messageAttributes());
 

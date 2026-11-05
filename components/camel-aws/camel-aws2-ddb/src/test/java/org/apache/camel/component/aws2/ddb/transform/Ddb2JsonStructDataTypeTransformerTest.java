@@ -107,6 +107,24 @@ class Ddb2JsonStructDataTypeTransformerTest {
     }
 
     @Test
+    void bytesAreReadAsText() throws Exception {
+        // CAMEL-26300: Gson wrote bytes as a Json array of numbers, while the same Json in a String, a stream or a file
+        // is taken as it is
+        Exchange exchange = new DefaultExchange(camelContext);
+        exchange.getMessage().setBody(JSON.getBytes(StandardCharsets.UTF_8));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        assertEquals(JSON, exchange.getMessage().getBody());
+
+        // the charset of the exchange applies, as for a stream
+        String json = "{\"name\": \"Andr\u00e9s\"}";
+        exchange = new DefaultExchange(camelContext);
+        exchange.setProperty(Exchange.CHARSET_NAME, StandardCharsets.ISO_8859_1.name());
+        exchange.getMessage().setBody(json.getBytes(StandardCharsets.ISO_8859_1));
+        transformer.transform(exchange.getMessage(), DataType.ANY, DataType.ANY);
+        assertEquals(json, exchange.getMessage().getBody());
+    }
+
+    @Test
     void aFileIsReadAsText() throws Exception {
         // CAMEL-26300: Gson failed with a JsonIOException, as it cannot reflect into java.io.File
         Path file = Files.writeString(dir.resolve("item.json"), JSON);

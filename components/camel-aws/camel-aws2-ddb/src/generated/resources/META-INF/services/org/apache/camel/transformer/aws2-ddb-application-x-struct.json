@@ -22,7 +22,7 @@
         "list",
         "pojo"
       ],
-      "description": "A String is left as it is, and a stream or a file is read as text; another body, such as the Record of the aws2-ddbstream consumer, is written as JSON with Gson"
+      "description": "A String is left as it is, and bytes, a stream or a file are read as text; another body, such as the Record of the aws2-ddbstream consumer, is written as JSON with Gson"
     },
     "transformerOut": {
       "carriers": [

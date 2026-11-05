@@ -4972,10 +4972,18 @@ The `aws2-sqs:application-cloudevents` data type transformer now sets the `Camel
 of the message, which changes each time a message is received, so every event had a source of its own.
 
 The queue name comes from the new `CamelAwsSqsQueueName` header, which the `aws2-sqs` consumer now sets on each
-message. When the endpoint names the queue by its ARN, the header holds the queue name part of the ARN. A message
-without this header, such as one that does not come from the `aws2-sqs` consumer, gets no CloudEvent source from the
-transformer, also when it has a `CamelAwsSqsReceiptHandle` header. A route that relies on the old source can set the
+message. When the endpoint names the queue by its ARN, the header holds the queue name part of the ARN, and when the
+`queueUrl` option is set, the last part of its path, as that is the queue the consumer reads. A message without this
+header, such as one that does not come from the `aws2-sqs` consumer, gets no CloudEvent source from the transformer,
+also when it has a `CamelAwsSqsReceiptHandle` header. A route that relies on the old source can set the
 `CamelCloudEventSource` header itself after the transformer.
+
+=== camel-aws2-ddb - the x-struct transformer reads bytes as JSON text
+
+The `aws2-ddb:application-x-struct` data type transformer now reads a `byte[]` body as JSON text, with the charset of
+the exchange, as it reads a stream or a file and takes a String as it is, so the same JSON gives the same String
+whatever the type of the body. Before, Gson wrote the bytes as a JSON array of numbers. A stream or a file body, which
+failed before, is now read as text as well.
 
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer
 
