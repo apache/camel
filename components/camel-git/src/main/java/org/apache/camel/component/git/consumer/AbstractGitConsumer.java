@@ -46,9 +46,10 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        // open the repository before super.doStart() starts the scheduler, which may poll at once (initialDelay=0)
         this.repo = getLocalRepository();
         this.git = new Git(repo);
+        super.doStart();
     }
 
     @Override
