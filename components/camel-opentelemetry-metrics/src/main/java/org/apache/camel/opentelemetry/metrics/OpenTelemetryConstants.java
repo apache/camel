@@ -34,7 +34,8 @@ public class OpenTelemetryConstants {
     public static final String HEADER_METRIC_NAME = HEADER_PREFIX + "Name";
     @Metadata(description = "Override description value in URI", javaType = "String")
     public static final String HEADER_METRIC_DESCRIPTION = HEADER_PREFIX + "Description";
-    @Metadata(description = "To augment meter attributes defined as URI parameters",
+    @Metadata(description = "To augment meter attributes defined as URI parameters. The attributes from the header are used"
+                            + " as given; use the attributes URI parameters for Simple expressions.",
               javaType = "io.opentelemetry.api.common.Attributes")
 
     public static final String HEADER_METRIC_ATTRIBUTES = HEADER_PREFIX + "Attributes";

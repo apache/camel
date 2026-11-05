@@ -61,6 +61,17 @@ Starting in 4.24, parameter values provided via the `CamelJpaParameters` header 
 
 Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
 
+=== camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
+
+The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
+attributes of the `CamelMetricsAttributes` header as given. Before, their keys and values were evaluated as Simple
+expressions, in the same way as the `tags` and `attributes` URI options. The URI options are still evaluated per
+exchange, and a tag or attribute from the header still overrides one from the URI with the same key.
+
+A route that relied on a Simple expression in a header tag or attribute should use the `tags` / `attributes` URI
+option instead (for example `tags.customer=${header.customerId}`), or compute the value in the route before
+setting the header.
+
 === camel-a2a - consumer context is separate from producer headers
 
 An A2A consumer no longer populates producer control headers with the incoming operation and
