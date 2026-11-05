@@ -102,6 +102,15 @@ others (for example `ProvisionedThroughputExceededException`). The producer then
 again, up to 3 times, waiting 100, 200 and 400 milliseconds plus a random part of up to a quarter of the delay (so
 that producers throttled at the same time do not all send again at the same time), and then goes on with the next
 requests of the batch.
+When every record fails, for example when the whole stream is throttled, each request waits 700 to 875 milliseconds in
+total before its records are counted as not written, so a batch of 10,000 records (20 requests of 500 records) can
+block the caller for 14 to 17.5 seconds, plus the time of the 80 calls and of the retries of the AWS SDK client.
+
+A record that is sent again is written after the next records of its request: if record A fails and record B, with
+the same partition key, is written, the stream has B before A. `PutRecords` does not guarantee the order of the
+records either. When the order of the records of a partition key matters, send them one by one, with a body that is
+not an `Iterable`.
+
 After the last request, the `CamelAwsKinesisRecordCount` header has the number of records of the batch, and the
 `CamelAwsKinesisFailedRecordCount` header the number of records that are still not written. When that number is not
 0, the exchange fails with an exception that gives both numbers and the first error code.
