@@ -171,17 +171,22 @@ class MinaSftpConsumerMaxMessagesPerPollListingIT extends CamelTestSupport {
         // the link outside the starting directory is skipped
         mock.message(0).exchangeProperty(Exchange.BATCH_SIZE).isEqualTo(2);
 
-        consume("inbox", "&maxMessagesPerPoll=10&stepwise=false");
+        consumeWithBodies("inbox", "&maxMessagesPerPoll=10&stepwise=false");
 
         mock.assertIsSatisfied();
     }
 
     private void consume(String directory, String query) throws Exception {
-        consume(directory, 100, query);
+        // the tests only need the names: downloading hundreds of files takes too long on some machines
+        consume(directory, 100, "&download=false" + query);
     }
 
     private void consumeOnePoll(String directory, String query) throws Exception {
-        consume(directory, 60000, query);
+        consume(directory, 60000, "&download=false" + query);
+    }
+
+    private void consumeWithBodies(String directory, String query) throws Exception {
+        consume(directory, 100, query);
     }
 
     private void consume(String directory, long delay, String query) throws Exception {
@@ -191,7 +196,6 @@ class MinaSftpConsumerMaxMessagesPerPollListingIT extends CamelTestSupport {
                 from("mina-sftp://localhost:" + service.getPort() + "/" + base.resolve(directory)
                      + "?username=admin&password=admin&strictHostKeyChecking=no&useUserKnownHostsFile=false"
                      + "&initialDelay=0&delay=" + delay + "&noop=true" + query)
-                        .convertBodyTo(String.class)
                         .to("mock:result");
             }
         });
