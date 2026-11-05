@@ -1791,10 +1791,15 @@ public class AggregateProcessor extends BaseProcessorSupport
                 LOG.trace("Recover check cannot start due CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
+            // a recover check of an earlier start may still run (a stop does not wait for it): two checks must not run
+            // at the same time, as they share the exchanges in progress
+            if (!recoveryInProgress.compareAndSet(false, true)) {
+                LOG.debug("Skipping recover check as the previous recover check is still running");
+                return;
+            }
             LOG.trace("Starting recover check");
             try {
                 // copy the current in progress before doing scan
-                recoveryInProgress.set(true);
                 inProgressCompleteExchangesForRecoveryTask.clear();
                 inProgressCompleteExchangesForRecoveryTask.addAll(inProgressCompleteExchanges);
                 // These are delivered but still in complete repository!
@@ -1807,7 +1812,9 @@ public class AggregateProcessor extends BaseProcessorSupport
                         LOG.info("We are shutting down so stop recovering");
                         return;
                     }
-                    lock.lock();
+                    // a start creates a new lock, so unlock the lock that was locked
+                    final Lock recoverLock = lock;
+                    recoverLock.lock();
                     try {
                         // consider in progress if it was in progress before we did the scan, or currently after we did the scan
                         // (or is being completed and not yet registered as in progress)
@@ -1886,7 +1893,7 @@ public class AggregateProcessor extends BaseProcessorSupport
                             }
                         }
                     } finally {
-                        lock.unlock();
+                        recoverLock.unlock();
                     }
                 }
             } catch (Exception e) {
