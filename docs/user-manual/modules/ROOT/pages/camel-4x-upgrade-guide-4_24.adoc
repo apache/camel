@@ -5339,6 +5339,26 @@ The `SAVE_DOCUMENT` operation now inserts a `Collection` body, such as a `List` 
 it does with the `CamelArangoDbMultiInsert` header, and the body after it is a `MultiDocumentEntity`. Before, without
 the header, ArangoDB inserted the documents and the exchange then failed, so a redelivery inserted them again.
 
+=== camel-aws2-sqs - the CloudEvent source is the queue name
+
+The `aws2-sqs:application-cloudevents` data type transformer now sets the `CamelCloudEventSource` header to
+`aws.sqs.queue.` followed by the name of the queue the message was received from. Before, it used the receipt handle
+of the message, which changes each time a message is received, so every event had a source of its own.
+
+The queue name comes from the new `CamelAwsSqsQueueName` header, which the `aws2-sqs` consumer now sets on each
+message. When the endpoint names the queue by its ARN, the header holds the queue name part of the ARN, and when the
+`queueUrl` option is set, the last part of its path, as that is the queue the consumer reads. A message without this
+header, such as one that does not come from the `aws2-sqs` consumer, gets no CloudEvent source from the transformer,
+also when it has a `CamelAwsSqsReceiptHandle` header. A route that relies on the old source can set the
+`CamelCloudEventSource` header itself after the transformer.
+
+=== camel-aws2-ddb - the x-struct transformer reads bytes as JSON text
+
+The `aws2-ddb:application-x-struct` data type transformer now reads a `byte[]` body as JSON text, with the charset of
+the exchange, as it reads a stream or a file and takes a String as it is, so the same JSON gives the same String
+whatever the type of the body. Before, Gson wrote the bytes as a JSON array of numbers. A stream or a file body, which
+failed before, is now read as text as well.
+
 === camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp - sendNoop also applies to the consumer
 
 The `sendNoop` option now also applies to the check a consumer makes before each poll, not only to the pre-write check

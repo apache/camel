@@ -3,7 +3,7 @@
     "kind": "transformer",
     "name": "aws2-ddb:application-x-struct",
     "title": "Aws2 Ddb (Application X Struct)",
-    "description": "Transforms DynamoDB record into a Json node",
+    "description": "Transforms DynamoDB record into a Json String",
     "deprecated": false,
     "javaType": "org.apache.camel.component.aws2.ddb.transform.Ddb2JsonStructDataTypeTransformer",
     "groupId": "org.apache.camel",
@@ -15,12 +15,14 @@
       "carriers": [
         "text",
         "bytes",
+        "stream",
+        "file",
         "value",
         "map",
         "list",
         "pojo"
       ],
-      "description": "A String is left as it is; another body, such as the Record of the aws2-ddbstream consumer, is written as JSON with Gson, which fails on a stream or a file"
+      "description": "A String is left as it is, and bytes, a stream or a file are read as text; another body, such as the Record of the aws2-ddbstream consumer, is written as JSON with Gson"
     },
     "transformerOut": {
       "carriers": [

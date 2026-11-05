@@ -3507,6 +3507,18 @@ public interface Sqs2EndpointBuilderFactory {
         public String awsSqsSuccessfulMessageCount() {
             return "CamelAwsSqsSuccessfulMessageCount";
         }
+        /**
+         * The name of the queue the message was received from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsSqsQueueName}.
+         */
+        public String awsSqsQueueName() {
+            return "CamelAwsSqsQueueName";
+        }
     }
     static Sqs2EndpointBuilder endpointBuilder(String componentName, String path) {
         class Sqs2EndpointBuilderImpl extends AbstractEndpointBuilder implements Sqs2EndpointBuilder, AdvancedSqs2EndpointBuilder {

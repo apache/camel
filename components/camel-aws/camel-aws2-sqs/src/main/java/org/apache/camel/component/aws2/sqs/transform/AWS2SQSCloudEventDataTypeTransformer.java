@@ -32,7 +32,8 @@ import org.apache.camel.spi.Transformer;
 
 /**
  * Output data type represents AWS SQS receive Message response as CloudEvent V1. The data type sets Camel specific
- * CloudEvent headers on the exchange.
+ * CloudEvent headers on the exchange. The CloudEvent source is the name of the queue, from the header the aws2-sqs
+ * consumer sets, with the prefix {@code aws.sqs.queue.}.
  */
 @DataTypeTransformer(name = "aws2-sqs:application-cloudevents",
                      description = "Adds CloudEvent headers to the Camel message with AWS SQS receive message details")
@@ -50,9 +51,9 @@ public class AWS2SQSCloudEventDataTypeTransformer extends Transformer {
         headers.putIfAbsent(CloudEvent.CAMEL_CLOUD_EVENT_VERSION, cloudEvent.version());
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_TYPE, "org.apache.camel.event.aws.sqs.receiveMessage");
 
-        if (message.getHeaders().containsKey(Sqs2Constants.RECEIPT_HANDLE)) {
+        if (message.getHeaders().containsKey(Sqs2Constants.QUEUE_NAME)) {
             headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SOURCE,
-                    "aws.sqs.queue." + message.getHeader(Sqs2Constants.RECEIPT_HANDLE, String.class));
+                    "aws.sqs.queue." + message.getHeader(Sqs2Constants.QUEUE_NAME, String.class));
         }
 
         headers.put(CloudEvents.CAMEL_CLOUD_EVENT_SUBJECT, message.getHeader(Sqs2Constants.MESSAGE_ID, String.class));
