@@ -4126,10 +4126,15 @@ With `ignoreBody=true`, the consumer, and the `getObject` operation of the produ
 (HeadObject) instead of a GET request, so the content of the object is not downloaded. Before, the whole object was
 transferred and discarded. The headers are the same, and HeadObject needs the same `s3:GetObject` permission. However:
 
-* An object whose content cannot be got but whose metadata can, for example an object archived in S3 Glacier that is
-not restored, is now consumed (or returned by `getObject`) instead of failing.
+* An object whose content cannot be got but whose metadata can is now consumed (or returned by `getObject`) instead of
+failing, and with `deleteAfterRead` (the default) deleted. For example an object archived in S3 Glacier that is not
+restored, or an object encrypted with SSE-KMS whose KMS key the role cannot use to decrypt (a GET needs
+`kms:Decrypt`, a HEAD does not).
 * The response to a failed HEAD request has no body: the `S3Exception` has the HTTP status code, but no S3 error code,
 except `NoSuchKey` for an object that does not exist.
+* The consumer no longer calls `includeS3Object(ResponseInputStream)` or `createExchange(ResponseInputStream, String)`
+for these objects, as there is no GET response: a subclass of `AWS2S3Consumer` that overrides them is not called with
+`ignoreBody=true`.
 
 The `getObject` operation of the producer now also sets the `CamelAwsS3LastModified` and `CamelMessageTimestamp`
 headers, with or without `ignoreBody`, as the consumer does. A `CamelMessageTimestamp` header that the message had

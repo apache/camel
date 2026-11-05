@@ -57,7 +57,7 @@ This component implements the Batch Consumer.
 
 This allows you, for instance, to know how many messages exist in this
 batch and for instance, let the Aggregator
-aggregate this number of messages.
+aggregate this number of messages (see the note below when objects of the poll can be skipped).
 
 The consumer lists the objects of a poll, and gets each of them right before its exchange is routed, so that only the
 objects of the exchanges in flight are in memory, or hold a connection of the HTTP client (with `includeBody=false`).
