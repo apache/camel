@@ -19,6 +19,7 @@ package org.apache.camel.component.seda;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,11 +27,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.apache.camel.support.service.ServiceSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -45,6 +48,7 @@ class SedaMultipleConsumersOtherRoutesTest extends ContextTestSupport {
     private final CountDownLatch release = new CountDownLatch(1);
     private final CountingProcessor counting = new CountingProcessor();
     private final CountDownLatch k2Done = new CountDownLatch(1);
+    private final AtomicReference<Exception> k2Failure = new AtomicReference<>();
 
     @Test
     void testInflightExchangeCompletesWhenAnotherRouteStarts() throws Exception {
@@ -93,6 +97,8 @@ class SedaMultipleConsumersOtherRoutesTest extends ContextTestSupport {
         template.sendBodyAndHeader(URI, "k2", "k", "K");
         b.assertIsSatisfied();
         assertTrue(k2Done.await(10, TimeUnit.SECONDS));
+        // the aggregator hands a completed group to its own thread, so the rejection is what proves the key was kept
+        assertInstanceOf(ClosedCorrelationKeyException.class, k2Failure.get());
 
         agg.expectedMessageCount(1);
         agg.assertIsSatisfied();
@@ -116,6 +122,7 @@ class SedaMultipleConsumersOtherRoutesTest extends ContextTestSupport {
                         .onCompletion()
                         .process(e -> {
                             if ("k2".equals(e.getMessage().getBody(String.class))) {
+                                k2Failure.set(e.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                                 k2Done.countDown();
                             }
                         })
