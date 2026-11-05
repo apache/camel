@@ -179,11 +179,17 @@ public class FileBasedKeyLifecycleManagerStatefulClaimTest {
             pool.shutdownNow();
         }
 
-        // and the key is held exactly once, so another holder is still refused
+        // each thread claimed once, so the key is held eight times, and another manager is still refused
         FileBasedKeyLifecycleManager other = new FileBasedKeyLifecycleManager(keyDir.toString());
         assertThrows(IllegalStateException.class, () -> other.claimStatefulKey(KEY_ID));
 
-        manager.releaseStatefulKey(KEY_ID);
+        // every holder releases the key, and only then is it given back
+        for (int i = 0; i < threads; i++) {
+            manager.releaseStatefulKey(KEY_ID);
+        }
+        assertDoesNotThrow(() -> other.claimStatefulKey(KEY_ID),
+                "once every holder has released the key, another manager must be able to claim it");
+        other.releaseStatefulKey(KEY_ID);
     }
 
     @Test

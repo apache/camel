@@ -612,8 +612,9 @@ public class PQCProducer extends DefaultProducer {
 
     private void signature(Exchange exchange)
             throws Exception {
-        checkStatefulKeyBeforeSign();
+        // the claim first: it may adopt the stored key, and that is the key the exhaustion check must look at
         claimStatefulKeyBeforeSign(exchange);
+        checkStatefulKeyBeforeSign();
 
         Signature signerForExchange = signerForExchange();
         byte[] signature;
@@ -911,8 +912,9 @@ public class PQCProducer extends DefaultProducer {
     private void hybridSignature(Exchange exchange)
             throws InvalidPayloadException, InvalidKeyException, SignatureException, IOException,
             NoSuchAlgorithmException, NoSuchProviderException {
-        checkStatefulKeyBeforeSign();
+        // the claim first: it may adopt the stored key, and that is the key the exhaustion check must look at
         claimStatefulKeyBeforeSign(exchange);
+        checkStatefulKeyBeforeSign();
 
         byte[] data = bodyToByteArray(exchange.getMessage());
 
