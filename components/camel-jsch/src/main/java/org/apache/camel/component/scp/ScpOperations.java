@@ -508,20 +508,19 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     /**
-     * Refuses a file name with a line feed, a carriage return or a NUL character. The scp protocol sends the name of
-     * each directory and of the file on a line that ends with a line feed, so a line feed in the name would end the
-     * protocol line early, and the remote scp would read the rest of the name as the next line. The remote scp refuses
-     * a NUL character in a name, or cuts the name short there. A carriage return is refused with them, so that a name
-     * never holds a line end. Any other character is sent as is. The message gives the character and its index, not the
-     * name.
+     * Refuses a file name with a line feed or a NUL character. The scp protocol sends the name of each directory and of
+     * the file on a line that ends with a line feed, so a line feed in the name would end the protocol line early, and
+     * the remote scp would read the rest of the name as the next line. The remote scp refuses a NUL character in a
+     * name, or cuts the name short there. Any other character, such as a carriage return or a tab, is sent as is. The
+     * message gives the character and its index, not the name.
      */
     private static void checkFileName(String name) {
         for (int i = 0; i < name.length(); i++) {
             char ch = name.charAt(i);
-            if (ch == '\n' || ch == '\r' || ch == '\0') {
+            if (ch == '\n' || ch == '\0') {
                 throw new GenericFileOperationFailedException(
-                        String.format("Cannot write file: the file name has the character U+%04X at index %d, and a line feed,"
-                                      + " a carriage return or a NUL character cannot be sent in an scp file name",
+                        String.format("Cannot write file: the file name has the character U+%04X at index %d, and a line feed"
+                                      + " or a NUL character cannot be sent in an scp file name",
                                 (int) ch, i));
             }
         }

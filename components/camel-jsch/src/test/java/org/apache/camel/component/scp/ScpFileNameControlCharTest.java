@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * The scp producer sends the name of each directory and of the file on a protocol line that ends with a line feed, so
- * it refuses a file name with a line feed, a carriage return or a NUL character before it starts the scp command on the
- * server. Any other control character, such as a tab, is sent as is.
+ * it refuses a file name with a line feed or a NUL character before it starts the scp command on the server. Any other
+ * character, such as a carriage return or a tab, is sent as is.
  * <p/>
  * The server directory is checked directly, so unlike {@link ScpSimpleProduceTest} there is no route that consumes and
  * deletes the files written there.
@@ -69,8 +69,8 @@ public class ScpFileNameControlCharTest extends ScpServerTestSupport {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "a\nb.txt", "a\rb.txt", "a\u0000b.txt", "hello.txt\n",
-            "a\nb/file.txt", "a\rb/file.txt", "a\u0000b/file.txt", "mysub/a\nb/file.txt" })
+            "a\nb.txt", "a\u0000b.txt", "hello.txt\n",
+            "a\nb/file.txt", "a\u0000b/file.txt", "mysub/a\nb/file.txt" })
     public void testFileNameWithControlCharIsRefused(String name) throws Exception {
         assumeTrue(isSetupComplete());
 
@@ -103,8 +103,11 @@ public class ScpFileNameControlCharTest extends ScpServerTestSupport {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "a\tb.txt", "my\tsub/a\tb.txt", "a\u001Bb.txt", "a\u0085b.txt" })
-    @DisabledOnOs(value = OS.WINDOWS, disabledReason = "a Windows file name cannot hold a tab or an escape character")
+    @ValueSource(strings = {
+            "a\rb.txt", "hello.txt\r", "my\rsub/a\rb.txt", "a\tb.txt", "my\tsub/a\tb.txt", "a\u001Bb.txt",
+            "a\u0085b.txt" })
+    @DisabledOnOs(value = OS.WINDOWS,
+                  disabledReason = "a Windows file name cannot hold a carriage return, a tab or an escape character")
     public void testFileNameWithOtherControlCharIsWritten(String name) throws Exception {
         assumeTrue(isSetupComplete());
 
@@ -128,7 +131,7 @@ public class ScpFileNameControlCharTest extends ScpServerTestSupport {
     private void assertRefused(CamelExecutionException e, String name) throws IOException {
         GenericFileOperationFailedException cause
                 = assertInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-        assertTrue(cause.getMessage().contains("a line feed, a carriage return or a NUL character"), cause.getMessage());
+        assertTrue(cause.getMessage().contains("a line feed or a NUL character"), cause.getMessage());
         assertFalse(cause.getMessage().contains(name), "the message does not give the name");
         // nothing is sent: the scp command is not started on the server, and no file or directory is created
         assertEquals(List.of(), scpCommands, "scp commands started on the server");
