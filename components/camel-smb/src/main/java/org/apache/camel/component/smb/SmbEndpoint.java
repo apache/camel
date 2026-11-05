@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
              headersClass = SmbConstants.class, category = { Category.FILE })
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "readLockDeleteOrphanLockFiles,readLockRemoveOnCommit,readLockRemoveOnRollback,"
                               + "directoryMustExist,extendedAttributes,probeContentType,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
                               + "synchronous")

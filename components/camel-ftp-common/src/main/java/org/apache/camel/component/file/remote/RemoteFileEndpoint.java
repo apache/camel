@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -29,6 +30,7 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,7 @@ import org.slf4j.LoggerFactory;
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileEndpoint.class);
+    private static final String VALID_READ_LOCKS = "none,rename,changed";
 
     @UriParam(label = "advanced", description = "Specifies the maximum reconnect attempts Camel performs when it "
                                                 + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
@@ -165,6 +168,12 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
             throw new IllegalArgumentException("You cannot both set delete=true and move options");
         }
 
+        // the readLock option does not apply when a custom read lock or process strategy is set
+        if (getExclusiveReadLockStrategy() == null && getProcessStrategy() == null
+                && ObjectHelper.isNotEmpty(getReadLock())) {
+            readLockCheck();
+        }
+
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotentSet()) {
             LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
@@ -188,6 +197,23 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
         configureConsumer(consumer);
         return consumer;
+    }
+
+    /**
+     * The remote file components implement only the none, rename and changed read locks. Any other value, such as the
+     * markerFile, fileLock and idempotent read locks of the file component, or a misspelled name, would give no read
+     * lock at all, so it fails instead.
+     */
+    private void readLockCheck() {
+        String readLock = getReadLock();
+        // false and off mean none: the process strategy factories give no read lock for them
+        if ("false".equals(readLock) || "off".equals(readLock)) {
+            return;
+        }
+        boolean matched = Arrays.stream(VALID_READ_LOCKS.split(",")).anyMatch(readLock::equals);
+        if (!matched) {
+            throw new IllegalArgumentException("ReadLock invalid: " + readLock + ", must be one of: " + VALID_READ_LOCKS);
+        }
     }
 
     @Override

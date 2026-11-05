@@ -24,7 +24,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(126);
+        Set<String> props = new HashSet<>(123);
         props.add("account");
         props.add("activePortRange");
         props.add("allowNullBody");
@@ -111,13 +111,10 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("processStrategy");
         props.add("readLock");
         props.add("readLockCheckInterval");
-        props.add("readLockDeleteOrphanLockFiles");
         props.add("readLockLoggingLevel");
         props.add("readLockMarkerFile");
         props.add("readLockMinAge");
         props.add("readLockMinLength");
-        props.add("readLockRemoveOnCommit");
-        props.add("readLockRemoveOnRollback");
         props.add("readLockTimeout");
         props.add("reconnectDelay");
         props.add("recursive");

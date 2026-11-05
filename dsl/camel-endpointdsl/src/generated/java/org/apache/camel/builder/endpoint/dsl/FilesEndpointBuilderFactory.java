@@ -1117,48 +1117,6 @@ public interface FilesEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether or not read lock with marker files should upon startup delete
-         * any orphan read lock files, which may have been left on the file
-         * system, if Camel was not properly shutdown (such as a JVM crash). If
-         * turning this option to false then any orphaned lock file will cause
-         * Camel to not attempt to pickup that file, this could also be due
-         * another node is concurrently reading files from the same shared
-         * directory.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockDeleteOrphanLockFiles the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder readLockDeleteOrphanLockFiles(boolean readLockDeleteOrphanLockFiles) {
-            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
-            return this;
-        }
-        /**
-         * Whether or not read lock with marker files should upon startup delete
-         * any orphan read lock files, which may have been left on the file
-         * system, if Camel was not properly shutdown (such as a JVM crash). If
-         * turning this option to false then any orphaned lock file will cause
-         * Camel to not attempt to pickup that file, this could also be due
-         * another node is concurrently reading files from the same shared
-         * directory.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockDeleteOrphanLockFiles the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder readLockDeleteOrphanLockFiles(String readLockDeleteOrphanLockFiles) {
-            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
-            return this;
-        }
-        /**
          * Logging level used when a read lock could not be acquired. By default
          * a DEBUG is logged. You can change this level, for example to OFF to
          * not have any logging. This option is only applicable for readLock of
@@ -1311,90 +1269,6 @@ public interface FilesEndpointBuilderFactory {
          */
         default FilesEndpointConsumerBuilder readLockMinLength(String readLockMinLength) {
             doSetProperty("readLockMinLength", readLockMinLength);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file is succeeded and a commit
-         * happens. By default the file is not removed which ensures that any
-         * race-condition do not occur so another active node may attempt to
-         * grab the file. Instead the idempotent repository may support eviction
-         * strategies that you can configure to evict the file name entry after
-         * X minutes - this ensures no problems with race conditions. See more
-         * details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockRemoveOnCommit the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder readLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
-            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file is succeeded and a commit
-         * happens. By default the file is not removed which ensures that any
-         * race-condition do not occur so another active node may attempt to
-         * grab the file. Instead the idempotent repository may support eviction
-         * strategies that you can configure to evict the file name entry after
-         * X minutes - this ensures no problems with race conditions. See more
-         * details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockRemoveOnCommit the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder readLockRemoveOnCommit(String readLockRemoveOnCommit) {
-            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file failed and a rollback happens. If
-         * this option is false, then the file name entry is confirmed (as if
-         * the file did a commit).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockRemoveOnRollback the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder readLockRemoveOnRollback(boolean readLockRemoveOnRollback) {
-            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file failed and a rollback happens. If
-         * this option is false, then the file name entry is confirmed (as if
-         * the file did a commit).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockRemoveOnRollback the value to set
-         * @return the dsl builder
-         */
-        default FilesEndpointConsumerBuilder readLockRemoveOnRollback(String readLockRemoveOnRollback) {
-            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**

@@ -24,7 +24,7 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(106);
+        Set<String> props = new HashSet<>(103);
         props.add("account");
         props.add("allowNullBody");
         props.add("antExclude");
@@ -89,13 +89,10 @@ public class FilesEndpointUriFactory extends org.apache.camel.support.component.
         props.add("processStrategy");
         props.add("readLock");
         props.add("readLockCheckInterval");
-        props.add("readLockDeleteOrphanLockFiles");
         props.add("readLockLoggingLevel");
         props.add("readLockMarkerFile");
         props.add("readLockMinAge");
         props.add("readLockMinLength");
-        props.add("readLockRemoveOnCommit");
-        props.add("readLockRemoveOnRollback");
         props.add("readLockTimeout");
         props.add("reconnectDelay");
         props.add("recursive");
