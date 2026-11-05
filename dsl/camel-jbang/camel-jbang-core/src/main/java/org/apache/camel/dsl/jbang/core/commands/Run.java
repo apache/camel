@@ -686,6 +686,17 @@ public class Run extends CamelCommand {
     }
 
     public Integer runTransformMessage(String camelVersion, MavenResolverMixin mavenResolver) throws Exception {
+        prepareTransformMessage(camelVersion, mavenResolver);
+        return run();
+    }
+
+    /**
+     * The options of the empty Camel that boots in the background to transform a message or evaluate an expression
+     * (camel transform message, camel eval --isolated). It needs no plugins: loading them resolves every configured
+     * plugin, and when this runs in another JVM, such as a test, it caches their class path for the user's Camel CLI
+     * with the class path of that JVM.
+     */
+    void prepareTransformMessage(String camelVersion, MavenResolverMixin mavenResolver) {
         // just boot silently an empty camel in the background and exit
         this.transformMessageRun = true;
         this.background = true;
@@ -693,8 +704,8 @@ public class Run extends CamelCommand {
         this.mavenResolver = mavenResolver;
         this.empty = true;
         this.ignoreLoadingError = true;
+        this.skipPlugins = true;
         this.name = "transform";
-        return run();
     }
 
     protected Integer runScript(String file) throws Exception {
