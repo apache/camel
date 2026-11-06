@@ -149,6 +149,23 @@ class TimelineTest {
         assertThat(timeline.routes("1234", List.of("orders"), S0, 60)).isEmpty();
     }
 
+    @Test
+    void aRouteDownAtTwoSamplesWasDownInTheSecondsBetween() throws Exception {
+        IntegrationInfo info = info(0, 0, 0, 0, 0);
+        info.chaos = ChaosInfo.parse((JsonObject) Jsoner.deserialize("""
+                {"enabled": true,
+                 "rules": [{"id": "r3", "version": 1, "state": "active", "rule": "route=orders stall duration=20s",
+                            "matches": 1, "fired": {"lifecycle": 1},
+                            "lifecycle": {"action": "suspend", "route": "orders", "state": "down"}}],
+                 "report": {"verdict": "PASS", "routes": [], "recentFaults": []}}
+                """));
+        timeline.record(info, T0);
+        // the status was not written for two seconds
+        timeline.record(info, T0 + 3000);
+
+        assertThat(orders(S0 + 3, 4).down()).containsExactly(1, 1, 1, 1);
+    }
+
     private static ErrorInfo error(String route, String node, String message, long repeat, long timestamp) {
         ErrorInfo e = new ErrorInfo();
         e.routeId = route;

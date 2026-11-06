@@ -147,6 +147,18 @@ final class Timeline {
         }
         if (!down.isEmpty()) {
             rec.down.put(second, down);
+            // a route down at the last sample too was down in the seconds between (a status not written each second)
+            Map.Entry<Long, Set<String>> before = rec.down.lowerEntry(second);
+            if (before != null && second - before.getKey() <= SPREAD && rec.routes.lowerKey(second) != null
+                    && rec.routes.lowerKey(second) <= before.getKey()) {
+                for (long s = before.getKey() + 1; s < second; s++) {
+                    for (String route : down) {
+                        if (before.getValue().contains(route)) {
+                            rec.down.computeIfAbsent(s, x -> new LinkedHashSet<>()).add(route);
+                        }
+                    }
+                }
+            }
         } else {
             rec.down.remove(second);
         }
