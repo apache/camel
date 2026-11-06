@@ -55,4 +55,26 @@ class GenericFileKeptDoneFilesTest {
         assertEquals(List.of("dir/ready"), keptDoneFiles.startBatch(Set.of(), true));
         assertFalse(keptDoneFiles.isKept("dir/ready"));
     }
+
+    @Test
+    void fileOfTheLastPollFindsItsKeptDoneFileWhileTheNextPollDecidesAgain() {
+        GenericFileKeptDoneFiles.Batch lastPoll = keptDoneFiles.batch();
+        keptDoneFiles.keep("dir/ready");
+        assertTrue(lastPoll.isKept("dir/ready"));
+
+        // the next poll lists the directory completely: until it keeps the done file again for the files it leaves, a
+        // file of the last poll that completes on another thread must still find the done file kept by its poll
+        assertNull(keptDoneFiles.startBatch(Set.of("dir/ready"), true));
+        assertFalse(keptDoneFiles.isKept("dir/ready"));
+        assertTrue(lastPoll.isKept("dir/ready"));
+
+        // the files of the next poll decide again: it leaves no file, so its last file deletes the done file
+        GenericFileKeptDoneFiles.Batch nextPoll = keptDoneFiles.batch();
+        assertFalse(nextPoll.isKept("dir/ready"));
+
+        // a done file kept by the next poll is kept for the files of the last poll as well
+        keptDoneFiles.keep("other/ready");
+        assertTrue(nextPoll.isKept("other/ready"));
+        assertTrue(lastPoll.isKept("other/ready"));
+    }
 }

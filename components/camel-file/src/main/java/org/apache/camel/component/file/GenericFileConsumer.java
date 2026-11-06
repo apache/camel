@@ -604,7 +604,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // (for instance to move the file after we have processed it)
             GenericFileOnCompletion<T> onCompletion
                     = new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName);
-            onCompletion.setKeptDoneFiles(getKeptDoneFiles());
+            GenericFileKeptDoneFiles kept = getKeptDoneFiles();
+            if (kept != null) {
+                onCompletion.setKeptDoneFiles(kept.batch());
+            }
             exchange.getExchangeExtension().addOnCompletion(onCompletion);
 
             LOG.debug("About to process file: {} using exchange: {}", target, exchange);
