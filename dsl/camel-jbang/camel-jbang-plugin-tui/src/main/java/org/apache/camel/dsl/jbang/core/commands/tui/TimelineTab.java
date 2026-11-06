@@ -453,7 +453,7 @@ class TimelineTab extends AbstractTableTab {
         int cells = rows * 8;
         for (int row = rows - 1; row >= 0; row--) {
             List<Span> spans = new ArrayList<>();
-            String scale = row == rows - 1 ? String.valueOf(max) : row == 0 ? "0" : "";
+            String scale = row == rows - 1 && max > 0 ? String.valueOf(max) : row == 0 ? "0" : "";
             spans.add(Span.styled(padLeft(scale, label - 2) + " ┤", Theme.muted()));
             for (int c = 0; c < columns; c++) {
                 long t = totals[c];
