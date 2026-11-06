@@ -4056,6 +4056,21 @@ To send such a body, implement `java.io.Serializable` (and enable `objectMessage
 `jmsMessageType` option, or marshal the body (for example to JSON) before sending it. This applies to the components
 that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`) and to `camel-sjms2`.
 
+=== camel-jms - a message sent from a transacted route with a username and password is rolled back with it
+
+When `username` and `password` are set, on the component or on the endpoints, the endpoints that use the connection
+factory of the component with the same username and password now share one connection factory. A message sent from a
+transacted route (`transacted=true` on the consumer) is now part of the transaction of the consumed message, as it is
+without credentials: when the route fails, the message is rolled back with the consumed message. Before, each endpoint
+wrapped the connection factory in a `UserCredentialsConnectionFactoryAdapter` of its own, so the message was committed
+at once, and sent again when the broker delivered the consumed message again.
+
+In a route that is not transacted, a message sent from the thread of the consumer now uses the session of the consumer
+(see `exposeListenerSession`), as it does without credentials, instead of a connection of its own.
+
+An endpoint with its own `connectionFactory` or other credentials keeps a connection factory of its own, as before. This
+applies to the components that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`).
+
 === camel-jms, camel-sjms - text that is not a String is sent as a TextMessage
 
 A body that is text but not a `String` (a `CharSequence` such as a `StringBuilder` or a Groovy GString) is now sent as
