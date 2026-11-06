@@ -93,6 +93,44 @@ class ExpressionEvaluatorLanguageTest {
         assertThat(result.getString("syntaxError")).isNotBlank();
     }
 
+    /**
+     * r28 connect-stock-api step 2: field reads on a body passed as JSON text failed, with the advice to unmarshal it
+     * first, which the tool cannot do (21 calls, no write). They are read on the data a route has after unmarshal:
+     * json, with a note that says so.
+     */
+    @Test
+    void theFieldsOfAJsonTextBodyAreReadOnTheParsedData() {
+        JsonObject one = ExpressionEvaluator.evaluate(new ToolContext(), "groovy", "body.find { it.sku == 'ABC' }",
+                "[{\"sku\": \"ABC\", \"qty\": 10}, {\"sku\": \"DEF\", \"qty\": 20}]");
+        assertThat(one.getString("status")).isEqualTo("ok");
+        assertThat(one.getString("result")).isEqualTo("{sku=ABC, qty=10}");
+        assertThat(one.getString("evaluatedIn")).isEqualTo("a local scratch context, with the body parsed from its JSON text");
+        assertThat(one.getString("note")).startsWith("the body is JSON text, so this is the result on that text parsed into"
+                                                     + " a List, as a route has the body after unmarshal: json, or in a split"
+                                                     + " over that data; on the text itself it fails: No such property: sku"
+                                                     + " for class: java.lang.String");
+        // r28l-7 connect-http-client step 1: one line of an order, read with simple
+        JsonObject sku = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${body[sku]}",
+                "{\"sku\": \"CAMEL-MUG\", \"qty\": 1, \"price\": 9.50}");
+        assertThat(sku.getString("status")).isEqualTo("ok");
+        assertThat(sku.getString("result")).isEqualTo("CAMEL-MUG");
+        assertThat(sku.getString("note")).contains("parsed into a Map");
+        // the numbers as unmarshal: json gives them to a route
+        assertThat(ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${body[price]}",
+                "{\"sku\": \"CAMEL-MUG\", \"qty\": 1, \"price\": 9.50}").getString("result")).isEqualTo("9.5");
+        // what works on the text is answered as before, and so is a failure on text that is no JSON
+        JsonObject length = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${body.length()}",
+                "{\"sku\": \"A\"}");
+        assertThat(length.getString("result")).isEqualTo("12");
+        assertThat(length.get("note")).isNull();
+        assertThat(ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${body[sku]}", "sku=A").getString("status"))
+                .isEqualTo("error");
+        // an error the parsed data does not cure stays the error on the text
+        JsonObject broken = ExpressionEvaluator.evaluate(new ToolContext(), "simple", "${body[sku]", "{\"sku\": \"A\"}");
+        assertThat(broken.getString("status")).isEqualTo("error");
+        assertThat(broken.get("note")).isNull();
+    }
+
     @Test
     @EnabledIfSystemProperty(named = "camel.test.download", matches = "true")
     void jsonpathIsDownloadedAndEvaluated() {

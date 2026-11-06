@@ -62,9 +62,16 @@ public class MinaSftpRemoteFile implements SftpRemoteFile<SftpClient.DirEntry> {
 
     @Override
     public long getLastModified() {
+        return lastModified(entry.getAttributes());
+    }
+
+    /**
+     * The modification time in millis, or 0 when the server did not send it.
+     */
+    static long lastModified(SftpClient.Attributes attributes) {
         // MINA SSHD returns FileTime, convert to millis
-        if (entry.getAttributes().getModifyTime() != null) {
-            return entry.getAttributes().getModifyTime().toMillis();
+        if (attributes.getModifyTime() != null) {
+            return attributes.getModifyTime().toMillis();
         }
         return 0L;
     }

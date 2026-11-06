@@ -42,6 +42,7 @@ import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.kinesis.common.ConfigsBuilder;
 import software.amazon.kinesis.coordinator.Scheduler;
 import software.amazon.kinesis.exceptions.InvalidStateException;
+import software.amazon.kinesis.exceptions.KinesisClientLibRetryableException;
 import software.amazon.kinesis.exceptions.ShutdownException;
 import software.amazon.kinesis.lifecycle.events.InitializationInput;
 import software.amazon.kinesis.lifecycle.events.LeaseLostInput;
@@ -50,6 +51,7 @@ import software.amazon.kinesis.lifecycle.events.ShardEndedInput;
 import software.amazon.kinesis.lifecycle.events.ShutdownRequestedInput;
 import software.amazon.kinesis.metrics.MetricsLevel;
 import software.amazon.kinesis.metrics.NullMetricsFactory;
+import software.amazon.kinesis.processor.RecordProcessorCheckpointer;
 import software.amazon.kinesis.processor.ShardRecordProcessor;
 import software.amazon.kinesis.processor.ShardRecordProcessorFactory;
 import software.amazon.kinesis.retrieval.KinesisClientRecord;
@@ -179,9 +181,19 @@ public class KclKinesis2Consumer extends DefaultConsumer {
 
         private String shardId;
         private Kinesis2Endpoint endpoint;
+        private final boolean stopCheckpointOnFailure;
+        // With kclStopCheckpointOnFailure. KCL does not deliver the records of a batch again while this processor holds
+        // the lease of the shard (it goes on with the next batch), and checkpoint() covers every record delivered so far.
+        // A failed record is consumed again only by the next holder of the lease (the route started again, or the lease
+        // taken over by another worker), which reads from the checkpoint: so once a record has failed, the checkpoint
+        // must not move past it.
+        private boolean failed;
+        // the last record routed successfully after the last checkpoint and before the first failed record
+        private KinesisClientRecord lastGood;
 
         public CamelKinesisRecordProcessor(Kinesis2Endpoint endpoint) {
             this.endpoint = endpoint;
+            this.stopCheckpointOnFailure = endpoint.getConfiguration().isKclStopCheckpointOnFailure();
         }
 
         @Override
@@ -192,21 +204,66 @@ public class KclKinesis2Consumer extends DefaultConsumer {
 
         @Override
         public void processRecords(ProcessRecordsInput processRecordsInput) {
+            LOG.debug("Processing {} record(s)", processRecordsInput.records().size());
+            KinesisClientRecord record = null;
             try {
-                LOG.debug("Processing {} record(s)", processRecordsInput.records().size());
-                for (KinesisClientRecord record : processRecordsInput.records()) {
-                    processor.process(createExchange(record, shardId));
+                for (KinesisClientRecord r : processRecordsInput.records()) {
+                    record = r;
+                    Exchange exchange = createExchange(record, shardId);
+                    processor.process(exchange);
+                    // a route that fails sets the exception on the exchange, it does not throw
+                    if (exchange.getException() != null) {
+                        onFailure(record);
+                        KclKinesis2Consumer.this.getExceptionHandler().handleException("Error processing Kinesis record",
+                                exchange, exchange.getException());
+                    } else if (stopCheckpointOnFailure && !failed) {
+                        lastGood = record;
+                    }
                 }
-                // Checkpoint only after the whole batch has been processed successfully, so that a
-                // processing failure leaves the records to be redelivered from the last checkpoint
-                // rather than being silently skipped.
-                processRecordsInput.checkpointer().checkpoint();
-            } catch (ShutdownException | InvalidStateException e) {
-                LOG.warn("Unable to checkpoint after processing Kinesis records", e);
             } catch (Exception e) {
-                // Do not checkpoint: let KCL redeliver this batch from the last successful checkpoint.
                 KclKinesis2Consumer.this.getExceptionHandler()
-                        .handleException("Error while processing Kinesis records; batch will be retried", e);
+                        .handleException("Error while processing Kinesis records", e);
+                if (!stopCheckpointOnFailure) {
+                    // as before: this batch is not checkpointed, the next checkpoint covers it
+                    return;
+                }
+                onFailure(record);
+            }
+            checkpoint(processRecordsInput.checkpointer(), "after processing Kinesis records");
+        }
+
+        private void onFailure(KinesisClientRecord record) {
+            if (stopCheckpointOnFailure && !failed) {
+                failed = true;
+                if (record != null) {
+                    LOG.warn("Record {} (sub-sequence {}) of shard {} failed, the checkpoint of the shard stays before it"
+                             + " until the lease is taken again",
+                            record.sequenceNumber(), record.subSequenceNumber(), shardId);
+                } else {
+                    LOG.warn("A record of shard {} failed, the checkpoint of the shard stays before it until the lease is"
+                             + " taken again",
+                            shardId);
+                }
+            }
+        }
+
+        /**
+         * Checkpoints the records delivered so far, or, once a record has failed with kclStopCheckpointOnFailure, only
+         * the records before it.
+         */
+        private void checkpoint(RecordProcessorCheckpointer checkpointer, String when) {
+            try {
+                if (!failed) {
+                    checkpointer.checkpoint();
+                } else if (lastGood != null) {
+                    checkpointer.checkpoint(lastGood.sequenceNumber(), lastGood.subSequenceNumber());
+                }
+                lastGood = null;
+            } catch (ShutdownException | InvalidStateException e) {
+                LOG.warn("Unable to checkpoint {}", when, e);
+            } catch (KinesisClientLibRetryableException e) {
+                // throttled or DynamoDB not available: the next checkpoint covers these records
+                LOG.warn("Unable to checkpoint {}, will try again with the next records: {}", when, e.getMessage());
             }
         }
 
@@ -217,6 +274,11 @@ public class KclKinesis2Consumer extends DefaultConsumer {
 
         @Override
         public void shardEnded(ShardEndedInput shardEndedInput) {
+            if (failed) {
+                LOG.warn("Shard {} has ended after a record of it failed: its end is checkpointed, as KCL requires, so the"
+                         + " failed records of the shard are not consumed again",
+                        shardId);
+            }
             try {
                 LOG.debug("Reached shard end checkpointing.");
                 shardEndedInput.checkpointer().checkpoint();
@@ -227,12 +289,8 @@ public class KclKinesis2Consumer extends DefaultConsumer {
 
         @Override
         public void shutdownRequested(ShutdownRequestedInput shutdownRequestedInput) {
-            try {
-                LOG.debug("Scheduler is shutting down, checkpointing.");
-                shutdownRequestedInput.checkpointer().checkpoint();
-            } catch (ShutdownException | InvalidStateException e) {
-                LOG.error("Exception while checkpointing at requested shutdown. Giving up.", e);
-            }
+            LOG.debug("Scheduler is shutting down, checkpointing.");
+            checkpoint(shutdownRequestedInput.checkpointer(), "at requested shutdown");
         }
 
         protected Exchange createExchange(KinesisClientRecord dataRecord, String shardId) {

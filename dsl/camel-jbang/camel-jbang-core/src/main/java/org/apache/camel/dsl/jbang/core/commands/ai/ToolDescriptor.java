@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -40,6 +41,7 @@ public class ToolDescriptor {
     private boolean deterministic = false;
     private String deterministicWhen;
     private String[] deterministicUnless = new String[0];
+    private Predicate<Map<String, ?>> deterministicIf;
     private String repeatHint;
 
     /**
@@ -136,6 +138,16 @@ public class ToolDescriptor {
         return this;
     }
 
+    /**
+     * Marks the tool as deterministic for the calls the condition accepts, such as an evaluation of an expression on
+     * the message the call gives, which answers the same each time unless the expression reads the clock or a random
+     * value.
+     */
+    public ToolDescriptor deterministicIf(Predicate<Map<String, ?>> condition) {
+        deterministicIf = condition;
+        return this;
+    }
+
     /** What the note of a repeated call adds for this tool: what to do instead of asking again. */
     public ToolDescriptor repeatHint(String hint) {
         repeatHint = hint;
@@ -185,6 +197,9 @@ public class ToolDescriptor {
         if (deterministic) {
             return true;
         }
+        if (deterministicIf != null) {
+            return deterministicIf.test(args);
+        }
         if (deterministicWhen == null || !hasValue(args, deterministicWhen)) {
             return false;
         }
@@ -199,6 +214,13 @@ public class ToolDescriptor {
     /** The argument that makes a call deterministic, or null when the tool is always or never deterministic. */
     public String deterministicWhen() {
         return deterministicWhen;
+    }
+
+    /**
+     * Whether some calls of the tool are deterministic: all of them, the ones with an argument, or as a condition says.
+     */
+    public boolean isDeterministicForSomeCalls() {
+        return deterministic || deterministicWhen != null || deterministicIf != null;
     }
 
     private static boolean hasValue(Map<String, ?> args, String name) {

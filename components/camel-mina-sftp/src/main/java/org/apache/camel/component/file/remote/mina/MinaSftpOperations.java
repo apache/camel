@@ -947,7 +947,7 @@ public class MinaSftpOperations
                 // maybe the full directory already exists
                 try {
                     // Use stat to check if the directory exists - stat throws if path doesn't exist
-                    // Note: readDir doesn't throw for non-existent directories in MINA SSHD
+                    // Note: readDir only sends OPENDIR once its result is iterated, so it does not check the directory
                     SftpClient.Attributes attrs = sftpClient.stat(directory);
                     if (attrs != null && attrs.isDirectory()) {
                         success = true;
@@ -1123,8 +1123,8 @@ public class MinaSftpOperations
 
         LOG.trace("doChangeDirectory: path={}, currentDirectory={}, newDirectory={}", path, currentDirectory, newDirectory);
 
-        // Verify the directory exists using stat() - more reliable than readDir()
-        // Note: readDir doesn't throw for non-existent directories in MINA SSHD
+        // Verify the directory exists using stat(), a single request
+        // Note: readDir only sends OPENDIR once its result is iterated, so it does not check the directory
         try {
             SftpClient.Attributes attrs = sftpClient.stat(newDirectory);
             if (attrs == null || !attrs.isDirectory()) {
@@ -1186,7 +1186,9 @@ public class MinaSftpOperations
             }
 
             return result.toArray(new MinaSftpRemoteFile[0]);
-        } catch (IOException e) {
+        } catch (IOException | UncheckedIOException e) {
+            // readDir sends OPENDIR and reads the entries while iterating, so a failure, such as a directory that does
+            // not exist, surfaces as an UncheckedIOException, as in the listing one entry at a time
             throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
         } finally {
             lock.unlock();
@@ -1515,17 +1517,86 @@ public class MinaSftpOperations
         lock.lock();
         try {
             LOG.trace("existsFile({})", name);
-            reconnectIfNecessary(null);
-
-            try {
-                sftpClient.stat(name);
-                return true;
-            } catch (IOException e) {
-                // file does not exist
-                return false;
-            }
+            return getFileAttributes(name) != null;
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * Gets the attributes of a file with a single request, whatever the number of files in its directory.
+     * <p/>
+     * These are the attributes of the path itself, as in a directory listing: a symbolic link is not followed, so for a
+     * link they are the size and modification time of the link, and a dangling link exists. When the server answers
+     * that request with another status than no such file, such as when it does not permit or support it on the path,
+     * the attributes are taken from a listing of the directory of the file instead.
+     *
+     * @param  name                                the name of the file, with its directory if any
+     * @return                                     the attributes, or {@code null} if there is no such file
+     * @throws GenericFileOperationFailedException if the attributes cannot be read, such as when the connection fails
+     */
+    public FileAttributes getFileAttributes(String name) throws GenericFileOperationFailedException {
+        lock.lock();
+        try {
+            reconnectIfNecessary(null);
+            SftpClient.Attributes attrs;
+            try {
+                attrs = sftpClient.lstat(name);
+            } catch (SftpException e) {
+                // MINA SSHD reports a status sent by the server as an SftpException, and an I/O or session failure
+                // as another IOException
+                if (e.getStatus() == SftpConstants.SSH_FX_NO_SUCH_FILE) {
+                    return null;
+                }
+                LOG.debug("Cannot get the attributes of: {} due to: {}. Listing its directory instead.", name,
+                        e.getMessage());
+                attrs = listFileAttributes(name);
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException("Cannot get the attributes of: " + name, e);
+            }
+            return attrs != null ? new FileAttributes(attrs.getSize(), MinaSftpRemoteFile.lastModified(attrs)) : null;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * The attributes of a file read by {@link #getFileAttributes(String)}.
+     *
+     * @param fileLength   the file size
+     * @param lastModified the file modification timestamp (in millis), as {@link MinaSftpRemoteFile#getLastModified()}
+     */
+    public record FileAttributes(long fileLength, long lastModified) {
+    }
+
+    /**
+     * Gets the attributes of a file from a listing of its directory, comparing the names of the listed files.
+     *
+     * @return the attributes, or {@code null} if the directory does not list the file, or does not exist
+     */
+    private SftpClient.Attributes listFileAttributes(String name) throws GenericFileOperationFailedException {
+        String directory = FileUtil.onlyPath(name);
+        if (directory == null) {
+            // assume current dir if no path could be extracted
+            directory = ".";
+        }
+        String onlyName = FileUtil.stripPath(name);
+
+        // the handle is closed also when the file is found before the end of the directory
+        try (CloseableHandle handle = sftpClient.openDir(directory)) {
+            for (DirEntry entry : sftpClient.listDir(handle)) {
+                if (onlyName.equals(entry.getFilename())) {
+                    return entry.getAttributes();
+                }
+            }
+            return null;
+        } catch (IOException | UncheckedIOException e) {
+            // the entries are read while iterating, so an I/O error can surface as an UncheckedIOException
+            IOException cause = e instanceof UncheckedIOException unchecked ? unchecked.getCause() : (IOException) e;
+            if (cause instanceof SftpException sftp && sftp.getStatus() == SftpConstants.SSH_FX_NO_SUCH_FILE) {
+                return null;
+            }
+            throw new GenericFileOperationFailedException("Cannot list directory: " + directory, cause);
         }
     }
 

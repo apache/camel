@@ -17,7 +17,8 @@
 package org.apache.camel.maven.packaging;
 
 import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,11 +38,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.build.BuildContext;
-import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.StaticCapable;
-import org.jboss.forge.roaster.model.source.AnnotationSource;
-import org.jboss.forge.roaster.model.source.FieldSource;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Prepares camel-jbang by generating Camel CLI configuration metadata for tooling support.
@@ -68,60 +64,66 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
     }
 
     /**
-     * Parses the Camel CLI configuration java source file.
+     * Reads the Camel CLI configuration of a compiled configuration class: its static fields with {@code @Metadata}.
+     * The compiler has resolved the values (a description written as string literals joined with {@code +} is one
+     * text), so the source is not parsed.
      */
-    public static List<JBangModel.JBangOptionModel> parseConfigurationSource(String fileName) throws IOException {
-        return parseConfigurationSource(new File(fileName));
+    public static List<JBangModel.JBangOptionModel> parseConfigurationClass(Class<?> clazz) {
+        final List<JBangModel.JBangOptionModel> answer = new ArrayList<>();
+        for (Field f : clazz.getDeclaredFields()) {
+            Metadata as = f.getAnnotation(Metadata.class);
+            if (as == null || !Modifier.isStatic(f.getModifiers()) || f.getType() != String.class) {
+                continue;
+            }
+            String name;
+            try {
+                if (!f.trySetAccessible()) {
+                    throw new IllegalStateException("Cannot access " + clazz.getName() + "." + f.getName());
+                }
+                name = (String) f.get(null);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException("Cannot read " + clazz.getName() + "." + f.getName(), e);
+            }
+            String javaType = text(as.javaType());
+            String defaultValue = text(as.defaultValue());
+            String security = text(as.security());
+            boolean secret = as.secret() || "secret".equals(security);
+            boolean deprecated = clazz.isAnnotationPresent(Deprecated.class) || f.isAnnotationPresent(Deprecated.class);
+            JBangModel.JBangOptionModel model = new JBangModel.JBangOptionModel();
+            model.setName(name);
+            model.setJavaType(javaType);
+            model.setDescription(JavadocHelper.sanitizeDescription(text(as.description()), false));
+            model.setLabel(text(as.label()));
+            model.setSourceType(null);
+            model.setDeprecated(deprecated);
+            model.setSecret(secret);
+            model.setSecurity(security);
+            model.setRequired(as.required());
+            String enumText = text(as.enums());
+            List<String> enums = enumText != null ? Arrays.asList(enumText.split(",")) : null;
+            model.setEnums(enums);
+            String type = MojoHelper.getType(javaType, enums != null && !enums.isEmpty(), false);
+            model.setType(type);
+            model.setDefaultValue(asDefaultValue(type, defaultValue));
+            answer.add(model);
+        }
+        return answer;
     }
 
-    /**
-     * Parses the Camel CLI configuration java source file.
-     */
-    public static List<JBangModel.JBangOptionModel> parseConfigurationSource(File file) throws IOException {
-        final List<JBangModel.JBangOptionModel> answer = new ArrayList<>();
+    // an annotation attribute that is not set is an empty text
+    private static String text(String value) {
+        return value == null || value.isEmpty() ? null : value;
+    }
 
-        JavaClassSource clazz = (JavaClassSource) Roaster.parse(file);
-        List<FieldSource<JavaClassSource>> fields = clazz.getFields();
-        fields = fields.stream().filter(StaticCapable::isStatic).toList();
-        fields.forEach(f -> {
-            AnnotationSource<?> as = f.getAnnotation(Metadata.class);
-            if (as != null) {
-                String name = f.getStringInitializer();
-                String javaType = as.getStringValue("javaType");
-                String defaultValue = as.getStringValue("defaultValue");
-                String desc = as.getStringValue("description");
-                String label = as.getStringValue("label");
-                boolean secret = "true".equals(as.getStringValue("secret"));
-                String security = as.getStringValue("security");
-                if ("secret".equals(security) && !secret) {
-                    secret = true;
-                }
-                boolean required = "true".equals(as.getStringValue("required"));
-                boolean deprecated = clazz.getAnnotation(Deprecated.class) != null || f.getAnnotation(Deprecated.class) != null;
-                JBangModel.JBangOptionModel model = new JBangModel.JBangOptionModel();
-                model.setName(name);
-                model.setJavaType(javaType);
-                model.setDescription(JavadocHelper.sanitizeDescription(desc, false));
-                model.setLabel(label);
-                model.setSourceType(null);
-                model.setDeprecated(deprecated);
-                model.setSecret(secret);
-                model.setSecurity(security);
-                model.setRequired(required);
-                List<String> enums = null;
-                String text = as.getStringValue("enums");
-                if (text != null) {
-                    enums = Arrays.asList(text.split(","));
-                }
-                model.setEnums(enums);
-                String type = MojoHelper.getType(javaType, enums != null && !enums.isEmpty(), false);
-                model.setType(type);
-                model.setDefaultValue(asDefaultValue(type, defaultValue));
-                answer.add(model);
-            }
-        });
-
-        return answer;
+    /** The class of a configuration source file: its path under src/main/java. */
+    static String className(File file) {
+        String path = file.getPath().replace(File.separatorChar, '/');
+        int root = path.indexOf("src/main/java/");
+        if (root < 0) {
+            throw new IllegalArgumentException("Cannot determine the class of " + file + ": not under src/main/java/");
+        }
+        String relative = path.substring(root + "src/main/java/".length());
+        return relative.substring(0, relative.length() - ".java".length()).replace('/', '.');
     }
 
     private static Object asDefaultValue(String type, String defaultValue) {
@@ -156,12 +158,13 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
         final List<JBangModel.JBangOptionModel> data = new ArrayList<>();
 
         for (File file : files) {
-            getLog().info("Parsing Camel CLI configuration file: " + file);
+            // the compiled class of the source (camel-jbang-run is a dependency of the project)
+            String className = className(file);
+            getLog().info("Reading Camel CLI configuration class: " + className);
             try {
-                List<JBangModel.JBangOptionModel> model = parseConfigurationSource(file);
-                data.addAll(model);
-            } catch (Exception e) {
-                throw new MojoFailureException("Error parsing file " + file + " due " + e.getMessage(), e);
+                data.addAll(parseConfigurationClass(getProjectClassLoader().loadClass(className)));
+            } catch (Exception | LinkageError e) {
+                throw new MojoFailureException("Error reading class " + className + " due " + e.getMessage(), e);
             }
         }
 

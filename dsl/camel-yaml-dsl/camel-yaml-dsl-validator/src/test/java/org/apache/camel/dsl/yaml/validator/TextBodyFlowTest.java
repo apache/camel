@@ -3044,6 +3044,50 @@ public class TextBodyFlowTest {
                                                        + " need, such as for a file name or a log, before the marshal"));
     }
 
+    /**
+     * r28 of the local-model benchmark, route-enrich-and-dedupe step 3: the marshal wrote the JSON text into a variable
+     * (variableReceive), so the body was still the order Map at the wireTap. Told to add marshal: json before the step,
+     * which it had, the model sent the same lines 11 times: the variable is what to send.
+     */
+    @Test
+    public void testAMarshalIntoAVariableBeforeAWireTapOfTheBody() {
+        String yaml = """
+                - route:
+                    id: incoming-orders
+                    from:
+                      uri: file:orders
+                      steps:
+                        - unmarshal:
+                            json:
+                              library: Jackson
+                        - setVariable:
+                            name: orderId
+                            expression:
+                              simple:
+                                expression: "${body[orderId]}"
+                        - marshal:
+                            json:
+                              library: Jackson
+                            variableReceive: orderJson
+                        - wireTap:
+                            uri: "file:audit?fileName=${variable.orderId}.json"
+                """;
+        assertThat(lines(yaml)).singleElement().asString()
+                .startsWith("Line 19: ")
+                .endsWith("route incoming-orders: wireTap: file needs the body as text, bytes, a stream or a file, but"
+                          + " the body here is parsed data (a Map or a List), not text - unmarshal: json turns the text"
+                          + " into data: the marshal wrote the text into the variable orderJson (variableReceive:"
+                          + " orderJson), and the body is still the data: send that variable with variableSend: orderJson"
+                          + " on this wireTap, or leave out variableReceive so that the marshal writes the body");
+        // the variable sent: valid
+        assertThat(lines(yaml.replace("""
+                            uri: "file:audit?fileName=${variable.orderId}.json"
+                """, """
+                            uri: "file:audit?fileName=${variable.orderId}.json"
+                            variableSend: orderJson
+                """))).isEmpty();
+    }
+
     @Test
     public void testAWireTapOrAnEnrichOfDataToAFile() {
         // what the benchmark wrote (r22): the order Map is tapped to a file

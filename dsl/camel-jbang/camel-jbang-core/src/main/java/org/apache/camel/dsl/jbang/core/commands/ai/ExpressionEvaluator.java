@@ -16,9 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
@@ -179,10 +184,19 @@ public final class ExpressionEvaluator {
         Request r = new Request(lang, expression, body, request.headers(), request.variables(), predicate, resultType);
         if (ctx.hasProcess()) {
             result.put("evaluatedIn", "the running integration (pid " + ctx.pid() + ")");
-            evaluateInProcess(ctx, r, result);
+            try {
+                evaluateInProcess(ctx, r, result);
+            } catch (ToolExecutionException e) {
+                if (!evaluateOnParsedBody(ctx, r, result, e.getMessage())) {
+                    throw e;
+                }
+            }
         } else {
             result.put("evaluatedIn", "a local scratch context (no integration selected)");
             evaluateLocally(ctx, r, result);
+        }
+        if ("error".equals(result.getString("status"))) {
+            evaluateOnParsedBody(ctx, r, result, result.getString("error"));
         }
         addNullAndElvisNotes(ctx, result, lang, expression);
         addFilterNote(result, lang, expression);
@@ -192,6 +206,111 @@ public final class ExpressionEvaluator {
 
     static final String NULL_NOTE = "evaluated to null: a header, property or variable that is not set, or a function"
                                     + " name that took in the rest of the text";
+
+    /** The languages whose expressions read the fields of a body that is data, a Map or a List, and not of text. */
+    private static final Set<String> READS_DATA = Set.of("simple", "groovy", "mvel", "ognl", "spel", "js", "javascript",
+            "python", "java", "joor", "jactl");
+
+    /**
+     * What an expression can read that changes from one call to the next: the clock, a random value, an id, a property,
+     * a bean, a file, or the context or system of the integration.
+     */
+    private static final Pattern CHANGES = Pattern.compile("(?i)random|date|time|now|uuid|\\bid\\b|exchangeId|messageId"
+                                                           + "|propert|\\{\\{|bean|ref:|resource:|file|context|system|env"
+                                                           + "|sys\\.|instant|clock|math|counter");
+
+    /**
+     * Whether an evaluation gives the same answer each time it is asked with the same arguments, so that asking again
+     * cannot tell anything new ({@link RepeatedToolCalls}): not when the expression reads the clock, a random value, an
+     * id, a property, a bean, a file or the context. r28 connect-stock-api step 2: body.getClass().getName() was
+     * evaluated 10 times, 9 of them with the same arguments, up to the call limit of the step.
+     */
+    static boolean sameAnswer(Map<String, ?> args) {
+        Object expression = args != null ? args.get("expression") : null;
+        return expression != null && !expression.toString().isBlank()
+                && !CHANGES.matcher(expression.toString()).find();
+    }
+
+    /**
+     * Evaluates again with the body parsed, when the expression read the body and failed on a body that is JSON text: a
+     * route has that body as data (a Map or a List) after unmarshal: json, and in a split over such data. The tool
+     * takes the body as text, so its answer "unmarshal it first" was advice the tool could not follow: r28
+     * connect-stock-api step 2, 21 evaluations of body.find { it.sku == 'ABC' } on a JSON text body and no write; and
+     * http-client step 1, where the model then added an unmarshal to a route whose body was a Map already.
+     *
+     * @return true when the expression gave a value on the parsed body: the result is that value, with a note that says
+     *         so and what the expression gives on the text
+     */
+    private static boolean evaluateOnParsedBody(ToolContext ctx, Request r, JsonObject result, String error) {
+        if (!READS_DATA.contains(r.language()) || r.expression() == null || !r.expression().contains("body")) {
+            return false;
+        }
+        Object data = jsonData(r.body());
+        if (data == null) {
+            return false;
+        }
+        JsonObject parsed = new JsonObject();
+        evaluateLocally(ctx, r, data, parsed);
+        if (!"ok".equals(parsed.getString("status"))) {
+            return false;
+        }
+        result.remove("error");
+        result.remove("syntaxError");
+        result.remove("syntaxErrorAt");
+        result.put("status", "ok");
+        result.put("result", parsed.get("result"));
+        result.put("evaluatedIn", "a local scratch context, with the body parsed from its JSON text");
+        if (parsed.get("downloaded") != null) {
+            result.put("downloaded", parsed.get("downloaded"));
+        }
+        String failure = error != null ? error.lines().findFirst().orElse("").strip() : "";
+        addNote(result, "the body is JSON text, so this is the result on that text parsed into a "
+                        + (data instanceof Map ? "Map" : "List") + ", as a route has the body after unmarshal: json, or in"
+                        + " a split over that data"
+                        + (failure.isEmpty() ? "" : "; on the text itself it fails: " + failure));
+        return true;
+    }
+
+    /**
+     * The body as data when it is the text of a JSON object or array, else null: as unmarshal: json gives it to a
+     * route, maps, lists, text, whole numbers as Integer or Long, and the others as Double.
+     */
+    private static Object jsonData(String body) {
+        String text = body != null ? body.strip() : "";
+        if (!text.startsWith("{") && !text.startsWith("[")) {
+            return null;
+        }
+        try {
+            Object data = Jsoner.deserialize(text);
+            return data instanceof Map || data instanceof Collection ? unmarshalled(data) : null;
+        } catch (DeserializationException | RuntimeException e) {
+            return null;
+        }
+    }
+
+    private static Object unmarshalled(Object value) {
+        if (value instanceof Map<?, ?> map) {
+            Map<String, Object> answer = new LinkedHashMap<>();
+            map.forEach((k, v) -> answer.put(String.valueOf(k), unmarshalled(v)));
+            return answer;
+        }
+        if (value instanceof Collection<?> list) {
+            List<Object> answer = new ArrayList<>();
+            list.forEach(v -> answer.add(unmarshalled(v)));
+            return answer;
+        }
+        if (value instanceof BigDecimal n) {
+            if (n.scale() > 0) {
+                return n.doubleValue();
+            }
+            try {
+                return n.intValueExact();
+            } catch (ArithmeticException e) {
+                return n.toBigInteger().bitLength() < 64 ? n.longValue() : n.toBigInteger();
+            }
+        }
+        return value;
+    }
 
     /**
      * Says that a value is null, and why it may be. An answer that leaves out null fields (the MCP server does) has no
@@ -391,13 +510,18 @@ public final class ExpressionEvaluator {
     }
 
     private static void evaluateLocally(ToolContext ctx, Request r, JsonObject result) {
+        evaluateLocally(ctx, r, r.body(), result);
+    }
+
+    /** As {@link #evaluateLocally(ToolContext, Request, JsonObject)}, with the body to evaluate on. */
+    private static void evaluateLocally(ToolContext ctx, Request r, Object body, JsonObject result) {
         String lang = r.language();
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {
             String gav = languageArtifact(ctx, lang);
             // the languages of this process (simple, constant, header, ...) need no class loader of their own
             ClassLoader known = gav != null ? DOWNLOADED.get(gav) : null;
-            if (evaluateWith(known, r, result)) {
+            if (evaluateWith(known, r, body, result)) {
                 if (known != null) {
                     // downloaded by an earlier call: say so again, so the answers of two calls read the same
                     result.put("downloaded", gav);
@@ -409,7 +533,7 @@ public final class ExpressionEvaluator {
             // jsonpath, jq or xpath expression can be tried before it is written (CAMEL-24907)
             StringBuilder failure = new StringBuilder();
             ClassLoader downloaded = download(gav, failure);
-            if (downloaded == null || !evaluateWith(downloaded, r, result)) {
+            if (downloaded == null || !evaluateWith(downloaded, r, body, result)) {
                 result.put("status", "error");
                 result.put("error", "The language '" + lang + "' is not on the classpath of this process"
                                     + (gav != null ? " and " + gav + " could not be downloaded" : "")
@@ -429,7 +553,7 @@ public final class ExpressionEvaluator {
      * Evaluates with the given class loader (null for this process's own), and answers whether the language was found;
      * the result of the evaluation, or its error, is put in {@code result}.
      */
-    private static boolean evaluateWith(ClassLoader loader, Request r, JsonObject result) {
+    private static boolean evaluateWith(ClassLoader loader, Request r, Object body, JsonObject result) {
         // without the CLI connector, which would make this process, such as the MCP server, a running integration
         try (DefaultCamelContext context = ScratchContextHelper.withoutCliConnector(new DefaultCamelContext(false))) {
             if (loader != null) {
@@ -445,7 +569,7 @@ public final class ExpressionEvaluator {
                 return false;
             }
             Exchange exchange = new DefaultExchange(context);
-            exchange.getMessage().setBody(r.body() != null ? r.body() : "");
+            exchange.getMessage().setBody(body != null ? body : "");
             if (r.headers() != null) {
                 r.headers().forEach(exchange.getMessage()::setHeader);
             }
@@ -577,4 +701,40 @@ public final class ExpressionEvaluator {
 
     /** The class loaders of the languages downloaded so far, so the next call does not download again. */
     private static final Map<String, ClassLoader> DOWNLOADED = new ConcurrentHashMap<>();
+
+    /** The languages whose download failed, for a check that tries once. */
+    private static final Set<String> NOT_DOWNLOADED = ConcurrentHashMap.newKeySet();
+
+    /**
+     * The class loader that has the language, for a check of an expression of a route: this process's own when it has
+     * the language, else the one its component is downloaded into, once, as for an evaluation (a download that failed
+     * is not tried again). Null when the catalog does not know the language or it cannot be had.
+     */
+    static ClassLoader languageLoader(CamelCatalog catalog, String lang) {
+        LanguageModel model;
+        try {
+            model = catalog.languageModel(lang);
+        } catch (Exception e) {
+            return null;
+        }
+        if (model == null || model.getJavaType() == null || model.getArtifactId() == null) {
+            return null;
+        }
+        ClassLoader own = ExpressionEvaluator.class.getClassLoader();
+        try {
+            Class.forName(model.getJavaType(), false, own);
+            return own;
+        } catch (ClassNotFoundException | LinkageError e) {
+            // not on the classpath of this process: its component
+        }
+        String gav = model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion();
+        if (NOT_DOWNLOADED.contains(gav)) {
+            return null;
+        }
+        ClassLoader downloaded = download(gav, new StringBuilder());
+        if (downloaded == null) {
+            NOT_DOWNLOADED.add(gav);
+        }
+        return downloaded;
+    }
 }
