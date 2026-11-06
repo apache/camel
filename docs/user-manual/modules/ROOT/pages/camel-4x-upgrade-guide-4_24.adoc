@@ -156,6 +156,24 @@ default. Scheme and host are compared ignoring case and a default port may be le
 not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected, and neither are the Spring Boot and
 Quarkus engines.
 
+=== camel-mina-sftp - checking whether a file exists takes one lstat request
+
+The `mina-sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,
+`tempPrefix`, a producer `doneFileName`) with an `lstat` request instead of `stat`. `readLock=changed` reads the size
+and modification time of the file with the same request, instead of a listing of the directory. Each check is one
+request, whatever the number of files in the directory, and `fastExistsCheck` no longer makes a difference for
+`readLock=changed`: with `fastExistsCheck=true`, the read lock is now acquired, where before the file was never
+consumed. The answer can differ from before in two cases:
+
+* A dangling symbolic link now exists: the link itself is checked, not its target. For example, with
+  `fileExist=Fail`, sending a file with the name of a dangling link now fails, where before the file was written.
+* When the server answers the request with another status than "no such file", for example because it does not permit
+  it on the path, the component lists the directory and compares the names, where before the file counted as missing.
+  When the server does not answer that listing either, or the connection fails, the check now fails with an error.
+
+`readLock=changed` keeps comparing the size and modification time of a symbolic link itself, as the directory listing
+reported them. See the xref:components::mina-sftp-component.adoc[MINA SFTP component].
+
 === camel-mina-sftp - TCP_NODELAY is set on the connections
 
 The `mina-sftp` component now sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.
