@@ -29,6 +29,9 @@ class ProcessorInfo {
     int level;
     long total;
     long failed;
+    // the failures the error handler handled, and its redeliveries (CAMEL-26698)
+    long failuresHandled;
+    long redeliveries;
     long meanTime;
     long minTime;
     long maxTime;
