@@ -80,7 +80,7 @@ to any tab, or *Shift+F2* to go to a tab by name.
 The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
-* *Observability* -- Chaos, Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
+* *Observability* -- Timeline, Chaos, Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
 * *AI* -- Semantic (definitions, expert contracts, relationships, sample evaluation, Audit and Monitoring), Ollama (listed when an Ollama server is detected)
 * *Data* -- JDBC DataSource, Kafka, Secrets, SQL Query, SQL Trace
 * *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads

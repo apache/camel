@@ -60,6 +60,9 @@ class TimelineTab extends AbstractTableTab {
     private static final int MAX_LABEL = 18;
 
     private final LongSupplier clock;
+    // the seconds a column has, and the characters a column is wide, as the last render worked them out
+    private int per = 1;
+    private int width = 1;
     private int window;
     // the second the screen stays at while paused, or -1 to follow now
     private long pausedAt = -1;
@@ -220,9 +223,12 @@ class TimelineTab extends AbstractTableTab {
         int inner = Math.max(20, area.width() - 2);
         int label = Math.min(MAX_LABEL,
                 Math.max(10, routes.stream().mapToInt(r -> r.route().length()).max().orElse(0))) + 3;
-        int columns = Math.max(10, Math.min(seconds(), inner - label - SUFFIX - 1));
-        int per = (int) Math.ceil((double) seconds() / columns);
-        columns = (seconds() + per - 1) / per;
+        // a second is 1 to 3 characters wide as the screen allows, or a character is several seconds
+        int room = Math.max(10, inner - label - SUFFIX - 1);
+        int per = room >= seconds() ? 1 : (int) Math.ceil((double) seconds() / room);
+        width = per == 1 ? Math.max(1, Math.min(3, room / seconds())) : 1;
+        this.per = per;
+        int columns = (seconds() + per - 1) / per * width;
 
         List<Line> lines = new ArrayList<>();
         renderCauses(lines, causes, anyCause, info, columns, per, label);
@@ -278,7 +284,7 @@ class TimelineTab extends AbstractTableTab {
                 continue;
             }
             Style style = causeStyle(colour++);
-            values.add(columnsOf(c.values(), per, false));
+            values.add(cols(c.values(), false));
             styles.add(style);
             legend.add(Span.styled("█ ", style));
             legend.add(Span.raw((c.rule() != null ? "🎲 " : "") + c.label() + "  "));
@@ -311,11 +317,11 @@ class TimelineTab extends AbstractTableTab {
         spans.add(selected
                 ? Span.styled(pad(">> " + name, label), Theme.selectionBg())
                 : Span.raw(pad("   " + name, label)));
-        long[] completed = columnsOf(r.completed(), per, false);
-        long[] recovered = columnsOf(r.recovered(), per, false);
-        long[] handled = columnsOf(r.handled(), per, false);
-        long[] failed = columnsOf(r.failed(), per, false);
-        long[] down = columnsOf(r.down(), per, true);
+        long[] completed = cols(r.completed(), false);
+        long[] recovered = cols(r.recovered(), false);
+        long[] handled = cols(r.handled(), false);
+        long[] failed = cols(r.failed(), false);
+        long[] down = cols(r.down(), true);
         long max = 1;
         for (int c = 0; c < columns; c++) {
             max = Math.max(max, total(completed[c], recovered[c], handled[c], failed[c]));
@@ -422,13 +428,13 @@ class TimelineTab extends AbstractTableTab {
                     .block(block(" Route ")).build(), area);
             return;
         }
-        List<long[]> values = List.of(columnsOf(r.completed(), per, false), columnsOf(r.recovered(), per, false),
-                columnsOf(r.handled(), per, false), columnsOf(r.failed(), per, false));
+        List<long[]> values = List.of(cols(r.completed(), false), cols(r.recovered(), false),
+                cols(r.handled(), false), cols(r.failed(), false));
         List<Style> styles = List.of(Theme.success(), Theme.warning(), handledStyle(), Theme.error());
         int rows = Math.max(2, Math.min(DETAIL_ROWS, area.height() - 5));
         lines.addAll(stacked(values, styles, rows, columns, label));
 
-        long[] mean = columnsOf(r.mean(), per, true);
+        long[] mean = cols(r.mean(), true);
         long maxMean = 0;
         long sumMean = 0;
         int n = 0;
@@ -450,7 +456,7 @@ class TimelineTab extends AbstractTableTab {
                 : "no exchange")));
         lines.add(Line.from(meanLine));
 
-        long[] inflight = columnsOf(r.inflight(), per, true);
+        long[] inflight = cols(r.inflight(), true);
         long maxInflight = 0;
         long last = 0;
         for (long v : r.inflight()) {
@@ -542,6 +548,19 @@ class TimelineTab extends AbstractTableTab {
             }
         }
         return sb.toString();
+    }
+
+    /** The seconds as the columns of the chart: several seconds a column, or a second several characters wide. */
+    private long[] cols(long[] seconds, boolean highest) {
+        long[] columns = columnsOf(seconds, per, highest);
+        if (width == 1) {
+            return columns;
+        }
+        long[] wide = new long[columns.length * width];
+        for (int i = 0; i < wide.length; i++) {
+            wide[i] = columns[i / width];
+        }
+        return wide;
     }
 
     /**
