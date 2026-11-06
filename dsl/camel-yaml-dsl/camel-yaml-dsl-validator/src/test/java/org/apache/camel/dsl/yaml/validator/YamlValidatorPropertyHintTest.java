@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.validator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.networknt.schema.Error;
@@ -2065,10 +2066,11 @@ public class YamlValidatorPropertyHintTest {
 
     /**
      * A key in the column of the dashes of a list gets "expected <block end>, but found '?'": steps: under the -
-     * simple: of a when:, meant for the item.
+     * simple: of a when:, meant for the item. Of the two columns, only the one of the item gives valid Camel (choice
+     * has no steps: of its own): it is the one said, with the lines to write.
      */
     @Test
-    void aKeyInTheColumnOfTheDashesOfAListNamesBothColumns() throws Exception {
+    void aKeyInTheColumnOfTheDashesOfAListGetsTheColumnTheSchemaTakes() throws Exception {
         List<Error> errors = validator.validate("""
                 - route:
                     from:
@@ -2083,9 +2085,10 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
                 .isEqualTo("line 8: steps starts in column 15, the column of the - of the list item at line 7, so it is"
-                           + " part of neither that item nor the key that holds the list. Write it in column 17 to make"
-                           + " it a key of the item, as simple is, or in column 13 to make it a key next to when"
-                           + " (line 6)");
+                           + " part of neither that item nor the key that holds the list. It is a key of the item, as"
+                           + " simple is: write it in column 17. Write lines 8-9 as:\n"
+                           + "                steps:\n"
+                           + "                  - log: \"a\"");
     }
 
     /** onFallback: under the - to: of the steps: of a circuitBreaker, meant for the circuit breaker. */
@@ -2106,7 +2109,130 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 9: onFallback starts in column 15, the column of the - of the list item at line 7")
-                .endsWith("as to is, or in column 13 to make it a key next to steps (line 6)");
+                .isEqualTo("line 9: onFallback starts in column 15, the column of the - of the list item at line 7, so"
+                           + " it is part of neither that item nor the key that holds the list. It is a key next to steps"
+                           + " (line 6): write it in column 13. Write lines 9-11 as:\n"
+                           + "            onFallback:\n"
+                           + "              steps:\n"
+                           + "                - log: \"fallback\"");
+    }
+
+    /**
+     * r28 of the local-model benchmark, fail-well-error-handling step 2: the steps: of the when of a choice nested in
+     * otherwise:, written after that otherwise:, in the column of the - of the choice. The two columns of the old
+     * message both give invalid Camel (a second key of the - choice: item, a second steps: of otherwise:), and the
+     * model sent the same lines 16 times. The steps belong to the when item further up: the lines to write move them
+     * there.
+     */
+    @Test
+    void aKeyInTheColumnOfTheDashesOfAListGoesToTheItemAboveItThatTakesIt() throws Exception {
+        String route = """
+                - route:
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - choice:
+                            when:
+                              - expression:
+                                  simple:
+                                    expression: "${body[orderId]} == 'ORD-1003'"
+                                steps:
+                                  - throwException:
+                                      exceptionType: java.lang.IllegalStateException
+                                      message: "card declined"
+                            otherwise:
+                              steps:
+                                - choice:
+                                    when:
+                                      - expression:
+                                          simple:
+                                            expression: "${body[orderId]} == 'ORD-1002'"
+                                    otherwise:
+                                      steps:
+                                        - log:
+                                            message: "Order ${body[orderId]} charged successfully"
+                                steps:
+                                  - throwException:
+                                      exceptionType: java.net.ConnectException
+                                      message: "payment provider did not answer"
+                """;
+        List<Error> errors = validator.validate(route);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .isEqualTo("line 25: steps starts in column 17, the column of the - of the list item at line 16, so it"
+                           + " is part of neither that item nor the key that holds the list. It is a key of the item at"
+                           + " line 18, as expression is: it goes in column 25, after line 20. Write lines 21-28 as:\n"
+                           + "                        steps:\n"
+                           + "                          - throwException:\n"
+                           + "                              exceptionType: java.net.ConnectException\n"
+                           + "                              message: \"payment provider did not answer\"\n"
+                           + "                    otherwise:\n"
+                           + "                      steps:\n"
+                           + "                        - log:\n"
+                           + "                            message: \"Order ${body[orderId]} charged successfully\"");
+        // the lines to write give valid Camel
+        String message = errors.get(0).getMessage();
+        List<String> lines = new ArrayList<>(List.of(route.split("\n", -1)));
+        lines.subList(20, 28).clear();
+        lines.addAll(20, List.of(message.substring(message.indexOf(" as:\n") + 5).split("\n")));
+        assertThat(validator.validate(String.join("\n", lines))).isEmpty();
+    }
+
+    /** otherwise: in the column of the dashes of the when items is a key of the choice. */
+    @Test
+    void anOtherwiseInTheColumnOfTheDashesOfTheWhenItemsIsAKeyOfTheChoice() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} == 'a'"
+                                steps:
+                                  - log: "a"
+                              otherwise:
+                                steps:
+                                  - log: "other"
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .isEqualTo("line 10: otherwise starts in column 15, the column of the - of the list item at line 7, so"
+                           + " it is part of neither that item nor the key that holds the list. It is a key next to when"
+                           + " (line 6): write it in column 13. Write lines 10-12 as:\n"
+                           + "            otherwise:\n"
+                           + "              steps:\n"
+                           + "                - log: \"other\"");
+    }
+
+    /**
+     * Under otherwise: with a list, which the schema checks nothing in, no place can be judged: the columns are said as
+     * before (r24l-6 connect-http-client step 3).
+     */
+    @Test
+    void aKeyWhosePlaceTheSchemaCannotJudgeGetsBothColumns() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} == 'a'"
+                                steps:
+                                  - log: "a"
+                            otherwise:
+                              - choice:
+                                  when:
+                                    - simple: "${body} == 'b'"
+                                    steps:
+                                      - log: "b"
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .isEqualTo("line 14: steps starts in column 21, the column of the - of the list item at line 13, so it"
+                           + " is part of neither that item nor the key that holds the list. Write it in column 23 to make"
+                           + " it a key of the item, as simple is, or in column 19 to make it a key next to when (line"
+                           + " 12)");
     }
 }
