@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Overflow;
@@ -27,6 +28,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.Clear;
 import dev.tamboui.widgets.block.Block;
@@ -50,6 +52,8 @@ final class ChaosControl {
     /** What the control shows: nothing, the rule being typed, the question, or the outcome to read. */
     enum Step {
         NONE,
+        // the known rules to pick from, and the form of the one picked
+        RECIPES,
         INPUT,
         CONFIRM,
         RESULT
@@ -67,6 +71,11 @@ final class ChaosControl {
     private final MonitorContext ctx;
     // sends the request of the chaos action to the integration and returns its reply (null when it did not answer)
     private final Function<JsonObject, JsonObject> sender;
+    // the known rules of the catalog, or null when its catalog has none (loaded once, when a rule is first added)
+    private final Supplier<ChaosRecipes> recipeSource;
+    private ChaosRecipes recipes;
+    private boolean recipesLoaded;
+    private ChaosRecipeForm form;
     // set by the background task that sends the action, read when the screen is drawn
     private volatile Step step = Step.NONE;
     private Command command;
@@ -80,12 +89,21 @@ final class ChaosControl {
     private boolean resultError;
 
     ChaosControl(MonitorContext ctx) {
-        this(ctx, null);
+        this(ctx, null, ChaosRecipes::load);
     }
 
     ChaosControl(MonitorContext ctx, Function<JsonObject, JsonObject> sender) {
+        this(ctx, sender, () -> null);
+    }
+
+    ChaosControl(MonitorContext ctx, Function<JsonObject, JsonObject> sender, Supplier<ChaosRecipes> recipeSource) {
         this.ctx = ctx;
         this.sender = sender;
+        this.recipeSource = recipeSource;
+    }
+
+    ChaosRecipeForm form() {
+        return form;
     }
 
     Step step() {
@@ -93,7 +111,8 @@ final class ChaosControl {
     }
 
     boolean isTextInputActive() {
-        return step == Step.INPUT;
+        // the list of known rules takes the keys too, so a digit or a letter does not leave the screen
+        return step == Step.INPUT || step == Step.RECIPES;
     }
 
     boolean isConfirming() {
@@ -113,6 +132,9 @@ final class ChaosControl {
      */
     boolean handleKey(KeyEvent ke, IntegrationInfo info, ChaosInfo.Rule selected) {
         switch (step) {
+            case RECIPES -> {
+                return handleRecipeKey(ke);
+            }
             case INPUT -> {
                 return handleInputKey(ke);
             }
@@ -148,7 +170,15 @@ final class ChaosControl {
         name = info.name;
         if (ke.isChar('a')) {
             id = null;
-            openInput(Command.ADD, "");
+            ChaosRecipes known = knownRules();
+            if (known != null) {
+                // what can go wrong, in plain words, with the endpoints, routes and steps of the integration
+                command = Command.ADD;
+                form = new ChaosRecipeForm(known, info);
+                step = Step.RECIPES;
+            } else {
+                openInput(Command.ADD, "");
+            }
             return true;
         }
         if (selected != null && selected.id != null && ke.isChar('e')) {
@@ -171,6 +201,29 @@ final class ChaosControl {
             return true;
         }
         return false;
+    }
+
+    private ChaosRecipes knownRules() {
+        if (!recipesLoaded) {
+            recipes = recipeSource.get();
+            recipesLoaded = true;
+        }
+        return recipes;
+    }
+
+    private boolean handleRecipeKey(KeyEvent ke) {
+        switch (form.handleKey(ke)) {
+            case CLOSED -> close();
+            case TYPE_RULE -> openInput(Command.ADD, "");
+            case RULE -> {
+                rule = form.rule();
+                ask(Command.ADD);
+            }
+            default -> {
+                // the form used the key
+            }
+        }
+        return true;
     }
 
     private void openInput(Command what, String text) {
@@ -197,6 +250,10 @@ final class ChaosControl {
 
     /** Pastes into the rule being typed. */
     boolean handlePaste(String text) {
+        if (step == Step.RECIPES) {
+            form.paste(text);
+            return true;
+        }
         if (step != Step.INPUT || text == null) {
             return false;
         }
@@ -219,6 +276,10 @@ final class ChaosControl {
         if (step == Step.NONE) {
             return false;
         }
+        if (step == Step.RECIPES) {
+            // the form goes back to the list, the list closes
+            return handleRecipeKey(KeyEvent.ofKey(KeyCode.ESCAPE));
+        }
         close();
         return true;
     }
@@ -226,6 +287,7 @@ final class ChaosControl {
     private void close() {
         step = Step.NONE;
         input = null;
+        form = null;
     }
 
     /** The request of the chaos action for the command, as {@code camel cmd chaos-*} sends it. */
@@ -333,6 +395,7 @@ final class ChaosControl {
 
     void render(Frame frame, Rect area) {
         switch (step) {
+            case RECIPES -> form.render(frame, area);
             case INPUT -> DialogHelper.renderInputDialog(frame, area,
                     command == Command.CHANGE ? "Change chaos rule " + id : "Add a chaos rule to " + name, input,
                     "endpoint=kafka:orders* error rate=0.1 until=5m");
@@ -408,6 +471,7 @@ final class ChaosControl {
     /** The keys of the screen, or of the open dialog, for the footer. */
     void renderFooter(List<Span> spans, boolean hasRules) {
         switch (step) {
+            case RECIPES -> form.renderFooter(spans);
             case INPUT -> {
                 TuiHelper.hint(spans, "Enter", "confirm");
                 TuiHelper.hint(spans, "Esc", "cancel");

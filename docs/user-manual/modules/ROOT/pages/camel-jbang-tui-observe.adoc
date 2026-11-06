@@ -263,8 +263,15 @@ on purpose is not debugged as a real one.
 The rules are added, changed and removed on the tab, as with `camel cmd chaos-add`, `chaos-change`, `chaos-remove` and
 `chaos-clear` (see xref:next@components:others:chaos.adoc#_control_while_it_runs[Control while it runs]):
 
-* *a* adds a rule, typed as one line (`endpoint=kafka:orders* error rate=0.1 until=5m`), and *e* changes the selected
-rule, starting from the rule as it is.
+* *a* adds a rule. It lists the known rules of camel-chaos by what goes wrong (Downstream: returns an error, is slow,
+times out, did the work and then failed; Messages; Consumers and routes; Error handling), from the chaos model of the
+catalog. For the one chosen, a field per value of its rule: the endpoints, routes and steps of the integration are
+picked with Left and Right (for "Returns an error (HTTP status)", the HTTP endpoints the routes call), the other
+values start with a default, and the rule is shown as it is built. The last entry types the rule as one line
+(`endpoint=kafka:orders* error rate=0.1 until=5m`).
++
+image::jbang/camel-tui-chaos-recipes.png[Adding a chaos rule from the known rules: the HTTP endpoint of the route is picked]
+* *e* changes the selected rule, starting from the rule as it is.
 * *x* removes the selected rule, *c* removes all rules (the report keeps what they did), and *R* starts a new experiment:
 no rules and a new report, with the same seed.
 
