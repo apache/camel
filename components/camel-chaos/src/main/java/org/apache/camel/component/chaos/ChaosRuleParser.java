@@ -20,7 +20,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -56,11 +55,16 @@ final class ChaosRuleParser {
      */
     static final Set<String> HTTP_SCHEMES = Set.of("http", "https", "netty-http", "undertow", "vertx-http");
 
-    private static final Set<String> GENERAL_KEYS = Set.of("at", "rate", "until", "from", "expect", "within");
-    private static final Set<String> ERROR_KEYS = Set.of("exception", "message", "status", "body", "after");
+    // the options of a rule besides the parameters of its fault: all of them for the faults at a hook, and those of a
+    // stall or lifecycle rule, which acts on its route at no hook
+    static final Set<String> GENERAL_KEYS = Set.of("at", "rate", "until", "from", "expect", "within");
+    static final Set<String> LIFECYCLE_KEYS = Set.of("from", "expect", "within");
+    // the prefix of the response headers of error status=: header.<name>=<value>
+    static final String HEADER_PREFIX = "header.";
+    private static final Set<String> ERROR_KEYS
+            = Set.of("exception", "message", "status", "body", "after", HEADER_PREFIX);
     // the most times a lifecycle rule acts (repeat=)
     static final int MAX_REPEAT = 100;
-    private static final String HEADER_PREFIX = "header.";
     // the parameters of every fault, to tell a misspelt target from a parameter
     private static final Set<String> FAULT_KEYS
             = Set.of("exception", "message", "status", "body", "after", "duration", "mode", "header", "action", "repeat",
@@ -70,6 +74,36 @@ final class ChaosRuleParser {
             "when", "when= (a condition on the message) is not supported yet; a rule fires by rate= and ends by until=");
 
     private ChaosRuleParser() {
+    }
+
+    /**
+     * The parameters of a fault, as the parser accepts them ({@code header.} stands for the {@code header.<name>}
+     * parameters of {@code error}). The chaos model ({@link ChaosModel}) is built from it.
+     *
+     * @param stall for {@code Fault.LIFECYCLE}: the rule says stall, which takes no action
+     */
+    static Set<String> faultKeys(Fault fault, boolean stall) {
+        return switch (fault) {
+            case ERROR -> ERROR_KEYS;
+            case DELAY -> Set.of("duration");
+            case DROP -> Set.of();
+            case CORRUPT -> Set.of("mode", "header");
+            case LIFECYCLE -> stall ? Set.of("duration", "repeat", "every") : Set.of("action", "duration", "repeat", "every");
+        };
+    }
+
+    /** The options a rule with the fault takes besides the parameters of the fault. */
+    static Set<String> optionKeys(Fault fault) {
+        return fault == Fault.LIFECYCLE ? LIFECYCLE_KEYS : GENERAL_KEYS;
+    }
+
+    /**
+     * Whether a rule reaches the hook only with {@code at=} naming it: the send of the dead letter channel, so
+     * {@code endpoint=*} does not lose the messages that the dead letter channel should keep, and the reply, so a rule
+     * fails a send before the producer is called unless it says otherwise.
+     */
+    static boolean onlyWithAt(Hook hook) {
+        return hook == Hook.DLQ || hook == Hook.REPLY;
     }
 
     /**
@@ -215,7 +249,7 @@ final class ChaosRuleParser {
                 }
             }
             case DELAY -> {
-                checkKeys(params, Set.of("duration"), b.fault);
+                checkKeys(params, faultKeys(Fault.DELAY, false), b.fault);
                 String duration = params.get("duration");
                 if (duration == null) {
                     throw new IllegalArgumentException(
@@ -243,9 +277,9 @@ final class ChaosRuleParser {
                     checkMax("duration", duration, b.duration, maxDuration);
                 }
             }
-            case DROP -> checkKeys(params, Set.of(), b.fault);
+            case DROP -> checkKeys(params, faultKeys(Fault.DROP, false), b.fault);
             case CORRUPT -> {
-                checkKeys(params, Set.of("mode", "header"), b.fault);
+                checkKeys(params, faultKeys(Fault.CORRUPT, false), b.fault);
                 String mode = params.get("mode");
                 if (mode == null) {
                     throw new IllegalArgumentException("the fault corrupt needs mode=<mode> (" + MODES + ")");
@@ -452,9 +486,7 @@ final class ChaosRuleParser {
      * The parameters of {@code error}. Returns whether the error is the failure of an HTTP component.
      */
     private static boolean errorParameters(ChaosRule.Builder b, Map<String, String> params, ClassResolver classResolver) {
-        Set<String> keys = new HashSet<>(ERROR_KEYS);
-        keys.add(HEADER_PREFIX);
-        checkKeys(params, keys, Fault.ERROR);
+        checkKeys(params, faultKeys(Fault.ERROR, false), Fault.ERROR);
 
         Map<String, String> headers = new LinkedHashMap<>();
         params.forEach((k, v) -> {
@@ -561,8 +593,7 @@ final class ChaosRuleParser {
                     "stall is short for lifecycle action=suspend, so it takes no action=; use lifecycle action=...");
         }
         // at, rate and until are rejected above
-        checkKeys(params, b.stall ? Set.of("duration", "repeat", "every") : Set.of("action", "duration", "repeat", "every"),
-                word, Set.of("from", "expect", "within"));
+        checkKeys(params, faultKeys(Fault.LIFECYCLE, b.stall), word, optionKeys(Fault.LIFECYCLE));
         if (b.target != Target.ROUTE) {
             throw new IllegalArgumentException(
                     "the fault " + word + " acts on a route, so it takes only a route=<id> target, not " + b.target.key
@@ -706,11 +737,7 @@ final class ChaosRuleParser {
         }
         Set<Hook> hooks = EnumSet.noneOf(Hook.class);
         for (Map.Entry<Hook, Set<Fault>> entry : offered.entrySet()) {
-            // the send of the dead letter channel is reached only with at=dlq, so endpoint=* does not lose the messages
-            // that the dead letter channel should keep; the reply only with at=reply, so a rule fails a send before the
-            // producer is called unless it says otherwise
-            boolean asked = b.at == null
-                    ? entry.getKey() != Hook.DLQ && entry.getKey() != Hook.REPLY : b.at == entry.getKey();
+            boolean asked = b.at == null ? !onlyWithAt(entry.getKey()) : b.at == entry.getKey();
             if (asked && entry.getValue().contains(b.fault)) {
                 hooks.add(entry.getKey());
             }

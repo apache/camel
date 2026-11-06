@@ -680,6 +680,16 @@ public interface CamelCatalog {
     String devConsolesOpenApiSpec();
 
     /**
+     * The model of the chaos rules of camel-chaos, as JSON: the targets, the hooks of each target and the faults each
+     * offers, the parameters of each fault, the options, the expectations, the limits, and the recipes (known rules as
+     * templates), for the tools that help to write rules.
+     *
+     * @return the model, or null when the catalog has none
+     * @since  4.24
+     */
+    String chaosModelJSon();
+
+    /**
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();
