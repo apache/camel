@@ -53,6 +53,7 @@
         <module>camel-test-infra-azure-common</module>
         <module>camel-test-infra-azure-eventgrid</module>
         <module>camel-test-infra-azure-key-vault</module>
+        <module>camel-test-infra-azure-servicebus</module>
         <module>camel-test-infra-azure-storage-blob</module>
         <module>camel-test-infra-azure-storage-datalake</module>
         <module>camel-test-infra-azure-storage-queue</module>

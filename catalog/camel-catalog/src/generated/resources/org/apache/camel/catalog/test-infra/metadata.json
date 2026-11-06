@@ -219,6 +219,17 @@
   "serviceVersion" : null,
   "uiSupported" : true
 }, {
+  "service" : "org.apache.camel.test.infra.azure.servicebus.services.AzureServiceBusInfraService",
+  "description" : "Local Azure Service Bus service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.servicebus.services.AzureServiceBusLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "service-bus" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-servicebus",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.solr.services.SolrInfraService",
   "description" : "Apache Solr is an open source search platform",
   "implementation" : "org.apache.camel.test.infra.solr.services.SolrLocalContainerInfraService",
