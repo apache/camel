@@ -40,6 +40,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,8 +71,18 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
+        closeMongoClient();
         mongo = MongoClients.create(service.getReplicaSetUrl());
         db = mongo.getDatabase(dbName);
+    }
+
+    @AfterAll
+    static void closeMongoClient() {
+        // the container is a JVM-wide singleton: close the client, or they pile up
+        if (mongo != null) {
+            mongo.close();
+            mongo = null;
+        }
     }
 
     @Override
