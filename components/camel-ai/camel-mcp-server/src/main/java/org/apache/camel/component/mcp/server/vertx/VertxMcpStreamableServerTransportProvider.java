@@ -81,10 +81,6 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private static final String APPLICATION_JSON = "application/json";
     private static final String TEXT_EVENT_STREAM = "text/event-stream";
     private static final String ORIGIN = "Origin";
-    // a JSON-RPC error response without an id (McpSchema.JSONRPCResponse requires one, so it is written as is)
-    private static final String ORIGIN_NOT_ALLOWED = "{\"jsonrpc\":\"" + McpSchema.JSONRPC_VERSION
-                                                     + "\",\"error\":{\"code\":" + McpSchema.ErrorCodes.INVALID_REQUEST
-                                                     + ",\"message\":\"Origin not allowed\"}}";
 
     /**
      * The origins allowed when none are configured: loopback hosts on any port, so browser-based tools on the same
@@ -225,7 +221,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             ctx.response()
                     .setStatusCode(e.getStatusCode())
                     .putHeader("Content-Type", APPLICATION_JSON)
-                    .end(ORIGIN_NOT_ALLOWED);
+                    .end(errorBody(McpSchema.ErrorCodes.INVALID_REQUEST, "Origin not allowed"));
             return;
         }
         ctx.next();
@@ -558,27 +554,34 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     }
 
     /**
-     * Answers with the given HTTP status and a JSON-RPC error response without an id (the request id is not known, and
-     * {@link McpSchema.JSONRPCResponse} requires one).
+     * Answers with the given HTTP status and a JSON-RPC error response without an id, see
+     * {@link #errorBody(int, String)}.
      */
     private void respondError(Context connection, RoutingContext ctx, int status, int code, String message) {
+        String body = errorBody(code, message);
+        connection.runOnContext(v -> ctx.response()
+                .setStatusCode(status)
+                .putHeader("Content-Type", APPLICATION_JSON)
+                .end(body));
+    }
+
+    /**
+     * A JSON-RPC error response without an id (the request id is not known, and {@link McpSchema.JSONRPCResponse}
+     * requires one).
+     */
+    private String errorBody(int code, String message) {
         Map<String, Object> error = new LinkedHashMap<>();
         error.put("code", code);
         error.put("message", message);
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("jsonrpc", McpSchema.JSONRPC_VERSION);
         response.put("error", error);
-        String json;
         try {
-            json = jsonMapper.writeValueAsString(response);
+            return jsonMapper.writeValueAsString(response);
         } catch (Exception e) {
-            json = "{\"jsonrpc\":\"" + McpSchema.JSONRPC_VERSION + "\",\"error\":{\"code\":" + code + "}}";
+            return "{\"jsonrpc\":\"" + McpSchema.JSONRPC_VERSION + "\",\"error\":{\"code\":" + code
+                   + ",\"message\":\"" + message.replace("\\", "\\\\").replace("\"", "\\\"") + "\"}}";
         }
-        String body = json;
-        connection.runOnContext(v -> ctx.response()
-                .setStatusCode(status)
-                .putHeader("Content-Type", APPLICATION_JSON)
-                .end(body));
     }
 
     private void endWithStatus(Context connection, RoutingContext ctx, int status) {
