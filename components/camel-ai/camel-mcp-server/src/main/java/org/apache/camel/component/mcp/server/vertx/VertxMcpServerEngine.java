@@ -53,6 +53,10 @@ import org.slf4j.LoggerFactory;
  * serves on the main server port and inherits its lifecycle, authentication and CORS configuration. Set
  * {@link #setTargetServerType(String)} to {@link VertxPlatformHttpRouter#SERVER_TYPE_MANAGEMENT} to serve on the
  * management HTTP server router instead (e.g. for dev/diagnostics tools that must not be publicly exposed).
+ * <p>
+ * Every request on the MCP endpoint that carries an {@code Origin} header must come from an allowed origin
+ * ({@link McpServerInfo#allowedOrigins()}, loopback origins by default), or it is rejected with HTTP 403 before it
+ * reaches the MCP server. Requests without an {@code Origin} header (MCP clients running as a process) are served.
  */
 @JdkService(McpServerConstants.MCP_SERVER_ENGINE_FACTORY)
 public class VertxMcpServerEngine extends ServiceSupport implements McpServerEngine {
@@ -120,7 +124,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
         jsonMapper = McpJsonDefaults.getMapper();
         transport = new VertxMcpStreamableServerTransportProvider(
                 jsonMapper, info.path(),
-                info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs());
+                info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs(), info.allowedOrigins());
         McpServer.SyncSpecification<?> specification = McpServer.sync(transport)
                 .serverInfo(buildServerInfo(info))
                 // resources(subscribe, listChanged): per-resource subscriptions are not offered, but clients are

@@ -183,7 +183,8 @@ match is case-sensitive and a `*` can stand anywhere in the pattern, unlike the 
 which ignore case and can be regular expressions: a rule, also one from a tool, cannot make matching slow. An
 `endpoint=` pattern is matched against the endpoint URI, with or without its query parameters, and the `//` after the
 scheme does not count (`kafka:orders*` matches `kafka://orders?brokers=b1`). A `component=` pattern is matched against
-the scheme of the URI. Some components give their endpoints the URI of their address:
+the scheme of the URI only, so a pattern with a `:` (`component=http:localhost`) is rejected, with the `endpoint=`
+pattern to use instead. Some components give their endpoints the URI of their address:
 `undertow:http://inventory/stock` has the endpoint URI `http://inventory/stock`. When the scheme of the endpoint URI is
 not a name of the component in the context, chaos puts the default name of the component in front, and matches
 `undertow:http://inventory/stock` (with `component=undertow`, not `component=http`). A camel-netty-http endpoint has
@@ -194,7 +195,8 @@ matched with `netty-http` in front too. A `route=` pattern is matched against th
 A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove take. A change replaces the rule with a
 new one with the same id and the next version (a rule is version 1 when it is added), and the replaced one stays in the
 report: so the report has an entry per version of the id, and a tool tells them apart by the `version` of the entry
-(the latest has the highest). A rule ends by itself after its `until`, at the latest after `camel.chaos.maxDuration`,
+(the latest has the highest). An `until` count counts the matches, so a rule with `rate=every:N` and an `until` count
+below N would never fire, and is rejected. A rule ends by itself after its `until`, at the latest after `camel.chaos.maxDuration`,
 so a forgotten rule cannot keep breaking a development instance; a `stall` or `lifecycle` rule ends when its route is
 back (see <<_route_lifecycle_faults,Route lifecycle faults>>). Rules stay when the routes are reloaded.
 
@@ -243,7 +245,10 @@ first that fires decides the fault.
 |Fails the send or the step with that exception (with the message when the class has a constructor taking a `String`).
 Without `exception` (and without `status`) it is a `ChaosException`, a `RuntimeCamelException`, with the `message` or a
 default one. A rule whose class is not found, is not a `Throwable`, is abstract or not public, or has neither a public
-constructor taking a `String` nor a public no-argument one is rejected when it is added. Any such public class on the
+constructor taking a `String` nor a public no-argument one is rejected when it is added, and so is a `message` for a
+class without a constructor taking a `String` (the message would be lost). An `InterruptedException` (or a subclass) is
+rejected too: Camel stops routing an exchange that failed with one, without `onException`, redelivery or the dead
+letter channel, so it would not test them. Any such public class on the
 classpath of the application can be named, and its constructor runs when the fault fires, so a rule is development
 configuration of a trusted developer, like a route: it comes only from `camel.chaos.rules` (marked `insecure:dev`), Java
 and the CLI connector (which the CLI, `camel ask` and the MCP tools use), never over the HTTP server of the application,

@@ -688,7 +688,7 @@ Examples:
 duration=5s rate=0.5 until=5m'
 
 == camel cmd chaos-clear --help
-Usage: camel cmd chaos-clear [-h] [--timeout=<timeout>] [<name>]
+Usage: camel cmd chaos-clear [-h] [--reset] [--timeout=<timeout>] [<name>]
 Remove all chaos rules of running integrations (camel-chaos, for development
 only)
       [<name>]              Name or pid of running Camel integration
@@ -697,14 +697,17 @@ only)
       --timeout=<timeout>   How long to wait for the integration to answer, in
                               millis or as a duration such as 30s
                               Default: 10000
+      --reset               Also start a new report: the removed rules, the
+                              counts per route and the verdict are gone
 
-The rules stay in the report as removed. Without a name it acts on every
-running integration that
-has chaos switched on.
+The rules stay in the report as removed; with --reset the report starts
+again (no rules, counts or verdict). Without a name it acts on every running
+integration that has chaos switched on.
 
 Examples:
   camel cmd chaos-clear
   camel cmd chaos-clear myApp
+  camel cmd chaos-clear myApp --reset
 
 == camel cmd chaos-remove --help
 Usage: camel cmd chaos-remove [-h] --id=<id> [--timeout=<timeout>] <name>
