@@ -2443,6 +2443,34 @@ public class YamlValidator {
         return answer;
     }
 
+    /**
+     * The options of a kind of error handler (deadLetterChannel: deadLetterUri, redeliveryPolicy...), from the schema;
+     * empty for a kind it does not have.
+     */
+    Set<String> errorHandlerOptions(String kind) {
+        Set<String> answer = new LinkedHashSet<>();
+        if (model != null) {
+            collectKindOptions(model.at("/items/definitions/org.apache.camel.model.ErrorHandlerDefinition"), kind, answer,
+                    0);
+        }
+        return answer;
+    }
+
+    /** The kinds are branches of the definition of errorHandler: {required: [kind], properties: {kind: {$ref}}}. */
+    private void collectKindOptions(JsonNode node, String kind, Set<String> answer, int depth) {
+        if (node == null || node.isMissingNode() || depth > 4) {
+            return;
+        }
+        JsonNode ref = node.path("properties").path(kind).path("$ref");
+        if (ref.isTextual() && ref.asText().startsWith("#")) {
+            model.at(ref.asText().substring(1)).path("properties").fieldNames().forEachRemaining(answer::add);
+            return;
+        }
+        for (String composition : new String[] { "anyOf", "oneOf", "allOf" }) {
+            node.path(composition).forEach(n -> collectKindOptions(n, kind, answer, depth + 1));
+        }
+    }
+
     /** The properties of redeliveryPolicy (maximumRedeliveries, redeliveryDelay...), from the schema. */
     Set<String> redeliveryPolicyProperties() {
         return redeliveryPolicyProperties;

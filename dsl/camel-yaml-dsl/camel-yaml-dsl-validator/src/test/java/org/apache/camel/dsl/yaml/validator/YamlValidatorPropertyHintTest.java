@@ -111,6 +111,77 @@ public class YamlValidatorPropertyHintTest {
     }
 
     /**
+     * r28 of the local-model benchmark, connect-service-jms-request-reply step 4: errorHandler: {redeliveryPolicy: ...}
+     * under from:, with no kind of handler. The hint copied it as the text to write, and the model was refused for it
+     * next ("errorHandler: property 'redeliveryPolicy' is not defined", which had no hint). Both say the form with the
+     * kind, which the schema takes.
+     */
+    @Test
+    public void testAnErrorHandlerWithoutItsKindGetsTheKind() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    id: reserve-order
+                    from:
+                      uri: direct:orders
+                      errorHandler:
+                        redeliveryPolicy:
+                          maximumRedeliveries: 3
+                          redeliveryDelay: 1000
+                          useExponentialBackOff: false
+                      steps:
+                        - log: "reserving"
+                """);
+        String handler = "{defaultErrorHandler: {redeliveryPolicy: {maximumRedeliveries: 3, redeliveryDelay: 1000,"
+                         + " useExponentialBackOff: false}}}";
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .endsWith("(errorHandler: is a key of the route, not of from:, and it takes the kind of handler as its"
+                          + " key, with the options under the kind. For this route only, write it under the route at"
+                          + " the same level as from:, as in route: {errorHandler: " + handler + ", from: {uri: ...,"
+                          + " steps: [...]}}. For every route, write it as a top-level item instead: - errorHandler: "
+                          + handler + ")");
+        // the model's next write, the handler under the route as the old hint gave it
+        String route = """
+                - route:
+                    id: reserve-order
+                    errorHandler:
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
+                        redeliveryDelay: 1000
+                        useExponentialBackOff: false
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - log: "reserving"
+                """;
+        assertThat(validator.validate(route)).singleElement().extracting(Error::getMessage).asString()
+                .endsWith("(errorHandler takes the kind of handler as its key, and redeliveryPolicy is an option of the"
+                          + " kind: write errorHandler: " + handler + ")");
+        // what is said to write is valid
+        assertThat(validator.validate(route.replace("""
+                    errorHandler:
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
+                        redeliveryDelay: 1000
+                        useExponentialBackOff: false
+                """, "    errorHandler: " + handler + "\n"))).isEmpty();
+        // the dead letter queue as the value of its kind, the options next to it (r25n-4 step 3)
+        assertThat(validator.validate("""
+                - route:
+                    errorHandler:
+                      deadLetterChannel: "jms:queue:orders.dead"
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - log: "reserving"
+                """)).extracting(Error::getMessage)
+                .anySatisfy(m -> assertThat(m).endsWith("write errorHandler: {deadLetterChannel: {deadLetterUri:"
+                                                        + " \"jms:queue:orders.dead\", redeliveryPolicy:"
+                                                        + " {maximumRedeliveries: 3}}})"));
+    }
+
+    /**
      * An errorHandler under from: gets both of its places: under the route for that route, a top-level item for every
      * route. Told only "a top-level entry", r21 and r25 of the local-model benchmark moved a noErrorHandler meant for
      * one route to the top level.
