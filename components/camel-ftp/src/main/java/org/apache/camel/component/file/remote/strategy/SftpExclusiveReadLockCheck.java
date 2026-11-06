@@ -18,7 +18,6 @@
 package org.apache.camel.component.file.remote.strategy;
 
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.SftpATTRS;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.remote.SftpOperations;
@@ -59,11 +58,11 @@ public class SftpExclusiveReadLockCheck {
             // a single request whatever the number of files in the directory. As in the directory listing, these are the
             // attributes of the path itself: for a symbolic link, the size and modification time of the link, not of
             // its target
-            SftpATTRS attrs = sftp.getFileAttributes(file.getAbsoluteFilePath());
+            SftpOperations.FileAttributes attrs = sftp.getFileAttributes(file.getAbsoluteFilePath());
             LOG.trace("Attributes of {}: {}", file.getAbsoluteFilePath(), attrs);
             if (attrs != null) {
-                newLastModified = attrs.getMTime() * 1000L;
-                newLength = attrs.getSize();
+                newLastModified = attrs.lastModified();
+                newLength = attrs.fileLength();
             }
         } else {
             Object[] files = listFiles(operations, file);

@@ -1432,22 +1432,33 @@ public class SftpOperations
      * @return                                     the attributes, or {@code null} if there is no such file
      * @throws GenericFileOperationFailedException if the attributes cannot be read
      */
-    public SftpATTRS getFileAttributes(String name) throws GenericFileOperationFailedException {
+    public FileAttributes getFileAttributes(String name) throws GenericFileOperationFailedException {
         lock.lock();
         try {
+            SftpATTRS attrs;
             try {
-                return lstat(name);
+                attrs = lstat(name);
             } catch (SftpException e) {
                 if (!isLstatUnanswered(e)) {
                     throw new GenericFileOperationFailedException(e.getMessage(), e);
                 }
                 LOG.debug("Cannot get the attributes of: {} due to: {}. Listing its directory instead.", name,
                         e.getMessage());
+                attrs = listFileAttributes(name);
             }
-            return listFileAttributes(name);
+            return attrs != null ? new FileAttributes(attrs.getSize(), attrs.getMTime() * 1000L) : null;
         } finally {
             lock.unlock();
         }
+    }
+
+    /**
+     * The attributes of a file read by {@link #getFileAttributes(String)}.
+     *
+     * @param fileLength   the file size
+     * @param lastModified the file modification timestamp (in millis)
+     */
+    public record FileAttributes(long fileLength, long lastModified) {
     }
 
     /**
