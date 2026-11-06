@@ -43,6 +43,9 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "4.18.0", scheme = "mina-sftp", extendsScheme = "file", title = "MINA SFTP",
              syntax = "mina-sftp:host:port/directoryName", category = { Category.FILE }, headersClass = FtpConstants.class)
 @Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
+                              + "readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "readLockDeleteOrphanLockFiles,readLockRemoveOnCommit,readLockRemoveOnRollback,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous")

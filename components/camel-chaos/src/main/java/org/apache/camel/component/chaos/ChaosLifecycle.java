@@ -41,8 +41,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The route lifecycle faults ({@code stall} and {@code lifecycle}): each rule acts once on its route, and brings the
- * route back after its duration.
+ * The route lifecycle faults ({@code stall} and {@code lifecycle}): each rule acts on its route (when it is added, or
+ * after {@code from=}), and brings the route back after its duration; with {@code repeat=<n> every=<time>} it does so n
+ * times, each action every so long after the last one.
  * <p/>
  * The action and the comeback are tasks of one scheduled executor of the {@code ExecutorServiceManager}, created when
  * the first lifecycle rule acts and shut down when the context stops, so they run one at a time, in the order they were
@@ -165,6 +166,10 @@ final class ChaosLifecycle {
         holders.put(fault.rule.pattern, fault);
     }
 
+    private synchronized void release(Fault fault) {
+        holders.remove(fault.rule.pattern, fault);
+    }
+
     private synchronized Fault holder(String routeId) {
         return holders.get(routeId);
     }
@@ -239,7 +244,8 @@ final class ChaosLifecycle {
             synchronized (fault) {
                 if (fault.endRequested) {
                     // removed or changed again meanwhile
-                    fault.finish(FaultState.CANCELLED, null, "the rule was removed before it acted");
+                    fault.finish(fault.round > 0 ? FaultState.BACK : FaultState.CANCELLED, null,
+                            fault.notActed("the rule was removed"));
                     return;
                 }
                 fault.state = FaultState.PENDING;
@@ -247,7 +253,8 @@ final class ChaosLifecycle {
                 if (ex != null) {
                     fault.scheduleAct(ex);
                 } else {
-                    fault.finish(FaultState.CANCELLED, null, "the context stopped before it acted");
+                    fault.finish(fault.round > 0 ? FaultState.BACK : FaultState.CANCELLED, null,
+                            fault.notActed("the context stopped"));
                 }
             }
             return;
@@ -301,7 +308,7 @@ final class ChaosLifecycle {
         }
         synchronized (fault) {
             if (skip != null) {
-                rule.skipped();
+                rule.skipped(skip);
                 LOG.info("Chaos rule {} did nothing: {}", rule.id, skip);
                 fault.finish(FaultState.SKIPPED, null, skip);
                 return;
@@ -317,7 +324,10 @@ final class ChaosLifecycle {
             }
             fault.state = FaultState.DOWN;
             fault.downAt = now;
+            fault.round++;
+            rule.firedLifecycle(routeId, now);
             fault.route = route;
+            fault.downUri = route != null ? route.getEndpoint().getEndpointBaseUri() : null;
             fault.definition = definition;
             fault.comebackAs = comebackAs;
             fault.statusAfter = comebackAs == Action.REMOVE ? null : controller.getRouteStatus(routeId);
@@ -392,7 +402,9 @@ final class ChaosLifecycle {
                         "could not " + action.comeback + " route " + routeId + ": " + failure);
             } else {
                 LOG.info("Chaos rule {} {} route {}", rule.id, action.back, routeId);
-                fault.finish(FaultState.BACK, now, note);
+                if (!fault.nextRound(now, note)) {
+                    fault.finish(FaultState.BACK, now, note);
+                }
             }
         }
     }
@@ -442,11 +454,25 @@ final class ChaosLifecycle {
         private Route route;
         private NamedNode definition;
         private ServiceStatus statusAfter;
+        // the times the rule took its route down (repeat= takes it down more than once), and when it acts next
+        private int round;
+        private long actAt = -1;
         // how the route comes back: the action of the rule, or how a half failed action left the route
         private Action comebackAs;
+        // the endpoint URI of the route, without its query, while it is down (read by the send hook without the lock),
+        // else null
+        private volatile String downUri;
 
         Fault(ChaosRule rule) {
             this.rule = rule;
+        }
+
+        /**
+         * The endpoint URI of the route, without its query, while the fault has it down, so the exchanges sent to it
+         * then count in the effect of the rule; else null.
+         */
+        String downEndpointUri() {
+            return downUri;
         }
 
         /** Whether the fault brings its route back now (the rule was removed, or the comeback runs). */
@@ -459,19 +485,57 @@ final class ChaosLifecycle {
             return (comebackAs != null ? comebackAs : rule.action).back;
         }
 
-        /** Schedules the action. Called with the lock held, in state PENDING. */
+        /**
+         * Schedules the action: at the start of the rule (from=), and for the next round of repeat= every so long after
+         * the last action. Called with the lock held, in state PENDING.
+         */
         private void scheduleAct(ScheduledExecutorService ex) {
             ChaosLifecycle lifecycle = owner;
+            long now = TimeSource.currentTimeMillis();
+            long at = round == 0 ? rule.startsAt : downAt + rule.repeatEvery;
+            long delay = Math.max(0, at - now);
             try {
-                task = ex.schedule(() -> lifecycle.act(this), 0, TimeUnit.MILLISECONDS);
+                task = ex.schedule(() -> lifecycle.act(this), delay, TimeUnit.MILLISECONDS);
+                actAt = now + delay;
                 lifecycle.track(this, true);
             } catch (RejectedExecutionException e) {
-                finish(FaultState.CANCELLED, null, "the context stopped before it acted");
+                finish(round > 0 ? FaultState.BACK : FaultState.CANCELLED, null, notActed("the context stopped"));
             }
         }
 
+        /** Why the rule did not act (again), such as "the context stopped before it acted". */
+        private String notActed(String why) {
+            return why + (round > 0 ? " before round " + (round + 1) + " of " + rule.repeat : " before it acted");
+        }
+
+        /**
+         * The route is back after a round of repeat=: schedules the next one, unless it was the last. Called with the
+         * lock held, in state COMING_BACK.
+         *
+         * @return whether there is a next round
+         */
+        private boolean nextRound(long now, String note) {
+            if (round >= rule.repeat || endRequested || endedEarly) {
+                return false;
+            }
+            ScheduledExecutorService ex = owner != null ? owner.executorIfStarted() : null;
+            if (ex == null) {
+                return false;
+            }
+            backAt = now;
+            reason = note;
+            route = null;
+            downUri = null;
+            definition = null;
+            owner.release(this);
+            state = FaultState.PENDING;
+            scheduleAct(ex);
+            return true;
+        }
+
+        /** Whether the rule did not act yet (a rule with repeat= that acted once is not). */
         synchronized boolean isPending() {
-            return state == FaultState.PENDING;
+            return state == FaultState.PENDING && round == 0;
         }
 
         synchronized boolean isDone() {
@@ -488,7 +552,8 @@ final class ChaosLifecycle {
                     if (task != null) {
                         task.cancel(false);
                     }
-                    finish(FaultState.CANCELLED, null, "the rule was removed before it acted");
+                    // after a round of repeat= the route is back: the rule ends with it so
+                    finish(round > 0 ? FaultState.BACK : FaultState.CANCELLED, null, notActed("the rule was removed"));
                 }
                 case ACTING -> endRequested = true;
                 case DOWN -> {
@@ -508,7 +573,8 @@ final class ChaosLifecycle {
                 task.cancel(false);
             }
             switch (state) {
-                case PENDING -> finish(FaultState.CANCELLED, null, "the context stopped before it acted");
+                case PENDING -> finish(round > 0 ? FaultState.BACK : FaultState.CANCELLED, null,
+                        notActed("the context stopped"));
                 case DOWN -> finish(FaultState.CANCELLED, null,
                         "the context stopped, so route " + rule.pattern + " was not " + backWord());
                 default -> {
@@ -556,6 +622,7 @@ final class ChaosLifecycle {
             reason = why;
             task = null;
             route = null;
+            downUri = null;
             definition = null;
             if (owner != null) {
                 owner.track(this, false);
@@ -569,15 +636,19 @@ final class ChaosLifecycle {
             long backIn = state == FaultState.DOWN && !endedEarly && downAt >= 0
                     ? Math.max(0, downAt + rule.duration - now) : -1;
             boolean acted = downAt >= 0;
+            long actsIn = state == FaultState.PENDING && task != null && actAt >= 0 ? Math.max(0, actAt - now) : -1;
             return new Reading(
                     state, comebackAs != null ? comebackAs : rule.action, acted, down, back, backIn, endedEarly,
-                    reason);
+                    reason, round, actsIn);
         }
 
-        /** What the report reads of a lifecycle fault; the times are milliseconds after the rule was added, or -1. */
+        /**
+         * What the report reads of a lifecycle fault; the times are milliseconds after the rule was added, or -1. The
+         * round is how many times the rule took its route down, and actsIn the time until it acts (again), or -1.
+         */
         record Reading(
                 FaultState state, Action action, boolean acted, long downAt, long backAt, long backIn,
-                boolean endedEarly, String reason) {
+                boolean endedEarly, String reason, int round, long actsIn) {
         }
     }
 }

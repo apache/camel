@@ -147,9 +147,9 @@ public interface JGroupsEndpointBuilderFactory {
          * JGroups receive path; to block such attacks, also configure the
          * JVM-wide -Djdk.serialFilter and secure the channel with AUTH and
          * encryption. When this option is not set and no JVM-wide filter is
-         * configured, a conservative default filter denying java.net. and
-         * otherwise allowing java., javax. and org.apache.camel. is applied.
-         * Use to accept any type.
+         * configured, a conservative default filter denying java.net.** and
+         * otherwise allowing java.**, javax.** and org.apache.camel.** is
+         * applied. Use * to accept any type.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -496,9 +496,9 @@ public interface JGroupsEndpointBuilderFactory {
             return "CamelJGroupsChannelAddress";
         }
         /**
-         * Consumer: The org.jgroups.Address instance extracted by
+         * Consumer*: The org.jgroups.Address instance extracted by
          * org.jgroups.Message.getDest() method of the consumed message.
-         * Producer: The custom destination org.jgroups.Address of the message
+         * Producer*: The custom destination org.jgroups.Address of the message
          * to be sent.
          * 
          * The option is a: {@code org.jgroups.Address} type.
@@ -511,9 +511,9 @@ public interface JGroupsEndpointBuilderFactory {
             return "CamelJGroupsDest";
         }
         /**
-         * Consumer : The org.jgroups.Address instance extracted by
+         * Consumer* : The org.jgroups.Address instance extracted by
          * org.jgroups.Message.getSrc() method of the consumed message.
-         * Producer: The custom source org.jgroups.Address of the message to be
+         * Producer*: The custom source org.jgroups.Address of the message to be
          * sent.
          * 
          * The option is a: {@code org.jgroups.Address} type.

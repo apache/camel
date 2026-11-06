@@ -386,7 +386,7 @@ public interface SedaEndpointBuilderFactory {
         /**
          * If enabled, spawns a new virtual thread for each message instead of
          * using a fixed pool of consumer threads. This model is optimized for
-         * virtual threads (JDK 21) and I/O-bound workloads where creating
+         * virtual threads (JDK 21+) and I/O-bound workloads where creating
          * threads is cheap. The concurrentConsumers option becomes a limit on
          * max concurrent tasks (0 = unlimited). Requires virtual threads to be
          * enabled via camel.threads.virtual.enabled=true.
@@ -406,7 +406,7 @@ public interface SedaEndpointBuilderFactory {
         /**
          * If enabled, spawns a new virtual thread for each message instead of
          * using a fixed pool of consumer threads. This model is optimized for
-         * virtual threads (JDK 21) and I/O-bound workloads where creating
+         * virtual threads (JDK 21+) and I/O-bound workloads where creating
          * threads is cheap. The concurrentConsumers option becomes a limit on
          * max concurrent tasks (0 = unlimited). Requires virtual threads to be
          * enabled via camel.threads.virtual.enabled=true.

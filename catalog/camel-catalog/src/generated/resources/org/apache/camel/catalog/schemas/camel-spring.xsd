@@ -5974,7 +5974,7 @@ Disables redelivery (same as setting maximum redeliveries to 0). Default value: 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a
-redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s).
+redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s).
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -6801,7 +6801,7 @@ After sending to the endpoint then send the message to this uri which allows to 
             <xs:documentation xml:lang="en">
 <![CDATA[
 Name of the Kamelet (templateId/routeId) to call. Options for the kamelet can be specified using uri syntax, eg
-mynamecount=4&type=gold.
+myname?count=4&type=gold.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7582,7 +7582,7 @@ When not disabled, the SchemaResolver will be looked up into the registry. Defau
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes
+Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes
 resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.
 ]]>
             </xs:documentation>
@@ -7661,7 +7661,7 @@ The line separators to use. By default \r\n is used.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Instead of emitting and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding
+Instead of emitting + and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding
 seamlessly handles both modes. Default value: false
 ]]>
             </xs:documentation>
@@ -10642,7 +10642,7 @@ A String used as passPhrase to encrypt/decrypt content.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-A byte used as passPhrase to encrypt/decrypt content.
+A byte[] used as passPhrase to encrypt/decrypt content.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -12182,7 +12182,7 @@ Name of header to remove.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular
+Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular
 expression (all case-insensitive).
 ]]>
             </xs:documentation>
@@ -12208,7 +12208,7 @@ Name or pattern of headers to not remove. You can use comma to separate multiple
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all
+Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all
 case-insensitive).
 ]]>
             </xs:documentation>

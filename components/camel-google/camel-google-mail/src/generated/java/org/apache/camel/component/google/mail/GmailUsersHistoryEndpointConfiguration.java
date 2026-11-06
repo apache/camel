@@ -38,7 +38,7 @@ public final class GmailUsersHistoryEndpointConfiguration extends GoogleMailConf
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "list", description="Required")})
     private java.math.BigInteger startHistoryId;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "list", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "list", description="The user's email address. The special value me can be used to indicate the authenticated user. [default: me]")})
     private String userId;
 
     public java.util.List getHistoryTypes() {

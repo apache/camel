@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
              headersClass = SmbConstants.class, category = { Category.FILE })
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "readLockDeleteOrphanLockFiles,readLockRemoveOnCommit,readLockRemoveOnRollback,"
                               + "directoryMustExist,extendedAttributes,probeContentType,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,"
                               + "synchronous")
@@ -75,9 +76,24 @@ import org.slf4j.LoggerFactory;
 public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformation> implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmbEndpoint.class);
+    private static final String VALID_READ_LOCKS = "none,rename,changed";
 
     @UriParam
     private SmbConfiguration configuration;
+    // re-declares the readLock option of GenericFileEndpoint, to list only the read locks implemented by smb
+    @UriParam(label = "consumer,lock", defaultValue = "none", enums = VALID_READ_LOCKS,
+              description = "Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. "
+                            + "the file is not in-progress or being written). Camel will wait until the file lock is granted. "
+                            + "This option provides the build in strategies:<p/>"
+                            + " - none - No read lock is in use<p/>"
+                            + " - changed - Changed is using file length/modification timestamp to detect whether the file "
+                            + "is currently being copied or not, so this option cannot consume files as fast as the others. "
+                            + "The option readLockCheckInterval can be used to set the check frequency.<p/>"
+                            + " - rename - rename is for using a try to rename the file as a test if we can get exclusive "
+                            + "read-lock.<p/>"
+                            + " The other read locks of the file component (markerFile, fileLock and the idempotent read "
+                            + "locks) are not supported, and fail when the consumer is created.")
+    private String readLock = "none";
 
     protected SmbEndpoint(String uri, SmbComponent component, SmbConfiguration configuration) {
         super(uri, component);
@@ -186,11 +202,10 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
 
     private void readLockCheck() {
         // check if it's valid
-        String valid = "none,rename,changed";
-        String[] arr = valid.split(",");
+        String[] arr = VALID_READ_LOCKS.split(",");
         boolean matched = Arrays.stream(arr).anyMatch(n -> n.equals(getReadLock()));
         if (!matched) {
-            throw new IllegalArgumentException("ReadLock invalid: " + getReadLock() + ", must be one of: " + valid);
+            throw new IllegalArgumentException("ReadLock invalid: " + getReadLock() + ", must be one of: " + VALID_READ_LOCKS);
         }
     }
 
@@ -234,5 +249,16 @@ public class SmbEndpoint extends GenericFileEndpoint<FileIdBothDirectoryInformat
             file.bindToExchange(answer);
         }
         return answer;
+    }
+
+    /**
+     * Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. the file is not
+     * in-progress or being written). The supported read locks are none, rename and changed.
+     */
+    @Override
+    public void setReadLock(String readLock) {
+        super.setReadLock(readLock);
+        // the field holds the metadata of the option, the value is read from GenericFileEndpoint
+        this.readLock = readLock;
     }
 }

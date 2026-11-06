@@ -134,8 +134,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "readLock": target.setReadLock(property(camelContext, java.lang.String.class, value)); return true;
         case "readlockcheckinterval":
         case "readLockCheckInterval": target.setReadLockCheckInterval(property(camelContext, long.class, value)); return true;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": target.setReadLockDeleteOrphanLockFiles(property(camelContext, boolean.class, value)); return true;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": target.setReadLockLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "readlockmarkerfile":
@@ -144,10 +142,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "readLockMinAge": target.setReadLockMinAge(property(camelContext, long.class, value)); return true;
         case "readlockminlength":
         case "readLockMinLength": target.setReadLockMinLength(property(camelContext, long.class, value)); return true;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": target.setReadLockRemoveOnCommit(property(camelContext, boolean.class, value)); return true;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": target.setReadLockRemoveOnRollback(property(camelContext, boolean.class, value)); return true;
         case "readlocktimeout":
         case "readLockTimeout": target.setReadLockTimeout(property(camelContext, long.class, value)); return true;
         case "reconnectdelay":
@@ -316,8 +310,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "readLock": return java.lang.String.class;
         case "readlockcheckinterval":
         case "readLockCheckInterval": return long.class;
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return boolean.class;
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "readlockmarkerfile":
@@ -326,10 +318,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "readLockMinAge": return long.class;
         case "readlockminlength":
         case "readLockMinLength": return long.class;
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return boolean.class;
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return boolean.class;
         case "readlocktimeout":
         case "readLockTimeout": return long.class;
         case "reconnectdelay":
@@ -499,8 +487,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "readLock": return target.getReadLock();
         case "readlockcheckinterval":
         case "readLockCheckInterval": return target.getReadLockCheckInterval();
-        case "readlockdeleteorphanlockfiles":
-        case "readLockDeleteOrphanLockFiles": return target.isReadLockDeleteOrphanLockFiles();
         case "readlocklogginglevel":
         case "readLockLoggingLevel": return target.getReadLockLoggingLevel();
         case "readlockmarkerfile":
@@ -509,10 +495,6 @@ public class FilesEndpointConfigurer extends PropertyConfigurerSupport implement
         case "readLockMinAge": return target.getReadLockMinAge();
         case "readlockminlength":
         case "readLockMinLength": return target.getReadLockMinLength();
-        case "readlockremoveoncommit":
-        case "readLockRemoveOnCommit": return target.isReadLockRemoveOnCommit();
-        case "readlockremoveonrollback":
-        case "readLockRemoveOnRollback": return target.isReadLockRemoveOnRollback();
         case "readlocktimeout":
         case "readLockTimeout": return target.getReadLockTimeout();
         case "reconnectdelay":

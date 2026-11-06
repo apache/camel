@@ -45,11 +45,13 @@ final class ChaosStepHook implements StepHook {
         long now = TimeSource.currentTimeMillis();
         for (ChaosRule rule : rules) {
             if (rule.live(now) && rule.matchesId(nodeId) && rule.fires(now)) {
-                rule.fired(Hook.STEP);
+                rule.fired(Hook.STEP, exchange, null, nodeId);
                 if (rule.fault == Fault.DELAY) {
-                    return rule.duration;
+                    return rule.delayFor();
                 }
-                exchange.setException(ChaosFaults.newException(rule));
+                if (ChaosFaults.waitBeforeError(rule, exchange)) {
+                    exchange.setException(ChaosFaults.newException(rule));
+                }
                 return PROCEED;
             }
         }

@@ -39,30 +39,28 @@ public class QuartzCronRouteWithStartDateEndDateTest extends BaseQuartzTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
 
-        // use timed assertion — the trigger starts 5s in the future and
-        // fires for 4 seconds, so messages arrive between ~5s and ~9s
-        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
-        assertThat(mock.getReceivedExchanges().size() <= 5, CoreMatchers.is(true));
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
+        // add the route once the CamelContext is started, so that the start and end dates are computed just before
+        // the trigger is created. When computed at CamelContext startup, a slow startup on a loaded CI could make the
+        // whole firing window elapse, and the trigger would then never be scheduled
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
-                calendar.add(Calendar.SECOND, 5);
+                calendar.add(Calendar.SECOND, 3);
                 Date startDate = calendar.getTime();
                 calendar.add(Calendar.SECOND, 4);
                 Date endDate = calendar.getTime();
 
                 // triggers every 1th second at precise 00,01,02,03..59 with startAt and endAt 4 seconds apart.
-                // give plenty of headroom (5s) for route setup before the trigger window opens,
-                // so that Quartz scheduler initialization doesn't eat into the firing window on loaded CI
                 fromF("quartz://myGroup/myTimerName?cron=0/1 * * * * ?&trigger.startAt=%s&trigger.endAt=%s",
                         dateFormat.format(startDate), dateFormat.format(endDate)).to("mock:result");
             }
-        };
+        });
+
+        // use timed assertion — the trigger starts 3s in the future and
+        // fires for 4 seconds, so messages arrive between ~3s and ~7s
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
+        assertThat(mock.getReceivedExchanges().size() <= 5, CoreMatchers.is(true));
     }
 }

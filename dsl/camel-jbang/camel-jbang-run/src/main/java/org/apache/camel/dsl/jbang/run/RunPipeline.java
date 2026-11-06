@@ -481,7 +481,12 @@ public class RunPipeline {
         writeSetting(main, profileProperties, CAMEL_VERSION, new DefaultCamelCatalog().getCatalogVersion());
         writeSetting(main, profileProperties, SPRING_BOOT_VERSION, request.springBootVersion);
 
-        if (request.quarkusPlatform != null) {
+        // the Quarkus runtime runs on its platform, and a Quarkus version that is given is the one to use. Any other run
+        // has no platform to look up: its known dependencies that have the version of Quarkus (such as
+        // io.quarkus:quarkus-core, for a source that imports jakarta.inject.Inject) get the one of the camel-dependencies
+        // POM, as the other version placeholders of the known dependencies do
+        if (request.quarkusPlatform != null
+                && (RuntimeType.quarkus == request.runtime || request.quarkusPlatform.quarkusVersion() != null)) {
             QuarkusPlatformBom platformBoms
                     = request.quarkusPlatform.resolve(
                             request.camelVersion,

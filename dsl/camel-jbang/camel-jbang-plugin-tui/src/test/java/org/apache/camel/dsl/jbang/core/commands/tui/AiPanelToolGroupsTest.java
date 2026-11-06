@@ -243,7 +243,8 @@ class AiPanelToolGroupsTest {
         assertEquals(List.of(ToolGroup.CHAOS), on.groups());
         assertTrue(on.tools().isEmpty(), on.tools().toString());
         assertEquals(List.of("Chaos: camel-chaos is on, so some failures and delays may be injected on purpose;"
-                             + " tui_get_status section 'chaos' has the rules."),
+                             + " tui_get_status section 'chaos' has the rules, tui_get_table tab 'Chaos' their live"
+                             + " state and effect."),
                 on.guidance());
 
         TuiToolGroups.Selection off = TuiToolGroups.select(

@@ -1043,7 +1043,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * Query Couchbase databases using SQL++ (N1QL) queries or MapReduce Views
      * with a poll strategy and/or perform various operations against Couchbase
      * databases.
      * 
@@ -1073,7 +1073,7 @@ public class EndpointHeaderBuilders {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
      * 
      * Category: database,bigdata

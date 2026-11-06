@@ -152,8 +152,8 @@ public interface Sns2EndpointBuilderFactory {
         /**
          * Only for FIFO Topic. Strategy for setting the messageDeduplicationId
          * on the message. It can be one of the following options:
-         * useExchangeId, useContentBasedDeduplication. For the
-         * useContentBasedDeduplication option, no messageDeduplicationId will
+         * *useExchangeId*, *useContentBasedDeduplication*. For the
+         * *useContentBasedDeduplication* option, no messageDeduplicationId will
          * be set on the message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -170,9 +170,9 @@ public interface Sns2EndpointBuilderFactory {
         }
         /**
          * Only for FIFO Topic. Strategy for setting the messageGroupId on the
-         * message. It can be one of the following options: useConstant,
-         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
-         * value of property CamelAwsSnsMessageGroupId will be used.
+         * message. It can be one of the following options: *useConstant*,
+         * *useExchangeId*, *usePropertyValue*. For the *usePropertyValue*
+         * option, the value of property CamelAwsSnsMessageGroupId will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

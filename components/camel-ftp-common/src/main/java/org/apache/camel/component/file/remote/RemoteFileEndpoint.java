@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
@@ -29,6 +30,7 @@ import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.spi.EndpointServiceLocation;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,9 @@ import org.slf4j.LoggerFactory;
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> implements EndpointServiceLocation {
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileEndpoint.class);
+    private static final String VALID_READ_LOCKS = "none,rename,changed";
+    // false and off mean none: the process strategy factories give no read lock for them
+    private static final Set<String> ACCEPTED_READ_LOCKS = Set.of("none", "rename", "changed", "false", "off");
 
     @UriParam(label = "advanced", description = "Specifies the maximum reconnect attempts Camel performs when it "
                                                 + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
@@ -60,7 +65,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
                                                        + "directly, if the option is false, camel-ftp will use the old way to list the directory and check if the "
                                                        + "file exists. This option also influences readLock=changed to control whether it performs a fast check "
                                                        + "to update file information or not. This can be used to speed up the process if the FTP server has a lot "
-                                                       + "of files.")
+                                                       + "of files. The sftp and mina-sftp components check whether a file exists, also for readLock=changed, "
+                                                       + "with a single request whatever the number of files, so this option makes no difference for them.")
     private boolean fastExistsCheck;
     @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "Whether the FTP consumer should download the file. If this "
@@ -68,6 +74,20 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
                             + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
                             + "not be downloaded.")
     private boolean download = true;
+    // re-declares the readLock option of GenericFileEndpoint, to list only the read locks implemented here
+    @UriParam(label = "consumer,lock", defaultValue = "none", enums = VALID_READ_LOCKS,
+              description = "Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. "
+                            + "the file is not in-progress or being written). Camel will wait until the file lock is granted. "
+                            + "This option provides the build in strategies:<p/>"
+                            + " - none - No read lock is in use<p/>"
+                            + " - changed - Changed is using file length/modification timestamp to detect whether the file "
+                            + "is currently being copied or not, so this option cannot consume files as fast as the others. "
+                            + "The option readLockCheckInterval can be used to set the check frequency.<p/>"
+                            + " - rename - rename is for using a try to rename the file as a test if we can get exclusive "
+                            + "read-lock.<p/>"
+                            + " The other read locks of the file component (markerFile, fileLock and the idempotent read "
+                            + "locks) are not supported, and fail when the consumer is created.")
+    private String readLock = "none";
 
     protected RemoteFileEndpoint() {
         // ftp must be synchronous as the ftp-client is not thread-safe
@@ -165,6 +185,12 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
             throw new IllegalArgumentException("You cannot both set delete=true and move options");
         }
 
+        // the readLock option does not apply when a custom read lock or process strategy is set
+        if (getExclusiveReadLockStrategy() == null && getProcessStrategy() == null
+                && ObjectHelper.isNotEmpty(getReadLock())) {
+            readLockCheck();
+        }
+
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotentSet()) {
             LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
@@ -188,6 +214,18 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
         configureConsumer(consumer);
         return consumer;
+    }
+
+    /**
+     * The remote file components implement only the none, rename and changed read locks. Any other value, such as the
+     * markerFile, fileLock and idempotent read locks of the file component, or a misspelled name, would give no read
+     * lock at all, so it fails instead.
+     */
+    private void readLockCheck() {
+        String readLock = getReadLock();
+        if (!ACCEPTED_READ_LOCKS.contains(readLock)) {
+            throw new IllegalArgumentException("ReadLock invalid: " + readLock + ", must be one of: " + VALID_READ_LOCKS);
+        }
     }
 
     @Override
@@ -330,7 +368,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
      * FTP server may not support to list the file directly, if the option is false, camel-ftp will use the old way to
      * list the directory and check if the file exists. This option also influences readLock=changed to control whether
      * it performs a fast check to update file information or not. This can be used to speed up the process if the FTP
-     * server has a lot of files.
+     * server has a lot of files. The sftp and mina-sftp components check whether a file exists, also for
+     * readLock=changed, with a single request whatever the number of files, so this option makes no difference for
+     * them.
      */
     public void setFastExistsCheck(boolean fastExistsCheck) {
         this.fastExistsCheck = fastExistsCheck;
@@ -347,6 +387,17 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
      */
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    /**
+     * Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. the file is not
+     * in-progress or being written). The supported read locks are none, rename and changed.
+     */
+    @Override
+    public void setReadLock(String readLock) {
+        super.setReadLock(readLock);
+        // the field holds the metadata of the option, the value is read from GenericFileEndpoint
+        this.readLock = readLock;
     }
 
 }

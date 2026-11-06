@@ -88,9 +88,16 @@ class LocalCliConnectorChaosActionTest {
 
     /** Dispatches the action as both transports do, and returns its outcome. */
     private CliActionOutcome chaos(String command, String id, String rule) throws Exception {
+        return chaos(command, id, rule, false);
+    }
+
+    private CliActionOutcome chaos(String command, String id, String rule, boolean reset) throws Exception {
         JsonObject action = new JsonObject();
         action.put("action", "chaos");
         action.put("command", command);
+        if (reset) {
+            action.put("reset", true);
+        }
         if (id != null) {
             action.put("id", id);
         }
@@ -134,7 +141,36 @@ class LocalCliConnectorChaosActionTest {
         assertThat(cleared.result().getInteger("removed")).isEqualTo(1);
         assertThat(reportRules().stream().map(JsonObject.class::cast)
                 .map(r -> r.getString("id") + " v" + r.getInteger("version") + " " + r.getString("state")))
-                .containsExactly("r1 v1 replaced", "r2 v1 removed", "r1 v2 removed");
+                .containsExactly("r1 v2 removed", "r1 v1 replaced", "r2 v1 removed");
+
+        // a reset also starts a new report
+        assertThat(chaos("add", null, "step=* delay duration=1ms").result().getString("id")).isEqualTo("r3");
+        CliActionOutcome reset = chaos("clear", null, null, true);
+        assertThat(reset.error()).isNull();
+        assertThat(reset.result().getInteger("removed")).isEqualTo(1);
+        assertThat(reset.result().getBoolean("reset")).isTrue();
+        assertThat(reportRules()).isEmpty();
+    }
+
+    @Test
+    void rulesAreAddedTogetherWithWarningsForTheOnesThatMatchNothing() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+
+        CliActionOutcome added = chaos("add", null, "endpoint=mock:target error at=dlq; step=tpyo delay duration=1ms");
+        assertThat(added.error()).isNull();
+        assertThat(added.result().<List<Object>> getCollection("ids")).containsExactly("r1", "r2");
+        // the id of a single rule only
+        assertThat(added.result().containsKey("id")).isFalse();
+        assertThat(added.result().<List<Object>> getCollection("warnings")).singleElement().asString()
+                .startsWith("r2: step=tpyo matches no step of the context now");
+
+        CliActionOutcome one = chaos("add", null, "endpoint=mock:target delay duration=1ms");
+        assertThat(one.result().getString("id")).isEqualTo("r3");
+        assertThat(one.result().containsKey("warnings")).isFalse();
+
+        CliActionOutcome changed = chaos("change", "r3", "endpoint=mock:taget delay duration=1ms");
+        assertThat(changed.result().<List<Object>> getCollection("warnings")).singleElement().asString()
+                .startsWith("r3: endpoint=mock:taget matches no endpoint of the context now");
     }
 
     @Test

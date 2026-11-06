@@ -179,6 +179,8 @@ class AuthoringToolsCitrusTest {
                 """;
         Files.createDirectories(dir.resolve("test"));
         Files.writeString(dir.resolve(FILE), SAMPLE);
+        Files.writeString(dir.resolve("orders.camel.yaml"), "- from:\n    uri: timer:tick\n    steps:\n      - log: hi\n");
+        Files.writeString(dir.resolve("application.properties"), "camel.server.port=8080\n");
 
         JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, FILE, invented, true);
 
@@ -187,8 +189,22 @@ class AuthoringToolsCitrusTest {
                 .contains("Line 4: uri, method, requestFile and expectStatus are not keys of the http action, which"
                           + " takes actor, client,")
                 .contains("Line 8: assert-log is not a Citrus test action: echo: {message: ");
+        // the test starts no integration: the action that starts the one of the project, not a tool the client may not
+        // have (camel_catalog_examples is not a core tool)
         assertThat(result.getString("message")).startsWith("The file was not written")
-                .contains("camel_catalog_examples with filter citrus");
+                .doesNotContain("camel_catalog_examples")
+                .endsWith(" The test calls the integration but does not start it, and camel test run runs only the"
+                          + " test: start it with the first action of the test (or have it running when the test"
+                          + " runs):\n" + """
+                                    - camel:
+                                        cli:
+                                          run:
+                                            integration:
+                                              name: "orders"
+                                              file: "../orders.camel.yaml"
+                                              systemProperties:
+                                                file: "../application.properties"
+                                  """.stripTrailing());
         assertThat(result.get("repaired")).isNull();
         assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(SAMPLE);
 
@@ -196,6 +212,36 @@ class AuthoringToolsCitrusTest {
         result = AuthoringTools.writeFile(new ToolContext(), dir, FILE, ORDERS_TEST, true);
         assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("overwritten");
         assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(ORDERS_TEST);
+    }
+
+    @Test
+    void aTestThatCallsTheIntegrationWithoutStartingItIsWrittenWithTheActionThatStartsIt(@TempDir Path dir)
+            throws IOException {
+        // camel test run runs only the test: with no action that starts the integration, the call fails (the
+        // integration a test of test-citrus-orders calls is not running while the test runs). The name is the one the
+        // test checks the log of
+        Files.writeString(dir.resolve("orders.camel.yaml"), "- from:\n    uri: timer:tick\n    steps:\n      - log: hi\n");
+        String test = ORDERS_TEST.substring(0, ORDERS_TEST.indexOf("  - camel:\n      cli:\n        run:"))
+                      + ORDERS_TEST.substring(ORDERS_TEST.indexOf("  - http:")).replace("\"orders\"", "\"orders-app\"");
+
+        JsonObject result = AuthoringTools.writeFile(new ToolContext(), dir, FILE, test, true);
+
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("created");
+        assertThat(result.getString("message")).isEqualTo(AuthoringTools.citrusTestNote(FILE)
+                                                          + " The test calls the integration but does not start it, and"
+                                                          + " camel test run runs only the test: start it with the first"
+                                                          + " action of the test (or have it running when the test"
+                                                          + " runs):\n" + """
+                                                                    - camel:
+                                                                        cli:
+                                                                          run:
+                                                                            integration:
+                                                                              name: "orders-app"
+                                                                              file: "../orders.camel.yaml"
+                                                                  """.stripTrailing());
+        // with the action that starts it, nothing is said
+        assertThat(AuthoringTools.writeFile(new ToolContext(), dir, FILE, ORDERS_TEST, true).getString("message"))
+                .isEqualTo(AuthoringTools.citrusTestNote(FILE));
     }
 
     @Test
@@ -295,8 +341,7 @@ class AuthoringToolsCitrusTest {
                 """);
         assertThat(log.getBoolean("valid")).isFalse();
         assertThat(log.get("errors").toString()).contains("Line 3: log is not a Citrus test action");
-        assertThat(log.getString("message")).isEqualTo("1 problem(s) found; fix them before writing the file. "
-                                                       + AuthoringTools.CITRUS_SAMPLES);
+        assertThat(log.getString("message")).isEqualTo("1 problem(s) found; fix them before writing the file");
 
         // a quote that is not closed: the parser reads to the end of the file, and names the line of the quote
         JsonObject invalid = AuthoringTools.validate(new ToolContext(), FILE, """

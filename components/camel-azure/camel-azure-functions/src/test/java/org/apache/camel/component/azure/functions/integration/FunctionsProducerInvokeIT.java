@@ -35,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration tests for invoking Azure Functions.
  * <p>
- * Run with:
+ * They run against a function app on Azure only: the component invokes
+ * {@code https://<functionApp>.azurewebsites.net/api/<functionName>}, and has no option to invoke the functions of
+ * Floci AZ, on {@code <address>/devstoreaccount1-functions/api/<functionApp>/<functionName>}. Run with:
  *
  * <pre>
  * mvn verify -Dcamel.component.azure-functions.function-app=myFunctionApp \
@@ -44,7 +46,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * </pre>
  */
 @EnabledIfSystemProperty(named = BaseFunctionsTestSupport.FUNCTION_APP_PROPERTY, matches = ".*",
-                         disabledReason = "Azure Functions credentials must be supplied to run this test, e.g: "
+                         disabledReason = "The component invokes https://<functionApp>.azurewebsites.net/api/<functionName>,"
+                                          + " which cannot be pointed at Floci AZ: Azure Functions credentials must be"
+                                          + " supplied to run this test, e.g: "
                                           + "mvn verify -D" + BaseFunctionsTestSupport.FUNCTION_APP_PROPERTY + "=myApp "
                                           + "-D" + BaseFunctionsTestSupport.FUNCTION_NAME_PROPERTY + "=myFunction "
                                           + "-D" + BaseFunctionsTestSupport.FUNCTION_KEY_PROPERTY + "=myKey")

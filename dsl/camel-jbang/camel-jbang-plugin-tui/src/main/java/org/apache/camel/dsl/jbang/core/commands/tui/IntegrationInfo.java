@@ -106,6 +106,8 @@ class IntegrationInfo {
     final List<EndpointInfo> endpoints = new ArrayList<>();
     final List<ServiceInfo> services = new ArrayList<>();
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
+    // the chaos rules and report (camel-chaos), or null without camel-chaos
+    ChaosInfo chaos;
     final List<KafkaConsumerInfo> kafkaConsumers = new ArrayList<>();
     int errorCount;
     volatile List<ErrorInfo> errors = new ArrayList<>();

@@ -29,10 +29,11 @@ import java.util.regex.Pattern;
 /**
  * CAMEL-25532: the YAML shapes a model writes for a Camel route that have one reading, repaired before a write is
  * refused for them: an option at the column of its EIP, a plain value where an expression goes, a list where a map goes
- * (and the other way round), a list item or a key one column off, an unquoted placeholder, an enum value in another
- * case, and the names models use for an option that has another name (from the benchmark traces). Each repair is driven
- * by the validator's message for that shape and changes only the lines it names; a name is never guessed by similarity.
- * The caller validates the result again, and keeps it only when no new problem is left.
+ * (and the other way round), a list item or a key one column off, steps: or otherwise: in the column of the dashes of a
+ * list where the schema takes it in one place, an unquoted placeholder, an enum value in another case, and the names
+ * models use for an option that has another name (from the benchmark traces). Each repair is driven by the validator's
+ * message for that shape and changes only the lines it names; a name is never guessed by similarity. The caller
+ * validates the result again, and keeps it only when no new problem is left.
  */
 final class LenientRepairs {
 
@@ -87,6 +88,18 @@ final class LenientRepairs {
     private static final Pattern KEY_COLUMN = Pattern.compile(
             "^line (\\d+): (\\S+) starts in column (\\d+), but the keys of the mapping that starts at line \\d+ are in"
                                                               + " column (\\d+)");
+    /**
+     * steps: or otherwise: in the column of the dashes of a list, which the validator places where the schema takes it,
+     * when one place does, with the lines to write (what it is there, the column, the line after which it goes).
+     */
+    private static final Pattern KEY_IN_DASH_COLUMN = Pattern.compile(
+            "^line (\\d+): (steps|otherwise) starts in column \\d+, the column of the - of the list item at line \\d+, so"
+                                                                      + " it is part of neither that item nor the key that"
+                                                                      + " holds the list\\. It is (.+?): (?:write it in"
+                                                                      + " column (\\d+)|it goes in column (\\d+), after"
+                                                                      + " line (\\d+))\\. Write lines? (\\d+)(?:-(\\d+))?"
+                                                                      + " as:\\n",
+            Pattern.DOTALL);
 
     /** How many columns a list item or key may be off to be moved: a slip, not another structure. */
     private static final int MAX_SHIFT = 2;
@@ -141,6 +154,20 @@ final class LenientRepairs {
     private static List<Repair> repairsFor(String error, List<String> lines) {
         List<Repair> answer = new ArrayList<>();
         Matcher m;
+        if ((m = KEY_IN_DASH_COLUMN.matcher(error)).find()) {
+            // the place of steps: and otherwise: is fixed by the schema, and the validator found the one place it
+            // takes: r28 of the local-model benchmark, fail-well-error-handling step 2 sent the same lines 16 times
+            int line = Integer.parseInt(m.group(1));
+            int first = Integer.parseInt(m.group(7));
+            int last = m.group(8) != null ? Integer.parseInt(m.group(8)) : first;
+            List<String> written = List.of(error.substring(m.end()).split("\n", -1));
+            String column = m.group(4) != null ? m.group(4) : m.group(5) + " after line " + m.group(6);
+            answer.add(new Repair(
+                    line, m.group(6) != null, "line " + line + ": " + m.group(2) + ": moved to column " + column + " ("
+                                              + m.group(3) + ")",
+                    ls -> replaceLines(ls, first - 1, last, written)));
+            return answer;
+        }
         if (error.contains("lines up with") && error.startsWith("Line ")) {
             int line = leadingLine(error);
             Matcher o = OPTION_AT_EIP.matcher(error);
@@ -557,6 +584,25 @@ final class LenientRepairs {
             return false;
         }
         lines.set(index, l.substring(0, at + 2) + "\"" + braces + "\"" + l.substring(at + 2 + braces.length()));
+        return true;
+    }
+
+    /**
+     * The lines the validator says to write in place of the lines it names, when they are those lines, moved or with
+     * another indentation: the same lines without their indentation, in another order at most.
+     */
+    private static boolean replaceLines(List<String> lines, int from, int to, List<String> written) {
+        if (from < 0 || to > lines.size() || from >= to || written.size() != to - from) {
+            return false;
+        }
+        List<String> before = lines.subList(from, to).stream().map(String::strip).sorted().toList();
+        List<String> after = written.stream().map(String::strip).sorted().toList();
+        if (!before.equals(after)) {
+            return false;
+        }
+        for (int i = 0; i < written.size(); i++) {
+            lines.set(from + i, written.get(i));
+        }
         return true;
     }
 

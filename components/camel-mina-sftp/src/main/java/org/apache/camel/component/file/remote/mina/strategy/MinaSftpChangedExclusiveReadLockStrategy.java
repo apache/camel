@@ -23,6 +23,7 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.remote.SftpRemoteFile;
+import org.apache.camel.component.file.remote.mina.MinaSftpOperations;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -71,54 +72,18 @@ public class MinaSftpChangedExclusiveReadLockStrategy implements GenericFileExcl
                 }
             }
 
-            long newLastModified = 0;
-            long newLength = 0;
-            // operations.listFiles returns SftpRemoteFile[] so
-            // do not use generic in the List files
-            Object[] files;
-            if (fastExistsCheck) {
-                // use the absolute file path to only pickup the file we want to
-                // check, this avoids expensive
-                // list operations if we have a lot of files in the directory
-                String path = file.getAbsoluteFilePath();
-                if (path.equals("/") || path.equals("\\")) {
-                    // special for root (= home) directory
-                    LOG.trace("Using fast exists to update file information in home directory");
-                    files = operations.listFiles();
-                } else {
-                    LOG.trace("Using fast exists to update file information for {}", path);
-                    files = operations.listFiles(path);
-                }
+            MinaSftpOperations.FileAttributes attributes;
+            if (operations instanceof MinaSftpOperations sftp) {
+                // a single request whatever the number of files in the directory, with and without fastExistsCheck.
+                // As in the directory listing, these are the attributes of the path itself: for a symbolic link, the
+                // size and modification time of the link, not of its target
+                attributes = sftp.getFileAttributes(file.getAbsoluteFilePath());
+                LOG.trace("Attributes of {}: {}", file.getAbsoluteFilePath(), attributes);
             } else {
-                String path = file.getParent();
-                if (path.equals("/") || path.equals("\\")) {
-                    // special for root (= home) directory
-                    LOG.trace(
-                            "Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
-                    files = operations.listFiles();
-                } else {
-                    LOG.trace(
-                            "Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.",
-                            path);
-                    files = operations.listFiles(path);
-                }
+                attributes = listFileAttributes(operations, file);
             }
-            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.length);
-            for (Object f : files) {
-                SftpRemoteFile rf = (SftpRemoteFile) f;
-                boolean match;
-                if (fastExistsCheck) {
-                    // uses the absolute file path as well
-                    match = rf.getFilename().equals(file.getAbsoluteFilePath())
-                            || rf.getFilename().equals(file.getFileNameOnly());
-                } else {
-                    match = rf.getFilename().equals(file.getFileNameOnly());
-                }
-                if (match) {
-                    newLastModified = rf.getLastModified();
-                    newLength = rf.getFileLength();
-                }
-            }
+            long newLastModified = attributes != null ? attributes.lastModified() : 0;
+            long newLength = attributes != null ? attributes.fileLength() : 0;
 
             LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
             LOG.trace("Previous length: {}, new length: {}", length, newLength);
@@ -144,6 +109,57 @@ public class MinaSftpChangedExclusiveReadLockStrategy implements GenericFileExcl
         }
 
         return exclusive;
+    }
+
+    private MinaSftpOperations.FileAttributes listFileAttributes(
+            GenericFileOperations<SftpRemoteFile> operations, GenericFile<SftpRemoteFile> file) {
+        // operations.listFiles returns SftpRemoteFile[] so
+        // do not use generic in the List files
+        Object[] files;
+        if (fastExistsCheck) {
+            // use the absolute file path to only pickup the file we want to
+            // check, this avoids expensive
+            // list operations if we have a lot of files in the directory
+            String path = file.getAbsoluteFilePath();
+            if (path.equals("/") || path.equals("\\")) {
+                // special for root (= home) directory
+                LOG.trace("Using fast exists to update file information in home directory");
+                files = operations.listFiles();
+            } else {
+                LOG.trace("Using fast exists to update file information for {}", path);
+                files = operations.listFiles(path);
+            }
+        } else {
+            String path = file.getParent();
+            if (path.equals("/") || path.equals("\\")) {
+                // special for root (= home) directory
+                LOG.trace(
+                        "Using full directory listing in home directory to update file information. Consider enabling fastExistsCheck option.");
+                files = operations.listFiles();
+            } else {
+                LOG.trace(
+                        "Using full directory listing to update file information for {}. Consider enabling fastExistsCheck option.",
+                        path);
+                files = operations.listFiles(path);
+            }
+        }
+        LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.length);
+        MinaSftpOperations.FileAttributes attributes = null;
+        for (Object f : files) {
+            SftpRemoteFile rf = (SftpRemoteFile) f;
+            boolean match;
+            if (fastExistsCheck) {
+                // uses the absolute file path as well
+                match = rf.getFilename().equals(file.getAbsoluteFilePath())
+                        || rf.getFilename().equals(file.getFileNameOnly());
+            } else {
+                match = rf.getFilename().equals(file.getFileNameOnly());
+            }
+            if (match) {
+                attributes = new MinaSftpOperations.FileAttributes(rf.getFileLength(), rf.getLastModified());
+            }
+        }
+        return attributes;
     }
 
     private boolean sleep() {

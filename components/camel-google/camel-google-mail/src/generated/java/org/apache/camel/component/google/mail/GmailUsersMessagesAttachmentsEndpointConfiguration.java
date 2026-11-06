@@ -29,7 +29,7 @@ public final class GmailUsersMessagesAttachmentsEndpointConfiguration extends Go
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "get", description="The ID of the message containing the attachment")})
     private String messageId;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "get", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "get", description="The user's email address. The special value me can be used to indicate the authenticated user. [default: me]")})
     private String userId;
 
     public String getId() {

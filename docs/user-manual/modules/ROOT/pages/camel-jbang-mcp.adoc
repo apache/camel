@@ -1069,21 +1069,25 @@ that changes rules is refused. The list and the report read the chaos console fr
 
 | `camel_runtime_chaos_list`
 | `true` | `false`
-| The current rules: id, version, the rule, state, where it fires, matches, faults fired, time left and the
-  expectation; or why chaos is off. Read from the status, which the application writes every second.
+| The current rules: id, version, the rule, state, where it fires, matches, faults fired, time left, the
+  expectation and the live state (observed rate next to the rate of the rule, when it last fired, faults per second over
+  the last minute, and the effect of its faults on the exchanges); or why chaos is off. Read from the status, which the
+  application writes every second.
 
 | `camel_runtime_chaos_report`
 | `true` | `false`
-| The report: the verdict and whether it is final, the seed, every version of every rule, the expectations and the
-  counts per route.
+| The report: the verdict and whether it is final, the seed, every version of every rule with its live state, the
+  expectations, the counts per route and the last 20 faults.
 
 | `camel_runtime_chaos_add`
 | `false` | `true`
-| Adds a rule (`rule`) and returns its id (`r1`, `r2`, ...).
+| Adds a rule (`rule`), or several separated by `;` (all or none), and returns the ids (`r1`, `r2`, ...), with
+  `warnings` for a rule that matches nothing in the application now (often a typo).
 
 | `camel_runtime_chaos_change`
 | `false` | `true`
-| Gives the rule with the `id` the new `rule` and one more version; the report keeps the version it replaces.
+| Gives the rule with the `id` the new `rule` and one more version; the report keeps the version it replaces. Returns
+  `warnings` when the new rule matches nothing in the application now.
 
 | `camel_runtime_chaos_remove`
 | `false` | `false`
@@ -1091,7 +1095,8 @@ that changes rules is refused. The list and the report read the chaos console fr
 
 | `camel_runtime_chaos_clear`
 | `false` | `false`
-| Removes all rules, and returns how many.
+| Removes all rules, and returns how many. With `reset=true` the report starts again (no rules, route counts or
+  verdict), for a new experiment, as `camel cmd chaos-clear --reset` does.
 |===
 
 Adding and changing a rule are marked destructive: a rule makes messages fail, wait or get lost, and its

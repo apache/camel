@@ -429,7 +429,7 @@ public interface HttpEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of hosts that should bypass the proxy. Supports
-         * wildcards, e.g., localhost,.example.com,192.168..
+         * wildcards, e.g., localhost,*.example.com,192.168.*.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

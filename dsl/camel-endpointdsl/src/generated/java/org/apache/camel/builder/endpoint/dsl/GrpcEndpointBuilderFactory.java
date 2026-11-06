@@ -392,7 +392,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets a custom max connection age in milliseconds. Connections lasting
          * longer than which will be gracefully terminated. A random jitter of
-         * /-10% will be added to the value. A value of Long.MAX_VALUE (the
+         * +/-10% will be added to the value. A value of Long.MAX_VALUE (the
          * default) or a value greater or equal to
          * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
          * age.
@@ -412,7 +412,7 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets a custom max connection age in milliseconds. Connections lasting
          * longer than which will be gracefully terminated. A random jitter of
-         * /-10% will be added to the value. A value of Long.MAX_VALUE (the
+         * +/-10% will be added to the value. A value of Long.MAX_VALUE (the
          * default) or a value greater or equal to
          * NettyServerBuilder.AS_LARGE_AS_INFINITE will disable max connection
          * age.

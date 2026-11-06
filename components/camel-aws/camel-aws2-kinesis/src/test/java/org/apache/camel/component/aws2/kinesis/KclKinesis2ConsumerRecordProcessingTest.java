@@ -42,8 +42,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Verifies the KCL consumer only checkpoints after a batch is processed successfully, so a processing failure leaves
- * the records to be redelivered rather than silently skipped.
+ * Verifies the KCL consumer checkpoints a batch processed successfully, and not a batch whose processor throws. KCL
+ * does not deliver that batch again while the lease is held: see KclKinesis2ConsumerFailedRecordTest.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -98,7 +98,7 @@ public class KclKinesis2ConsumerRecordProcessingTest {
 
         recordProcessor.processRecords(input());
 
-        // The failed batch must not be checkpointed, so KCL redelivers it from the last checkpoint.
+        // The batch whose processor throws is not checkpointed (the next checkpoint covers it).
         verify(checkpointer, never()).checkpoint();
     }
 }

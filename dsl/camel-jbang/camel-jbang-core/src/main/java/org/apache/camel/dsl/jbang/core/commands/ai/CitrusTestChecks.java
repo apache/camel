@@ -19,8 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -31,12 +34,15 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.networknt.schema.Error;
@@ -82,6 +88,23 @@ public final class CitrusTestChecks {
     /** The words SnakeYAML, which Citrus reads a test with, takes as a boolean. */
     private static final Set<String> BOOLEAN_WORDS = Set.of("true", "false", "yes", "no", "on", "off");
 
+    // the keys local models wrote under http: for the parts of a request and its response, which an http action does
+    // not take (every write of test-citrus-orders step 1 in r26 and r28 of the local-model benchmark)
+    private static final Set<String> URL_KEYS = Set.of("uri", "url", "endpoint", "endpointUri", "address");
+    private static final Set<String> METHOD_KEYS = Set.of("method", "httpMethod", "verb", "requestMethod");
+    private static final Set<String> FILE_KEYS = Set.of("requestFile", "file", "bodyFile", "payloadFile",
+            "requestBodyFile", "resource");
+    private static final Set<String> BODY_KEYS = Set.of("body", "payload", "requestBody", "data", "content");
+    private static final Set<String> STATUS_KEYS = Set.of("status", "statusCode", "expectStatus", "expectedStatus",
+            "expectedStatusCode", "expectStatusCode", "responseCode", "responseStatus", "code");
+    private static final Set<String> RESPONSE_BODY_KEYS = Set.of("expectedBody", "expectBody", "responseBody",
+            "expectedResponse", "expectResponse", "expectedResponseBody");
+    /** The keys a model wrote under a body for a part of the text it expects (test-citrus-orders step 2). */
+    private static final Set<String> CONTAINS_KEYS = Set.of("contains", "containsString", "includes", "include",
+            "matches", "match", "regex", "pattern", "like", "startsWith", "endsWith");
+    /** A URL: the client part (scheme, host and port), and the path. */
+    private static final Pattern URL = Pattern.compile("^([A-Za-z][\\w+.-]*://[^/?#]+)(.*)$");
+
     private static volatile TestSchema schema;
 
     private CitrusTestChecks() {
@@ -109,6 +132,17 @@ public final class CitrusTestChecks {
      * parse (the YAML check says where), and when there is no schema.
      */
     public static List<String> validate(String content) {
+        return validate(content, null, null);
+    }
+
+    /**
+     * As {@link #validate(String)}, with where the test is: a file the lines to write name is given relative to the
+     * test, as Citrus reads it.
+     *
+     * @param dir  the project directory, or null
+     * @param file the test file, relative to the directory
+     */
+    public static List<String> validate(String content, Path dir, String file) {
         if (content == null || content.isBlank()) {
             return List.of();
         }
@@ -125,7 +159,9 @@ public final class CitrusTestChecks {
         if (tree == null || tree.isMissingNode()) {
             return List.of();
         }
-        return new Check(s, content, tree).problems();
+        Path project = dir != null ? dir.toAbsolutePath().normalize() : null;
+        Path testDir = project != null && file != null ? project.resolve(file).normalize().getParent() : null;
+        return new Check(s, content, tree, project, testDir).problems();
     }
 
     /** Whether a test is checked against the test schema; false when it is checked for its YAML syntax only. */
@@ -341,8 +377,14 @@ public final class CitrusTestChecks {
         private final TestSchema schema;
         private final JsonNode tree;
         private final Node root;
+        private final String[] lines;
+        /** The project directory and the directory of the test, or null when they are not known. */
+        private final Path project;
+        private final Path testDir;
         /** The action of each action item, by its pointer (/actions/0: http), for the path a message names. */
         private final Map<String, String> items = new LinkedHashMap<>();
+        /** The YAML node of each action item, by its pointer, for the lines of the item. */
+        private final Map<String, Node> itemNodes = new HashMap<>();
         /** The pointers where an action is expected: the items of the action lists. */
         private final Set<String> slots = new HashSet<>();
         private final List<Problem> problems = new ArrayList<>();
@@ -350,10 +392,25 @@ public final class CitrusTestChecks {
         private record Problem(int line, String text) {
         }
 
-        Check(TestSchema schema, String content, JsonNode tree) {
+        Check(TestSchema schema, String content, JsonNode tree, Path project, Path testDir) {
             this.schema = schema;
             this.tree = tree;
             this.root = YamlPointerLines.root(content);
+            this.lines = content.split("\n", -1);
+            this.project = project;
+            this.testDir = testDir;
+        }
+
+        /**
+         * A file as Citrus reads it, relative to the test: a file of the project named as the tools name it
+         * (sample-order.json for the file beside the test directory) is ../sample-order.json from test/.
+         */
+        private String fromTest(String file) {
+            if (testDir == null || file.isBlank() || Files.exists(testDir.resolve(file))) {
+                return file;
+            }
+            Path inProject = project.resolve(file).normalize();
+            return Files.exists(inProject) ? testDir.relativize(inProject).toString().replace('\\', '/') : file;
         }
 
         List<String> problems() {
@@ -437,6 +494,7 @@ public final class CitrusTestChecks {
             }
             String name = scalar(keys.get(0).getKeyNode());
             items.put(at, name);
+            itemNodes.put(at, item);
             JsonNode action = tree.at(at);
             if (nested && !action.isMissingNode()) {
                 describe(schema.action().validate(action), at);
@@ -519,7 +577,8 @@ public final class CitrusTestChecks {
                     return message + ": a Citrus test is a map with the keys " + String.join(", ", keys);
                 }
                 if (!keys.isEmpty()) {
-                    return what + ": " + message + "; " + name(what) + " takes " + String.join(", ", keys);
+                    String answer = what + ": " + message + "; " + name(what) + " takes " + String.join(", ", keys);
+                    return isBody(keys) && tree.at(at).isValueNode() ? answer + bodyText(at, tree.at(at).asText()) : answer;
                 }
             }
             if ("enum".equals(e.getKeyword()) && e.getSchemaNode() != null && e.getInstanceNode() != null) {
@@ -557,11 +616,241 @@ public final class CitrusTestChecks {
             }
             String what = where(at);
             // the keys of the action itself (http: {uri: ...}), or of a node in it (http.sendRequest)
-            String of = what.isEmpty() ? "a Citrus test"
-                    : items.containsKey(at.substring(0, Math.max(0, at.lastIndexOf('/')))) ? "the " + what + " action"
-                    : what;
-            return and(named) + (keys.size() == 1 ? " is not a key of " : " are not keys of ") + of
-                   + (takes.isEmpty() ? "" : ", which takes " + String.join(", ", takes));
+            boolean action = items.containsKey(parent(at));
+            String of = what.isEmpty() ? "a Citrus test" : action ? "the " + what + " action" : what;
+            String answer = and(named) + (keys.size() == 1 ? " is not a key of " : " are not keys of ") + of
+                            + (takes.isEmpty() ? "" : ", which takes " + String.join(", ", takes));
+            if (action && "http".equals(what)) {
+                return answer + requestAndResponse(at, keys);
+            }
+            if (isBody(takes)) {
+                return answer + bodyKeys(at, at, keys);
+            }
+            if (takes.contains("body") && takes.contains("status")) {
+                // a check of the body as a key of the response: bodyContains (r26 of the local-model benchmark)
+                List<String> body = keys.stream().filter(k -> k.toLowerCase(Locale.ROOT).contains("body")).toList();
+                return body.isEmpty() ? answer : answer + bodyKeys(at, at + "/body", body);
+            }
+            return answer;
+        }
+
+        /**
+         * The request and its expected response written straight under http: (uri, method, requestFile, contentType and
+         * expectStatus in every write of test-citrus-orders step 1 of the local-model benchmark), or as request: and
+         * response: maps. An http action of a client sends the request or receives the response, so they are two
+         * actions: the lines to write with the values as written, when they pass the schema; else the shape of the two.
+         */
+        private String requestAndResponse(String at, List<String> keys) {
+            JsonNode http = schema.model().at("/definitions/TestActions/properties/http");
+            if (!hasPath(http, "sendRequest") || !hasPath(http, "receiveResponse", "response")
+                    || keys.stream().noneMatch(k -> isCallKey(k, http))) {
+                return "";
+            }
+            String shape = ". An http action of a client either sends the request (sendRequest) or receives the response"
+                           + " (receiveResponse)";
+            HttpCall call = new HttpCall(http);
+            tree.at(at).properties().forEach(e -> call.add(e.getKey(), e.getValue(), null));
+            List<JsonNode> actions = call.actions();
+            String written = actions != null ? itemLines(parent(at), actions) : null;
+            String left = call.left.isEmpty()
+                    ? ""
+                    : " (" + and(call.left) + (call.left.size() == 1 ? " has" : " have") + " no place in them and "
+                      + (call.left.size() == 1 ? "is" : "are") + " left out)";
+            if (written != null && actions.size() == 2) {
+                return shape + ", so the request and the response it expects are two http actions" + left + "." + written;
+            }
+            if (written != null) {
+                return shape + ", so the request is an action of its own, and a second http action checks the response"
+                       + " with receiveResponse: {response: {status: \"200\"}}" + left + "." + written;
+            }
+            return shape + ", so the request and the response it expects are two http actions, such as - http: {client:"
+                   + " \"http://localhost:8080\", sendRequest: {POST: {path: \"/...\", body: {data: \"...\"}}}} and"
+                   + " - http: {client: \"http://localhost:8080\", receiveResponse: {response: {status: \"200\"}}}";
+        }
+
+        /**
+         * A body written with a key of its own, text, equal, contains or equalTo (five of seven runs of
+         * test-citrus-orders step 2 had the whole case right but this key): the text goes under data:, as the body to
+         * send or the body the test expects; a part of the expected text is checked with jsonPath.
+         */
+        private String bodyKeys(String at, String bodyAt, List<String> keys) {
+            JsonNode node = tree.at(at);
+            String key = keys.stream().filter(k -> node.path(k).isValueNode() && !node.path(k).isNull()).findFirst()
+                    .orElse(null);
+            if (key == null) {
+                return "";
+            }
+            String text = node.get(key).asText();
+            boolean contains = CONTAINS_KEYS.contains(key) || key.toLowerCase(Locale.ROOT).contains("contain");
+            if (contains && isReceived(bodyAt)) {
+                String jsonPath = jsonPathCheck(bodyAt, Map.of("<field>", text));
+                return "; data is the whole body the test expects, compared as a whole"
+                       + (jsonPath != null
+                               ? ". To check that one field holds this text, leave out " + (at.equals(bodyAt) ? "body" : key)
+                                 + ": and validate the field next to response: " + jsonPath
+                               : "");
+            }
+            if (!at.equals(bodyAt)) {
+                return "; the body the test expects goes under body: {data: " + quoted(text) + "}";
+            }
+            return bodyText(at, text);
+        }
+
+        /**
+         * The lines of a body written as text, under data:, and what data is; for an expected JSON body, jsonPath too.
+         */
+        private String bodyText(String at, String text) {
+            boolean expected = isReceived(at);
+            Map<String, String> fields = expected ? jsonFields(text) : Map.of();
+            String jsonPath = fields.isEmpty() ? null : jsonPathCheck(at, fields);
+            String written = keyLines(at, JSON.createObjectNode().put("data", text));
+            return "; the text goes under data:, which is the body "
+                   + (expected ? "the test expects (Citrus compares a JSON body as JSON)" : "to send")
+                   + (jsonPath != null
+                           ? ". To check fields instead of the whole body, validate them next to response: " + jsonPath
+                           : "")
+                   + "." + (written != null ? written : " Write body: {data: " + quoted(text) + "}");
+        }
+
+        /**
+         * The jsonPath check of the fields, as validate: [...] in one line, when the body is the one of the response of
+         * an http action, whose receiveResponse takes it; null otherwise.
+         */
+        private String jsonPathCheck(String at, Map<String, String> fields) {
+            JsonNode http = schema.model().at("/definitions/TestActions/properties/http");
+            if (!at.endsWith("/receiveResponse/response/body")
+                    || !hasPath(http, "receiveResponse", "validate", "jsonPath", "expression")
+                    || !hasPath(http, "receiveResponse", "validate", "jsonPath", "value")) {
+                return null;
+            }
+            StringJoiner checks = new StringJoiner(", ");
+            fields.forEach((field, value) -> checks.add("{expression: " + quoted("$." + field) + ", value: " + quoted(value)
+                                                        + "}"));
+            return "validate: [{jsonPath: [" + checks + "]}]";
+        }
+
+        /**
+         * " Write lines 14-19 as:" and the actions in place of the list item at the pointer, when they pass the schema;
+         * null when the item is not in block style.
+         */
+        private String itemLines(String pointer, List<JsonNode> actions) {
+            Node item = itemNodes.get(pointer);
+            int first = item != null ? line(item) - 1 : -1;
+            if (first < 0 || first >= lines.length) {
+                return null;
+            }
+            int dash = indent(lines[first]);
+            if (!lines[first].startsWith("- ", dash)) {
+                return null;
+            }
+            List<String> written = new ArrayList<>();
+            for (JsonNode a : actions) {
+                List<String> one = new ArrayList<>();
+                yaml(a, dash + 2, one);
+                one.set(0, " ".repeat(dash) + "- " + one.get(0).substring(dash + 2));
+                written.addAll(one);
+            }
+            if (!validActions(written)) {
+                return null;
+            }
+            return writeLines(first + 1, blockEnd(first), written);
+        }
+
+        /** " Write lines 14-19 as:" or " Write line 43 as:", and the lines. */
+        private static String writeLines(int first, int last, List<String> written) {
+            return (first == last ? " Write line " + first : " Write lines " + first + "-" + last) + " as:\n"
+                   + String.join("\n", written);
+        }
+
+        /** " Write lines 52-53 as:" and the key at the pointer with the value given; null when it is not found. */
+        private String keyLines(String pointer, JsonNode value) {
+            Node key = keyNode(pointer);
+            int first = key != null ? line(key) - 1 : -1;
+            if (first < 0 || first >= lines.length) {
+                return null;
+            }
+            int column = indent(lines[first]);
+            if (!lines[first].startsWith(scalar(key) + ":", column)) {
+                return null;
+            }
+            List<String> written = new ArrayList<>();
+            yaml(JSON.createObjectNode().set(scalar(key), value), column, written);
+            return writeLines(first + 1, blockEnd(first), written);
+        }
+
+        /** Whether the lines are YAML of actions that the schema takes, each. */
+        private boolean validActions(List<String> written) {
+            try {
+                JsonNode list = YAML.readTree(String.join("\n", written));
+                if (list == null || !list.isArray() || list.isEmpty()) {
+                    return false;
+                }
+                for (JsonNode a : list) {
+                    List<Error> errors = new ArrayList<>(
+                            YamlValidator.filterOneOfNoise(
+                                    new ArrayList<>(schema.action().validate(a))));
+                    errors.removeIf(CitrusTestChecks::convertedScalar);
+                    if (!errors.isEmpty()) {
+                        return false;
+                    }
+                }
+                return true;
+            } catch (IOException | RuntimeException e) {
+                return false;
+            }
+        }
+
+        /**
+         * The 1-based last line of the block of a line: the lines below it indented more, without blank lines and
+         * comments at its end.
+         */
+        private int blockEnd(int first) {
+            int column = indent(lines[first]);
+            int end = first + 1;
+            int last = first + 1;
+            while (end < lines.length) {
+                String l = lines[end];
+                if (!l.isBlank() && indent(l) <= column) {
+                    break;
+                }
+                end++;
+                if (!l.isBlank() && !l.strip().startsWith("#")) {
+                    last = end;
+                }
+            }
+            return last;
+        }
+
+        /** The YAML node of the key of the last segment of a pointer, or null. */
+        private Node keyNode(String pointer) {
+            Node node = root;
+            Node key = null;
+            for (String segment : pointer.split("/")) {
+                if (segment.isEmpty()) {
+                    continue;
+                }
+                String name = segment.replace("~1", "/").replace("~0", "~");
+                key = null;
+                if (node instanceof SequenceNode seq && INTEGER.matcher(name).matches()) {
+                    int index = Integer.parseInt(name);
+                    node = index < seq.getValue().size() ? seq.getValue().get(index) : null;
+                } else if (node instanceof MappingNode map) {
+                    Node value = null;
+                    for (NodeTuple t : map.getValue()) {
+                        if (name.equals(scalar(t.getKeyNode()))) {
+                            key = t.getKeyNode();
+                            value = t.getValueNode();
+                        }
+                    }
+                    node = value;
+                } else {
+                    return null;
+                }
+                if (node == null) {
+                    return null;
+                }
+            }
+            return key;
         }
 
         /**
@@ -576,6 +865,227 @@ public final class CitrusTestChecks {
             Set<String> answer = new LinkedHashSet<>();
             collectKeys(schema.model().at(pointer), answer, 0);
             return answer;
+        }
+
+        /** The keys a node of the schema takes: its properties and those of its references and branches. */
+        private Set<String> keysOf(JsonNode node) {
+            Set<String> answer = new LinkedHashSet<>();
+            collectKeys(node, answer, 0);
+            return answer;
+        }
+
+        /**
+         * The schema of a property of a node of the schema, through its references, branches and the items of a list
+         * (the methods of sendRequest are declared {} and have their schema in a branch); missing when there is none.
+         */
+        private JsonNode property(JsonNode node, String name) {
+            return property(node, name, 0);
+        }
+
+        private JsonNode property(JsonNode node, String name, int depth) {
+            if (node == null || node.isMissingNode() || depth > 6) {
+                return MissingNode.getInstance();
+            }
+            JsonNode p = node.path("properties").path(name);
+            if (!p.isMissingNode() && !p.isEmpty()) {
+                return p;
+            }
+            List<JsonNode> more = new ArrayList<>();
+            JsonNode ref = node.get("$ref");
+            if (ref != null && ref.isTextual() && ref.asText().startsWith("#")) {
+                more.add(schema.model().at(ref.asText().substring(1)));
+            }
+            for (String composition : new String[] { "allOf", "anyOf", "oneOf" }) {
+                node.path(composition).forEach(more::add);
+            }
+            if (node.has("items")) {
+                more.add(node.get("items"));
+            }
+            for (JsonNode n : more) {
+                JsonNode r = property(n, name, depth + 1);
+                if (!r.isMissingNode()) {
+                    return r;
+                }
+            }
+            return p;
+        }
+
+        /** Whether the schema has the properties one under the other from the node: receiveResponse, response. */
+        private boolean hasPath(JsonNode node, String... names) {
+            JsonNode n = node;
+            for (String name : names) {
+                n = property(n, name);
+                if (n.isMissingNode()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /** Whether a key the http action does not take is a part of a request or its response. */
+        private boolean isCallKey(String key, JsonNode http) {
+            return URL_KEYS.contains(key) || METHOD_KEYS.contains(key) || FILE_KEYS.contains(key)
+                    || BODY_KEYS.contains(key) || STATUS_KEYS.contains(key) || RESPONSE_BODY_KEYS.contains(key)
+                    || "request".equals(key) || "response".equals(key) || new HttpCall(http).isRequestOrResponseKey(key);
+        }
+
+        /**
+         * A call written as one http action, put in the two actions of a client: the request that sendRequest sends,
+         * with its method, and the response that receiveResponse expects. The keys of the request and of the response
+         * are the ones of the schema; the names models write for them are mapped.
+         */
+        private final class HttpCall {
+
+            private final Set<String> methods = new LinkedHashSet<>();
+            private final Set<String> requestKeys;
+            private final Set<String> responseKeys;
+            private final ObjectNode request = JSON.createObjectNode();
+            private final ObjectNode response = JSON.createObjectNode();
+            /** The keys as written that have no place in the two actions. */
+            private final List<String> left = new ArrayList<>();
+            private String client;
+            private String method;
+            private String description;
+
+            HttpCall(JsonNode http) {
+                JsonNode send = property(http, "sendRequest");
+                // the methods are the keys of sendRequest in upper case: GET, POST...
+                keysOf(send).stream().filter(k -> k.equals(k.toUpperCase(Locale.ROOT))).forEach(methods::add);
+                requestKeys = methods.isEmpty() ? Set.of() : plainKeys(property(send, methods.iterator().next()));
+                responseKeys = plainKeys(property(property(http, "receiveResponse"), "response"));
+            }
+
+            /**
+             * The keys of a request or a response that are not of a group (advanced, schema...): a key of a model's own
+             * with the name of one of those, such as type: Async, is not meant as it.
+             */
+            private Set<String> plainKeys(JsonNode node) {
+                Set<String> answer = new LinkedHashSet<>();
+                keysOf(node).stream().filter(k -> !property(node, k).has("$comment")).forEach(answer::add);
+                return answer;
+            }
+
+            boolean isRequestOrResponseKey(String key) {
+                return requestKeys.contains(key) || responseKeys.contains(key);
+            }
+
+            /**
+             * Puts a key as written in the request or the response, or among the keys left out: side is request or
+             * response for the keys of a request: or response: map, null for a key of the action.
+             */
+            void add(String key, JsonNode value, String side) {
+                if (!place(key, value, side)) {
+                    left.add(key);
+                }
+            }
+
+            private boolean place(String key, JsonNode value, String side) {
+                boolean forRequest = !"response".equals(side);
+                if (side == null && "client".equals(key) && value.isTextual()) {
+                    client = value.asText().strip();
+                } else if (side == null && "description".equals(key) && value.isTextual()) {
+                    description = value.asText();
+                } else if (side == null && ("request".equals(key) || "response".equals(key)) && value.isObject()) {
+                    value.properties().forEach(e -> add(e.getKey(), e.getValue(), key));
+                } else if (side == null && "sendRequest".equals(key) && value.isObject() && value.size() == 1
+                        && methods.contains(value.fieldNames().next()) && value.elements().next().isObject()) {
+                    method = value.fieldNames().next();
+                    value.get(method).properties().forEach(e -> request.set(e.getKey(), e.getValue()));
+                } else if (side == null && "receiveResponse".equals(key) && value.path("response").isObject()
+                        && value.size() == 1) {
+                    value.get("response").properties().forEach(e -> response.set(e.getKey(), e.getValue()));
+                } else if (forRequest && URL_KEYS.contains(key) && value.isTextual()) {
+                    Matcher m = URL.matcher(value.asText().strip());
+                    if (m.matches()) {
+                        client = m.group(1);
+                        if (!m.group(2).isEmpty()) {
+                            request.put("path", m.group(2));
+                        }
+                    } else {
+                        request.put("path", value.asText().strip());
+                    }
+                } else if (forRequest && METHOD_KEYS.contains(key) && value.isTextual()) {
+                    method = value.asText().strip().toUpperCase(Locale.ROOT);
+                } else if (forRequest && FILE_KEYS.contains(key) && value.isTextual()) {
+                    request.set("body", JSON.createObjectNode().set("resource",
+                            JSON.createObjectNode().put("file", fromTest(value.asText().strip()))));
+                } else if (!"request".equals(side) && STATUS_KEYS.contains(key) && value.isValueNode()) {
+                    response.put("status", value.asText());
+                } else if (side == null && RESPONSE_BODY_KEYS.contains(key) && value.isTextual()) {
+                    response.set("body", JSON.createObjectNode().put("data", value.asText()));
+                } else if ("body".equals(key) || forRequest && BODY_KEYS.contains(key)) {
+                    JsonNode body = body(value);
+                    if (body == null) {
+                        return false;
+                    }
+                    (forRequest ? request : response).set("body", body);
+                } else if (value.isValueNode() && !value.isNull()
+                        && (forRequest ? requestKeys : responseKeys).contains(key)) {
+                    // contentType and path of the request, contentType of the response
+                    (forRequest ? request : response).put(key, value.asText());
+                } else {
+                    return false;
+                }
+                return true;
+            }
+
+            /** The body of a request or a response: text as data, or a map of one of data, resource or script. */
+            private static JsonNode body(JsonNode value) {
+                if (value.isValueNode() && !value.isNull()) {
+                    return JSON.createObjectNode().put("data", value.asText());
+                }
+                return value.isObject() && value.size() == 1
+                        && (value.has("data") || value.has("resource") || value.has("script")) ? value : null;
+            }
+
+            /**
+             * The action that sends the request, and the one that receives the response when a part of it is given;
+             * null without a client, or with a method the schema does not have.
+             */
+            List<JsonNode> actions() {
+                String m = method != null ? method : request.has("body") ? "POST" : "GET";
+                if (client == null || client.isBlank() || !methods.contains(m)) {
+                    return null;
+                }
+                List<JsonNode> answer = new ArrayList<>();
+                ObjectNode send = JSON.createObjectNode();
+                send.set(m, ordered(request, "path"));
+                answer.add(http("sendRequest", send));
+                if (description != null) {
+                    ((ObjectNode) answer.get(0).get("http")).put("description", description);
+                }
+                if (!response.isEmpty()) {
+                    ObjectNode receive = JSON.createObjectNode();
+                    receive.set("response", ordered(response, "status"));
+                    answer.add(http("receiveResponse", receive));
+                }
+                return answer;
+            }
+
+            private ObjectNode http(String key, ObjectNode value) {
+                ObjectNode http = JSON.createObjectNode().put("client", client);
+                http.set(key, value);
+                ObjectNode action = JSON.createObjectNode();
+                action.set("http", http);
+                return action;
+            }
+
+            /** The keys with the given one first and the body last, as the tests of the examples write them. */
+            private static ObjectNode ordered(ObjectNode node, String first) {
+                ObjectNode answer = JSON.createObjectNode();
+                if (node.has(first)) {
+                    answer.set(first, node.get(first));
+                }
+                node.properties().forEach(e -> {
+                    if (!first.equals(e.getKey()) && !"body".equals(e.getKey())) {
+                        answer.set(e.getKey(), e.getValue());
+                    }
+                });
+                if (node.has("body")) {
+                    answer.set("body", node.get("body"));
+                }
+                return answer;
+            }
         }
 
         private void collectKeys(JsonNode node, Set<String> answer, int depth) {
@@ -624,6 +1134,166 @@ public final class CitrusTestChecks {
     /** The last key of a path such as http.sendRequest.POST, or what the test itself is called. */
     private static String name(String what) {
         return what.isEmpty() ? "a Citrus test" : what.substring(what.lastIndexOf('.') + 1);
+    }
+
+    /** Whether the keys an object takes are the ones of a message body: data, resource and script. */
+    private static boolean isBody(Set<String> keys) {
+        return keys.contains("data") && keys.contains("resource");
+    }
+
+    /** Whether the node at the pointer is in a message the test receives, such as the response of an http request. */
+    private static boolean isReceived(String pointer) {
+        return List.of(pointer.split("/")).stream()
+                .anyMatch(s -> "receiveResponse".equals(s) || "receiveRequest".equals(s) || "receive".equals(s));
+    }
+
+    /** The pointer of the node that holds the node at the pointer. */
+    private static String parent(String pointer) {
+        return pointer.substring(0, Math.max(0, pointer.lastIndexOf('/')));
+    }
+
+    /** The fields of a JSON object with a text, number or boolean value, by name; empty for any other text. */
+    private static Map<String, String> jsonFields(String text) {
+        Map<String, String> answer = new LinkedHashMap<>();
+        try {
+            JsonNode json = text != null && text.strip().startsWith("{") ? JSON.readTree(text) : null;
+            if (json != null && json.isObject()) {
+                json.properties().forEach(e -> {
+                    if (e.getValue().isValueNode() && !e.getValue().isNull() && e.getKey().matches("[A-Za-z_]\\w*")) {
+                        answer.put(e.getKey(), e.getValue().asText());
+                    }
+                });
+            }
+        } catch (IOException e) {
+            // not JSON: no fields
+        }
+        return answer;
+    }
+
+    /**
+     * What is said of a test that calls an integration (an http action, or a check of what an integration logged) but
+     * does not start one: camel test run runs only the test. The action that starts it, with the route file of the
+     * project when there is one, and the name the checks of the test give the integration (no test a local model wrote
+     * for test-citrus-orders step 1 started the integration). Empty when the test starts one or calls none.
+     *
+     * @param content the test
+     * @param dir     the project directory, or null
+     * @param file    the test file, relative to the directory
+     */
+    static String startNote(String content, Path dir, String file) {
+        TestSchema s = schema();
+        JsonNode tree;
+        try {
+            tree = s.model() != null && content != null && !content.isBlank() ? YAML.readTree(content) : null;
+        } catch (IOException e) {
+            tree = null;
+        }
+        if (tree == null || !tree.isObject()) {
+            return "";
+        }
+        String cli = s.model().at("/definitions/TestActions/properties/camel/properties/cli").isMissingNode()
+                ? "jbang" : "cli";
+        List<JsonNode> camel = tree.findValues("camel");
+        if (camel.stream().anyMatch(c -> c.path("cli").has("run") || c.path("jbang").has("run"))) {
+            return "";
+        }
+        String name = camel.stream().map(c -> c.path(cli).path("verify").path("integration"))
+                .filter(JsonNode::isTextual).map(JsonNode::asText).findFirst().orElse(null);
+        if (name == null && tree.findValues("http").isEmpty()) {
+            return "";
+        }
+        // the route file of the project: the one *.camel.yaml in the directory, read from the directory of the test
+        Path project = dir != null ? dir.toAbsolutePath().normalize() : null;
+        Path testDir = project != null && file != null ? project.resolve(file).normalize().getParent() : null;
+        List<Path> routes = new ArrayList<>();
+        if (testDir != null && Files.isDirectory(project)) {
+            try (Stream<Path> files = Files.list(project)) {
+                files.filter(p -> p.getFileName().toString().matches(".+\\.camel\\.ya?ml")).sorted().forEach(routes::add);
+            } catch (IOException e) {
+                routes.clear();
+            }
+        }
+        String start = "The test calls the integration but does not start it, and camel test run runs only the test:"
+                       + " start it with the first action of the test (or have it running when the test runs)";
+        if (routes.size() != 1) {
+            String example = name != null ? name : "my-app";
+            return start + ", such as - camel: {" + cli + ": {run: {integration: {name: " + example + ", file: ../"
+                   + example + ".camel.yaml}}}} for the route file " + example + ".camel.yaml in the directory above the"
+                   + " test (a file is relative to the test)";
+        }
+        String route = routes.get(0).getFileName().toString();
+        ObjectNode integration = JSON.createObjectNode();
+        integration.put("name", name != null ? name : route.substring(0, route.indexOf(".camel.")));
+        integration.put("file", testDir.relativize(routes.get(0)).toString().replace('\\', '/'));
+        if (Files.isRegularFile(project.resolve("application.properties"))) {
+            integration.set("systemProperties", JSON.createObjectNode().put("file",
+                    testDir.relativize(project.resolve("application.properties")).toString().replace('\\', '/')));
+        }
+        ObjectNode run = JSON.createObjectNode();
+        run.set("integration", integration);
+        ObjectNode action = JSON.createObjectNode();
+        action.set("camel", JSON.createObjectNode().set(cli, JSON.createObjectNode().set("run", run)));
+        List<Error> errors = new ArrayList<>(YamlValidator.filterOneOfNoise(new ArrayList<>(s.action().validate(action))));
+        if (!errors.isEmpty()) {
+            return "";
+        }
+        List<String> lines = new ArrayList<>();
+        yaml(action, 4, lines);
+        lines.set(0, "  - " + lines.get(0).substring(4));
+        return start + ":\n" + String.join("\n", lines);
+    }
+
+    /**
+     * A node of the schema's shape as YAML lines in block style at the indentation given: a text value quoted, a text
+     * of several lines as a block, an empty map as {}.
+     */
+    static void yaml(JsonNode node, int indent, List<String> out) {
+        String pad = " ".repeat(indent);
+        node.properties().forEach(e -> {
+            JsonNode v = e.getValue();
+            if (v.isObject() && !v.isEmpty()) {
+                out.add(pad + e.getKey() + ":");
+                yaml(v, indent + 2, out);
+            } else if (v.isObject()) {
+                out.add(pad + e.getKey() + ": {}");
+            } else if (v.isArray()) {
+                out.add(pad + e.getKey() + ":");
+                for (JsonNode item : v) {
+                    List<String> one = new ArrayList<>();
+                    yaml(item, indent + 4, one);
+                    if (!one.isEmpty()) {
+                        one.set(0, pad + "  - " + one.get(0).substring(indent + 4));
+                        out.addAll(one);
+                    }
+                }
+            } else if (v.asText().contains("\n")) {
+                String text = v.asText();
+                boolean newline = text.endsWith("\n");
+                out.add(pad + e.getKey() + ": " + (newline ? "|" : "|-"));
+                for (String l : (newline ? text.substring(0, text.length() - 1) : text).split("\n", -1)) {
+                    out.add(l.isEmpty() ? "" : pad + "  " + l);
+                }
+            } else {
+                out.add(pad + e.getKey() + ": " + quoted(v.asText()));
+            }
+        });
+    }
+
+    /**
+     * A text as a YAML value in quotes: double quotes, or single quotes when it holds a double quote or a backslash.
+     */
+    static String quoted(String text) {
+        return text.contains("\"") || text.contains("\\")
+                ? "'" + text.replace("'", "''") + "'"
+                : "\"" + text + "\"";
+    }
+
+    private static int indent(String line) {
+        int i = 0;
+        while (i < line.length() && line.charAt(i) == ' ') {
+            i++;
+        }
+        return i;
     }
 
     private static boolean isComposition(Error e) {

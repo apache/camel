@@ -35,7 +35,7 @@ public final class FhirCreateEndpointConfiguration extends FhirConfiguration {
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource", description="The resource to create")})
     private String resourceAsString;
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource", description="The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null"), @ApiMethod(methodName = "resource", description="The search URL to use. The format of this URL should be of the form ResourceTypeParameters, for example: Patientname=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "resource", description="The search URL to use. The format of this URL should be of the form [ResourceType]?[Parameters], for example: Patient?name=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null"), @ApiMethod(methodName = "resource", description="The search URL to use. The format of this URL should be of the form [ResourceType]?[Parameters], for example: Patient?name=Smith&amp;identifier=13.2.4.11.4%7C847366, may be null")})
     private String url;
 
     public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {

@@ -47,10 +47,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * For HTTP endpoint: if true, text and binary messages will be wrapped
          * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * otherwise they will be passed as byte[]. For WebSocket endpoint: if
          * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte[]
          * respectively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -68,10 +68,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * For HTTP endpoint: if true, text and binary messages will be wrapped
          * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * otherwise they will be passed as byte[]. For WebSocket endpoint: if
          * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte[]
          * respectively.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -704,10 +704,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * For HTTP endpoint: if true, text and binary messages will be wrapped
          * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * otherwise they will be passed as byte[]. For WebSocket endpoint: if
          * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte[]
          * respectively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -725,10 +725,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * For HTTP endpoint: if true, text and binary messages will be wrapped
          * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * otherwise they will be passed as byte[]. For WebSocket endpoint: if
          * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte[]
          * respectively.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -1339,10 +1339,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * For HTTP endpoint: if true, text and binary messages will be wrapped
          * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * otherwise they will be passed as byte[]. For WebSocket endpoint: if
          * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte[]
          * respectively.
          * 
          * The option is a: <code>boolean</code> type.
@@ -1360,10 +1360,10 @@ public interface UndertowEndpointBuilderFactory {
         /**
          * For HTTP endpoint: if true, text and binary messages will be wrapped
          * as java.io.InputStream before they are passed to an Exchange;
-         * otherwise they will be passed as byte. For WebSocket endpoint: if
+         * otherwise they will be passed as byte[]. For WebSocket endpoint: if
          * true, text and binary messages will be wrapped as java.io.Reader and
          * java.io.InputStream respectively before they are passed to an
-         * Exchange; otherwise they will be passed as String and byte
+         * Exchange; otherwise they will be passed as String and byte[]
          * respectively.
          * 
          * The option will be converted to a <code>boolean</code> type.

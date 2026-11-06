@@ -1546,6 +1546,12 @@ that you set the following properties on the component/endpoint:
 See the Transactional Client EIP pattern
 for further details.
 
+A message that the route sends with the JMS component is part of the transaction of the consumer when the producer
+endpoint uses the same connection factory as the consumer endpoint. This is the case for the connection factory of the
+component, also when `username` and `password` are set on the component, or set to the same values on both endpoints.
+A producer endpoint with its own `connectionFactory`, or with other credentials, sends outside the transaction of the
+consumer.
+
 Transactions and [Request Reply] over JMS
 
 When using Request Reply over JMS, you cannot

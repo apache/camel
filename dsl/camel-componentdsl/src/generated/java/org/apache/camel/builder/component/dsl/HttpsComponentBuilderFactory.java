@@ -618,7 +618,7 @@ public interface HttpsComponentBuilderFactory {
     
         /**
          * Comma-separated list of hosts that should bypass the proxy. Supports
-         * wildcards, e.g., localhost,.example.com,192.168..
+         * wildcards, e.g., localhost,*.example.com,192.168.*.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -795,8 +795,8 @@ public interface HttpsComponentBuilderFactory {
          * Content-Type application/x-java-serialized-object (only used when
          * allowJavaSerializedObject or transferException is enabled). When not
          * set, the JVM-wide jdk.serialFilter is used if present; otherwise a
-         * conservative default filter denying java.net. and otherwise allowing
-         * java., javax. and org.apache.camel. packages is applied.
+         * conservative default filter denying java.net.* and otherwise allowing
+         * java.*, javax.* and org.apache.camel.* packages is applied.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

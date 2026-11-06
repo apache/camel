@@ -107,6 +107,7 @@ final class StatusParser {
         parseServices(info, root);
         parseInternalTasks(info, root);
         parseCircuitBreakers(info, root);
+        info.chaos = ChaosInfo.parse(root.get("chaos") instanceof JsonObject chaos ? chaos : null);
 
         // Parse Kafka consumers
         parseKafkaSection(root, info);

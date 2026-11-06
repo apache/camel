@@ -118,9 +118,8 @@ public interface CxfEndpointBuilderFactory {
          * and the exception is not a SOAP fault the service contract declares,
          * the SOAP fault returned to the caller won't contain the exception's
          * class or message. Faults the route raises deliberately - a CXF Fault,
-         * an exception annotated {code WebFault}, or a Throwable set as the
-         * message body - are part of the contract and are always returned in
-         * full.
+         * an exception annotated WebFault, or a Throwable set as the message
+         * body - are part of the contract and are always returned in full.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -139,9 +138,8 @@ public interface CxfEndpointBuilderFactory {
          * and the exception is not a SOAP fault the service contract declares,
          * the SOAP fault returned to the caller won't contain the exception's
          * class or message. Faults the route raises deliberately - a CXF Fault,
-         * an exception annotated {code WebFault}, or a Throwable set as the
-         * message body - are part of the contract and are always returned in
-         * full.
+         * an exception annotated WebFault, or a Throwable set as the message
+         * body - are part of the contract and are always returned in full.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -313,7 +311,7 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * This option can override the endpointUrl that published from the WSDL
-         * which can be accessed with service address url plus wsd.
+         * which can be accessed with service address url plus ?wsd.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -652,7 +650,7 @@ public interface CxfEndpointBuilderFactory {
          * This option could apply the implementation of
          * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
          * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{ServerClient}
+         * the CXF server and client by implementing configure{Server|Client}
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
@@ -671,7 +669,7 @@ public interface CxfEndpointBuilderFactory {
          * This option could apply the implementation of
          * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
          * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{ServerClient}
+         * the CXF server and client by implementing configure{Server|Client}
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
@@ -1312,7 +1310,7 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * This option can override the endpointUrl that published from the WSDL
-         * which can be accessed with service address url plus wsd.
+         * which can be accessed with service address url plus ?wsd.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1609,7 +1607,7 @@ public interface CxfEndpointBuilderFactory {
          * This option could apply the implementation of
          * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
          * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{ServerClient}
+         * the CXF server and client by implementing configure{Server|Client}
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
@@ -1628,7 +1626,7 @@ public interface CxfEndpointBuilderFactory {
          * This option could apply the implementation of
          * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
          * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{ServerClient}
+         * the CXF server and client by implementing configure{Server|Client}
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
@@ -2117,7 +2115,7 @@ public interface CxfEndpointBuilderFactory {
         }
         /**
          * This option can override the endpointUrl that published from the WSDL
-         * which can be accessed with service address url plus wsd.
+         * which can be accessed with service address url plus ?wsd.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2341,7 +2339,7 @@ public interface CxfEndpointBuilderFactory {
          * This option could apply the implementation of
          * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
          * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{ServerClient}
+         * the CXF server and client by implementing configure{Server|Client}
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
@@ -2360,7 +2358,7 @@ public interface CxfEndpointBuilderFactory {
          * This option could apply the implementation of
          * org.apache.camel.component.cxf.CxfEndpointConfigurer which supports
          * to configure the CXF endpoint in programmatic way. User can configure
-         * the CXF server and client by implementing configure{ServerClient}
+         * the CXF server and client by implementing configure{Server|Client}
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a

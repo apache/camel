@@ -265,7 +265,7 @@ public interface SpringJdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * To read BLOB columns as bytes (a byte) instead of a java.sql.Blob,
+         * To read BLOB columns as bytes (a byte[]) instead of a java.sql.Blob,
          * which cannot be read after the producer has closed the connection.
          * This may be needed for certain databases such as Oracle where you
          * must read BLOB columns as bytes.
@@ -283,7 +283,7 @@ public interface SpringJdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * To read BLOB columns as bytes (a byte) instead of a java.sql.Blob,
+         * To read BLOB columns as bytes (a byte[]) instead of a java.sql.Blob,
          * which cannot be read after the producer has closed the connection.
          * This may be needed for certain databases such as Oracle where you
          * must read BLOB columns as bytes.

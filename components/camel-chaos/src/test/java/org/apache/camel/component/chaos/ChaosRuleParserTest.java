@@ -72,6 +72,17 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void theSendOfTheDeadLetterChannelNeedsAtDlq() {
+        assertThat(parse("endpoint=mock:dead error").hooks).doesNotContain(Hook.DLQ);
+        assertThat(parse("component=seda drop").hooks).doesNotContain(Hook.DLQ);
+        assertThat(parse("endpoint=mock:dead error at=dlq").hooks).containsExactly(Hook.DLQ);
+        assertThat(parse("endpoint=mock:dead delay duration=1s at=dlq").hooks).containsExactly(Hook.DLQ);
+        assertThat(parse("endpoint=http:dead* error status=503 at=dlq").hooks).containsExactly(Hook.DLQ);
+        rejected("step=s1 error at=dlq", "at=dlq is not a hook of the target step=");
+        rejected("route=r1 corrupt mode=headers at=dlq", "at=dlq is not a hook of the target route=");
+    }
+
+    @Test
     void errorWithoutParametersIsAChaosException() {
         ChaosRule.Builder b = parse("component=kafka error");
         assertThat(b.exceptionType).isNull();
@@ -163,6 +174,27 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void expectationKindsAndOps() {
+        ChaosRule.Builder b = parse("endpoint=x error expect=orders:handled<=0 within=1m");
+        assertThat(b.expectRoute).isEqualTo("orders");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.HANDLED);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.AT_MOST);
+        assertThat(b.expectCount).isZero();
+        b = parse("endpoint=x error expect=a:b:redeliveries>=30");
+        assertThat(b.expectRoute).isEqualTo("a:b");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.REDELIVERIES);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.AT_LEAST);
+        b = parse("endpoint=x error expect=orders:failed=0");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.FAILED);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.EXACTLY);
+        // a count alone is at least that many completed exchanges, as before
+        b = parse("endpoint=x error expect=orders:20");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.COMPLETED);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.AT_LEAST);
+        assertThat(parse("endpoint=x error expect=orders:completed>=20").expectCount).isEqualTo(20);
+    }
+
+    @Test
     void quotedValuesAndEscapes() {
         assertThat(parse("endpoint=x error message='it is \\'down\\''").message).isEqualTo("it is 'down'");
         assertThat(parse("endpoint=x error message=\"a \\\\ b ; c\"").message).isEqualTo("a \\ b ; c");
@@ -172,6 +204,64 @@ class ChaosRuleParserTest {
         // a backslash before any other character stays
         assertThat(parse("endpoint=x error message=\"c:\\temp\"").message).isEqualTo("c:\\temp");
         assertThat(parse("  endpoint=x\terror  ").fault).isEqualTo(Fault.ERROR);
+    }
+
+    @Test
+    void errorAfterTheProducerAtReply() {
+        ChaosRule.Builder b = parse("endpoint=kafka:payments* error at=reply");
+        assertThat(b.hooks).containsExactly(Hook.REPLY);
+        // only with at=reply, so an error rule still fails the send before the producer
+        assertThat(parse("endpoint=kafka:payments* error").hooks).doesNotContain(Hook.REPLY);
+        assertThat(parse("endpoint=kafka:payments* corrupt mode=headers").hooks).containsExactly(Hook.SEND);
+        assertThat(parse("endpoint=kafka:payments* corrupt mode=empty at=reply").hooks).containsExactly(Hook.REPLY);
+        assertThat(parse("endpoint=https:payments* error status=503 at=reply").hooks).containsExactly(Hook.REPLY);
+    }
+
+    @Test
+    void errorAfterAWaitIsATimeout() {
+        ChaosRule.Builder b = parse("endpoint=kafka:orders* error after=5s exception=java.net.SocketTimeoutException");
+        assertThat(b.after).isEqualTo(5000L);
+        assertThat(b.hooks).containsExactlyInAnyOrder(Hook.SEND, Hook.POLL);
+        assertThat(parse("step=s1 error after=1s").after).isEqualTo(1000L);
+        assertThat(parse("endpoint=https:x error status=504 after=30s").after).isEqualTo(30_000L);
+    }
+
+    @Test
+    void jitteredDelay() {
+        ChaosRule.Builder b = parse("endpoint=kafka:orders* delay duration=100ms..2s");
+        assertThat(b.duration).isEqualTo(100L);
+        assertThat(b.durationMax).isEqualTo(2000L);
+        assertThat(parse("step=s1 delay duration=1s").durationMax).isZero();
+    }
+
+    @Test
+    void startOffsetBurstsAndFlappingRoutes() {
+        assertThat(parse("endpoint=x drop from=+30s").from).isEqualTo(30_000L);
+        assertThat(parse("endpoint=x drop from=30s until=1m").from).isEqualTo(30_000L);
+        // within can reach the end of a rule that starts later
+        assertThat(parse("endpoint=x drop from=5m until=10m expect=orders:1 within=15m").within)
+                .isEqualTo(TimeUnit.MINUTES.toMillis(15));
+        rejected("endpoint=x drop from=5m expect=orders:1 within=16m", "after the start of the rule (from=)");
+
+        ChaosRule.Builder burst = parse("endpoint=x error rate=burst:5s/30s");
+        assertThat(burst.burstOn).isEqualTo(5000L);
+        assertThat(burst.burstPeriod).isEqualTo(30_000L);
+
+        ChaosRule.Builder flap = parse("route=orders stall duration=10s repeat=3 every=1m from=+30s");
+        assertThat(flap.repeat).isEqualTo(3);
+        assertThat(flap.repeatEvery).isEqualTo(60_000L);
+        assertThat(flap.from).isEqualTo(30_000L);
+        assertThat(parse("route=orders lifecycle action=stop duration=1m repeat=5 every=2m15s").repeat).isEqualTo(5);
+        assertThat(parse("route=orders stall duration=10s").repeat).isEqualTo(1);
+    }
+
+    @Test
+    void moreCorruptModes() {
+        assertThat(parse("endpoint=x corrupt mode=empty").mode).isEqualTo(CorruptMode.EMPTY);
+        ChaosRule.Builder b = parse("endpoint=x corrupt mode=remove-header header=X-Correlation-*");
+        assertThat(b.mode).isEqualTo(CorruptMode.REMOVE_HEADER);
+        assertThat(b.header).isEqualTo("X-Correlation-*");
+        assertThat(parse("route=r1 corrupt mode=remove-header").header).isNull();
     }
 
     @Test
@@ -212,15 +302,16 @@ class ChaosRuleParserTest {
             "route=orders stall duration=11m|duration=11m is longer than camel.chaos.maxDuration (10m0s)",
             "route=orders stall duration=0|duration=0 must be longer than 0",
             "route=orders stall duration=soon|duration=soon is not a time",
-            "route=orders stall duration=1m rate=0.5|rate= does not apply to the fault stall: it acts once on the route"
-                                                                            + " when the rule is added, and brings it back after its duration",
+            "route=orders stall duration=1m rate=0.5|rate= does not apply to the fault stall: it acts on the route"
+                                                                            + " when the rule is added (or from=, and again with repeat=), and brings it"
+                                                                            + " back after its duration",
             "route=orders lifecycle action=stop duration=1m until=5|until= does not apply to the fault lifecycle",
             "route=orders stall duration=1m until=1m|until= does not apply to the fault stall",
             "route=orders stall duration=1m at=entry|at= does not apply to the fault stall",
             "route=orders stall duration=1m mode=headers|unknown parameter mode for the fault stall (its parameters are"
-                                                                                             + " duration, expect, within)",
+                                                                                             + " duration, every, repeat, expect, from, within)",
             "route=orders lifecycle action=stop duration=1m mode=x|unknown parameter mode for the fault lifecycle (its"
-                                                                                                                             + " parameters are action, duration, expect, within)",
+                                                                                                                                                  + " parameters are action, duration, every, repeat, expect, from, within)",
             "route=orders stall lifecycle duration=1m|a rule has one fault, found stall and lifecycle",
             "endpoint=kafka:x stall duration=1m|the fault stall acts on a route, so it takes only a route=<id> target, not"
                                                                                                         + " endpoint=",
@@ -289,6 +380,12 @@ class ChaosRuleParserTest {
             "endpoint=x error expect=:5|is not <route>:<count>",
             "endpoint=x error expect=orders:|is not <route>:<count>",
             "endpoint=x error expect=orders:0|needs a count of 1 or more",
+            "endpoint=x error expect=orders:completed>=0|needs a count of 1 or more",
+            "endpoint=x error expect=orders:lost<=0|counts lost: the kinds are completed, handled, failed and redeliveries",
+            "endpoint=x error expect=orders:<=0|counts nothing",
+            "endpoint=x error expect=orders:handled<0|needs >=, <= or = after handled",
+            "endpoint=x error expect=orders:handled<=x|needs a count that is a whole number",
+            "endpoint=x error expect=orders:handled<=|needs a count that is a whole number",
             "endpoint=x error expect=orders:5 within=0s|must be longer than 0",
             "endpoint=x error expect=orders:5 within=11m|within=11m is longer than camel.chaos.maxDuration",
             "endpoint=x error expect=orders:5 within=106751991167d|is longer than camel.chaos.maxDuration",
@@ -309,7 +406,37 @@ class ChaosRuleParserTest {
             "component=http:localhost error|component= is matched against the scheme of the endpoint URI only",
             "component=http:localhost error|use endpoint=http:localhost* to match the endpoint",
             "component=http:* delay duration=1s|use endpoint=http:* to match the endpoint",
-            "endpoint=x error rate=every:10 until=5|would never fire" })
+            "endpoint=x error rate=every:10 until=5|would never fire",
+            "endpoint=x error at=reply after=5s|after= waits before the failure, which it cannot do at=reply",
+            "endpoint=x delay duration=1s at=reply|the fault delay is not offered at=reply",
+            "endpoint=x drop at=reply|the fault drop is not offered at=reply",
+            "step=s1 error at=reply|at=reply is not a hook of the target step=",
+            "endpoint=x error after=0|after=0 must be longer than 0",
+            "endpoint=x error after=11m|after=11m is longer than camel.chaos.maxDuration",
+            "endpoint=x delay duration=2s..1s|needs a range from a shorter time to a longer one",
+            "endpoint=x delay duration=1s..1s|needs a range from a shorter time to a longer one",
+            "endpoint=x delay duration=1s..11m|duration=1s..11m is longer than camel.chaos.maxDuration",
+            "endpoint=x delay duration=..2s|duration=..2s needs two times longer than 0",
+            "endpoint=x delay duration=1s..|duration=1s.. needs two times longer than 0",
+            "endpoint=x drop from=+0s|from=0s must be longer than 0",
+            "endpoint=x drop from=11m|from=11m is longer than camel.chaos.maxDuration",
+            "endpoint=x drop from=soon|from=soon is not a time",
+            "endpoint=x drop rate=burst:5s|needs burst:<time>/<period>",
+            "endpoint=x drop rate=burst:/30s|needs burst:<time>/<period>",
+            "endpoint=x drop rate=burst:30s/30s|needs a burst shorter than its period",
+            "endpoint=x drop rate=burst:5s/11m|is longer than camel.chaos.maxDuration",
+            "endpoint=x drop rate=burst:5x/30s|rate=burst:5x/30s needs two times longer than 0",
+            "endpoint=x corrupt mode=headers header=X-Id|header= names the headers that mode=remove-header removes",
+            "endpoint=x error header=X-Id|unknown parameter header for the fault error",
+            "endpoint=x drop every=1m|unknown parameter every for the fault drop",
+            "route=orders stall duration=10s every=1m|every= is the time between the actions of repeat=<n>",
+            "route=orders stall duration=10s repeat=3|repeat=3 needs every=<time>, the time from one suspend",
+            "route=orders stall duration=10s repeat=0 every=1m|repeat=0 needs a number from 1 to 100",
+            "route=orders stall duration=10s repeat=101 every=1m|repeat=101 needs a number from 1 to 100",
+            "route=orders stall duration=1m repeat=3 every=1m|every=1m must be longer than duration=1m0s",
+            "route=orders stall duration=1m repeat=6 every=2m|keeps the rule going for 11m0s, longer than"
+                                                                                                           + " camel.chaos.maxDuration (10m0s)",
+            "route=orders stall duration=1m from=11m|from=11m is longer than camel.chaos.maxDuration" })
     void rejectedWithReason(String rule, String reason) {
         rejected(rule, reason.replace("\\'", "'"));
     }

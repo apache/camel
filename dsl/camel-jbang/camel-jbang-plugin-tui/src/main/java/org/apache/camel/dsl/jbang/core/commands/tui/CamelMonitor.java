@@ -1875,8 +1875,8 @@ public class CamelMonitor extends CamelCommand {
                 monitorNotification = null;
             }
         }
-        // Right-aligned header spans (web server indicator)
-        List<Span> headerRight = new ArrayList<>();
+        // Right-aligned header spans (the chaos badge, web server indicator)
+        List<Span> headerRight = new ArrayList<>(ChaosTab.headerBadge(ctx.findSelectedIntegration()));
         if (web && webBackend == null) {
             headerRight.add(Span.styled("web :" + webPort + " ",
                     Theme.notice().underlined().hyperlink("http://127.0.0.1:" + webPort + "/")));

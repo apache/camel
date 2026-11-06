@@ -77,7 +77,7 @@ public interface VertxHttpComponentBuilderFactory {
     
         
         /**
-         * Whether the response body should be byte or as
+         * Whether the response body should be byte[] or as
          * io.vertx.core.buffer.Buffer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

@@ -403,7 +403,7 @@ public interface PdfEndpointBuilderFactory {
 
         /**
          * Expected type is
-         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/ProtectionPolicy.htmlProtectionPolicy. If specified then PDF document will be encrypted with it.
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/ProtectionPolicy.html[ProtectionPolicy]. If specified then PDF document will be encrypted with it.
          * 
          * The option is a: {@code
          * org.apache.pdfbox.pdmodel.encryption.ProtectionPolicy} type.
@@ -416,9 +416,9 @@ public interface PdfEndpointBuilderFactory {
             return "CamelPdfProtectionPolicy";
         }
         /**
-         * Mandatory header for append operation and ignored in all other
+         * Mandatory* header for append operation and ignored in all other
          * operations. Expected type is
-         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/PDDocument.htmlPDDocument. Stores PDF document which will be used for append operation.
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/PDDocument.html[PDDocument]. Stores PDF document which will be used for append operation.
          * 
          * The option is a: {@code org.apache.pdfbox.pdmodel.PDDocument} type.
          * 
@@ -431,7 +431,7 @@ public interface PdfEndpointBuilderFactory {
         }
         /**
          * Expected type is
-         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.htmlDecryptionMaterial. Mandatory header if PDF document is encrypted.
+         * https://pdfbox.apache.org/docs/2.0.13/javadocs/org/apache/pdfbox/pdmodel/encryption/DecryptionMaterial.html[DecryptionMaterial]. Mandatory* header if PDF document is encrypted.
          * 
          * The option is a: {@code
          * org.apache.pdfbox.pdmodel.encryption.DecryptionMaterial} type.
@@ -444,7 +444,7 @@ public interface PdfEndpointBuilderFactory {
             return "CamelPdfDecryptionMaterial";
         }
         /**
-         * Mandatory header for merge operation and ignored in all other
+         * Mandatory* header for merge operation and ignored in all other
          * operations. The list of pdf files that will be merged, each given as
          * a java.io.File or a java.nio.file.Path.
          * 

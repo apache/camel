@@ -352,6 +352,34 @@ resolved: OpenSSH and Apache MINA SSHD list a link as a link, but a server that 
 instead does not show it as a link, and with `useList=false` there is no listing. The check and the download that
 follows are not atomic, so the permissions and link settings of the SFTP server still matter.
 
+=== Read locks
+
+The sftp consumer supports the read locks `none`, `rename` and `changed`.
+`readLock=false` and `readLock=off` mean `none`.
+Any other `readLock` value, such as the `markerFile`, `fileLock`, `idempotent`, `idempotent-changed`
+and `idempotent-rename` read locks of the xref:file-component.adoc[File] component, fails when the
+consumer is created, also with `poll` and `pollEnrich`, with `IllegalArgumentException: ReadLock invalid`.
+The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
+is set, as it does not apply then.
+
+=== Checking whether a file exists
+
+The `sftp` component checks whether a remote file exists with a single `lstat` request, whatever the number of files
+in the directory. This applies to `fileExist=Ignore`, `Fail` and `Move`, to `tempFileName` and `tempPrefix`, to a
+producer `doneFileName`, and to `readLock=changed`, which reads the size and modification time of the file with the same
+request on every check. So the `fastExistsCheck` option no longer makes a difference for these checks with `sftp`.
+
+The answer comes from the server for the path itself:
+
+* A symbolic link is not followed, as in a directory listing. A dangling link exists, and `readLock=changed` compares
+  the size and modification time of the link, not those of its target.
+* A server on a case-insensitive file system, such as one backed by Windows or macOS, finds a file whose name differs
+  only in case, which the upload would replace.
+
+When the server answers the request with another status than "no such file", for example because it does not permit or
+support it on the path, the component lists the directory instead and compares the names, as before. This listing is
+the same with and without `fastExistsCheck`.
+
 == More Information
 
 For more information, you can look at the xref:ftp-component.adoc[FTP component].

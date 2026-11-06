@@ -80,14 +80,15 @@ to any tab, or *Shift+F2* to go to a tab by name.
 The *More* menu (key *0*) opens a popup with tabs organized into groups:
 
 * *Routing* -- Browse Endpoints, Consumers, HTTP, Inflight, Producers, Route Controller
-* *Observability* -- Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
+* *Observability* -- Chaos, Circuit Breaker, Health, JFR, Metrics, Network Services, Exchange Events, Recovery Tasks, OpenTelemetry Spans
 * *AI* -- Semantic (definitions, expert contracts, relationships, sample evaluation, Audit and Monitoring), Ollama (listed when an Ollama server is detected)
 * *Data* -- JDBC DataSource, Kafka, Secrets, SQL Query, SQL Trace
 * *JVM* -- Classpath, Heap Memory Histogram, Memory Usage, Memory Leak, Process, Startup, Threads
 * *Project* -- Beans, Catalog, Configuration, CVE Audit, Maven Dependencies, Type Converters, Data Type Transformers
 
 Tabs appear dynamically based on what the integration uses. For example, the Kafka tab appears
-when a Kafka component is in use, SQL tabs when a DataSource is present, Circuit Breaker when
+when a Kafka component is in use, SQL tabs when a DataSource is present, Chaos when the integration has
+xref:next@components:others:chaos.adoc[camel-chaos] (`camel run --chaos`), Circuit Breaker when
 resilience4j is in use, Spans when OpenTelemetry is enabled, and JFR when `camel-jfr` is on the
 classpath. The TUI adapts to show only what's relevant to your integration.
 
