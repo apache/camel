@@ -118,6 +118,13 @@ It also reads the whole directory when the server supports SMB 3 directory lease
 `searchPattern` is set: the SMB client then serves a repeat listing from its cache while it holds the lease, which
 costs less than reading the start of the directory again.
 
+=== Read locks
+
+The smb consumer supports the read locks `none`, `rename` and `changed`.
+Any other `readLock` value, such as the `markerFile`, `fileLock`, `idempotent`, `idempotent-changed`
+and `idempotent-rename` read locks of the xref:file-component.adoc[File] component, and also `false`
+and `off`, fails when the consumer is created, with `IllegalArgumentException: ReadLock invalid`.
+
 === Polling files (advanced)
 
 

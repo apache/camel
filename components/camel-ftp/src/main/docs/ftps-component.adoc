@@ -78,6 +78,15 @@ And this route uploads the files of a local folder:
               binary: true
 ----
 
+=== Read locks
+
+The ftps consumer supports the read locks `none`, `rename` and `changed`.
+`readLock=false` and `readLock=off` mean `none`.
+Any other `readLock` value, such as the `markerFile`, `fileLock`, `idempotent`, `idempotent-changed`
+and `idempotent-rename` read locks of the xref:file-component.adoc[File] component, fails when the
+consumer is created, also with `poll` and `pollEnrich`, with `IllegalArgumentException: ReadLock invalid`.
+The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
+is set, as it does not apply then.
 
 == More Information
 
