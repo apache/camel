@@ -184,6 +184,14 @@ final class ChaosRuleParser {
         if (b.fault == null) {
             throw new IllegalArgumentException("a rule needs a fault: error, delay, drop, corrupt, stall or lifecycle");
         }
+        if (b.target == Target.COMPONENT && b.pattern.indexOf(':') >= 0) {
+            // matched against the scheme only, so a pattern with a colon would never match
+            throw new IllegalArgumentException(
+                    "component=" + b.pattern + " has a ':', but component= is matched against the scheme of the"
+                                               + " endpoint URI only (such as component=http): use endpoint="
+                                               + b.pattern + (b.pattern.endsWith("*") ? "" : "*")
+                                               + " to match the endpoint");
+        }
         if (b.fault == Fault.LIFECYCLE) {
             // stall and lifecycle act once on the route: no hook, rate or until
             lifecycle(b, params, maxDuration);
@@ -223,6 +231,13 @@ final class ChaosRuleParser {
         hooks(b, params.get("at"), http);
         rate(b, params.get("rate"));
         until(b, params.get("until"), maxDuration);
+        if (b.every > b.untilCount && b.untilCount > 0) {
+            // until counts the matches, so the rule ends before its first fault
+            throw new IllegalArgumentException(
+                    "rate=every:" + b.every + " fires at match " + b.every + ", but until=" + b.untilCount
+                                               + " ends the rule after " + b.untilCount + " matches, so it would never"
+                                               + " fire");
+        }
         expectation(b, params.get("expect"), params.get("within"), maxDuration);
         return b;
     }
@@ -270,7 +285,7 @@ final class ChaosRuleParser {
                 while (i < n) {
                     char c = text.charAt(i);
                     checkChar(text, i);
-                    if (c == '\\' && i + 1 < n && (text.charAt(i + 1) == quote || text.charAt(i + 1) == '\\')) {
+                    if (c == '\\' && i + 1 < n && isEscaped(text.charAt(i + 1))) {
                         value.append(text.charAt(i + 1));
                         i += 2;
                     } else if (c == quote) {
@@ -313,6 +328,11 @@ final class ChaosRuleParser {
 
     private static boolean isSpace(char ch) {
         return ch == ' ' || ch == '\t';
+    }
+
+    /** The characters that a backslash escapes inside a quoted value: either quote and the backslash. */
+    private static boolean isEscaped(char ch) {
+        return ch == '"' || ch == '\'' || ch == '\\';
     }
 
     private static void checkChar(String text, int i) {
@@ -442,6 +462,13 @@ final class ChaosRuleParser {
         if (!Throwable.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException("the exception class " + name + " is not a Throwable");
         }
+        if (InterruptedException.class.isAssignableFrom(type)) {
+            // Camel marks an exchange with an InterruptedException as interrupted and stops routing it, so
+            // onException, redelivery and the dead letter channel would never see the failure
+            throw new IllegalArgumentException(
+                    "the exception class " + name + " is an InterruptedException, which makes Camel stop routing the"
+                                               + " exchange without onException, redelivery or the dead letter channel");
+        }
         if (Modifier.isAbstract(type.getModifiers()) || !Modifier.isPublic(type.getModifiers())) {
             throw new IllegalArgumentException("the exception class " + name + " is abstract or not public");
         }
@@ -451,6 +478,11 @@ final class ChaosRuleParser {
         Constructor<? extends Throwable> constructor = constructor(throwable, String.class);
         b.exceptionTakesMessage = constructor != null;
         if (constructor == null) {
+            if (b.message != null) {
+                throw new IllegalArgumentException(
+                        "the exception class " + name + " has no public constructor taking a String message,"
+                                                   + " so it cannot be used with message=");
+            }
             constructor = constructor(throwable);
         }
         if (constructor == null) {
