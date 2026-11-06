@@ -94,6 +94,8 @@ class MonitorContext {
     BiConsumer<String, Boolean> notificationCallback;
     // opens the Chaos screen with the known rules for a target ({@code !} on an endpoint, a consumer or a diagram node)
     Consumer<ChaosHere.Target> chaosHere;
+    // the exchanges chaos rules faulted, for the marks on the Activity, Errors and Inspect tabs
+    final ChaosMarks chaosMarks = new ChaosMarks();
     BiConsumer<String, String> openMarkdownCallback;
     /** Opens markdown in the doc viewer scrolled to a heading: title, markdown, heading (may be null). */
     MarkdownOpener openMarkdownAtCallback;

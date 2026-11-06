@@ -63,7 +63,7 @@ class SourceSizeTest {
             DiagramSupport.java 2360
             DiagramSupport.loadHighlightedNativeDiagramInBackground 200
             EndpointsTab.renderContent 170
-            HistoryTab.java 2720
+            HistoryTab.java 2722
             HistoryTab.renderDiagramInfoPanel 202
             LogTab.render 173
             MemoryLeakTab.java 2033

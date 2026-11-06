@@ -156,7 +156,8 @@ class ActivityTab extends AbstractTableTab {
 
             rows.add(Row
                     .from(
-                            Cell.from(shortExchangeId(ae.exchangeId)),
+                            ChaosMarks.cell(shortExchangeId(ae.exchangeId), Style.EMPTY,
+                                    ChaosMarks.ruleOf(ctx, info, ae.exchangeId, null)),
                             Cell.from(Span.styled(ae.routeId != null ? ae.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                             Cell.from(Span.styled(status, statusStyle)),
                             Cell.from(elapsed),
@@ -179,7 +180,7 @@ class ActivityTab extends AbstractTableTab {
         List<Constraint> constraints = new ArrayList<>();
         constraints.add(Constraint.length(4));
         constraints.add(Constraint.fill());
-        List<Line> detailLines = showDetail ? detailLines(selectedEntry) : List.of();
+        List<Line> detailLines = showDetail ? detailLines(selectedEntry, info) : List.of();
         if (showDetail) {
             // the detail is as tall as what it has to say, up to half of the tab; the table takes the rest
             int detailHeight = Math.max(6, Math.min(detailLines.size() + 2, (area.height() - 4) / 2));
@@ -322,12 +323,13 @@ class ActivityTab extends AbstractTableTab {
         detailHScroll = hScroll[0];
     }
 
-    private static List<Line> detailLines(ActivityEntry ae) {
+    private List<Line> detailLines(ActivityEntry ae, IntegrationInfo info) {
         List<Line> lines = new ArrayList<>();
 
         HistoryTab.addExchangeInfoLines(lines,
                 ae.exchangeId, ae.routeId, null, null, "Endpoint", TuiHelper.displayUri(ae.fromEndpointUri),
                 ae.elapsed, null, ae.failed);
+        ChaosMarks.addDetailLine(lines, ctx, info, ae.exchangeId, null);
 
         if (ae.exceptionMessage != null) {
             HistoryTab.addExceptionLines(lines, ae.exceptionMessage);
