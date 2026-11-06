@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
@@ -69,6 +70,7 @@ public class MongoDbFindOperationIT extends CamelTestSupport {
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
+        mongo = MongoClients.create(service.getReplicaSetUrl());
         db = mongo.getDatabase(dbName);
     }
 
