@@ -94,9 +94,14 @@ Rules can also be added, changed and removed from Java while the application run
 ChaosManager chaos = ChaosManager.get(camelContext);
 String id = chaos.addRule("endpoint=file:inbox* drop at=poll rate=0.5 until=2m");
 chaos.changeRule(id, "endpoint=file:inbox* drop at=poll rate=0.2 until=2m");
+List<String> warnings = chaos.checkRule(id);
 chaos.removeRule(id);
+List<String> ids = chaos.addRules("endpoint=seda:dlq error at=dlq; endpoint=https:inventory* error status=503");
 String text = chaos.report().toText();
 ----
+
+`addRules` adds rules separated by `;`, as in `camel.chaos.rules`, all of them or none when one is not valid, so they
+are in place at the same time. `checkRule` says what a rule matches nothing of in the context now, see below.
 
 == Control while it runs
 
@@ -105,6 +110,7 @@ With the Camel CLI, against a running integration (`myapp` is its name or pid):
 [source,bash]
 ----
 camel cmd chaos-add myapp --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'
+camel cmd chaos-add myapp --rule='endpoint=seda:dlq error at=dlq' --rule='endpoint=https:inventory* error status=503'
 camel cmd chaos-change myapp --id=r1 --rule='endpoint=kafka:orders* delay duration=5s rate=0.5 until=5m'
 camel cmd chaos-remove myapp --id=r1
 camel cmd chaos-clear
@@ -114,12 +120,23 @@ camel get chaos myapp --report
 ----
 
 `chaos-add` prints the id of the new rule (`r1`, `r2`, ...), and `chaos-change` the version of the rule that replaces
-it. The ids are per integration, so `chaos-add`, `chaos-change` and `chaos-remove` need the name or pid of one
+it. `--rule` can be given more than once (or a rule can hold several separated by `;`): the rules are added together,
+all or none, which matters when one must be in place before the other fires, as each `chaos-add` takes a moment. The ids are per integration, so `chaos-add`, `chaos-change` and `chaos-remove` need the name or pid of one
 integration; `chaos-clear` without one acts on every running integration that has chaos switched on. The rules that
 `chaos-clear` removes stay in the report; with `--reset` the report starts again, for a new experiment: no rules,
 route counts or verdict, as for an application that just started (with the same seed, and the ids of new rules going on
 from the last one). An id that does not exist is "not found" (exit code 3). `camel get chaos` lists the current rules with their id, version, state,
-matches and faults, and `--report` shows the report (also as JSON with `--json`).
+matches and faults, and `--report` shows the report (also as JSON with `--json`). Their `NOTE` column says what a
+lifecycle rule does to its route (`route poller down, back in 12s`) and why a rule did nothing when it was skipped.
+Without a rule to show, `camel get chaos` says so on stderr (no rules, chaos off, or no integration with camel-chaos).
+
+A rule that matches nothing in the integration now is added with a warning, which `chaos-add` and `chaos-change` print,
+and which is logged: an `endpoint=` or `component=` pattern that matches no endpoint of the context, an `at=poll` for
+endpoints that no route consumes with a scheduled poll, a `route=` or `step=` pattern that matches no route or step
+id, and an expectation of a route that does not exist. Such a rule fires 0 times, and is often a typo; the warning
+names some of the endpoints, routes or steps there are. It is not an error, as the routes may still change (a `toD`
+creates its endpoints when it sends, and a route can be added later). The rules of `camel.chaos.rules` are checked when
+the context has started.
 
 The commands go through the `chaos` action of the CLI connector, which calls `ChaosManager`: a rule goes through the
 same parser as `camel.chaos.rules`, and one that is not valid is refused with the reason. They work only when chaos is
@@ -137,7 +154,8 @@ as tools, for an AI agent that tries a route against failures: `camel_runtime_ch
 They take the same one-line rules: adding, changing, removing and clearing go through the same `chaos` action of the CLI
 connector, and the list and the report read the console from the status of the application. So chaos must be switched
 on, and a rule that is not valid is refused with the reason; `camel_runtime_chaos_clear` takes `reset=true` as
-`chaos-clear --reset` does. Adding and changing a rule are marked destructive, so a
+`chaos-clear --reset` does. `camel_runtime_chaos_add` takes several rules separated by `;`, and the add and change
+tools return the warnings of a rule that matches nothing, so an agent can fix a typo with a change. Adding and changing a rule are marked destructive, so a
 client that honours `destructiveHint` asks before it runs them, and the `read-write` access level of the MCP security
 layer does not offer them; the list and the report are read-only. `camel ask` has the same tools, and asks before it
 adds or changes a rule. The development MCP tools that `camel run --mcp` (`camel.jbang.mcp=true`) serves over HTTP have
@@ -268,7 +286,7 @@ which is read into memory; not a stream or a reader, which reading would consume
 the bytes of that text in UTF-16, while the exchange keeps its charset, so read as text again it has characters outside
 US-ASCII. `truncate`: an `InputStream` or stream cache body ends after the first half of its bytes (the stream is read
 into memory; a stream cache stays a stream cache). On a message the mode cannot change, the message is left as it is,
-and the report counts the rule as skipped.
+and the report counts the rule as skipped, with the reason.
 
 |`lifecycle`
 |`action=suspend\|stop\|remove`, `duration=<time>`
@@ -396,7 +414,8 @@ removed while the route was down, and the `reason` when it did not go as planned
 
 `ChaosManager.report()` gives the report, as plain text (`toText()`) for a person and as JSON (`toJson()`) for a tool,
 and it is logged when the context stops (`camel.chaos.reportOnShutdown`), if any rule was added. It states the seed,
-each rule with its id and version, its matches, the faults that fired at each hook and the ones that were skipped, its
+each rule with its id and version, its matches, the faults that fired at each hook and the ones that were skipped (with
+the reasons, such as `a stream body`, counted in `skippedReasons`), its
 state (`active`, `ended`, `removed` or `replaced`), and per route. The rules are in the order of their ids, and the
 versions of an id from the latest. Per route:
 

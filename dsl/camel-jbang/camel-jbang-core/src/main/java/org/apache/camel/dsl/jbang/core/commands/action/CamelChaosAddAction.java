@@ -16,30 +16,37 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "chaos-add",
-                     description = "Add a chaos rule to a running integration (camel-chaos, for development only)",
+                     description = "Add chaos rules to a running integration (camel-chaos, for development only)",
                      sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nThe integration must have camel-chaos switched on (camel run --chaos, profile dev). The rule is",
                              "checked as camel.chaos.rules is; a rule that is not valid is refused with the reason. Its id",
-                             "(r1, r2, ...) is printed, for chaos-change and chaos-remove.",
+                             "(r1, r2, ...) is printed, for chaos-change and chaos-remove. Several --rule options (or rules",
+                             "separated by ;) are added together, all or none, so they are in place at the same time. A rule",
+                             "that matches nothing in the integration now (often a typo) is added with a warning.",
                              "%nExamples:",
                              "  camel cmd chaos-add myApp --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'",
                              "  camel cmd chaos-add myApp --rule='endpoint=file:inbox* drop at=poll rate=0.5 until=2m'",
-                             "  camel cmd chaos-add myApp --rule='step=enrich* error exception=java.sql.SQLException rate=0.1'" })
+                             "  camel cmd chaos-add myApp --rule='step=enrich* error exception=java.sql.SQLException rate=0.1'",
+                             "  camel cmd chaos-add myApp --rule='endpoint=seda:dlq error at=dlq' --rule='endpoint=http:stock* error'" })
 public class CamelChaosAddAction extends CamelChaosAction {
 
     @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one)", arity = "1")
     String name;
 
     @CommandLine.Option(names = { "--rule" }, required = true,
-                        description = "One rule in its one-line text form, as one entry of camel.chaos.rules")
-    String rule;
+                        description = "A rule in its one-line text form, as an entry of camel.chaos.rules; can be given more"
+                                      + " than once")
+    List<String> rules;
 
     public CamelChaosAddAction(CamelJBangMain main) {
         super(main);
@@ -49,12 +56,18 @@ public class CamelChaosAddAction extends CamelChaosAction {
     public Integer doCall() throws Exception {
         // a rule goes to one integration: its id is only known there
         CamelProcess process = findOne(name);
-        printer().println(describe(chaos(process, "add", root -> root.put("rule", rule))));
+        // the rules go together, separated by ; as in camel.chaos.rules (a ; inside a rule is quoted)
+        String text = String.join(";", rules);
+        printer().println(describe(chaos(process, "add", root -> root.put("rule", text))));
         return 0;
     }
 
     @Override
     protected String describe(JsonObject answer) {
-        return "Added chaos rule " + answer.getString("id");
+        List<Object> ids = answer.getCollection("ids");
+        String added = ids != null && ids.size() > 1
+                ? "Added chaos rules " + ids.stream().map(String::valueOf).collect(Collectors.joining(", "))
+                : "Added chaos rule " + answer.getString("id");
+        return added + warnings(answer);
     }
 }

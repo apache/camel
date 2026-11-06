@@ -106,7 +106,7 @@ final class ChaosPollStrategy implements PollingConsumerPollStrategy {
             case ERROR -> {
                 if (!beginDelegate(consumer, endpoint)) {
                     // the strategy of the consumer skips this poll anyway
-                    rule.skipped();
+                    rule.skipped("the poll strategy of the consumer skipped the poll");
                     return false;
                 }
                 rule.fired(Hook.POLL);

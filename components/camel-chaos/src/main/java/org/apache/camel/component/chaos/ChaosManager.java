@@ -131,27 +131,67 @@ public final class ChaosManager {
     public String addRule(String rule) {
         ChaosRule.Builder definition = ChaosRuleParser.parse(rule, camelContext.getClassResolver(), maxDuration);
         synchronized (lock) {
-            checkRoute(definition);
-            long now = TimeSource.currentTimeMillis();
-            if (rules.size() >= MAX_RULES) {
-                retireEnded(now);
-            }
-            if (rules.size() >= MAX_RULES) {
-                throw new IllegalStateException(
-                        "There are " + MAX_RULES + " chaos rules already; remove some before adding more");
-            }
-            String id = "r" + nextId++;
-            ChaosRule added = new ChaosRule(definition, id, seed, now, maxDuration);
-            // a rule added before the context started starts its clock when it has started
-            added.clockStarted = camelContext.isStarted();
-            rules.add(added);
-            update();
-            LOG.info("Chaos rule {} added: {}", id, added.text);
-            if (camelContext.isStarted()) {
-                warnIfNoRoute(added);
-            }
-            return id;
+            return add(List.of(definition)).get(0);
         }
+    }
+
+    /**
+     * Adds rules together: all of them, or none when one is not valid. The rules are in the form of
+     * {@code camel.chaos.rules}, separated by {@code ;}, so they are in place at the same time, such as a rule for the
+     * dead letter channel and the rule that sends a message there.
+     *
+     * @param  rules                    the rules in their one-line text form, separated by {@code ;}
+     * @return                          the ids of the rules, in their order
+     * @throws IllegalArgumentException when a rule is not valid, with the reason; no rule is added then
+     * @throws IllegalStateException    when the rules would be more than {@link #MAX_RULES}
+     */
+    public List<String> addRules(String rules) {
+        List<String> texts = ChaosRuleParser.splitRules(rules);
+        if (texts.isEmpty()) {
+            throw new IllegalArgumentException("The chaos rule is empty");
+        }
+        List<ChaosRule.Builder> definitions = new ArrayList<>();
+        for (String text : texts) {
+            definitions.add(ChaosRuleParser.parse(text, camelContext.getClassResolver(), maxDuration));
+        }
+        synchronized (lock) {
+            return add(definitions);
+        }
+    }
+
+    /** Adds parsed rules, all or none. Called with the lock held. */
+    private List<String> add(List<ChaosRule.Builder> definitions) {
+        for (ChaosRule.Builder definition : definitions) {
+            checkRoute(definition);
+        }
+        long now = TimeSource.currentTimeMillis();
+        if (rules.size() + definitions.size() > MAX_RULES) {
+            retireEnded(now);
+        }
+        if (rules.size() + definitions.size() > MAX_RULES) {
+            throw new IllegalStateException(
+                    "There are " + rules.size() + " chaos rules already, and at most " + MAX_RULES
+                                            + "; remove some before adding more");
+        }
+        List<ChaosRule> added = new ArrayList<>();
+        for (ChaosRule.Builder definition : definitions) {
+            ChaosRule rule = new ChaosRule(definition, "r" + nextId++, seed, now, maxDuration);
+            // a rule added before the context started starts its clock when it has started
+            rule.clockStarted = camelContext.isStarted();
+            rules.add(rule);
+            added.add(rule);
+        }
+        update();
+        List<String> ids = new ArrayList<>();
+        for (ChaosRule rule : added) {
+            LOG.info("Chaos rule {} added: {}", rule.id, rule.text);
+            if (camelContext.isStarted()) {
+                warnIfNoRoute(rule);
+                warnIfNoTarget(rule);
+            }
+            ids.add(rule.id);
+        }
+        return ids;
     }
 
     /**
@@ -183,9 +223,44 @@ public final class ChaosManager {
             LOG.info("Chaos rule {} changed (version {}): {}", id, changed.version, changed.text);
             if (camelContext.isStarted()) {
                 warnIfNoRoute(changed);
+                warnIfNoTarget(changed);
             }
             return changed.version;
         }
+    }
+
+    /**
+     * What a rule matches nothing of in the context now: its pattern matches no endpoint, route or step id, its
+     * {@code at=poll} finds no consumer that polls on a schedule, or its expectation names a route that does not exist.
+     * Such a rule fires 0 times, often because of a typo. The routes may still change (a {@code toD} creates its
+     * endpoints when it sends, a route can be added later), so it is a warning, not an error. Empty before the context
+     * has started, as its routes are not there yet.
+     *
+     * @param  id                       the id of the rule
+     * @return                          the warnings, empty when the rule finds something to fire at
+     * @throws IllegalArgumentException when there is no rule with that id
+     */
+    public List<String> checkRule(String id) {
+        ChaosRule rule;
+        synchronized (lock) {
+            int index = indexOf(id);
+            if (index < 0) {
+                throw new IllegalArgumentException("There is no chaos rule " + id);
+            }
+            rule = rules.get(index);
+        }
+        List<String> answer = new ArrayList<>();
+        if (!camelContext.isStarted()) {
+            return answer;
+        }
+        if (rule.expectation != null && camelContext.getRoute(rule.expectation.route) == null) {
+            answer.add("expects route " + rule.expectation.route + ", but there is no route with that id (yet)");
+        }
+        String target = ChaosTargets.check(camelContext, rule);
+        if (target != null) {
+            answer.add(target);
+        }
+        return answer;
     }
 
     /**
@@ -463,7 +538,25 @@ public final class ChaosManager {
                 warned.add(rule.id);
             }
         }
+        List<ChaosRule> current;
+        synchronized (lock) {
+            current = new ArrayList<>(rules);
+        }
+        for (ChaosRule rule : current) {
+            warnIfNoTarget(rule);
+        }
         return warned;
+    }
+
+    // the WARNs for a rule that matches nothing, for the tests
+    final AtomicInteger noTargetWarnings = new AtomicInteger();
+
+    private void warnIfNoTarget(ChaosRule rule) {
+        String warning = ChaosTargets.check(camelContext, rule);
+        if (warning != null) {
+            noTargetWarnings.incrementAndGet();
+            LOG.warn("Chaos rule {}: {}", rule.id, warning);
+        }
     }
 
     // the WARNs for an expectation of a route that does not exist, for the tests

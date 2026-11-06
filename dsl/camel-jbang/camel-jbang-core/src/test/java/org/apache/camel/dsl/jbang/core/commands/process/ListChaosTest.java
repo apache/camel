@@ -160,6 +160,54 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void theNoteSaysWhatALifecycleRuleDidAndWhyARuleWasSkipped() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject stall = rule(1, "active", "route=poller stall duration=20s");
+        stall.put("id", "r2");
+        JsonObject lifecycle = new JsonObject();
+        lifecycle.put("action", "suspend");
+        lifecycle.put("route", "poller");
+        lifecycle.put("state", "down");
+        lifecycle.put("backIn", 12000L);
+        stall.put("lifecycle", lifecycle);
+        JsonObject corrupt = rule(1, "active", "route=shipping corrupt mode=charset");
+        corrupt.put("id", "r3");
+        corrupt.put("skippedReasons", new JsonObject(Map.of("a stream body", 79L)));
+        JsonArray rules = chaos.getCollection("rules");
+        rules.add(stall);
+        rules.add(corrupt);
+        writeStatus(chaos);
+
+        assertThat(run()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("NOTE");
+        assertThat(lineOf(out, "r2")).contains("route poller down, back in 12s");
+        assertThat(lineOf(out, "r3")).contains("skipped 79: a stream body");
+    }
+
+    @Test
+    void withoutANoteThereIsNoNoteColumn() throws Exception {
+        writeStatus(chaosOn());
+
+        assertThat(run()).isZero();
+
+        assertThat(printer.getStdout()).doesNotContain("NOTE");
+    }
+
+    @Test
+    void noRulesSaysSo() throws Exception {
+        JsonObject chaos = chaosOn();
+        chaos.put("rules", new JsonArray());
+        writeStatus(chaos);
+
+        assertThat(run()).isZero();
+
+        assertThat(printer.getStdout()).isEmpty();
+        assertThat(printer.getStderr()).contains("orders (pid " + TEST_PID + "): no chaos rules");
+    }
+
+    @Test
     void chaosOff() throws Exception {
         writeStatus(new JsonObject(Map.of("enabled", false, "reason", "Chaos is off: it stays off with profile prod")));
 
@@ -186,7 +234,9 @@ class ListChaosTest extends ProcessCommandTestSupport {
 
         assertThat(run()).isZero();
 
-        assertThat(printer.getOutput()).isEmpty();
+        // nothing on stdout, and why on stderr
+        assertThat(printer.getStdout()).isEmpty();
+        assertThat(printer.getStderr()).contains("No running integration has camel-chaos: run it with camel run --chaos");
     }
 
     private int run(String... args) throws Exception {

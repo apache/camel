@@ -19,8 +19,10 @@ package org.apache.camel.cli.connector;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -69,8 +71,14 @@ final class ChaosAction {
                     output.error("A rule is required");
                     return;
                 }
-                answer.put("id", call(type, chaos, "addRule", rule));
+                // one rule or several separated by ; (as camel.chaos.rules), added together
+                List<?> ids = (List<?>) call(type, chaos, "addRules", rule);
+                if (ids.size() == 1) {
+                    answer.put("id", ids.get(0));
+                }
+                answer.put("ids", new JsonArray(ids));
                 answer.put("version", 1);
+                warnings(type, chaos, ids, answer);
             } else if ("change".equals(command)) {
                 if (isBlank(id) || isBlank(rule)) {
                     output.error("The id of the rule and the new rule are required");
@@ -82,6 +90,7 @@ final class ChaosAction {
                 }
                 answer.put("id", id);
                 answer.put("version", call(type, chaos, "changeRule", id, rule));
+                warnings(type, chaos, List.of(id), answer);
             } else if ("remove".equals(command)) {
                 if (isBlank(id)) {
                     output.error("The id of the rule is required");
@@ -115,6 +124,22 @@ final class ChaosAction {
             return;
         }
         output.write(answer);
+    }
+
+    /**
+     * The warnings of the rules that match nothing in the integration now (often a typo), each with the id of its rule,
+     * for the tool to show: the rule is added anyway, as the routes may still change.
+     */
+    private static void warnings(Class<?> type, Object chaos, List<?> ids, JsonObject answer) throws Exception {
+        JsonArray warnings = new JsonArray();
+        for (Object id : ids) {
+            for (Object warning : (List<?>) call(type, chaos, "checkRule", (String) id)) {
+                warnings.add(id + ": " + warning);
+            }
+        }
+        if (!warnings.isEmpty()) {
+            answer.put("warnings", warnings);
+        }
     }
 
     private static boolean isBlank(String text) {

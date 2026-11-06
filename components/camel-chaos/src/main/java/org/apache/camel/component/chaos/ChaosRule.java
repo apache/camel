@@ -19,6 +19,9 @@ package org.apache.camel.component.chaos;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -168,6 +171,8 @@ final class ChaosRule {
     private final AtomicLong matches = new AtomicLong();
     private final LongAdder[] fired = new LongAdder[Hook.values().length];
     private final LongAdder skipped = new LongAdder();
+    // why the rule did nothing when it fired: a reason per kind of message it could not change (a few fixed texts)
+    private final ConcurrentMap<String, LongAdder> skipReasons = new ConcurrentHashMap<>();
     // the messages lost because the rule failed or dropped the send of the dead letter channel, which then handled them
     private final LongAdder lostAtDlq = new LongAdder();
     private final AtomicLong random;
@@ -280,9 +285,22 @@ final class ChaosRule {
         return lostAtDlq.sum();
     }
 
-    /** Counts that the rule fired at a message it could not change, so it did nothing. */
-    void skipped() {
+    /**
+     * Counts that the rule fired at a message it could not change, so it did nothing.
+     *
+     * @param reason why, such as {@code a stream body (charset changes a text body)}: one of a few fixed texts, so the
+     *               report can count them
+     */
+    void skipped(String reason) {
         skipped.increment();
+        skipReasons.computeIfAbsent(reason, k -> new LongAdder()).increment();
+    }
+
+    /** How often the rule did nothing, per reason, in the order of the reasons. */
+    Map<String, Long> skipReasons() {
+        Map<String, Long> answer = new TreeMap<>();
+        skipReasons.forEach((reason, count) -> answer.put(reason, count.sum()));
+        return answer;
     }
 
     long matches() {

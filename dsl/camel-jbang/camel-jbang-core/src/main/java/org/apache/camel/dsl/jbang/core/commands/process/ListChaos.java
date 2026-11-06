@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -129,14 +130,18 @@ public class ListChaos extends ProcessWatchCommand {
                 if (r.rule.get("lifecycle") != null) {
                     jo.put("lifecycle", r.rule.get("lifecycle"));
                 }
+                if (r.rule.get("skippedReasons") != null) {
+                    jo.put("skippedReasons", r.rule.get("skippedReasons"));
+                }
                 return jo;
             }).toList()));
             return;
         }
         if (rows.isEmpty()) {
-            printOff(integrations);
+            printNothing(integrations, false);
             return;
         }
+        boolean notes = rows.stream().anyMatch(r -> !note(r.rule).isEmpty());
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, List.of(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.integration.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -153,6 +158,8 @@ public class ListChaos extends ProcessWatchCommand {
                         .with(r -> String.valueOf(r.rule.get("skipped"))),
                 new Column().header("ENDS IN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> endsIn(r.rule)),
+                new Column().header("NOTE").visible(notes).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(40, OverflowBehaviour.NEWLINE).with(r -> note(r.rule)),
                 new Column().header("RULE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(r -> r.rule.getString("rule")))));
     }
@@ -185,7 +192,7 @@ public class ListChaos extends ProcessWatchCommand {
             printReport(integration, report);
         }
         if (!any) {
-            printOff(integrations);
+            printNothing(integrations, true);
         }
     }
 
@@ -209,6 +216,7 @@ public class ListChaos extends ProcessWatchCommand {
         JsonArray rules = report.getCollection("rules");
         if (rules != null && !rules.isEmpty()) {
             List<JsonObject> list = rules.stream().map(JsonObject.class::cast).toList();
+            boolean notes = list.stream().anyMatch(r -> !note(r).isEmpty());
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, list, List.of(
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.getString("id")),
                     new Column().header("VER").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
@@ -221,6 +229,8 @@ public class ListChaos extends ProcessWatchCommand {
                     new Column().header("SKIPPED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> String.valueOf(r.get("skipped"))),
                     new Column().header("EXPECT").dataAlign(HorizontalAlign.LEFT).with(ListChaos::expectation),
+                    new Column().header("NOTE").visible(notes).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(40, OverflowBehaviour.NEWLINE).with(ListChaos::note),
                     new Column().header("RULE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                             .with(r -> r.getString("rule")))));
         }
@@ -244,15 +254,53 @@ public class ListChaos extends ProcessWatchCommand {
     }
 
     /**
-     * Without a rule to show, says why for each integration where chaos is off, on stderr, so the output stays empty.
+     * Without a rule to show, says why on stderr, so the output stays empty: for each integration where chaos is off
+     * the reason, for each one where it is on that it has no rules, and when no integration has camel-chaos at all,
+     * that.
      */
-    private void printOff(List<Row> integrations) {
+    private void printNothing(List<Row> integrations, boolean report) {
+        boolean any = false;
         for (Row integration : integrations) {
-            if (integration.chaos != null && !integration.isOn()) {
-                printer().printDiagnostic(integration.name + " (pid " + integration.pid + "): "
-                                          + integration.chaos.getStringOrDefault("reason", "chaos is off"));
+            if (integration.chaos == null) {
+                continue;
+            }
+            any = true;
+            String prefix = integration.name + " (pid " + integration.pid + "): ";
+            if (!integration.isOn()) {
+                printer().printDiagnostic(prefix + integration.chaos.getStringOrDefault("reason", "chaos is off"));
+            } else if (!report) {
+                printer().printDiagnostic(prefix + "no chaos rules (add one with camel cmd chaos-add)");
             }
         }
+        if (!any && !integrations.isEmpty()) {
+            printer().printDiagnostic("No running integration has camel-chaos: run it with camel run --chaos");
+        }
+    }
+
+    /**
+     * What a person should know about a rule, besides its counts: what a lifecycle rule did to its route, and why the
+     * rule did nothing when it was skipped.
+     */
+    static String note(JsonObject rule) {
+        StringJoiner sj = new StringJoiner("; ");
+        if (rule.get("lifecycle") instanceof JsonObject l) {
+            String state = l.getString("state");
+            StringBuilder sb = new StringBuilder("route ").append(l.getString("route")).append(' ').append(state);
+            if (l.get("backIn") instanceof Number n) {
+                sb.append(", back in ").append(TimeUtils.printDuration(n.longValue()));
+            } else if ("back".equals(state) && l.get("downAt") instanceof Number down
+                    && l.get("backAt") instanceof Number back) {
+                sb.append(" after ").append(TimeUtils.printDuration(back.longValue() - down.longValue()));
+            }
+            if (l.getString("reason") != null) {
+                sb.append(": ").append(l.getString("reason"));
+            }
+            sj.add(sb);
+        }
+        if (rule.get("skippedReasons") instanceof Map<?, ?> reasons && rule.get("lifecycle") == null) {
+            reasons.forEach((reason, count) -> sj.add("skipped " + count + ": " + reason));
+        }
+        return sj.toString();
     }
 
     private static long fired(JsonObject rule) {
