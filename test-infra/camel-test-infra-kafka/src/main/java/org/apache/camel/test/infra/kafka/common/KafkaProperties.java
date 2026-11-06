@@ -24,6 +24,7 @@ public final class KafkaProperties {
     public static final String KAFKA_CONTAINER = "kafka.container.image";
     public static final String REDPANDA_CONTAINER = "redpanda.container.image";
     public static final String STRIMZI_CONTAINER = "strimzi.container.image";
+    public static final String STRIMZI_CONTAINER_STARTUP = "strimzi.container.startup.attempts";
 
     private KafkaProperties() {
 

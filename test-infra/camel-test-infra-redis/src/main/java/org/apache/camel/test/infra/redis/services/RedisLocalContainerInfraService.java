@@ -73,6 +73,7 @@ public class RedisLocalContainerInfraService implements RedisInfraService, Conta
     @Override
     public void initialize() {
         LOG.info("Trying to start the Redis container");
+        ContainerEnvironmentUtil.configureContainerStartup(container, RedisProperties.REDIS_CONTAINER_STARTUP, 3);
         container.start();
 
         registerProperties();
