@@ -166,6 +166,26 @@ class TimelineTest {
         assertThat(orders(S0 + 3, 4).down()).containsExactly(1, 1, 1, 1);
     }
 
+    @Test
+    void theRedeliveryAttemptsOfTheProcessorsShowARecoveryTheRouteDidNotCount() {
+        IntegrationInfo info = info(10, 0, 0, 0, 0);
+        ProcessorInfo call = new ProcessorInfo();
+        call.redeliveries = 4;
+        info.routes.get(0).processors.add(call);
+        timeline.record(info, T0);
+        // a removeHeaders("Camel*") after the call took the redelivered header away: the route counted no recovery
+        IntegrationInfo later = info(12, 0, 0, 0, 0);
+        ProcessorInfo again = new ProcessorInfo();
+        again.redeliveries = 7;
+        later.routes.get(0).processors.add(again);
+        timeline.record(later, T0 + 1000);
+
+        Timeline.RouteSeries r = orders(S0 + 1, 1);
+        assertThat(r.recovered()).containsExactly(0);
+        assertThat(r.attempts()).containsExactly(3);
+        assertThat(r.completed()).containsExactly(2);
+    }
+
     private static ErrorInfo error(String route, String node, String message, long repeat, long timestamp) {
         ErrorInfo e = new ErrorInfo();
         e.routeId = route;

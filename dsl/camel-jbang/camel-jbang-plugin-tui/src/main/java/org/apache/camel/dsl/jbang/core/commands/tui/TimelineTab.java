@@ -215,7 +215,7 @@ class TimelineTab extends AbstractTableTab {
         boolean anyCause = causes.stream().anyMatch(c -> sum(c.values()) > 0);
         int causeHeight = anyCause ? CAUSE_ROWS + 1 : 1;
         // the cause, the legend of the routes, a line per route and the time axis, in a border
-        int detailHeight = DETAIL_ROWS + 5;
+        int detailHeight = DETAIL_ROWS + 6;
         int topHeight = Math.max(6, Math.min(area.height() - detailHeight, causeHeight + routes.size() + 4));
         List<Rect> rows = Layout.vertical()
                 .constraints(Constraint.length(topHeight), Constraint.length(detailHeight), Constraint.fill())
@@ -322,6 +322,7 @@ class TimelineTab extends AbstractTableTab {
         long[] handled = cols(r.handled(), false);
         long[] failed = cols(r.failed(), false);
         long[] down = cols(r.down(), true);
+        long[] attempts = cols(r.attempts(), false);
         long max = 1;
         for (int c = 0; c < columns; c++) {
             max = Math.max(max, total(completed[c], recovered[c], handled[c], failed[c]));
@@ -338,7 +339,7 @@ class TimelineTab extends AbstractTableTab {
                 int level = (int) Math.max(1, Math.min(8, Math.ceil(t * 8.0 / max)));
                 Style style = failed[c] > 0 ? Theme.error()
                         : handled[c] > 0 ? handledStyle()
-                        : recovered[c] > 0 ? Theme.warning() : Theme.success();
+                        : recovered[c] > 0 || attempts[c] > 0 ? Theme.warning() : Theme.success();
                 spans.add(Span.styled(String.valueOf(BLOCKS.charAt(level - 1)), style));
             }
         }
@@ -371,6 +372,8 @@ class TimelineTab extends AbstractTableTab {
             spans.add(Span.styled("  " + r.total(r.handled()) + " handled", handledStyle()));
         } else if (r.total(r.recovered()) > 0) {
             spans.add(Span.styled("  " + r.total(r.recovered()) + " recovered", Theme.warning()));
+        } else if (r.total(r.attempts()) > 0) {
+            spans.add(Span.styled("  " + r.total(r.attempts()) + " redeliveries", Theme.warning()));
         } else if (done == 0) {
             spans.add(Span.styled("  idle", Theme.muted()));
         }
@@ -431,7 +434,7 @@ class TimelineTab extends AbstractTableTab {
         List<long[]> values = List.of(cols(r.completed(), false), cols(r.recovered(), false),
                 cols(r.handled(), false), cols(r.failed(), false));
         List<Style> styles = List.of(Theme.success(), Theme.warning(), handledStyle(), Theme.error());
-        int rows = Math.max(2, Math.min(DETAIL_ROWS, area.height() - 5));
+        int rows = Math.max(2, Math.min(DETAIL_ROWS, area.height() - 6));
         lines.addAll(stacked(values, styles, rows, columns, label));
 
         long[] mean = cols(r.mean(), true);
@@ -468,6 +471,15 @@ class TimelineTab extends AbstractTableTab {
         lines.add(Line.from(Span.styled(pad("   in flight", label), Theme.label()),
                 Span.styled(spark(inflight, maxInflight), Theme.notice()),
                 Span.raw("  now " + last + (maxInflight > last ? ", max " + maxInflight : ""))));
+
+        long[] attempts = cols(r.attempts(), false);
+        long maxAttempts = 0;
+        for (long v : attempts) {
+            maxAttempts = Math.max(maxAttempts, v);
+        }
+        lines.add(Line.from(Span.styled(pad("   redelivery", label), Theme.label()),
+                Span.styled(spark(attempts, maxAttempts), Theme.warning()),
+                Span.raw("  " + r.total(r.attempts()) + " attempts")));
 
         List<Span> totals = new ArrayList<>();
         totals.add(Span.raw(pad("", label)));
@@ -683,6 +695,7 @@ class TimelineTab extends AbstractTableTab {
             row.put("handled", r.total(r.handled()));
             row.put("failed", r.total(r.failed()));
             row.put("downSeconds", r.total(r.down()));
+            row.put("redeliveryAttempts", r.total(r.attempts()));
             JsonObject perSecond = new JsonObject();
             perSecond.put("completed", array(r.completed()));
             perSecond.put("recovered", array(r.recovered()));
@@ -690,6 +703,7 @@ class TimelineTab extends AbstractTableTab {
             perSecond.put("failed", array(r.failed()));
             perSecond.put("inflight", array(r.inflight()));
             perSecond.put("meanMillis", array(r.mean()));
+            perSecond.put("redeliveryAttempts", array(r.attempts()));
             row.put("perSecond", perSecond);
             rows.add(row);
         }

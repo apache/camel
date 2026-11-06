@@ -49,14 +49,19 @@ final class Timeline {
     private static final int REDELIVERIES = 3;
     private static final int INFLIGHT = 4;
     private static final int MEAN = 5;
+    private static final int ATTEMPTS = 6;
 
     private static final Pattern STATUS_CODE = Pattern.compile("statusCode: ?(\\d{3})");
 
     private final Map<String, Recording> byPid = new ConcurrentHashMap<>();
 
-    /** The exchanges of a route per second, oldest first; a second before the first sample is -1. */
+    /**
+     * The exchanges of a route per second, oldest first; a second before the first sample is -1. The attempts are the
+     * redeliveries of its processors (each attempt), which also show a recovery the route did not count: the route
+     * counts an exchange done after a redelivery by the redelivered header, which a removeHeaders("Camel*") takes away.
+     */
     record RouteSeries(String route, long[] completed, long[] recovered, long[] handled, long[] failed, long[] inflight,
-            long[] mean, long[] down) {
+            long[] mean, long[] down, long[] attempts) {
 
         long total(long[] values) {
             long sum = 0;
@@ -111,8 +116,12 @@ final class Timeline {
             Map<String, long[]> counters = new LinkedHashMap<>();
             for (RouteInfo r : info.routes) {
                 if (r.routeId != null) {
-                    counters.put(r.routeId,
-                            new long[] { r.total, r.failed, r.failuresHandled, r.redeliveries, r.inflight, r.meanTime });
+                    long attempts = 0;
+                    for (ProcessorInfo p : r.processors) {
+                        attempts += p.redeliveries;
+                    }
+                    counters.put(r.routeId, new long[] {
+                            r.total, r.failed, r.failuresHandled, r.redeliveries, r.inflight, r.meanTime, attempts });
                 }
             }
             rec.routes.put(second, counters);
@@ -308,6 +317,7 @@ final class Timeline {
         long[] failed = filled(seconds);
         long[] inflight = filled(seconds);
         long[] mean = filled(seconds);
+        long[] attempts = filled(seconds);
         long[] down = new long[seconds];
         long prevSecond = -1;
         long[] prev = null;
@@ -326,6 +336,7 @@ final class Timeline {
                 long dHandled = Math.max(0, cur[HANDLED] - prev[HANDLED]);
                 long dRecovered = Math.max(0, cur[REDELIVERIES] - prev[REDELIVERIES]);
                 long dOk = Math.max(0, dTotal - dFailed - dHandled - dRecovered);
+                long dAttempts = Math.max(0, cur[ATTEMPTS] - prev[ATTEMPTS]);
                 // the mean of the exchanges done since the last sample, from the means of all of them
                 long dTime = cur[MEAN] * cur[TOTAL] - prev[MEAN] * prev[TOTAL];
                 long m = dTotal > 0 ? Math.max(0, dTime / dTotal) : -1;
@@ -340,6 +351,7 @@ final class Timeline {
                     recovered[i] = share(dRecovered, span, k);
                     handled[i] = share(dHandled, span, k);
                     failed[i] = share(dFailed, span, k);
+                    attempts[i] = share(dAttempts, span, k);
                     mean[i] = m;
                     if (t < s && inflight[i] < 0) {
                         inflight[i] = cur[INFLIGHT];
@@ -354,7 +366,7 @@ final class Timeline {
                 down[(int) (en.getKey() - start)] = 1;
             }
         }
-        return new RouteSeries(route, completed, recovered, handled, failed, inflight, mean, down);
+        return new RouteSeries(route, completed, recovered, handled, failed, inflight, mean, down, attempts);
     }
 
     /** The k-th of n parts of a count: the parts add up to the count, the later ones a little bigger. */

@@ -67,6 +67,10 @@ final class TimelineAiPrompt {
                 }
                 sb.append(" (handled or failed ").append(when(trouble)).append(')');
             }
+            long attempts = r.total(r.attempts());
+            if (attempts > 0) {
+                sb.append(", ").append(attempts).append(" redelivery attempts of its processors ").append(when(r.attempts()));
+            }
             long down = r.total(r.down());
             if (down > 0) {
                 sb.append(", down ").append(down).append("s by a chaos rule");
