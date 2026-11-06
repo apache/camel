@@ -33,6 +33,7 @@ import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -85,7 +86,25 @@ class ChaosTab extends AbstractTableTab {
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        return control.handleKey(ke, info, info != null && info.chaos != null ? selectedRule(info.chaos) : null);
+        ChaosInfo.Rule rule = info != null && info.chaos != null ? selectedRule(info.chaos) : null;
+        if (ke.isKey(KeyCode.F8) && ke.hasShift() && control.step() == ChaosControl.Step.NONE) {
+            // explain with AI what the selected rule did (CAMEL-26702)
+            if (rule != null && ctx.askAiCallback != null) {
+                ctx.askAiCallback.ask(ChaosAiPrompt.of(info, rule));
+            }
+            return true;
+        }
+        return control.handleKey(ke, info, rule);
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (ctx.askAiCallback != null && control.step() == ChaosControl.Step.NONE && info != null
+                && info.chaos != null && selectedRule(info.chaos) != null) {
+            hint(spans, "Shift+F8", "explain with AI");
+        }
     }
 
     @Override

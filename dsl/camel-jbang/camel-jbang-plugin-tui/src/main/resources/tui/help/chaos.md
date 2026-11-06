@@ -71,6 +71,12 @@ error handler (HAND) and the redeliveries (REDEL).
 - **x** — Remove the selected rule
 - **c** — Clear: remove all rules (the report keeps what they did)
 - **R** — A new experiment: no rules and a new report, with the same seed
+- **Shift+F8** — Explain with AI: the AI panel opens with a question about
+  the selected rule and what it did (its rate, its effect, the
+  expectation, the routes its faults were in, the recent faults). The AI
+  says what the fault simulates and how the routes coped, and suggests how
+  to make them cope better, changing the routes only when you agree.
+  Press Enter to send the question, or change it first
 
 Each asks to confirm with **y**, showing the rule. The integration checks
 the rule as `camel.chaos.rules` is checked: a rule that is not valid comes

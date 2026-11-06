@@ -26,6 +26,7 @@ import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -145,6 +146,7 @@ class ActivityTab extends AbstractTableTab {
         List<ActivityEntry> sorted = filteredActivity(info);
 
         List<Row> rows = new ArrayList<>();
+        int exchangeWidth = 16;
         for (ActivityEntry ae : sorted) {
             String ago = ae.timestamp > 0
                     ? TimeUtils.printSince(ae.timestamp) : "";
@@ -154,10 +156,15 @@ class ActivityTab extends AbstractTableTab {
 
             String sends = ae.endpointSends.isEmpty() ? "" : String.valueOf(ae.endpointSends.size());
 
+            String rule = ChaosMarks.ruleOf(ctx, info, ae.exchangeId, null);
+            if (rule != null) {
+                // the id and its mark, " 🎲r1": the dice is two columns wide (CAMEL-26699)
+                exchangeWidth = Math.max(exchangeWidth,
+                        CharWidth.of(shortExchangeId(ae.exchangeId) + " " + TuiIcons.TAB_CHAOS + rule));
+            }
             rows.add(Row
                     .from(
-                            ChaosMarks.cell(shortExchangeId(ae.exchangeId), Style.EMPTY,
-                                    ChaosMarks.ruleOf(ctx, info, ae.exchangeId, null)),
+                            ChaosMarks.cell(shortExchangeId(ae.exchangeId), Style.EMPTY, rule),
                             Cell.from(Span.styled(ae.routeId != null ? ae.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                             Cell.from(Span.styled(status, statusStyle)),
                             Cell.from(elapsed),
@@ -203,7 +210,7 @@ class ActivityTab extends AbstractTableTab {
                         Cell.from(Span.styled(sortLabel("SINCE", "since"), sortStyle("since"))),
                         Cell.from(Span.styled("ENDPOINT", Style.EMPTY.bold()))))
                 .widths(
-                        Constraint.length(16),
+                        Constraint.length(exchangeWidth),
                         Constraint.length(20),
                         Constraint.length(8),
                         Constraint.length(10),
