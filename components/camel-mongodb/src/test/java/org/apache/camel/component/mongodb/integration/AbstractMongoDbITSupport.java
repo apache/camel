@@ -107,6 +107,11 @@ public abstract class AbstractMongoDbITSupport implements ConfigurableContext {
 
     @AfterAll
     static void closeMongoClient() {
+        // stop the context first: it uses the client (bound as myDb) and consumers may still be reading from it
+        CamelContext camelContext = contextExtension.getContext();
+        if (camelContext != null) {
+            camelContext.stop();
+        }
         // the container is a JVM-wide singleton: close the client created per test class, or they pile up
         if (mongo != null) {
             mongo.close();
