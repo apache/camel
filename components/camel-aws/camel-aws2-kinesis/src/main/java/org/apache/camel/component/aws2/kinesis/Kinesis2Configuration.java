@@ -49,9 +49,11 @@ public class Kinesis2Configuration implements Cloneable, AwsCommonConfiguration 
     @UriParam(description = "Amazon Kinesis client to use for all requests for this endpoint")
     @Metadata(label = "advanced", autowired = true)
     private KinesisClient amazonKinesisClient;
-    @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll",
-              defaultValue = "1")
-    private int maxResultsPerRequest = 1;
+    @UriParam(label = "consumer",
+              description = "Maximum number of records fetched from each shard in each poll: the Limit of the GetRecords request,"
+                            + " from 1 to 10000. Not used by the KCL consumer (useKclConsumers).",
+              defaultValue = "1000")
+    private int maxResultsPerRequest = 1000;
     @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records",
               defaultValue = "TRIM_HORIZON")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;

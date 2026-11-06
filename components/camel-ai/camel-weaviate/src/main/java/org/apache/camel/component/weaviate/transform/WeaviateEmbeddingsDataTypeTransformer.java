@@ -54,6 +54,11 @@ public class WeaviateEmbeddingsDataTypeTransformer extends Transformer {
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         Embedding embedding = message.getHeader(CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR, Embedding.class);
+        if (embedding == null) {
+            throw new IllegalArgumentException(
+                    "Missing embedding vector header '" + CamelLangchain4jAttributes.CAMEL_LANGCHAIN4J_EMBEDDING_VECTOR
+                                               + "'. Ensure the langchain4j-embeddings component is called before this transformer.");
+        }
         String textFieldName = message.getHeader(WeaviateVectorDbHeaders.TEXT_FIELD_NAME, () -> "text", String.class);
         String collectionName = message.getHeader(WeaviateVectorDbHeaders.COLLECTION_NAME, () -> "embeddings", String.class);
         String keyName = message.getHeader(WeaviateVectorDbHeaders.KEY_NAME, () -> "id", String.class);

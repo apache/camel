@@ -471,12 +471,18 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Gets the maximum number of messages as a limit to poll at each
-         * polling. Is default unlimited, but use 0 or negative number to
-         * disable it as unlimited.
+         * The maximum number of messages to receive in each poll. A receive
+         * request returns at most 10 messages, so a value above 10 is split
+         * into several receive requests of at most 10 messages each, and 0 or a
+         * negative value receives one message per poll. The messages of a poll
+         * are routed one after the other, and the visibility timeout of each
+         * one runs from its receive: with a slow route, enable
+         * extendMessageVisibility together with visibilityTimeout, or use a
+         * visibility timeout that covers the whole batch.
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          * 
          * @param maxMessagesPerPoll the value to set
@@ -487,12 +493,18 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Gets the maximum number of messages as a limit to poll at each
-         * polling. Is default unlimited, but use 0 or negative number to
-         * disable it as unlimited.
+         * The maximum number of messages to receive in each poll. A receive
+         * request returns at most 10 messages, so a value above 10 is split
+         * into several receive requests of at most 10 messages each, and 0 or a
+         * negative value receives one message per poll. The messages of a poll
+         * are routed one after the other, and the visibility timeout of each
+         * one runs from its receive: with a slow route, enable
+         * extendMessageVisibility together with visibilityTimeout, or use a
+         * visibility timeout that covers the whole batch.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          * 
          * @param maxMessagesPerPoll the value to set
@@ -1989,8 +2001,8 @@ public interface Sqs2EndpointBuilderFactory {
         /**
          * Only for FIFO queues. Strategy for setting the messageDeduplicationId
          * on the message. It can be one of the following options:
-         * useExchangeId, useContentBasedDeduplication. For the
-         * useContentBasedDeduplication option, no messageDeduplicationId will
+         * *useExchangeId*, *useContentBasedDeduplication*. For the
+         * *useContentBasedDeduplication* option, no messageDeduplicationId will
          * be set on the message.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -2007,9 +2019,9 @@ public interface Sqs2EndpointBuilderFactory {
         }
         /**
          * Only for FIFO queues. Strategy for setting the messageGroupId on the
-         * message. It can be one of the following options: useConstant,
-         * useExchangeId, usePropertyValue. For the usePropertyValue option, the
-         * value of property CamelAwsMessageGroupId will be used.
+         * message. It can be one of the following options: *useConstant*,
+         * *useExchangeId*, *usePropertyValue*. For the *usePropertyValue*
+         * option, the value of property CamelAwsMessageGroupId will be used.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3506,6 +3518,18 @@ public interface Sqs2EndpointBuilderFactory {
          */
         public String awsSqsSuccessfulMessageCount() {
             return "CamelAwsSqsSuccessfulMessageCount";
+        }
+        /**
+         * The name of the queue the message was received from.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code AwsSqsQueueName}.
+         */
+        public String awsSqsQueueName() {
+            return "CamelAwsSqsQueueName";
         }
     }
     static Sqs2EndpointBuilder endpointBuilder(String componentName, String path) {

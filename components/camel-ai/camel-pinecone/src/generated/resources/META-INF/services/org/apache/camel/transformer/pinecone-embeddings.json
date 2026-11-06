@@ -15,7 +15,7 @@
       "carriers": [
         "any"
       ],
-      "description": "The body is not read: the vector comes from the CamelLangChain4jEmbeddingsVector header, which must be set, and the text is not stored"
+      "description": "A LangChain4j TextSegment, or a String the converter of camel-langchain4j-embeddings turns into one, whose text goes in the text_segment field of the CamelPineconeMetadata header, which UPSERT and UPDATE store with the vector; another body stores no text. The vector comes from the CamelLangChain4jEmbeddingsVector header, which must be set"
     },
     "transformerOut": {
       "carriers": [

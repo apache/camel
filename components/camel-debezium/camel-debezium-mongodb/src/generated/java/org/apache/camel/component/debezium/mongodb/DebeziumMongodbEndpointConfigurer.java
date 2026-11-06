@@ -26,10 +26,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": target.getConfiguration().setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "capturemode":
         case "captureMode": target.getConfiguration().setCaptureMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "capturescope":
+        case "captureScope": target.getConfiguration().setCaptureScope(property(camelContext, java.lang.String.class, value)); return true;
+        case "capturetarget":
+        case "captureTarget": target.getConfiguration().setCaptureTarget(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionexcludelist":
         case "collectionExcludeList": target.getConfiguration().setCollectionExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "collectionincludelist":
@@ -49,6 +55,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "databaseIncludeList": target.getConfiguration().setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "errorsmaxretries":
         case "errorsMaxRetries": target.getConfiguration().setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": target.getConfiguration().setEventConvertingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -61,6 +69,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
         case "fieldexcludelist":
         case "fieldExcludeList": target.getConfiguration().setFieldExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": target.getConfiguration().setFieldNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "fieldrenames":
         case "fieldRenames": target.getConfiguration().setFieldRenames(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionslimitaction":
@@ -71,12 +81,18 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "heartbeatIntervalMs": target.getConfiguration().setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": target.getConfiguration().setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": target.getConfiguration().setIncrementalSnapshotAllowSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": target.getConfiguration().setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": target.getConfiguration().setIncrementalSnapshotWatermarkingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": target.getConfiguration().setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
         case "internalValueConverter": target.getConfiguration().setInternalValueConverter(property(camelContext, java.lang.String.class, value)); return true;
+        case "jsonserializationmode":
+        case "jsonSerializationMode": target.getConfiguration().setJsonSerializationMode(property(camelContext, java.lang.String.class, value)); return true;
         case "legacysnapshotmaxthreads":
         case "legacySnapshotMaxThreads": target.getConfiguration().setLegacySnapshotMaxThreads(property(camelContext, boolean.class, value)); return true;
         case "maxbatchsize":
@@ -109,6 +125,14 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbUser": target.getConfiguration().setMongodbUser(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": target.getConfiguration().setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": target.getConfiguration().setNotificationHttpAllowPrivateNetworks(property(camelContext, boolean.class, value)); return true;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": target.getConfiguration().setNotificationHttpRetries(property(camelContext, int.class, value)); return true;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": target.getConfiguration().setNotificationHttpTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": target.getConfiguration().setNotificationHttpUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": target.getConfiguration().setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -157,10 +181,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": target.getConfiguration().setSignalEmitFailureBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": target.getConfiguration().setSignalEmitFailureMaxRetries(property(camelContext, int.class, value)); return true;
         case "signalenabledchannels":
         case "signalEnabledChannels": target.getConfiguration().setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
         case "signalpollintervalms":
         case "signalPollIntervalMs": target.getConfiguration().setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": target.getConfiguration().setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotcollectionfilteroverrides":
@@ -212,10 +242,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return java.util.Map.class;
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "capturemode":
         case "captureMode": return java.lang.String.class;
+        case "capturescope":
+        case "captureScope": return java.lang.String.class;
+        case "capturetarget":
+        case "captureTarget": return java.lang.String.class;
         case "collectionexcludelist":
         case "collectionExcludeList": return java.lang.String.class;
         case "collectionincludelist":
@@ -235,6 +271,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "databaseIncludeList": return java.lang.String.class;
         case "errorsmaxretries":
         case "errorsMaxRetries": return int.class;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "exceptionhandler":
@@ -247,6 +285,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "extendedHeadersEnabled": return boolean.class;
         case "fieldexcludelist":
         case "fieldExcludeList": return java.lang.String.class;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return java.lang.String.class;
         case "fieldrenames":
         case "fieldRenames": return java.lang.String.class;
         case "guardrailcollectionslimitaction":
@@ -257,12 +297,18 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return java.lang.String.class;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return boolean.class;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return int.class;
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": return java.lang.String.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
         case "internalValueConverter": return java.lang.String.class;
+        case "jsonserializationmode":
+        case "jsonSerializationMode": return java.lang.String.class;
         case "legacysnapshotmaxthreads":
         case "legacySnapshotMaxThreads": return boolean.class;
         case "maxbatchsize":
@@ -295,6 +341,14 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbUser": return java.lang.String.class;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return boolean.class;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return int.class;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return int.class;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return java.lang.String.class;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -343,10 +397,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return long.class;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return int.class;
         case "signalenabledchannels":
         case "signalEnabledChannels": return java.lang.String.class;
         case "signalpollintervalms":
         case "signalPollIntervalMs": return long.class;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotcollectionfilteroverrides":
@@ -399,10 +459,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "additionalproperties":
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
+        case "binaryhandlingmode":
+        case "binaryHandlingMode": return target.getConfiguration().getBinaryHandlingMode();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "capturemode":
         case "captureMode": return target.getConfiguration().getCaptureMode();
+        case "capturescope":
+        case "captureScope": return target.getConfiguration().getCaptureScope();
+        case "capturetarget":
+        case "captureTarget": return target.getConfiguration().getCaptureTarget();
         case "collectionexcludelist":
         case "collectionExcludeList": return target.getConfiguration().getCollectionExcludeList();
         case "collectionincludelist":
@@ -422,6 +488,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "databaseIncludeList": return target.getConfiguration().getDatabaseIncludeList();
         case "errorsmaxretries":
         case "errorsMaxRetries": return target.getConfiguration().getErrorsMaxRetries();
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return target.getConfiguration().getEventConvertingFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":
@@ -434,6 +502,8 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
         case "fieldexcludelist":
         case "fieldExcludeList": return target.getConfiguration().getFieldExcludeList();
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return target.getConfiguration().getFieldNameAdjustmentMode();
         case "fieldrenames":
         case "fieldRenames": return target.getConfiguration().getFieldRenames();
         case "guardrailcollectionslimitaction":
@@ -444,12 +514,18 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "heartbeatIntervalMs": return target.getConfiguration().getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return target.getConfiguration().getHeartbeatTopicsPrefix();
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return target.getConfiguration().isIncrementalSnapshotAllowSchemaChanges();
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return target.getConfiguration().getIncrementalSnapshotChunkSize();
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": return target.getConfiguration().getIncrementalSnapshotWatermarkingStrategy();
         case "internalkeyconverter":
         case "internalKeyConverter": return target.getConfiguration().getInternalKeyConverter();
         case "internalvalueconverter":
         case "internalValueConverter": return target.getConfiguration().getInternalValueConverter();
+        case "jsonserializationmode":
+        case "jsonSerializationMode": return target.getConfiguration().getJsonSerializationMode();
         case "legacysnapshotmaxthreads":
         case "legacySnapshotMaxThreads": return target.getConfiguration().isLegacySnapshotMaxThreads();
         case "maxbatchsize":
@@ -482,6 +558,14 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "mongodbUser": return target.getConfiguration().getMongodbUser();
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return target.getConfiguration().getNotificationEnabledChannels();
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return target.getConfiguration().isNotificationHttpAllowPrivateNetworks();
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return target.getConfiguration().getNotificationHttpRetries();
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return target.getConfiguration().getNotificationHttpTimeoutMs();
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return target.getConfiguration().getNotificationHttpUrl();
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return target.getConfiguration().getNotificationSinkTopicName();
         case "offsetcommitpolicy":
@@ -530,10 +614,16 @@ public class DebeziumMongodbEndpointConfigurer extends PropertyConfigurerSupport
         case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return target.getConfiguration().getSignalEmitFailureBackoffMs();
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return target.getConfiguration().getSignalEmitFailureMaxRetries();
         case "signalenabledchannels":
         case "signalEnabledChannels": return target.getConfiguration().getSignalEnabledChannels();
         case "signalpollintervalms":
         case "signalPollIntervalMs": return target.getConfiguration().getSignalPollIntervalMs();
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return target.getConfiguration().isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotcollectionfilteroverrides":

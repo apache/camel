@@ -330,7 +330,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             pullImageCmd.withTag(tag);
         }
 
-        AuthConfig authConfig = client.authConfig();
+        AuthConfig authConfig = getRegistryAuthConfig(client, message, repository);
 
         if (authConfig != null) {
             pullImageCmd.withAuthConfig(authConfig);
@@ -359,7 +359,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             pushImageCmd.withTag(tag);
         }
 
-        AuthConfig authConfig = client.authConfig();
+        AuthConfig authConfig = getRegistryAuthConfig(client, message, name);
 
         if (authConfig != null) {
             pushImageCmd.withAuthConfig(authConfig);
@@ -367,6 +367,37 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
         return pushImageCmd;
 
+    }
+
+    /**
+     * The registry authentication of the endpoint for a pull or push of the given image. It applies only when a
+     * username is configured and the image is in the registry of the server address of the endpoint; otherwise the
+     * request is sent without authentication.
+     */
+    private AuthConfig getRegistryAuthConfig(DockerClient client, Message message, String image) {
+        // the username header applies only when the endpoint allows it, as in DockerClientFactory
+        Message credentialHeaders = configuration.isAllowConnectionAndCredentialsFromHeaders() ? message : null;
+        String username = DockerHelper.getProperty(DockerConstants.DOCKER_USERNAME, configuration, credentialHeaders,
+                String.class, configuration.getUsername());
+        if (username == null) {
+            LOG.debug("No registry username configured: sending the request for image {} without authentication", image);
+            return null;
+        }
+
+        AuthConfig authConfig = client.authConfig();
+        if (authConfig == null) {
+            return null;
+        }
+
+        String imageRegistry = DockerHelper.getImageRegistryHost(image);
+        String endpointRegistry = DockerHelper.getServerAddressRegistryHost(authConfig.getRegistryAddress());
+        if (imageRegistry == null || !imageRegistry.equals(endpointRegistry)) {
+            LOG.debug("Image {} is in registry {}, not in the registry {} of the endpoint:"
+                      + " sending the request without the registry authentication of the endpoint",
+                    image, imageRegistry, endpointRegistry);
+            return null;
+        }
+        return authConfig;
     }
 
     /**

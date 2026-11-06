@@ -740,7 +740,7 @@ public interface GoogleVertexAIEndpointBuilderFactory {
             return "CamelGoogleVertexAICandidatesTokenCount";
         }
         /**
-         * The total token count (prompt response).
+         * The total token count (prompt + response).
          * 
          * The option is a: {@code Integer} type.
          * 

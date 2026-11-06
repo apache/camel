@@ -100,8 +100,8 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     private String queueNameOrArn; // to support component docs
     @UriParam
     private Sqs2Configuration configuration;
-    @UriParam(label = "consumer")
-    private int maxMessagesPerPoll;
+    @UriParam(label = "consumer", defaultValue = "10")
+    private int maxMessagesPerPoll = 10;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -432,9 +432,13 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
     }
 
     /**
-     * Gets the maximum number of messages as a limit to poll at each polling.
+     * The maximum number of messages to receive in each poll. A receive request returns at most 10 messages, so a value
+     * above 10 is split into several receive requests of at most 10 messages each, and 0 or a negative value receives
+     * one message per poll.
      * <p/>
-     * Is default unlimited, but use 0 or negative number to disable it as unlimited.
+     * The messages of a poll are routed one after the other, and the visibility timeout of each one runs from its
+     * receive: with a slow route, enable extendMessageVisibility together with visibilityTimeout, or use a visibility
+     * timeout that covers the whole batch.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;

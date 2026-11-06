@@ -60,6 +60,7 @@ public final class SecurityUtils {
         // SECURITY-OPTIONS: START
         map.put("acceptallobjects", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("acceptanyspiffeid", new SecurityOption(INSECURE_SSL, "true"));
+        map.put("allowconnectionandcredentialsfromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowcontrolheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowdatabaseandtablefromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowdatabasepathfromheader", new SecurityOption(INSECURE_DEV, "true"));
@@ -70,7 +71,9 @@ public final class SecurityUtils {
         map.put("allowoperationheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowpredicatefrommessage", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowqueryfromheader", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowsecretstoreandkeyfromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
+        map.put("allowsharedstatefulkey", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowtemplatefromheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlbody", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowurlsource", new SecurityOption(INSECURE_DEV, "true"));
@@ -107,6 +110,7 @@ public final class SecurityUtils {
         map.put("validateauth", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("verifyssl", new SecurityOption(INSECURE_SSL, VALUE_FALSE));
         map.put("webhooksecrettokenenabled", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
+        map.put("webhookverification", new SecurityOption(INSECURE_DEV, VALUE_FALSE));
         map.put("x509hostnameverifier", new SecurityOption(INSECURE_SSL, ""));
         // SECURITY-OPTIONS: END
         SECURITY_OPTIONS = Collections.unmodifiableMap(map);
@@ -123,6 +127,8 @@ public final class SecurityUtils {
         // SECURITY-OPTION-OWNERS: START
         owners.put("acceptallobjects", Set.of(
                 "component:jgroups"));
+        owners.put("allowconnectionandcredentialsfromheaders", Set.of(
+                "component:docker"));
         owners.put("allowcontrolheaders", Set.of(
                 "component:exec"));
         owners.put("allowdatabaseandtablefromheaders", Set.of(
@@ -143,11 +149,14 @@ public final class SecurityUtils {
         owners.put("allowlocalwebhookurls", Set.of(
                 "component:a2a"));
         owners.put("allowoperationheader", Set.of(
+                "component:keycloak",
                 "component:spiffe"));
         owners.put("allowpredicatefrommessage", Set.of(
                 "component:dynamicroutercontrol"));
         owners.put("allowqueryfromheader", Set.of(
                 "component:sql"));
+        owners.put("allowsecretstoreandkeyfromheaders", Set.of(
+                "component:dapr"));
         owners.put("allowserializedheaders", Set.of(
                 "component:activemq",
                 "component:activemq6",
@@ -155,6 +164,8 @@ public final class SecurityUtils {
                 "component:jms",
                 "component:netty",
                 "component:nettyhttp"));
+        owners.put("allowsharedstatefulkey", Set.of(
+                "component:pqc"));
         owners.put("allowtemplatefromheader", Set.of(
                 "component:sqlstored"));
         owners.put("allowurlbody", Set.of(
@@ -325,9 +336,12 @@ public final class SecurityUtils {
         owners.put("validateauth", Set.of(
                 "component:a2a"));
         owners.put("verifyssl", Set.of(
+                "component:cyberarkvault",
                 "component:ibmwatsonxai"));
         owners.put("webhooksecrettokenenabled", Set.of(
                 "component:telegram"));
+        owners.put("webhookverification", Set.of(
+                "component:whatsapp"));
         owners.put("x509hostnameverifier", Set.of(
                 "component:http",
                 "component:https"));

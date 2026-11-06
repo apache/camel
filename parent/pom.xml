@@ -74,7 +74,7 @@
         <aliyun-tablestore-version>5.17.14</aliyun-tablestore-version>
         <tea-openapi-version>0.3.18</tea-openapi-version>
         <!-- the Alibaba SDKs declare com.aliyun:tea as an open version range, so it is pinned in dependencyManagement -->
-        <tea-version>1.4.2</tea-version>
+        <tea-version>1.4.3</tea-version>
         <amazon-kinesis-client-version>3.5.4</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
@@ -137,7 +137,7 @@
         <commons-validator-version>1.11.0</commons-validator-version>
         <compress-lzf-version>1.2.1</compress-lzf-version>
         <consul-client-version>1.12.1</consul-client-version>
-        <couchbase-client-version>3.12.3</couchbase-client-version>
+        <couchbase-client-version>3.13.0</couchbase-client-version>
         <curator-version>5.9.0</curator-version>
         <cxf-version>4.2.4</cxf-version>
         <cxf-codegen-plugin-version>4.2.4</cxf-codegen-plugin-version>
@@ -148,7 +148,7 @@
         <dapr-version>1.19.0</dapr-version>
         <dapr-workflow-version>1.19.0</dapr-workflow-version>
         <datasonnet-mapper-version>3.0.1.3</datasonnet-mapper-version>
-        <debezium-version>3.6.3.Final</debezium-version>
+        <debezium-version>3.7.0.Final</debezium-version>
         <debezium-mysql-connector-version>26.10.0</debezium-mysql-connector-version>
         <dhis2-version>3.0.2</dhis2-version>
         <directory-api-version>2.1.9</directory-api-version>
@@ -164,8 +164,8 @@
         <ehcache3-version>3.12.0</ehcache3-version>
         <!-- github-api (kohsuke) for camel-github2 -->
         <github-api-version>1.330</github-api-version>
-        <elasticsearch-java-client-version>9.5.5</elasticsearch-java-client-version>
-        <elasticsearch-java-client-sniffer-version>9.5.5</elasticsearch-java-client-sniffer-version>
+        <elasticsearch-java-client-version>9.5.6</elasticsearch-java-client-version>
+        <elasticsearch-java-client-sniffer-version>9.5.6</elasticsearch-java-client-sniffer-version>
         <endive-version>1.2.0</endive-version>
         <extjwnl-version>2.0.5</extjwnl-version>
         <extjwnl-data-wn31-version>1.2</extjwnl-data-wn31-version>
@@ -347,7 +347,8 @@
         <junit6-jupiter-version>6.1.3</junit6-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
         <juniversalchardet-version>1.0.3</juniversalchardet-version>
-        <jxmpp-version>1.1.0</jxmpp-version>
+        <!-- smack 4.4.x asks for jxmpp in the range [1.0.0,1.0.999] -->
+        <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.4</jython-version>
         <kafka-version>4.3.1</kafka-version>
         <keycloak-client-version>26.0.12</keycloak-client-version>
@@ -525,7 +526,7 @@
         <squareup-wire-version>6.4.7</squareup-wire-version>
         <sshd-version>2.20.0</sshd-version>
         <stompjms-version>1.19</stompjms-version>
-        <stripe-java-version>34.0.0</stripe-java-version>
+        <stripe-java-version>34.1.0</stripe-java-version>
         <swagger-java-version>1.6.10</swagger-java-version>
         <swagger-openapi3-version>2.2.36</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.65</swagger-java-parser-version>

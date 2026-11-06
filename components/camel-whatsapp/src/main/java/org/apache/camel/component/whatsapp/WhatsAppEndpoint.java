@@ -34,6 +34,7 @@ import org.apache.camel.spi.BodyTypes;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +51,12 @@ import org.slf4j.LoggerFactory;
                                                  + " text. The verification request of WhatsApp (a GET) also reaches the route,"
                                                  + " with the hub.challenge as the body when hub.mode is subscribe and"
                                                  + " hub.verify_token matches webhookVerifyToken, else with no body (403, or 400"
-                                                 + " when the parameters are missing). With webhookSecret, an event without a"
-                                                 + " valid X-Hub-Signature-256 is answered with 403 and does not reach the route"),
+                                                 + " when the parameters are missing). An event without a valid"
+                                                 + " X-Hub-Signature-256 is answered with 403 and does not reach the route, unless"
+                                                 + " webhookVerification is false"),
            consumerReply = @BodyType(value = Carrier.ANY,
-                                     description = "The body at the end of the route is not sent: the reply is the body the route"
-                                                   + " got, the event or the hub.challenge"),
+                                     description = "The body at the end of the route is not sent: an event is answered with an"
+                                                   + " empty 200, and the verification request with the hub.challenge"),
            producerIn = @BodyType(value = { Carrier.POJO, Carrier.NULL },
                                   description = "A request of org.apache.camel.component.whatsapp.model: a TextMessageRequest,"
                                                 + " MediaMessageRequest, LocationMessageRequest, ContactMessageRequest,"
@@ -118,6 +120,16 @@ public class WhatsAppEndpoint extends DefaultEndpoint implements WebhookCapableE
 
     @Override
     public Processor createWebhookHandler(Processor next) {
+        if (!configuration.isWebhookVerification()) {
+            LOG.warn("Webhook signature verification is disabled (webhookVerification=false): the events posted to {} are"
+                     + " not verified",
+                    this);
+        } else if (ObjectHelper.isEmpty(configuration.getWebhookSecret())) {
+            throw new IllegalArgumentException(
+                    "webhookSecret must be configured in webhook mode: it is the app secret of the Meta app dashboard, used to"
+                                               + " verify the X-Hub-Signature-256 signature of the events. Set"
+                                               + " webhookVerification=false to accept the events without verifying them");
+        }
         return new WhatsAppWebhookProcessor(next, configuration);
     }
 

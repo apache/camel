@@ -37,6 +37,9 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
              syntax = "sftp:host:port/directoryName", category = { Category.FILE }, headersClass = FtpConstants.class)
 @Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
+                              + "readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
+                              + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "readLockDeleteOrphanLockFiles,readLockRemoveOnCommit,readLockRemoveOnRollback,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous")

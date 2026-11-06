@@ -390,6 +390,16 @@ from("mina-sftp://user@sftp.example.com/download?password=secret&localWorkDirect
     .to("file:archive");
 ----
 
+== Read locks
+
+The mina-sftp consumer supports the read locks `none`, `rename` and `changed`.
+`readLock=false` and `readLock=off` mean `none`.
+Any other `readLock` value, such as the `markerFile`, `fileLock`, `idempotent`, `idempotent-changed`
+and `idempotent-rename` read locks of the xref:file-component.adoc[File] component, fails when the
+consumer is created, also with `poll` and `pollEnrich`, with `IllegalArgumentException: ReadLock invalid`.
+The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
+is set, as it does not apply then.
+
 == Error Handling
 
 === Connection Retry
@@ -604,6 +614,23 @@ from("mina-sftp://user@host/path?password=secret&readBufferSize=65536&writeBuffe
 IMPORTANT: The maximum recommended buffer size is `126976` bytes (~124KB). Larger values may cause data corruption in Apache MINA SSHD.
 
 The deprecated `bulkRequests` parameter is still accepted for backward compatibility but new configurations should use `readBufferSize` and `writeBufferSize` directly.
+
+== TCP_NODELAY
+
+The component sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.
+
+Apache MINA SSHD leaves `TCP_NODELAY` off by default. A small request, such as one that reads the next part of a
+directory listing or deletes a file, would then wait for the server to acknowledge the previous reply (Nagle's
+algorithm and delayed acknowledgements). A consumer sends many such requests: an OpenSSH server returns about 100
+entries per directory listing request.
+
+In a benchmark against an OpenSSH server on the same host, with `maxMessagesPerPoll=1000`:
+
+* one poll of a directory of 10,000 files took 66 ms with `TCP_NODELAY` off and 18 ms with it on;
+* consuming and deleting 5,000 files took 2.1 s with it off and 1.5 s with it on.
+
+The `org.apache.sshd.config.tcp-nodelay` system property of Apache MINA SSHD does not apply to the connections of
+this component.
 
 == File and Directory Permissions (chmod)
 

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.consul.cluster;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,7 +43,7 @@ public class ConsulClusteredRoutePolicyFactoryIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusteredRoutePolicyFactoryIT.class);
     private static final List<String> CLIENTS = IntStream.range(0, 3).mapToObj(Integer::toString).toList();
-    private static final List<String> RESULTS = new ArrayList<>();
+    private static final List<String> RESULTS = new CopyOnWriteArrayList<>();
     private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(CLIENTS.size() * 2);
     private static final CountDownLatch LATCH = new CountDownLatch(CLIENTS.size());
 
@@ -69,6 +69,7 @@ public class ConsulClusteredRoutePolicyFactoryIT {
     // ************************************
 
     private static void run(String id) {
+        DefaultCamelContext context = new DefaultCamelContext();
         try {
             int events = ThreadLocalRandom.current().nextInt(2, 6);
             CountDownLatch contextLatch = new CountDownLatch(events);
@@ -79,11 +80,10 @@ public class ConsulClusteredRoutePolicyFactoryIT {
 
             LOGGER.info("Consul URL {}", consulClusterService.getUrl());
 
-            DefaultCamelContext context = new DefaultCamelContext();
             context.disableJMX();
             context.getCamelContextExtension().setName("context-" + id);
             context.addService(consulClusterService);
-            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("my-ns"));
+            context.addRoutePolicyFactory(ClusteredRoutePolicyFactory.forNamespace("consul-clustered-route-policy-factory-it"));
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() {
@@ -110,6 +110,9 @@ public class ConsulClusteredRoutePolicyFactoryIT {
             LATCH.countDown();
         } catch (Exception e) {
             LOGGER.warn("{}", e.getMessage(), e);
+        } finally {
+            // also when the test gave up waiting, so that this node does not keep running and holding the lock
+            context.stop();
         }
     }
 }

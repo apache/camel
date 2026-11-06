@@ -841,6 +841,78 @@ public class YamlValidatorPropertyHintTest {
                 .contains("otherwise holds its EIPs under steps: otherwise: {steps: [- log: \"...\"]}"));
     }
 
+    /**
+     * r27l-4 connect-http-client step 3: a second condition and an - otherwise: item written under otherwise:. Told
+     * that otherwise holds its EIPs under steps:, a model sent the same lines 16 times.
+     */
+    @Test
+    public void testOtherwiseHoldingASecondConditionSaysWhen() throws Exception {
+        List<Error> errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - choice:
+                          when:
+                            - simple:
+                                expression: "${header.CamelHttpResponseCode} != 200"
+                              steps:
+                                - log: "a"
+                          otherwise:
+                            - simple:
+                                expression: "${body[qty]} >= ${variable.needed}"
+                              steps:
+                                - log: "b"
+                            - otherwise:
+                              steps:
+                                - log: "c"
+                """);
+        assertThat(errors).anySatisfy(e -> assertThat(e.getMessage()).contains("array found, object expected").endsWith(
+                "(otherwise holds only steps:, the steps for a message that no when matches."
+                                                                                                                        + " A second condition is another item of when:, with its simple: and its steps:,"
+                                                                                                                        + " and the steps of an - otherwise: item go under otherwise: steps:, as in choice:"
+                                                                                                                        + " {when: [{simple: \"...\", steps: [...]}, {simple: \"...\", steps: [...]}],"
+                                                                                                                        + " otherwise: {steps: [...]}})"));
+        // with expression: and the language under it, as the when items are written in the canonical form
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - choice:
+                          when:
+                            - expression:
+                                simple:
+                                  expression: "${body} != null"
+                              steps:
+                                - log: "a"
+                          otherwise:
+                            - expression:
+                                simple:
+                                  expression: "${body} == 'x'"
+                              steps:
+                                - log: "b"
+                """);
+        assertThat(errors).anySatisfy(e -> assertThat(e.getMessage())
+                .contains("with its expression: and its steps:")
+                .contains("{expression: {simple: {expression: \"...\"}}, steps: [...]}"));
+        // an - otherwise: item in the when: list
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - choice:
+                          when:
+                            - simple: "${body} != null"
+                              steps:
+                                - log: "a"
+                            - otherwise:
+                              steps:
+                                - log: "c"
+                """);
+        assertThat(errors).anySatisfy(e -> assertThat(e.getMessage()).contains("property 'otherwise' is not defined")
+                .contains("otherwise is not an item of when: it is a key of choice, next to when: and at its column, and"
+                          + " it holds only steps: choice: {when: [...], otherwise: {steps: [...]}}"));
+    }
+
     @Test
     public void testStepDirectlyUnderOtherwiseOrWhenSaysSteps() throws Exception {
         List<Error> errors = validator.validate("""

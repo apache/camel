@@ -38,6 +38,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("JwtKeystorePath", java.lang.String.class);
         map.put("JwtKeystoreType", java.lang.String.class);
         map.put("MaxBodySize", java.lang.Long.class);
+        map.put("McpAllowedOrigins", java.lang.String.class);
         map.put("McpEnabled", boolean.class);
         map.put("McpInstructions", java.lang.String.class);
         map.put("McpPath", java.lang.String.class);
@@ -93,6 +94,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": target.setJwtKeystoreType(property(camelContext, java.lang.String.class, value)); return true;
         case "maxbodysize":
         case "maxBodySize": target.setMaxBodySize(property(camelContext, java.lang.Long.class, value)); return true;
+        case "mcpallowedorigins":
+        case "mcpAllowedOrigins": target.setMcpAllowedOrigins(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpenabled":
         case "mcpEnabled": target.setMcpEnabled(property(camelContext, boolean.class, value)); return true;
         case "mcpinstructions":
@@ -171,6 +174,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return java.lang.String.class;
         case "maxbodysize":
         case "maxBodySize": return java.lang.Long.class;
+        case "mcpallowedorigins":
+        case "mcpAllowedOrigins": return java.lang.String.class;
         case "mcpenabled":
         case "mcpEnabled": return boolean.class;
         case "mcpinstructions":
@@ -245,6 +250,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "jwtKeystoreType": return target.getJwtKeystoreType();
         case "maxbodysize":
         case "maxBodySize": return target.getMaxBodySize();
+        case "mcpallowedorigins":
+        case "mcpAllowedOrigins": return target.getMcpAllowedOrigins();
         case "mcpenabled":
         case "mcpEnabled": return target.isMcpEnabled();
         case "mcpinstructions":

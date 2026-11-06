@@ -13,6 +13,17 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading from 4.18.5 to 4.18.6
 
+=== camel-aws2-sns - string array message attributes
+
+String values in list-valued message headers are now JSON-escaped when mapped to SNS
+`String.Array` message attributes. Quotes, backslashes and control characters are preserved
+as string data. Routes should supply the original strings rather than pre-escaping them.
+Other member types, such as enums, characters, UUIDs and dates, are serialized as JSON strings.
+Non-finite floating-point values (`NaN` and infinities) are also serialized as strings; finite numbers,
+booleans and null remain JSON primitives.
+The JSON utility also escapes forward slashes and some Unicode characters, so raw `String.Array`
+attribute text may differ even when its decoded string values are unchanged.
+
 === camel-as2 - server/listen - signature and MIC over the message as received
 
 The signature of a `multipart/signed` message is now verified over the signed part exactly as it was received, its
@@ -60,6 +71,17 @@ partition stayed quiet it was delivered again after a restart. Routes that read 
 Checkpoint failures from the timer are now logged at `WARN` level with the full stack trace instead of
 at `DEBUG` level with the message only. Checkpoint failures triggered by batch size are still logged at
 `WARN`.
+
+=== camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
+
+A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
+`transferExchange=true` put on the queue only when the consumer has `transferExchange=true` as well. A consumer without
+the option, the default, now takes only the body of such an exchange, as it does for any other item of the queue, and
+logs a warning the first time. Before, the consumer restored the headers and exchange properties whatever its
+`transferExchange` option said.
+
+Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
+exchange properties.
 
 === camel-lra - only an LRA hosted by the configured coordinator is joined
 
@@ -113,6 +135,13 @@ none of them lists, whatever the value of `failOnUnknownHost`, which only applie
 such an entry: `@revoked` and `@cert-authority` entries do not list a host.
 Check that the `known_hosts` file has an entry for the host name or address, and the port, that each
 endpoint is configured with.
+
+=== camel-google-calendar-stream
+
+With `syncFlow=false` and `considerLastUpdate=true`, the consumer now follows all result pages in each poll.
+Previously it only read the first page, which could prevent later events from ever being delivered.
+In this mode, `maxResults` controls the API page size; a poll can now deliver more events than this value.
+Non-sync polling with `considerLastUpdate=false` continues to read only one page per poll.
 
 === camel-google-mail, camel-google-drive, camel-google-calendar, camel-google-sheets - one API client per endpoint
 
@@ -189,6 +218,19 @@ registered.
 To restore the previous behaviour, set `webhookSecretTokenEnabled=false`: the webhook is then registered without a
 secret token, and webhook requests are not verified.
 
+=== camel-whatsapp - webhook events are verified by default
+
+In webhook mode (`webhook:whatsapp:...`), the `X-Hub-Signature-256` signature of every event that WhatsApp posts is now
+verified with the `webhookSecret` option (added in 4.18.3), the app secret from the Meta app dashboard. Before, the
+signature was only verified when `webhookSecret` was set. A webhook route without `webhookSecret` now fails to start.
+Set `webhookSecret` to the app secret, or set the new `webhookVerification` option to `false` to accept the events
+without verifying their signature, for example in development. An event without a valid signature is answered with HTTP
+403 and does not reach the route. A client that posts events to the webhook endpoint directly, for example in a test,
+must sign them too.
+
+An event that reaches the route is now answered with HTTP 200 and an empty body. Before, the reply carried the event
+back to the caller. The reply to the verification request (`GET`) is still the `hub.challenge`.
+
 === camel-thrift - SSL/TLS settings of the consumer, and errors sent to the client
 
 * A consumer configured with `negotiationType=SSL` and the default `synchronous=false` now fails to start. It used to
@@ -225,6 +267,16 @@ the connection it accepted is the source of truth. Before, the headers of the tr
 a header in the transferred exchange is no longer used, also when the receiving side has no value for it (for example
 the `CamelNettySSLClientCert*` headers on a connection without a client certificate). This also applies to the reply
 the producer receives. Send any such value of the sender under a header name of your own.
+
+=== camel-mina - the producer closes its session when a request times out
+
+A synchronous `mina` producer (`sync=true`) now always closes its session when a request times out while waiting for a
+reply. Because a synchronous producer is pooled and reused for later exchanges, a session kept open after a timeout
+could receive the late reply to the timed-out exchange and hand it to the next exchange that reused the same producer.
+The producer now discards that session, so the next exchange opens a fresh one.
+
+The default behaviour is unchanged: `disconnectOnNoReply` defaults to `true`, which already closed the session on a
+timeout. Setting `disconnectOnNoReply=false` no longer keeps the producer session open after a timeout.
 
 === camel-oauth - the bearer token processor is stateless and reads the HTTP request headers
 
@@ -682,6 +734,30 @@ auto-mock names, tracing and metrics are the same as before.
 
 Two routes that consume from the same address with different endpoint options are no longer rejected at startup as
 "Multiple consumers for the same endpoint is not allowed". Use one consumer per address.
+
+=== camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
+
+The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
+attributes of the `CamelMetricsAttributes` header as given. Before, their keys and values were evaluated as Simple
+expressions, in the same way as the `tags` and `attributes` URI options. The URI options are still evaluated per
+exchange, and a tag or attribute from the header still overrides one from the URI with the same key.
+
+A route that relied on a Simple expression in a header tag or attribute should use the `tags` / `attributes` URI
+option instead (for example `tags.customer=${header.customerId}`), or compute the value in the route before
+setting the header.
+
+=== camel-jsch - the scp producer refuses a file name with a line feed or a NUL character
+
+The `scp` producer now refuses a file name with a line feed or a NUL character, in the file name or in one of its
+directories, with a `GenericFileOperationFailedException`. It does so before it starts scp on the remote host, so
+nothing is written there. Any other character, such as a carriage return or a tab, is sent as before.
+
+scp sends each name on a protocol line that ends with a line feed. Before, a line feed in the file name ended that
+line early: the remote scp wrote a file named after the part of the name before the line feed, with the rest of the
+name at the start of its content, and the exchange did not fail. A line feed in a directory failed the exchange, but
+left a directory named after the part before it. A NUL character failed the exchange on the remote host, or, with an
+OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
+or in the `fileName` option before the message reaches the producer.
 
 == Upgrading from 4.18.4 to 4.18.5
 

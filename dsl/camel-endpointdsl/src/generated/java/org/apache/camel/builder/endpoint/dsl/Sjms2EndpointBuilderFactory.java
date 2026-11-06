@@ -1368,9 +1368,9 @@ public interface Sjms2EndpointBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter denying java.net.
-         * and otherwise allowing java., javax. and org.apache.camel. is
-         * applied.
+         * filter is configured, a conservative default filter denying
+         * java.net.** and otherwise allowing java.**, javax.** and
+         * org.apache.camel.** is applied.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2600,9 +2600,9 @@ public interface Sjms2EndpointBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter denying java.net.
-         * and otherwise allowing java., javax. and org.apache.camel. is
-         * applied.
+         * filter is configured, a conservative default filter denying
+         * java.net.** and otherwise allowing java.**, javax.** and
+         * org.apache.camel.** is applied.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3369,9 +3369,9 @@ public interface Sjms2EndpointBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter denying java.net.
-         * and otherwise allowing java., javax. and org.apache.camel. is
-         * applied.
+         * filter is configured, a conservative default filter denying
+         * java.net.** and otherwise allowing java.**, javax.** and
+         * org.apache.camel.** is applied.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

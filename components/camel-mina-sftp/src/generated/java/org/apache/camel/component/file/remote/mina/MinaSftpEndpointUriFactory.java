@@ -24,7 +24,7 @@ public class MinaSftpEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(140);
+        Set<String> props = new HashSet<>(133);
         props.add("allowNullBody");
         props.add("antExclude");
         props.add("antFilterCaseSensitive");
@@ -120,17 +120,10 @@ public class MinaSftpEndpointUriFactory extends org.apache.camel.support.compone
         props.add("readBufferSize");
         props.add("readLock");
         props.add("readLockCheckInterval");
-        props.add("readLockDeleteOrphanLockFiles");
-        props.add("readLockIdempotentReleaseAsync");
-        props.add("readLockIdempotentReleaseAsyncPoolSize");
-        props.add("readLockIdempotentReleaseDelay");
-        props.add("readLockIdempotentReleaseExecutorService");
         props.add("readLockLoggingLevel");
         props.add("readLockMarkerFile");
         props.add("readLockMinAge");
         props.add("readLockMinLength");
-        props.add("readLockRemoveOnCommit");
-        props.add("readLockRemoveOnRollback");
         props.add("readLockTimeout");
         props.add("reconnectDelay");
         props.add("recursive");

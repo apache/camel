@@ -29,6 +29,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.camel.component.pqc.PQCSymmetricAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA384Digest;
@@ -123,7 +124,9 @@ public final class HybridKEM {
                 keyLength / 8,
                 symmetricAlgorithm);
 
-        SecretKey hybridSecretKey = new SecretKeySpec(combinedSecret, symmetricAlgorithm);
+        // The label only: the value handed to combineSecrets above is the HKDF info and must stay exactly as the
+        // caller gave it, or every encapsulation produced by an earlier version stops decrypting.
+        SecretKey hybridSecretKey = new SecretKeySpec(combinedSecret, PQCSymmetricAlgorithms.toJceName(symmetricAlgorithm));
 
         // Combine encapsulations
         byte[] hybridEncapsulation = combineEncapsulations(classicalEncapsulation, pqcEncapsulation);
@@ -199,7 +202,8 @@ public final class HybridKEM {
                 keyLength / 8,
                 symmetricAlgorithm);
 
-        return new SecretKeySpec(combinedSecret, symmetricAlgorithm);
+        // As in encapsulate(): the label is mapped, the HKDF info is not
+        return new SecretKeySpec(combinedSecret, PQCSymmetricAlgorithms.toJceName(symmetricAlgorithm));
     }
 
     /**

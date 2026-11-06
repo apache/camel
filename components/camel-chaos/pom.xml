@@ -111,6 +111,21 @@
     <build>
         <plugins>
             <plugin>
+                <!-- the model of the chaos rules (META-INF/org/apache/camel/chaos/chaos-model.json), from ChaosModel -->
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-chaos-model</id>
+                        <goals>
+                            <goal>generate-chaos-model</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <!-- sets the property net.bytebuddy:byte-buddy-agent:jar to the path of the agent of the DST test -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

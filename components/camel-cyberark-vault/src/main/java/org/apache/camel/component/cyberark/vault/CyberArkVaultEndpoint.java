@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cyberark.vault;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -50,9 +52,8 @@ import org.apache.camel.util.ObjectHelper;
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",
                                    byOption = @BodyType.When(option = "operation", value = "createSecret",
                                                              carriers = Carrier.UNCHANGED),
-                                   description = "The value of the secret as text for getSecret, also in the"
-                                                 + " CamelCyberArkVaultSecretValue header: unmarshal a JSON secret to read its"
-                                                 + " fields. createSecret leaves the body unchanged"))
+                                   description = "The value of the secret as text for getSecret: unmarshal a JSON secret to"
+                                                 + " read its fields. createSecret leaves the body unchanged"))
 public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointServiceLocation {
 
     @UriParam
@@ -84,6 +85,10 @@ public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointSe
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (configuration.getConjurClient() == null) {
+            checkCredentials();
+        }
+
         conjurClient = configuration.getConjurClient();
         if (conjurClient == null) {
             String url = configuration.getUrl();
@@ -92,13 +97,15 @@ public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointSe
             String apiKey = configuration.getApiKey();
             String username = configuration.getUsername();
             String password = configuration.getPassword();
+            SSLContext sslContext
+                    = ConjurClientFactory.createSslContext(configuration.isVerifySsl(), configuration.getCertificatePath());
 
             if (ObjectHelper.isNotEmpty(authToken)) {
-                conjurClient = ConjurClientFactory.createWithToken(url, account, authToken);
+                conjurClient = ConjurClientFactory.createWithToken(url, account, authToken, sslContext);
             } else if (ObjectHelper.isNotEmpty(apiKey)) {
-                conjurClient = ConjurClientFactory.createWithApiKey(url, account, username, apiKey);
+                conjurClient = ConjurClientFactory.createWithApiKey(url, account, username, apiKey, sslContext);
             } else if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(password)) {
-                conjurClient = ConjurClientFactory.createWithCredentials(url, account, username, password);
+                conjurClient = ConjurClientFactory.createWithCredentials(url, account, username, password, sslContext);
             }
         }
     }
@@ -109,6 +116,17 @@ public class CyberArkVaultEndpoint extends DefaultEndpoint implements EndpointSe
         if (conjurClient != null && configuration.getConjurClient() == null) {
             // Only close if we created the client
             conjurClient.close();
+        }
+    }
+
+    private void checkCredentials() {
+        boolean hasLogin = ObjectHelper.isNotEmpty(configuration.getUsername())
+                && (ObjectHelper.isNotEmpty(configuration.getApiKey()) || ObjectHelper.isNotEmpty(configuration.getPassword()));
+        if (ObjectHelper.isEmpty(configuration.getAuthToken()) && !hasLogin) {
+            throw new IllegalArgumentException(
+                    "No credentials to authenticate with CyberArk Conjur: set the authToken option, the username and apiKey"
+                                               + " options, or the username and password options, or set the conjurClient"
+                                               + " option");
         }
     }
 

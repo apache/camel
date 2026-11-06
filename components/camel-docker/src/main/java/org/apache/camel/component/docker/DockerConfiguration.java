@@ -63,6 +63,8 @@ public class DockerConfiguration implements Cloneable {
     private boolean followRedirectFilter;
     @UriParam(label = "security", defaultValue = "false")
     private boolean tlsVerify;
+    @UriParam(label = "producer,security", defaultValue = "false", security = "insecure:dev", insecureValue = "true")
+    private boolean allowConnectionAndCredentialsFromHeaders;
     @UriParam(label = "advanced", defaultValue = "false")
     private boolean socket;
     @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.netty.NettyDockerCmdExecFactory")
@@ -246,6 +248,22 @@ public class DockerConfiguration implements Cloneable {
      */
     public void setTlsVerify(boolean tlsVerify) {
         this.tlsVerify = tlsVerify;
+    }
+
+    public boolean isAllowConnectionAndCredentialsFromHeaders() {
+        return allowConnectionAndCredentialsFromHeaders;
+    }
+
+    /**
+     * Whether to allow overriding the connection and credential settings of the endpoint with the CamelDockerHost,
+     * CamelDockerPort, CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify, CamelDockerCertPath,
+     * CamelDockerCmdExecFactory, CamelDockerUsername, CamelDockerPassword and CamelDockerServerAddress headers.
+     * Disabled by default; enable it only when the header source is trusted, since it lets a message choose the Docker
+     * daemon that the client connects to and how, and the registry that receives the username and password of the
+     * endpoint.
+     */
+    public void setAllowConnectionAndCredentialsFromHeaders(boolean allowConnectionAndCredentialsFromHeaders) {
+        this.allowConnectionAndCredentialsFromHeaders = allowConnectionAndCredentialsFromHeaders;
     }
 
     public boolean isSocket() {

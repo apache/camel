@@ -44,7 +44,8 @@ public interface RocketMQEndpointBuilderFactory {
             return (AdvancedRocketMQEndpointConsumerBuilder) this;
         }
         /**
-         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, [LOCAL] by
+         * default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -133,7 +134,7 @@ public interface RocketMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Message Selector Type, TAG or SQL TAG by default.
+         * Message Selector Type, TAG or SQL [TAG] by default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -164,8 +165,8 @@ public interface RocketMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Subscribe tags of consumer. Multiple tags could be split by , such as
-         * TagATagB.
+         * Subscribe tags of consumer. Multiple tags could be split by ||, such
+         * as TagA||TagB.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -408,7 +409,8 @@ public interface RocketMQEndpointBuilderFactory {
         }
 
         /**
-         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, [LOCAL] by
+         * default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -734,7 +736,8 @@ public interface RocketMQEndpointBuilderFactory {
         }
 
         /**
-         * Access channel of RocketMQ cluster. LOCAL or CLOUD, LOCAL by default.
+         * Access channel of RocketMQ cluster. LOCAL or CLOUD, [LOCAL] by
+         * default.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

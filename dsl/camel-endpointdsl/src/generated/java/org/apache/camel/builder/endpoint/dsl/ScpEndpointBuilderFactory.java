@@ -263,7 +263,7 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Set a comma separated list of CA signature algorithms accepted for
          * host certificate verification. If not specified the default list from
-         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * JSch will be used (matches OpenSSH 8.2+ defaults).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -487,7 +487,7 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * If knownHostFile has not been explicit configured, then use the host
-         * file from System.getProperty(user.home) /.ssh/known_hosts.
+         * file from System.getProperty(user.home) + /.ssh/known_hosts.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -503,7 +503,7 @@ public interface ScpEndpointBuilderFactory {
         }
         /**
          * If knownHostFile has not been explicit configured, then use the host
-         * file from System.getProperty(user.home) /.ssh/known_hosts.
+         * file from System.getProperty(user.home) + /.ssh/known_hosts.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

@@ -131,8 +131,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     // the id of the step, when this is the channel of a step that asks the step hook itself, as it has no error handler
     // that does (set by DefaultChannel)
     String stepHookNodeId;
-    // whether the processor is the step itself, with no error handler around it (set by DefaultChannel, such as for the
-    // steps of a doTry or an onException): this then catches an exception that the processor throws instead of
+    // whether the processor has no error handler around it (set by DefaultChannel for a step without an error handler,
+    // such as the steps of a doTry or an onException, or through setCatchProcessorThrows): this then catches an exception that the processor throws instead of
     // calling the callback, which would otherwise be dropped by the reactive executor and leave the exchange hanging
     boolean catchProcessorThrows;
 
@@ -223,6 +223,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     @Override
     public void addManagementInterceptStrategy(InstrumentationProcessor processor) {
         addAdvice(CamelInternalProcessor.wrap(processor));
+    }
+
+    /**
+     * Whether to catch an exception that the wrapped processor throws from {@code process(exchange, callback)}, instead
+     * of setting it on the exchange, and fail the exchange with it. For a processor with no error handler around it, as
+     * {@link DefaultChannel} does for a step without an error handler. Must be set before this processor is used.
+     */
+    public void setCatchProcessorThrows(boolean catchProcessorThrows) {
+        this.catchProcessorThrows = catchProcessorThrows;
     }
 
     @Override

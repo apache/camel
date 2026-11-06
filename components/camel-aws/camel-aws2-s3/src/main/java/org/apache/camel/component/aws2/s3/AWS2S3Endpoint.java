@@ -157,8 +157,11 @@ public class AWS2S3Endpoint extends ScheduledPollEndpoint implements EndpointSer
     @Deprecated
     @UriParam(label = "consumer", defaultValue = "60",
               description = "Set the maxConnections parameter in the S3 client configuration. This option is"
-                            + " deprecated and has no effect. Use the httpClientBuilder option on the S3 client"
-                            + " configuration to customize the HTTP client connection pool.")
+                            + " deprecated and has no effect: the S3 client that Camel creates uses the connection"
+                            + " pool of the AWS SDK, of 50 connections by default. The consumer gets each object"
+                            + " right before routing its exchange, so it does not hold a connection for every object"
+                            + " of a poll. To use another pool size, set the amazonS3Client option to an S3 client"
+                            + " built with an HTTP client of that size.")
     private int maxConnections = 50 + maxMessagesPerPoll;
     @UriParam(label = "consumer,advanced", description = "A pluggable in-progress repository "
                                                          + "org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in "

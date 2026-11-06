@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dapr;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -23,6 +24,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.PropertiesHelper;
 
 @Component("dapr")
 public class DaprComponent extends DefaultComponent {
@@ -40,6 +42,16 @@ public class DaprComponent extends DefaultComponent {
 
         final DaprConfiguration config = this.configuration != null ? this.configuration.copy() : new DaprConfiguration();
         config.setOperation(DaprOperation.valueOf(remaining));
+
+        Map<String, Object> metadata = PropertiesHelper.extractProperties(parameters, "metadata.");
+        if (!metadata.isEmpty()) {
+            Map<String, String> merged = new LinkedHashMap<>();
+            if (config.getMetadata() != null) {
+                merged.putAll(config.getMetadata());
+            }
+            metadata.forEach((k, v) -> merged.put(k, v != null ? v.toString() : null));
+            config.setMetadata(merged);
+        }
 
         DaprEndpoint endpoint = new DaprEndpoint(uri, this, config);
         endpoint.setHeaderFilterStrategy(headerFilterStrategy);

@@ -133,10 +133,10 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host address of mongodb server in host:port format. It's possible to
-         * also use more than one address, as a comma separated list of hosts:
-         * host1:port1,host2:port2. If this parameter is specified, the provided
-         * connectionBean is ignored.
+         * Host address of mongodb server in [host]:[port] format. It's possible
+         * to also use more than one address, as a comma separated list of
+         * hosts: [host1]:[port1],[host2]:[port2]. If this parameter is
+         * specified, the provided connectionBean is ignored.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1712,10 +1712,10 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host address of mongodb server in host:port format. It's possible to
-         * also use more than one address, as a comma separated list of hosts:
-         * host1:port1,host2:port2. If this parameter is specified, the provided
-         * connectionBean is ignored.
+         * Host address of mongodb server in [host]:[port] format. It's possible
+         * to also use more than one address, as a comma separated list of
+         * hosts: [host1]:[port1],[host2]:[port2]. If this parameter is
+         * specified, the provided connectionBean is ignored.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2989,10 +2989,10 @@ public interface MongoDbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host address of mongodb server in host:port format. It's possible to
-         * also use more than one address, as a comma separated list of hosts:
-         * host1:port1,host2:port2. If this parameter is specified, the provided
-         * connectionBean is ignored.
+         * Host address of mongodb server in [host]:[port] format. It's possible
+         * to also use more than one address, as a comma separated list of
+         * hosts: [host1]:[port1],[host2]:[port2]. If this parameter is
+         * specified, the provided connectionBean is ignored.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4279,8 +4279,8 @@ public interface MongoDbEndpointBuilderFactory {
         }
         /**
          * If the update should be applied to all objects matching. See
-         * http://www.mongodb.org/display/DOCS/AtomicOperationsAtomic
-         * Operations.
+         * http://www.mongodb.org/display/DOCS/Atomic+Operations[Atomic
+         * Operations].
          * 
          * The option is a: {@code Boolean} type.
          * 

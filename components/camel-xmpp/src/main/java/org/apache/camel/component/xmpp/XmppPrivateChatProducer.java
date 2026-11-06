@@ -58,9 +58,10 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 connection = endpoint.acquireConnection(this);
             }
 
-            if (!connection.isConnected()) {
-                this.reconnect();
-            }
+            // connect and log in again when needed: another user of the account's connection, or Smack's
+            // ReconnectionManager, can have connected it again without having logged it in yet, and the server does
+            // not deliver what is sent before the login
+            this.reconnect();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeCamelException("Interrupted while connecting to XMPP server.", e);

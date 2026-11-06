@@ -75,7 +75,7 @@ public class JsonPojoDataTypeTransformer extends Transformer implements CamelCon
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.JAVA_OBJECT.type());
 
             Class<?> contentType = camelContext.getClassResolver().resolveMandatoryClass(contentClass);
-            if (contentType.isAssignableFrom(message.getBody().getClass())) {
+            if (contentType.isInstance(message.getBody())) {
                 return;
             }
 

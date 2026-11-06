@@ -276,7 +276,7 @@ public interface TypesafeAiComponentBuilderFactory {
         
         /**
          * Default inclusive probability threshold for the TypeSafe AI language.
-         * Must be within 0,1.
+         * Must be within [0,1].
          * 
          * The option is a: &lt;code&gt;double&lt;/code&gt; type.
          * 

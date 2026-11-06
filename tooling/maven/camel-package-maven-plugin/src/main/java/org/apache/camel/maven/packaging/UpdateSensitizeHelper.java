@@ -87,6 +87,8 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             = new String[] {
                     "apipassword", "apisecret", "apiuser", "apiusername", "api_key", "api-key", "api_secret", "authorization",
                     "callbacksecret", "db_password",
+                    // the login secrets of camel.vault.hashicorp, which are on the endpoint only in the component
+                    "jwt", "roleid", "secretid",
                     SECRET, "keystorePassword" };
 
     // extra security options from camel-main properties that are not in component JSON files

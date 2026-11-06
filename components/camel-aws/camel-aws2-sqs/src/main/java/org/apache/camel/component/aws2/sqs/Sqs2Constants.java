@@ -70,4 +70,8 @@ public interface Sqs2Constants {
     @Metadata(label = "sendBatchMessage",
               description = "The number of successful messages in a batch send operation.", javaType = "Integer")
     String SUCCESSFUL_MESSAGE_COUNT = "CamelAwsSqsSuccessfulMessageCount";
+
+    @Metadata(label = "consumer", description = "The name of the queue the message was received from.",
+              javaType = "String")
+    String QUEUE_NAME = "CamelAwsSqsQueueName";
 }

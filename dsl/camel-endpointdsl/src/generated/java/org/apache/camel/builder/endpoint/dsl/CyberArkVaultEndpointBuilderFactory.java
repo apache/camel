@@ -60,20 +60,6 @@ public interface CyberArkVaultEndpointBuilderFactory {
             return this;
         }
         /**
-         * Path to the SSL certificate for verification.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: producer
-         * 
-         * @param certificatePath the value to set
-         * @return the dsl builder
-         */
-        default CyberArkVaultEndpointBuilder certificatePath(String certificatePath) {
-            doSetProperty("certificatePath", certificatePath);
-            return this;
-        }
-        /**
          * Reference to a ConjurClient instance in the registry.
          * 
          * The option is a:
@@ -165,38 +151,6 @@ public interface CyberArkVaultEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to verify SSL certificates when connecting to CyberArk
-         * Conjur.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param verifySsl the value to set
-         * @return the dsl builder
-         */
-        default CyberArkVaultEndpointBuilder verifySsl(boolean verifySsl) {
-            doSetProperty("verifySsl", verifySsl);
-            return this;
-        }
-        /**
-         * Whether to verify SSL certificates when connecting to CyberArk
-         * Conjur.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param verifySsl the value to set
-         * @return the dsl builder
-         */
-        default CyberArkVaultEndpointBuilder verifySsl(String verifySsl) {
-            doSetProperty("verifySsl", verifySsl);
-            return this;
-        }
-        /**
          * The API key for authentication with CyberArk Conjur.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -225,6 +179,23 @@ public interface CyberArkVaultEndpointBuilderFactory {
             return this;
         }
         /**
+         * Path of a file with the SSL certificate to trust when connecting to
+         * CyberArk Conjur, for example the certificate of a private CA, in PEM
+         * or DER format. The certificates in the file are trusted instead of
+         * the default trust store of the JVM. Not used when verifySsl is false.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param certificatePath the value to set
+         * @return the dsl builder
+         */
+        default CyberArkVaultEndpointBuilder certificatePath(String certificatePath) {
+            doSetProperty("certificatePath", certificatePath);
+            return this;
+        }
+        /**
          * The password for authentication with CyberArk Conjur.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -250,6 +221,40 @@ public interface CyberArkVaultEndpointBuilderFactory {
          */
         default CyberArkVaultEndpointBuilder username(String username) {
             doSetProperty("username", username);
+            return this;
+        }
+        /**
+         * Whether to verify the SSL certificate and the host name of the
+         * CyberArk Conjur server. Setting it to false trusts any server, so use
+         * it only for testing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param verifySsl the value to set
+         * @return the dsl builder
+         */
+        default CyberArkVaultEndpointBuilder verifySsl(boolean verifySsl) {
+            doSetProperty("verifySsl", verifySsl);
+            return this;
+        }
+        /**
+         * Whether to verify the SSL certificate and the host name of the
+         * CyberArk Conjur server. Setting it to false trusts any server, so use
+         * it only for testing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: security
+         * 
+         * @param verifySsl the value to set
+         * @return the dsl builder
+         */
+        default CyberArkVaultEndpointBuilder verifySsl(String verifySsl) {
+            doSetProperty("verifySsl", verifySsl);
             return this;
         }
     }

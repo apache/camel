@@ -376,6 +376,7 @@ You can enhance the Camel LangChain4j chat RAG experience by integrating Neo4j s
 To achieve this, use the `neo4j:embeddings` DataType to generate embeddings from the prompt. These embeddings will then be utilized for the similarity search operation.
 
 Next, use the `neo4j:rag` DataType to convert the retrieved embeddings into a List<String> for RAG. This list can be directly used with the `LangChain4jRagAggregatorStrategy` from the LangChain4j chat component.
+Each element is the `text` property of a node: a value of another type, such as a number, is converted to a String, and a node without the property gives an empty String.
 
 NOTE: The retrieved embeddings must be ingested in Neo4j as LangChain4j embeddings.
 

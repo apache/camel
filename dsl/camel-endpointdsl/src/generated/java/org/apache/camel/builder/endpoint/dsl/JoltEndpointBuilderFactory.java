@@ -115,8 +115,8 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Specifies if the input is hydrated JSON or a JSON String. With
          * Hydrated, a body that is JSON text (its first non-whitespace
-         * character is { or ), bytes, a stream or a file is parsed as JSON, and
-         * any other body, such as a Map or a List, is used as it is. With
+         * character is { or [), bytes, a stream or a file is parsed as JSON,
+         * and any other body, such as a Map or a List, is used as it is. With
          * JsonString, the body is always parsed as JSON.
          * 
          * The option is a:
@@ -136,8 +136,8 @@ public interface JoltEndpointBuilderFactory {
         /**
          * Specifies if the input is hydrated JSON or a JSON String. With
          * Hydrated, a body that is JSON text (its first non-whitespace
-         * character is { or ), bytes, a stream or a file is parsed as JSON, and
-         * any other body, such as a Map or a List, is used as it is. With
+         * character is { or [), bytes, a stream or a file is parsed as JSON,
+         * and any other body, such as a Map or a List, is used as it is. With
          * JsonString, the body is always parsed as JSON.
          * 
          * The option will be converted to a

@@ -736,8 +736,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
-         * to EXCLUSIVE.
+         * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER|KEY_SHARED],
+         * defaults to EXCLUSIVE.
          * 
          * The option is a:
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
@@ -753,8 +753,8 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
-         * Type of the subscription EXCLUSIVESHAREDFAILOVERKEY_SHARED, defaults
-         * to EXCLUSIVE.
+         * Type of the subscription [EXCLUSIVE|SHARED|FAILOVER|KEY_SHARED],
+         * defaults to EXCLUSIVE.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
@@ -1291,7 +1291,7 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending messages for partitioned topics. The
-         * maxPendingMessages value will be reduced if (number of partitions
+         * maxPendingMessages value will be reduced if (number of partitions *
          * maxPendingMessages) exceeds this value. Partitioned topics have a
          * pending message queue for each partition.
          * 
@@ -1310,7 +1310,7 @@ public interface PulsarEndpointBuilderFactory {
         }
         /**
          * The maximum number of pending messages for partitioned topics. The
-         * maxPendingMessages value will be reduced if (number of partitions
+         * maxPendingMessages value will be reduced if (number of partitions *
          * maxPendingMessages) exceeds this value. Partitioned topics have a
          * pending message queue for each partition.
          * 

@@ -232,7 +232,7 @@ public class ComponentDslMojo extends AbstractGeneratorMojo {
         StringBuilder sb = new StringBuilder(doc.length() * 2);
         sb.append("/**\n");
         int len = 78 - indent.length();
-        String rem = xmlEncode(doc);
+        String rem = DslHelper.escapeJavadocCommentEnd(xmlEncode(doc));
         while (!rem.isEmpty()) {
             int idx = rem.length() >= len ? rem.substring(0, len).lastIndexOf(' ') : -1;
             int idx2 = rem.indexOf('\n');

@@ -941,8 +941,8 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint. When set via URI (e.g. {code
-         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * configuring this endpoint. When set via URI (e.g.
+         * ?bootstrapConfiguration=#myBean), its properties are merged into the
          * endpoint configuration by NettyComponent.createEndpoint(). Note: this
          * parameter is URI-resolved by the component and is not applied when
          * set programmatically via this setter.
@@ -961,8 +961,8 @@ public interface NettyEndpointBuilderFactory {
         }
         /**
          * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint. When set via URI (e.g. {code
-         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * configuring this endpoint. When set via URI (e.g.
+         * ?bootstrapConfiguration=#myBean), its properties are merged into the
          * endpoint configuration by NettyComponent.createEndpoint(). Note: this
          * parameter is URI-resolved by the component and is not applied when
          * set programmatically via this setter.

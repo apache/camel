@@ -587,10 +587,13 @@ public interface MinaSftpEndpointBuilderFactory {
         /**
          * Allows for controlling whether the limit from maxMessagesPerPoll is
          * eager or not. If eager then the limit is during the scanning of
-         * files. Where as false would scan all files, and then perform sorting.
-         * Setting this option to false allows for sorting all files first, and
-         * then limit the poll. Mind that this requires a higher memory usage as
-         * all file details are in memory to perform the sorting.
+         * files, and the file, sftp, mina-sftp and smb consumers stop reading
+         * the directory once the limit is hit, unless preSort or doneFileName
+         * is used, as they need the whole directory. Where as false would scan
+         * all files, and then perform sorting. Setting this option to false
+         * allows for sorting all files first, and then limit the poll. Mind
+         * that this requires a higher memory usage as all file details are in
+         * memory to perform the sorting.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -607,10 +610,13 @@ public interface MinaSftpEndpointBuilderFactory {
         /**
          * Allows for controlling whether the limit from maxMessagesPerPoll is
          * eager or not. If eager then the limit is during the scanning of
-         * files. Where as false would scan all files, and then perform sorting.
-         * Setting this option to false allows for sorting all files first, and
-         * then limit the poll. Mind that this requires a higher memory usage as
-         * all file details are in memory to perform the sorting.
+         * files, and the file, sftp, mina-sftp and smb consumers stop reading
+         * the directory once the limit is hit, unless preSort or doneFileName
+         * is used, as they need the whole directory. Where as false would scan
+         * all files, and then perform sorting. Setting this option to false
+         * allows for sorting all files first, and then limit the poll. Mind
+         * that this requires a higher memory usage as all file details are in
+         * memory to perform the sorting.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1049,40 +1055,14 @@ public interface MinaSftpEndpointBuilderFactory {
          * read-lock on the file (i.e. the file is not in-progress or being
          * written). Camel will wait until the file lock is granted. This option
          * provides the build in strategies: - none - No read lock is in use -
-         * markerFile - Camel creates a marker file (fileName.camelLock) and
-         * then holds a lock on it. This option is not available for the FTP
-         * component - changed - Changed is using file length/modification
-         * timestamp to detect whether the file is currently being copied or
-         * not. Will at least use 1 sec to determine this, so this option cannot
-         * consume files as fast as the others, but can be more reliable as the
-         * JDK IO API cannot always determine whether a file is currently being
-         * used by another process. The option readLockCheckInterval can be used
-         * to set the check frequency. - fileLock - is for using
-         * java.nio.channels.FileLock. This option is not avail for Windows OS
-         * and the FTP component. This approach should be avoided when accessing
-         * a remote file system via a mount/share unless that file system
-         * supports distributed file locks. - rename - rename is for using a try
-         * to rename the file as a test if we can get exclusive read-lock. -
-         * idempotent - (only for file component) idempotent is for using a
-         * idempotentRepository as the read-lock. This allows to use read locks
-         * that supports clustering if the idempotent repository implementation
-         * supports that. - idempotent-changed - (only for file component)
-         * idempotent-changed is for using a idempotentRepository and changed as
-         * the combined read-lock. This allows to use read locks that supports
-         * clustering if the idempotent repository implementation supports that.
-         * - idempotent-rename - (only for file component) idempotent-rename is
-         * for using a idempotentRepository and rename as the combined
-         * read-lock. This allows to use read locks that supports clustering if
-         * the idempotent repository implementation supports that.Notice: The
-         * various read locks is not all suited to work in clustered mode, where
-         * concurrent consumers on different nodes is competing for the same
-         * files on a shared file system. The markerFile using a close to atomic
-         * operation to create the empty marker file, but its not guaranteed to
-         * work in a cluster. The fileLock may work better but then the file
-         * system need to support distributed file locks, and so on. Using the
-         * idempotent read lock can support clustering if the idempotent
-         * repository supports clustering, such as Hazelcast Component or
-         * Infinispan.
+         * changed - Changed is using file length/modification timestamp to
+         * detect whether the file is currently being copied or not, so this
+         * option cannot consume files as fast as the others. The option
+         * readLockCheckInterval can be used to set the check frequency. -
+         * rename - rename is for using a try to rename the file as a test if we
+         * can get exclusive read-lock. The other read locks of the file
+         * component (markerFile, fileLock and the idempotent read locks) are
+         * not supported, and fail when the consumer is created.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1144,198 +1124,6 @@ public interface MinaSftpEndpointBuilderFactory {
          */
         default MinaSftpEndpointConsumerBuilder readLockCheckInterval(String readLockCheckInterval) {
             doSetProperty("readLockCheckInterval", readLockCheckInterval);
-            return this;
-        }
-        /**
-         * Whether or not read lock with marker files should upon startup delete
-         * any orphan read lock files, which may have been left on the file
-         * system, if Camel was not properly shutdown (such as a JVM crash). If
-         * turning this option to false then any orphaned lock file will cause
-         * Camel to not attempt to pickup that file, this could also be due
-         * another node is concurrently reading files from the same shared
-         * directory.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockDeleteOrphanLockFiles the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(boolean readLockDeleteOrphanLockFiles) {
-            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
-            return this;
-        }
-        /**
-         * Whether or not read lock with marker files should upon startup delete
-         * any orphan read lock files, which may have been left on the file
-         * system, if Camel was not properly shutdown (such as a JVM crash). If
-         * turning this option to false then any orphaned lock file will cause
-         * Camel to not attempt to pickup that file, this could also be due
-         * another node is concurrently reading files from the same shared
-         * directory.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockDeleteOrphanLockFiles the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(String readLockDeleteOrphanLockFiles) {
-            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
-            return this;
-        }
-        /**
-         * Whether the delayed release task should be synchronous or
-         * asynchronous. See more details at the readLockIdempotentReleaseDelay
-         * option.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseAsync the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(boolean readLockIdempotentReleaseAsync) {
-            doSetProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
-            return this;
-        }
-        /**
-         * Whether the delayed release task should be synchronous or
-         * asynchronous. See more details at the readLockIdempotentReleaseDelay
-         * option.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseAsync the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(String readLockIdempotentReleaseAsync) {
-            doSetProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
-            return this;
-        }
-        /**
-         * The number of threads in the scheduled thread pool when using
-         * asynchronous release tasks. Using a default of 1 core threads should
-         * be sufficient in almost all use-cases, only set this to a higher
-         * value if either updating the idempotent repository is slow, or there
-         * are a lot of files to process. This option is not in-use if you use a
-         * shared thread pool by configuring the
-         * readLockIdempotentReleaseExecutorService option. See more details at
-         * the readLockIdempotentReleaseDelay option.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseAsyncPoolSize the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(int readLockIdempotentReleaseAsyncPoolSize) {
-            doSetProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
-            return this;
-        }
-        /**
-         * The number of threads in the scheduled thread pool when using
-         * asynchronous release tasks. Using a default of 1 core threads should
-         * be sufficient in almost all use-cases, only set this to a higher
-         * value if either updating the idempotent repository is slow, or there
-         * are a lot of files to process. This option is not in-use if you use a
-         * shared thread pool by configuring the
-         * readLockIdempotentReleaseExecutorService option. See more details at
-         * the readLockIdempotentReleaseDelay option.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseAsyncPoolSize the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(String readLockIdempotentReleaseAsyncPoolSize) {
-            doSetProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
-            return this;
-        }
-        /**
-         * Whether to delay the release task for a period of millis. This can be
-         * used to delay the release tasks to expand the window when a file is
-         * regarded as read-locked, in an active/active cluster scenario with a
-         * shared idempotent repository, to ensure other nodes cannot
-         * potentially scan and acquire the same file, due to race-conditions.
-         * By expanding the time-window of the release tasks helps prevents
-         * these situations. Note delaying is only needed if you have configured
-         * readLockRemoveOnCommit to true.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseDelay the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(int readLockIdempotentReleaseDelay) {
-            doSetProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
-            return this;
-        }
-        /**
-         * Whether to delay the release task for a period of millis. This can be
-         * used to delay the release tasks to expand the window when a file is
-         * regarded as read-locked, in an active/active cluster scenario with a
-         * shared idempotent repository, to ensure other nodes cannot
-         * potentially scan and acquire the same file, due to race-conditions.
-         * By expanding the time-window of the release tasks helps prevents
-         * these situations. Note delaying is only needed if you have configured
-         * readLockRemoveOnCommit to true.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseDelay the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(String readLockIdempotentReleaseDelay) {
-            doSetProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
-            return this;
-        }
-        /**
-         * To use a custom and shared thread pool for asynchronous release
-         * tasks. See more details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseExecutorService the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
-            doSetProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
-            return this;
-        }
-        /**
-         * To use a custom and shared thread pool for asynchronous release
-         * tasks. See more details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: lock
-         * 
-         * @param readLockIdempotentReleaseExecutorService the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(String readLockIdempotentReleaseExecutorService) {
-            doSetProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
         }
         /**
@@ -1491,90 +1279,6 @@ public interface MinaSftpEndpointBuilderFactory {
          */
         default MinaSftpEndpointConsumerBuilder readLockMinLength(String readLockMinLength) {
             doSetProperty("readLockMinLength", readLockMinLength);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file is succeeded and a commit
-         * happens. By default the file is not removed which ensures that any
-         * race-condition do not occur so another active node may attempt to
-         * grab the file. Instead the idempotent repository may support eviction
-         * strategies that you can configure to evict the file name entry after
-         * X minutes - this ensures no problems with race conditions. See more
-         * details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockRemoveOnCommit the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
-            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file is succeeded and a commit
-         * happens. By default the file is not removed which ensures that any
-         * race-condition do not occur so another active node may attempt to
-         * grab the file. Instead the idempotent repository may support eviction
-         * strategies that you can configure to evict the file name entry after
-         * X minutes - this ensures no problems with race conditions. See more
-         * details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockRemoveOnCommit the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockRemoveOnCommit(String readLockRemoveOnCommit) {
-            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file failed and a rollback happens. If
-         * this option is false, then the file name entry is confirmed (as if
-         * the file did a commit).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockRemoveOnRollback the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockRemoveOnRollback(boolean readLockRemoveOnRollback) {
-            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file failed and a rollback happens. If
-         * this option is false, then the file name entry is confirmed (as if
-         * the file did a commit).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockRemoveOnRollback the value to set
-         * @return the dsl builder
-         */
-        default MinaSftpEndpointConsumerBuilder readLockRemoveOnRollback(String readLockRemoveOnRollback) {
-            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -2341,8 +2045,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -2356,8 +2060,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -4461,8 +4165,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -4476,8 +4180,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -6136,8 +5840,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -6151,8 +5855,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -7228,8 +6932,8 @@ public interface MinaSftpEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
-         * The actual absolute filepath (path name) for the output file that was
-         * written. This header is set by Camel and its purpose is providing
+         * The actual absolute filepath (path + name) for the output file that
+         * was written. This header is set by Camel and its purpose is providing
          * end-users with the name of the file that was written.
          * 
          * The option is a: {@code String} type.

@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -40,8 +41,9 @@ import picocli.CommandLine.Command;
          showDefaultValues = true,
          footer = {
                  "%nLists the current rules of the integrations that have camel-chaos switched on: id, version, state,",
-                 "matches and the faults that fired. With --report it shows the report instead: the verdict, the seed,",
-                 "all rules (also the removed and replaced versions), the counts per route and the reasons of a FAIL.",
+                 "matches, the faults that fired, the observed rate, when a rule last fired and the effect of its faults",
+                 "on the exchanges. With --report it shows the report instead: the verdict, the seed, all rules (also",
+                 "the removed and replaced versions), the counts per route, the recent faults and the reasons of a FAIL.",
                  "%nExamples:",
                  "  camel get chaos",
                  "  camel get chaos myApp --report",
@@ -50,11 +52,16 @@ public class ListChaos extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
+    // the keys of a rule with its live state, besides its counts, that --json copies when the rule has them
+    private static final List<String> LIVE_KEYS = List.of(
+            "lostAtDlq", "startsIn", "rate", "observedRate", "nextFireIn", "burstEndsIn", "nextBurstIn", "lastFiredAgo",
+            "faultsLastMinute", "faultsPerSecond", "effect");
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
     @CommandLine.Option(names = { "--report" },
-                        description = "Show the report: verdict, seed, all rules, the counts per route")
+                        description = "Show the report: verdict, seed, all rules, the counts per route, the recent faults")
     boolean report;
 
     @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
@@ -129,14 +136,26 @@ public class ListChaos extends ProcessWatchCommand {
                 if (r.rule.get("lifecycle") != null) {
                     jo.put("lifecycle", r.rule.get("lifecycle"));
                 }
+                if (r.rule.get("skippedReasons") != null) {
+                    jo.put("skippedReasons", r.rule.get("skippedReasons"));
+                }
+                // the live state of the rule
+                for (String key : LIVE_KEYS) {
+                    if (r.rule.get(key) != null) {
+                        jo.put(key, r.rule.get(key));
+                    }
+                }
                 return jo;
             }).toList()));
             return;
         }
         if (rows.isEmpty()) {
-            printOff(integrations);
+            printNothing(integrations, false);
             return;
         }
+        boolean notes = rows.stream().anyMatch(r -> !note(r.rule).isEmpty());
+        boolean rates = rows.stream().anyMatch(r -> !rate(r.rule).isEmpty());
+        boolean effects = rows.stream().anyMatch(r -> !effect(r.rule).isEmpty());
         printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, List.of(
                 new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.integration.pid),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -151,8 +170,16 @@ public class ListChaos extends ProcessWatchCommand {
                         .with(r -> Long.toString(fired(r.rule))),
                 new Column().header("SKIPPED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> String.valueOf(r.rule.get("skipped"))),
+                new Column().header("RATE").visible(rates).headerAlign(HorizontalAlign.RIGHT)
+                        .dataAlign(HorizontalAlign.RIGHT).with(r -> rate(r.rule)),
+                new Column().header("LAST").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> lastFired(r.rule)),
                 new Column().header("ENDS IN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> endsIn(r.rule)),
+                new Column().header("EFFECT").visible(effects).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(40, OverflowBehaviour.NEWLINE).with(r -> effect(r.rule)),
+                new Column().header("NOTE").visible(notes).dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(40, OverflowBehaviour.NEWLINE).with(r -> note(r.rule)),
                 new Column().header("RULE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                         .with(r -> r.rule.getString("rule")))));
     }
@@ -185,7 +212,7 @@ public class ListChaos extends ProcessWatchCommand {
             printReport(integration, report);
         }
         if (!any) {
-            printOff(integrations);
+            printNothing(integrations, true);
         }
     }
 
@@ -209,6 +236,8 @@ public class ListChaos extends ProcessWatchCommand {
         JsonArray rules = report.getCollection("rules");
         if (rules != null && !rules.isEmpty()) {
             List<JsonObject> list = rules.stream().map(JsonObject.class::cast).toList();
+            boolean notes = list.stream().anyMatch(r -> !note(r).isEmpty());
+            boolean effects = list.stream().anyMatch(r -> !effect(r).isEmpty());
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, list, List.of(
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.getString("id")),
                     new Column().header("VER").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
@@ -221,6 +250,10 @@ public class ListChaos extends ProcessWatchCommand {
                     new Column().header("SKIPPED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> String.valueOf(r.get("skipped"))),
                     new Column().header("EXPECT").dataAlign(HorizontalAlign.LEFT).with(ListChaos::expectation),
+                    new Column().header("EFFECT").visible(effects).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(40, OverflowBehaviour.NEWLINE).with(ListChaos::effect),
+                    new Column().header("NOTE").visible(notes).dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(40, OverflowBehaviour.NEWLINE).with(ListChaos::note),
                     new Column().header("RULE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
                             .with(r -> r.getString("rule")))));
         }
@@ -241,18 +274,90 @@ public class ListChaos extends ProcessWatchCommand {
                             .dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> String.valueOf(r.get("redeliveries"))))));
         }
+        JsonArray recent = report.getCollection("recentFaults");
+        if (recent != null && !recent.isEmpty()) {
+            List<JsonObject> list = recent.stream().map(JsonObject.class::cast).toList();
+            printer().println("  recent faults:");
+            printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, list, List.of(
+                    new Column().header("AGO").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                            .with(r -> r.get("ago") instanceof Number n ? TimeUtils.printDuration(n.longValue()) : ""),
+                    new Column().header("RULE").dataAlign(HorizontalAlign.LEFT).with(r -> r.getString("rule")),
+                    new Column().header("FAULT").dataAlign(HorizontalAlign.LEFT).with(r -> r.getString("fault")),
+                    new Column().header("HOOK").dataAlign(HorizontalAlign.LEFT)
+                            .with(r -> r.getStringOrDefault("hook", "")),
+                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT)
+                            .with(r -> r.getStringOrDefault("route", "")),
+                    new Column().header("AT").dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                            .with(r -> r.getStringOrDefault("endpoint", r.getStringOrDefault("step", ""))),
+                    new Column().header("EXCHANGE").dataAlign(HorizontalAlign.LEFT)
+                            .with(r -> r.getStringOrDefault("exchangeId", "")))));
+        }
     }
 
     /**
-     * Without a rule to show, says why for each integration where chaos is off, on stderr, so the output stays empty.
+     * Without a rule to show, says why on stderr, so the output stays empty: for each integration where chaos is off
+     * the reason, for each one where it is on that it has no rules, and when no integration has camel-chaos at all,
+     * that.
      */
-    private void printOff(List<Row> integrations) {
+    private void printNothing(List<Row> integrations, boolean report) {
+        boolean any = false;
         for (Row integration : integrations) {
-            if (integration.chaos != null && !integration.isOn()) {
-                printer().printDiagnostic(integration.name + " (pid " + integration.pid + "): "
-                                          + integration.chaos.getStringOrDefault("reason", "chaos is off"));
+            if (integration.chaos == null) {
+                continue;
+            }
+            any = true;
+            String prefix = integration.name + " (pid " + integration.pid + "): ";
+            if (!integration.isOn()) {
+                printer().printDiagnostic(prefix + integration.chaos.getStringOrDefault("reason", "chaos is off"));
+            } else if (!report) {
+                printer().printDiagnostic(prefix + "no chaos rules (add one with camel cmd chaos-add)");
             }
         }
+        if (!any && !integrations.isEmpty()) {
+            printer().printDiagnostic("No running integration has camel-chaos: run it with camel run --chaos");
+        }
+    }
+
+    /**
+     * What a person should know about a rule, besides its counts: when a rule that waits starts, the bursts of a
+     * {@code rate=burst:} rule, what a lifecycle rule did to its route (in which round of {@code repeat=}), and why the
+     * rule did nothing when it was skipped.
+     */
+    static String note(JsonObject rule) {
+        StringJoiner sj = new StringJoiner("; ");
+        if (rule.get("startsIn") instanceof Number n) {
+            sj.add("starts in " + TimeUtils.printDuration(n.longValue()));
+        }
+        if (rule.get("burstEndsIn") instanceof Number n) {
+            sj.add("in a burst for " + TimeUtils.printDuration(n.longValue()));
+        } else if (rule.get("nextBurstIn") instanceof Number n) {
+            sj.add("next burst in " + TimeUtils.printDuration(n.longValue()));
+        }
+        if (rule.get("lifecycle") instanceof JsonObject l) {
+            String state = l.getString("state");
+            StringBuilder sb = new StringBuilder("route ").append(l.getString("route")).append(' ').append(state);
+            if (l.get("repeat") instanceof Number repeat && l.get("round") instanceof Number round
+                    && round.intValue() > 0) {
+                sb.append(" (round ").append(round).append(" of ").append(repeat).append(')');
+            }
+            if (l.get("actsIn") instanceof Number n) {
+                sb.append(", acts in ").append(TimeUtils.printDuration(n.longValue()));
+            } else if (l.get("backIn") instanceof Number n) {
+                sb.append(", back in ").append(TimeUtils.printDuration(n.longValue()));
+            } else if ("back".equals(state) && l.get("downAt") instanceof Number down
+                    && l.get("backAt") instanceof Number back) {
+                sb.append(" after ").append(TimeUtils.printDuration(back.longValue() - down.longValue()));
+            }
+            if (l.getString("reason") != null) {
+                sb.append(": ").append(l.getString("reason"));
+            }
+            sj.add(sb);
+        }
+        if (rule.get("skippedReasons") instanceof Map<?, ?> reasons && rule.get("lifecycle") == null) {
+            reasons.forEach((reason, count) -> sj.add("skipped " + count + ": " + reason));
+        }
+        return sj.toString();
     }
 
     private static long fired(JsonObject rule) {
@@ -267,6 +372,43 @@ public class ListChaos extends ProcessWatchCommand {
         return total;
     }
 
+    /** The observed rate of a rule next to its own, such as {@code 4.8% of 5%}, for a rule with a rate below 100%. */
+    static String rate(JsonObject rule) {
+        if (rule.get("rate") instanceof Number rate && rate.doubleValue() < 1.0d
+                && rule.get("observedRate") instanceof Number observed) {
+            return percent(observed.doubleValue()) + " of " + percent(rate.doubleValue());
+        }
+        return "";
+    }
+
+    private static String percent(double share) {
+        double tenths = Math.round(share * 1000) / 10.0d;
+        return (tenths == Math.rint(tenths) ? Long.toString((long) tenths) : Double.toString(tenths)) + "%";
+    }
+
+    private static String lastFired(JsonObject rule) {
+        return rule.get("lastFiredAgo") instanceof Number n ? TimeUtils.printDuration(n.longValue()) + " ago" : "";
+    }
+
+    /**
+     * What the faults of a rule did to the exchanges, such as {@code 10 recovered, 2 handled, 1 in flight}; the counts
+     * that are 0 are left out.
+     */
+    static String effect(JsonObject rule) {
+        if (!(rule.get("effect") instanceof JsonObject e)) {
+            return "";
+        }
+        StringJoiner sj = new StringJoiner(", ");
+        for (String[] key : new String[][] {
+                { "completed", "completed" }, { "recovered", "recovered" }, { "handled", "handled" },
+                { "failed", "failed" }, { "inFlight", "in flight" } }) {
+            if (e.get(key[0]) instanceof Number n && n.longValue() > 0) {
+                sj.add(n + " " + key[1]);
+            }
+        }
+        return sj.toString();
+    }
+
     private static String endsIn(JsonObject rule) {
         return rule.get("endsIn") instanceof Number n ? TimeUtils.printDuration(n.longValue()) : "";
     }
@@ -275,13 +417,18 @@ public class ListChaos extends ProcessWatchCommand {
         if (!(rule.get("expectation") instanceof JsonObject e)) {
             return "";
         }
+        // orders:100 counts completed exchanges (at least that many); orders:handled<=0 names its kind and op
+        String kind = e.getStringOrDefault("kind", "completed");
+        String op = e.getStringOrDefault("op", ">=");
+        Object value = e.get("value") != null ? e.get("value") : e.get("completed");
         StringBuilder sb = new StringBuilder();
-        sb.append(e.getString("route")).append(':').append(e.get("count")).append(' ').append(e.getString("outcome"))
-                .append(" (").append(e.get("completed")).append(" completed");
-        if (e.getBooleanOrDefault("notDecided", false)) {
-            // the rule was removed or changed, or the context stopped, first: it stays pending for good
-            sb.append(", not decided");
-        } else if (e.get("timeLeft") instanceof Number n) {
+        sb.append(e.getString("route")).append(':');
+        if (!"completed".equals(kind) || !">=".equals(op)) {
+            sb.append(kind).append(op);
+        }
+        sb.append(e.get("count")).append(' ').append(e.getString("outcome"))
+                .append(" (").append(value).append(' ').append(kind);
+        if (e.get("timeLeft") instanceof Number n) {
             sb.append(", ").append(TimeUtils.printDuration(n.longValue())).append(" left");
         }
         return sb.append(')').toString();

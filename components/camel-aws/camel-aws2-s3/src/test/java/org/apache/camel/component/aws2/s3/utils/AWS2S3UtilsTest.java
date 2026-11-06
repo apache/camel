@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.aws2.s3.utils;
 
+import java.time.Instant;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.AWS2S3Constants;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.services.s3.model.ChecksumMode;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.RequestPayer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -185,5 +191,48 @@ public class AWS2S3UtilsTest extends CamelTestSupport {
         config.setBucketName("${header.missing}");
 
         assertThrows(IllegalArgumentException.class, () -> AWS2S3Utils.determineBucketName(exchange, config));
+    }
+
+    // ---- toHeadObjectRequest ----
+
+    @Test
+    void headObjectRequestHasTheFieldsOfTheGetObjectRequest() {
+        GetObjectRequest get = GetObjectRequest.builder()
+                .bucket("bkt").key("a.txt").versionId("v1").partNumber(2).range("bytes=0-9")
+                .ifMatch("etag1").ifModifiedSince(Instant.ofEpochSecond(1)).ifNoneMatch("etag2")
+                .ifUnmodifiedSince(Instant.ofEpochSecond(2))
+                .responseCacheControl("no-cache").responseContentDisposition("inline").responseContentEncoding("gzip")
+                .responseContentLanguage("en").responseContentType("text/plain")
+                .responseExpires(Instant.ofEpochSecond(3))
+                .sseCustomerAlgorithm("AES256").sseCustomerKey("key").sseCustomerKeyMD5("md5")
+                .requestPayer(RequestPayer.REQUESTER).expectedBucketOwner("123456789012")
+                .checksumMode(ChecksumMode.ENABLED)
+                .overrideConfiguration(o -> o.putHeader("x-test", "1"))
+                .build();
+
+        HeadObjectRequest head = AWS2S3Utils.toHeadObjectRequest(get);
+
+        assertEquals("bkt", head.bucket());
+        assertEquals("a.txt", head.key());
+        assertEquals("v1", head.versionId());
+        assertEquals(2, head.partNumber());
+        assertEquals("bytes=0-9", head.range());
+        assertEquals("etag1", head.ifMatch());
+        assertEquals(Instant.ofEpochSecond(1), head.ifModifiedSince());
+        assertEquals("etag2", head.ifNoneMatch());
+        assertEquals(Instant.ofEpochSecond(2), head.ifUnmodifiedSince());
+        assertEquals("no-cache", head.responseCacheControl());
+        assertEquals("inline", head.responseContentDisposition());
+        assertEquals("gzip", head.responseContentEncoding());
+        assertEquals("en", head.responseContentLanguage());
+        assertEquals("text/plain", head.responseContentType());
+        assertEquals(Instant.ofEpochSecond(3), head.responseExpires());
+        assertEquals("AES256", head.sseCustomerAlgorithm());
+        assertEquals("key", head.sseCustomerKey());
+        assertEquals("md5", head.sseCustomerKeyMD5());
+        assertEquals(RequestPayer.REQUESTER, head.requestPayer());
+        assertEquals("123456789012", head.expectedBucketOwner());
+        assertEquals(ChecksumMode.ENABLED, head.checksumMode());
+        assertEquals(get.overrideConfiguration(), head.overrideConfiguration());
     }
 }

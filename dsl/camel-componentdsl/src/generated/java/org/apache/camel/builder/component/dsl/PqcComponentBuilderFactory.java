@@ -598,6 +598,28 @@ public interface PqcComponentBuilderFactory {
             doSetProperty("healthCheckProducerEnabled", healthCheckProducerEnabled);
             return this;
         }
+    
+        
+        /**
+         * Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the
+         * configured KeyLifecycleManager cannot claim for this process alone.
+         * These are one-time-signature schemes: when two processes load the
+         * same key from a shared store, both sign from the same index and the
+         * key is broken. Only enable it when something outside Camel guarantees
+         * a single signer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security (advanced)
+         * 
+         * @param allowSharedStatefulKey the value to set
+         * @return the dsl builder
+         */
+        default PqcComponentBuilder allowSharedStatefulKey(boolean allowSharedStatefulKey) {
+            doSetProperty("allowSharedStatefulKey", allowSharedStatefulKey);
+            return this;
+        }
     }
 
     class PqcComponentBuilderImpl
@@ -650,6 +672,7 @@ public interface PqcComponentBuilderFactory {
             case "symmetricKeyLength": getOrCreateConfiguration((PQCComponent) component).setSymmetricKeyLength((int) value); return true;
             case "healthCheckConsumerEnabled": ((PQCComponent) component).setHealthCheckConsumerEnabled((boolean) value); return true;
             case "healthCheckProducerEnabled": ((PQCComponent) component).setHealthCheckProducerEnabled((boolean) value); return true;
+            case "allowSharedStatefulKey": getOrCreateConfiguration((PQCComponent) component).setAllowSharedStatefulKey((boolean) value); return true;
             default: return false;
             }
         }

@@ -57,7 +57,7 @@ import org.keycloak.admin.client.KeycloakBuilder;
                                                 + " for the others."
                                                 + " introspectToken, revokeAccessToken and revokeRefreshToken take the token"
                                                 + " as text when the CamelKeycloakToken header is not set"),
-           producerOut = @BodyType(value = Carrier.UNKNOWN,
+           producerOut = @BodyType(value = Carrier.UNKNOWN, dependsOn = "allowOperationHeader",
                                    byOption = {
                                            @BodyType.When(option = "operation", value = "createRealm", carriers = Carrier.TEXT,
                                                           javaType = "java.lang.String"),
@@ -297,7 +297,8 @@ import org.keycloak.admin.client.KeycloakBuilder;
                                            @BodyType.When(option = "operation", value = "getFederatedIdentities",
                                                           carriers = Carrier.LIST,
                                                           javaType = "java.util.List<org.keycloak.representations.idm.FederatedIdentityRepresentation>") },
-                                   description = "Depends on the operation, which the CamelKeycloakOperation header can set:"
+                                   description = "Depends on the operation, which the CamelKeycloakOperation header can set"
+                                                 + " with allowOperationHeader=true:"
                                                  + " get gives the Keycloak representation, such as a UserRepresentation, and"
                                                  + " list and search a List of them. Most create operations, deleteUser and"
                                                  + " some organization operations give the closed JAX-RS Response, whose"

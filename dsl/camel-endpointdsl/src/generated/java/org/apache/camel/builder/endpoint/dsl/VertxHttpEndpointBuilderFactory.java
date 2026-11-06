@@ -281,7 +281,7 @@ public interface VertxHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the response body should be byte or as
+         * Whether the response body should be byte[] or as
          * io.vertx.core.buffer.Buffer.
          * 
          * The option is a: <code>boolean</code> type.
@@ -297,7 +297,7 @@ public interface VertxHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether the response body should be byte or as
+         * Whether the response body should be byte[] or as
          * io.vertx.core.buffer.Buffer.
          * 
          * The option will be converted to a <code>boolean</code> type.

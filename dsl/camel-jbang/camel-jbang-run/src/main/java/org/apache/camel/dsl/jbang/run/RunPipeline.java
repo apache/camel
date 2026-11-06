@@ -1137,13 +1137,15 @@ public class RunPipeline {
     }
 
     /**
-     * The reload pattern of dev mode with a source directory: every file under it, except the data folders
-     * (--data-dir), whose files the routes read and write: a change there is not a change of the sources, and reloading
-     * the routes for it restarts them, so they write again and reload again (CAMEL-25670).
+     * The reload pattern of dev mode with a source directory: every file under it, except the test folder, which holds
+     * the Citrus tests of the project (run with camel test run) and their data, none of them routes (CAMEL-26494), and
+     * the data folders (--data-dir), whose files the routes read and write: a change there is not a change of the
+     * sources, and reloading the routes for it restarts them, so they write again and reload again (CAMEL-25670).
      */
     public static String sourceDirReloadPattern(String dataDir) {
         StringJoiner sj = new StringJoiner(",");
         sj.add("*");
+        sj.add("!test/**");
         if (dataDir != null) {
             for (String dir : dataDir.split(",")) {
                 dir = dir.trim().replace('\\', '/');

@@ -1483,7 +1483,7 @@ public interface OAIPMHEndpointBuilderFactory {
         }
         /**
          * Custom HTTP headers to send with the request, overriding any
-         * httpHeader. endpoint parameters.
+         * httpHeader.* endpoint parameters.
          * 
          * The option is a: {@code java.util.Map<java.lang.String,
          * java.lang.String>} type.

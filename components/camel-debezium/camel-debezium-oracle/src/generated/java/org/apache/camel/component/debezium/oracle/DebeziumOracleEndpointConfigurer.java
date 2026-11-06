@@ -53,8 +53,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "databaseConnectionAdapter": target.getConfiguration().setDatabaseConnectionAdapter(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": target.getConfiguration().setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseexcludelist":
+        case "databaseExcludeList": target.getConfiguration().setDatabaseExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
+        case "databaseincludelist":
+        case "databaseIncludeList": target.getConfiguration().setDatabaseIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": target.getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepdbname":
@@ -73,6 +77,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "decimalHandlingMode": target.getConfiguration().setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "errorsmaxretries":
         case "errorsMaxRetries": target.getConfiguration().setErrorsMaxRetries(property(camelContext, int.class, value)); return true;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": target.getConfiguration().setEventConvertingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": target.getConfiguration().setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
@@ -83,6 +89,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": target.getConfiguration().setExecutorShutdownTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": target.getConfiguration().setExtendedHeadersEnabled(property(camelContext, boolean.class, value)); return true;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": target.getConfiguration().setFieldNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": target.getConfiguration().setGuardrailCollectionsLimitAction(property(camelContext, java.lang.String.class, value)); return true;
         case "guardrailcollectionsmax":
@@ -97,6 +105,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "includeSchemaChanges": target.getConfiguration().setIncludeSchemaChanges(property(camelContext, boolean.class, value)); return true;
         case "includeschemacomments":
         case "includeSchemaComments": target.getConfiguration().setIncludeSchemaComments(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": target.getConfiguration().setIncrementalSnapshotAllowSchemaChanges(property(camelContext, boolean.class, value)); return true;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": target.getConfiguration().setIncrementalSnapshotChunkSize(property(camelContext, int.class, value)); return true;
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": target.getConfiguration().setIncrementalSnapshotWatermarkingStrategy(property(camelContext, java.lang.String.class, value)); return true;
         case "internalkeyconverter":
@@ -205,6 +217,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "messageKeyColumns": target.getConfiguration().setMessageKeyColumns(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": target.getConfiguration().setNotificationEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": target.getConfiguration().setNotificationHttpAllowPrivateNetworks(property(camelContext, boolean.class, value)); return true;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": target.getConfiguration().setNotificationHttpRetries(property(camelContext, int.class, value)); return true;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": target.getConfiguration().setNotificationHttpTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": target.getConfiguration().setNotificationHttpUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": target.getConfiguration().setNotificationSinkTopicName(property(camelContext, java.lang.String.class, value)); return true;
         case "offsetcommitpolicy":
@@ -259,6 +279,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaHistoryInternal": target.getConfiguration().setSchemaHistoryInternal(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": target.getConfiguration().setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": target.getConfiguration().setSchemaHistoryInternalMemoryOptimization(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": target.getConfiguration().setSchemaHistoryInternalSkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -277,10 +299,16 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "secondaryUrl": target.getConfiguration().setSecondaryUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": target.getConfiguration().setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": target.getConfiguration().setSignalEmitFailureBackoffMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": target.getConfiguration().setSignalEmitFailureMaxRetries(property(camelContext, int.class, value)); return true;
         case "signalenabledchannels":
         case "signalEnabledChannels": target.getConfiguration().setSignalEnabledChannels(property(camelContext, java.lang.String.class, value)); return true;
         case "signalpollintervalms":
         case "signalPollIntervalMs": target.getConfiguration().setSignalPollIntervalMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": target.getConfiguration().setSkipMessagesWithoutChange(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdatabaseerrorsmaxretries":
@@ -377,8 +405,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "databaseConnectionAdapter": return java.lang.String.class;
         case "databasedbname":
         case "databaseDbname": return java.lang.String.class;
+        case "databaseexcludelist":
+        case "databaseExcludeList": return java.lang.String.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
+        case "databaseincludelist":
+        case "databaseIncludeList": return java.lang.String.class;
         case "databasepassword":
         case "databasePassword": return java.lang.String.class;
         case "databasepdbname":
@@ -397,6 +429,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "decimalHandlingMode": return java.lang.String.class;
         case "errorsmaxretries":
         case "errorsMaxRetries": return int.class;
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
         case "exceptionhandler":
@@ -407,6 +441,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": return long.class;
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return boolean.class;
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return java.lang.String.class;
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return java.lang.String.class;
         case "guardrailcollectionsmax":
@@ -421,6 +457,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "includeSchemaChanges": return boolean.class;
         case "includeschemacomments":
         case "includeSchemaComments": return boolean.class;
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return boolean.class;
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return int.class;
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": return java.lang.String.class;
         case "internalkeyconverter":
@@ -529,6 +569,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "messageKeyColumns": return java.lang.String.class;
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return java.lang.String.class;
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return boolean.class;
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return int.class;
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return int.class;
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return java.lang.String.class;
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return java.lang.String.class;
         case "offsetcommitpolicy":
@@ -583,6 +631,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaHistoryInternal": return java.lang.String.class;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return java.lang.String.class;
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return java.lang.String.class;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return boolean.class;
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -601,10 +651,16 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "secondaryUrl": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return long.class;
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return int.class;
         case "signalenabledchannels":
         case "signalEnabledChannels": return java.lang.String.class;
         case "signalpollintervalms":
         case "signalPollIntervalMs": return long.class;
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdatabaseerrorsmaxretries":
@@ -702,8 +758,12 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "databaseConnectionAdapter": return target.getConfiguration().getDatabaseConnectionAdapter();
         case "databasedbname":
         case "databaseDbname": return target.getConfiguration().getDatabaseDbname();
+        case "databaseexcludelist":
+        case "databaseExcludeList": return target.getConfiguration().getDatabaseExcludeList();
         case "databasehostname":
         case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
+        case "databaseincludelist":
+        case "databaseIncludeList": return target.getConfiguration().getDatabaseIncludeList();
         case "databasepassword":
         case "databasePassword": return target.getConfiguration().getDatabasePassword();
         case "databasepdbname":
@@ -722,6 +782,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "decimalHandlingMode": return target.getConfiguration().getDecimalHandlingMode();
         case "errorsmaxretries":
         case "errorsMaxRetries": return target.getConfiguration().getErrorsMaxRetries();
+        case "eventconvertingfailurehandlingmode":
+        case "eventConvertingFailureHandlingMode": return target.getConfiguration().getEventConvertingFailureHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return target.getConfiguration().getEventProcessingFailureHandlingMode();
         case "exceptionhandler":
@@ -732,6 +794,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "executorShutdownTimeoutMs": return target.getConfiguration().getExecutorShutdownTimeoutMs();
         case "extendedheadersenabled":
         case "extendedHeadersEnabled": return target.getConfiguration().isExtendedHeadersEnabled();
+        case "fieldnameadjustmentmode":
+        case "fieldNameAdjustmentMode": return target.getConfiguration().getFieldNameAdjustmentMode();
         case "guardrailcollectionslimitaction":
         case "guardrailCollectionsLimitAction": return target.getConfiguration().getGuardrailCollectionsLimitAction();
         case "guardrailcollectionsmax":
@@ -746,6 +810,10 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "includeSchemaChanges": return target.getConfiguration().isIncludeSchemaChanges();
         case "includeschemacomments":
         case "includeSchemaComments": return target.getConfiguration().isIncludeSchemaComments();
+        case "incrementalsnapshotallowschemachanges":
+        case "incrementalSnapshotAllowSchemaChanges": return target.getConfiguration().isIncrementalSnapshotAllowSchemaChanges();
+        case "incrementalsnapshotchunksize":
+        case "incrementalSnapshotChunkSize": return target.getConfiguration().getIncrementalSnapshotChunkSize();
         case "incrementalsnapshotwatermarkingstrategy":
         case "incrementalSnapshotWatermarkingStrategy": return target.getConfiguration().getIncrementalSnapshotWatermarkingStrategy();
         case "internalkeyconverter":
@@ -854,6 +922,14 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "messageKeyColumns": return target.getConfiguration().getMessageKeyColumns();
         case "notificationenabledchannels":
         case "notificationEnabledChannels": return target.getConfiguration().getNotificationEnabledChannels();
+        case "notificationhttpallowprivatenetworks":
+        case "notificationHttpAllowPrivateNetworks": return target.getConfiguration().isNotificationHttpAllowPrivateNetworks();
+        case "notificationhttpretries":
+        case "notificationHttpRetries": return target.getConfiguration().getNotificationHttpRetries();
+        case "notificationhttptimeoutms":
+        case "notificationHttpTimeoutMs": return target.getConfiguration().getNotificationHttpTimeoutMs();
+        case "notificationhttpurl":
+        case "notificationHttpUrl": return target.getConfiguration().getNotificationHttpUrl();
         case "notificationsinktopicname":
         case "notificationSinkTopicName": return target.getConfiguration().getNotificationSinkTopicName();
         case "offsetcommitpolicy":
@@ -908,6 +984,8 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "schemaHistoryInternal": return target.getConfiguration().getSchemaHistoryInternal();
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return target.getConfiguration().getSchemaHistoryInternalFileFilename();
+        case "schemahistoryinternalmemoryoptimization":
+        case "schemaHistoryInternalMemoryOptimization": return target.getConfiguration().getSchemaHistoryInternalMemoryOptimization();
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return target.getConfiguration().isSchemaHistoryInternalSkipUnparseableDdl();
         case "schemahistoryinternalstoreonlycaptureddatabasesddl":
@@ -926,10 +1004,16 @@ public class DebeziumOracleEndpointConfigurer extends PropertyConfigurerSupport 
         case "secondaryUrl": return target.getConfiguration().getSecondaryUrl();
         case "signaldatacollection":
         case "signalDataCollection": return target.getConfiguration().getSignalDataCollection();
+        case "signalemitfailurebackoffms":
+        case "signalEmitFailureBackoffMs": return target.getConfiguration().getSignalEmitFailureBackoffMs();
+        case "signalemitfailuremaxretries":
+        case "signalEmitFailureMaxRetries": return target.getConfiguration().getSignalEmitFailureMaxRetries();
         case "signalenabledchannels":
         case "signalEnabledChannels": return target.getConfiguration().getSignalEnabledChannels();
         case "signalpollintervalms":
         case "signalPollIntervalMs": return target.getConfiguration().getSignalPollIntervalMs();
+        case "skipmessageswithoutchange":
+        case "skipMessagesWithoutChange": return target.getConfiguration().isSkipMessagesWithoutChange();
         case "skippedoperations":
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdatabaseerrorsmaxretries":

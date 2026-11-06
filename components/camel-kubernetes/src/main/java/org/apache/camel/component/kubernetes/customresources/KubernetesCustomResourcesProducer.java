@@ -57,13 +57,7 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         String operation = KubernetesHelper.extractOperation(getEndpoint(), exchange);
-        String namespace;
-
-        if (ObjectHelper.isEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
-            namespace = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
-        } else {
-            namespace = getEndpoint().getKubernetesConfiguration().getNamespace();
-        }
+        String namespace = KubernetesHelper.extractNamespace(getEndpoint(), exchange);
         if (ObjectHelper.isEmpty(namespace)) {
             throw new IllegalArgumentException("Custom Resource producer requires a namespace argument");
         }

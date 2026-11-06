@@ -451,6 +451,19 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * Whether a directory can be listed one entry at a time, and the listing stopped once {@link #canPollMoreFiles}
+     * returns {@code false}, rather than listed whole before its files are picked. This is the case when the eager
+     * {@code maxMessagesPerPoll} limit is in use, and nothing needs the whole directory: {@code preSort} sorts all its
+     * files, and a done file is looked up among them.
+     *
+     * @return <tt>true</tt> if the listing can stop at the limit
+     */
+    protected boolean canStopListingAtLimit() {
+        return eagerLimitMaxMessagesPerPoll && maxMessagesPerPoll > 0
+                && !endpoint.isPreSort() && endpoint.getDoneFileName() == null;
+    }
+
+    /**
      * Override if required. Perform some checks (and perhaps actions) before we poll.
      *
      * @return <tt>true</tt> to poll, <tt>false</tt> to skip this poll.
@@ -591,7 +604,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // (for instance to move the file after we have processed it)
             GenericFileOnCompletion<T> onCompletion
                     = new GenericFileOnCompletion<>(endpoint, operations, processStrategy, target, absoluteFileName);
-            onCompletion.setKeptDoneFiles(getKeptDoneFiles());
+            GenericFileKeptDoneFiles kept = getKeptDoneFiles();
+            if (kept != null) {
+                onCompletion.setKeptDoneFiles(kept.batch());
+            }
             exchange.getExchangeExtension().addOnCompletion(onCompletion);
 
             LOG.debug("About to process file: {} using exchange: {}", target, exchange);

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
@@ -36,20 +37,37 @@ import org.apache.camel.spi.Transformer;
                      description = "Prepares the similarity search LangChain4j embeddings to become a List of String for LangChain4j RAG")
 @BodyTypes(transformerIn = @BodyType(value = Carrier.LIST,
                                      javaType = "java.util.List<java.util.Map<java.lang.String, java.lang.Object>>",
-                                     description = "The rows of a VECTOR_SIMILARITY_SEARCH, whose text keys are kept. A"
-                                                   + " null body fails"),
+                                     description = "The rows of a VECTOR_SIMILARITY_SEARCH, whose text values are kept as"
+                                                   + " String: a value of another type, such as a number, is converted, and a"
+                                                   + " row without text gives an empty String. A null body fails"),
            transformerOut = @BodyType(value = Carrier.LIST, javaType = "java.util.List<java.lang.String>"))
 public class Neo4jReverseEmbeddingsDataTypeTransformer extends Transformer {
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
         final List<Map<String, Object>> embeddings = message.getBody(List.class);
+        final Exchange exchange = message.getExchange();
 
         List<String> result = embeddings.stream()
-                .map(embedding -> (String) embedding.getOrDefault("text", ""))
+                .map(embedding -> toText(exchange, embedding.get("text")))
                 .collect(Collectors.toList());
 
         message.setBody(result);
 
+    }
+
+    /**
+     * The text of a row. The text of a node is a String, but a value of another type, such as a number, is converted
+     * instead of cast, and a row without text gives an empty String.
+     */
+    private static String toText(Exchange exchange, Object value) {
+        if (value == null) {
+            return "";
+        }
+        if (value instanceof String text) {
+            return text;
+        }
+        String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+        return text != null ? text : "";
     }
 }

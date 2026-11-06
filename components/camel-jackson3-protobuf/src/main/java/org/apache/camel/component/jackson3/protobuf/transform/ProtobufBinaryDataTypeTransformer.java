@@ -33,6 +33,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.dataformat.protobuf.schema.ProtobufSchema;
 
@@ -76,7 +77,7 @@ public class ProtobufBinaryDataTypeTransformer extends Transformer {
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.PROTOBUF_BINARY.type());
             message.setHeader(SchemaHelper.CONTENT_SCHEMA, schema.getSource().toString());
-        } catch (InvalidPayloadException | IOException | ClassNotFoundException e) {
+        } catch (InvalidPayloadException | IOException | JacksonException | ClassNotFoundException e) {
             throw new CamelExecutionException(
                     "Failed to apply Protobuf binary data type on exchange", message.getExchange(), e);
         }

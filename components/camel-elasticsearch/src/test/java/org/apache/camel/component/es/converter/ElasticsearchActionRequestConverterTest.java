@@ -95,6 +95,18 @@ public class ElasticsearchActionRequestConverterTest {
     }
 
     @Test
+    void aSearchBuilderBodyCanBeBuiltAfterConversion() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, "idx");
+        SearchRequest.Builder body = new SearchRequest.Builder().size(3);
+
+        SearchRequest request = ElasticsearchActionRequestConverter.toSearchRequestBuilder(body, exchange).build();
+
+        assertEquals(List.of("idx"), request.index());
+        assertEquals(3, request.size());
+    }
+
+    @Test
     void aJsonSearchBodyKeepsItsSizeSortAggregationsAndSource() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         String body = """

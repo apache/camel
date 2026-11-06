@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileHelper;
+import org.apache.camel.component.file.GenericFileListingOperations;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.FtpConstants;
 import org.apache.camel.component.file.remote.RemoteFile;
@@ -75,6 +78,7 @@ import org.apache.sshd.common.signature.Signature;
 import org.apache.sshd.core.CoreModuleProperties;
 import org.apache.sshd.sftp.SftpModuleProperties;
 import org.apache.sshd.sftp.client.SftpClient;
+import org.apache.sshd.sftp.client.SftpClient.CloseableHandle;
 import org.apache.sshd.sftp.client.SftpClient.DirEntry;
 import org.apache.sshd.sftp.client.SftpClient.OpenMode;
 import org.apache.sshd.sftp.client.SftpClientFactory;
@@ -88,7 +92,9 @@ import org.slf4j.LoggerFactory;
  *
  * The SSHD session and SFTP client are not thread-safe so we need to synchronize access to using this operation.
  */
-public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations {
+public class MinaSftpOperations
+        implements RemoteFileOperations<SftpRemoteFile>, SftpSymbolicLinkOperations,
+        GenericFileListingOperations<SftpRemoteFile> {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinaSftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
@@ -240,6 +246,10 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>,
      */
     private SshClient createAndConfigureSshClient(MinaSftpConfiguration sftpConfig) {
         SshClient client = SshClient.setUpDefaultClient();
+
+        // Send each request at once, as JSch does: Apache MINA SSHD leaves TCP_NODELAY off, so a small request, such as
+        // one that reads the next part of a directory listing, would wait for the server to acknowledge the previous reply
+        CoreModuleProperties.TCP_NODELAY.set(client, true);
 
         // Configure host key verification
         ServerKeyVerifier verifier = createServerKeyVerifier(sftpConfig);
@@ -1178,6 +1188,33 @@ public class MinaSftpOperations implements RemoteFileOperations<SftpRemoteFile>,
             return result.toArray(new MinaSftpRemoteFile[0]);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void listFiles(String path, Predicate<SftpRemoteFile> visitor) throws GenericFileOperationFailedException {
+        lock.lock();
+        String dir = path;
+        try {
+            reconnectIfNecessary(null);
+            if (ObjectHelper.isEmpty(dir)) {
+                // the current directory, as listFiles()
+                dir = currentDirectory != null ? currentDirectory : ".";
+            }
+            LOG.trace("Listing remote files from path {} one at a time", dir);
+            // unlike readDir(path), which closes the handle only at the end of the directory
+            try (CloseableHandle handle = sftpClient.openDir(dir)) {
+                for (DirEntry entry : sftpClient.listDir(handle)) {
+                    if (!visitor.test(new MinaSftpRemoteFile(entry))) {
+                        break;
+                    }
+                }
+            }
+        } catch (IOException | UncheckedIOException e) {
+            // the entries are read while iterating, so an I/O error can surface as an UncheckedIOException
+            throw new GenericFileOperationFailedException("Cannot list directory: " + dir, e);
         } finally {
             lock.unlock();
         }

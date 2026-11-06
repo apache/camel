@@ -348,6 +348,31 @@ public interface DockerComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether to allow overriding the connection and credential settings of
+         * the endpoint with the CamelDockerHost, CamelDockerPort,
+         * CamelDockerSocketEnabled, CamelDockerSecure, CamelDockerTlsVerify,
+         * CamelDockerCertPath, CamelDockerCmdExecFactory, CamelDockerUsername,
+         * CamelDockerPassword and CamelDockerServerAddress headers. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the Docker daemon that the client connects to
+         * and how, and the registry that receives the username and password of
+         * the endpoint.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowConnectionAndCredentialsFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DockerComponentBuilder allowConnectionAndCredentialsFromHeaders(boolean allowConnectionAndCredentialsFromHeaders) {
+            doSetProperty("allowConnectionAndCredentialsFromHeaders", allowConnectionAndCredentialsFromHeaders);
+            return this;
+        }
+    
         /**
          * Location containing the SSL certificate chain.
          * 
@@ -463,6 +488,7 @@ public interface DockerComponentBuilderFactory {
             case "parameters": getOrCreateConfiguration((DockerComponent) component).setParameters((java.util.Map) value); return true;
             case "serverAddress": getOrCreateConfiguration((DockerComponent) component).setServerAddress((java.lang.String) value); return true;
             case "socket": getOrCreateConfiguration((DockerComponent) component).setSocket((boolean) value); return true;
+            case "allowConnectionAndCredentialsFromHeaders": getOrCreateConfiguration((DockerComponent) component).setAllowConnectionAndCredentialsFromHeaders((boolean) value); return true;
             case "certPath": getOrCreateConfiguration((DockerComponent) component).setCertPath((java.lang.String) value); return true;
             case "password": getOrCreateConfiguration((DockerComponent) component).setPassword((java.lang.String) value); return true;
             case "secure": getOrCreateConfiguration((DockerComponent) component).setSecure((boolean) value); return true;

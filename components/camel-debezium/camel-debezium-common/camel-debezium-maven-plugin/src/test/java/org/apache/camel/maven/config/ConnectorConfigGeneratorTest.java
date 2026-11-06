@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,6 +85,30 @@ public class ConnectorConfigGeneratorTest {
 
         assertThrows(IllegalArgumentException.class,
                 () -> ConnectorConfigGenerator.create(connector, clazz, null, requiredFields, overridenDefaultValues));
+    }
+
+    @Test
+    void testIfAdditionalFieldIsGenerated() {
+        // Debezium 3.7 reads ddl.parser.type but no longer publishes it in the MySQL config definition
+        final ConnectorConfigGenerator connectorConfigGenerator = ConnectorConfigGenerator.create(
+                new MySqlConnector(), MySqlConnectorConfig.class, null, Collections.emptySet(), Collections.emptyMap(),
+                List.of("DDL_PARSER_TYPE"));
+
+        final String connectorFieldsAsString = connectorConfigGenerator.printClassAsString();
+
+        assertTrue(connectorFieldsAsString.contains("private String ddlParserType"), "ddlParserType should be generated");
+        assertTrue(connectorFieldsAsString.contains("setDdlParserType"), "setDdlParserType should be generated");
+        assertTrue(connectorFieldsAsString.contains("\"ddl.parser.type\""), "ddl.parser.type should be configured");
+    }
+
+    @Test
+    void testIfItHandlesUnknownAdditionalField() {
+        final MySqlConnector connector = new MySqlConnector();
+        final List<String> additionalFields = List.of("NO_SUCH_FIELD");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> ConnectorConfigGenerator.create(connector, MySqlConnectorConfig.class, null, Collections.emptySet(),
+                        Collections.emptyMap(), additionalFields));
     }
 
     private String declarationOf(final String generatedClass, final String fieldName) {

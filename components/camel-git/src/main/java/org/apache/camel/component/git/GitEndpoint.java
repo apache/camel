@@ -160,11 +160,13 @@ public class GitEndpoint extends ScheduledPollEndpoint {
             throw new IllegalArgumentException("type must be specified for git consumer");
         }
 
-        return switch (type) {
+        Consumer consumer = switch (type) {
             case COMMIT -> new GitCommitConsumer(this, processor);
             case TAG -> new GitTagConsumer(this, processor);
             case BRANCH -> new GitBranchConsumer(this, processor);
         };
+        configureConsumer(consumer);
+        return consumer;
     }
 
     /**

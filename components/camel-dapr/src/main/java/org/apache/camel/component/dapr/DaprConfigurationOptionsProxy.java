@@ -79,8 +79,23 @@ public class DaprConfigurationOptionsProxy {
         return getOption(DaprExchangeHeaders::getStateStoreFromHeaders, configuration::getStateStore, exchange);
     }
 
+    // the secret store, key and metadata headers may only change what the secret operation reads when the endpoint opts in
     public String getSecretStore(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getSecretStoreFromHeaders, configuration::getSecretStore, exchange);
+        if (configuration.isAllowSecretStoreAndKeyFromHeaders()) {
+            return getOption(DaprExchangeHeaders::getSecretStoreFromHeaders, configuration::getSecretStore, exchange);
+        }
+        return configuration.getSecretStore();
+    }
+
+    public String getSecretKey(final Exchange exchange) {
+        if (configuration.isAllowSecretStoreAndKeyFromHeaders()) {
+            return getKey(exchange);
+        }
+        return configuration.getKey();
+    }
+
+    public boolean isAllowSecretStoreAndKeyFromHeaders() {
+        return configuration.isAllowSecretStoreAndKeyFromHeaders();
     }
 
     public String getConfigStore(final Exchange exchange) {
@@ -104,7 +119,14 @@ public class DaprConfigurationOptionsProxy {
     }
 
     public Map<String, String> getMetadata(final Exchange exchange) {
-        return getOption(DaprExchangeHeaders::getMetadataFromHeaders, () -> null, exchange);
+        return getOption(DaprExchangeHeaders::getMetadataFromHeaders, configuration::getMetadata, exchange);
+    }
+
+    public Map<String, String> getSecretMetadata(final Exchange exchange) {
+        if (configuration.isAllowSecretStoreAndKeyFromHeaders()) {
+            return getMetadata(exchange);
+        }
+        return configuration.getMetadata();
     }
 
     public List<State<?>> getStates(final Exchange exchange) {

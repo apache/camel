@@ -241,6 +241,26 @@ YAML::
 ----
 ====
 
+=== Post-Quantum Key Exchange
+
+`sshd-core` offers the hybrid post-quantum key exchanges `mlkem768x25519-sha256`, `mlkem768nistp256-sha256` and
+`mlkem1024nistp384-sha384`, as well as `sntrup761x25519-sha512`, and proposes them to a server that supports them
+without any configuration. They are implemented through Bouncy Castle, which `camel-ssh` already brings on the
+classpath. `sntrup761x25519-sha512` is proposed first, under its name and under its `sntrup761x25519-sha512@openssh.com`
+alias, so a server that offers both, such as OpenSSH 9.9 or later, negotiates it rather than ML-KEM; an OpenSSH server
+before 9.9 offers only the alias. To prefer ML-KEM, put `mlkem768x25519-sha256` first in `kex`.
+
+The `kex` option *replaces* the proposal rather than adding to it, so an endpoint that pins a list of classical
+algorithms never negotiates a post-quantum one. Check any value configured before Camel 4.24. To require the
+post-quantum exchange, and fail rather than fall back to a classical one, pin `kex` to the hybrid groups alone:
+
+[source,text]
+----
+ssh://host:22?username=admin&kex=mlkem768x25519-sha256,sntrup761x25519-sha512,sntrup761x25519-sha512@openssh.com
+----
+
+The equivalent option on the `sftp` component is `keyExchangeProtocols`.
+
 [[SSH-CertificateDependencies]]
 === Certificate Dependencies
 

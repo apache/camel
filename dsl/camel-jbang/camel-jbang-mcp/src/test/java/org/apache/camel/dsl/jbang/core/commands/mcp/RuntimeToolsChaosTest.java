@@ -183,7 +183,7 @@ class RuntimeToolsChaosTest {
         assertThat(rules(awaitList(l -> rules(l).size() == 1)))
                 .containsExactly("r1 v2 endpoint=direct:target delay duration=1ms");
 
-        assertThat(tools.camel_runtime_chaos_clear("shop").getInteger("removed")).isEqualTo(1);
+        assertThat(tools.camel_runtime_chaos_clear("shop", null).getInteger("removed")).isEqualTo(1);
         assertThat(rules(awaitList(l -> rules(l).isEmpty()))).isEmpty();
 
         // the report keeps every version of every rule
@@ -196,7 +196,14 @@ class RuntimeToolsChaosTest {
         assertThat(report[0].<Map<String, Object>> getMap("report")).containsKey("verdict");
         assertThat(((List<?>) report[0].getMap("report").get("rules")).stream().map(Map.class::cast)
                 .map(r -> r.get("id") + " v" + r.get("version") + " " + r.get("state")))
-                .containsExactly("r1 v1 replaced", "r2 v1 removed", "r1 v2 removed");
+                .containsExactly("r1 v2 removed", "r1 v1 replaced", "r2 v1 removed");
+
+        // reset=true also starts a new report
+        JsonObject reset = tools.camel_runtime_chaos_clear("shop", true);
+        assertThat(reset.getInteger("removed")).isZero();
+        assertThat(reset.getBoolean("reset")).isTrue();
+        awaitThat("the report without rules", () -> tools.camel_runtime_chaos_report("shop").getMap("report")
+                .get("rules") instanceof List<?> l && l.isEmpty());
     }
 
     @Test
@@ -254,7 +261,7 @@ class RuntimeToolsChaosTest {
                 () -> tools.camel_runtime_chaos_add("shop", RULE_ERROR),
                 () -> tools.camel_runtime_chaos_change("shop", "r1", RULE_ERROR),
                 () -> tools.camel_runtime_chaos_remove("shop", "r1"),
-                () -> tools.camel_runtime_chaos_clear("shop"))) {
+                () -> tools.camel_runtime_chaos_clear("shop", null))) {
             assertThatThrownBy(change::run)
                     .isInstanceOf(ToolCallException.class)
                     .hasMessageStartingWith("Chaos is off in this integration");
@@ -303,7 +310,7 @@ class RuntimeToolsChaosTest {
         assertThatThrownBy(() -> tools.camel_runtime_chaos_add("orders", RULE_ERROR))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageStartingWith("No unique Camel process found matching 'orders'");
-        assertThatThrownBy(() -> tools.camel_runtime_chaos_clear(null))
+        assertThatThrownBy(() -> tools.camel_runtime_chaos_clear(null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageStartingWith("Multiple Camel processes running");
         assertThatThrownBy(() -> tools.camel_runtime_chaos_list("billing"))

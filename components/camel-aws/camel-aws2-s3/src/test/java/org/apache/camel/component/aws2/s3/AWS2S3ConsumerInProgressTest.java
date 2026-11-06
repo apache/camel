@@ -197,6 +197,8 @@ class AWS2S3ConsumerInProgressTest extends CamelTestSupport {
         mock.assertIsSatisfied();
         await().atMost(20, TimeUnit.SECONDS)
                 .until(() -> context.getRouteController().getRouteStatus("s3") == ServiceStatus.Stopped);
+        // each object is got right before its exchange is routed, so the stopping consumer did not get the others
+        assertEquals(0, s3.gets("b.txt") + s3.gets("c.txt"), "the objects that were not routed were got");
 
         mock.reset();
         mock.expectedBodiesReceivedInAnyOrder("b", "c");

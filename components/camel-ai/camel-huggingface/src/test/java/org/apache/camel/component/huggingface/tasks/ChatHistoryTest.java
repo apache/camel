@@ -18,6 +18,11 @@ package org.apache.camel.component.huggingface.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
@@ -33,6 +38,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ChatHistoryTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
+    private final Map<FutureTask<Void>, Thread> threads = new ConcurrentHashMap<>();
     private DefaultCamelContext context;
 
     @BeforeEach
@@ -163,6 +170,60 @@ class ChatHistoryTest {
         assertTrue(negative.getMessage().contains("maxHistoryMessages"), negative.getMessage());
     }
 
+    @Test
+    void turnsOfOneConversationRunOneAtATime() throws Exception {
+        CountDownLatch release = new CountDownLatch(1);
+        HeldModelChatPredictor predictor = new HeldModelChatPredictor(release);
+        FutureTask<Void> one = start(predictor, "alice", "One", false);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> predictor.sent.containsKey("One"));
+        FutureTask<Void> two = start(predictor, "alice", "Two", false);
+        // the second turn must wait for the first one, and not be sent to the model without the first turn
+        await().atMost(10, TimeUnit.SECONDS).until(() -> isWaiting(two));
+        release.countDown();
+        one.get(10, TimeUnit.SECONDS);
+        two.get(10, TimeUnit.SECONDS);
+
+        assertEquals(List.of("user:One", "assistant:Reply to One", "user:Two"), predictor.sent.get("Two"));
+        assertEquals(List.of("user:One", "assistant:Reply to One", "user:Two", "assistant:Reply to Two", "user:Three"),
+                turn(predictor, "alice", "Three", "Reply three"));
+        assertEquals(0, predictor.conversationsInFlight());
+    }
+
+    @Test
+    void clearWaitsForTheRunningTurnOfTheConversation() throws Exception {
+        CountDownLatch release = new CountDownLatch(1);
+        HeldModelChatPredictor predictor = new HeldModelChatPredictor(release);
+        turn(predictor, "alice", "Zero", "Reply zero");
+        FutureTask<Void> one = start(predictor, "alice", "One", false);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> predictor.sent.containsKey("One"));
+        FutureTask<Void> two = start(predictor, "alice", "Two", true);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> isWaiting(two));
+        release.countDown();
+        one.get(10, TimeUnit.SECONDS);
+        two.get(10, TimeUnit.SECONDS);
+
+        // the history written by the running turn is cleared too
+        assertEquals(List.of("user:Two"), predictor.sent.get("Two"));
+        assertEquals(List.of("user:Two", "assistant:Reply to Two", "user:Three"),
+                turn(predictor, "alice", "Three", "Reply three"));
+    }
+
+    @Test
+    void turnsOfDifferentConversationsRunAtTheSameTime() throws Exception {
+        CountDownLatch release = new CountDownLatch(1);
+        HeldModelChatPredictor predictor = new HeldModelChatPredictor(release);
+        FutureTask<Void> alice = start(predictor, "alice", "Hello from alice", false);
+        FutureTask<Void> bob = start(predictor, "bob", "Hello from bob", false);
+        // both turns are with the model at the same time
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> predictor.sent.containsKey("Hello from alice") && predictor.sent.containsKey("Hello from bob"));
+        release.countDown();
+        alice.get(10, TimeUnit.SECONDS);
+        bob.get(10, TimeUnit.SECONDS);
+
+        assertEquals(0, predictor.conversationsInFlight());
+    }
+
     private ChatPredictor predictor(String options) {
         return new ChatPredictor(
                 context.getEndpoint("huggingface:chat?modelId=test&" + options, HuggingFaceEndpoint.class));
@@ -179,19 +240,83 @@ class ChatHistoryTest {
         Input input = predictor.prepareInput(exchange);
 
         JsonNode sent = mapper.readTree(input.getAsString("data"));
+        predictor.processOutput(exchange, answer(sent, reply));
+        assertEquals(reply, exchange.getMessage().getBody(String.class));
+        return messages(sent);
+    }
+
+    /**
+     * Answers the conversation with the whole conversation and the reply, as the text-generation pipeline does.
+     */
+    private Output answer(JsonNode sent, String reply) {
         ArrayNode conversation = sent.deepCopy();
         conversation.addObject().put("role", "assistant").put("content", reply);
         ArrayNode result = mapper.createArrayNode();
         result.addObject().set("generated_text", conversation);
         Output output = new Output();
         output.add("data", result.toString());
-        predictor.processOutput(exchange, output);
-        assertEquals(reply, exchange.getMessage().getBody(String.class));
+        return output;
+    }
 
+    private static List<String> messages(JsonNode sent) {
         List<String> messages = new ArrayList<>();
         for (JsonNode node : sent) {
             messages.add(node.get("role").asText() + ":" + node.get("content").asText());
         }
         return messages;
+    }
+
+    /**
+     * Starts a turn of the conversation of the memory ID in its own thread, through the predict method that the
+     * producer calls.
+     */
+    private FutureTask<Void> start(ChatPredictor predictor, String memoryId, String message, boolean clear) {
+        FutureTask<Void> task = new FutureTask<>(() -> {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getIn().setHeader("CamelChatMemoryId", memoryId);
+            if (clear) {
+                exchange.getIn().setHeader("CamelChatClearHistory", true);
+            }
+            exchange.getIn().setBody(message);
+            predictor.predict(exchange);
+            return null;
+        });
+        Thread thread = new Thread(task, "turn-" + message);
+        thread.setDaemon(true);
+        threads.put(task, thread);
+        thread.start();
+        return task;
+    }
+
+    /**
+     * Whether the thread of the turn waits, for the turn before it or for the model to be released.
+     */
+    private boolean isWaiting(FutureTask<Void> task) {
+        Thread.State state = threads.get(task).getState();
+        return state == Thread.State.WAITING || state == Thread.State.TIMED_WAITING;
+    }
+
+    /**
+     * Plays the model: keeps the conversation sent for each user message, holds every turn until the test releases the
+     * model, and then answers it.
+     */
+    private final class HeldModelChatPredictor extends ChatPredictor {
+
+        private final Map<String, List<String>> sent = new ConcurrentHashMap<>();
+        private final CountDownLatch release;
+
+        HeldModelChatPredictor(CountDownLatch release) {
+            super(new HuggingFaceEndpoint(null, null, new HuggingFaceConfiguration()));
+            this.release = release;
+        }
+
+        @Override
+        protected Output infer(Input input) throws Exception {
+            JsonNode conversation = mapper.readTree(input.getAsString("data"));
+            String message = conversation.get(conversation.size() - 1).get("content").asText();
+            sent.put(message, messages(conversation));
+            assertTrue(release.await(10, TimeUnit.SECONDS), "the model was not released");
+            return answer(conversation, "Reply to " + message);
+        }
     }
 }

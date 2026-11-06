@@ -97,6 +97,10 @@ camel.jbang.dataDir=inbox,archive
 Dev mode then does not watch these folders, nor the folders in them. When the routes keep reloading for files in one
 folder, Camel logs a warning that names the folder.
 
+The `test` folder of the source directory holds the Citrus tests of the project (such as `test/orders.citrus.it.yaml`,
+run with `camel test run`) and their data, which are not routes either: dev mode does not watch it, so editing a test
+does not reload the routes. Keep the routes out of `test`.
+
 === Live reload of resource files
 
 In dev mode, Camel disables `contentCache` on resource-based components (such as `xslt`)

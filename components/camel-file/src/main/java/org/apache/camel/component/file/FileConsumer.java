@@ -19,7 +19,10 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -51,6 +54,8 @@ import org.slf4j.LoggerFactory;
 public class FileConsumer extends GenericFileConsumer<File> implements ResumeAware<ResumeStrategy> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileConsumer.class);
+    // the files of the directory, when it is read one entry at a time (only used to look up done files)
+    private static final File[] NO_FILES = new File[0];
     private ResumeStrategy resumeStrategy;
     private final String endpointPath;
     private Set<String> extendedAttributes;
@@ -133,6 +138,12 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         if (LOG.isTraceEnabled()) {
             LOG.trace("Polling directory: {}, absolute path: {}", directory.getPath(), directory.getAbsolutePath());
         }
+        if (canStopListingAtLimit()) {
+            Path path = toPath(directory);
+            if (path != null) {
+                return pollDirectoryLazily(dynamic, directory, path, fileList, depth);
+            }
+        }
         final File[] files = listFiles(directory);
         if (files == null || files.length == 0) {
             return true;
@@ -149,40 +160,82 @@ public class FileConsumer extends GenericFileConsumer<File> implements ResumeAwa
         return true;
     }
 
-    private boolean processPolledFiles(Exchange dynamic, List<GenericFile<File>> fileList, int depth, File[] files) {
-        for (File file : files) {
-            // check if we can continue polling in files
-            if (!canPollMoreFiles(fileList)) {
-                return true;
-            }
-
-            // trace log as Windows/Unix can have different views what the file is
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
-                        file.isDirectory(), file.isFile(),
-                        file.isHidden());
-            }
-
-            // creates a generic file
-            Supplier<GenericFile<File>> gf = Suppliers.memorize(
-                    () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType()));
-
-            if (resumeStrategy != null) {
-                final ResumeAdapter adapter = setupResumeStrategy(gf.get());
-                if (adapter instanceof DirectoryEntriesResumeAdapter directoryEntriesResumeAdapter) {
-                    LOG.trace("Running the resume process for file {}", file);
-                    if (directoryEntriesResumeAdapter.resume(file)) {
-                        LOG.trace("Skipping file {} because it has been marked previously consumed", file);
-                        continue;
-                    }
+    /**
+     * Polls the directory reading it one entry at a time, and stops reading it once the maxMessagesPerPoll limit is
+     * hit, rather than listing the whole directory first.
+     */
+    private boolean pollDirectoryLazily(
+            Exchange dynamic, File directory, Path path, List<GenericFile<File>> fileList, int depth) {
+        if (!getEndpoint().isIncludeHiddenDirs() && isHiddenDirectory(directory)) {
+            return true;
+        }
+        try (DirectoryStream<Path> entries = Files.newDirectoryStream(path)) {
+            for (Path entry : entries) {
+                // the same file as File.listFiles() returns
+                File file = new File(directory, entry.getFileName().toString());
+                if (pollFile(dynamic, fileList, depth, file, NO_FILES)) {
+                    return false;
                 }
             }
+        } catch (IOException | DirectoryIteratorException e) {
+            // as File.listFiles() returns no files when the directory cannot be read
+            LOG.debug("Cannot list directory: {} due to: {}", directory, e.getMessage());
+        }
+        return true;
+    }
 
-            if (processEntry(dynamic, fileList, depth, file, gf, files)) {
+    private static Path toPath(File directory) {
+        try {
+            return directory.toPath();
+        } catch (InvalidPathException e) {
+            // listed with File.listFiles() instead
+            return null;
+        }
+    }
+
+    private boolean processPolledFiles(Exchange dynamic, List<GenericFile<File>> fileList, int depth, File[] files) {
+        for (File file : files) {
+            if (pollFile(dynamic, fileList, depth, file, files)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Polls a listed file or directory.
+     *
+     * @return <tt>true</tt> to stop polling, as the maxMessagesPerPoll limit is hit
+     */
+    private boolean pollFile(Exchange dynamic, List<GenericFile<File>> fileList, int depth, File file, File[] files) {
+        // check if we can continue polling in files
+        if (!canPollMoreFiles(fileList)) {
+            return true;
+        }
+
+        // trace log as Windows/Unix can have different views what the file is
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]", file, file.isAbsolute(),
+                    file.isDirectory(), file.isFile(),
+                    file.isHidden());
+        }
+
+        // creates a generic file
+        Supplier<GenericFile<File>> gf = Suppliers.memorize(
+                () -> asGenericFile(endpointPath, file, getEndpoint().getCharset(), getEndpoint().isProbeContentType()));
+
+        if (resumeStrategy != null) {
+            final ResumeAdapter adapter = setupResumeStrategy(gf.get());
+            if (adapter instanceof DirectoryEntriesResumeAdapter directoryEntriesResumeAdapter) {
+                LOG.trace("Running the resume process for file {}", file);
+                if (directoryEntriesResumeAdapter.resume(file)) {
+                    LOG.trace("Skipping file {} because it has been marked previously consumed", file);
+                    return false;
+                }
+            }
+        }
+
+        return processEntry(dynamic, fileList, depth, file, gf, files);
     }
 
     private boolean processEntry(

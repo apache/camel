@@ -65,6 +65,14 @@ public class KeycloakConfiguration implements Cloneable {
     @UriParam(description = "The operation to perform")
     private KeycloakOperations operation;
 
+    @UriParam(label = "producer,security", defaultValue = "false", security = "insecure:dev", insecureValue = "true",
+              description = "Whether the CamelKeycloakOperation header may override the configured operation."
+                            + " Disabled by default: the operation decides what the endpoint does with its admin client,"
+                            + " from reading a user to deleting a realm, so a message that can set the header can run any"
+                            + " operation that the credentials of the endpoint allow. Enable it only on routes whose input"
+                            + " is trusted.")
+    private boolean allowOperationHeader;
+
     @UriParam(description = "If we want to use a POJO request as body or not")
     private boolean pojoRequest;
 
@@ -248,11 +256,26 @@ public class KeycloakConfiguration implements Cloneable {
     /**
      * The operation to perform.
      *
-     * You can configure a default operation on the component level, or the operation as part of the endpoint, or via a
-     * message header with the key CamelKeycloakOperation.
+     * You can configure a default operation on the component level, or the operation as part of the endpoint. With
+     * allowOperationHeader enabled, a message header with the key CamelKeycloakOperation overrides it.
      */
     public void setOperation(KeycloakOperations operation) {
         this.operation = operation;
+    }
+
+    public boolean isAllowOperationHeader() {
+        return allowOperationHeader;
+    }
+
+    /**
+     * Whether the {@code CamelKeycloakOperation} header may override the configured operation.
+     * <p/>
+     * Disabled by default: the operation decides what the endpoint does with its admin client, from reading a user to
+     * deleting a realm, so a message that can set the header can run any operation that the credentials of the endpoint
+     * allow. Enable it only on routes whose input is trusted.
+     */
+    public void setAllowOperationHeader(boolean allowOperationHeader) {
+        this.allowOperationHeader = allowOperationHeader;
     }
 
     public boolean isPojoRequest() {

@@ -5860,7 +5860,7 @@
       }, {
         "name" : "delayPattern",
         "type" : "string",
-        "description" : "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s).",
+        "description" : "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s).",
         "title" : "Delay Pattern",
         "displayName" : "Delay Pattern",
         "kind" : "attribute",
@@ -5993,7 +5993,7 @@
       }, {
         "name" : "pattern",
         "type" : "string",
-        "description" : "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular expression (all case-insensitive).",
+        "description" : "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive).",
         "title" : "Pattern",
         "required" : true,
         "displayName" : "Pattern",
@@ -6059,7 +6059,7 @@
       }, {
         "name" : "pattern",
         "type" : "string",
-        "description" : "Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all case-insensitive).",
+        "description" : "Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive).",
         "title" : "Pattern",
         "required" : true,
         "displayName" : "Pattern",
@@ -10591,7 +10591,7 @@
       }, {
         "name" : "serializablePackages",
         "type" : "string",
-        "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.",
+        "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.",
         "title" : "Serializable Packages",
         "displayName" : "Serializable Packages",
         "kind" : "attribute",
@@ -10693,7 +10693,7 @@
       }, {
         "name" : "urlSafe",
         "type" : "boolean",
-        "description" : "Instead of emitting and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.",
+        "description" : "Instead of emitting + and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.",
         "title" : "Url Safe",
         "default" : "false",
         "displayName" : "Url Safe",
@@ -14149,7 +14149,7 @@
       }, {
         "name" : "passPhraseByte",
         "type" : "string",
-        "description" : "A byte used as passPhrase to encrypt/decrypt content.",
+        "description" : "A byte[] used as passPhrase to encrypt/decrypt content.",
         "title" : "Pass Phrase Byte"
       }, {
         "name" : "recipientKeyAlias",

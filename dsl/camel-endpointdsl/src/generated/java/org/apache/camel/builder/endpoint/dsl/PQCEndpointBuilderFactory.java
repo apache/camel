@@ -662,6 +662,46 @@ public interface PQCEndpointBuilderFactory {
             doSetProperty("symmetricKeyLength", symmetricKeyLength);
             return this;
         }
+        /**
+         * Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the
+         * configured KeyLifecycleManager cannot claim for this process alone.
+         * These are one-time-signature schemes: when two processes load the
+         * same key from a shared store, both sign from the same index and the
+         * key is broken. Only enable it when something outside Camel guarantees
+         * a single signer.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security (advanced)
+         * 
+         * @param allowSharedStatefulKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder allowSharedStatefulKey(boolean allowSharedStatefulKey) {
+            doSetProperty("allowSharedStatefulKey", allowSharedStatefulKey);
+            return this;
+        }
+        /**
+         * Whether to sign with a stateful key (XMSS, XMSSMT, LMS/HSS) that the
+         * configured KeyLifecycleManager cannot claim for this process alone.
+         * These are one-time-signature schemes: when two processes load the
+         * same key from a shared store, both sign from the same index and the
+         * key is broken. Only enable it when something outside Camel guarantees
+         * a single signer.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security (advanced)
+         * 
+         * @param allowSharedStatefulKey the value to set
+         * @return the dsl builder
+         */
+        default AdvancedPQCEndpointBuilder allowSharedStatefulKey(String allowSharedStatefulKey) {
+            doSetProperty("allowSharedStatefulKey", allowSharedStatefulKey);
+            return this;
+        }
     }
 
     public interface PQCBuilders {

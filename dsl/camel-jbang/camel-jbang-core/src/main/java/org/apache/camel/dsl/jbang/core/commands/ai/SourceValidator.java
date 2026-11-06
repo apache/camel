@@ -151,8 +151,8 @@ public final class SourceValidator {
             // route: read it, so that a GET operation is known to carry no body (CAMEL-24844), and with the REST binding
             // mode of the properties, whether a Map sent or returned over REST is written for the route (CAMEL-25762);
             // and what a running integration of the file saw at the endpoints of its routes (CAMEL-25750)
-            List<String> msgs = validateCamelYaml(content, catalog, schemaValidator,
-                    ValidatorFacts.read(fileName, content, directory));
+            ProjectFacts facts = ValidatorFacts.read(fileName, content, directory);
+            List<String> msgs = validateCamelYaml(content, catalog, schemaValidator, facts);
             if (name.endsWith(".kamelet.yaml") || name.endsWith(".kamelet.yml")) {
                 // the shape of a Kamelet file, which the schema of a route file does not know
                 List<String> shape = KameletChecks.validateKameletFile(content);
@@ -183,8 +183,9 @@ public final class SourceValidator {
                 }
             }
             if (msgs.isEmpty()) {
-                // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516)
-                msgs = new ArrayList<>(HeaderPropertyMixups.validate(content));
+                // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516),
+                // and a header copied to itself that nothing sets
+                msgs = new ArrayList<>(HeaderPropertyMixups.validate(content, facts));
             }
             // an option at the column of its EIP: the lines to write, which a model copies (the words it does not,
             // CAMEL-25556)

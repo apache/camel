@@ -36,9 +36,6 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
-                                          + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     private static final String DIRECT_SEND_TO_QUEUE_URI = "direct:sendToQueue";
     private static final String DIRECT_SEND_TO_TOPIC_URI = "direct:sendToTopic";
@@ -181,6 +178,8 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void camelSchedulesServiceBusMessage() throws InterruptedException {
         messageLatch = new CountDownLatch(5);
         try (ServiceBusProcessorClient client = createQueueProcessorClient()) {
@@ -207,6 +206,8 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void camelSchedulesServiceBusMessageBatch() throws InterruptedException {
         messageLatch = new CountDownLatch(5);
         try (ServiceBusProcessorClient client = createQueueProcessorClient()) {
@@ -315,6 +316,8 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void camelSchedulesServiceBusMessageWithSessions() throws InterruptedException {
         messageLatch = new CountDownLatch(5);
         try (ServiceBusProcessorClient client = createSessionQueueProcessorClient()) {
@@ -341,6 +344,8 @@ public class ServiceBusProducerIT extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void camelSchedulesServiceBusMessageBatchWIthSessions() throws InterruptedException {
         messageLatch = new CountDownLatch(5);
         try (ServiceBusProcessorClient client = createSessionQueueProcessorClient()) {

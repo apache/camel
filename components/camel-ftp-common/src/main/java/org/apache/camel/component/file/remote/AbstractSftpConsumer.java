@@ -20,6 +20,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileHelper;
+import org.apache.camel.component.file.GenericFileListingOperations;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.util.FileUtil;
@@ -49,6 +51,11 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
      * The most symbolic links followed to resolve a path, as a longer chain is most likely a loop
      */
     private static final int MAX_SYMBOLIC_LINKS = 32;
+
+    /**
+     * The files of the directory, when it is read one entry at a time (only used to look up done files)
+     */
+    private static final SftpRemoteFile[] NO_FILES = new SftpRemoteFile[0];
 
     protected String endpointPath;
 
@@ -152,6 +159,11 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
             dir = absolutePath;
         }
 
+        GenericFileListingOperations<SftpRemoteFile> listing = getListingOperations();
+        if (listing != null) {
+            return pollDirectoryLazily(dynamic, absolutePath, dir, listing, fileList, depth);
+        }
+
         final SftpRemoteFile[] files = getSftpRemoteFiles(dynamic, dir);
 
         if (files == null || files.length == 0) {
@@ -168,49 +180,150 @@ public abstract class AbstractSftpConsumer extends RemoteFileConsumer<SftpRemote
         }
 
         for (SftpRemoteFile file : files) {
-
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(),
-                        file.isDirectory());
-            }
-
-            // check if we can continue polling in files
-            if (!canPollMoreFiles(fileList)) {
+            if (!pollFile(dynamic, absolutePath, file, fileList, depth, files)) {
                 return false;
-            }
-
-            if (file.isDirectory()) {
-                if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
-                    String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
-                    Supplier<GenericFile<SftpRemoteFile>> remote
-                            = Suppliers.memorize(
-                                    () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
-                    Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
-                    if (isValidFile(dynamic, remote, file.getFilename(), absoluteFilePath, relativePath, true, files)) {
-                        // recursive scan and add the sub files and folders
-                        String subDirectory = file.getFilename();
-                        String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
-                        boolean canPollMore = pollSubDirectory(dynamic, path, subDirectory, fileList, depth);
-                        if (!canPollMore) {
-                            return false;
-                        }
-                    }
-                }
-            } else {
-                if (depth >= endpoint.getMinDepth()) {
-                    String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
-                    Supplier<GenericFile<SftpRemoteFile>> remote
-                            = Suppliers.memorize(
-                                    () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
-                    Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
-                    if (isValidFile(dynamic, remote, file.getFilename(), absoluteFilePath, relativePath, false, files)) {
-                        // matched file so add
-                        fileList.add(remote.get());
-                    }
-                }
             }
         }
 
+        return true;
+    }
+
+    /**
+     * The operations to read a directory one entry at a time with, when the listing can stop at the maxMessagesPerPoll
+     * limit.
+     */
+    @SuppressWarnings("unchecked")
+    private GenericFileListingOperations<SftpRemoteFile> getListingOperations() {
+        if (isUseList() && canStopListingAtLimit() && operations instanceof GenericFileListingOperations<?> listing) {
+            return (GenericFileListingOperations<SftpRemoteFile>) listing;
+        }
+        return null;
+    }
+
+    /**
+     * Polls the directory reading it one entry at a time, and stops reading it once the maxMessagesPerPoll limit is
+     * hit, rather than listing the whole directory first.
+     * <p/>
+     * When the operations cannot be used while the directory is read (JSch), the listing stops at the first entry that
+     * needs them, a sub directory to poll or a symbolic link to resolve, and the rest of the directory is polled from
+     * the whole listing, as without this.
+     */
+    private boolean pollDirectoryLazily(
+            Exchange dynamic, String absolutePath, String dir, GenericFileListingOperations<SftpRemoteFile> listing,
+            List<GenericFile<SftpRemoteFile>> fileList, int depth) {
+        boolean reentrant = listing.isReentrantListing();
+        Set<String> polled = reentrant ? null : new HashSet<>();
+        boolean[] canPollMore = { true };
+        boolean[] needsOperations = { false };
+        RuntimeException[] failure = { null };
+        try {
+            LOG.trace("Polling directory: {}", dir);
+            listing.listFiles(isStepwise() ? null : dir, file -> {
+                try {
+                    if (!reentrant && canPollMoreFiles(fileList) && needsOperations(absolutePath, file, depth)) {
+                        needsOperations[0] = true;
+                        return false;
+                    }
+                    if (polled != null) {
+                        polled.add(file.getFilename());
+                    }
+                    canPollMore[0] = pollFile(dynamic, absolutePath, file, fileList, depth, NO_FILES);
+                    return canPollMore[0];
+                } catch (RuntimeException e) {
+                    // thrown after the listing, so that only a failure to list the directory can be ignored
+                    failure[0] = e;
+                    return false;
+                }
+            });
+        } catch (GenericFileOperationFailedException e) {
+            if (ignoreCannotRetrieveFile(null, null, e)) {
+                LOG.debug("Cannot list files in directory {} due directory does not exist or file permission error.", dir);
+                return true;
+            }
+            throw e;
+        }
+        if (failure[0] != null) {
+            throw failure[0];
+        }
+        if (!needsOperations[0]) {
+            return canPollMore[0];
+        }
+
+        LOG.trace("Polling the rest of directory: {} from the whole listing", dir);
+        SftpRemoteFile[] files = getSftpRemoteFiles(dynamic, dir);
+        if (files != null) {
+            for (SftpRemoteFile file : files) {
+                if (!polled.contains(file.getFilename())
+                        && !pollFile(dynamic, absolutePath, file, fileList, depth, files)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Whether polling the listed entry uses the operations: to poll a sub directory, or to resolve a symbolic link (see
+     * {@link #isWithinStartingDirectory(Supplier, String)}).
+     */
+    private boolean needsOperations(String absolutePath, SftpRemoteFile file, int depth) {
+        Supplier<GenericFile<SftpRemoteFile>> remote = Suppliers.memorize(() -> asRemoteFile(absolutePath,
+                FtpUtils.absoluteFilePath(absolutePath, file.getFilename()), file, getEndpoint().getCharset()));
+        if (!isMatchedHiddenFile(remote, file.getFilename(), file.isDirectory())) {
+            // skipped before anything else, such as the . and .. entries
+            return false;
+        }
+        if (file.isDirectory()) {
+            return endpoint.isRecursive() && depth < endpoint.getMaxDepth();
+        }
+        return file.isSymbolicLink() && endpoint.isJailStartingDirectory();
+    }
+
+    /**
+     * Polls a listed file or directory.
+     *
+     * @return <tt>false</tt> to stop polling, as the maxMessagesPerPoll limit is hit
+     */
+    private boolean pollFile(
+            Exchange dynamic, String absolutePath, SftpRemoteFile file, List<GenericFile<SftpRemoteFile>> fileList,
+            int depth, SftpRemoteFile[] files) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(),
+                    file.isDirectory());
+        }
+
+        // check if we can continue polling in files
+        if (!canPollMoreFiles(fileList)) {
+            return false;
+        }
+
+        if (file.isDirectory()) {
+            if (endpoint.isRecursive() && depth < endpoint.getMaxDepth()) {
+                String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
+                Supplier<GenericFile<SftpRemoteFile>> remote
+                        = Suppliers.memorize(
+                                () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+                Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+                if (isValidFile(dynamic, remote, file.getFilename(), absoluteFilePath, relativePath, true, files)) {
+                    // recursive scan and add the sub files and folders
+                    String subDirectory = file.getFilename();
+                    String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+                    return pollSubDirectory(dynamic, path, subDirectory, fileList, depth);
+                }
+            }
+        } else {
+            if (depth >= endpoint.getMinDepth()) {
+                String absoluteFilePath = FtpUtils.absoluteFilePath(absolutePath, file.getFilename());
+                Supplier<GenericFile<SftpRemoteFile>> remote
+                        = Suppliers.memorize(
+                                () -> asRemoteFile(absolutePath, absoluteFilePath, file, getEndpoint().getCharset()));
+                Supplier<String> relativePath = getRelativeFilePath(endpointPath, null, absolutePath, file);
+                if (isValidFile(dynamic, remote, file.getFilename(), absoluteFilePath, relativePath, false, files)) {
+                    // matched file so add
+                    fileList.add(remote.get());
+                }
+            }
+        }
         return true;
     }
 

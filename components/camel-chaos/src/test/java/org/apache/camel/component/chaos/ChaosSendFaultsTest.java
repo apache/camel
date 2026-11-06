@@ -251,14 +251,73 @@ class ChaosSendFaultsTest extends ChaosTestSupport {
     }
 
     @Test
-    void truncateOnTextIsSkipped() throws Exception {
+    void truncateEndsTextAndBytesAfterHalfOfThem() throws Exception {
         String id = chaos().addRule("endpoint=mock:target corrupt mode=truncate");
-        getMockEndpoint("mock:target").expectedBodiesReceived("hello");
+        MockEndpoint target = getMockEndpoint("mock:target");
+        target.expectedMessageCount(3);
 
-        template.sendBody("direct:start", "hello");
+        template.sendBody("direct:start", "hello world");
+        template.sendBody("direct:start", "0123456789".getBytes(StandardCharsets.UTF_8));
+        template.sendBody("direct:start", 42);
 
         MockEndpoint.assertIsSatisfied(context);
-        assertThat(ruleReport(id).getLong("skipped")).isEqualTo(1);
+        assertThat(target.getReceivedExchanges().get(0).getMessage().getBody()).isEqualTo("hello");
+        assertThat(target.getReceivedExchanges().get(1).getMessage().getBody())
+                .isEqualTo("01234".getBytes(StandardCharsets.UTF_8));
+        assertThat(target.getReceivedExchanges().get(2).getMessage().getBody()).isEqualTo(42);
+        assertThat(fired(id, "send")).isEqualTo(2);
+        assertThat(ruleReport(id).getJsonObject("skippedReasons"))
+                .containsOnlyKeys("not a String, byte[] or stream body (truncate changes text, bytes and streams)");
+    }
+
+    @Test
+    void emptyMakesTheBodyEmptyOfItsKind() throws Exception {
+        String id = chaos().addRule("endpoint=mock:target corrupt mode=empty");
+        MockEndpoint target = getMockEndpoint("mock:target");
+        target.expectedMessageCount(5);
+
+        template.sendBody("direct:start", "hello");
+        template.sendBody("direct:start", "abc".getBytes(StandardCharsets.UTF_8));
+        template.sendBody("direct:start", new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8)));
+        template.sendBody("direct:start", Map.of("id", 1));
+        template.sendBody("direct:start", null);
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(target.getReceivedExchanges().get(0).getMessage().getBody()).isEqualTo("");
+        assertThat(target.getReceivedExchanges().get(1).getMessage().getBody()).isEqualTo(new byte[0]);
+        Object stream = target.getReceivedExchanges().get(2).getMessage().getBody();
+        assertThat(stream).isInstanceOf(InputStream.class);
+        assertThat(((InputStream) stream).readAllBytes()).isEmpty();
+        // any other body is removed
+        assertThat(target.getReceivedExchanges().get(3).getMessage().getBody()).isNull();
+        assertThat(fired(id, "send")).isEqualTo(4);
+        assertThat(ruleReport(id).getJsonObject("skippedReasons")).containsOnlyKeys("no body");
+    }
+
+    @Test
+    void removeHeaderRemovesTheNamedHeadersOrAllButCamelOnes() throws Exception {
+        String named = chaos().addRule("endpoint=mock:target corrupt mode=remove-header header=x-trace-* until=1");
+        MockEndpoint target = getMockEndpoint("mock:target");
+        target.expectedMessageCount(3);
+
+        Map<String, Object> headers = Map.of("X-Trace-Id", "t1", "X-Trace-Span", "s1", "Customer", "c1",
+                "CamelFileName", "a.txt");
+        template.sendBodyAndHeaders("direct:start", "a", headers);
+        String all = chaos().addRule("endpoint=mock:target corrupt mode=remove-header until=1");
+        template.sendBodyAndHeaders("direct:start", "b", headers);
+        String none = chaos().addRule("endpoint=mock:target corrupt mode=remove-header header=Nope until=1");
+        template.sendBodyAndHeaders("direct:start", "c", headers);
+
+        MockEndpoint.assertIsSatisfied(context);
+        // header names ignore case, as the headers of a message do
+        assertThat(target.getReceivedExchanges().get(0).getMessage().getHeaders())
+                .containsOnlyKeys("Customer", "CamelFileName");
+        assertThat(target.getReceivedExchanges().get(1).getMessage().getHeaders()).containsOnlyKeys("CamelFileName");
+        assertThat(target.getReceivedExchanges().get(2).getMessage().getHeaders()).hasSize(4);
+        assertThat(fired(named, "send")).isEqualTo(1);
+        assertThat(fired(all, "send")).isEqualTo(1);
+        assertThat(ruleReport(none).getJsonObject("skippedReasons")).containsOnlyKeys("no header matches header=Nope");
+        assertThat(chaos().report().toText()).contains("corrupt remove-header x-trace-*");
     }
 
     @Test

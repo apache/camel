@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class Neo4jEmbeddingDataTypeTransformerTest {
 
@@ -61,7 +62,11 @@ class Neo4jEmbeddingDataTypeTransformerTest {
 
             // a null body fails, and so does a message without the embedding
             assertThrows(NullPointerException.class, () -> transform(context, null, true));
-            assertThrows(NullPointerException.class, () -> transform(context, TextSegment.from("hello"), false));
+            // CAMEL-26300: with an IllegalArgumentException that names the header, as pgvector:embeddings gives, instead
+            // of a NullPointerException
+            IllegalArgumentException noEmbedding
+                    = assertThrows(IllegalArgumentException.class, () -> transform(context, TextSegment.from("hello"), false));
+            assertTrue(noEmbedding.getMessage().contains("CamelLangChain4jEmbeddingsVector"), noEmbedding.getMessage());
         }
     }
 

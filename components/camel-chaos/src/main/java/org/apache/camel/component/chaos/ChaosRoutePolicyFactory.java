@@ -46,7 +46,8 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
     /**
      * Changes the message of an exchange as it enters the route ({@code onExchangeBegin}); the first rule that fires
      * decides the fault. Counts the exchange when the route is done with it ({@code onExchangeDone}), while there are
-     * rules.
+     * rules. camel-core calls both each time the exchange goes through the route, but an exchange meets the entry rules
+     * of a route, and counts in it, once (see {@link ChaosExchangeState}).
      */
     static final class ChaosRoutePolicy extends RoutePolicySupport {
 
@@ -59,13 +60,13 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
             ChaosRule[] rules = manager.ruleSet().entry;
-            if (rules.length == 0) {
+            if (rules.length == 0 || !ChaosExchangeState.of(exchange).enter(route.getRouteId())) {
                 return;
             }
             long now = TimeSource.currentTimeMillis();
             for (ChaosRule rule : rules) {
                 if (rule.live(now) && rule.matchesId(route.getRouteId()) && rule.fires(now)) {
-                    ChaosFaults.corrupt(rule, exchange, Hook.ENTRY);
+                    ChaosFaults.corrupt(rule, exchange, Hook.ENTRY, route.getRouteId(), null);
                     return;
                 }
             }

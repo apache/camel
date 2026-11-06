@@ -34,6 +34,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -396,7 +397,7 @@ final class EndpointChecks {
                 }
             }
             if (!result.isSuccess()) {
-                collectEndpointErrors(errors, result, scheme, catalog, lineIdx, optionLineMap);
+                collectEndpointErrors(errors, result, scheme, catalog, lineIdx, optionLineMap, eipName, fullUri, uriForm);
             }
             checkRegexOptions(errors, fullUri, lineIdx, optionLineMap);
             checkFileLanguageOptions(errors, catalog, fullUri, rawLine, lineIdx, optionLineMap);
@@ -964,7 +965,7 @@ final class EndpointChecks {
 
     static void collectEndpointErrors(
             List<String> errors, EndpointValidationResult result, String scheme, CamelCatalog catalog,
-            int uriLineIdx, Map<String, Integer> optionLineMap) {
+            int uriLineIdx, Map<String, Integer> optionLineMap, String eipName, String fullUri, boolean uriForm) {
         if (result.getUnknown() != null && !"kamelet".equals(scheme)) {
             // the options of a kamelet: endpoint are the parameters of its template, which the catalog does not know
             for (String name : result.getUnknown()) {
@@ -977,8 +978,15 @@ final class EndpointChecks {
                 // (cronService) is a fix that makes it worse; say what the endpoint takes instead (an entry of
                 // INVENTED_OPTIONS for it says more, and is the one hint)
                 String named = known == null && name.equals(scheme) ? namedAfterComponent(catalog, scheme) : null;
+                // variableReceive under parameters: of a to: is a key of the to:, which the closest options of the
+                // endpoint do not say
+                String ofTheEip = known == null && named == null
+                        ? optionOfTheEip(catalog, eipName, name, scheme, fullUri, uriForm, optionLineMap.containsKey(name))
+                        : null;
                 if (named != null) {
                     sb.append(" (").append(named).append(")");
+                } else if (ofTheEip != null) {
+                    sb.append(" (").append(ofTheEip).append(")");
                 } else if (result.getUnknownSuggestions() != null) {
                     String[] suggestions = result.getUnknownSuggestions().get(name);
                     if (suggestions != null && suggestions.length > 0) {
@@ -1033,6 +1041,45 @@ final class EndpointChecks {
                            + ")");
             }
         }
+    }
+
+    /**
+     * The words for an option of the EIP of the endpoint written as an option of the endpoint: variableReceive under
+     * parameters: of a to: is a key of the to:, next to uri:. r27 connect-service-jms-request-reply step 2: told to
+     * keep the message with variableReceive, a model put it (and pattern before it) under parameters:, and was told
+     * only "jms: Unknown option 'variableReceive'". The options of the EIP are the ones the catalog has for it, uri
+     * aside. Null when the EIP has no option of that name.
+     */
+    static String optionOfTheEip(
+            CamelCatalog catalog, String eipName, String name, String scheme, String fullUri, boolean uriForm,
+            boolean underParameters) {
+        if (eipName == null || "uri".equals(name)) {
+            return null;
+        }
+        String eip = StringHelper.dashToCamelCase(eipName);
+        EipModel model;
+        try {
+            model = catalog.eipModel(eip);
+        } catch (Exception e) {
+            return null;
+        }
+        if (model == null || model.getOptions().stream()
+                .noneMatch(o -> name.equals(o.getName()) && "attribute".equals(o.getKind()))) {
+            return null;
+        }
+        if (uriForm) {
+            return name + " is an option of the " + eip + ", not of the " + scheme + " endpoint: set it on the " + eip
+                   + ", not in the uri";
+        }
+        String uri = fullUri.contains("?") ? fullUri.substring(0, fullUri.indexOf('?')) : fullUri;
+        if (uri.endsWith(":")) {
+            uri = uri.substring(0, uri.length() - 1);
+        }
+        Matcher value = Pattern.compile("[?&]" + Pattern.quote(name) + "=([^&]*)").matcher(fullUri);
+        String written = value.find() && !value.group(1).isEmpty() ? value.group(1) : "...";
+        return name + " is a key of the " + eip + ":, next to uri:, not an option of the " + scheme + " endpoint: "
+               + eip + ": {uri: " + (underParameters ? uri + ", parameters: {...}" : "\"" + uri + "\"") + ", " + name
+               + ": " + written + "}";
     }
 
     static void addInvalid(

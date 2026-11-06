@@ -100,7 +100,9 @@ public class KeycloakProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         KeycloakOperations operation = determineOperation(exchange);
         if (operation == null) {
-            throw new IllegalArgumentException("Operation must be provided");
+            throw new IllegalArgumentException(
+                    "Operation must be provided: set the operation option, or allowOperationHeader=true to take it from"
+                                               + " the CamelKeycloakOperation header");
         }
 
         switch (operation) {
@@ -422,11 +424,14 @@ public class KeycloakProducer extends DefaultProducer {
     }
 
     private KeycloakOperations determineOperation(Exchange exchange) {
-        KeycloakOperations operation = exchange.getIn().getHeader(KeycloakConstants.OPERATION, KeycloakOperations.class);
-        if (operation == null) {
-            operation = getConfiguration().getOperation();
+        KeycloakOperations configured = getConfiguration().getOperation();
+        if (!getConfiguration().isAllowOperationHeader()) {
+            // the operation decides what the admin client of the endpoint does, so the message only picks it when the
+            // route allows it
+            return configured;
         }
-        return operation;
+        KeycloakOperations operation = exchange.getIn().getHeader(KeycloakConstants.OPERATION, KeycloakOperations.class);
+        return operation != null ? operation : configured;
     }
 
     protected KeycloakConfiguration getConfiguration() {

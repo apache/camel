@@ -74,6 +74,8 @@ public class HashicorpVaultLocalContainerInfraService
 
                 withNetworkAliases(containerName)
                         .withEnv("VAULT_DEV_ROOT_TOKEN_ID", DEFAULT_TOKEN)
+                        // the same for an OpenBao image, which has its own name for it
+                        .withEnv("BAO_DEV_ROOT_TOKEN_ID", DEFAULT_TOKEN)
                         .withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withCapAdd(Capability.IPC_LOCK))
                         .withLogConsumer(logConsumer)
                         .waitingFor(Wait.forListeningPort())

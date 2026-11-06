@@ -104,6 +104,55 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void theLiveStateOfTheRules() throws Exception {
+        writeStatus(withLiveState(chaosOn()));
+
+        assertThat(run()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("RATE").contains("LAST").contains("EFFECT");
+        assertThat(lineOf(out, "r1")).contains("40% of 50%").contains("3s ago")
+                .contains("2 recovered, 1 handled, 1 in flight");
+    }
+
+    @Test
+    void theLiveStateAsJson() throws Exception {
+        writeStatus(withLiveState(chaosOn()));
+
+        assertThat(run("--json")).isZero();
+
+        JsonObject row = (JsonObject) ((JsonArray) Jsoner.deserialize(printer.getStdout())).get(0);
+        assertThat(row.getDouble("rate")).isEqualTo(0.5d);
+        assertThat(row.getDouble("observedRate")).isEqualTo(0.4d);
+        assertThat(row.getLong("lastFiredAgo")).isEqualTo(3000);
+        assertThat(row.getLong("faultsLastMinute")).isEqualTo(5);
+        assertThat(((JsonObject) row.get("effect")).getLong("inFlight")).isEqualTo(1);
+    }
+
+    @Test
+    void theRecentFaultsInTheReport() throws Exception {
+        writeStatus(withLiveState(chaosOn()));
+
+        assertThat(run("--report")).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("recent faults:").contains("FAULT").contains("EXCHANGE");
+        assertThat(lineOf(out, "ABC-1")).contains("2s").contains("r1").contains("error ChaosException").contains("send")
+                .contains("orders").contains("kafka://orders");
+        assertThat(lineOf(out, "r1  ")).contains("2 recovered, 1 handled, 1 in flight");
+    }
+
+    @Test
+    void withoutLiveStateTheColumnsAreLeftOut() throws Exception {
+        writeStatus(chaosOn());
+
+        assertThat(run()).isZero();
+
+        // a rule of an older camel-chaos has no live state
+        assertThat(printer.getStdout()).doesNotContain("RATE").doesNotContain("EFFECT");
+    }
+
+    @Test
     void report() throws Exception {
         writeStatus(chaosOn());
 
@@ -133,7 +182,7 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
-    void reportSaysWhyAnExpectationIsNotDecided() throws Exception {
+    void reportShowsACancelledExpectation() throws Exception {
         JsonObject chaos = chaosOn();
         JsonObject report = (JsonObject) chaos.get("report");
         report.put("verdict", "PASS");
@@ -141,11 +190,10 @@ class ListChaosTest extends ProcessCommandTestSupport {
         report.put("lost", 0);
         report.put("reasons", new JsonArray());
         JsonArray rules = report.getCollection("rules");
-        // the replaced version keeps its expectation pending for good, the current one has time left
+        // the replaced version has its expectation cancelled, the current one has time left
         JsonObject replaced = (JsonObject) rules.get(1);
         replaced.put("expectation", new JsonObject(
-                Map.of("route", "orders", "count", 10, "within", 60000, "completed", 4,
-                        "outcome", "pending", "notDecided", true)));
+                Map.of("route", "orders", "count", 10, "within", 60000, "completed", 4, "outcome", "cancelled")));
         JsonObject current = (JsonObject) rules.get(0);
         current.put("expectation", new JsonObject(
                 Map.of("route", "orders", "count", 100, "within", 60000,
@@ -156,8 +204,107 @@ class ListChaosTest extends ProcessCommandTestSupport {
 
         String out = printer.getStdout();
         assertThat(out).contains("PASS (not final: an expectation is pending)");
-        assertThat(out).contains("orders:10 pending (4 completed, not decided)");
+        assertThat(out).contains("orders:10 cancelled (4 completed)");
         assertThat(out).contains("orders:100 pending (2 completed, 30s left)");
+    }
+
+    @Test
+    void theNoteSaysWhatALifecycleRuleDidAndWhyARuleWasSkipped() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject stall = rule(1, "active", "route=poller stall duration=20s");
+        stall.put("id", "r2");
+        JsonObject lifecycle = new JsonObject();
+        lifecycle.put("action", "suspend");
+        lifecycle.put("route", "poller");
+        lifecycle.put("state", "down");
+        lifecycle.put("backIn", 12000L);
+        stall.put("lifecycle", lifecycle);
+        JsonObject corrupt = rule(1, "active", "route=shipping corrupt mode=charset");
+        corrupt.put("id", "r3");
+        corrupt.put("skippedReasons", new JsonObject(Map.of("a stream body", 79L)));
+        JsonArray rules = chaos.getCollection("rules");
+        rules.add(stall);
+        rules.add(corrupt);
+        writeStatus(chaos);
+
+        assertThat(run()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("NOTE");
+        assertThat(lineOf(out, "r2")).contains("route poller down, back in 12s");
+        assertThat(lineOf(out, "r3")).contains("skipped 79: a stream body");
+    }
+
+    @Test
+    void theNoteSaysWhenARuleStartsItsBurstsAndTheRoundOfAFlappingRoute() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject waiting = rule(1, "waiting", "endpoint=mock:x drop from=+30s");
+        waiting.put("id", "r2");
+        waiting.put("startsIn", 25000L);
+        JsonObject burst = rule(1, "active", "endpoint=mock:x error rate=burst:5s/30s");
+        burst.put("id", "r3");
+        burst.put("nextBurstIn", 12000L);
+        JsonObject flap = rule(1, "active", "route=poller stall duration=10s repeat=3 every=1m");
+        flap.put("id", "r4");
+        JsonObject lifecycle = new JsonObject();
+        lifecycle.put("action", "suspend");
+        lifecycle.put("route", "poller");
+        lifecycle.put("state", "pending");
+        lifecycle.put("repeat", 3);
+        lifecycle.put("every", 60000L);
+        lifecycle.put("round", 1);
+        lifecycle.put("actsIn", 40000L);
+        flap.put("lifecycle", lifecycle);
+        JsonArray rules = chaos.getCollection("rules");
+        rules.add(waiting);
+        rules.add(burst);
+        rules.add(flap);
+        writeStatus(chaos);
+
+        assertThat(run()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(lineOf(out, "r2")).contains("starts in 25s");
+        assertThat(lineOf(out, "r3")).contains("next burst in 12s");
+        // the note wraps in its column
+        assertThat(lineOf(out, "r4")).contains("route poller pending (round 1 of 3),");
+        assertThat(out).contains("acts in 40s");
+    }
+
+    @Test
+    void withoutANoteThereIsNoNoteColumn() throws Exception {
+        writeStatus(chaosOn());
+
+        assertThat(run()).isZero();
+
+        assertThat(printer.getStdout()).doesNotContain("NOTE");
+    }
+
+    @Test
+    void noRulesSaysSo() throws Exception {
+        JsonObject chaos = chaosOn();
+        chaos.put("rules", new JsonArray());
+        writeStatus(chaos);
+
+        assertThat(run()).isZero();
+
+        assertThat(printer.getStdout()).isEmpty();
+        assertThat(printer.getStderr()).contains("orders (pid " + TEST_PID + "): no chaos rules");
+    }
+
+    @Test
+    void reportShowsTheKindAndOpOfAnExpectation() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject report = (JsonObject) chaos.get("report");
+        JsonObject rule = (JsonObject) ((JsonArray) report.getCollection("rules")).get(0);
+        rule.put("expectation", new JsonObject(
+                Map.of("route", "orders", "kind", "handled", "op", "<=", "count", 0, "within", 60000, "value", 3,
+                        "outcome", "unmet")));
+        writeStatus(chaos);
+
+        assertThat(run("--report")).isZero();
+
+        assertThat(printer.getStdout()).contains("orders:handled<=0 unmet (3 handled)");
     }
 
     @Test
@@ -187,7 +334,9 @@ class ListChaosTest extends ProcessCommandTestSupport {
 
         assertThat(run()).isZero();
 
-        assertThat(printer.getOutput()).isEmpty();
+        // nothing on stdout, and why on stderr
+        assertThat(printer.getStdout()).isEmpty();
+        assertThat(printer.getStderr()).contains("No running integration has camel-chaos: run it with camel run --chaos");
     }
 
     private int run(String... args) throws Exception {
@@ -246,6 +395,35 @@ class ListChaosTest extends ProcessCommandTestSupport {
         chaos.put("enabled", true);
         chaos.put("rules", new JsonArray(List.of(current)));
         chaos.put("report", report);
+        return chaos;
+    }
+
+    /** The live state of rule r1, as camel-chaos adds it to its rules and its report. */
+    private static JsonObject withLiveState(JsonObject chaos) {
+        JsonObject rule = (JsonObject) ((JsonArray) chaos.get("rules")).get(0);
+        rule.put("rate", 0.5d);
+        rule.put("observedRate", 0.4d);
+        rule.put("lastFiredAgo", 3000L);
+        rule.put("faultsLastMinute", 5L);
+        JsonObject effect = new JsonObject();
+        effect.put("faulted", 4L);
+        effect.put("completed", 0L);
+        effect.put("recovered", 2L);
+        effect.put("handled", 1L);
+        effect.put("failed", 0L);
+        effect.put("inFlight", 1L);
+        rule.put("effect", effect);
+        JsonObject fault = new JsonObject();
+        fault.put("timestamp", 1_000_000L);
+        fault.put("ago", 2000L);
+        fault.put("rule", "r1");
+        fault.put("version", 2);
+        fault.put("fault", "error ChaosException");
+        fault.put("hook", "send");
+        fault.put("route", "orders");
+        fault.put("endpoint", "kafka://orders");
+        fault.put("exchangeId", "ABC-1");
+        ((JsonObject) chaos.get("report")).put("recentFaults", new JsonArray(List.of(fault)));
         return chaos;
     }
 

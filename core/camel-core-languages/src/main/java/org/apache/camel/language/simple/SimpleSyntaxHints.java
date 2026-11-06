@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Hints that turn a Simple parser error into a message that says what to write (CAMEL-24703). Every consumer of the
@@ -172,8 +174,82 @@ public final class SimpleSyntaxHints {
             return "Unexpected token " + word + ": text outside ${...} is a literal, functions are written as ${body}, "
                    + "${header.name}; did you mean " + rewrite + "?";
         }
+        // ${body.lines}.size() > 0: the method after the closing brace of the function
+        int start = Math.min(Math.max(index, 0), expression.length());
+        while (start > 0 && !Character.isWhitespace(expression.charAt(start - 1))) {
+            start--;
+        }
+        int close = word.startsWith("${") ? closingBrace(word) : -1;
+        String after = close > 0 ? afterFunction(expression, start + close + 1) : null;
+        if (after != null) {
+            return "Unexpected token " + word + ": " + after;
+        }
         return "Unexpected token " + word + ": text outside ${...} must be " + VALUE_FORMS + ", or an operator ("
                + OPERATORS + ")";
+    }
+
+    /** The functions whose value can be read further with a field, a method or an index, as ${body.lines.size()}. */
+    private static final Pattern READ_FURTHER = Pattern.compile(
+            "(?:in\\.)?(?:body|headers?|exchangeProperty|variables?|exception)(?:[.\\[?].*)?"
+                                                                + "|(?:mandatoryB|b)odyAs\\(.*|messageAs\\(.*");
+
+    /** A path that reads further: .lines, ?.lines, .size(), [0] or ['sku'], one after the other. */
+    private static final Pattern PATH = Pattern.compile(
+            "(?:\\??\\.[A-Za-z_]\\w*(?:\\([^()]*\\))?|\\[[^\\]]*])+");
+
+    /**
+     * A method, a field or an index written right after the closing brace of a function, as in ${body.lines}.size():
+     * the parser reads it as text, not as part of the function (r27 of the local-model benchmark, 18 calls of the
+     * expression tool with it in one step). The hint writes it inside the braces: ${body.lines.size()}. Null when the
+     * text at the index does not follow a function whose value can be read further, or is a filter, which Simple does
+     * not have.
+     *
+     * @param  expression the expression
+     * @param  index      the index of the first character after the closing brace of the function
+     * @return            the hint, or null
+     */
+    public static String afterFunction(String expression, int index) {
+        if (expression == null || index < 3 || index >= expression.length() || expression.charAt(index - 1) != '}') {
+            return null;
+        }
+        // the ${ that the brace closes
+        int depth = 0;
+        int open = -1;
+        for (int i = index - 1; i > 0 && open < 0; i--) {
+            char c = expression.charAt(i);
+            if (c == '}') {
+                depth++;
+            } else if (c == '{' && expression.charAt(i - 1) == '$' && --depth == 0) {
+                open = i - 1;
+            }
+        }
+        String rest = expression.substring(index);
+        Matcher path = PATH.matcher(rest);
+        if (open < 0 || !path.lookingAt() || rest.matches("(?s)\\??\\.[?^$!]\\[.*|\\[\\?\\(.*")) {
+            return null;
+        }
+        String inner = expression.substring(open + 2, index - 1);
+        if (!READ_FURTHER.matcher(inner).matches()) {
+            return null;
+        }
+        String written = path.group();
+        String what = written.endsWith(")") ? "method" : written.endsWith("]") ? "index" : "field";
+        return "the " + what + " " + written + " is outside the function, as text after its closing brace: write it inside"
+               + " the braces, ${" + inner + written + "}";
+    }
+
+    /** The index of the brace that closes the ${ the text starts with, or -1. */
+    private static int closingBrace(String text) {
+        int depth = 0;
+        for (int i = 0; i < text.length(); i++) {
+            if (text.startsWith("${", i)) {
+                depth++;
+                i++;
+            } else if (text.charAt(i) == '}' && --depth == 0) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /** The message when an operator has no usable value next to it. */

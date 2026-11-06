@@ -47,10 +47,14 @@ public final class DockerClientFactory {
 
         org.apache.camel.util.ObjectHelper.notNull(dockerConfiguration, "dockerConfiguration");
 
-        Integer port = DockerHelper.getProperty(DockerConstants.DOCKER_PORT, dockerConfiguration, message, Integer.class,
-                dockerConfiguration.getPort());
-        String host = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, dockerConfiguration, message, String.class,
-                dockerConfiguration.getHost());
+        // the daemon to connect to, how to connect to it, and the registry credentials come from the endpoint, and from
+        // the headers of the message only when allowConnectionAndCredentialsFromHeaders is enabled
+        Message connectionHeaders = dockerConfiguration.isAllowConnectionAndCredentialsFromHeaders() ? message : null;
+
+        Integer port = DockerHelper.getProperty(DockerConstants.DOCKER_PORT, dockerConfiguration, connectionHeaders,
+                Integer.class, dockerConfiguration.getPort());
+        String host = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, dockerConfiguration, connectionHeaders,
+                String.class, dockerConfiguration.getHost());
 
         Integer maxTotalConnections = DockerHelper.getProperty(DockerConstants.DOCKER_MAX_TOTAL_CONNECTIONS,
                 dockerConfiguration, message, Integer.class,
@@ -59,28 +63,28 @@ public final class DockerClientFactory {
                 dockerConfiguration, message, Integer.class,
                 dockerConfiguration.getMaxPerRouteConnections());
 
-        String username = DockerHelper.getProperty(DockerConstants.DOCKER_USERNAME, dockerConfiguration, message, String.class,
-                dockerConfiguration.getUsername());
-        String password = DockerHelper.getProperty(DockerConstants.DOCKER_PASSWORD, dockerConfiguration, message, String.class,
-                dockerConfiguration.getPassword());
+        String username = DockerHelper.getProperty(DockerConstants.DOCKER_USERNAME, dockerConfiguration, connectionHeaders,
+                String.class, dockerConfiguration.getUsername());
+        String password = DockerHelper.getProperty(DockerConstants.DOCKER_PASSWORD, dockerConfiguration, connectionHeaders,
+                String.class, dockerConfiguration.getPassword());
         String email = DockerHelper.getProperty(DockerConstants.DOCKER_EMAIL, dockerConfiguration, message, String.class,
                 dockerConfiguration.getEmail());
         Integer requestTimeout = DockerHelper.getProperty(DockerConstants.DOCKER_API_REQUEST_TIMEOUT, dockerConfiguration,
                 message, Integer.class,
                 dockerConfiguration.getRequestTimeout());
-        String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration, message,
-                String.class, dockerConfiguration.getServerAddress());
-        String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, message, String.class,
-                dockerConfiguration.getCertPath());
-        Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, message, Boolean.class,
-                dockerConfiguration.isSecure());
-        Boolean tlsVerify = DockerHelper.getProperty(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration, message,
+        String serverAddress = DockerHelper.getProperty(DockerConstants.DOCKER_SERVER_ADDRESS, dockerConfiguration,
+                connectionHeaders, String.class, dockerConfiguration.getServerAddress());
+        String certPath = DockerHelper.getProperty(DockerConstants.DOCKER_CERT_PATH, dockerConfiguration, connectionHeaders,
+                String.class, dockerConfiguration.getCertPath());
+        Boolean secure = DockerHelper.getProperty(DockerConstants.DOCKER_SECURE, dockerConfiguration, connectionHeaders,
+                Boolean.class, dockerConfiguration.isSecure());
+        Boolean tlsVerify = DockerHelper.getProperty(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration, connectionHeaders,
                 Boolean.class, dockerConfiguration.isTlsVerify());
-        Boolean socket = DockerHelper.getProperty(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration, message,
-                Boolean.class, dockerConfiguration.isSocket());
+        Boolean socket = DockerHelper.getProperty(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration,
+                connectionHeaders, Boolean.class, dockerConfiguration.isSocket());
 
         String cmdExecFactory = DockerHelper.getProperty(DockerConstants.DOCKER_CMD_EXEC_FACTORY,
-                dockerConfiguration, message, String.class, dockerConfiguration.getCmdExecFactory());
+                dockerConfiguration, connectionHeaders, String.class, dockerConfiguration.getCmdExecFactory());
 
         DockerClientProfile clientProfile = new DockerClientProfile();
         clientProfile.setHost(host);

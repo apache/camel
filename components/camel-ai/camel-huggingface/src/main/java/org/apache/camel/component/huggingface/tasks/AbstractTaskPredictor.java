@@ -158,21 +158,27 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
     @Override
     public void predict(Exchange exchange) throws Exception {
         Input input = prepareInput(exchange);
+        Output output = infer(input);
+        processOutput(exchange, output);
+    }
+
+    /**
+     * Runs the model on the input. With pooling, the calls share one predictor and run one at a time.
+     */
+    protected Output infer(Input input) throws Exception {
         if (config.isPooling()) {
             lock.lock();
             try {
                 if (predictor == null) {
                     predictor = model.newPredictor();
                 }
-                Output output = predictor.predict(input);
-                processOutput(exchange, output);
+                return predictor.predict(input);
             } finally {
                 lock.unlock();
             }
         } else {
             try (Predictor<Input, Output> djlPredictor = model.newPredictor()) {
-                Output output = djlPredictor.predict(input);
-                processOutput(exchange, output);
+                return djlPredictor.predict(input);
             }
         }
     }

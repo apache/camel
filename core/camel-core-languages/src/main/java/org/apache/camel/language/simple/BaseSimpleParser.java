@@ -500,7 +500,9 @@ public abstract class BaseSimpleParser {
             } else if (expect == TokenType.whiteSpace && token.getType().getType() == TokenType.singleQuote) {
                 hint = ": a literal that contains a single quote must be written with double quotes, e.g. \"it's\"";
             } else if (expect == TokenType.whiteSpace) {
-                hint = ": operators and values must be separated by a space";
+                // ${body.lines}.size(): a method after the closing brace of a function, rather than a missing space
+                String after = SimpleSyntaxHints.afterFunction(expression, previousIndex);
+                hint = after != null ? ": " + after : ": operators and values must be separated by a space";
             }
             throw new SimpleParserException(
                     "expected symbol " + expect + " but was " + token.getType().getType() + hint, previousIndex);

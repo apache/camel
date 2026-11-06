@@ -58,18 +58,33 @@ public final class UnitOfWorkHelper {
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations) {
+        doneSynchronizations(exchange, synchronizations, true);
+    }
+
+    /**
+     * Done the synchronizations.
+     *
+     * @param exchange         the exchange
+     * @param synchronizations the synchronizations
+     * @param copy             whether to work on a copy of the list, or on the list itself, which is then reordered:
+     *                         {@code false} only for a list that is private to the caller, such as a copy taken under a
+     *                         lock
+     * @since                  4.24
+     */
+    public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, boolean copy) {
         if (synchronizations == null || synchronizations.isEmpty()) {
             return;
         }
 
         if (synchronizations.size() > 1) {
-            // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-            final List<Synchronization> copy = safeCopy(synchronizations);
+            // work on a copy of the list (unless it is private) to avoid any modification which may cause
+            // ConcurrentModificationException
+            final List<Synchronization> ordered = order(synchronizations, copy);
 
             boolean failed = exchange.isFailed();
 
             // invoke synchronization callbacks
-            for (Synchronization synchronization : copy) {
+            for (Synchronization synchronization : ordered) {
                 doneSynchronization(synchronization, exchange, failed);
             }
         } else {
@@ -95,23 +110,36 @@ public final class UnitOfWorkHelper {
 
     public static void beforeRouteSynchronizations(
             Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-        final List<Synchronization> copy = safeCopy(synchronizations);
-
-        // invoke synchronization callbacks
-        invokeSynchronizationCallbacks(route, exchange, log, copy);
+        beforeRouteSynchronizations(route, exchange, synchronizations, log, true);
     }
 
-    private static List<Synchronization> safeCopy(List<Synchronization> synchronizations) {
-        List<Synchronization> copy = new ArrayList<>(synchronizations);
+    /**
+     * Invokes the before route callbacks of the synchronizations.
+     *
+     * @param copy whether to work on a copy of the list, or on the list itself, which is then reordered: {@code false}
+     *             only for a list that is private to the caller, such as a copy taken under a lock
+     * @since      4.24
+     */
+    public static void beforeRouteSynchronizations(
+            Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log, boolean copy) {
+        // work on a copy of the list (unless it is private) to avoid any modification which may cause
+        // ConcurrentModificationException
+        final List<Synchronization> ordered = order(synchronizations, copy);
 
-        if (copy.size() > 1) {
+        // invoke synchronization callbacks
+        invokeSynchronizationCallbacks(route, exchange, log, ordered);
+    }
+
+    private static List<Synchronization> order(List<Synchronization> synchronizations, boolean copy) {
+        List<Synchronization> ordered = copy ? new ArrayList<>(synchronizations) : synchronizations;
+
+        if (ordered.size() > 1) {
             // reverse so we invoke it FILO style instead of FIFO
-            Collections.reverse(copy);
+            Collections.reverse(ordered);
             // and honor if any was ordered by sorting it accordingly
-            copy.sort(OrderedComparator.get());
+            ordered.sort(OrderedComparator.get());
         }
-        return copy;
+        return ordered;
     }
 
     private static void invokeSynchronizationCallbacks(Route route, Exchange exchange, Logger log, List<Synchronization> copy) {
@@ -131,11 +159,24 @@ public final class UnitOfWorkHelper {
 
     public static void afterRouteSynchronizations(
             Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log) {
-        // work on a copy of the list to avoid any modification which may cause ConcurrentModificationException
-        final List<Synchronization> copy = safeCopy(synchronizations);
+        afterRouteSynchronizations(route, exchange, synchronizations, log, true);
+    }
+
+    /**
+     * Invokes the after route callbacks of the synchronizations.
+     *
+     * @param copy whether to work on a copy of the list, or on the list itself, which is then reordered: {@code false}
+     *             only for a list that is private to the caller, such as a copy taken under a lock
+     * @since      4.24
+     */
+    public static void afterRouteSynchronizations(
+            Route route, Exchange exchange, List<Synchronization> synchronizations, Logger log, boolean copy) {
+        // work on a copy of the list (unless it is private) to avoid any modification which may cause
+        // ConcurrentModificationException
+        final List<Synchronization> ordered = order(synchronizations, copy);
 
         // invoke synchronization callbacks
-        for (Synchronization synchronization : copy) {
+        for (Synchronization synchronization : ordered) {
             final SynchronizationRouteAware routeSynchronization = synchronization.getRouteSynchronization();
             if (routeSynchronization != null) {
                 try {

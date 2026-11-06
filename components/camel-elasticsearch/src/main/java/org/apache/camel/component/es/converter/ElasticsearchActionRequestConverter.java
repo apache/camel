@@ -268,10 +268,13 @@ public final class ElasticsearchActionRequestConverter {
         String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
 
         if (queryObject instanceof SearchRequest.Builder searchReqBuilder) {
-            if (searchReqBuilder.build().index().isEmpty()) {
-                searchReqBuilder.index(indexName);
+            // a builder can be built only once, so return a fresh one
+            SearchRequest built = searchReqBuilder.build();
+            SearchRequest.Builder builder = built.rebuild();
+            if (built.index().isEmpty()) {
+                builder.index(indexName);
             }
-            return searchReqBuilder;
+            return builder;
         }
         if (queryObject instanceof SearchRequest searchRequest) {
             // a built request is sent as it is, as a builder body is

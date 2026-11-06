@@ -32,6 +32,7 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.MimeType;
 import org.apache.camel.spi.Transformer;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.dataformat.protobuf.schema.ProtobufSchema;
 
@@ -65,7 +66,7 @@ public class ProtobufStructDataTypeTransformer extends Transformer {
                 unmarshalled = Protobuf.mapper().reader().forType(JsonNode.class).with(schema)
                         .readValue(Protobuf.mapper().writerFor(contentType).with(schema).writeValueAsBytes(message.getBody()));
             } else if (message.getBody() instanceof String jsonString && Json.isJson(jsonString)) {
-                unmarshalled = Json.mapper().readTree(getBodyAsStream(message));
+                unmarshalled = Json.mapper().readTree(jsonString);
             } else {
                 unmarshalled
                         = Protobuf.mapper().reader().forType(JsonNode.class).with(schema).readValue(getBodyAsStream(message));
@@ -74,7 +75,7 @@ public class ProtobufStructDataTypeTransformer extends Transformer {
             message.setBody(unmarshalled);
 
             message.setHeader(Exchange.CONTENT_TYPE, MimeType.STRUCT.type());
-        } catch (InvalidPayloadException | ClassNotFoundException e) {
+        } catch (InvalidPayloadException | JacksonException | ClassNotFoundException e) {
             throw new CamelExecutionException(
                     "Failed to apply Protobuf x-struct data type on exchange", message.getExchange(), e);
         }

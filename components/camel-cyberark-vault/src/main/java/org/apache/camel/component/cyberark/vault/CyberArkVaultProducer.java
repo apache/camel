@@ -67,7 +67,6 @@ public class CyberArkVaultProducer extends DefaultProducer {
                 String secretValue = client.retrieveSecret(secretId, version);
                 message.setBody(secretValue);
                 message.setHeader(CyberArkVaultConstants.SECRET_ID, secretId);
-                message.setHeader(CyberArkVaultConstants.SECRET_VALUE, secretValue);
                 if (version != null) {
                     message.setHeader(CyberArkVaultConstants.SECRET_VERSION, version);
                 }

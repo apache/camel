@@ -120,10 +120,10 @@ public interface MllpComponentBuilderFactory {
         
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -473,7 +473,7 @@ public interface MllpComponentBuilderFactory {
     
         
         /**
-         * Set the default character set to use for byte to/from String
+         * Set the default character set to use for byte[] to/from String
          * conversions.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.

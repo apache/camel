@@ -481,8 +481,12 @@ class SourceValidatorSimpleTest {
 
     private static String rewritten(String text) {
         String message = SimpleChecks.topLevelTernary(text);
-        assertThat(message).contains("Write the whole ternary inside one function: ");
-        return message.substring(message.indexOf("inside one function: ") + "inside one function: ".length());
+        assertThat(message).containsPattern("Write the whole ternary inside one function(, and resource:\\w+: before it)?: ");
+        String start = message.contains(" before it: ") ? " before it: " : "inside one function: ";
+        String rewrite = message.substring(message.indexOf(start) + start.length());
+        // the reason a resource: goes before the function follows the rewrite
+        int reason = rewrite.indexOf(" (a function's result is never loaded");
+        return reason > 0 ? rewrite.substring(0, reason) : rewrite;
     }
 
     @Test
@@ -512,6 +516,107 @@ class SourceValidatorSimpleTest {
                 .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'}");
         assertThat(rewritten("${header.a} == 1 ? resource:file:order.json : none"))
                 .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'none'}");
+    }
+
+    /**
+     * r27 transform-groovy step 3: the values quoted, as two runs wrote them. The hint kept them inside the function,
+     * so the body was the text resource:file:order.json, and the next step failed with a JsonParseException (12
+     * errors).
+     */
+    @Test
+    void aResourceInBothQuotedValuesGoesBeforeTheFunctionAndTheMessageSaysWhy() {
+        String message = SimpleChecks.topLevelTernary(
+                "${exchangeProperty.CamelTimerCounter} == 0 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'");
+        assertThat(message).contains("Write the whole ternary inside one function, and resource:file: before it:"
+                                     + " resource:file:${exchangeProperty.CamelTimerCounter == 0 ? 'order.json' :"
+                                     + " 'order-bad-email.json'} (a function's result is never loaded as a resource:"
+                                     + " with resource:file: inside the function, the body is the text"
+                                     + " resource:file:order.json, not the file)");
+        // r27l-4 wrote the timer's counter as a field of the body, and double quotes
+        assertThat(rewritten(
+                "${body[CamelTimerCounter]} == 1 ? \"resource:file:order.json\" : \"resource:file:order-bad-email.json\""))
+                .isEqualTo("resource:file:${body[CamelTimerCounter] == 1 ? 'order.json' : 'order-bad-email.json'}");
+        // the resource: before the condition already: as before, with no reason to give
+        assertThat(SimpleChecks.topLevelTernary(
+                "resource:file:${exchangeProperty.CamelTimerCounter} == 0 ? 'order.json' : 'order-bad-email.json'"))
+                .endsWith("Write the whole ternary inside one function:"
+                          + " resource:file:${exchangeProperty.CamelTimerCounter == 0 ? 'order.json' : 'order-bad-email.json'}");
+        // quoted values of two schemes stay as they are
+        assertThat(rewritten("${header.a} == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'"))
+                .isEqualTo("${header.a == 1 ? 'resource:file:order.json' : 'resource:classpath:order.json'}");
+    }
+
+    /**
+     * r27 transform-groovy step 3: the rewrite of the old hint, written as told, passed the write and failed at
+     * runtime. The value is the text, which nothing loads; the same for the value of an elvis inside the function.
+     */
+    @Test
+    void aResourceAsTheValueOfAFunctionIsReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:orders?repeatCount=2&includeMetadata=true
+                            steps:
+                              - setBody:
+                                  expression:
+                                    simple:
+                                      expression: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'resource:file:order-bad-email.json'}"
+                              - setHeader:
+                                  name: fileUri
+                                  simple: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'x'}"
+                              - setBody:
+                                  simple: "${header.file ?: 'resource:file:order.json'}"
+                        """,
+                catalog);
+        assertThat(msgs).hasSize(3);
+        assertThat(msgs.get(0)).isEqualTo("Line 7: `${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' :"
+                                          + " 'resource:file:order-bad-email.json'}` gives the text resource:file:order.json,"
+                                          + " not the file: a function's result is never loaded as a resource, only a"
+                                          + " resource: at the start of the expression is. Write resource:file: before"
+                                          + " the function: resource:file:${exchangeProperty.CamelTimerCounter == 1 ?"
+                                          + " 'order.json' : 'order-bad-email.json'}");
+        assertThat(msgs.get(1)).startsWith("Line 10: `${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json'"
+                                           + " : 'x'}` gives the text resource:file:order.json, not the file")
+                .endsWith("Write resource:file: at the start of the expression, and a function only for the part of the"
+                          + " name that changes, as in resource:file:order-${header.id}.json");
+        assertThat(msgs.get(2)).startsWith("Line 12: `${header.file ?: 'resource:file:order.json'}` gives the text"
+                                           + " resource:file:order.json, not the file");
+        // the rewrite is accepted
+        assertThat(SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:orders?repeatCount=2&includeMetadata=true
+                            steps:
+                              - setBody:
+                                  simple: "resource:file:${exchangeProperty.CamelTimerCounter == 1 ? 'order.json' : 'order-bad-email.json'}"
+                        """,
+                catalog)).isEmpty();
+    }
+
+    @Test
+    void aResourceThatIsLoadedOrNotAValueIsNotReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple(
+                """
+                        - from:
+                            uri: timer:orders?repeatCount=2&includeMetadata=true
+                            steps:
+                              - setBody:
+                                  simple:
+                                    expression: "${exchangeProperty.CamelTimerCounter == 1 ? 'resource:file:order.json' : 'resource:file:b.json'}"
+                                    resolveResource: true
+                              - setBody:
+                                  simple: "resource:file:order-${exchangeProperty.CamelTimerCounter}.json"
+                              - setBody:
+                                  simple: "${header.uri.replace('resource:file:', '')}"
+                              - filter:
+                                  simple: "${header.uri} == 'resource:file:order.json'"
+                              - log:
+                                  message: "Loading ${header.uri} ?: 'resource:file:order.json'"
+                              - setBody:
+                                  simple: "${body} ?: 'resource:file:order.json'"
+                        """,
+                catalog);
+        assertThat(msgs).isEmpty();
     }
 
     @Test
@@ -770,6 +875,114 @@ class SourceValidatorSimpleTest {
                 .startsWith("Simple has no projection: .![...] is SpEL").endsWith("expression: \"$[*].orderId\"");
         assertThat(SimpleChecks.filterInFunction("${body.^[orderId == headers.id]}"))
                 .contains(".^[...] is SpEL").endsWith(PICK_BY_ID.substring(PICK_BY_ID.indexOf("        expression")));
+    }
+
+    /**
+     * r27 rest-code-first step 1 (r27n-4): the filter written after the function. In a predicate the parser said only
+     * that operators and values must be separated by a space; in an expression it was text after the body.
+     */
+    @Test
+    void aFilterWrittenAfterTheFunctionIsReportedWithTheJsonPathStep() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setHeader:
+                          name: foundOrder
+                          expression:
+                            simple:
+                              expression: "${body}?.?[orderId == '${header.id}']"
+                      - choice:
+                          when:
+                            - simple: "${header.id} != null && ${body}?.?[orderId == '${header.id}'] != null"
+                              steps:
+                                - setBody:
+                                    simple: "${body}[?(@.orderId == '${header.id}')]"
+                """, catalog);
+        String pick = " To pick the element whose orderId is '${header.id}', set the body with jsonpath before this step;"
+                      + " the body is then that element, or null when none or several match (test that with ${body} =="
+                      + " null):\n" + PICK_BY_ID;
+        assertThat(msgs).hasSize(3);
+        assertThat(msgs.get(0)).isEqualTo("Line 8: Simple has no filter: .?[...] is SpEL, and after ${body} it is text, not"
+                                          + " a part of the function." + pick);
+        assertThat(msgs.get(1)).isEqualTo("Line 11: Simple has no filter: .?[...] is SpEL, and after ${body} it is text,"
+                                          + " not a part of the function." + pick);
+        assertThat(msgs.get(2)).isEqualTo("Line 14: Simple has no filter: [?(...)] is JsonPath, and after ${body} it is"
+                                          + " text, not a part of the function." + pick);
+        // from a header, as r27n-4 kept the list in one
+        assertThat(SimpleChecks.filterInFunction("${header.orders}?.?[orderId == '${header.id}']"))
+                .contains("after ${header.orders} it is text").endsWith("        source: header:orders\n"
+                                                                        + "        resultType: java.util.Map");
+        // text after a function that is no filter
+        for (String text : List.of("${header.name}.json", "order-${header.id}.csv", "${body}?.x", "${body} [?]")) {
+            assertThat(SimpleChecks.filterInFunction(text)).as(text).isNull();
+        }
+    }
+
+    /**
+     * r27 rest-code-first step 1 (r27n-7): ${size:${body}} passed the check and failed at runtime with "Unknown
+     * function: size:${body}", 4 errors before ${body.size()}. A nested function makes the parser read the outer one
+     * only when it runs.
+     */
+    @Test
+    void anUnknownFunctionWithANestedFunctionIsReported() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - choice:
+                          when:
+                            - simple: "${body} == null || ${size:${body}} == 0"
+                              steps:
+                                - setBody:
+                                    simple: "${foo:${header.id}}"
+                """, catalog);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0)).isEqualTo("Line 6: Simple has no function size:, so ${size:${body}} fails when the route"
+                                          + " runs (Unknown function: size:${body}): the number of elements of the body"
+                                          + " is ${body.size()}");
+        assertThat(msgs.get(1)).isEqualTo("Line 9: Simple has no function foo:, so ${foo:${header.id}} fails when the"
+                                          + " route runs (Unknown function: foo:${header.id})");
+        // functions that take a nested function
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setBody:
+                          simple: "${header.${header.name}} ${variable.${header.key}} ${bean:${header.bean}?method=find}"
+                      - setBody:
+                          simple: "${date:header.${header.field}:yyyy} ${properties:${header.key}} ${size(${body})}"
+                      - setBody:
+                          simple: "${body[${header.index}]} ${exchangeProperty.${header.p}}"
+                """, catalog)).isEmpty();
+        // a custom function (a SimpleFunction bean, as in the simple-advanced documentation) is not in the catalog
+        assertThat(SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:contact
+                    steps:
+                      - setBody:
+                          simple: "Contact: ${maskEmail(${header.customerEmail})}"
+                """, catalog)).isEmpty();
+    }
+
+    /**
+     * r27 rest-code-first step 2 (r27n-6): the method after the function, told only that a space is missing; the parser
+     * says now that it goes inside the braces, and the write check shows that.
+     */
+    @Test
+    void aMethodAfterTheFunctionSaysItGoesInside() {
+        List<String> msgs = SourceValidator.validateYamlSimple("""
+                - from:
+                    uri: direct:list-orders
+                    steps:
+                      - filter:
+                          simple: "${body.lines} != null && ${body.lines}.size() > 0"
+                          steps:
+                            - log: "${body}"
+                """, catalog);
+        assertThat(msgs).singleElement().asString().startsWith("Line 5: Simple syntax error:")
+                .contains("the method .size() is outside the function, as text after its closing brace: write it inside"
+                          + " the braces, ${body.lines.size()}");
     }
 
     @Test

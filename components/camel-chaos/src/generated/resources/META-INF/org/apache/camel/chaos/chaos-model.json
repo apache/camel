@@ -1,0 +1,1078 @@
+{
+  "chaos": {
+    "description": "The chaos rules of camel-chaos: a rule is one line, the target, the fault and its parameters as name=value, then the options (such as at, rate, from, until) and optionally an expectation",
+    "syntax": "<target>=<pattern> <fault> [<parameter>=<value> ...] [<option>=<value> ...]",
+    "targets": [
+      {
+        "name": "route",
+        "description": "A route id, with * for any characters; one route id (no pattern) for stall and lifecycle",
+        "pattern": true,
+        "pick": "routes"
+      },
+      {
+        "name": "endpoint",
+        "description": "An endpoint URI pattern, with * for any characters; matched with or without the query parameters, and the \/\/ after the scheme does not count (kafka:orders* matches kafka:\/\/orders?brokers=b1)",
+        "pattern": true,
+        "pick": "endpoints"
+      },
+      {
+        "name": "component",
+        "description": "The scheme of the endpoint URIs, with * for any characters (no ':')",
+        "pattern": true,
+        "pick": "components"
+      },
+      {
+        "name": "step",
+        "description": "A step id (to1, or the id set with id(\"enrich\")), with * for any characters",
+        "pattern": true,
+        "pick": "steps"
+      }
+    ],
+    "hooks": [
+      {
+        "name": "send",
+        "description": "The sends to a matching endpoint (to, toD, wireTap, enrich, recipientList, a ProducerTemplate...), before the producer is called, inside the error handler",
+        "targets": [
+          "endpoint",
+          "component"
+        ],
+        "faults": [
+          "error",
+          "delay",
+          "drop",
+          "corrupt"
+        ],
+        "onlyWithAt": false
+      },
+      {
+        "name": "reply",
+        "description": "The reply of such a send, after the producer succeeded: its side effect happened (only with at=reply)",
+        "targets": [
+          "endpoint",
+          "component"
+        ],
+        "faults": [
+          "error",
+          "corrupt"
+        ],
+        "onlyWithAt": true
+      },
+      {
+        "name": "dlq",
+        "description": "The send of the dead letter channel to a matching endpoint (only with at=dlq)",
+        "targets": [
+          "endpoint",
+          "component"
+        ],
+        "faults": [
+          "error",
+          "delay",
+          "drop",
+          "corrupt"
+        ],
+        "onlyWithAt": true
+      },
+      {
+        "name": "poll",
+        "description": "The polls of the scheduled poll consumers of the routes",
+        "targets": [
+          "endpoint",
+          "component"
+        ],
+        "faults": [
+          "error",
+          "delay",
+          "drop"
+        ],
+        "onlyWithAt": false
+      },
+      {
+        "name": "entry",
+        "description": "Each exchange that enters a matching route, before the first step",
+        "targets": [
+          "route"
+        ],
+        "faults": [
+          "corrupt"
+        ],
+        "onlyWithAt": false
+      },
+      {
+        "name": "step",
+        "description": "Each matching step of a route, right before its processor is called",
+        "targets": [
+          "step"
+        ],
+        "faults": [
+          "error",
+          "delay"
+        ],
+        "onlyWithAt": false
+      }
+    ],
+    "faults": [
+      {
+        "name": "error",
+        "description": "Fails the send, the poll or the step with an exception (a ChaosException without exception=), or the failure of an HTTP component for status=",
+        "targets": [
+          "component",
+          "endpoint",
+          "step"
+        ],
+        "hooks": [
+          "send",
+          "reply",
+          "dlq",
+          "poll",
+          "step"
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "type": "duration",
+            "required": false,
+            "description": "Waits that long first, then fails, as a call that times out; the producer is not called",
+            "example": "5s",
+            "notAt": [
+              "reply"
+            ]
+          },
+          {
+            "name": "body",
+            "type": "string",
+            "required": false,
+            "description": "The body of the HTTP response (needs status=)",
+            "example": "no stock"
+          },
+          {
+            "name": "exception",
+            "type": "class",
+            "required": false,
+            "description": "The class of the exception: a public Throwable with a public constructor taking a String or none (not an InterruptedException)",
+            "example": "java.net.ConnectException"
+          },
+          {
+            "name": "header.<name>",
+            "type": "string",
+            "required": false,
+            "description": "A header of the HTTP response, such as header.Retry-After=5 (needs status=)",
+            "example": "5",
+            "prefix": "header."
+          },
+          {
+            "name": "message",
+            "type": "string",
+            "required": false,
+            "description": "The message of the exception (the class needs a constructor taking a String)",
+            "example": "broker down"
+          },
+          {
+            "name": "status",
+            "type": "integer",
+            "required": false,
+            "description": "The failure of an HTTP component for this status (not with exception= or message=)",
+            "example": "503",
+            "min": 300,
+            "max": 599,
+            "schemes": [
+              "http",
+              "https",
+              "netty-http",
+              "undertow",
+              "vertx-http"
+            ]
+          }
+        ],
+        "options": [
+          "at",
+          "expect",
+          "from",
+          "rate",
+          "until",
+          "within"
+        ]
+      },
+      {
+        "name": "delay",
+        "description": "Waits before the send, the poll or the step, as for a slow endpoint",
+        "targets": [
+          "component",
+          "endpoint",
+          "step"
+        ],
+        "hooks": [
+          "send",
+          "dlq",
+          "poll",
+          "step"
+        ],
+        "parameters": [
+          {
+            "name": "duration",
+            "type": "duration",
+            "required": true,
+            "description": "How long to wait, or a range such as 100ms..2s for a draw between the two times (from the seeded sequence of the rule)",
+            "example": "500ms",
+            "range": true
+          }
+        ],
+        "options": [
+          "at",
+          "expect",
+          "from",
+          "rate",
+          "until",
+          "within"
+        ]
+      },
+      {
+        "name": "drop",
+        "description": "A send that reports success without calling the producer, or a poll that is skipped",
+        "targets": [
+          "component",
+          "endpoint"
+        ],
+        "hooks": [
+          "send",
+          "dlq",
+          "poll"
+        ],
+        "parameters": [
+          
+        ],
+        "options": [
+          "at",
+          "expect",
+          "from",
+          "rate",
+          "until",
+          "within"
+        ]
+      },
+      {
+        "name": "corrupt",
+        "description": "Changes the message: its headers, the charset of its body, or its body",
+        "targets": [
+          "component",
+          "endpoint",
+          "route"
+        ],
+        "hooks": [
+          "send",
+          "reply",
+          "dlq",
+          "entry"
+        ],
+        "parameters": [
+          {
+            "name": "header",
+            "type": "string",
+            "required": false,
+            "description": "The headers mode=remove-header removes: a name or a pattern with *, ignoring case (without it every header that is not Camel*)",
+            "example": "X-Trace-*"
+          },
+          {
+            "name": "mode",
+            "type": "enum",
+            "required": true,
+            "description": "headers: the headers that are not Camel* get random values; charset: a text body becomes UTF-16 bytes; truncate: a String, byte[] or stream body ends after half of it; empty: the body becomes empty of its kind (or null); remove-header: removes headers",
+            "example": "headers",
+            "enum": [
+              "headers",
+              "charset",
+              "truncate",
+              "empty",
+              "remove-header"
+            ]
+          }
+        ],
+        "options": [
+          "at",
+          "expect",
+          "from",
+          "rate",
+          "until",
+          "within"
+        ]
+      },
+      {
+        "name": "lifecycle",
+        "description": "Suspends, stops or removes the route of a route=<id> target, and brings it back after the duration; repeat= takes it down more than once",
+        "targets": [
+          "route"
+        ],
+        "hooks": [
+          
+        ],
+        "parameters": [
+          {
+            "name": "action",
+            "type": "enum",
+            "required": true,
+            "description": "What to do to the route",
+            "example": "stop",
+            "enum": [
+              "suspend",
+              "stop",
+              "remove"
+            ]
+          },
+          {
+            "name": "duration",
+            "type": "duration",
+            "required": true,
+            "description": "How long the route stays down (at most camel.chaos.maxDuration)",
+            "example": "20s"
+          },
+          {
+            "name": "every",
+            "type": "duration",
+            "required": false,
+            "description": "The time from one time the route goes down to the next, longer than duration=",
+            "example": "1m"
+          },
+          {
+            "name": "repeat",
+            "type": "integer",
+            "required": false,
+            "description": "How many times to take the route down (needs every= when more than 1)",
+            "example": "3",
+            "min": 1,
+            "max": 100
+          }
+        ],
+        "options": [
+          "expect",
+          "from",
+          "within"
+        ]
+      },
+      {
+        "name": "stall",
+        "description": "Short for lifecycle action=suspend: the route stalls for the duration",
+        "targets": [
+          "route"
+        ],
+        "hooks": [
+          
+        ],
+        "shortFor": "lifecycle action=suspend",
+        "parameters": [
+          {
+            "name": "duration",
+            "type": "duration",
+            "required": true,
+            "description": "How long the route stays down (at most camel.chaos.maxDuration)",
+            "example": "20s"
+          },
+          {
+            "name": "every",
+            "type": "duration",
+            "required": false,
+            "description": "The time from one time the route goes down to the next, longer than duration=",
+            "example": "1m"
+          },
+          {
+            "name": "repeat",
+            "type": "integer",
+            "required": false,
+            "description": "How many times to take the route down (needs every= when more than 1)",
+            "example": "3",
+            "min": 1,
+            "max": 100
+          }
+        ],
+        "options": [
+          "expect",
+          "from",
+          "within"
+        ]
+      }
+    ],
+    "options": [
+      {
+        "name": "at",
+        "type": "enum",
+        "required": false,
+        "description": "Narrows the rule to one hook of its target (reply and dlq are reached only with at=)",
+        "example": "send",
+        "enum": [
+          "send",
+          "reply",
+          "dlq",
+          "poll",
+          "entry",
+          "step"
+        ]
+      },
+      {
+        "name": "expect",
+        "type": "expectation",
+        "required": false,
+        "description": "An expectation of a route after the rule is added: <route>:<count> (at least that many completed) or <route>:<kind><op><count>",
+        "example": "orders:handled<=0"
+      },
+      {
+        "name": "from",
+        "type": "duration",
+        "required": false,
+        "description": "When the rule starts after it is added, such as after the warm-up (+30s or 30s)",
+        "example": "+30s"
+      },
+      {
+        "name": "rate",
+        "type": "rate",
+        "required": false,
+        "description": "How often the rule fires: a probability above 0 and at most 1, every Nth match, or bursts (every match during the first part of each period); without it every match fires",
+        "example": "0.25",
+        "forms": [
+          "0.25",
+          "every:4",
+          "burst:5s\/30s"
+        ]
+      },
+      {
+        "name": "until",
+        "type": "countOrDuration",
+        "required": false,
+        "description": "When the rule ends: a number of matches or a time from its start (at most camel.chaos.maxDuration, its default)",
+        "example": "10m"
+      },
+      {
+        "name": "within",
+        "type": "duration",
+        "required": false,
+        "description": "The time of the expectation (by default until the rule ends)",
+        "example": "2m"
+      }
+    ],
+    "expectation": {
+      "kinds": [
+        {
+          "name": "completed",
+          "description": "The exchanges completed in the route"
+        },
+        {
+          "name": "handled",
+          "description": "The exchanges handled by the error handler in the route"
+        },
+        {
+          "name": "failed",
+          "description": "The exchanges failed in the route"
+        },
+        {
+          "name": "redeliveries",
+          "description": "The redeliveries in the route"
+        }
+      ],
+      "ops": [
+        {
+          "name": ">=",
+          "description": "at least"
+        },
+        {
+          "name": "<=",
+          "description": "at most"
+        },
+        {
+          "name": "=",
+          "description": "exactly"
+        }
+      ]
+    },
+    "limits": {
+      "maxLength": 2000,
+      "maxRepeat": 100,
+      "maxDuration": "camel.chaos.maxDuration (default 10m): the longest until, delay, after, from, burst period and stall or lifecycle duration",
+      "time": "a number with a unit (ms, s, m, h, d), also combined as 1m30s; a number alone is milliseconds",
+      "quoting": "a value with spaces or ; is quoted with \" or ' (\\\", \\' and \\\\ inside quotes)"
+    },
+    "recipes": [
+      {
+        "id": "http-error",
+        "group": "Downstream",
+        "title": "Returns an error (HTTP status)",
+        "description": "An HTTP call fails with a status, as for a service that is down or overloaded: tests onException, redelivery and the dead letter channel",
+        "rule": "endpoint=${endpoint} error status=${status} rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The HTTP endpoint the route calls",
+            "example": "https:\/\/inventory\/stock",
+            "pick": {
+              "from": "producers",
+              "schemes": [
+                "http",
+                "https",
+                "netty-http",
+                "undertow",
+                "vertx-http"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "type": "integer",
+            "description": "The HTTP status",
+            "default": "503",
+            "example": "503"
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "connection-refused",
+        "group": "Downstream",
+        "title": "Refuses the connection",
+        "description": "The send fails as when the other side is not there",
+        "rule": "endpoint=${endpoint} error exception=java.net.ConnectException rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "slow",
+        "group": "Downstream",
+        "title": "Is slow",
+        "description": "Each send waits a different time within a range, as a slow service does",
+        "rule": "endpoint=${endpoint} delay duration=${duration} rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "duration",
+            "type": "duration",
+            "description": "The time, or a range of times",
+            "default": "200ms..3s",
+            "example": "200ms..3s"
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.5",
+            "example": "0.5"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "timeout",
+        "group": "Downstream",
+        "title": "Times out",
+        "description": "The send waits, then fails without calling the producer, as a call that times out",
+        "rule": "endpoint=${endpoint} error after=${after} exception=java.net.SocketTimeoutException rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "after",
+            "type": "duration",
+            "description": "How long before it times out",
+            "default": "5s",
+            "example": "5s"
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.1",
+            "example": "0.1"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "failed-after-success",
+        "group": "Downstream",
+        "title": "Did the work, then failed",
+        "description": "The send succeeds and then fails, as a reply that is lost: a redelivery sends it again, so this tests that a duplicate does no harm",
+        "rule": "endpoint=${endpoint} error at=reply until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "How many sends fail",
+            "default": "1",
+            "example": "1"
+          }
+        ]
+      },
+      {
+        "id": "outage",
+        "group": "Downstream",
+        "title": "Is down for a while",
+        "description": "Every send fails during the first part of each period, as outage windows",
+        "rule": "endpoint=${endpoint} error rate=burst:${outage}\/${period} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "outage",
+            "type": "duration",
+            "description": "How long each outage lasts",
+            "default": "10s",
+            "example": "10s"
+          },
+          {
+            "name": "period",
+            "type": "duration",
+            "description": "The time from one outage to the next",
+            "default": "1m",
+            "example": "1m"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "corrupt-entry",
+        "group": "Messages",
+        "title": "Arrives corrupt",
+        "description": "The messages that enter the route are changed: random headers, the wrong charset, cut in half or empty",
+        "rule": "route=${route} corrupt mode=${mode} rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "route",
+            "type": "route",
+            "description": "The route",
+            "example": "orders",
+            "pick": {
+              "from": "routes"
+            }
+          },
+          {
+            "name": "mode",
+            "type": "enum",
+            "description": "How the message is changed",
+            "default": "headers",
+            "example": "headers",
+            "pick": {
+              "from": "values",
+              "values": [
+                "headers",
+                "charset",
+                "truncate",
+                "empty",
+                "remove-header"
+              ]
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "empty-body",
+        "group": "Messages",
+        "title": "Is sent with an empty body",
+        "description": "The message sent to the endpoint has an empty body",
+        "rule": "endpoint=${endpoint} corrupt mode=empty rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "missing-header",
+        "group": "Messages",
+        "title": "Is sent without a header",
+        "description": "A header is missing from the message sent to the endpoint",
+        "rule": "endpoint=${endpoint} corrupt mode=remove-header header=${header} rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "header",
+            "type": "string",
+            "description": "The header, or a pattern with *",
+            "example": "X-Trace-Id",
+            "pick": {
+              "from": "headers"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "poll-error",
+        "group": "Consumers and routes",
+        "title": "Polls fail",
+        "description": "The polls of a scheduled poll consumer fail, as when the source is not reachable",
+        "rule": "endpoint=${endpoint} error at=poll rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint a route consumes with a scheduled poll",
+            "example": "file:inbox",
+            "pick": {
+              "from": "pollingConsumers"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.5",
+            "example": "0.5"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "poll-skip",
+        "group": "Consumers and routes",
+        "title": "Polls are skipped",
+        "description": "The polls of a scheduled poll consumer are skipped, as a consumer that falls behind",
+        "rule": "endpoint=${endpoint} drop at=poll rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint a route consumes with a scheduled poll",
+            "example": "file:inbox",
+            "pick": {
+              "from": "pollingConsumers"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.5",
+            "example": "0.5"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "stall",
+        "group": "Consumers and routes",
+        "title": "The route stalls",
+        "description": "The route is suspended for a while, and its messages wait",
+        "rule": "route=${route} stall duration=${duration}",
+        "placeholders": [
+          {
+            "name": "route",
+            "type": "route",
+            "description": "The route",
+            "example": "orders",
+            "pick": {
+              "from": "routes"
+            }
+          },
+          {
+            "name": "duration",
+            "type": "duration",
+            "description": "How long it stalls",
+            "default": "20s",
+            "example": "20s"
+          }
+        ]
+      },
+      {
+        "id": "flap",
+        "group": "Consumers and routes",
+        "title": "The route flaps",
+        "description": "The route stops and starts again several times",
+        "rule": "route=${route} lifecycle action=stop duration=${duration} repeat=${repeat} every=${every}",
+        "placeholders": [
+          {
+            "name": "route",
+            "type": "route",
+            "description": "The route",
+            "example": "orders",
+            "pick": {
+              "from": "routes"
+            }
+          },
+          {
+            "name": "duration",
+            "type": "duration",
+            "description": "How long it is down each time",
+            "default": "10s",
+            "example": "10s"
+          },
+          {
+            "name": "repeat",
+            "type": "integer",
+            "description": "How many times",
+            "default": "3",
+            "example": "3"
+          },
+          {
+            "name": "every",
+            "type": "duration",
+            "description": "The time from one time to the next",
+            "default": "1m",
+            "example": "1m"
+          }
+        ]
+      },
+      {
+        "id": "removed",
+        "group": "Consumers and routes",
+        "title": "The route is removed",
+        "description": "The route is removed, and added back after a while",
+        "rule": "route=${route} lifecycle action=remove duration=${duration}",
+        "placeholders": [
+          {
+            "name": "route",
+            "type": "route",
+            "description": "The route",
+            "example": "orders",
+            "pick": {
+              "from": "routes"
+            }
+          },
+          {
+            "name": "duration",
+            "type": "duration",
+            "description": "How long it is gone",
+            "default": "30s",
+            "example": "30s"
+          }
+        ]
+      },
+      {
+        "id": "dlq-unreachable",
+        "group": "Error handling",
+        "title": "The dead letter channel is unreachable",
+        "description": "The send of the dead letter channel fails, so the messages it handles are lost (add it before the rule that makes them fail)",
+        "rule": "endpoint=${endpoint} error at=dlq",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          }
+        ]
+      },
+      {
+        "id": "step-error",
+        "group": "Error handling",
+        "title": "A step fails",
+        "description": "A step of a route fails, as when its processor throws",
+        "rule": "step=${step} error rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "step",
+            "type": "step",
+            "description": "The step",
+            "example": "enrich",
+            "pick": {
+              "from": "steps"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.1",
+            "example": "0.1"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "step-slow",
+        "group": "Error handling",
+        "title": "A step is slow",
+        "description": "A step of a route waits before its processor is called",
+        "rule": "step=${step} delay duration=${duration} rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "step",
+            "type": "step",
+            "description": "The step",
+            "example": "enrich",
+            "pick": {
+              "from": "steps"
+            }
+          },
+          {
+            "name": "duration",
+            "type": "duration",
+            "description": "The time, or a range of times",
+            "default": "1s",
+            "example": "1s"
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      }
+    ]
+  }
+}
+

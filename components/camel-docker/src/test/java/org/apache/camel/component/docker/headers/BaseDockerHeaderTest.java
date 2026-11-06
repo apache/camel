@@ -50,7 +50,11 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from("direct:in").to("docker://" + getOperation().toString());
+                String uri = "docker://" + getOperation().toString();
+                if (isAllowConnectionAndCredentialsFromHeaders()) {
+                    uri += "?allowConnectionAndCredentialsFromHeaders=true";
+                }
+                from("direct:in").to(uri);
 
             }
         };
@@ -67,6 +71,15 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
         dockerConfiguration = new DockerConfiguration();
         dockerConfiguration.setParameters(getDefaultParameters());
+        // the endpoints connect with the settings of the client profile, as they ignore the connection headers by default
+        dockerConfiguration.setHost(getHost());
+        dockerConfiguration.setPort(getPort());
+        dockerConfiguration.setServerAddress(getServerAddress());
+        dockerConfiguration.setUsername(getUsername());
+        dockerConfiguration.setSecure(isSecure());
+        dockerConfiguration.setTlsVerify(isTlsVerify());
+        dockerConfiguration.setSocket(isSocket());
+        dockerConfiguration.setCmdExecFactory(getCmdExecFactory());
 
         DockerComponent dockerComponent = new DockerComponent(dockerConfiguration);
         dockerComponent.setClient(getClientProfile(), dockerClient);
@@ -100,6 +113,13 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         return "https://index.docker.io/v1/";
     }
 
+    /**
+     * The registry username of the endpoint, none by default.
+     */
+    protected String getUsername() {
+        return null;
+    }
+
     public boolean isSecure() {
         return false;
     }
@@ -118,6 +138,14 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
     public T getMockObject() {
         return mockObject;
+    }
+
+    /**
+     * Whether the endpoint takes the connection and credential settings from the headers, which the tests that send the
+     * registry credentials as headers need.
+     */
+    protected boolean isAllowConnectionAndCredentialsFromHeaders() {
+        return false;
     }
 
     protected Map<String, Object> getDefaultParameters() {
@@ -141,6 +169,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setPort(getPort());
         clientProfile.setEmail(getEmail());
         clientProfile.setServerAddress(getServerAddress());
+        clientProfile.setUsername(getUsername());
         clientProfile.setMaxPerRouteConnections(getMaxPerRouteConnections());
         clientProfile.setMaxTotalConnections(getMaxTotalConnections());
         clientProfile.setSecure(isSecure());

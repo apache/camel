@@ -437,6 +437,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> beans = executeBeans();
             executeApis();
             Set<String> consoles = executeDevConsoles();
+            executeChaosModel();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
             executeDocs();
@@ -915,6 +916,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printApisReport(jsonFiles, duplicateJsonFiles);
 
         return apiNames;
+    }
+
+    /**
+     * Copies the model of the chaos rules of camel-chaos into the catalog (CamelCatalog.chaosModelJSon()).
+     */
+    protected void executeChaosModel() throws Exception {
+        List<Path> models = allJsonFiles.stream()
+                .filter(p -> p.endsWith("META-INF/org/apache/camel/chaos/chaos-model.json"))
+                .toList();
+        if (models.size() != 1) {
+            getLog().warn("Expected one chaos-model.json (camel-chaos), found " + models.size());
+            return;
+        }
+        Path target = consolesOutDir.toPath().resolve("../chaos-model.json");
+        FileUtil.updateFile(target, Files.readString(models.get(0)));
+        getLog().info("Copied the chaos model of camel-chaos");
     }
 
     protected Set<String> executeDevConsoles() throws Exception {

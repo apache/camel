@@ -120,10 +120,13 @@ class HazelcastReliableTopicConsumerLossTest extends CamelTestSupport {
 
     @Test
     void listenerCancelledByHazelcastIsReported() throws Exception {
-        // Hazelcast cancels the listener when the topic is destroyed: the consumer receives nothing more
-        member.getReliableTopic("news").destroy();
-
-        await().atMost(10, TimeUnit.SECONDS).until(() -> !reported.isEmpty());
+        // Hazelcast cancels the listener when the topic is destroyed: the consumer receives nothing more.
+        // Only a read of the listener that waits on the ringbuffer is cancelled; a read that reaches the member after
+        // the destroy waits on a new ringbuffer instead, so destroy the topic again until the consumer reports it
+        await().atMost(10, TimeUnit.SECONDS).pollInterval(200, TimeUnit.MILLISECONDS).until(() -> {
+            member.getReliableTopic("news").destroy();
+            return !reported.isEmpty();
+        });
         assertEquals(1, reported.size(), "Reported: " + reported);
         assertTrue(reported.get(0).contains("Hazelcast cancelled the listener of the reliable topic news"),
                 "Reported: " + reported);

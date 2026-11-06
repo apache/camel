@@ -72,6 +72,31 @@ below
 |containerId |CamelDockerContainerId
 |=======================================================================
 
+The headers of the connection and credential settings are the exception: `CamelDockerHost`, `CamelDockerPort`,
+`CamelDockerSocketEnabled`, `CamelDockerSecure`, `CamelDockerTlsVerify`, `CamelDockerCertPath`,
+`CamelDockerCmdExecFactory`, `CamelDockerUsername`, `CamelDockerPassword` and `CamelDockerServerAddress` are ignored
+unless the endpoint sets `allowConnectionAndCredentialsFromHeaders=true`. Without this option, the producer connects
+to the Docker daemon of the endpoint, in the way the endpoint configures, and gives the username and password of the
+endpoint to the registry of the endpoint, whatever the headers of the message say.
+
+Enable `allowConnectionAndCredentialsFromHeaders` only when the headers come from a trusted source, since with it a
+message chooses the Docker daemon that the client connects to and how (TLS, the client certificates and the
+`DockerCmdExecFactory` class), and the registry that receives the username and password of the endpoint. Set on the
+component, the option applies to all its endpoints.
+
+The other headers, such as `CamelDockerContainerId`, still take precedence over the options of the endpoint. When the
+messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers, remove these
+headers with `removeHeaders("CamelDocker*")` before the `docker` endpoint.
+
+=== Registry authentication
+
+The `imagepull` and `imagepush` operations send the `username`, `password` and `email` of the endpoint only for an
+image in the registry of `serverAddress`: the registry host and port of the image reference must match those of
+`serverAddress`. An image reference without a registry host, such as `ubuntu` or `team/app`, is on Docker Hub, which
+matches the default `serverAddress` (`https://index.docker.io/v1/`). An image in another registry is pulled or pushed
+without authentication, and so is every image when the endpoint has no `username`. To pull or push with
+authentication from several registries, use one endpoint per registry.
+
 === Streaming operations
 
 The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and
