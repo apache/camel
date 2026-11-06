@@ -109,7 +109,8 @@ public class HazelcastSedaConfiguration {
 
     /**
      * If set to true the whole Exchange will be transfered. If header or body contains not serializable objects, they
-     * will be skipped.
+     * will be skipped. Set it on both the producer and the consumer: the producer puts the whole Exchange on the queue,
+     * and the consumer restores its headers and exchange properties. A consumer without it takes only the body.
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;

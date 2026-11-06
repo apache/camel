@@ -101,3 +101,30 @@ YAML::
 ----
 ====
 
+== Transferring the whole exchange
+
+By default only the message body goes on the queue. With `transferExchange=true` the producer puts the whole exchange
+on the queue: the body, and the headers and exchange properties whose values are text, numbers, booleans or dates. A
+consumer with `transferExchange=true` restores them. A consumer without the option takes only the body of such an
+exchange: set `transferExchange=true` on both endpoints to keep the headers and exchange properties.
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:foo
+      steps:
+        - to:
+            uri: hazelcast-seda:foo
+            parameters:
+              transferExchange: true
+- route:
+    from:
+      uri: hazelcast-seda:foo
+      parameters:
+        transferExchange: true
+      steps:
+        - to:
+            uri: mock:result
+----
+
