@@ -434,8 +434,8 @@ class SpringBootExporter extends Exporter {
     }
 
     @Override
-    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
-        Set<String> answer = super.resolveDependencies(settings, profile);
+    protected Set<String> doResolveDependencies(Path settings, Path profile) throws Exception {
+        Set<String> answer = super.doResolveDependencies(settings, profile);
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
