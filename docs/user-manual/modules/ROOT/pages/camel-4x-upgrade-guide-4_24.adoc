@@ -3663,7 +3663,10 @@ This applies to an endpoint that is used once and discarded (`toD`, `recipientLi
 dev-mode reload or `CamelContext.addRoutes`) that consumes from a Kamelet (`from("kamelet:my-source")`): removing that
 route now also removes the route of the Kamelet. A route id given in the uri (`kamelet:my-source/myRoute` or
 `routeId=`) is shared by the endpoints that use it, so such a route is not removed. Routes created when the
-CamelContext starts are not changed.
+CamelContext starts are not changed. The removal of the route of a discarded endpoint waits until the thread pools of
+the route are idle, as the calling route can continue on them, but at most the timeout of the shutdown strategy; then
+it logs a WARN and removes the route anyway. The route of a Kamelet that a removed route consumed from is removed
+without that wait.
 
 === camel-undertow - the producer refuses a request target or header value with control characters
 
