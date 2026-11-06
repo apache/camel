@@ -272,6 +272,12 @@ values start with a default, and the rule is shown as it is built. The last entr
 +
 image::jbang/camel-tui-chaos-recipes.png[Adding a chaos rule from the known rules: the HTTP endpoint of the route is picked]
 * *e* changes the selected rule, starting from the rule as it is.
+* *!* on the Endpoint tab, the Consumers tab or a node of the Diagram opens the known rules for what is selected, with
+it filled in: for a `to` or an endpoint the routes send to, the faults of that endpoint (an HTTP status only for an
+HTTP endpoint) and of the step; for the `from` of a route, a consumer or an endpoint a route consumes, the faults of
+the route, and of its polls when it polls.
++
+image::jbang/camel-tui-chaos-here.png[! on the to callStock of the Diagram: the known rules for its HTTP endpoint and its step, with the endpoint filled in]
 * *x* removes the selected rule, *c* removes all rules (the report keeps what they did), and *R* starts a new experiment:
 no rules and a new report, with the same seed.
 

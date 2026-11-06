@@ -26,6 +26,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
@@ -295,6 +296,29 @@ class ConsumersTab extends AbstractTableTab {
         List<String> items = sorted.stream().map(c -> c.id != null ? c.id : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Consumers");
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return ke.isChar('!') && ChaosHere.handleKey(ke, ctx, info, ChaosHere.forConsumer(selectedConsumer(info)));
+    }
+
+    @Override
+    public void renderFooter(List<Span> spans) {
+        super.renderFooter(spans);
+        ChaosHere.hint(spans, ctx.findSelectedIntegration());
+    }
+
+    /** The consumer selected in the table, as sorted. */
+    private ConsumerInfo selectedConsumer(IntegrationInfo info) {
+        Integer sel = tableState.selected();
+        if (info == null || sel == null) {
+            return null;
+        }
+        List<ConsumerInfo> sorted = new ArrayList<>(info.consumers);
+        sorted.sort(this::sortConsumer);
+        return sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
     }
 
     @Override

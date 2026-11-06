@@ -203,6 +203,28 @@ final class ChaosControl {
         return false;
     }
 
+    /**
+     * Opens the known rules for a target ({@code !} on an endpoint, a consumer or a node of the diagram), or the rule
+     * typed as one line, starting with the target, when the catalog has no known rules.
+     */
+    void openAt(IntegrationInfo info, ChaosHere.Target target) {
+        if (!ChaosHere.available(info)) {
+            return;
+        }
+        pid = info.pid;
+        name = info.name;
+        id = null;
+        command = Command.ADD;
+        ChaosRecipes known = knownRules();
+        ChaosRecipeForm targeted = known != null ? new ChaosRecipeForm(known, info, target) : null;
+        if (targeted != null && !targeted.recipes().isEmpty()) {
+            form = targeted;
+            step = Step.RECIPES;
+        } else {
+            openInput(Command.ADD, target.rulePrefix());
+        }
+    }
+
     private ChaosRecipes knownRules() {
         if (!recipesLoaded) {
             recipes = recipeSource.get();
@@ -214,7 +236,7 @@ final class ChaosControl {
     private boolean handleRecipeKey(KeyEvent ke) {
         switch (form.handleKey(ke)) {
             case CLOSED -> close();
-            case TYPE_RULE -> openInput(Command.ADD, "");
+            case TYPE_RULE -> openInput(Command.ADD, form.target() != null ? form.target().rulePrefix() : "");
             case RULE -> {
                 rule = form.rule();
                 ask(Command.ADD);
