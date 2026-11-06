@@ -454,8 +454,9 @@ the channel. So:
   `postInitChannel`, so the order is: error handler, JMX instrumentation, the `StepHook` processor, the listener
   wrapper, the interceptor wrappers, the processor. In every case the `StepHook` is asked before the wrapper is
   called, so a step that the hook fails is not a call the listeners see.
-* The wrapper is outside the strategy loop, so it also wraps the `doTry` step, which the strategies skip:
-  `TryProcessor`, `CatchProcessor` and `FinallyProcessor` return `false` from `canIntercept()`. The steps inside
+* The wrapper is outside the strategy loop, so it also wraps the `doTry`, `doCatch` and `doFinally` steps, which the
+  strategies skip: `TryProcessor`, `CatchProcessor` and `FinallyProcessor` return `false` from `canIntercept()`. The
+  steps inside
   `doTry`, `doCatch` and `doFinally` have their own channels, so the strategies wrap them today, and so does the
   listener wrapper.
 * Code that unwraps processors (`Navigate`) still finds the processor, and `Channel.getNextProcessor()` still returns
@@ -467,13 +468,19 @@ transacted path calls `process(exchange)` of the same wrapper, through the await
 
 The wrapper is given the processor of the step, so a report names it, and lists the strategy wrappers in between when
 there are any. What the listeners see is the call of that chain. With no strategy, that is the processor's own call.
-The strategies of the tracing components (camel-telemetry, camel-opentelemetry2, camel-jfr) and of camel-mdc pass the
-call and its callback through, so nothing is lost. With `intercept()`, the call includes the interception pipeline
-before the processor, and the steps of the intercept route are seen as their own calls inside it. A strategy that
-returns a plain `Processor`, as the deprecated camel-opentelemetry does, makes the call of an asynchronous processor
-wait in the await manager; a second callback of that processor then reaches the await manager, not the listeners, and
-is not seen. The same holds for a user strategy that catches what the processor throws. The validation runs use no such
-strategy.
+The strategies of the tracing components (camel-telemetry, camel-opentelemetry2, camel-micrometer-observability,
+camel-jfr) and of camel-mdc pass the call and its callback through, so nothing is lost. Some strategies hide part of
+the processor's call:
+
+* `intercept()` wraps the processor in a pipeline with the intercept route before it. The pipeline returns `false` and
+  calls the processor later on the reactive executor, so the listeners do not see the processor's own return value or
+  what it throws. The steps of the intercept route are seen as their own calls.
+* A strategy that returns a plain `Processor`, as the deprecated camel-opentelemetry can, makes the call of an
+  asynchronous processor wait in the await manager. A second callback of that processor then reaches the await
+  manager, not the listeners, and is not seen. The same holds for a strategy that catches what the processor throws.
+
+Some camel-core tests install such strategies (a plain `DelegateProcessor`). There R1 and R3 check the call of the
+chain, and the quiet run on camel-core shows whether that matters.
 
 With no step listener installed when the route is created, there is no wrapper, so a step costs nothing more than
 today: not a check, not a volatile read. With listeners, each step call costs the calls of the listeners and one
@@ -693,11 +700,11 @@ Each step is its own pull request after this document:
   one more strategy on the route and the context, ordered against the user's strategies by `Ordered`, and part of
   the route model that users configure. The strategies that wrap it would get its wrapper as `target` instead of the
   processor. The listener wrapper is built by the channel, only when a listener is installed, and no strategy sees it.
-* *A `CamelInternalProcessorAdvice` only.* This is where the debugger, message history and the tracers hook in, and it
-  needs no new processor. But an advice runs around the error handler: `before` once per step and `after` once, through
-  the after task of the channel. So it sees one callback for all attempts, after the error handler, and not the
-  processor's own return value, what the processor threw, or which attempt a second callback belongs to. R1 and R3 are
-  about each call of the processor, so they need a place below the error handler.
+* *A `CamelInternalProcessorAdvice` only.* This is where the debuggers, message history, the backlog tracer and the
+  tracer hook in, and it needs no new processor. But an advice runs around the error handler: `before` once per step
+  and `after` once, through the after task of the channel. So it sees one callback for all attempts, after the error
+  handler, and not the processor's own return value, what the processor threw, or which attempt a second callback
+  belongs to. R1 and R3 are about each call of the processor, so they need a place below the error handler.
 * *A hybrid: an advice for what is per step, the wrapper for what is per attempt.* Every rule of R1 and R3 is per
   attempt, and R2 and R4 are not about steps, so nothing would be left for the advice to do; the wrapper is needed at
   every step either way. Two mechanisms for the same steps would cost more than one. The hybrid becomes worth it if a
@@ -744,7 +751,7 @@ Each has a proposed answer; the maintainers decide.
   around the strategy wrappers and below the error handler, where the `StepHook` processor delegates to. The strategies
   keep seeing the processor of the step, and the listeners see each attempt. The other choice is `StepHelper`, next to
   the hook (see Alternatives).
-* Should the per-step part use a `CamelInternalProcessorAdvice`, as the debugger and the tracers do? Proposed: no.
+* Should the per-step part use a `CamelInternalProcessorAdvice`, as the debugger and the tracer do? Proposed: no.
   Every step rule is per attempt and must be checked below the error handler, which an advice cannot see (see
   Alternatives). If a later rule needs one event per step only, an advice is the place for it.
 * A standby flag for step listeners in dev mode, as `isDebugStandby` and `isBacklogTracingStandby` are read in
