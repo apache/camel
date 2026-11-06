@@ -57,6 +57,8 @@ public class FileComponent extends GenericFileComponent<File> {
                                                + " Use the fileName option to set the dynamic expression.");
         }
 
+        remaining = FileUtil.normalizePath(remaining);
+
         File file = new File(remaining);
 
         FileEndpoint result = new FileEndpoint(uri, this);
