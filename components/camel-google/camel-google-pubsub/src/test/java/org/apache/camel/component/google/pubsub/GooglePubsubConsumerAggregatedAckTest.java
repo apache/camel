@@ -18,6 +18,7 @@ package org.apache.camel.component.google.pubsub;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
 import com.google.api.core.ApiFutures;
@@ -41,6 +42,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -60,6 +67,7 @@ public class GooglePubsubConsumerAggregatedAckTest {
     private final List<AcknowledgeRequest> ackRequests = new CopyOnWriteArrayList<>();
     private final List<ModifyAckDeadlineRequest> modifyAckDeadlineRequests = new CopyOnWriteArrayList<>();
     private final SettableApiFuture<PullResponse> pending = SettableApiFuture.create();
+    private final AtomicInteger stubs = new AtomicInteger();
 
     @Test
     void ackOfAggregatedExchangeAcksEveryGroupedMessage() throws Exception {
@@ -108,6 +116,35 @@ public class GooglePubsubConsumerAggregatedAckTest {
         assertEquals(List.of("ack-1"), ackRequests.get(0).getAckIdsList());
     }
 
+    @Test
+    void ackWithoutAnyAckIdSendsNoRequest() {
+        // e.g. the route removed the ack id header of the grouped exchanges with removeHeaders("Camel*")
+        CamelContext context = new DefaultCamelContext();
+        Exchange aggregated = new DefaultExchange(context);
+        aggregated.getIn().setBody(List.of(new DefaultExchange(context), new DefaultExchange(context)));
+
+        List<LogEvent> warnings = warningsOf(() -> new AcknowledgeSync(this::stub, SUBSCRIPTION).ack(aggregated));
+
+        assertEquals(List.of(), ackRequests);
+        assertEquals(0, stubs.get());
+        assertEquals(1, warnings.size());
+        assertTrue(warnings.get(0).getMessage().getFormattedMessage().contains(aggregated.getExchangeId()));
+    }
+
+    @Test
+    void nackWithoutAckIdSendsNoRequest() {
+        CamelContext context = new DefaultCamelContext();
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("hello".getBytes());
+
+        List<LogEvent> warnings = warningsOf(() -> new AcknowledgeSync(this::stub, SUBSCRIPTION).nack(exchange));
+
+        assertEquals(List.of(), modifyAckDeadlineRequests);
+        assertEquals(0, stubs.get());
+        assertEquals(1, warnings.size());
+        assertTrue(warnings.get(0).getMessage().getFormattedMessage().contains(exchange.getExchangeId()));
+    }
+
     /**
      * One pull returns three messages, the route aggregates them into one exchange and acknowledges that exchange with
      * the acknowledge header of the first grouped exchange.
@@ -152,6 +189,7 @@ public class GooglePubsubConsumerAggregatedAckTest {
 
     @SuppressWarnings("unchecked")
     private SubscriberStub stub() {
+        stubs.incrementAndGet();
         UnaryCallable<PullRequest, PullResponse> pullCallable = mock(UnaryCallable.class);
         when(pullCallable.futureCall(any(PullRequest.class)))
                 .thenReturn(ApiFutures.immediateFuture(PullResponse.newBuilder()
@@ -194,5 +232,32 @@ public class GooglePubsubConsumerAggregatedAckTest {
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setHeader(GooglePubsubConstants.ACK_ID, ackId);
         return exchange;
+    }
+
+    /** Runs the action and returns the WARN events that {@link AcknowledgeSync} logged meanwhile. */
+    private static List<LogEvent> warningsOf(Runnable action) {
+        Logger logger = (Logger) LogManager.getLogger(AcknowledgeSync.class);
+        LogEventCaptor captor = new LogEventCaptor();
+        logger.addAppender(captor);
+        try {
+            action.run();
+        } finally {
+            logger.removeAppender(captor);
+        }
+        return captor.events.stream().filter(event -> event.getLevel() == Level.WARN).toList();
+    }
+
+    private static final class LogEventCaptor extends AbstractAppender {
+        private final List<LogEvent> events = new CopyOnWriteArrayList<>();
+
+        LogEventCaptor() {
+            super("AcknowledgeSyncLogEventCaptor", null, null, false, Property.EMPTY_ARRAY);
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            events.add(event.toImmutable());
+        }
     }
 }
