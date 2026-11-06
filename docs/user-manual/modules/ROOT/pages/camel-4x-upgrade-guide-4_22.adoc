@@ -1943,6 +1943,16 @@ If you relied on the previous silent no-op, ensure the body is the correct
 request type when `pojoRequest=true`, or drive the operation through headers
 with `pojoRequest=false`.
 
+=== camel-aws2-sts - the secret access key and the session token are no longer copied into headers
+
+The `assumeRole`, `getSessionToken` and `getFederationToken` operations of `aws2-sts` no longer set the
+`CamelAwsStsSecretKey` and `CamelAwsStsSessionToken` headers. The body is the response of the AWS SDK, such as an
+`AssumeRoleResponse`, and its `credentials()` hold them: use `${body.credentials().secretAccessKey()}` and
+`${body.credentials().sessionToken()}` instead of the headers. The `CamelAwsStsAccessKeyId`, `CamelAwsStsExpiration` and
+`CamelAwsStsAssumedRoleArn` headers are still set.
+
+The `STS2Constants.SECRET_KEY_ID` and `STS2Constants.SESSION_TOKEN` constants are deprecated.
+
 === camel-google-storage - downloads are confined to the configured directory
 
 When the consumer is configured with `downloadFileName` pointing at a directory, the

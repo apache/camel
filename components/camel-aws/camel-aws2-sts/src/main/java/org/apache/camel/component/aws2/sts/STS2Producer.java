@@ -137,9 +137,8 @@ public class STS2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             if (ObjectHelper.isNotEmpty(result.credentials())) {
+                // the secret access key and the session token are only in the body, not in headers
                 message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
-                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
-                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
                 message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
             }
             if (ObjectHelper.isNotEmpty(result.assumedRoleUser())) {
@@ -177,9 +176,8 @@ public class STS2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             if (ObjectHelper.isNotEmpty(result.credentials())) {
+                // the secret access key and the session token are only in the body, not in headers
                 message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
-                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
-                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
                 message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
             }
         }
@@ -220,9 +218,8 @@ public class STS2Producer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
             if (ObjectHelper.isNotEmpty(result.credentials())) {
+                // the secret access key and the session token are only in the body, not in headers
                 message.setHeader(STS2Constants.ACCESS_KEY_ID, result.credentials().accessKeyId());
-                message.setHeader(STS2Constants.SECRET_KEY_ID, result.credentials().secretAccessKey());
-                message.setHeader(STS2Constants.SESSION_TOKEN, result.credentials().sessionToken());
                 message.setHeader(STS2Constants.EXPIRATION, result.credentials().expiration());
             }
         }
