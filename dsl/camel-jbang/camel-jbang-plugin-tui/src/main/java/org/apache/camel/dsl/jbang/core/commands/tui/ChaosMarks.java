@@ -72,15 +72,19 @@ final class ChaosMarks {
     }
 
     /**
-     * The rule that faulted an exchange: from its {@code CamelChaosRule} property when there are properties, else from
-     * the recent faults seen; null when no rule did (or chaos is off).
+     * The rule that faulted an exchange: from its {@code CamelChaosRule} property when there are properties (none when
+     * the failure was not made by chaos), else from the recent faults seen; null when no rule did (or chaos is off).
      */
     static String ruleOf(MonitorContext ctx, IntegrationInfo info, String exchangeId, Map<String, Object> properties) {
         if (info == null || info.chaos == null) {
             return null;
         }
-        if (properties != null && properties.get(PROPERTY) != null) {
-            return String.valueOf(properties.get(PROPERTY));
+        if (properties != null && !properties.isEmpty()) {
+            // the properties of the failure say it: camel-chaos removes the mark when the faulted attempt is
+            // redelivered, so a later failure it did not make has none (CAMEL-26701); an error without the properties
+            // captured has an empty map
+            Object rule = properties.get(PROPERTY);
+            return rule != null ? String.valueOf(rule) : null;
         }
         return ctx != null && ctx.chaosMarks != null ? ctx.chaosMarks.ruleOf(info.pid, exchangeId) : null;
     }

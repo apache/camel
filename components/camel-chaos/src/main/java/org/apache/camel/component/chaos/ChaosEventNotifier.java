@@ -41,6 +41,11 @@ final class ChaosEventNotifier extends EventNotifierSupport {
 
     @Override
     public void notify(CamelEvent event) throws Exception {
+        if ((event instanceof CamelEvent.ExchangeCompletedEvent || event instanceof CamelEvent.ExchangeFailedEvent)
+                && manager.isWaitingForOriginals()) {
+            // the faults of a copy of a circuit breaker count when the exchange is done (CAMEL-26701)
+            manager.originalDone(((CamelEvent.ExchangeEvent) event).getExchange());
+        }
         if (event instanceof CamelEvent.ExchangeFailureHandlingEvent handling) {
             if (handling.isDeadLetterChannel()) {
                 ChaosExchangeState.of(handling.getExchange()).deadLetter = true;
@@ -60,6 +65,9 @@ final class ChaosEventNotifier extends EventNotifierSupport {
                 // a rule that faulted the exchange before is recovered when the exchange then completes
                 state.redelivered();
             }
+            // the faulted attempt is tried again: a later failure that chaos did not make is not marked with the rule
+            // (CAMEL-26701); a fault at the redelivery marks it again
+            exchange.removeProperty(ChaosManager.CHAOS_RULE);
             String routeId = ChaosExchangeState.routeId(exchange);
             if (routeId != null) {
                 manager.redelivered(routeId);
@@ -109,7 +117,8 @@ final class ChaosEventNotifier extends EventNotifierSupport {
 
     @Override
     public boolean isIgnoreExchangeCompletedEvent() {
-        return true;
+        // only while faults of a copy of a circuit breaker wait for the exchange to be done
+        return !manager.isWaitingForOriginals();
     }
 
     @Override
