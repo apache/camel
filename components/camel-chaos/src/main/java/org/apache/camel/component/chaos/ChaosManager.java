@@ -391,7 +391,8 @@ public final class ChaosManager {
      * An exchange counts once per route, with how the route was done with it the last time: camel-core calls the route
      * policy each time the exchange goes through the route (a {@code direct} route called in a loop, or again by a
      * redelivery of the calling route), so a later pass moves the count (a failed pass and then a completed one count
-     * as one completed exchange). The expectations of the route count it the first time it completes.
+     * as one completed exchange). The expectations of the route count it the first time it completes, is handled by the
+     * error handler, or fails.
      */
     void routeDone(Route route, Exchange exchange) {
         String routeId = route.getRouteId();
@@ -406,12 +407,30 @@ public final class ChaosManager {
         counts.count(outcome);
         state.outcome = outcome;
         state.counts = counts;
-        if (outcome.completed() && !state.expected) {
-            state.expected = true;
-            for (ChaosRule.Expectation expectation : ruleSet.expectations) {
-                if (expectation.route.equals(routeId)) {
-                    expectation.complete();
-                }
+        if (outcome.completed() && !state.expectedCompleted) {
+            state.expectedCompleted = true;
+            record(routeId, ChaosRule.Expectation.Kind.COMPLETED);
+        }
+        if (outcome == ChaosExchangeState.Outcome.HANDLED && !state.expectedHandled) {
+            state.expectedHandled = true;
+            record(routeId, ChaosRule.Expectation.Kind.HANDLED);
+        }
+        if (!outcome.completed() && outcome != ChaosExchangeState.Outcome.ENTERED && !state.expectedFailed) {
+            state.expectedFailed = true;
+            record(routeId, ChaosRule.Expectation.Kind.FAILED);
+        }
+    }
+
+    /** The error handler redelivers a step of the route: counted for the report and the expectations. */
+    void redelivered(String routeId) {
+        counts(routeId).redeliveries.increment();
+        record(routeId, ChaosRule.Expectation.Kind.REDELIVERIES);
+    }
+
+    private void record(String routeId, ChaosRule.Expectation.Kind kind) {
+        for (ChaosRule.Expectation expectation : ruleSet.expectations) {
+            if (expectation.kind == kind && expectation.route.equals(routeId)) {
+                expectation.record();
             }
         }
     }
@@ -605,7 +624,7 @@ public final class ChaosManager {
             ChaosRule.Expectation.Outcome outcome = reading != null ? reading.outcome() : null;
             if (outcome == ChaosRule.Expectation.Outcome.UNMET) {
                 evictedUnmet++;
-                evictedLost += Math.max(0, expectation.count - reading.completed());
+                evictedLost += expectation.lost(reading);
             } else if (outcome == ChaosRule.Expectation.Outcome.PENDING) {
                 // a pending expectation that left the report keeps the report from being final
                 evictedPending++;

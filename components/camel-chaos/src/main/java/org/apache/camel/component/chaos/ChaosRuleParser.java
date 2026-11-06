@@ -769,26 +769,65 @@ final class ChaosRuleParser {
     private static void expectation(ChaosRule.Builder b, String expect, String within, long maxDuration) {
         if (expect == null) {
             if (within != null) {
-                throw new IllegalArgumentException("within= is the time of an expectation, and needs expect=<route>:<count>");
+                throw new IllegalArgumentException(
+                        "within= is the time of an expectation, and needs expect=<route>:<count> (or"
+                                                   + " <route>:<kind><op><count>)");
             }
             return;
         }
         int colon = expect.lastIndexOf(':');
         if (colon <= 0 || colon == expect.length() - 1) {
-            throw new IllegalArgumentException("expect=" + expect + " is not <route>:<count>, such as expect=orders:100");
+            throw new IllegalArgumentException(
+                    "expect=" + expect + " is not <route>:<count> or <route>:<kind><op><count>, such as expect=orders:100"
+                                               + " or expect=orders:handled<=0");
         }
         b.expectRoute = expect.substring(0, colon);
         if (b.expectRoute.indexOf('*') >= 0) {
             throw new IllegalArgumentException(
                     "expect=" + expect + " needs the id of one route, not a pattern, such as expect=orders:100");
         }
-        String count = expect.substring(colon + 1);
+        String spec = expect.substring(colon + 1);
+        String count = spec;
+        if (!isDigits(spec)) {
+            // <kind><op><count>, such as handled<=0
+            int op = 0;
+            while (op < spec.length() && Character.isLetter(spec.charAt(op))) {
+                op++;
+            }
+            String kind = spec.substring(0, op);
+            b.expectKind = null;
+            for (ChaosRule.Expectation.Kind k : ChaosRule.Expectation.Kind.values()) {
+                if (k.key.equals(kind)) {
+                    b.expectKind = k;
+                }
+            }
+            if (b.expectKind == null) {
+                throw new IllegalArgumentException(
+                        "expect=" + expect + " counts " + (kind.isEmpty() ? "nothing" : kind)
+                                                   + ": the kinds are completed, handled, failed and redeliveries,"
+                                                   + " such as expect=orders:handled<=0");
+            }
+            String rest = spec.substring(op);
+            if (rest.startsWith(">=")) {
+                b.expectOp = ChaosRule.Expectation.Op.AT_LEAST;
+            } else if (rest.startsWith("<=")) {
+                b.expectOp = ChaosRule.Expectation.Op.AT_MOST;
+            } else if (rest.startsWith("=")) {
+                b.expectOp = ChaosRule.Expectation.Op.EXACTLY;
+            } else {
+                throw new IllegalArgumentException(
+                        "expect=" + expect + " needs >=, <= or = after " + kind + ", such as expect=orders:" + kind
+                                                   + "<=0");
+            }
+            count = rest.substring(b.expectOp.key.length());
+        }
         if (!isDigits(count) || count.length() > 18) {
             throw new IllegalArgumentException(
-                    "expect=" + expect + " needs a count that is a whole number of at most 18 digits after the colon");
+                    "expect=" + expect + " needs a count that is a whole number of at most 18 digits");
         }
         b.expectCount = Long.parseLong(count);
-        if (b.expectCount < 1) {
+        if (b.expectCount < 1 && b.expectOp == ChaosRule.Expectation.Op.AT_LEAST) {
+            // at least 0 is always met
             throw new IllegalArgumentException("expect=" + expect + " needs a count of 1 or more");
         }
         if (within != null) {

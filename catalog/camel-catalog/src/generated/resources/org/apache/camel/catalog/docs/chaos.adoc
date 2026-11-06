@@ -175,7 +175,9 @@ at:      send | poll | entry | step             (optional)
 rate:    a probability (rate=0.3), or every Nth match (rate=every:5); without it every match fires
 until:   a number of matches (until=100) or a time (until=2m); without it camel.chaos.maxDuration
 time:    a number with a unit (ms, s, m, h, d), also combined as 1m30s; a number alone is milliseconds
-expect:  expect=<route id>:<count>, with an optional within=<time>
+expect:  expect=<route id>:<count> (at least that many completed exchanges), or
+         expect=<route id>:<kind><op><count> with kind completed | handled | failed | redeliveries
+         and op >= | <= | = (such as expect=orders:handled<=0); with an optional within=<time>
 ----
 
 The patterns of the targets are matched as text, with `*` for any characters; they are not regular expressions. The
@@ -462,6 +464,46 @@ time is up without it: then the verdict is FAIL, with the reason, and the missin
 with a pending expectation as not decided yet. An expectation is cancelled when its rule is removed or changed first, or
 when the context stops first (also when the context is started again): the messages may still arrive, so it is
 neither met nor unmet, and it does not keep the report from being final.
+
+=== Expectations on the error handler
+
+An exchange that the dead letter channel handled counts as completed, so `expect=orders:100` is met while every
+message goes to the dead letter channel. To check the error handler itself, an expectation names what it counts and how,
+`expect=<route id>:<kind><op><count>`:
+
+[cols="1,3"]
+|===
+|Kind |Counts, in the route, after the rule is added
+
+|`completed` |The exchanges that completed (also after the error handler handled a failure); `orders:100` is
+`orders:completed>=100`.
+|`handled` |The completed exchanges after the error handler handled a failure: the dead letter channel, or `onException`
+with `handled(true)`.
+|`failed` |The exchanges that failed (also marked rollback only).
+|`redeliveries` |The redelivery attempts of the error handler, in the route that runs the step it redelivers.
+|===
+
+The op is `>=` (at least), `<=` (at most) or `=` (exactly). At least is met as soon as the count is reached, and unmet
+when the time is up without it. At most and exactly are unmet as soon as the count goes over, and decided when the time
+is up otherwise: an at most is met then, an exactly when the count is that many. Each exchange counts once per kind (the
+first time it completes, is handled or fails in the route).
+
+For example, with redelivery that should recover from a broker that fails one send in ten:
+
+[source,properties]
+----
+camel.chaos.rules = endpoint=kafka:orders* error rate=0.1 until=2m expect=orders:handled<=0
+----
+
+The verdict is FAIL as soon as one message goes to the dead letter channel, with the reason
+(`route orders: 1 exchange handled by the error handler within 2m0s, at most 0 expected (rule r1)`), and PASS when the
+2 minutes are up without one. `expect=orders:handled>=5` checks that 5 messages reach the dead letter channel, also when
+it is an endpoint that no route consumes, and `expect=orders:redeliveries<=30` that redelivery does not retry too much.
+Only an unmet expectation of completed exchanges (at least or exactly) counts the missing exchanges as lost; the others
+give their reason only.
+
+In JSON an expectation has its `kind`, `op`, `count` and the `value` counted so far (and `completed`, the same value, for
+an expectation of completed exchanges).
 
 == Time and the seed
 

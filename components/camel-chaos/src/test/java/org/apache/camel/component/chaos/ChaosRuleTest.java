@@ -150,23 +150,23 @@ class ChaosRuleTest {
     @Test
     void expectationMetUnmetPending() {
         ChaosRule.Expectation met = new ChaosRule.Expectation("orders", 2, T0 + 100);
-        met.completeAt(T0 + 10);
+        met.recordAt(T0 + 10);
         assertThat(met.outcome(T0 + 10)).isEqualTo(Outcome.PENDING);
-        met.completeAt(T0 + 100);
+        met.recordAt(T0 + 100);
         assertThat(met.outcome(T0 + 1000)).isEqualTo(Outcome.MET);
 
         ChaosRule.Expectation unmet = new ChaosRule.Expectation("orders", 2, T0 + 100);
-        unmet.completeAt(T0 + 10);
+        unmet.recordAt(T0 + 10);
         // a completion after the deadline does not count
-        unmet.completeAt(T0 + 101);
-        assertThat(unmet.completed()).isEqualTo(1);
+        unmet.recordAt(T0 + 101);
+        assertThat(unmet.value()).isEqualTo(1);
         assertThat(unmet.outcome(T0 + 100)).isEqualTo(Outcome.PENDING);
         assertThat(unmet.outcome(T0 + 101)).isEqualTo(Outcome.UNMET);
 
         ChaosRule.Expectation removed = new ChaosRule.Expectation("orders", 2, T0 + 100);
         removed.freeze(T0 + 50);
-        removed.completeAt(T0 + 60);
-        assertThat(removed.completed()).isZero();
+        removed.recordAt(T0 + 60);
+        assertThat(removed.value()).isZero();
         // removed before it was decided: cancelled, never unmet
         assertThat(removed.outcome(T0 + 1000)).isEqualTo(Outcome.CANCELLED);
 
