@@ -137,12 +137,18 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 configuration.getSessionKeepAliveInterval(), configuration.getSessionIdleTtl(),
                 configuration.getServerTitle(), configuration.getServerDescription(),
                 configuration.getServerWebsiteUrl(), configuration.getInstructions(),
-                configuration.getServerIcons()));
+                configuration.getServerIcons(),
+                McpServerOrigins.parseAllowedOrigins(configuration.getAllowedOrigins())));
 
         if (!engine.consumesServingConfiguration()) {
             if (!McpServerConstants.DEFAULT_PATH.equals(configuration.getPath())) {
                 LOG.warn("The MCP path option is ignored by engine {}: the runtime's native MCP server configuration "
                          + "decides the endpoint path",
+                        engine.getClass().getSimpleName());
+            }
+            if (isSet(configuration.getAllowedOrigins())) {
+                LOG.warn("The MCP allowed origins option is ignored by engine {}: the runtime's native MCP server "
+                         + "configuration decides which origins are allowed",
                         engine.getClass().getSimpleName());
             }
             if (hasServerMetadataConfiguration()) {
