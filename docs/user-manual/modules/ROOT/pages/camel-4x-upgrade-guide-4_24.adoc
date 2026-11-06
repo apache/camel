@@ -61,6 +61,15 @@ Starting in 4.24, parameter values provided via the `CamelJpaParameters` header 
 
 Routes that previously relied on evaluating Simple expressions within the `CamelJpaParameters` header should evaluate those expressions in the route before setting the header value.
 
+=== camel-mcp-server - error replies on /mcp are JSON-RPC error responses
+
+With the embedded HTTP server (Camel Main and Camel JBang), a request on `/mcp` that fails before it reaches the MCP
+session (wrong `Content-Type`, a message that cannot be parsed, a missing or unknown `Mcp-Session-Id`) is answered with
+the same HTTP status as before, and a body that is a JSON-RPC error response without an `id`:
+`{"jsonrpc":"2.0","error":{"code":-32600,"message":"Session not found"}}`. The messages are short and fixed. The error
+code is `-32700` (parse error) for a message that cannot be parsed, and `-32600` (invalid request) otherwise; before,
+a missing header or session id gave `-32601` and an unknown session `-32603`.
+
 === camel-micrometer, camel-opentelemetry-metrics - tags and attributes from headers are used as given
 
 The `micrometer` and `opentelemetry-metrics` producers now use the tags of the `CamelMetricsTags` header and the
