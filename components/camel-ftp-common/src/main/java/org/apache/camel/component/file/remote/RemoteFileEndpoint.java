@@ -65,7 +65,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
                                                        + "directly, if the option is false, camel-ftp will use the old way to list the directory and check if the "
                                                        + "file exists. This option also influences readLock=changed to control whether it performs a fast check "
                                                        + "to update file information or not. This can be used to speed up the process if the FTP server has a lot "
-                                                       + "of files.")
+                                                       + "of files. The sftp and mina-sftp components check whether a file exists, also for readLock=changed, "
+                                                       + "with a single request whatever the number of files, so this option makes no difference for them.")
     private boolean fastExistsCheck;
     @UriParam(label = "consumer,advanced", defaultValue = "true",
               description = "Whether the FTP consumer should download the file. If this "
@@ -367,7 +368,9 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
      * FTP server may not support to list the file directly, if the option is false, camel-ftp will use the old way to
      * list the directory and check if the file exists. This option also influences readLock=changed to control whether
      * it performs a fast check to update file information or not. This can be used to speed up the process if the FTP
-     * server has a lot of files.
+     * server has a lot of files. The sftp and mina-sftp components check whether a file exists, also for
+     * readLock=changed, with a single request whatever the number of files, so this option makes no difference for
+     * them.
      */
     public void setFastExistsCheck(boolean fastExistsCheck) {
         this.fastExistsCheck = fastExistsCheck;
