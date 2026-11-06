@@ -210,7 +210,10 @@ public interface GrpcEndpointBuilderFactory {
          * stream, but no response generated under the assumption that all
          * necessary responses will be sent at another part of route. Delegation
          * strategy always comes with routeControlledStreamObserver=true to be
-         * able to achieve the assumption.
+         * able to achieve the assumption. With
+         * routeControlledStreamObserver=true, the propagation strategy does not
+         * send responses either: it sends the requests to the route one at a
+         * time, and the route sends the responses.
          * 
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
@@ -237,7 +240,10 @@ public interface GrpcEndpointBuilderFactory {
          * stream, but no response generated under the assumption that all
          * necessary responses will be sent at another part of route. Delegation
          * strategy always comes with routeControlledStreamObserver=true to be
-         * able to achieve the assumption.
+         * able to achieve the assumption. With
+         * routeControlledStreamObserver=true, the propagation strategy does not
+         * send responses either: it sends the requests to the route one at a
+         * time, and the route sends the responses.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
