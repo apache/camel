@@ -229,7 +229,7 @@ public final class ExportHelper {
         for (MavenGav gav : gavs) {
             String ga = gav.getGroupId() + ":" + gav.getArtifactId();
             MavenGav existing = kept.get(ga);
-            if (existing == null || !hasVersion(existing) && hasVersion(gav)) {
+            if (existing == null || (!hasVersion(existing) && hasVersion(gav))) {
                 kept.put(ga, gav);
             }
         }
