@@ -849,8 +849,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint. When set via URI (e.g. {code
-         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * configuring this endpoint. When set via URI (e.g.
+         * ?bootstrapConfiguration=#myBean), its properties are merged into the
          * endpoint configuration by NettyHttpComponent.createEndpoint(). Note:
          * this parameter is URI-resolved by the component and is not applied
          * when set programmatically via this setter.
@@ -869,8 +869,8 @@ public interface NettyHttpEndpointBuilderFactory {
         }
         /**
          * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint. When set via URI (e.g. {code
-         * bootstrapConfiguration=#myBean}), its properties are merged into the
+         * configuring this endpoint. When set via URI (e.g.
+         * ?bootstrapConfiguration=#myBean), its properties are merged into the
          * endpoint configuration by NettyHttpComponent.createEndpoint(). Note:
          * this parameter is URI-resolved by the component and is not applied
          * when set programmatically via this setter.
@@ -1327,9 +1327,9 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum length of the initial line (e.g. {code GET / HTTP/1.0} or
-         * {code HTTP/1.0 200 OK}) If the length of the initial line exceeds
-         * this value, a TooLongFrameException will be raised. See
+         * The maximum length of the initial line (e.g. GET / HTTP/1.0 or
+         * HTTP/1.0 200 OK) If the length of the initial line exceeds this
+         * value, a TooLongFrameException will be raised. See
          * io.netty.handler.codec.http.HttpObjectDecoder.
          * 
          * The option is a: <code>int</code> type.
@@ -1345,9 +1345,9 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum length of the initial line (e.g. {code GET / HTTP/1.0} or
-         * {code HTTP/1.0 200 OK}) If the length of the initial line exceeds
-         * this value, a TooLongFrameException will be raised. See
+         * The maximum length of the initial line (e.g. GET / HTTP/1.0 or
+         * HTTP/1.0 200 OK) If the length of the initial line exceeds this
+         * value, a TooLongFrameException will be raised. See
          * io.netty.handler.codec.http.HttpObjectDecoder.
          * 
          * The option will be converted to a <code>int</code> type.

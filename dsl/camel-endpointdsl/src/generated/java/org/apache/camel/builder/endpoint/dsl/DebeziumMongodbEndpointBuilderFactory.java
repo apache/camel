@@ -739,7 +739,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * A comma-separated list of the fully-qualified replacements of fields
          * that should be used to rename fields in change event message values.
          * Fully-qualified replacements for fields are of the form
-         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard () which matches any characters, the colon character (:) is used to determine rename mapping of field.
+         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard (*) which matches any characters, the colon character (:) is used to determine rename mapping of field.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2147,7 +2147,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2167,7 +2167,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2779,7 +2779,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         }
         /**
          * The identifier of the connector, normally is this format
-         * {server-name}.{database-name}.{table-name}.
+         * +++{server-name}.{database-name}.{table-name}+++.
          * 
          * The option is a: {@code String} type.
          * 

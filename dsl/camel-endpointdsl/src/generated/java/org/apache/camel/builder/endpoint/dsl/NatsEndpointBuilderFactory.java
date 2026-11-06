@@ -780,8 +780,7 @@ public interface NatsEndpointBuilderFactory {
         }
         /**
          * Maximum number of messages to fetch per pull request when using a
-         * JetStream Pull Subscription. Only used when {code
-         * pullSubscription=true}.
+         * JetStream Pull Subscription. Only used when pullSubscription=true.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -797,8 +796,7 @@ public interface NatsEndpointBuilderFactory {
         }
         /**
          * Maximum number of messages to fetch per pull request when using a
-         * JetStream Pull Subscription. Only used when {code
-         * pullSubscription=true}.
+         * JetStream Pull Subscription. Only used when pullSubscription=true.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -815,7 +813,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Maximum time (in milliseconds) to wait for a batch of messages to be
          * available on the server during a single fetch when using a JetStream
-         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * Pull Subscription. Only used when pullSubscription=true.
          * 
          * The option is a: <code>long</code> type.
          * 
@@ -832,7 +830,7 @@ public interface NatsEndpointBuilderFactory {
         /**
          * Maximum time (in milliseconds) to wait for a batch of messages to be
          * available on the server during a single fetch when using a JetStream
-         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * Pull Subscription. Only used when pullSubscription=true.
          * 
          * The option will be converted to a <code>long</code> type.
          * 
@@ -848,8 +846,8 @@ public interface NatsEndpointBuilderFactory {
         }
         /**
          * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
+         * a **Pull Subscription** (consumer explicitly requests messages). Set
+         * to false to use a **Push Subscription** (messages are automatically
          * delivered).
          * 
          * The option is a: <code>boolean</code> type.
@@ -866,8 +864,8 @@ public interface NatsEndpointBuilderFactory {
         }
         /**
          * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
+         * a **Pull Subscription** (consumer explicitly requests messages). Set
+         * to false to use a **Push Subscription** (messages are automatically
          * delivered).
          * 
          * The option will be converted to a <code>boolean</code> type.

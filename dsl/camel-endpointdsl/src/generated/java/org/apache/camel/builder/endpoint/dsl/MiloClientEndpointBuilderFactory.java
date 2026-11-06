@@ -831,7 +831,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -908,7 +908,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The username for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the username contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1833,7 +1833,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1910,7 +1910,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The username for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the username contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2764,7 +2764,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The password for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the password contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2841,7 +2841,7 @@ public interface MiloClientEndpointBuilderFactory {
         /**
          * The username for authentication. Use this instead of embedding
          * credentials in the endpoint URI when the username contains special
-         * characters (such as {code }, {code /}, {code }, {code &amp;}).
+         * characters (such as ?, /, , &amp;).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

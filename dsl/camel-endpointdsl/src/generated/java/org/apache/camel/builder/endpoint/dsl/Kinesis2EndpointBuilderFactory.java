@@ -2821,7 +2821,7 @@ public interface Kinesis2EndpointBuilderFactory {
 
         /**
          * The sequence number of the record, as defined in
-         * http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntaxResponse Syntax.
+         * http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_PutRecord_ResponseSyntax[Response Syntax].
          * 
          * The option is a: {@code String} type.
          * 

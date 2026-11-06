@@ -87,7 +87,7 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]-(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]].
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -283,7 +283,7 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]-(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]].
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -408,7 +408,7 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * The optional sessionID identifies a specific FIX session. The format
          * of the sessionID is:
-         * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
+         * (BeginString):(SenderCompID)[/(SenderSubID)[/(SenderLocationID)]]-(TargetCompID)[/(TargetSubID)[/(TargetLocationID)]].
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

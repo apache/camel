@@ -733,7 +733,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
             return "CamelHazelcastObjectId";
         }
         /**
-         * The type of event - here added and removed.
+         * The type of event - here *added* and *removed*.
          * 
          * The option is a: {@code String} type.
          * 

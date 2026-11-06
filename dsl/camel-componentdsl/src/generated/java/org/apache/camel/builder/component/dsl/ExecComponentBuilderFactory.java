@@ -110,8 +110,8 @@ public interface ExecComponentBuilderFactory {
     
         
         /**
-         * Whether {code CamelExec} in-headers may override URI options (default
-         * false since Camel 4.20). When false, CamelExecCommandExecutable,
+         * Whether CamelExec* in-headers may override URI options (default false
+         * since Camel 4.20). When false, CamelExecCommandExecutable,
          * CamelExecCommandArgs, CamelExecCommandOutFile,
          * CamelExecCommandWorkingDir, CamelExecCommandTimeout,
          * CamelExecExitValues, CamelExecUseStderrOnEmptyStdout, and

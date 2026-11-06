@@ -296,8 +296,8 @@ public interface NetWeaverEndpointBuilderFactory {
 
         /**
          * The command to execute in
-         * http://msdn.microsoft.com/en-us/library/cc956153.aspxMS ADO.Net Data
-         * Service format.
+         * http://msdn.microsoft.com/en-us/library/cc956153.aspx[MS ADO.Net Data
+         * Service] format.
          * 
          * The option is a: {@code String} type.
          * 
