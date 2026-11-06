@@ -613,7 +613,7 @@ final class ChaosRuleParser {
                 }
             }
             if (hook == null) {
-                throw new IllegalArgumentException("unknown at=" + at + " (the hooks are send, poll, entry and step)");
+                throw new IllegalArgumentException("unknown at=" + at + " (the hooks are send, dlq, poll, entry and step)");
             }
             if (!offered.containsKey(hook)) {
                 throw new IllegalArgumentException(
@@ -624,13 +624,16 @@ final class ChaosRuleParser {
         }
         Set<Hook> hooks = EnumSet.noneOf(Hook.class);
         for (Map.Entry<Hook, Set<Fault>> entry : offered.entrySet()) {
-            if ((b.at == null || b.at == entry.getKey()) && entry.getValue().contains(b.fault)) {
+            // the send of the dead letter channel is reached only with at=dlq, so endpoint=* does not lose the messages
+            // that the dead letter channel should keep
+            boolean asked = b.at == null ? entry.getKey() != Hook.DLQ : b.at == entry.getKey();
+            if (asked && entry.getValue().contains(b.fault)) {
                 hooks.add(entry.getKey());
             }
         }
         if (http) {
             // the failure of an HTTP component is raised at the sends to it
-            hooks.retainAll(Set.of(Hook.SEND));
+            hooks.retainAll(Set.of(Hook.SEND, Hook.DLQ));
             if (hooks.isEmpty()) {
                 throw new IllegalArgumentException(
                         "status= is the failure of a send to an HTTP component, so it fires at the "
@@ -687,6 +690,7 @@ final class ChaosRuleParser {
         switch (target) {
             case ENDPOINT, COMPONENT -> {
                 answer.put(Hook.SEND, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
+                answer.put(Hook.DLQ, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
                 answer.put(Hook.POLL, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP));
             }
             case ROUTE -> answer.put(Hook.ENTRY, EnumSet.of(Fault.CORRUPT));

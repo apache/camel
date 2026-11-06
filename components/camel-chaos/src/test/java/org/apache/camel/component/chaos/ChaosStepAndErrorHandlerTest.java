@@ -142,16 +142,72 @@ class ChaosStepAndErrorHandlerTest extends ChaosTestSupport {
     }
 
     @Test
-    void anOpenEndpointPatternAlsoMatchesTheSendToTheDeadLetterChannel() throws Exception {
+    void anOpenEndpointPatternDoesNotMatchTheSendToTheDeadLetterChannel() throws Exception {
         String id = chaos().addRule("endpoint=mock:* error");
         getMockEndpoint("mock:flaky").expectedMessageCount(0);
-        getMockEndpoint("mock:dead").expectedMessageCount(0);
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
 
         template.send("direct:redeliver", e -> e.getMessage().setBody("x"));
 
         MockEndpoint.assertIsSatisfied(context);
-        // the first try, two redeliveries, and the send to the dead letter channel
-        assertThat(fired(id, "send")).isEqualTo(4);
+        // the first try and two redeliveries; the send of the dead letter channel needs at=dlq
+        assertThat(fired(id, "send")).isEqualTo(3);
+        assertThat(ruleReport(id).getJsonObject("fired").containsKey("dlq")).isFalse();
+        assertThat(chaos().report().getLost()).isZero();
+    }
+
+    @Test
+    void aDlqRuleLosesTheMessageOfTheDeadLetterChannel() throws Exception {
+        chaos().addRule("endpoint=mock:flaky error");
+        String id = chaos().addRule("endpoint=mock:dead error at=dlq");
+        getMockEndpoint("mock:dead").expectedMessageCount(0);
+
+        Exchange out = template.send("direct:redeliver", e -> e.getMessage().setBody("x"));
+
+        MockEndpoint.assertIsSatisfied(context);
+        // the dead letter channel handled the new exception (deadLetterHandleNewException), without delivering it
+        assertThat(out.getException()).isNull();
+        assertThat(fired(id, "dlq")).isEqualTo(1);
+        assertThat(ruleReport(id).getLong("lostAtDlq")).isEqualTo(1);
+        ChaosReport report = chaos().report();
+        assertThat(report.getLost()).isEqualTo(1);
+        assertThat(report.getVerdict()).isEqualTo(ChaosReport.FAIL);
+        assertThat(report.getReasons()).containsExactly("rule " + id + " failed or dropped 1 send of the dead letter"
+                                                        + " channel, which handled it without delivering it: 1 lost");
+        assertThat(report.toText()).contains("lost at the dead letter channel 1");
+    }
+
+    @Test
+    void aLossAtTheDeadLetterChannelStaysInTheVerdictAfterItsRuleLeftTheReport() throws Exception {
+        String flaky = chaos().addRule("endpoint=mock:flaky error");
+        String id = chaos().addRule("endpoint=mock:dead error at=dlq");
+        template.sendBody("direct:redeliver", "x");
+        chaos().removeRule(id);
+        chaos().removeRule(flaky);
+        for (int i = 0; i < ChaosManager.MAX_HISTORY; i++) {
+            chaos().removeRule(chaos().addRule("endpoint=nothing" + i + " error"));
+        }
+
+        ChaosReport report = chaos().report();
+        assertThat(report.toText()).doesNotContain(id + " removed");
+        assertThat(report.getVerdict()).isEqualTo(ChaosReport.FAIL);
+        assertThat(report.getLost()).isEqualTo(1);
+        assertThat(report.getReasons()).contains(
+                "rules that are no longer in the report kept messages from the dead letter channel: 1 lost");
+    }
+
+    @Test
+    void aDlqDelayDeliversTheMessage() throws Exception {
+        chaos().addRule("endpoint=mock:flaky error");
+        String id = chaos().addRule("endpoint=mock:dead delay duration=1ms at=dlq");
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
+
+        template.sendBody("direct:redeliver", "x");
+
+        MockEndpoint.assertIsSatisfied(context);
+        assertThat(fired(id, "dlq")).isEqualTo(1);
+        assertThat(ruleReport(id).getLong("lostAtDlq")).isZero();
+        assertThat(chaos().report().getLost()).isZero();
     }
 
     @Test

@@ -94,7 +94,12 @@ final class ChaosAction {
                 answer.put("id", id);
                 answer.put("removed", 1);
             } else if ("clear".equals(command)) {
-                answer.put("removed", call(type, chaos, "clearRules"));
+                // reset also starts a new report: the removed rules, the counts per route and the verdict are gone
+                boolean reset = root.getBooleanOrDefault("reset", false);
+                answer.put("removed", call(type, chaos, reset ? "reset" : "clearRules"));
+                if (reset) {
+                    answer.put("reset", true);
+                }
             } else {
                 output.error("Unknown chaos command: " + command + " (add, change, remove or clear)");
                 return;

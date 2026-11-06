@@ -1131,10 +1131,15 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Remove all chaos rules of the Camel application: no more faults, and the report keeps what they \
-                  did. Returns how many were removed.""")
+                  did (with reset=true the report starts again, for a new experiment). Returns how many were \
+                  removed.""")
     public JsonObject camel_runtime_chaos_clear(
-            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
-        return delegateToRegistry("chaos_clear", nameOrPid, Map.of());
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Also start a new report: the removed rules, the counts per route and the verdict"
+                                   + " are gone (default false)",
+                     required = false) Boolean reset) {
+        return delegateToRegistry("chaos_clear", nameOrPid,
+                Boolean.TRUE.equals(reset) ? Map.of("reset", "true") : Map.of());
     }
 
     private static void requireArg(String name, String value) {

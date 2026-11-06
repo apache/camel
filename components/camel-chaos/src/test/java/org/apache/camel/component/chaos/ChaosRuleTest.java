@@ -95,7 +95,7 @@ class ChaosRuleTest {
                         Long.MAX_VALUE),
                 "r1", 1, T0, Long.MAX_VALUE);
         assertThat(r.endsAt).isEqualTo(Long.MAX_VALUE);
-        assertThat(r.expectation.deadline).isEqualTo(Long.MAX_VALUE);
+        assertThat(r.expectation.deadline()).isEqualTo(Long.MAX_VALUE);
         assertThat(r.fires(T0)).isTrue();
         assertThat(r.state(T0)).isEqualTo(State.ACTIVE);
         assertThat(r.expectation.outcome(T0)).isEqualTo(Outcome.PENDING);
@@ -167,8 +167,8 @@ class ChaosRuleTest {
         removed.freeze(T0 + 50);
         removed.completeAt(T0 + 60);
         assertThat(removed.completed()).isZero();
-        // removed before it was decided: pending for good, never unmet
-        assertThat(removed.outcome(T0 + 1000)).isEqualTo(Outcome.PENDING);
+        // removed before it was decided: cancelled, never unmet
+        assertThat(removed.outcome(T0 + 1000)).isEqualTo(Outcome.CANCELLED);
 
         ChaosRule.Expectation removedLate = new ChaosRule.Expectation("orders", 2, T0 + 100);
         removedLate.freeze(T0 + 200);
@@ -181,7 +181,7 @@ class ChaosRuleTest {
         assertThat(rule("endpoint=x error until=1m expect=o:1", "r1", 1).within).isEqualTo(60_000L);
         assertThat(rule("endpoint=x error until=5 expect=o:1", "r1", 1).within).isEqualTo(MAX);
         assertThat(rule("endpoint=x error until=1m expect=o:1 within=2m", "r1", 1).within).isEqualTo(120_000L);
-        assertThat(rule("endpoint=x error until=1m expect=o:1 within=2m", "r1", 1).expectation.deadline)
+        assertThat(rule("endpoint=x error until=1m expect=o:1 within=2m", "r1", 1).expectation.deadline())
                 .isEqualTo(T0 + 120_000L);
     }
 }

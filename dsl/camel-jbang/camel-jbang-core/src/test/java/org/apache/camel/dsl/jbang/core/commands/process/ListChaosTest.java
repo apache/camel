@@ -133,7 +133,7 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
-    void reportSaysWhyAnExpectationIsNotDecided() throws Exception {
+    void reportShowsACancelledExpectation() throws Exception {
         JsonObject chaos = chaosOn();
         JsonObject report = (JsonObject) chaos.get("report");
         report.put("verdict", "PASS");
@@ -141,11 +141,10 @@ class ListChaosTest extends ProcessCommandTestSupport {
         report.put("lost", 0);
         report.put("reasons", new JsonArray());
         JsonArray rules = report.getCollection("rules");
-        // the replaced version keeps its expectation pending for good, the current one has time left
+        // the replaced version has its expectation cancelled, the current one has time left
         JsonObject replaced = (JsonObject) rules.get(1);
         replaced.put("expectation", new JsonObject(
-                Map.of("route", "orders", "count", 10, "within", 60000, "completed", 4,
-                        "outcome", "pending", "notDecided", true)));
+                Map.of("route", "orders", "count", 10, "within", 60000, "completed", 4, "outcome", "cancelled")));
         JsonObject current = (JsonObject) rules.get(0);
         current.put("expectation", new JsonObject(
                 Map.of("route", "orders", "count", 100, "within", 60000,
@@ -156,7 +155,7 @@ class ListChaosTest extends ProcessCommandTestSupport {
 
         String out = printer.getStdout();
         assertThat(out).contains("PASS (not final: an expectation is pending)");
-        assertThat(out).contains("orders:10 pending (4 completed, not decided)");
+        assertThat(out).contains("orders:10 cancelled (4 completed)");
         assertThat(out).contains("orders:100 pending (2 completed, 30s left)");
     }
 

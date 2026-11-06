@@ -79,6 +79,7 @@ public final class ChaosManager {
     private int evictedUnmet;
     private long evictedLost;
     private int evictedPending;
+    private long evictedLostAtDlq;
 
     // the snapshot the hooks read
     private volatile RuleSet ruleSet = RuleSet.EMPTY;
@@ -141,6 +142,8 @@ public final class ChaosManager {
             }
             String id = "r" + nextId++;
             ChaosRule added = new ChaosRule(definition, id, seed, now, maxDuration);
+            // a rule added before the context started starts its clock when it has started
+            added.clockStarted = camelContext.isStarted();
             rules.add(added);
             update();
             LOG.info("Chaos rule {} added: {}", id, added.text);
@@ -172,6 +175,7 @@ public final class ChaosManager {
             checkRoute(definition);
             long now = TimeSource.currentTimeMillis();
             ChaosRule changed = new ChaosRule(definition, id, rules.get(index).version + 1, seed, now, maxDuration);
+            changed.clockStarted = camelContext.isStarted();
             ChaosRule old = rules.set(index, changed);
             old.removed(State.REPLACED, now);
             remember(old);
@@ -198,7 +202,7 @@ public final class ChaosManager {
     }
 
     /**
-     * Removes a rule. It stays in the report, and its expectation, if not decided yet, stays pending.
+     * Removes a rule. It stays in the report, and its expectation, if not decided yet, is cancelled.
      *
      * @param  id the id of the rule
      * @return    whether there was a rule with that id
@@ -241,6 +245,26 @@ public final class ChaosManager {
     }
 
     /**
+     * Removes all rules and starts a new report: the removed rules, the counts per route and the verdict are gone, as
+     * for an application that just started (with the same seed). The ids of new rules go on from the last one.
+     *
+     * @return the number of rules removed
+     */
+    public int reset() {
+        synchronized (lock) {
+            int count = clearRules();
+            history.clear();
+            evictedUnmet = 0;
+            evictedLost = 0;
+            evictedPending = 0;
+            evictedLostAtDlq = 0;
+            routes.clear();
+            LOG.info("Chaos report reset");
+            return count;
+        }
+    }
+
+    /**
      * The report: the rules and what they did, the counts per route, the expectations and the verdict.
      */
     public ChaosReport report() {
@@ -249,16 +273,19 @@ public final class ChaosManager {
         int unmet;
         long lost;
         int pending;
+        long lostAtDlq;
         synchronized (lock) {
             current = new ArrayList<>(rules);
             removed = new ArrayList<>(history);
             unmet = evictedUnmet;
             lost = evictedLost;
             pending = evictedPending;
+            lostAtDlq = evictedLostAtDlq;
         }
         Map<String, RouteCounts> counts = new TreeMap<>(routes);
         return new ChaosReport(
-                seed, seedGiven, TimeSource.currentTimeMillis(), current, removed, counts, unmet, lost, pending);
+                seed, seedGiven, TimeSource.currentTimeMillis(), current, removed, counts, unmet, lost, pending,
+                lostAtDlq);
     }
 
     // -- for the hooks, the event notifier and the plugin
@@ -285,39 +312,55 @@ public final class ChaosManager {
      * letter channel or {@code onException} with {@code handled(true)}) or failed (also when it was marked rollback
      * only). An exchange counts in each route it goes through: a route called with {@code direct} counts it too, and a
      * copy of a wire tap or a seda queue counts in the route that consumes it.
+     * <p/>
+     * An exchange counts once per route, with how the route was done with it the last time: camel-core calls the route
+     * policy each time the exchange goes through the route (a {@code direct} route called in a loop, or again by a
+     * redelivery of the calling route), so a later pass moves the count (a failed pass and then a completed one count
+     * as one completed exchange). The expectations of the route count it the first time it completes.
      */
     void routeDone(Route route, Exchange exchange) {
         String routeId = route.getRouteId();
         RouteCounts counts = counts(routeId);
+        ChaosExchangeState.Outcome outcome = outcome(route, exchange);
+        ChaosExchangeState.RouteState state = ChaosExchangeState.of(exchange).route(routeId);
+        ChaosExchangeState.Outcome previous = state.counts == counts ? state.outcome : ChaosExchangeState.Outcome.ENTERED;
+        if (previous == outcome) {
+            return;
+        }
+        counts.uncount(previous);
+        counts.count(outcome);
+        state.outcome = outcome;
+        state.counts = counts;
+        if (outcome.completed() && !state.expected) {
+            state.expected = true;
+            for (ChaosRule.Expectation expectation : ruleSet.expectations) {
+                if (expectation.route.equals(routeId)) {
+                    expectation.complete();
+                }
+            }
+        }
+    }
+
+    private static ChaosExchangeState.Outcome outcome(Route route, Exchange exchange) {
         // an exchange marked rollback only has no exception, but its message is not processed either
         boolean failed = exchange.isFailed();
         if (failed || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
-            counts.failed.increment();
             // the JMS listener rolls back for isRollbackOnly, not for isRollbackOnlyLast (which a transaction policy
             // of the route handles)
-            if (failed
+            boolean kept = failed
                     ? ChaosConsumers.keepsFailed(route.getEndpoint())
-                    : exchange.isRollbackOnly() && ChaosConsumers.keepsRollbackOnly(route.getEndpoint())) {
-                counts.failedKept.increment();
-            }
-            return;
-        }
-        for (ChaosRule.Expectation expectation : ruleSet.expectations) {
-            if (expectation.route.equals(routeId)) {
-                expectation.complete();
-            }
+                    : exchange.isRollbackOnly() && ChaosConsumers.keepsRollbackOnly(route.getEndpoint());
+            return kept ? ChaosExchangeState.Outcome.FAILED_KEPT : ChaosExchangeState.Outcome.FAILED;
         }
         ExchangeExtension ee = exchange.getExchangeExtension();
-        if (ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled()) {
-            counts.handled.increment();
-        }
-        counts.completed.increment();
+        return ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled()
+                ? ChaosExchangeState.Outcome.HANDLED : ChaosExchangeState.Outcome.COMPLETED;
     }
 
     /**
      * The context stops: camel-core does not call the route policies while it stops, so the exchanges that finish while
-     * the context drains them are not counted. The expectations that are not decided yet stay pending for good, as for
-     * a removed rule, so they are not called unmet for messages that were not counted.
+     * the context drains them are not counted. The expectations that are not decided yet are cancelled, as for a
+     * removed rule, so they are not called unmet for messages that were not counted.
      */
     void contextStopping() {
         synchronized (lock) {
@@ -395,13 +438,21 @@ public final class ChaosManager {
     }
 
     /**
-     * The context started: warns for the expectations of the current rules (such as those of camel.chaos.rules, added
-     * before the routes) whose route does not exist. It runs at every start of the context.
+     * The context started: the rules added before it started (such as those of camel.chaos.rules) start their clock, so
+     * their until, within and lifecycle times do not include the startup, and it warns for the expectations of the
+     * current rules whose route does not exist. It runs at every start of the context.
      *
      * @return the ids of the rules it warned for
      */
     List<String> contextStarted() {
         synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            for (ChaosRule rule : rules) {
+                if (!rule.clockStarted) {
+                    rule.clockStarted = true;
+                    rule.startClock(now);
+                }
+            }
             // the lifecycle rules that wait for the context to start act now
             lifecycle.contextStarted();
             update();
@@ -452,6 +503,8 @@ public final class ChaosManager {
         history.addLast(rule);
         while (history.size() > MAX_HISTORY) {
             ChaosRule evicted = history.removeFirst();
+            // the messages it lost at the dead letter channel keep the verdict FAIL too
+            evictedLostAtDlq += evicted.lostAtDlqCount();
             ChaosRule.Expectation expectation = evicted.expectation;
             // an unmet expectation keeps the verdict FAIL after its rule left the report
             ChaosRule.Expectation.Reading reading
@@ -529,6 +582,7 @@ public final class ChaosManager {
         static final RuleSet EMPTY = new RuleSet(List.of(), 0);
 
         final ChaosRule[] send;
+        final ChaosRule[] dlq;
         final ChaosRule[] poll;
         final ChaosRule[] entry;
         final ChaosRule[] step;
@@ -538,6 +592,7 @@ public final class ChaosManager {
         RuleSet(List<ChaosRule> rules, long now) {
             List<ChaosRule> live = rules.stream().filter(r -> r.live(now)).toList();
             send = live.stream().filter(r -> r.hooks.contains(Hook.SEND)).toArray(ChaosRule[]::new);
+            dlq = live.stream().filter(r -> r.hooks.contains(Hook.DLQ)).toArray(ChaosRule[]::new);
             poll = live.stream().filter(r -> r.hooks.contains(Hook.POLL)).toArray(ChaosRule[]::new);
             entry = live.stream().filter(r -> r.hooks.contains(Hook.ENTRY)).toArray(ChaosRule[]::new);
             step = live.stream().filter(r -> r.hooks.contains(Hook.STEP)).toArray(ChaosRule[]::new);
@@ -559,5 +614,31 @@ public final class ChaosManager {
         final LongAdder failedKept = new LongAdder();
         final LongAdder handled = new LongAdder();
         final LongAdder redeliveries = new LongAdder();
+
+        void count(ChaosExchangeState.Outcome outcome) {
+            add(outcome, 1);
+        }
+
+        void uncount(ChaosExchangeState.Outcome outcome) {
+            add(outcome, -1);
+        }
+
+        private void add(ChaosExchangeState.Outcome outcome, int n) {
+            switch (outcome) {
+                case COMPLETED -> completed.add(n);
+                case HANDLED -> {
+                    completed.add(n);
+                    handled.add(n);
+                }
+                case FAILED -> failed.add(n);
+                case FAILED_KEPT -> {
+                    failed.add(n);
+                    failedKept.add(n);
+                }
+                default -> {
+                    // entered, not counted
+                }
+            }
+        }
     }
 }

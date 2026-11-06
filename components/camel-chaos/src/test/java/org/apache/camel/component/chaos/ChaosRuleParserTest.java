@@ -72,6 +72,17 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void theSendOfTheDeadLetterChannelNeedsAtDlq() {
+        assertThat(parse("endpoint=mock:dead error").hooks).doesNotContain(Hook.DLQ);
+        assertThat(parse("component=seda drop").hooks).doesNotContain(Hook.DLQ);
+        assertThat(parse("endpoint=mock:dead error at=dlq").hooks).containsExactly(Hook.DLQ);
+        assertThat(parse("endpoint=mock:dead delay duration=1s at=dlq").hooks).containsExactly(Hook.DLQ);
+        assertThat(parse("endpoint=http:dead* error status=503 at=dlq").hooks).containsExactly(Hook.DLQ);
+        rejected("step=s1 error at=dlq", "at=dlq is not a hook of the target step=");
+        rejected("route=r1 corrupt mode=headers at=dlq", "at=dlq is not a hook of the target route=");
+    }
+
+    @Test
     void errorWithoutParametersIsAChaosException() {
         ChaosRule.Builder b = parse("component=kafka error");
         assertThat(b.exceptionType).isNull();

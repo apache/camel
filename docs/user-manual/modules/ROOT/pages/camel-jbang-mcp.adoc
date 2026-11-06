@@ -1091,7 +1091,8 @@ that changes rules is refused. The list and the report read the chaos console fr
 
 | `camel_runtime_chaos_clear`
 | `false` | `false`
-| Removes all rules, and returns how many.
+| Removes all rules, and returns how many. With `reset=true` the report starts again (no rules, route counts or
+  verdict), for a new experiment, as `camel cmd chaos-clear --reset` does.
 |===
 
 Adding and changing a rule are marked destructive: a rule makes messages fail, wait or get lost, and its

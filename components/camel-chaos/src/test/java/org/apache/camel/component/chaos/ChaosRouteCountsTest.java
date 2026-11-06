@@ -48,6 +48,19 @@ class ChaosRouteCountsTest extends ChaosTestSupport {
                 from("direct:wireTap").routeId("wireTap").wireTap("direct:tap").to("mock:wireTap");
                 from("direct:tap").routeId("tap").to("mock:tap");
                 from("direct:sub").routeId("sub").setHeader("sub", constant(true)).id("subStep");
+                from("direct:loop").routeId("loop").loop(3).to("direct:sub").end();
+                // the calling route redelivers the send to flaky, which has no error handler and fails twice
+                from("direct:retry").routeId("retry")
+                        .errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0))
+                        .to("direct:flaky");
+                from("direct:flaky").routeId("flaky").errorHandler(noErrorHandler())
+                        .process(e -> {
+                            int attempt = e.getProperty("attempt", 0, Integer.class) + 1;
+                            e.setProperty("attempt", attempt);
+                            if (attempt < 3) {
+                                throw new IllegalStateException("attempt " + attempt);
+                            }
+                        });
                 from("direct:notHandled").routeId("notHandled")
                         .onException(IllegalStateException.class).log("seen, not handled").end()
                         .throwException(new IllegalStateException("not handled"));
@@ -67,6 +80,55 @@ class ChaosRouteCountsTest extends ChaosTestSupport {
 
     private long count(String route, String count) {
         return routeCount(route, count);
+    }
+
+    @Test
+    void anExchangeThatGoesThroughARouteInALoopCountsOnce() {
+        String id = chaos().addRule("endpoint=nothing2:* error expect=sub:2 within=1m");
+
+        template.sendBody("direct:loop", "a");
+
+        // three passes through sub, one exchange
+        assertThat(count("sub", "completed")).isEqualTo(1);
+        assertThat(count("loop", "completed")).isEqualTo(1);
+        JsonObject expectation = (JsonObject) ruleReport(id).get("expectation");
+        assertThat(expectation.getLong("completed")).isEqualTo(1);
+        assertThat(expectation.getString("outcome")).isEqualTo("pending");
+
+        template.sendBody("direct:loop", "b");
+        assertThat(count("sub", "completed")).isEqualTo(2);
+        assertThat(((JsonObject) ruleReport(id).get("expectation")).getString("outcome")).isEqualTo("met");
+    }
+
+    @Test
+    void aRouteCalledAgainByARedeliveryCountsTheLastPass() {
+        template.sendBody("direct:retry", "x");
+
+        // two failed passes and a completed one: one completed exchange of flaky
+        assertThat(count("flaky", "completed")).isEqualTo(1);
+        assertThat(count("flaky", "failed")).isZero();
+        assertThat(count("retry", "completed")).isEqualTo(1);
+        assertThat(count("retry", "redeliveries")).isEqualTo(2);
+    }
+
+    @Test
+    void theEntryFaultsOfARouteAreAskedOncePerExchange() {
+        String id = chaos().addRule("route=sub corrupt mode=headers until=10");
+
+        // a header for the corrupt mode to change
+        template.sendBodyAndHeader("direct:loop", "a", "country", "DK");
+
+        assertThat(ruleReport(id).getLong("matches")).isEqualTo(1);
+        assertThat(fired(id, "entry")).isEqualTo(1);
+    }
+
+    @Test
+    void aCopyOfAnExchangeCountsOnItsOwn() throws Exception {
+        // the original goes through sub, and so do the two copies of the multicast
+        template.sendBody("direct:sub", "a");
+        template.sendBody("direct:multicast", "b");
+
+        assertThat(count("sub", "completed")).isEqualTo(3);
     }
 
     @Test
