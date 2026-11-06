@@ -45,7 +45,7 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisInfraServ
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractArtemisEmbeddedService.class);
     private static final AtomicInteger BROKER_COUNT = new AtomicInteger();
 
-    protected EmbeddedActiveMQ embeddedBrokerService;
+    protected volatile EmbeddedActiveMQ embeddedBrokerService;
     private Configuration artemisConfiguration;
     private Consumer<Configuration> customConfigurator;
     private final int port;
