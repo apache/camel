@@ -1,0 +1,52 @@
+{
+  "UserConfig": {
+    "Namespaces": [
+      {
+        "Name": "sbemulatorns",
+        "Queues": [
+          {
+            "Name": "camelTestQueue",
+            "Properties": {
+              "RequiresSession": false
+            }
+          },
+          {
+            "Name": "camelTestQueueSessions",
+            "Properties": {
+              "RequiresSession": true
+            }
+          }
+        ],
+        "Topics": [
+          {
+            "Name": "camelTestTopic",
+            "Properties": {},
+            "Subscriptions": [
+              {
+                "Name": "camelTestSubscription",
+                "Properties": {
+                  "RequiresSession": false
+                }
+              }
+            ]
+          },
+          {
+            "Name": "camelTestTopicSessions",
+            "Properties": {},
+            "Subscriptions": [
+              {
+                "Name": "camelTestSubscriptionSessions",
+                "Properties": {
+                  "RequiresSession": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Logging": {
+      "Type": "File"
+    }
+  }
+}

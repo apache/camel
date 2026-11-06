@@ -401,3 +401,16 @@ jobs:
               echo "⚠️ No Pull Requests were created" >> $GITHUB_STEP_SUMMARY
             fi
           fi
+
+          ARCH_BLOCKED=$(jq '[.[] | select(.arch_missing != null and (.arch_missing | length) > 0)] | length' versions.json 2>/dev/null || echo "0")
+          if [[ "$ARCH_BLOCKED" -gt 0 ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🏗️ **$ARCH_BLOCKED** image(s) have a newer version available but it lacks linux/s390x or linux/ppc64le support — upgrade skipped." >> $GITHUB_STEP_SUMMARY
+            echo "To investigate, run the checker locally with \`--verbose\`." >> $GITHUB_STEP_SUMMARY
+          fi
+
+          ARCH_UNVERIFIED=$(jq '[.[] | select(.arch_unverified == true)] | length' versions.json 2>/dev/null || echo "0")
+          if [[ "$ARCH_UNVERIFIED" -gt 0 ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **$ARCH_UNVERIFIED** image(s) could not be verified for multi-arch availability (network error or unsupported registry). Upgrades were proposed but linux/s390x and linux/ppc64le support is unconfirmed." >> $GITHUB_STEP_SUMMARY
+          fi

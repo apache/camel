@@ -36,19 +36,12 @@
 
     <camel:sslContextParameters id="sslClient" />
 
-    <bean id="dynaPort" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetClass">
-            <value>org.apache.camel.test.AvailablePortFinder</value>
-        </property>
-        <property name="targetMethod">
-            <value>getNextAvailable</value>
-        </property>
-    </bean>
+    <bean id="dynaPort" class="org.apache.camel.test.AvailablePortFinder" factory-method="find" destroy-method="close"/>
 
     <bean id="myHandler" class="org.apache.camel.component.undertow.UndertowBasicAuthHandler"/>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="input" uri="undertow:http://localhost:#{dynaPort}/spring?handlers=#myHandler"/>
+        <endpoint id="input" uri="undertow:http://localhost:#{dynaPort.port}/spring?handlers=#myHandler"/>
 
         <route>
             <from uri="ref:input"/>

@@ -70,6 +70,17 @@ scheduled time of its window, but before the (late) timer has run, joins that wi
 checkpointed by that timer. Before, such an event always started a new window, so `timeout` was practically never
 set. Routes that read this header can now see `timeout` as well as `size`.
 
+=== camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
+
+A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
+`transferExchange=true` put on the queue only when the consumer has `transferExchange=true` as well. A consumer without
+the option, the default, now takes only the body of such an exchange, as it does for any other item of the queue, and
+logs a warning the first time. Before, the consumer restored the headers and exchange properties whatever its
+`transferExchange` option said.
+
+Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
+exchange properties.
+
 === camel-milo - the OPC UA client validates the server certificate
 
 When the endpoint it selects uses a security policy other than `None`, the `milo-client` and `milo-browse` components

@@ -21,8 +21,10 @@ import org.apache.camel.component.jetty12.JettyHttpComponent12;
 import org.apache.camel.support.ExceptionHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Unit test to verify that the Jetty HTTP connector is correctly disconnected on shutdown
@@ -30,26 +32,43 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Isolated
 public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpEndpointDisconnectTest.class);
+
     private final String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
     public void testContextShutdownRemovesHttpConnector() {
         context.stop();
-        assertEquals(0, JettyHttpComponent.CONNECTORS.size(),
+        // only check the connector of this test, as the connectors are static and a connector
+        // left behind by another test in the same JVM must not make this test fail
+        String connectorKey = "http:localhost:" + getPort();
+        logOtherConnectors(connectorKey);
+        assertFalse(JettyHttpComponent.CONNECTORS.containsKey(connectorKey),
                 () -> {
-                    StringBuilder sb = new StringBuilder("Connector should have been removed\n");
-                    for (String key : JettyHttpComponent.CONNECTORS.keySet()) {
-                        Throwable t = JettyHttpComponent12.connectorCreation.get(key);
-                        if (t == null) {
-                            t = new Throwable("Unable to find connector creation");
-                        }
-
-                        final String stackTrace = ExceptionHelper.stackTraceToString(t);
-
-                        sb.append(key).append(": ").append(stackTrace);
+                    Throwable t = JettyHttpComponent12.connectorCreation.get(connectorKey);
+                    if (t == null) {
+                        t = new Throwable("Unable to find connector creation");
                     }
-                    return sb.toString();
+                    return "Connector should have been removed\n" + connectorKey + ": "
+                           + ExceptionHelper.stackTraceToString(t);
                 });
+    }
+
+    /**
+     * Logs the connectors still registered that do not belong to this test, with where they were created, to help
+     * finding which test leaks them.
+     */
+    private void logOtherConnectors(String connectorKey) {
+        if (!LOG.isDebugEnabled()) {
+            return;
+        }
+        for (String key : JettyHttpComponent.CONNECTORS.keySet()) {
+            if (!key.equals(connectorKey)) {
+                Throwable t = JettyHttpComponent12.connectorCreation.get(key);
+                LOG.debug("Connector left behind by another test: {}, created at: {}", key,
+                        t != null ? ExceptionHelper.stackTraceToString(t) : "unknown");
+            }
+        }
     }
 
     @Override

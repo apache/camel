@@ -18,7 +18,10 @@ package org.apache.camel.component.jdbc;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,19 +58,21 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
             final String query, final String preparedQuery, final int expectedParams,
             final Exchange exchange, final Object value)
             throws SQLException {
-        Map<?, ?> map = null;
-        if (exchange.getIn().hasHeaders()) {
-            if (exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS) != null) {
-                // header JDBC_PARAMETERS takes precedence over regular headers
-                map = exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS, Map.class);
-            } else {
-                map = exchange.getIn().getHeaders();
-            }
-        }
-
-        final Map<?, ?> headerMap = map;
-
         if (hasNamedParameters(query)) {
+            Map<?, ?> map = null;
+            if (exchange.getIn().hasHeaders()) {
+                if (exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS) instanceof Map<?, ?> parameters) {
+                    // header JDBC_PARAMETERS takes precedence over regular headers
+                    map = parameters;
+                } else {
+                    // a JDBC_PARAMETERS header that is not a Map (such as the List of the values of an earlier query
+                    // with plain ? placeholders) has no names, so the values come from the headers
+                    map = exchange.getIn().getHeaders();
+                }
+            }
+
+            final Map<?, ?> headerMap = map;
+
             // create an iterator that returns the value in the named order
             try {
 
@@ -118,10 +123,41 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
             }
 
         } else {
-            // just use a regular iterator
-            return exchange.getContext().getTypeConverter().convertTo(Iterator.class,
-                    headerMap != null ? headerMap.values() : null);
+            // plain ? placeholders are bound by position, so the values are only taken from the JDBC_PARAMETERS header
+            // (and not from all the message headers, as their order does not relate to the query)
+            return createPositionalIterator(query, expectedParams, exchange);
         }
+    }
+
+    private Iterator<?> createPositionalIterator(String query, int expectedParams, Exchange exchange) {
+        Object parameters = exchange.getIn().getHeader(JdbcConstants.JDBC_PARAMETERS);
+        if (parameters == null) {
+            throw new RuntimeExchangeException(
+                    "Cannot set the ? placeholders in query [" + query + "]: set their values, in order, as a List in the "
+                                               + JdbcConstants.JDBC_PARAMETERS
+                                               + " header, or use named parameters (:?name)",
+                    exchange);
+        }
+        List<Object> values = new ArrayList<>();
+        if (parameters instanceof Map<?, ?> map) {
+            values.addAll(map.values());
+        } else if (parameters instanceof Iterable<?> iterable) {
+            iterable.forEach(values::add);
+        } else if (parameters instanceof Object[] array) {
+            values.addAll(Arrays.asList(array));
+        } else {
+            // any other value is the one value, such as a String (not split by comma) or a byte[] (not one value
+            // per byte)
+            values.add(parameters);
+        }
+        if (values.size() != expectedParams) {
+            throw new RuntimeExchangeException(
+                    "Query [" + query + "] has " + expectedParams + " ? placeholders but the "
+                                               + JdbcConstants.JDBC_PARAMETERS + " header has " + values.size()
+                                               + " values",
+                    exchange);
+        }
+        return values.iterator();
     }
 
     @Override
