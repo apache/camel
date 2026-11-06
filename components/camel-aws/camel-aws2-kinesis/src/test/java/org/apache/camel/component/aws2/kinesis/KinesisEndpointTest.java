@@ -67,7 +67,7 @@ public class KinesisEndpointTest {
         assertThat(endpoint.getConfiguration().getAmazonKinesisClient(), is(amazonKinesisClient));
         assertThat(endpoint.getConfiguration().getStreamName(), is("some_stream_name"));
         assertThat(endpoint.getConfiguration().getIteratorType(), is(ShardIteratorType.TRIM_HORIZON));
-        assertThat(endpoint.getConfiguration().getMaxResultsPerRequest(), is(1));
+        assertThat(endpoint.getConfiguration().getMaxResultsPerRequest(), is(1000));
     }
 
     @Test

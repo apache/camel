@@ -136,6 +136,9 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
             @Override
             public void configure() {
                 final ResumeCache<Object> simpleCache = TransientResumeStrategy.createSimpleCache();
+                // the consumer calls the resume action for each entry of the cache: without an entry for the shard
+                // TestResumeAction is never called and the shard is read from its first record
+                simpleCache.add("shardId-000000000000", "0");
                 final KinesisResumeStrategyConfiguration.KinesisResumeStrategyConfigurationBuilder resumeConfigurationBuilder
                         = KinesisResumeStrategyConfiguration.builder()
                                 .withResumeCache(simpleCache);
@@ -204,6 +207,8 @@ public class KinesisConsumerResumeIT extends CamelTestSupport {
              and so on. This is just testing that the code is not mixing things up.
              */
             assertTrue(data.partition.endsWith(data.body), "The data/partition mismatch for record: " + data);
+            // the consumer resumed at the record number expectedCount
+            assertTrue(Integer.parseInt(data.body) >= expectedCount, "A record before the resume position: " + data);
         }
     }
 }
