@@ -1254,6 +1254,23 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
 
+=== camel-jdbc, camel-spring-jdbc - plain ? placeholders take their values only from the CamelJdbcParameters header
+
+With `useHeadersAsParameters=true` and a query with only plain `?` placeholders (no named parameters `:?name`), the
+`jdbc` and `spring-jdbc` producers bound the values of all the message headers by position, or of the
+`CamelJdbcParameters` header when it was set. Which value went to which `?` then depended on the headers of the
+message and their order (which changed in 4.21 from alphabetical to the order they were added). The values of plain
+`?` placeholders now come only from the `CamelJdbcParameters` header: a `List` with the values in the order of the
+placeholders (or a `Map`, whose values are taken in the order of its entries, or a single value for a query with one
+`?`, such as a `String` or a `byte[]`). When the header is not set, or has more or fewer values than the query has
+`?` placeholders, the exchange fails with a `RuntimeExchangeException` (before, extra values were ignored). Set the
+values in that header, or use named parameters.
+
+Named parameters take their values from the `CamelJdbcParameters` header when it is a `Map`, or else from the message
+headers, as before. A `CamelJdbcParameters` header that is not a `Map` (such as the `List` left by an earlier query
+with plain `?` placeholders in the same route) is now ignored for named parameters, where before it made the exchange
+fail with `Cannot find key`.
+
 === camel-jgroups-raft - a body that does not convert to a byte array fails the exchange
 
 The `jgroups-raft` producer skipped a message body that has no conversion to `byte[]`, such as a `Map`, a POJO or a

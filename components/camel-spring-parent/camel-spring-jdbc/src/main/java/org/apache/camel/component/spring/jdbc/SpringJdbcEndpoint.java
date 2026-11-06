@@ -35,8 +35,9 @@ import org.apache.camel.spi.UriEndpoint;
 @BodyTypes(producerIn = @BodyType(value = { Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
                                   description = "The SQL statement as text, or bytes, a stream or a file of it; a Map or a List"
                                                 + " is not a statement: set the SQL as the body. With useHeadersAsParameters,"
-                                                + " the values of its placeholders come from the CamelJdbcParameters header, or"
-                                                + " else from the headers"),
+                                                + " the values of its named parameters (:?name) come from the"
+                                                + " CamelJdbcParameters header, or else from the headers, and the values of"
+                                                + " plain ? placeholders, in order, only from the CamelJdbcParameters header"),
            producerOut = @BodyType(value = { Carrier.LIST, Carrier.UNCHANGED },
                                    byOption = {
                                            @BodyType.When(option = "outputType", value = "SelectOne",
