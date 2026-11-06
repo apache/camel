@@ -74,7 +74,7 @@
         <aliyun-tablestore-version>5.17.14</aliyun-tablestore-version>
         <tea-openapi-version>0.3.18</tea-openapi-version>
         <!-- the Alibaba SDKs declare com.aliyun:tea as an open version range, so it is pinned in dependencyManagement -->
-        <tea-version>1.4.2</tea-version>
+        <tea-version>1.4.3</tea-version>
         <amazon-kinesis-client-version>3.5.4</amazon-kinesis-client-version>
         <angus-mail-version>2.0.5</angus-mail-version>
         <apacheds-version>2.0.0.AM27</apacheds-version>
