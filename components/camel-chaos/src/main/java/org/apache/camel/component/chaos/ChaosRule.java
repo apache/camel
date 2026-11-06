@@ -768,6 +768,11 @@ final class ChaosRule {
             faulted.increment();
         }
 
+        /** A fault of another copy of an exchange that was counted already (CAMEL-26701). */
+        void unfaulted() {
+            faulted.decrement();
+        }
+
         void done(Outcome outcome) {
             done[outcome.ordinal()].increment();
         }

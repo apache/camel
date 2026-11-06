@@ -23,9 +23,11 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Route;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 
 /**
@@ -147,7 +149,7 @@ final class ChaosExchangeState implements SafeCopyProperty {
     }
 
     /** The rules that faulted an exchange, and whether the error handler redelivered it after each one. */
-    private static final class Faults extends SynchronizationAdapter {
+    static final class Faults extends SynchronizationAdapter {
 
         private final List<ChaosRule> rules = new ArrayList<>(2);
         private final List<Boolean> redelivered = new ArrayList<>(2);
@@ -170,6 +172,22 @@ final class ChaosExchangeState implements SafeCopyProperty {
             }
         }
 
+        /**
+         * Takes the faults of another copy of the same exchange: a rule that faulted both counts once, as it is one
+         * message.
+         */
+        void merge(Faults other) {
+            for (int i = 0; i < other.rules.size(); i++) {
+                ChaosRule rule = other.rules.get(i);
+                if (rules.contains(rule)) {
+                    rule.effect.unfaulted();
+                } else {
+                    rules.add(rule);
+                    redelivered.add(other.redelivered.get(i));
+                }
+            }
+        }
+
         @Override
         public boolean allowHandover() {
             // the effect is how this exchange was done: not a copy that a seda endpoint (such as the one of a dead
@@ -179,23 +197,60 @@ final class ChaosExchangeState implements SafeCopyProperty {
 
         @Override
         public void onDone(Exchange exchange) {
-            // an exchange marked rollback only has no exception, but its message is not processed either
-            boolean failed = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast();
-            ExchangeExtension ee = exchange.getExchangeExtension();
-            boolean handled = !failed && ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled();
+            if (waitForOriginal(exchange)) {
+                return;
+            }
+            count(exchange);
+        }
+
+        /**
+         * A circuit breaker runs its steps on a correlated copy of the exchange, in a try block, with a unit of work of
+         * its own (CAMEL-26701). The exchange then goes on with the result, the fallback or the exception, and is the
+         * message the faults had an effect on: they count when it is done, with its outcome, once per rule also when
+         * the circuit breaker ran again at a redelivery. The exchange is not touched from the thread of the copy; the
+         * faults wait under its id until the event that it is done. A copy of a wire tap in a try block is correlated
+         * too, and its exchange may be done before it: when no event comes in a minute, its faults count with how the
+         * copy was done.
+         */
+        private boolean waitForOriginal(Exchange copy) {
+            String originalId = copy.getProperty(ExchangePropertyKey.CORRELATION_ID, String.class);
+            if (originalId == null || !copy.getProperty(ExchangePropertyKey.TRY_ROUTE_BLOCK, false, boolean.class)) {
+                return false;
+            }
+            ChaosManager manager = ChaosManager.get(copy.getContext());
+            return manager != null && manager.waitForOriginal(originalId, this, failed(copy), handled(copy));
+        }
+
+        /** Counts the faults in the effect of their rules, with how the exchange was done. */
+        void count(Exchange exchange) {
+            count(failed(exchange), handled(exchange), ExchangeHelper.isRedelivered(exchange));
+        }
+
+        /** Counts the faults, with whether the exchange failed, was handled, or was redelivered. */
+        void count(boolean failed, boolean handled, boolean redeliveredExchange) {
             for (int i = 0; i < rules.size(); i++) {
                 ChaosRule.Effect.Outcome outcome;
                 if (failed) {
                     outcome = ChaosRule.Effect.Outcome.FAILED;
                 } else if (handled) {
                     outcome = ChaosRule.Effect.Outcome.HANDLED;
-                } else if (redelivered.get(i)) {
+                } else if (redelivered.get(i) || redeliveredExchange) {
                     outcome = ChaosRule.Effect.Outcome.RECOVERED;
                 } else {
                     outcome = ChaosRule.Effect.Outcome.COMPLETED;
                 }
                 rules.get(i).effect.done(outcome);
             }
+        }
+
+        private static boolean failed(Exchange exchange) {
+            // an exchange marked rollback only has no exception, but its message is not processed either
+            return exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast();
+        }
+
+        private static boolean handled(Exchange exchange) {
+            ExchangeExtension ee = exchange.getExchangeExtension();
+            return !failed(exchange) && ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled();
         }
 
         @Override

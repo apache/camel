@@ -356,6 +356,7 @@ public final class ChaosManager {
      * verdict.
      */
     public ChaosReport report() {
+        countWaitedTooLong(TimeSource.currentTimeMillis());
         List<ChaosRule> current;
         List<ChaosRule> removed;
         int unmet;
@@ -384,6 +385,74 @@ public final class ChaosManager {
 
     boolean isCounting() {
         return counting;
+    }
+
+    // the faults of the copies of circuit breakers, by the id of the exchange they are a copy of, counted when that
+    // exchange is done (CAMEL-26701); bounded, and counted with the copy when no event comes for a minute
+    private static final int MAX_WAITING = 10_000;
+    private static final long WAIT_FOR_ORIGINAL_MILLIS = 60_000;
+    private final ConcurrentMap<String, WaitingFaults> waitingForOriginal = new ConcurrentHashMap<>();
+
+    /** The faults of copies of an exchange, and how the last copy was done. */
+    private static final class WaitingFaults {
+        final ChaosExchangeState.Faults faults;
+        final boolean copyFailed;
+        final boolean copyHandled;
+        final long since;
+
+        WaitingFaults(ChaosExchangeState.Faults faults, boolean copyFailed, boolean copyHandled, long since) {
+            this.faults = faults;
+            this.copyFailed = copyFailed;
+            this.copyHandled = copyHandled;
+            this.since = since;
+        }
+    }
+
+    /**
+     * The faults of a copy of a circuit breaker wait for the exchange it is a copy of.
+     *
+     * @return false when too many wait already, so the faults count now, with the copy
+     */
+    boolean waitForOriginal(String exchangeId, ChaosExchangeState.Faults faults, boolean copyFailed, boolean copyHandled) {
+        long now = TimeSource.currentTimeMillis();
+        countWaitedTooLong(now);
+        if (waitingForOriginal.size() >= MAX_WAITING) {
+            return false;
+        }
+        // another copy when the circuit breaker runs again at a redelivery of the exchange: one message
+        waitingForOriginal.merge(exchangeId, new WaitingFaults(faults, copyFailed, copyHandled, now), (before, copy) -> {
+            before.faults.merge(copy.faults);
+            return new WaitingFaults(before.faults, copy.copyFailed, copy.copyHandled, copy.since);
+        });
+        return true;
+    }
+
+    /** Whether faults wait for an exchange to be done, so the events of done exchanges are listened to. */
+    boolean isWaitingForOriginals() {
+        return !waitingForOriginal.isEmpty();
+    }
+
+    /** An exchange is done: the faults of the copies of circuit breakers that wait for it count. */
+    void originalDone(Exchange exchange) {
+        WaitingFaults waiting = waitingForOriginal.remove(exchange.getExchangeId());
+        if (waiting != null) {
+            waiting.faults.count(exchange);
+        }
+    }
+
+    /** The faults that waited a minute for an exchange count with how their copy was done. */
+    void countWaitedTooLong(long now) {
+        if (waitingForOriginal.isEmpty()) {
+            return;
+        }
+        waitingForOriginal.entrySet().removeIf(e -> {
+            WaitingFaults w = e.getValue();
+            if (now - w.since < WAIT_FOR_ORIGINAL_MILLIS) {
+                return false;
+            }
+            w.faults.count(w.copyFailed, w.copyHandled, false);
+            return true;
+        });
     }
 
     /** Whether a rule was ever added (for the report when the context stops). */

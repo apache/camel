@@ -567,13 +567,16 @@ unit of work counts (one that a route processes), as that tells when it is done.
 exchanges sent to the endpoint of its route while the route is down count, such as `direct:inventory` or
 `seda:shipping` (not an HTTP call to a `platform-http` route, which is another endpoint): a 3 second stop of a route
 called with `direct:inventory?block=false` that sends 5 orders to the dead letter channel shows as
-`5 handled by the error handler`, as the redelivery is too short to ride it out;
+`5 handled by the error handler`, as the redelivery is too short to ride it out. A circuit breaker runs its steps on
+a copy of the exchange: a fault in it counts with how the exchange was done, so a fault that the fallback took over
+shows as `completed`, and a message that the circuit breaker runs again at a redelivery counts once;
 * the last 20 faults of all rules, the latest first: when, the rule, the fault, the hook, the route, the endpoint
 (without its query) or the step, and the exchange id.
 
 An exchange that a rule faulted (or that was sent to the route of a lifecycle rule while it was down) gets the exchange
 property `CamelChaosRule` with the id of the rule (of the last one, when more rules did), so the tracer, the message history and a route of the dead letter channel can tell why
-it is there:
+it is there. When the error handler redelivers the exchange, the property is removed, as the faulted attempt is tried
+again: a later failure that chaos did not make is not marked (a fault at the redelivery marks it again):
 
 [source,text]
 ----
