@@ -214,6 +214,11 @@ nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
+=== camel-azure-storage-blob - copyBlob validates the source account and container name
+
+`copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
+and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
