@@ -73,6 +73,20 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
                             + "Exchange that has details about the file such as file name, file size, etc. It's just that the file will "
                             + "not be downloaded.")
     private boolean download = true;
+    // re-declares the readLock option of GenericFileEndpoint, to list only the read locks implemented here
+    @UriParam(label = "consumer,lock", defaultValue = "none", enums = VALID_READ_LOCKS,
+              description = "Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. "
+                            + "the file is not in-progress or being written). Camel will wait until the file lock is granted. "
+                            + "This option provides the build in strategies:<p/>"
+                            + " - none - No read lock is in use<p/>"
+                            + " - changed - Changed is using file length/modification timestamp to detect whether the file "
+                            + "is currently being copied or not, so this option cannot consume files as fast as the others. "
+                            + "The option readLockCheckInterval can be used to set the check frequency.<p/>"
+                            + " - rename - rename is for using a try to rename the file as a test if we can get exclusive "
+                            + "read-lock.<p/>"
+                            + " The other read locks of the file component (markerFile, fileLock and the idempotent read "
+                            + "locks) are not supported, and fail when the consumer is created.")
+    private String readLock = "none";
 
     protected RemoteFileEndpoint() {
         // ftp must be synchronous as the ftp-client is not thread-safe
@@ -370,6 +384,17 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
      */
     public void setDownload(boolean download) {
         this.download = download;
+    }
+
+    /**
+     * Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. the file is not
+     * in-progress or being written). The supported read locks are none, rename and changed.
+     */
+    @Override
+    public void setReadLock(String readLock) {
+        super.setReadLock(readLock);
+        // the field holds the metadata of the option, the value is read from GenericFileEndpoint
+        this.readLock = readLock;
     }
 
 }

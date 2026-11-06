@@ -5543,6 +5543,12 @@ on these values, and on `false` and `off`, and is unchanged.
 To keep the previous behavior, remove the `readLock` option, or set `readLock=none`. To keep a file from being picked
 up while it is being written, use `readLock=changed` or `readLock=rename`.
 
+The `readLock` option of these endpoints, and of `smb`, now lists only `none`, `rename` and `changed` in the component
+documentation, the catalog and the Java Endpoint DSL, instead of all the read locks of the `file` component. The
+endpoint validation of the catalog, as used by `camel-report-maven-plugin:validate`, now reports `markerFile`,
+`fileLock`, `idempotent`, `idempotent-changed` and `idempotent-rename` as invalid values of `readLock` on these
+endpoints, as it already did for `false` and `off`.
+
 The following options only apply to read locks of the `file` component, did nothing on these endpoints, and are no
 longer listed in the component documentation, the catalog and the Java Endpoint DSL:
 

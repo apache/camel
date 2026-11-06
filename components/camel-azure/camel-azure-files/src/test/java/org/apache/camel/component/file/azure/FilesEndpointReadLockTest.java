@@ -16,11 +16,18 @@
  */
 package org.apache.camel.component.file.azure;
 
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -55,5 +62,16 @@ class FilesEndpointReadLockTest extends CamelTestSupport {
 
         assertNotNull(endpoint.createConsumer(exchange -> {
         }));
+    }
+
+    @Test
+    void readLockListsOnlyTheSupportedReadLocks() throws Exception {
+        // the catalog, the Endpoint DSL and the tooling offer only the read locks that the consumer accepts
+        String json = ((CatalogCamelContext) context).getComponentParameterJsonSchema("azure-files");
+        JsonObject properties = (JsonObject) ((JsonObject) Jsoner.deserialize(json)).get("properties");
+        JsonObject readLock = (JsonObject) properties.get("readLock");
+
+        assertEquals(new JsonArray(List.of("none", "rename", "changed")), readLock.get("enum"));
+        assertEquals("none", readLock.get("defaultValue"));
     }
 }
