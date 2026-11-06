@@ -30,6 +30,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
@@ -86,6 +87,38 @@ class TimelineTab extends AbstractTableTab {
     @Override
     public void onTabSelected() {
         refreshWhileVisible();
+        // the detail opens on the route that had the worst time in the window
+        List<Timeline.RouteSeries> routes = routes(ctx.findSelectedIntegration());
+        int worst = worst(routes);
+        if (worst >= 0) {
+            tableState.select(worst);
+        }
+    }
+
+    /** The route that failed the most, else was handled, recovered or down the most, else the busiest; -1 if none. */
+    static int worst(List<Timeline.RouteSeries> routes) {
+        int best = -1;
+        long[] bestScore = null;
+        for (int i = 0; i < routes.size(); i++) {
+            Timeline.RouteSeries r = routes.get(i);
+            long[] score = {
+                    r.total(r.failed()), r.total(r.handled()), r.total(r.recovered()) + r.total(r.down()),
+                    r.total(r.completed()) };
+            if (bestScore == null || compare(score, bestScore) > 0) {
+                best = i;
+                bestScore = score;
+            }
+        }
+        return best;
+    }
+
+    private static int compare(long[] a, long[] b) {
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] != b[i]) {
+                return Long.compare(a[i], b[i]);
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -100,18 +133,27 @@ class TimelineTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // explain with AI: the story of cause and effect of the window
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            if (info != null && ctx.askAiCallback != null) {
+                ctx.askAiCallback.ask(TimelineAiPrompt.of(info, ctx.timeline.causes(info.pid, endSecond(), seconds()),
+                        routes(info), seconds()));
+            }
+            return true;
+        }
         if (ke.isChar('w')) {
             window = (window + 1) % WINDOWS.length;
             return true;
         }
         if (ke.isChar(' ')) {
-            pausedAt = pausedAt < 0 ? clock.getAsLong() / 1000 : -1;
+            pausedAt = pausedAt < 0 ? nowSecond() : -1;
             return true;
         }
         if (pausedAt >= 0 && (ke.isLeft() || ke.isRight())) {
             IntegrationInfo info = ctx.findSelectedIntegration();
             long first = info != null ? ctx.timeline.firstSecond(info.pid) : -1;
-            long now = clock.getAsLong() / 1000;
+            long now = nowSecond();
             long step = Math.max(5, seconds() / 4);
             long to = pausedAt + (ke.isLeft() ? -step : step);
             long earliest = first >= 0 ? Math.min(now, first + seconds() - 1) : now;
@@ -146,8 +188,13 @@ class TimelineTab extends AbstractTableTab {
         return pausedAt >= 0;
     }
 
+    /** The last whole second: the current one is still counting. */
+    private long nowSecond() {
+        return clock.getAsLong() / 1000 - 1;
+    }
+
     private long endSecond() {
-        return pausedAt >= 0 ? pausedAt : clock.getAsLong() / 1000;
+        return pausedAt >= 0 ? pausedAt : nowSecond();
     }
 
     private List<Timeline.RouteSeries> routes(IntegrationInfo info) {
@@ -209,7 +256,7 @@ class TimelineTab extends AbstractTableTab {
         StringBuilder sb = new StringBuilder(" Timeline ─ ").append(info.name != null ? info.name : info.pid)
                 .append(" ─ last ").append(span).append(' ');
         if (pausedAt >= 0) {
-            long ago = clock.getAsLong() / 1000 - pausedAt;
+            long ago = nowSecond() - pausedAt;
             sb.append("─ paused").append(ago > 0 ? ", " + ChaosTab.shortTime(ago * 1000) + " ago " : " ");
         }
         return sb.toString();
@@ -343,7 +390,7 @@ class TimelineTab extends AbstractTableTab {
         put(axis, columns / 2 - middle.length() / 2, middle);
         put(axis, columns - end.length(), pausedAt >= 0 ? "" : end);
         if (pausedAt >= 0) {
-            String at = "-" + ChaosTab.shortTime(Math.max(0, clock.getAsLong() / 1000 - pausedAt) * 1000);
+            String at = "-" + ChaosTab.shortTime(Math.max(0, nowSecond() - pausedAt) * 1000);
             put(axis, columns - at.length(), at);
         }
         String text = new String(axis);
@@ -542,6 +589,14 @@ class TimelineTab extends AbstractTableTab {
 
     private static Block block(String title) {
         return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
+    }
+
+    @Override
+    public void renderFKeyHints(List<Span> spans) {
+        // with the global F-keys, as the AI key of a screen is an F-key of every screen that has one
+        if (ctx.askAiCallback != null && ctx.findSelectedIntegration() != null) {
+            hint(spans, "Shift+F8", "explain with AI");
+        }
     }
 
     @Override

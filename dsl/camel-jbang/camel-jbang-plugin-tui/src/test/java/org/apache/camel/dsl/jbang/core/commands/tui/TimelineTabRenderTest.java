@@ -16,13 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +41,7 @@ class TimelineTabRenderTest {
 
     private static final long T0 = 1_800_000_000_000L;
 
-    private final AtomicLong now = new AtomicLong(T0 + 59_000);
+    private final AtomicLong now = new AtomicLong(T0 + 60_000);
     private MonitorContext ctx;
     private IntegrationInfo info;
 
@@ -171,6 +174,45 @@ class TimelineTabRenderTest {
         String screen = TuiTestHelper.renderToString(new TimelineTab(qctx, now::get), 160, 40);
 
         assertThat(screen).contains("Errors/s  none").contains("idle");
+    }
+
+    @Test
+    void theScreenOpensOnTheRouteWithTheWorstTime() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        tab.onTabSelected();
+        String screen = TuiTestHelper.renderToString(tab, 160, 40);
+        // orders had its exchanges handled by the dead letter channel
+        assertThat(screen).contains(">> orders").contains("orders ─ per second");
+    }
+
+    @Test
+    void shiftF8AsksTheAiForTheStoryOfCauseAndEffect() {
+        List<String> asked = new ArrayList<>();
+        ctx.askAiCallback = new MonitorContext.AskAi() {
+            @Override
+            public void fixProblem(Path file, int line, String problem, String lineText) {
+            }
+
+            @Override
+            public void ask(String question) {
+                asked.add(question);
+            }
+        };
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        List<Span> hints = new ArrayList<>();
+        tab.renderFKeyHints(hints);
+        assertThat(text(hints)).contains("explain with AI");
+
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.F8, KeyModifiers.SHIFT));
+
+        assertThat(asked).hasSize(1);
+        assertThat(asked.get(0)).startsWith("Explain what happened in the last 60s of the running integration shop")
+                .contains("error HttpOperationFailedException 503: 30 in 15 seconds, from 34s to 20s ago")
+                .contains("orders: 88 completed, 0 recovered by redelivery, 30 handled by the error handler, 0 failed"
+                          + " (handled or failed from 34s to 20s ago)")
+                .contains("shipping: 88 completed").endsWith("Make no changes to the files unless I agree.");
     }
 
     private static String text(List<Span> spans) {

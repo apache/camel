@@ -323,7 +323,7 @@ class DataRefreshService {
                 IntegrationInfo info = StatusParser.parseIntegration(ph, root);
                 if (info != null && ctx != null) {
                     ctx.chaosMarks.record(info);
-                    ctx.timeline.record(info, System.currentTimeMillis());
+                    ctx.timeline.record(info, writtenAt(pid));
                 }
                 if (info != null) {
                     IntegrationInfo prev = previousByPid.get(info.pid);
@@ -875,6 +875,22 @@ class DataRefreshService {
 
     private JsonObject loadStatus(long pid) {
         return TuiHelper.loadStatus(pid, statusFileResolver);
+    }
+
+    /**
+     * When the integration wrote its status file: the timeline puts each status at the second it was written, so a read
+     * that sees the same status again adds no second, and the seconds follow the clock of the integration.
+     */
+    private long writtenAt(long pid) {
+        try {
+            Path f = statusFileResolver.apply(Long.toString(pid));
+            if (f != null) {
+                return Files.getLastModifiedTime(f).toMillis();
+            }
+        } catch (Exception e) {
+            // the time of the read then
+        }
+        return System.currentTimeMillis();
     }
 
     private JsonObject loadErrorFile(long pid) {
