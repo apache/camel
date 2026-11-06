@@ -65,9 +65,9 @@ class ChaosMarksTest {
         assertThat(ChaosMarks.ruleOf(ctx, info, "OTHER", Map.of(ChaosMarks.PROPERTY, "r7"))).isEqualTo("r7");
         // CAMEL-26701: a failure with properties and no mark was not made by chaos, though a rule faulted the exchange
         // before (and a redelivery recovered it)
-        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-0000000000000001E", Map.of("other", "x"))).isNull();
+        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-000000000000104E", Map.of("other", "x"))).isNull();
         // without the properties captured, the recent faults of the report say it
-        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-0000000000000001E", Map.of())).isEqualTo("r1");
+        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-000000000000104E", Map.of())).isEqualTo("r1");
         // no marks without chaos
         info.chaos = null;
         assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-000000000000104E", null)).isNull();
