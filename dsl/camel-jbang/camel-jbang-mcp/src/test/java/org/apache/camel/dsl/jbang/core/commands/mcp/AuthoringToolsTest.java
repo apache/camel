@@ -160,7 +160,8 @@ class AuthoringToolsTest {
         CommandLineHelper.useHomeDir(home.toString());
         try {
             assertThatThrownBy(
-                    () -> tools.camel_eval_expression("${body}", null, "camel", "no-such-app-xyz-1", null, null, null, null))
+                    () -> tools.camel_eval_expression(null, "${body}", null, "camel", "no-such-app-xyz-1", null, null, null,
+                            null))
                     .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
             assertThatThrownBy(() -> tools.camel_get_log("no-such-app-xyz-1", null, null, null, null, null))
                     .isInstanceOf(ToolCallException.class).hasMessageContaining("no-such-app-xyz-1");
@@ -179,27 +180,27 @@ class AuthoringToolsTest {
         Path previousHome = CommandLineHelper.getHomeDir();
         CommandLineHelper.useHomeDir(home.toString());
         try {
-            JsonObject values = tools.camel_eval_expression("${header.foo}-${variable.bar}", null, null, null,
+            JsonObject values = tools.camel_eval_expression(null, "${header.foo}-${variable.bar}", null, null, null,
                     Map.of("foo", "x"), "bar=y", null, null);
             assertThat(values.getString("status")).isEqualTo("ok");
             assertThat(values.getString("result")).isEqualTo("x-y");
 
-            JsonObject typed = tools.camel_eval_expression("${body}", null, "0042", null, null, null, null,
+            JsonObject typed = tools.camel_eval_expression(null, "${body}", null, "0042", null, null, null, null,
                     "java.lang.Integer");
             assertThat(typed.getString("result")).isEqualTo("42");
             assertThat(typed.getString("resultType")).isEqualTo("java.lang.Integer");
 
-            JsonObject predicate = tools.camel_eval_expression("true", "constant", null, null, null, null, true, null);
+            JsonObject predicate = tools.camel_eval_expression(null, "true", "constant", null, null, null, null, true, null);
             assertThat(predicate.getBoolean("predicate")).isTrue();
             assertThat(predicate.getString("result")).isEqualTo("true");
 
-            assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, "foo", null, null,
+            assertThatThrownBy(() -> tools.camel_eval_expression(null, "${header.foo}", null, null, null, "foo", null, null,
                     null)).isInstanceOf(ToolCallException.class).hasMessageContaining("key=value");
 
             // a JSON object is not a string argument, which the security interceptor checks: its JSON is held to the
             // same length limit
             Map<String, Object> large = Map.of("foo", "x".repeat(McpSecurityConfig.DEFAULT_MAX_ARGUMENT_LENGTH));
-            assertThatThrownBy(() -> tools.camel_eval_expression("${header.foo}", null, null, null, large, null, null,
+            assertThatThrownBy(() -> tools.camel_eval_expression(null, "${header.foo}", null, null, null, large, null, null,
                     null)).isInstanceOf(ToolCallException.class)
                     .hasMessageStartingWith("Argument 'headers' is ")
                     .hasMessageContaining(" characters long as JSON, over the limit of "
@@ -253,10 +254,11 @@ class AuthoringToolsTest {
                 boolean marked = meta != null && "camel.apache.org/".equals(meta.prefix())
                         && "deterministic".equals(meta.name()) && "true".equals(meta.value());
                 assertThat(marked).as(m.getName() + " marked deterministic").isEqualTo(td.isDeterministic());
-                // a tool that is deterministic for some arguments (camel_validate_source with content) counts too
+                // a tool that is deterministic for some arguments (camel_validate_source with content, an evaluation)
+                // counts too
                 boolean connected = Arrays.stream(m.getParameterTypes()).anyMatch(t -> t == McpConnection.class);
                 assertThat(connected).as(m.getName() + " gets the connection to count its repeats")
-                        .isEqualTo(td.isDeterministic() || td.deterministicWhen() != null);
+                        .isEqualTo(td.isDeterministicForSomeCalls());
             }
         }
     }
@@ -304,6 +306,34 @@ class AuthoringToolsTest {
         // changed content is a new question
         assertThat(counted.camel_validate_source(agent, null, null, "route.camel.yaml", content + "\n", null)
                 .get("repeated")).isNull();
+    }
+
+    /** r28 connect-stock-api step 2: one evaluation 9 times with the same arguments, up to the call limit. */
+    @Test
+    void aThirdIdenticalEvaluationOfAConnectionGetsAShortNote(@TempDir Path home) {
+        // a home of its own: without a name the tool picks the only running integration of the machine
+        Path previousHome = CommandLineHelper.getHomeDir();
+        CommandLineHelper.useHomeDir(home.toString());
+        try {
+            AuthoringTools counted = new AuthoringTools();
+            counted.repeatedCalls = new RepeatedCallSessions();
+            McpConnection agent = connection("agent-1");
+            for (int i = 0; i < 2; i++) {
+                assertThat(counted.camel_eval_expression(agent, "${body.length()}", null, "[1, 2]", null, null, null, null,
+                        null).getString("result")).isEqualTo("6");
+            }
+            JsonObject third = counted.camel_eval_expression(agent, "${body.length()}", null, "[1, 2]", null, null, null,
+                    null, null);
+            assertThat(third.getBoolean("repeated")).isTrue();
+            assertThat(third.getString("note")).contains("camel_eval_expression", "change the expression or the message");
+            // a random value is asked again for a new one
+            for (int i = 0; i < 3; i++) {
+                assertThat(counted.camel_eval_expression(agent, "${random(1,10)}", null, null, null, null, null, null, null)
+                        .get("repeated")).isNull();
+            }
+        } finally {
+            CommandLineHelper.useHomeDir(previousHome.toString());
+        }
     }
 
     private static McpConnection connection(String id) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.validator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.networknt.schema.Error;
@@ -107,6 +108,77 @@ public class YamlValidatorPropertyHintTest {
                     .anyMatch(m -> m.contains("noErrorHandler") && m.contains("an error handler is not a step")
                             && m.contains("errorHandler: {noErrorHandler: {}}"));
         }
+    }
+
+    /**
+     * r28 of the local-model benchmark, connect-service-jms-request-reply step 4: errorHandler: {redeliveryPolicy: ...}
+     * under from:, with no kind of handler. The hint copied it as the text to write, and the model was refused for it
+     * next ("errorHandler: property 'redeliveryPolicy' is not defined", which had no hint). Both say the form with the
+     * kind, which the schema takes.
+     */
+    @Test
+    public void testAnErrorHandlerWithoutItsKindGetsTheKind() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    id: reserve-order
+                    from:
+                      uri: direct:orders
+                      errorHandler:
+                        redeliveryPolicy:
+                          maximumRedeliveries: 3
+                          redeliveryDelay: 1000
+                          useExponentialBackOff: false
+                      steps:
+                        - log: "reserving"
+                """);
+        String handler = "{defaultErrorHandler: {redeliveryPolicy: {maximumRedeliveries: 3, redeliveryDelay: 1000,"
+                         + " useExponentialBackOff: false}}}";
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .endsWith("(errorHandler: is a key of the route, not of from:, and it takes the kind of handler as its"
+                          + " key, with the options under the kind. For this route only, write it under the route at"
+                          + " the same level as from:, as in route: {errorHandler: " + handler + ", from: {uri: ...,"
+                          + " steps: [...]}}. For every route, write it as a top-level item instead: - errorHandler: "
+                          + handler + ")");
+        // the model's next write, the handler under the route as the old hint gave it
+        String route = """
+                - route:
+                    id: reserve-order
+                    errorHandler:
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
+                        redeliveryDelay: 1000
+                        useExponentialBackOff: false
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - log: "reserving"
+                """;
+        assertThat(validator.validate(route)).singleElement().extracting(Error::getMessage).asString()
+                .endsWith("(errorHandler takes the kind of handler as its key, and redeliveryPolicy is an option of the"
+                          + " kind: write errorHandler: " + handler + ")");
+        // what is said to write is valid
+        assertThat(validator.validate(route.replace("""
+                    errorHandler:
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
+                        redeliveryDelay: 1000
+                        useExponentialBackOff: false
+                """, "    errorHandler: " + handler + "\n"))).isEmpty();
+        // the dead letter queue as the value of its kind, the options next to it (r25n-4 step 3)
+        assertThat(validator.validate("""
+                - route:
+                    errorHandler:
+                      deadLetterChannel: "jms:queue:orders.dead"
+                      redeliveryPolicy:
+                        maximumRedeliveries: 3
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - log: "reserving"
+                """)).extracting(Error::getMessage)
+                .anySatisfy(m -> assertThat(m).endsWith("write errorHandler: {deadLetterChannel: {deadLetterUri:"
+                                                        + " \"jms:queue:orders.dead\", redeliveryPolicy:"
+                                                        + " {maximumRedeliveries: 3}}})"));
     }
 
     /**
@@ -1194,6 +1266,93 @@ public class YamlValidatorPropertyHintTest {
                 .contains("no concatenation");
     }
 
+    /**
+     * r28 of the local-model benchmark, contracts-rest-code-first step 1: a line break escaped twice, so the line holds
+     * the two characters \n before the next key. Told it was a concatenation, the model sent the same lines 15 times.
+     */
+    @Test
+    public void testTheTwoCharactersOfALineBreakAfterAQuoteAreNamed() throws Exception {
+        List<Error> errors = validator.validate("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setBody:
+                          expression:
+                            jsonpath:
+                              expression: "$[?(@.orderId == '${header.id}')]"\\n              resultType: java.util.Map
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage()).isEqualTo(
+                "line 7: the value of expression is followed by \\n, the two characters \\ and n: YAML reads them as text,"
+                                                         + " not as a line break, so what comes after them is not a key."
+                                                         + " Write line 7 as these 2 lines:\n"
+                                                         + "              expression: \"$[?(@.orderId == '${header.id}')]\"\n"
+                                                         + "              resultType: java.util.Map");
+        // a whole block on one line, its quotes escaped too (r23l-2 transform-groovy step 1)
+        errors = validator.validate(
+                """
+                        - from:
+                            uri: direct:check
+                            steps:
+                              - choice:\\n    when:\\n      - simple: \\"${body} != null\\"\\n        steps:\\n          - log: "ok"\\n      - otherwise:
+                        """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .startsWith("line 4 has the two characters \\n where line breaks belong (and \\\" where quotes belong)");
+        // a value that continues after its quote: as before
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log:
+                          message: "Order " + "${body}"
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("continues after its closing quote");
+    }
+
+    /**
+     * r28 of the local-model benchmark, connect-sftp-transfer step 2: - route: in column 3 after a top-level
+     * onException was told to line up with the steps of the onException, and the model sent the same lines 12 times. It
+     * is an entry of the file, so it belongs to the list of the entries, in column 1.
+     */
+    @Test
+    public void testAnEntryOfTheFileInAColumnOfItsOwnBelongsToTheEntries() throws Exception {
+        List<Error> errors = validator.validate("""
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    steps:
+                      - log:
+                          message: "Batch failed: ${exception.message}"
+                  - route:
+                      id: invoice-batches
+                      from:
+                        uri: timer:tick
+                        steps:
+                          - log: "tick"
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .isEqualTo("line 7 (\"  - route:\"): this list item starts in column 3, but the list that starts at line"
+                           + " 1 (\"- onException:\") has its items in column 1 (- route: is an entry of the file, as the"
+                           + " items of that list are); every item of a list must start in the same column");
+        // an onException can be an item of a routeConfiguration too: the list is named by the columns, as before
+        errors = validator.validate("""
+                - routeConfiguration:
+                    onException:
+                      - onException:
+                          exception:
+                            - java.lang.Exception
+                          steps:
+                            - log: "failed"
+                        - onException:
+                            exception:
+                              - java.io.IOException
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("this list item starts in column 9, but the list that starts at line")
+                .doesNotContain("entry of the file");
+    }
+
     @Test
     public void testALineWithNoKeyIsNamed() throws Exception {
         // r24 ai-ticket-classifier step 2: a setHeader with the bare line directory (meant as name: directory), told 15
@@ -2065,10 +2224,11 @@ public class YamlValidatorPropertyHintTest {
 
     /**
      * A key in the column of the dashes of a list gets "expected <block end>, but found '?'": steps: under the -
-     * simple: of a when:, meant for the item.
+     * simple: of a when:, meant for the item. Of the two columns, only the one of the item gives valid Camel (choice
+     * has no steps: of its own): it is the one said, with the lines to write.
      */
     @Test
-    void aKeyInTheColumnOfTheDashesOfAListNamesBothColumns() throws Exception {
+    void aKeyInTheColumnOfTheDashesOfAListGetsTheColumnTheSchemaTakes() throws Exception {
         List<Error> errors = validator.validate("""
                 - route:
                     from:
@@ -2083,9 +2243,10 @@ public class YamlValidatorPropertyHintTest {
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
                 .isEqualTo("line 8: steps starts in column 15, the column of the - of the list item at line 7, so it is"
-                           + " part of neither that item nor the key that holds the list. Write it in column 17 to make"
-                           + " it a key of the item, as simple is, or in column 13 to make it a key next to when"
-                           + " (line 6)");
+                           + " part of neither that item nor the key that holds the list. It is a key of the item, as"
+                           + " simple is: write it in column 17. Write lines 8-9 as:\n"
+                           + "                steps:\n"
+                           + "                  - log: \"a\"");
     }
 
     /** onFallback: under the - to: of the steps: of a circuitBreaker, meant for the circuit breaker. */
@@ -2106,7 +2267,130 @@ public class YamlValidatorPropertyHintTest {
                 """);
         assertThat(errors).hasSize(1);
         assertThat(errors.get(0).getMessage())
-                .startsWith("line 9: onFallback starts in column 15, the column of the - of the list item at line 7")
-                .endsWith("as to is, or in column 13 to make it a key next to steps (line 6)");
+                .isEqualTo("line 9: onFallback starts in column 15, the column of the - of the list item at line 7, so"
+                           + " it is part of neither that item nor the key that holds the list. It is a key next to steps"
+                           + " (line 6): write it in column 13. Write lines 9-11 as:\n"
+                           + "            onFallback:\n"
+                           + "              steps:\n"
+                           + "                - log: \"fallback\"");
+    }
+
+    /**
+     * r28 of the local-model benchmark, fail-well-error-handling step 2: the steps: of the when of a choice nested in
+     * otherwise:, written after that otherwise:, in the column of the - of the choice. The two columns of the old
+     * message both give invalid Camel (a second key of the - choice: item, a second steps: of otherwise:), and the
+     * model sent the same lines 16 times. The steps belong to the when item further up: the lines to write move them
+     * there.
+     */
+    @Test
+    void aKeyInTheColumnOfTheDashesOfAListGoesToTheItemAboveItThatTakesIt() throws Exception {
+        String route = """
+                - route:
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - choice:
+                            when:
+                              - expression:
+                                  simple:
+                                    expression: "${body[orderId]} == 'ORD-1003'"
+                                steps:
+                                  - throwException:
+                                      exceptionType: java.lang.IllegalStateException
+                                      message: "card declined"
+                            otherwise:
+                              steps:
+                                - choice:
+                                    when:
+                                      - expression:
+                                          simple:
+                                            expression: "${body[orderId]} == 'ORD-1002'"
+                                    otherwise:
+                                      steps:
+                                        - log:
+                                            message: "Order ${body[orderId]} charged successfully"
+                                steps:
+                                  - throwException:
+                                      exceptionType: java.net.ConnectException
+                                      message: "payment provider did not answer"
+                """;
+        List<Error> errors = validator.validate(route);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .isEqualTo("line 25: steps starts in column 17, the column of the - of the list item at line 16, so it"
+                           + " is part of neither that item nor the key that holds the list. It is a key of the item at"
+                           + " line 18, as expression is: it goes in column 25, after line 20. Write lines 21-28 as:\n"
+                           + "                        steps:\n"
+                           + "                          - throwException:\n"
+                           + "                              exceptionType: java.net.ConnectException\n"
+                           + "                              message: \"payment provider did not answer\"\n"
+                           + "                    otherwise:\n"
+                           + "                      steps:\n"
+                           + "                        - log:\n"
+                           + "                            message: \"Order ${body[orderId]} charged successfully\"");
+        // the lines to write give valid Camel
+        String message = errors.get(0).getMessage();
+        List<String> lines = new ArrayList<>(List.of(route.split("\n", -1)));
+        lines.subList(20, 28).clear();
+        lines.addAll(20, List.of(message.substring(message.indexOf(" as:\n") + 5).split("\n")));
+        assertThat(validator.validate(String.join("\n", lines))).isEmpty();
+    }
+
+    /** otherwise: in the column of the dashes of the when items is a key of the choice. */
+    @Test
+    void anOtherwiseInTheColumnOfTheDashesOfTheWhenItemsIsAKeyOfTheChoice() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} == 'a'"
+                                steps:
+                                  - log: "a"
+                              otherwise:
+                                steps:
+                                  - log: "other"
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .isEqualTo("line 10: otherwise starts in column 15, the column of the - of the list item at line 7, so"
+                           + " it is part of neither that item nor the key that holds the list. It is a key next to when"
+                           + " (line 6): write it in column 13. Write lines 10-12 as:\n"
+                           + "            otherwise:\n"
+                           + "              steps:\n"
+                           + "                - log: \"other\"");
+    }
+
+    /**
+     * Under otherwise: with a list, which the schema checks nothing in, no place can be judged: the columns are said as
+     * before (r24l-6 connect-http-client step 3).
+     */
+    @Test
+    void aKeyWhosePlaceTheSchemaCannotJudgeGetsBothColumns() throws Exception {
+        List<Error> errors = validator.validate("""
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} == 'a'"
+                                steps:
+                                  - log: "a"
+                            otherwise:
+                              - choice:
+                                  when:
+                                    - simple: "${body} == 'b'"
+                                    steps:
+                                      - log: "b"
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage())
+                .isEqualTo("line 14: steps starts in column 21, the column of the - of the list item at line 13, so it"
+                           + " is part of neither that item nor the key that holds the list. Write it in column 23 to make"
+                           + " it a key of the item, as simple is, or in column 19 to make it a key next to when (line"
+                           + " 12)");
     }
 }

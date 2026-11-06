@@ -156,12 +156,50 @@ default. Scheme and host are compared ignoring case and a default port may be le
 not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected, and neither are the Spring Boot and
 Quarkus engines.
 
+=== camel-mina-sftp - checking whether a file exists takes one lstat request
+
+The `mina-sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,
+`tempPrefix`, a producer `doneFileName`) with an `lstat` request instead of `stat`. `readLock=changed` reads the size
+and modification time of the file with the same request, instead of a listing of the directory. Each check is one
+request, whatever the number of files in the directory, and `fastExistsCheck` no longer makes a difference for
+`readLock=changed`: with `fastExistsCheck=true`, the read lock is now acquired, where before the file was never
+consumed. The answer can differ from before in two cases:
+
+* A dangling symbolic link now exists: the link itself is checked, not its target. For example, with
+  `fileExist=Fail`, sending a file with the name of a dangling link now fails, where before the file was written.
+* When the server answers the request with another status than "no such file", for example because it does not permit
+  it on the path, the component lists the directory and compares the names, where before the file counted as missing.
+  When the server does not answer that listing either, or the connection fails, the check now fails with an error.
+
+`readLock=changed` keeps comparing the size and modification time of a symbolic link itself, as the directory listing
+reported them. See the xref:components::mina-sftp-component.adoc[MINA SFTP component].
+
 === camel-mina-sftp - TCP_NODELAY is set on the connections
 
 The `mina-sftp` component now sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.
 Apache MINA SSHD leaves it off by default, so a small request, such as one that reads the next part of a directory
 listing, could wait for the server to acknowledge the previous reply. The `org.apache.sshd.config.tcp-nodelay` system
 property no longer applies to the connections of `mina-sftp`.
+
+=== camel-ftp - sftp checks whether a file exists with one lstat request
+
+The `sftp` component now checks whether a remote file exists (`fileExist=Ignore|Fail|Move`, `tempFileName`,
+`tempPrefix`, a producer `doneFileName`), and reads the size and modification time of the file for `readLock=changed`,
+with a single `lstat` request instead of a listing of the directory. Each check is one request, whatever the number of
+files in the directory, and `fastExistsCheck` no longer makes a difference for these checks. The answer can differ from
+before in two cases:
+
+* A dangling symbolic link now exists also with `fastExistsCheck=true`, as it already did without that option: the
+  link itself is checked, not its target.
+* On a server with a case-insensitive file system, such as one backed by Windows or macOS, a file whose name differs
+  only in case now exists: before, the names of the listing were compared case-sensitively. For example, with
+  `fileExist=Fail`, sending `REPORT.TXT` to a directory that holds `report.txt` now fails, where before it replaced
+  `report.txt`.
+
+When the server answers `lstat` with another status than "no such file", for example because it does not permit or
+support it on the path, the component lists the directory as before. `readLock=changed` keeps comparing the size and
+modification time of a symbolic link itself, as the directory listing reported them. See the
+xref:components::sftp-component.adoc[SFTP component].
 
 === Java
 
@@ -896,6 +934,16 @@ closed that client for every other endpoint.
 
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
+
+=== camel-aws2-kinesis - failed records of the KCL consumer
+
+With `useKclConsumers=true`, a record whose exchange fails (the route ends with an exception) is now reported to the
+exception handler of the consumer, as the other consumers do. It is still checkpointed with its batch, so it is not
+consumed again: handle it in the route, for example with a dead letter channel.
+
+The new option `kclStopCheckpointOnFailure` (default `false`) keeps the checkpoint of a shard before the first failed
+record instead, so the next holder of the lease of the shard consumes the records from that one on again. See the
+component documentation for its cost: the records after the failed one can be routed twice.
 
 === camel-aws2-kinesis - the batch producer sends the failed records again and splits at 10 MiB
 
@@ -4055,6 +4103,21 @@ exchange of the producer fails, and for a reply the incoming message fails as wh
 To send such a body, implement `java.io.Serializable` (and enable `objectMessageEnabled`), force a type with the
 `jmsMessageType` option, or marshal the body (for example to JSON) before sending it. This applies to the components
 that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`) and to `camel-sjms2`.
+
+=== camel-jms - a message sent from a transacted route with a username and password is rolled back with it
+
+When `username` and `password` are set, on the component or on the endpoints, the endpoints that use the connection
+factory of the component with the same username and password now share one connection factory. A message sent from a
+transacted route (`transacted=true` on the consumer) is now part of the transaction of the consumed message, as it is
+without credentials: when the route fails, the message is rolled back with the consumed message. Before, each endpoint
+wrapped the connection factory in a `UserCredentialsConnectionFactoryAdapter` of its own, so the message was committed
+at once, and sent again when the broker delivered the consumed message again.
+
+In a route that is not transacted, a message sent from the thread of the consumer now uses the session of the consumer
+(see `exposeListenerSession`), as it does without credentials, instead of a connection of its own.
+
+An endpoint with its own `connectionFactory` or other credentials keeps a connection factory of its own, as before. This
+applies to the components that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`).
 
 === camel-jms, camel-sjms - text that is not a String is sent as a TextMessage
 
@@ -7243,3 +7306,33 @@ An item that fails every time is now routed again at every poll. Handle the fail
 dead letter channel or a handled `onException`, so that the item is marked consumed. To retry it less often, raise
 `delay`, or set `backoffIdleThreshold` and `backoffMultiplier`: a poll counts only the items that it marked consumed,
 so a poll whose items all failed is an idle poll, after which a `greedy` consumer does not poll again at once.
+
+=== camel-jbang - the Quarkus Platform is looked up only for the Quarkus runtime
+
+With a runtime other than Quarkus, `camel run` and `camel export` no longer look up the Quarkus Platform in the Quarkus
+Extension Registry. Before, the command stopped when the registry could not be reached and no cached answer existed,
+also for an integration that uses nothing from Quarkus. For these runtimes `camel kubernetes export` and
+`camel kubernetes run` no longer look it up either; with the Quarkus runtime they no longer ask `registry.quarkus.io`
+in addition to the registry or the Quarkus version that is given.
+
+With these runtimes, the dependencies that Camel CLI adds with the version of Quarkus now get the `quarkus-version` of
+the `camel-dependencies` POM of the Camel CLI, as before Camel 4.21, instead of the version of the Quarkus Platform that
+the registry has for the Camel version:
+
+* `io.quarkus:quarkus-core`, for `jakarta.inject.Inject`, `jakarta.inject.Named`, `jakarta.inject.Singleton`,
+  `jakarta.enterprise.context.ApplicationScoped` and `jakarta.enterprise.inject.Produces`: when a source imports one of
+  them, or when one of them is loaded at runtime;
+* the `io.quarkus:quarkus-jdbc-*` driver of a `quarkus.datasource.db-kind` property.
+
+This is also the version of these dependencies in the `pom.xml` of an export to Camel Main or Spring Boot. With
+`camel run` and `camel export`, `--quarkus-version` (or `camel.jbang.quarkusVersion`) still sets it.
+
+The run settings (`.camel-jbang/camel-jbang-run.properties`) of these runs no longer have `camel.jbang.quarkusGroupId`,
+`camel.jbang.quarkusVersion` and `camel.jbang.quarkusExtensionRegistryBaseUri`, unless a Quarkus version is given
+(`--quarkus-version` or `camel.jbang.quarkusVersion`).
+
+The export to Quarkus now leaves the version of the `io.quarkus` dependencies that Camel CLI adds itself to the Quarkus
+Platform BOM, as for the Camel Quarkus extensions that the BOM manages. Before, the `pom.xml` had them with the version
+of the run, which can be another one than the platform of the export, for example when the export reuses the data of
+an earlier `camel run`. An `io.quarkus` dependency that is given with its version (`--dep` or
+`camel.jbang.dependencies`) keeps that version. Nothing else changes for the Quarkus runtime.

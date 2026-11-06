@@ -363,6 +363,133 @@ class AuthoringToolsLenientTest {
     }
 
     /**
+     * r28l-4 fail-well-error-handling step 2: the steps: of the when of a choice nested in otherwise:, written after
+     * that otherwise:, in the column of the - of the choice. Told two columns, both wrong Camel, the model sent the
+     * same lines 16 times. The schema takes the steps: in one place, the when item further up, so the write puts them
+     * there.
+     */
+    @Test
+    void stepsInTheColumnOfTheDashesOfAListAreWrittenWhereTheSchemaTakesThem(@TempDir Path dir) throws IOException {
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: direct:charge
+                      steps:
+                        - choice:
+                            when:
+                              - expression:
+                                  simple:
+                                    expression: "${body[orderId]} == 'ORD-1003'"
+                                steps:
+                                  - throwException:
+                                      exceptionType: java.lang.IllegalStateException
+                                      message: "card declined"
+                            otherwise:
+                              steps:
+                                - choice:
+                                    when:
+                                      - expression:
+                                          simple:
+                                            expression: "${body[orderId]} == 'ORD-1002'"
+                                    otherwise:
+                                      steps:
+                                        - log:
+                                            message: "Order ${body[orderId]} charged successfully"
+                                steps:
+                                  - throwException:
+                                      exceptionType: java.net.ConnectException
+                                      message: "payment provider did not answer"
+                """);
+        assertRepairedAndValid(dir, result, "line 25: steps: moved to column 25 after line 20 (a key of the item at line"
+                                            + " 18, as expression is)");
+        assertThat(Files.readString(dir.resolve(FILE))).contains("""
+                                      - expression:
+                                          simple:
+                                            expression: "${body[orderId]} == 'ORD-1002'"
+                                        steps:
+                                          - throwException:
+                                              exceptionType: java.net.ConnectException
+                                              message: "payment provider did not answer"
+                                    otherwise:
+                """);
+    }
+
+    /** r28n-1 contracts-rest-code-first step 1: otherwise: in the column of the dashes of the when items. */
+    @Test
+    void anOtherwiseInTheColumnOfTheDashesOfTheWhenItemsIsWrittenAsAKeyOfTheChoice(@TempDir Path dir)
+            throws IOException {
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} != null"
+                                steps:
+                                  - log: "found"
+                              otherwise:
+                                steps:
+                                  - log: "not found"
+                """);
+        assertRepairedAndValid(dir, result, "line 10: otherwise: moved to column 13 (a key next to when (line 6))");
+    }
+
+    /**
+     * Under otherwise: with a list the schema checks nothing, so no place is said, and the write repairs nothing: the
+     * columns are said as before.
+     */
+    @Test
+    void aKeyInTheColumnOfTheDashesWhosePlaceTheSchemaCannotJudgeIsNotRepaired(@TempDir Path dir) {
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: direct:start
+                      steps:
+                        - choice:
+                            when:
+                              - simple: "${body} == 'a'"
+                                steps:
+                                  - log: "a"
+                            otherwise:
+                              - choice:
+                                  when:
+                                    - simple: "${body} == 'b'"
+                                    steps:
+                                      - log: "b"
+                """);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("repaired")).isNull();
+        assertThat(result.get("errors").toString()).contains("Write it in column 23 to make it a key of the item, as"
+                                                             + " simple is, or in column 19 to make it a key next to when");
+    }
+
+    /**
+     * r28n-6 connect-sftp-transfer step 2: - route: in column 3 after a top-level onException was told to line up with
+     * the steps of the onException, 12 times. Named as an entry of the file, it is two columns off the entries, which
+     * the write repairs.
+     */
+    @Test
+    void aRouteTwoColumnsOffTheEntriesOfTheFileIsRepaired(@TempDir Path dir) throws IOException {
+        JsonObject result = write(dir, """
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    steps:
+                      - log:
+                          message: "Batch failed: ${exception.message}"
+                  - route:
+                      id: invoice-batches
+                      from:
+                        uri: timer:tick
+                        steps:
+                          - log: "tick"
+                """);
+        assertRepairedAndValid(dir, result, "line 7: the list item moved to the column of the list");
+        assertThat(Files.readString(dir.resolve(FILE))).contains("\n- route:\n    id: invoice-batches\n");
+    }
+
+    /**
      * r27l-4 connect-http-client step 3: a second condition and an - otherwise: item written under otherwise:. The
      * write put them under steps:, where they were still not steps, and said the shape needed no change; the model sent
      * the same lines 16 times. They are conditions: no repair, and the answer says where they go.

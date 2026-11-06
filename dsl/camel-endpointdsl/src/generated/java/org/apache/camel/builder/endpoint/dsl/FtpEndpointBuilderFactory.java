@@ -2064,7 +2064,9 @@ public interface FtpEndpointBuilderFactory {
          * exists. This option also influences readLock=changed to control
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * of files. The sftp and mina-sftp components check whether a file
+         * exists, also for readLock=changed, with a single request whatever the
+         * number of files, so this option makes no difference for them.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -2086,7 +2088,9 @@ public interface FtpEndpointBuilderFactory {
          * exists. This option also influences readLock=changed to control
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * of files. The sftp and mina-sftp components check whether a file
+         * exists, also for readLock=changed, with a single request whatever the
+         * number of files, so this option makes no difference for them.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3724,7 +3728,9 @@ public interface FtpEndpointBuilderFactory {
          * exists. This option also influences readLock=changed to control
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * of files. The sftp and mina-sftp components check whether a file
+         * exists, also for readLock=changed, with a single request whatever the
+         * number of files, so this option makes no difference for them.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3746,7 +3752,9 @@ public interface FtpEndpointBuilderFactory {
          * exists. This option also influences readLock=changed to control
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * of files. The sftp and mina-sftp components check whether a file
+         * exists, also for readLock=changed, with a single request whatever the
+         * number of files, so this option makes no difference for them.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4967,7 +4975,9 @@ public interface FtpEndpointBuilderFactory {
          * exists. This option also influences readLock=changed to control
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * of files. The sftp and mina-sftp components check whether a file
+         * exists, also for readLock=changed, with a single request whatever the
+         * number of files, so this option makes no difference for them.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4989,7 +4999,9 @@ public interface FtpEndpointBuilderFactory {
          * exists. This option also influences readLock=changed to control
          * whether it performs a fast check to update file information or not.
          * This can be used to speed up the process if the FTP server has a lot
-         * of files.
+         * of files. The sftp and mina-sftp components check whether a file
+         * exists, also for readLock=changed, with a single request whatever the
+         * number of files, so this option makes no difference for them.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

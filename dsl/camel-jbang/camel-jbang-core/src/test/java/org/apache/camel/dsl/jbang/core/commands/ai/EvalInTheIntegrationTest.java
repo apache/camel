@@ -250,6 +250,32 @@ class EvalInTheIntegrationTest {
         }
     }
 
+    /**
+     * A field read on a body passed as JSON text fails in the integration too (r28 connect-stock-api step 2): it is
+     * read on the parsed body, in a local context, with the error of the integration in the note.
+     */
+    @Test
+    void aFieldOfAJsonTextBodyIsReadOnTheParsedData() throws Exception {
+        String error = "No such property: sku for class: java.lang.String (the body is text (a String), not parsed data:"
+                       + " unmarshal it first (unmarshal: json) to read its fields)";
+        try (FakeIntegration failing = new FakeIntegration(
+                PID + 1, root -> Map.of("status", "failed", "exception", Map.of("message", error)))) {
+            ToolContext ctx = new ToolContext();
+            ctx.selectProcess(PID + 1);
+
+            JsonObject result = ExpressionEvaluator.evaluate(ctx, "groovy", "body.find { it.sku == 'ABC' }",
+                    "[{\"sku\": \"ABC\", \"qty\": 10}]");
+            assertThat(result.getString("status")).isEqualTo("ok");
+            assertThat(result.getString("result")).isEqualTo("{sku=ABC, qty=10}");
+            assertThat(result.getString("evaluatedIn"))
+                    .isEqualTo("a local scratch context, with the body parsed from its JSON text");
+            assertThat(result.getString("note")).endsWith("; on the text itself it fails: " + error);
+            // a body that is no JSON: the error of the integration
+            assertThatThrownBy(() -> ExpressionEvaluator.evaluate(ctx, "groovy", "body.find { it.sku == 'ABC' }", "ABC"))
+                    .isInstanceOf(ToolExecutionException.class).hasMessage(error);
+        }
+    }
+
     private static JsonObject keyValue(String key, Object value) {
         JsonObject jo = new JsonObject();
         jo.put("key", key);
