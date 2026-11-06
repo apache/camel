@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
@@ -42,6 +42,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
 
     private static final Logger LOG = LoggerFactory.getLogger(RemoteFileEndpoint.class);
     private static final String VALID_READ_LOCKS = "none,rename,changed";
+    // false and off mean none: the process strategy factories give no read lock for them
+    private static final Set<String> ACCEPTED_READ_LOCKS = Set.of("none", "rename", "changed", "false", "off");
 
     @UriParam(label = "advanced", description = "Specifies the maximum reconnect attempts Camel performs when it "
                                                 + "tries to connect to the remote FTP server. Use 0 to disable this behavior.")
@@ -206,12 +208,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> imple
      */
     private void readLockCheck() {
         String readLock = getReadLock();
-        // false and off mean none: the process strategy factories give no read lock for them
-        if ("false".equals(readLock) || "off".equals(readLock)) {
-            return;
-        }
-        boolean matched = Arrays.stream(VALID_READ_LOCKS.split(",")).anyMatch(readLock::equals);
-        if (!matched) {
+        if (!ACCEPTED_READ_LOCKS.contains(readLock)) {
             throw new IllegalArgumentException("ReadLock invalid: " + readLock + ", must be one of: " + VALID_READ_LOCKS);
         }
     }
