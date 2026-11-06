@@ -41,7 +41,8 @@ public class GitTagConsumer extends AbstractGitConsumer {
         List<Ref> call = getGit().tagList().call();
         for (Ref ref : call) {
             if (!tagsConsumed.contains(ref.getName())) {
-                Exchange e = createExchange(true);
+                // released by processBatch once the outcome of the route has been read
+                Exchange e = createExchange(false);
                 e.getMessage().setBody(ref.getName());
                 e.getMessage().setHeader(GitConstants.GIT_BRANCH_NAME, ref.getName());
                 e.getMessage().setHeader(GitConstants.GIT_BRANCH_LEAF, ref.getLeaf().getName());
