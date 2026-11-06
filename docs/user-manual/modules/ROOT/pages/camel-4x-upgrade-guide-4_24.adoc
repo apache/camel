@@ -874,6 +874,26 @@ closed that client for every other endpoint.
 Camel now closes only the clients it created. A client set with `amazonKinesisClient` or `amazonKinesisAsyncClient`, on
 the component or on an endpoint, is no longer closed when Camel stops: close it yourself when you no longer need it.
 
+=== camel-aws2-kinesis - the batch producer sends the failed records again and splits at 10 MiB
+
+When the body is an `Iterable`, the producer now splits the batch into `PutRecords` requests of at most 500 records
+and 10 MiB (the data and partition keys of the records). Before, only the number of records was limited, and a request
+above 10 MiB was rejected by Kinesis. A record above 10 MiB now fails the exchange with an `IllegalArgumentException`
+before any request is sent.
+
+When some records of a request are not written, the producer now sends only those records again, up to 3 times with a
+delay of 100 to 400 milliseconds (plus a random part of up to a quarter of it), and then sends the next requests of the
+batch. Before, the exchange failed at once and
+the next requests were not sent. If records are still not written, the exchange fails after the last request, with a
+`RuntimeCamelException` (a `RuntimeException`, as before) whose message gives the number of records written and not
+written. The `CamelAwsKinesisRecordCount` and `CamelAwsKinesisFailedRecordCount` headers are now also set when the
+exchange fails, including when a `PutRecords` call throws: the exchange then fails with the exception of the call, as
+before, and the records of that call and of the requests that were not sent are counted as not written.
+Because of the retries, a batch whose records all fail now blocks the caller longer before it fails (700 to 875
+milliseconds per request, 14 to 17.5 seconds for 10,000 records), and a record that is sent again is written after the
+next records of its request. A redelivery of the exchange still sends the whole batch again: see the Batch Producer
+section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
+
 === camel-stitch - a response with an empty body, and the default sequence of a message
 
 A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`
