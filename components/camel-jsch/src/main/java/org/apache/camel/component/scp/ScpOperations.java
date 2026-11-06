@@ -107,11 +107,6 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         checkFileName(name);
         ScpConfiguration cfg = endpoint.getConfiguration();
 
-        int timeout = cfg.getConnectTimeout();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Opening channel to {} with {} timeout...", cfg.remoteServerInformation(),
-                    timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
-        }
         String file = getRemoteFile(name, cfg);
 
         InputStream is = null;
@@ -126,34 +121,15 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         }
 
         try {
-            channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand(getScpCommand(cfg, file));
-
-            try {
-                if (is == null) {
-                    is = exchange.getIn().getMandatoryBody(InputStream.class);
-                }
-                connectAndWrite(channel, file, is, cfg, timeout);
-            } catch (InvalidPayloadException e) {
-                throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
-            } catch (IOException e) {
-                throw new GenericFileOperationFailedException("Failed to write file " + file, e);
-            } finally {
-                // must close stream after usage
-                IOHelper.close(is);
+            if (is == null) {
+                is = exchange.getIn().getMandatoryBody(InputStream.class);
             }
-        } catch (JSchException e) {
-            throw new GenericFileOperationFailedException("Failed to write file " + file, e);
+            executeScpTransfer(file, is, cfg);
+        } catch (InvalidPayloadException e) {
+            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
-            if (channel != null) {
-                LOG.trace("Disconnecting 'exec' scp channel");
-                channel.disconnect();
-                channel = null;
-
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Channel disconnected from {}", cfg.remoteServerInformation());
-                }
-            }
+            // must close stream after usage
+            IOHelper.close(is);
         }
         return true;
     }
@@ -164,27 +140,46 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         ObjectHelper.notNull(session, "session");
         ScpConfiguration cfg = endpoint.getConfiguration();
 
-        int timeout = cfg.getConnectTimeout();
         String file = getRemoteFile(name, cfg);
 
-        ByteArrayInputStream bis = null;
+        ByteArrayInputStream bis = new ByteArrayInputStream(payload.getBytes(StandardCharsets.UTF_8));
         try {
-            bis = new ByteArrayInputStream(payload.getBytes(StandardCharsets.UTF_8));
+            executeScpTransfer(file, bis, cfg);
+        } finally {
+            IOHelper.close(bis);
+        }
+        return true;
+    }
+
+    /**
+     * Opens an exec channel, sets the scp command, writes the stream, and disconnects. Both {@link #storeFile} and
+     * {@link #storeFileDirectly} delegate here so the two paths stay in sync.
+     */
+    private void executeScpTransfer(String file, InputStream data, ScpConfiguration cfg)
+            throws GenericFileOperationFailedException {
+        int timeout = cfg.getConnectTimeout();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Opening channel to {} with {} timeout...", cfg.remoteServerInformation(),
+                    timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
+        }
+        try {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(getScpCommand(cfg, file));
             try {
-                connectAndWrite(channel, file, bis, cfg, timeout);
+                connectAndWrite(channel, file, data, cfg, timeout);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException("Failed to write file " + file, e);
             }
-            return true;
         } catch (JSchException e) {
             throw new GenericFileOperationFailedException("Failed to write file " + file, e);
         } finally {
-            IOHelper.close(bis);
             if (channel != null) {
+                LOG.trace("Disconnecting 'exec' scp channel");
                 channel.disconnect();
                 channel = null;
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Channel disconnected from {}", cfg.remoteServerInformation());
+                }
             }
         }
     }
