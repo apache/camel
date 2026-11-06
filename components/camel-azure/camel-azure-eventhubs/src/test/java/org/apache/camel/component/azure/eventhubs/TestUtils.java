@@ -58,4 +58,11 @@ public final class TestUtils {
 
         return AzureEventHubsServiceFactory.createSingletonService();
     }
+
+    /**
+     * Whether the integration tests run against Azure rather than a local Floci AZ container
+     */
+    public static boolean isRemote() {
+        return "remote".equals(System.getProperty("azure.instance.type"));
+    }
 }

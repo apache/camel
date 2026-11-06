@@ -23,31 +23,17 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateContainerCmd;
-import com.github.dockerjava.api.exception.NotFoundException;
-import com.github.dockerjava.api.model.Bind;
-import com.github.dockerjava.api.model.Container;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Volume;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.test.infra.azure.common.services.FlociAzContainer;
 import org.apache.camel.test.infra.azure.common.services.FlociAzInfraService;
 import org.apache.camel.test.infra.azure.eventhubs.common.AzureEventHubsProperties;
-import org.apache.camel.test.infra.common.LocalPropertyResolver;
 import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testcontainers.DockerClientFactory;
-import org.testcontainers.utility.ResourceReaper;
 
 /**
  * A local Event Hubs service with Floci AZ, which runs the AMQP broker of an Event Hubs namespace in an Apache ActiveMQ
@@ -56,8 +42,8 @@ import org.testcontainers.utility.ResourceReaper;
  * Blob service of Floci AZ.
  * <p>
  * Floci AZ reaches the broker on the Docker network, the clients on the port Docker publishes it on. Testcontainers
- * does not know the broker container, so {@link #shutdown()} removes it, found by the resource namespace that Floci AZ
- * puts on the containers it creates.
+ * does not know the broker container: stopping the Floci AZ container removes it (see
+ * {@link FlociAzContainer#withDockerSocket()}).
  * <p>
  * Floci AZ answers the {@code $management} requests for the properties of the event hub, but not for the properties of
  * a partition. It spreads the events of a batch sent with no partition id or key over the partitions, one event after
@@ -79,76 +65,43 @@ public class AzureEventHubsLocalContainerInfraService extends FlociAzInfraServic
      */
     public static final List<String> CONSUMER_GROUPS = List.of("$Default", "$default");
 
-    /**
-     * The key of the Artemis image of the broker in {@code container.properties}. Floci AZ copies into it the AMQP
-     * libraries that it patched for one Artemis version, so the tag must be the Artemis version of the Floci AZ image.
-     */
-    public static final String BROKER_CONTAINER = "azure.eventhubs.broker.container";
-
     private static final Logger LOG = LoggerFactory.getLogger(AzureEventHubsLocalContainerInfraService.class);
 
     // the namespace that Floci AZ creates by default
     private static final String NAMESPACE = "emulatorNs1";
-    private static final String RESOURCE_NAMESPACE_LABEL = "floci_namespace";
-    private static final String DOCKER_SOCKET = "/var/run/docker.sock";
+    private static final String ARTEMIS_IMAGE_VARIABLE = "FLOCI_AZ_SERVICES_EVENT_HUB_ARTEMIS_IMAGE";
     private static final Pattern AMQP_HOST_PORT = Pattern.compile("\"amqpHostPort\"\\s*:\\s*(\\d+)");
     // Floci AZ ignores the key: the broker accepts any client
     private static final String SHARED_ACCESS_KEY_NAME = "RootManageSharedAccessKey";
     private static final String SHARED_ACCESS_KEY = "devkey";
 
-    // unique, so that the containers of parallel builds on one Docker host keep apart
-    private final String resourceNamespace = "camel-" + UUID.randomUUID().toString().substring(0, 8);
     private int amqpPort;
     private volatile boolean started;
 
-    public AzureEventHubsLocalContainerInfraService() {
-        FlociAzContainer container = getContainer()
-                .withEnv("FLOCI_AZ_DOCKER_RESOURCE_NAMESPACE", resourceNamespace)
+    @Override
+    protected FlociAzContainer initContainer(String imageName) {
+        FlociAzContainer container = super.initContainer(imageName)
+                .withDockerSocket()
                 .withEnv("FLOCI_AZ_SERVICES_EVENT_HUB_ENTITIES", EVENT_HUB_NAME + ":" + PARTITION_COUNT)
-                .withEnv("FLOCI_AZ_SERVICES_EVENT_HUB_CONSUMER_GROUPS", String.join(",", CONSUMER_GROUPS))
-                .withEnv("FLOCI_AZ_SERVICES_EVENT_HUB_ARTEMIS_IMAGE",
-                        LocalPropertyResolver.getProperty(AzureEventHubsLocalContainerInfraService.class, BROKER_CONTAINER))
-                .withCreateContainerCmdModifier(AzureEventHubsLocalContainerInfraService::bindDockerSocket);
+                .withEnv("FLOCI_AZ_SERVICES_EVENT_HUB_CONSUMER_GROUPS", String.join(",", CONSUMER_GROUPS));
         if (!ContainerEnvironmentUtil.isFixedPort(getClass())) {
             // Docker publishes the broker on free host ports, so that builds running at the same time do not clash;
             // camel infra run keeps the ports 5672 (AMQP) and 5671 (AMQPS) that Floci AZ documents
             container.withEnv("FLOCI_AZ_SERVICES_EVENT_HUB_AMQP_PORT", "0")
                     .withEnv("FLOCI_AZ_SERVICES_EVENT_HUB_AMQP_TLS_PORT", "0");
         }
-    }
-
-    /**
-     * Mounts the Docker socket, resolved as Testcontainers does for its own resource reaper. With SELinux enforcing, a
-     * container can connect to the socket only with its labeling disabled.
-     */
-    private static void bindDockerSocket(CreateContainerCmd cmd) {
-        HostConfig hostConfig = cmd.getHostConfig();
-
-        List<Bind> binds = new ArrayList<>();
-        if (hostConfig.getBinds() != null) {
-            binds.addAll(Arrays.asList(hostConfig.getBinds()));
-        }
-        binds.add(new Bind(DockerClientFactory.instance().getRemoteDockerUnixSocketPath(), new Volume(DOCKER_SOCKET)));
-        hostConfig.withBinds(binds);
-
-        List<String> securityOpts = new ArrayList<>();
-        if (hostConfig.getSecurityOpts() != null) {
-            securityOpts.addAll(hostConfig.getSecurityOpts());
-        }
-        securityOpts.add("label=disable");
-        hostConfig.withSecurityOpts(securityOpts);
+        return container;
     }
 
     @Override
     public void initialize() {
-        // the resource reaper of Testcontainers removes the broker too, if this JVM ends without a shutdown
-        ResourceReaper.instance().registerLabelsFilterForCleanup(Map.of(RESOURCE_NAMESPACE_LABEL, resourceNamespace));
         started = true;
-
-        getContainer().start();
         try {
+            getContainer().withBrokerImage(ARTEMIS_IMAGE_VARIABLE);
+            getContainer().start();
             amqpPort = startNamespace();
         } catch (RuntimeException e) {
+            // also removes the broker, should Floci AZ have started it
             shutdown();
             throw e;
         }
@@ -169,14 +122,13 @@ public class AzureEventHubsLocalContainerInfraService extends FlociAzInfraServic
         URI uri = URI.create(getContainer().serviceAddress() + "/" + FlociAzContainer.DEFAULT_ACCOUNT_NAME
                              + "-eventhub/namespaces/" + NAMESPACE);
         HttpRequest request = HttpRequest.newBuilder(uri)
-                // the first start pulls the image of the broker
-                .timeout(Duration.ofMinutes(5))
+                .timeout(Duration.ofMinutes(2))
                 .PUT(HttpRequest.BodyPublishers.noBody())
                 .build();
 
         HttpResponse<String> response;
-        try {
-            response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
             throw new IllegalStateException("Floci AZ did not start the Event Hubs namespace " + NAMESPACE, e);
         } catch (InterruptedException e) {
@@ -194,8 +146,8 @@ public class AzureEventHubsLocalContainerInfraService extends FlociAzInfraServic
     }
 
     /**
-     * Stops Floci AZ and removes the broker. A singleton service is shut down by a JVM shutdown hook for each test
-     * class that used it, and these hooks run at the same time.
+     * Stops Floci AZ, which removes the broker too. A singleton service is shut down by a JVM shutdown hook for each
+     * test class that used it, and these hooks run at the same time.
      */
     @Override
     public synchronized void shutdown() {
@@ -204,27 +156,7 @@ public class AzureEventHubsLocalContainerInfraService extends FlociAzInfraServic
         }
         started = false;
 
-        try {
-            super.shutdown();
-        } finally {
-            removeBrokerContainers();
-        }
-    }
-
-    private void removeBrokerContainers() {
-        DockerClient client = DockerClientFactory.instance().client();
-        List<Container> containers = client.listContainersCmd()
-                .withShowAll(true)
-                .withLabelFilter(Map.of(RESOURCE_NAMESPACE_LABEL, resourceNamespace))
-                .exec();
-        for (Container container : containers) {
-            LOG.debug("Removing the container {} of Floci AZ", Arrays.toString(container.getNames()));
-            try {
-                client.removeContainerCmd(container.getId()).withForce(true).withRemoveVolumes(true).exec();
-            } catch (NotFoundException e) {
-                LOG.debug("The container {} was removed already", container.getId());
-            }
-        }
+        super.shutdown();
     }
 
     @Override

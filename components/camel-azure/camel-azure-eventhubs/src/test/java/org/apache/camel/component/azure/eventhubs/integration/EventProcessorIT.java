@@ -71,8 +71,15 @@ public class EventProcessorIT {
         configuration.setEventPosition(positionMap);
 
         containerAsyncClient = AzureEventHubsClientUtils.createBlobContainerClient(service, containerName);
-        // the checkpoints go to the Blob storage of the service, which a local service has at its own endpoint
-        configuration.setCheckpointStore(new BlobCheckpointStore(containerAsyncClient));
+        if (TestUtils.isRemote()) {
+            // against Azure the event processor builds its checkpoint store from the Blob options, as an application does
+            configuration.setBlobAccountName(service.blobAccountName());
+            configuration.setBlobAccessKey(service.blobAccessKey());
+            configuration.setBlobContainerName(containerName);
+        } else {
+            // a local service has its Blob storage at an endpoint of its own, which the component builds no client for
+            configuration.setCheckpointStore(new BlobCheckpointStore(containerAsyncClient));
+        }
 
         // create test container
         containerAsyncClient.create().block();

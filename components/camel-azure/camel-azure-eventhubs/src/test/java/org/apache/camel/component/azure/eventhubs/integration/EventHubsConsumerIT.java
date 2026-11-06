@@ -59,12 +59,13 @@ class EventHubsConsumerIT extends CamelTestSupport {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    private String containerName;
     private BlobContainerAsyncClient containerAsyncClient;
     private EventHubsConfiguration configuration;
 
     @BeforeAll
     public void prepare() {
-        final String containerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
+        containerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
         configuration = new EventHubsConfiguration();
         configuration.setConnectionString(service.connectionString());
@@ -127,7 +128,7 @@ class EventHubsConsumerIT extends CamelTestSupport {
             public void configure() {
                 from("azure-eventhubs:?"
                      + "connectionString=RAW(" + service.connectionString() + ")"
-                     + "&eventPosition=#eventPosition&checkpointStore=#checkpointStore")
+                     + "&eventPosition=#eventPosition" + checkpointOptions())
                         .to(result);
 
             }
@@ -142,9 +143,23 @@ class EventHubsConsumerIT extends CamelTestSupport {
 
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind("eventPosition", positionMap);
-        // the checkpoints go to the Blob storage of the service, which a local service has at its own endpoint
-        context.getRegistry().bind("checkpointStore", new BlobCheckpointStore(containerAsyncClient));
+        if (!TestUtils.isRemote()) {
+            context.getRegistry().bind("checkpointStore", new BlobCheckpointStore(containerAsyncClient));
+        }
 
         return context;
+    }
+
+    /*
+     * Against Azure the consumer builds its checkpoint store from the Blob options, as an application does. A local
+     * service has its Blob storage at an endpoint of its own, which the component builds no client for, so the consumer
+     * gets a checkpoint store on that endpoint.
+     */
+    private String checkpointOptions() {
+        if (TestUtils.isRemote()) {
+            return "&blobContainerName=" + containerName + "&blobAccountName=" + service.blobAccountName()
+                   + "&blobAccessKey=RAW(" + service.blobAccessKey() + ")";
+        }
+        return "&checkpointStore=#checkpointStore";
     }
 }
