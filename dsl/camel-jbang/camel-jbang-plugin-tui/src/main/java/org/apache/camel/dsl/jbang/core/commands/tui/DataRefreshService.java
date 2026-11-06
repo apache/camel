@@ -323,6 +323,7 @@ class DataRefreshService {
                 IntegrationInfo info = StatusParser.parseIntegration(ph, root);
                 if (info != null && ctx != null) {
                     ctx.chaosMarks.record(info);
+                    ctx.timeline.record(info, System.currentTimeMillis());
                 }
                 if (info != null) {
                     IntegrationInfo prev = previousByPid.get(info.pid);
@@ -343,7 +344,9 @@ class DataRefreshService {
             }
         }
         if (ctx != null) {
-            ctx.chaosMarks.retain(pids.stream().map(String::valueOf).collect(Collectors.toSet()));
+            Set<String> live = pids.stream().map(String::valueOf).collect(Collectors.toSet());
+            ctx.chaosMarks.retain(live);
+            ctx.timeline.retain(live);
         }
         if (!fullScan && ctx.selectedPid != null && !overviewTab) {
             boolean checkLiveness = now - lastLivenessCheckTime >= LIVENESS_CHECK_INTERVAL_MS;
@@ -758,6 +761,7 @@ class DataRefreshService {
                 if (root != null) {
                     List<ErrorInfo> parsed = StatusParser.parseErrors(root);
                     sel.errors = List.copyOf(parsed);
+                    ctx.timeline.recordErrors(sel.pid, sel.errors, System.currentTimeMillis());
                 }
             } catch (Exception e) {
                 // ignore

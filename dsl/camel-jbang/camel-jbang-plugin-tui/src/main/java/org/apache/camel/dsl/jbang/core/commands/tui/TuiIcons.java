@@ -168,6 +168,7 @@ final class TuiIcons {
     static final String TAB_PROCESS = CLIPBOARD;
     static final String TAB_STARTUP = QUARKUS;
     static final String TAB_THREADS = "🧵";
+    static final String TAB_TIMELINE = "🕒";
     static final String TAB_PRODUCERS = "📤";
     static final String TAB_EVENTS = "📣";
     static final String TAB_RECOVERY_TASKS = "🔁";

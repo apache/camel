@@ -74,6 +74,7 @@ class TabRegistry {
     private HistoryTab historyTab;
     private CircuitBreakerTab circuitBreakerTab;
     private ChaosTab chaosTab;
+    private TimelineTab timelineTab;
     private ErrorsTab errorsTab;
     private ActivityTab activityTab;
     private MetricsTab metricsTab;
@@ -143,6 +144,7 @@ class TabRegistry {
         historyTab = new HistoryTab(ctx, dataService.traces(), dataService.traceFilePositions());
         circuitBreakerTab = new CircuitBreakerTab(ctx, dataService.metrics());
         chaosTab = new ChaosTab(ctx);
+        timelineTab = new TimelineTab(ctx);
         errorsTab = new ErrorsTab(ctx);
         activityTab = new ActivityTab(ctx);
         metricsTab = new MetricsTab(ctx);
@@ -189,6 +191,7 @@ class TabRegistry {
                         "Routing",
                         List.of(), info -> "SupervisingRouteController".equals(info.routeControllerType)),
                 // Observability
+                new MoreTab(TuiIcons.TAB_TIMELINE, "Timeline", "Time&line", timelineTab, "Observability"),
                 new MoreTab(
                         TuiIcons.TAB_CHAOS, "Chaos", "C&haos", chaosTab, "Observability",
                         List.of("chaos")),

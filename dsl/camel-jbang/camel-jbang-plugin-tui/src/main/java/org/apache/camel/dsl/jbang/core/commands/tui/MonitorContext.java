@@ -96,6 +96,8 @@ class MonitorContext {
     Consumer<ChaosHere.Target> chaosHere;
     // the exchanges chaos rules faulted, for the marks on the Activity, Errors and Inspect tabs
     final ChaosMarks chaosMarks = new ChaosMarks();
+    // what happened second by second, for the Timeline screen (CAMEL-26691)
+    final Timeline timeline = new Timeline();
     BiConsumer<String, String> openMarkdownCallback;
     /** Opens markdown in the doc viewer scrolled to a heading: title, markdown, heading (may be null). */
     MarkdownOpener openMarkdownAtCallback;
