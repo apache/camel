@@ -1190,6 +1190,17 @@ exchange, where it sent nothing before. An `onError` event with a body that is n
 an `INTERNAL` status error and fails the exchange with an `IllegalArgumentException`, where it failed with a
 `ClassCastException` or a `NullPointerException` and the client waited until its deadline.
 
+=== camel-grpc - routeControlledStreamObserver applies to streaming requests with the PROPAGATION strategy
+
+With `routeControlledStreamObserver=true` and the default `PROPAGATION` consumer strategy, the route now sends the
+replies of client streaming and bidirectional streaming calls, as it already did for unary and server streaming calls.
+The consumer passes the `grpcResponseObserver` exchange property to the route, and no longer sends the body at the end
+of the route or ends the call itself. Before, a producer with `toRouteControlledStreamObserver=true` failed with an
+`IllegalArgumentException`, and the consumer sent the body at the end of the route as the reply. Such a route must now
+send its replies with a producer with `toRouteControlledStreamObserver=true` and end the call, for example on the event
+forwarded with `forwardOnCompleted=true`. The events of a call are still routed one at a time, in order, which is the
+difference with the `DELEGATION` strategy.
+
 === camel-hashicorp-vault - cloud without a namespace, the createSecret body, and the secret version
 
 With `cloud=true` and no `namespace`, the `hashicorp-vault` producer now works on the secrets engine itself, as the
