@@ -128,16 +128,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         try {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(getScpCommand(cfg, file));
-            channel.connect(timeout);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
-            }
 
             try {
                 if (is == null) {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
                 }
-                write(channel, file, is, cfg);
+                connectAndWrite(channel, file, is, cfg, timeout);
             } catch (InvalidPayloadException e) {
                 throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
             } catch (IOException e) {
@@ -469,17 +465,6 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
             }
             readAck(is);
-            writeFile(name, data, os, is, cfg);
-        } finally {
-            IOHelper.close(is, os);
-        }
-    }
-
-    private void write(ChannelExec c, String name, InputStream data, ScpConfiguration cfg) throws IOException {
-        OutputStream os = c.getOutputStream();
-        InputStream is = c.getInputStream();
-
-        try {
             writeFile(name, data, os, is, cfg);
         } finally {
             IOHelper.close(is, os);
