@@ -47,6 +47,8 @@ final class ChaosRule {
     /** A place where a rule can fire. */
     enum Hook {
         SEND("send"),
+        // the send of the dead letter channel, which a rule reaches only with at=dlq
+        DLQ("dlq"),
         POLL("poll"),
         ENTRY("entry"),
         STEP("step");
@@ -154,16 +156,25 @@ final class ChaosRule {
     final Action action;
     // the rule says stall, not lifecycle action=suspend
     final boolean stall;
-    final long addedAt;
+    // when the rule was added, and its clock started: a rule added before the context started (camel.chaos.rules)
+    // starts its clock when the context has started (see startClock)
+    volatile long addedAt;
+    // how long the rule runs: its until duration, else camel.chaos.maxDuration
+    private final long runFor;
 
     // the state while it runs
-    final long endsAt;
+    volatile long endsAt;
     final Expectation expectation;
     private final AtomicLong matches = new AtomicLong();
     private final LongAdder[] fired = new LongAdder[Hook.values().length];
     private final LongAdder skipped = new LongAdder();
+    // the messages lost because the rule failed or dropped the send of the dead letter channel, which then handled them
+    private final LongAdder lostAtDlq = new LongAdder();
     private final AtomicLong random;
     private volatile State removedAs;
+    // the clock of the rule started: false for a rule added before the context started, until it has (guarded by the
+    // lock of the manager)
+    boolean clockStarted;
     // what a lifecycle rule did to its route, else null
     final ChaosLifecycle.Fault lifecycle;
 
@@ -199,7 +210,8 @@ final class ChaosRule {
         this.stall = b.stall;
         this.addedAt = addedAt;
         // a rule without an until duration ends after camel.chaos.maxDuration (also one that ends after a count)
-        this.endsAt = plus(addedAt, untilDuration > 0 ? untilDuration : maxDuration);
+        this.runFor = untilDuration > 0 ? untilDuration : maxDuration;
+        this.endsAt = plus(addedAt, runFor);
         this.within = b.within > 0 ? b.within : (untilDuration > 0 ? untilDuration : maxDuration);
         this.expectation = expectRoute != null ? new Expectation(expectRoute, expectCount, plus(addedAt, within)) : null;
         for (int i = 0; i < fired.length; i++) {
@@ -245,6 +257,27 @@ final class ChaosRule {
     /** Counts that the rule fired at the hook. */
     void fired(Hook hook) {
         fired[hook.ordinal()].increment();
+    }
+
+    /**
+     * Starts the clock of the rule again: its end time and the deadline of its expectation count from now. For the
+     * rules added before the context started, so their times do not include the startup.
+     */
+    void startClock(long now) {
+        addedAt = now;
+        endsAt = plus(now, runFor);
+        if (expectation != null) {
+            expectation.startClock(plus(now, within));
+        }
+    }
+
+    /** Counts a message lost because the rule failed or dropped the send of the dead letter channel. */
+    void lostAtDlq() {
+        lostAtDlq.increment();
+    }
+
+    long lostAtDlqCount() {
+        return lostAtDlq.sum();
     }
 
     /** Counts that the rule fired at a message it could not change, so it did nothing. */
@@ -343,7 +376,8 @@ final class ChaosRule {
     /**
      * An expectation of a rule: the route completes at least that many more exchanges after the rule is added, before
      * the time is up. It is met when the count is reached in time, unmet when the time is up without it, and pending
-     * before that, or for good when the rule is removed (or replaced) first.
+     * before that. It is cancelled when the rule is removed (or replaced), or the context stops, first: the messages
+     * may still arrive, so it is neither met nor unmet, and does not keep the report from being final.
      */
     static final class Expectation {
 
@@ -351,7 +385,8 @@ final class ChaosRule {
         enum Outcome {
             MET("met"),
             UNMET("unmet"),
-            PENDING("pending");
+            PENDING("pending"),
+            CANCELLED("cancelled");
 
             final String key;
 
@@ -362,7 +397,7 @@ final class ChaosRule {
 
         final String route;
         final long count;
-        final long deadline;
+        private long deadline;
         private long completed;
         private long metAt = -1;
         private long frozenAt = -1;
@@ -392,6 +427,17 @@ final class ChaosRule {
             }
         }
 
+        synchronized long deadline() {
+            return deadline;
+        }
+
+        /** The clock of the rule starts again (see {@link ChaosRule#startClock(long)}). */
+        synchronized void startClock(long deadline) {
+            if (metAt < 0 && frozenAt < 0) {
+                this.deadline = deadline;
+            }
+        }
+
         synchronized void freeze(long now) {
             if (frozenAt < 0) {
                 frozenAt = now;
@@ -408,7 +454,7 @@ final class ChaosRule {
             }
             if (frozenAt >= 0 && frozenAt <= deadline) {
                 // removed before it was decided: the messages may still arrive, so they are not called lost
-                return Outcome.PENDING;
+                return Outcome.CANCELLED;
             }
             return now > deadline ? Outcome.UNMET : Outcome.PENDING;
         }

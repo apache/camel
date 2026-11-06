@@ -24,15 +24,20 @@ import picocli.CommandLine;
                      description = "Remove all chaos rules of running integrations (camel-chaos, for development only)",
                      sortOptions = false, showDefaultValues = true,
                      footer = {
-                             "%nThe rules stay in the report as removed. Without a name it acts on every running integration that",
-                             "has chaos switched on.",
+                             "%nThe rules stay in the report as removed; with --reset the report starts again (no rules,",
+                             "counts or verdict). Without a name it acts on every running integration that has chaos switched on.",
                              "%nExamples:",
                              "  camel cmd chaos-clear",
-                             "  camel cmd chaos-clear myApp" })
+                             "  camel cmd chaos-clear myApp",
+                             "  camel cmd chaos-clear myApp --reset" })
 public class CamelChaosClearAction extends CamelChaosAction {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
+
+    @CommandLine.Option(names = { "--reset" },
+                        description = "Also start a new report: the removed rules, the counts per route and the verdict are gone")
+    boolean reset;
 
     public CamelChaosClearAction(CamelJBangMain main) {
         super(main);
@@ -40,11 +45,12 @@ public class CamelChaosClearAction extends CamelChaosAction {
 
     @Override
     public Integer doCall() throws Exception {
-        return chaosOnEach(findChaosProcesses(name), "clear", null);
+        return chaosOnEach(findChaosProcesses(name), "clear", reset ? root -> root.put("reset", true) : null);
     }
 
     @Override
     protected String describe(JsonObject answer) {
-        return "Removed chaos rules: " + answer.get("removed");
+        String removed = "Removed chaos rules: " + answer.get("removed");
+        return answer.getBooleanOrDefault("reset", false) ? removed + " (report reset)" : removed;
     }
 }

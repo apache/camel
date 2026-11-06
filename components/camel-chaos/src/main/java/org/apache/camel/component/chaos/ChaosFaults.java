@@ -78,30 +78,31 @@ final class ChaosFaults {
     }
 
     /**
-     * Raises the fault of a rule that fired at a send.
+     * Raises the fault of a rule that fired at a send: at the {@code send} hook, or the {@code dlq} hook for the send
+     * of the dead letter channel.
      *
      * @return the value for {@link SendHook#beforeSend(Exchange, Endpoint)}
      */
-    static long atSend(ChaosRule rule, Exchange exchange, Endpoint endpoint) {
+    static long atSend(ChaosRule rule, Exchange exchange, Endpoint endpoint, Hook hook) {
         switch (rule.fault) {
             case ERROR -> {
                 if (rule.status > 0) {
-                    return httpFailure(rule, exchange, endpoint);
+                    return httpFailure(rule, exchange, endpoint, hook);
                 }
                 exchange.setException(newException(rule));
-                rule.fired(Hook.SEND);
+                rule.fired(hook);
                 return SendHook.PROCEED;
             }
             case DELAY -> {
-                rule.fired(Hook.SEND);
+                rule.fired(hook);
                 return rule.duration;
             }
             case DROP -> {
-                rule.fired(Hook.SEND);
+                rule.fired(hook);
                 return SendHook.SKIP;
             }
             case CORRUPT -> {
-                corrupt(rule, exchange, Hook.SEND);
+                corrupt(rule, exchange, hook);
                 return SendHook.PROCEED;
             }
             default -> throw new IllegalStateException("Unknown fault " + rule.fault);
@@ -112,7 +113,7 @@ final class ChaosFaults {
      * The failure of an HTTP component for the status of the rule, or the response with that status when the endpoint
      * has {@code throwExceptionOnFailure=false}, as the producer of the component does. The producer is not called.
      */
-    private static long httpFailure(ChaosRule rule, Exchange exchange, Endpoint endpoint) {
+    private static long httpFailure(ChaosRule rule, Exchange exchange, Endpoint endpoint, Hook hook) {
         String scheme = ChaosPatterns.scheme(ChaosPatterns.endpointUri(endpoint));
         if (!ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
             // the rule matched an endpoint that is not an HTTP one (with a pattern such as endpoint=*inventory*)
@@ -126,7 +127,7 @@ final class ChaosFaults {
         if (Boolean.FALSE.equals(toBoolean(option(endpoint, "throwExceptionOnFailure")))
                 || isOkStatus(rule.status, option(endpoint, "okStatusCodeRange"))) {
             response(message, rule, !undertow);
-            rule.fired(Hook.SEND);
+            rule.fired(hook);
             return SendHook.SKIP;
         }
         Throwable failure;
@@ -152,7 +153,7 @@ final class ChaosFaults {
             response(message, rule, true);
         }
         exchange.setException(failure);
-        rule.fired(Hook.SEND);
+        rule.fired(hook);
         return SendHook.PROCEED;
     }
 

@@ -278,10 +278,7 @@ public class ListChaos extends ProcessWatchCommand {
         StringBuilder sb = new StringBuilder();
         sb.append(e.getString("route")).append(':').append(e.get("count")).append(' ').append(e.getString("outcome"))
                 .append(" (").append(e.get("completed")).append(" completed");
-        if (e.getBooleanOrDefault("notDecided", false)) {
-            // the rule was removed or changed, or the context stopped, first: it stays pending for good
-            sb.append(", not decided");
-        } else if (e.get("timeLeft") instanceof Number n) {
+        if (e.get("timeLeft") instanceof Number n) {
             sb.append(", ").append(TimeUtils.printDuration(n.longValue())).append(" left");
         }
         return sb.append(')').toString();

@@ -771,13 +771,23 @@ public final class ToolRegistry {
                 }));
 
         register(tool("chaos_clear",
-                "Remove all chaos rules of the integration: no more faults, and the report keeps what they did. "
-                                     + "Returns how many were removed.")
+                "Remove all chaos rules of the integration: no more faults, and the report keeps what they did "
+                                     + "(with reset=true the report starts again, for a new experiment). Returns how "
+                                     + "many were removed.")
                 .param("name", "string", CHAOS_NAME, false)
+                .param("reset", "boolean",
+                        "Also start a new report: the removed rules, the counts per route and the verdict are gone",
+                        false)
                 .readOnly(false).destructive(false)
                 .executor((ctx, args) -> {
                     selectNamedProcess(ctx, args);
-                    return chaos(ctx, "clear", null, null);
+                    boolean reset = "true".equalsIgnoreCase(args.get("reset"));
+                    return ctx.executeAction("chaos", root -> {
+                        root.put("command", "clear");
+                        if (reset) {
+                            root.put("reset", true);
+                        }
+                    });
                 }));
     }
 

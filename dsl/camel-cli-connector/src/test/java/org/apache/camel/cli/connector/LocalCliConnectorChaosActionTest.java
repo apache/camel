@@ -88,9 +88,16 @@ class LocalCliConnectorChaosActionTest {
 
     /** Dispatches the action as both transports do, and returns its outcome. */
     private CliActionOutcome chaos(String command, String id, String rule) throws Exception {
+        return chaos(command, id, rule, false);
+    }
+
+    private CliActionOutcome chaos(String command, String id, String rule, boolean reset) throws Exception {
         JsonObject action = new JsonObject();
         action.put("action", "chaos");
         action.put("command", command);
+        if (reset) {
+            action.put("reset", true);
+        }
         if (id != null) {
             action.put("id", id);
         }
@@ -134,7 +141,15 @@ class LocalCliConnectorChaosActionTest {
         assertThat(cleared.result().getInteger("removed")).isEqualTo(1);
         assertThat(reportRules().stream().map(JsonObject.class::cast)
                 .map(r -> r.getString("id") + " v" + r.getInteger("version") + " " + r.getString("state")))
-                .containsExactly("r1 v1 replaced", "r2 v1 removed", "r1 v2 removed");
+                .containsExactly("r1 v2 removed", "r1 v1 replaced", "r2 v1 removed");
+
+        // a reset also starts a new report
+        assertThat(chaos("add", null, "step=* delay duration=1ms").result().getString("id")).isEqualTo("r3");
+        CliActionOutcome reset = chaos("clear", null, null, true);
+        assertThat(reset.error()).isNull();
+        assertThat(reset.result().getInteger("removed")).isEqualTo(1);
+        assertThat(reset.result().getBoolean("reset")).isTrue();
+        assertThat(reportRules()).isEmpty();
     }
 
     @Test
