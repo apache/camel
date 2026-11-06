@@ -127,6 +127,21 @@ class ChaosModelTest {
     }
 
     @Test
+    void everyRecipeSaysWhatItUncoversWhenNotToUseItAndWhatToWatch() {
+        // CAMEL-26699: the add form guides a person (or an AI) with these
+        Map<String, ChaosModel.Guide> guides = ChaosModel.guides();
+        for (Recipe recipe : ChaosModel.recipeList()) {
+            ChaosModel.Guide guide = guides.get(recipe.id());
+            assertThat(guide).as(recipe.id()).isNotNull();
+            assertThat(guide.uncovers()).as(recipe.id()).isNotEmpty();
+            assertThat(guide.avoid()).as(recipe.id()).isNotEmpty();
+            assertThat(guide.watch()).as(recipe.id()).isNotEmpty();
+        }
+        assertThat(guides.keySet()).containsExactlyInAnyOrderElementsOf(
+                ChaosModel.recipeList().stream().map(Recipe::id).toList());
+    }
+
+    @Test
     void theModeOfACorruptRecipeOffersEveryMode() {
         Recipe recipe = ChaosModel.recipeList().stream().filter(r -> r.id().equals("corrupt-entry")).findFirst()
                 .orElseThrow();

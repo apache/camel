@@ -41,7 +41,12 @@ final class ChaosRecipes {
     }
 
     /** A known rule. */
-    record Recipe(String id, String group, String title, String description, String rule, List<Placeholder> placeholders) {
+    /**
+     * A known rule. Besides what it does, the model says what it can uncover, when not to use it and what to watch
+     * while it runs (CAMEL-26699): empty with a catalog from before that.
+     */
+    record Recipe(String id, String group, String title, String description, String rule, List<Placeholder> placeholders,
+            List<String> uncovers, List<String> avoid, List<String> watch) {
 
         /** The rule with the values of the placeholders; a placeholder without a value stays {@code ${name}}. */
         String fill(Map<String, String> values) {
@@ -112,7 +117,8 @@ final class ChaosRecipes {
             }
             answer.add(new Recipe(
                     r.getString("id"), r.getStringOrDefault("group", ""), r.getString("title"),
-                    r.getString("description"), r.getString("rule"), placeholders));
+                    r.getString("description"), r.getString("rule"), placeholders,
+                    strings(r.get("uncovers")), strings(r.get("avoid")), strings(r.get("watch"))));
         }
         return answer.isEmpty() ? null : new ChaosRecipes(answer);
     }
