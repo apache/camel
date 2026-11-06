@@ -6480,6 +6480,16 @@ Jackson 2 and Jackson 3. An object node is now sent as one record; previously it
 value, without the field names, as the 4.22 upgrade guide said. A Jackson 3 scalar node is now sent as one record,
 where nothing was sent before.
 
+=== camel-kafka - breakOnFirstError while the consumer is paused
+
+With `breakOnFirstError=true`, a failed record now creates a new Kafka consumer also when the consumer is paused in the
+same poll, for example by a `ThrottlingExceptionRoutePolicy` that suspends the route on the failed exchange. The new
+consumer stays paused until the route is resumed, and then polls each partition from its committed offset, or from
+`autoOffsetReset` when it has none, as on a break without a pause. Before, a partition without a committed offset
+resumed after the failed record. The new consumer leaves and rejoins the consumer group, so each such break is now a
+rebalance of the group, also when the partition has a committed offset. There is no option to keep the previous
+behaviour.
+
 === camel-dns - dig without a type, and the wikipedia type
 
 `dns:dig` without the `CamelDnsType` header now asks for type A, and without the `CamelDnsName` header fails with an
