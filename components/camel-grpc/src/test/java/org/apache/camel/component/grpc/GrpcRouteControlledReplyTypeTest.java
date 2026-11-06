@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.grpc.ManagedChannel;
@@ -66,6 +67,11 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
     private final Map<String, ManagedChannel> channels = new ConcurrentHashMap<>();
     // the exception of each exchange done by a consumer route (null when it completed), by route id
     private final Map<String, List<Exception>> doneExchanges = new ConcurrentHashMap<>();
+    // rc-delegation-unchanged: the onCompleted event reached the route, and the onNext exchange failed. They order the
+    // events, as the call must not be closed by the reply type error before the server handles the half-close of the
+    // client, otherwise there is no onCompleted event to forward
+    private final CountDownLatch delegationOnCompletedReceived = new CountDownLatch(1);
+    private final CountDownLatch delegationOnNextFailed = new CountDownLatch(1);
 
     @AfterEach
     public void stopGrpcChannels() {
@@ -284,6 +290,10 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
                             doneExchanges.computeIfAbsent(exchange.getFromRouteId(),
                                     id -> Collections.synchronizedList(new ArrayList<>()))
                                     .add(exchange.getException());
+                            if (event instanceof CamelEvent.ExchangeFailedEvent
+                                    && "rc-delegation-unchanged".equals(exchange.getFromRouteId())) {
+                                delegationOnNextFailed.countDown();
+                            }
                         }
                     }
 
@@ -354,6 +364,20 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
                 // client and bidirectional streaming calls: the consumer forwards each event with its type header
                 from(CONSUMER + "&hash=5&consumerStrategy=DELEGATION&forwardOnCompleted=true&muteException=false")
                         .routeId("rc-delegation-unchanged")
+                        .choice()
+                        .when(header(GrpcConstants.GRPC_EVENT_TYPE_HEADER)
+                                .isEqualTo(GrpcConstants.GRPC_EVENT_TYPE_ON_COMPLETED))
+                        // the onCompleted reply is sent once the call is closed by the failure of the onNext reply
+                        .process(e -> {
+                            delegationOnCompletedReceived.countDown();
+                            awaitLatch(delegationOnNextFailed);
+                        })
+                        .otherwise()
+                        // another thread than the one of the call, which has to deliver the onCompleted event
+                        .threads(1)
+                        .process(e -> awaitLatch(delegationOnCompletedReceived))
+                        .end() // threads
+                        .end() // choice
                         .to(REPLY);
 
                 from(CONSUMER + "&hash=6&consumerStrategy=DELEGATION&forwardOnCompleted=true")
@@ -367,6 +391,10 @@ public class GrpcRouteControlledReplyTypeTest extends GrpcTestSupport {
                         .to(REPLY);
             }
         };
+    }
+
+    private static void awaitLatch(CountDownLatch latch) throws InterruptedException {
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "the latch was not released within 5 seconds");
     }
 
     private static Pong toPong(PingRequest request, String suffix) {

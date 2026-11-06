@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.PushImageCmd;
+import com.github.dockerjava.api.model.AuthConfig;
 import com.github.dockerjava.api.model.Frame;
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
@@ -68,6 +69,43 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
         Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd(name);
         Mockito.verify(mockObject, Mockito.times(1)).withTag(tag);
 
+    }
+
+    @Test
+    void pushImageOfEndpointRegistrySendsEndpointCredentials() {
+        AuthConfig authConfig = endpointAuthConfig();
+        Mockito.when(dockerClient.authConfig()).thenReturn(authConfig);
+
+        template.sendBodyAndHeaders("direct:in", "", credentialHeaders("jdoe/imagename"));
+
+        Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd("jdoe/imagename");
+        Mockito.verify(mockObject, Mockito.times(1)).withAuthConfig(authConfig);
+    }
+
+    @Test
+    void pushImageOfOtherRegistrySendsNoCredentials() {
+        Mockito.when(dockerClient.authConfig()).thenReturn(endpointAuthConfig());
+
+        template.sendBodyAndHeaders("direct:in", "", credentialHeaders("registry.example.com:5000/jdoe/imagename"));
+
+        Mockito.verify(dockerClient, Mockito.times(1)).pushImageCmd("registry.example.com:5000/jdoe/imagename");
+        Mockito.verify(mockObject, Mockito.never()).withAuthConfig(any());
+        Mockito.verify(mockObject, Mockito.times(1)).exec(any());
+    }
+
+    private Map<String, Object> credentialHeaders(String imageName) {
+        Map<String, Object> headers = getDefaultParameters();
+        headers.put(DockerConstants.DOCKER_USERNAME, userName);
+        headers.put(DockerConstants.DOCKER_PASSWORD, password);
+        headers.put(DockerConstants.DOCKER_EMAIL, email);
+        headers.put(DockerConstants.DOCKER_SERVER_ADDRESS, serverAddress);
+        headers.put(DockerConstants.DOCKER_NAME, imageName);
+        return headers;
+    }
+
+    private AuthConfig endpointAuthConfig() {
+        return new AuthConfig().withUsername(userName).withPassword(password).withEmail(email)
+                .withRegistryAddress(serverAddress);
     }
 
     @Override

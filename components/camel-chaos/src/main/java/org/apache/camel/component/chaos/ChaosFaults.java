@@ -78,30 +78,31 @@ final class ChaosFaults {
     }
 
     /**
-     * Raises the fault of a rule that fired at a send.
+     * Raises the fault of a rule that fired at a send: at the {@code send} hook, or the {@code dlq} hook for the send
+     * of the dead letter channel.
      *
      * @return the value for {@link SendHook#beforeSend(Exchange, Endpoint)}
      */
-    static long atSend(ChaosRule rule, Exchange exchange, Endpoint endpoint) {
+    static long atSend(ChaosRule rule, Exchange exchange, Endpoint endpoint, Hook hook) {
         switch (rule.fault) {
             case ERROR -> {
                 if (rule.status > 0) {
-                    return httpFailure(rule, exchange, endpoint);
+                    return httpFailure(rule, exchange, endpoint, hook);
                 }
                 exchange.setException(newException(rule));
-                rule.fired(Hook.SEND);
+                rule.fired(hook, exchange, null, endpoint.getEndpointUri());
                 return SendHook.PROCEED;
             }
             case DELAY -> {
-                rule.fired(Hook.SEND);
+                rule.fired(hook, exchange, null, endpoint.getEndpointUri());
                 return rule.duration;
             }
             case DROP -> {
-                rule.fired(Hook.SEND);
+                rule.fired(hook, exchange, null, endpoint.getEndpointUri());
                 return SendHook.SKIP;
             }
             case CORRUPT -> {
-                corrupt(rule, exchange, Hook.SEND);
+                corrupt(rule, exchange, hook, null, endpoint.getEndpointUri());
                 return SendHook.PROCEED;
             }
             default -> throw new IllegalStateException("Unknown fault " + rule.fault);
@@ -112,11 +113,11 @@ final class ChaosFaults {
      * The failure of an HTTP component for the status of the rule, or the response with that status when the endpoint
      * has {@code throwExceptionOnFailure=false}, as the producer of the component does. The producer is not called.
      */
-    private static long httpFailure(ChaosRule rule, Exchange exchange, Endpoint endpoint) {
+    private static long httpFailure(ChaosRule rule, Exchange exchange, Endpoint endpoint, Hook hook) {
         String scheme = ChaosPatterns.scheme(ChaosPatterns.endpointUri(endpoint));
         if (!ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
             // the rule matched an endpoint that is not an HTTP one (with a pattern such as endpoint=*inventory*)
-            rule.skipped();
+            rule.skipped("not an HTTP endpoint (status= is for the HTTP components)");
             return SendHook.PROCEED;
         }
         Message message = exchange.getMessage();
@@ -126,7 +127,7 @@ final class ChaosFaults {
         if (Boolean.FALSE.equals(toBoolean(option(endpoint, "throwExceptionOnFailure")))
                 || isOkStatus(rule.status, option(endpoint, "okStatusCodeRange"))) {
             response(message, rule, !undertow);
-            rule.fired(Hook.SEND);
+            rule.fired(hook, exchange, null, endpoint.getEndpointUri());
             return SendHook.SKIP;
         }
         Throwable failure;
@@ -152,7 +153,7 @@ final class ChaosFaults {
             response(message, rule, true);
         }
         exchange.setException(failure);
-        rule.fired(Hook.SEND);
+        rule.fired(hook, exchange, null, endpoint.getEndpointUri());
         return SendHook.PROCEED;
     }
 
@@ -345,23 +346,27 @@ final class ChaosFaults {
     /**
      * Changes the message of the exchange as the mode of the rule says, and counts the rule as fired at the hook, or as
      * skipped when the message has nothing the mode can change.
+     *
+     * @param routeId the route at its entry, else null for the route of the exchange
+     * @param where   the endpoint URI of a send, else null
      */
-    static void corrupt(ChaosRule rule, Exchange exchange, Hook hook) {
-        boolean changed;
+    static void corrupt(ChaosRule rule, Exchange exchange, Hook hook, String routeId, String where) {
+        // why the message was left as it is, or null when it was changed
+        String skip;
         try {
-            changed = switch (rule.mode) {
+            skip = switch (rule.mode) {
                 case HEADERS -> corruptHeaders(rule, exchange.getMessage());
                 case CHARSET -> corruptCharset(exchange);
                 case TRUNCATE -> truncate(exchange.getMessage());
             };
         } catch (RuntimeException e) {
             // a body that cannot be read as the mode needs (such as a failing type conversion) is left as it is
-            changed = false;
+            skip = "the body could not be read (" + e.getClass().getSimpleName() + ")";
         }
-        if (changed) {
-            rule.fired(hook);
+        if (skip == null) {
+            rule.fired(hook, exchange, routeId, where);
         } else {
-            rule.skipped();
+            rule.skipped(skip);
         }
     }
 
@@ -369,7 +374,7 @@ final class ChaosFaults {
      * Gives every header that is not one of Camel's own ({@code Camel*}) a random value of letters and digits, from the
      * random sequence of the rule.
      */
-    private static boolean corruptHeaders(ChaosRule rule, Message message) {
+    private static String corruptHeaders(ChaosRule rule, Message message) {
         List<String> names = new ArrayList<>();
         for (String name : message.getHeaders().keySet()) {
             if (!name.regionMatches(true, 0, "Camel", 0, 5)) {
@@ -383,7 +388,7 @@ final class ChaosFaults {
             }
             message.setHeader(name, new String(value));
         }
-        return !names.isEmpty();
+        return names.isEmpty() ? "no headers to change (Camel* headers are left as they are)" : null;
     }
 
     /**
@@ -391,15 +396,18 @@ final class ChaosFaults {
      * stream, which reading would consume) with the bytes of that text in UTF-16, while the exchange keeps its charset:
      * read as text again, the body has characters outside US-ASCII.
      */
-    private static boolean corruptCharset(Exchange exchange) {
+    private static String corruptCharset(Exchange exchange) {
         Message message = exchange.getMessage();
         Object body = message.getBody();
-        if (body == null || body instanceof InputStream || body instanceof Reader || body instanceof StreamCache) {
-            return false;
+        if (body == null) {
+            return "no body";
+        }
+        if (body instanceof InputStream || body instanceof Reader || body instanceof StreamCache) {
+            return "a stream body (charset changes a text body; mode=truncate changes a stream)";
         }
         if (body instanceof WrappedFile<?> wrapped && !(wrapped.getFile() instanceof File)) {
             // a remote file (such as FTP), whose content may be a stream
-            return false;
+            return "a remote file body (charset changes a text body)";
         }
         String text;
         if (body instanceof CharSequence cs) {
@@ -409,22 +417,25 @@ final class ChaosFaults {
         } else {
             text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
         }
-        if (text == null || text.isEmpty()) {
-            return false;
+        if (text == null) {
+            return "a body that is not text (charset changes a text body)";
+        }
+        if (text.isEmpty()) {
+            return "an empty body";
         }
         message.setBody(text.getBytes(StandardCharsets.UTF_16));
-        return true;
+        return null;
     }
 
     /**
      * Replaces an {@link InputStream} or stream cache body with one that ends after the first half of its bytes. The
      * stream is read into memory and closed; a stream cache stays a stream cache.
      */
-    private static boolean truncate(Message message) {
+    private static String truncate(Message message) {
         Object body = message.getBody();
         boolean cache = body instanceof StreamCache;
         if (!(body instanceof InputStream) && !cache) {
-            return false;
+            return body == null ? "no body" : "not a stream body (truncate changes a stream or a stream cache)";
         }
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try {
@@ -445,6 +456,6 @@ final class ChaosFaults {
         byte[] half = new byte[all.length / 2];
         System.arraycopy(all, 0, half, 0, half.length);
         message.setBody(cache ? new InputStreamCache(half) : new ByteArrayInputStream(half));
-        return all.length > 0;
+        return all.length > 0 ? null : "an empty body";
     }
 }

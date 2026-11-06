@@ -66,9 +66,54 @@
               "type": "integer",
               "description": "The faults that did nothing, as the rule fired at a message or an endpoint it cannot change"
             },
+            "skippedReasons": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "Why the rule did nothing when it was skipped: the count per reason (only when it was skipped)"
+            },
+            "lostAtDlq": {
+              "type": "integer",
+              "description": "The messages lost because the rule failed or dropped the send of the dead letter channel, which then handled them (only for a rule with at=dlq)"
+            },
             "endsIn": {
               "type": "integer",
               "description": "The milliseconds until an active rule ends"
+            },
+            "rate": {
+              "type": "number",
+              "description": "The share of the matches the rule fires at: rate=, 1\/N for rate=every:N, else 1 (not for a lifecycle or stall rule)"
+            },
+            "observedRate": {
+              "type": "number",
+              "description": "The share of the matches the rule fired at so far, to compare with rate (once it matched; not for a lifecycle or stall rule)"
+            },
+            "nextFireIn": {
+              "type": "integer",
+              "description": "The matches until a rule with rate=every:N fires again (only for such a rule while it is active)"
+            },
+            "lastFiredAgo": {
+              "type": "integer",
+              "description": "The milliseconds since the rule last fired (only when it fired)"
+            },
+            "faultsLastMinute": {
+              "type": "integer",
+              "description": "The faults the rule fired in the last minute"
+            },
+            "faultsPerSecond": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "The faults the rule fired per second over the last minute, 60 counts from the oldest second to the current one (only when it fired in the last minute)"
+            },
+            "effect": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "description": "The effect of the faults on the exchanges they hit (for a lifecycle or stall rule: the exchanges sent to its route while it was down), each counted once when it is done: faulted, completed, recovered (by a redelivery of the error handler), handled (by the error handler, such as the dead letter channel), failed and inFlight (only when the rule faulted an exchange)"
             },
             "expectation": {
               "type": "object",
@@ -84,7 +129,8 @@
           "required": [
             "version",
             "matches",
-            "skipped"
+            "skipped",
+            "faultsLastMinute"
           ]
         },
         "description": "The current rules (not the removed or replaced ones; only when chaos is on)"
@@ -92,7 +138,7 @@
       "report": {
         "type": "object",
         "additionalProperties": true,
-        "description": "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, and the counts per route (only when chaos is on)"
+        "description": "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, the counts per route, and the recent faults (the last 20, the latest first: timestamp, ago, rule, version, fault, hook, route, endpoint or step, exchangeId) (only when chaos is on)"
       }
     },
     "required": [

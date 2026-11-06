@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dapr;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
@@ -48,5 +50,49 @@ public class DaprConfigurationOptionsProxyTest extends CamelTestSupport {
         configuration.setMethodToInvoke(null);
 
         assertNull(configurationOptionsProxy.getMethodToInvoke(exchange));
+    }
+
+    @Test
+    void secretStoreAndKeyHeadersApplyToTheSecretOperationOnlyWhenAllowed() {
+        final DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setSecretStore("configStore");
+        configuration.setKey("configKey");
+        final DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(DaprConstants.SECRET_STORE, "headerStore");
+        exchange.getIn().setHeader(DaprConstants.KEY, "headerKey");
+
+        // by default, the secret operation uses the endpoint, and the state operations still use the key header
+        assertEquals("configStore", configurationOptionsProxy.getSecretStore(exchange));
+        assertEquals("configKey", configurationOptionsProxy.getSecretKey(exchange));
+        assertEquals("headerKey", configurationOptionsProxy.getKey(exchange));
+
+        configuration.setAllowSecretStoreAndKeyFromHeaders(true);
+
+        assertEquals("headerStore", configurationOptionsProxy.getSecretStore(exchange));
+        assertEquals("headerKey", configurationOptionsProxy.getSecretKey(exchange));
+    }
+
+    @Test
+    void metadataHeaderAppliesToTheSecretOperationOnlyWhenAllowed() {
+        final DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setMetadata(Map.of("namespace", "config"));
+        final DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(DaprConstants.METADATA, Map.of("namespace", "header"));
+
+        // by default, the secret operation uses the endpoint, and the other operations still use the header
+        assertEquals(Map.of("namespace", "config"), configurationOptionsProxy.getSecretMetadata(exchange));
+        assertEquals(Map.of("namespace", "header"), configurationOptionsProxy.getMetadata(exchange));
+
+        configuration.setAllowSecretStoreAndKeyFromHeaders(true);
+
+        assertEquals(Map.of("namespace", "header"), configurationOptionsProxy.getSecretMetadata(exchange));
+
+        // without a header, every operation uses the endpoint
+        exchange.getIn().removeHeader(DaprConstants.METADATA);
+        assertEquals(Map.of("namespace", "config"), configurationOptionsProxy.getMetadata(exchange));
     }
 }

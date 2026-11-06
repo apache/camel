@@ -470,9 +470,9 @@ public interface CamelEventEndpointBuilderFactory {
          * Comma-separated list of event types to subscribe to. Event types
          * correspond to CamelEvent.Type enum values (case-insensitive), for
          * example: RouteStarted, RouteStopped, ExchangeCompleted,
-         * ExchangeFailed. Wildcard patterns are supported using a suffix, for
-         * example: Route matches all route events, Exchange matches all
-         * exchange events, and matches all events.
+         * ExchangeFailed. Wildcard patterns are supported using a * suffix, for
+         * example: Route* matches all route events, Exchange* matches all
+         * exchange events, and * matches all events.
          * 
          * @param path events
          * @return the dsl builder
@@ -495,9 +495,9 @@ public interface CamelEventEndpointBuilderFactory {
          * Comma-separated list of event types to subscribe to. Event types
          * correspond to CamelEvent.Type enum values (case-insensitive), for
          * example: RouteStarted, RouteStopped, ExchangeCompleted,
-         * ExchangeFailed. Wildcard patterns are supported using a suffix, for
-         * example: Route matches all route events, Exchange matches all
-         * exchange events, and matches all events.
+         * ExchangeFailed. Wildcard patterns are supported using a * suffix, for
+         * example: Route* matches all route events, Exchange* matches all
+         * exchange events, and * matches all events.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

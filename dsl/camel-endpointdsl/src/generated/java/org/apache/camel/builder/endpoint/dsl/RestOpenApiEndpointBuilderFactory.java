@@ -454,7 +454,7 @@ public interface RestOpenApiEndpointBuilderFactory {
         }
         /**
          * Scheme hostname and port to direct the HTTP requests to in the form
-         * of https://hostname:port. Can be configured at the endpoint,
+         * of http[s]://hostname[:port]. Can be configured at the endpoint,
          * component or in the corresponding REST configuration in the Camel
          * Context. If you give this component a name (e.g. petstore) that REST
          * configuration is consulted first, rest-openapi next, and global

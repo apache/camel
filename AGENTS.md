@@ -113,6 +113,7 @@ Camel is a large, long-lived project — code often looks "wrong" but exists for
    [`headers.adoc`](design/headers.adoc) (header naming, constants, upgrade policy),
    [`cross-cutting-binding.adoc`](design/cross-cutting-binding.adoc) (onException, interceptors, onCompletion, route
    configurations), [`chaos.adoc`](design/chaos.adoc) (proposed `camel-chaos`),
+   [`exchange-sanitizer.adoc`](design/exchange-sanitizer.adoc) (proposed exchange sanitizer, dev-mode checks),
    [`java-dsl-parser.adoc`](design/java-dsl-parser.adoc) (`LwJavaParser`, reading Java routes without compiling them).
 5. **Understand the broader context**: if a module replaced another (e.g. `camel-opentelemetry2`), understand what was
    intentionally changed vs. accidentally omitted.

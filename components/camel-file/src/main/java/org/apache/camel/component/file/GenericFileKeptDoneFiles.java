@@ -31,18 +31,25 @@ import java.util.Set;
  * file that was taken and failed is not left: as before, the done file is deleted after the last file of the poll
  * unless that file failed.
  * <p/>
- * The state is in memory and cleared when the consumer stops.
+ * The files of a poll can complete on another thread while the next poll runs (the route continues asynchronously), so
+ * the last file of a poll checks the done files kept by its own poll as well as those kept by the current poll (see
+ * {@link Batch}).
+ * <p/>
+ * The state is in memory, and the done files kept by the current poll are forgotten when the consumer stops.
  */
 final class GenericFileKeptDoneFiles {
 
-    private final Set<String> kept = new HashSet<>();
+    // the done files kept by the current poll: a complete listing starts a new set, and the set of the previous poll
+    // stays with the files of that poll that have not completed yet
+    private Set<String> kept = new HashSet<>();
 
     /**
      * Called once the directory is listed, before the files are consumed. When the listing was complete, forgets the
-     * done files kept by the last poll, as the files of this poll decide again whether they are kept. When the listing
-     * was cut (it stopped at the limit), the kept done files are left as they are: a done file not listed is still
-     * kept, as its files may be among those not listed, and the caller then keeps the done file of every listed file,
-     * as the poll leaves files for the next one.
+     * done files kept by the last poll, as the files of this poll decide again whether they are kept; the files of the
+     * last poll that have not completed yet still find them kept (see {@link #batch()}). When the listing was cut (it
+     * stopped at the limit), the kept done files are left as they are: a done file not listed is still kept, as its
+     * files may be among those not listed, and the caller then keeps the done file of every listed file, as the poll
+     * leaves files for the next one.
      *
      * @param  listedDoneFiles the done files of the files this poll found
      * @param  listingComplete whether every file was listed
@@ -60,7 +67,7 @@ final class GenericFileKeptDoneFiles {
                     answer.add(doneFileName);
                 }
             }
-            kept.clear();
+            kept = new HashSet<>();
         }
         return answer;
     }
@@ -73,13 +80,43 @@ final class GenericFileKeptDoneFiles {
     }
 
     /**
-     * Whether the done file must be kept after the last file of the poll.
+     * Whether the current poll keeps the done file (the files of a poll check it through {@link #batch()}).
      */
     synchronized boolean isKept(String doneFileName) {
         return kept.contains(doneFileName);
     }
 
+    /**
+     * The kept done files as the files of the current poll see them, to take when a file of this poll is started.
+     */
+    synchronized Batch batch() {
+        return new Batch(kept);
+    }
+
     synchronized void clear() {
         kept.clear();
+    }
+
+    /**
+     * The kept done files as the files of one poll see them.
+     */
+    final class Batch {
+
+        private final Set<String> keptByBatch;
+
+        private Batch(Set<String> keptByBatch) {
+            this.keptByBatch = keptByBatch;
+        }
+
+        /**
+         * Whether the done file must be kept after the last file of this poll: this poll or the current one left files
+         * of its directory. A file of this poll that completes while the next poll runs must not delete a done file
+         * that this poll kept before the next poll has decided again whether it keeps it.
+         */
+        boolean isKept(String doneFileName) {
+            synchronized (GenericFileKeptDoneFiles.this) {
+                return keptByBatch.contains(doneFileName) || kept.contains(doneFileName);
+            }
+        }
     }
 }

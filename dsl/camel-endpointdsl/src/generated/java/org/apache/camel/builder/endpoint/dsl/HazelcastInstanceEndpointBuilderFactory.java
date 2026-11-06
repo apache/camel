@@ -341,7 +341,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
         public static final HazelcastInstanceHeaderNameBuilder INSTANCE = new HazelcastInstanceHeaderNameBuilder();
 
         /**
-         * The type of event - here added and removed.
+         * The type of event - here *added* and *removed*.
          * 
          * The option is a: {@code String} type.
          * 

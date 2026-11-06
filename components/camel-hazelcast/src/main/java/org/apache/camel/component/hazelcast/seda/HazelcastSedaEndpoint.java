@@ -46,8 +46,9 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.SCHEME_SED
         Carrier.TEXT, Carrier.BYTES, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST, Carrier.POJO },
                                    description = "The body the producer put on the Hazelcast queue, as Hazelcast "
                                                  + "deserializes it: a body that is not Serializable, such as a "
-                                                 + "stream, arrives as bytes. With transferExchange=true on the "
-                                                 + "producer the headers and exchange properties come along"),
+                                                 + "stream, arrives as bytes. With transferExchange=true on both the "
+                                                 + "producer and the consumer the headers and exchange properties "
+                                                 + "come along: a consumer without it takes only the body"),
            producerIn = @BodyType(value = {
                    Carrier.TEXT, Carrier.BYTES, Carrier.STREAM, Carrier.FILE, Carrier.VALUE, Carrier.MAP, Carrier.LIST,
                    Carrier.POJO },

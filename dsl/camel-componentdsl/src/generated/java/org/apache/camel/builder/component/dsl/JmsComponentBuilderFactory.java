@@ -982,7 +982,7 @@ public interface JmsComponentBuilderFactory {
          * message systems, such as WMQ, do this with header names using prefix
          * JMS_IBM_MQMD_ containing values with byte array or other invalid
          * types. You can specify multiple header names separated by comma, and
-         * use as suffix for wildcard matching.
+         * use * as suffix for wildcard matching.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2101,9 +2101,9 @@ public interface JmsComponentBuilderFactory {
          * provider's ObjectInputStream; to block such attacks, also configure
          * the JMS provider's own deserialization filter and/or the JVM-wide
          * -Djdk.serialFilter. When this option is not set and no JVM-wide
-         * filter is configured, a conservative default filter denying java.net.
-         * and otherwise allowing java., javax. and org.apache.camel. is
-         * applied.
+         * filter is configured, a conservative default filter denying
+         * java.net.** and otherwise allowing java.**, javax.** and
+         * org.apache.camel.** is applied.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

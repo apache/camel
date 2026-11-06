@@ -37,11 +37,25 @@ public interface STS2Constants {
     @Metadata(label = "assumeRole getSessionToken getFederationToken",
               description = "The temporary access key ID.", javaType = "String")
     String ACCESS_KEY_ID = "CamelAwsStsAccessKeyId";
+    /**
+     * @deprecated the producer no longer sets this header. Take the secret access key from the body, such as
+     *             {@code ${body.credentials().secretAccessKey()}}.
+     */
     @Metadata(label = "assumeRole getSessionToken getFederationToken",
-              description = "The temporary secret access key.", javaType = "String")
+              description = "The temporary secret access key.", javaType = "String",
+              deprecationNote = "The producer no longer sets this header. Take the secret access key from the body,"
+                                + " such as ${body.credentials().secretAccessKey()}.")
+    @Deprecated
     String SECRET_KEY_ID = "CamelAwsStsSecretKey";
+    /**
+     * @deprecated the producer no longer sets this header. Take the session token from the body, such as
+     *             {@code ${body.credentials().sessionToken()}}.
+     */
     @Metadata(label = "assumeRole getSessionToken getFederationToken",
-              description = "The temporary session token.", javaType = "String")
+              description = "The temporary session token.", javaType = "String",
+              deprecationNote = "The producer no longer sets this header. Take the session token from the body, such"
+                                + " as ${body.credentials().sessionToken()}.")
+    @Deprecated
     String SESSION_TOKEN = "CamelAwsStsSessionToken";
     @Metadata(label = "assumeRole getSessionToken getFederationToken",
               description = "The expiration date and time of the credentials.", javaType = "java.time.Instant")

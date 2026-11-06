@@ -299,7 +299,7 @@ public interface TypeSafeAiEndpointBuilderFactory {
         }
         /**
          * Default inclusive probability threshold for the TypeSafe AI language.
-         * Must be within 0,1.
+         * Must be within [0,1].
          * 
          * The option is a: <code>double</code> type.
          * 
@@ -315,7 +315,7 @@ public interface TypeSafeAiEndpointBuilderFactory {
         }
         /**
          * Default inclusive probability threshold for the TypeSafe AI language.
-         * Must be within 0,1.
+         * Must be within [0,1].
          * 
          * The option will be converted to a <code>double</code> type.
          * 

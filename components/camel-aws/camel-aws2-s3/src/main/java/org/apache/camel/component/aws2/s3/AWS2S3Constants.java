@@ -169,7 +169,7 @@ public interface AWS2S3Constants {
             metadata https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].""",
               javaType = "Map<String, String>")
     String METADATA = "CamelAwsS3Metadata";
-    @Metadata(label = "consumer", description = "The timestamp of the message", javaType = "long")
+    @Metadata(description = "The timestamp of the message: the last modified time of the object", javaType = "long")
     String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
 
     @Metadata(description = "The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only list objects we are interested in")

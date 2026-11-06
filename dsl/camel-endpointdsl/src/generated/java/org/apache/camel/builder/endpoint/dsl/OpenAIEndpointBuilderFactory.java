@@ -1326,7 +1326,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
          * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
@@ -1352,7 +1352,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
          * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
@@ -2269,7 +2269,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * SSLContextParameters to use for configuring SSL/TLS. When set, takes
-         * precedence over the individual sslTruststore, sslKeystore, and
+         * precedence over the individual sslTruststore*, sslKeystore*, and
          * sslProtocol options.
          * 
          * The option is a:
@@ -2286,7 +2286,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * SSLContextParameters to use for configuring SSL/TLS. When set, takes
-         * precedence over the individual sslTruststore, sslKeystore, and
+         * precedence over the individual sslTruststore*, sslKeystore*, and
          * sslProtocol options.
          * 
          * The option will be converted to a
@@ -3888,7 +3888,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
          * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
@@ -3914,7 +3914,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
          * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
@@ -4751,7 +4751,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * SSLContextParameters to use for configuring SSL/TLS. When set, takes
-         * precedence over the individual sslTruststore, sslKeystore, and
+         * precedence over the individual sslTruststore*, sslKeystore*, and
          * sslProtocol options.
          * 
          * The option is a:
@@ -4768,7 +4768,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * SSLContextParameters to use for configuring SSL/TLS. When set, takes
-         * precedence over the individual sslTruststore, sslKeystore, and
+         * precedence over the individual sslTruststore*, sslKeystore*, and
          * sslProtocol options.
          * 
          * The option will be converted to a
@@ -6299,7 +6299,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
          * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
@@ -6325,7 +6325,7 @@ public interface OpenAIEndpointBuilderFactory {
         /**
          * MCP (Model Context Protocol) server configurations. Define servers
          * using prefix notation:
-         * mcpServer..transportType=stdiossestreamableHttp, (Note that sse is
+         * mcpServer..transportType=stdio|sse|streamableHttp, (Note that sse is
          * deprecated) mcpServer..command= (stdio), mcpServer..args= (stdio),
          * mcpServer..url= (sse/streamableHttp), mcpServer..oauthProfile= (OAuth
          * profile for HTTP auth, requires camel-oauth), mcpServer..toolNames=
@@ -7162,7 +7162,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * SSLContextParameters to use for configuring SSL/TLS. When set, takes
-         * precedence over the individual sslTruststore, sslKeystore, and
+         * precedence over the individual sslTruststore*, sslKeystore*, and
          * sslProtocol options.
          * 
          * The option is a:
@@ -7179,7 +7179,7 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * SSLContextParameters to use for configuring SSL/TLS. When set, takes
-         * precedence over the individual sslTruststore, sslKeystore, and
+         * precedence over the individual sslTruststore*, sslKeystore*, and
          * sslProtocol options.
          * 
          * The option will be converted to a
@@ -7726,9 +7726,9 @@ public interface OpenAIEndpointBuilderFactory {
         }
         /**
          * The MIME type of the message body when sending a file or binary
-         * content (File, WrappedFile, byte or InputStream) to the model. Takes
-         * precedence over component content-type headers and automatic MIME
-         * type detection.
+         * content (File, WrappedFile, byte[] or InputStream) to the model.
+         * Takes precedence over component content-type headers and automatic
+         * MIME type detection.
          * 
          * The option is a: {@code String} type.
          * 
@@ -7828,7 +7828,7 @@ public interface OpenAIEndpointBuilderFactory {
             return "CamelOpenAICompletionTokens";
         }
         /**
-         * The total number of tokens used (prompt completion) for the latest
+         * The total number of tokens used (prompt + completion) for the latest
          * API call.
          * 
          * The option is a: {@code Long} type.

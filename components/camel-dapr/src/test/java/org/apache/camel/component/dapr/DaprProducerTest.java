@@ -44,10 +44,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -96,6 +99,120 @@ class DaprProducerTest extends CamelTestSupport {
 
         assertNull(exchange.getException());
         assertEquals(secrets, exchange.getMessage().getBody());
+    }
+
+    @Test
+    void secretStoreAndKeyHeadersAreIgnoredByDefaultForSecret() {
+        Map<String, String> secret = Map.of("mySecret", "myValue");
+        when(client.getSecret(any(GetSecretRequest.class))).thenReturn(Mono.just(secret));
+
+        Exchange exchange = template.request("dapr:secret?secretStore=myStore&key=mySecret&" + CLIENTS, e -> {
+            e.getIn().setHeader(DaprConstants.SECRET_STORE, "otherStore");
+            e.getIn().setHeader(DaprConstants.KEY, "otherSecret");
+        });
+
+        assertNull(exchange.getException());
+        ArgumentCaptor<GetSecretRequest> request = ArgumentCaptor.forClass(GetSecretRequest.class);
+        verify(client).getSecret(request.capture());
+        assertEquals("myStore", request.getValue().getStoreName());
+        assertEquals("mySecret", request.getValue().getKey());
+    }
+
+    @Test
+    void keyHeaderDoesNotTurnABulkSecretEndpointIntoAnotherSecretByDefault() {
+        Exchange exchange = template.request("dapr:secret?secretStore=myStore&" + CLIENTS,
+                e -> e.getIn().setHeader(DaprConstants.KEY, "otherSecret"));
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(cause.getMessage().contains("allowSecretStoreAndKeyFromHeaders=true"));
+        verify(client, never()).getSecret(any(GetSecretRequest.class));
+        verify(client, never()).getBulkSecret(any(GetBulkSecretRequest.class));
+    }
+
+    @Test
+    void secretStoreHeaderDoesNotStandInForAMissingSecretStoreByDefault() {
+        Exchange exchange = template.request("dapr:secret?key=mySecret&" + CLIENTS,
+                e -> e.getIn().setHeader(DaprConstants.SECRET_STORE, "otherStore"));
+
+        IllegalArgumentException cause = assertInstanceOf(IllegalArgumentException.class, exchange.getException());
+        assertTrue(cause.getMessage().contains("secretStore is mandatory"));
+        assertTrue(cause.getMessage().contains("allowSecretStoreAndKeyFromHeaders=true"));
+        verify(client, never()).getSecret(any(GetSecretRequest.class));
+    }
+
+    @Test
+    void secretStoreAndKeyHeadersOverrideTheEndpointWhenAllowed() {
+        Map<String, String> secret = Map.of("otherSecret", "otherValue");
+        when(client.getSecret(any(GetSecretRequest.class))).thenReturn(Mono.just(secret));
+
+        Exchange exchange = template.request(
+                "dapr:secret?secretStore=myStore&allowSecretStoreAndKeyFromHeaders=true&" + CLIENTS, e -> {
+                    e.getIn().setHeader(DaprConstants.SECRET_STORE, "otherStore");
+                    e.getIn().setHeader(DaprConstants.KEY, "otherSecret");
+                });
+
+        assertNull(exchange.getException());
+        assertEquals(secret, exchange.getMessage().getBody());
+        ArgumentCaptor<GetSecretRequest> request = ArgumentCaptor.forClass(GetSecretRequest.class);
+        verify(client).getSecret(request.capture());
+        assertEquals("otherStore", request.getValue().getStoreName());
+        assertEquals("otherSecret", request.getValue().getKey());
+    }
+
+    @Test
+    void metadataHeaderIsIgnoredByDefaultForSecret() {
+        when(client.getSecret(any(GetSecretRequest.class))).thenReturn(Mono.just(Map.of("mySecret", "myValue")));
+
+        Exchange exchange = template.request(
+                "dapr:secret?secretStore=myStore&key=mySecret&metadata.namespace=production&" + CLIENTS,
+                e -> e.getIn().setHeader(DaprConstants.METADATA, Map.of("namespace", "other")));
+
+        assertNull(exchange.getException());
+        ArgumentCaptor<GetSecretRequest> request = ArgumentCaptor.forClass(GetSecretRequest.class);
+        verify(client).getSecret(request.capture());
+        assertEquals(Map.of("namespace", "production"), request.getValue().getMetadata());
+    }
+
+    @Test
+    void metadataHeaderIsIgnoredByDefaultForBulkSecret() {
+        when(client.getBulkSecret(any(GetBulkSecretRequest.class))).thenReturn(Mono.just(Map.of()));
+
+        Exchange exchange = template.request("dapr:secret?secretStore=myStore&" + CLIENTS,
+                e -> e.getIn().setHeader(DaprConstants.METADATA, Map.of("namespace", "other")));
+
+        assertNull(exchange.getException());
+        ArgumentCaptor<GetBulkSecretRequest> request = ArgumentCaptor.forClass(GetBulkSecretRequest.class);
+        verify(client).getBulkSecret(request.capture());
+        assertNull(request.getValue().getMetadata());
+    }
+
+    @Test
+    void metadataHeaderOverridesTheEndpointForSecretWhenAllowed() {
+        when(client.getSecret(any(GetSecretRequest.class))).thenReturn(Mono.just(Map.of("mySecret", "myValue")));
+
+        Exchange exchange = template.request(
+                "dapr:secret?secretStore=myStore&key=mySecret&metadata.namespace=production"
+                                             + "&allowSecretStoreAndKeyFromHeaders=true&" + CLIENTS,
+                e -> e.getIn().setHeader(DaprConstants.METADATA, Map.of("namespace", "other")));
+
+        assertNull(exchange.getException());
+        ArgumentCaptor<GetSecretRequest> request = ArgumentCaptor.forClass(GetSecretRequest.class);
+        verify(client).getSecret(request.capture());
+        assertEquals(Map.of("namespace", "other"), request.getValue().getMetadata());
+    }
+
+    @Test
+    void metadataOptionIsSentByOtherOperationsAndTheHeaderOverridesIt() {
+        when(client.publishEvent(any(PublishEventRequest.class))).thenReturn(Mono.empty());
+
+        template.sendBody("dapr:pubSub?pubSubName=myPubSub&topic=myTopic&metadata.ttlInSeconds=60&" + CLIENTS, "hello");
+        template.sendBodyAndHeader("dapr:pubSub?pubSubName=myPubSub&topic=myTopic&metadata.ttlInSeconds=60&" + CLIENTS,
+                "hello", DaprConstants.METADATA, Map.of("ttlInSeconds", "10"));
+
+        ArgumentCaptor<PublishEventRequest> request = ArgumentCaptor.forClass(PublishEventRequest.class);
+        verify(client, times(2)).publishEvent(request.capture());
+        assertEquals(Map.of("ttlInSeconds", "60"), request.getAllValues().get(0).getMetadata());
+        assertEquals(Map.of("ttlInSeconds", "10"), request.getAllValues().get(1).getMetadata());
     }
 
     @Test

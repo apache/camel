@@ -128,7 +128,10 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If it is true, the S3 Object Body will be ignored completely if it is
          * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
+         * true will override any behavior defined by includeBody option. When
+         * it is true, the consumer and the getObject operation send a HEAD
+         * request, which returns the metadata of the object without downloading
+         * its content.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -145,7 +148,10 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If it is true, the S3 Object Body will be ignored completely if it is
          * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
+         * true will override any behavior defined by includeBody option. When
+         * it is true, the consumer and the getObject operation send a HEAD
+         * request, which returns the metadata of the object without downloading
+         * its content.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -485,9 +491,12 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Set the maxConnections parameter in the S3 client configuration. This
-         * option is deprecated and has no effect. Use the httpClientBuilder
-         * option on the S3 client configuration to customize the HTTP client
-         * connection pool.
+         * option is deprecated and has no effect: the S3 client that Camel
+         * creates uses the connection pool of the AWS SDK, of 50 connections by
+         * default. The consumer gets each object right before routing its
+         * exchange, so it does not hold a connection for every object of a
+         * poll. To use another pool size, set the amazonS3Client option to an
+         * S3 client built with an HTTP client of that size.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -504,9 +513,12 @@ public interface AWS2S3EndpointBuilderFactory {
         }
         /**
          * Set the maxConnections parameter in the S3 client configuration. This
-         * option is deprecated and has no effect. Use the httpClientBuilder
-         * option on the S3 client configuration to customize the HTTP client
-         * connection pool.
+         * option is deprecated and has no effect: the S3 client that Camel
+         * creates uses the connection pool of the AWS SDK, of 50 connections by
+         * default. The consumer gets each object right before routing its
+         * exchange, so it does not hold a connection for every object of a
+         * poll. To use another pool size, set the amazonS3Client option to an
+         * S3 client built with an HTTP client of that size.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1833,7 +1845,10 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If it is true, the S3 Object Body will be ignored completely if it is
          * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
+         * true will override any behavior defined by includeBody option. When
+         * it is true, the consumer and the getObject operation send a HEAD
+         * request, which returns the metadata of the object without downloading
+         * its content.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1850,7 +1865,10 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If it is true, the S3 Object Body will be ignored completely if it is
          * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
+         * true will override any behavior defined by includeBody option. When
+         * it is true, the consumer and the getObject operation send a HEAD
+         * request, which returns the metadata of the object without downloading
+         * its content.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3117,7 +3135,10 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If it is true, the S3 Object Body will be ignored completely if it is
          * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
+         * true will override any behavior defined by includeBody option. When
+         * it is true, the consumer and the getObject operation send a HEAD
+         * request, which returns the metadata of the object without downloading
+         * its content.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3134,7 +3155,10 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * If it is true, the S3 Object Body will be ignored completely if it is
          * set to false, the S3 Object will be put in the body. Setting this to
-         * true will override any behavior defined by includeBody option.
+         * true will override any behavior defined by includeBody option. When
+         * it is true, the consumer and the getObject operation send a HEAD
+         * request, which returns the metadata of the object without downloading
+         * its content.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3777,7 +3801,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3BucketExists";
         }
         /**
-         * The optional Cache-Control HTTP header which allows the user to
+         * The *optional* Cache-Control HTTP header which allows the user to
          * specify caching behavior along the HTTP request/reply chain.
          * 
          * The option is a: {@code String} type.
@@ -3790,7 +3814,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3ContentControl";
         }
         /**
-         * The optional Content-Disposition HTTP header, which specifies
+         * The *optional* Content-Disposition HTTP header, which specifies
          * presentational information such as the recommended filename for the
          * object to be saved as.
          * 
@@ -3804,7 +3828,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3ContentDisposition";
         }
         /**
-         * The optional Content-Encoding HTTP header specifying what content
+         * The *optional* Content-Encoding HTTP header specifying what content
          * encodings have been applied to the object and what decoding
          * mechanisms must be applied in order to obtain the media-type
          * referenced by the Content-Type field.
@@ -3941,7 +3965,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3StorageClass";
         }
         /**
-         * (producer) The optional version ID of the newly uploaded object.
+         * (producer) The *optional* version ID of the newly uploaded object.
          * (consumer) The version ID of the associated Amazon S3 object if
          * available. Version IDs are only assigned to objects when an object is
          * uploaded to an Amazon S3 bucket that has object versioning enabled.
@@ -4169,7 +4193,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * A map of metadata to be stored or stored with the object in S3. More
          * details about metadata
-         * https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.htmlhere.
+         * https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].
          * 
          * The option is a: {@code Map<String, String>} type.
          * 
@@ -4181,11 +4205,11 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3Metadata";
         }
         /**
-         * The timestamp of the message.
+         * The timestamp of the message: the last modified time of the object.
          * 
          * The option is a: {@code long} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code MessageTimestamp}.
          */

@@ -225,7 +225,7 @@ YAML::
 ----
 ====
 
-This consumer polls every 60 seconds, processes up to 5 objects per poll, and puts the stream of the object in the body instead of reading it into a byte array. Use `ignoreBody: true` to get only the metadata.
+This consumer polls every 60 seconds, processes up to 5 objects per poll, and puts the stream of the object in the body instead of reading it into a byte array. Each object is got right before its exchange is routed, and the AWS SDK aborts the stream when nothing was read from it within 60 seconds of the get. Use `ignoreBody: true` to get only the metadata: the consumer then sends a HEAD request for each object, so the content is not downloaded, and the message has no body.
 
 == Consumer with file filtering and no deletion
 

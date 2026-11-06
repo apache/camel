@@ -781,7 +781,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets .json file with credentials for Service account.
+         * Sets *.json file with credentials for Service account.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

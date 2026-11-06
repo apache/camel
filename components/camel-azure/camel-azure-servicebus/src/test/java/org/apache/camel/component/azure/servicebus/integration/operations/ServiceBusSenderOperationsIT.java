@@ -37,10 +37,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
-                                          + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
-public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
+class ServiceBusSenderOperationsIT extends BaseServiceBusTestSupport {
 
     private static ServiceBusSenderClient client;
     private static ServiceBusSenderClient sessionClient;
@@ -49,13 +46,13 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
 
     @BeforeAll
     static void prepare() {
-        client = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
+        client = new ServiceBusClientBuilder().connectionString(connectionString())
                 .sender().topicName(TOPIC_NAME).buildClient();
-        sessionClient = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
+        sessionClient = new ServiceBusClientBuilder().connectionString(connectionString())
                 .sender().topicName(TOPIC_WITH_SESSIONS_NAME).buildClient();
-        batchClient = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
+        batchClient = new ServiceBusClientBuilder().connectionString(connectionString())
                 .sender().queueName(QUEUE_NAME).buildClient();
-        batchSessionClient = new ServiceBusClientBuilder().connectionString(CONNECTION_STRING)
+        batchSessionClient = new ServiceBusClientBuilder().connectionString(connectionString())
                 .sender().queueName(QUEUE_WITH_SESSIONS_NAME).buildClient();
     }
 
@@ -218,6 +215,8 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void testScheduleMessage() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(client);
         messageLatch = new CountDownLatch(2);
@@ -247,6 +246,8 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void testScheduleMessageWithSessions() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(sessionClient);
         messageLatch = new CountDownLatch(2);
@@ -276,6 +277,8 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void testSchedulingBatchMessages() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(client);
         messageLatch = new CountDownLatch(5);
@@ -320,6 +323,8 @@ public class ServiceBusSenderOperationsTest extends BaseServiceBusTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SCHEDULED_MESSAGES_NOT_SUPPORTED)
     void testSchedulingBatchMessagesWithSessions() throws InterruptedException {
         final ServiceBusSenderOperations operations = new ServiceBusSenderOperations(batchSessionClient);
         messageLatch = new CountDownLatch(5);

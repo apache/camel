@@ -384,7 +384,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
+         * required for coaps+tcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option is a:
@@ -401,7 +401,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
+         * required for coaps+tcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option will be converted to a
@@ -853,7 +853,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
+         * required for coaps+tcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option is a:
@@ -870,7 +870,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
+         * required for coaps+tcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option will be converted to a
@@ -1247,7 +1247,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
+         * required for coaps+tcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option is a:
@@ -1264,7 +1264,7 @@ public interface CoAPEndpointBuilderFactory {
         }
         /**
          * Set the SSLContextParameters object for setting up TLS. This is
-         * required for coapstcp, and for coaps when we are using certificates
+         * required for coaps+tcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
          * 
          * The option will be converted to a

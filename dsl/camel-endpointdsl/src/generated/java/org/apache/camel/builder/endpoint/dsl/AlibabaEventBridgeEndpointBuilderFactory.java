@@ -46,7 +46,7 @@ public interface AlibabaEventBridgeEndpointBuilderFactory {
 
         /**
          * Allowed event sources and source-scoped event types per event bus.
-         * Supports multi-bus DSL (bussrc - type1,type2), single-bus shorthand
+         * Supports multi-bus DSL (bus[src - type1,type2]), single-bus shorthand
          * (src - type1,type2), JSON string, or Map/List objects.
          * 
          * The option is a: <code>java.lang.String</code> type.

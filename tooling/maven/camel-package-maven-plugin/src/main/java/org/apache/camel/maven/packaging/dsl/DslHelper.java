@@ -23,6 +23,10 @@ public final class DslHelper {
     private DslHelper() {
     }
 
+    public static String escapeJavadocCommentEnd(String text) {
+        return text.replace("*/", "*&#47;");
+    }
+
     public static String toCamelCaseLower(final String schema) {
         String convertedText = CaseUtils.toCamelCase(schema, false, '-', '+');
         if (convertedText != null) {

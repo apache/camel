@@ -40,7 +40,7 @@ public class FooEndpoint {
     }
 
     /**
-     * My interval in seconds.
+     * My interval in seconds. Use {@code intervalSeconds=5} to poll every five seconds.
      */
     public void setIntervalSeconds(int intervalSeconds) {
         this.intervalSeconds = intervalSeconds;

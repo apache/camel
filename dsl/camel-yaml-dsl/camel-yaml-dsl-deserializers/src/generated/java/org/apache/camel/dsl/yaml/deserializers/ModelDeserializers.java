@@ -742,7 +742,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "moduleRefs", type = "string", description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.", displayName = "Module Refs"),
                     @YamlProperty(name = "objectMapper", type = "string", description = "Lookup and use the existing ObjectMapper with the given id when using Jackson.", displayName = "Object Mapper"),
                     @YamlProperty(name = "schemaResolver", type = "string", description = "Optional schema resolver used to lookup schemas for the data in transit.", displayName = "Schema Resolver"),
-                    @YamlProperty(name = "serializablePackages", type = "string", description = "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.", displayName = "Serializable Packages"),
+                    @YamlProperty(name = "serializablePackages", type = "string", description = "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class.", displayName = "Serializable Packages"),
                     @YamlProperty(name = "timezone", type = "string", description = "If set then Jackson will use the Timezone when marshalling/unmarshalling.", displayName = "Timezone"),
                     @YamlProperty(name = "unmarshalType", type = "string", description = "Class name of the java type to use when unmarshalling.", displayName = "Unmarshal Type"),
                     @YamlProperty(name = "useDefaultObjectMapper", type = "boolean", defaultValue = "true", description = "Whether to lookup and use default Jackson ObjectMapper from the registry.", displayName = "Use Default Object Mapper"),
@@ -960,7 +960,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "lineLength", type = "number", defaultValue = "76", description = "To specific a maximum line length for the encoded data. By default 76 is used.", displayName = "Line Length"),
                     @YamlProperty(name = "lineSeparator", type = "string", description = "The line separators to use. By default \\r\\n is used.", displayName = "Line Separator"),
-                    @YamlProperty(name = "urlSafe", type = "boolean", defaultValue = "false", description = "Instead of emitting and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.", displayName = "Url Safe")
+                    @YamlProperty(name = "urlSafe", type = "boolean", defaultValue = "false", description = "Instead of emitting + and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.", displayName = "Url Safe")
             }
     )
     public static class Base64DataFormatDeserializer extends YamlDeserializerBase<Base64DataFormat> {
@@ -13519,7 +13519,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "asyncDelayedRedelivery", type = "boolean", defaultValue = "false", description = "Allow asynchronous delayed redelivery. The route, in particular the consumer's component, must support the Asynchronous Routing Engine (e.g. seda).", displayName = "Async Delayed Redelivery"),
                     @YamlProperty(name = "backOffMultiplier", type = "number", defaultValue = "2.0", description = "Sets the multiplier applied to the previous redelivery delay to compute the next delay when using exponential backoff.", displayName = "Back Off Multiplier"),
                     @YamlProperty(name = "collisionAvoidanceFactor", type = "number", defaultValue = "0.15", description = "Sets the collision avoidance factor, which adds a random percentage of the delay to avoid thundering herd problems when multiple redeliveries happen simultaneously.", displayName = "Collision Avoidance Factor"),
-                    @YamlProperty(name = "delayPattern", type = "string", description = "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s).", displayName = "Delay Pattern"),
+                    @YamlProperty(name = "delayPattern", type = "string", description = "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s).", displayName = "Delay Pattern"),
                     @YamlProperty(name = "disableRedelivery", type = "boolean", defaultValue = "false", description = "Disables redelivery (same as setting maximum redeliveries to 0).", displayName = "Disable Redelivery"),
                     @YamlProperty(name = "exchangeFormatterRef", type = "string", description = "Sets the reference of the instance of org.apache.camel.spi.ExchangeFormatter to generate the log message from exchange.", displayName = "Exchange Formatter Ref"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
@@ -13903,7 +13903,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of headers to not remove. You can use comma to separate multiple patterns.", displayName = "Exclude Pattern"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
-                    @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular expression (all case-insensitive).", displayName = "Pattern")
+                    @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive).", displayName = "Pattern")
             }
     )
     public static class RemoveHeadersDefinitionDeserializer extends YamlDeserializerBase<RemoveHeadersDefinition> {
@@ -13978,7 +13978,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "excludePattern", type = "string", description = "Name or pattern of properties to not remove. You can use comma to separate multiple patterns.", displayName = "Exclude Pattern"),
                     @YamlProperty(name = "id", type = "string", description = "The id of this node", displayName = "Id"),
                     @YamlProperty(name = "note", type = "string", description = "The note for this node", displayName = "Note"),
-                    @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all case-insensitive).", displayName = "Pattern")
+                    @YamlProperty(name = "pattern", type = "string", required = true, description = "Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive).", displayName = "Pattern")
             }
     )
     public static class RemovePropertiesDefinitionDeserializer extends YamlDeserializerBase<RemovePropertiesDefinition> {
@@ -21256,7 +21256,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "mgfAlgorithm", type = "enum:MGF1_SHA1,MGF1_SHA256,MGF1_SHA512", defaultValue = "MGF1_SHA1", description = "The MGF Algorithm to use with the RSA OAEP algorithm.", displayName = "Mgf Algorithm"),
                     @YamlProperty(name = "namespace", type = "string", description = "Refers to a Map of XML Namespaces of prefix to uri mappings.", displayName = "Namespace"),
                     @YamlProperty(name = "passPhrase", type = "string", format = "password", description = "A String used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase"),
-                    @YamlProperty(name = "passPhraseByte", type = "string", format = "binary", description = "A byte used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase Byte"),
+                    @YamlProperty(name = "passPhraseByte", type = "string", format = "binary", description = "A byte[] used as passPhrase to encrypt/decrypt content.", displayName = "Pass Phrase Byte"),
                     @YamlProperty(name = "recipientKeyAlias", type = "string", description = "The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.", displayName = "Recipient Key Alias"),
                     @YamlProperty(name = "secureTag", type = "string", description = "The XPath reference to the XML Element selected for encryption/decryption. If no tag is specified, the entire payload is encrypted/decrypted.", displayName = "Secure Tag"),
                     @YamlProperty(name = "secureTagContents", type = "boolean", defaultValue = "true", description = "A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element. false = Element Level, true = Element Content Level.", displayName = "Secure Tag Contents"),

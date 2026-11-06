@@ -78,8 +78,9 @@ class MailIdempotentRepositoryPollErrorTest extends CamelTestSupport {
         assertEquals(1, pollErrors.size());
         assertInstanceOf(RejectedExecutionException.class, pollErrors.get(0));
         assertEquals(2, routed.size());
-        // the keys of the two mails that went into routing stay, the keys of the three mails after them are removed
-        assertEquals(new TreeSet<>(routed), repo.keys());
+        // the key of the first mail stays (its exchange went through processExchange); the key of the mail whose
+        // processExchange threw and the keys of the three mails after it are removed
+        assertEquals(new TreeSet<>(routed.subList(0, 1)), repo.keys());
     }
 
     @Test
@@ -102,8 +103,36 @@ class MailIdempotentRepositoryPollErrorTest extends CamelTestSupport {
         }
 
         assertEquals(2, routed.size());
-        // releasing the first given-back exchange fails, the keys of all three mails after the routed ones are removed
-        assertEquals(new TreeSet<>(routed), repo.keys());
+        // releasing the first given-back exchange fails, the keys of the mail whose processExchange threw and of all
+        // three mails after it are removed
+        assertEquals(new TreeSet<>(routed.subList(0, 1)), repo.keys());
+    }
+
+    @Test
+    void mailWhoseProcessExchangeThrowsIsConsumedByTheNextPoll() throws Exception {
+        appendMessages(1);
+
+        AtomicBoolean fail = new AtomicBoolean(true);
+        List<String> routed = new ArrayList<>();
+        MailConsumer consumer = createConsumer(exchange -> {
+            routed.add(exchange.getProperty(MailConsumer.MAIL_MESSAGE_UID, String.class));
+            if (fail.compareAndSet(true, false)) {
+                throw new RejectedExecutionException("Simulated: cannot route the exchange");
+            }
+        });
+        try {
+            consumer.poll();
+            assertEquals(1, pollErrors.size());
+            assertEquals(new TreeSet<>(), repo.keys(), "The key of the mail whose processExchange threw must be removed");
+
+            // the mail is still in the folder and is not skipped as a duplicate
+            consumer.poll();
+        } finally {
+            consumer.stop();
+        }
+
+        assertEquals(2, routed.size());
+        assertEquals(routed.get(0), routed.get(1));
     }
 
     @Test

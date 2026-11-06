@@ -899,7 +899,7 @@ public interface DoclingComponentBuilderFactory {
          * Whether a String message body that starts with / or contains \ is
          * interpreted as a local filesystem path to read. When disabled, such a
          * body is rejected instead of being read. This does not affect the
-         * CamelDoclingInputFilePath header, nor File, byte or explicit path
+         * CamelDoclingInputFilePath header, nor File, byte[] or explicit path
          * collection bodies used by the batch operations.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

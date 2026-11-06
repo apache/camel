@@ -17,6 +17,7 @@
 package org.apache.camel.component.docker;
 
 import java.lang.reflect.Array;
+import java.util.Locale;
 
 import org.apache.camel.Message;
 import org.apache.camel.util.StringHelper;
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.BooleanUtils;
 public final class DockerHelper {
 
     private static final String STRING_DELIMITER = ";";
+    private static final String DOCKER_HUB = "docker.io";
 
     private DockerHelper() {
         // Helper class
@@ -146,6 +148,63 @@ public final class DockerHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Returns the registry host (with the port, if any) of an image reference, following the rules of Docker: the first
+     * path component is a registry when it contains a dot or a colon, is <tt>localhost</tt> or has upper case letters;
+     * otherwise the image is on Docker Hub. The names of Docker Hub are returned as <tt>docker.io</tt>, and the host is
+     * in lower case.
+     *
+     * @param  image the image reference, such as <tt>ubuntu:24.04</tt> or <tt>myregistry:5000/team/app@sha256:...</tt>
+     * @return       the registry host, or <tt>null</tt> if the image is empty
+     */
+    public static String getImageRegistryHost(String image) {
+        if (image == null || image.isBlank()) {
+            return null;
+        }
+        int slash = image.indexOf('/');
+        if (slash == -1) {
+            return DOCKER_HUB;
+        }
+        String first = image.substring(0, slash);
+        if (first.indexOf('.') == -1 && first.indexOf(':') == -1 && !"localhost".equals(first)
+                && first.equals(first.toLowerCase(Locale.ROOT))) {
+            return DOCKER_HUB;
+        }
+        return normalizeRegistryHost(first);
+    }
+
+    /**
+     * Returns the registry host (with the port, if any) of a registry server address, such as
+     * <tt>https://index.docker.io/v1/</tt> or <tt>myregistry:5000</tt>. The scheme and the path are ignored, the names
+     * of Docker Hub are returned as <tt>docker.io</tt>, and the host is in lower case.
+     *
+     * @param  serverAddress the server address of the registry
+     * @return               the registry host, or <tt>null</tt> if the server address is empty
+     */
+    public static String getServerAddressRegistryHost(String serverAddress) {
+        if (serverAddress == null || serverAddress.isBlank()) {
+            return null;
+        }
+        String host = serverAddress.trim();
+        int scheme = host.indexOf("://");
+        if (scheme != -1) {
+            host = host.substring(scheme + 3);
+        }
+        int slash = host.indexOf('/');
+        if (slash != -1) {
+            host = host.substring(0, slash);
+        }
+        return host.isEmpty() ? null : normalizeRegistryHost(host);
+    }
+
+    private static String normalizeRegistryHost(String host) {
+        String answer = host.toLowerCase(Locale.ROOT);
+        if ("index.docker.io".equals(answer) || "registry-1.docker.io".equals(answer)) {
+            return DOCKER_HUB;
+        }
+        return answer;
     }
 
     /**

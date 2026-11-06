@@ -57,6 +57,7 @@ public class CamelChaosChangeAction extends CamelChaosAction {
 
     @Override
     protected String describe(JsonObject answer) {
-        return "Changed chaos rule " + answer.getString("id") + " (version " + answer.get("version") + ")";
+        return "Changed chaos rule " + answer.getString("id") + " (version " + answer.get("version") + ")"
+               + warnings(answer);
     }
 }

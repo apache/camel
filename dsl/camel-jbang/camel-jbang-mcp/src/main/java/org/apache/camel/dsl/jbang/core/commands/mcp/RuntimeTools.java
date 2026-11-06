@@ -1072,8 +1072,11 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List the chaos rules of the Camel application (camel-chaos, development only): id, version, the \
-                  rule, state (active or ended), where it fires, matches, faults fired, time left and the expectation; \
-                  or why chaos is off. The rules come from the status of the application, written every second.""")
+                  rule, state (active or ended), where it fires, matches, faults fired, time left, the expectation, \
+                  and the live state: observed rate next to the rate of the rule, when it last fired, faults per \
+                  second over the last minute, and the effect of its faults (exchanges completed, recovered by \
+                  redelivery, handled by the error handler, failed, in flight); or why chaos is off. The rules come \
+                  from the status of the application, written every second.""")
     public JsonObject camel_runtime_chaos_list(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("chaos_list", nameOrPid, Map.of());
@@ -1083,8 +1086,9 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the chaos report of the Camel application: the verdict (PASS or FAIL) and whether it is final, \
-                  the seed, every version of every rule with what it fired, the expectations (a pending one is not \
-                  decided yet) and the counts per route; or why chaos is off.""")
+                  the seed, every version of every rule with what it fired and its live state, the expectations (a \
+                  pending one is not decided yet), the counts per route and the last 20 faults (rule, fault, route, \
+                  endpoint or step, exchange id); or why chaos is off.""")
     public JsonObject camel_runtime_chaos_report(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("chaos_report", nameOrPid, Map.of());
@@ -1094,11 +1098,14 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Add a chaos rule to the Camel application, in the one-line form of camel.chaos.rules, e.g. \
-                  'endpoint=kafka:orders* error rate=0.1 until=5m'. Returns the id of the rule. Chaos must be on in \
-                  the application; a rule that is not valid is refused with the reason.""")
+                  'endpoint=kafka:orders* error rate=0.1 until=5m'; several rules separated by ; are added together \
+                  (all or none). Returns the ids of the rules, and warnings for a rule that matches nothing in the \
+                  application now (often a typo: fix it with camel_runtime_chaos_change). Chaos must be on in the \
+                  application; a rule that is not valid is refused with the reason.""")
     public JsonObject camel_runtime_chaos_add(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "The rule in its one-line text form, as one entry of camel.chaos.rules") String rule) {
+            @ToolArg(description = "The rule in its one-line text form, as an entry of camel.chaos.rules; several"
+                                   + " rules separated by ;") String rule) {
         requireArg("rule", rule);
         return delegateToRegistry("chaos_add", nameOrPid, Map.of("rule", rule));
     }
@@ -1107,7 +1114,8 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Change a chaos rule of the Camel application: the rule with the id gets the new one-line rule and \
-                  one more version; the report keeps the version it replaces. Returns the id and the new version.""")
+                  one more version; the report keeps the version it replaces. Returns the id and the new version, \
+                  and warnings when the new rule matches nothing in the application now.""")
     public JsonObject camel_runtime_chaos_change(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "The id of the rule, such as r1 (camel_runtime_chaos_list shows them)") String id,
@@ -1131,10 +1139,15 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
           description = """
                   Remove all chaos rules of the Camel application: no more faults, and the report keeps what they \
-                  did. Returns how many were removed.""")
+                  did (with reset=true the report starts again, for a new experiment). Returns how many were \
+                  removed.""")
     public JsonObject camel_runtime_chaos_clear(
-            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
-        return delegateToRegistry("chaos_clear", nameOrPid, Map.of());
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "Also start a new report: the removed rules, the counts per route and the verdict"
+                                   + " are gone (default false)",
+                     required = false) Boolean reset) {
+        return delegateToRegistry("chaos_clear", nameOrPid,
+                Boolean.TRUE.equals(reset) ? Map.of("reset", "true") : Map.of());
     }
 
     private static void requireArg(String name, String value) {

@@ -298,8 +298,8 @@ public interface RestPostmanComponentBuilderFactory {
     
         /**
          * Scheme hostname and port to direct the HTTP requests to in the form
-         * of https://hostname:port. If set overrides any value derived from the
-         * collection.
+         * of http[s]://hostname[:port]. If set overrides any value derived from
+         * the collection.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

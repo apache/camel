@@ -25,6 +25,13 @@ import org.apache.camel.Exchange;
 public interface SynchronizedExchange {
     Exchange getExchange();
 
+    /**
+     * The exchange that a consumer copies to route. With several consumers this is a snapshot taken when the exchange
+     * is published, as the first consumer that fails copies its result into {@link #getExchange()}, which the other
+     * consumers must not see (the exception) or read while it is written.
+     */
+    Exchange getExchangeToCopy();
+
     void consumed(Exchange result);
 
     Exchange cancelAndGetOriginalExchange();

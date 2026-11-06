@@ -83,7 +83,7 @@ public final class DriveFilesEndpointConfiguration extends GoogleDriveConfigurat
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "create", description="The media HTTP content"), @ApiMethod(methodName = "update", description="The media HTTP content")})
     private com.google.api.client.http.AbstractInputStreamContent mediaContent;
     @UriParam
-    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "download", description="Optional"), @ApiMethod(methodName = "export", description="Required. The MIME type of the format requested for this export. For a list of supported MIME types, see Export MIME types for Google Workspace documents(/workspace/drive/api/guides/ref- export-formats).")})
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "download", description="Optional"), @ApiMethod(methodName = "export", description="Required. The MIME type of the format requested for this export. For a list of supported MIME types, see [Export MIME types for Google Workspace documents](/workspace/drive/api/guides/ref- export-formats).")})
     private java.lang.String mimeType;
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "modifyLabels", description="The com.google.api.services.drive.model.ModifyLabelsRequest")})

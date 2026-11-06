@@ -18,6 +18,9 @@ package org.apache.camel.tooling.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class JavadocHelperTest {
 
@@ -69,6 +72,37 @@ public class JavadocHelperTest {
               + " was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives, then you would need"
               + " to wait a little period to ensure no further message arrives. This is what you can use this setAssertPeriod(long) method for. By default"
               + " this period is disabled.";
+
+    @ParameterizedTest
+    @CsvSource(delimiter = '|', value = {
+            "Use {@code allowManualCommit=true}.|Use allowManualCommit=true.",
+            "Use {@literal transacted=true}.|Use transacted=true.",
+            "Matches ({@code foo*}), and {@code *} to match all tags.|Matches (foo*), and * to match all tags.",
+            "Use {@literal foo bar} or {@code foo bar}.|Use foo bar or foo bar.",
+            "Use {@code #name} and {@literal #name}.|Use #name and #name.",
+            "Use {@code $1} and {@literal $2}.|Use $1 and $2.",
+            "Use {@code } then {@literal }.|Use then ."
+    })
+    void testSanitizeInlineCodeAndLiteral(String javadoc, String expected) {
+        Assertions.assertEquals(expected, JavadocHelper.sanitizeDescription(javadoc, false));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void testPreserveOptionSyntax(boolean summary) {
+        String javadoc = "Use :?name, foo*, [a-z]+ and foo|bar.";
+        Assertions.assertEquals(javadoc, JavadocHelper.sanitizeDescription(javadoc, summary));
+        Assertions.assertEquals(javadoc, JavadocHelper.sanitizeDescription(
+                "Use {@literal :?name}, {@literal foo*}, {@code [a-z]+} and {@code foo|bar}.", summary));
+    }
+
+    @Test
+    void testSanitizeMultilineCode() {
+        String javadoc = " * Use {@code foo\n * bar*} and {@literal :?name}.\n * More details.";
+        Assertions.assertEquals("Use foo bar* and :?name. More details.",
+                JavadocHelper.sanitizeDescription(javadoc, false));
+        Assertions.assertEquals("Use foo bar* and :?name.", JavadocHelper.sanitizeDescription(javadoc, true));
+    }
 
     @Test
     public void testSanitizeJavaDoc() throws Exception {

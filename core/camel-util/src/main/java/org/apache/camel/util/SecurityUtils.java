@@ -71,6 +71,7 @@ public final class SecurityUtils {
         map.put("allowoperationheader", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowpredicatefrommessage", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowqueryfromheader", new SecurityOption(INSECURE_DEV, "true"));
+        map.put("allowsecretstoreandkeyfromheaders", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowserializedheaders", new SecurityOption(INSECURE_SERIALIZATION, "true"));
         map.put("allowsharedstatefulkey", new SecurityOption(INSECURE_DEV, "true"));
         map.put("allowtemplatefromheader", new SecurityOption(INSECURE_DEV, "true"));
@@ -154,6 +155,8 @@ public final class SecurityUtils {
                 "component:dynamicroutercontrol"));
         owners.put("allowqueryfromheader", Set.of(
                 "component:sql"));
+        owners.put("allowsecretstoreandkeyfromheaders", Set.of(
+                "component:dapr"));
         owners.put("allowserializedheaders", Set.of(
                 "component:activemq",
                 "component:activemq6",

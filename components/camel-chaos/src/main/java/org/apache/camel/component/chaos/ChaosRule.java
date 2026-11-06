@@ -19,9 +19,13 @@ package org.apache.camel.component.chaos;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.util.TimeSource;
 
 /**
@@ -47,6 +51,8 @@ final class ChaosRule {
     /** A place where a rule can fire. */
     enum Hook {
         SEND("send"),
+        // the send of the dead letter channel, which a rule reaches only with at=dlq
+        DLQ("dlq"),
         POLL("poll"),
         ENTRY("entry"),
         STEP("step");
@@ -123,6 +129,9 @@ final class ChaosRule {
     // the golden ratio increment of SplitMix64
     private static final long GOLDEN_GAMMA = 0x9e3779b97f4a7c15L;
 
+    // the seconds of the faults per second the rule keeps: the last minute
+    static final int MINUTE = 60;
+
     // the definition (immutable)
     final String id;
     // 1 when the rule is added, one more each time it is changed (the report has an entry per version of an id)
@@ -154,18 +163,37 @@ final class ChaosRule {
     final Action action;
     // the rule says stall, not lifecycle action=suspend
     final boolean stall;
-    final long addedAt;
+    // when the rule was added, and its clock started: a rule added before the context started (camel.chaos.rules)
+    // starts its clock when the context has started (see startClock)
+    volatile long addedAt;
+    // how long the rule runs: its until duration, else camel.chaos.maxDuration
+    private final long runFor;
 
     // the state while it runs
-    final long endsAt;
+    volatile long endsAt;
     final Expectation expectation;
     private final AtomicLong matches = new AtomicLong();
     private final LongAdder[] fired = new LongAdder[Hook.values().length];
     private final LongAdder skipped = new LongAdder();
+    // why the rule did nothing when it fired: a reason per kind of message it could not change (a few fixed texts)
+    private final ConcurrentMap<String, LongAdder> skipReasons = new ConcurrentHashMap<>();
+    // the messages lost because the rule failed or dropped the send of the dead letter channel, which then handled them
+    private final LongAdder lostAtDlq = new LongAdder();
     private final AtomicLong random;
     private volatile State removedAs;
+    // the clock of the rule started: false for a rule added before the context started, until it has (guarded by the
+    // lock of the manager)
+    boolean clockStarted;
     // what a lifecycle rule did to its route, else null
     final ChaosLifecycle.Fault lifecycle;
+    // the live state, for the chaos screen: when the rule last fired, its faults per second over the last minute (a
+    // ring of seconds, guarded by itself), the effect of its faults on the exchanges, and the recent faults of the
+    // manager (null in the tests of a rule alone; set by the manager before the rule is published to the hooks)
+    private volatile long lastFiredAt = -1;
+    private final long[] faultsPerSecond = new long[MINUTE];
+    private final long[] secondOf = new long[MINUTE];
+    final Effect effect = new Effect();
+    ChaosRecentFaults recentFaults;
 
     ChaosRule(Builder b, String id, long seed, long addedAt, long maxDuration) {
         this(b, id, 1, seed, addedAt, maxDuration);
@@ -199,9 +227,11 @@ final class ChaosRule {
         this.stall = b.stall;
         this.addedAt = addedAt;
         // a rule without an until duration ends after camel.chaos.maxDuration (also one that ends after a count)
-        this.endsAt = plus(addedAt, untilDuration > 0 ? untilDuration : maxDuration);
+        this.runFor = untilDuration > 0 ? untilDuration : maxDuration;
+        this.endsAt = plus(addedAt, runFor);
         this.within = b.within > 0 ? b.within : (untilDuration > 0 ? untilDuration : maxDuration);
-        this.expectation = expectRoute != null ? new Expectation(expectRoute, expectCount, plus(addedAt, within)) : null;
+        this.expectation = expectRoute != null
+                ? new Expectation(expectRoute, b.expectKind, b.expectOp, expectCount, plus(addedAt, within)) : null;
         for (int i = 0; i < fired.length; i++) {
             fired[i] = new LongAdder();
         }
@@ -242,14 +272,133 @@ final class ChaosRule {
         return now < endsAt && (untilCount == 0 || matches.get() < untilCount);
     }
 
-    /** Counts that the rule fired at the hook. */
+    /** Counts that the rule fired at the hook, where there is no exchange (a poll). */
     void fired(Hook hook) {
-        fired[hook.ordinal()].increment();
+        fired(hook, null, null, null);
     }
 
-    /** Counts that the rule fired at a message it could not change, so it did nothing. */
-    void skipped() {
+    /**
+     * Counts that the rule fired at the hook, with the live state of the rule: the time, the faults per second, the
+     * recent faults, and the exchange it faulted (marked with {@link ChaosManager#CHAOS_RULE}, and counted in the
+     * effect of the rule).
+     *
+     * @param exchange the exchange, or null at a poll
+     * @param routeId  the route, or null to take the route of the exchange
+     * @param where    the endpoint URI of a send or poll, or the id of a step, or null at the entry of a route
+     */
+    void fired(Hook hook, Exchange exchange, String routeId, String where) {
+        fired[hook.ordinal()].increment();
+        long now = TimeSource.currentTimeMillis();
+        countFault(now);
+        if (exchange != null) {
+            ChaosExchangeState.faulted(this, exchange);
+        }
+        ChaosRecentFaults recent = recentFaults;
+        if (recent != null) {
+            recent.add(now, this, hook, routeId != null || exchange == null ? routeId : ChaosExchangeState.routeId(exchange),
+                    where, exchange != null ? exchange.getExchangeId() : null);
+        }
+    }
+
+    /** A lifecycle rule (or stall) took its route down: counted in its live state, as the faults at a hook are. */
+    void firedLifecycle(String routeId, long now) {
+        countFault(now);
+        ChaosRecentFaults recent = recentFaults;
+        if (recent != null) {
+            recent.add(now, this, null, routeId, null, null);
+        }
+    }
+
+    private void countFault(long now) {
+        lastFiredAt = now;
+        long second = now / 1000;
+        int i = (int) (second % MINUTE);
+        synchronized (faultsPerSecond) {
+            if (secondOf[i] != second) {
+                secondOf[i] = second;
+                faultsPerSecond[i] = 0;
+            }
+            faultsPerSecond[i]++;
+        }
+    }
+
+    /** When the rule last fired, or -1 when it has not. */
+    long lastFiredAt() {
+        return lastFiredAt;
+    }
+
+    /** The faults per second over the last minute, the oldest second first: the last one is the current second. */
+    long[] faultsPerSecond(long now) {
+        long second = now / 1000;
+        long[] answer = new long[MINUTE];
+        synchronized (faultsPerSecond) {
+            for (int k = 0; k < MINUTE; k++) {
+                long s = second - (MINUTE - 1) + k;
+                int i = (int) Math.floorMod(s, MINUTE);
+                answer[k] = secondOf[i] == s ? faultsPerSecond[i] : 0;
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The share of the matches the rule decides to fire at: the probability of {@code rate=}, one in N for
+     * {@code rate=every:N}, else all of them.
+     */
+    double targetRate() {
+        return every > 0 ? 1.0d / every : probability;
+    }
+
+    /** What the rule does when it fires, in a few words, such as {@code error status 503} or {@code delay 2s}. */
+    String faultText() {
+        return switch (fault) {
+            case ERROR -> "error " + (status > 0
+                    ? "status " + status
+                    : exceptionType != null ? exceptionType.getSimpleName() : ChaosException.class.getSimpleName());
+            case DELAY -> "delay " + ChaosRuleParser.printTime(duration);
+            case DROP -> "drop";
+            case CORRUPT -> "corrupt " + mode.key;
+            case LIFECYCLE -> (stall ? "stall" : action.key) + " " + ChaosRuleParser.printTime(duration);
+        };
+    }
+
+    /**
+     * Starts the clock of the rule again: its end time and the deadline of its expectation count from now. For the
+     * rules added before the context started, so their times do not include the startup.
+     */
+    void startClock(long now) {
+        addedAt = now;
+        endsAt = plus(now, runFor);
+        if (expectation != null) {
+            expectation.startClock(plus(now, within));
+        }
+    }
+
+    /** Counts a message lost because the rule failed or dropped the send of the dead letter channel. */
+    void lostAtDlq() {
+        lostAtDlq.increment();
+    }
+
+    long lostAtDlqCount() {
+        return lostAtDlq.sum();
+    }
+
+    /**
+     * Counts that the rule fired at a message it could not change, so it did nothing.
+     *
+     * @param reason why, such as {@code a stream body (charset changes a text body)}: one of a few fixed texts, so the
+     *               report can count them
+     */
+    void skipped(String reason) {
         skipped.increment();
+        skipReasons.computeIfAbsent(reason, k -> new LongAdder()).increment();
+    }
+
+    /** How often the rule did nothing, per reason, in the order of the reasons. */
+    Map<String, Long> skipReasons() {
+        Map<String, Long> answer = new TreeMap<>();
+        skipReasons.forEach((reason, count) -> answer.put(reason, count.sum()));
+        return answer;
     }
 
     long matches() {
@@ -341,9 +490,15 @@ final class ChaosRule {
     }
 
     /**
-     * An expectation of a rule: the route completes at least that many more exchanges after the rule is added, before
-     * the time is up. It is met when the count is reached in time, unmet when the time is up without it, and pending
-     * before that, or for good when the rule is removed (or replaced) first.
+     * An expectation of a rule: a count of the route after the rule is added, before the time is up. Its kind is what
+     * it counts (the exchanges that completed, were handled by the error handler or failed, or the redeliveries), and
+     * its op how the count compares: at least ({@code >=}, as {@code expect=orders:100} is), at most ({@code <=}) or
+     * exactly ({@code =}) that many.
+     * <p/>
+     * At least is met as soon as the count is reached in time, and unmet when the time is up without it. At most and
+     * exactly are unmet as soon as the count goes over, and decided when the time is up otherwise. Before that it is
+     * pending. It is cancelled when the rule is removed (or replaced), or the context stops, first: the messages may
+     * still arrive, so it is neither met nor unmet, and does not keep the report from being final.
      */
     static final class Expectation {
 
@@ -351,7 +506,8 @@ final class ChaosRule {
         enum Outcome {
             MET("met"),
             UNMET("unmet"),
-            PENDING("pending");
+            PENDING("pending"),
+            CANCELLED("cancelled");
 
             final String key;
 
@@ -360,35 +516,95 @@ final class ChaosRule {
             }
         }
 
+        /** What an expectation counts in its route. */
+        enum Kind {
+            COMPLETED("completed", "exchange completed", "exchanges completed"),
+            HANDLED("handled", "exchange handled by the error handler", "exchanges handled by the error handler"),
+            FAILED("failed", "exchange failed", "exchanges failed"),
+            REDELIVERIES("redeliveries", "redelivery", "redeliveries");
+
+            final String key;
+            // for the reason of an unmet expectation
+            private final String one;
+            private final String many;
+
+            Kind(String key, String one, String many) {
+                this.key = key;
+                this.one = one;
+                this.many = many;
+            }
+
+            String words(long n) {
+                return n == 1 ? one : many;
+            }
+        }
+
+        /** How the count of an expectation compares. */
+        enum Op {
+            AT_LEAST(">=", "at least"),
+            AT_MOST("<=", "at most"),
+            EXACTLY("=", "exactly");
+
+            final String key;
+            final String words;
+
+            Op(String key, String words) {
+                this.key = key;
+                this.words = words;
+            }
+        }
+
         final String route;
+        final Kind kind;
+        final Op op;
         final long count;
-        final long deadline;
-        private long completed;
-        private long metAt = -1;
+        private long deadline;
+        private long value;
+        // when it was decided before the time was up (met for at least, unmet for at most and exactly), and how
+        private long decidedAt = -1;
+        private Outcome decided;
         private long frozenAt = -1;
 
         Expectation(String route, long count, long deadline) {
+            this(route, Kind.COMPLETED, Op.AT_LEAST, count, deadline);
+        }
+
+        Expectation(String route, Kind kind, Op op, long count, long deadline) {
             this.route = route;
+            this.kind = kind;
+            this.op = op;
             this.count = count;
             this.deadline = deadline;
         }
 
         /**
-         * The route of this expectation completed an exchange. The time is read under the lock, so once a report saw
-         * the expectation unmet, a completion that comes later cannot make it met.
+         * The route of this expectation counted one more of its kind. The time is read under the lock, so once a report
+         * saw the expectation decided, a count that comes later cannot change it.
          */
-        synchronized void complete() {
-            completeAt(TimeSource.currentTimeMillis());
+        synchronized void record() {
+            recordAt(TimeSource.currentTimeMillis());
         }
 
-        /** The route of this expectation completed an exchange at the given time (the tests give the time). */
-        synchronized void completeAt(long now) {
-            if (metAt >= 0 || frozenAt >= 0 || now > deadline) {
+        /** The route of this expectation counted one more of its kind at the given time (the tests give the time). */
+        synchronized void recordAt(long now) {
+            if (decided != null || frozenAt >= 0 || now > deadline) {
                 return;
             }
-            completed++;
-            if (completed >= count) {
-                metAt = now;
+            value++;
+            if (op == Op.AT_LEAST ? value >= count : value > count) {
+                decided = op == Op.AT_LEAST ? Outcome.MET : Outcome.UNMET;
+                decidedAt = now;
+            }
+        }
+
+        synchronized long deadline() {
+            return deadline;
+        }
+
+        /** The clock of the rule starts again (see {@link ChaosRule#startClock(long)}). */
+        synchronized void startClock(long deadline) {
+            if (decided == null && frozenAt < 0) {
+                this.deadline = deadline;
             }
         }
 
@@ -398,32 +614,97 @@ final class ChaosRule {
             }
         }
 
-        synchronized long completed() {
-            return completed;
+        synchronized long value() {
+            return value;
         }
 
         synchronized Outcome outcome(long now) {
-            if (metAt >= 0) {
-                return Outcome.MET;
+            if (decided != null) {
+                return decided;
             }
             if (frozenAt >= 0 && frozenAt <= deadline) {
-                // removed before it was decided: the messages may still arrive, so they are not called lost
+                // removed before it was decided: the messages may still arrive, so it is neither met nor unmet
+                return Outcome.CANCELLED;
+            }
+            if (now <= deadline) {
                 return Outcome.PENDING;
             }
-            return now > deadline ? Outcome.UNMET : Outcome.PENDING;
+            // the time is up
+            return switch (op) {
+                case AT_LEAST -> Outcome.UNMET;
+                case AT_MOST -> Outcome.MET;
+                case EXACTLY -> value == count ? Outcome.MET : Outcome.UNMET;
+            };
         }
 
         synchronized boolean frozen() {
             return frozenAt >= 0;
         }
 
-        /** The outcome, the completed count and whether it is frozen, read together (for the report). */
+        /** The outcome, the counted value and whether it is frozen, read together (for the report). */
         synchronized Reading read(long now) {
-            return new Reading(outcome(now), completed, frozenAt >= 0);
+            return new Reading(outcome(now), value, frozenAt >= 0);
         }
 
-        /** What the report reads of an expectation at one time. */
-        record Reading(Outcome outcome, long completed, boolean frozen) {
+        /**
+         * The messages an unmet expectation counts as lost: only one of completed exchanges, at least or exactly that
+         * many, misses the ones that did not complete.
+         */
+        long lost(Reading reading) {
+            return reading.outcome() == Outcome.UNMET && kind == Kind.COMPLETED && op != Op.AT_MOST
+                    ? Math.max(0, count - reading.value()) : 0;
+        }
+
+        /** The expectation as the rule writes it, such as orders:100 or orders:handled<=0. */
+        String spec() {
+            return kind == Kind.COMPLETED && op == Op.AT_LEAST
+                    ? route + ":" + count : route + ":" + kind.key + op.key + count;
+        }
+
+        /** What an expectation reads at one time. */
+        record Reading(Outcome outcome, long value, boolean frozen) {
+        }
+    }
+
+    /**
+     * The effect of the faults of a rule on the exchanges it faulted, each counted once when it is done: completed
+     * (without a redelivery after the fault, such as after a delay), recovered by a redelivery of the error handler,
+     * handled by the error handler (such as the dead letter channel), or failed. The others are still in flight. Only
+     * the exchanges with a unit of work count, as it tells when the exchange is done.
+     */
+    static final class Effect {
+
+        /** How an exchange was done, after the rule faulted it. */
+        enum Outcome {
+            COMPLETED,
+            RECOVERED,
+            HANDLED,
+            FAILED
+        }
+
+        private final LongAdder faulted = new LongAdder();
+        private final LongAdder[] done = new LongAdder[Outcome.values().length];
+
+        Effect() {
+            for (int i = 0; i < done.length; i++) {
+                done[i] = new LongAdder();
+            }
+        }
+
+        void faulted() {
+            faulted.increment();
+        }
+
+        void done(Outcome outcome) {
+            done[outcome.ordinal()].increment();
+        }
+
+        long faultedCount() {
+            return faulted.sum();
+        }
+
+        long count(Outcome outcome) {
+            return done[outcome.ordinal()].sum();
         }
     }
 
@@ -449,6 +730,8 @@ final class ChaosRule {
         long untilCount;
         long untilDuration;
         String expectRoute;
+        Expectation.Kind expectKind = Expectation.Kind.COMPLETED;
+        Expectation.Op expectOp = Expectation.Op.AT_LEAST;
         long expectCount;
         long within;
         Action action;

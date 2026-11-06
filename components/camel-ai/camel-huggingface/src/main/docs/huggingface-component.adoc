@@ -279,7 +279,9 @@ otherwise): the oldest messages are dropped first, the system prompt is kept, an
 message, so an odd value keeps one message less. For long-running conversations, keep `maxHistoryMessages` within what
 the context of the model can take: a history that outgrows it makes every message of that conversation fail until the
 history is cleared. Set the `CamelChatClearHistory` header to `true` to clear the history of the conversation before
-the message is sent.
+the message is sent. The messages of one conversation are processed one at a time, so each message sees the history
+of the message before it, also when a concurrent consumer receives them; messages of different conversations are not
+held up by each other.
 
 .Custom Task
 For a custom task (e.g., _translation_):

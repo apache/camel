@@ -384,7 +384,7 @@ public interface AzureServicebusComponentBuilderFactory {
     
         
         /**
-         * Set binary mode. If true, message body will be sent as byte. By
+         * Set binary mode. If true, message body will be sent as byte[]. By
          * default, it is false.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

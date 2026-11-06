@@ -150,7 +150,7 @@ For these operations, `accountName`, `fileSystemName` and `fileName` options are
 [width="100%", cols="10%,90%", options="header",]
 |===
 |Operation |Description
-|`getFile` | Get the contents of a file
+|`getFile` | Get the contents of a file. The content is written to the body when the body is an `OutputStream`; any other body is replaced by an `InputStream` of the content.
 |`downloadToFile` | Download the entire file from the file system into a path specified by fileDir.
 |`downloadLink` | Generate a download link for the specified file using Shared Access Signature (SAS).
 The expiration time to be set for the link can be specified otherwise 1 hour is taken as default.
@@ -435,8 +435,9 @@ from("direct:start")
     .to("mock:results");
 ----
 
-Or if the body is not set, the operation will give an `InputStream`, given that you have already registered for query acceleration
-in azure portal.
+Only a body that is an `OutputStream` is written to. Any other body, or no body, is replaced by an `InputStream` of the file content,
+which can be processed further downstream. So a `File`, `Path` or the file of a file consumer in the body is not written to:
+to save a file locally, use the `downloadToFile` operation, or a `file` endpoint after `getFile`.
 
 ._Java-only: reads the file content as an `InputStream`_
 [source,java]

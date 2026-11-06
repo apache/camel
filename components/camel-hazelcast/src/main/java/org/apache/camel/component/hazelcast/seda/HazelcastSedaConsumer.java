@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.task.Tasks;
 import org.apache.camel.support.task.budget.Budgets;
@@ -51,6 +52,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     private final AsyncProcessor processor;
     private ExecutorService executor;
     private ScheduledExecutorService taskExecutor;
+    private volatile boolean transferredExchangeLogged;
 
     public HazelcastSedaConsumer(final Endpoint endpoint, final Processor processor) {
         super(endpoint, processor);
@@ -115,8 +117,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         TimeUnit.MILLISECONDS);
 
                 if (body != null) {
-                    if (body instanceof DefaultExchangeHolder defaultExchangeHolder) {
-                        DefaultExchangeHolder.unmarshal(exchange, defaultExchangeHolder);
+                    if (body instanceof DefaultExchangeHolder holder) {
+                        takeTransferredExchange(exchange, holder);
                     } else {
                         exchange.getIn().setBody(body);
                     }
@@ -188,6 +190,27 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 }
             }
         }
+    }
+
+    /**
+     * An exchange that a producer with transferExchange=true put on the queue: the consumer restores its headers and
+     * exchange properties only when it has transferExchange=true as well, and otherwise takes only its body.
+     */
+    private void takeTransferredExchange(Exchange exchange, DefaultExchangeHolder holder) {
+        if (endpoint.getConfiguration().isTransferExchange()) {
+            DefaultExchangeHolder.unmarshal(exchange, holder);
+            return;
+        }
+        if (!transferredExchangeLogged) {
+            transferredExchangeLogged = true;
+            LOG.warn("The queue {} holds an exchange that a producer with transferExchange=true put on it, but this consumer"
+                     + " has transferExchange=false: it takes only the body of such an exchange, without its headers and"
+                     + " exchange properties. Set transferExchange=true on the consumer to restore them.",
+                    endpoint.getConfiguration().getQueueName());
+        }
+        Exchange transferred = new DefaultExchange(endpoint.getCamelContext());
+        DefaultExchangeHolder.unmarshal(transferred, holder);
+        exchange.getIn().setBody(transferred.getIn().getBody());
     }
 
     private void onExchangeDone(Exchange exchange, TransactionContext txc) {

@@ -98,6 +98,9 @@ abstract class MongoAbstractConsumerThread implements Runnable {
     @Override
     public void run() {
         stoppedLatch = new CountDownLatch(1);
+        // the failures since a cursor was last opened: while the server cannot be reached, every attempt fails the same
+        // way, so only the first one logs the stack trace
+        int failures = 0;
         try {
             // an interrupt ends the thread, as it did before the cursor was reopened inside the try
             while (keepRunning && !Thread.currentThread().isInterrupted()) {
@@ -112,14 +115,26 @@ abstract class MongoAbstractConsumerThread implements Runnable {
                             cursor.close();
                             break;
                         }
+                        if (failures > 0) {
+                            log.info("Opened a new cursor to consume from MongoDB again (consecutive failures: {})", failures);
+                            failures = 0;
+                        }
                     }
                     doRun();
                 } catch (Exception e) {
                     if (keepRunning) {
-                        // this one repeats for as long as the cause persists, so it is the branch that
-                        // needs the stack trace, not the one below
-                        log.warn("Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
-                                e.getMessage(), e);
+                        failures++;
+                        if (failures == 1) {
+                            log.warn("Exception from consuming from MongoDB caused by {}. Will try again on next poll.",
+                                    e.getMessage(), e);
+                        } else {
+                            // this one repeats for as long as the cause persists: the stack trace was logged with the
+                            // first failure
+                            log.warn("Exception from consuming from MongoDB caused by {} ({} consecutive failures)."
+                                     + " Will try again on next poll.",
+                                    e.getMessage(), failures);
+                            log.debug("Exception from consuming from MongoDB", e);
+                        }
                     } else {
                         log.warn("Exception from consuming from MongoDB caused by {}. ConsumerThread will be stopped.",
                                 e.getMessage(), e);

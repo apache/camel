@@ -209,9 +209,9 @@ public interface JgroupsComponentBuilderFactory {
          * JGroups receive path; to block such attacks, also configure the
          * JVM-wide -Djdk.serialFilter and secure the channel with AUTH and
          * encryption. When this option is not set and no JVM-wide filter is
-         * configured, a conservative default filter denying java.net. and
-         * otherwise allowing java., javax. and org.apache.camel. is applied.
-         * Use to accept any type.
+         * configured, a conservative default filter denying java.net.** and
+         * otherwise allowing java.**, javax.** and org.apache.camel.** is
+         * applied. Use * to accept any type.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

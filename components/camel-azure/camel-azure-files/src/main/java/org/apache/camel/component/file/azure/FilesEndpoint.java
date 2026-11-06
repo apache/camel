@@ -48,6 +48,7 @@ import org.apache.camel.util.ObjectHelper;
              headersClass = FilesConstants.class)
 @Metadata(excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,"
                               + "readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService,"
+                              + "readLockDeleteOrphanLockFiles,readLockRemoveOnCommit,readLockRemoveOnRollback,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,chmodDirectory,forceWrites,copyAndDeleteOnRenameFail,"
                               + "renameUsingCopy,synchronous,passive,passiveMode,stepwise,useList,binary,charset,password,"

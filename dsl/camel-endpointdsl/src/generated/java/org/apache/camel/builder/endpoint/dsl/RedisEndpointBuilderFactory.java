@@ -349,9 +349,9 @@ public interface RedisEndpointBuilderFactory {
          * when the default JDK serializer deserializes Redis payloads, both on
          * the consumer and on producer read commands. When not set, the
          * JVM-wide jdk.serialFilter is used if present; otherwise a
-         * conservative default filter denying java.net. and otherwise allowing
-         * java., javax. and org.apache.camel. packages is applied. Ignored when
-         * a custom serializer is set.
+         * conservative default filter denying java.net.* and otherwise allowing
+         * java.*, javax.* and org.apache.camel.* packages is applied. Ignored
+         * when a custom serializer is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -578,9 +578,9 @@ public interface RedisEndpointBuilderFactory {
          * when the default JDK serializer deserializes Redis payloads, both on
          * the consumer and on producer read commands. When not set, the
          * JVM-wide jdk.serialFilter is used if present; otherwise a
-         * conservative default filter denying java.net. and otherwise allowing
-         * java., javax. and org.apache.camel. packages is applied. Ignored when
-         * a custom serializer is set.
+         * conservative default filter denying java.net.* and otherwise allowing
+         * java.*, javax.* and org.apache.camel.* packages is applied. Ignored
+         * when a custom serializer is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -765,9 +765,9 @@ public interface RedisEndpointBuilderFactory {
          * when the default JDK serializer deserializes Redis payloads, both on
          * the consumer and on producer read commands. When not set, the
          * JVM-wide jdk.serialFilter is used if present; otherwise a
-         * conservative default filter denying java.net. and otherwise allowing
-         * java., javax. and org.apache.camel. packages is applied. Ignored when
-         * a custom serializer is set.
+         * conservative default filter denying java.net.* and otherwise allowing
+         * java.*, javax.* and org.apache.camel.* packages is applied. Ignored
+         * when a custom serializer is set.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
