@@ -81,6 +81,17 @@ Camel-AWS STS component provides the following operation on the producer side:
 - getSessionToken
 - getFederationToken
 
+=== The temporary credentials
+
+The body of the message is the response of the AWS SDK, such as an `AssumeRoleResponse`, and its `credentials()` hold
+the temporary credentials.
+
+The producer also sets the `CamelAwsStsAccessKeyId` and `CamelAwsStsExpiration` headers, and for `assumeRole` the
+`CamelAwsStsAssumedRoleArn` header. It does not set headers with the secret access key and the session token: take them
+from the body, such as `${body.credentials().secretAccessKey()}` and `${body.credentials().sessionToken()}` with the
+xref:languages:simple-language.adoc[Simple] language. To keep them for later steps of the route, store them in a
+variable rather than in a header, as message headers are logged, traced and sent on by many producers.
+
 == Examples
 
 === Producer Examples
