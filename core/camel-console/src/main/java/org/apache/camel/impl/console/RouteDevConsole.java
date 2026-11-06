@@ -67,6 +67,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             @Metadata(description = "Total number of exchanges") long exchangesTotal,
             @Metadata(description = "Number of failed exchanges") long exchangesFailed,
             @Metadata(description = "Number of inflight exchanges") long exchangesInflight,
+            @Metadata(description = "Number of exchanges whose failure was handled by the error handler, such as moved to a dead letter channel") long failuresHandled,
+            @Metadata(description = "Number of redeliveries by the error handler of Camel (internal only)") long redeliveries,
+            @Metadata(description = "Number of redeliveries initiated from outside, such as by a JMS broker") long externalRedeliveries,
             @Metadata(description = "Total number of exchanges that came from a remote endpoint") long remoteExchangesTotal,
             @Metadata(description = "Number of failed exchanges that came from a remote endpoint") long remoteExchangesFailed,
             @Metadata(description = "Number of inflight exchanges that came from a remote endpoint") long remoteExchangesInflight,
@@ -216,6 +219,9 @@ public class RouteDevConsole extends AbstractDevConsole {
             sb.append(String.format("%n    Total: %s", mrb.getExchangesTotal()));
             sb.append(String.format("%n    Failed: %s", mrb.getExchangesFailed()));
             sb.append(String.format("%n    Inflight: %s", mrb.getExchangesInflight()));
+            sb.append(String.format("%n    Failures Handled: %s", mrb.getFailuresHandled()));
+            sb.append(String.format("%n    Redeliveries: %s", mrb.getRedeliveries()));
+            sb.append(String.format("%n    External Redeliveries: %s", mrb.getExternalRedeliveries()));
             long idle = mrb.getIdleSince();
             if (idle > 0) {
                 sb.append(String.format("%n    Idle Since: %s", TimeUtils.printDuration(idle)));
@@ -560,6 +566,7 @@ public class RouteDevConsole extends AbstractDevConsole {
                 coverage, hasLoad ? load1 : null, hasLoad ? load5 : null, hasLoad ? load15 : null,
                 thp.isEmpty() ? null : thp,
                 mrb.getIdleSince(), mrb.getExchangesTotal(), mrb.getExchangesFailed(), mrb.getExchangesInflight(),
+                mrb.getFailuresHandled(), mrb.getRedeliveries(), mrb.getExternalRedeliveries(),
                 mrb.getRemoteExchangesTotal(), mrb.getRemoteExchangesFailed(), mrb.getRemoteExchangesInflight(),
                 mrb.getMeanProcessingTime(), mrb.getMaxProcessingTime(), mrb.getMinProcessingTime(),
                 p50, p95, p99, lastProcessingTime, deltaProcessingTime,

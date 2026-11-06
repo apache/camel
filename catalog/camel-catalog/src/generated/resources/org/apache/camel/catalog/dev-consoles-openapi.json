@@ -5089,6 +5089,18 @@
 																"type": "integer",
 																"description": "Number of inflight exchanges"
 															},
+															"failuresHandled": {
+																"type": "integer",
+																"description": "Number of exchanges whose failure was handled by the error handler, such as moved to a dead letter channel"
+															},
+															"redeliveries": {
+																"type": "integer",
+																"description": "Number of redeliveries by the error handler of Camel (internal only)"
+															},
+															"externalRedeliveries": {
+																"type": "integer",
+																"description": "Number of redeliveries initiated from outside, such as by a JMS broker"
+															},
 															"exchangesThroughput": {
 																"type": "string",
 																"description": "Messages per second throughput (only present when available)"
@@ -5147,6 +5159,9 @@
 															"exchangesTotal",
 															"exchangesFailed",
 															"exchangesInflight",
+															"failuresHandled",
+															"redeliveries",
+															"externalRedeliveries",
 															"meanProcessingTime",
 															"maxProcessingTime",
 															"minProcessingTime"
@@ -6262,6 +6277,18 @@
 																"type": "integer",
 																"description": "Number of inflight exchanges"
 															},
+															"failuresHandled": {
+																"type": "integer",
+																"description": "Number of exchanges whose failure was handled by the error handler, such as moved to a dead letter channel"
+															},
+															"redeliveries": {
+																"type": "integer",
+																"description": "Number of redeliveries by the error handler of Camel (internal only)"
+															},
+															"externalRedeliveries": {
+																"type": "integer",
+																"description": "Number of redeliveries initiated from outside, such as by a JMS broker"
+															},
 															"remoteExchangesTotal": {
 																"type": "integer",
 																"description": "Total number of exchanges that came from a remote endpoint"
@@ -6328,6 +6355,9 @@
 															"exchangesTotal",
 															"exchangesFailed",
 															"exchangesInflight",
+															"failuresHandled",
+															"redeliveries",
+															"externalRedeliveries",
 															"remoteExchangesTotal",
 															"remoteExchangesFailed",
 															"remoteExchangesInflight",
@@ -6444,6 +6474,18 @@
 																			"type": "integer",
 																			"description": "Number of inflight exchanges"
 																		},
+																		"failuresHandled": {
+																			"type": "integer",
+																			"description": "Number of exchanges whose failure was handled by the error handler, such as moved to a dead letter channel"
+																		},
+																		"redeliveries": {
+																			"type": "integer",
+																			"description": "Number of redeliveries by the error handler of Camel (internal only)"
+																		},
+																		"externalRedeliveries": {
+																			"type": "integer",
+																			"description": "Number of redeliveries initiated from outside, such as by a JMS broker"
+																		},
 																		"exchangesThroughput": {
 																			"type": "string",
 																			"description": "Messages per second throughput (only present when available)"
@@ -6502,6 +6544,9 @@
 																		"exchangesTotal",
 																		"exchangesFailed",
 																		"exchangesInflight",
+																		"failuresHandled",
+																		"redeliveries",
+																		"externalRedeliveries",
 																		"meanProcessingTime",
 																		"maxProcessingTime",
 																		"minProcessingTime"

@@ -273,6 +273,8 @@ final class StatusParser {
                     ri.throughput = objToString(rs.get("exchangesThroughput"));
                     ri.total = objToLong(rs.get("exchangesTotal"));
                     ri.failed = objToLong(rs.get("exchangesFailed"));
+                    ri.failuresHandled = objToLong(rs.get("failuresHandled"));
+                    ri.redeliveries = objToLong(rs.get("redeliveries"));
                     ri.inflight = objToLong(rs.get("exchangesInflight"));
                     ri.meanTime = Math.max(0, objToLong(rs.get("meanProcessingTime")));
                     ri.minTime = Math.max(0, objToLong(rs.get("minProcessingTime")));
@@ -320,6 +322,8 @@ final class StatusParser {
                         if (ps != null) {
                             pi.total = objToLong(ps.get("exchangesTotal"));
                             pi.failed = objToLong(ps.get("exchangesFailed"));
+                            pi.failuresHandled = objToLong(ps.get("failuresHandled"));
+                            pi.redeliveries = objToLong(ps.get("redeliveries"));
                             pi.meanTime = Math.max(0, objToLong(ps.get("meanProcessingTime")));
                             pi.minTime = Math.max(0, objToLong(ps.get("minProcessingTime")));
                             pi.maxTime = Math.max(0, objToLong(ps.get("maxProcessingTime")));

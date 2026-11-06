@@ -25,6 +25,8 @@ Below the routes are the steps of the selected route, with the same numbers:
 - **TYPE** — The kind of step (`to`, `setBody`, `choice`), indented under the step it is inside, such as the steps of a branch of a choice
 - **LINE** — The line of the route source the step is on (when the runtime records the source locations)
 - **PROCESSOR** — What the step does, as the route diagram shows it: where it sends to (`log:outbox`), its expression (`simple{${body}}`) or its data format (`jackson`). An id the route gives a step (`id: audit`) is shown first; the ids Camel generates (`to1`, `setBody2`) are left out, as they only repeat the type
+- **REDEL** — The redeliveries of the error handler at this step: an exchange that failed here and was tried again, whether the next attempt succeeded or not. The route row counts the exchanges that completed after a redelivery. Shown when the error handler redelivered an exchange of the route, or handled one
+- **HAND** — The failures the error handler handled, such as an exchange moved to a dead letter channel: the route counts them as done, not failed, so FAIL stays 0
 - **BODY TYPES** — The body types the step has been reached with, across the messages (with the message history on)
 
 ## Percentile Latency (P50/P95/P99)
