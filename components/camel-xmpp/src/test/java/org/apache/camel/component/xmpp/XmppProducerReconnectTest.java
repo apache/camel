@@ -18,12 +18,17 @@ package org.apache.camel.component.xmpp;
 
 import java.net.InetAddress;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.ReconnectionManager;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.junit.jupiter.api.AfterEach;
@@ -44,6 +49,7 @@ class XmppProducerReconnectTest extends CamelTestSupport {
 
     private static final String ALICE = "alice@" + FakeXmppServer.DOMAIN;
     private static final String ROOM = "dev@conference." + FakeXmppServer.DOMAIN;
+    private static final String OPS_ROOM = "ops@conference." + FakeXmppServer.DOMAIN;
 
     private FakeXmppServer server;
 
@@ -124,6 +130,87 @@ class XmppProducerReconnectTest extends CamelTestSupport {
         assertEquals(1, server.occupants(ROOM));
     }
 
+    @Test
+    void groupChatProducerEntersItsRoomAgainWhileAnotherUserIsStillLoggingTheConnectionIn() throws Exception {
+        // the connection of the account, logged in, with a listener that comes before the one of the producer
+        XmppEndpoint endpoint = context.getEndpoint(opsRoomUri(), XmppEndpoint.class);
+        Object probe = new Object();
+        XMPPTCPConnection connection = endpoint.getComponent().acquireConnection(endpoint, probe);
+        try {
+            // the test logs the connection in again, not Smack
+            ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
+            AtomicBoolean holdLogin = new AtomicBoolean();
+            CountDownLatch inLogin = new CountDownLatch(1);
+            CountDownLatch releaseLogin = new CountDownLatch(1);
+            connection.addConnectionListener(new ConnectionListener() {
+                @Override
+                public void authenticated(XMPPConnection c, boolean resumed) {
+                    if (holdLogin.compareAndSet(true, false)) {
+                        inLogin.countDown();
+                        try {
+                            releaseLogin.await(20, TimeUnit.SECONDS);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+            });
+            // the producer starts now, so its listener comes after the one above
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("direct:opsRoom").routeId("opsRoom").to(opsRoomUri());
+                }
+            });
+            // a listener after the one of the producer: when it was called, the producer's was called too
+            CountDownLatch closed = new CountDownLatch(1);
+            connection.addConnectionListener(new ConnectionListener() {
+                @Override
+                public void connectionClosedOnError(Exception e) {
+                    closed.countDown();
+                }
+            });
+
+            template.sendBody("direct:opsRoom", "before");
+            await().atMost(10, TimeUnit.SECONDS).until(() -> server.messagesTo(OPS_ROOM).size() == 1);
+
+            server.dropConnections();
+            assertTrue(closed.await(10, TimeUnit.SECONDS));
+
+            // another user of the account (or Smack's ReconnectionManager) logs the connection in again: Smack reports
+            // it as logged in, and the authenticated listeners have not been called yet
+            holdLogin.set(true);
+            Thread login = new Thread(() -> {
+                try {
+                    connection.connect();
+                    connection.login();
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+            }, "other-user-login");
+            login.start();
+            assertTrue(inLogin.await(10, TimeUnit.SECONDS));
+            assertTrue(connection.isAuthenticated());
+
+            template.sendBody("direct:opsRoom", "after");
+
+            await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertEquals(List.of("before", "after"), server.messagesTo(OPS_ROOM)));
+            assertEquals(1, server.occupants(OPS_ROOM));
+
+            releaseLogin.countDown();
+            login.join(10000);
+            assertFalse(login.isAlive());
+
+            template.sendBody("direct:opsRoom", "later");
+            await().atMost(10, TimeUnit.SECONDS)
+                    .untilAsserted(() -> assertEquals(List.of("before", "after", "later"), server.messagesTo(OPS_ROOM)));
+            assertEquals(1, server.occupants(OPS_ROOM));
+        } finally {
+            endpoint.getComponent().releaseConnection(endpoint, probe);
+        }
+    }
+
     private XMPPTCPConnection connectionOf(String uri) throws Exception {
         XmppEndpoint endpoint = context.getEndpoint(uri, XmppEndpoint.class);
         XmppComponent component = endpoint.getComponent();
@@ -141,6 +228,11 @@ class XmppProducerReconnectTest extends CamelTestSupport {
     private String roomUri() {
         return "xmpp://speaker@127.0.0.1:" + server.getPort() + "?room=" + ROOM
                + "&nickname=speaker&password=secret&connectionConfig=#connectionConfig";
+    }
+
+    private String opsRoomUri() {
+        return "xmpp://writer@127.0.0.1:" + server.getPort() + "?room=" + OPS_ROOM
+               + "&nickname=writer&password=secret&connectionConfig=#connectionConfig";
     }
 
     @Override
