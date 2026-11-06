@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -74,6 +76,44 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
         return parseConfigurationSource(new File(fileName));
     }
 
+    // a Java string literal, with its escapes
+    private static final Pattern STRING_LITERAL = Pattern.compile("\"((?:[^\"\\\\]|\\\\.)*)\"");
+
+    /**
+     * The value of a String attribute of an annotation. A value written as string literals joined with {@code +} (a
+     * long description) is joined here: Roaster gives it as the source text with the {@code +} in it.
+     */
+    static String stringValue(AnnotationSource<?> as, String name) {
+        String literal = as.getLiteralValue(name);
+        if (literal == null || literal.indexOf('+') < 0 || !literal.startsWith("\"")) {
+            return as.getStringValue(name);
+        }
+        StringBuilder sb = new StringBuilder();
+        Matcher m = STRING_LITERAL.matcher(literal);
+        while (m.find()) {
+            sb.append(unescape(m.group(1)));
+        }
+        return sb.toString();
+    }
+
+    private static String unescape(String text) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (ch == '\\' && i + 1 < text.length()) {
+                char next = text.charAt(++i);
+                sb.append(switch (next) {
+                    case 'n' -> '\n';
+                    case 't' -> '\t';
+                    default -> next;
+                });
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
     /**
      * Parses the Camel CLI configuration java source file.
      */
@@ -89,7 +129,7 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
                 String name = f.getStringInitializer();
                 String javaType = as.getStringValue("javaType");
                 String defaultValue = as.getStringValue("defaultValue");
-                String desc = as.getStringValue("description");
+                String desc = stringValue(as, "description");
                 String label = as.getStringValue("label");
                 boolean secret = "true".equals(as.getStringValue("secret"));
                 String security = as.getStringValue("security");
