@@ -48,8 +48,14 @@ exchanges per second over the window, and the worst count.
 ## The selected route
 
 Its outcomes stacked per second (green at the bottom, then yellow, orange
-and red), the mean processing time of the exchanges done each second, and
-the exchanges in flight. The last line has the totals of the window.
+and red), the mean processing time of the exchanges done each second, the
+exchanges in flight, and the redelivery attempts of its processors. The
+last line has the totals of the window.
+
+A second with redelivery attempts is yellow in the route line too: the
+route counts an exchange recovered by redelivery from its redelivered
+header, and a route that removes the `Camel*` headers after the redelivery
+does not count it, while its processors still count each attempt.
 
 ## Keys
 
