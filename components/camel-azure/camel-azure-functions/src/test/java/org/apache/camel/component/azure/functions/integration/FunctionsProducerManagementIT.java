@@ -19,16 +19,30 @@ package org.apache.camel.component.azure.functions.integration;
 import java.util.List;
 import java.util.Map;
 
+import com.azure.core.management.Region;
+import com.azure.resourcemanager.appservice.AppServiceManager;
+import com.azure.resourcemanager.appservice.fluent.models.SiteConfigInner;
+import com.azure.resourcemanager.appservice.fluent.models.SiteInner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.azure.functions.FunctionsComponent;
+import org.apache.camel.component.azure.functions.FunctionsConfiguration;
 import org.apache.camel.component.azure.functions.FunctionsConstants;
+import org.apache.camel.test.infra.azure.functions.clients.AzureFunctionsClientUtils;
+import org.apache.camel.test.infra.azure.functions.services.AzureFunctionsService;
+import org.apache.camel.test.infra.azure.functions.services.AzureFunctionsServiceFactory;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,7 +50,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration tests for Azure Functions management operations.
  * <p>
- * These tests require Azure AD authentication (DefaultAzureCredential or service principal). Run with:
+ * They run against Floci AZ by default, on a function app they create there through its Azure Resource Manager
+ * endpoint. Floci AZ serves the Microsoft.Web/sites resources, but not the config/logs of a site, which the Azure SDK
+ * reads to get a function app: the tests of the operations on one function app run against Azure only.
+ * <p>
+ * To run them against Azure, with Azure AD authentication (DefaultAzureCredential or service principal):
  *
  * <pre>
  * mvn verify -Dcamel.component.azure-functions.function-app=myFunctionApp \
@@ -50,24 +68,83 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * -DAZURE_CLIENT_ID=xxx -DAZURE_CLIENT_SECRET=xxx -DAZURE_TENANT_ID=xxx
  * </pre>
  */
-@EnabledIfSystemProperty(named = BaseFunctionsTestSupport.SUBSCRIPTION_ID_PROPERTY, matches = ".*",
-                         disabledReason = "Azure subscription credentials must be supplied to run this test, e.g: "
-                                          + "mvn verify -D" + BaseFunctionsTestSupport.FUNCTION_APP_PROPERTY + "=myApp "
-                                          + "-D" + BaseFunctionsTestSupport.SUBSCRIPTION_ID_PROPERTY + "=mySubscription "
-                                          + "-D" + BaseFunctionsTestSupport.RESOURCE_GROUP_PROPERTY + "=myResourceGroup")
 public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
+
+    // against Floci AZ, unless a subscription is given
+    private static final boolean REMOTE = SUBSCRIPTION_ID != null;
+
+    static {
+        if (REMOTE) {
+            System.setProperty("azure.instance.type", "remote");
+        }
+    }
+
+    @RegisterExtension
+    static AzureFunctionsService service = AzureFunctionsServiceFactory.createService();
+
+    // the function app of the tests: the given one, or one they create on Floci AZ
+    private static final String APP = REMOTE ? FUNCTION_APP : "camel-functions-it";
+    // the function app the delete test creates on Floci AZ
+    private static final String APP_TO_DELETE = "camel-functions-it-delete";
+
+    private static final String FLOCI_AZ_GAP
+            = "Floci AZ does not serve the config/logs of a site, which the Azure SDK reads to get a function app"
+              + " (GET .../sites/{name}/config/logs answers 404 ResourceNotFound)";
+    private static final String REMOTE_ONLY = ". Supply an Azure subscription to run this test, e.g: mvn verify -D"
+                                              + FUNCTION_APP_PROPERTY + "=myApp -D" + SUBSCRIPTION_ID_PROPERTY
+                                              + "=mySubscription -D" + RESOURCE_GROUP_PROPERTY + "=myResourceGroup";
 
     private static final String DIRECT_LIST_APPS = "direct:listApps";
     private static final String DIRECT_GET_APP = "direct:getApp";
     private static final String DIRECT_LIST_FUNCTIONS = "direct:listFunctions";
     private static final String DIRECT_GET_CONFIG = "direct:getConfig";
     private static final String DIRECT_LIST_TAGS = "direct:listTags";
+    private static final String DIRECT_DELETE_APP = "direct:deleteApp";
+
+    private static AppServiceManager appServiceManager;
 
     private ProducerTemplate producerTemplate;
+
+    @BeforeAll
+    static void createFunctionApp() {
+        if (!REMOTE) {
+            appServiceManager = AzureFunctionsClientUtils.createLocalAppServiceManager(service);
+            appServiceManager.resourceManager().resourceGroups().define(service.resourceGroup())
+                    .withRegion(Region.EUROPE_WEST)
+                    .create();
+            createSite(APP);
+        }
+    }
+
+    /**
+     * Creates a function app as a Microsoft.Web/sites resource: Floci AZ serves no App Service plan, which the
+     * createFunctionApp operation creates first.
+     */
+    private static void createSite(String name) {
+        SiteInner site = new SiteInner()
+                .withKind("functionapp,linux")
+                .withSiteConfig(new SiteConfigInner().withLinuxFxVersion("Java|21"))
+                .withLocation(Region.EUROPE_WEST.name());
+        appServiceManager.serviceClient().getWebApps().createOrUpdate(service.resourceGroup(), name, site);
+    }
 
     @BeforeEach
     void beforeEach() {
         producerTemplate = contextExtension.getProducerTemplate();
+    }
+
+    @Override
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        super.configureComponent(context);
+
+        if (!REMOTE) {
+            FunctionsConfiguration configuration
+                    = context.getComponent("azure-functions", FunctionsComponent.class).getConfiguration();
+            configuration.setSubscriptionId(service.subscriptionId());
+            configuration.setResourceGroup(service.resourceGroup());
+            configuration.setAppServiceManager(appServiceManager);
+        }
     }
 
     @Override
@@ -77,23 +154,27 @@ public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
             public void configure() {
                 // List function apps in resource group
                 from(DIRECT_LIST_APPS)
-                        .toF("azure-functions:%s?operation=listFunctionApps", FUNCTION_APP);
+                        .toF("azure-functions:%s?operation=listFunctionApps", APP);
 
                 // Get function app details
                 from(DIRECT_GET_APP)
-                        .toF("azure-functions:%s?operation=getFunctionApp", FUNCTION_APP);
+                        .toF("azure-functions:%s?operation=getFunctionApp", APP);
 
                 // List functions in app
                 from(DIRECT_LIST_FUNCTIONS)
-                        .toF("azure-functions:%s?operation=listFunctions", FUNCTION_APP);
+                        .toF("azure-functions:%s?operation=listFunctions", APP);
 
                 // Get function app configuration
                 from(DIRECT_GET_CONFIG)
-                        .toF("azure-functions:%s?operation=getFunctionAppConfiguration", FUNCTION_APP);
+                        .toF("azure-functions:%s?operation=getFunctionAppConfiguration", APP);
 
                 // List tags
                 from(DIRECT_LIST_TAGS)
-                        .toF("azure-functions:%s?operation=listTags", FUNCTION_APP);
+                        .toF("azure-functions:%s?operation=listTags", APP);
+
+                // Delete the function app the delete test creates
+                from(DIRECT_DELETE_APP)
+                        .toF("azure-functions:%s?operation=deleteFunctionApp", APP_TO_DELETE);
             }
         };
     }
@@ -119,6 +200,8 @@ public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = SUBSCRIPTION_ID_PROPERTY, matches = ".*",
+                             disabledReason = FLOCI_AZ_GAP + ", nor the defaultHostName of a site" + REMOTE_ONLY)
     @SuppressWarnings("unchecked")
     void testGetFunctionApp() {
         Exchange result = producerTemplate.request(DIRECT_GET_APP, exchange -> {
@@ -139,6 +222,10 @@ public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = SUBSCRIPTION_ID_PROPERTY, matches = ".*",
+                             disabledReason = FLOCI_AZ_GAP
+                                              + ", nor the functions of a site (GET .../sites/{name}/functions answers 404)"
+                                              + REMOTE_ONLY)
     @SuppressWarnings("unchecked")
     void testListFunctions() {
         Exchange result = producerTemplate.request(DIRECT_LIST_FUNCTIONS, exchange -> {
@@ -153,6 +240,10 @@ public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = SUBSCRIPTION_ID_PROPERTY, matches = ".*",
+                             disabledReason = FLOCI_AZ_GAP
+                                              + ", nor the app settings of a site (POST .../sites/{name}/config/appsettings/list"
+                                              + " answers 404)" + REMOTE_ONLY)
     @SuppressWarnings("unchecked")
     void testGetFunctionAppConfiguration() {
         Exchange result = producerTemplate.request(DIRECT_GET_CONFIG, exchange -> {
@@ -168,6 +259,8 @@ public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = SUBSCRIPTION_ID_PROPERTY, matches = ".*",
+                             disabledReason = FLOCI_AZ_GAP + ", and it keeps no tags of a site" + REMOTE_ONLY)
     @SuppressWarnings("unchecked")
     void testListTags() {
         Exchange result = producerTemplate.request(DIRECT_LIST_TAGS, exchange -> {
@@ -178,5 +271,26 @@ public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
 
         Map<String, String> tags = result.getMessage().getBody(Map.class);
         assertNotNull(tags, "Should return tags map (may be empty)");
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = SUBSCRIPTION_ID_PROPERTY, matches = ".*",
+                              disabledReason = "The test deletes a function app it creates on Floci AZ")
+    void testDeleteFunctionApp() {
+        createSite(APP_TO_DELETE);
+        assertTrue(listFunctionAppNames().contains(APP_TO_DELETE), "Should list the function app before its deletion");
+
+        Object deleted = producerTemplate.requestBody(DIRECT_DELETE_APP, (Object) null);
+
+        assertEquals(Boolean.TRUE, deleted);
+        List<String> names = listFunctionAppNames();
+        assertFalse(names.contains(APP_TO_DELETE), "Should not list the deleted function app");
+        assertTrue(names.contains(APP), "Should still list the other function app");
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> listFunctionAppNames() {
+        List<Map<String, Object>> apps = producerTemplate.requestBody(DIRECT_LIST_APPS, null, List.class);
+        return apps.stream().map(app -> (String) app.get("name")).toList();
     }
 }
