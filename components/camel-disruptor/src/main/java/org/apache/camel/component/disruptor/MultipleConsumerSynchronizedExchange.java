@@ -30,6 +30,10 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
 
     private final int expectedConsumers;
 
+    // the consumers copy this one: the first consumer that fails copies its result into the exchange, which the other
+    // consumers must neither see nor read while it is written
+    private final Exchange exchangeToCopy;
+
     private final AtomicInteger processedConsumers = new AtomicInteger();
 
     private final AtomicBoolean resultHandled = new AtomicBoolean();
@@ -40,6 +44,13 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
         super(exchange);
         this.expectedConsumers = expectedConsumers;
         processedConsumers.set(0);
+        // taken when the exchange is published, before any consumer can fail
+        this.exchangeToCopy = ExchangeHelper.copyExchangeWithProperties(exchange, exchange.getContext());
+    }
+
+    @Override
+    public Exchange getExchangeToCopy() {
+        return exchangeToCopy;
     }
 
     @Override
