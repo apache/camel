@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,6 +92,8 @@ class MonitorContext {
     /** Collector behind the Ollama tab and the tui_get_ollama tool; set by CamelMonitor at startup. */
     OllamaMonitor ollamaMonitor;
     BiConsumer<String, Boolean> notificationCallback;
+    // opens the Chaos screen with the known rules for a target ({@code !} on an endpoint, a consumer or a diagram node)
+    Consumer<ChaosHere.Target> chaosHere;
     BiConsumer<String, String> openMarkdownCallback;
     /** Opens markdown in the doc viewer scrolled to a heading: title, markdown, heading (may be null). */
     MarkdownOpener openMarkdownAtCallback;

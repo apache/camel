@@ -38,6 +38,7 @@ import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectCapabilities;
+import org.apache.camel.dsl.jbang.core.commands.tui.diagram.RouteDiagramWidget;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -77,6 +78,11 @@ class DiagramTab extends AbstractDiagramTab {
 
         // Source view scrolling (takes priority when active)
         if (sourceViewer.handleKeyEvent(ke)) {
+            return true;
+        }
+
+        // !: the known chaos rules for the selected node (or route)
+        if (diagram.isShowDiagram() && ke.isChar('!') && handleChaosKey(ke)) {
             return true;
         }
 
@@ -681,6 +687,22 @@ class DiagramTab extends AbstractDiagramTab {
                 area);
     }
 
+    /** {@code !} on the diagram: the selected node of a route, or the selected route of the topology. */
+    private boolean handleChaosKey(KeyEvent ke) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (!ChaosHere.available(info)) {
+            return false;
+        }
+        RouteDiagramWidget.EipNodeBox box = topologyMode ? null : diagram.getSelectedEipNodeBox();
+        // the endpoint of a to, from the model of the route
+        String uri = box != null && box.layoutNode() != null && box.layoutNode().treeNode != null
+                ? box.layoutNode().treeNode.info.uri : null;
+        ChaosHere.Target target = ChaosHere.forDiagramNode(
+                box != null ? box.nodeId() : null, box != null ? box.type() : null, uri, diagram.getSelectedRouteId(),
+                info);
+        return ChaosHere.handleKey(ke, ctx, info, target);
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
         if (renderGotoNodeFooter(spans)) {
@@ -716,6 +738,7 @@ class DiagramTab extends AbstractDiagramTab {
             } else {
                 diagram.renderFooterHints(spans);
             }
+            ChaosHere.hint(spans, ctx.findSelectedIntegration());
         }
     }
 

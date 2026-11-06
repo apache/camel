@@ -72,6 +72,11 @@ class ChaosTab extends AbstractTableTab {
         return control;
     }
 
+    /** Opens the known rules for a target ({@code !} on another screen). */
+    void openAt(ChaosHere.Target target) {
+        control.openAt(ctx.findSelectedIntegration(), target);
+    }
+
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
         IntegrationInfo info = ctx.findSelectedIntegration();

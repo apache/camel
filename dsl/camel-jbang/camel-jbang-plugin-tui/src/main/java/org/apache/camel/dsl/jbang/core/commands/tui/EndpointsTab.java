@@ -119,6 +119,10 @@ class EndpointsTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (ke.isChar('!') && ChaosHere.handleKey(ke, ctx, info, ChaosHere.forEndpoint(selectedEndpoint(info), info))) {
+            return true;
+        }
         if (ke.isKey(KeyCode.TAB) && panelMode == PANEL_DETAIL) {
             detailFocused = !detailFocused;
             return true;
@@ -418,6 +422,19 @@ class EndpointsTab extends AbstractTableTab {
         if (panelMode == PANEL_DETAIL) {
             hint(spans, "Tab", detailFocused ? "table" : "detail");
         }
+        ChaosHere.hint(spans, ctx.findSelectedIntegration());
+    }
+
+    /** The endpoint selected in the table, as filtered and sorted. */
+    private EndpointInfo selectedEndpoint(IntegrationInfo info) {
+        Integer sel = tableState.selected();
+        if (info == null || sel == null) {
+            return null;
+        }
+        List<EndpointInfo> sorted = new ArrayList<>(info.endpoints);
+        sorted.removeIf(ep -> !matchesFilter(ep));
+        sorted.sort(this::sortEndpoint);
+        return sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
     }
 
     int getFilter() {

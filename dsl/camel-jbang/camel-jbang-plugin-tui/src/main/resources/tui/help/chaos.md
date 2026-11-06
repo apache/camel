@@ -72,3 +72,16 @@ the rule as `camel.chaos.rules` is checked: a rule that is not valid comes
 back with the reason, and a rule that matches nothing in the integration
 (often a typo) with a warning. Press **e** in that dialog to change the
 rule.
+
+## Chaos from where you look
+
+Press **!** on the Endpoint tab, the Consumers tab or a node of the
+Diagram to open the known rules for what is selected, with it filled in:
+
+- a `to` (or an endpoint the routes send to): the faults of that endpoint,
+  such as an HTTP status for an HTTP endpoint, and the faults of the step;
+- the `from` of a route, a consumer, or an endpoint a route consumes: the
+  route stalls, flaps or gets corrupt messages, and the polls fail when it
+  polls.
+
+Only when chaos is on in the integration.

@@ -98,6 +98,8 @@ final class ChaosRecipeForm {
 
     private final List<ChaosRecipes.Recipe> recipes;
     private final IntegrationInfo info;
+    // what the form was opened for ({@code !} on an endpoint, a consumer or a node of the diagram), or null
+    private final ChaosHere.Target target;
     // the index in the list (the recipes, then the entry that types the rule)
     private int selected;
     private boolean inForm;
@@ -106,8 +108,64 @@ final class ChaosRecipeForm {
     private String rule;
 
     ChaosRecipeForm(ChaosRecipes recipes, IntegrationInfo info) {
-        this.recipes = recipes.recipes();
+        this(recipes, info, null);
+    }
+
+    /** The known rules for a target: only the recipes it fills in, with it filled in. */
+    ChaosRecipeForm(ChaosRecipes recipes, IntegrationInfo info, ChaosHere.Target target) {
+        this.recipes = target == null
+                ? recipes.recipes()
+                : recipes.recipes().stream().filter(r -> applies(r, target)).toList();
         this.info = info;
+        this.target = target;
+    }
+
+    ChaosHere.Target target() {
+        return target;
+    }
+
+    List<ChaosRecipes.Recipe> recipes() {
+        return recipes;
+    }
+
+    /** Whether the target fills in every placeholder of the recipe that names an endpoint, a route or a step. */
+    static boolean applies(ChaosRecipes.Recipe recipe, ChaosHere.Target target) {
+        boolean any = false;
+        for (ChaosRecipes.Placeholder p : recipe.placeholders()) {
+            if (isTargetKind(p)) {
+                if (preset(p, target) == null) {
+                    return false;
+                }
+                any = true;
+            }
+        }
+        return any;
+    }
+
+    private static boolean isTargetKind(ChaosRecipes.Placeholder p) {
+        String from = p.pickFrom();
+        return "producers".equals(from) || "pollingConsumers".equals(from) || "routes".equals(from)
+                || "steps".equals(from);
+    }
+
+    /** The value of the target for a placeholder, or null when the target does not fill it in. */
+    static String preset(ChaosRecipes.Placeholder p, ChaosHere.Target target) {
+        if (target == null || p.pickFrom() == null) {
+            return null;
+        }
+        return switch (p.pickFrom()) {
+            case "producers" -> target.endpoint() != null && ofScheme(target.endpoint(), p.schemes())
+                    ? target.endpoint() : null;
+            case "pollingConsumers" -> target.polled();
+            case "routes" -> target.route();
+            case "steps" -> target.step();
+            default -> null;
+        };
+    }
+
+    private static boolean ofScheme(String uri, List<String> schemes) {
+        int colon = uri.indexOf(':');
+        return schemes.isEmpty() || colon > 0 && schemes.contains(uri.substring(0, colon));
     }
 
     boolean inForm() {
@@ -151,7 +209,15 @@ final class ChaosRecipeForm {
     private void openForm(ChaosRecipes.Recipe recipe) {
         fields.clear();
         for (ChaosRecipes.Placeholder p : recipe.placeholders()) {
-            fields.add(new Field(p, ChaosRecipes.candidates(p, info)));
+            Field field = new Field(p, ChaosRecipes.candidates(p, info));
+            String preset = preset(p, target);
+            if (preset != null) {
+                // what the form was opened for
+                field.input.setText(preset);
+                field.input.moveCursorToEnd();
+                field.choice = field.choices.indexOf(preset);
+            }
+            fields.add(field);
         }
         focus = 0;
         inForm = true;
@@ -219,7 +285,8 @@ final class ChaosRecipeForm {
         Rect popup = DialogHelper.centered(area, width, height);
         frame.renderWidget(Clear.INSTANCE, popup);
         Block outer = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(Theme.warning())
-                .title(" Add a chaos rule to " + info.name + " ").build();
+                .title(" Add a chaos rule to " + info.name + (target != null ? " at " + target.label() : "") + " ")
+                .build();
         frame.renderWidget(outer, popup);
         Rect inner = outer.inner(popup);
         List<Rect> cols = Layout.horizontal()

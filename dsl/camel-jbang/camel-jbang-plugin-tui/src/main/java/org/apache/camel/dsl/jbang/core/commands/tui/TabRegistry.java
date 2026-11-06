@@ -166,10 +166,7 @@ class TabRegistry {
                 ctx, dataService.metrics(), dataService.stoppingPids(),
                 resetIntegrationTabState);
 
-        sqlTraceTab.setEditSqlAction(sql -> {
-            selectMoreTab(moreTabIndex("SQL Query"));
-            sqlQueryTab.setInputValue("sql", sql);
-        });
+        wireCrossTabActions(ctx);
 
         // Single source of truth for the More submenu: icon, programmatic name, mnemonic label, tab instance, and group.
         // Tabs are ordered by group (Routing, Observability, AI, Data, JVM, Project), alphabetically within each group.
@@ -330,6 +327,18 @@ class TabRegistry {
         }
         tabsState.select(tab);
         return true;
+    }
+
+    /** The actions of a tab that open another tab: SQL Trace edits its query in SQL Query, ! opens Chaos. */
+    private void wireCrossTabActions(MonitorContext ctx) {
+        ctx.chaosHere = target -> {
+            selectMoreTab(moreTabIndex("Chaos"));
+            chaosTab.openAt(target);
+        };
+        sqlTraceTab.setEditSqlAction(sql -> {
+            selectMoreTab(moreTabIndex("SQL Query"));
+            sqlQueryTab.setInputValue("sql", sql);
+        });
     }
 
     void selectMoreTab(int index) {
