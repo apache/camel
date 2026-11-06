@@ -26,6 +26,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class McpServerBridgeTest extends CamelTestSupport {
 
@@ -226,7 +227,7 @@ class McpServerBridgeTest extends CamelTestSupport {
         originContext.getRegistry().bind("mcpServerEngine", originEngine);
         McpServerConfiguration configuration = new McpServerConfiguration();
         configuration.setTags("crm");
-        configuration.setAllowedOrigins(" https://app.example.com/ ,, http://localhost:* ");
+        configuration.setAllowedOrigins(" https://App.Example.com:443/ ,, http://localhost:* ");
         McpServerBridge originBridge = new McpServerBridge(configuration);
         originContext.addService(originBridge);
         originContext.start();
@@ -244,10 +245,22 @@ class McpServerBridgeTest extends CamelTestSupport {
     @Test
     void testAllowedOriginsNotSetLeavesTheEngineDefault() {
         assertThat(engine.info().allowedOrigins()).isNull();
-        assertThat(McpServerBridge.parseAllowedOrigins(null)).isNull();
-        assertThat(McpServerBridge.parseAllowedOrigins(" ")).isNull();
-        // a value with no origin in it allows none
-        assertThat(McpServerBridge.parseAllowedOrigins(",")).isEmpty();
+    }
+
+    @Test
+    void testAllowedOriginThatCanNeverMatchFailsTheStart() throws Exception {
+        try (DefaultCamelContext originContext = new DefaultCamelContext()) {
+            originContext.getRegistry().bind("mcpServerEngine", new RecordingMcpServerEngine());
+            McpServerConfiguration configuration = new McpServerConfiguration();
+            configuration.setTags("crm");
+            configuration.setAllowedOrigins("*");
+            McpServerBridge originBridge = new McpServerBridge(configuration);
+
+            // adding the bridge to a context that is already built initializes it, and the origins are checked then
+            assertThatThrownBy(() -> originContext.addService(originBridge))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageStartingWith("MCP allowed origin * is not supported");
+        }
     }
 
     @Test

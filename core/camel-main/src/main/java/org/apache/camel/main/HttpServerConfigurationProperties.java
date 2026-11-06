@@ -528,9 +528,12 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
 
     /**
      * Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. Each entry
-     * is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. A request
-     * without an Origin header is always served; a request with an Origin header that is not allowed is rejected with
-     * HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any port).
+     * is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. Scheme and
+     * host are compared ignoring case, and a default port (80 for http, 443 for https) may be left out. A wildcard for
+     * all origins is not supported: an entry that is not of the form scheme://host or scheme://host:port fails the
+     * startup. A request without an Origin header is always served; a request with an Origin header that is not allowed
+     * is rejected with HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any
+     * port).
      */
     public void setMcpAllowedOrigins(String mcpAllowedOrigins) {
         this.mcpAllowedOrigins = mcpAllowedOrigins;

@@ -46,6 +46,7 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.SecurityPolicyHandler;
+import org.apache.camel.component.mcp.server.McpServerOrigins;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +125,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     /**
      * @param allowedOrigins the origins allowed to call the endpoint, each exact (e.g. {@code https://app.example.com})
-     *                       or with a wildcard port (e.g. {@code http://localhost:*}); {@code null} for
+     *                       or with a wildcard port (e.g. {@code http://localhost:*}), normalized with
+     *                       {@link McpServerOrigins#normalizeAllowedOrigin(String)}; {@code null} for
      *                       {@link #DEFAULT_ALLOWED_ORIGINS}
      */
     public VertxMcpStreamableServerTransportProvider(
@@ -135,7 +137,9 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         this.sessionKeepAliveIntervalMs = sessionKeepAliveIntervalMs;
         this.sessionIdleTtlMs = sessionIdleTtlMs;
         this.originValidator = DefaultServerTransportSecurityValidator.builder()
-                .allowedOrigins(allowedOrigins != null ? allowedOrigins : DEFAULT_ALLOWED_ORIGINS)
+                .allowedOrigins(allowedOrigins != null
+                        ? allowedOrigins.stream().map(McpServerOrigins::normalizeAllowedOrigin).toList()
+                        : DEFAULT_ALLOWED_ORIGINS)
                 .build();
     }
 
@@ -578,7 +582,12 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
         @Override
         public List<String> getHeader(String name) {
-            return ctx.request().headers().getAll(name);
+            List<String> values = ctx.request().headers().getAll(name);
+            if (ORIGIN.equalsIgnoreCase(name)) {
+                // compare in the form the allowed origins are kept in: lower-case scheme and host, no default port
+                return values.stream().map(McpServerOrigins::normalizeOrigin).toList();
+            }
+            return values;
         }
 
         @Override

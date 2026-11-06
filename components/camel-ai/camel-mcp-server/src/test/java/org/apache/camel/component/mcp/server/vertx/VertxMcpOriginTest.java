@@ -134,6 +134,25 @@ class VertxMcpOriginTest {
     }
 
     @Test
+    void originsAreComparedIgnoringCaseAndDefaultPort() throws Exception {
+        start(List.of("https://App.Example.com:443/", "http://Tools.Example.com:*"));
+
+        assertThat(post("https://app.example.com", null, INITIALIZE_REQUEST).statusCode()).isEqualTo(200);
+        assertThat(post("HTTPS://APP.EXAMPLE.COM:443", null, INITIALIZE_REQUEST).statusCode()).isEqualTo(200);
+        assertThat(post("http://tools.example.com", null, INITIALIZE_REQUEST).statusCode()).isEqualTo(200);
+        assertThat(post("http://TOOLS.example.com:9000", null, INITIALIZE_REQUEST).statusCode()).isEqualTo(200);
+        assertThat(post("https://app.example.com:8443", null, INITIALIZE_REQUEST).statusCode()).isEqualTo(403);
+        assertThat(post("https://app.example.com.evil.test", null, INITIALIZE_REQUEST).statusCode()).isEqualTo(403);
+    }
+
+    @Test
+    void loopbackOriginIsComparedIgnoringCase() throws Exception {
+        start(null);
+
+        assertThat(post("http://LocalHost:6274", null, INITIALIZE_REQUEST).statusCode()).isEqualTo(200);
+    }
+
+    @Test
     void rejectedOriginDoesNotCallTheTool() throws Exception {
         start(null);
         AtomicInteger calls = new AtomicInteger();

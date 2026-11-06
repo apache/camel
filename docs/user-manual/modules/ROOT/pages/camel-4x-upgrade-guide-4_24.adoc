@@ -143,7 +143,9 @@ only when the origin is allowed, and gets HTTP 403 otherwise.
 By default only loopback origins are allowed (`localhost`, `127.0.0.1` and `[::1]`, on any port). A browser-based
 client served from another origin must now be listed in the new `camel.server.mcp-allowed-origins` option, for example
 `+camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*+`. The list replaces the loopback
-default. Stdio mode is not affected, and neither are the Spring Boot and Quarkus engines.
+default. Scheme and host are compared ignoring case and a default port may be left out; `+*+` and other entries that are
+not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected, and neither are the Spring Boot and
+Quarkus engines.
 
 === camel-mina-sftp - TCP_NODELAY is set on the connections
 

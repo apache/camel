@@ -190,8 +190,11 @@ public class McpServerConfiguration {
     /**
      * Comma-separated list of origins allowed to call the MCP endpoint, such as {@code https://app.example.com} or
      * {@code http://localhost:*} (any port). A request without an {@code Origin} header is always served; a request
-     * with an {@code Origin} header that is not allowed is rejected with HTTP 403. When not set, only loopback origins
-     * are allowed. Engine-owned: ignored by native engines.
+     * with an {@code Origin} header that is not allowed is rejected with HTTP 403. Scheme and host are compared
+     * ignoring case, and a default port ({@code :80} for http, {@code :443} for https) may be left out. An entry that
+     * is not of the form {@code scheme://host[:port]}, such as {@code *}, fails the startup (see
+     * {@link McpServerOrigins}). When not set, only loopback origins are allowed. Engine-owned: ignored by native
+     * engines.
      *
      * @since 4.24
      */

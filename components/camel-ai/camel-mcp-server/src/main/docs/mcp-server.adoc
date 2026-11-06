@@ -293,8 +293,9 @@ JBang (see the xref:main.adoc[camel-main] options) or on
   to call the MCP endpoint, such as `+https://app.example.com+` or
   `+http://localhost:*+` (`+:*+` matches any port). A request without an `Origin`
   header is always served; a request with an `Origin` header that is not in the
-  list gets HTTP 403. When not set, only loopback origins are allowed. See
-  <<_origins_and_binding>>. | loopback origins | engine
+  list gets HTTP 403. Scheme and host are compared ignoring case, and a default
+  port may be left out. `+*+` is not supported. When not set, only loopback
+  origins are allowed. See <<_origins_and_binding>>. | loopback origins | engine
 |===
 
 Bridge-owned options are honored identically on every runtime. Engine-owned
@@ -409,14 +410,26 @@ to the MCP endpoint (`POST`, the SSE `GET` and `DELETE`):
   `[::1]`, over `http` or `https`, on any port. Browser-based tools on the
   same machine, such as the MCP Inspector, keep working.
 * `camel.server.mcp-allowed-origins` replaces the default with your own list.
-  Each entry is an exact origin (scheme, host and port, as the browser sends
-  it), or ends with `+:*+` to match any port. Add the loopback entries again if
-  you still need them:
+  Each entry is an origin (scheme, host and port), or ends with `+:*+` to match
+  any port. Add the loopback entries again if you still need them:
 
 [source,properties]
 ----
 camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*
 ----
+
+Entries are compared in the form a browser sends the `Origin` header: the
+scheme and host ignoring case, and without the default port, so
+`+https://App.Example.com:443/+` and `+https://app.example.com+` are the same
+origin. An entry that can never match an `Origin` header fails the startup with
+a message saying why: `+*+` (the check cannot be turned off; clients that are
+not browsers send no `Origin` header and are always served), an entry with a
+path such as `+https://app.example.com/mcp+`, an entry without a scheme such as
+`app.example.com`, or a wildcard in the host such as `+https://*.example.com+`.
+
+A refused request is logged at `DEBUG` level by the
+`org.apache.camel.component.mcp.server.vertx.VertxMcpStreamableServerTransportProvider`
+logger, with the `Origin` it carried.
 
 The check is independent of the platform-http CORS configuration: CORS only
 adds response headers for the browser, while the origin check refuses the

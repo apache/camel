@@ -103,7 +103,7 @@ class McpServerMainPropertiesTest {
         main.addInitialProperty("camel.server.port", String.valueOf(port));
         main.addInitialProperty("camel.server.mcp-enabled", "true");
         main.addInitialProperty("camel.server.mcp-tags", "crm");
-        main.addInitialProperty("camel.server.mcp-allowed-origins", "https://app.example.com/, http://localhost:3000");
+        main.addInitialProperty("camel.server.mcp-allowed-origins", "https://App.Example.com:443/, http://localhost:3000");
         main.start();
 
         try {
@@ -113,6 +113,23 @@ class McpServerMainPropertiesTest {
             // the configured list replaces the loopback default
             assertThat(initialize(port, "http://localhost:6274")).isEqualTo(403);
             assertThat(initialize(port, "https://other.example.com")).isEqualTo(403);
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void testMcpAllowedOriginWildcardFailsFast() {
+        Main main = new Main();
+        main.addInitialProperty("camel.server.enabled", "true");
+        main.addInitialProperty("camel.server.port", String.valueOf(AvailablePortFinder.getNextAvailable()));
+        main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-tags", "crm");
+        main.addInitialProperty("camel.server.mcp-allowed-origins", "*");
+
+        try {
+            assertThatThrownBy(main::start)
+                    .hasStackTraceContaining("MCP allowed origin * is not supported");
         } finally {
             main.stop();
         }
