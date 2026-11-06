@@ -411,6 +411,11 @@ public final class AuthoringTools {
                 .param("predicate", "boolean", EVAL_PREDICATE_DESC, false)
                 .param("resultType", "string", EVAL_RESULT_TYPE_DESC, false)
                 .core(true)
+                // the same expression on the same message gets the same answer, unless it reads the clock, a random
+                // value or the integration: a model that evaluates it again and again is stuck
+                .deterministicIf(ExpressionEvaluator::sameAnswer)
+                .repeatHint("The same expression on the same message gives the same result: change the expression or"
+                            + " the message (body, headers, variables) to learn something new.")
                 .executor((ctx, args) -> {
                     String expression = required(args, "expression");
                     Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", args.get("headers"));

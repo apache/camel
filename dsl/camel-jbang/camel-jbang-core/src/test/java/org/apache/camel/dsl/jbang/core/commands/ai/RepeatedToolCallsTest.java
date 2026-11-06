@@ -54,6 +54,37 @@ class RepeatedToolCallsTest {
         assertThat(calls.repeatOf(catalogDoc, sql).getInteger("timesAsked")).isEqualTo(4);
     }
 
+    /**
+     * r28 connect-stock-api step 2: body.getClass().getName() evaluated 9 times with the same arguments, up to the call
+     * limit. The same expression on the same message gets the note from the third call, unless the expression reads
+     * what changes from one call to the next.
+     */
+    @Test
+    void anIdenticalEvaluationGetsTheNoteUnlessItsAnswerCanChange() {
+        ToolDescriptor eval = ToolRegistry.findTool("camel_eval_expression");
+        Map<String, String> args = Map.of("expression", "body.getClass().getName()", "language", "groovy", "body",
+                "[{\"sku\": \"ABC\", \"qty\": 10}]");
+        successfulCall(eval, args);
+        successfulCall(eval, args);
+        JsonObject note = calls.repeatOf(eval, args);
+        assertThat(note).isNotNull();
+        assertThat(note.getString("note")).startsWith("camel_eval_expression was already called with these same arguments 2"
+                                                      + " times")
+                .endsWith("The same expression on the same message gives the same result: change the expression or the"
+                          + " message (body, headers, variables) to learn something new.");
+        // another message is another question
+        assertThat(calls.repeatOf(eval, Map.of("expression", "body.getClass().getName()", "language", "groovy", "body",
+                "[]"))).isNull();
+        // a random value, the clock, an id, a property: asked again, the answer can change
+        for (String expression : List.of("${random(1,10)}", "${date:now:yyyy-MM-dd}", "${exchangeId}",
+                "${properties:stock.url}", "{{stock.url}}")) {
+            Map<String, String> changing = Map.of("expression", expression);
+            successfulCall(eval, changing);
+            successfulCall(eval, changing);
+            assertThat(calls.repeatOf(eval, changing)).as(expression).isNull();
+        }
+    }
+
     /** CAMEL-25640: a call that throws must not consume the retry budget. */
     @Test
     void aFailedCallDoesNotCountAgainstTheRetryBudget() {
