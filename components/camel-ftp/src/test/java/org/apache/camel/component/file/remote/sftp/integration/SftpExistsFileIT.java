@@ -59,6 +59,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -152,6 +153,27 @@ class SftpExistsFileIT extends CamelTestSupport {
             assertEquals(2, service.requests(SftpConstants.SSH_FXP_LSTAT));
             // both were looked up in a listing of their directory
             assertEquals(2, service.requests(SftpConstants.SSH_FXP_OPENDIR), "requests: " + service.requests);
+        } finally {
+            operations.disconnect();
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void failsWhenConnectionIsLostDuringLstat(boolean fastExistsCheck) throws Exception {
+        createFiles(base.resolve("inbox"), 10);
+
+        SftpOperations operations = connect(fastExistsCheck);
+        try {
+            service.reset();
+            // the server drops the connection when it receives the LSTAT request, before it answers
+            service.onLstat(service::disconnectAllSessions);
+            GenericFileOperationFailedException e = assertThrows(GenericFileOperationFailedException.class,
+                    () -> operations.existsFile(remotePath("inbox/file-0005.txt")));
+            assertEquals(1, service.requests(SftpConstants.SSH_FXP_LSTAT));
+            // the check fails, it does not answer that the file is missing. JSch gives the SftpException of this I/O
+            // failure a cause, and none to the SftpException of a status sent by the server, which tells them apart
+            assertNotNull(e.getCause().getCause(), "cause of: " + e.getCause());
         } finally {
             operations.disconnect();
         }
