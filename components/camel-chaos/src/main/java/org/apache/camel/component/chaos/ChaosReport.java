@@ -66,12 +66,17 @@ public final class ChaosReport {
     private final List<String> reasons = new ArrayList<>();
     private final long lost;
     private final boolean pending;
+    private final long now;
+    // the last faults, the latest first
+    private final List<ChaosRecentFaults.Entry> recentFaults;
 
     ChaosReport(long seed, boolean seedGiven, long now, List<ChaosRule> current, List<ChaosRule> removed,
                 Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
-                long evictedLostAtDlq) {
+                long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults) {
         this.seed = seed;
         this.seedGiven = seedGiven;
+        this.now = now;
+        this.recentFaults = List.copyOf(recentFaults);
         long lostCount = 0;
         boolean anyPending = false;
         for (ChaosRule rule : current) {
@@ -210,6 +215,13 @@ public final class ChaosReport {
             if (r.state == State.ACTIVE && r.lifecycle == null) {
                 sb.append(", ends in ").append(ChaosRuleParser.printTime(r.endsIn));
             }
+            String live = liveText(r);
+            if (!live.isEmpty()) {
+                sb.append("\n      ").append(live);
+            }
+            if (r.faulted > 0) {
+                sb.append("\n      ").append(effectText(r));
+            }
             if (r.lifecycle != null) {
                 sb.append("\n      ").append(lifecycleText(r));
             }
@@ -233,11 +245,100 @@ public final class ChaosReport {
                     .append(r.failed).append(" (kept by the consumer ").append(r.failedKept).append("), handled ")
                     .append(r.handled).append(", redeliveries ").append(r.redeliveries);
         }
+        if (!recentFaults.isEmpty()) {
+            sb.append("\n  recent faults:");
+            for (ChaosRecentFaults.Entry f : recentFaults) {
+                sb.append("\n    ").append(recentFaultText(f));
+            }
+        }
         sb.append("\n  lost: ").append(lost);
         for (String reason : reasons) {
             sb.append("\n  FAIL: ").append(reason);
         }
         return sb.toString();
+    }
+
+    /**
+     * The live state of a rule, for a person: its observed rate next to the one of the rule, the next match an
+     * {@code every:N} rule fires at, when it last fired and its faults in the last minute.
+     */
+    private static String liveText(RuleEntry r) {
+        StringJoiner sj = new StringJoiner(", ");
+        if (r.observedRate >= 0 && r.rule.targetRate() < 1.0d) {
+            sj.add("rate " + percent(r.observedRate) + " of "
+                   + (r.rule.every > 0 ? "1 in " + r.rule.every : percent(r.rule.targetRate())));
+        }
+        if (r.nextFireIn > 0) {
+            sj.add("fires again in " + r.nextFireIn + (r.nextFireIn == 1 ? " match" : " matches"));
+        }
+        if (r.lastFiredAgo >= 0) {
+            sj.add("last fired " + ChaosRuleParser.printTime(r.lastFiredAgo) + " ago");
+            sj.add(r.faultsLastMinute + (r.faultsLastMinute == 1 ? " fault" : " faults") + " in the last minute");
+        }
+        return sj.toString();
+    }
+
+    /** What the faults of a rule did to the exchanges, for a person; the counts that are 0 are left out. */
+    private static String effectText(RuleEntry r) {
+        StringJoiner sj = new StringJoiner(
+                ", ", "effect on " + r.faulted + (r.faulted == 1 ? " exchange: " : " exchanges: "),
+                "");
+        if (r.completed > 0) {
+            sj.add(r.completed + " completed");
+        }
+        if (r.recovered > 0) {
+            sj.add(r.recovered + " recovered by redelivery");
+        }
+        if (r.handled > 0) {
+            sj.add(r.handled + " handled by the error handler");
+        }
+        if (r.failed > 0) {
+            sj.add(r.failed + " failed");
+        }
+        if (r.inFlight > 0) {
+            sj.add(r.inFlight + " in flight");
+        }
+        return sj.toString();
+    }
+
+    /**
+     * A recent fault, for a person, such as {@code 3s ago r1 error ChaosException at send mock://stock, route orders}.
+     */
+    private String recentFaultText(ChaosRecentFaults.Entry f) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ChaosRuleParser.printTime(Math.max(0, now - f.time()))).append(" ago ").append(f.rule().id);
+        if (f.rule().version > 1) {
+            sb.append(" v").append(f.rule().version);
+        }
+        sb.append(' ').append(f.rule().faultText());
+        if (f.hook() == null) {
+            sb.append(" of route ").append(f.routeId());
+            return sb.toString();
+        }
+        if (f.hook() == Hook.ENTRY) {
+            sb.append(" at the entry of route ").append(f.routeId());
+        } else {
+            sb.append(" at ").append(f.hook().key).append(' ').append(where(f));
+            if (f.routeId() != null) {
+                sb.append(", route ").append(f.routeId());
+            }
+        }
+        if (f.exchangeId() != null) {
+            sb.append(", exchange ").append(f.exchangeId());
+        }
+        return sb.toString();
+    }
+
+    // the endpoint of a fault without its query, which can hold secrets, or the id of its step
+    private static String where(ChaosRecentFaults.Entry f) {
+        return f.hook() == Hook.STEP ? f.where() : ChaosTargets.withoutQuery(f.where());
+    }
+
+    // a share as a percent, such as 5% or 5.1%
+    private static String percent(double share) {
+        double p = share * 100;
+        double tenths = Math.round(p * 10) / 10.0d;
+        return (tenths == Math.rint(tenths) ? Long.toString((long) tenths) : Double.toString(tenths)) + "%";
     }
 
     /**
@@ -264,7 +365,35 @@ public final class ChaosReport {
             routeArray.add(jo);
         }
         root.put("routes", routeArray);
+        root.put("recentFaults", recentFaultsJson());
         return root;
+    }
+
+    /** The recent faults as JSON, the latest first, as in {@link #toJson()}. */
+    JsonArray recentFaultsJson() {
+        JsonArray answer = new JsonArray();
+        for (ChaosRecentFaults.Entry f : recentFaults) {
+            JsonObject jo = new JsonObject();
+            jo.put("timestamp", f.time());
+            jo.put("ago", Math.max(0, now - f.time()));
+            jo.put("rule", f.rule().id);
+            jo.put("version", f.rule().version);
+            jo.put("fault", f.rule().faultText());
+            if (f.hook() != null) {
+                jo.put("hook", f.hook().key);
+            }
+            if (f.routeId() != null) {
+                jo.put("route", f.routeId());
+            }
+            if (f.where() != null) {
+                jo.put(f.hook() == Hook.STEP ? "step" : "endpoint", where(f));
+            }
+            if (f.exchangeId() != null) {
+                jo.put("exchangeId", f.exchangeId());
+            }
+            answer.add(jo);
+        }
+        return answer;
     }
 
     /**
@@ -310,6 +439,7 @@ public final class ChaosReport {
             if (r.state == State.ACTIVE && r.lifecycle == null) {
                 jo.put("endsIn", r.endsIn);
             }
+            liveJson(r, jo);
             if (r.outcome != null) {
                 JsonObject e = new JsonObject();
                 e.put("route", r.expectRoute);
@@ -337,6 +467,45 @@ public final class ChaosReport {
     @Override
     public String toString() {
         return toText();
+    }
+
+    /**
+     * The live state of a rule, for a tool: the rate of the rule and the observed one (the share of the matches it
+     * fired at), the next match an {@code every:N} rule fires at, when it last fired, its faults per second over the
+     * last minute, and the effect of its faults on the exchanges.
+     */
+    private static void liveJson(RuleEntry r, JsonObject jo) {
+        if (r.lifecycle == null) {
+            jo.put("rate", r.rule.targetRate());
+            if (r.observedRate >= 0) {
+                jo.put("observedRate", Math.round(r.observedRate * 10000) / 10000.0d);
+            }
+        }
+        if (r.nextFireIn > 0) {
+            jo.put("nextFireIn", r.nextFireIn);
+        }
+        if (r.lastFiredAgo >= 0) {
+            jo.put("lastFiredAgo", r.lastFiredAgo);
+        }
+        jo.put("faultsLastMinute", r.faultsLastMinute);
+        if (r.faultsLastMinute > 0) {
+            // the oldest second first; the last one is the current second
+            JsonArray perSecond = new JsonArray();
+            for (long n : r.faultsPerSecond) {
+                perSecond.add(n);
+            }
+            jo.put("faultsPerSecond", perSecond);
+        }
+        if (r.faulted > 0) {
+            JsonObject e = new JsonObject();
+            e.put("faulted", r.faulted);
+            e.put("completed", r.completed);
+            e.put("recovered", r.recovered);
+            e.put("handled", r.handled);
+            e.put("failed", r.failed);
+            e.put("inFlight", r.inFlight);
+            jo.put("effect", e);
+        }
     }
 
     /**
@@ -419,6 +588,20 @@ public final class ChaosReport {
         final Map<String, Long> skipReasons;
         final long lostAtDlq;
         final long endsIn;
+        // the live state: the share of the matches the rule fired at (-1 without a match), the matches until an
+        // every:N rule fires again (0 when it does not), how long ago it last fired (-1 when it did not), its faults
+        // per second over the last minute, and the effect of its faults on the exchanges
+        final double observedRate;
+        final long nextFireIn;
+        final long lastFiredAgo;
+        final long[] faultsPerSecond;
+        final long faultsLastMinute;
+        final long faulted;
+        final long completed;
+        final long recovered;
+        final long handled;
+        final long failed;
+        final long inFlight;
         final String expectRoute;
         final ChaosRule.Expectation.Kind expectKind;
         final ChaosRule.Expectation.Op expectOp;
@@ -459,6 +642,25 @@ public final class ChaosReport {
             skipReasons = rule.skipReasons();
             lostAtDlq = rule.lostAtDlqCount();
             endsIn = Math.max(0, rule.endsAt - now);
+            // a lifecycle rule acts once at its route: it has no rate
+            observedRate = matches > 0 && rule.lifecycle == null ? Math.min(1.0d, (double) (total + skipped) / matches) : -1;
+            nextFireIn = rule.every > 0 && state == State.ACTIVE ? rule.every - matches % rule.every : 0;
+            long last = rule.lastFiredAt();
+            lastFiredAgo = last >= 0 ? Math.max(0, now - last) : -1;
+            faultsPerSecond = rule.faultsPerSecond(now);
+            long minute = 0;
+            for (long n : faultsPerSecond) {
+                minute += n;
+            }
+            faultsLastMinute = minute;
+            ChaosRule.Effect effect = rule.effect;
+            // the done counts first, so an exchange that is done while the report is made is not in flight twice
+            completed = effect.count(ChaosRule.Effect.Outcome.COMPLETED);
+            recovered = effect.count(ChaosRule.Effect.Outcome.RECOVERED);
+            handled = effect.count(ChaosRule.Effect.Outcome.HANDLED);
+            failed = effect.count(ChaosRule.Effect.Outcome.FAILED);
+            faulted = Math.max(effect.faultedCount(), completed + recovered + handled + failed);
+            inFlight = faulted - completed - recovered - handled - failed;
             within = rule.within;
             ChaosRule.Expectation expectation = rule.expectation;
             if (expectation != null) {

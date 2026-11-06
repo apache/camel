@@ -184,4 +184,24 @@ class ChaosRuleTest {
         assertThat(rule("endpoint=x error until=1m expect=o:1 within=2m", "r1", 1).expectation.deadline())
                 .isEqualTo(T0 + 120_000L);
     }
+
+    @Test
+    void theFaultInAFewWords() {
+        assertThat(rule("endpoint=x error", "r1", 1).faultText()).isEqualTo("error ChaosException");
+        assertThat(rule("endpoint=x error exception=java.io.IOException", "r1", 1).faultText())
+                .isEqualTo("error IOException");
+        assertThat(rule("endpoint=http:x* error status=503", "r1", 1).faultText()).isEqualTo("error status 503");
+        assertThat(rule("endpoint=x delay duration=2s", "r1", 1).faultText()).isEqualTo("delay 2s");
+        assertThat(rule("endpoint=x drop", "r1", 1).faultText()).isEqualTo("drop");
+        assertThat(rule("route=orders corrupt mode=headers", "r1", 1).faultText()).isEqualTo("corrupt headers");
+        assertThat(rule("route=orders stall duration=20s", "r1", 1).faultText()).isEqualTo("stall 20s");
+        assertThat(rule("route=orders lifecycle action=stop duration=10s", "r1", 1).faultText()).isEqualTo("stop 10s");
+    }
+
+    @Test
+    void theFaultsPerSecondOverTheLastMinute() {
+        ChaosRule r = rule("endpoint=x error", "r1", 1);
+        assertThat(r.faultsPerSecond(T0)).hasSize(ChaosRule.MINUTE).containsOnly(0L);
+        assertThat(r.lastFiredAt()).isEqualTo(-1);
+    }
 }

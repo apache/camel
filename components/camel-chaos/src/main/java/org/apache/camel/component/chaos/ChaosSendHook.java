@@ -40,6 +40,9 @@ final class ChaosSendHook implements SendHook {
     @Override
     public long beforeSend(Exchange exchange, Endpoint endpoint) {
         ChaosManager.RuleSet ruleSet = manager.ruleSet();
+        if (ruleSet.lifecycle.length > 0) {
+            sentToDownRoute(ruleSet.lifecycle, exchange, endpoint);
+        }
         if (ruleSet.send.length == 0 && ruleSet.dlq.length == 0) {
             return PROCEED;
         }
@@ -62,6 +65,27 @@ final class ChaosSendHook implements SendHook {
             }
         }
         return PROCEED;
+    }
+
+    /**
+     * An exchange sent to the endpoint of a route that a lifecycle rule has down is marked with the rule, and counts in
+     * the effect of the rule (such as one that goes to the dead letter channel as the route is stopped). It is not a
+     * fault of its own: the rule fired when it took the route down.
+     */
+    private static void sentToDownRoute(ChaosRule[] rules, Exchange exchange, Endpoint endpoint) {
+        String uri = null;
+        for (ChaosRule rule : rules) {
+            String down = rule.lifecycle.downEndpointUri();
+            if (down != null) {
+                if (uri == null) {
+                    // with or without the options of the endpoint (direct:shipping?block=false)
+                    uri = endpoint.getEndpointBaseUri();
+                }
+                if (down.equals(uri)) {
+                    ChaosExchangeState.faulted(rule, exchange);
+                }
+            }
+        }
     }
 
     @Override

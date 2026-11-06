@@ -1072,8 +1072,11 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List the chaos rules of the Camel application (camel-chaos, development only): id, version, the \
-                  rule, state (active or ended), where it fires, matches, faults fired, time left and the expectation; \
-                  or why chaos is off. The rules come from the status of the application, written every second.""")
+                  rule, state (active or ended), where it fires, matches, faults fired, time left, the expectation, \
+                  and the live state: observed rate next to the rate of the rule, when it last fired, faults per \
+                  second over the last minute, and the effect of its faults (exchanges completed, recovered by \
+                  redelivery, handled by the error handler, failed, in flight); or why chaos is off. The rules come \
+                  from the status of the application, written every second.""")
     public JsonObject camel_runtime_chaos_list(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("chaos_list", nameOrPid, Map.of());
@@ -1083,8 +1086,9 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   Get the chaos report of the Camel application: the verdict (PASS or FAIL) and whether it is final, \
-                  the seed, every version of every rule with what it fired, the expectations (a pending one is not \
-                  decided yet) and the counts per route; or why chaos is off.""")
+                  the seed, every version of every rule with what it fired and its live state, the expectations (a \
+                  pending one is not decided yet), the counts per route and the last 20 faults (rule, fault, route, \
+                  endpoint or step, exchange id); or why chaos is off.""")
     public JsonObject camel_runtime_chaos_report(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("chaos_report", nameOrPid, Map.of());

@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.util.TimeSource;
 
 /**
@@ -128,6 +129,9 @@ final class ChaosRule {
     // the golden ratio increment of SplitMix64
     private static final long GOLDEN_GAMMA = 0x9e3779b97f4a7c15L;
 
+    // the seconds of the faults per second the rule keeps: the last minute
+    static final int MINUTE = 60;
+
     // the definition (immutable)
     final String id;
     // 1 when the rule is added, one more each time it is changed (the report has an entry per version of an id)
@@ -182,6 +186,14 @@ final class ChaosRule {
     boolean clockStarted;
     // what a lifecycle rule did to its route, else null
     final ChaosLifecycle.Fault lifecycle;
+    // the live state, for the chaos screen: when the rule last fired, its faults per second over the last minute (a
+    // ring of seconds, guarded by itself), the effect of its faults on the exchanges, and the recent faults of the
+    // manager (null in the tests of a rule alone; set by the manager before the rule is published to the hooks)
+    private volatile long lastFiredAt = -1;
+    private final long[] faultsPerSecond = new long[MINUTE];
+    private final long[] secondOf = new long[MINUTE];
+    final Effect effect = new Effect();
+    ChaosRecentFaults recentFaults;
 
     ChaosRule(Builder b, String id, long seed, long addedAt, long maxDuration) {
         this(b, id, 1, seed, addedAt, maxDuration);
@@ -260,9 +272,94 @@ final class ChaosRule {
         return now < endsAt && (untilCount == 0 || matches.get() < untilCount);
     }
 
-    /** Counts that the rule fired at the hook. */
+    /** Counts that the rule fired at the hook, where there is no exchange (a poll). */
     void fired(Hook hook) {
+        fired(hook, null, null, null);
+    }
+
+    /**
+     * Counts that the rule fired at the hook, with the live state of the rule: the time, the faults per second, the
+     * recent faults, and the exchange it faulted (marked with {@link ChaosManager#CHAOS_RULE}, and counted in the
+     * effect of the rule).
+     *
+     * @param exchange the exchange, or null at a poll
+     * @param routeId  the route, or null to take the route of the exchange
+     * @param where    the endpoint URI of a send or poll, or the id of a step, or null at the entry of a route
+     */
+    void fired(Hook hook, Exchange exchange, String routeId, String where) {
         fired[hook.ordinal()].increment();
+        long now = TimeSource.currentTimeMillis();
+        countFault(now);
+        if (exchange != null) {
+            ChaosExchangeState.faulted(this, exchange);
+        }
+        ChaosRecentFaults recent = recentFaults;
+        if (recent != null) {
+            recent.add(now, this, hook, routeId != null || exchange == null ? routeId : ChaosExchangeState.routeId(exchange),
+                    where, exchange != null ? exchange.getExchangeId() : null);
+        }
+    }
+
+    /** A lifecycle rule (or stall) took its route down: counted in its live state, as the faults at a hook are. */
+    void firedLifecycle(String routeId, long now) {
+        countFault(now);
+        ChaosRecentFaults recent = recentFaults;
+        if (recent != null) {
+            recent.add(now, this, null, routeId, null, null);
+        }
+    }
+
+    private void countFault(long now) {
+        lastFiredAt = now;
+        long second = now / 1000;
+        int i = (int) (second % MINUTE);
+        synchronized (faultsPerSecond) {
+            if (secondOf[i] != second) {
+                secondOf[i] = second;
+                faultsPerSecond[i] = 0;
+            }
+            faultsPerSecond[i]++;
+        }
+    }
+
+    /** When the rule last fired, or -1 when it has not. */
+    long lastFiredAt() {
+        return lastFiredAt;
+    }
+
+    /** The faults per second over the last minute, the oldest second first: the last one is the current second. */
+    long[] faultsPerSecond(long now) {
+        long second = now / 1000;
+        long[] answer = new long[MINUTE];
+        synchronized (faultsPerSecond) {
+            for (int k = 0; k < MINUTE; k++) {
+                long s = second - (MINUTE - 1) + k;
+                int i = (int) Math.floorMod(s, MINUTE);
+                answer[k] = secondOf[i] == s ? faultsPerSecond[i] : 0;
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The share of the matches the rule decides to fire at: the probability of {@code rate=}, one in N for
+     * {@code rate=every:N}, else all of them.
+     */
+    double targetRate() {
+        return every > 0 ? 1.0d / every : probability;
+    }
+
+    /** What the rule does when it fires, in a few words, such as {@code error status 503} or {@code delay 2s}. */
+    String faultText() {
+        return switch (fault) {
+            case ERROR -> "error " + (status > 0
+                    ? "status " + status
+                    : exceptionType != null ? exceptionType.getSimpleName() : ChaosException.class.getSimpleName());
+            case DELAY -> "delay " + ChaosRuleParser.printTime(duration);
+            case DROP -> "drop";
+            case CORRUPT -> "corrupt " + mode.key;
+            case LIFECYCLE -> (stall ? "stall" : action.key) + " " + ChaosRuleParser.printTime(duration);
+        };
     }
 
     /**
@@ -566,6 +663,48 @@ final class ChaosRule {
 
         /** What an expectation reads at one time. */
         record Reading(Outcome outcome, long value, boolean frozen) {
+        }
+    }
+
+    /**
+     * The effect of the faults of a rule on the exchanges it faulted, each counted once when it is done: completed
+     * (without a redelivery after the fault, such as after a delay), recovered by a redelivery of the error handler,
+     * handled by the error handler (such as the dead letter channel), or failed. The others are still in flight. Only
+     * the exchanges with a unit of work count, as it tells when the exchange is done.
+     */
+    static final class Effect {
+
+        /** How an exchange was done, after the rule faulted it. */
+        enum Outcome {
+            COMPLETED,
+            RECOVERED,
+            HANDLED,
+            FAILED
+        }
+
+        private final LongAdder faulted = new LongAdder();
+        private final LongAdder[] done = new LongAdder[Outcome.values().length];
+
+        Effect() {
+            for (int i = 0; i < done.length; i++) {
+                done[i] = new LongAdder();
+            }
+        }
+
+        void faulted() {
+            faulted.increment();
+        }
+
+        void done(Outcome outcome) {
+            done[outcome.ordinal()].increment();
+        }
+
+        long faultedCount() {
+            return faulted.sum();
+        }
+
+        long count(Outcome outcome) {
+            return done[outcome.ordinal()].sum();
         }
     }
 

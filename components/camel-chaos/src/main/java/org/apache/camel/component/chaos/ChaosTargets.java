@@ -120,7 +120,7 @@ final class ChaosTargets {
 
     // the endpoints are named as Camel shows them elsewhere (a pattern matches them with or without the // after the
     // scheme), and without their query, which can hold secrets
-    private static String withoutQuery(String uri) {
+    static String withoutQuery(String uri) {
         int query = uri.indexOf('?');
         return URISupport.sanitizeUri(query > 0 ? uri.substring(0, query) : uri);
     }

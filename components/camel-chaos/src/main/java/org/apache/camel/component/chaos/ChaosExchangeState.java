@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
+import org.apache.camel.Route;
 import org.apache.camel.SafeCopyProperty;
+import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.SynchronizationAdapter;
 
 /**
  * What chaos keeps of one exchange: how each route it went through is done with it, so a route counts the exchange once
@@ -66,6 +71,8 @@ final class ChaosExchangeState implements SafeCopyProperty {
     }
 
     private final Map<String, RouteState> routes = new HashMap<>(4);
+    // the rules that faulted the exchange, counted in their effect when it is done (null until a rule faults it)
+    private Faults faults;
     // the dead letter channel is delivering the exchange
     boolean deadLetter;
     // the rule that failed or dropped that delivery, which loses the message when the dead letter channel then handles
@@ -100,6 +107,99 @@ final class ChaosExchangeState implements SafeCopyProperty {
     /** The state of the exchange in the route, created when the exchange enters it. */
     RouteState route(String routeId) {
         return routes.computeIfAbsent(routeId, k -> new RouteState());
+    }
+
+    /**
+     * The route the exchange is in: the route of its unit of work, else the route that created it.
+     */
+    static String routeId(Exchange exchange) {
+        UnitOfWork uow = exchange.getUnitOfWork();
+        Route route = uow != null ? uow.getRoute() : null;
+        return route != null ? route.getRouteId() : exchange.getFromRouteId();
+    }
+
+    /**
+     * A rule faulted the exchange: the exchange property {@link ChaosManager#CHAOS_RULE} names the rule, and the effect
+     * of the rule counts the exchange once, when it is done. An exchange without a unit of work (such as one sent with
+     * a producer template to an endpoint, not to a route) is not counted in the effect, as nothing tells when it is
+     * done.
+     */
+    static void faulted(ChaosRule rule, Exchange exchange) {
+        exchange.setProperty(ChaosManager.CHAOS_RULE, rule.id);
+        if (exchange.getUnitOfWork() == null) {
+            return;
+        }
+        ChaosExchangeState state = of(exchange);
+        if (state.faults == null) {
+            state.faults = new Faults();
+            exchange.getExchangeExtension().addOnCompletion(state.faults);
+        }
+        state.faults.add(rule);
+    }
+
+    /** The error handler redelivers the exchange: a rule that faulted it before is recovered when it then completes. */
+    void redelivered() {
+        if (faults != null) {
+            faults.redelivered();
+        }
+    }
+
+    /** The rules that faulted an exchange, and whether the error handler redelivered it after each one. */
+    private static final class Faults extends SynchronizationAdapter {
+
+        private final List<ChaosRule> rules = new ArrayList<>(2);
+        private final List<Boolean> redelivered = new ArrayList<>(2);
+
+        void add(ChaosRule rule) {
+            int i = rules.indexOf(rule);
+            if (i < 0) {
+                rules.add(rule);
+                redelivered.add(Boolean.FALSE);
+                rule.effect.faulted();
+            } else {
+                // faulted again (such as at a redelivery): the redelivery that follows counts from now
+                redelivered.set(i, Boolean.FALSE);
+            }
+        }
+
+        void redelivered() {
+            for (int i = 0; i < redelivered.size(); i++) {
+                redelivered.set(i, Boolean.TRUE);
+            }
+        }
+
+        @Override
+        public boolean allowHandover() {
+            // the effect is how this exchange was done: not a copy that a seda endpoint (such as the one of a dead
+            // letter channel) hands the completions over to, which its route completes
+            return false;
+        }
+
+        @Override
+        public void onDone(Exchange exchange) {
+            // an exchange marked rollback only has no exception, but its message is not processed either
+            boolean failed = exchange.isFailed() || exchange.isRollbackOnly() || exchange.isRollbackOnlyLast();
+            ExchangeExtension ee = exchange.getExchangeExtension();
+            boolean handled = !failed && ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled();
+            for (int i = 0; i < rules.size(); i++) {
+                ChaosRule.Effect.Outcome outcome;
+                if (failed) {
+                    outcome = ChaosRule.Effect.Outcome.FAILED;
+                } else if (handled) {
+                    outcome = ChaosRule.Effect.Outcome.HANDLED;
+                } else if (redelivered.get(i)) {
+                    outcome = ChaosRule.Effect.Outcome.RECOVERED;
+                } else {
+                    outcome = ChaosRule.Effect.Outcome.COMPLETED;
+                }
+                rules.get(i).effect.done(outcome);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "ChaosFaults" + rules;
+        }
     }
 
     @Override

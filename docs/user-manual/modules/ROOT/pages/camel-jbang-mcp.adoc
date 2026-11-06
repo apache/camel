@@ -1069,13 +1069,15 @@ that changes rules is refused. The list and the report read the chaos console fr
 
 | `camel_runtime_chaos_list`
 | `true` | `false`
-| The current rules: id, version, the rule, state, where it fires, matches, faults fired, time left and the
-  expectation; or why chaos is off. Read from the status, which the application writes every second.
+| The current rules: id, version, the rule, state, where it fires, matches, faults fired, time left, the
+  expectation and the live state (observed rate next to the rate of the rule, when it last fired, faults per second over
+  the last minute, and the effect of its faults on the exchanges); or why chaos is off. Read from the status, which the
+  application writes every second.
 
 | `camel_runtime_chaos_report`
 | `true` | `false`
-| The report: the verdict and whether it is final, the seed, every version of every rule, the expectations and the
-  counts per route.
+| The report: the verdict and whether it is final, the seed, every version of every rule with its live state, the
+  expectations, the counts per route and the last 20 faults.
 
 | `camel_runtime_chaos_add`
 | `false` | `true`

@@ -22,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,6 +55,10 @@ class ChaosLifecycleTest extends ChaosTestSupport {
             public void configure() {
                 from("direct:a").routeId("a").to("mock:a");
                 from("direct:b").routeId("b").to("mock:b");
+                // a route that sends to route a, and to its dead letter channel when it cannot
+                from("direct:orders").routeId("orders")
+                        .errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0))
+                        .to("direct:a?block=false");
                 routeTemplate("tpl").templateParameter("name").from("direct:{{name}}").to("mock:tpl");
                 templatedRoute("tpl").routeId("t").parameter("name", "t");
                 // an exchange in flight that the test lets finish: a stop of the route waits for it
@@ -158,7 +163,34 @@ class ChaosLifecycleTest extends ChaosTestSupport {
         await().atMost(10, TimeUnit.SECONDS).until(() -> status("a") == ServiceStatus.Stopped);
         awaitLifecycle(id, "back");
         assertThat(status("a")).isEqualTo(ServiceStatus.Started);
-        assertThat(chaos().report().toText()).contains("stopped route a at +").contains(", started at +");
+        assertThat(chaos().report().toText()).contains("stopped route a at +").contains(", started at +")
+                .contains(" ago " + id + " stop 2s of route a");
+        assertThat(ruleReport(id).containsKey("lastFiredAgo")).isTrue();
+    }
+
+    @Test
+    void theExchangesSentToTheRouteWhileItIsDownAreTheEffectOfTheRule() throws Exception {
+        MockEndpoint dead = getMockEndpoint("mock:dead");
+        dead.expectedMessageCount(2);
+        String id = chaos().addRule("route=a lifecycle action=stop duration=10m");
+        awaitLifecycle(id, "down");
+        template.sendBody("direct:orders", "x");
+        template.sendBody("direct:orders", "y");
+
+        dead.assertIsSatisfied();
+        // the redelivery was too short for the stop, so they went to the dead letter channel, which tells why
+        assertThat(dead.getExchanges()).allSatisfy(e -> assertThat(e.getProperty(ChaosManager.CHAOS_RULE)).isEqualTo(id));
+        JsonObject effect = (JsonObject) ruleReport(id).get("effect");
+        assertThat(effect.getLong("faulted")).isEqualTo(2);
+        assertThat(effect.getLong("handled")).isEqualTo(2);
+        assertThat(chaos().report().toText()).contains("effect on 2 exchanges: 2 handled by the error handler");
+
+        // once the route is back, the exchanges sent to it are not the effect of the rule
+        chaos().removeRule(id);
+        awaitLifecycle(id, "back");
+        Exchange after = template.send("direct:orders", e -> e.getMessage().setBody("z"));
+        assertThat(after.getProperty(ChaosManager.CHAOS_RULE)).isNull();
+        assertThat(((JsonObject) ruleReport(id).get("effect")).getLong("faulted")).isEqualTo(2);
     }
 
     @Test
