@@ -947,7 +947,7 @@ public class MinaSftpOperations
                 // maybe the full directory already exists
                 try {
                     // Use stat to check if the directory exists - stat throws if path doesn't exist
-                    // Note: readDir doesn't throw for non-existent directories in MINA SSHD
+                    // Note: readDir only sends OPENDIR once its result is iterated, so it does not check the directory
                     SftpClient.Attributes attrs = sftpClient.stat(directory);
                     if (attrs != null && attrs.isDirectory()) {
                         success = true;
@@ -1123,8 +1123,8 @@ public class MinaSftpOperations
 
         LOG.trace("doChangeDirectory: path={}, currentDirectory={}, newDirectory={}", path, currentDirectory, newDirectory);
 
-        // Verify the directory exists using stat() - more reliable than readDir()
-        // Note: readDir doesn't throw for non-existent directories in MINA SSHD
+        // Verify the directory exists using stat(), a single request
+        // Note: readDir only sends OPENDIR once its result is iterated, so it does not check the directory
         try {
             SftpClient.Attributes attrs = sftpClient.stat(newDirectory);
             if (attrs == null || !attrs.isDirectory()) {
@@ -1186,7 +1186,9 @@ public class MinaSftpOperations
             }
 
             return result.toArray(new MinaSftpRemoteFile[0]);
-        } catch (IOException e) {
+        } catch (IOException | UncheckedIOException e) {
+            // readDir sends OPENDIR and reads the entries while iterating, so a failure, such as a directory that does
+            // not exist, surfaces as an UncheckedIOException, as in the listing one entry at a time
             throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
         } finally {
             lock.unlock();
