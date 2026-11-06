@@ -52,6 +52,7 @@
         <module>camel-test-infra-rabbitmq</module>
         <module>camel-test-infra-azure-common</module>
         <module>camel-test-infra-azure-eventgrid</module>
+        <module>camel-test-infra-azure-eventhubs</module>
         <module>camel-test-infra-azure-key-vault</module>
         <module>camel-test-infra-azure-servicebus</module>
         <module>camel-test-infra-azure-storage-blob</module>

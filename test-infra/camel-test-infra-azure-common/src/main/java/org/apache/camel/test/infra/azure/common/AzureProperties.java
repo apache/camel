@@ -31,6 +31,12 @@ public final class AzureProperties {
      * The Azurite image of the local Queue service
      */
     public static final String AZURE_STORAGE_QUEUE_CONTAINER = "azure.storage.queue.container";
+    /**
+     * The Artemis image of the AMQP brokers that Floci AZ starts for Event Hubs and Service Bus. Floci AZ copies AMQP
+     * libraries patched for one Artemis version into it, so the version must be the one that the Floci AZ image of
+     * {@link #AZURE_CONTAINER} expects.
+     */
+    public static final String AZURE_BROKER_CONTAINER = "azure.broker.container";
 
     private AzureProperties() {
 
