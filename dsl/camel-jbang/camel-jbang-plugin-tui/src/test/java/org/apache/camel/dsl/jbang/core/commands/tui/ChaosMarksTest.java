@@ -50,7 +50,7 @@ class ChaosMarksTest {
                  "rules": [{"id": "r1", "version": 1, "state": "active", "rule": "endpoint=http:stock* error status=503"}],
                  "report": {"verdict": "PASS", "final": true, "seed": 42,
                             "recentFaults": [{"ago": 2000, "rule": "r1", "fault": "error status 503", "hook": "send",
-                                              "route": "orders", "exchangeId": "3F2A85F3D4213-0000000000000001E"}]}}
+                                              "route": "orders", "exchangeId": "3F2A85F3D4213-000000000000104E"}]}}
                 """));
         ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
         ctx.selectedPid = "1234";
@@ -59,13 +59,13 @@ class ChaosMarksTest {
 
     @Test
     void theRuleOfAnExchange() {
-        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-0000000000000001E", null)).isEqualTo("r1");
+        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-000000000000104E", null)).isEqualTo("r1");
         assertThat(ChaosMarks.ruleOf(ctx, info, "OTHER", null)).isNull();
         // the property of the exchange, when there are properties
         assertThat(ChaosMarks.ruleOf(ctx, info, "OTHER", Map.of(ChaosMarks.PROPERTY, "r7"))).isEqualTo("r7");
         // no marks without chaos
         info.chaos = null;
-        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-0000000000000001E", null)).isNull();
+        assertThat(ChaosMarks.ruleOf(ctx, info, "3F2A85F3D4213-000000000000104E", null)).isNull();
     }
 
     @Test
@@ -88,15 +88,16 @@ class ChaosMarksTest {
     @Test
     void theMarksOfAStoppedIntegrationAreForgotten() {
         ctx.chaosMarks.retain(Set.of("1234"));
-        assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-0000000000000001E")).isEqualTo("r1");
+        assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-000000000000104E")).isEqualTo("r1");
         ctx.chaosMarks.retain(Set.of("5678"));
-        assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-0000000000000001E")).isNull();
+        assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-000000000000104E")).isNull();
     }
 
     @Test
     void theActivityTabMarksTheExchange() {
         ActivityEntry faulted = new ActivityEntry();
-        faulted.exchangeId = "3F2A85F3D4213-0000000000000001E";
+        // a real id: the short form has four characters after the dash, so the mark needs a wider column
+        faulted.exchangeId = "3F2A85F3D4213-000000000000104E";
         faulted.routeId = "orders";
         faulted.failed = true;
         faulted.timestamp = System.currentTimeMillis();
@@ -111,7 +112,7 @@ class ChaosMarksTest {
         tab.navigateDown();
         // the dice is two columns wide: the screen has a blank cell after it
         String screen = TuiTestHelper.renderToString(tab, 160, 40).replace(TuiIcons.TAB_CHAOS + " ", TuiIcons.TAB_CHAOS);
-        assertThat(screen).contains("3F2A85…-1E " + TuiIcons.TAB_CHAOS + "r1");
+        assertThat(screen).contains("3F2A85…-104E " + TuiIcons.TAB_CHAOS + "r1 ");
         // the other exchange is not faulted
         assertThat(screen).doesNotContain("3F2A85…-1F " + TuiIcons.TAB_CHAOS);
         assertThat(screen).contains("injected by chaos rule r1").contains("endpoint=http:stock* error status=503");
@@ -139,7 +140,7 @@ class ChaosMarksTest {
         List<Line> lines = new ArrayList<>();
         ChaosMarks.addDetailLine(lines, ctx, info, "OTHER", null);
         assertThat(lines).isEmpty();
-        ChaosMarks.addDetailLine(lines, ctx, info, "3F2A85F3D4213-0000000000000001E", null);
+        ChaosMarks.addDetailLine(lines, ctx, info, "3F2A85F3D4213-000000000000104E", null);
         assertThat(lines).hasSize(1);
     }
 }
