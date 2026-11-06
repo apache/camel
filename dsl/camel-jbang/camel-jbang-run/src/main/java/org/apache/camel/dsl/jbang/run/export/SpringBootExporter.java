@@ -138,7 +138,8 @@ class SpringBootExporter extends Exporter {
                 prop.remove("camel.main.modeline");
             }
             // ensure spring-boot keeps running if no HTTP server included
-            boolean http = deps.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
+            boolean http = hasCamelArtifact(deps, "camel-platform-http")
+                    || hasCamelArtifact(deps, "camel-platform-http-vertx");
             if (!http) {
                 prop.put("camel.main.run-controller", "true");
             }
@@ -445,7 +446,8 @@ class SpringBootExporter extends Exporter {
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
 
-        boolean http = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
+        boolean http = hasCamelArtifact(answer, "camel-platform-http")
+                || hasCamelArtifact(answer, "camel-platform-http-vertx");
         if (hasOpenapi(answer) && !http) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http");

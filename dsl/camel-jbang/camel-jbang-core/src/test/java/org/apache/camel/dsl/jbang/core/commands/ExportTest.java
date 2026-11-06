@@ -43,6 +43,7 @@ import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -1635,6 +1636,39 @@ class ExportTest {
         assertThat(model.getDependencies()).extracting(Dependency::getArtifactId)
                 .contains(artifactId);
         assertEachArtifactOnce(model);
+    }
+
+    @Test
+    void shouldKeepTheRunControllerOutWhenPlatformHttpIsGivenInAnyNotation() throws Exception {
+        LOG.info("shouldKeepTheRunControllerOutWhenPlatformHttpIsGivenInAnyNotation");
+        // camel-spring-boot 4.19+ requires JDK 21 (Spring Boot 4), as runtimeProvider has it
+        Assumptions.assumeTrue(Runtime.version().feature() >= 21, "camel-spring-boot requires JDK 21");
+
+        File profile = new File(".", "application.properties");
+        try {
+            // a profile, so the exported project has an application.properties to read
+            Files.writeString(profile.toPath(), "camel.main.name=platform-http-demo\n");
+
+            // --dep=camel-platform-http becomes camel:platform-http, and it is the HTTP server of the exported
+            // project, so the run controller is not needed to keep it alive
+            Export command = new Export(new CamelJBangMain());
+            CommandLineTestHelper.parse(command,
+                    "--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet",
+                    "--runtime=spring-boot", "--camel-version=" + RELEASED_CAMEL_VERSION,
+                    CamelCommandBaseTestSupport.quarkusExtRegistry(),
+                    "--dep=camel-platform-http",
+                    "src/test/resources/route.yaml");
+            int exit = command.doCall();
+
+            assertThat(exit).isEqualTo(0);
+            Properties props = loadExportedProperties("application.properties");
+            assertThat(exportedProperty(props, "camel.main.run-controller"))
+                    .as("the export has an HTTP server of its own")
+                    .isNull();
+            assertEachArtifactOnce(readMavenModel());
+        } finally {
+            FileUtil.deleteFile(profile);
+        }
     }
 
     @Test
