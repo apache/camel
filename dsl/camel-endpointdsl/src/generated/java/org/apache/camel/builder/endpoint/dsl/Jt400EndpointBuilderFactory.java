@@ -1602,8 +1602,8 @@ public interface Jt400EndpointBuilderFactory {
         public static final Jt400HeaderNameBuilder INSTANCE = new Jt400HeaderNameBuilder();
 
         /**
-         * Data queues: Returns the sender information for this data queue
-         * entry, or an empty string if not available.Message queues: The job
+         * Data queues:* Returns the sender information for this data queue
+         * entry, or an empty string if not available.*Message queues: The job
          * identifier of the sending job.
          * 
          * The option is a: {@code String} type.
@@ -1702,9 +1702,9 @@ public interface Jt400EndpointBuilderFactory {
             return "CamelJt400MessageDefaultReply";
         }
         /**
-         * Consumer: The key of the message that will be replied to (if the
-         * sendingReply parameter is set to true). Producer: If set, and if the
-         * message body is not empty, a new message will not be sent to the
+         * Consumer:* The key of the message that will be replied to (if the
+         * sendingReply parameter is set to true). *Producer:* If set, and if
+         * the message body is not empty, a new message will not be sent to the
          * provided message queue. Instead, a response will be sent to the
          * message identified by the given key. This is set automatically when
          * reading from the message queue if the sendingReply parameter is set

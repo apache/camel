@@ -367,7 +367,7 @@ public interface GoogleMailStreamComponentBuilderFactory {
         }
     
         /**
-         * Sets .json file with credentials for Service account.
+         * Sets *.json file with credentials for Service account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

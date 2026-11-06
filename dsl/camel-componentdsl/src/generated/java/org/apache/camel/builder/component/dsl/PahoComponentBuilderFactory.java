@@ -643,7 +643,7 @@ public interface PahoComponentBuilderFactory {
          * use. For example /mydir/etc/key.p12 com.ibm.ssl.keyStorePassword The
          * password for the KeyStore object that you want the KeyManager to use.
          * The password can either be in plain-text, or may be obfuscated using
-         * the static method: com.ibm.micro.security.Password.obfuscate(char
+         * the static method: com.ibm.micro.security.Password.obfuscate(char[]
          * password). This obfuscates the password using a simple and insecure
          * XOR and Base64 encoding mechanism. Note that this is only a simple
          * scrambler to obfuscate clear-text passwords. com.ibm.ssl.keyStoreType
@@ -654,7 +654,7 @@ public interface PahoComponentBuilderFactory {
          * com.ibm.ssl.trustStorePassword The password for the TrustStore object
          * that you want the TrustManager to use. The password can either be in
          * plain-text, or may be obfuscated using the static method:
-         * com.ibm.micro.security.Password.obfuscate(char password). This
+         * com.ibm.micro.security.Password.obfuscate(char[] password). This
          * obfuscates the password using a simple and insecure XOR and Base64
          * encoding mechanism. Note that this is only a simple scrambler to
          * obfuscate clear-text passwords. com.ibm.ssl.trustStoreType The type

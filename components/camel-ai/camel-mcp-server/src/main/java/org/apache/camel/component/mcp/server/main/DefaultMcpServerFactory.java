@@ -54,6 +54,7 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setServerIcons(McpServerIconsParser.parse(configuration.getMcpServerIcons()));
         mcpConfiguration.setSessionKeepAliveInterval(configuration.getMcpSessionKeepAliveInterval());
         mcpConfiguration.setSessionIdleTtl(configuration.getMcpSessionIdleTtl());
+        mcpConfiguration.setAllowedOrigins(configuration.getMcpAllowedOrigins());
         return new McpServerBridge(mcpConfiguration);
     }
 

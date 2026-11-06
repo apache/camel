@@ -4005,7 +4005,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * Query Couchbase databases using SQL++ (N1QL) queries or MapReduce Views
      * with a poll strategy and/or perform various operations against Couchbase
      * databases.
      * 
@@ -4033,7 +4033,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Couchbase (camel-couchbase)
-     * Query Couchbase databases using SQL (N1QL) queries or MapReduce Views
+     * Query Couchbase databases using SQL++ (N1QL) queries or MapReduce Views
      * with a poll strategy and/or perform various operations against Couchbase
      * databases.
      * 
@@ -4129,7 +4129,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
      * 
      * Category: database,bigdata
@@ -4159,7 +4159,7 @@ public class StaticEndpointBuilders {
     }
     /**
      * Cassandra CQL (camel-cassandraql)
-     * Integrate with Cassandra 2.0 using the CQL3 API (not the Thrift API).
+     * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API).
      * Based on Cassandra Java Driver provided by DataStax.
      * 
      * Category: database,bigdata
@@ -5612,8 +5612,8 @@ public class StaticEndpointBuilders {
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
      * example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.
-     * Wildcard patterns are supported using a suffix, for example: Route
-     * matches all route events, Exchange matches all exchange events, and
+     * Wildcard patterns are supported using a * suffix, for example: Route*
+     * matches all route events, Exchange* matches all exchange events, and *
      * matches all events.
      * 
      * @param path events
@@ -5637,8 +5637,8 @@ public class StaticEndpointBuilders {
      * Comma-separated list of event types to subscribe to. Event types
      * correspond to CamelEvent.Type enum values (case-insensitive), for
      * example: RouteStarted, RouteStopped, ExchangeCompleted, ExchangeFailed.
-     * Wildcard patterns are supported using a suffix, for example: Route
-     * matches all route events, Exchange matches all exchange events, and
+     * Wildcard patterns are supported using a * suffix, for example: Route*
+     * matches all route events, Exchange* matches all exchange events, and *
      * matches all events.
      * 
      * @param componentName to use a custom component name for the endpoint

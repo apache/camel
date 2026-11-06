@@ -59,7 +59,8 @@ public class GitCommitConsumer extends AbstractGitConsumer {
         }
         for (RevCommit commit : commits) {
             if (!commitsConsumed.contains(commit.getId())) {
-                Exchange e = createExchange(true);
+                // released by processBatch once the outcome of the route has been read
+                Exchange e = createExchange(false);
                 e.getMessage().setBody(commit.getFullMessage());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_ID, commit.getName());
                 e.getMessage().setHeader(GitConstants.GIT_COMMIT_AUTHOR_NAME, commit.getAuthorIdent().getName());

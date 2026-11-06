@@ -266,7 +266,7 @@ public interface CxfRsEndpointBuilderFactory {
         }
         /**
          * This option can override the endpointUrl that published from the WADL
-         * which can be accessed with resource address url plus _wadl.
+         * which can be accessed with resource address url plus ?_wadl.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

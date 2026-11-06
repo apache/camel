@@ -36,6 +36,8 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
     private final GitEndpoint endpoint;
     private Repository repo;
     private Git git;
+    // whether the last poll found items to deliver, consumed or not
+    private boolean lastPollFoundItems;
 
     protected AbstractGitConsumer(GitEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -44,9 +46,10 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        // open the repository before super.doStart() starts the scheduler, which may poll at once (initialDelay=0)
         this.repo = getLocalRepository();
         this.git = new Git(repo);
+        super.doStart();
     }
 
     @Override
@@ -68,10 +71,18 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
         return git;
     }
 
+    /**
+     * Hands the exchanges of a poll to the route.
+     *
+     * @return the number of items marked consumed. A failed item, or one that was not handed to the route, is not
+     *         counted: a poll whose items all failed does not make a greedy consumer poll again at once, and the
+     *         backoff options count it as an idle poll.
+     */
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
-        int answer = total;
+        int consumed = 0;
+        lastPollFoundItems = total > 0;
         if (this.maxMessagesPerPoll > 0 && total > this.maxMessagesPerPoll) {
             LOG.debug("Limiting to maximum messages to poll {} as there were {} messages in this poll.",
                     this.maxMessagesPerPoll, total);
@@ -85,11 +96,55 @@ public abstract class AbstractGitConsumer extends ScheduledBatchPollingConsumer 
             exchange.setProperty(ExchangePropertyKey.BATCH_COMPLETE, index == total - 1);
             this.pendingExchanges = total - index - 1;
             Object value = onPreProcessed(exchange);
-            getProcessor().process(exchange);
-            onProcessed(exchange, value);
+            try {
+                // only an item the route accepted is marked consumed, so a failed one is delivered again on the
+                // next poll
+                if (processExchange(exchange)) {
+                    onProcessed(exchange, value);
+                    consumed++;
+                }
+            } finally {
+                releaseExchange(exchange, false);
+            }
         }
 
-        return answer;
+        // release the exchanges that were not handed to the route, when the consumer stops in the middle of a batch
+        Exchange remaining;
+        while ((remaining = (Exchange) exchanges.poll()) != null) {
+            releaseExchange(remaining, false);
+        }
+
+        return consumed;
+    }
+
+    @Override
+    protected void processEmptyMessage() throws Exception {
+        // a poll whose items all failed counts no item, but it found and delivered them, so it is not idle
+        if (!lastPollFoundItems) {
+            super.processEmptyMessage();
+        }
+    }
+
+    /**
+     * Hands the exchange to the route and reports a failure through the exception handler of the consumer.
+     * <p/>
+     * A route that fails does not throw from {@code process()}: the failure is left on the exchange, so it is read
+     * there. The exchange is created with {@code createExchange(false)}, so it is not reset before its outcome is read.
+     *
+     * @return {@code true} if the route processed the exchange without a failure
+     */
+    private boolean processExchange(Exchange exchange) {
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        Exception cause = exchange.getException();
+        if (cause != null) {
+            getExceptionHandler().handleException("Error processing exchange", exchange, cause);
+            return false;
+        }
+        return true;
     }
 
     public abstract Object onPreProcessed(Exchange exchange);

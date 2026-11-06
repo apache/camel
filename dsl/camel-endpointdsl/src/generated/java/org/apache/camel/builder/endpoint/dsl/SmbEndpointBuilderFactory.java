@@ -358,20 +358,20 @@ public interface SmbEndpointBuilderFactory {
          * parameter can contain the name of a file (or multiple files, if
          * wildcards are used) within this directory. When it is null all files
          * are included. Two wild card characters are supported in the search
-         * pattern. The (question mark) character matches a single character. If
-         * a search pattern contains one or more characters, then exactly that
-         * number of characters is matched by the wildcards. For example, the
-         * criterion x matches abx but not abcx or ax, because the two file
-         * names do not have enough characters preceding the literal. When a
-         * file name criterion has characters trailing a literal, then the match
-         * is made with specified number of characters or less. For example, the
-         * criterion x matches xab, xa, and x, but not xabc. If only characters
-         * are present in the file name selection criterion, then the match is
-         * made as if the criterion contained characters trailing a literal. The
-         * (asterisk) character matches an entire file name. A null or empty
-         * specification criterion also selects all file names. For example,
-         * .abc or .abc match any file with an extension of abc. ., , or empty
-         * string match all files in a directory.
+         * pattern. The ? (question mark) character matches a single character.
+         * If a search pattern contains one or more ? characters, then exactly
+         * that number of characters is matched by the wildcards. For example,
+         * the criterion ??x matches abx but not abcx or ax, because the two
+         * file names do not have enough characters preceding the literal. When
+         * a file name criterion has ? characters trailing a literal, then the
+         * match is made with specified number of characters or less. For
+         * example, the criterion x?? matches xab, xa, and x, but not xabc. If
+         * only ? characters are present in the file name selection criterion,
+         * then the match is made as if the criterion contained ? characters
+         * trailing a literal. The * (asterisk) character matches an entire file
+         * name. A null or empty specification criterion also selects all file
+         * names. For example, *.abc or .abc match any file with an extension of
+         * abc. *.*, *, or empty string match all files in a directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -984,40 +984,14 @@ public interface SmbEndpointBuilderFactory {
          * read-lock on the file (i.e. the file is not in-progress or being
          * written). Camel will wait until the file lock is granted. This option
          * provides the build in strategies: - none - No read lock is in use -
-         * markerFile - Camel creates a marker file (fileName.camelLock) and
-         * then holds a lock on it. This option is not available for the FTP
-         * component - changed - Changed is using file length/modification
-         * timestamp to detect whether the file is currently being copied or
-         * not. Will at least use 1 sec to determine this, so this option cannot
-         * consume files as fast as the others, but can be more reliable as the
-         * JDK IO API cannot always determine whether a file is currently being
-         * used by another process. The option readLockCheckInterval can be used
-         * to set the check frequency. - fileLock - is for using
-         * java.nio.channels.FileLock. This option is not avail for Windows OS
-         * and the FTP component. This approach should be avoided when accessing
-         * a remote file system via a mount/share unless that file system
-         * supports distributed file locks. - rename - rename is for using a try
-         * to rename the file as a test if we can get exclusive read-lock. -
-         * idempotent - (only for file component) idempotent is for using a
-         * idempotentRepository as the read-lock. This allows to use read locks
-         * that supports clustering if the idempotent repository implementation
-         * supports that. - idempotent-changed - (only for file component)
-         * idempotent-changed is for using a idempotentRepository and changed as
-         * the combined read-lock. This allows to use read locks that supports
-         * clustering if the idempotent repository implementation supports that.
-         * - idempotent-rename - (only for file component) idempotent-rename is
-         * for using a idempotentRepository and rename as the combined
-         * read-lock. This allows to use read locks that supports clustering if
-         * the idempotent repository implementation supports that.Notice: The
-         * various read locks is not all suited to work in clustered mode, where
-         * concurrent consumers on different nodes is competing for the same
-         * files on a shared file system. The markerFile using a close to atomic
-         * operation to create the empty marker file, but its not guaranteed to
-         * work in a cluster. The fileLock may work better but then the file
-         * system need to support distributed file locks, and so on. Using the
-         * idempotent read lock can support clustering if the idempotent
-         * repository supports clustering, such as Hazelcast Component or
-         * Infinispan.
+         * changed - Changed is using file length/modification timestamp to
+         * detect whether the file is currently being copied or not, so this
+         * option cannot consume files as fast as the others. The option
+         * readLockCheckInterval can be used to set the check frequency. -
+         * rename - rename is for using a try to rename the file as a test if we
+         * can get exclusive read-lock. The other read locks of the file
+         * component (markerFile, fileLock and the idempotent read locks) are
+         * not supported, and fail when the consumer is created.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1079,48 +1053,6 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointConsumerBuilder readLockCheckInterval(String readLockCheckInterval) {
             doSetProperty("readLockCheckInterval", readLockCheckInterval);
-            return this;
-        }
-        /**
-         * Whether or not read lock with marker files should upon startup delete
-         * any orphan read lock files, which may have been left on the file
-         * system, if Camel was not properly shutdown (such as a JVM crash). If
-         * turning this option to false then any orphaned lock file will cause
-         * Camel to not attempt to pickup that file, this could also be due
-         * another node is concurrently reading files from the same shared
-         * directory.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockDeleteOrphanLockFiles the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder readLockDeleteOrphanLockFiles(boolean readLockDeleteOrphanLockFiles) {
-            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
-            return this;
-        }
-        /**
-         * Whether or not read lock with marker files should upon startup delete
-         * any orphan read lock files, which may have been left on the file
-         * system, if Camel was not properly shutdown (such as a JVM crash). If
-         * turning this option to false then any orphaned lock file will cause
-         * Camel to not attempt to pickup that file, this could also be due
-         * another node is concurrently reading files from the same shared
-         * directory.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockDeleteOrphanLockFiles the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder readLockDeleteOrphanLockFiles(String readLockDeleteOrphanLockFiles) {
-            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
         }
         /**
@@ -1276,90 +1208,6 @@ public interface SmbEndpointBuilderFactory {
          */
         default SmbEndpointConsumerBuilder readLockMinLength(String readLockMinLength) {
             doSetProperty("readLockMinLength", readLockMinLength);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file is succeeded and a commit
-         * happens. By default the file is not removed which ensures that any
-         * race-condition do not occur so another active node may attempt to
-         * grab the file. Instead the idempotent repository may support eviction
-         * strategies that you can configure to evict the file name entry after
-         * X minutes - this ensures no problems with race conditions. See more
-         * details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockRemoveOnCommit the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder readLockRemoveOnCommit(boolean readLockRemoveOnCommit) {
-            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file is succeeded and a commit
-         * happens. By default the file is not removed which ensures that any
-         * race-condition do not occur so another active node may attempt to
-         * grab the file. Instead the idempotent repository may support eviction
-         * strategies that you can configure to evict the file name entry after
-         * X minutes - this ensures no problems with race conditions. See more
-         * details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: false
-         * Group: lock
-         * 
-         * @param readLockRemoveOnCommit the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder readLockRemoveOnCommit(String readLockRemoveOnCommit) {
-            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file failed and a rollback happens. If
-         * this option is false, then the file name entry is confirmed (as if
-         * the file did a commit).
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockRemoveOnRollback the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder readLockRemoveOnRollback(boolean readLockRemoveOnRollback) {
-            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
-            return this;
-        }
-        /**
-         * This option is applied only for readLock=idempotent. It allows to
-         * specify whether to remove the file name entry from the idempotent
-         * repository when processing the file failed and a rollback happens. If
-         * this option is false, then the file name entry is confirmed (as if
-         * the file did a commit).
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Default: true
-         * Group: lock
-         * 
-         * @param readLockRemoveOnRollback the value to set
-         * @return the dsl builder
-         */
-        default SmbEndpointConsumerBuilder readLockRemoveOnRollback(String readLockRemoveOnRollback) {
-            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -4044,8 +3892,8 @@ public interface SmbEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
-         * The actual absolute filepath (path name) for the output file that was
-         * written. This header is set by Camel and its purpose is providing
+         * The actual absolute filepath (path + name) for the output file that
+         * was written. This header is set by Camel and its purpose is providing
          * end-users with the name of the file that was written.
          * 
          * The option is a: {@code String} type.

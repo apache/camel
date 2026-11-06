@@ -183,11 +183,13 @@ public interface Aws2KinesisComponentBuilderFactory {
     
         
         /**
-         * Maximum number of records that will be fetched in each poll.
+         * Maximum number of records fetched from each shard in each poll: the
+         * Limit of the GetRecords request, from 1 to 10000. Not used by the KCL
+         * consumer (useKclConsumers).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
-         * Default: 1
+         * Default: 1000
          * Group: consumer
          * 
          * @param maxResultsPerRequest the value to set

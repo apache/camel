@@ -18,6 +18,7 @@ package org.apache.camel.component.chaos;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,14 +36,18 @@ import org.apache.camel.util.json.JsonObject;
  * What the chaos rules did, as of the time the report was made: the seed, each rule with its matches and the faults
  * that fired, the counts per route, the expectations and the verdict.
  * <p/>
- * Without an expectation the verdict is PASS, as chaos makes exchanges fail on purpose. Only an expectation that is
- * unmet (its route did not complete that many exchanges in time) makes it FAIL, and only an unmet expectation counts
- * messages as lost. An expectation that is not decided yet is pending, and so is the report: a PASS with a pending
- * expectation is not final ({@link #isFinal()}).
+ * Without an expectation the verdict is PASS, as chaos makes exchanges fail on purpose. An expectation that is unmet
+ * (its route did not complete that many exchanges in time) makes it FAIL, and counts messages as lost; so does a rule
+ * with {@code at=dlq} that failed or dropped the send of the dead letter channel, which then handled the exchange
+ * without delivering it. An expectation that is not decided yet is pending, and so is the report: a PASS with a pending
+ * expectation is not final ({@link #isFinal()}). An expectation whose rule was removed or changed, or whose context
+ * stopped, before it was decided is cancelled: it is neither met nor unmet, and does not keep the report pending.
  * <p/>
- * A route counts each exchange that goes through it once, when the route is done with it: a message that fails and is
- * read again by its consumer is one failed and one completed exchange. A failed exchange is "kept by the consumer" when
- * the consumer of the route reads the message again (for example a file consumer without {@code moveFailed}).
+ * A route counts each exchange that goes through it once, with how the route was done with it the last time (an
+ * exchange can go through a route more than once, such as a {@code direct} route called in a loop): a message that
+ * fails and is read again by its consumer is one failed and one completed exchange. A failed exchange is "kept by the
+ * consumer" when the consumer of the route reads the message again (for example a file consumer without
+ * {@code moveFailed}).
  *
  * @since 4.24
  */
@@ -55,32 +60,54 @@ public final class ChaosReport {
 
     private final long seed;
     private final boolean seedGiven;
+    // in the order of their ids, and the versions of an id from the latest
     private final List<RuleEntry> rules = new ArrayList<>();
-    // the current rules come first in rules, then the removed, replaced and retired ones
-    private final int current;
     private final List<RouteEntry> routes = new ArrayList<>();
     private final List<String> reasons = new ArrayList<>();
     private final long lost;
     private final boolean pending;
+    private final long now;
+    // the last faults, the latest first
+    private final List<ChaosRecentFaults.Entry> recentFaults;
 
     ChaosReport(long seed, boolean seedGiven, long now, List<ChaosRule> current, List<ChaosRule> removed,
-                Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending) {
+                Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
+                long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults) {
         this.seed = seed;
         this.seedGiven = seedGiven;
+        this.now = now;
+        this.recentFaults = List.copyOf(recentFaults);
         long lostCount = 0;
         boolean anyPending = false;
-        this.current = current.size();
-        List<ChaosRule> all = new ArrayList<>(current);
-        all.addAll(removed);
-        for (ChaosRule rule : all) {
-            RuleEntry entry = new RuleEntry(rule, now);
-            rules.add(entry);
+        for (ChaosRule rule : current) {
+            rules.add(new RuleEntry(rule, now, true));
+        }
+        for (ChaosRule rule : removed) {
+            rules.add(new RuleEntry(rule, now, false));
+        }
+        rules.sort(Comparator.comparingInt((RuleEntry r) -> idNumber(r.id))
+                .thenComparing(Comparator.comparingInt((RuleEntry r) -> r.version).reversed()));
+        for (RuleEntry entry : rules) {
+            if (entry.lostAtDlq > 0) {
+                lostCount += entry.lostAtDlq;
+                reasons.add("rule " + entry.id + " failed or dropped " + entry.lostAtDlq
+                            + (entry.lostAtDlq == 1 ? " send" : " sends") + " of the dead letter channel, which handled"
+                            + (entry.lostAtDlq == 1 ? " it without delivering it: " : " them without delivering them: ")
+                            + entry.lostAtDlq + " lost");
+            }
+            ChaosRule rule = entry.rule;
             if (entry.outcome == Outcome.UNMET) {
-                long missing = Math.max(0, rule.expectation.count - entry.completed);
-                lostCount += missing;
-                reasons.add("route " + rule.expectation.route + " completed " + entry.completed + " of "
-                            + rule.expectation.count + " exchanges within " + ChaosRuleParser.printTime(rule.within)
-                            + " (rule " + rule.id + "): " + missing + " lost");
+                ChaosRule.Expectation e = rule.expectation;
+                lostCount += entry.lost;
+                if (e.kind == ChaosRule.Expectation.Kind.COMPLETED && e.op == ChaosRule.Expectation.Op.AT_LEAST) {
+                    reasons.add("route " + e.route + " completed " + entry.value + " of " + e.count + " exchanges within "
+                                + ChaosRuleParser.printTime(rule.within) + " (rule " + rule.id + "): " + entry.lost
+                                + " lost");
+                } else {
+                    reasons.add("route " + e.route + ": " + entry.value + " " + e.kind.words(entry.value) + " within "
+                                + ChaosRuleParser.printTime(rule.within) + ", " + e.op.words + " " + e.count
+                                + " expected (rule " + rule.id + ")" + (entry.lost > 0 ? ": " + entry.lost + " lost" : ""));
+                }
             } else if (entry.outcome == Outcome.PENDING) {
                 anyPending = true;
             }
@@ -90,13 +117,28 @@ public final class ChaosReport {
             reasons.add(evictedUnmet + " unmet expectations of rules that are no longer in the report: " + evictedLost
                         + " lost");
         }
+        if (evictedLostAtDlq > 0) {
+            lostCount += evictedLostAtDlq;
+            reasons.add("rules that are no longer in the report kept messages from the dead letter channel: "
+                        + evictedLostAtDlq + " lost");
+        }
         counts.forEach((route, c) -> routes.add(new RouteEntry(route, c)));
         this.lost = lostCount;
         this.pending = anyPending || evictedPending > 0;
     }
 
+    // the number of an id such as r12, for the order of the rules
+    private static int idNumber(String id) {
+        try {
+            return Integer.parseInt(id.substring(1));
+        } catch (RuntimeException e) {
+            return Integer.MAX_VALUE;
+        }
+    }
+
     /**
-     * The verdict: {@link #FAIL} when an expectation is unmet, {@link #PASS} otherwise.
+     * The verdict: {@link #FAIL} when an expectation is unmet, or a message was lost at the dead letter channel;
+     * {@link #PASS} otherwise.
      */
     public String getVerdict() {
         return reasons.isEmpty() ? PASS : FAIL;
@@ -110,15 +152,16 @@ public final class ChaosReport {
     }
 
     /**
-     * The reasons of a {@link #FAIL} verdict, one per unmet expectation.
+     * The reasons of a {@link #FAIL} verdict, one per unmet expectation and per rule that lost messages at the dead
+     * letter channel.
      */
     public List<String> getReasons() {
         return Collections.unmodifiableList(reasons);
     }
 
     /**
-     * The messages that unmet expectations count as lost: the count of each unmet expectation minus the exchanges its
-     * route completed in time.
+     * The messages counted as lost: the count of each unmet expectation minus the exchanges its route completed in
+     * time, and the messages that a rule with {@code at=dlq} kept from reaching the dead letter channel.
      */
     public long getLost() {
         return lost;
@@ -161,20 +204,35 @@ public final class ChaosReport {
                 }
             }
             sb.append(at).append(", skipped ").append(r.skipped);
+            if (!r.skipReasons.isEmpty()) {
+                StringJoiner why = new StringJoiner("; ", " (", ")");
+                r.skipReasons.forEach((reason, count) -> why.add(reason + ": " + count));
+                sb.append(why);
+            }
+            if (r.lostAtDlq > 0) {
+                sb.append(", lost at the dead letter channel ").append(r.lostAtDlq);
+            }
             if (r.state == State.ACTIVE && r.lifecycle == null) {
                 sb.append(", ends in ").append(ChaosRuleParser.printTime(r.endsIn));
+            }
+            String live = liveText(r);
+            if (!live.isEmpty()) {
+                sb.append("\n      ").append(live);
+            }
+            if (r.faulted > 0) {
+                sb.append("\n      ").append(effectText(r));
             }
             if (r.lifecycle != null) {
                 sb.append("\n      ").append(lifecycleText(r));
             }
             if (r.outcome != null) {
-                sb.append("\n      expect ").append(r.expectRoute).append(':').append(r.expectCount).append(" within ")
+                sb.append("\n      expect ").append(r.expectSpec).append(" within ")
                         .append(ChaosRuleParser.printTime(r.within)).append(": ").append(r.outcome.key)
-                        .append(", ").append(r.completed).append(" completed");
+                        .append(", ").append(r.value).append(' ').append(r.expectKind.key);
                 if (r.outcome == Outcome.PENDING) {
-                    sb.append(r.frozen
-                            ? " (not decided: the rule was removed or changed, or the context stopped, first)"
-                            : ", " + ChaosRuleParser.printTime(r.timeLeft) + " left");
+                    sb.append(", ").append(ChaosRuleParser.printTime(r.timeLeft)).append(" left");
+                } else if (r.outcome == Outcome.CANCELLED) {
+                    sb.append(" (the rule was removed or changed, or the context stopped, before it was decided)");
                 }
             }
         }
@@ -187,11 +245,100 @@ public final class ChaosReport {
                     .append(r.failed).append(" (kept by the consumer ").append(r.failedKept).append("), handled ")
                     .append(r.handled).append(", redeliveries ").append(r.redeliveries);
         }
+        if (!recentFaults.isEmpty()) {
+            sb.append("\n  recent faults:");
+            for (ChaosRecentFaults.Entry f : recentFaults) {
+                sb.append("\n    ").append(recentFaultText(f));
+            }
+        }
         sb.append("\n  lost: ").append(lost);
         for (String reason : reasons) {
             sb.append("\n  FAIL: ").append(reason);
         }
         return sb.toString();
+    }
+
+    /**
+     * The live state of a rule, for a person: its observed rate next to the one of the rule, the next match an
+     * {@code every:N} rule fires at, when it last fired and its faults in the last minute.
+     */
+    private static String liveText(RuleEntry r) {
+        StringJoiner sj = new StringJoiner(", ");
+        if (r.observedRate >= 0 && r.rule.targetRate() < 1.0d) {
+            sj.add("rate " + percent(r.observedRate) + " of "
+                   + (r.rule.every > 0 ? "1 in " + r.rule.every : percent(r.rule.targetRate())));
+        }
+        if (r.nextFireIn > 0) {
+            sj.add("fires again in " + r.nextFireIn + (r.nextFireIn == 1 ? " match" : " matches"));
+        }
+        if (r.lastFiredAgo >= 0) {
+            sj.add("last fired " + ChaosRuleParser.printTime(r.lastFiredAgo) + " ago");
+            sj.add(r.faultsLastMinute + (r.faultsLastMinute == 1 ? " fault" : " faults") + " in the last minute");
+        }
+        return sj.toString();
+    }
+
+    /** What the faults of a rule did to the exchanges, for a person; the counts that are 0 are left out. */
+    private static String effectText(RuleEntry r) {
+        StringJoiner sj = new StringJoiner(
+                ", ", "effect on " + r.faulted + (r.faulted == 1 ? " exchange: " : " exchanges: "),
+                "");
+        if (r.completed > 0) {
+            sj.add(r.completed + " completed");
+        }
+        if (r.recovered > 0) {
+            sj.add(r.recovered + " recovered by redelivery");
+        }
+        if (r.handled > 0) {
+            sj.add(r.handled + " handled by the error handler");
+        }
+        if (r.failed > 0) {
+            sj.add(r.failed + " failed");
+        }
+        if (r.inFlight > 0) {
+            sj.add(r.inFlight + " in flight");
+        }
+        return sj.toString();
+    }
+
+    /**
+     * A recent fault, for a person, such as {@code 3s ago r1 error ChaosException at send mock://stock, route orders}.
+     */
+    private String recentFaultText(ChaosRecentFaults.Entry f) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(ChaosRuleParser.printTime(Math.max(0, now - f.time()))).append(" ago ").append(f.rule().id);
+        if (f.rule().version > 1) {
+            sb.append(" v").append(f.rule().version);
+        }
+        sb.append(' ').append(f.rule().faultText());
+        if (f.hook() == null) {
+            sb.append(" of route ").append(f.routeId());
+            return sb.toString();
+        }
+        if (f.hook() == Hook.ENTRY) {
+            sb.append(" at the entry of route ").append(f.routeId());
+        } else {
+            sb.append(" at ").append(f.hook().key).append(' ').append(where(f));
+            if (f.routeId() != null) {
+                sb.append(", route ").append(f.routeId());
+            }
+        }
+        if (f.exchangeId() != null) {
+            sb.append(", exchange ").append(f.exchangeId());
+        }
+        return sb.toString();
+    }
+
+    // the endpoint of a fault without its query, which can hold secrets, or the id of its step
+    private static String where(ChaosRecentFaults.Entry f) {
+        return f.hook() == Hook.STEP ? f.where() : ChaosTargets.withoutQuery(f.where());
+    }
+
+    // a share as a percent, such as 5% or 5.1%
+    private static String percent(double share) {
+        double p = share * 100;
+        double tenths = Math.round(p * 10) / 10.0d;
+        return (tenths == Math.rint(tenths) ? Long.toString((long) tenths) : Double.toString(tenths)) + "%";
     }
 
     /**
@@ -218,7 +365,35 @@ public final class ChaosReport {
             routeArray.add(jo);
         }
         root.put("routes", routeArray);
+        root.put("recentFaults", recentFaultsJson());
         return root;
+    }
+
+    /** The recent faults as JSON, the latest first, as in {@link #toJson()}. */
+    JsonArray recentFaultsJson() {
+        JsonArray answer = new JsonArray();
+        for (ChaosRecentFaults.Entry f : recentFaults) {
+            JsonObject jo = new JsonObject();
+            jo.put("timestamp", f.time());
+            jo.put("ago", Math.max(0, now - f.time()));
+            jo.put("rule", f.rule().id);
+            jo.put("version", f.rule().version);
+            jo.put("fault", f.rule().faultText());
+            if (f.hook() != null) {
+                jo.put("hook", f.hook().key);
+            }
+            if (f.routeId() != null) {
+                jo.put("route", f.routeId());
+            }
+            if (f.where() != null) {
+                jo.put(f.hook() == Hook.STEP ? "step" : "endpoint", where(f));
+            }
+            if (f.exchangeId() != null) {
+                jo.put("exchangeId", f.exchangeId());
+            }
+            answer.add(jo);
+        }
+        return answer;
     }
 
     /**
@@ -227,7 +402,10 @@ public final class ChaosReport {
      */
     JsonArray rulesJson(boolean currentOnly) {
         JsonArray ruleArray = new JsonArray();
-        for (RuleEntry r : currentOnly ? rules.subList(0, current) : rules) {
+        for (RuleEntry r : rules) {
+            if (currentOnly && !r.current) {
+                continue;
+            }
             JsonObject jo = new JsonObject();
             jo.put("id", r.id);
             jo.put("version", r.version);
@@ -249,22 +427,34 @@ public final class ChaosReport {
             }
             jo.put("fired", fired);
             jo.put("skipped", r.skipped);
+            if (!r.skipReasons.isEmpty()) {
+                // why the rule did nothing, per reason
+                JsonObject why = new JsonObject();
+                r.skipReasons.forEach(why::put);
+                jo.put("skippedReasons", why);
+            }
+            if (r.hooks.contains(Hook.DLQ)) {
+                jo.put("lostAtDlq", r.lostAtDlq);
+            }
             if (r.state == State.ACTIVE && r.lifecycle == null) {
                 jo.put("endsIn", r.endsIn);
             }
+            liveJson(r, jo);
             if (r.outcome != null) {
                 JsonObject e = new JsonObject();
                 e.put("route", r.expectRoute);
+                e.put("kind", r.expectKind.key);
+                e.put("op", r.expectOp.key);
                 e.put("count", r.expectCount);
                 e.put("within", r.within);
-                e.put("completed", r.completed);
-                e.put("outcome", r.outcome.key);
-                if (r.outcome == Outcome.PENDING && !r.frozen) {
-                    e.put("timeLeft", r.timeLeft);
+                // the count of its kind so far (completed for an expectation of completed exchanges, as before)
+                e.put("value", r.value);
+                if (r.expectKind == ChaosRule.Expectation.Kind.COMPLETED) {
+                    e.put("completed", r.value);
                 }
-                if (r.frozen && r.outcome == Outcome.PENDING) {
-                    // the rule was removed or changed, or the context stopped, before it was decided
-                    e.put("notDecided", true);
+                e.put("outcome", r.outcome.key);
+                if (r.outcome == Outcome.PENDING) {
+                    e.put("timeLeft", r.timeLeft);
                 }
                 jo.put("expectation", e);
             }
@@ -277,6 +467,45 @@ public final class ChaosReport {
     @Override
     public String toString() {
         return toText();
+    }
+
+    /**
+     * The live state of a rule, for a tool: the rate of the rule and the observed one (the share of the matches it
+     * fired at), the next match an {@code every:N} rule fires at, when it last fired, its faults per second over the
+     * last minute, and the effect of its faults on the exchanges.
+     */
+    private static void liveJson(RuleEntry r, JsonObject jo) {
+        if (r.lifecycle == null) {
+            jo.put("rate", r.rule.targetRate());
+            if (r.observedRate >= 0) {
+                jo.put("observedRate", Math.round(r.observedRate * 10000) / 10000.0d);
+            }
+        }
+        if (r.nextFireIn > 0) {
+            jo.put("nextFireIn", r.nextFireIn);
+        }
+        if (r.lastFiredAgo >= 0) {
+            jo.put("lastFiredAgo", r.lastFiredAgo);
+        }
+        jo.put("faultsLastMinute", r.faultsLastMinute);
+        if (r.faultsLastMinute > 0) {
+            // the oldest second first; the last one is the current second
+            JsonArray perSecond = new JsonArray();
+            for (long n : r.faultsPerSecond) {
+                perSecond.add(n);
+            }
+            jo.put("faultsPerSecond", perSecond);
+        }
+        if (r.faulted > 0) {
+            JsonObject e = new JsonObject();
+            e.put("faulted", r.faulted);
+            e.put("completed", r.completed);
+            e.put("recovered", r.recovered);
+            e.put("handled", r.handled);
+            e.put("failed", r.failed);
+            e.put("inFlight", r.inFlight);
+            jo.put("effect", e);
+        }
     }
 
     /**
@@ -344,6 +573,9 @@ public final class ChaosReport {
 
     /** A rule in the report. */
     private static final class RuleEntry {
+        final ChaosRule rule;
+        // a current rule (not removed, replaced or moved to the history)
+        final boolean current;
         final String id;
         final int version;
         final String text;
@@ -353,21 +585,42 @@ public final class ChaosReport {
         final long[] fired = new long[Hook.values().length];
         final long firedTotal;
         final long skipped;
+        final Map<String, Long> skipReasons;
+        final long lostAtDlq;
         final long endsIn;
+        // the live state: the share of the matches the rule fired at (-1 without a match), the matches until an
+        // every:N rule fires again (0 when it does not), how long ago it last fired (-1 when it did not), its faults
+        // per second over the last minute, and the effect of its faults on the exchanges
+        final double observedRate;
+        final long nextFireIn;
+        final long lastFiredAgo;
+        final long[] faultsPerSecond;
+        final long faultsLastMinute;
+        final long faulted;
+        final long completed;
+        final long recovered;
+        final long handled;
+        final long failed;
+        final long inFlight;
         final String expectRoute;
+        final ChaosRule.Expectation.Kind expectKind;
+        final ChaosRule.Expectation.Op expectOp;
+        final String expectSpec;
         final long expectCount;
         final long within;
         final Outcome outcome;
-        final long completed;
+        final long value;
+        final long lost;
         final long timeLeft;
-        final boolean frozen;
         // a lifecycle rule: its action, route, duration and what it did, else null
         final Action action;
         final String lifecycleRoute;
         final long duration;
         final ChaosLifecycle.Fault.Reading lifecycle;
 
-        RuleEntry(ChaosRule rule, long now) {
+        RuleEntry(ChaosRule rule, long now, boolean current) {
+            this.rule = rule;
+            this.current = current;
             id = rule.id;
             version = rule.version;
             text = rule.text;
@@ -386,24 +639,51 @@ public final class ChaosReport {
             // a lifecycle rule fired when it took its route down
             firedTotal = total + (lifecycle != null && lifecycle.acted() ? 1 : 0);
             skipped = rule.skippedCount();
+            skipReasons = rule.skipReasons();
+            lostAtDlq = rule.lostAtDlqCount();
             endsIn = Math.max(0, rule.endsAt - now);
+            // a lifecycle rule acts once at its route: it has no rate
+            observedRate = matches > 0 && rule.lifecycle == null ? Math.min(1.0d, (double) (total + skipped) / matches) : -1;
+            nextFireIn = rule.every > 0 && state == State.ACTIVE ? rule.every - matches % rule.every : 0;
+            long last = rule.lastFiredAt();
+            lastFiredAgo = last >= 0 ? Math.max(0, now - last) : -1;
+            faultsPerSecond = rule.faultsPerSecond(now);
+            long minute = 0;
+            for (long n : faultsPerSecond) {
+                minute += n;
+            }
+            faultsLastMinute = minute;
+            ChaosRule.Effect effect = rule.effect;
+            // the done counts first, so an exchange that is done while the report is made is not in flight twice
+            completed = effect.count(ChaosRule.Effect.Outcome.COMPLETED);
+            recovered = effect.count(ChaosRule.Effect.Outcome.RECOVERED);
+            handled = effect.count(ChaosRule.Effect.Outcome.HANDLED);
+            failed = effect.count(ChaosRule.Effect.Outcome.FAILED);
+            faulted = Math.max(effect.faultedCount(), completed + recovered + handled + failed);
+            inFlight = faulted - completed - recovered - handled - failed;
             within = rule.within;
             ChaosRule.Expectation expectation = rule.expectation;
             if (expectation != null) {
                 expectRoute = expectation.route;
+                expectKind = expectation.kind;
+                expectOp = expectation.op;
+                expectSpec = expectation.spec();
                 expectCount = expectation.count;
                 ChaosRule.Expectation.Reading reading = expectation.read(now);
                 outcome = reading.outcome();
-                completed = reading.completed();
-                timeLeft = Math.max(0, expectation.deadline - now);
-                frozen = reading.frozen();
+                value = reading.value();
+                lost = expectation.lost(reading);
+                timeLeft = Math.max(0, expectation.deadline() - now);
             } else {
                 expectRoute = null;
+                expectKind = null;
+                expectOp = null;
+                expectSpec = null;
                 expectCount = 0;
                 outcome = null;
-                completed = 0;
+                value = 0;
+                lost = 0;
                 timeLeft = 0;
-                frozen = false;
             }
         }
     }

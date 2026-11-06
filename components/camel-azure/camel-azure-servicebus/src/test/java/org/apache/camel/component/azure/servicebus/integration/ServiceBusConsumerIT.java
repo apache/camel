@@ -19,6 +19,7 @@ package org.apache.camel.component.azure.servicebus.integration;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 import com.azure.core.amqp.models.AmqpAnnotatedMessage;
 import com.azure.messaging.servicebus.ServiceBusClientBuilder;
@@ -34,25 +35,25 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@EnabledIfSystemProperty(named = BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME, matches = ".*",
-                         disabledReason = "Service Bus connection string must be supplied to run this test, e.g:  mvn verify -D"
-                                          + BaseServiceBusTestSupport.CONNECTION_STRING_PROPERTY_NAME + "=connectionString")
 public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
+    private static final String SESSION_LOCKED_UNTIL_NOT_SET
+            = "Floci AZ does not set the lock expiry (the x-opt-locked-until annotation) on the messages of a session"
+              + " entity: set " + CONNECTION_STRING_PROPERTY_NAME + " to run this test against a Service Bus namespace";
 
     private final ServiceBusSenderClient queueSenderClient = new ServiceBusClientBuilder()
-            .connectionString(CONNECTION_STRING)
+            .connectionString(connectionString())
             .sender()
             .queueName(QUEUE_NAME)
             .buildClient();
 
     private final ServiceBusSenderClient queueWithSessionsSenderClient = new ServiceBusClientBuilder()
-            .connectionString(CONNECTION_STRING)
+            .connectionString(connectionString())
             .sender()
             .queueName(QUEUE_WITH_SESSIONS_NAME)
             .buildClient();
 
     private final ServiceBusSenderClient topicSenderClient = new ServiceBusClientBuilder()
-            .connectionString(CONNECTION_STRING)
+            .connectionString(connectionString())
             .sender()
             .topicName(TOPIC_NAME)
             .buildClient();
@@ -95,7 +96,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
 
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            ServiceBusMessage serviceBusMessage = new ServiceBusMessage(msg);
+            ServiceBusMessage serviceBusMessage = createMessage(msg);
             serviceBusMessage.getApplicationProperties().put(propagatedHeaderKey, propagatedHeaderValue);
             queueSenderClient.sendMessage(serviceBusMessage);
         }
@@ -120,7 +121,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
 
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            ServiceBusMessage serviceBusMessage = new ServiceBusMessage(msg);
+            ServiceBusMessage serviceBusMessage = createMessage(msg);
             serviceBusMessage.getApplicationProperties().put(propagatedHeaderKey, propagatedHeaderValue);
             topicSenderClient.sendMessage(serviceBusMessage);
         }
@@ -137,6 +138,8 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
     */
 
     @Test
+    @EnabledIfSystemProperty(named = CONNECTION_STRING_PROPERTY_NAME, matches = ".+",
+                             disabledReason = SESSION_LOCKED_UNTIL_NOT_SET)
     public void serviceBusSessionEnabledQueueIsConsumedByCamel() throws InterruptedException {
         String propagatedHeaderKey = "PropagatedCustomHeader";
         String propagatedHeaderValue = "propagated header value";
@@ -149,7 +152,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
 
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            ServiceBusMessage serviceBusMessage = new ServiceBusMessage(msg);
+            ServiceBusMessage serviceBusMessage = createMessage(msg);
             serviceBusMessage.setSessionId("session-1");
             serviceBusMessage.getApplicationProperties().put(propagatedHeaderKey, propagatedHeaderValue);
             queueWithSessionsSenderClient.sendMessage(serviceBusMessage);
@@ -175,7 +178,7 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
 
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
-            ServiceBusMessage serviceBusMessage = new ServiceBusMessage(msg);
+            ServiceBusMessage serviceBusMessage = createMessage(msg);
             serviceBusMessage.setSessionId("session-1");
             serviceBusMessage.getApplicationProperties().put(propagatedHeaderKey, propagatedHeaderValue);
             topicSenderClient.sendMessage(serviceBusMessage);
@@ -186,6 +189,11 @@ public class ServiceBusConsumerIT extends BaseServiceBusTestSupport {
         Map<String, Object> headers = to.getExchanges().get(0).getIn().getHeaders();
         assertTrue(headers.containsKey(propagatedHeaderKey), "Should receive propagated header");
         assertBrokerPropertyHeadersPropagated(headers);
+    }
+
+    private static ServiceBusMessage createMessage(String body) {
+        // the message ID is application-defined: Azure assigns one to a message sent without it, Floci AZ does not
+        return new ServiceBusMessage(body).setMessageId(UUID.randomUUID().toString());
     }
 
     private void assertBrokerPropertyHeadersPropagated(Map<String, Object> headers) {

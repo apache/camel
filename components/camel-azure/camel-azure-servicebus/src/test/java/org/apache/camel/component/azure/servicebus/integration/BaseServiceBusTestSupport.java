@@ -31,22 +31,28 @@ import com.azure.messaging.servicebus.administration.models.CreateTopicOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.azure.servicebus.ServiceBusComponent;
+import org.apache.camel.test.infra.azure.servicebus.common.AzureServiceBusProperties;
+import org.apache.camel.test.infra.azure.servicebus.services.AzureServiceBusService;
+import org.apache.camel.test.infra.azure.servicebus.services.AzureServiceBusServiceFactory;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.System.getProperty;
-
 public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     public static final String CONNECTION_STRING_PROPERTY_NAME = "camel.component.azure-servicebus.connection-string";
-    protected static final String CONNECTION_STRING = getProperty(CONNECTION_STRING_PROPERTY_NAME);
+    protected static final String SCHEDULED_MESSAGES_NOT_SUPPORTED
+            = "Floci AZ does not implement scheduled messages (com.microsoft:schedule-message answers 501 Not Implemented,"
+              + " and a topic has no $management node): set " + CONNECTION_STRING_PROPERTY_NAME
+              + " to run this test against a Service Bus namespace";
     protected static final String QUEUE_NAME = "camelTestQueue";
     protected static final String QUEUE_WITH_SESSIONS_NAME = "camelTestQueueSessions";
     protected static final String TOPIC_NAME = "camelTestTopic";
@@ -55,16 +61,45 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     protected static final String SUBSCRIPTION_WITH_SESSIONS_NAME = "camelTestSubscriptionSessions";
     protected static final String MOCK_RESULT = "mock:result";
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseServiceBusTestSupport.class);
+    // registered before the context extension, so that the routes stop before the service in afterAll
+    @Order(1)
+    @RegisterExtension
+    protected static AzureServiceBusService service = createService();
+    @Order(2)
     @RegisterExtension
     protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
     protected static ServiceBusAdministrationClient serviceBusAdminClient;
     protected CountDownLatch messageLatch;
     protected List<ServiceBusReceivedMessageContext> receivedMessageContexts;
 
+    /*
+     * The tests run against a local Floci AZ container, which declares the queues, topics and subscriptions they use,
+     * unless a connection string is given: then they run against that namespace, and create these entities.
+     */
+    private static AzureServiceBusService createService() {
+        if (isRemote()) {
+            System.setProperty(AzureServiceBusProperties.CONNECTION_STRING,
+                    System.getProperty(CONNECTION_STRING_PROPERTY_NAME));
+            System.setProperty("azure.instance.type", "remote");
+        }
+        return AzureServiceBusServiceFactory.createService();
+    }
+
+    protected static boolean isRemote() {
+        return ObjectHelper.isNotEmpty(System.getProperty(CONNECTION_STRING_PROPERTY_NAME));
+    }
+
+    protected static String connectionString() {
+        return service.connectionString();
+    }
+
     @BeforeAll
     static void baseBeforeAll() {
+        if (!isRemote()) {
+            return;
+        }
         serviceBusAdminClient = new ServiceBusAdministrationClientBuilder()
-                .connectionString(CONNECTION_STRING)
+                .connectionString(connectionString())
                 .buildClient();
         try {
             serviceBusAdminClient.createQueue(QUEUE_NAME);
@@ -89,6 +124,9 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
 
     @AfterAll
     static void baseAfterAll() {
+        if (!isRemote()) {
+            return;
+        }
         serviceBusAdminClient.deleteSubscription(TOPIC_NAME, SUBSCRIPTION_NAME);
         serviceBusAdminClient.deleteSubscription(TOPIC_WITH_SESSIONS_NAME, SUBSCRIPTION_WITH_SESSIONS_NAME);
         serviceBusAdminClient.deleteTopic(TOPIC_NAME);
@@ -101,7 +139,7 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
     public void configureServiceBus(CamelContext context) {
         ServiceBusComponent serviceBusComponent = new ServiceBusComponent(context);
         serviceBusComponent.init();
-        serviceBusComponent.getConfiguration().setConnectionString(CONNECTION_STRING);
+        serviceBusComponent.getConfiguration().setConnectionString(connectionString());
         context.addComponent("azure-servicebus", serviceBusComponent);
     }
 
@@ -114,7 +152,7 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
 
     protected ServiceBusProcessorClient createQueueProcessorClient() {
         return new ServiceBusClientBuilder()
-                .connectionString(CONNECTION_STRING)
+                .connectionString(connectionString())
                 .processor()
                 .queueName(QUEUE_NAME)
                 .processMessage(this::processMessage)
@@ -125,7 +163,7 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
 
     protected ServiceBusProcessorClient createSessionQueueProcessorClient() {
         return new ServiceBusClientBuilder()
-                .connectionString(CONNECTION_STRING)
+                .connectionString(connectionString())
                 .sessionProcessor()
                 .queueName(QUEUE_WITH_SESSIONS_NAME)
                 .processMessage(this::processMessage)
@@ -136,7 +174,7 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
 
     protected ServiceBusProcessorClient createTopicProcessorClient() {
         return new ServiceBusClientBuilder()
-                .connectionString(CONNECTION_STRING)
+                .connectionString(connectionString())
                 .processor()
                 .topicName(TOPIC_NAME)
                 .subscriptionName(SUBSCRIPTION_NAME)
@@ -148,7 +186,7 @@ public abstract class BaseServiceBusTestSupport implements ConfigurableRoute {
 
     protected ServiceBusProcessorClient createTopicSessionProcessorClient() {
         return new ServiceBusClientBuilder()
-                .connectionString(CONNECTION_STRING)
+                .connectionString(connectionString())
                 .sessionProcessor()
                 .disableAutoComplete()
                 .topicName(TOPIC_WITH_SESSIONS_NAME)

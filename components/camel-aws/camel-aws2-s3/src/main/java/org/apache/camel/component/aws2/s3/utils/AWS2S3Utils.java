@@ -27,6 +27,8 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.support.PayloadHelper;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.services.s3.model.CreateMultipartUploadRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ServerSideEncryption;
 
 import static org.apache.camel.support.LanguageSupport.hasSimpleFunction;
@@ -193,5 +195,38 @@ public final class AWS2S3Utils {
                 createMultipartUploadRequest.sseCustomerAlgorithm(configuration.getCustomerAlgorithm());
             }
         }
+    }
+
+    /**
+     * The HEAD request of the given GET request: it returns the same metadata, without the content of the object.
+     *
+     * @param  getObjectRequest the request to get the object
+     * @return                  the request to get the metadata of the object only
+     */
+    public static HeadObjectRequest toHeadObjectRequest(GetObjectRequest getObjectRequest) {
+        HeadObjectRequest.Builder head = HeadObjectRequest.builder()
+                .bucket(getObjectRequest.bucket())
+                .key(getObjectRequest.key())
+                .versionId(getObjectRequest.versionId())
+                .partNumber(getObjectRequest.partNumber())
+                .range(getObjectRequest.range())
+                .ifMatch(getObjectRequest.ifMatch())
+                .ifModifiedSince(getObjectRequest.ifModifiedSince())
+                .ifNoneMatch(getObjectRequest.ifNoneMatch())
+                .ifUnmodifiedSince(getObjectRequest.ifUnmodifiedSince())
+                .responseCacheControl(getObjectRequest.responseCacheControl())
+                .responseContentDisposition(getObjectRequest.responseContentDisposition())
+                .responseContentEncoding(getObjectRequest.responseContentEncoding())
+                .responseContentLanguage(getObjectRequest.responseContentLanguage())
+                .responseContentType(getObjectRequest.responseContentType())
+                .responseExpires(getObjectRequest.responseExpires())
+                .sseCustomerAlgorithm(getObjectRequest.sseCustomerAlgorithm())
+                .sseCustomerKey(getObjectRequest.sseCustomerKey())
+                .sseCustomerKeyMD5(getObjectRequest.sseCustomerKeyMD5())
+                .requestPayer(getObjectRequest.requestPayerAsString())
+                .expectedBucketOwner(getObjectRequest.expectedBucketOwner())
+                .checksumMode(getObjectRequest.checksumModeAsString());
+        getObjectRequest.overrideConfiguration().ifPresent(head::overrideConfiguration);
+        return head.build();
     }
 }

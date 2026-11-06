@@ -271,7 +271,7 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * To read BLOB columns as bytes (a byte) instead of a java.sql.Blob,
+         * To read BLOB columns as bytes (a byte[]) instead of a java.sql.Blob,
          * which cannot be read after the producer has closed the connection.
          * This may be needed for certain databases such as Oracle where you
          * must read BLOB columns as bytes.
@@ -289,7 +289,7 @@ public interface JdbcEndpointBuilderFactory {
             return this;
         }
         /**
-         * To read BLOB columns as bytes (a byte) instead of a java.sql.Blob,
+         * To read BLOB columns as bytes (a byte[]) instead of a java.sql.Blob,
          * which cannot be read after the producer has closed the connection.
          * This may be needed for certain databases such as Oracle where you
          * must read BLOB columns as bytes.
@@ -310,7 +310,9 @@ public interface JdbcEndpointBuilderFactory {
          * Set this option to true to use the prepareStatementStrategy with
          * named parameters. This allows to define queries with named
          * placeholders, and use headers with the dynamic values for the query
-         * placeholders.
+         * placeholders. A query with only positional placeholders (no named
+         * parameters) takes their values, in order, only from the
+         * CamelJdbcParameters header (a List).
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -328,7 +330,9 @@ public interface JdbcEndpointBuilderFactory {
          * Set this option to true to use the prepareStatementStrategy with
          * named parameters. This allows to define queries with named
          * placeholders, and use headers with the dynamic values for the query
-         * placeholders.
+         * placeholders. A query with only positional placeholders (no named
+         * parameters) takes their values, in order, only from the
+         * CamelJdbcParameters header (a List).
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -659,10 +663,12 @@ public interface JdbcEndpointBuilderFactory {
             return "CamelJdbcColumnNames";
         }
         /**
-         * A java.util.Map which has the headers to be used if
-         * useHeadersAsParameters has been enabled.
+         * The values of the query parameters when useHeadersAsParameters has
+         * been enabled: a java.util.Map with the values of the named
+         * parameters, or a java.util.List with the values of the positional
+         * placeholders, in order (a single value for one placeholder).
          * 
-         * The option is a: {@code Map} type.
+         * The option is a: {@code Object} type.
          * 
          * Group: producer
          * 

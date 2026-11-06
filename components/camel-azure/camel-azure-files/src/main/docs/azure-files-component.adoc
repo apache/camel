@@ -153,6 +153,14 @@ destination and move the file after it has been written.
 For the `readLock=changed`, it relies only on the last modified;
 furthermore a precision finer than 5 seconds might be problematic.
 
+The azure-files consumer supports the read locks `none`, `rename` and `changed`.
+`readLock=false` and `readLock=off` mean `none`.
+Any other `readLock` value, such as the `markerFile`, `fileLock`, `idempotent`, `idempotent-changed`
+and `idempotent-rename` read locks of the xref:file-component.adoc[File] component, fails when the
+consumer is created, also with `poll` and `pollEnrich`, with `IllegalArgumentException: ReadLock invalid`.
+The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
+is set, as it does not apply then.
+
 When moving files using `move` or `preMove` option, the files are
 restricted to the share. That prevents consumer from moving files
 outside the endpoint share.

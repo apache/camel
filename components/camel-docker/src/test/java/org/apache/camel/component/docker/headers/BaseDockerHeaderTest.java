@@ -75,6 +75,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         dockerConfiguration.setHost(getHost());
         dockerConfiguration.setPort(getPort());
         dockerConfiguration.setServerAddress(getServerAddress());
+        dockerConfiguration.setUsername(getUsername());
         dockerConfiguration.setSecure(isSecure());
         dockerConfiguration.setTlsVerify(isTlsVerify());
         dockerConfiguration.setSocket(isSocket());
@@ -110,6 +111,13 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
 
     protected String getServerAddress() {
         return "https://index.docker.io/v1/";
+    }
+
+    /**
+     * The registry username of the endpoint, none by default.
+     */
+    protected String getUsername() {
+        return null;
     }
 
     public boolean isSecure() {
@@ -161,6 +169,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setPort(getPort());
         clientProfile.setEmail(getEmail());
         clientProfile.setServerAddress(getServerAddress());
+        clientProfile.setUsername(getUsername());
         clientProfile.setMaxPerRouteConnections(getMaxPerRouteConnections());
         clientProfile.setMaxTotalConnections(getMaxTotalConnections());
         clientProfile.setSecure(isSecure());

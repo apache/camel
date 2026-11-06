@@ -133,6 +133,20 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-mcp-server - the Origin header is checked on /mcp
+
+On Camel Main and Camel JBang, the streamable HTTP MCP endpoint now checks the `Origin` header on every request
+(`POST`, the SSE `GET` and `DELETE`), as the MCP streamable HTTP transport requires. A request without an `Origin`
+header is served as before; MCP clients that run as a process send none. A request with an `Origin` header is served
+only when the origin is allowed, and gets HTTP 403 otherwise.
+
+By default only loopback origins are allowed (`localhost`, `127.0.0.1` and `[::1]`, on any port). A browser-based
+client served from another origin must now be listed in the new `camel.server.mcp-allowed-origins` option, for example
+`+camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*+`. The list replaces the loopback
+default. Scheme and host are compared ignoring case and a default port may be left out; `+*+` and other entries that are
+not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected, and neither are the Spring Boot and
+Quarkus engines.
+
 === camel-mina-sftp - TCP_NODELAY is set on the connections
 
 The `mina-sftp` component now sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.
@@ -479,8 +493,8 @@ option brings back the redelivery of a whole routing slip or dynamic router.
 === camel-core - an AsyncProcessor that throws in a step without an error handler fails the exchange
 
 A step that has no error handler of its own (the steps of `doTry`, `doCatch`, `doFinally` and `onException`, also when
-nested in another EIP inside them, the outputs of a multicast, the steps of a circuit breaker, and a step with
-`inheritErrorHandler(false)`) now handles a processor that throws from `process(exchange, callback)` instead of
+nested in another EIP inside them, the outputs of a multicast, the recipients of a recipient list inside a `doTry`,
+the steps of a circuit breaker, and a step with `inheritErrorHandler(false)`) now handles a processor that throws from `process(exchange, callback)` instead of
 setting the exception on the exchange as if it had set it: the exchange fails with that exception, so the `doCatch`
 catches it, and the output of a multicast is redelivered by the error handler of the route as for any other failure.
 Before, the exchange hung.
@@ -884,6 +898,26 @@ The new option `kclStopCheckpointOnFailure` (default `false`) keeps the checkpoi
 record instead, so the next holder of the lease of the shard consumes the records from that one on again. See the
 component documentation for its cost: the records after the failed one can be routed twice.
 
+=== camel-aws2-kinesis - the batch producer sends the failed records again and splits at 10 MiB
+
+When the body is an `Iterable`, the producer now splits the batch into `PutRecords` requests of at most 500 records
+and 10 MiB (the data and partition keys of the records). Before, only the number of records was limited, and a request
+above 10 MiB was rejected by Kinesis. A record above 10 MiB now fails the exchange with an `IllegalArgumentException`
+before any request is sent.
+
+When some records of a request are not written, the producer now sends only those records again, up to 3 times with a
+delay of 100 to 400 milliseconds (plus a random part of up to a quarter of it), and then sends the next requests of the
+batch. Before, the exchange failed at once and
+the next requests were not sent. If records are still not written, the exchange fails after the last request, with a
+`RuntimeCamelException` (a `RuntimeException`, as before) whose message gives the number of records written and not
+written. The `CamelAwsKinesisRecordCount` and `CamelAwsKinesisFailedRecordCount` headers are now also set when the
+exchange fails, including when a `PutRecords` call throws: the exchange then fails with the exception of the call, as
+before, and the records of that call and of the requests that were not sent are counted as not written.
+Because of the retries, a batch whose records all fail now blocks the caller longer before it fails (700 to 875
+milliseconds per request, 14 to 17.5 seconds for 10,000 records), and a record that is sent again is written after the
+next records of its request. A redelivery of the exchange still sends the whole batch again: see the Batch Producer
+section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
+
 === camel-stitch - a response with an empty body, and the default sequence of a message
 
 A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`
@@ -1009,6 +1043,29 @@ as a quoted, escaped JSON string; a stream body failed. A route that relied on t
 it wants, for example with `marshal().json()`. Other bodies, such as a `Map` or a POJO, are still serialized as JSON.
 The workflow operations give the body to the workflow client as before.
 
+=== camel-dapr - the secret store and key headers need the allowSecretStoreAndKeyFromHeaders option
+
+The `secret` operation of the `dapr` producer took the secret store, the key and the metadata from the
+`CamelDaprSecretStore`, `CamelDaprKey` and `CamelDaprMetadata` headers when they were set, over the `secretStore` and
+`key` options of the endpoint, so a message could read another secret, or use another secret store, than the endpoint
+is configured with. The `secret` operation now takes the secret store, the key and the metadata from the endpoint,
+unless the endpoint sets the new `allowSecretStoreAndKeyFromHeaders=true` option (disabled by default), or the
+component sets `camel.component.dapr.allowSecretStoreAndKeyFromHeaders=true`. A route that relies on these headers
+must set this option.
+
+The metadata of the endpoint is set with the new `metadata.` options, such as `metadata.namespace=production`. A
+`secret` route that sent the metadata in the `CamelDaprMetadata` header can move it to these options. The other
+operations also send the metadata of these options, and the `CamelDaprMetadata` header still takes their place for
+one message.
+
+A `secret` endpoint without a `key`, which took the key from the `CamelDaprKey` header, now fails with an error that
+names the option, instead of reading all the secrets of the store. A `secret` endpoint without a `secretStore`, which
+took it from the `CamelDaprSecretStore` header, now fails because the secret store is missing.
+
+The other operations do not change: the `state` operations still take the key from the `CamelDaprKey` header, the
+other operations still take the metadata from the `CamelDaprMetadata` header, and the other `CamelDapr*` headers still
+take the place of the options of the endpoint, as before.
+
 === camel-consul - no Optional in the body, and the CamelConsulResult header of every action
 
 The `GET_SESSIONS` action of `consul:kv`, the `RENEW` action of `consul:session` and the `GET` action of
@@ -1076,6 +1133,16 @@ The `invokeImageModelStreaming` and `invokeEmbeddingsModelStreaming` operations 
 will be removed in a later release. The image generation and embedding models do not stream their response, so these
 operations fail for such a model, and with a text model they are the same as `invokeTextModelStreaming`. Use
 `invokeImageModel`, `invokeEmbeddingsModel` or `invokeTextModelStreaming` instead.
+
+=== camel-aws2-sts - the secret access key and the session token are no longer copied into headers
+
+The `assumeRole`, `getSessionToken` and `getFederationToken` operations of `aws2-sts` no longer set the
+`CamelAwsStsSecretKey` and `CamelAwsStsSessionToken` headers. The body is the response of the AWS SDK, such as an
+`AssumeRoleResponse`, and its `credentials()` hold them: use `${body.credentials().secretAccessKey()}` and
+`${body.credentials().sessionToken()}` instead of the headers. The `CamelAwsStsAccessKeyId`, `CamelAwsStsExpiration` and
+`CamelAwsStsAssumedRoleArn` headers are still set.
+
+The `STS2Constants.SECRET_KEY_ID` and `STS2Constants.SESSION_TOKEN` constants are deprecated.
 
 === camel-weather - the CamelWeatherLocation header is the location that is queried
 
@@ -1147,6 +1214,17 @@ exchange, where it sent nothing before. An `onError` event with a body that is n
 an `INTERNAL` status error and fails the exchange with an `IllegalArgumentException`, where it failed with a
 `ClassCastException` or a `NullPointerException` and the client waited until its deadline.
 
+=== camel-grpc - routeControlledStreamObserver applies to streaming requests with the PROPAGATION strategy
+
+With `routeControlledStreamObserver=true` and the default `PROPAGATION` consumer strategy, the route now sends the
+replies of client streaming and bidirectional streaming calls, as it already did for unary and server streaming calls.
+The consumer passes the `grpcResponseObserver` exchange property to the route, and no longer sends the body at the end
+of the route or ends the call itself. Before, a producer with `toRouteControlledStreamObserver=true` failed with an
+`IllegalArgumentException`, and the consumer sent the body at the end of the route as the reply. Such a route must now
+send its replies with a producer with `toRouteControlledStreamObserver=true` and end the call, for example on the event
+forwarded with `forwardOnCompleted=true`. The events of a call are still routed one at a time, in order, which is the
+difference with the `DELEGATION` strategy.
+
 === camel-hashicorp-vault - cloud without a namespace, the createSecret body, and the secret version
 
 With `cloud=true` and no `namespace`, the `hashicorp-vault` producer now works on the secrets engine itself, as the
@@ -1199,6 +1277,23 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 `JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
+=== camel-jdbc, camel-spring-jdbc - plain ? placeholders take their values only from the CamelJdbcParameters header
+
+With `useHeadersAsParameters=true` and a query with only plain `?` placeholders (no named parameters `:?name`), the
+`jdbc` and `spring-jdbc` producers bound the values of all the message headers by position, or of the
+`CamelJdbcParameters` header when it was set. Which value went to which `?` then depended on the headers of the
+message and their order (which changed in 4.21 from alphabetical to the order they were added). The values of plain
+`?` placeholders now come only from the `CamelJdbcParameters` header: a `List` with the values in the order of the
+placeholders (or a `Map`, whose values are taken in the order of its entries, or a single value for a query with one
+`?`, such as a `String` or a `byte[]`). When the header is not set, or has more or fewer values than the query has
+`?` placeholders, the exchange fails with a `RuntimeExchangeException` (before, extra values were ignored). Set the
+values in that header, or use named parameters.
+
+Named parameters take their values from the `CamelJdbcParameters` header when it is a `Map`, or else from the message
+headers, as before. A `CamelJdbcParameters` header that is not a `Map` (such as the `List` left by an earlier query
+with plain `?` placeholders in the same route) is now ignored for named parameters, where before it made the exchange
+fail with `Cannot find key`.
 
 === camel-jgroups-raft - a body that does not convert to a byte array fails the exchange
 
@@ -1487,6 +1582,19 @@ the header, as in 4.14. A checksum header set before the producer is no longer u
 azure-files upload the bytes of the body without the `charset` option, while the checksum applies it: do not set
 `charset` with `checksumFileAlgorithm` there. FTP uploads in ASCII mode unless `binary=true`, and the server may then
 change the line ends of the stored file, so its checksum can differ from the checksum of the uploaded bytes.
+
+=== camel-jsch - the scp producer refuses a file name with a line feed or a NUL character
+
+The `scp` producer now refuses a file name with a line feed or a NUL character, in the file name or in one of its
+directories, with a `GenericFileOperationFailedException`. It does so before it starts scp on the remote host, so
+nothing is written there. Any other character, such as a carriage return or a tab, is sent as before.
+
+scp sends each name on a protocol line that ends with a line feed. Before, a line feed in the file name ended that
+line early: the remote scp wrote a file named after the part of the name before the line feed, with the rest of the
+name at the start of its content, and the exchange did not fail. A line feed in a directory failed the exchange, but
+left a directory named after the part before it. A NUL character failed the exchange on the remote host, or, with an
+OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
+or in the `fileName` option before the message reaches the producer.
 
 === camel-file - a done file with a fixed name is kept for the files a poll left
 
@@ -2067,6 +2175,17 @@ endpoints.
 The other headers, such as `CamelDockerContainerId`, `CamelDockerEmail` and `CamelDockerRequestTimeout`, still take
 precedence over the options of the endpoint, as before. The `events` and `stats` consumers do not change: they always
 used the options of the endpoint.
+
+=== camel-docker - imagepull and imagepush authenticate only to the registry of serverAddress
+
+The `imagepull` and `imagepush` operations of the `docker` component added the registry authentication of the
+endpoint (`username`, `password`, `email` and `serverAddress`) to every pull and push, whatever registry the image
+reference names. They now add it only when the registry host and port of the image (Docker Hub for an image without a
+registry host, such as `ubuntu` or `team/app`) match those of `serverAddress`. An image in another registry is pulled
+or pushed without authentication. Set `serverAddress` to the registry of the images, or use one endpoint per registry.
+
+Without a `username` on the endpoint, `imagepull` and `imagepush` failed with a `NullPointerException`
+("Configured username is null."). They now pull or push without authentication.
 
 === camel-cli-connector - every action with a request id gets an answer
 
@@ -3673,7 +3792,10 @@ This applies to an endpoint that is used once and discarded (`toD`, `recipientLi
 dev-mode reload or `CamelContext.addRoutes`) that consumes from a Kamelet (`from("kamelet:my-source")`): removing that
 route now also removes the route of the Kamelet. A route id given in the uri (`kamelet:my-source/myRoute` or
 `routeId=`) is shared by the endpoints that use it, so such a route is not removed. Routes created when the
-CamelContext starts are not changed.
+CamelContext starts are not changed. The removal of the route of a discarded endpoint waits until the thread pools of
+the route are idle, as the calling route can continue on them, but at most the timeout of the shutdown strategy; then
+it logs a WARN and removes the route anyway. The route of a Kamelet that a removed route consumed from is removed
+without that wait.
 
 === camel-undertow - the producer refuses a request target or header value with control characters
 
@@ -4105,6 +4227,51 @@ producer now uploads it with that length, and the `CamelAwsS3ContentLength` head
 length is not known. Previously the header took precedence: after a route changed the body of an object read by the
 aws2-s3 consumer (which sets the header), a longer body was stored cut to the old length and a shorter one failed.
 
+=== camel-aws2-s3 - the consumer gets each object right before routing it, and ignoreBody no longer downloads objects
+
+The consumer now gets each listed object right before its exchange is routed. Before, it got every object of the poll
+before it routed the first one: with the default `includeBody=true` the content of every object of the poll was in
+memory at the same time, and with `includeBody=false` the streams of all the objects of the poll were open at the
+same time. A poll of more than 50 objects (`maxMessagesPerPoll`) with `includeBody=false` then ran out of the 50
+connections that the HTTP client of the AWS SDK has by default, and the AWS SDK aborted the streams that were not read
+within 60 seconds, so most of the exchanges of the poll failed.
+
+This changes the following:
+
+* The batch properties count the listed objects of the poll. An object that is skipped when it is got (it was deleted
+after the listing; it cannot be got; or it is a folder and `includeFolders` is `false`) is still counted:
+`CamelBatchSize` can be higher than the number of exchanges routed for the poll, `CamelBatchIndex` has a gap, and when
+the skipped object is the last listed one, no exchange of the poll has `CamelBatchComplete` set to `true`. Before,
+they counted only the exchanges that were routed. The number of messages of the poll (used by `greedy` and
+`sendEmptyMessageWhenIdle`) still counts the exchanges routed. An aggregator with `completionFromBatchConsumer` then
+does not complete the group of a poll in which an object is skipped: the group waits for the exchanges of the next poll.
+This happens with `includeFolders=false` and folders in the bucket, or with several consumers of the same bucket (such
+as several pods of the same application). Such a route can use `completionTimeout` instead of
+`completionFromBatchConsumer` (not both), with a timeout longer than the time between two exchanges of a poll, and
+shorter than the `delay` of the consumer minus the `completionTimeoutCheckerInterval` (1 second by default).
+* An object that cannot be got is given to the exception handler of the consumer once the other exchanges of the poll
+were routed, instead of before the first one.
+* A consumer that stops during a poll no longer gets the objects that it does not route.
+* The protected method `AWS2S3Consumer.createExchanges(List<S3Object>)` is removed.
+
+With `ignoreBody=true`, the consumer, and the `getObject` operation of the producer, now send a HEAD request
+(HeadObject) instead of a GET request, so the content of the object is not downloaded. Before, the whole object was
+transferred and discarded. The headers are the same, and HeadObject needs the same `s3:GetObject` permission. However:
+
+* An object whose content cannot be got but whose metadata can is now consumed (or returned by `getObject`) instead of
+failing, and with `deleteAfterRead` (the default) deleted. For example an object archived in S3 Glacier that is not
+restored, or an object encrypted with SSE-KMS whose KMS key the role cannot use to decrypt (a GET needs
+`kms:Decrypt`, a HEAD does not).
+* The response to a failed HEAD request has no body: the `S3Exception` has the HTTP status code, but no S3 error code,
+except `NoSuchKey` for an object that does not exist.
+* The consumer no longer calls `includeS3Object(ResponseInputStream)` or `createExchange(ResponseInputStream, String)`
+for these objects, as there is no GET response: a subclass of `AWS2S3Consumer` that overrides them is not called with
+`ignoreBody=true`.
+
+The `getObject` operation of the producer now also sets the `CamelAwsS3LastModified` and `CamelMessageTimestamp`
+headers, with or without `ignoreBody`, as the consumer does. A `CamelMessageTimestamp` header that the message had
+before the operation is replaced.
+
 === camel-minio - the producer stores the whole body when the content-length header is stale
 
 When the length of the body is known without reading it (a file, `byte[]`, `String`, `Path` or cached stream), the
@@ -4186,6 +4353,10 @@ context. A check sends two `LookupEvents` requests, one per event name, and one 
 always one request, for all Secrets Manager events); reads of secrets no longer add requests. LookupEvents allows two
 requests per second per account and Region.
 
+Each check looks up these events from 10 minutes before the newest event seen (but not before the task started), and
+skips the events seen by an earlier check: CloudTrail can make an event visible after a newer one, and such an update was
+never read. The number of requests is as above, counted over that range.
+
 === camel-aws2-s3 - a timestamp window uploaded more than once is stored in more than one object
 
 With `streamingUploadMode=true` and `timestampGroupingEnabled=true`, the upload of a time window is completed when it
@@ -4211,6 +4382,24 @@ default) it routed all the records of the shard again, with `LATEST` it skipped 
 A shard created by a split or a merge while the consumer is running is now read from its first record, whatever the
 `iteratorType`. Previously, with `LATEST`, the records stored in the new shard before the consumer listed it were
 skipped. The shards that exist when the consumer starts are read from the configured `iteratorType`, as before.
+
+=== camel-aws2-kinesis - the consumer fetches up to 1000 records per shard in each poll
+
+The default of `maxResultsPerRequest` is now `1000` (it was `1`). In each poll the consumer asks each shard for up to
+that many records, so with the default `delay` of 500 ms it can read up to about 2000 records per second from a shard
+(within the Kinesis quota of 2 MiB per second), instead of about 2. A poll now routes more records, and holds up to
+1000 records per shard in memory while they are routed. The KCL consumer (`useKclConsumers=true`) does not use this
+option.
+
+A graceful shutdown waits until the consumer has routed all the records of the poll that is running. With 1000 records
+per shard and a route that takes 50 ms per record, a poll takes about 50 seconds, which is more than the default
+xref:graceful-shutdown.adoc[shutdown timeout] of 45 seconds. The shutdown is then forced, and the records of the poll
+that are not routed yet fail with a `RouteStoppingException`. Before, a poll held one record per shard. Lower
+`maxResultsPerRequest`, or raise the shutdown timeout, so that the records of a poll are routed within the timeout.
+
+To keep the previous behaviour, set `maxResultsPerRequest=1`. See the
+xref:components::aws2-kinesis-component.adoc[AWS Kinesis component] for how `maxResultsPerRequest`, `delay` and
+`greedy` relate to the Kinesis read quotas of a shard.
 
 === camel-graphql - the credentials are only sent to the authority of httpUri
 
@@ -5537,6 +5726,43 @@ noop is a request that waits for the reply, so with `sendNoop=false` such a conn
 which fails and is logged before the consumer connects again. For sftp and mina-sftp, set `serverAliveInterval` to let
 the client close such a connection itself, so that the consumer connects again before the poll.
 
+=== camel-ftp, camel-mina-sftp, camel-azure-files, camel-smb - a readLock the component does not implement fails the consumer
+
+The consumers of `ftp`, `ftps` and `sftp` (all three in `camel-ftp`), `mina-sftp` and `azure-files` support the read
+locks `none`, `rename` and `changed`, and `readLock=false` and `readLock=off` still mean `none`. Any other `readLock`
+value now fails when the consumer is created, with
+`IllegalArgumentException: ReadLock invalid: <value>, must be one of: none,rename,changed`, so the route does not start.
+With `poll` or `pollEnrich`, the exchange fails with a `FailedToCreateConsumerException` caused by this
+`IllegalArgumentException` when it polls the endpoint. Before, such a value was accepted and the consumer ran without
+any read lock, so it could pick up a file that was still being written. This concerns the read locks that only the
+`file` component implements (`markerFile`, `fileLock`, `idempotent`, `idempotent-changed` and `idempotent-rename`), and
+misspelled values. The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
+is set, as it does not apply then. The `smb` consumer already failed on these values, and on `false` and `off`, and is
+unchanged.
+
+To keep the previous behavior, remove the `readLock` option, or set `readLock=none`. To keep a file from being picked
+up while it is being written, use `readLock=changed` or `readLock=rename`.
+
+The `readLock` option of these endpoints, and of `smb`, now lists only `none`, `rename` and `changed` in the component
+documentation, the catalog and the Java Endpoint DSL, instead of all the read locks of the `file` component. The
+endpoint validation of the catalog, as used by `camel-report-maven-plugin:validate`, now reports `markerFile`,
+`fileLock`, `idempotent`, `idempotent-changed` and `idempotent-rename` as invalid values of `readLock` on these
+endpoints, as it already did for `false` and `off`.
+
+The following options only apply to read locks of the `file` component, did nothing on these endpoints, and are no
+longer listed in the component documentation, the catalog and the Java Endpoint DSL:
+
+* `ftp`, `ftps`, `azure-files` and `smb`: `readLockDeleteOrphanLockFiles`, `readLockRemoveOnCommit` and
+  `readLockRemoveOnRollback`.
+* `sftp` and `mina-sftp`: the same three options, and `readLockIdempotentReleaseAsync`,
+  `readLockIdempotentReleaseAsyncPoolSize`, `readLockIdempotentReleaseDelay` and
+  `readLockIdempotentReleaseExecutorService`, which `ftp`, `ftps`, `azure-files` and `smb` already did not list.
+
+Java Endpoint DSL code that calls the builder methods of these options, such as
+`sftp(...).readLockIdempotentReleaseDelay(1000)`, no longer compiles: remove the calls. An endpoint URI that sets
+these options still works: the value is still set on the endpoint, and still has no effect. The endpoint validation of
+the catalog, as used by `camel-report-maven-plugin:validate`, now reports them as unknown options.
+
 === camel-cometd - the CORS filter allows credentials only for listed origins
 
 With `crossOriginFilterOn=true`, the CORS responses now include `Access-Control-Allow-Credentials: true` only when
@@ -6114,6 +6340,17 @@ Previously the newest message was left out.
 The `stream:header` producer now fails with a `NoSuchHeaderException` when the `stream` header is missing or is not an
 `OutputStream`. Previously it failed with a `NullPointerException`, or did nothing when the body was null.
 
+=== camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
+
+A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
+`transferExchange=true` put on the queue only when the consumer has `transferExchange=true` as well. A consumer without
+the option, the default, now takes only the body of such an exchange, as it does for any other item of the queue, and
+logs a warning the first time. Before, the consumer restored the headers and exchange properties whatever its
+`transferExchange` option said.
+
+Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
+exchange properties.
+
 === camel-knative - a structured CloudEvent whose Content-Type has parameters
 
 The consumer now finds the content mode of a CloudEvent by the media type of the `Content-Type` header, ignoring its
@@ -6342,6 +6579,16 @@ With `useIterator=true` (the default), the producer now splits a Jackson JSON no
 Jackson 2 and Jackson 3. An object node is now sent as one record; previously it was sent as one record per field
 value, without the field names, as the 4.22 upgrade guide said. A Jackson 3 scalar node is now sent as one record,
 where nothing was sent before.
+
+=== camel-kafka - breakOnFirstError while the consumer is paused
+
+With `breakOnFirstError=true`, a failed record now creates a new Kafka consumer also when the consumer is paused in the
+same poll, for example by a `ThrottlingExceptionRoutePolicy` that suspends the route on the failed exchange. The new
+consumer stays paused until the route is resumed, and then polls each partition from its committed offset, or from
+`autoOffsetReset` when it has none, as on a break without a pause. Before, a partition without a committed offset
+resumed after the failed record. The new consumer leaves and rejoins the consumer group, so each such break is now a
+rebalance of the group, also when the partition has a committed offset. There is no option to keep the previous
+behaviour.
 
 === camel-dns - dig without a type, and the wikipedia type
 
@@ -6976,3 +7223,24 @@ contains neither the extension nor `camel-quarkus-observability-services`, which
 A project that lists the dependency but does not want the health extension in the Quarkus export must remove it.
 Without the dependency nothing changes: the health extension then only comes with `--observe` (which
 `camel kubernetes export` always sets), as part of `camel-quarkus-observability-services`.
+
+=== camel-git - the consumer applies the scheduler and error handler options
+
+The `git` consumer (`type=commit`, `tag` and `branch`) now applies the scheduler options of the endpoint, such as
+`delay`, `initialDelay`, `startScheduler`, `greedy` and the `backoff` options, and the `bridgeErrorHandler` and
+`exceptionHandler` options. Before, it ignored them and always polled with an initial delay of 1 second and a delay of
+500 milliseconds. A route that sets one of these options now gets what it configured: for example, `delay=60000` now
+polls once a minute.
+
+=== camel-git - a failed commit, tag or branch is delivered again on the next poll
+
+The `git` consumer now marks a commit, tag or branch consumed only when its exchange completes without a failure. A
+failed exchange (an exception that the route did not handle) is reported to the exception handler of the consumer,
+which logs it at WARN by default, and the item is delivered again on the next poll. Before, the item was marked
+consumed whether the route succeeded or not, so a failed item was never delivered again. The item then comes after
+the items that followed it in the same poll, which were already delivered, such as the older commits.
+
+An item that fails every time is now routed again at every poll. Handle the failure in the route, for example with a
+dead letter channel or a handled `onException`, so that the item is marked consumed. To retry it less often, raise
+`delay`, or set `backoffIdleThreshold` and `backoffMultiplier`: a poll counts only the items that it marked consumed,
+so a poll whose items all failed is an idle poll, after which a `greedy` consumer does not poll again at once.

@@ -100,14 +100,15 @@ class AWS2S3ConsumerDeletedObjectTest extends CamelTestSupport {
         s3.removeWhenListed("b.txt");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("a", "c");
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
+        // each object is got right before its exchange is routed, so the batch properties count the listed objects
+        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
         AWS2S3Consumer consumer = startRoute("");
         RecordingExceptionHandler handler = new RecordingExceptionHandler();
         consumer.setExceptionHandler(handler);
 
         int polled = consumer.poll();
 
-        // the object that is gone is not counted either
+        // but the poll does not count the object that is gone
         assertEquals(2, polled);
         mock.assertIsSatisfied();
         // and it is not an error
@@ -145,7 +146,7 @@ class AWS2S3ConsumerDeletedObjectTest extends CamelTestSupport {
         s3.refuseGets("b.txt");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("a", "c");
-        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
+        mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 3);
         AWS2S3Consumer consumer = startRoute("");
         RecordingExceptionHandler handler = new RecordingExceptionHandler();
         consumer.setExceptionHandler(handler);
@@ -309,8 +310,9 @@ class AWS2S3ConsumerDeletedObjectTest extends CamelTestSupport {
                 return oneObject("a.txt", content);
             }
         };
-        // not started, but the exchange factory of the consumer must be ready
-        consumer.build();
+        // the scheduler is not started (startScheduler=false), but the consumer must be, as it gets the listed
+        // objects only while it is allowed to route them
+        consumer.start();
 
         // it is the only listed object, so the poll fails
         RuntimeCamelException e = assertThrows(RuntimeCamelException.class, consumer::poll);
@@ -318,6 +320,7 @@ class AWS2S3ConsumerDeletedObjectTest extends CamelTestSupport {
 
         assertTrue(closed.get(), "the object stream of a.txt was not closed");
         assertFalse(endpoint.getInProgressRepository().contains("a.txt"), "a.txt is still in progress");
+        consumer.stop();
     }
 
     @Test
@@ -347,14 +350,16 @@ class AWS2S3ConsumerDeletedObjectTest extends CamelTestSupport {
                 throw new IllegalStateException("cannot decide");
             }
         };
-        // not started, but the exchange factory of the consumer must be ready
-        consumer.build();
+        // the scheduler is not started (startScheduler=false), but the consumer must be, as it gets the listed
+        // objects only while it is allowed to route them
+        consumer.start();
 
         // it is the only listed object, so the poll fails
         assertThrows(IllegalStateException.class, consumer::poll);
 
         assertTrue(closed.get(), "the object stream of a.txt was not closed");
         assertFalse(endpoint.getInProgressRepository().contains("a.txt"), "a.txt is still in progress");
+        consumer.stop();
     }
 
     /**

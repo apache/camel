@@ -20,7 +20,7 @@ import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 public final class JavadocHelper {
 
-    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}";
+    private static final String VALID_CHARS = ".,-='/\\!&%():;#${}?*+[]|";
 
     private JavadocHelper() {
     }
@@ -95,6 +95,9 @@ public final class JavadocHelper {
         // also remove the commonly mistake to do with @{link
         s = s.replaceAll("@\\{link\\s\\w+\\s(\\w+)}", "$1");
         s = s.replaceAll("@\\{link\\s([\\w]+)}", "$1");
+
+        // Code and literal tags can contain spaces and punctuation, not just Java identifiers.
+        s = s.replaceAll("\\{@(?:code|literal)\\s+([^{}]*)}", "$1");
 
         // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}
         // use #? to remove leading # in case its a local reference

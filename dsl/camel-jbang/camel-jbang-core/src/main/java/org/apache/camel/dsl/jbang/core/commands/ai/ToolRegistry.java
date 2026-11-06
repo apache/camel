@@ -712,8 +712,11 @@ public final class ToolRegistry {
     private static void registerChaosTools() {
         register(tool("chaos_list",
                 "List the chaos rules of the integration (camel-chaos, development only): id, version, the rule, state, "
-                                    + "where it fires, matches, faults fired, time left and the expectation; or why "
-                                    + "chaos is off.")
+                                    + "where it fires, matches, faults fired, time left, the expectation, and the live "
+                                    + "state: observed rate next to the rate of the rule, when it last fired, faults "
+                                    + "per second over the last minute, and the effect of its faults (exchanges "
+                                    + "completed, recovered by redelivery, handled by the error handler, failed, in "
+                                    + "flight); or why chaos is off.")
                 .param("name", "string", CHAOS_NAME, false)
                 .executor((ctx, args) -> {
                     selectNamedProcess(ctx, args);
@@ -722,8 +725,9 @@ public final class ToolRegistry {
 
         register(tool("chaos_report",
                 "Get the chaos report of the integration (camel-chaos): the verdict (PASS or FAIL) and whether it is "
-                                      + "final, the seed, every version of every rule with what it fired, the "
-                                      + "expectations and the counts per route; or why chaos is off.")
+                                      + "final, the seed, every version of every rule with what it fired and its live "
+                                      + "state, the expectations, the counts per route and the last 20 faults (rule, "
+                                      + "fault, route, endpoint or step, exchange id); or why chaos is off.")
                 .param("name", "string", CHAOS_NAME, false)
                 .executor((ctx, args) -> {
                     selectNamedProcess(ctx, args);
@@ -732,10 +736,14 @@ public final class ToolRegistry {
 
         register(tool("chaos_add",
                 "Add a chaos rule to the integration, in the one-line form of camel.chaos.rules, e.g. "
-                                   + "'endpoint=kafka:orders* error rate=0.1 until=5m'. Returns the id of the rule. "
-                                   + "Chaos must be on in the integration; a rule that is not valid is refused with "
-                                   + "the reason.")
-                .param("rule", "string", "The rule in its one-line text form, as one entry of camel.chaos.rules", true)
+                                   + "'endpoint=kafka:orders* error rate=0.1 until=5m'; several rules separated by ; "
+                                   + "are added together (all or none). Returns the ids of the rules, and warnings for "
+                                   + "a rule that matches nothing in the integration now (often a typo: fix it with "
+                                   + "chaos_change). Chaos must be on in the integration; a rule that is not valid is "
+                                   + "refused with the reason.")
+                .param("rule", "string",
+                        "The rule in its one-line text form, as an entry of camel.chaos.rules; several rules separated by ;",
+                        true)
                 .param("name", "string", CHAOS_NAME, false)
                 .readOnly(false).destructive(true)
                 .executor((ctx, args) -> {
@@ -747,7 +755,7 @@ public final class ToolRegistry {
         register(tool("chaos_change",
                 "Change a chaos rule of the integration: the rule with the id gets the new one-line rule and one more "
                                       + "version; the report keeps the version it replaces. Returns the id and the new "
-                                      + "version.")
+                                      + "version, and warnings when the new rule matches nothing in the integration now.")
                 .param("id", "string", "The id of the rule, such as r1 (chaos_list shows them)", true)
                 .param("rule", "string", "The new rule in its one-line text form", true)
                 .param("name", "string", CHAOS_NAME, false)
@@ -771,13 +779,23 @@ public final class ToolRegistry {
                 }));
 
         register(tool("chaos_clear",
-                "Remove all chaos rules of the integration: no more faults, and the report keeps what they did. "
-                                     + "Returns how many were removed.")
+                "Remove all chaos rules of the integration: no more faults, and the report keeps what they did "
+                                     + "(with reset=true the report starts again, for a new experiment). Returns how "
+                                     + "many were removed.")
                 .param("name", "string", CHAOS_NAME, false)
+                .param("reset", "boolean",
+                        "Also start a new report: the removed rules, the counts per route and the verdict are gone",
+                        false)
                 .readOnly(false).destructive(false)
                 .executor((ctx, args) -> {
                     selectNamedProcess(ctx, args);
-                    return chaos(ctx, "clear", null, null);
+                    boolean reset = "true".equalsIgnoreCase(args.get("reset"));
+                    return ctx.executeAction("chaos", root -> {
+                        root.put("command", "clear");
+                        if (reset) {
+                            root.put("reset", true);
+                        }
+                    });
                 }));
     }
 

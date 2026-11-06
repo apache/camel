@@ -1493,7 +1493,7 @@ public interface KubernetesEventsEndpointBuilderFactory {
         }
         /**
          * The event time in ISO-8601 extended offset date-time format, such as
-         * '2011-12-03T10:15:3001:00'.
+         * '2011-12-03T10:15:30+01:00'.
          * 
          * The option is a: {@code String} type.
          * 

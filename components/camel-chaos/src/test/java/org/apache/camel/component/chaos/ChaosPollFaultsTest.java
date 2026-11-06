@@ -32,6 +32,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.chaos.TestPollComponent.TestPollConsumer;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -94,6 +96,12 @@ class ChaosPollFaultsTest extends ChaosTestSupport {
         int polls = a.polls.get();
         int begins = strategy.begins.get();
         await().atMost(10, TimeUnit.SECONDS).until(() -> fired(id, "poll") >= 6);
+        // a fault at a poll has no exchange: the route and the endpoint, without its query
+        JsonObject fault = (JsonObject) ((JsonArray) chaos().report().toJson().get("recentFaults")).get(0);
+        assertThat(fault.getString("hook")).isEqualTo("poll");
+        assertThat(fault.getString("route")).isEqualTo("a");
+        assertThat(fault.getString("endpoint")).isEqualTo("testpoll://a");
+        assertThat(fault.containsKey("exchangeId")).isFalse();
         // a poll that began before the rule was added may still finish
         assertThat(a.polls.get()).isLessThanOrEqualTo(polls + 1);
         assertThat(strategy.begins.get()).isLessThanOrEqualTo(begins + 1);

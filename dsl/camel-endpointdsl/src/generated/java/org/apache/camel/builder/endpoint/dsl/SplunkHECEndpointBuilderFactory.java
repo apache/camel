@@ -170,7 +170,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * data like JSON use /services/collector/raw For a list of all
          * endpoints refer to splunk documentation (HTTP Event Collector REST
          * API endpoints) Example for Spunk 8.2.x:
-         * https://docs.splunk.com/Documentation/SplunkCloud/8.2.2203/Data/HECRESTendpoints To extract timestamps in Splunk8.0 /services/collector/eventauto_extract_timestamp=true Remember to utilize RAW{} for questionmarks or slashes in parameters.
+         * https://docs.splunk.com/Documentation/SplunkCloud/8.2.2203/Data/HECRESTendpoints To extract timestamps in Splunk8.0 /services/collector/event?auto_extract_timestamp=true Remember to utilize RAW{} for questionmarks or slashes in parameters.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
