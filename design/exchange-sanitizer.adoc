@@ -5,7 +5,7 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-11-05
-last-updated: 2026-11-05
+last-updated: 2026-11-06
 status: proposed
 see-also:
   - "CAMEL-26630"
@@ -266,9 +266,10 @@ the threads are:
   through the callback and ignore the return value (the `Pipeline`, the `RedeliveryErrorHandler`), so there a mismatch
   is harmless today; it still breaks the contract, and the same processor breaks under a caller that uses it. (The
   channel itself always continues the exchange through the reactive executor, so its own `doneSync` says nothing; R3
-  checks the processor of the step itself.) Whether every processor of the core EIPs keeps this today is the first
-  thing the camel-core run shows; a processor that does not is fixed with its own JIRA, or the rule is narrowed with
-  the reason written down, before R3 is proposed.
+  checks the call below the error handler, which is the processor's own call unless a strategy is in between.)
+  Whether every processor of the core EIPs keeps this today is the first thing the camel-core run shows; a processor
+  that does not is fixed with its own JIRA, or the rule is narrowed with the reason written down, before R3 is
+  proposed.
 . *Accesses that overlap in time*, as KCSAN does in the Linux kernel. The routing engine uses the exchange at known
   points: a step starts, its callback continues the exchange, an on completion runs. At a small sample of these points
   the sanitizer opens a short watch window on the exchange, during which that thread pauses. If another thread uses
@@ -435,27 +436,44 @@ Rules for listeners, in the Javadoc:
   the error handler, which would take over and continue the exchange a second time.
 * Step listeners are looked at when a route is created, so they are added before (`onContextInitializing`, as chaos
   does); a route created while none was installed is not seen until it is created again (as a reload in dev mode
-  does).
+  does). Switching it on in a running application is an open question (a standby flag, see Open questions).
 
 === Where they are called
 
 *Steps.* When a route is created and at least one step listener is installed, `DefaultChannel` (only it, not channels
-of a custom `InternalProcessorFactory`) wraps the processor of the step in one small `DelegateAsyncProcessor` that
-calls the listeners. Code that unwraps processors (`Navigate`) still finds the processor, and
-`Channel.getNextProcessor()` still returns it, so the debugger and the `DisabledAware` check are unchanged.
+of a custom `InternalProcessorFactory`) adds one small `DelegateAsyncProcessor` that calls the listeners. It is added in
+`initChannel` after the `InterceptStrategy` loop, around what the loop returns, just before that becomes the output of
+the channel. So:
 
-The wrapper is the `target` the `InterceptStrategy` loop starts with, so each strategy wraps it and it stays innermost.
-The `next` the strategies get and the `InterceptableProcessor` skip check are still computed from the processor of the
-step, so they do not change; a strategy that looks at its `target` gets the wrapper, which implements `Navigate`. The
-error handler of the step calls it (through those wrappers) for each attempt, and the channel calls it for a step
-without such an error handler; with JMX and redelivery the order is error handler, JMX instrumentation, the `StepHook`
-processor, the interceptor wrappers, the listener wrapper, the processor. It does not ask `canIntercept()`, so the steps
-inside `doTry`, `doCatch` and `doFinally` are seen. Not seen are a user `InterceptStrategy` wrapper and the interception
-pipeline of `intercept()` (the steps of the intercept route are seen).
+* The strategies run exactly as today. Each gets the processor of the step as its `target`, so a strategy that checks
+  the type of its `target` (as camel-opentelemetry's does) is not changed by the sanitizer. The `next` they get and the
+  `canIntercept()` skip check are not touched.
+* The error handler of the step wraps the output of the channel, which is now the wrapper. It calls the wrapper for each
+  attempt, also each redelivery, and the channel calls it for a step without such an error handler. With JMX and
+  redelivery, the instrumentation and the `StepHook` processor are put around the output of the error handler in
+  `postInitChannel`, so the order is: error handler, JMX instrumentation, the `StepHook` processor, the listener
+  wrapper, the interceptor wrappers, the processor. In every case the `StepHook` is asked before the wrapper is
+  called, so a step that the hook fails is not a call the listeners see.
+* The wrapper is outside the strategy loop, so it also wraps the `doTry` step, which the strategies skip:
+  `TryProcessor`, `CatchProcessor` and `FinallyProcessor` return `false` from `canIntercept()`. The steps inside
+  `doTry`, `doCatch` and `doFinally` have their own channels, so the strategies wrap them today, and so does the
+  listener wrapper.
+* Code that unwraps processors (`Navigate`) still finds the processor, and `Channel.getNextProcessor()` still returns
+  it, so the debugger and the `DisabledAware` check are unchanged.
 
-The wrapper reads the listeners, calls `onStepCall`, wraps the callback once per call, calls the processor, and then
+The wrapper reads the listeners, calls `onStepCall`, wraps the callback once per call, calls what it wraps, and then
 `onStepReturn` or `onStepThrow`; the wrapped callback calls `onStepCallback` and then the real callback. The
 transacted path calls `process(exchange)` of the same wrapper, through the await manager.
+
+The wrapper is given the processor of the step, so a report names it, and lists the strategy wrappers in between when
+there are any. What the listeners see is the call of that chain. With no strategy, that is the processor's own call.
+The strategies of the tracing components (camel-telemetry, camel-opentelemetry2, camel-jfr) and of camel-mdc pass the
+call and its callback through, so nothing is lost. With `intercept()`, the call includes the interception pipeline
+before the processor, and the steps of the intercept route are seen as their own calls inside it. A strategy that
+returns a plain `Processor`, as the deprecated camel-opentelemetry does, makes the call of an asynchronous processor
+wait in the await manager; a second callback of that processor then reaches the await manager, not the listeners, and
+is not seen. The same holds for a user strategy that catches what the processor throws. The validation runs use no such
+strategy.
 
 With no step listener installed when the route is created, there is no wrapper, so a step costs nothing more than
 today: not a check, not a volatile read. With listeners, each step call costs the calls of the listeners and one
@@ -490,6 +508,11 @@ outside the `InterceptStrategy` wrappers; if it fails the step, the processor is
 call (`StepHelper` calls the callback, which R1 does not check). The `StepHook` stays as it is: it cannot be expressed
 on a listener, which cannot act. A later version could let chaos count its faults through a listener; that is not
 proposed here.
+
+Making the `StepHook` composable is future work, outside this design. Acting hooks can compose with a fixed rule: ask
+them in the order they were added, stop at the first that fails the step, and wait for the sum of the delays. The
+Javadoc of `StepHook` already tells users to combine their hooks in one; a composite in camel-support, installed in the
+one slot, would do that for them, and chaos would then no longer need its WARN. The sanitizer does not need it.
 
 === The sanitizer module
 
@@ -664,18 +687,29 @@ Each step is its own pull request after this document:
 
 == Alternatives considered
 
-* *An `InterceptStrategy`.* It needs no camel-core change. But it is the SPI users configure for their own wrappers, its
-  order against the user's strategies comes from `Ordered`, and the steps of `doTry`, `doCatch` and `doFinally` opt out
-  of it. The listener wrapper is built by the channel, only when a listener is installed, and sees those steps.
-* *A `CamelInternalProcessorAdvice`.* An advice runs `before` and, through the after task of the channel, `after`, but
-  around the error handler: it sees one callback for all attempts, after the guards of the channel, and not the
-  processor's own return value or a second call of its callback.
+* *An `InterceptStrategy`.* It needs no camel-core change, and it sits inside the error handler, so it sees each
+  attempt. Only the `doTry`, `doCatch` and `doFinally` processors themselves are skipped (`canIntercept()` returns
+  `false`); the steps inside them are wrapped. The main drawback is that it is a user SPI: the sanitizer would become
+  one more strategy on the route and the context, ordered against the user's strategies by `Ordered`, and part of
+  the route model that users configure. The strategies that wrap it would get its wrapper as `target` instead of the
+  processor. The listener wrapper is built by the channel, only when a listener is installed, and no strategy sees it.
+* *A `CamelInternalProcessorAdvice` only.* This is where the debugger, message history and the tracers hook in, and it
+  needs no new processor. But an advice runs around the error handler: `before` once per step and `after` once, through
+  the after task of the channel. So it sees one callback for all attempts, after the error handler, and not the
+  processor's own return value, what the processor threw, or which attempt a second callback belongs to. R1 and R3 are
+  about each call of the processor, so they need a place below the error handler.
+* *A hybrid: an advice for what is per step, the wrapper for what is per attempt.* Every rule of R1 and R3 is per
+  attempt, and R2 and R4 are not about steps, so nothing would be left for the advice to do; the wrapper is needed at
+  every step either way. Two mechanisms for the same steps would cost more than one. The hybrid becomes worth it if a
+  later rule needs one event per step only.
 * *The `StepHook`.* One per context, and before the call only (see Relation to StepHook).
-* *Listener calls in `StepHelper`, next to the hook.* Every step already reads the `stepHook` field there, so holding
-  the hook and the listeners in one field would add no read per step, and would see listeners added after the routes
-  were built. It sits outside the `InterceptStrategy` wrappers, though, so a report would name the outermost wrapper
-  rather than the processor that broke the contract, and it changes the field that the `StepHook` reads. The innermost
-  wrapper names the processor and leaves the `StepHook` alone; this choice is open (see Open questions).
+* *Listener calls in `StepHelper`, next to the hook.* `StepHelper` is called just outside the chosen wrapper in most
+  cases: by the error handler for each attempt, or by the `StepHook` processor or the channel. Every step
+  already reads the `stepHook` field there, so holding the hook and the listeners in one field would add no read per
+  step, and would see listeners added after the routes were built (which would answer the standby question below). But
+  it changes the field and the code path that every step uses, with or without the sanitizer, and it mixes a hook that
+  acts with listeners that only observe. The wrapper changes nothing when no listener is installed. This choice is open
+  (see Open questions).
 * *`EventNotifier` only.* It has the exchange events, but not the call of a processor, its return value, its throw or
   a second call of a callback.
 * *A `UnitOfWorkFactory` for R2.* It is pluggable today and sees `addSynchronization`, `handoverSynchronization` and
@@ -706,8 +740,20 @@ the new method hands over as today and reports no moved list, so R2 is weaker wi
 Each has a proposed answer; the maintainers decide.
 
 * The names of the SPIs. Proposed: `StepListener` and `OnCompletionListener`, next to `StepHook`.
-* Where the step listener is called. Proposed: the innermost wrapper, built by the channel, so a report names the
-  processor itself. The other choice is `StepHelper`, next to the hook (see Alternatives).
+* Where the step listener is called. Proposed: a wrapper that the channel adds after the `InterceptStrategy` loop,
+  around the strategy wrappers and below the error handler, where the `StepHook` processor delegates to. The strategies
+  keep seeing the processor of the step, and the listeners see each attempt. The other choice is `StepHelper`, next to
+  the hook (see Alternatives).
+* Should the per-step part use a `CamelInternalProcessorAdvice`, as the debugger and the tracers do? Proposed: no.
+  Every step rule is per attempt and must be checked below the error handler, which an advice cannot see (see
+  Alternatives). If a later rule needs one event per step only, an advice is the place for it.
+* A standby flag for step listeners in dev mode, as `isDebugStandby` and `isBacklogTracingStandby` are read in
+  `DefaultChannel.initChannel`, so the sanitizer can be switched on in a running application without creating the
+  routes again. With the flag, the channel would add the wrapper to every step, and the wrapper would check for
+  listeners at each call, a cost only in dev. Proposed: not in the first version, as `camel run --sanitizer`, the JUnit
+  extension and the CI switch all install the listener before the routes are created. Add it when switching on at
+  runtime is wanted; the first code pull request keeps the decision to add the wrapper in one place, so the flag is a
+  small change.
 * Module location. Proposed: `components/camel-sanitizer`, next to `camel-chaos`, with its tests in camel-core;
   `core/camel-sanitizer` is the other choice, as it checks the routing engine.
 * Should the Maven `sanitizer` profile go in the parent pom for every module? Proposed: start with camel-core and the
