@@ -243,5 +243,6 @@ from("google-pubsub:{{project.name}}:{{subscription.name}}?synchronousPull=true&
     });
 ----
 
+The request goes to the subscription of the `GooglePubsubAcknowledge` used, so every grouped exchange must come from that same subscription, that is from the same consumer endpoint.
 The synchronous consumer does not extend the ack deadline of the messages it pulls, so the aggregated exchange must be acknowledged before the ack deadline of the subscription expires, otherwise the grouped messages are delivered again.
 With the asynchronous consumer, acknowledge each grouped exchange with its own `GooglePubsubAcknowledge` header.
