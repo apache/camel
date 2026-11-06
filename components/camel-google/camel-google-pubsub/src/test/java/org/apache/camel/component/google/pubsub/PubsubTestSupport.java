@@ -25,6 +25,7 @@ import java.util.logging.LogManager;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.api.gax.rpc.AlreadyExistsException;
 import com.google.api.gax.rpc.TransportChannelProvider;
 import com.google.cloud.pubsub.v1.SubscriptionAdminClient;
 import com.google.cloud.pubsub.v1.SubscriptionAdminSettings;
@@ -147,17 +148,21 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     public void createTopic(Topic topic) {
         TopicAdminClient topicAdminClient = createTopicAdminClient();
-
-        topicAdminClient.createTopic(topic);
-
+        try {
+            topicAdminClient.createTopic(topic);
+        } catch (AlreadyExistsException e) {
+            // created for an earlier test of the class, which shares the emulator: safe to ignore
+        }
         topicAdminClient.shutdown();
     }
 
     public void createSubscription(Subscription subscription) {
         SubscriptionAdminClient subscriptionAdminClient = createSubscriptionAdminClient();
-
-        subscriptionAdminClient.createSubscription(subscription);
-
+        try {
+            subscriptionAdminClient.createSubscription(subscription);
+        } catch (AlreadyExistsException e) {
+            // created for an earlier test of the class, which shares the emulator: safe to ignore
+        }
         subscriptionAdminClient.shutdown();
     }
 
