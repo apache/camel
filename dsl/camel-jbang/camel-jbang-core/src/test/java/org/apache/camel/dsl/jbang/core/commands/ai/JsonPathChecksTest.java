@@ -246,4 +246,80 @@ class JsonPathChecksTest {
                 """;
         assertThat(JsonPathChecks.validateYamlJsonPath(yaml, catalog)).isEmpty();
     }
+
+    /**
+     * r28n-3 contracts-rest-code-first step 1 [19] (shortened): [] after the filter does not compile, which only the
+     * runtime said, 16 times ("Could not parse token starting at position 29").
+     */
+    @Test
+    void anExpressionThatDoesNotCompile() {
+        String yaml = """
+                - route:
+                    id: get-order-by-id
+                    from:
+                      uri: direct:get-order-by-id
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.id}')][]"
+                                resultType: java.util.List
+                """;
+        assertThat(JsonPathChecks.validateYamlJsonPath(yaml, catalog)).singleElement().isEqualTo(
+                "Line 9: jsonpath $[?(@.orderId == '${header.id}')][] does not compile: Could not parse token starting at"
+                                                                                                 + " position 33 (at []). Expected ?, ', 0-9, *; JsonPath has no [], and a filter"
+                                                                                                 + " or [*] gives a list already: write $[?(@.orderId == '${header.id}')]");
+        // without a placeholder, and in a split
+        assertThat(JsonPathChecks.validateYamlJsonPath(yaml.replace("$[?(@.orderId == '${header.id}')][]", "$.lines[]"),
+                catalog)).singleElement().asString()
+                .startsWith("Line 9: jsonpath $.lines[] does not compile: Could not parse token starting at position 7"
+                            + " (at [])")
+                .endsWith("write $.lines");
+        assertThat(JsonPathChecks.validateYamlJsonPath("""
+                - route:
+                    from:
+                      uri: timer:t
+                      steps:
+                        - split:
+                            jsonpath: "$.lines[*]."
+                            steps:
+                              - log: "${body}"
+                """, catalog)).singleElement().isEqualTo(
+                "Line 6: jsonpath $.lines[*]. does not compile: Path must not end with a '.' or '..'");
+    }
+
+    /** Camel fills in the ${...} first: a placeholder can be an index, a number, a text or a name. */
+    @Test
+    void placeholdersAreFilledInFirst() {
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:stock
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "%s"
+                """;
+        for (String path : List.of("$.items[${header.index}]", "$[?(@.qty > ${header.min})]",
+                "$[?(@.sku == '${header.sku}')].qty", "$.${header.field}", "$.{{stock.field}}", "$[?(${header.filter})]",
+                "$..[?(@.sku in ['${header.a}', '${header.b}'])]", "$.lines.length()")) {
+            assertThat(JsonPathChecks.validateYamlJsonPath(yaml.formatted(path), catalog)).as(path).isEmpty();
+        }
+        // r28n-4: the two characters \n after the closing quote, a line with no value to compile, which other checks say
+        assertThat(JsonPathChecks.compileProblem(catalog,
+                "\"$[?(@.orderId == '${header.id}')]\"\\n    resultType: java.util.List", false)).isNull();
+        // the easy predicate syntax of a when or filter is turned into a filter first, so it is not compiled as written
+        assertThat(JsonPathChecks.validateYamlJsonPath("""
+                - route:
+                    from:
+                      uri: direct:stock
+                      steps:
+                        - filter:
+                            expression:
+                              jsonpath: "$.qty > ${header.min}"
+                            steps:
+                              - log: "low"
+                """, catalog)).isEmpty();
+    }
 }

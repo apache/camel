@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.ai;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
@@ -577,4 +579,40 @@ public final class ExpressionEvaluator {
 
     /** The class loaders of the languages downloaded so far, so the next call does not download again. */
     private static final Map<String, ClassLoader> DOWNLOADED = new ConcurrentHashMap<>();
+
+    /** The languages whose download failed, for a check that tries once. */
+    private static final Set<String> NOT_DOWNLOADED = ConcurrentHashMap.newKeySet();
+
+    /**
+     * The class loader that has the language, for a check of an expression of a route: this process's own when it has
+     * the language, else the one its component is downloaded into, once, as for an evaluation (a download that failed
+     * is not tried again). Null when the catalog does not know the language or it cannot be had.
+     */
+    static ClassLoader languageLoader(CamelCatalog catalog, String lang) {
+        LanguageModel model;
+        try {
+            model = catalog.languageModel(lang);
+        } catch (Exception e) {
+            return null;
+        }
+        if (model == null || model.getJavaType() == null || model.getArtifactId() == null) {
+            return null;
+        }
+        ClassLoader own = ExpressionEvaluator.class.getClassLoader();
+        try {
+            Class.forName(model.getJavaType(), false, own);
+            return own;
+        } catch (ClassNotFoundException | LinkageError e) {
+            // not on the classpath of this process: its component
+        }
+        String gav = model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion();
+        if (NOT_DOWNLOADED.contains(gav)) {
+            return null;
+        }
+        ClassLoader downloaded = download(gav, new StringBuilder());
+        if (downloaded == null) {
+            NOT_DOWNLOADED.add(gav);
+        }
+        return downloaded;
+    }
 }
