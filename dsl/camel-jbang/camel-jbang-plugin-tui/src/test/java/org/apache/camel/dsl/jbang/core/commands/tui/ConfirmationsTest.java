@@ -103,6 +103,45 @@ class ConfirmationsTest {
     }
 
     @Test
+    void aLoneEscCancelsADialogThatEscOnlyCancels() {
+        // CAMEL-26699: the confirm of a chaos action, which an MCP client opened; Esc closes it, Enter or y never answer
+        AtomicBoolean chaosConfirm = new AtomicBoolean(true);
+        Confirmations chaos = new Confirmations(pending).add("a confirm dialog of the tab", chaosConfirm::get, () -> true);
+        pending.add(due(KeyEvent.ofChar('y')));
+        pending.add(due(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.CTRL)));
+        pending.add(due(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE)));
+        List<String> delivered = new ArrayList<>();
+
+        chaos.deliverDue(0, key -> {
+            delivered.add(key.isKey(KeyCode.ESCAPE) ? "Esc" : key.string());
+            chaosConfirm.set(false);
+        });
+
+        assertThat(delivered).containsExactly("Esc");
+        assertThat(chaos.open()).isNull();
+        // the quit confirmation is not one that Esc only cancels
+        assertThat(confirmations.isOpenCancelledByEsc()).isFalse();
+    }
+
+    @Test
+    void sendKeysLetsALoneEscCancelADialogThatEscOnlyCancels() {
+        AtomicBoolean chaosConfirm = new AtomicBoolean(true);
+        Confirmations chaos = new Confirmations(pending).add("a confirm dialog of the tab", chaosConfirm::get, () -> true);
+        McpFacade facade = new McpFacade(
+                null, new AtomicReference<>(List.of()), null, new RecordingManager(null), null, null, null, null, null,
+                null, null, pending, null);
+        facade.setConfirmations(chaos);
+        TuiToolRegistry tools = new TuiToolRegistry(facade);
+
+        assertThat(tools.callSendKeys(Map.of("keys", List.of("y"))))
+                .startsWith("Not sent: a confirm dialog of the tab is open").endsWith("(a lone Esc cancels it).");
+        assertThat(tools.callSendKeys(Map.of("keys", List.of("Esc", "y")))).startsWith("Not sent");
+        assertThat(pending).isEmpty();
+        assertThat(tools.callSendKeys(Map.of("keys", List.of("Esc")))).startsWith("Queued 1 key");
+        assertThat(pending).hasSize(1);
+    }
+
+    @Test
     void whileATapeDrivesTheMonitorNothingAsksToConfirm() {
         MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));
         ctx.confirmActions = true;

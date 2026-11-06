@@ -177,6 +177,29 @@ class ChaosRuleTest {
     }
 
     @Test
+    void aDecidedExpectationCountsOnUntilTheTimeIsUp() {
+        // CAMEL-26699: unmet at the first exchange handled, and the count says how far it went over
+        ChaosRule.Expectation atMost = new ChaosRule.Expectation(
+                "orders", ChaosRule.Expectation.Kind.HANDLED, ChaosRule.Expectation.Op.AT_MOST, 0, T0 + 100);
+        atMost.recordAt(T0 + 10);
+        assertThat(atMost.outcome(T0 + 10)).isEqualTo(Outcome.UNMET);
+        atMost.recordAt(T0 + 20);
+        atMost.recordAt(T0 + 30);
+        assertThat(atMost.value()).isEqualTo(3);
+        assertThat(atMost.outcome(T0 + 1000)).isEqualTo(Outcome.UNMET);
+        // not after the time is up
+        atMost.recordAt(T0 + 101);
+        assertThat(atMost.value()).isEqualTo(3);
+
+        // met at the count, and the count goes on: the outcome stays met
+        ChaosRule.Expectation atLeast = new ChaosRule.Expectation("orders", 1, T0 + 100);
+        atLeast.recordAt(T0 + 10);
+        atLeast.recordAt(T0 + 20);
+        assertThat(atLeast.value()).isEqualTo(2);
+        assertThat(atLeast.outcome(T0 + 1000)).isEqualTo(Outcome.MET);
+    }
+
+    @Test
     void withinDefaultsToTheUntilDurationElseMaxDuration() {
         assertThat(rule("endpoint=x error until=1m expect=o:1", "r1", 1).within).isEqualTo(60_000L);
         assertThat(rule("endpoint=x error until=5 expect=o:1", "r1", 1).within).isEqualTo(MAX);

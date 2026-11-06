@@ -426,6 +426,8 @@ final class StatusParser {
                     // the consumers console says clazz (class in older versions)
                     ci.className = cj.getStringOrDefault("clazz", cj.getString("class"));
                     ci.scheduled = Boolean.TRUE.equals(cj.get("scheduled"));
+                    // only a scheduled poll consumer has a scheduler: at=poll of camel-chaos hooks its polls
+                    ci.polls = cj.get("schedulerClass") != null;
                     ci.remote = Boolean.TRUE.equals(cj.get("remote"));
                     ci.inflight = cj.getIntegerOrDefault("inflight", 0);
                     ci.polling = Boolean.TRUE.equals(cj.get("polling"));

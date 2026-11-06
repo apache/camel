@@ -22,6 +22,8 @@ class ConsumerInfo {
     String state;
     String className;
     boolean scheduled;
+    // a scheduled poll consumer (file, ftp, sql, ...): it has a scheduler, which a timer has not (CAMEL-26699)
+    boolean polls;
     boolean remote;
     int inflight;
     Boolean polling;

@@ -31,12 +31,12 @@ minute, and the seed of the random draws.
 - **ID** — The id of the rule (r1, r2, ...), with its version when it was changed
 - **STATE** — `active`, `waiting` (it starts later, `from=`) or `ended`
 - **TARGET** — What the rule matches: `endpoint=`, `component=`, `route=` or `step=`
-- **FAULT** — What it does, with its parameters, such as `error status=503`
+- **FAULT** — What it does, in a few words: `error status 503`, `error ConnectException`, `delay 500ms..1s`, `stop 5s ×3 every 20s` (the rule in full is the title of the panel under the table)
 - **RATE** — The share of the matches it fired at, next to its own: `24% of 25%`, `20% of 1 in 5`, `16% of 5s in 30s`; for a flapping route the round
 - **FIRED** — How many faults it fired
 - **LAST** — How long ago it last fired
 - **FAULTS/S** — Its faults per second over the last minute, as a sparkline
-- **EFFECT** — What its faults did to the exchanges: `✓` completed, `↩` recovered by redelivery, `⇩` handled by the error handler (such as the dead letter channel), `✗` failed, `…` in flight
+- **EFFECT** — What its faults did to the exchanges: `✓` completed, `↩` recovered by redelivery, `⇩` handled by the error handler (such as the dead letter channel), `✗` failed, `◷` in flight. A rule at the polls of a consumer faults no exchange: its effect is the polls it failed or skipped (`39 polls failed`)
 - **NOTE** — When it ends or starts, its bursts, what a stall or lifecycle rule does to its route, and the faults it skipped
 
 ## The selected rule
@@ -45,7 +45,10 @@ The panel under the table shows the selected rule in full: its faults
 per second, rate, the effect as a bar with the counts in words, its
 expectation with the time left, why it skipped faults, and its recent
 faults: when, the fault, where (the endpoint or step), the route and the
-exchange.
+exchange. An exchange faulted again on its redeliveries is shown once, with
+how many times (`×3`). The routes of its recent faults are listed with
+their mean time, p95 and p99, and throughput: what a delay costs, as the
+exchanges it delayed still complete.
 
 ## Routes
 

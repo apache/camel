@@ -103,7 +103,7 @@ final class ChaosHere {
         String uri = consumer.uri != null ? withoutQuery(consumer.uri) : null;
         return new Target(
                 "route " + consumer.id + (uri != null ? " (" + uri + ")" : ""), null,
-                consumer.scheduled ? uri : null, consumer.id, null);
+                consumer.polls ? uri : null, consumer.id, null);
     }
 
     /**
@@ -117,7 +117,7 @@ final class ChaosHere {
             }
             String polled = null;
             for (ConsumerInfo c : info.consumers) {
-                if (routeId.equals(c.id) && c.scheduled && c.uri != null) {
+                if (routeId.equals(c.id) && c.polls && c.uri != null) {
                     polled = withoutQuery(c.uri);
                 }
             }
@@ -137,7 +137,7 @@ final class ChaosHere {
 
     private static String polled(IntegrationInfo info, String uri) {
         for (ConsumerInfo c : info.consumers) {
-            if (c.scheduled && uri.equals(c.uri)) {
+            if (c.polls && uri.equals(c.uri)) {
                 return withoutQuery(uri);
             }
         }

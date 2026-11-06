@@ -17,15 +17,19 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -56,6 +60,7 @@ class ChaosTab extends AbstractTableTab {
     // the width of the sparkline in the rules table: the 60 seconds, 4 per column
     private static final int TABLE_SPARK = 15;
     private static final int ROUTES_WIDTH = 46;
+    private static final int MAX_EFFECT_WIDTH = 30;
 
     private final ChaosControl control;
 
@@ -96,6 +101,12 @@ class ChaosTab extends AbstractTableTab {
     @Override
     public boolean isConfirming() {
         return control.isConfirming();
+    }
+
+    @Override
+    public boolean isConfirmCancelledByEsc() {
+        // Esc closes the confirm of a chaos action without doing it
+        return true;
     }
 
     @Override
@@ -150,7 +161,7 @@ class ChaosTab extends AbstractTableTab {
         List<Rect> bottom = Layout.horizontal()
                 .constraints(Constraint.fill(), Constraint.length(ROUTES_WIDTH))
                 .split(rows.get(2));
-        renderDetail(frame, bottom.get(0), chaos, selectedRule(chaos));
+        renderDetail(frame, bottom.get(0), info, selectedRule(chaos));
         renderRoutes(frame, bottom.get(1), chaos);
         control.render(frame, area);
     }
@@ -227,7 +238,7 @@ class ChaosTab extends AbstractTableTab {
                     Cell.from(Span.styled(r.id + (r.version > 1 ? " v" + r.version : ""), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(r.state != null ? r.state : "", stateStyle(r.state))),
                     Cell.from(target(r)),
-                    Cell.from(r.fault()),
+                    Cell.from(r.faultShort()),
                     Cell.from(rate(r)),
                     rightCell(String.valueOf(r.fired), 5),
                     rightCell(r.lastFiredAgo >= 0 ? shortTime(r.lastFiredAgo) : "-", 6),
@@ -246,6 +257,13 @@ class ChaosTab extends AbstractTableTab {
             return;
         }
         Style bold = Style.EMPTY.bold();
+        // EFFECT is as wide as its counts need ("62↩ 1…" was cut), TARGET and FAULT share the rest
+        int effectWidth = CharWidth.of("EFFECT");
+        for (ChaosInfo.Rule r : chaos.rules) {
+            effectWidth = Math.max(effectWidth, CharWidth.of(Line.from(effect(r)).rawContent()));
+        }
+        // one more, so the counts do not run into the note
+        effectWidth = Math.min(effectWidth + 1, MAX_EFFECT_WIDTH);
         Table table = Table.builder()
                 .rows(rows)
                 .header(Row.from(
@@ -268,7 +286,7 @@ class ChaosTab extends AbstractTableTab {
                         Constraint.length(5),
                         Constraint.length(6),
                         Constraint.length(TABLE_SPARK),
-                        Constraint.length(12),
+                        Constraint.length(effectWidth),
                         Constraint.fill(4))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -317,14 +335,25 @@ class ChaosTab extends AbstractTableTab {
     static List<Span> effect(ChaosInfo.Rule r) {
         List<Span> spans = new ArrayList<>();
         if (r.faulted <= 0) {
+            // a poll rule faults no exchange: its effect is on the polls (CAMEL-26699)
+            if (r.firedAtPoll() > 0) {
+                spans.add(Span.styled(r.firedAtPoll() + (r.firedAtPoll() == 1 ? " poll " : " polls ") + pollWord(r),
+                        r.faultShort().startsWith("error") ? Theme.error() : Theme.warning()));
+            }
             return spans;
         }
         addCount(spans, r.completed, "✓", Theme.success());
         addCount(spans, r.recovered, "↩", Theme.warning());
         addCount(spans, r.handled, "⇩", Theme.error());
         addCount(spans, r.failed, TuiIcons.CROSS, Theme.error().bold());
-        addCount(spans, r.inFlight, "…", Theme.muted());
+        // not … , which reads as a cut text
+        addCount(spans, r.inFlight, "◷", Theme.muted());
         return spans;
+    }
+
+    /** What a poll rule did to the polls: an error fails them, a drop skips them. */
+    private static String pollWord(ChaosInfo.Rule r) {
+        return r.faultShort().startsWith("error") ? "failed" : "skipped";
     }
 
     private static void addCount(List<Span> spans, long count, String mark, Style style) {
@@ -381,7 +410,8 @@ class ChaosTab extends AbstractTableTab {
 
     // ---- the selected rule ----
 
-    private static void renderDetail(Frame frame, Rect area, ChaosInfo chaos, ChaosInfo.Rule r) {
+    private static void renderDetail(Frame frame, Rect area, IntegrationInfo info, ChaosInfo.Rule r) {
+        ChaosInfo chaos = info.chaos;
         if (r == null) {
             frame.renderWidget(Paragraph.builder().text(Text.from(Line.from(Span.raw(""))))
                     .block(block(" Rule ")).build(), area);
@@ -410,7 +440,13 @@ class ChaosTab extends AbstractTableTab {
         if (r.faulted > 0) {
             lines.add(effectBar(r, Math.max(10, Math.min(40, area.width() - 40))));
             lines.add(Line.from(effectWords(r)));
+        } else if (r.firedAtPoll() > 0) {
+            lines.add(Line.from(Span.styled(" Effect    ", label), Span.styled(
+                    r.firedAtPoll() + (r.firedAtPoll() == 1 ? " poll " : " polls ") + pollWord(r)
+                                                                               + ": the consumer polls again on its schedule",
+                    Theme.warning())));
         }
+        addImpact(lines, info, chaos, r);
         if (r.expectRoute != null) {
             String spec = "completed".equals(r.expectKind) && ">=".equals(r.expectOp)
                     ? r.expectRoute + ":" + r.expectCount
@@ -436,22 +472,76 @@ class ChaosTab extends AbstractTableTab {
                     Span.styled(skip.getValue() + ": " + skip.getKey(), Theme.warning())));
         }
         boolean first = true;
-        for (ChaosInfo.RecentFault f : chaos.recentFaults) {
-            if (r.id == null || !r.id.equals(f.rule())) {
-                continue;
-            }
+        for (Map.Entry<ChaosInfo.RecentFault, Integer> e : recentOf(chaos, r).entrySet()) {
+            ChaosInfo.RecentFault f = e.getKey();
             lines.add(Line.from(
                     Span.styled(first ? " Recent    " : "           ", label),
                     Span.styled(String.format("%-6s", f.ago() >= 0 ? shortTime(f.ago()) : ""), label),
                     Span.styled("🎲 ", Theme.warning()),
                     Span.raw(f.fault() != null ? f.fault() : ""),
-                    Span.styled(where(f), label)));
+                    Span.styled(where(f), label),
+                    Span.styled(e.getValue() > 1 ? "  ×" + e.getValue() : "", Theme.warning())));
             first = false;
         }
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(lines))
                 .block(block(" " + r.id + " ─ " + r.text + " "))
                 .build(), area);
+    }
+
+    /**
+     * The recent faults of a rule, the latest first, with how many times each exchange was faulted: a redelivery is
+     * faulted again, and is shown once with its count ({@code ×3}), not once per attempt.
+     */
+    static Map<ChaosInfo.RecentFault, Integer> recentOf(ChaosInfo chaos, ChaosInfo.Rule r) {
+        Map<ChaosInfo.RecentFault, Integer> answer = new LinkedHashMap<>();
+        Map<String, ChaosInfo.RecentFault> byExchange = new LinkedHashMap<>();
+        for (ChaosInfo.RecentFault f : chaos.recentFaults) {
+            if (r.id == null || !r.id.equals(f.rule())) {
+                continue;
+            }
+            ChaosInfo.RecentFault seen = f.exchangeId() != null ? byExchange.get(f.exchangeId()) : null;
+            if (seen != null) {
+                answer.merge(seen, 1, Integer::sum);
+            } else {
+                if (f.exchangeId() != null) {
+                    byExchange.put(f.exchangeId(), f);
+                }
+                answer.put(f, 1);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The routes the faults of the rule were in, with their times and throughput: what a delay costs, which the effect
+     * does not say (the exchanges complete), is in the times of the route.
+     */
+    private static void addImpact(List<Line> lines, IntegrationInfo info, ChaosInfo chaos, ChaosInfo.Rule r) {
+        Set<String> routes = new LinkedHashSet<>();
+        for (ChaosInfo.RecentFault f : chaos.recentFaults) {
+            if (r.id != null && r.id.equals(f.rule()) && f.route() != null) {
+                routes.add(f.route());
+            }
+        }
+        boolean first = true;
+        for (String routeId : routes) {
+            RouteInfo route = info.routes.stream().filter(ri -> routeId.equals(ri.routeId)).findFirst().orElse(null);
+            if (route == null || route.total <= 0) {
+                continue;
+            }
+            StringBuilder sb = new StringBuilder(routeId).append("  mean ").append(route.meanTime).append("ms");
+            if (route.p99Time >= 0) {
+                sb.append(" · p95 ").append(route.p95Time).append("ms · p99 ").append(route.p99Time).append("ms");
+            } else {
+                sb.append(" · max ").append(route.maxTime).append("ms");
+            }
+            if (route.throughput != null && !route.throughput.isEmpty()) {
+                sb.append(" · ").append(route.throughput).append(" msg/s");
+            }
+            lines.add(Line.from(Span.styled(first ? " Routes    " : "           ", Theme.muted()), Span.raw(sb.toString())));
+            first = false;
+        }
     }
 
     private static String where(ChaosInfo.RecentFault f) {

@@ -72,6 +72,15 @@ interface MonitorTab {
     }
 
     /**
+     * Whether Esc only cancels the confirm dialog of this tab ({@link #isConfirming()}), so an MCP client may send it
+     * to close a dialog it opened: it can never answer yes. False by default, as Esc means another answer in some
+     * dialogs (CAMEL-26699).
+     */
+    default boolean isConfirmCancelledByEsc() {
+        return false;
+    }
+
+    /**
      * Pastes text into the text field that has the keyboard; returns {@code false} when none has, as the default does.
      */
     default boolean handlePaste(String text) {

@@ -52,6 +52,8 @@ final class ChaosInfo {
         String state;
         long matches;
         long fired;
+        // the faults it fired per hook, such as poll=39 (CAMEL-26699)
+        final Map<String, Long> firedAt = new LinkedHashMap<>();
         long skipped;
         final Map<String, Long> skippedReasons = new LinkedHashMap<>();
         long lostAtDlq = -1;
@@ -119,6 +121,62 @@ final class ChaosInfo {
                 sb.append(token);
             }
             return sb.toString();
+        }
+
+        /**
+         * The fault in a few words, as the report says it: {@code error status 503}, {@code error ConnectException},
+         * {@code delay 500ms..1s}, {@code stop 5s ×3 every 20s}.
+         */
+        String faultShort() {
+            List<String> tokens = new ArrayList<>(List.of(fault().split(" ")));
+            if (tokens.isEmpty() || tokens.get(0).isEmpty()) {
+                return "";
+            }
+            String kind = tokens.remove(0);
+            Map<String, String> params = new LinkedHashMap<>();
+            for (String token : tokens) {
+                int eq = token.indexOf('=');
+                params.put(eq > 0 ? token.substring(0, eq) : token, eq > 0 ? token.substring(eq + 1) : "");
+            }
+            StringBuilder sb = new StringBuilder();
+            switch (kind) {
+                case "error" -> {
+                    sb.append("error");
+                    String exception = params.get("exception");
+                    if (params.containsKey("status")) {
+                        sb.append(" status ").append(params.get("status"));
+                    } else {
+                        // the exception camel-chaos throws when the rule names none
+                        String type = exception != null ? exception : "ChaosException";
+                        sb.append(' ').append(type.substring(type.lastIndexOf('.') + 1));
+                    }
+                    if (params.containsKey("after")) {
+                        sb.append(" after ").append(params.get("after"));
+                    }
+                }
+                case "delay", "stall" -> sb.append(kind).append(' ').append(params.getOrDefault("duration", ""));
+                case "corrupt" -> sb.append("corrupt ").append(params.getOrDefault("mode", ""))
+                        .append(params.containsKey("header") ? " " + params.get("header") : "");
+                case "lifecycle" -> {
+                    sb.append(params.getOrDefault("action", "lifecycle")).append(' ')
+                            .append(params.getOrDefault("duration", ""));
+                    if (params.containsKey("repeat")) {
+                        sb.append(" ×").append(params.get("repeat"));
+                    }
+                    if (params.containsKey("every")) {
+                        sb.append(" every ").append(params.get("every"));
+                    }
+                }
+                default -> {
+                    return fault();
+                }
+            }
+            return sb.toString().strip();
+        }
+
+        /** The faults it fired at the polls of a consumer: a poll rule faults no exchange. */
+        long firedAtPoll() {
+            return firedAt.getOrDefault("poll", 0L);
         }
 
         /** The options at, rate, until and from as they are written, for the RATE column. */
@@ -260,9 +318,10 @@ final class ChaosInfo {
         r.state = jo.getString("state");
         r.matches = num(jo.get("matches"), 0);
         if (jo.get("fired") instanceof Map<?, ?> fired) {
-            for (Object v : fired.values()) {
+            fired.forEach((k, v) -> {
                 r.fired += num(v, 0);
-            }
+                r.firedAt.put(String.valueOf(k), num(v, 0));
+            });
         }
         r.skipped = num(jo.get("skipped"), 0);
         if (jo.get("skippedReasons") instanceof Map<?, ?> reasons) {

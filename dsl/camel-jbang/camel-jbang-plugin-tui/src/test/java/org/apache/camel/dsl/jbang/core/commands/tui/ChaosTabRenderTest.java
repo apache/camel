@@ -146,6 +146,67 @@ class ChaosTabRenderTest {
     }
 
     @Test
+    void theFaultInAFewWordsAndTheEffectOfAPollRule() throws Exception {
+        // CAMEL-26699: as the demo shop had them
+        chaos("""
+                {"enabled": true, "rules": [
+                  {"id": "r3", "version": 1, "state": "active",
+                   "rule": "endpoint=http://localhost:8765/pay* error exception=java.net.ConnectException rate=0.5",
+                   "hooks": ["send"], "matches": 20, "fired": {"send": 9}, "faultsLastMinute": 9,
+                   "effect": {"faulted": 9, "completed": 0, "recovered": 7, "handled": 0, "failed": 0, "inFlight": 2}},
+                  {"id": "r4", "version": 1, "state": "active",
+                   "rule": "route=shipping lifecycle action=stop duration=5s repeat=3 every=20s",
+                   "hooks": [], "matches": 2, "fired": {"lifecycle": 2}, "faultsLastMinute": 2},
+                  {"id": "r5", "version": 1, "state": "active", "rule": "endpoint=file://inbox* error at=poll rate=0.5",
+                   "hooks": ["poll"], "matches": 80, "fired": {"poll": 39}, "faultsLastMinute": 30}],
+                 "report": {"verdict": "PASS", "final": true, "seed": 42}}
+                """);
+        ChaosInfo.Rule pay = info.chaos.rule("r3");
+        assertThat(pay.faultShort()).isEqualTo("error ConnectException");
+        assertThat(info.chaos.rule("r4").faultShort()).isEqualTo("stop 5s ×3 every 20s");
+        ChaosInfo.Rule poll = info.chaos.rule("r5");
+        assertThat(poll.firedAtPoll()).isEqualTo(39);
+
+        String screen = TuiTestHelper.renderToString(new ChaosTab(ctx), 160, 40);
+        // in flight is not … , which reads as a cut text
+        assertThat(screen).contains("error ConnectException").contains("stop 5s ×3 every 20s").contains("7↩ 2◷")
+                .contains("39 polls failed");
+    }
+
+    @Test
+    void theRecentFaultsOfAnExchangeOnceAndTheRoutesItWasIn() throws Exception {
+        chaos("""
+                {"enabled": true, "rules": [
+                  {"id": "r1", "version": 1, "state": "active", "rule": "step=reserve error rate=0.6",
+                   "hooks": ["step"], "matches": 30, "fired": {"step": 4}, "faultsLastMinute": 4,
+                   "effect": {"faulted": 2, "completed": 0, "recovered": 1, "handled": 1, "failed": 0, "inFlight": 0}}],
+                 "report": {"verdict": "PASS", "final": true, "seed": 42, "recentFaults": [
+                   {"ago": 1000, "rule": "r1", "fault": "error ChaosException", "hook": "step", "route": "inventory",
+                    "step": "reserve", "exchangeId": "98AE31B10677BEA-000000000000286B"},
+                   {"ago": 1500, "rule": "r1", "fault": "error ChaosException", "hook": "step", "route": "inventory",
+                    "step": "reserve", "exchangeId": "98AE31B10677BEA-000000000000286B"},
+                   {"ago": 2000, "rule": "r1", "fault": "error ChaosException", "hook": "step", "route": "inventory",
+                    "step": "reserve", "exchangeId": "98AE31B10677BEA-000000000000286B"},
+                   {"ago": 4000, "rule": "r1", "fault": "error ChaosException", "hook": "step", "route": "inventory",
+                    "step": "reserve", "exchangeId": "98AE31B10677BEA-0000000000002861"}]}}
+                """);
+        RouteInfo inventory = new RouteInfo();
+        inventory.routeId = "inventory";
+        inventory.total = 900;
+        inventory.meanTime = 27;
+        inventory.p95Time = 411;
+        inventory.p99Time = 907;
+        inventory.throughput = "1.69";
+        info.routes.add(inventory);
+
+        assertThat(ChaosTab.recentOf(info.chaos, info.chaos.rule("r1")).values()).containsExactly(3, 1);
+        String screen = TuiTestHelper.renderToString(new ChaosTab(ctx), 160, 40);
+        assertThat(screen).contains("98AE31…286B  ×3").contains("98AE31…2861")
+                .contains("inventory  mean 27ms · p95 411ms · p99 907ms · 1.69 msg/s");
+        assertThat(screen.lines().filter(l -> l.contains("…286B")).count()).isEqualTo(1);
+    }
+
+    @Test
     void withoutCamelChaosOrWhenItIsOff() throws Exception {
         String none = TuiTestHelper.renderToString(new ChaosTab(ctx), 120, 15);
         assertThat(none).contains("camel-chaos is not in this integration: run it with camel run --chaos");
