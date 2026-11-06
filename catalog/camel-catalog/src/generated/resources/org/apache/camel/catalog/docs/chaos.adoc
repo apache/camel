@@ -617,6 +617,29 @@ exchange gets which draw: with several threads (concurrent consumers, parallel p
 so two runs with the same seed can give different reports. With one thread and the same exchanges in the same order,
 the same seed gives the same faults.
 
+== The model of the rules
+
+The rules are also described as data, for the tools that help to write them (a form in a terminal UI, an AI that turns
+a request into rules, the docs): `META-INF/org/apache/camel/chaos/chaos-model.json` in the camel-chaos JAR, also in the
+Camel catalog (`CamelCatalog.chaosModelJSon()`). It has the targets, the hooks of each target and the faults each one
+offers (and whether it is reached only with `at=`), the parameters of each fault with their types and limits, the
+options, the kinds and ops of an expectation, the limits, and recipes: known rules in plain words, grouped by what goes
+wrong, each a rule with placeholders (`${endpoint}`, `${rate}`) and what to pick them from (the endpoints the routes
+send to, the routes, the steps), such as:
+
+[source,json]
+----
+{
+  "id": "failed-after-success",
+  "group": "Downstream",
+  "title": "Did the work, then failed",
+  "rule": "endpoint=${endpoint} error at=reply until=${until}"
+}
+----
+
+The model is made from the tables of the parser, so it says what the parser accepts; a tool still adds a rule through
+`ChaosManager` or the CLI connector, which check it as for any other rule.
+
 == Limits
 
 * A rule that ended stays in the rules (and the report) as `ended`. The hooks skip it at once, and the next change

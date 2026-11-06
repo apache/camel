@@ -2198,6 +2198,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void chaosModel() {
+        String json = catalog.chaosModelJSon();
+        Assertions.assertNotNull(json);
+
+        JsonObject chaos = JsonMapper.deserialize(json).getJsonObject("chaos");
+        Assertions.assertNotNull(chaos);
+        Assertions.assertFalse(chaos.getCollection("faults").isEmpty());
+        Assertions.assertFalse(chaos.getCollection("recipes").isEmpty());
+    }
+
+    @Test
     public void devConsolesOpenApiSpec() {
         String json = catalog.devConsolesOpenApiSpec();
         Assertions.assertNotNull(json);
