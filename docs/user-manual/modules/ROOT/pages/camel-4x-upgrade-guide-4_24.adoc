@@ -5527,18 +5527,19 @@ noop is a request that waits for the reply, so with `sendNoop=false` such a conn
 which fails and is logged before the consumer connects again. For sftp and mina-sftp, set `serverAliveInterval` to let
 the client close such a connection itself, so that the consumer connects again before the poll.
 
-=== camel-ftp, camel-sftp, camel-ftps, camel-mina-sftp, camel-azure-files, camel-smb - a readLock the component does not implement fails the consumer
+=== camel-ftp, camel-mina-sftp, camel-azure-files, camel-smb - a readLock the component does not implement fails the consumer
 
-The consumers of `ftp`, `ftps`, `sftp`, `mina-sftp` and `azure-files` support the read locks `none`, `rename` and
-`changed`, and `readLock=false` and `readLock=off` still mean `none`. Any other `readLock` value now fails when the
-consumer is created, with `IllegalArgumentException: ReadLock invalid: <value>, must be one of: none,rename,changed`,
-so the route does not start. With `poll` or `pollEnrich`, the exchange fails with a `FailedToCreateConsumerException`
-caused by this `IllegalArgumentException` when it polls the endpoint. Before, such a value was accepted and the
-consumer ran without any read lock, so it could pick up a file that was still being written. This concerns the read
-locks that only the `file` component implements (`markerFile`, `fileLock`, `idempotent`, `idempotent-changed` and
-`idempotent-rename`), and misspelled values. The `readLock` option is not checked when a custom
-`exclusiveReadLockStrategy` or `processStrategy` is set, as it does not apply then. The `smb` consumer already failed
-on these values, and on `false` and `off`, and is unchanged.
+The consumers of `ftp`, `ftps` and `sftp` (all three in `camel-ftp`), `mina-sftp` and `azure-files` support the read
+locks `none`, `rename` and `changed`, and `readLock=false` and `readLock=off` still mean `none`. Any other `readLock`
+value now fails when the consumer is created, with
+`IllegalArgumentException: ReadLock invalid: <value>, must be one of: none,rename,changed`, so the route does not start.
+With `poll` or `pollEnrich`, the exchange fails with a `FailedToCreateConsumerException` caused by this
+`IllegalArgumentException` when it polls the endpoint. Before, such a value was accepted and the consumer ran without
+any read lock, so it could pick up a file that was still being written. This concerns the read locks that only the
+`file` component implements (`markerFile`, `fileLock`, `idempotent`, `idempotent-changed` and `idempotent-rename`), and
+misspelled values. The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
+is set, as it does not apply then. The `smb` consumer already failed on these values, and on `false` and `off`, and is
+unchanged.
 
 To keep the previous behavior, remove the `readLock` option, or set `readLock=none`. To keep a file from being picked
 up while it is being written, use `readLock=changed` or `readLock=rename`.
