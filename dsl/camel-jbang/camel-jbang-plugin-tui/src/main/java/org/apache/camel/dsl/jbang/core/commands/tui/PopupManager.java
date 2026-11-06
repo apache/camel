@@ -704,6 +704,12 @@ class PopupManager {
                     badge = " " + cbOpenCount + " OPEN";
                     badgeStyle = Theme.error();
                 }
+                // the chaos rules that inject faults now, and a failed verdict
+                String chaosBadge = "Chaos".equals(tab.name()) ? ChaosTab.badge(sel) : null;
+                if (chaosBadge != null) {
+                    badge = " " + chaosBadge;
+                    badgeStyle = chaosBadge.endsWith("FAIL") ? Theme.error() : Theme.warning();
+                }
 
                 List<Span> spans = new ArrayList<>();
                 if (keyPos >= 0 && keyPos < name.length()) {

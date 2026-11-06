@@ -123,7 +123,7 @@ final class TuiToolGroups {
             // injected on purpose, so it does not hunt for a bug behind them
             case CHAOS -> f.chaosOn()
                     ? "Chaos: camel-chaos is on, so some failures and delays may be injected on purpose; tui_get_status"
-                      + " section 'chaos' has the rules."
+                      + " section 'chaos' has the rules, tui_get_table tab 'Chaos' their live state and effect."
                     : "Chaos: camel-chaos is in the integration but off, so it injects no faults.";
         };
     }
