@@ -7186,3 +7186,31 @@ An item that fails every time is now routed again at every poll. Handle the fail
 dead letter channel or a handled `onException`, so that the item is marked consumed. To retry it less often, raise
 `delay`, or set `backoffIdleThreshold` and `backoffMultiplier`: a poll counts only the items that it marked consumed,
 so a poll whose items all failed is an idle poll, after which a `greedy` consumer does not poll again at once.
+
+=== camel-jbang - the Quarkus Platform is looked up only for the Quarkus runtime
+
+With a runtime other than Quarkus, `camel run` and `camel export` no longer look up the Quarkus Platform in the Quarkus
+Extension Registry. Before, the command stopped when the registry could not be reached and no cached answer existed,
+also for an integration that uses nothing from Quarkus. For these runtimes `camel kubernetes export` and
+`camel kubernetes run` no longer look it up either; with the Quarkus runtime they no longer ask `registry.quarkus.io`
+in addition to the registry or the Quarkus version that is given.
+
+With these runtimes, the dependencies that Camel CLI adds with the version of Quarkus now get the `quarkus-version` of
+the `camel-dependencies` POM of the Camel CLI, as before Camel 4.21, instead of the version of the Quarkus Platform that
+the registry has for the Camel version:
+
+* `io.quarkus:quarkus-core`, for a source that imports `jakarta.inject.Inject`, `jakarta.inject.Named`,
+  `jakarta.inject.Singleton`, `jakarta.enterprise.context.ApplicationScoped` or `jakarta.enterprise.inject.Produces`;
+* the `io.quarkus:quarkus-jdbc-*` driver of a `quarkus.datasource.db-kind` property.
+
+This is also the version of these dependencies in the `pom.xml` of an export to Camel Main or Spring Boot. With
+`camel run` and `camel export`, `--quarkus-version` (or `camel.jbang.quarkusVersion`) still sets it.
+
+The run settings (`.camel-jbang/camel-jbang-run.properties`) of these runs no longer have `camel.jbang.quarkusGroupId`,
+`camel.jbang.quarkusVersion` and `camel.jbang.quarkusExtensionRegistryBaseUri`, unless a Quarkus version is given.
+
+The export to Quarkus now leaves the version of the `io.quarkus` dependencies to the Quarkus Platform BOM, as for the
+Camel Quarkus extensions that the BOM manages, also for a dependency given with `--dep`. Before, the `pom.xml` had them
+with the version of the run, which can be another one than the platform of the export, for example when the export
+reuses the data of an earlier `camel run`. An `io.quarkus` artifact that the BOM does not manage needs its version
+added in the exported `pom.xml`. Nothing else changes for the Quarkus runtime.

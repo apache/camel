@@ -489,6 +489,10 @@ class QuarkusExporter extends Exporter {
                         // Use plain camel with hard-coded version
                         gav.setVersion(request.camelVersion);
                     }
+                } else if ("io.quarkus".equals(gid) && !"lib".equals(gav.getPackaging())) {
+                    // managed in the Quarkus Platform BOM. The version of the run can be another one, such as the one
+                    // of a run with another runtime, whose data is reused. A local JAR is named by its version
+                    gav.setVersion(null);
                 }
                 gavs.add(gav);
             }

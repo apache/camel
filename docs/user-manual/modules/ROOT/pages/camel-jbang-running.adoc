@@ -374,7 +374,8 @@ The lookup walks up from the class name:
 3. The value is a Maven coordinate. A `camel:xxx` short form uses its Camel catalog coordinates
    when available, or the running Camel version otherwise. A `${...}` placeholder in the hand-written file is resolved
    from the `camel-dependencies` POM of that version; the generated third-party file carries the
-   versions already resolved.
+   versions already resolved. The Quarkus dependencies of the hand-written file use `--quarkus-version` when it is
+   given, and the version of the Quarkus Platform with the Quarkus runtime.
 4. The dependency and its transitive dependencies are downloaded and added to the classpath,
    and the class is loaded again.
 
