@@ -30,6 +30,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +55,13 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
+    private static final int MAX_CREDENTIALS_CONNECTION_FACTORIES = 100;
 
     private ExecutorService asyncStartStopExecutorService;
+    // the connection factory of the component wrapped with the credentials of the endpoints: one per username, which
+    // other credentials (such as a rotated password) replace
+    private final Map<String, CredentialsConnectionFactory> credentialsConnectionFactories
+            = LRUCacheFactory.newLRUCache(MAX_CREDENTIALS_CONNECTION_FACTORIES);
 
     @Metadata(label = "advanced", description = "To use a shared JMS configuration")
     private JmsConfiguration configuration;
@@ -1250,11 +1256,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
             LOG.debug(
                     "Wrapping existing ConnectionFactory with UserCredentialsConnectionFactoryAdapter using username: {} and password: ******",
                     cfUsername);
-            UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
-            ucfa.setTargetConnectionFactory(cf);
-            ucfa.setPassword(cfPassword);
-            ucfa.setUsername(cfUsername);
-            endpoint.getConfiguration().setConnectionFactory(ucfa);
+            endpoint.getConfiguration().setConnectionFactory(credentialsConnectionFactory(cf, cfUsername, cfPassword));
             endpoint.getConfiguration().setUsername(cfUsername);
             endpoint.getConfiguration().setPassword(cfPassword);
         } else {
@@ -1296,6 +1298,54 @@ public class JmsComponent extends HeaderFilterStrategyComponent {
         setProperties(endpoint, parameters);
 
         return endpoint;
+    }
+
+    /**
+     * Wraps the connection factory with the credentials. Spring finds the session of a transaction by the connection
+     * factory instance, so the endpoints that wrap the connection factory of the component with the same username and
+     * password share one adapter: a message they send from a transacted route takes part in the transaction of the
+     * consumer. Other credentials, such as a rotated password, get a new adapter, and so does another connection
+     * factory.
+     */
+    private ConnectionFactory credentialsConnectionFactory(
+            ConnectionFactory connectionFactory, String username, String password) {
+        if (connectionFactory != getConfiguration().getConnectionFactory()) {
+            return createCredentialsConnectionFactory(connectionFactory, username, password);
+        }
+        synchronized (credentialsConnectionFactories) {
+            CredentialsConnectionFactory answer = credentialsConnectionFactories.get(username);
+            if (answer == null || !answer.isFor(connectionFactory, password)) {
+                answer = new CredentialsConnectionFactory(
+                        connectionFactory, password, createCredentialsConnectionFactory(connectionFactory, username, password));
+                credentialsConnectionFactories.put(username, answer);
+            }
+            return answer.adapter;
+        }
+    }
+
+    private static ConnectionFactory createCredentialsConnectionFactory(
+            ConnectionFactory connectionFactory, String username, String password) {
+        UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
+        ucfa.setTargetConnectionFactory(connectionFactory);
+        ucfa.setPassword(password);
+        ucfa.setUsername(username);
+        return ucfa;
+    }
+
+    private static final class CredentialsConnectionFactory {
+        private final ConnectionFactory target;
+        private final String password;
+        private final ConnectionFactory adapter;
+
+        private CredentialsConnectionFactory(ConnectionFactory target, String password, ConnectionFactory adapter) {
+            this.target = target;
+            this.password = password;
+            this.adapter = adapter;
+        }
+
+        private boolean isFor(ConnectionFactory connectionFactory, String password) {
+            return target == connectionFactory && this.password.equals(password);
+        }
     }
 
     protected JmsEndpoint createTemporaryTopicEndpoint(
