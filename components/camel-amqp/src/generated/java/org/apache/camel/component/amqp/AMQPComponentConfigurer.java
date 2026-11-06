@@ -26,6 +26,8 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "brokerurl":
         case "brokerUrl": target.setBrokerUrl(property(camelContext, java.lang.String.class, value)); return true;
+        case "cacheconnection":
+        case "cacheConnection": target.setCacheConnection(property(camelContext, boolean.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "includeamqpannotations":
         case "includeAmqpAnnotations": target.setIncludeAmqpAnnotations(property(camelContext, boolean.class, value)); return true;
@@ -55,6 +57,8 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "brokerurl":
         case "brokerUrl": return java.lang.String.class;
+        case "cacheconnection":
+        case "cacheConnection": return boolean.class;
         case "host": return java.lang.String.class;
         case "includeamqpannotations":
         case "includeAmqpAnnotations": return boolean.class;
@@ -85,6 +89,8 @@ public class AMQPComponentConfigurer extends JmsComponentConfigurer implements G
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "brokerurl":
         case "brokerUrl": return target.getBrokerUrl();
+        case "cacheconnection":
+        case "cacheConnection": return target.isCacheConnection();
         case "host": return target.getHost();
         case "includeamqpannotations":
         case "includeAmqpAnnotations": return target.isIncludeAmqpAnnotations();

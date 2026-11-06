@@ -4069,6 +4069,20 @@ of the body. It also says how to send the body as text: convert it to a `String`
 JSON). This applies to the components that build on camel-jms (`camel-amqp`, `camel-activemq`, `camel-activemq6`) and
 to `camel-sjms2`.
 
+=== camel-amqp - the producers share one connection when the component creates the connection factory
+
+When the `amqp` component creates the connection factory, from `brokerUrl`, from the `host`, `port`, `username`,
+`password` and `useSsl` options, or with the `AMQPComponent.amqpComponent` factory methods, its producers now send
+over one shared connection, which the component closes when it stops. Before, every message sent opened and closed a
+connection to the broker. This also applies to request/reply and to the polling consumer (for example `pollEnrich`).
+The consumers keep their own connections, and a message sent in a transacted route takes part in the transaction as
+before. As the messages go over one connection, they all go to the same broker when the URL leads to several brokers,
+for example behind a load balancer.
+
+A `connectionFactory` set on the component or on an endpoint is used as before, and so is the connection factory of an
+endpoint with its own `username` and `password`. To open a connection for every message sent, as before, set the new
+`cacheConnection` option to `false` (`camel.component.amqp.cache-connection = false`).
+
 === camel-pulsar - the producer continues the sequence ids of the broker
 
 The `pulsar` producer no longer passes the default `initialSequenceId=-1` to the Pulsar client, so the client
