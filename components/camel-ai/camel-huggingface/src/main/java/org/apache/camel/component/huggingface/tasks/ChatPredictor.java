@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
@@ -41,6 +42,11 @@ import org.apache.camel.support.LRUCacheFactory;
  * models. It supports automatic history retention in-memory (keyed by a header for multi-user support), system prompts,
  * and configurable roles. The predictor is designed to be model-agnostic, allowing seamless swapping of compatible
  * chat-tuned LLMs via the modelId configuration.
+ * </p>
+ *
+ * <p>
+ * The turns of one memory ID run one at a time, so each turn sees the history of the turn before it. Turns of different
+ * memory IDs are not held up by each other.
  * </p>
  *
  * <p>
@@ -105,6 +111,10 @@ public class ChatPredictor extends AbstractTaskPredictor {
     // In-memory chat history (key = memoryId, value = JSON string of list of dicts)
     private final Map<String, String> chatHistories;
 
+    // A turn reads the history, runs the model and writes the history back, so the turns of one memory ID hold its
+    // lock. A lock is kept only while turns of its memory ID are in flight, so the map needs no bound.
+    private final Map<String, TurnLock> turnLocks = new ConcurrentHashMap<>();
+
     public ChatPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
         int maxHistoryMessages = config.getMaxHistoryMessages();
@@ -131,9 +141,36 @@ public class ChatPredictor extends AbstractTaskPredictor {
     }
 
     @Override
+    public void predict(Exchange exchange) throws Exception {
+        String memoryId = memoryId(exchange);
+        TurnLock turnLock = turnLocks.compute(memoryId, (id, existing) -> {
+            TurnLock answer = existing != null ? existing : new TurnLock();
+            answer.turns++;
+            return answer;
+        });
+        turnLock.lock.lock();
+        try {
+            super.predict(exchange);
+        } finally {
+            turnLock.lock.unlock();
+            turnLocks.computeIfPresent(memoryId, (id, existing) -> --existing.turns == 0 ? null : existing);
+        }
+    }
+
+    /**
+     * The number of memory IDs with turns in flight.
+     */
+    int conversationsInFlight() {
+        return turnLocks.size();
+    }
+
+    private String memoryId(Exchange exchange) {
+        return exchange.getIn().getHeader(config.getMemoryIdHeader(), "default", String.class);
+    }
+
+    @Override
     protected Input prepareInput(Exchange exchange) throws Exception {
-        String memoryIdHeader = config.getMemoryIdHeader();
-        String memoryId = exchange.getIn().getHeader(memoryIdHeader, "default", String.class);
+        String memoryId = memoryId(exchange);
 
         // Clear if requested
         Boolean clear = exchange.getIn().getHeader("CamelChatClearHistory", Boolean.class);
@@ -209,8 +246,7 @@ public class ChatPredictor extends AbstractTaskPredictor {
         exchange.getMessage().setHeader(HuggingFaceConstants.OUTPUT, generatedText);
 
         // Update history with full returned history
-        String memoryIdHeader = config.getMemoryIdHeader();
-        String memoryId = exchange.getIn().getHeader(memoryIdHeader, "default", String.class);
+        String memoryId = memoryId(exchange);
         if (node.isArray() && !node.isEmpty()) {
             JsonNode first = node.get(0);
             if (first.has("generated_text") && first.get("generated_text").isArray()) {
@@ -244,5 +280,11 @@ public class ChatPredictor extends AbstractTaskPredictor {
         }
         LOG.debug("Dropped {} old messages from the chat history", history.size() - trimmed.size());
         return trimmed;
+    }
+
+    private static final class TurnLock {
+        private final ReentrantLock lock = new ReentrantLock();
+        // the turns that hold or wait for the lock, only changed inside a compute of turnLocks
+        private int turns;
     }
 }
