@@ -305,7 +305,8 @@ class ChaosTab extends AbstractTableTab {
             parts.add("next burst in " + shortTime(r.nextBurstIn));
         }
         if (r.nextFireIn > 0) {
-            parts.add("fires again in " + r.nextFireIn);
+            // a count of matches (rate=every:N), not a time
+            parts.add("fires again in " + r.nextFireIn + (r.nextFireIn == 1 ? " match" : " matches"));
         }
         if (r.endsIn >= 0) {
             parts.add("ends in " + shortTime(r.endsIn));
@@ -377,7 +378,7 @@ class ChaosTab extends AbstractTableTab {
         }
         boolean first = true;
         for (ChaosInfo.RecentFault f : chaos.recentFaults) {
-            if (!r.id.equals(f.rule())) {
+            if (r.id == null || !r.id.equals(f.rule())) {
                 continue;
             }
             lines.add(Line.from(

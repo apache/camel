@@ -193,6 +193,23 @@ class ChaosTabRenderTest {
     }
 
     @Test
+    void theNoteOfAnEveryNRuleCountsMatches() {
+        ChaosInfo.Rule every = new ChaosInfo.Rule();
+        every.text = "endpoint=x error rate=every:5";
+        every.nextFireIn = 3;
+        assertThat(ChaosTab.note(every)).isEqualTo("fires again in 3 matches");
+        every.nextFireIn = 1;
+        assertThat(ChaosTab.note(every)).isEqualTo("fires again in 1 match");
+    }
+
+    @Test
+    void aRuleWithoutAnIdIsShownWithoutFailing() throws Exception {
+        chaos("{\"enabled\": true, \"rules\": [{\"state\": \"active\", \"rule\": \"step=a error\"}],"
+              + " \"report\": {\"verdict\": \"PASS\", \"recentFaults\": [{\"rule\": \"r1\", \"fault\": \"error\"}]}}");
+        assertThat(TuiTestHelper.renderToString(new ChaosTab(ctx), 160, 30)).contains("step a");
+    }
+
+    @Test
     void sparklineAndRates() {
         long[] perSecond = new long[60];
         perSecond[0] = 1;
