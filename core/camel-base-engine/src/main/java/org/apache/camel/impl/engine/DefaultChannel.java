@@ -41,6 +41,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.InterceptableProcessor;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.spi.StepListener;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.WrapAwareProcessor;
 import org.apache.camel.support.OrderedComparator;
@@ -263,6 +264,14 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                 }
                 target = wrapped;
             }
+        }
+
+        // the step listeners observe each call of what the strategies returned, below the error handler of the step;
+        // with no listener installed there is no wrapper, so the step is built as without listeners
+        List<StepListener> stepListeners = camelContext.getCamelContextExtension().getStepListeners();
+        if (!stepListeners.isEmpty()) {
+            target = StepListenerProcessor.create(stepListeners, route.getRouteId(), targetOutputDef.getId(),
+                    nextProcessor, target);
         }
 
         if (route.isStreamCaching()) {

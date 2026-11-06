@@ -32,9 +32,15 @@ public interface AsyncCallback extends Runnable {
      * <p/>
      * If an exception occurred while processing the exchange, the exception field of the {@link Exchange} being
      * processed will hold the caused exception.
+     * <p/>
+     * It is called exactly once for each call of {@link AsyncProcessor#process(Exchange, AsyncCallback)} it was given
+     * to, also when the processing failed, and never a second time: a second call can continue an exchange that was
+     * already continued. See the contract in {@link AsyncProcessor}.
      *
      * @param doneSync is <tt>true</tt> if the processing of the {@link Exchange} was completed by a synchronous thread.
-     *                 Otherwise, its <tt>false</tt> to indicate it was completed by an asynchronous thread.
+     *                 Otherwise, its <tt>false</tt> to indicate it was completed by an asynchronous thread. It is the
+     *                 value that {@link AsyncProcessor#process(Exchange, AsyncCallback)} returns, except for a
+     *                 processor that hands its callback to the reactive executor (see {@link AsyncProcessor}).
      */
     void done(boolean doneSync);
 
