@@ -6,7 +6,7 @@ for 20 seconds". This screen shows the rules, how often they fire, what
 their faults do to the exchanges, and the verdict of the report.
 
 Chaos is on with `camel run --chaos` (profile `dev`). Add, change and
-remove rules with the Camel CLI:
+remove rules on this screen (see Keys below), or with the Camel CLI:
 
 ```
 camel cmd chaos-add myapp --rule='endpoint=http:stock* error status=503 rate=0.25 until=10m'
@@ -52,3 +52,17 @@ exchange.
 The counts of the report per route: completed (DONE), failed (FAIL),
 failed and kept by the consumer to read again (KEPT), handled by the
 error handler (HAND) and the redeliveries (REDEL).
+
+## Keys
+
+- **a** — Add a rule, typed as one line, such as `endpoint=kafka:orders* error rate=0.1 until=5m`
+- **e** — Change the selected rule: the line starts with the rule as it is
+- **x** — Remove the selected rule
+- **c** — Clear: remove all rules (the report keeps what they did)
+- **R** — A new experiment: no rules and a new report, with the same seed
+
+Each asks to confirm with **y**, showing the rule. The integration checks
+the rule as `camel.chaos.rules` is checked: a rule that is not valid comes
+back with the reason, and a rule that matches nothing in the integration
+(often a typo) with a warning. Press **e** in that dialog to change the
+rule.

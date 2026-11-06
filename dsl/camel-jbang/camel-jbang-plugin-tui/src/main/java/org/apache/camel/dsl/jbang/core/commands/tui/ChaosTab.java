@@ -29,6 +29,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -46,7 +47,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
  * The chaos screen (camel-chaos): whether chaos is on, the verdict of the report, the current rules with their live
  * state (the observed rate, when a rule last fired, its faults per second over the last minute as a sparkline, and the
  * effect of its faults on the exchanges), the selected rule in detail with its recent faults, and the counts per route
- * of the report. It only reads: rules are added, changed and removed with {@code camel cmd chaos-*}.
+ * of the report. Rules are added, changed and removed from here too ({@link ChaosControl}), as with
+ * {@code camel cmd chaos-*}.
  */
 class ChaosTab extends AbstractTableTab {
 
@@ -55,8 +57,59 @@ class ChaosTab extends AbstractTableTab {
     private static final int TABLE_SPARK = 15;
     private static final int ROUTES_WIDTH = 46;
 
+    private final ChaosControl control;
+
     ChaosTab(MonitorContext ctx) {
+        this(ctx, new ChaosControl(ctx));
+    }
+
+    ChaosTab(MonitorContext ctx, ChaosControl control) {
         super(ctx);
+        this.control = control;
+    }
+
+    ChaosControl control() {
+        return control;
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        return control.handleKey(ke, info, info != null && info.chaos != null ? selectedRule(info.chaos) : null);
+    }
+
+    @Override
+    public boolean handleEscape() {
+        return control.escape();
+    }
+
+    @Override
+    public boolean isTextInputActive() {
+        return control.isTextInputActive();
+    }
+
+    @Override
+    public boolean isConfirming() {
+        return control.isConfirming();
+    }
+
+    @Override
+    public boolean handlePaste(String text) {
+        return control.handlePaste(text);
+    }
+
+    @Override
+    public void navigateUp() {
+        if (!control.isOpen()) {
+            super.navigateUp();
+        }
+    }
+
+    @Override
+    public void navigateDown() {
+        if (!control.isOpen()) {
+            super.navigateDown();
+        }
     }
 
     @Override
@@ -94,6 +147,7 @@ class ChaosTab extends AbstractTableTab {
                 .split(rows.get(2));
         renderDetail(frame, bottom.get(0), chaos, selectedRule(chaos));
         renderRoutes(frame, bottom.get(1), chaos);
+        control.render(frame, area);
     }
 
     private ChaosInfo.Rule selectedRule(ChaosInfo chaos) {
@@ -596,7 +650,12 @@ class ChaosTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        hint(spans, "Esc", "back");
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null || info.chaos == null || !info.chaos.enabled) {
+            hint(spans, "Esc", "back");
+            return;
+        }
+        control.renderFooter(spans, !info.chaos.rules.isEmpty());
     }
 
     @Override
