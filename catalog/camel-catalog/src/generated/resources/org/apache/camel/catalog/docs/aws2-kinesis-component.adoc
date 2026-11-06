@@ -218,6 +218,27 @@ Everything will work out of the box, by simply using your AWS Credentials.
 
 NOTE: In the beginning the consumer will require 60/70 seconds for preparing everything, listing the shards, creating/querying the Lease table on Dynamo DB. Keep it in mind while working with the KCL consumer.
 
+=== Failed records with the KCL consumer
+
+By default, a record whose exchange fails (the route ends with an exception) is reported to the exception handler of the
+consumer and checkpointed with its batch, so it is not consumed again. Use a dead letter channel or redelivery in the
+route when a failed record must not be lost.
+
+With `kclStopCheckpointOnFailure=true`, the checkpoint of a shard stays before the first record of it that failed. KCL
+does not deliver records of a shard again while the consumer holds the lease of the shard, so the consumer goes on
+routing the next records, but it checkpoints only the records before the failed one, also when the route stops. The
+next holder of the lease (the route started again, or another worker taking over the lease) consumes the records from
+the failed one on again. This has a cost:
+
+* the records after the failed one are routed again, so they can be routed twice and out of order: the route must be
+idempotent;
+* only one WARN, with the sequence number of the first failed record, shows that the checkpoint stays behind: the lag
+metrics do not, as the consumer still reads the shard. A record that fails each time keeps the checkpoint of its shard
+before it: each new holder of the lease routes again everything since that record, up to the retention period of the
+stream;
+* at the end of a shard (resharding) the end is still checkpointed, as KCL requires, so the failed records of that shard
+are not consumed again.
+
 == Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
