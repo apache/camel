@@ -96,8 +96,10 @@ public class ConsulMasterIT {
 
             // Start the context after some random time so the startup order
             // changes for each test.
+            // The start itself must not run inside Awaitility: its timeout interrupts the thread, which aborts a
+            // start that is slow on a loaded machine and leaves the node without ever taking part in the election
             Awaitility.await().pollDelay(ThreadLocalRandom.current().nextInt(500), TimeUnit.MILLISECONDS)
-                    .untilAsserted(() -> Assertions.assertDoesNotThrow(context::start));
+                    .until(() -> true);
             context.start();
 
             contextLatch.await();
