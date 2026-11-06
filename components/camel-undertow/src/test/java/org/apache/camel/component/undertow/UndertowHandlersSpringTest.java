@@ -26,6 +26,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.http.base.HttpOperationFailedException;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ContextConfiguration(locations = { "/HandlersSpringTest.xml" })
 public class UndertowHandlersSpringTest {
 
-    private Integer port;
+    private AvailablePortFinder.Port port;
 
     @Produce
     private ProducerTemplate template;
@@ -64,7 +65,7 @@ public class UndertowHandlersSpringTest {
         mockEndpoint.expectedBodiesReceived("Hello World");
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2VjcmV0";
-        String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
+        String out = template.requestBodyAndHeader("undertow:http://localhost:" + port.getPort() + "/spring", "Hello World",
                 "Authorization", auth, String.class);
         assertEquals("Bye World", out);
 
@@ -77,19 +78,15 @@ public class UndertowHandlersSpringTest {
         // username:password is guest:secret
         String auth = "Basic Z3Vlc3Q6c2Vjc";
         CamelExecutionException e = assertThrows(CamelExecutionException.class, () -> {
-            String out = template.requestBodyAndHeader("undertow:http://localhost:" + port + "/spring", "Hello World",
+            String out = template.requestBodyAndHeader("undertow:http://localhost:" + port.getPort() + "/spring", "Hello World",
                     "Authorization", auth, String.class);
         });
         HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
         assertEquals(401, cause.getStatusCode());
     }
 
-    public Integer getPort() {
-        return port;
-    }
-
     @Resource(name = "dynaPort")
-    public void setPort(Integer port) {
+    public void setPort(AvailablePortFinder.Port port) {
         this.port = port;
     }
 

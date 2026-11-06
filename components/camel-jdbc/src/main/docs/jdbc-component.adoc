@@ -157,7 +157,27 @@ YAML::
 ====
 
 You can also store the header values in a `java.util.Map` and store the
-map on the headers with the key `CamelJdbcParameters`.
+map on the headers with the key `CamelJdbcParameters`. When `CamelJdbcParameters` is not a `Map` (such as the `List`
+of an earlier query with plain `?` placeholders in the same route), the named parameters take their values from the
+message headers.
+
+=== Using plain ? placeholders
+
+A query with plain `?` placeholders (and no named parameters) takes the values of the placeholders, in order, only from
+the `CamelJdbcParameters` header, as a `java.util.List` (a `java.util.Map` works too, with its values taken in the order
+of its entries, so use a `LinkedHashMap`). An object array works like a `List`, and any other value is the value of a
+query with one `?` placeholder: a `String` is not split by comma, and a `byte[]` is one value. The other message
+headers are not used. When the header is not set, or has more or fewer values than the query has `?` placeholders,
+the exchange fails.
+
+._Java-only: inline Processor that sets the List of the values_
+[source,java]
+----
+from("direct:projects")
+    .process(exchange -> exchange.getIn().setHeader(JdbcConstants.JDBC_PARAMETERS, List.of("ASF", 123)))
+    .setBody(constant("select * from projects where license = ? and id > ? order by id"))
+    .to("jdbc:myDataSource?useHeadersAsParameters=true");
+----
 
 == Examples
 

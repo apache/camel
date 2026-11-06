@@ -18,6 +18,10 @@ package org.apache.camel.component.mcp.server.main;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Map;
 
@@ -87,6 +91,64 @@ class McpServerMainPropertiesTest {
                 client.closeGracefully();
             }
             main.stop();
+        }
+    }
+
+    @Test
+    void testMcpAllowedOriginsFromProperties() throws Exception {
+        int port = AvailablePortFinder.getNextAvailable();
+
+        Main main = new Main();
+        main.addInitialProperty("camel.server.enabled", "true");
+        main.addInitialProperty("camel.server.port", String.valueOf(port));
+        main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-tags", "crm");
+        main.addInitialProperty("camel.server.mcp-allowed-origins", "https://App.Example.com:443/, http://localhost:3000");
+        main.start();
+
+        try {
+            assertThat(initialize(port, null)).isEqualTo(200);
+            assertThat(initialize(port, "https://app.example.com")).isEqualTo(200);
+            assertThat(initialize(port, "http://localhost:3000")).isEqualTo(200);
+            // the configured list replaces the loopback default
+            assertThat(initialize(port, "http://localhost:6274")).isEqualTo(403);
+            assertThat(initialize(port, "https://other.example.com")).isEqualTo(403);
+        } finally {
+            main.stop();
+        }
+    }
+
+    @Test
+    void testMcpAllowedOriginWildcardFailsFast() {
+        Main main = new Main();
+        main.addInitialProperty("camel.server.enabled", "true");
+        main.addInitialProperty("camel.server.port", String.valueOf(AvailablePortFinder.getNextAvailable()));
+        main.addInitialProperty("camel.server.mcp-enabled", "true");
+        main.addInitialProperty("camel.server.mcp-tags", "crm");
+        main.addInitialProperty("camel.server.mcp-allowed-origins", "*");
+
+        try {
+            assertThatThrownBy(main::start)
+                    .hasStackTraceContaining("MCP allowed origin * is not supported");
+        } finally {
+            main.stop();
+        }
+    }
+
+    private static int initialize(int port, String origin) throws Exception {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:" + port + "/mcp"))
+                .timeout(Duration.ofSeconds(10))
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json, text/event-stream")
+                .POST(HttpRequest.BodyPublishers.ofString("""
+                        {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18",
+                        "capabilities":{},"clientInfo":{"name":"test","version":"1"}}}"""));
+        if (origin != null) {
+            builder.header("Origin", origin);
+        }
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            return client.send(builder.build(), HttpResponse.BodyHandlers.discarding()).statusCode();
         }
     }
 
