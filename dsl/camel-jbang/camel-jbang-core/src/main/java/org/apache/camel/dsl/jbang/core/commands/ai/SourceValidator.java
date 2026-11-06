@@ -144,7 +144,7 @@ public final class SourceValidator {
             // Checked for its YAML syntax only, a test with actions Citrus does not have was written, and camel test
             // run then failed on it: so the test schema of Citrus checks it too
             List<String> syntax = validateYamlSyntax(content);
-            return syntax.isEmpty() ? CitrusTestChecks.validate(content) : syntax;
+            return syntax.isEmpty() ? CitrusTestChecks.validate(content, directory, fileName) : syntax;
         }
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
