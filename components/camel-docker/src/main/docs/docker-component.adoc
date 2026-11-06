@@ -88,6 +88,15 @@ The other headers, such as `CamelDockerContainerId`, still take precedence over 
 messages come from an untrusted producer through a consumer that does not filter out `Camel*` headers, remove these
 headers with `removeHeaders("CamelDocker*")` before the `docker` endpoint.
 
+=== Registry authentication
+
+The `imagepull` and `imagepush` operations send the `username`, `password` and `email` of the endpoint only for an
+image in the registry of `serverAddress`: the registry host and port of the image reference must match those of
+`serverAddress`. An image reference without a registry host, such as `ubuntu` or `team/app`, is on Docker Hub, which
+matches the default `serverAddress` (`https://index.docker.io/v1/`). An image in another registry is pulled or pushed
+without authentication, and so is every image when the endpoint has no `username`. To pull or push with
+authentication from several registries, use one endpoint per registry.
+
 === Streaming operations
 
 The operations `imagebuild`, `imagepull`, `imagepush`, `containerattach`, `containerlog`, `containerwait` and

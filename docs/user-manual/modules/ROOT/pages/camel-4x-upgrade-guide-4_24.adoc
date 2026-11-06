@@ -2166,6 +2166,17 @@ The other headers, such as `CamelDockerContainerId`, `CamelDockerEmail` and `Cam
 precedence over the options of the endpoint, as before. The `events` and `stats` consumers do not change: they always
 used the options of the endpoint.
 
+=== camel-docker - imagepull and imagepush authenticate only to the registry of serverAddress
+
+The `imagepull` and `imagepush` operations of the `docker` component added the registry authentication of the
+endpoint (`username`, `password`, `email` and `serverAddress`) to every pull and push, whatever registry the image
+reference names. They now add it only when the registry host and port of the image (Docker Hub for an image without a
+registry host, such as `ubuntu` or `team/app`) match those of `serverAddress`. An image in another registry is pulled
+or pushed without authentication. Set `serverAddress` to the registry of the images, or use one endpoint per registry.
+
+Without a `username` on the endpoint, `imagepull` and `imagepush` failed with a `NullPointerException`
+("Configured username is null."). They now pull or push without authentication.
+
 === camel-cli-connector - every action with a request id gets an answer
 
 An action written to `~/.camel/<pid>-action-<requestId>.json` now always gets an answer in
