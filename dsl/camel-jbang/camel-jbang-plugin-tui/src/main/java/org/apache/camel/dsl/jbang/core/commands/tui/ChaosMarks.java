@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -58,6 +59,11 @@ final class ChaosMarks {
                 marks.put(f.exchangeId(), f.rule());
             }
         }
+    }
+
+    /** Forgets the marks of the integrations that are no longer running. */
+    synchronized void retain(Collection<String> pids) {
+        byPid.keySet().retainAll(pids);
     }
 
     synchronized String ruleOf(String pid, String exchangeId) {

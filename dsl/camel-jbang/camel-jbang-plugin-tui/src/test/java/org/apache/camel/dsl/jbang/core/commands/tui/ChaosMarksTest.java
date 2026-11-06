@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Line;
@@ -82,6 +83,14 @@ class ChaosMarksTest {
         assertThat(marks.ruleOf("1234", "E0")).isNull();
         assertThat(marks.ruleOf("1234", "E" + (ChaosMarks.MAX + 9))).isEqualTo("r1");
         assertThat(marks.ruleOf("9999", "E5")).isNull();
+    }
+
+    @Test
+    void theMarksOfAStoppedIntegrationAreForgotten() {
+        ctx.chaosMarks.retain(Set.of("1234"));
+        assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-0000000000000001E")).isEqualTo("r1");
+        ctx.chaosMarks.retain(Set.of("5678"));
+        assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-0000000000000001E")).isNull();
     }
 
     @Test

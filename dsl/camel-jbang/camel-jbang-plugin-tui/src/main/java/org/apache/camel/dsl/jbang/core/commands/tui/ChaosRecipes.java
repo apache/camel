@@ -74,8 +74,8 @@ final class ChaosRecipes {
         try {
             String json = new DefaultCamelCatalog().chaosModelJSon();
             return json != null ? parse(json) : null;
-        } catch (RuntimeException | LinkageError e) {
-            // an older catalog: the rule is typed as one line
+        } catch (LinkageError e) {
+            // an older catalog without chaosModelJSon(): the rule is typed as one line
             return null;
         }
     }
