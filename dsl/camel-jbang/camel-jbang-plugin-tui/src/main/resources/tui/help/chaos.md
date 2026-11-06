@@ -55,7 +55,13 @@ error handler (HAND) and the redeliveries (REDEL).
 
 ## Keys
 
-- **a** — Add a rule, typed as one line, such as `endpoint=kafka:orders* error rate=0.1 until=5m`
+- **a** — Add a rule: pick what should go wrong from the known rules of
+  camel-chaos (such as "Downstream returns an error", "Did the work, then
+  failed", "The route flaps"), then fill in its values: the endpoints,
+  routes and steps of the integration are picked with Left and Right, and
+  the rule is shown as it is built. The last entry, "Write the rule
+  yourself", types it as one line, such as
+  `endpoint=kafka:orders* error rate=0.1 until=5m`
 - **e** — Change the selected rule: the line starts with the rule as it is
 - **x** — Remove the selected rule
 - **c** — Clear: remove all rules (the report keeps what they did)
