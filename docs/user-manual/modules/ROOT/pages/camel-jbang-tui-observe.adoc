@@ -240,6 +240,28 @@ right panel. While sending, the status shows a spinner.
 
 Beyond the core tabs described above, the TUI includes several specialized screens worth highlighting.
 
+=== Chaos
+
+With xref:next@components:others:chaos.adoc[camel-chaos] (`camel run --chaos`), the Chaos tab (under More >
+Observability) shows the faults that the chaos rules inject into the running integration, and what they do:
+
+* The verdict of the report (PASS or FAIL with the reason), the messages lost, the expectations (met, unmet, pending)
+and the faults of all rules in the last minute.
+* The rules: target, fault, the observed rate next to the rate of the rule (`24% of 25%`), how often and how long ago it
+fired, its faults per second over the last minute as a sparkline, the effect of its faults on the exchanges (completed,
+recovered by redelivery, handled by the error handler, failed, in flight), and a note (when it ends or starts, its
+bursts, what a stall or lifecycle rule does to its route).
+* The selected rule in detail: the effect as a bar, its expectation with the time left, why it skipped faults, and its
+recent faults with the endpoint or step, the route and the exchange.
+* The counts of the report per route: completed, failed, kept by the consumer, handled, redeliveries.
+
+image::jbang/camel-tui-chaos.png[The Chaos tab: a failed expectation, four rules with their live state, and the recent faults of the selected rule]
+
+While a rule injects faults, the title bar shows a badge on every screen (`🎲 chaos 3 rules · FAIL`), so a failure made
+on purpose is not debugged as a real one. The tab only reads: add, change and remove rules with `camel cmd chaos-add`,
+`chaos-change`, `chaos-remove` and `chaos-clear` (see
+xref:next@components:others:chaos.adoc#_control_while_it_runs[Control while it runs]).
+
 === CVE Audit
 
 The CVE Audit tab (under More > Project) scans all Maven dependencies on your integration's classpath
