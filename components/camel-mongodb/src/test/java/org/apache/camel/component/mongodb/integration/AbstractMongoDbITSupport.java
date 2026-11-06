@@ -39,6 +39,7 @@ import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
@@ -102,6 +103,15 @@ public abstract class AbstractMongoDbITSupport implements ConfigurableContext {
         dynamicCollection = db.getCollection(dynamicCollectionName, Document.class);
         dynamicCollection.drop();
         dynamicCollection = db.getCollection(dynamicCollectionName, Document.class);
+    }
+
+    @AfterAll
+    static void closeMongoClient() {
+        // the container is a JVM-wide singleton: close the client created per test class, or they pile up
+        if (mongo != null) {
+            mongo.close();
+            mongo = null;
+        }
     }
 
     @AfterEach
