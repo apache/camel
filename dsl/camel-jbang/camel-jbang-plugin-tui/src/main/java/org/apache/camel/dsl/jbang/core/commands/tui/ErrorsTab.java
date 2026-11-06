@@ -371,7 +371,7 @@ class ErrorsTab extends AbstractTableTab {
                     Cell.from(ei.repeatCount > 1
                             ? Span.styled(Long.toString(ei.repeatCount), Theme.error().bold())
                             : Span.raw(Long.toString(Math.max(1, ei.repeatCount)))),
-                    Cell.from(shortException),
+                    ChaosMarks.markedCell(ChaosMarks.ruleOf(ctx, info, ei.exchangeId, ei.properties), shortException),
                     Cell.from(ei.exceptionMessage != null ? ei.exceptionMessage : "")));
         }
 
@@ -550,6 +550,7 @@ class ErrorsTab extends AbstractTableTab {
                 ei.exchangeId, ei.routeId, ei.nodeId, null, ei.location,
                 ei.elapsed, ei.threadName, !ei.handled);
         addRepeatLine(lines, ei);
+        ChaosMarks.addDetailLine(lines, ctx, ctx.findSelectedIntegration(), ei.exchangeId, ei.properties);
 
         // exception with stack trace
         String exception = null;

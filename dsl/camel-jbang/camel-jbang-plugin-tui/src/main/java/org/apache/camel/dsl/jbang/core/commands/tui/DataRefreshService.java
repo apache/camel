@@ -321,6 +321,9 @@ class DataRefreshService {
                     continue;
                 }
                 IntegrationInfo info = StatusParser.parseIntegration(ph, root);
+                if (info != null && ctx != null) {
+                    ctx.chaosMarks.record(info);
+                }
                 if (info != null) {
                     IntegrationInfo prev = previousByPid.get(info.pid);
                     if (prev != null) {

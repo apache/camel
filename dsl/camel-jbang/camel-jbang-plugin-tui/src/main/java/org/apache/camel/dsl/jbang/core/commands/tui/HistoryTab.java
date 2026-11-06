@@ -1429,6 +1429,7 @@ class HistoryTab extends AbstractTab {
 
         addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
                 entry.location, entry.elapsed, entry.threadName, entry.failed);
+        ChaosMarks.addDetailLine(lines, ctx, ctx.findSelectedIntegration(), entry.exchangeId, null);
         if (showTraceProperties) {
             addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes,
                     propsChanged, prev != null ? prev.exchangeProperties : null);
@@ -1764,6 +1765,7 @@ class HistoryTab extends AbstractTab {
 
         addExchangeInfoLines(lines, entry.exchangeId, entry.routeId, entry.nodeId, entry.nodeLabel,
                 entry.location, entry.elapsed, entry.threadName, entry.failed);
+        ChaosMarks.addDetailLine(lines, ctx, ctx.findSelectedIntegration(), entry.exchangeId, null);
         if (showHistoryProperties) {
             addKvLines(lines, " Exchange Properties:", entry.exchangeProperties, entry.exchangePropertyTypes,
                     propsChanged, prev != null ? prev.exchangeProperties : null);
