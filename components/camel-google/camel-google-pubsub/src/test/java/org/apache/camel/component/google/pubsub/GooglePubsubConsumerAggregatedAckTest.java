@@ -146,7 +146,6 @@ public class GooglePubsubConsumerAggregatedAckTest {
 
             acknowledged.assertIsSatisfied();
         } finally {
-            pending.cancel(true);
             context.stop();
         }
     }
@@ -160,7 +159,7 @@ public class GooglePubsubConsumerAggregatedAckTest {
                         .addReceivedMessages(message("ack-2", "two"))
                         .addReceivedMessages(message("ack-3", "three"))
                         .build()))
-                // no more messages; cancelled when the test ends
+                // no more messages; cancelled when the consumer stops
                 .thenReturn(pending);
 
         UnaryCallable<AcknowledgeRequest, Empty> acknowledgeCallable = mock(UnaryCallable.class);
