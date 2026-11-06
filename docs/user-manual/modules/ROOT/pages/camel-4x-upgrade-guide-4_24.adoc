@@ -4111,6 +4111,51 @@ producer now uploads it with that length, and the `CamelAwsS3ContentLength` head
 length is not known. Previously the header took precedence: after a route changed the body of an object read by the
 aws2-s3 consumer (which sets the header), a longer body was stored cut to the old length and a shorter one failed.
 
+=== camel-aws2-s3 - the consumer gets each object right before routing it, and ignoreBody no longer downloads objects
+
+The consumer now gets each listed object right before its exchange is routed. Before, it got every object of the poll
+before it routed the first one: with the default `includeBody=true` the content of every object of the poll was in
+memory at the same time, and with `includeBody=false` the streams of all the objects of the poll were open at the
+same time. A poll of more than 50 objects (`maxMessagesPerPoll`) with `includeBody=false` then ran out of the 50
+connections that the HTTP client of the AWS SDK has by default, and the AWS SDK aborted the streams that were not read
+within 60 seconds, so most of the exchanges of the poll failed.
+
+This changes the following:
+
+* The batch properties count the listed objects of the poll. An object that is skipped when it is got (it was deleted
+after the listing; it cannot be got; or it is a folder and `includeFolders` is `false`) is still counted:
+`CamelBatchSize` can be higher than the number of exchanges routed for the poll, `CamelBatchIndex` has a gap, and when
+the skipped object is the last listed one, no exchange of the poll has `CamelBatchComplete` set to `true`. Before,
+they counted only the exchanges that were routed. The number of messages of the poll (used by `greedy` and
+`sendEmptyMessageWhenIdle`) still counts the exchanges routed. An aggregator with `completionFromBatchConsumer` then
+does not complete the group of a poll in which an object is skipped: the group waits for the exchanges of the next poll.
+This happens with `includeFolders=false` and folders in the bucket, or with several consumers of the same bucket (such
+as several pods of the same application). Such a route can use `completionTimeout` instead of
+`completionFromBatchConsumer` (not both), with a timeout longer than the time between two exchanges of a poll, and
+shorter than the `delay` of the consumer minus the `completionTimeoutCheckerInterval` (1 second by default).
+* An object that cannot be got is given to the exception handler of the consumer once the other exchanges of the poll
+were routed, instead of before the first one.
+* A consumer that stops during a poll no longer gets the objects that it does not route.
+* The protected method `AWS2S3Consumer.createExchanges(List<S3Object>)` is removed.
+
+With `ignoreBody=true`, the consumer, and the `getObject` operation of the producer, now send a HEAD request
+(HeadObject) instead of a GET request, so the content of the object is not downloaded. Before, the whole object was
+transferred and discarded. The headers are the same, and HeadObject needs the same `s3:GetObject` permission. However:
+
+* An object whose content cannot be got but whose metadata can is now consumed (or returned by `getObject`) instead of
+failing, and with `deleteAfterRead` (the default) deleted. For example an object archived in S3 Glacier that is not
+restored, or an object encrypted with SSE-KMS whose KMS key the role cannot use to decrypt (a GET needs
+`kms:Decrypt`, a HEAD does not).
+* The response to a failed HEAD request has no body: the `S3Exception` has the HTTP status code, but no S3 error code,
+except `NoSuchKey` for an object that does not exist.
+* The consumer no longer calls `includeS3Object(ResponseInputStream)` or `createExchange(ResponseInputStream, String)`
+for these objects, as there is no GET response: a subclass of `AWS2S3Consumer` that overrides them is not called with
+`ignoreBody=true`.
+
+The `getObject` operation of the producer now also sets the `CamelAwsS3LastModified` and `CamelMessageTimestamp`
+headers, with or without `ignoreBody`, as the consumer does. A `CamelMessageTimestamp` header that the message had
+before the operation is replaced.
+
 === camel-minio - the producer stores the whole body when the content-length header is stale
 
 When the length of the body is known without reading it (a file, `byte[]`, `String`, `Path` or cached stream), the
