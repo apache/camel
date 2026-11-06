@@ -52,6 +52,7 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
+import org.apache.camel.impl.engine.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
@@ -1311,6 +1312,11 @@ public class MulticastProcessor extends BaseProcessorSupport
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
             answer = createUnitOfWorkProcessor(route, withSendHook(processor), exchange);
+            if (answer instanceof CamelInternalProcessor internal) {
+                // no error handler around the output (such as in a doTry): a recipient producer that throws from
+                // process(exchange, callback) fails the copy instead of hanging the recipient list, as in a channel
+                internal.setCatchProcessorThrows(true);
+            }
         }
 
         return answer;
