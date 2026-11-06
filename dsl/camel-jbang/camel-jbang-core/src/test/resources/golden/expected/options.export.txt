@@ -63,8 +63,6 @@ dependency org.apache.camel:camel-micrometer-prometheus
 dependency org.apache.camel:camel-observability-services
 dependency org.apache.camel:camel-opentelemetry2
 dependency org.apache.camel:camel-platform-http-jolokia
-dependency org.apache.camel:camel-platform-http-jolokia
-dependency org.apache.camel:camel-platform-http-main
 dependency org.apache.camel:camel-platform-http-main
 dependency org.apache.camel:camel-timer
 dependency org.apache.camel:camel-yaml-dsl
