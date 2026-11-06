@@ -193,6 +193,11 @@ public final class ChaosReport {
                 }
             }
             sb.append(at).append(", skipped ").append(r.skipped);
+            if (!r.skipReasons.isEmpty()) {
+                StringJoiner why = new StringJoiner("; ", " (", ")");
+                r.skipReasons.forEach((reason, count) -> why.add(reason + ": " + count));
+                sb.append(why);
+            }
             if (r.lostAtDlq > 0) {
                 sb.append(", lost at the dead letter channel ").append(r.lostAtDlq);
             }
@@ -287,6 +292,12 @@ public final class ChaosReport {
             }
             jo.put("fired", fired);
             jo.put("skipped", r.skipped);
+            if (!r.skipReasons.isEmpty()) {
+                // why the rule did nothing, per reason
+                JsonObject why = new JsonObject();
+                r.skipReasons.forEach(why::put);
+                jo.put("skippedReasons", why);
+            }
             if (r.hooks.contains(Hook.DLQ)) {
                 jo.put("lostAtDlq", r.lostAtDlq);
             }
@@ -393,6 +404,7 @@ public final class ChaosReport {
         final long[] fired = new long[Hook.values().length];
         final long firedTotal;
         final long skipped;
+        final Map<String, Long> skipReasons;
         final long lostAtDlq;
         final long endsIn;
         final String expectRoute;
@@ -428,6 +440,7 @@ public final class ChaosReport {
             // a lifecycle rule fired when it took its route down
             firedTotal = total + (lifecycle != null && lifecycle.acted() ? 1 : 0);
             skipped = rule.skippedCount();
+            skipReasons = rule.skipReasons();
             lostAtDlq = rule.lostAtDlqCount();
             endsIn = Math.max(0, rule.endsAt - now);
             within = rule.within;

@@ -153,6 +153,27 @@ class LocalCliConnectorChaosActionTest {
     }
 
     @Test
+    void rulesAreAddedTogetherWithWarningsForTheOnesThatMatchNothing() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+
+        CliActionOutcome added = chaos("add", null, "endpoint=mock:target error at=dlq; step=tpyo delay duration=1ms");
+        assertThat(added.error()).isNull();
+        assertThat(added.result().<List<Object>> getCollection("ids")).containsExactly("r1", "r2");
+        // the id of a single rule only
+        assertThat(added.result().containsKey("id")).isFalse();
+        assertThat(added.result().<List<Object>> getCollection("warnings")).singleElement().asString()
+                .startsWith("r2: step=tpyo matches no step of the context now");
+
+        CliActionOutcome one = chaos("add", null, "endpoint=mock:target delay duration=1ms");
+        assertThat(one.result().getString("id")).isEqualTo("r3");
+        assertThat(one.result().containsKey("warnings")).isFalse();
+
+        CliActionOutcome changed = chaos("change", "r3", "endpoint=mock:taget delay duration=1ms");
+        assertThat(changed.result().<List<Object>> getCollection("warnings")).singleElement().asString()
+                .startsWith("r3: endpoint=mock:taget matches no endpoint of the context now");
+    }
+
+    @Test
     void aRuleThatIsNotValidIsRefusedWithTheReason() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
 

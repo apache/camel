@@ -1094,11 +1094,14 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Add a chaos rule to the Camel application, in the one-line form of camel.chaos.rules, e.g. \
-                  'endpoint=kafka:orders* error rate=0.1 until=5m'. Returns the id of the rule. Chaos must be on in \
-                  the application; a rule that is not valid is refused with the reason.""")
+                  'endpoint=kafka:orders* error rate=0.1 until=5m'; several rules separated by ; are added together \
+                  (all or none). Returns the ids of the rules, and warnings for a rule that matches nothing in the \
+                  application now (often a typo: fix it with camel_runtime_chaos_change). Chaos must be on in the \
+                  application; a rule that is not valid is refused with the reason.""")
     public JsonObject camel_runtime_chaos_add(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
-            @ToolArg(description = "The rule in its one-line text form, as one entry of camel.chaos.rules") String rule) {
+            @ToolArg(description = "The rule in its one-line text form, as an entry of camel.chaos.rules; several"
+                                   + " rules separated by ;") String rule) {
         requireArg("rule", rule);
         return delegateToRegistry("chaos_add", nameOrPid, Map.of("rule", rule));
     }
@@ -1107,7 +1110,8 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Change a chaos rule of the Camel application: the rule with the id gets the new one-line rule and \
-                  one more version; the report keeps the version it replaces. Returns the id and the new version.""")
+                  one more version; the report keeps the version it replaces. Returns the id and the new version, \
+                  and warnings when the new rule matches nothing in the application now.""")
     public JsonObject camel_runtime_chaos_change(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "The id of the rule, such as r1 (camel_runtime_chaos_list shows them)") String id,

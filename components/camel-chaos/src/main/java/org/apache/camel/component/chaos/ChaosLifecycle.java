@@ -301,7 +301,7 @@ final class ChaosLifecycle {
         }
         synchronized (fault) {
             if (skip != null) {
-                rule.skipped();
+                rule.skipped(skip);
                 LOG.info("Chaos rule {} did nothing: {}", rule.id, skip);
                 fault.finish(FaultState.SKIPPED, null, skip);
                 return;
