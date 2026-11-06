@@ -90,13 +90,15 @@ public class CouchDbClientWrapper {
     }
 
     public Response<ChangesResult> pollChanges(String style, String since, long heartBeat, long maxMessagesPerPoll) {
-        PostChangesOptions postChangesOptions = new PostChangesOptions.Builder()
+        PostChangesOptions.Builder builder = new PostChangesOptions.Builder()
                 .db(dbName)
-                .since(since)
-                .limit(maxMessagesPerPoll)
-                .build();
+                .since(since);
+        // 0 or a negative number means unlimited: CouchDB has no such limit value, so do not send one
+        if (maxMessagesPerPoll > 0) {
+            builder.limit(maxMessagesPerPoll);
+        }
 
-        return client.postChanges(postChangesOptions).execute();
+        return client.postChanges(builder.build()).execute();
     }
 
     public Response get(String id) {

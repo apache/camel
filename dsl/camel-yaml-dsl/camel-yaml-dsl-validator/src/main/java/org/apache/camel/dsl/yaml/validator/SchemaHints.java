@@ -30,6 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.Error;
 
 /**
@@ -340,9 +342,14 @@ final class SchemaHints {
      */
     static String errorHandlerUnderFrom(Match m) {
         JsonNode from = m.error().getInstanceNode();
-        String handler = errorHandlerText(from != null ? from.get("errorHandler") : null);
+        JsonNode written = from != null ? from.get("errorHandler") : null;
+        String handler = errorHandlerText(written, m.validator());
         String example = "route: {errorHandler: " + handler + ", from: {uri: ..., steps: [...]}}";
-        return "errorHandler: is a key of the route, not of from:. For this route only, "
+        // the handler as written, copied as the text to write, had no kind (r28 of the local-model benchmark,
+        // connect-service-jms-request-reply step 4): the model wrote it so, and was refused for it next
+        String kind = written != null && written.isObject() && !handler.equals(errorHandlerText(written))
+                ? ", and it takes the kind of handler as its key, with the options under the kind" : "";
+        return "errorHandler: is a key of the route, not of from:" + kind + ". For this route only, "
                + (m.location().endsWith("/route/from")
                        ? "write it under the route at the same level as from:, as in " + example
                        : "write the route as - route: with errorHandler: at the same level as from:, as in - " + example)
@@ -351,9 +358,51 @@ final class SchemaHints {
 
     /** An error handler as one line to copy, {noErrorHandler: {}}; its kind only when it is long. */
     static String errorHandlerText(JsonNode handler) {
+        return errorHandlerText(handler, null);
+    }
+
+    /**
+     * As {@link #errorHandlerText(JsonNode)}; with the validator, a handler whose options are not under its kind gets
+     * the form the schema takes: {redeliveryPolicy: {...}} is {defaultErrorHandler: {redeliveryPolicy: {...}}}, with a
+     * deadLetterUri the kind is deadLetterChannel, and {deadLetterChannel: "jms:queue:dead", redeliveryPolicy: {...}}
+     * is {deadLetterChannel: {deadLetterUri: "jms:queue:dead", redeliveryPolicy: {...}}}. The kind alone, {kind:
+     * {...}}, when the options are not all options of the kind.
+     */
+    static String errorHandlerText(JsonNode handler, YamlValidator validator) {
         if (handler == null || !handler.isObject() || handler.isEmpty()) {
             return handler != null && handler.isTextual() && ROUTE_ERROR_HANDLER_KINDS.contains(handler.asText())
                     ? "{" + handler.asText() + ": {}}" : "{noErrorHandler: {}}";
+        }
+        List<String> kinds = new ArrayList<>();
+        handler.fieldNames().forEachRemaining(k -> {
+            if (ROUTE_ERROR_HANDLER_KINDS.contains(k)) {
+                kinds.add(k);
+            }
+        });
+        boolean asTheSchemaTakesIt = kinds.size() == 1 && handler.size() == 1 && handler.get(kinds.get(0)).isObject();
+        if (validator != null && kinds.size() <= 1 && !asTheSchemaTakesIt && !kinds.contains("refErrorHandler")) {
+            String kind = !kinds.isEmpty() ? kinds.get(0)
+                    : handler.has("deadLetterUri") ? "deadLetterChannel" : "defaultErrorHandler";
+            JsonNode value = handler.get(kind);
+            ObjectNode options = value != null && value.isObject()
+                    ? ((ObjectNode) value).deepCopy() : JsonNodeFactory.instance.objectNode();
+            if (value != null && value.isTextual() && "deadLetterChannel".equals(kind)) {
+                // the kind with its uri as the value
+                options.set("deadLetterUri", value);
+            }
+            handler.properties().forEach(e -> {
+                if (!kind.equals(e.getKey())) {
+                    options.set(e.getKey(), e.getValue());
+                }
+            });
+            List<String> keys = new ArrayList<>();
+            options.fieldNames().forEachRemaining(keys::add);
+            if (!validator.errorHandlerOptions(kind).containsAll(keys)) {
+                return "{" + kind + ": {...}}";
+            }
+            ObjectNode wrapped = JsonNodeFactory.instance.objectNode();
+            wrapped.set(kind, options);
+            handler = wrapped;
         }
         String kind = handler.fieldNames().next();
         if (handler.size() == 1 && ROUTE_ERROR_HANDLER_KINDS.contains(kind) && !"refErrorHandler".equals(kind)
@@ -801,6 +850,12 @@ final class SchemaHints {
                     m -> "errorHandler: has the kind of handler as its key, not a " + m.unknown() + " property:"
                          + " errorHandler: {noErrorHandler: {}}, {deadLetterChannel: {deadLetterUri: \"...\"}} or"
                          + " {defaultErrorHandler: {...}}"),
+            // errorHandler: {redeliveryPolicy: ...}: an option of a kind of handler written without the kind (r28 of the
+            // local-model benchmark, connect-service-jms-request-reply step 4)
+            unknownProperty(".*/errorHandler", m -> m.validator().errorHandlerOptions("defaultErrorHandler")
+                    .contains(m.unknown()) || m.validator().errorHandlerOptions("deadLetterChannel").contains(m.unknown()),
+                    m -> "errorHandler takes the kind of handler as its key, and " + m.unknown() + " is an option of the"
+                         + " kind: write errorHandler: " + errorHandlerText(m.error().getInstanceNode(), m.validator())),
             append("type", ".*/errorHandler/noErrorHandler", m -> m.message().contains("object expected"),
                     m -> "noErrorHandler takes no options: write noErrorHandler: {}"),
             // onException: {java.lang.Exception: ...}: the class is a list item under exception:

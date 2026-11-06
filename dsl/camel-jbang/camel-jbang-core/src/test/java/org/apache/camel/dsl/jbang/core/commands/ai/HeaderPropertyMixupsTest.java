@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-25516: a header, exchange property or variable read where the route keeps the name in another of them; and a
- * header copied to itself that nothing sets.
+ * header copied to itself, or read in a split, that nothing sets.
  */
 class HeaderPropertyMixupsTest {
 
@@ -292,20 +292,26 @@ class HeaderPropertyMixupsTest {
                         "name: orderId\n                  expression:\n                    simple:\n"
                                                                                   + "                      expression: \"${header.orderId}\"")
                 .replace("${variable.orderId}: ", "${header.orderId}: ");
-        assertThat(SourceValidator.validate("http-client.camel.yaml", orderId, new DefaultCamelCatalog(), null, dir))
-                .singleElement().asString()
+        msgs = SourceValidator.validate("http-client.camel.yaml", orderId, new DefaultCamelCatalog(), null, dir);
+        assertThat(msgs).hasSize(2);
+        assertThat(msgs.get(0))
                 .startsWith("Line 21: ${header.orderId} is null here: no step before this line sets the header orderId")
                 .contains("orderId is a field of the data that was split, not of one of the lines: read it before the"
                           + " split, into a variable (setVariable), and write ${variable.orderId} in the split");
+        // the sku that the copy no longer sets, read in the uri after the body was emptied
+        assertThat(msgs.get(1)).startsWith("Line 32: ${header.sku} is null here: no step before this line sets the header"
+                                           + " sku. In the split the body is one of the lines of the files in orders/"
+                                           + " (price, qty, sku), until setBody on line 27 replaces it");
     }
 
     @Test
     void aHeaderCopiedToItselfIsNotReportedWhereItCanBeSet() {
         String split = "        - split:\n";
-        // set before: no copy to itself is left, and a copy from another header alone is not reported
+        // set before: no copy to itself is left, and the copy from a header that nothing sets is a read of it
         assertThat(HeaderPropertyMixups.validate(CHECK_STOCK.replace(split,
                 "        - setHeader:\n            name: sku\n            simple: \"${body[lines][0][sku]}\"\n" + split)))
-                .isEmpty();
+                .singleElement().asString()
+                .startsWith("Line 34: ${header.qty} is null here: no step before this line sets the header qty");
         // a step that may set any header before it: a to:, an enrich, a process, a script
         for (String step : List.of("- to: direct:prepare", "- enrich:\n    expression:\n      constant: direct:prepare",
                 "- process:\n    ref: prepare", "- setBody:\n    groovy: \"headers.sku = 'A'; body\"")) {
@@ -319,11 +325,154 @@ class HeaderPropertyMixupsTest {
         }
 
         // r27l-6, a passed step: the order id copied to itself, and the log reads the variable: the null is never read
-        assertThat(HeaderPropertyMixups.validate(CHECK_STOCK.replace("name: sku", "name: orderId")
-                .replace("expression: \"${header.sku}\"", "expression: \"${header.orderId}\""))).isEmpty();
-        // a header of Camel itself, which the consumer sets
+        assertThat(HeaderPropertyMixups.validate(R27L6)).isEmpty();
+        // a header of Camel itself, which the consumer sets: only the qty that nothing sets is left
         assertThat(HeaderPropertyMixups.validate(CHECK_STOCK.replace("name: sku", "name: CamelFileName")
-                .replace("expression: \"${header.sku}\"", "expression: \"${header.CamelFileName}\""))).isEmpty();
+                .replace("${header.sku}", "${header.CamelFileName}"))).singleElement().asString()
+                .startsWith("Line 31: ${header.qty} is null here");
+    }
+
+    /** r27l-6 connect-http-client step 2, a passed step (shortened). */
+    private static final String R27L6 = """
+            - route:
+                id: check-stock
+                from:
+                  uri: file
+                  parameters:
+                    directoryName: orders
+                  steps:
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - setVariable:
+                        name: orderId
+                        simple: "${body[orderId]}"
+                    - split:
+                        simple: "${body[lines]}"
+                        steps:
+                          - setHeader:
+                              name: orderId
+                              simple: "${header.orderId}"
+                          - setHeader:
+                              name: sku
+                              simple: "${body[sku]}"
+                          - setHeader:
+                              name: needed
+                              simple: "${body[qty]}"
+                          - setBody:
+                              simple: "${null}"
+                          - toD:
+                              uri: "http://localhost:8080/stock/${header.sku}"
+                          - log:
+                              message: "${variable.orderId}: ${header.sku} x ${header.needed}, ${body[qty]} in stock"
+            """;
+
+    /**
+     * r28l-6 connect-http-client step 1 [13] (shortened): the body emptied for the GET, then a header that nothing sets
+     * in the uri. Every line called http://localhost:8080/stock/: 100 errors of 404 (r28l-7 and r26l-7 the same).
+     */
+    private static final String STOCK_CALL = """
+            - route:
+                id: check-stock
+                from:
+                  uri: file
+                  parameters:
+                    directoryName: orders
+                    noop: true
+                  steps:
+                    - unmarshal:
+                        json:
+                          library: Jackson
+                    - split:
+                        expression:
+                          simple:
+                            expression: "${body[lines]}"
+                        steps:
+                          - setBody:
+                              simple:
+                                expression: "${null}"
+                          - toD:
+                              uri: "http://localhost:8080/stock/${header.sku}"
+                          - log:
+                              message: "Stock answer: ${body}"
+            """;
+
+    private static final String SET_BODY_NULL
+            = "              - setBody:\n                  simple:\n                    expression: \"${null}\"\n";
+
+    @Test
+    void aHeaderReadInASplitThatNothingSets(@TempDir Path dir) throws IOException {
+        Files.createDirectories(dir.resolve("orders"));
+        Files.writeString(dir.resolve("orders/order-1001.json"), """
+                {"orderId": "ORD-1001", "lines": [{"sku": "CAMEL-MUG", "qty": 1}]}
+                """);
+        assertThat(SourceValidator.validate("http-client.camel.yaml", STOCK_CALL, new DefaultCamelCatalog(), null, dir))
+                .singleElement().isEqualTo(
+                        "Line 21: ${header.sku} is null here: no step before this line sets the header sku. In the split"
+                                           + " the body is one of the lines of the files in orders/ (qty, sku), until setBody"
+                                           + " on line 17 replaces it: keep sku in a variable first, as the first step of the"
+                                           + " split: setVariable: {name: sku, simple: \"${body[sku]}\"}, and write"
+                                           + " ${variable.sku}");
+        // the path parameter {sku} of the rest is a header of the route the rest calls, not of this one
+        assertThat(HeaderPropertyMixups.validate(STOCK_CALL + REST)).singleElement().asString()
+                .startsWith("Line 21: ${header.sku} is null here");
+        // the body is still the line
+        assertThat(SourceValidator.validate("http-client.camel.yaml", STOCK_CALL.replace(SET_BODY_NULL, ""),
+                new DefaultCamelCatalog(), null, dir)).singleElement().asString()
+                .endsWith("sku. In the split the body is one of the lines of the files in orders/ (qty, sku): write"
+                          + " ${body[sku]}");
+        // a field of the order, not of a line
+        assertThat(SourceValidator.validate("http-client.camel.yaml", STOCK_CALL.replace("${header.sku}",
+                "${header.orderId}"), new DefaultCamelCatalog(), null, dir)).singleElement().asString()
+                .endsWith("orderId is a field of the data that was split, not of one of the lines: read it before the"
+                          + " split, into a variable (setVariable), and write ${variable.orderId} in the split");
+    }
+
+    @Test
+    void aHeaderReadInASplitIsNotReportedWhereItCanBeSet() {
+        String toD = "              - toD:\n";
+        // set before the read
+        assertThat(HeaderPropertyMixups.validate(STOCK_CALL.replace(toD,
+                "              - setHeader:\n                  name: sku\n                  simple: \"${body[sku]}\"\n"
+                                                                         + toD)))
+                .isEmpty();
+        // a step that may set any header before the read: a to:, a process, a script
+        for (String step : List.of("- to: direct:prepare", "- process:\n    ref: prepare",
+                "- setBody:\n    groovy: \"headers.sku = 'A'; body\"")) {
+            assertThat(HeaderPropertyMixups.validate(STOCK_CALL.replace(toD, step.indent(14) + toD))).as(step)
+                    .isEmpty();
+        }
+        // a consumer whose messages, or callers, can carry the header
+        for (String from : List.of("direct:check", "seda:check", "platform-http:/check", "kafka:orders")) {
+            assertThat(HeaderPropertyMixups.validate(STOCK_CALL.replace("uri: file", "uri: " + from))).as(from)
+                    .isEmpty();
+        }
+        // a header of Camel, and one of the job that a quartz consumer sets
+        assertThat(HeaderPropertyMixups.validate(STOCK_CALL.replace("${header.sku}", "${header.CamelSplitIndex}")))
+                .isEmpty();
+        assertThat(HeaderPropertyMixups.validate(STOCK_CALL.replace("uri: file", "uri: quartz:nightly")
+                .replace("${header.sku}", "${header.fireTime}"))).isEmpty();
+        // outside a split
+        assertThat(HeaderPropertyMixups.validate("- route:\n    from:\n      uri: file:orders\n      steps:\n"
+                                                 + "        - log: \"${header.sku}\"\n"))
+                .isEmpty();
+        // the reference of step 2: the line's fields kept in variables before the body is emptied
+        assertThat(HeaderPropertyMixups.validate(STOCK_CALL
+                .replace(SET_BODY_NULL, "              - setVariable:\n                  name: sku\n"
+                                        + "                  simple: \"${body[sku]}\"\n" + SET_BODY_NULL)
+                .replace("${header.sku}", "${variable.sku}"))).isEmpty();
+    }
+
+    @Test
+    void aHeaderReadInASplitWhereTheRouteKeepsAVariableIsOneMessage() {
+        String variable = STOCK_CALL.replace(SET_BODY_NULL, "              - setVariable:\n                  name: sku\n"
+                                                            + "                  simple: \"${body[sku]}\"\n" + SET_BODY_NULL);
+        assertThat(HeaderPropertyMixups.validate(variable)).singleElement().asString()
+                .startsWith("Line 24: ${header.sku} reads a header sku, but the route keeps sku in a variable");
+        // with the path parameter of the rest, which the mix-up check counts as a header
+        assertThat(HeaderPropertyMixups.validate(variable + REST)).singleElement().asString()
+                .startsWith("Line 24: ${header.sku} is null here")
+                .endsWith("The route keeps sku in a variable: write ${variable.sku}");
     }
 
     @Test

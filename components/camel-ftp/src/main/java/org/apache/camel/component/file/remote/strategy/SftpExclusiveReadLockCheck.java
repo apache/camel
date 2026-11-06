@@ -20,6 +20,7 @@ package org.apache.camel.component.file.remote.strategy;
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.component.file.remote.SftpOperations;
 import org.apache.camel.component.file.remote.SftpRemoteFile;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -52,21 +53,34 @@ public class SftpExclusiveReadLockCheck {
         long newLastModified = 0;
         long newLength = 0;
 
-        Object[] files = listFiles(operations, file);
-
-        LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.length);
-        for (Object f : files) {
-            SftpRemoteFile rf = (SftpRemoteFile) f;
-            boolean match;
-            if (fastExistsCheck) {
-                match = rf.getFilename().equals(file.getAbsoluteFilePath())
-                        || rf.getFilename().equals(file.getFileNameOnly());
-            } else {
-                match = rf.getFilename().equals(file.getFileNameOnly());
+        SftpOperations sftp = asSftpOperations(operations);
+        if (sftp != null) {
+            // a single request whatever the number of files in the directory. As in the directory listing, these are the
+            // attributes of the path itself: for a symbolic link, the size and modification time of the link, not of
+            // its target
+            SftpOperations.FileAttributes attrs = sftp.getFileAttributes(file.getAbsoluteFilePath());
+            LOG.trace("Attributes of {}: {}", file.getAbsoluteFilePath(), attrs);
+            if (attrs != null) {
+                newLastModified = attrs.lastModified();
+                newLength = attrs.fileLength();
             }
-            if (match) {
-                newLastModified = rf.getLastModified();
-                newLength = rf.getFileLength();
+        } else {
+            Object[] files = listFiles(operations, file);
+
+            LOG.trace("List files {} found {} files", file.getAbsoluteFilePath(), files.length);
+            for (Object f : files) {
+                SftpRemoteFile rf = (SftpRemoteFile) f;
+                boolean match;
+                if (fastExistsCheck) {
+                    match = rf.getFilename().equals(file.getAbsoluteFilePath())
+                            || rf.getFilename().equals(file.getFileNameOnly());
+                } else {
+                    match = rf.getFilename().equals(file.getFileNameOnly());
+                }
+                if (match) {
+                    newLastModified = rf.getLastModified();
+                    newLength = rf.getFileLength();
+                }
             }
         }
 
@@ -83,6 +97,10 @@ public class SftpExclusiveReadLockCheck {
         lastModified = newLastModified;
         length = newLength;
         return false;
+    }
+
+    private static SftpOperations asSftpOperations(GenericFileOperations<?> operations) {
+        return operations instanceof SftpOperations sftp ? sftp : null;
     }
 
     private Object[] listFiles(

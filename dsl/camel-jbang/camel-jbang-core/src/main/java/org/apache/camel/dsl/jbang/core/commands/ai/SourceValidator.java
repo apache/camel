@@ -144,7 +144,7 @@ public final class SourceValidator {
             // Checked for its YAML syntax only, a test with actions Citrus does not have was written, and camel test
             // run then failed on it: so the test schema of Citrus checks it too
             List<String> syntax = validateYamlSyntax(content);
-            return syntax.isEmpty() ? CitrusTestChecks.validate(content) : syntax;
+            return syntax.isEmpty() ? CitrusTestChecks.validate(content, directory, fileName) : syntax;
         }
         if (name.endsWith(".yaml") || name.endsWith(".yml")) {
             // a rest binding to an OpenAPI specification hides the verb, and the specification is a file beside the
@@ -186,6 +186,8 @@ public final class SourceValidator {
                 // a header read where the route keeps the name in an exchange property, or the reverse (CAMEL-25516),
                 // and a header copied to itself that nothing sets
                 msgs = new ArrayList<>(HeaderPropertyMixups.validate(content, facts));
+                // an sftp or ftp endpoint without a login, next to one of the same server with one
+                msgs.addAll(RemoteFileLogins.validate(content, catalog, directory, fileName));
             }
             // an option at the column of its EIP: the lines to write, which a model copies (the words it does not,
             // CAMEL-25556)

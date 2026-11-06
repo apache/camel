@@ -411,6 +411,11 @@ public final class AuthoringTools {
                 .param("predicate", "boolean", EVAL_PREDICATE_DESC, false)
                 .param("resultType", "string", EVAL_RESULT_TYPE_DESC, false)
                 .core(true)
+                // the same expression on the same message gets the same answer, unless it reads the clock, a random
+                // value or the integration: a model that evaluates it again and again is stuck
+                .deterministicIf(ExpressionEvaluator::sameAnswer)
+                .repeatHint("The same expression on the same message gives the same result: change the expression or"
+                            + " the message (body, headers, variables) to learn something new.")
                 .executor((ctx, args) -> {
                     String expression = required(args, "expression");
                     Map<String, Object> headers = ExpressionEvaluator.parseValues("headers", args.get("headers"));
@@ -661,12 +666,13 @@ public final class AuthoringTools {
                 result.put("notChecked", notChecked);
             }
         }
+        String start = startNote(dir, file, content);
         if (!errors.isEmpty()) {
             result.put("message", errors.size() + " problem(s) found; fix them before writing the file"
-                                  + (SourceValidator.isCitrusTest(file) ? ". " + CITRUS_SAMPLES : ""));
+                                  + (start.isEmpty() ? "" : "." + start));
         } else if (SourceValidator.isCitrusTest(file)) {
             result.put("message", (CitrusTestChecks.hasSchema() ? "The test is valid. " : "The YAML is valid. ")
-                                  + citrusTestNote(file));
+                                  + citrusTestNote(file) + start);
         } else {
             result.put("message", "The source is valid");
         }
@@ -674,11 +680,14 @@ public final class AuthoringTools {
     }
 
     /**
-     * Where a model finds a Citrus test that runs, said when its own test is refused: a local model wrote Citrus YAML
-     * of its own (test-citrus-orders of the local-model benchmark).
+     * What is said of a Citrus test that calls the integration but does not start it, with a space before it, or
+     * nothing: no test a local model wrote for test-citrus-orders of the local-model benchmark started the integration,
+     * and camel test run runs only the test.
      */
-    static final String CITRUS_SAMPLES
-            = "A sample Citrus test is the test/ file of an example: camel_catalog_examples with filter citrus lists them.";
+    private static String startNote(Path dir, String file, String content) {
+        String note = SourceValidator.isCitrusTest(file) ? CitrusTestChecks.startNote(content, dir, file) : "";
+        return note.isEmpty() ? "" : " " + note;
+    }
 
     /**
      * What the tools say of a Citrus test: it is not a route, so it is checked against the test schema of Citrus (or
@@ -778,7 +787,7 @@ public final class AuthoringTools {
                                   + " Change what the errors say; where an error shows the lines to write, copy them.");
         } else {
             result.put("message", "The file was not changed: the result has validation errors. Fix them and call"
-                                  + " camel_edit_file again.");
+                                  + " camel_edit_file again." + startNote(dir, file, content));
         }
         if ("invalid".equals(result.getString("status")) && result.get("repairable") instanceof JsonArray repairable) {
             result.put("message", result.getString("message") + " "
@@ -1751,7 +1760,7 @@ public final class AuthoringTools {
                 result.put("file", file);
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
-                                      + " call camel_write_file again." + (citrusTest ? " " + CITRUS_SAMPLES : ""));
+                                      + " call camel_write_file again." + startNote(dir, file, content));
                 int times = refusedAgain(path, content);
                 if (times > 1) {
                     // the same content again: a model that does not see the problem in its own lines writes them
@@ -1903,7 +1912,7 @@ public final class AuthoringTools {
                 default -> "Written; " + reload.getString("message");
             });
         } else if (citrusTest) {
-            result.put("message", citrusTestNote(file));
+            result.put("message", citrusTestNote(file) + startNote(dir, file, content));
         } else if (notWatchedBy >= 0) {
             result.put("message", "The running integration (pid " + notWatchedBy + ") was started with its own files"
                                   + " and does not reload when this file changes; camel_control restart picks up the"

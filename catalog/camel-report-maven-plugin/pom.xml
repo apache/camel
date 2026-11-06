@@ -131,18 +131,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <!-- roaster java parser -->
-        <dependency>
-            <groupId>org.jboss.forge.roaster</groupId>
-            <artifactId>roaster-api</artifactId>
-            <version>${roaster-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.roaster</groupId>
-            <artifactId>roaster-jdt</artifactId>
-            <version>${roaster-version}</version>
-        </dependency>
-
         <!-- HTML and XLSX report generation -->
         <dependency>
             <groupId>org.thymeleaf</groupId>

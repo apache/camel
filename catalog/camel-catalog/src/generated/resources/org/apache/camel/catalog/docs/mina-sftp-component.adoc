@@ -400,6 +400,22 @@ consumer is created, also with `poll` and `pollEnrich`, with `IllegalArgumentExc
 The `readLock` option is not checked when a custom `exclusiveReadLockStrategy` or `processStrategy`
 is set, as it does not apply then.
 
+== Checking whether a file exists
+
+The `mina-sftp` component checks whether a remote file exists with a single `lstat` request, whatever the number of
+files in the directory. This applies to `fileExist=Ignore`, `Fail` and `Move`, to `tempFileName` and `tempPrefix`, to a
+producer `doneFileName`, and to `readLock=changed`, which reads the size and modification time of the file with the
+same request on every check. So the `fastExistsCheck` option makes no difference for these checks with `mina-sftp`.
+
+The answer comes from the server for the path itself. A symbolic link is not followed, as in a directory listing: a
+dangling link exists, and `readLock=changed` compares the size and modification time of the link, not those of its
+target.
+
+When the server answers the request with another status than "no such file", for example because it does not permit or
+support it on the path, the component lists the directory instead and compares the names. When the server does not
+answer that listing either, or the connection fails, the check fails with an error, rather than answering that the
+file is missing.
+
 == Error Handling
 
 === Connection Retry

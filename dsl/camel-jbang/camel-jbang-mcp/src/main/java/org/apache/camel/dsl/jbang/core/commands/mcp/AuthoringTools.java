@@ -395,6 +395,7 @@ public class AuthoringTools {
                         + "the value (true/false for a predicate) or the syntax error, so check an expression before "
                         + "answering or writing it.")
     public JsonObject camel_eval_expression(
+            McpConnection connection,
             @ToolArg(description = "e.g. ${random(1,10)} or ${body} ?: 'none'", required = true) String expression,
             @ToolArg(description = "simple (default), jsonpath, xpath, jq", required = false) String language,
             @ToolArg(description = "Message body", required = false) String body,
@@ -408,8 +409,9 @@ public class AuthoringTools {
                      required = false) Boolean predicate,
             @ToolArg(description = org.apache.camel.dsl.jbang.core.commands.ai.AuthoringTools.EVAL_RESULT_TYPE_DESC,
                      required = false) String resultType) {
-        return call("camel_eval_expression", args("expression", expression, "language", language, "body", body,
-                "name", name, "headers", limited("headers", jsonText(headers)), "variables",
+        // the same expression on the same message gets the same answer: the third identical call gets a short note
+        return callDeterministic(connection, "camel_eval_expression", args("expression", expression, "language",
+                language, "body", body, "name", name, "headers", limited("headers", jsonText(headers)), "variables",
                 limited("variables", jsonText(variables)), "predicate", predicate, "resultType", resultType));
     }
 
