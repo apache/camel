@@ -1195,6 +1195,93 @@ public class YamlValidatorPropertyHintTest {
                 .contains("no concatenation");
     }
 
+    /**
+     * r28 of the local-model benchmark, contracts-rest-code-first step 1: a line break escaped twice, so the line holds
+     * the two characters \n before the next key. Told it was a concatenation, the model sent the same lines 15 times.
+     */
+    @Test
+    public void testTheTwoCharactersOfALineBreakAfterAQuoteAreNamed() throws Exception {
+        List<Error> errors = validator.validate("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setBody:
+                          expression:
+                            jsonpath:
+                              expression: "$[?(@.orderId == '${header.id}')]"\\n              resultType: java.util.Map
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage()).isEqualTo(
+                "line 7: the value of expression is followed by \\n, the two characters \\ and n: YAML reads them as text,"
+                                                         + " not as a line break, so what comes after them is not a key."
+                                                         + " Write line 7 as these 2 lines:\n"
+                                                         + "              expression: \"$[?(@.orderId == '${header.id}')]\"\n"
+                                                         + "              resultType: java.util.Map");
+        // a whole block on one line, its quotes escaped too (r23l-2 transform-groovy step 1)
+        errors = validator.validate(
+                """
+                        - from:
+                            uri: direct:check
+                            steps:
+                              - choice:\\n    when:\\n      - simple: \\"${body} != null\\"\\n        steps:\\n          - log: "ok"\\n      - otherwise:
+                        """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .startsWith("line 4 has the two characters \\n where line breaks belong (and \\\" where quotes belong)");
+        // a value that continues after its quote: as before
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log:
+                          message: "Order " + "${body}"
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("continues after its closing quote");
+    }
+
+    /**
+     * r28 of the local-model benchmark, connect-sftp-transfer step 2: - route: in column 3 after a top-level
+     * onException was told to line up with the steps of the onException, and the model sent the same lines 12 times. It
+     * is an entry of the file, so it belongs to the list of the entries, in column 1.
+     */
+    @Test
+    public void testAnEntryOfTheFileInAColumnOfItsOwnBelongsToTheEntries() throws Exception {
+        List<Error> errors = validator.validate("""
+                - onException:
+                    exception:
+                      - java.lang.Exception
+                    steps:
+                      - log:
+                          message: "Batch failed: ${exception.message}"
+                  - route:
+                      id: invoice-batches
+                      from:
+                        uri: timer:tick
+                        steps:
+                          - log: "tick"
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .isEqualTo("line 7 (\"  - route:\"): this list item starts in column 3, but the list that starts at line"
+                           + " 1 (\"- onException:\") has its items in column 1 (- route: is an entry of the file, as the"
+                           + " items of that list are); every item of a list must start in the same column");
+        // an onException can be an item of a routeConfiguration too: the list is named by the columns, as before
+        errors = validator.validate("""
+                - routeConfiguration:
+                    onException:
+                      - onException:
+                          exception:
+                            - java.lang.Exception
+                          steps:
+                            - log: "failed"
+                        - onException:
+                            exception:
+                              - java.io.IOException
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .contains("this list item starts in column 9, but the list that starts at line")
+                .doesNotContain("entry of the file");
+    }
+
     @Test
     public void testALineWithNoKeyIsNamed() throws Exception {
         // r24 ai-ticket-classifier step 2: a setHeader with the bare line directory (meant as name: directory), told 15

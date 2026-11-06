@@ -576,7 +576,8 @@ final class TextBodyFlow {
                     Need need = needsText(name, value, w);
                     Parsed element = "split".equals(name) ? splitElement(value, parsed, w.bodyTypes()) : null;
                     if (need != null) {
-                        w.errors().add(error(here, w.routeId(), need, parsed));
+                        w.errors().add(error(here, w.routeId(), need, parsed,
+                                SENDS_THE_BODY.contains(name) ? marshalledInto(parsed, w) : null, name));
                         if (!"wireTap".equals(name)) {
                             // the step fails at runtime, so what comes after it is not run with this body: one report.
                             // A wire tap fails on its own thread, and the route goes on
@@ -2183,6 +2184,21 @@ final class TextBodyFlow {
     }
 
     private static Error error(NodePath at, String routeId, Need need, Parsed parsed) {
+        return error(at, routeId, need, parsed, null, null);
+    }
+
+    /**
+     * As {@link #error(NodePath, String, Need, Parsed)}, with the variable a marshal of the data wrote its text into,
+     * and the step, which can send that variable instead of the body.
+     */
+    private static Error error(NodePath at, String routeId, Need need, Parsed parsed, String variable, String step) {
+        // a marshal with variableReceive: told to add marshal: json before the step, a local model sent the same
+        // lines 11 times (r28 of the local-model benchmark, route-enrich-and-dedupe step 3)
+        String fix = variable != null
+                ? "the marshal wrote the text into the variable " + variable + " (variableReceive: " + variable
+                  + "), and the body is still the data: send that variable with variableSend: " + variable
+                  + " on this " + step + ", or leave out variableReceive so that the marshal writes the body"
+                : fix(need, parsed);
         return Error.builder()
                 .keyword("type")
                 .instanceLocation(at)
@@ -2190,8 +2206,26 @@ final class TextBodyFlow {
                 .format(new MessageFormat("{0}"))
                 .arguments((routeId != null ? "route " + routeId + ": " : "") + need.what()
                            + ", but the body here is parsed data (a Map or a List), not text - " + parsed.origin()
-                           + ": " + fix(need, parsed))
+                           + ": " + fix)
                 .build();
+    }
+
+    /**
+     * The one variable that holds the text a marshal wrote of data in the format of the body, which a marshal with
+     * variableReceive leaves as it was; null when there is none, or several.
+     */
+    private static String marshalledInto(Parsed parsed, Walk w) {
+        String answer = null;
+        for (Map.Entry<String, Body> e : w.variables().entrySet()) {
+            if (e.getValue() instanceof Text text && text.marshalled()
+                    && (parsed.format() == null || parsed.format().equals(text.format()))) {
+                if (answer != null) {
+                    return null;
+                }
+                answer = e.getKey();
+            }
+        }
+        return answer;
     }
 
     /**

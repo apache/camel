@@ -247,7 +247,7 @@ public class YamlValidator {
             answer.addAll(errors);
             return answer;
         } catch (Exception e) {
-            return routesOnly ? List.of() : List.of(parseError(e, content, this::shapeOf));
+            return routesOnly ? List.of() : List.of(parseError(e, content, this));
         }
     }
 
@@ -294,6 +294,9 @@ public class YamlValidator {
 
     private static final Pattern LINE_COLUMN = Pattern.compile("line:? (\\d+), column:? (\\d+)");
 
+    /** The two characters \n before a key or a list item, as a line break escaped twice writes them. */
+    private static final Pattern ESCAPED_LINE_BREAK = Pattern.compile("\\\\n(?=\\s*(?:-\\s|[A-Za-z_][\\w.-]*:))");
+
     /**
      * A YAML parse error whose line is a line of text at column 1 after the routes (an explanation appended to the
      * file, or a markdown fence) says so; the parser's "while scanning a simple key" does not.
@@ -303,10 +306,11 @@ public class YamlValidator {
     }
 
     /**
-     * As {@link #parseError(Exception, String)}, with the problems of the schema of a content, which a key written in
-     * the column of the dashes of a list is placed by; null to place it by its columns only.
+     * As {@link #parseError(Exception, String)}, with the validator whose schema the messages read: the places a key
+     * written in the column of the dashes of a list can go, and the entries of a file. Null to say them by the columns
+     * only.
      */
-    static Error parseError(Exception e, String content, Function<String, Shape> shape) {
+    static Error parseError(Exception e, String content, YamlValidator validator) {
         Error plain = parseError(e);
         String msg = e.getMessage();
         if (msg == null || content == null) {
@@ -353,11 +357,29 @@ public class YamlValidator {
                 Matcher q = Pattern.compile(":\\s*(\"(?:[^\"\\\\]|\\\\.)*\"|'[^']*')\\s*\\S").matcher(t);
                 if (q.find()) {
                     String key = t.trim().contains(":") ? t.trim().substring(0, t.trim().indexOf(':')) : "the value";
-                    String tail = t.substring(t.indexOf(q.group(1)) + q.group(1).length()).strip();
-                    // the value was corrected twice: it ends with two quotes, not with a concatenation (CAMEL-24906)
-                    String message = "\"".equals(tail)
-                            ? "line " + last + ": the value of " + key + " ends with two double quotes; remove the"
-                              + " extra one and write the line as " + t.strip().substring(0, t.strip().length() - 1)
+                    int valueEnd = t.indexOf(q.group(1)) + q.group(1).length();
+                    String tail = t.substring(valueEnd).strip();
+                    // the two characters \n of a line break escaped twice, before the next key: read as a
+                    // concatenation, a local model sent the same lines 15 times (r28 of the local-model benchmark,
+                    // contracts-rest-code-first step 1)
+                    List<String> parts = new ArrayList<>(List.of(ESCAPED_LINE_BREAK.split(t.substring(valueEnd), -1)));
+                    parts.set(0, t.substring(0, valueEnd) + parts.get(0));
+                    boolean escaped = tail.startsWith("\\n") && parts.size() > 1;
+                    String message = escaped && ESCAPED_LINE_BREAK.matcher(t.substring(0, valueEnd)).find()
+                            // a whole block on one line, its quotes escaped too
+                            ? "line " + last + " has the two characters \\n where line breaks belong (and \\\" where"
+                              + " quotes belong): YAML reads them as text, so the line is one value. Write each part on"
+                              + " a line of its own, with real line breaks and quotes"
+                            : escaped
+                                    ? "line " + last + ": the value of " + key + " is followed by \\n, the two characters"
+                                      + " \\ and n: YAML reads them as text, not as a line break, so what comes after them"
+                                      + " is not a key. Write line " + last + " as these " + parts.size() + " lines:\n"
+                                      + String.join("\n", parts.stream().map(String::stripTrailing).toList())
+                            // the value was corrected twice: it ends with two quotes, not with a concatenation
+                            // (CAMEL-24906)
+                            : "\"".equals(tail)
+                                    ? "line " + last + ": the value of " + key + " ends with two double quotes; remove the"
+                                      + " extra one and write the line as " + t.strip().substring(0, t.strip().length() - 1)
                             // a line copied with the colon of the next key: expression: "$[?(@.id == 'a')]": (r24)
                             : ":".equals(tail)
                                     ? "line " + last + ": the value of " + key + " ends with a : after its closing quote;"
@@ -382,7 +404,7 @@ public class YamlValidator {
                     return unclosed;
                 }
             }
-            Error marked = indentationError(msg, lines, shape);
+            Error marked = indentationError(msg, lines, validator);
             return marked != null ? marked : plain;
         }
         // errorHandler: at column 1 in a file of - items is YAML, not prose: the list item marker is missing
@@ -464,10 +486,9 @@ public class YamlValidator {
     }
 
     /**
-     * As {@link #indentationError(String, String[])}, with the problems of the schema of a content, which a key written
-     * in the column of the dashes of a list is placed by; null to place it by its columns only.
+     * As {@link #indentationError(String, String[])}, with the validator whose schema the messages read, or null.
      */
-    static Error indentationError(String msg, String[] lines, Function<String, Shape> shape) {
+    static Error indentationError(String msg, String[] lines, YamlValidator validator) {
         List<Mark> marks = marks(msg, lines);
         if (marks.isEmpty()) {
             return null;
@@ -476,7 +497,7 @@ public class YamlValidator {
         // the stray item is named '-', or '<block sequence start>' when the list it broke uses bare dashes
         if (msg.contains("expected <block end>, but found '-'")
                 || msg.contains("expected <block end>, but found '<block sequence start>'")) {
-            return listItemColumn(problem, lines);
+            return listItemColumn(problem, lines, validator != null ? validator.entriesOnly() : Set.of());
         }
         if (msg.contains("expected <block end>, but found '<block mapping start>'")) {
             Error bare = bareLineAbove(problem.line(), lines);
@@ -487,7 +508,7 @@ public class YamlValidator {
         }
         // a key in the column of the dashes of a list: '?' is the parser's name for a key
         if (msg.contains("expected <block end>, but found '?'")) {
-            return marks.size() > 1 ? keyInListColumn(marks.get(0), problem, lines, shape) : null;
+            return marks.size() > 1 ? keyInListColumn(marks.get(0), problem, lines, validator) : null;
         }
         if (msg.contains("mapping values are not allowed here")) {
             return mappingValue(problem, lines);
@@ -547,12 +568,18 @@ public class YamlValidator {
     /**
      * A list item in a column of its own: the parser only says that it expected the end of what it was reading. Name
      * the list the item belongs to, which is the shallowest list still open below the item's column, or the deepest one
-     * above it when the item is the over-indented one.
+     * above it when the item is the over-indented one; for an entry of the file (- route:), the list of the entries.
+     *
+     * @param entries the keys of the entries of a file that are nowhere else an item of a list (route, rest...)
      */
-    private static Error listItemColumn(Mark problem, String[] lines) {
+    private static Error listItemColumn(Mark problem, String[] lines, Set<String> entries) {
         Mark deeper = null;
         Mark shallower = null;
+        Mark top = null;
         for (Mark open : openLists(problem, lines)) {
+            if (open.column() == 1) {
+                top = open;
+            }
             if (open.column() > problem.column() && (deeper == null || open.column() < deeper.column())) {
                 deeper = open;
             } else if (open.column() < problem.column() && (shallower == null || open.column() > shallower.column())) {
@@ -560,11 +587,19 @@ public class YamlValidator {
             }
         }
         Mark list = deeper != null ? deeper : shallower;
+        // - route: in column 3 after the steps of a top-level onException was told to line up with those steps, and a
+        // local model sent the same lines 12 times (r28 of the local-model benchmark, connect-sftp-transfer step 2)
+        String key = keyName(lines[problem.line() - 1].strip().substring(1));
+        boolean entry = top != null && problem.column() > 1 && entries.contains(key);
+        if (entry) {
+            list = top;
+        }
         // the two lines as written: with the columns alone, a local model sent the same indentation again up to 18 times
         String belongs = list == null
                 ? ""
                 : ", but the list that starts at line " + list.line() + quotedLine(lines, list.line())
-                  + " has its items in column " + list.column();
+                  + " has its items in column " + list.column()
+                  + (entry ? " (- " + key + ": is an entry of the file, as the items of that list are)" : "");
         return hint("line " + problem.line() + quotedLine(lines, problem.line()) + ": this list item starts in column "
                     + problem.column() + belongs + "; every item of a list must start in the same column");
     }
@@ -623,8 +658,7 @@ public class YamlValidator {
      * mapping that holds the list. With the schema, the one place whose result it takes, with the lines to write; else
      * the two columns, one of which was meant.
      */
-    private static Error keyInListColumn(
-            Mark item, Mark problem, String[] lines, Function<String, Shape> shape) {
+    private static Error keyInListColumn(Mark item, Mark problem, String[] lines, YamlValidator validator) {
         String itemLine = lines[item.line() - 1];
         int dash = item.column() - 1;
         if (dash < 0 || dash >= itemLine.length() || itemLine.charAt(dash) != '-') {
@@ -656,7 +690,7 @@ public class YamlValidator {
                 break;
             }
         }
-        List<Place> fit = shape != null ? fittingPlaces(item, problem, lines, places, shape) : null;
+        List<Place> fit = validator != null ? fittingPlaces(item, problem, lines, places, validator::shapeOf) : null;
         if (fit == null) {
             // the places by their columns, when the schema cannot judge them
             fit = places;
@@ -2368,6 +2402,17 @@ public class YamlValidator {
     /** The keys of the file's entries (route, from, beans, rest, onException...), from the schema. */
     Set<String> topLevelEntries() {
         return topLevelEntries;
+    }
+
+    /**
+     * The keys of the file's entries that are nowhere else an item of a list (route, rest, beans...): not onException
+     * or intercept, which are items of a routeConfiguration too; from the schema.
+     */
+    Set<String> entriesOnly() {
+        Set<String> answer = new LinkedHashSet<>(topLevelEntries);
+        model.at("/items/definitions/org.apache.camel.model.RouteConfigurationDefinition/properties").fieldNames()
+                .forEachRemaining(answer::remove);
+        return answer;
     }
 
     /** The language keys of an expression (simple, constant, groovy...), from the schema. */
