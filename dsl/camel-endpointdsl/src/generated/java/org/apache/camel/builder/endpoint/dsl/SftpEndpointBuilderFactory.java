@@ -1860,7 +1860,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of CA signature algorithms accepted for
          * host certificate verification. If not specified the default list from
-         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * JSch will be used (matches OpenSSH 8.2+ defaults).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2095,8 +2095,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -2110,8 +2110,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -3953,7 +3953,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of CA signature algorithms accepted for
          * host certificate verification. If not specified the default list from
-         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * JSch will be used (matches OpenSSH 8.2+ defaults).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -4188,8 +4188,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -4203,8 +4203,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -5601,7 +5601,7 @@ public interface SftpEndpointBuilderFactory {
         /**
          * Set a comma separated list of CA signature algorithms accepted for
          * host certificate verification. If not specified the default list from
-         * JSch will be used (matches OpenSSH 8.2 defaults).
+         * JSch will be used (matches OpenSSH 8.2+ defaults).
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -5836,8 +5836,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option is a: <code>byte[]</code> type.
          * 
@@ -5851,8 +5851,8 @@ public interface SftpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Set the private key as byte so that the SFTP endpoint can do private
-         * key verification.
+         * Set the private key as byte[] so that the SFTP endpoint can do
+         * private key verification.
          * 
          * The option will be converted to a <code>byte[]</code> type.
          * 
@@ -6848,8 +6848,8 @@ public interface SftpEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
-         * The actual absolute filepath (path name) for the output file that was
-         * written. This header is set by Camel and its purpose is providing
+         * The actual absolute filepath (path + name) for the output file that
+         * was written. This header is set by Camel and its purpose is providing
          * end-users with the name of the file that was written.
          * 
          * The option is a: {@code String} type.

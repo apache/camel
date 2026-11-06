@@ -4468,7 +4468,7 @@
           "delayPattern" : {
             "type" : "string",
             "title" : "Delay Pattern",
-            "description" : "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10 use 30s)."
+            "description" : "Sets the delay pattern for redeliveries using a pattern such as '0:1000;5:5000;10:30000' where each entry maps a redelivery count to a delay in milliseconds (e.g. redeliveries 0-4 use 1s delay, 5-9 use 5s, 10+ use 30s)."
           },
           "disableRedelivery" : {
             "type" : "boolean",
@@ -4668,7 +4668,7 @@
             "pattern" : {
               "type" : "string",
               "title" : "Pattern",
-              "description" : "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with ), and regular expression (all case-insensitive)."
+              "description" : "Name or pattern of headers to remove. The pattern supports exact match, wildcard (pattern ends with *), and regular expression (all case-insensitive)."
             }
           }
         } ],
@@ -4712,7 +4712,7 @@
             "pattern" : {
               "type" : "string",
               "title" : "Pattern",
-              "description" : "Name or pattern of properties to remove. Supports exact match, wildcard (ending with ), and regular expression (all case-insensitive)."
+              "description" : "Name or pattern of properties to remove. Supports exact match, wildcard (ending with *), and regular expression (all case-insensitive)."
             }
           }
         } ],
@@ -8598,7 +8598,7 @@
             "serializablePackages" : {
               "type" : "string",
               "title" : "Serializable Packages",
-              "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12 validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class."
+              "description" : "Comma-separated list of additional packages that contain trusted Avro model classes. Avro 1.12+ validates classes resolved from schemas; Camel automatically trusts packages derived from the configured schema or instance class."
             },
             "timezone" : {
               "type" : "string",
@@ -8689,7 +8689,7 @@
           "urlSafe" : {
             "type" : "boolean",
             "title" : "Url Safe",
-            "description" : "Instead of emitting and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.",
+            "description" : "Instead of emitting + and / we emit - and _ respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes.",
             "default" : false
           }
         }
@@ -11324,7 +11324,7 @@
           "passPhraseByte" : {
             "type" : "string",
             "title" : "Pass Phrase Byte",
-            "description" : "A byte used as passPhrase to encrypt/decrypt content.",
+            "description" : "A byte[] used as passPhrase to encrypt/decrypt content.",
             "format" : "binary"
           },
           "recipientKeyAlias" : {

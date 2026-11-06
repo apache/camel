@@ -688,7 +688,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * A comma-separated list of the fully-qualified replacements of fields
          * that should be used to rename fields in change event message values.
          * Fully-qualified replacements for fields are of the form
-         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard () which matches any characters, the colon character (:) is used to determine rename mapping of field.
+         * databaseName.collectionName.fieldName.nestedFieldName:newNestedFieldName, where databaseName and collectionName may contain the wildcard (*) which matches any characters, the colon character (:) is used to determine rename mapping of field.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1688,7 +1688,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 

@@ -358,20 +358,20 @@ public interface SmbEndpointBuilderFactory {
          * parameter can contain the name of a file (or multiple files, if
          * wildcards are used) within this directory. When it is null all files
          * are included. Two wild card characters are supported in the search
-         * pattern. The (question mark) character matches a single character. If
-         * a search pattern contains one or more characters, then exactly that
-         * number of characters is matched by the wildcards. For example, the
-         * criterion x matches abx but not abcx or ax, because the two file
-         * names do not have enough characters preceding the literal. When a
-         * file name criterion has characters trailing a literal, then the match
-         * is made with specified number of characters or less. For example, the
-         * criterion x matches xab, xa, and x, but not xabc. If only characters
-         * are present in the file name selection criterion, then the match is
-         * made as if the criterion contained characters trailing a literal. The
-         * (asterisk) character matches an entire file name. A null or empty
-         * specification criterion also selects all file names. For example,
-         * .abc or .abc match any file with an extension of abc. ., , or empty
-         * string match all files in a directory.
+         * pattern. The ? (question mark) character matches a single character.
+         * If a search pattern contains one or more ? characters, then exactly
+         * that number of characters is matched by the wildcards. For example,
+         * the criterion ??x matches abx but not abcx or ax, because the two
+         * file names do not have enough characters preceding the literal. When
+         * a file name criterion has ? characters trailing a literal, then the
+         * match is made with specified number of characters or less. For
+         * example, the criterion x?? matches xab, xa, and x, but not xabc. If
+         * only ? characters are present in the file name selection criterion,
+         * then the match is made as if the criterion contained ? characters
+         * trailing a literal. The * (asterisk) character matches an entire file
+         * name. A null or empty specification criterion also selects all file
+         * names. For example, *.abc or .abc match any file with an extension of
+         * abc. *.*, *, or empty string match all files in a directory.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -3892,8 +3892,8 @@ public interface SmbEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
-         * The actual absolute filepath (path name) for the output file that was
-         * written. This header is set by Camel and its purpose is providing
+         * The actual absolute filepath (path + name) for the output file that
+         * was written. This header is set by Camel and its purpose is providing
          * end-users with the name of the file that was written.
          * 
          * The option is a: {@code String} type.

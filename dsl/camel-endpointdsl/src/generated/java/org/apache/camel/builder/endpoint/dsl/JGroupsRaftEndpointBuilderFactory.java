@@ -744,7 +744,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return "CamelJGroupsRaftEventType";
         }
         /**
-         * Offset to use in the byte buffer to be set().
+         * Offset to use in the byte[] buffer to be set().
          * 
          * The option is a: {@code Integer} type.
          * 
@@ -756,7 +756,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return "CamelJGroupsRaftSetOffset";
         }
         /**
-         * Length to use in the byte buffer to be set().
+         * Length to use in the byte[] buffer to be set().
          * 
          * The option is a: {@code Integer} type.
          * 

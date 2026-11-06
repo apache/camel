@@ -758,7 +758,7 @@ public interface SpringAiChatEndpointBuilderFactory {
         }
         /**
          * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=stdiosse, mcpServer..command= (stdio),
+         * mcpServer..transportType=stdio|sse, mcpServer..command= (stdio),
          * mcpServer..args= (stdio), mcpServer..url= (sse),
          * mcpServer..oauthProfile= (OAuth profile for HTTP auth, requires
          * camel-oauth). This is a multi-value option with prefix: mcpServer.
@@ -781,7 +781,7 @@ public interface SpringAiChatEndpointBuilderFactory {
         }
         /**
          * MCP server configurations. Define servers using prefix notation:
-         * mcpServer..transportType=stdiosse, mcpServer..command= (stdio),
+         * mcpServer..transportType=stdio|sse, mcpServer..command= (stdio),
          * mcpServer..args= (stdio), mcpServer..url= (sse),
          * mcpServer..oauthProfile= (OAuth profile for HTTP auth, requires
          * camel-oauth). This is a multi-value option with prefix: mcpServer.

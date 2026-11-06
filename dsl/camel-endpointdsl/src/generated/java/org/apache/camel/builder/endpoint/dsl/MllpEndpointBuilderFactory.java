@@ -123,10 +123,10 @@ public interface MllpEndpointBuilderFactory {
         }
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -142,10 +142,10 @@ public interface MllpEndpointBuilderFactory {
         }
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -944,10 +944,10 @@ public interface MllpEndpointBuilderFactory {
         }
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -963,10 +963,10 @@ public interface MllpEndpointBuilderFactory {
         }
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1640,10 +1640,10 @@ public interface MllpEndpointBuilderFactory {
         }
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1659,10 +1659,10 @@ public interface MllpEndpointBuilderFactory {
         }
         /**
          * Enable/Disable strict compliance to the MLLP standard. The MLLP
-         * standard specifies START_OF_BLOCKhl7 payloadEND_OF_BLOCKEND_OF_DATA,
-         * however, some systems do not send the final END_OF_DATA byte. This
-         * setting controls whether or not the final END_OF_DATA byte is
-         * required or optional.
+         * standard specifies [START_OF_BLOCK]hl7
+         * payload[END_OF_BLOCK][END_OF_DATA], however, some systems do not send
+         * the final END_OF_DATA byte. This setting controls whether or not the
+         * final END_OF_DATA byte is required or optional.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

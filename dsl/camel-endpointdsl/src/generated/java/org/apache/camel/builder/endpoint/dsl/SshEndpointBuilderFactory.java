@@ -673,7 +673,7 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of allowed/supported key exchange algorithms in
-         * their order of preference.
+         * their **order** of preference.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -757,8 +757,8 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of allowed/supported message authentication code
-         * algorithms in their order of preference. The MAC algorithm is used
-         * for data integrity protection.
+         * algorithms in their **order** of preference. The MAC algorithm is
+         * used for data integrity protection.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1402,7 +1402,7 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of allowed/supported key exchange algorithms in
-         * their order of preference.
+         * their **order** of preference.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1486,8 +1486,8 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of allowed/supported message authentication code
-         * algorithms in their order of preference. The MAC algorithm is used
-         * for data integrity protection.
+         * algorithms in their **order** of preference. The MAC algorithm is
+         * used for data integrity protection.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2024,7 +2024,7 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of allowed/supported key exchange algorithms in
-         * their order of preference.
+         * their **order** of preference.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2108,8 +2108,8 @@ public interface SshEndpointBuilderFactory {
         }
         /**
          * Comma-separated list of allowed/supported message authentication code
-         * algorithms in their order of preference. The MAC algorithm is used
-         * for data integrity protection.
+         * algorithms in their **order** of preference. The MAC algorithm is
+         * used for data integrity protection.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

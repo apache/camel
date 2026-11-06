@@ -26,7 +26,7 @@ public final class GmailUsersEndpointConfiguration extends GoogleMailConfigurati
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "watch", description="The com.google.api.services.gmail.model.WatchRequest")})
     private com.google.api.services.gmail.model.WatchRequest content;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "getProfile", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "stop", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me"), @ApiMethod(methodName = "watch", description="The user's email address. The special value me can be used to indicate the authenticated user. default: me")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "getProfile", description="The user's email address. The special value me can be used to indicate the authenticated user. [default: me]"), @ApiMethod(methodName = "stop", description="The user's email address. The special value me can be used to indicate the authenticated user. [default: me]"), @ApiMethod(methodName = "watch", description="The user's email address. The special value me can be used to indicate the authenticated user. [default: me]")})
     private String userId;
 
     public com.google.api.services.gmail.model.WatchRequest getContent() {

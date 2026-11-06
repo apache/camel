@@ -3522,7 +3522,7 @@ public interface BlobEndpointBuilderFactory {
         }
         /**
          * (producer) (Most operations related to upload blob) Most operations
-         * related to upload blobAn MD5 hash of the block content. This hash is
+         * related to upload blob|An MD5 hash of the block content. This hash is
          * used to verify the integrity of the block during transport. When this
          * header is specified, the storage service compares the hash of the
          * content that has arrived with this header value. Note that this MD5
@@ -3881,7 +3881,7 @@ public interface BlobEndpointBuilderFactory {
         }
         /**
          * (producer) (Operations related to container and blob) Operations
-         * related to container and blob Metadata to associate with the
+         * related to container and blob| Metadata to associate with the
          * container or blob. (consumer) Additional metadata associated with the
          * blob.
          * 

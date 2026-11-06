@@ -35,7 +35,7 @@ public final class FhirSearchEndpointConfiguration extends FhirConfiguration {
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "searchByResource", description="Forces the query to perform the search using the given method (allowable methods are described in the FHIR Search Specification). The default search style is HTTP POST.")})
     private ca.uhn.fhir.rest.api.SearchStyleEnum searchStyle;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "searchByUrl", description="The URL to search for. Note that this URL may be complete (e.g. http://example.com/base/Patientname=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patientname=foo) in which case the client's base URL will be used.")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "searchByUrl", description="The URL to search for. Note that this URL may be complete (e.g. http://example.com/base/Patient?name=foo) in which case the client's base URL will be ignored. Or it can be relative (e.g. Patient?name=foo) in which case the client's base URL will be used.")})
     private String url;
 
     public java.util.Map<org.apache.camel.component.fhir.api.ExtraParameters, Object> getExtraParameters() {

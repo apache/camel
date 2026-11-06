@@ -3801,7 +3801,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3BucketExists";
         }
         /**
-         * The optional Cache-Control HTTP header which allows the user to
+         * The *optional* Cache-Control HTTP header which allows the user to
          * specify caching behavior along the HTTP request/reply chain.
          * 
          * The option is a: {@code String} type.
@@ -3814,7 +3814,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3ContentControl";
         }
         /**
-         * The optional Content-Disposition HTTP header, which specifies
+         * The *optional* Content-Disposition HTTP header, which specifies
          * presentational information such as the recommended filename for the
          * object to be saved as.
          * 
@@ -3828,7 +3828,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3ContentDisposition";
         }
         /**
-         * The optional Content-Encoding HTTP header specifying what content
+         * The *optional* Content-Encoding HTTP header specifying what content
          * encodings have been applied to the object and what decoding
          * mechanisms must be applied in order to obtain the media-type
          * referenced by the Content-Type field.
@@ -3965,7 +3965,7 @@ public interface AWS2S3EndpointBuilderFactory {
             return "CamelAwsS3StorageClass";
         }
         /**
-         * (producer) The optional version ID of the newly uploaded object.
+         * (producer) The *optional* version ID of the newly uploaded object.
          * (consumer) The version ID of the associated Amazon S3 object if
          * available. Version IDs are only assigned to objects when an object is
          * uploaded to an Amazon S3 bucket that has object versioning enabled.
@@ -4193,7 +4193,7 @@ public interface AWS2S3EndpointBuilderFactory {
         /**
          * A map of metadata to be stored or stored with the object in S3. More
          * details about metadata
-         * https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.htmlhere.
+         * https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingMetadata.html[here].
          * 
          * The option is a: {@code Map<String, String>} type.
          * 

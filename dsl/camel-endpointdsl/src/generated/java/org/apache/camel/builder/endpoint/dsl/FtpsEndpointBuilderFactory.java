@@ -6565,8 +6565,8 @@ public interface FtpsEndpointBuilderFactory {
             return "CamelFileParent";
         }
         /**
-         * The actual absolute filepath (path name) for the output file that was
-         * written. This header is set by Camel and its purpose is providing
+         * The actual absolute filepath (path + name) for the output file that
+         * was written. This header is set by Camel and its purpose is providing
          * end-users with the name of the file that was written.
          * 
          * The option is a: {@code String} type.

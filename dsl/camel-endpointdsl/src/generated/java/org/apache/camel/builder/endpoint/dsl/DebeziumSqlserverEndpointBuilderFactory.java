@@ -628,7 +628,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Controls how the connector queries CDC data. The default is 'direct',
          * which makes the connector to query the change tables directly. The
          * value of 'function' means the data is queried by means of calling
-         * cdc.fn_cdc_get_all_changes_# function.
+         * cdc.[fn_cdc_get_all_changes_#] function.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -2359,7 +2359,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2379,7 +2379,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * compute the number of rows per chunks. This may not be ideal for
          * larger tables, and using the multiplier, the formula is adjusted to
          * increase the number of chunks by using
-         * 'row_count/(snapshot.max.threads snapshot.max.threads.multiplier).
+         * 'row_count/(snapshot.max.threads * snapshot.max.threads.multiplier).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2614,8 +2614,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * the specific connectors. Select statements for the individual tables
          * are specified in further configuration properties, one for each
          * table, identified by the id
-         * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
-         * 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME',
+         * 'snapshot.select.statement.overrides.[DB_NAME].[TABLE_NAME]' or
+         * 'snapshot.select.statement.overrides.[SCHEMA_NAME].[TABLE_NAME]',
          * respectively. The value of those properties is the select statement
          * to use when retrieving data from the specific table during
          * snapshotting. A possible use case for large append-only tables is
@@ -3165,7 +3165,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         }
         /**
          * The identifier of the connector, normally is this format
-         * {server-name}.{database-name}.{table-name}.
+         * +++{server-name}.{database-name}.{table-name}+++.
          * 
          * The option is a: {@code String} type.
          * 

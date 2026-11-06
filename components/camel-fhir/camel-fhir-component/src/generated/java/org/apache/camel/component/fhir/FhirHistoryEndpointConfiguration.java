@@ -41,7 +41,7 @@ public final class FhirHistoryEndpointConfiguration extends FhirConfiguration {
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "onType", description="The resource type to search for")})
     private Class<org.hl7.fhir.instance.model.api.IBaseResource> resourceType;
     @UriParam
-    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "onInstance", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server."), @ApiMethod(methodName = "onServer", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server."), @ApiMethod(methodName = "onType", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2 server.")})
+    @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "onInstance", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2+ server."), @ApiMethod(methodName = "onServer", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2+ server."), @ApiMethod(methodName = "onType", description="Request that the method return a Bundle resource (such as ca.uhn.fhir.model.dstu2.resource.Bundle). Use this method if you are accessing a DSTU2+ server.")})
     private Class<org.hl7.fhir.instance.model.api.IBaseBundle> returnType;
 
     public Integer getCount() {

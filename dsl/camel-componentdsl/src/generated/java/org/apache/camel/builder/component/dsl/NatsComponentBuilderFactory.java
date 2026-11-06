@@ -538,8 +538,7 @@ public interface NatsComponentBuilderFactory {
         
         /**
          * Maximum number of messages to fetch per pull request when using a
-         * JetStream Pull Subscription. Only used when {code
-         * pullSubscription=true}.
+         * JetStream Pull Subscription. Only used when pullSubscription=true.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -558,7 +557,7 @@ public interface NatsComponentBuilderFactory {
         /**
          * Maximum time (in milliseconds) to wait for a batch of messages to be
          * available on the server during a single fetch when using a JetStream
-         * Pull Subscription. Only used when {code pullSubscription=true}.
+         * Pull Subscription. Only used when pullSubscription=true.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -576,8 +575,8 @@ public interface NatsComponentBuilderFactory {
         
         /**
          * Sets the consumer subscription type for JetStream. Set to true to use
-         * a Pull Subscription (consumer explicitly requests messages). Set to
-         * false to use a Push Subscription (messages are automatically
+         * a **Pull Subscription** (consumer explicitly requests messages). Set
+         * to false to use a **Push Subscription** (messages are automatically
          * delivered).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

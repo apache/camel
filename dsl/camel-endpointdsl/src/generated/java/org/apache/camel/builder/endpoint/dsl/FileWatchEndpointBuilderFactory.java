@@ -566,8 +566,8 @@ public interface FileWatchEndpointBuilderFactory {
             return "CamelFileAbsolutePath";
         }
         /**
-         * The file path. For relative files this is the starting directory the
-         * relative filename. For absolute files this is the absolute path.
+         * The file path. For relative files this is the starting directory +
+         * the relative filename. For absolute files this is the absolute path.
          * 
          * The option is a: {@code String} type.
          * 

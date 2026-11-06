@@ -744,7 +744,7 @@ public interface PlatformHttpEndpointBuilderFactory {
         /**
          * A comma or whitespace separated list of file extensions. Uploads
          * having these extensions will be stored locally. Null value or
-         * asterisk () will allow all files.
+         * asterisk (*) will allow all files.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
