@@ -18,9 +18,12 @@
 import org.apache.camel.tooling.model.ComponentModel
 import org.apache.camel.tooling.model.JsonMapper
 
-File json = new File(basedir, "src/generated/resources/org/apache/camel/component/foo/foo.json")
+File json = new File(basedir, "src/generated/resources/META-INF/org/apache/camel/component/foo/foo.json")
 assert json.exists()
 
 ComponentModel component = JsonMapper.generateComponentModel(json.text)
 assert component.getEndpointHeaders().size() == 1
 assert "My description of the SomeHeader".equals(component.getEndpointHeaders().get(0).getDescription())
+
+assert "My interval in seconds. Use intervalSeconds=5 to poll every five seconds.".equals(
+        component.getEndpointOptions().find { it.getName() == "intervalSeconds" }.getDescription())
