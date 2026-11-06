@@ -238,14 +238,26 @@ public class ActiveMQComponent extends JmsComponent {
 
     @Override
     protected void doStop() throws Exception {
+        // close the connections of the connection factories that the endpoints created, but keep the factories usable:
+        // the endpoints keep them, and open new connections when the component is started again
         for (Object s : pooledConnectionFactoryServiceList) {
+            invokePooledConnectionFactory(s, "clear");
+        }
+        for (SingleConnectionFactory s : singleConnectionFactoryList) {
             try {
-                // invoke stop method if exists
-                Method m = s.getClass().getMethod("stop");
-                org.apache.camel.support.ObjectHelper.invokeMethod(m, s);
+                s.resetConnection();
             } catch (Exception e) {
                 // ignore
             }
+        }
+
+        super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        for (Object s : pooledConnectionFactoryServiceList) {
+            invokePooledConnectionFactory(s, "stop");
         }
         pooledConnectionFactoryServiceList.clear();
 
@@ -258,7 +270,17 @@ public class ActiveMQComponent extends JmsComponent {
         }
         singleConnectionFactoryList.clear();
 
-        super.doStop();
+        super.doShutdown();
+    }
+
+    private static void invokePooledConnectionFactory(Object pooledConnectionFactory, String method) {
+        try {
+            // invoke the method if it exists
+            Method m = pooledConnectionFactory.getClass().getMethod(method);
+            org.apache.camel.support.ObjectHelper.invokeMethod(m, pooledConnectionFactory);
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     /**
