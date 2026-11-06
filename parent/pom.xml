@@ -350,7 +350,7 @@
         <!-- smack 4.4.x asks for jxmpp in the range [1.0.0,1.0.999] -->
         <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.4</jython-version>
-        <kafka-version>4.3.1</kafka-version>
+        <kafka-version>4.4.0</kafka-version>
         <keycloak-client-version>26.0.12</keycloak-client-version>
         <keycloak-version>26.8.1</keycloak-version>
         <kubernetes-client-version>8.0.0</kubernetes-client-version>
