@@ -92,11 +92,17 @@ public final class ChaosReport {
             }
             ChaosRule rule = entry.rule;
             if (entry.outcome == Outcome.UNMET) {
-                long missing = Math.max(0, rule.expectation.count - entry.completed);
-                lostCount += missing;
-                reasons.add("route " + rule.expectation.route + " completed " + entry.completed + " of "
-                            + rule.expectation.count + " exchanges within " + ChaosRuleParser.printTime(rule.within)
-                            + " (rule " + rule.id + "): " + missing + " lost");
+                ChaosRule.Expectation e = rule.expectation;
+                lostCount += entry.lost;
+                if (e.kind == ChaosRule.Expectation.Kind.COMPLETED && e.op == ChaosRule.Expectation.Op.AT_LEAST) {
+                    reasons.add("route " + e.route + " completed " + entry.value + " of " + e.count + " exchanges within "
+                                + ChaosRuleParser.printTime(rule.within) + " (rule " + rule.id + "): " + entry.lost
+                                + " lost");
+                } else {
+                    reasons.add("route " + e.route + ": " + entry.value + " " + e.kind.words(entry.value) + " within "
+                                + ChaosRuleParser.printTime(rule.within) + ", " + e.op.words + " " + e.count
+                                + " expected (rule " + rule.id + ")" + (entry.lost > 0 ? ": " + entry.lost + " lost" : ""));
+                }
             } else if (entry.outcome == Outcome.PENDING) {
                 anyPending = true;
             }
@@ -208,9 +214,9 @@ public final class ChaosReport {
                 sb.append("\n      ").append(lifecycleText(r));
             }
             if (r.outcome != null) {
-                sb.append("\n      expect ").append(r.expectRoute).append(':').append(r.expectCount).append(" within ")
+                sb.append("\n      expect ").append(r.expectSpec).append(" within ")
                         .append(ChaosRuleParser.printTime(r.within)).append(": ").append(r.outcome.key)
-                        .append(", ").append(r.completed).append(" completed");
+                        .append(", ").append(r.value).append(' ').append(r.expectKind.key);
                 if (r.outcome == Outcome.PENDING) {
                     sb.append(", ").append(ChaosRuleParser.printTime(r.timeLeft)).append(" left");
                 } else if (r.outcome == Outcome.CANCELLED) {
@@ -307,9 +313,15 @@ public final class ChaosReport {
             if (r.outcome != null) {
                 JsonObject e = new JsonObject();
                 e.put("route", r.expectRoute);
+                e.put("kind", r.expectKind.key);
+                e.put("op", r.expectOp.key);
                 e.put("count", r.expectCount);
                 e.put("within", r.within);
-                e.put("completed", r.completed);
+                // the count of its kind so far (completed for an expectation of completed exchanges, as before)
+                e.put("value", r.value);
+                if (r.expectKind == ChaosRule.Expectation.Kind.COMPLETED) {
+                    e.put("completed", r.value);
+                }
                 e.put("outcome", r.outcome.key);
                 if (r.outcome == Outcome.PENDING) {
                     e.put("timeLeft", r.timeLeft);
@@ -408,10 +420,14 @@ public final class ChaosReport {
         final long lostAtDlq;
         final long endsIn;
         final String expectRoute;
+        final ChaosRule.Expectation.Kind expectKind;
+        final ChaosRule.Expectation.Op expectOp;
+        final String expectSpec;
         final long expectCount;
         final long within;
         final Outcome outcome;
-        final long completed;
+        final long value;
+        final long lost;
         final long timeLeft;
         // a lifecycle rule: its action, route, duration and what it did, else null
         final Action action;
@@ -447,16 +463,24 @@ public final class ChaosReport {
             ChaosRule.Expectation expectation = rule.expectation;
             if (expectation != null) {
                 expectRoute = expectation.route;
+                expectKind = expectation.kind;
+                expectOp = expectation.op;
+                expectSpec = expectation.spec();
                 expectCount = expectation.count;
                 ChaosRule.Expectation.Reading reading = expectation.read(now);
                 outcome = reading.outcome();
-                completed = reading.completed();
+                value = reading.value();
+                lost = expectation.lost(reading);
                 timeLeft = Math.max(0, expectation.deadline() - now);
             } else {
                 expectRoute = null;
+                expectKind = null;
+                expectOp = null;
+                expectSpec = null;
                 expectCount = 0;
                 outcome = null;
-                completed = 0;
+                value = 0;
+                lost = 0;
                 timeLeft = 0;
             }
         }

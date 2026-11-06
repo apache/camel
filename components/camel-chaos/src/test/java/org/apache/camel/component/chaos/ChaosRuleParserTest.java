@@ -174,6 +174,27 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void expectationKindsAndOps() {
+        ChaosRule.Builder b = parse("endpoint=x error expect=orders:handled<=0 within=1m");
+        assertThat(b.expectRoute).isEqualTo("orders");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.HANDLED);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.AT_MOST);
+        assertThat(b.expectCount).isZero();
+        b = parse("endpoint=x error expect=a:b:redeliveries>=30");
+        assertThat(b.expectRoute).isEqualTo("a:b");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.REDELIVERIES);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.AT_LEAST);
+        b = parse("endpoint=x error expect=orders:failed=0");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.FAILED);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.EXACTLY);
+        // a count alone is at least that many completed exchanges, as before
+        b = parse("endpoint=x error expect=orders:20");
+        assertThat(b.expectKind).isEqualTo(ChaosRule.Expectation.Kind.COMPLETED);
+        assertThat(b.expectOp).isEqualTo(ChaosRule.Expectation.Op.AT_LEAST);
+        assertThat(parse("endpoint=x error expect=orders:completed>=20").expectCount).isEqualTo(20);
+    }
+
+    @Test
     void quotedValuesAndEscapes() {
         assertThat(parse("endpoint=x error message='it is \\'down\\''").message).isEqualTo("it is 'down'");
         assertThat(parse("endpoint=x error message=\"a \\\\ b ; c\"").message).isEqualTo("a \\ b ; c");
@@ -295,6 +316,12 @@ class ChaosRuleParserTest {
             "endpoint=x error expect=:5|is not <route>:<count>",
             "endpoint=x error expect=orders:|is not <route>:<count>",
             "endpoint=x error expect=orders:0|needs a count of 1 or more",
+            "endpoint=x error expect=orders:completed>=0|needs a count of 1 or more",
+            "endpoint=x error expect=orders:lost<=0|counts lost: the kinds are completed, handled, failed and redeliveries",
+            "endpoint=x error expect=orders:<=0|counts nothing",
+            "endpoint=x error expect=orders:handled<0|needs >=, <= or = after handled",
+            "endpoint=x error expect=orders:handled<=x|needs a count that is a whole number",
+            "endpoint=x error expect=orders:handled<=|needs a count that is a whole number",
             "endpoint=x error expect=orders:5 within=0s|must be longer than 0",
             "endpoint=x error expect=orders:5 within=11m|within=11m is longer than camel.chaos.maxDuration",
             "endpoint=x error expect=orders:5 within=106751991167d|is longer than camel.chaos.maxDuration",

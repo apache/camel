@@ -323,9 +323,17 @@ public class ListChaos extends ProcessWatchCommand {
         if (!(rule.get("expectation") instanceof JsonObject e)) {
             return "";
         }
+        // orders:100 counts completed exchanges (at least that many); orders:handled<=0 names its kind and op
+        String kind = e.getStringOrDefault("kind", "completed");
+        String op = e.getStringOrDefault("op", ">=");
+        Object value = e.get("value") != null ? e.get("value") : e.get("completed");
         StringBuilder sb = new StringBuilder();
-        sb.append(e.getString("route")).append(':').append(e.get("count")).append(' ').append(e.getString("outcome"))
-                .append(" (").append(e.get("completed")).append(" completed");
+        sb.append(e.getString("route")).append(':');
+        if (!"completed".equals(kind) || !">=".equals(op)) {
+            sb.append(kind).append(op);
+        }
+        sb.append(e.get("count")).append(' ').append(e.getString("outcome"))
+                .append(" (").append(value).append(' ').append(kind);
         if (e.get("timeLeft") instanceof Number n) {
             sb.append(", ").append(TimeUtils.printDuration(n.longValue())).append(" left");
         }

@@ -61,7 +61,7 @@ final class ChaosEventNotifier extends EventNotifierSupport {
             Route route = uow != null ? uow.getRoute() : null;
             String routeId = route != null ? route.getRouteId() : exchange.getFromRouteId();
             if (routeId != null) {
-                manager.counts(routeId).redeliveries.increment();
+                manager.redelivered(routeId);
             }
         }
     }

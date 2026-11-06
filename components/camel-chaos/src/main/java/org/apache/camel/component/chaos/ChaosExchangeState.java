@@ -58,8 +58,11 @@ final class ChaosExchangeState implements SafeCopyProperty {
         // the counts of the route the outcome is counted in: other counts (after a reset of the report) have not
         // counted the exchange
         ChaosManager.RouteCounts counts;
-        // the expectations of the route counted the exchange as completed (once, also when it completes again)
-        boolean expected;
+        // the expectations of the route counted the exchange as completed, handled or failed (each once, also when the
+        // exchange goes through the route again)
+        boolean expectedCompleted;
+        boolean expectedHandled;
+        boolean expectedFailed;
     }
 
     private final Map<String, RouteState> routes = new HashMap<>(4);

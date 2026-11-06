@@ -208,6 +208,21 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void reportShowsTheKindAndOpOfAnExpectation() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject report = (JsonObject) chaos.get("report");
+        JsonObject rule = (JsonObject) ((JsonArray) report.getCollection("rules")).get(0);
+        rule.put("expectation", new JsonObject(
+                Map.of("route", "orders", "kind", "handled", "op", "<=", "count", 0, "within", 60000, "value", 3,
+                        "outcome", "unmet")));
+        writeStatus(chaos);
+
+        assertThat(run("--report")).isZero();
+
+        assertThat(printer.getStdout()).contains("orders:handled<=0 unmet (3 handled)");
+    }
+
+    @Test
     void chaosOff() throws Exception {
         writeStatus(new JsonObject(Map.of("enabled", false, "reason", "Chaos is off: it stays off with profile prod")));
 
