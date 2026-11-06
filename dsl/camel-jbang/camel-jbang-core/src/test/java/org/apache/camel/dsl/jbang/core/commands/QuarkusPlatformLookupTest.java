@@ -26,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.junit.jupiter.api.Test;
@@ -87,6 +88,25 @@ class QuarkusPlatformLookupTest {
     }
 
     @Test
+    void quarkusVersionOfApplicationPropertiesIsUsedWithoutTheRegistry(@TempDir Path dir) throws Exception {
+        Path project = Files.createDirectory(dir.resolve("project"));
+        Files.copy(Path.of(ROUTE), project.resolve("hello.camel.yaml"));
+        Files.writeString(project.resolve("application.properties"),
+                "camel.jbang.quarkusVersion=" + REGISTRY_QUARKUS_VERSION + System.lineSeparator());
+
+        // a directory is exported with its application.properties
+        Export command = export(RuntimeType.main, dir.resolve("out"), List.of(unreachableRegistry(dir)),
+                project.toString());
+
+        assertThat(command.doCall()).isZero();
+
+        assertThat(dir.resolve("out/pom.xml")).exists();
+        // the platform of the given version is resolved, which also sets its group
+        assertThat(runSettings()).contains("camel.jbang.quarkusGroupId=io.quarkus.platform",
+                "camel.jbang.quarkusVersion=" + REGISTRY_QUARKUS_VERSION);
+    }
+
+    @Test
     void quarkusRuntimeLooksUpItsPlatform(@TempDir Path dir) throws Exception {
         Export command = export(RuntimeType.quarkus, dir.resolve("out"),
                 List.of(CamelCommandBaseTestSupport.quarkusExtRegistry()), ROUTE);
@@ -119,15 +139,41 @@ class QuarkusPlatformLookupTest {
                 List.of(CamelCommandBaseTestSupport.quarkusExtRegistry()));
         assertThat(quarkus.doCall()).isZero();
 
-        Model pom;
-        try (Reader reader = Files.newBufferedReader(dir.resolve("quarkus/pom.xml"))) {
-            pom = new MavenXpp3Reader().read(reader);
-        }
+        Model pom = readPom(dir.resolve("quarkus/pom.xml"));
         assertThat(pom.getProperties()).containsEntry("quarkus.platform.version", REGISTRY_QUARKUS_VERSION);
-        assertThat(pom.getDependencies())
-                .filteredOn(d -> "io.quarkus".equals(d.getGroupId()) && "quarkus-core".equals(d.getArtifactId()))
-                .singleElement()
-                .satisfies(d -> assertThat(d.getVersion()).isNull());
+        assertThat(quarkusDependency(pom, "quarkus-core").getVersion()).isNull();
+    }
+
+    @Test
+    void quarkusExportKeepsTheVersionOfAGivenQuarkusDependency(@TempDir Path dir) throws Exception {
+        // given to a run: the run data has it in camel.jbang.dependencies
+        Export main = export(RuntimeType.main, dir.resolve("main"),
+                List.of(unreachableRegistry(dir), "--dep=io.quarkus:quarkus-given-to-the-run:1.0"), ROUTE);
+        assertThat(main.doCall()).isZero();
+
+        // given to the export, which has no files and reuses the run data
+        Export quarkus = export(RuntimeType.quarkus, dir.resolve("quarkus"),
+                List.of(CamelCommandBaseTestSupport.quarkusExtRegistry(),
+                        "--dep=io.quarkus:quarkus-given-to-the-export:2.0"));
+        assertThat(quarkus.doCall()).isZero();
+
+        Model pom = readPom(dir.resolve("quarkus/pom.xml"));
+        assertThat(quarkusDependency(pom, "quarkus-given-to-the-run").getVersion()).isEqualTo("1.0");
+        assertThat(quarkusDependency(pom, "quarkus-given-to-the-export").getVersion()).isEqualTo("2.0");
+    }
+
+    private static Model readPom(Path pom) throws Exception {
+        try (Reader reader = Files.newBufferedReader(pom)) {
+            return new MavenXpp3Reader().read(reader);
+        }
+    }
+
+    private static Dependency quarkusDependency(Model pom, String artifactId) {
+        List<Dependency> found = pom.getDependencies().stream()
+                .filter(d -> "io.quarkus".equals(d.getGroupId()) && artifactId.equals(d.getArtifactId()))
+                .toList();
+        assertThat(found).as("io.quarkus:%s in the pom.xml", artifactId).hasSize(1);
+        return found.get(0);
     }
 
     /**

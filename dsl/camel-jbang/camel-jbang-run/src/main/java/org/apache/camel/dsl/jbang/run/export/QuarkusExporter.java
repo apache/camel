@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -437,7 +438,7 @@ class QuarkusExporter extends Exporter {
         }
 
         // Build template data model
-        List<Map<String, Object>> depList = buildQuarkusDependencyList(deps, quarkusCamelBom);
+        List<Map<String, Object>> depList = buildQuarkusDependencyList(deps, givenQuarkusDependencies(prop), quarkusCamelBom);
 
         Map<String, Object> model = new HashMap<>();
         model.put("GroupId", ids[0]);
@@ -460,7 +461,27 @@ class QuarkusExporter extends Exporter {
         Files.writeString(pom, context);
     }
 
-    private List<Map<String, Object>> buildQuarkusDependencyList(Set<String> deps, MavenGav quarkusCamelBom) {
+    /**
+     * The io.quarkus dependencies that the user gave with a version, as artifactId:version: the ones of this export
+     * (--dep), and the ones of the run whose data is used (camel.jbang.dependencies of the run settings, which has the
+     * dependencies of --dep and of application.properties).
+     */
+    private Set<String> givenQuarkusDependencies(Properties settings) {
+        List<String> given = new ArrayList<>(request.dependencies);
+        given.addAll(Arrays.asList(RuntimeUtil.getDependenciesAsArray(settings)));
+
+        Set<String> answer = new HashSet<>();
+        for (String dep : given) {
+            MavenGav gav = MavenGav.parseGav(dep);
+            if ("io.quarkus".equals(gav.getGroupId()) && gav.getVersion() != null && !gav.getVersion().isBlank()) {
+                answer.add(gav.getArtifactId() + ":" + gav.getVersion());
+            }
+        }
+        return answer;
+    }
+
+    private List<Map<String, Object>> buildQuarkusDependencyList(
+            Set<String> deps, Set<String> givenQuarkusDependencies, MavenGav quarkusCamelBom) {
         List<MavenGav> gavs = new ArrayList<>();
 
         Path file = request.mavenResolver.downloader().resolveArtifact(quarkusCamelBom).getFile().toPath();
@@ -489,9 +510,11 @@ class QuarkusExporter extends Exporter {
                         // Use plain camel with hard-coded version
                         gav.setVersion(request.camelVersion);
                     }
-                } else if ("io.quarkus".equals(gid) && !"lib".equals(gav.getPackaging())) {
-                    // managed in the Quarkus Platform BOM. The version of the run can be another one, such as the one
-                    // of a run with another runtime, whose data is reused. A local JAR is named by its version
+                } else if ("io.quarkus".equals(gid) && !"lib".equals(gav.getPackaging())
+                        && !givenQuarkusDependencies.contains(aid + ":" + gav.getVersion())) {
+                    // a dependency that the run added, which is managed in the Quarkus Platform BOM. The version of the
+                    // run can be another one, such as the one of a run with another runtime, whose data is reused. A
+                    // version that the user gave is kept, and a local JAR is named by its version
                     gav.setVersion(null);
                 }
                 gavs.add(gav);

@@ -7199,18 +7199,20 @@ With these runtimes, the dependencies that Camel CLI adds with the version of Qu
 the `camel-dependencies` POM of the Camel CLI, as before Camel 4.21, instead of the version of the Quarkus Platform that
 the registry has for the Camel version:
 
-* `io.quarkus:quarkus-core`, for a source that imports `jakarta.inject.Inject`, `jakarta.inject.Named`,
-  `jakarta.inject.Singleton`, `jakarta.enterprise.context.ApplicationScoped` or `jakarta.enterprise.inject.Produces`;
+* `io.quarkus:quarkus-core`, for `jakarta.inject.Inject`, `jakarta.inject.Named`, `jakarta.inject.Singleton`,
+  `jakarta.enterprise.context.ApplicationScoped` and `jakarta.enterprise.inject.Produces`: when a source imports one of
+  them, or when one of them is loaded at runtime;
 * the `io.quarkus:quarkus-jdbc-*` driver of a `quarkus.datasource.db-kind` property.
 
 This is also the version of these dependencies in the `pom.xml` of an export to Camel Main or Spring Boot. With
 `camel run` and `camel export`, `--quarkus-version` (or `camel.jbang.quarkusVersion`) still sets it.
 
 The run settings (`.camel-jbang/camel-jbang-run.properties`) of these runs no longer have `camel.jbang.quarkusGroupId`,
-`camel.jbang.quarkusVersion` and `camel.jbang.quarkusExtensionRegistryBaseUri`, unless a Quarkus version is given.
+`camel.jbang.quarkusVersion` and `camel.jbang.quarkusExtensionRegistryBaseUri`, unless a Quarkus version is given
+(`--quarkus-version` or `camel.jbang.quarkusVersion`).
 
-The export to Quarkus now leaves the version of the `io.quarkus` dependencies to the Quarkus Platform BOM, as for the
-Camel Quarkus extensions that the BOM manages, also for a dependency given with `--dep`. Before, the `pom.xml` had them
-with the version of the run, which can be another one than the platform of the export, for example when the export
-reuses the data of an earlier `camel run`. An `io.quarkus` artifact that the BOM does not manage needs its version
-added in the exported `pom.xml`. Nothing else changes for the Quarkus runtime.
+The export to Quarkus now leaves the version of the `io.quarkus` dependencies that Camel CLI adds itself to the Quarkus
+Platform BOM, as for the Camel Quarkus extensions that the BOM manages. Before, the `pom.xml` had them with the version
+of the run, which can be another one than the platform of the export, for example when the export reuses the data of
+an earlier `camel run`. An `io.quarkus` dependency that is given with its version (`--dep` or
+`camel.jbang.dependencies`) keeps that version. Nothing else changes for the Quarkus runtime.
