@@ -21,7 +21,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.camel.tooling.maven.MavenGav;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -215,5 +218,35 @@ public class ExportHelperTest {
 
         // Verify target exists
         Assertions.assertTrue(Files.exists(target));
+    }
+
+    @Test
+    public void testRemoveDuplicateArtifactsKeepsTheVersionThatIsGiven() {
+        List<MavenGav> gavs = new ArrayList<>(
+                List.of(
+                        MavenGav.parseGav("org.apache.camel.quarkus:camel-quarkus-console"),
+                        MavenGav.parseGav("org.apache.camel.quarkus:camel-quarkus-log"),
+                        MavenGav.parseGav("org.apache.camel.quarkus:camel-quarkus-console:3.2.0")));
+
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
+        // the duplicate keeps the position of the first, with the version that is given
+        Assertions.assertEquals(2, gavs.size());
+        Assertions.assertEquals("camel-quarkus-console", gavs.get(0).getArtifactId());
+        Assertions.assertEquals("3.2.0", gavs.get(0).getVersion());
+        Assertions.assertEquals("camel-quarkus-log", gavs.get(1).getArtifactId());
+    }
+
+    @Test
+    public void testRemoveDuplicateArtifactsKeepsTheFirstOfTwoVersions() {
+        List<MavenGav> gavs = new ArrayList<>(
+                List.of(
+                        MavenGav.parseGav("org.postgresql:postgresql:42.7.9"),
+                        MavenGav.parseGav("org.postgresql:postgresql:42.7.99")));
+
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
+        Assertions.assertEquals(1, gavs.size());
+        Assertions.assertEquals("42.7.9", gavs.get(0).getVersion());
     }
 }

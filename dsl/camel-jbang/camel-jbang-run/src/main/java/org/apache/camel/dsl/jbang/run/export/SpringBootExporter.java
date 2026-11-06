@@ -297,6 +297,8 @@ class SpringBootExporter extends Exporter {
             gavs.add(gav);
         }
 
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         gavs.sort(ExportHelper.mavenGavComparator());
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -356,6 +358,9 @@ class SpringBootExporter extends Exporter {
             }
             gavs.add(gav);
         }
+
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         gavs.sort(ExportHelper.mavenGavComparator());
 
         StringBuilder sb = new StringBuilder();

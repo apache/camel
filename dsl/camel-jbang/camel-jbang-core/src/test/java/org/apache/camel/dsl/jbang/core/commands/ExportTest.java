@@ -1610,6 +1610,33 @@ class ExportTest {
         }
     }
 
+    private static Stream<Arguments> consoleArtifactProvider() {
+        Stream.Builder<Arguments> builder = Stream.builder();
+        builder.add(Arguments.of(RuntimeType.quarkus, "org.apache.camel.quarkus", "camel-quarkus-console"));
+        // camel-spring-boot 4.19+ requires JDK 21 (Spring Boot 4)
+        if (Runtime.version().feature() >= 21) {
+            builder.add(Arguments.of(RuntimeType.springBoot, "org.apache.camel.springboot", "camel-console-starter"));
+        }
+        return builder.build();
+    }
+
+    @ParameterizedTest
+    @MethodSource("consoleArtifactProvider")
+    void shouldNotDuplicateConsoleDependencyGivenAsRuntimeArtifact(RuntimeType rt, String groupId, String artifactId)
+            throws Exception {
+        LOG.info("shouldNotDuplicateConsoleDependencyGivenAsRuntimeArtifact {}", rt);
+        // --console adds org.apache.camel:camel-console, which the runtime maps to its own artifact: the same artifact
+        // as the --dep names, with other coordinates before the mapping
+        int exit = exportWithConsole(rt, "--dep=" + groupId + ":" + artifactId);
+
+        assertThat(exit).isEqualTo(0);
+        Model model = readMavenModel();
+
+        assertThat(model.getDependencies()).extracting(Dependency::getArtifactId)
+                .contains(artifactId);
+        assertEachArtifactOnce(model);
+    }
+
     @Test
     void shouldReplacePlatformHttpInAnyNotation() throws Exception {
         LOG.info("shouldReplacePlatformHttpInAnyNotation");

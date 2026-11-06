@@ -530,6 +530,8 @@ class QuarkusExporter extends Exporter {
         // replace dependencies with special quarkus dependencies if we can find any
         replaceQuarkusDependencies(gavs);
 
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         // sort artifacts
         gavs.sort(ExportHelper.mavenGavComparator());
 

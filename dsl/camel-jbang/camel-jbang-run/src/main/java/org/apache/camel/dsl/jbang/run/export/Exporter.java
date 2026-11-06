@@ -160,6 +160,8 @@ abstract class Exporter {
             gavs.add(gav);
         }
 
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         // sort artifacts
         gavs.sort(ExportHelper.mavenGavComparator());
 
