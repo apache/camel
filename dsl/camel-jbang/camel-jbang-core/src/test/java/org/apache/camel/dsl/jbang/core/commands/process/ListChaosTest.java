@@ -236,6 +236,42 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void theNoteSaysWhenARuleStartsItsBurstsAndTheRoundOfAFlappingRoute() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject waiting = rule(1, "waiting", "endpoint=mock:x drop from=+30s");
+        waiting.put("id", "r2");
+        waiting.put("startsIn", 25000L);
+        JsonObject burst = rule(1, "active", "endpoint=mock:x error rate=burst:5s/30s");
+        burst.put("id", "r3");
+        burst.put("nextBurstIn", 12000L);
+        JsonObject flap = rule(1, "active", "route=poller stall duration=10s repeat=3 every=1m");
+        flap.put("id", "r4");
+        JsonObject lifecycle = new JsonObject();
+        lifecycle.put("action", "suspend");
+        lifecycle.put("route", "poller");
+        lifecycle.put("state", "pending");
+        lifecycle.put("repeat", 3);
+        lifecycle.put("every", 60000L);
+        lifecycle.put("round", 1);
+        lifecycle.put("actsIn", 40000L);
+        flap.put("lifecycle", lifecycle);
+        JsonArray rules = chaos.getCollection("rules");
+        rules.add(waiting);
+        rules.add(burst);
+        rules.add(flap);
+        writeStatus(chaos);
+
+        assertThat(run()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(lineOf(out, "r2")).contains("starts in 25s");
+        assertThat(lineOf(out, "r3")).contains("next burst in 12s");
+        // the note wraps in its column
+        assertThat(lineOf(out, "r4")).contains("route poller pending (round 1 of 3),");
+        assertThat(out).contains("acts in 40s");
+    }
+
+    @Test
     void withoutANoteThereIsNoNoteColumn() throws Exception {
         writeStatus(chaosOn());
 

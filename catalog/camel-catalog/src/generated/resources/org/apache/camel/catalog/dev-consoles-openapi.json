@@ -897,14 +897,14 @@
 													},
 													"state": {
 														"type": "string",
-														"description": "The state of the rule: active or ended"
+														"description": "The state of the rule: active, waiting (before its start, from=) or ended"
 													},
 													"hooks": {
 														"type": "array",
 														"items": {
 															"type": "string"
 														},
-														"description": "Where the rule fires: send, poll, entry or step"
+														"description": "Where the rule fires: send, reply, dlq, poll, entry or step"
 													},
 													"matches": {
 														"type": "integer",
@@ -936,9 +936,13 @@
 														"type": "integer",
 														"description": "The milliseconds until an active rule ends"
 													},
+													"startsIn": {
+														"type": "integer",
+														"description": "The milliseconds until a waiting rule starts (from=)"
+													},
 													"rate": {
 														"type": "number",
-														"description": "The share of the matches the rule fires at: rate=, 1\/N for rate=every:N, else 1 (not for a lifecycle or stall rule)"
+														"description": "The share of the matches the rule fires at: rate=, 1\/N for rate=every:N, the share of each period in a burst for rate=burst:, else 1 (not for a lifecycle or stall rule)"
 													},
 													"observedRate": {
 														"type": "number",
@@ -947,6 +951,14 @@
 													"nextFireIn": {
 														"type": "integer",
 														"description": "The matches until a rule with rate=every:N fires again (only for such a rule while it is active)"
+													},
+													"burstEndsIn": {
+														"type": "integer",
+														"description": "The milliseconds until the burst of an active rate=burst: rule ends (only while it is in a burst)"
+													},
+													"nextBurstIn": {
+														"type": "integer",
+														"description": "The milliseconds until the next burst of an active rate=burst: rule (only between bursts)"
 													},
 													"lastFiredAgo": {
 														"type": "integer",
@@ -978,7 +990,7 @@
 													"lifecycle": {
 														"type": "object",
 														"additionalProperties": true,
-														"description": "What a lifecycle or stall rule did to its route: action, route, duration, state (pending, acting, down, comingBack, back, skipped, left, failed or cancelled), downAt, backAt, backIn, endedEarly and reason (only for such a rule)"
+														"description": "What a lifecycle or stall rule did to its route: action, route, duration, state (pending, acting, down, comingBack, back, skipped, left, failed or cancelled), round (the times it took the route down), repeat and every (with repeat=), actsIn (until it acts, again with repeat=), downAt, backAt, backIn, endedEarly and reason (only for such a rule)"
 													}
 												},
 												"required": [

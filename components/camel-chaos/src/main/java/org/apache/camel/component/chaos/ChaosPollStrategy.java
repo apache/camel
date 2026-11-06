@@ -93,23 +93,16 @@ final class ChaosPollStrategy implements PollingConsumerPollStrategy {
             }
             case DELAY -> {
                 rule.fired(Hook.POLL, null, routeId(consumer), endpoint.getEndpointUri());
-                try {
-                    TimeSource.sleep(rule.duration);
-                } catch (InterruptedException e) {
-                    // the consumer is stopping: skip the poll, and keep the interrupted status
-                    Thread.currentThread().interrupt();
-                    endRun();
-                    return false;
-                }
-                if (consumer instanceof ServiceSupport service
-                        && (!service.isRunAllowed() || service.isSuspendingOrSuspended())) {
-                    // the consumer was stopped or suspended while the poll waited
-                    endRun();
+                if (!waitBeforePoll(rule.delayFor(), consumer)) {
                     return false;
                 }
                 return beginDelegate(consumer, endpoint);
             }
             case ERROR -> {
+                if (rule.after > 0 && !waitBeforePoll(rule.after, consumer)) {
+                    // the poll times out after the wait, unless the consumer stopped meanwhile
+                    return false;
+                }
                 if (!beginDelegate(consumer, endpoint)) {
                     // the strategy of the consumer skips this poll anyway
                     rule.skipped("the poll strategy of the consumer skipped the poll");
@@ -132,6 +125,29 @@ final class ChaosPollStrategy implements PollingConsumerPollStrategy {
             }
             default -> throw new IllegalStateException("The fault " + rule.fault + " does not fire at polls");
         }
+    }
+
+    /**
+     * Waits before the poll, as for a slow poll or one that times out (an error with {@code after=}).
+     *
+     * @return whether to go on with the poll: false when the wait was interrupted (the consumer is stopping), or the
+     *         consumer was stopped or suspended while the poll waited; the run is then done
+     */
+    private boolean waitBeforePoll(long millis, Consumer consumer) {
+        try {
+            TimeSource.sleep(millis);
+        } catch (InterruptedException e) {
+            // the consumer is stopping: skip the poll, and keep the interrupted status
+            Thread.currentThread().interrupt();
+            endRun();
+            return false;
+        }
+        if (consumer instanceof ServiceSupport service
+                && (!service.isRunAllowed() || service.isSuspendingOrSuspended())) {
+            endRun();
+            return false;
+        }
+        return true;
     }
 
     @Override

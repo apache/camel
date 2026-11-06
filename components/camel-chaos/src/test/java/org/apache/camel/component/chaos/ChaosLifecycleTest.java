@@ -148,6 +148,58 @@ class ChaosLifecycleTest extends ChaosTestSupport {
     }
 
     @Test
+    void aFlappingRouteGoesDownRepeatTimes() {
+        String id = chaos().addRule("route=a stall duration=100ms repeat=3 every=400ms");
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> lifecycle(id).getInteger("round") == 1 && "pending".equals(lifecycle(id).getString("state")));
+        assertThat(ruleReport(id).getString("state")).isEqualTo("active");
+        assertThat(lifecycle(id).getInteger("repeat")).isEqualTo(3);
+        assertThat(lifecycle(id).getLong("every")).isEqualTo(400L);
+        assertThat(lifecycle(id).containsKey("actsIn")).isTrue();
+        assertThat(chaos().report().toText()).contains("round 1 of 3: suspended route a at +").contains("; round 2 in ");
+
+        awaitLifecycle(id, "back");
+        assertThat(status("a")).isEqualTo(ServiceStatus.Started);
+        JsonObject rule = ruleReport(id);
+        assertThat(rule.getString("state")).isEqualTo("ended");
+        assertThat(rule.getLong("matches")).isEqualTo(3);
+        assertThat(((JsonObject) rule.get("fired")).getLong("lifecycle")).isEqualTo(3);
+        JsonObject l = lifecycle(id);
+        assertThat(l.getInteger("round")).isEqualTo(3);
+        // the times are of the last round, which is at least two periods after the first
+        assertThat(l.getLong("downAt")).isGreaterThanOrEqualTo(800L);
+        assertThat(chaos().report().toText()).contains("round 3 of 3: suspended route a at +");
+        long recent = ((JsonArray) chaos().report().toJson().get("recentFaults")).stream()
+                .filter(f -> id.equals(((JsonObject) f).getString("rule"))).count();
+        assertThat(recent).isEqualTo(3);
+    }
+
+    @Test
+    void removingAFlappingRuleBetweenRoundsEndsIt() {
+        String id = chaos().addRule("route=a lifecycle action=stop duration=100ms repeat=5 every=5s");
+        await().atMost(10, TimeUnit.SECONDS)
+                .until(() -> lifecycle(id).getInteger("round") == 1 && "pending".equals(lifecycle(id).getString("state")));
+        assertThat(chaos().removeRule(id)).isTrue();
+
+        JsonObject l = lifecycle(id);
+        assertThat(l.getString("state")).isEqualTo("back");
+        assertThat(l.getString("reason")).isEqualTo("the rule was removed before round 2 of 5");
+        assertThat(status("a")).isEqualTo(ServiceStatus.Started);
+    }
+
+    @Test
+    void aLifecycleRuleWithFromActsLater() {
+        String id = chaos().addRule("route=a lifecycle action=stop duration=100ms from=+500ms");
+        assertThat(ruleReport(id).getString("state")).isEqualTo("waiting");
+        assertThat(lifecycle(id).getString("state")).isEqualTo("pending");
+        assertThat(status("a")).isEqualTo(ServiceStatus.Started);
+        assertThat(chaos().report().toText()).contains("pending: stop route a for 100ms in ");
+
+        awaitLifecycle(id, "back");
+        assertThat(lifecycle(id).getLong("downAt")).isGreaterThanOrEqualTo(500L);
+    }
+
+    @Test
     void theRouteTakesMessagesAgainAfterTheStall() throws Exception {
         String id = chaos().addRule("route=a stall duration=200ms");
         awaitLifecycle(id, "back");
