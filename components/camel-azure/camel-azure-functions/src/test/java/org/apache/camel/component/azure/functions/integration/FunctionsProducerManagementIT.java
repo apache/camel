@@ -80,7 +80,7 @@ public class FunctionsProducerManagementIT extends BaseFunctionsTestSupport {
     }
 
     @RegisterExtension
-    static AzureFunctionsService service = AzureFunctionsServiceFactory.createSingletonService();
+    static AzureFunctionsService service = AzureFunctionsServiceFactory.createService();
 
     // the function app of the tests: the given one, or one they create on Floci AZ
     private static final String APP = REMOTE ? FUNCTION_APP : "camel-functions-it";
