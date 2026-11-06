@@ -66,6 +66,29 @@ public interface AmqpComponentBuilderFactory {
             return this;
         }
     
+        
+        /**
+         * Whether the producers send over one shared connection to the broker,
+         * when the component creates the connection factory: from brokerUrl,
+         * from the host, port, username, password and useSsl options, or with
+         * the amqpComponent factory methods. Turn it off to open and close a
+         * connection for every message sent. The consumers keep their own
+         * connections. A connectionFactory that you set yourself, on the
+         * component or on the endpoint, is used as it is.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: common
+         * 
+         * @param cacheConnection the value to set
+         * @return the dsl builder
+         */
+        default AmqpComponentBuilder cacheConnection(boolean cacheConnection) {
+            doSetProperty("cacheConnection", cacheConnection);
+            return this;
+        }
+    
         /**
          * Sets the JMS client ID to use. Note that this value, if specified,
          * must be unique and can only be used by a single JMS connection
@@ -2482,6 +2505,7 @@ public interface AmqpComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "brokerUrl": ((AMQPComponent) component).setBrokerUrl((java.lang.String) value); return true;
+            case "cacheConnection": ((AMQPComponent) component).setCacheConnection((boolean) value); return true;
             case "clientId": getOrCreateConfiguration((AMQPComponent) component).setClientId((java.lang.String) value); return true;
             case "connectionFactory": getOrCreateConfiguration((AMQPComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "disableReplyTo": getOrCreateConfiguration((AMQPComponent) component).setDisableReplyTo((boolean) value); return true;
