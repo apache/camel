@@ -225,4 +225,23 @@ from("google-pubsub:{{project.name}}:{{subscription.name}}?ackMode=NONE")
     });
 ----
 
-Manual acknowledgement works with both the asynchronous and synchronous consumers and will use the acknowledgement id which is stored in `GooglePubsubConstants.ACK_ID`.
+Manual acknowledgement works with both the asynchronous and synchronous consumers.
+The synchronous consumer (`synchronousPull=true`) uses the acknowledgement id stored in the header `GooglePubsubConstants.ACK_ID` of the exchange given to `ack` or `nack`.
+The asynchronous consumer acknowledges the message the `GooglePubsubAcknowledge` object was taken from, whatever the exchange given.
+
+With the synchronous consumer, `ack` or `nack` of an aggregated exchange whose body is a `List<Exchange>`, such as the result of the `GroupedExchangeAggregationStrategy`, applies to every grouped message, in one request:
+
+._Java-only: manual acknowledgement of an aggregated exchange with the synchronous consumer_
+[source,java]
+----
+from("google-pubsub:{{project.name}}:{{subscription.name}}?synchronousPull=true&ackMode=NONE&maxMessagesPerPoll=10")
+    .aggregate(constant(true), new GroupedExchangeAggregationStrategy()).completionSize(10)
+    .process(exchange -> {
+        List<Exchange> grouped = exchange.getIn().getBody(List.class);
+        GooglePubsubAcknowledge acknowledge = grouped.get(0).getIn().getHeader(GooglePubsubConstants.GOOGLE_PUBSUB_ACKNOWLEDGE, GooglePubsubAcknowledge.class);
+        acknowledge.ack(exchange); // acknowledges the 10 grouped messages
+    });
+----
+
+The synchronous consumer does not extend the ack deadline of the messages it pulls, so the aggregated exchange must be acknowledged before the ack deadline of the subscription expires, otherwise the grouped messages are delivered again.
+With the asynchronous consumer, acknowledge each grouped exchange with its own `GooglePubsubAcknowledge` header.

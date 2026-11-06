@@ -17,7 +17,9 @@
 package org.apache.camel.component.google.pubsub.consumer;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import com.google.cloud.pubsub.v1.stub.SubscriberStub;
@@ -67,24 +69,27 @@ public class AcknowledgeSync implements GooglePubsubAcknowledge {
     }
 
     private List<String> getAckIdList(Exchange exchange) {
-        List<String> ackList = new ArrayList<>();
+        // an aggregated exchange (e.g. from GroupedExchangeAggregationStrategy) carries the grouped exchanges as its
+        // body: each one holds the ack id of its own message, and the aggregated exchange may be one of them
+        Set<String> ackIds = new LinkedHashSet<>();
 
-        if (exchange.getIn().getBody() instanceof List) {
-            for (Object body : exchange.getIn().getBody(List.class)) {
-                if (body instanceof Exchange) {
-                    String ackId = exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID, String.class);
-                    if (null != ackId) {
-                        ackList.add(ackId);
-                    }
+        if (exchange.getIn().getBody() instanceof List<?> grouped) {
+            for (Object body : grouped) {
+                if (body instanceof Exchange groupedExchange) {
+                    addAckId(ackIds, groupedExchange);
                 }
             }
         }
 
+        addAckId(ackIds, exchange);
+
+        return new ArrayList<>(ackIds);
+    }
+
+    private static void addAckId(Set<String> ackIds, Exchange exchange) {
         String ackId = exchange.getIn().getHeader(GooglePubsubConstants.ACK_ID, String.class);
         if (null != ackId) {
-            ackList.add(ackId);
+            ackIds.add(ackId);
         }
-
-        return ackList;
     }
 }
