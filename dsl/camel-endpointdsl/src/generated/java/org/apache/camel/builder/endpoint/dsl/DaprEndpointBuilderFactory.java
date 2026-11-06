@@ -755,6 +755,51 @@ public interface DaprEndpointBuilderFactory {
             return this;
         }
         /**
+         * Additional key-value pairs to pass to the Dapr building block, such
+         * as metadata.namespace=production. The CamelDaprMetadata header takes
+         * the place of these for one message, except for the secret operation
+         * unless allowSecretStoreAndKeyFromHeaders is enabled. This is a
+         * multi-value option with prefix: metadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the metadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: producer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder metadata(String key, Object value) {
+            doSetMultiValueProperty("metadata", "metadata." + key, value);
+            return this;
+        }
+        /**
+         * Additional key-value pairs to pass to the Dapr building block, such
+         * as metadata.namespace=production. The CamelDaprMetadata header takes
+         * the place of these for one message, except for the secret operation
+         * unless allowSecretStoreAndKeyFromHeaders is enabled. This is a
+         * multi-value option with prefix: metadata.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.String&gt;</code> type.
+         * The option is multivalued, and you can use the metadata(String,
+         * Object) method to add a value (call the method multiple times to set
+         * more values).
+         * 
+         * Group: producer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder metadata(Map values) {
+            doSetMultiValueProperties("metadata", "metadata.", values);
+            return this;
+        }
+        /**
          * The name of the method or route to invoke on the target service.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1068,6 +1113,46 @@ public interface DaprEndpointBuilderFactory {
          */
         default DaprEndpointProducerBuilder workflowVersion(String workflowVersion) {
             doSetProperty("workflowVersion", workflowVersion);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the secret store, the key and the
+         * metadata of the endpoint with the CamelDaprSecretStore, CamelDaprKey
+         * and CamelDaprMetadata headers for the secret operation. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the secret store and the secret that the secret
+         * operation reads.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSecretStoreAndKeyFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder allowSecretStoreAndKeyFromHeaders(boolean allowSecretStoreAndKeyFromHeaders) {
+            doSetProperty("allowSecretStoreAndKeyFromHeaders", allowSecretStoreAndKeyFromHeaders);
+            return this;
+        }
+        /**
+         * Whether to allow overriding the secret store, the key and the
+         * metadata of the endpoint with the CamelDaprSecretStore, CamelDaprKey
+         * and CamelDaprMetadata headers for the secret operation. Disabled by
+         * default; enable it only when the header source is trusted, since it
+         * lets a message choose the secret store and the secret that the secret
+         * operation reads.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: security
+         * 
+         * @param allowSecretStoreAndKeyFromHeaders the value to set
+         * @return the dsl builder
+         */
+        default DaprEndpointProducerBuilder allowSecretStoreAndKeyFromHeaders(String allowSecretStoreAndKeyFromHeaders) {
+            doSetProperty("allowSecretStoreAndKeyFromHeaders", allowSecretStoreAndKeyFromHeaders);
             return this;
         }
     }
@@ -1523,7 +1608,9 @@ public interface DaprEndpointBuilderFactory {
         }
         /**
          * The name of the Dapr secret store to interact with, defined in
-         * local-secret-store.yaml config.
+         * local-secret-store.yaml config. For the secret operation, this header
+         * is ignored unless the endpoint enables
+         * allowSecretStoreAndKeyFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1549,7 +1636,9 @@ public interface DaprEndpointBuilderFactory {
         }
         /**
          * The key used to identify the state/secret object within the specified
-         * state/secret store.
+         * state/secret store. For the secret operation, this header is ignored
+         * unless the endpoint enables allowSecretStoreAndKeyFromHeaders=true
+         * (disabled by default).
          * 
          * The option is a: {@code String} type.
          * 
@@ -1600,7 +1689,10 @@ public interface DaprEndpointBuilderFactory {
             return "CamelDaprConsistency";
         }
         /**
-         * Additional key-value pairs to be passed to the state store.
+         * Additional key-value pairs to be passed to the Dapr building block,
+         * in place of the metadata option. For the secret operation, this
+         * header is ignored unless the endpoint enables
+         * allowSecretStoreAndKeyFromHeaders=true (disabled by default).
          * 
          * The option is a: {@code Map<String, String>} type.
          * 
