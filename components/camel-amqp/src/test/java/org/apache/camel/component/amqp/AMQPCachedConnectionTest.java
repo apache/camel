@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
+import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -42,6 +43,9 @@ public class AMQPCachedConnectionTest {
 
     @RegisterExtension
     static ArtemisService service = ArtemisServiceFactory.createAMQPService();
+
+    @RegisterExtension
+    static ArtemisService otherService = ArtemisServiceFactory.createAMQPService();
 
     private static final int MESSAGES = 10;
 
@@ -102,6 +106,29 @@ public class AMQPCachedConnectionTest {
         amqp.setBrokerUrl(brokerUrl());
 
         assertEquals(MESSAGES, connectionsOpenedToSend(amqp, "cached.endpointFactory", "?connectionFactory=#endpointFactory"));
+    }
+
+    @Test
+    public void connectionFactoryOfTheEndpointInAnyCaseIsUsedAsIs() throws Exception {
+        // the endpoint options are not case sensitive
+        for (String option : new String[] { "connectionfactory", "ConnectionFactory", "CONNECTIONFACTORY" }) {
+            AMQPComponent amqp = new AMQPComponent();
+            amqp.setBrokerUrl(brokerUrl());
+            String queue = "cached.otherBroker." + option;
+            CamelContext context = new DefaultCamelContext();
+            context.getRegistry().bind("otherBroker",
+                    new JmsConnectionFactory("amqp://localhost:" + otherService.brokerPort()));
+            context.addComponent("amqp", amqp);
+            context.start();
+            try {
+                context.createProducerTemplate().sendBody("amqp:queue:" + queue + "?" + option + "=#otherBroker", "Hello");
+
+                assertEquals(1, messages(otherService, queue), "the message goes to the broker of " + option);
+                assertEquals(0, messages(service, queue), "the message does not go to the broker of the component");
+            } finally {
+                context.stop();
+            }
+        }
     }
 
     @Test
@@ -207,6 +234,11 @@ public class AMQPCachedConnectionTest {
         } finally {
             context.stop();
         }
+    }
+
+    private static long messages(ArtemisService broker, String queue) throws Exception {
+        QueueQueryResult result = broker.getQueueQueryResult(queue);
+        return result.isExists() ? broker.countMessages(queue) : 0;
     }
 
     private static long connectionsOpenedToSend(AMQPComponent amqp, String queue, String endpointOptions)

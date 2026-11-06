@@ -211,18 +211,22 @@ public class AMQPComponent extends JmsComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        boolean endpointConnectionFactory = parameters.containsKey("connectionFactory");
+        // a connection factory of the endpoint, in any case as the endpoint options are not case sensitive
+        boolean endpointConnectionFactory = parameters.keySet().stream().anyMatch("connectionFactory"::equalsIgnoreCase);
         JmsEndpoint endpoint = (JmsEndpoint) super.createEndpoint(uri, remaining, parameters);
         endpoint.setBinding(new AMQPJmsBinding(endpoint));
         if (cachedConnectionFactory != null && endpoint.getConfiguration() instanceof AMQPConfiguration configuration) {
-            // the endpoint uses the connection factory that the component created, which JmsComponent#createEndpoint
-            // wraps with the credentials of the component when they are set
+            // the endpoint uses the connection factory that the component created, or the adapter that
+            // JmsComponent#createEndpoint wraps around it with the credentials of the component
+            ConnectionFactory connectionFactory = configuration.getConnectionFactory();
             boolean createdConnectionFactoryUsed = !endpointConnectionFactory
                     && getConfiguration().getConnectionFactory() == createdConnectionFactory
+                    && (connectionFactory == createdConnectionFactory
+                            || connectionFactory instanceof UserCredentialsConnectionFactoryAdapter)
                     && Objects.equals(configuration.getUsername(), getUsername())
                     && Objects.equals(configuration.getPassword(), getPassword());
             if (createdConnectionFactoryUsed) {
-                configuration.useCachedConnection(configuration.getConnectionFactory(), cachedConnectionFactory);
+                configuration.useCachedConnection(connectionFactory, cachedConnectionFactory);
             } else {
                 configuration.useCachedConnection(null, null);
             }
