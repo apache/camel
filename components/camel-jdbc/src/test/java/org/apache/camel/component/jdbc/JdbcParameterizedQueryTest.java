@@ -28,6 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -118,7 +119,76 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
                 () -> template.sendBodyAndHeader("direct:start",
                         "select * from customer where id = ? and name = ? order by ID", JdbcConstants.JDBC_PARAMETERS,
                         "cust1,jstrachan"));
-        assertTrue(e.getCause().getMessage().contains("Number of parameters mismatch"), e.getCause().getMessage());
+        RuntimeExchangeException cause = assertIsInstanceOf(RuntimeExchangeException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("has 2 ? placeholders but the CamelJdbcParameters header has 1 values"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void testParameterizedQueryNoNamesTooManyValues() {
+        // more values than placeholders is a mistake in the route, and not silently ignored
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start",
+                        "select * from customer where id = ? and name = ? order by ID", JdbcConstants.JDBC_PARAMETERS,
+                        List.of("cust1", "jstrachan", "unused")));
+        RuntimeExchangeException cause = assertIsInstanceOf(RuntimeExchangeException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("has 2 ? placeholders but the CamelJdbcParameters header has 3 values"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void testParameterizedQueryNoNamesTooFewValues() {
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> template.sendBodyAndHeader("direct:start",
+                        "select * from customer where id = ? and name = ? order by ID", JdbcConstants.JDBC_PARAMETERS,
+                        List.of("cust1")));
+        RuntimeExchangeException cause = assertIsInstanceOf(RuntimeExchangeException.class, e.getCause());
+        assertTrue(cause.getMessage().contains("has 2 ? placeholders but the CamelJdbcParameters header has 1 values"),
+                cause.getMessage());
+    }
+
+    @Test
+    public void testParameterizedQueryNoNamesByteArray() throws Exception {
+        template.sendBody("direct:start", "create table blobs (id int auto_increment primary key, data varbinary(100))");
+
+        // a byte[] is the one value of a ? placeholder, and not one value per byte
+        byte[] data = new byte[] { 1, 2, 3, 4, 5 };
+        template.sendBodyAndHeader("direct:start", "insert into blobs (data) values (?)", JdbcConstants.JDBC_PARAMETERS,
+                data);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.reset();
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "select data from blobs where data = ?", JdbcConstants.JDBC_PARAMETERS,
+                data);
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertArrayEquals(data, assertIsInstanceOf(byte[].class, row.get("DATA")));
+    }
+
+    @Test
+    public void testPlainPlaceholdersThenNamedParameters() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        // the List of the first (plain ? placeholders) query stays on the message, and the second query (named
+        // parameters) takes its values from the headers, as the List has no names
+        Map<String, Object> headers = new LinkedHashMap<>();
+        headers.put(JdbcConstants.JDBC_PARAMETERS, List.of("cust1"));
+        headers.put("customer", "cust2");
+        template.sendBodyAndHeaders("direct:twoCalls", null, headers);
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        assertEquals(1, received.size());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("nsandhu", row.get("NAME"));
     }
 
     @Test
@@ -191,6 +261,13 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
                 getContext().getComponent("jdbc", JdbcComponent.class).setDataSource(db);
 
                 from("direct:start")
+                        .to("jdbc:testdb?useHeadersAsParameters=true")
+                        .to("mock:result");
+
+                from("direct:twoCalls")
+                        .setBody(constant("select * from customer where id = ?"))
+                        .to("jdbc:testdb?useHeadersAsParameters=true")
+                        .setBody(constant("select * from customer where id = :?customer"))
                         .to("jdbc:testdb?useHeadersAsParameters=true")
                         .to("mock:result");
             }
