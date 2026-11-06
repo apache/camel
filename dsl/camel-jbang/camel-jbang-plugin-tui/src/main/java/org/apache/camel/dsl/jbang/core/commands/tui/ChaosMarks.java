@@ -79,9 +79,10 @@ final class ChaosMarks {
         if (info == null || info.chaos == null) {
             return null;
         }
-        if (properties != null) {
+        if (properties != null && !properties.isEmpty()) {
             // the properties of the failure say it: camel-chaos removes the mark when the faulted attempt is
-            // redelivered, so a later failure it did not make has none (CAMEL-26701)
+            // redelivered, so a later failure it did not make has none (CAMEL-26701); an error without the properties
+            // captured has an empty map
             Object rule = properties.get(PROPERTY);
             return rule != null ? String.valueOf(rule) : null;
         }
