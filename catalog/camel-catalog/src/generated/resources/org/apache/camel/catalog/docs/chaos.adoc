@@ -165,17 +165,20 @@ only the list and the report.
 
 == Rules
 
-A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `rate` and `until`, and
-optionally an expectation. A value with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes
+A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `rate`, `from` and `until`,
+and optionally an expectation. A value with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes
 are a quote and a backslash).
 
 [source]
 ----
 target:  route=<id> | endpoint=<uri> | component=<name> | step=<id>    (* matches any characters)
 fault:   error | delay | drop | corrupt | stall | lifecycle, with its parameters
-at:      send | poll | entry | step             (optional)
-rate:    a probability (rate=0.3), or every Nth match (rate=every:5); without it every match fires
-until:   a number of matches (until=100) or a time (until=2m); without it camel.chaos.maxDuration
+at:      send | reply | dlq | poll | entry | step    (optional)
+rate:    a probability (rate=0.3), every Nth match (rate=every:5), or bursts (rate=burst:5s/30s: every match
+         during the first 5s of each 30s); without it every match fires
+from:    when the rule starts after it is added (from=+30s), such as after the warm-up; without it at once
+until:   a number of matches (until=100) or a time (until=2m), counted from the start; without it
+         camel.chaos.maxDuration
 time:    a number with a unit (ms, s, m, h, d), also combined as 1m30s; a number alone is milliseconds
 expect:  expect=<route id>:<count> (at least that many completed exchanges), or
          expect=<route id>:<kind><op><count> with kind completed | handled | failed | redeliveries
@@ -204,6 +207,13 @@ below N would never fire, and is rejected. A rule ends by itself after its `unti
 so a forgotten rule cannot keep breaking a development instance; a `stall` or `lifecycle` rule ends when its route is
 back (see <<_route_lifecycle_faults,Route lifecycle faults>>). Rules stay when the routes are reloaded.
 
+A rule with `from=+30s` starts 30 s after it is added (a rule of `camel.chaos.rules` 30 s after the context started),
+for faults after the warm-up of the application; until then it is `waiting`, and the matches do not count. Its `until`
+time counts from its start, so `from=+30s until=1m` fires from 30 s to 1 m 30 s after it is added. `from` is at most
+`camel.chaos.maxDuration`. A rule with `rate=burst:5s/30s` fires at every match during the first 5 s of each 30 s,
+counted from its start, and at none in between: outage windows, instead of the even spread of `rate=0.17`. The burst
+must be shorter than its period, and the period at most `camel.chaos.maxDuration`.
+
 === Targets and hooks
 
 Each target has hooks, and each hook offers some of the faults. A rule fires at every hook of its target that offers
@@ -215,9 +225,10 @@ target offers, is rejected when it is added, with an error that names the hooks 
 |Target |Hooks (`at=`) |Faults
 
 |`endpoint=`, `component=`
-|The sends to a matching endpoint (`send`), the send of the dead letter channel to it (`dlq`, only with `at=dlq`), and
-the polls of its consumer (`poll`).
-|`send` and `dlq`: `error`, `delay`, `drop`, `corrupt`. `poll`: `error`, `delay`, `drop`.
+|The sends to a matching endpoint (`send`), the reply of such a send after the producer succeeded (`reply`, only with
+`at=reply`), the send of the dead letter channel to it (`dlq`, only with `at=dlq`), and the polls of its consumer
+(`poll`).
+|`send` and `dlq`: `error`, `delay`, `drop`, `corrupt`. `reply`: `error`, `corrupt`. `poll`: `error`, `delay`, `drop`.
 
 |`route=`
 |The messages that enter the route (`entry`), and the route itself.
@@ -244,9 +255,12 @@ first that fires decides the fault.
 |Fault |Parameters |Effect
 
 |`error`
-|`exception=<class>`, `message=<text>`; for the HTTP components `status=<code>`, `header.<name>=<value>` and
-`body=<text>`
+|`exception=<class>`, `message=<text>`, `after=<time>`; for the HTTP components `status=<code>`,
+`header.<name>=<value>` and `body=<text>`
 |Fails the send or the step with that exception (with the message when the class has a constructor taking a `String`).
+With `after=5s` it waits that long first, on the thread that sends, runs the step or polls, and then fails, as a call
+that times out (name the exception the client would throw, such as `exception=java.net.SocketTimeoutException`); the
+producer is not called. `after` is not offered `at=reply`, see `reply` below.
 Without `exception` (and without `status`) it is a `ChaosException`, a `RuntimeCamelException`, with the `message` or a
 default one. A rule whose class is not found, is not a `Throwable`, is abstract or not public, or has neither a public
 constructor taking a `String` nor a public no-argument one is rejected when it is added, and so is a `message` for a
@@ -277,15 +291,17 @@ fires only at the sends; at a matching endpoint that is not one of these HTTP co
 counts it as skipped. A `rest:` endpoint is not one of them: its producer calls the HTTP producer without a send.
 
 |`delay`
-|`duration=<time>`, such as `500ms` or `2s`
-|The thread that sends, runs the step or polls waits that long first, as for a slow endpoint.
+|`duration=<time>`, such as `500ms` or `2s`, or a range such as `100ms..2s`
+|The thread that sends, runs the step or polls waits that long first, as for a slow endpoint. With a range, each delay
+is a draw between the two times (both included), from the random sequence of the rule, so a seed gives the same
+delays again.
 
 |`drop`
 |none
 |A send that reports success without calling the producer, or a poll that is skipped.
 
 |`corrupt`
-|`mode=headers\|charset\|truncate`
+|`mode=headers\|charset\|truncate\|empty\|remove-header`, and `header=<name>` for `remove-header`
 |Changes the message: at a send, the exchange that is sent, so the endpoint gets the changed message, and after a `to`
 the route goes on with it unless the endpoint replies with a new one. A `wireTap` sends a copy and keeps the message of
 the route; after `enrich`, `multicast` and `recipientList` the route goes on with what their aggregation strategy keeps
@@ -293,17 +309,23 @@ the route; after `enrich`, `multicast` and `recipientList` the route goes on wit
 (`Camel*`) gets a random value. `charset`: a text body (a String, or a body that converts to text, also a local file,
 which is read into memory; not a stream or a reader, which reading would consume, nor a remote file such as FTP) becomes
 the bytes of that text in UTF-16, while the exchange keeps its charset, so read as text again it has characters outside
-US-ASCII. `truncate`: an `InputStream` or stream cache body ends after the first half of its bytes (the stream is read
-into memory; a stream cache stays a stream cache). On a message the mode cannot change, the message is left as it is,
-and the report counts the rule as skipped, with the reason.
+US-ASCII. `truncate`: a String body ends after the first half of its characters, a `byte[]` body after the first half
+of its bytes, and an `InputStream` or stream cache body after the first half of its bytes (the stream is read into
+memory; a stream cache stays a stream cache). `empty`: the body becomes empty of its kind, an empty String, no bytes,
+or an empty stream (a stream cache stays a stream cache); any other body, such as a POJO or a file, is removed (it
+becomes null). `remove-header`: the headers that `header=` names are removed, a name or a pattern with `*`, ignoring
+case as header names do (`header=X-Trace-*`); without `header=` every header that is not one of Camel's own (`Camel*`).
+On a message the mode cannot change, the message is left as it is, and the report counts the rule as skipped, with the
+reason.
 
 |`lifecycle`
-|`action=suspend\|stop\|remove`, `duration=<time>`
-|Suspends, stops or removes the route of a `route=<id>` target once, when the rule is added, and resumes it, starts it
-or adds it back after the duration. See <<_route_lifecycle_faults,Route lifecycle faults>>.
+|`action=suspend\|stop\|remove`, `duration=<time>`, `repeat=<n>` with `every=<time>`
+|Suspends, stops or removes the route of a `route=<id>` target when the rule is added (or after `from=`), and resumes
+it, starts it or adds it back after the duration; with `repeat=3 every=1m` three times, a minute apart, as a flapping
+route. See <<_route_lifecycle_faults,Route lifecycle faults>>.
 
 |`stall`
-|`duration=<time>`
+|`duration=<time>`, `repeat=<n>` with `every=<time>`
 |Short for `lifecycle action=suspend duration=<time>`.
 |===
 
@@ -319,6 +341,16 @@ or adds it back after the duration. See <<_route_lifecycle_faults,Route lifecycl
 the error handler that handles a failure of the producer. So an `error` is a real failure for `onException`, redelivery
 and the dead letter channel, and each redelivery asks the rules again. A send from a `ProducerTemplate` has no error
 handler: the exception is returned to the caller. The send of the dead letter channel is not a `send` here, see `dlq`.
+
+|`reply`
+|The same sends, after the producer succeeded, through the send hook of camel-core (its `afterSend`). Only a rule with
+`at=reply` reaches it. So the side effect of the send happened (the payment was made, the message was published), and
+then `error` fails the send, as a reply that is lost or a call that fails after the server did the work: a redelivery
+sends again, which tests that the endpoint (or the route) copes with a duplicate. `corrupt` changes the reply, what the
+route goes on with. `status=` gives the failure (or the response) of the HTTP component, as at `send`. A send that
+failed by itself, that chaos dropped or failed at `send`, and the send of the dead letter channel, have no reply here.
+The reply runs on the thread that completes the send, which can be an I/O thread of an asynchronous component, so it
+does not wait: `after=` and `delay` are not offered at `reply`.
 
 |`dlq`
 |The send of the dead letter channel (`deadLetterChannel(...)`) to its endpoint, while it delivers a failed exchange.
@@ -359,8 +391,16 @@ letter channel) are sends: so `step=*` also fails the steps that handle a failur
 `stall` and `lifecycle` act on a route, not on its messages: `route=poller stall duration=20s` suspends route
 `poller` and resumes it 20 s later; `route=orders lifecycle action=stop duration=1m` stops and starts it again;
 `route=orders lifecycle action=remove duration=10s` removes it and adds the same route definition back. Each rule acts
-once, when it is added (a rule of `camel.chaos.rules` when the context has started), so `at`, `rate` and `until` are
-rejected; an expectation (`expect=`, `within=`) can be added. The `route=` target is the id of one route, not a
+when it is added (a rule of `camel.chaos.rules` when the context has started), or `from=` later
+(`route=poller stall duration=20s from=+1m`), so `at`, `rate` and `until` are rejected; an expectation (`expect=`,
+`within=`) can be added.
+
+A flapping route goes down more than once: `route=orders stall duration=10s repeat=3 every=1m` suspends route `orders`
+for 10 s three times, each time a minute after the last one went down. `every` must be longer than the `duration`, so
+the route is back before it goes down again, and the rule must be done within `camel.chaos.maxDuration`
+(`(repeat - 1) * every + duration`); `repeat` is at most 100. Each round acts as the first: a route that someone else
+stopped meanwhile is left as it is, and the rule ends there (`skipped`). Removing the rule between two rounds ends it,
+with the route as it is (`back`). The `route=` target is the id of one route, not a
 pattern, and the route must exist when the rule is added: a rule for a route that does not exist is rejected (with
 `camel.chaos.rules` the context does not start), and so is a `duration` longer than `camel.chaos.maxDuration`. While
 a lifecycle rule has a route removed, a rule for that route is still accepted (to change the rule, for example).
@@ -413,10 +453,15 @@ The report shows what each lifecycle rule did, with the times after the rule was
       suspended route poller at +4ms, resumed at +20s6ms (down 20s2ms)
 ----
 
-In JSON the action counts as `fired.lifecycle`, and the rule has a `lifecycle` object: `action`, `route`, `duration`,
-`state` (`pending`, `acting`, `down`, `comingBack`, `back`, `skipped`, `left`, `failed` or `cancelled`), `downAt` and
-`backAt` (milliseconds after the rule was added), `backIn` while the route is down, `endedEarly` when the rule was
-removed while the route was down, and the `reason` when it did not go as planned. `camel get chaos --json` and the
+With `repeat=` the line tells the round, and between two rounds when the next one starts
+(`round 1 of 3: suspended route orders at +2ms, resumed at +10s5ms (down 10s3ms); round 2 in 49s`).
+
+In JSON each action counts in `fired.lifecycle`, and the rule has a `lifecycle` object: `action`, `route`, `duration`,
+`state` (`pending`, `acting`, `down`, `comingBack`, `back`, `skipped`, `left`, `failed` or `cancelled`; `pending`
+also between two rounds), `round` (the times it took the route down), `repeat` and `every` (with `repeat=`), `actsIn`
+(the milliseconds until it acts, again), `downAt` and `backAt` (milliseconds after the rule was added, of the last
+round), `backIn` while the route is down, `endedEarly` when the rule was removed while the route was down, and the
+`reason` when it did not go as planned. `camel get chaos --json` and the
 `chaos` dev console give the same object.
 
 == The report
@@ -425,7 +470,7 @@ removed while the route was down, and the `reason` when it did not go as planned
 and it is logged when the context stops (`camel.chaos.reportOnShutdown`), if any rule was added. It states the seed,
 each rule with its id and version, its matches, the faults that fired at each hook and the ones that were skipped (with
 the reasons, such as `a stream body`, counted in `skippedReasons`), its
-state (`active`, `ended`, `removed` or `replaced`), and per route. The rules are in the order of their ids, and the
+state (`active`, `waiting` for its start with `from=`, `ended`, `removed` or `replaced`), and per route. The rules are in the order of their ids, and the
 versions of an id from the latest. Per route:
 
 * `completed` and `failed`: the exchanges that went through the route, each counted once, with how the route was done
@@ -455,8 +500,8 @@ Without an expectation the verdict is PASS, as chaos makes exchanges fail on pur
 message was lost, except for the messages that a rule with `at=dlq` kept from reaching the dead letter channel, which
 then handled them: those count as lost (in the report of the rule as `lostAtDlq`), and make the verdict FAIL, with the
 reason. An expectation, `expect=orders:100 within=2m`, says that route `orders` completes 100 more exchanges
-after the rule is added and before the time is up (by default the `until` time of the rule, else
-`camel.chaos.maxDuration`, which is also the longest `within`). An exchange of the route counts once, the first time
+after the rule is added and before the time is up (by default until the rule ends: its `from` plus its `until` time,
+else `camel.chaos.maxDuration`, which is also the longest `within` after the start of the rule). An exchange of the route counts once, the first time
 it completes in the route. An exchange that the error handler handled (for example one that went to the dead letter
 channel) completes, and so counts as completed, not as lost. The route id is not
 checked when the rule is added, as the route may come later (a WARN says so when a rule is added or changed, or the
@@ -511,8 +556,9 @@ an expectation of completed exchanges).
 
 While the rules run, the report tells how each one is doing, and what its faults do:
 
-* the observed rate next to the rate of the rule: the share of the matches it fired at (`rate 4.8% of 5%`, and
-`rate 20% of 1 in 5` for `rate=every:5`), and for `rate=every:N` the matches until it fires again;
+* the observed rate next to the rate of the rule: the share of the matches it fired at (`rate 4.8% of 5%`,
+`rate 20% of 1 in 5` for `rate=every:5`, and `rate 15% of 5s in 30s` for `rate=burst:5s/30s`), for `rate=every:N` the
+matches until it fires again, and for `rate=burst:` how long its burst lasts or when the next one starts;
 * when it last fired, and its faults per second over the last minute;
 * the effect of its faults on the exchanges they hit, each exchange counted once when it is done: `completed` (without a
 redelivery after the fault, such as after a `delay`), `recovered` by a redelivery of the error handler, `handled` by
@@ -539,8 +585,10 @@ it is there:
     2s ago r1 error ChaosException at send kafka://orders, route orders, exchange 4F2A...
 ----
 
-In JSON a rule has `rate` (the one of the rule: 1 without `rate=`) and `observedRate` (once it matched), `nextFireIn`
-(the matches until a `rate=every:N` rule fires again), `lastFiredAgo` (milliseconds), `faultsLastMinute`,
+In JSON a rule has `rate` (the one of the rule: 1 without `rate=`, the share of each period in a burst for
+`rate=burst:`) and `observedRate` (once it matched), `nextFireIn` (the matches until a `rate=every:N` rule fires
+again), `burstEndsIn` or `nextBurstIn` (milliseconds, for an active `rate=burst:` rule), `startsIn` (milliseconds, for
+a rule that waits for its start), `lastFiredAgo` (milliseconds), `faultsLastMinute`,
 `faultsPerSecond` (60 counts, from the oldest second to the current one, when it fired in the last minute) and `effect`
 (`faulted`, `completed`, `recovered`, `handled`, `failed` and `inFlight`, once it faulted an exchange); a lifecycle rule
 has no rate. The report has `recentFaults`, each with `timestamp`, `ago`, `rule`, `version`, `fault` (such as
@@ -549,8 +597,9 @@ has no rate. The report has `recentFaults`, each with `timestamp`, `ago`, `rule`
 
 == Time and the seed
 
-The `delay` fault waits through `TimeSource` of camel-util, and the end of a rule, the time of an expectation and the
-times of a lifecycle rule are read through it too; the action and the comeback of a lifecycle rule are tasks of a
+The `delay` fault (and an `error` with `after=`) waits through `TimeSource` of camel-util, and the start and the end
+of a rule, its bursts, the time of an expectation and the times of a lifecycle rule are read through it too; the action
+and the comeback of a lifecycle rule are tasks of a
 scheduled executor of the `ExecutorServiceManager`. So in a deterministic simulation test (`camel-test-dst`) they run
 in virtual time: a 10 minute stall takes milliseconds, and with `camel.chaos.seed` set to the seed of the run, the same
 seed gives the same report again, times included. Chaos does not depend on `camel-test-dst`.
@@ -562,7 +611,8 @@ rule, added while an exchange is in flight, takes the route down for up to 10 mi
 downstream call at a rate, and the test checks from the report that no message is lost (an expectation), that the
 redeliveries add up to the step faults, and that the route was down for exactly the duration.
 
-The seed fixes the sequence of random draws of each rule (`rate=<probability>`, the random header values), not which
+The seed fixes the sequence of random draws of each rule (`rate=<probability>`, the delays of a range such as
+`duration=100ms..2s`, the random header values), not which
 exchange gets which draw: with several threads (concurrent consumers, parallel processing) the threads decide that,
 so two runs with the same seed can give different reports. With one thread and the same exchanges in the same order,
 the same seed gives the same faults.
@@ -579,4 +629,5 @@ in the verdict and in `lost`.
 * A rule is at most 2000 characters long.
 * There is one send hook and one step hook per `CamelContext`: when another one is installed already, chaos keeps it,
 logs a WARN, and its rules do not fire at those hooks.
-* A `stall` or `lifecycle` rule acts on one route, once. To take a route down again, add the rule again.
+* A `stall` or `lifecycle` rule acts on one route, once, or `repeat=` times (at most 100). To take a route down again
+after that, add the rule again.

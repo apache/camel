@@ -18,6 +18,7 @@ package org.apache.camel.component.mcp.server.vertx;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +33,6 @@ import io.modelcontextprotocol.server.transport.HeaderAccessor;
 import io.modelcontextprotocol.server.transport.ServerHttpHeaderValidator;
 import io.modelcontextprotocol.server.transport.ServerTransportSecurityException;
 import io.modelcontextprotocol.spec.HttpHeaders;
-import io.modelcontextprotocol.spec.McpError;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpStreamableServerSession;
 import io.modelcontextprotocol.spec.McpStreamableServerTransport;
@@ -81,10 +81,6 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private static final String APPLICATION_JSON = "application/json";
     private static final String TEXT_EVENT_STREAM = "text/event-stream";
     private static final String ORIGIN = "Origin";
-    // a JSON-RPC error response without an id (McpSchema.JSONRPCResponse requires one, so it is written as is)
-    private static final String ORIGIN_NOT_ALLOWED = "{\"jsonrpc\":\"" + McpSchema.JSONRPC_VERSION
-                                                     + "\",\"error\":{\"code\":" + McpSchema.ErrorCodes.INVALID_REQUEST
-                                                     + ",\"message\":\"Origin not allowed\"}}";
 
     /**
      * The origins allowed when none are configured: loopback hosts on any port, so browser-based tools on the same
@@ -225,7 +221,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             ctx.response()
                     .setStatusCode(e.getStatusCode())
                     .putHeader("Content-Type", APPLICATION_JSON)
-                    .end(ORIGIN_NOT_ALLOWED);
+                    .end(errorBody(McpSchema.ErrorCodes.INVALID_REQUEST, "Origin not allowed"));
             return;
         }
         ctx.next();
@@ -257,8 +253,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         }
         String contentType = ctx.request().getHeader("Content-Type");
         if (contentType == null || !contentType.contains(APPLICATION_JSON)) {
-            respondError(connection, ctx, 415, McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
-                    .message("Content-Type application/json required").build());
+            respondError(connection, ctx, 415, McpSchema.ErrorCodes.INVALID_REQUEST,
+                    "Content-Type application/json required");
             return;
         }
 
@@ -275,8 +271,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         try {
             message = McpSchema.deserializeJsonRpcMessage(jsonMapper, ctx.body().asString());
         } catch (Exception e) {
-            respondError(connection, ctx, 400, McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST)
-                    .message("Invalid message format: " + e.getMessage()).build());
+            LOG.debug("Invalid MCP message: {}", e.getMessage());
+            respondError(connection, ctx, 400, McpSchema.ErrorCodes.PARSE_ERROR, "Invalid message format");
             return;
         }
 
@@ -298,8 +294,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         }
         ManagedSession managed = sessions.get(sessionId);
         if (managed == null) {
-            respondError(connection, ctx, 404, McpError.builder(McpSchema.ErrorCodes.INTERNAL_ERROR)
-                    .message("Session not found: " + sessionId).build());
+            respondError(connection, ctx, 404, McpSchema.ErrorCodes.INVALID_REQUEST, "Session not found");
             return;
         }
         managed.touch();
@@ -322,8 +317,7 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
                 transport.close();
             }
         } else {
-            respondError(connection, ctx, 500,
-                    McpError.builder(McpSchema.ErrorCodes.INVALID_REQUEST).message("Unknown message type").build());
+            respondError(connection, ctx, 500, McpSchema.ErrorCodes.INVALID_REQUEST, "Unknown message type");
         }
     }
 
@@ -404,8 +398,8 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         }
         String sessionId = ctx.request().getHeader(HttpHeaders.MCP_SESSION_ID);
         if (sessionId == null || sessionId.isBlank()) {
-            respondError(connection, ctx, 400, McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND)
-                    .message("Session ID required in " + HttpHeaders.MCP_SESSION_ID + " header").build());
+            respondError(connection, ctx, 400, McpSchema.ErrorCodes.INVALID_REQUEST,
+                    "Session ID required in " + HttpHeaders.MCP_SESSION_ID + " header");
             return;
         }
         ManagedSession managed = sessions.get(sessionId);
@@ -555,23 +549,39 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
         if (errors.isEmpty()) {
             return false;
         }
-        respondError(connection, ctx, 400,
-                McpError.builder(McpSchema.ErrorCodes.METHOD_NOT_FOUND).message(String.join("; ", errors)).build());
+        respondError(connection, ctx, 400, McpSchema.ErrorCodes.INVALID_REQUEST, String.join("; ", errors));
         return true;
     }
 
-    private void respondError(Context connection, RoutingContext ctx, int status, McpError error) {
-        String json;
-        try {
-            json = jsonMapper.writeValueAsString(error);
-        } catch (Exception e) {
-            json = "{}";
-        }
-        String body = json;
+    /**
+     * Answers with the given HTTP status and a JSON-RPC error response without an id, see
+     * {@link #errorBody(int, String)}.
+     */
+    private void respondError(Context connection, RoutingContext ctx, int status, int code, String message) {
+        String body = errorBody(code, message);
         connection.runOnContext(v -> ctx.response()
                 .setStatusCode(status)
                 .putHeader("Content-Type", APPLICATION_JSON)
                 .end(body));
+    }
+
+    /**
+     * A JSON-RPC error response without an id (the request id is not known, and {@link McpSchema.JSONRPCResponse}
+     * requires one).
+     */
+    private String errorBody(int code, String message) {
+        Map<String, Object> error = new LinkedHashMap<>();
+        error.put("code", code);
+        error.put("message", message);
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("jsonrpc", McpSchema.JSONRPC_VERSION);
+        response.put("error", error);
+        try {
+            return jsonMapper.writeValueAsString(response);
+        } catch (Exception e) {
+            return "{\"jsonrpc\":\"" + McpSchema.JSONRPC_VERSION + "\",\"error\":{\"code\":" + code
+                   + ",\"message\":\"" + message.replace("\\", "\\\\").replace("\"", "\\\"") + "\"}}";
+        }
     }
 
     private void endWithStatus(Context connection, RoutingContext ctx, int status) {

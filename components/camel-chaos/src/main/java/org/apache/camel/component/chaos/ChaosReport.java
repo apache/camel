@@ -214,6 +214,8 @@ public final class ChaosReport {
             }
             if (r.state == State.ACTIVE && r.lifecycle == null) {
                 sb.append(", ends in ").append(ChaosRuleParser.printTime(r.endsIn));
+            } else if (r.state == State.WAITING && r.lifecycle == null) {
+                sb.append(", starts in ").append(ChaosRuleParser.printTime(r.startsIn));
             }
             String live = liveText(r);
             if (!live.isEmpty()) {
@@ -264,9 +266,18 @@ public final class ChaosReport {
      */
     private static String liveText(RuleEntry r) {
         StringJoiner sj = new StringJoiner(", ");
-        if (r.observedRate >= 0 && r.rule.targetRate() < 1.0d) {
-            sj.add("rate " + percent(r.observedRate) + " of "
-                   + (r.rule.every > 0 ? "1 in " + r.rule.every : percent(r.rule.targetRate())));
+        ChaosRule rule = r.rule;
+        if (r.observedRate >= 0 && rule.targetRate() < 1.0d) {
+            String target = rule.every > 0 ? "1 in " + rule.every : percent(rule.targetRate());
+            if (rule.burstPeriod > 0) {
+                target = ChaosRuleParser.printTime(rule.burstOn) + " in " + ChaosRuleParser.printTime(rule.burstPeriod);
+            }
+            sj.add("rate " + percent(r.observedRate) + " of " + target);
+        }
+        if (r.burstEndsIn >= 0) {
+            sj.add("in a burst for " + ChaosRuleParser.printTime(r.burstEndsIn) + " more");
+        } else if (r.nextBurstIn >= 0) {
+            sj.add("next burst in " + ChaosRuleParser.printTime(r.nextBurstIn));
         }
         if (r.nextFireIn > 0) {
             sj.add("fires again in " + r.nextFireIn + (r.nextFireIn == 1 ? " match" : " matches"));
@@ -438,6 +449,8 @@ public final class ChaosReport {
             }
             if (r.state == State.ACTIVE && r.lifecycle == null) {
                 jo.put("endsIn", r.endsIn);
+            } else if (r.state == State.WAITING && r.lifecycle == null) {
+                jo.put("startsIn", r.startsIn);
             }
             liveJson(r, jo);
             if (r.outcome != null) {
@@ -484,6 +497,11 @@ public final class ChaosReport {
         if (r.nextFireIn > 0) {
             jo.put("nextFireIn", r.nextFireIn);
         }
+        if (r.burstEndsIn >= 0) {
+            jo.put("burstEndsIn", r.burstEndsIn);
+        } else if (r.nextBurstIn >= 0) {
+            jo.put("nextBurstIn", r.nextBurstIn);
+        }
         if (r.lastFiredAgo >= 0) {
             jo.put("lastFiredAgo", r.lastFiredAgo);
         }
@@ -518,9 +536,18 @@ public final class ChaosReport {
         Action a = l.action();
         String route = "route " + r.lifecycleRoute;
         String down = a.done + " " + route + " at +" + ChaosRuleParser.printTime(l.downAt());
-        return switch (l.state()) {
-            case PENDING -> "pending: " + a.key + " " + route + " for " + ChaosRuleParser.printTime(r.duration)
-                            + " when the context has started";
+        int repeat = r.rule.repeat;
+        // with repeat=: which round the times are of
+        String round = repeat > 1 && l.round() > 0 ? "round " + l.round() + " of " + repeat + ": " : "";
+        String text = switch (l.state()) {
+            case PENDING -> l.round() > 0
+                    ? down + ", " + a.back + " at +" + ChaosRuleParser.printTime(l.backAt()) + " (down "
+                      + ChaosRuleParser.printTime(l.backAt() - l.downAt()) + "); round " + (l.round() + 1) + " in "
+                      + ChaosRuleParser.printTime(Math.max(0, l.actsIn()))
+                    : "pending: " + a.key + " " + route + " for " + ChaosRuleParser.printTime(r.duration)
+                      + (repeat > 1 ? ", " + repeat + " times every " + ChaosRuleParser.printTime(r.rule.repeatEvery) : "")
+                      + (l.actsIn() >= 0
+                              ? " in " + ChaosRuleParser.printTime(l.actsIn()) : " when the context has started");
             case ACTING -> a.key + " " + route + ": in progress";
             case DOWN -> down + ", " + (l.endedEarly()
                     ? a.comeback + " now, as the rule was removed"
@@ -537,6 +564,7 @@ public final class ChaosReport {
                            + (l.backAt() >= 0 ? " (at +" + ChaosRuleParser.printTime(l.backAt()) + ")" : "");
             case CANCELLED -> (l.acted() ? down + ", " : "") + "cancelled: " + l.reason();
         };
+        return round + text;
     }
 
     /** What a lifecycle rule did to its route, for a tool; the times are milliseconds after the rule was added. */
@@ -546,12 +574,21 @@ public final class ChaosReport {
             return;
         }
         // the action is what a lifecycle rule fires (it has no hook)
-        ((JsonObject) jo.get("fired")).put("lifecycle", l.acted() ? 1 : 0);
+        ((JsonObject) jo.get("fired")).put("lifecycle", l.round());
         JsonObject lj = new JsonObject();
         lj.put("action", r.action.key);
         lj.put("route", r.lifecycleRoute);
         lj.put("duration", r.duration);
         lj.put("state", l.state().key);
+        if (r.rule.repeat > 1) {
+            lj.put("repeat", r.rule.repeat);
+            lj.put("every", r.rule.repeatEvery);
+        }
+        // the times the rule took its route down, and the time until it acts (again)
+        lj.put("round", l.round());
+        if (l.actsIn() >= 0) {
+            lj.put("actsIn", l.actsIn());
+        }
         if (l.downAt() >= 0) {
             lj.put("downAt", l.downAt());
         }
@@ -588,6 +625,10 @@ public final class ChaosReport {
         final Map<String, Long> skipReasons;
         final long lostAtDlq;
         final long endsIn;
+        final long startsIn;
+        // a rate=burst: rule that is active: how long its burst lasts, or until the next one (-1 when it does not apply)
+        final long burstEndsIn;
+        final long nextBurstIn;
         // the live state: the share of the matches the rule fired at (-1 without a match), the matches until an
         // every:N rule fires again (0 when it does not), how long ago it last fired (-1 when it did not), its faults
         // per second over the last minute, and the effect of its faults on the exchanges
@@ -637,11 +678,15 @@ public final class ChaosReport {
             lifecycleRoute = rule.lifecycle != null ? rule.pattern : null;
             duration = rule.duration;
             // a lifecycle rule fired when it took its route down
-            firedTotal = total + (lifecycle != null && lifecycle.acted() ? 1 : 0);
+            firedTotal = total + (lifecycle != null ? lifecycle.round() : 0);
             skipped = rule.skippedCount();
             skipReasons = rule.skipReasons();
             lostAtDlq = rule.lostAtDlqCount();
             endsIn = Math.max(0, rule.endsAt - now);
+            startsIn = Math.max(0, rule.startsAt - now);
+            boolean bursting = rule.burstPeriod > 0 && state == State.ACTIVE;
+            burstEndsIn = bursting && rule.inBurst(now) ? rule.burstChangesIn(now) : -1;
+            nextBurstIn = bursting && !rule.inBurst(now) ? rule.burstChangesIn(now) : -1;
             // a lifecycle rule acts once at its route: it has no rate
             observedRate = matches > 0 && rule.lifecycle == null ? Math.min(1.0d, (double) (total + skipped) / matches) : -1;
             nextFireIn = rule.every > 0 && state == State.ACTIVE ? rule.every - matches % rule.every : 0;

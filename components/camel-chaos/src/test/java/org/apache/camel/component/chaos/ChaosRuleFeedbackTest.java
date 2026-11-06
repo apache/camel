@@ -126,13 +126,13 @@ class ChaosRuleFeedbackTest extends ChaosTestSupport {
         template.sendBody("direct:orders", new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8)));
         template.sendBody("direct:orders", null);
         String truncate = chaos().addRule("endpoint=mock:stock* corrupt mode=truncate until=1");
-        template.sendBody("direct:orders", "text");
+        template.sendBody("direct:orders", 42);
 
         JsonObject reasons = ruleReport(charset).getJsonObject("skippedReasons");
         assertThat(reasons).containsEntry("a stream body (charset changes a text body; mode=truncate changes a stream)",
                 1L).containsEntry("no body", 1L);
         assertThat(ruleReport(truncate).getJsonObject("skippedReasons"))
-                .containsEntry("not a stream body (truncate changes a stream or a stream cache)", 1L);
+                .containsEntry("not a String, byte[] or stream body (truncate changes text, bytes and streams)", 1L);
         assertThat(chaos().report().toText())
                 .contains("skipped 2 (a stream body (charset changes a text body; mode=truncate changes a stream): 1;"
                           + " no body: 1)");

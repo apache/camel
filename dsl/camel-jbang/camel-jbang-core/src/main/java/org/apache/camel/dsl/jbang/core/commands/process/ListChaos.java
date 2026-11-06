@@ -54,8 +54,8 @@ public class ListChaos extends ProcessWatchCommand {
 
     // the keys of a rule with its live state, besides its counts, that --json copies when the rule has them
     private static final List<String> LIVE_KEYS = List.of(
-            "lostAtDlq", "rate", "observedRate", "nextFireIn", "lastFiredAgo", "faultsLastMinute", "faultsPerSecond",
-            "effect");
+            "lostAtDlq", "startsIn", "rate", "observedRate", "nextFireIn", "burstEndsIn", "nextBurstIn", "lastFiredAgo",
+            "faultsLastMinute", "faultsPerSecond", "effect");
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -320,15 +320,30 @@ public class ListChaos extends ProcessWatchCommand {
     }
 
     /**
-     * What a person should know about a rule, besides its counts: what a lifecycle rule did to its route, and why the
+     * What a person should know about a rule, besides its counts: when a rule that waits starts, the bursts of a
+     * {@code rate=burst:} rule, what a lifecycle rule did to its route (in which round of {@code repeat=}), and why the
      * rule did nothing when it was skipped.
      */
     static String note(JsonObject rule) {
         StringJoiner sj = new StringJoiner("; ");
+        if (rule.get("startsIn") instanceof Number n) {
+            sj.add("starts in " + TimeUtils.printDuration(n.longValue()));
+        }
+        if (rule.get("burstEndsIn") instanceof Number n) {
+            sj.add("in a burst for " + TimeUtils.printDuration(n.longValue()));
+        } else if (rule.get("nextBurstIn") instanceof Number n) {
+            sj.add("next burst in " + TimeUtils.printDuration(n.longValue()));
+        }
         if (rule.get("lifecycle") instanceof JsonObject l) {
             String state = l.getString("state");
             StringBuilder sb = new StringBuilder("route ").append(l.getString("route")).append(' ').append(state);
-            if (l.get("backIn") instanceof Number n) {
+            if (l.get("repeat") instanceof Number repeat && l.get("round") instanceof Number round
+                    && round.intValue() > 0) {
+                sb.append(" (round ").append(round).append(" of ").append(repeat).append(')');
+            }
+            if (l.get("actsIn") instanceof Number n) {
+                sb.append(", acts in ").append(TimeUtils.printDuration(n.longValue()));
+            } else if (l.get("backIn") instanceof Number n) {
                 sb.append(", back in ").append(TimeUtils.printDuration(n.longValue()));
             } else if ("back".equals(state) && l.get("downAt") instanceof Number down
                     && l.get("backAt") instanceof Number back) {

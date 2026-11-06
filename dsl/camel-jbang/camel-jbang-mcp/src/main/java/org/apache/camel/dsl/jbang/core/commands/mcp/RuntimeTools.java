@@ -1072,11 +1072,11 @@ public class RuntimeTools {
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = """
                   List the chaos rules of the Camel application (camel-chaos, development only): id, version, the \
-                  rule, state (active or ended), where it fires, matches, faults fired, time left, the expectation, \
-                  and the live state: observed rate next to the rate of the rule, when it last fired, faults per \
-                  second over the last minute, and the effect of its faults (exchanges completed, recovered by \
-                  redelivery, handled by the error handler, failed, in flight); or why chaos is off. The rules come \
-                  from the status of the application, written every second.""")
+                  rule, state (active, waiting for its start, or ended), where it fires, matches, faults fired, \
+                  time left, the expectation, and the live state: observed rate next to the rate of the rule, when \
+                  it last fired, faults per second over the last minute, and the effect of its faults (exchanges \
+                  completed, recovered by redelivery, handled by the error handler, failed, in flight); or why chaos \
+                  is off. The rules come from the status of the application, written every second.""")
     public JsonObject camel_runtime_chaos_list(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
         return delegateToRegistry("chaos_list", nameOrPid, Map.of());
