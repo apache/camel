@@ -83,6 +83,21 @@ class ChaosRecipeFormTest {
     }
 
     @Test
+    void theRecipeSaysWhatItUncoversWhenNotToUseItAndWhatToWatch() {
+        key('a');
+        assertThat(screen()).contains("What it can uncover").contains("• An error handler that does not retry")
+                .contains("When not to use it").contains("• The endpoint is not HTTP: use Refuses the connection")
+                .contains("What to watch").contains("• The redeliveries of the step");
+        // and while it is filled in
+        key(KeyCode.ENTER);
+        assertThat(screen()).contains("What it can uncover").contains("Enter to add it");
+        // a recipe without a guide shows none
+        key(KeyCode.ESCAPE);
+        key(KeyCode.DOWN);
+        assertThat(screen()).contains("The route stalls").doesNotContain("What it can uncover");
+    }
+
+    @Test
     void aRecipeFilledWithTheEndpointOfTheIntegrationAndItsDefaults() {
         key('a');
         key(KeyCode.ENTER);

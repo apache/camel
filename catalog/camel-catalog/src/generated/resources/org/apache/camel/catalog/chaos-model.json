@@ -492,7 +492,20 @@
         "id": "http-error",
         "group": "Downstream",
         "title": "Returns an error (HTTP status)",
-        "description": "An HTTP call fails with a status, as for a service that is down or overloaded: tests onException, redelivery and the dead letter channel",
+        "description": "An HTTP call fails with a status, as a service that is down (503), overloaded (429) or broken (500) answers. The exchange fails with the exception of the HTTP component, as the real call would",
+        "uncovers": [
+          "An error handler that does not retry, or retries a status that will not change, such as 400 or 404",
+          "Redeliveries without a delay, which hit an overloaded service again at once",
+          "Messages that are lost instead of reaching the dead letter channel"
+        ],
+        "avoid": [
+          "The endpoint is not HTTP: use Refuses the connection",
+          "To test a timeout: a status comes back at once, use Times out"
+        ],
+        "watch": [
+          "The redeliveries of the step and the exchanges handled by the error handler",
+          "The dead letter channel, and a circuit breaker around the call if there is one"
+        ],
         "rule": "endpoint=${endpoint} error status=${status} rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -538,7 +551,19 @@
         "id": "connection-refused",
         "group": "Downstream",
         "title": "Refuses the connection",
-        "description": "The send fails as when the other side is not there",
+        "description": "The send fails with a ConnectException before anything is sent, as when the service is not running or a firewall blocks it",
+        "uncovers": [
+          "Whether a connection error is retried: that is safe, as nothing reached the other side",
+          "Long redelivery delays that hold the consumer while the service is down",
+          "A circuit breaker that does not open"
+        ],
+        "avoid": [
+          "To test an HTTP status from a service that is up: use Returns an error"
+        ],
+        "watch": [
+          "The redeliveries and the exchanges handled by the error handler",
+          "The state of a circuit breaker around the call"
+        ],
         "rule": "endpoint=${endpoint} error exception=java.net.ConnectException rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -570,7 +595,20 @@
         "id": "slow",
         "group": "Downstream",
         "title": "Is slow",
-        "description": "Each send waits a different time within a range, as a slow service does",
+        "description": "Each send waits a time within the range before it is made, as a slow service. The exchange then goes on as usual: the cost is time, not errors",
+        "uncovers": [
+          "A consumer that falls behind: the throughput of the route drops and messages wait in front of it",
+          "Thread pools that fill up with waiting exchanges",
+          "Callers of the route (request\/reply) that time out"
+        ],
+        "avoid": [
+          "To test the timeout of the client: the wait is before the call, so the client's timeout does not fire. Use Times out",
+          "On a route started by a timer: the timer waits for the exchange, so there are fewer messages, not more load"
+        ],
+        "watch": [
+          "The mean, p95 and p99 time of the routes, and their throughput",
+          "The exchanges in flight"
+        ],
         "rule": "endpoint=${endpoint} delay duration=${duration} rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -609,7 +647,19 @@
         "id": "timeout",
         "group": "Downstream",
         "title": "Times out",
-        "description": "The send waits, then fails without calling the producer, as a call that times out",
+        "description": "The send waits, then fails with a SocketTimeoutException without calling the producer, as a call that times out",
+        "uncovers": [
+          "Whether a timeout is retried, and whether that is safe: in real life the other side may have done the work",
+          "How long a message takes when every attempt times out: the wait times the attempts",
+          "A consumer that stops taking messages while its threads wait"
+        ],
+        "avoid": [
+          "A long wait with a high rate: each fault holds a thread for that time"
+        ],
+        "watch": [
+          "The time of the route and the exchanges in flight",
+          "The redeliveries and the dead letter channel"
+        ],
         "rule": "endpoint=${endpoint} error after=${after} exception=java.net.SocketTimeoutException rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -648,7 +698,19 @@
         "id": "failed-after-success",
         "group": "Downstream",
         "title": "Did the work, then failed",
-        "description": "The send succeeds and then fails, as a reply that is lost: a redelivery sends it again, so this tests that a duplicate does no harm",
+        "description": "The send is made and succeeds, then the exchange fails, as when the reply is lost. The error handler sends it again, so the other side gets it twice",
+        "uncovers": [
+          "Duplicates: an order booked twice, a payment taken twice",
+          "Whether the other side or the route is idempotent, such as with an idempotent consumer or a key the other side checks"
+        ],
+        "avoid": [
+          "Against a real service where a duplicate costs, such as one that charges or sends mail to people",
+          "With a high count: until=1 makes one send fail, which is enough to see one duplicate"
+        ],
+        "watch": [
+          "What the other side received: two of the same",
+          "The redeliveries of the step"
+        ],
         "rule": "endpoint=${endpoint} error at=reply until=${until}",
         "placeholders": [
           {
@@ -673,7 +735,19 @@
         "id": "outage",
         "group": "Downstream",
         "title": "Is down for a while",
-        "description": "Every send fails during the first part of each period, as outage windows",
+        "description": "Every send fails during the first part of each period and works for the rest, as a service that goes down and comes back",
+        "uncovers": [
+          "A circuit breaker that opens during the outage and closes after it",
+          "Redelivery that gives up before the service is back, so the messages go to the dead letter channel",
+          "How long the route needs to catch up after an outage"
+        ],
+        "avoid": [
+          "An outage longer than all the redeliveries together sends every message in it to the dead letter channel: make sure that is what you want to test"
+        ],
+        "watch": [
+          "The faults per second: on during the outage, off between",
+          "The state of a circuit breaker, and the exchanges handled by the error handler"
+        ],
         "rule": "endpoint=${endpoint} error rate=burst:${outage}\/${period} until=${until}",
         "placeholders": [
           {
@@ -712,7 +786,19 @@
         "id": "corrupt-entry",
         "group": "Messages",
         "title": "Arrives corrupt",
-        "description": "The messages that enter the route are changed: random headers, the wrong charset, cut in half or empty",
+        "description": "The messages that enter the route are changed before its first step: random headers, the wrong charset, cut in half or empty",
+        "uncovers": [
+          "Validation that is missing, so a bad message gets deep into the route before it fails",
+          "A poison message that is redelivered again and again, instead of going to the dead letter channel",
+          "Unmarshal and parse errors that are not handled"
+        ],
+        "avoid": [
+          "When the body is a stream or a file: the charset and the cut change text and bytes only, so those messages are skipped (see the reasons it skipped)"
+        ],
+        "watch": [
+          "The errors of the steps that read the body",
+          "The messages the rule skipped, and why"
+        ],
         "rule": "route=${route} corrupt mode=${mode} rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -761,7 +847,17 @@
         "id": "empty-body",
         "group": "Messages",
         "title": "Is sent with an empty body",
-        "description": "The message sent to the endpoint has an empty body",
+        "description": "The message sent to the endpoint has an empty body, as a sender with nothing to send",
+        "uncovers": [
+          "A service, or the next route, that does not check for an empty body",
+          "An empty file or message that is accepted and passed on"
+        ],
+        "avoid": [
+          "To test the route itself with bad input: use Arrives corrupt on the route"
+        ],
+        "watch": [
+          "The route or the service that receives it"
+        ],
         "rule": "endpoint=${endpoint} corrupt mode=empty rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -793,7 +889,17 @@
         "id": "missing-header",
         "group": "Messages",
         "title": "Is sent without a header",
-        "description": "A header is missing from the message sent to the endpoint",
+        "description": "A header is removed from the message sent to the endpoint, such as a correlation id, a trace id or a content type",
+        "uncovers": [
+          "A receiver that needs the header and fails without it, or worse, goes on and does the wrong thing",
+          "Tracing that breaks, as the trace id does not reach the next service"
+        ],
+        "avoid": [
+          "With a header the endpoint does not send on, such as most Camel headers: nothing changes"
+        ],
+        "watch": [
+          "The route or the service that receives it"
+        ],
         "rule": "endpoint=${endpoint} corrupt mode=remove-header header=${header} rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -834,7 +940,18 @@
         "id": "poll-error",
         "group": "Consumers and routes",
         "title": "Polls fail",
-        "description": "The polls of a scheduled poll consumer fail, as when the source is not reachable",
+        "description": "The polls of a scheduled poll consumer fail, as when the folder, the server or the database is not reachable. No exchange is made: the consumer polls again on its schedule",
+        "uncovers": [
+          "A consumer without a backoff, which fails every poll and fills the log",
+          "A health check that does not show a consumer that cannot poll"
+        ],
+        "avoid": [
+          "On a consumer that does not poll on a schedule, such as a timer, Kafka or JMS: the rule fires 0 times"
+        ],
+        "watch": [
+          "The errors and the backoff of the consumer",
+          "The log and the health checks"
+        ],
         "rule": "endpoint=${endpoint} error at=poll rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -866,7 +983,18 @@
         "id": "poll-skip",
         "group": "Consumers and routes",
         "title": "Polls are skipped",
-        "description": "The polls of a scheduled poll consumer are skipped, as a consumer that falls behind",
+        "description": "The polls of a scheduled poll consumer are skipped, as a consumer that falls behind: the messages wait at the source",
+        "uncovers": [
+          "Messages that pile up at the source",
+          "Alerts on a consumer that goes quiet",
+          "Batching or ordering that counts on every poll"
+        ],
+        "avoid": [
+          "On a consumer that does not poll on a schedule, such as a timer, Kafka or JMS: the rule fires 0 times"
+        ],
+        "watch": [
+          "The polls of the consumer, and the routes after it that get nothing"
+        ],
         "rule": "endpoint=${endpoint} drop at=poll rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -898,7 +1026,19 @@
         "id": "stall",
         "group": "Consumers and routes",
         "title": "The route stalls",
-        "description": "The route is suspended for a while, and its messages wait",
+        "description": "The route is suspended for the time, then resumed: its consumer takes no messages, and they wait in a queue or at the source",
+        "uncovers": [
+          "Senders that block or fail when the route does not take messages, such as direct callers or a full seda queue",
+          "Health checks and alerts for a route that stopped",
+          "How long the route needs to catch up"
+        ],
+        "avoid": [
+          "On a route others call directly and wait for: they fail while it stalls, which may or may not be the test"
+        ],
+        "watch": [
+          "The state of the route",
+          "The callers, and the queue in front of the route"
+        ],
         "rule": "route=${route} stall duration=${duration}",
         "placeholders": [
           {
@@ -923,7 +1063,19 @@
         "id": "flap",
         "group": "Consumers and routes",
         "title": "The route flaps",
-        "description": "The route stops and starts again several times",
+        "description": "The route stops and starts again, several times, as a consumer that keeps losing its connection",
+        "uncovers": [
+          "Messages lost or delivered twice across a restart",
+          "Connections or other resources that leak on each start",
+          "Health checks and alerts that flap with it"
+        ],
+        "avoid": [
+          "On a route whose consumer takes long to start: make the time between longer than the start"
+        ],
+        "watch": [
+          "The state and the uptime of the route",
+          "The effect: completed against failed or lost messages"
+        ],
         "rule": "route=${route} lifecycle action=stop duration=${duration} repeat=${repeat} every=${every}",
         "placeholders": [
           {
@@ -962,7 +1114,18 @@
         "id": "removed",
         "group": "Consumers and routes",
         "title": "The route is removed",
-        "description": "The route is removed, and added back after a while",
+        "description": "The route is removed from the integration and added back after the time, as when one route is reloaded or redeployed",
+        "uncovers": [
+          "Routes that call it and fail while it is gone",
+          "State kept in memory that is lost with it, such as an aggregator or an idempotent repository"
+        ],
+        "avoid": [
+          "On a route whose state in memory you want to keep"
+        ],
+        "watch": [
+          "The callers of the route",
+          "Its counters, which start again from zero"
+        ],
         "rule": "route=${route} lifecycle action=remove duration=${duration}",
         "placeholders": [
           {
@@ -987,7 +1150,17 @@
         "id": "dlq-unreachable",
         "group": "Error handling",
         "title": "The dead letter channel is unreachable",
-        "description": "The send of the dead letter channel fails, so the messages it handles are lost (add it before the rule that makes them fail)",
+        "description": "The send of the dead letter channel fails, so the messages it should keep are lost. Add it before the rule that makes the messages fail",
+        "uncovers": [
+          "That the dead letter channel is a single point of failure",
+          "Whether lost messages are noticed: the report counts them as lost, and the verdict fails"
+        ],
+        "avoid": [
+          "On its own: without another rule, or a real error, that sends messages to the dead letter channel, nothing happens"
+        ],
+        "watch": [
+          "The messages lost, and the verdict"
+        ],
         "rule": "endpoint=${endpoint} error at=dlq",
         "placeholders": [
           {
@@ -1005,7 +1178,19 @@
         "id": "step-error",
         "group": "Error handling",
         "title": "A step fails",
-        "description": "A step of a route fails, as when its processor throws",
+        "description": "A step of a route fails, as when its processor throws because of a bug or bad data",
+        "uncovers": [
+          "onException clauses that do not match the exception",
+          "Redelivery of a step that will fail again: a bug is not a temporary error",
+          "Work done by the steps before it that is not undone"
+        ],
+        "avoid": [
+          "To test a call to another system: put the fault on its endpoint, with Returns an error or Refuses the connection"
+        ],
+        "watch": [
+          "The redeliveries of the step and the exchanges handled by the error handler",
+          "The errors, with the step that failed"
+        ],
         "rule": "step=${step} error rate=${rate} until=${until}",
         "placeholders": [
           {
@@ -1037,7 +1222,17 @@
         "id": "step-slow",
         "group": "Error handling",
         "title": "A step is slow",
-        "description": "A step of a route waits before its processor is called",
+        "description": "A step of a route waits before its processor is called, as a slow lookup or calculation",
+        "uncovers": [
+          "The step that the time of the route comes from",
+          "Callers of the route that wait for it, and time out"
+        ],
+        "avoid": [
+          "In a route started by a timer: the timer waits for the exchange, so there are fewer messages, not more load"
+        ],
+        "watch": [
+          "The times of the steps and of the route"
+        ],
         "rule": "step=${step} delay duration=${duration} rate=${rate} until=${until}",
         "placeholders": [
           {

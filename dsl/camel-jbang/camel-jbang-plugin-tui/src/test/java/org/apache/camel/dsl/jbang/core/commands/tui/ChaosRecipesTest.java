@@ -34,6 +34,9 @@ class ChaosRecipesTest {
             {"chaos": {"recipes": [
               {"id": "http-error", "group": "Downstream", "title": "Returns an error (HTTP status)",
                "description": "An HTTP call fails with a status",
+               "uncovers": ["An error handler that does not retry"],
+               "avoid": ["The endpoint is not HTTP: use Refuses the connection"],
+               "watch": ["The redeliveries of the step"],
                "rule": "endpoint=${endpoint} error status=${status} rate=${rate}",
                "placeholders": [
                  {"name": "endpoint", "type": "endpoint", "description": "The HTTP endpoint the route calls",
@@ -109,6 +112,11 @@ class ChaosRecipesTest {
         assertThat(http.placeholders()).extracting(ChaosRecipes.Placeholder::name).containsExactly("endpoint", "status",
                 "rate");
         assertThat(http.placeholders().get(0).schemes()).containsExactly("http", "https");
+        // what it can uncover, when not to use it and what to watch (CAMEL-26699); none from an older catalog
+        assertThat(http.uncovers()).containsExactly("An error handler that does not retry");
+        assertThat(http.avoid()).containsExactly("The endpoint is not HTTP: use Refuses the connection");
+        assertThat(http.watch()).containsExactly("The redeliveries of the step");
+        assertThat(recipes.recipes().get(1).uncovers()).isEmpty();
         assertThat(http.fill(Map.of("endpoint", "http://localhost:8765/stock", "status", "503", "rate", "0.25")))
                 .isEqualTo("endpoint=http://localhost:8765/stock error status=503 rate=0.25");
         // a placeholder without a value stays, so the form can say what is missing

@@ -60,7 +60,9 @@ error handler (HAND) and the redeliveries (REDEL).
 
 - **a** — Add a rule: pick what should go wrong from the known rules of
   camel-chaos (such as "Downstream returns an error", "Did the work, then
-  failed", "The route flaps"), then fill in its values: the endpoints,
+  failed", "The route flaps"). Each says what it does, what it can
+  uncover, when not to use it, and what to watch while it runs. Then fill
+  in its values: the endpoints,
   routes and steps of the integration are picked with Left and Right, and
   the rule is shown as it is built. The last entry, "Write the rule
   yourself", types it as one line, such as

@@ -345,8 +345,10 @@ final class ChaosRecipeForm {
                 new Rect(pad.x(), pad.y(), pad.width(), Math.min(topHeight, pad.height())));
         int y = pad.y() + topHeight;
         if (!inForm) {
-            frame.renderWidget(Paragraph.builder().overflow(Overflow.WRAP_WORD).text(Text.from(
-                    Line.from(Span.styled(recipe.rule(), Theme.muted())))).build(),
+            List<Line> lines = new ArrayList<>();
+            lines.add(Line.from(Span.styled(recipe.rule(), Theme.muted())));
+            addGuide(lines, recipe);
+            frame.renderWidget(Paragraph.builder().overflow(Overflow.WRAP_WORD).text(Text.from(lines)).build(),
                     new Rect(pad.x(), y, pad.width(), Math.max(1, pad.bottom() - y)));
             return;
         }
@@ -380,9 +382,31 @@ final class ChaosRecipeForm {
         bottom.add(missing == null
                 ? Line.from(Span.styled("Enter to add it (asks to confirm)", Theme.success()))
                 : Line.from(Span.styled(missing + " needs a value", Theme.warning())));
+        addGuide(bottom, recipe);
         int bottomY = y + 1;
         frame.renderWidget(Paragraph.builder().overflow(Overflow.WRAP_WORD).text(Text.from(bottom)).build(),
                 new Rect(pad.x(), bottomY, pad.width(), Math.max(1, pad.bottom() - bottomY)));
+    }
+
+    /**
+     * What the recipe can uncover, when not to use it and what to watch while it runs, as the model of camel-chaos
+     * says: under the rule, as far as there is room.
+     */
+    static void addGuide(List<Line> lines, ChaosRecipes.Recipe recipe) {
+        addSection(lines, "What it can uncover", recipe.uncovers(), Theme.success());
+        addSection(lines, "When not to use it", recipe.avoid(), Theme.warning());
+        addSection(lines, "What to watch", recipe.watch(), Theme.info());
+    }
+
+    private static void addSection(List<Line> lines, String title, List<String> items, Style style) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        lines.add(Line.empty());
+        lines.add(Line.from(Span.styled(title, style.bold())));
+        for (String item : items) {
+            lines.add(Line.from(Span.styled("• ", style), Span.raw(item)));
+        }
     }
 
     /** The keys of the form, for the footer. */
