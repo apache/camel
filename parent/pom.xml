@@ -347,7 +347,8 @@
         <junit6-jupiter-version>6.1.3</junit6-jupiter-version>
         <junit-pioneer-version>2.3.0</junit-pioneer-version>
         <juniversalchardet-version>1.0.3</juniversalchardet-version>
-        <jxmpp-version>1.1.0</jxmpp-version>
+        <!-- smack 4.4.x asks for jxmpp in the range [1.0.0,1.0.999] -->
+        <jxmpp-version>1.0.3</jxmpp-version>
         <jython-version>2.7.4</jython-version>
         <kafka-version>4.3.1</kafka-version>
         <keycloak-client-version>26.0.12</keycloak-client-version>
