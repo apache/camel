@@ -86,6 +86,7 @@ public class StrimziInfraService implements KafkaInfraService, ContainerService<
 
     @Override
     public void initialize() {
+        ContainerEnvironmentUtil.configureContainerStartup(strimziContainer, KafkaProperties.STRIMZI_CONTAINER_STARTUP, 3);
         strimziContainer.start();
 
         registerProperties();
