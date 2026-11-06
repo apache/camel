@@ -164,8 +164,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
-        ObjectHelper.notNull(session, "session");
         checkFileName(name);
+        ObjectHelper.notNull(session, "session");
         ScpConfiguration cfg = endpoint.getConfiguration();
 
         int timeout = cfg.getConnectTimeout();
