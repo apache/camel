@@ -4179,6 +4179,10 @@ context. A check sends two `LookupEvents` requests, one per event name, and one 
 always one request, for all Secrets Manager events); reads of secrets no longer add requests. LookupEvents allows two
 requests per second per account and Region.
 
+Each check looks up these events from 10 minutes before the newest event seen (but not before the task started), and
+skips the events seen by an earlier check: CloudTrail can make an event visible after a newer one, and such an update was
+never read. The number of requests is as above, counted over that range.
+
 === camel-aws2-s3 - a timestamp window uploaded more than once is stored in more than one object
 
 With `streamingUploadMode=true` and `timestampGroupingEnabled=true`, the upload of a time window is completed when it
