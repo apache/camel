@@ -703,6 +703,17 @@
   "serviceVersion" : "2.22.0",
   "uiSupported" : true
 }, {
+  "service" : "org.apache.camel.test.infra.azure.eventgrid.services.AzureEventGridInfraService",
+  "description" : "Local Azure Event Grid service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.eventgrid.services.AzureEventGridLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "event-grid" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-eventgrid",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
   "description" : "Infinispan is a distributed in-memory key/value data store",
   "implementation" : "org.apache.camel.test.infra.infinispan.services.InfinispanLocalContainerInfraService",
