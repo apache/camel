@@ -624,7 +624,7 @@ a request into rules, the docs): `META-INF/org/apache/camel/chaos/chaos-model.js
 Camel catalog (`CamelCatalog.chaosModelJSon()`). It has the targets, the hooks of each target and the faults each one
 offers (and whether it is reached only with `at=`), the parameters of each fault with their types and limits, the
 options, the kinds and ops of an expectation, the limits, and recipes: known rules in plain words, grouped by what goes
-wrong, each a rule with placeholders (`${endpoint}`, `${rate}`) and what to pick them from (the endpoints the routes
+wrong, each a rule with placeholders (`+${endpoint}+`, `+${rate}+`) and what to pick them from (the endpoints the routes
 send to, the routes, the steps), such as:
 
 [source,json]
