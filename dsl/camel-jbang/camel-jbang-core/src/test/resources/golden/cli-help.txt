@@ -552,8 +552,8 @@ or change logging levels. (use cmd --help to see sub commands)
   -h, --help   Display the help and sub-commands
 Commands:
   browse             Browse pending messages on endpoints
-  chaos-add          Add a chaos rule to a running integration (camel-chaos,
-                       for development only)
+  chaos-add          Add chaos rules to a running integration (camel-chaos, for
+                       development only)
   chaos-change       Change a chaos rule of a running integration (camel-chaos,
                        for development only)
   chaos-clear        Remove all chaos rules of running integrations
@@ -640,22 +640,24 @@ Examples:
   camel cmd browse --endpoint=seda:foo --limit=10
 
 == camel cmd chaos-add --help
-Usage: camel cmd chaos-add [-h] --rule=<rule> [--timeout=<timeout>] <name>
-Add a chaos rule to a running integration (camel-chaos, for development only)
+Usage: camel cmd chaos-add [-h] [--timeout=<timeout>] --rule=<rules>
+                           [--rule=<rules>]... <name>
+Add chaos rules to a running integration (camel-chaos, for development only)
       <name>                Name or pid of the running Camel integration (must
                               match one)
   -h, --help                Display the help and sub-commands
       --timeout=<timeout>   How long to wait for the integration to answer, in
                               millis or as a duration such as 30s
                               Default: 10000
-      --rule=<rule>         One rule in its one-line text form, as one entry of
-                              camel.chaos.rules
+      --rule=<rules>        A rule in its one-line text form, as an entry of
+                              camel.chaos.rules; can be given more than once
 
 The integration must have camel-chaos switched on (camel run --chaos, profile
-dev). The rule is
-checked as camel.chaos.rules is; a rule that is not valid is refused with the
-reason. Its id
-(r1, r2, ...) is printed, for chaos-change and chaos-remove.
+dev). The rule is checked as camel.chaos.rules is; a rule that is not valid is
+refused with the reason. Its id (r1, r2, ...) is printed, for chaos-change and
+chaos-remove. Several --rule options (or rules separated by ;) are added
+together, all or none, so they are in place at the same time. A rule that
+matches nothing in the integration now (often a typo) is added with a warning.
 
 Examples:
   camel cmd chaos-add myApp --rule='endpoint=kafka:orders* delay duration=2s
@@ -664,6 +666,8 @@ rate=0.2 until=5m'
 until=2m'
   camel cmd chaos-add myApp --rule='step=enrich* error exception=java.sql.
 SQLException rate=0.1'
+  camel cmd chaos-add myApp --rule='endpoint=seda:dlq error at=dlq'
+--rule='endpoint=http:stock* error'
 
 == camel cmd chaos-change --help
 Usage: camel cmd chaos-change [-h] --id=<id> --rule=<rule>
