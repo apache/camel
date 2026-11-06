@@ -965,6 +965,11 @@ milliseconds per request, 14 to 17.5 seconds for 10,000 records), and a record t
 next records of its request. A redelivery of the exchange still sends the whole batch again: see the Batch Producer
 section of xref:components::aws2-kinesis-component.adoc[AWS Kinesis].
 
+=== camel-azure-storage-blob - copyBlob validates the source account and container name
+
+`copyBlob` now rejects invalid source account or container names (headers `CamelAzureStorageBlobSourceBlobAccountName`
+and `CamelAzureStorageBlobSourceBlobContainerName`) with an `IllegalArgumentException`.
+
 === camel-stitch - a response with an empty body, and the default sequence of a message
 
 A response of Stitch with an empty body now sets the `CamelStitchCode`, `CamelStitchStatus` and `CamelStitchHeaders`
