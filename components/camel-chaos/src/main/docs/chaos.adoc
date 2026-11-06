@@ -126,7 +126,9 @@ integration; `chaos-clear` without one acts on every running integration that ha
 `chaos-clear` removes stay in the report; with `--reset` the report starts again, for a new experiment: no rules,
 route counts or verdict, as for an application that just started (with the same seed, and the ids of new rules going on
 from the last one). An id that does not exist is "not found" (exit code 3). `camel get chaos` lists the current rules with their id, version, state,
-matches and faults, and `--report` shows the report (also as JSON with `--json`). Their `NOTE` column says what a
+matches and faults, the observed rate (`RATE`), when the rule last fired (`LAST`) and the effect of its faults
+(`EFFECT`), and `--report` shows the report, with the recent faults (also as JSON with `--json`); see
+<<_the_live_state_of_the_rules,The live state of the rules>>. Their `NOTE` column says what a
 lifecycle rule does to its route (`route poller down, back in 12s`) and why a rule did nothing when it was skipped.
 Without a rule to show, `camel get chaos` says so on stderr (no rules, chaos off, or no integration with camel-chaos).
 
@@ -504,6 +506,46 @@ give their reason only.
 
 In JSON an expectation has its `kind`, `op`, `count` and the `value` counted so far (and `completed`, the same value, for
 an expectation of completed exchanges).
+
+=== The live state of the rules
+
+While the rules run, the report tells how each one is doing, and what its faults do:
+
+* the observed rate next to the rate of the rule: the share of the matches it fired at (`rate 4.8% of 5%`, and
+`rate 20% of 1 in 5` for `rate=every:5`), and for `rate=every:N` the matches until it fires again;
+* when it last fired, and its faults per second over the last minute;
+* the effect of its faults on the exchanges they hit, each exchange counted once when it is done: `completed` (without a
+redelivery after the fault, such as after a `delay`), `recovered` by a redelivery of the error handler, `handled` by
+the error handler (such as the dead letter channel), `failed`, and the others still in flight. Only an exchange with a
+unit of work counts (one that a route processes), as that tells when it is done. For a lifecycle rule (or `stall`), the
+exchanges sent to the endpoint of its route while the route is down count, such as `direct:inventory` or
+`seda:shipping` (not an HTTP call to a `platform-http` route, which is another endpoint): a 3 second stop of a route
+called with `direct:inventory?block=false` that sends 5 orders to the dead letter channel shows as
+`5 handled by the error handler`, as the redelivery is too short to ride it out;
+* the last 20 faults of all rules, the latest first: when, the rule, the fault, the hook, the route, the endpoint
+(without its query) or the step, and the exchange id.
+
+An exchange that a rule faulted (or that was sent to the route of a lifecycle rule while it was down) gets the exchange
+property `CamelChaosRule` with the id of the rule (of the last one, when more rules did), so the tracer, the message history and a route of the dead letter channel can tell why
+it is there:
+
+[source,text]
+----
+    r1 active: endpoint=kafka:orders* error rate=0.05 until=10m
+      matches 1250, fired 61 (send 61), skipped 0, ends in 7m12s
+      rate 4.9% of 5%, last fired 2s ago, 6 faults in the last minute
+      effect on 58 exchanges: 55 recovered by redelivery, 2 handled by the error handler, 1 in flight
+  recent faults:
+    2s ago r1 error ChaosException at send kafka://orders, route orders, exchange 4F2A...
+----
+
+In JSON a rule has `rate` (the one of the rule: 1 without `rate=`) and `observedRate` (once it matched), `nextFireIn`
+(the matches until a `rate=every:N` rule fires again), `lastFiredAgo` (milliseconds), `faultsLastMinute`,
+`faultsPerSecond` (60 counts, from the oldest second to the current one, when it fired in the last minute) and `effect`
+(`faulted`, `completed`, `recovered`, `handled`, `failed` and `inFlight`, once it faulted an exchange); a lifecycle rule
+has no rate. The report has `recentFaults`, each with `timestamp`, `ago`, `rule`, `version`, `fault` (such as
+`error status 503` or `delay 2s`), `hook` (none for a lifecycle rule), `route`, `endpoint` or `step`, and `exchangeId`
+(none at a poll). `ChaosManager.reset()` (`chaos-clear --reset`) clears the recent faults too.
 
 == Time and the seed
 

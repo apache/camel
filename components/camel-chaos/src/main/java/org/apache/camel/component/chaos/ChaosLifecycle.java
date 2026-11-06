@@ -317,7 +317,9 @@ final class ChaosLifecycle {
             }
             fault.state = FaultState.DOWN;
             fault.downAt = now;
+            rule.firedLifecycle(routeId, now);
             fault.route = route;
+            fault.downUri = route != null ? route.getEndpoint().getEndpointBaseUri() : null;
             fault.definition = definition;
             fault.comebackAs = comebackAs;
             fault.statusAfter = comebackAs == Action.REMOVE ? null : controller.getRouteStatus(routeId);
@@ -444,9 +446,20 @@ final class ChaosLifecycle {
         private ServiceStatus statusAfter;
         // how the route comes back: the action of the rule, or how a half failed action left the route
         private Action comebackAs;
+        // the endpoint URI of the route, without its query, while it is down (read by the send hook without the lock),
+        // else null
+        private volatile String downUri;
 
         Fault(ChaosRule rule) {
             this.rule = rule;
+        }
+
+        /**
+         * The endpoint URI of the route, without its query, while the fault has it down, so the exchanges sent to it
+         * then count in the effect of the rule; else null.
+         */
+        String downEndpointUri() {
+            return downUri;
         }
 
         /** Whether the fault brings its route back now (the rule was removed, or the comeback runs). */
@@ -556,6 +569,7 @@ final class ChaosLifecycle {
             reason = why;
             task = null;
             route = null;
+            downUri = null;
             definition = null;
             if (owner != null) {
                 owner.track(this, false);

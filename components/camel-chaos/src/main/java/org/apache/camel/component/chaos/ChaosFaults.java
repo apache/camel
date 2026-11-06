@@ -90,19 +90,19 @@ final class ChaosFaults {
                     return httpFailure(rule, exchange, endpoint, hook);
                 }
                 exchange.setException(newException(rule));
-                rule.fired(hook);
+                rule.fired(hook, exchange, null, endpoint.getEndpointUri());
                 return SendHook.PROCEED;
             }
             case DELAY -> {
-                rule.fired(hook);
+                rule.fired(hook, exchange, null, endpoint.getEndpointUri());
                 return rule.duration;
             }
             case DROP -> {
-                rule.fired(hook);
+                rule.fired(hook, exchange, null, endpoint.getEndpointUri());
                 return SendHook.SKIP;
             }
             case CORRUPT -> {
-                corrupt(rule, exchange, hook);
+                corrupt(rule, exchange, hook, null, endpoint.getEndpointUri());
                 return SendHook.PROCEED;
             }
             default -> throw new IllegalStateException("Unknown fault " + rule.fault);
@@ -127,7 +127,7 @@ final class ChaosFaults {
         if (Boolean.FALSE.equals(toBoolean(option(endpoint, "throwExceptionOnFailure")))
                 || isOkStatus(rule.status, option(endpoint, "okStatusCodeRange"))) {
             response(message, rule, !undertow);
-            rule.fired(hook);
+            rule.fired(hook, exchange, null, endpoint.getEndpointUri());
             return SendHook.SKIP;
         }
         Throwable failure;
@@ -153,7 +153,7 @@ final class ChaosFaults {
             response(message, rule, true);
         }
         exchange.setException(failure);
-        rule.fired(hook);
+        rule.fired(hook, exchange, null, endpoint.getEndpointUri());
         return SendHook.PROCEED;
     }
 
@@ -346,8 +346,11 @@ final class ChaosFaults {
     /**
      * Changes the message of the exchange as the mode of the rule says, and counts the rule as fired at the hook, or as
      * skipped when the message has nothing the mode can change.
+     *
+     * @param routeId the route at its entry, else null for the route of the exchange
+     * @param where   the endpoint URI of a send, else null
      */
-    static void corrupt(ChaosRule rule, Exchange exchange, Hook hook) {
+    static void corrupt(ChaosRule rule, Exchange exchange, Hook hook, String routeId, String where) {
         // why the message was left as it is, or null when it was changed
         String skip;
         try {
@@ -361,7 +364,7 @@ final class ChaosFaults {
             skip = "the body could not be read (" + e.getClass().getSimpleName() + ")";
         }
         if (skip == null) {
-            rule.fired(hook);
+            rule.fired(hook, exchange, routeId, where);
         } else {
             rule.skipped(skip);
         }

@@ -18,9 +18,7 @@ package org.apache.camel.component.chaos;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
-import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
@@ -57,9 +55,12 @@ final class ChaosEventNotifier extends EventNotifierSupport {
         }
         if (event instanceof CamelEvent.ExchangeRedeliveryEvent redelivery && manager.isCounting()) {
             Exchange exchange = redelivery.getExchange();
-            UnitOfWork uow = exchange.getUnitOfWork();
-            Route route = uow != null ? uow.getRoute() : null;
-            String routeId = route != null ? route.getRouteId() : exchange.getFromRouteId();
+            ChaosExchangeState state = ChaosExchangeState.peek(exchange);
+            if (state != null) {
+                // a rule that faulted the exchange before is recovered when the exchange then completes
+                state.redelivered();
+            }
+            String routeId = ChaosExchangeState.routeId(exchange);
             if (routeId != null) {
                 manager.redelivered(routeId);
             }

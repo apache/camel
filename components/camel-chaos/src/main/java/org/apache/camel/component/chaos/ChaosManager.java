@@ -55,6 +55,12 @@ import org.slf4j.LoggerFactory;
 public final class ChaosManager {
 
     /**
+     * The exchange property with the id of the rule that faulted the exchange (the last one, when more did), such as
+     * {@code r1}, so the tracer, the message history and a route of the dead letter channel can tell.
+     */
+    public static final String CHAOS_RULE = "CamelChaosRule";
+
+    /**
      * The most rules at a time. When there are this many, adding a rule first moves the rules that ended (and whose
      * expectation is decided) into the report history; remove some to add more when that does not make room.
      */
@@ -87,6 +93,8 @@ public final class ChaosManager {
     private volatile boolean counting;
     private volatile boolean used;
     private final ConcurrentMap<String, RouteCounts> routes = new ConcurrentHashMap<>();
+    // the last faults of the rules, for the chaos screen
+    private final ChaosRecentFaults recentFaults = new ChaosRecentFaults();
     // the route lifecycle faults (stall and lifecycle), and whether the routes of the context are created (guarded by
     // lock), so the route of such a rule can be checked
     private final ChaosLifecycle lifecycle;
@@ -176,6 +184,7 @@ public final class ChaosManager {
         List<ChaosRule> added = new ArrayList<>();
         for (ChaosRule.Builder definition : definitions) {
             ChaosRule rule = new ChaosRule(definition, "r" + nextId++, seed, now, maxDuration);
+            rule.recentFaults = recentFaults;
             // a rule added before the context started starts its clock when it has started
             rule.clockStarted = camelContext.isStarted();
             rules.add(rule);
@@ -215,6 +224,7 @@ public final class ChaosManager {
             checkRoute(definition);
             long now = TimeSource.currentTimeMillis();
             ChaosRule changed = new ChaosRule(definition, id, rules.get(index).version + 1, seed, now, maxDuration);
+            changed.recentFaults = recentFaults;
             changed.clockStarted = camelContext.isStarted();
             ChaosRule old = rules.set(index, changed);
             old.removed(State.REPLACED, now);
@@ -320,8 +330,9 @@ public final class ChaosManager {
     }
 
     /**
-     * Removes all rules and starts a new report: the removed rules, the counts per route and the verdict are gone, as
-     * for an application that just started (with the same seed). The ids of new rules go on from the last one.
+     * Removes all rules and starts a new report: the removed rules, the counts per route, the recent faults and the
+     * verdict are gone, as for an application that just started (with the same seed). The ids of new rules go on from
+     * the last one.
      *
      * @return the number of rules removed
      */
@@ -334,13 +345,15 @@ public final class ChaosManager {
             evictedPending = 0;
             evictedLostAtDlq = 0;
             routes.clear();
+            recentFaults.clear();
             LOG.info("Chaos report reset");
             return count;
         }
     }
 
     /**
-     * The report: the rules and what they did, the counts per route, the expectations and the verdict.
+     * The report: the rules and what they did, the counts per route, the expectations, the recent faults and the
+     * verdict.
      */
     public ChaosReport report() {
         List<ChaosRule> current;
@@ -360,7 +373,7 @@ public final class ChaosManager {
         Map<String, RouteCounts> counts = new TreeMap<>(routes);
         return new ChaosReport(
                 seed, seedGiven, TimeSource.currentTimeMillis(), current, removed, counts, unmet, lost, pending,
-                lostAtDlq);
+                lostAtDlq, recentFaults.latestFirst());
     }
 
     // -- for the hooks, the event notifier and the plugin
@@ -698,6 +711,8 @@ public final class ChaosManager {
         final ChaosRule[] poll;
         final ChaosRule[] entry;
         final ChaosRule[] step;
+        // the lifecycle rules (stall and lifecycle), for the exchanges sent to their route while it is down
+        final ChaosRule[] lifecycle;
         final ChaosRule.Expectation[] expectations;
         final ChaosRule[] expectationRules;
 
@@ -708,6 +723,7 @@ public final class ChaosManager {
             poll = live.stream().filter(r -> r.hooks.contains(Hook.POLL)).toArray(ChaosRule[]::new);
             entry = live.stream().filter(r -> r.hooks.contains(Hook.ENTRY)).toArray(ChaosRule[]::new);
             step = live.stream().filter(r -> r.hooks.contains(Hook.STEP)).toArray(ChaosRule[]::new);
+            lifecycle = rules.stream().filter(r -> r.lifecycle != null).toArray(ChaosRule[]::new);
             // all of them, for the WARN about a route that does not exist when the context starts
             expectationRules = rules.stream().filter(r -> r.expectation != null).toArray(ChaosRule[]::new);
             expectations = Arrays.stream(expectationRules).map(r -> r.expectation)

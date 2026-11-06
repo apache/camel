@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.TimeSource;
@@ -69,6 +70,11 @@ final class ChaosPollStrategy implements PollingConsumerPollStrategy {
         return beginDelegate(consumer, endpoint);
     }
 
+    // the route of the consumer, for the recent faults
+    private static String routeId(Consumer consumer) {
+        return consumer instanceof RouteIdAware aware ? aware.getRouteId() : null;
+    }
+
     // the strategy of the consumer begins the poll; when it skips it, the poll run is done
     private boolean beginDelegate(Consumer consumer, Endpoint endpoint) {
         boolean begun = delegate.begin(consumer, endpoint);
@@ -81,12 +87,12 @@ final class ChaosPollStrategy implements PollingConsumerPollStrategy {
     private boolean fault(ChaosRule rule, Consumer consumer, Endpoint endpoint) {
         switch (rule.fault) {
             case DROP -> {
-                rule.fired(Hook.POLL);
+                rule.fired(Hook.POLL, null, routeId(consumer), endpoint.getEndpointUri());
                 endRun();
                 return false;
             }
             case DELAY -> {
-                rule.fired(Hook.POLL);
+                rule.fired(Hook.POLL, null, routeId(consumer), endpoint.getEndpointUri());
                 try {
                     TimeSource.sleep(rule.duration);
                 } catch (InterruptedException e) {
@@ -109,7 +115,7 @@ final class ChaosPollStrategy implements PollingConsumerPollStrategy {
                     rule.skipped("the poll strategy of the consumer skipped the poll");
                     return false;
                 }
-                rule.fired(Hook.POLL);
+                rule.fired(Hook.POLL, null, routeId(consumer), endpoint.getEndpointUri());
                 Throwable failure = ChaosFaults.newException(rule);
                 // the strategy declares no checked exception: the consumer gets it wrapped, as its cause. An Error is
                 // wrapped too, as the consumer handles only an Exception (it would stop polling for good otherwise)

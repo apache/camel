@@ -46,7 +46,16 @@ public class ChaosDevConsole extends AbstractDevConsole {
             @Metadata(description = "The sends, polls, exchanges or steps the target of the rule matched") long matches,
             @Metadata(description = "The faults the rule fired, per hook") Map<String, Long> fired,
             @Metadata(description = "The faults that did nothing, as the rule fired at a message or an endpoint it cannot change") long skipped,
+            @Metadata(description = "Why the rule did nothing when it was skipped: the count per reason (only when it was skipped)") Map<String, Long> skippedReasons,
+            @Metadata(description = "The messages lost because the rule failed or dropped the send of the dead letter channel, which then handled them (only for a rule with at=dlq)") Long lostAtDlq,
             @Metadata(description = "The milliseconds until an active rule ends") Long endsIn,
+            @Metadata(description = "The share of the matches the rule fires at: rate=, 1/N for rate=every:N, else 1 (not for a lifecycle or stall rule)") Double rate,
+            @Metadata(description = "The share of the matches the rule fired at so far, to compare with rate (once it matched; not for a lifecycle or stall rule)") Double observedRate,
+            @Metadata(description = "The matches until a rule with rate=every:N fires again (only for such a rule while it is active)") Long nextFireIn,
+            @Metadata(description = "The milliseconds since the rule last fired (only when it fired)") Long lastFiredAgo,
+            @Metadata(description = "The faults the rule fired in the last minute") long faultsLastMinute,
+            @Metadata(description = "The faults the rule fired per second over the last minute, 60 counts from the oldest second to the current one (only when it fired in the last minute)") List<Long> faultsPerSecond,
+            @Metadata(description = "The effect of the faults on the exchanges they hit (for a lifecycle or stall rule: the exchanges sent to its route while it was down), each counted once when it is done: faulted, completed, recovered (by a redelivery of the error handler), handled (by the error handler, such as the dead letter channel), failed and inFlight (only when the rule faulted an exchange)") Map<String, Long> effect,
             @Metadata(description = "The expectation of the rule (expect= and within=) and its outcome, when it has one") Map<String, Object> expectation,
             @Metadata(description = "What a lifecycle or stall rule did to its route: action, route, duration, state (pending, acting, down, comingBack, back, skipped, left, failed or cancelled), downAt, backAt, backIn, endedEarly and reason (only for such a rule)") Map<String, Object> lifecycle) {
     }
@@ -55,7 +64,7 @@ public class ChaosDevConsole extends AbstractDevConsole {
             @Metadata(description = "Whether chaos is switched on: with profile dev or camel.chaos.enabled=true, never with profile prod") boolean enabled,
             @Metadata(description = "Why chaos is off (only when it is off)") String reason,
             @Metadata(description = "The current rules (not the removed or replaced ones; only when chaos is on)") List<RuleEntry> rules,
-            @Metadata(description = "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, and the counts per route (only when chaos is on)") Map<String, Object> report) {
+            @Metadata(description = "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, the counts per route, and the recent faults (the last 20, the latest first: timestamp, ago, rule, version, fault, hook, route, endpoint or step, exchangeId) (only when chaos is on)") Map<String, Object> report) {
     }
 
     public ChaosDevConsole() {

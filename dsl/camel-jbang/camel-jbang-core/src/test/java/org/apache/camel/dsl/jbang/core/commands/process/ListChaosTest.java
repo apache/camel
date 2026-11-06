@@ -104,6 +104,55 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void theLiveStateOfTheRules() throws Exception {
+        writeStatus(withLiveState(chaosOn()));
+
+        assertThat(run()).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("RATE").contains("LAST").contains("EFFECT");
+        assertThat(lineOf(out, "r1")).contains("40% of 50%").contains("3s ago")
+                .contains("2 recovered, 1 handled, 1 in flight");
+    }
+
+    @Test
+    void theLiveStateAsJson() throws Exception {
+        writeStatus(withLiveState(chaosOn()));
+
+        assertThat(run("--json")).isZero();
+
+        JsonObject row = (JsonObject) ((JsonArray) Jsoner.deserialize(printer.getStdout())).get(0);
+        assertThat(row.getDouble("rate")).isEqualTo(0.5d);
+        assertThat(row.getDouble("observedRate")).isEqualTo(0.4d);
+        assertThat(row.getLong("lastFiredAgo")).isEqualTo(3000);
+        assertThat(row.getLong("faultsLastMinute")).isEqualTo(5);
+        assertThat(((JsonObject) row.get("effect")).getLong("inFlight")).isEqualTo(1);
+    }
+
+    @Test
+    void theRecentFaultsInTheReport() throws Exception {
+        writeStatus(withLiveState(chaosOn()));
+
+        assertThat(run("--report")).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("recent faults:").contains("FAULT").contains("EXCHANGE");
+        assertThat(lineOf(out, "ABC-1")).contains("2s").contains("r1").contains("error ChaosException").contains("send")
+                .contains("orders").contains("kafka://orders");
+        assertThat(lineOf(out, "r1  ")).contains("2 recovered, 1 handled, 1 in flight");
+    }
+
+    @Test
+    void withoutLiveStateTheColumnsAreLeftOut() throws Exception {
+        writeStatus(chaosOn());
+
+        assertThat(run()).isZero();
+
+        // a rule of an older camel-chaos has no live state
+        assertThat(printer.getStdout()).doesNotContain("RATE").doesNotContain("EFFECT");
+    }
+
+    @Test
     void report() throws Exception {
         writeStatus(chaosOn());
 
@@ -310,6 +359,35 @@ class ListChaosTest extends ProcessCommandTestSupport {
         chaos.put("enabled", true);
         chaos.put("rules", new JsonArray(List.of(current)));
         chaos.put("report", report);
+        return chaos;
+    }
+
+    /** The live state of rule r1, as camel-chaos adds it to its rules and its report. */
+    private static JsonObject withLiveState(JsonObject chaos) {
+        JsonObject rule = (JsonObject) ((JsonArray) chaos.get("rules")).get(0);
+        rule.put("rate", 0.5d);
+        rule.put("observedRate", 0.4d);
+        rule.put("lastFiredAgo", 3000L);
+        rule.put("faultsLastMinute", 5L);
+        JsonObject effect = new JsonObject();
+        effect.put("faulted", 4L);
+        effect.put("completed", 0L);
+        effect.put("recovered", 2L);
+        effect.put("handled", 1L);
+        effect.put("failed", 0L);
+        effect.put("inFlight", 1L);
+        rule.put("effect", effect);
+        JsonObject fault = new JsonObject();
+        fault.put("timestamp", 1_000_000L);
+        fault.put("ago", 2000L);
+        fault.put("rule", "r1");
+        fault.put("version", 2);
+        fault.put("fault", "error ChaosException");
+        fault.put("hook", "send");
+        fault.put("route", "orders");
+        fault.put("endpoint", "kafka://orders");
+        fault.put("exchangeId", "ABC-1");
+        ((JsonObject) chaos.get("report")).put("recentFaults", new JsonArray(List.of(fault)));
         return chaos;
     }
 

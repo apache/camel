@@ -712,8 +712,11 @@ public final class ToolRegistry {
     private static void registerChaosTools() {
         register(tool("chaos_list",
                 "List the chaos rules of the integration (camel-chaos, development only): id, version, the rule, state, "
-                                    + "where it fires, matches, faults fired, time left and the expectation; or why "
-                                    + "chaos is off.")
+                                    + "where it fires, matches, faults fired, time left, the expectation, and the live "
+                                    + "state: observed rate next to the rate of the rule, when it last fired, faults "
+                                    + "per second over the last minute, and the effect of its faults (exchanges "
+                                    + "completed, recovered by redelivery, handled by the error handler, failed, in "
+                                    + "flight); or why chaos is off.")
                 .param("name", "string", CHAOS_NAME, false)
                 .executor((ctx, args) -> {
                     selectNamedProcess(ctx, args);
@@ -722,8 +725,9 @@ public final class ToolRegistry {
 
         register(tool("chaos_report",
                 "Get the chaos report of the integration (camel-chaos): the verdict (PASS or FAIL) and whether it is "
-                                      + "final, the seed, every version of every rule with what it fired, the "
-                                      + "expectations and the counts per route; or why chaos is off.")
+                                      + "final, the seed, every version of every rule with what it fired and its live "
+                                      + "state, the expectations, the counts per route and the last 20 faults (rule, "
+                                      + "fault, route, endpoint or step, exchange id); or why chaos is off.")
                 .param("name", "string", CHAOS_NAME, false)
                 .executor((ctx, args) -> {
                     selectNamedProcess(ctx, args);

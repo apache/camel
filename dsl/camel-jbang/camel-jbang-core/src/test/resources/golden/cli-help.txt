@@ -3441,15 +3441,17 @@ Get the chaos rules of running integrations, or their report (camel-chaos)
                         duration such as 30s (default: until Enter is pressed)
                         Default: 0
       --report        Show the report: verdict, seed, all rules, the counts per
-                        route
+                        route, the recent faults
       --sort=<sort>   Sort by pid, name or age
                         Default: pid
 
 Lists the current rules of the integrations that have camel-chaos switched on:
 id, version, state,
-matches and the faults that fired. With --report it shows the report instead:
-the verdict, the seed,
-all rules (also the removed and replaced versions), the counts per route and
+matches, the faults that fired, the observed rate, when a rule last fired and
+the effect of its faults
+on the exchanges. With --report it shows the report instead: the verdict, the
+seed, all rules (also
+the removed and replaced versions), the counts per route, the recent faults and
 the reasons of a FAIL.
 
 Examples:
