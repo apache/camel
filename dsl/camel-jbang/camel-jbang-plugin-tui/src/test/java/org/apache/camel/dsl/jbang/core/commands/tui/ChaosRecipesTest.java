@@ -77,11 +77,14 @@ class ChaosRecipesTest {
             producer.uri = uri;
             info.producers.add(producer);
         }
+        // both are scheduled, as the consumers console says; only the file consumer polls (it has a scheduler)
         ConsumerInfo timer = new ConsumerInfo();
         timer.uri = "timer://orders?period=500";
+        timer.scheduled = true;
         ConsumerInfo files = new ConsumerInfo();
         files.uri = "file://inbox?delay=1000";
         files.scheduled = true;
+        files.polls = true;
         info.consumers.add(timer);
         info.consumers.add(files);
         for (String id : List.of("orders", "inventory")) {
@@ -135,6 +138,49 @@ class ChaosRecipesTest {
         assertThat(ChaosRecipes.candidates(r.get(5).placeholders().get(0), info)).containsExactly("file://inbox");
         // a header name is typed
         assertThat(ChaosRecipes.candidates(r.get(3).placeholders().get(1), info)).isEmpty();
+    }
+
+    @Test
+    void theCallsToOtherSystemsFirstAndTheDeadLetterChannelLast() {
+        // CAMEL-26699: as the status of the demo shop has them
+        IntegrationInfo info = new IntegrationInfo();
+        for (String[] p : new String[][] {
+                { "direct://payment", "false" }, { "seda://dlq", "false" }, { "seda://shipping", "false" },
+                { "direct://inventory", "false" }, { "http://localhost:8765/stock", "true" },
+                { "seda://dlq", "false" }, { "http://localhost:8765/pay", "true" } }) {
+            ProducerInfo producer = new ProducerInfo();
+            producer.uri = p[0];
+            producer.remote = Boolean.parseBoolean(p[1]);
+            info.producers.add(producer);
+        }
+        for (String[] e : new String[][] {
+                { "direct://inventory", "in", "false" }, { "direct://inventory", "out", "false" },
+                { "platform-http:///stock", "in", "true" }, { "platform-http:///stock", "out", "true" },
+                { "http://localhost:8765/stock", "out", "true" }, { "seda://dlq", "in", "false" },
+                { "direct://payment", "out", "false" }, { "seda://shipping", "in", "false" },
+                { "seda://shipping", "out", "false" }, { "http://localhost:8765/pay", "out", "true" } }) {
+            EndpointInfo endpoint = new EndpointInfo();
+            endpoint.uri = e[0];
+            endpoint.direction = e[1];
+            endpoint.remote = Boolean.parseBoolean(e[2]);
+            info.endpoints.add(endpoint);
+        }
+        ChaosRecipes.Placeholder any = ChaosRecipes.parse(MODEL).recipes().get(3).placeholders().get(0);
+
+        // the reply of platform-http is not a send, and the dead letter channel only an error handler sends to
+        assertThat(ChaosRecipes.candidates(any, info)).containsExactly(
+                "http://localhost:8765/stock", "http://localhost:8765/pay", "direct://payment", "seda://shipping",
+                "direct://inventory", "seda://dlq");
+    }
+
+    @Test
+    void aTimerIsNotOfferedForThePollFaults() {
+        IntegrationInfo info = chaosdemo();
+        ChaosRecipes.Placeholder polled = ChaosRecipes.parse(MODEL).recipes().get(5).placeholders().get(0);
+        assertThat(ChaosRecipes.candidates(polled, info)).containsExactly("file://inbox");
+        ConsumerInfo timer = info.consumers.get(0);
+        timer.id = "orders";
+        assertThat(ChaosHere.forConsumer(timer).polled()).isNull();
     }
 
     @Test

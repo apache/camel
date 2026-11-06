@@ -505,10 +505,15 @@ class TuiToolRegistry {
             return "Error: keys array is empty";
         }
         String confirmation = facade.openConfirmation();
-        if (confirmation != null) {
-            // only the user answers a dialog that asks to confirm an action (CAMEL-25444)
+        boolean escCancels = keys.size() == 1
+                && ("Esc".equalsIgnoreCase(keys.get(0)) || "Escape".equalsIgnoreCase(keys.get(0)))
+                && facade.isOpenConfirmationCancelledByEsc();
+        if (confirmation != null && !escCancels) {
+            // only the user answers a dialog that asks to confirm an action (CAMEL-25444); a lone Esc may cancel a
+            // dialog that Esc only cancels, never answer it (CAMEL-26699)
             return "Not sent: " + confirmation + " is open, and only the user answers it. Wait for the user, or tell"
-                   + " them what you need: keys sent while it is open are dropped.";
+                   + " them what you need: keys sent while it is open are dropped"
+                   + (facade.isOpenConfirmationCancelledByEsc() ? " (a lone Esc cancels it)." : ".");
         }
         int delay = 150;
         Object delayArg = args.get("delay");

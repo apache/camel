@@ -298,6 +298,12 @@ class McpFacade {
         return c != null ? c.open() : null;
     }
 
+    /** Whether the dialog that asks to confirm and is open is one that Esc only cancels (CAMEL-26699). */
+    boolean isOpenConfirmationCancelledByEsc() {
+        Confirmations c = confirmations;
+        return c != null && c.isOpenCancelledByEsc();
+    }
+
     void setFullScan(Runnable request, LongSupplier done) {
         this.fullScanRequest = request;
         this.fullScansDone = done;

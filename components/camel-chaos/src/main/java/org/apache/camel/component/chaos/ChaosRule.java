@@ -651,7 +651,8 @@ final class ChaosRule {
 
         /**
          * The route of this expectation counted one more of its kind. The time is read under the lock, so once a report
-         * saw the expectation decided, a count that comes later cannot change it.
+         * saw the expectation decided, a count that comes later cannot change it. The count goes on after that, until
+         * the time is up, so the report says how far it went over: "6 exchanges handled, at most 0 expected".
          */
         synchronized void record() {
             recordAt(TimeSource.currentTimeMillis());
@@ -659,11 +660,11 @@ final class ChaosRule {
 
         /** The route of this expectation counted one more of its kind at the given time (the tests give the time). */
         synchronized void recordAt(long now) {
-            if (decided != null || frozenAt >= 0 || now > deadline) {
+            if (frozenAt >= 0 || now > deadline) {
                 return;
             }
             value++;
-            if (op == Op.AT_LEAST ? value >= count : value > count) {
+            if (decided == null && (op == Op.AT_LEAST ? value >= count : value > count)) {
                 decided = op == Op.AT_LEAST ? Outcome.MET : Outcome.UNMET;
                 decidedAt = now;
             }

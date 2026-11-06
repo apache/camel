@@ -137,19 +137,10 @@ final class ChaosRecipes {
         }
         switch (p.pickFrom()) {
             case "values" -> answer.addAll(p.values());
-            case "producers" -> {
-                for (ProducerInfo producer : info.producers) {
-                    addUri(answer, producer.uri, p.schemes());
-                }
-                for (EndpointInfo endpoint : info.endpoints) {
-                    if ("out".equalsIgnoreCase(endpoint.direction)) {
-                        addUri(answer, endpoint.uri, p.schemes());
-                    }
-                }
-            }
+            case "producers" -> answer.addAll(producers(info, p.schemes()));
             case "pollingConsumers" -> {
                 for (ConsumerInfo consumer : info.consumers) {
-                    if (consumer.scheduled) {
+                    if (consumer.polls) {
                         addUri(answer, consumer.uri, p.schemes());
                     }
                 }
@@ -177,6 +168,40 @@ final class ChaosRecipes {
             }
         }
         return List.copyOf(answer);
+    }
+
+    /**
+     * The endpoints the routes send to: the calls to other systems first (remote), then the sends within the
+     * integration, and last the endpoints only an error handler sends to, such as a dead letter channel. That one has a
+     * producer in every route, but no route sends to it (the endpoints have no {@code out} entry for it), and it has a
+     * recipe of its own. An {@code out} endpoint that a route consumes, such as the reply of {@code platform-http}, is
+     * not a send.
+     */
+    private static List<String> producers(IntegrationInfo info, List<String> schemes) {
+        Set<String> sentTo = new LinkedHashSet<>();
+        Set<String> consumed = new LinkedHashSet<>();
+        for (EndpointInfo endpoint : info.endpoints) {
+            addUri("out".equalsIgnoreCase(endpoint.direction) ? sentTo : consumed, endpoint.uri, List.of());
+        }
+        Set<String> remote = new LinkedHashSet<>();
+        Set<String> local = new LinkedHashSet<>();
+        Set<String> errorHandler = new LinkedHashSet<>();
+        for (ProducerInfo producer : info.producers) {
+            Set<String> uri = new LinkedHashSet<>();
+            addUri(uri, producer.uri, schemes);
+            uri.forEach(u -> (producer.remote ? remote : sentTo.contains(u) ? local : errorHandler).add(u));
+        }
+        for (EndpointInfo endpoint : info.endpoints) {
+            if ("out".equalsIgnoreCase(endpoint.direction)) {
+                Set<String> uri = new LinkedHashSet<>();
+                addUri(uri, endpoint.uri, schemes);
+                uri.stream().filter(u -> !consumed.contains(u)).forEach((endpoint.remote ? remote : local)::add);
+            }
+        }
+        List<String> answer = new ArrayList<>(remote);
+        local.stream().filter(u -> !answer.contains(u)).forEach(answer::add);
+        errorHandler.stream().filter(u -> !answer.contains(u)).forEach(answer::add);
+        return answer;
     }
 
     // an id Camel made up, such as to1 or log3
