@@ -342,6 +342,9 @@ class DataRefreshService {
                 }
             }
         }
+        if (ctx != null) {
+            ctx.chaosMarks.retain(pids.stream().map(String::valueOf).collect(Collectors.toSet()));
+        }
         if (!fullScan && ctx.selectedPid != null && !overviewTab) {
             boolean checkLiveness = now - lastLivenessCheckTime >= LIVENESS_CHECK_INTERVAL_MS;
             if (checkLiveness) {

@@ -422,7 +422,7 @@ class ErrorsTab extends AbstractTableTab {
         renderScrollbar(frame, table, filteredSize());
 
         if (showDetail) {
-            renderDetail(frame, chunks.get(1), selectedError);
+            renderDetail(frame, chunks.get(1), selectedError, info);
         }
     }
 
@@ -543,14 +543,14 @@ class ErrorsTab extends AbstractTableTab {
                 Span.styled(since, Style.EMPTY.dim())));
     }
 
-    private void renderDetail(Frame frame, Rect area, ErrorInfo ei) {
+    private void renderDetail(Frame frame, Rect area, ErrorInfo ei, IntegrationInfo info) {
         List<Line> lines = new ArrayList<>();
 
         HistoryTab.addExchangeInfoLines(lines,
                 ei.exchangeId, ei.routeId, ei.nodeId, null, ei.location,
                 ei.elapsed, ei.threadName, !ei.handled);
         addRepeatLine(lines, ei);
-        ChaosMarks.addDetailLine(lines, ctx, ctx.findSelectedIntegration(), ei.exchangeId, ei.properties);
+        ChaosMarks.addDetailLine(lines, ctx, info, ei.exchangeId, ei.properties);
 
         // exception with stack trace
         String exception = null;
