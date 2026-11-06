@@ -51,6 +51,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PQCSignatureOnlyKeyStoreTest extends CamelTestSupport {
 
+    private static final String KEYSTORE_FILE = "keystore-signature-only-test.jks";
+
     @EndpointInject("mock:sign")
     protected MockEndpoint resultSign;
 
@@ -82,7 +84,7 @@ public class PQCSignatureOnlyKeyStoreTest extends CamelTestSupport {
 
     @AfterAll
     public static void teardown() throws Exception {
-        Files.deleteIfExists(Path.of("keystore.jks"));
+        Files.deleteIfExists(Path.of(KEYSTORE_FILE));
     }
 
     @Test
@@ -135,7 +137,7 @@ public class PQCSignatureOnlyKeyStoreTest extends CamelTestSupport {
         keyStore.setKeyEntry("mykey", kp.getPrivate(), password, new Certificate[] { certificate });
 
         // Save keystore to file
-        try (FileOutputStream fos = new FileOutputStream("keystore.jks")) {
+        try (FileOutputStream fos = new FileOutputStream(KEYSTORE_FILE)) {
             keyStore.store(fos, password);
         }
         return keyStore;
