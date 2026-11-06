@@ -1079,11 +1079,13 @@ that changes rules is refused. The list and the report read the chaos console fr
 
 | `camel_runtime_chaos_add`
 | `false` | `true`
-| Adds a rule (`rule`) and returns its id (`r1`, `r2`, ...).
+| Adds a rule (`rule`), or several separated by `;` (all or none), and returns the ids (`r1`, `r2`, ...), with
+  `warnings` for a rule that matches nothing in the application now (often a typo).
 
 | `camel_runtime_chaos_change`
 | `false` | `true`
-| Gives the rule with the `id` the new `rule` and one more version; the report keeps the version it replaces.
+| Gives the rule with the `id` the new `rule` and one more version; the report keeps the version it replaces. Returns
+  `warnings` when the new rule matches nothing in the application now.
 
 | `camel_runtime_chaos_remove`
 | `false` | `false`
@@ -1091,7 +1093,8 @@ that changes rules is refused. The list and the report read the chaos console fr
 
 | `camel_runtime_chaos_clear`
 | `false` | `false`
-| Removes all rules, and returns how many.
+| Removes all rules, and returns how many. With `reset=true` the report starts again (no rules, route counts or
+  verdict), for a new experiment, as `camel cmd chaos-clear --reset` does.
 |===
 
 Adding and changing a rule are marked destructive: a rule makes messages fail, wait or get lost, and its

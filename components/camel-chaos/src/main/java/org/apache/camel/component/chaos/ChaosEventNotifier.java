@@ -17,6 +17,7 @@
 package org.apache.camel.component.chaos;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.Route;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.UnitOfWork;
@@ -26,6 +27,11 @@ import org.apache.camel.support.EventNotifierSupport;
  * Counts per route, for the report, the redelivery attempts of the error handlers. A redelivery counts in the route
  * that runs the step being redelivered. It counts only while there are rules, and asks for no exchange events
  * otherwise. (The completed and failed exchanges are counted by the chaos route policy of each route.)
+ * <p/>
+ * It also marks an exchange while the dead letter channel delivers it, so the send hook tells the send of the dead
+ * letter channel apart (rules reach it only with {@code at=dlq}), and counts a message as lost when such a rule failed
+ * or dropped that send and the dead letter channel then handled the exchange (as with
+ * {@code deadLetterHandleNewException}, the default).
  */
 final class ChaosEventNotifier extends EventNotifierSupport {
 
@@ -37,14 +43,41 @@ final class ChaosEventNotifier extends EventNotifierSupport {
 
     @Override
     public void notify(CamelEvent event) throws Exception {
+        if (event instanceof CamelEvent.ExchangeFailureHandlingEvent handling) {
+            if (handling.isDeadLetterChannel()) {
+                ChaosExchangeState.of(handling.getExchange()).deadLetter = true;
+            }
+            return;
+        }
+        if (event instanceof CamelEvent.ExchangeFailureHandledEvent handled) {
+            if (handled.isDeadLetterChannel()) {
+                deadLetterDone(handled.getExchange());
+            }
+            return;
+        }
         if (event instanceof CamelEvent.ExchangeRedeliveryEvent redelivery && manager.isCounting()) {
             Exchange exchange = redelivery.getExchange();
             UnitOfWork uow = exchange.getUnitOfWork();
             Route route = uow != null ? uow.getRoute() : null;
             String routeId = route != null ? route.getRouteId() : exchange.getFromRouteId();
             if (routeId != null) {
-                manager.counts(routeId).redeliveries.increment();
+                manager.redelivered(routeId);
             }
+        }
+    }
+
+    private static void deadLetterDone(Exchange exchange) {
+        ChaosExchangeState state = ChaosExchangeState.peek(exchange);
+        if (state == null) {
+            return;
+        }
+        state.deadLetter = false;
+        ChaosRule fault = state.deadLetterFault;
+        state.deadLetterFault = null;
+        ExchangeExtension ee = exchange.getExchangeExtension();
+        if (fault != null && ee.isErrorHandlerHandledSet() && ee.isErrorHandlerHandled()) {
+            // the dead letter channel handled the exchange without delivering it
+            fault.lostAtDlq();
         }
     }
 
@@ -80,7 +113,8 @@ final class ChaosEventNotifier extends EventNotifierSupport {
 
     @Override
     public boolean isIgnoreExchangeFailedEvents() {
-        return true;
+        // the failure handling events of the dead letter channel are exchange failed events
+        return false;
     }
 
     @Override

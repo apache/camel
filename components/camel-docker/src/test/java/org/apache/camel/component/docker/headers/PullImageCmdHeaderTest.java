@@ -64,6 +64,22 @@ public class PullImageCmdHeaderTest extends BaseDockerHeaderTest<PullImageCmd> {
 
     }
 
+    @Test
+    void pullImageWithoutUsernameSendsNoCredentials() {
+        // docker-java fails like this when the registry authentication is asked for without a username
+        Mockito.lenient().when(dockerClient.authConfig())
+                .thenThrow(new NullPointerException("Configured username is null."));
+
+        Map<String, Object> headers = getDefaultParameters();
+        headers.put(DockerConstants.DOCKER_REPOSITORY, "docker/empty");
+
+        template.sendBodyAndHeaders("direct:in", "", headers);
+
+        Mockito.verify(dockerClient, Mockito.never()).authConfig();
+        Mockito.verify(mockObject, Mockito.never()).withAuthConfig(any());
+        Mockito.verify(mockObject, Mockito.times(1)).exec(any());
+    }
+
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.pullImageCmd(anyString())).thenReturn(mockObject);

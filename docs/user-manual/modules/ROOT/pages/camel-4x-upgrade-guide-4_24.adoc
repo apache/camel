@@ -142,6 +142,20 @@ now reject the invocation before the tool route runs. Previously, these argument
 required-argument check and then be discarded by the reserved-name filter, leaving the route without
 a required value. Rename these parameters and update their `parameter.*` or `argSchema` declarations.
 
+=== camel-mcp-server - the Origin header is checked on /mcp
+
+On Camel Main and Camel JBang, the streamable HTTP MCP endpoint now checks the `Origin` header on every request
+(`POST`, the SSE `GET` and `DELETE`), as the MCP streamable HTTP transport requires. A request without an `Origin`
+header is served as before; MCP clients that run as a process send none. A request with an `Origin` header is served
+only when the origin is allowed, and gets HTTP 403 otherwise.
+
+By default only loopback origins are allowed (`localhost`, `127.0.0.1` and `[::1]`, on any port). A browser-based
+client served from another origin must now be listed in the new `camel.server.mcp-allowed-origins` option, for example
+`+camel.server.mcp-allowed-origins = https://app.example.com, http://localhost:*+`. The list replaces the loopback
+default. Scheme and host are compared ignoring case and a default port may be left out; `+*+` and other entries that are
+not of the form `scheme://host[:port]` fail the startup. Stdio mode is not affected, and neither are the Spring Boot and
+Quarkus engines.
+
 === camel-mina-sftp - TCP_NODELAY is set on the connections
 
 The `mina-sftp` component now sets `TCP_NODELAY` on its connections, as the JSch-based `sftp` component does.
@@ -488,8 +502,8 @@ option brings back the redelivery of a whole routing slip or dynamic router.
 === camel-core - an AsyncProcessor that throws in a step without an error handler fails the exchange
 
 A step that has no error handler of its own (the steps of `doTry`, `doCatch`, `doFinally` and `onException`, also when
-nested in another EIP inside them, the outputs of a multicast, the steps of a circuit breaker, and a step with
-`inheritErrorHandler(false)`) now handles a processor that throws from `process(exchange, callback)` instead of
+nested in another EIP inside them, the outputs of a multicast, the recipients of a recipient list inside a `doTry`,
+the steps of a circuit breaker, and a step with `inheritErrorHandler(false)`) now handles a processor that throws from `process(exchange, callback)` instead of
 setting the exception on the exchange as if it had set it: the exchange fails with that exception, so the `doCatch`
 catches it, and the output of a multicast is redelivered by the error handler of the route as for any other failure.
 Before, the exchange hung.
@@ -1262,6 +1276,23 @@ CamelContext of that provider. It now closes each of them only when no other `JC
 `JCacheManager` that was closed no longer opens its cache: `getCache()` then throws `IllegalStateException`; before,
 it returned the closed cache, whose operations throw `IllegalStateException`. This matters for code that calls a
 `JCacheManager` (for example one created by a custom `JCacheManagerFactory`) after it was closed.
+
+=== camel-jdbc, camel-spring-jdbc - plain ? placeholders take their values only from the CamelJdbcParameters header
+
+With `useHeadersAsParameters=true` and a query with only plain `?` placeholders (no named parameters `:?name`), the
+`jdbc` and `spring-jdbc` producers bound the values of all the message headers by position, or of the
+`CamelJdbcParameters` header when it was set. Which value went to which `?` then depended on the headers of the
+message and their order (which changed in 4.21 from alphabetical to the order they were added). The values of plain
+`?` placeholders now come only from the `CamelJdbcParameters` header: a `List` with the values in the order of the
+placeholders (or a `Map`, whose values are taken in the order of its entries, or a single value for a query with one
+`?`, such as a `String` or a `byte[]`). When the header is not set, or has more or fewer values than the query has
+`?` placeholders, the exchange fails with a `RuntimeExchangeException` (before, extra values were ignored). Set the
+values in that header, or use named parameters.
+
+Named parameters take their values from the `CamelJdbcParameters` header when it is a `Map`, or else from the message
+headers, as before. A `CamelJdbcParameters` header that is not a `Map` (such as the `List` left by an earlier query
+with plain `?` placeholders in the same route) is now ignored for named parameters, where before it made the exchange
+fail with `Cannot find key`.
 
 === camel-jgroups-raft - a body that does not convert to a byte array fails the exchange
 
@@ -2143,6 +2174,17 @@ endpoints.
 The other headers, such as `CamelDockerContainerId`, `CamelDockerEmail` and `CamelDockerRequestTimeout`, still take
 precedence over the options of the endpoint, as before. The `events` and `stats` consumers do not change: they always
 used the options of the endpoint.
+
+=== camel-docker - imagepull and imagepush authenticate only to the registry of serverAddress
+
+The `imagepull` and `imagepush` operations of the `docker` component added the registry authentication of the
+endpoint (`username`, `password`, `email` and `serverAddress`) to every pull and push, whatever registry the image
+reference names. They now add it only when the registry host and port of the image (Docker Hub for an image without a
+registry host, such as `ubuntu` or `team/app`) match those of `serverAddress`. An image in another registry is pulled
+or pushed without authentication. Set `serverAddress` to the registry of the images, or use one endpoint per registry.
+
+Without a `username` on the endpoint, `imagepull` and `imagepush` failed with a `NullPointerException`
+("Configured username is null."). They now pull or push without authentication.
 
 === camel-cli-connector - every action with a request id gets an answer
 
@@ -6260,6 +6302,17 @@ Previously the newest message was left out.
 The `stream:header` producer now fails with a `NoSuchHeaderException` when the `stream` header is missing or is not an
 `OutputStream`. Previously it failed with a `NullPointerException`, or did nothing when the body was null.
 
+=== camel-hazelcast - the hazelcast-seda consumer restores a transferred exchange only with transferExchange=true
+
+A `hazelcast-seda` consumer now restores the headers and exchange properties of an exchange that a producer with
+`transferExchange=true` put on the queue only when the consumer has `transferExchange=true` as well. A consumer without
+the option, the default, now takes only the body of such an exchange, as it does for any other item of the queue, and
+logs a warning the first time. Before, the consumer restored the headers and exchange properties whatever its
+`transferExchange` option said.
+
+Set `transferExchange=true` on both the producer and the consumer endpoints to keep transferring the headers and
+exchange properties.
+
 === camel-knative - a structured CloudEvent whose Content-Type has parameters
 
 The consumer now finds the content mode of a CloudEvent by the media type of the `Content-Type` header, ignoring its
@@ -6488,6 +6541,16 @@ With `useIterator=true` (the default), the producer now splits a Jackson JSON no
 Jackson 2 and Jackson 3. An object node is now sent as one record; previously it was sent as one record per field
 value, without the field names, as the 4.22 upgrade guide said. A Jackson 3 scalar node is now sent as one record,
 where nothing was sent before.
+
+=== camel-kafka - breakOnFirstError while the consumer is paused
+
+With `breakOnFirstError=true`, a failed record now creates a new Kafka consumer also when the consumer is paused in the
+same poll, for example by a `ThrottlingExceptionRoutePolicy` that suspends the route on the failed exchange. The new
+consumer stays paused until the route is resumed, and then polls each partition from its committed offset, or from
+`autoOffsetReset` when it has none, as on a break without a pause. Before, a partition without a committed offset
+resumed after the failed record. The new consumer leaves and rejoins the consumer group, so each such break is now a
+rebalance of the group, also when the partition has a committed offset. There is no option to keep the previous
+behaviour.
 
 === camel-dns - dig without a type, and the wikipedia type
 

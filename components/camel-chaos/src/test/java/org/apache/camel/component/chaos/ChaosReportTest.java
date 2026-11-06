@@ -134,10 +134,10 @@ class ChaosReportTest extends ChaosTestSupport {
                 entries.add(rule);
             }
         }
-        // the active entry first, then the replaced ones in the order they were replaced
-        assertThat(entries).extracting(e -> e.getInteger("version")).containsExactly(3, 1, 2);
+        // the versions of an id from the latest
+        assertThat(entries).extracting(e -> e.getInteger("version")).containsExactly(3, 2, 1);
         assertThat(entries).extracting(e -> e.getString("state")).containsExactly("active", "replaced", "replaced");
-        assertThat(entries).extracting(e -> e.getLong("matches")).containsExactly(0L, 1L, 2L);
+        assertThat(entries).extracting(e -> e.getLong("matches")).containsExactly(0L, 2L, 1L);
         assertThat(chaos().report().toText())
                 .contains(id + " v3 active: endpoint=mock:other error")
                 .contains(id + " replaced: endpoint=mock:kafka error")
@@ -318,7 +318,7 @@ class ChaosReportTest extends ChaosTestSupport {
     }
 
     @Test
-    void expectationOfARemovedRuleStaysPending() {
+    void expectationOfARemovedRuleIsCancelled() {
         String id = chaos().addRule("endpoint=mock:kafka error rate=every:2 expect=orders:10 within=1m");
         send(2);
         chaos().removeRule(id);
@@ -327,12 +327,15 @@ class ChaosReportTest extends ChaosTestSupport {
 
         ChaosReport report = chaos().report();
         assertThat(report.getVerdict()).isEqualTo(ChaosReport.PASS);
-        assertThat(report.isFinal()).isFalse();
+        // a cancelled expectation does not keep the report pending
+        assertThat(report.isFinal()).isTrue();
         JsonObject expectation = (JsonObject) ruleReport(id).get("expectation");
-        assertThat(expectation.getString("outcome")).isEqualTo("pending");
-        assertThat(expectation.getBoolean("notDecided")).isTrue();
+        assertThat(expectation.getString("outcome")).isEqualTo("cancelled");
+        assertThat(expectation.containsKey("timeLeft")).isFalse();
         assertThat(expectation.getLong("completed")).isEqualTo(1);
-        assertThat(report.toText()).contains("(not decided: the rule was removed or changed, or the context stopped, first)");
+        assertThat(report.toText())
+                .contains(
+                        "cancelled, 1 completed (the rule was removed or changed, or the context stopped, before it was decided)");
     }
 
     @Test
@@ -362,7 +365,31 @@ class ChaosReportTest extends ChaosTestSupport {
     }
 
     @Test
-    void anExpectationStaysPendingWhenTheContextStopsFirst() {
+    void resetStartsANewReport() {
+        String id = chaos().addRule("endpoint=nothing error expect=orders:5 within=1m");
+        send(2);
+        clock.advance(60_001);
+        assertThat(chaos().report().getVerdict()).isEqualTo(ChaosReport.FAIL);
+        chaos().addRule("endpoint=mock:kafka error rate=every:2");
+        send(2);
+
+        assertThat(chaos().reset()).isEqualTo(2);
+
+        ChaosReport report = chaos().report();
+        assertThat(report.getVerdict()).isEqualTo(ChaosReport.PASS);
+        assertThat(report.isFinal()).isTrue();
+        assertThat(report.getLost()).isZero();
+        assertThat((JsonArray) report.toJson().get("rules")).isEmpty();
+        assertThat((JsonArray) report.toJson().get("routes")).isEmpty();
+        assertThat(chaos().hasRule(id)).isFalse();
+        // the ids go on, so a new rule is not mistaken for an old one
+        assertThat(chaos().addRule("endpoint=nothing error")).isEqualTo("r3");
+        send(1);
+        assertThat(routeCount("orders", "completed")).isEqualTo(1);
+    }
+
+    @Test
+    void anExpectationIsCancelledWhenTheContextStopsFirst() {
         String id = chaos().addRule("endpoint=nothing error expect=orders:5 within=1m");
         send(2);
         context.stop();
@@ -371,15 +398,15 @@ class ChaosReportTest extends ChaosTestSupport {
 
         ChaosReport report = chaos().report();
         JsonObject expectation = (JsonObject) ruleReport(id).get("expectation");
-        assertThat(expectation.getString("outcome")).isEqualTo("pending");
+        assertThat(expectation.getString("outcome")).isEqualTo("cancelled");
         assertThat(expectation.getLong("completed")).isEqualTo(2);
         assertThat(report.getVerdict()).isEqualTo(ChaosReport.PASS);
-        assertThat(report.isFinal()).isFalse();
+        assertThat(report.isFinal()).isTrue();
         assertThat(report.getLost()).isZero();
     }
 
     @Test
-    void aPendingExpectationThatLeftTheReportKeepsItNotFinal() {
+    void aCancelledExpectationThatLeftTheReportKeepsItFinal() {
         String id = chaos().addRule("endpoint=nothing error expect=orders:5 within=1m");
         chaos().removeRule(id);
         for (int i = 0; i < ChaosManager.MAX_HISTORY; i++) {
@@ -388,6 +415,7 @@ class ChaosReportTest extends ChaosTestSupport {
         ChaosReport report = chaos().report();
         assertThat(report.toText()).doesNotContain(id + " removed");
         assertThat(report.getVerdict()).isEqualTo(ChaosReport.PASS);
-        assertThat(report.isFinal()).isFalse();
+        // the expectation was cancelled when its rule was removed, so nothing is pending
+        assertThat(report.isFinal()).isTrue();
     }
 }

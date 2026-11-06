@@ -28,6 +28,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.modelcontextprotocol.common.McpTransportContext;
 import io.modelcontextprotocol.json.McpJsonMapper;
 import io.modelcontextprotocol.json.TypeRef;
+import io.modelcontextprotocol.server.transport.DefaultServerTransportSecurityValidator;
+import io.modelcontextprotocol.server.transport.HeaderAccessor;
+import io.modelcontextprotocol.server.transport.ServerHttpHeaderValidator;
+import io.modelcontextprotocol.server.transport.ServerTransportSecurityException;
 import io.modelcontextprotocol.spec.HttpHeaders;
 import io.modelcontextprotocol.spec.McpSchema;
 import io.modelcontextprotocol.spec.McpStreamableServerSession;
@@ -41,6 +45,8 @@ import io.vertx.ext.auth.User;
 import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.SecurityPolicyHandler;
+import org.apache.camel.component.mcp.server.McpServerOrigins;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +61,10 @@ import reactor.core.publisher.Mono;
  * only servlet and stdio server transports). Request handling is offloaded to the Vert.x worker pool (unordered);
  * response writes always run on the connection's event-loop context. The long-lived GET stream does not occupy a worker
  * thread.
+ * <p>
+ * Every request carrying an {@code Origin} header is checked against the allowed origins before any other handling, as
+ * the MCP streamable HTTP transport requires; a request from an origin that is not allowed gets HTTP 403 with a
+ * JSON-RPC error and never reaches the MCP session. Requests without an {@code Origin} header are served.
  */
 public class VertxMcpStreamableServerTransportProvider implements McpStreamableServerTransportProvider {
 
@@ -70,11 +80,28 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private static final String ACCEPT = "Accept";
     private static final String APPLICATION_JSON = "application/json";
     private static final String TEXT_EVENT_STREAM = "text/event-stream";
+    private static final String ORIGIN = "Origin";
+    // a JSON-RPC error response without an id (McpSchema.JSONRPCResponse requires one, so it is written as is)
+    private static final String ORIGIN_NOT_ALLOWED = "{\"jsonrpc\":\"" + McpSchema.JSONRPC_VERSION
+                                                     + "\",\"error\":{\"code\":" + McpSchema.ErrorCodes.INVALID_REQUEST
+                                                     + ",\"message\":\"Origin not allowed\"}}";
+
+    /**
+     * The origins allowed when none are configured: loopback hosts on any port, so browser-based tools on the same
+     * machine keep working.
+     */
+    static final List<String> DEFAULT_ALLOWED_ORIGINS = List.of(
+            "http://localhost:*", "https://localhost:*",
+            "http://127.0.0.1:*", "https://127.0.0.1:*",
+            "http://[::1]:*", "https://[::1]:*");
 
     private final McpJsonMapper jsonMapper;
     private final String path;
     private final long sessionKeepAliveIntervalMs;
     private final long sessionIdleTtlMs;
+    private final ServerHttpHeaderValidator originValidator;
+    // Vert.x lets a handler of this type run before the body handler
+    private final SecurityPolicyHandler originHandler = this::checkOrigin;
     private final ConcurrentHashMap<String, ManagedSession> sessions = new ConcurrentHashMap<>();
     private final List<Route> routes = new ArrayList<>();
 
@@ -93,10 +120,27 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     public VertxMcpStreamableServerTransportProvider(
                                                      McpJsonMapper jsonMapper, String path, long sessionKeepAliveIntervalMs,
                                                      long sessionIdleTtlMs) {
+        this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, null);
+    }
+
+    /**
+     * @param allowedOrigins the origins allowed to call the endpoint, each exact (e.g. {@code https://app.example.com})
+     *                       or with a wildcard port (e.g. {@code http://localhost:*}), normalized with
+     *                       {@link McpServerOrigins#normalizeAllowedOrigin(String)}; {@code null} for
+     *                       {@link #DEFAULT_ALLOWED_ORIGINS}
+     */
+    public VertxMcpStreamableServerTransportProvider(
+                                                     McpJsonMapper jsonMapper, String path, long sessionKeepAliveIntervalMs,
+                                                     long sessionIdleTtlMs, List<String> allowedOrigins) {
         this.jsonMapper = jsonMapper;
         this.path = path;
         this.sessionKeepAliveIntervalMs = sessionKeepAliveIntervalMs;
         this.sessionIdleTtlMs = sessionIdleTtlMs;
+        this.originValidator = DefaultServerTransportSecurityValidator.builder()
+                .allowedOrigins(allowedOrigins != null
+                        ? allowedOrigins.stream().map(McpServerOrigins::normalizeAllowedOrigin).toList()
+                        : DEFAULT_ALLOWED_ORIGINS)
+                .build();
     }
 
     @Override
@@ -142,13 +186,17 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     public void registerRoutes(VertxPlatformHttpRouter router) {
         vertx = router.vertx();
         Route post = router.route(path).method(HttpMethod.POST);
+        // the origin check comes first, so a request that is not allowed is not even read
+        post.handler(originHandler);
         post.handler(BodyHandler.create(false));
         post.handler(ctx -> dispatch(vertx, ctx, this::handlePost));
         routes.add(post);
         Route get = router.route(path).method(HttpMethod.GET);
+        get.handler(originHandler);
         get.handler(ctx -> dispatch(vertx, ctx, this::handleGet));
         routes.add(get);
         Route delete = router.route(path).method(HttpMethod.DELETE);
+        delete.handler(originHandler);
         delete.handler(ctx -> dispatch(vertx, ctx, this::handleDelete));
         routes.add(delete);
         startSessionMaintenance();
@@ -162,6 +210,25 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     int sessionCount() {
         return sessions.size();
+    }
+
+    /**
+     * Serves a request without an {@code Origin} header or from an allowed origin; answers any other with HTTP 403 and
+     * a JSON-RPC error that has no {@code id}. Runs on the event loop before any other handler of the route.
+     */
+    private void checkOrigin(RoutingContext ctx) {
+        try {
+            originValidator.validate(new VertxHeaderAccessor(ctx));
+        } catch (ServerTransportSecurityException e) {
+            LOG.debug("Rejected MCP {} request on {}: origin {} is not allowed", ctx.request().method(), path,
+                    ctx.request().getHeader(ORIGIN));
+            ctx.response()
+                    .setStatusCode(e.getStatusCode())
+                    .putHeader("Content-Type", APPLICATION_JSON)
+                    .end(ORIGIN_NOT_ALLOWED);
+            return;
+        }
+        ctx.next();
     }
 
     @FunctionalInterface
@@ -516,6 +583,24 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
 
     private void endWithStatus(Context connection, RoutingContext ctx, int status) {
         connection.runOnContext(v -> ctx.response().setStatusCode(status).end());
+    }
+
+    private record VertxHeaderAccessor(RoutingContext ctx) implements HeaderAccessor {
+
+        @Override
+        public List<String> getHeader(String name) {
+            List<String> values = ctx.request().headers().getAll(name);
+            if (ORIGIN.equalsIgnoreCase(name)) {
+                // compare in the form the allowed origins are kept in: lower-case scheme and host, no default port
+                return values.stream().map(McpServerOrigins::normalizeOrigin).toList();
+            }
+            return values;
+        }
+
+        @Override
+        public List<String> getHeaderNames() {
+            return List.copyOf(ctx.request().headers().names());
+        }
     }
 
     private static final class ManagedSession {

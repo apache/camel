@@ -115,4 +115,16 @@ abstract class CamelChaosAction extends ActionBaseCommand {
      * The line printed for the answer of an integration that took the command.
      */
     protected abstract String describe(JsonObject answer);
+
+    /**
+     * The warnings of the answer, one per line after the line of the answer: the rules that match nothing in the
+     * integration now (often a typo), which were added anyway.
+     */
+    protected static String warnings(JsonObject answer) {
+        List<Object> warnings = answer.getCollection("warnings");
+        if (warnings == null || warnings.isEmpty()) {
+            return "";
+        }
+        return warnings.stream().map(w -> "\n  Warning: " + w).collect(Collectors.joining());
+    }
 }

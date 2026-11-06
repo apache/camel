@@ -41,6 +41,11 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install container upgrade script dependencies
+        shell: bash
+        run: |
+          pip install --only-binary :all: --require-hashes -r .github/actions/check-container-upgrade/requirements.txt
+
       - name: Test the container upgrade scripts
         shell: bash
         run: |

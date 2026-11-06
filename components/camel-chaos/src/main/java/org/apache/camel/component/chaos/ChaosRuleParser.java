@@ -184,6 +184,14 @@ final class ChaosRuleParser {
         if (b.fault == null) {
             throw new IllegalArgumentException("a rule needs a fault: error, delay, drop, corrupt, stall or lifecycle");
         }
+        if (b.target == Target.COMPONENT && b.pattern.indexOf(':') >= 0) {
+            // matched against the scheme only, so a pattern with a colon would never match
+            throw new IllegalArgumentException(
+                    "component=" + b.pattern + " has a ':', but component= is matched against the scheme of the"
+                                               + " endpoint URI only (such as component=http): use endpoint="
+                                               + b.pattern + (b.pattern.endsWith("*") ? "" : "*")
+                                               + " to match the endpoint");
+        }
         if (b.fault == Fault.LIFECYCLE) {
             // stall and lifecycle act once on the route: no hook, rate or until
             lifecycle(b, params, maxDuration);
@@ -223,6 +231,13 @@ final class ChaosRuleParser {
         hooks(b, params.get("at"), http);
         rate(b, params.get("rate"));
         until(b, params.get("until"), maxDuration);
+        if (b.every > b.untilCount && b.untilCount > 0) {
+            // until counts the matches, so the rule ends before its first fault
+            throw new IllegalArgumentException(
+                    "rate=every:" + b.every + " fires at match " + b.every + ", but until=" + b.untilCount
+                                               + " ends the rule after " + b.untilCount + " matches, so it would never"
+                                               + " fire");
+        }
         expectation(b, params.get("expect"), params.get("within"), maxDuration);
         return b;
     }
@@ -270,7 +285,7 @@ final class ChaosRuleParser {
                 while (i < n) {
                     char c = text.charAt(i);
                     checkChar(text, i);
-                    if (c == '\\' && i + 1 < n && (text.charAt(i + 1) == quote || text.charAt(i + 1) == '\\')) {
+                    if (c == '\\' && i + 1 < n && isEscaped(text.charAt(i + 1))) {
                         value.append(text.charAt(i + 1));
                         i += 2;
                     } else if (c == quote) {
@@ -313,6 +328,11 @@ final class ChaosRuleParser {
 
     private static boolean isSpace(char ch) {
         return ch == ' ' || ch == '\t';
+    }
+
+    /** The characters that a backslash escapes inside a quoted value: either quote and the backslash. */
+    private static boolean isEscaped(char ch) {
+        return ch == '"' || ch == '\'' || ch == '\\';
     }
 
     private static void checkChar(String text, int i) {
@@ -442,6 +462,13 @@ final class ChaosRuleParser {
         if (!Throwable.class.isAssignableFrom(type)) {
             throw new IllegalArgumentException("the exception class " + name + " is not a Throwable");
         }
+        if (InterruptedException.class.isAssignableFrom(type)) {
+            // Camel marks an exchange with an InterruptedException as interrupted and stops routing it, so
+            // onException, redelivery and the dead letter channel would never see the failure
+            throw new IllegalArgumentException(
+                    "the exception class " + name + " is an InterruptedException, which makes Camel stop routing the"
+                                               + " exchange without onException, redelivery or the dead letter channel");
+        }
         if (Modifier.isAbstract(type.getModifiers()) || !Modifier.isPublic(type.getModifiers())) {
             throw new IllegalArgumentException("the exception class " + name + " is abstract or not public");
         }
@@ -451,6 +478,11 @@ final class ChaosRuleParser {
         Constructor<? extends Throwable> constructor = constructor(throwable, String.class);
         b.exceptionTakesMessage = constructor != null;
         if (constructor == null) {
+            if (b.message != null) {
+                throw new IllegalArgumentException(
+                        "the exception class " + name + " has no public constructor taking a String message,"
+                                                   + " so it cannot be used with message=");
+            }
             constructor = constructor(throwable);
         }
         if (constructor == null) {
@@ -581,7 +613,7 @@ final class ChaosRuleParser {
                 }
             }
             if (hook == null) {
-                throw new IllegalArgumentException("unknown at=" + at + " (the hooks are send, poll, entry and step)");
+                throw new IllegalArgumentException("unknown at=" + at + " (the hooks are send, dlq, poll, entry and step)");
             }
             if (!offered.containsKey(hook)) {
                 throw new IllegalArgumentException(
@@ -592,13 +624,16 @@ final class ChaosRuleParser {
         }
         Set<Hook> hooks = EnumSet.noneOf(Hook.class);
         for (Map.Entry<Hook, Set<Fault>> entry : offered.entrySet()) {
-            if ((b.at == null || b.at == entry.getKey()) && entry.getValue().contains(b.fault)) {
+            // the send of the dead letter channel is reached only with at=dlq, so endpoint=* does not lose the messages
+            // that the dead letter channel should keep
+            boolean asked = b.at == null ? entry.getKey() != Hook.DLQ : b.at == entry.getKey();
+            if (asked && entry.getValue().contains(b.fault)) {
                 hooks.add(entry.getKey());
             }
         }
         if (http) {
             // the failure of an HTTP component is raised at the sends to it
-            hooks.retainAll(Set.of(Hook.SEND));
+            hooks.retainAll(Set.of(Hook.SEND, Hook.DLQ));
             if (hooks.isEmpty()) {
                 throw new IllegalArgumentException(
                         "status= is the failure of a send to an HTTP component, so it fires at the "
@@ -655,6 +690,7 @@ final class ChaosRuleParser {
         switch (target) {
             case ENDPOINT, COMPONENT -> {
                 answer.put(Hook.SEND, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
+                answer.put(Hook.DLQ, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
                 answer.put(Hook.POLL, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP));
             }
             case ROUTE -> answer.put(Hook.ENTRY, EnumSet.of(Fault.CORRUPT));
@@ -733,26 +769,65 @@ final class ChaosRuleParser {
     private static void expectation(ChaosRule.Builder b, String expect, String within, long maxDuration) {
         if (expect == null) {
             if (within != null) {
-                throw new IllegalArgumentException("within= is the time of an expectation, and needs expect=<route>:<count>");
+                throw new IllegalArgumentException(
+                        "within= is the time of an expectation, and needs expect=<route>:<count> (or"
+                                                   + " <route>:<kind><op><count>)");
             }
             return;
         }
         int colon = expect.lastIndexOf(':');
         if (colon <= 0 || colon == expect.length() - 1) {
-            throw new IllegalArgumentException("expect=" + expect + " is not <route>:<count>, such as expect=orders:100");
+            throw new IllegalArgumentException(
+                    "expect=" + expect + " is not <route>:<count> or <route>:<kind><op><count>, such as expect=orders:100"
+                                               + " or expect=orders:handled<=0");
         }
         b.expectRoute = expect.substring(0, colon);
         if (b.expectRoute.indexOf('*') >= 0) {
             throw new IllegalArgumentException(
                     "expect=" + expect + " needs the id of one route, not a pattern, such as expect=orders:100");
         }
-        String count = expect.substring(colon + 1);
+        String spec = expect.substring(colon + 1);
+        String count = spec;
+        if (!isDigits(spec)) {
+            // <kind><op><count>, such as handled<=0
+            int op = 0;
+            while (op < spec.length() && Character.isLetter(spec.charAt(op))) {
+                op++;
+            }
+            String kind = spec.substring(0, op);
+            b.expectKind = null;
+            for (ChaosRule.Expectation.Kind k : ChaosRule.Expectation.Kind.values()) {
+                if (k.key.equals(kind)) {
+                    b.expectKind = k;
+                }
+            }
+            if (b.expectKind == null) {
+                throw new IllegalArgumentException(
+                        "expect=" + expect + " counts " + (kind.isEmpty() ? "nothing" : kind)
+                                                   + ": the kinds are completed, handled, failed and redeliveries,"
+                                                   + " such as expect=orders:handled<=0");
+            }
+            String rest = spec.substring(op);
+            if (rest.startsWith(">=")) {
+                b.expectOp = ChaosRule.Expectation.Op.AT_LEAST;
+            } else if (rest.startsWith("<=")) {
+                b.expectOp = ChaosRule.Expectation.Op.AT_MOST;
+            } else if (rest.startsWith("=")) {
+                b.expectOp = ChaosRule.Expectation.Op.EXACTLY;
+            } else {
+                throw new IllegalArgumentException(
+                        "expect=" + expect + " needs >=, <= or = after " + kind + ", such as expect=orders:" + kind
+                                                   + "<=0");
+            }
+            count = rest.substring(b.expectOp.key.length());
+        }
         if (!isDigits(count) || count.length() > 18) {
             throw new IllegalArgumentException(
-                    "expect=" + expect + " needs a count that is a whole number of at most 18 digits after the colon");
+                    "expect=" + expect + " needs a count that is a whole number of at most 18 digits");
         }
         b.expectCount = Long.parseLong(count);
-        if (b.expectCount < 1) {
+        if (b.expectCount < 1 && b.expectOp == ChaosRule.Expectation.Op.AT_LEAST) {
+            // at least 0 is always met
             throw new IllegalArgumentException("expect=" + expect + " needs a count of 1 or more");
         }
         if (within != null) {
