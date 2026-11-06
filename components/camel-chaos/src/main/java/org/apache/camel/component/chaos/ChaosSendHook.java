@@ -27,7 +27,9 @@ import org.apache.camel.util.TimeSource;
  * (the sending thread waits, through {@link TimeSource}, before it calls the producer), {@code drop} (the send reports
  * success without calling the producer) and {@code corrupt} (the message that is sent). The first rule that fires
  * decides the fault of a send; the rules are asked in the order they were added. The send of the dead letter channel
- * meets only the rules with {@code at=dlq}: the event notifier marks the exchange while the channel delivers it.
+ * meets only the rules with {@code at=dlq}: the event notifier marks the exchange while the channel delivers it. The
+ * rules with {@code at=reply} are asked after the producer succeeded: {@code error} fails the send after its side
+ * effect happened, and {@code corrupt} changes the reply.
  */
 final class ChaosSendHook implements SendHook {
 
@@ -46,6 +48,16 @@ final class ChaosSendHook implements SendHook {
         if (ruleSet.send.length == 0 && ruleSet.dlq.length == 0) {
             return PROCEED;
         }
+        long answer = fire(ruleSet, exchange, endpoint);
+        if (answer == SKIP) {
+            // the producer is not called, so there is no reply for the rules with at=reply (afterSend comes right away,
+            // with no other send of the exchange in between)
+            ChaosExchangeState.of(exchange).skippedSend = true;
+        }
+        return answer;
+    }
+
+    private static long fire(ChaosManager.RuleSet ruleSet, Exchange exchange, Endpoint endpoint) {
         // the send of the dead letter channel meets only the rules with at=dlq, the other sends the rest
         ChaosExchangeState state = ChaosExchangeState.peek(exchange);
         boolean deadLetter = state != null && state.deadLetter;
@@ -90,7 +102,26 @@ final class ChaosSendHook implements SendHook {
 
     @Override
     public void afterSend(Exchange exchange, Endpoint endpoint) {
-        // the faults are raised before the send
+        ChaosExchangeState state = ChaosExchangeState.peek(exchange);
+        if (state != null && state.skippedSend) {
+            // chaos skipped the send (drop): the producer did not run
+            state.skippedSend = false;
+            return;
+        }
+        ChaosRule[] rules = manager.ruleSet().reply;
+        if (rules.length == 0 || exchange.getException() != null || state != null && state.deadLetter) {
+            // the reply rules are asked only after the producer succeeded, and not at the send of the dead letter
+            // channel
+            return;
+        }
+        long now = TimeSource.currentTimeMillis();
+        String uri = ChaosPatterns.endpointUri(endpoint);
+        for (ChaosRule rule : rules) {
+            if (rule.live(now) && rule.matchesUri(uri) && rule.fires(now)) {
+                ChaosFaults.atReply(rule, exchange, endpoint);
+                return;
+            }
+        }
     }
 
     @Override

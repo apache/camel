@@ -51,6 +51,8 @@ final class ChaosRule {
     /** A place where a rule can fire. */
     enum Hook {
         SEND("send"),
+        // the reply of a send, after the producer succeeded, which a rule reaches only with at=reply
+        REPLY("reply"),
         // the send of the dead letter channel, which a rule reaches only with at=dlq
         DLQ("dlq"),
         POLL("poll"),
@@ -103,7 +105,9 @@ final class ChaosRule {
     enum CorruptMode {
         HEADERS("headers"),
         CHARSET("charset"),
-        TRUNCATE("truncate");
+        TRUNCATE("truncate"),
+        EMPTY("empty"),
+        REMOVE_HEADER("remove-header");
 
         final String key;
 
@@ -115,6 +119,8 @@ final class ChaosRule {
     /** The state of a rule in the report. */
     enum State {
         ACTIVE("active"),
+        // before its start (from=)
+        WAITING("waiting"),
         ENDED("ended"),
         REMOVED("removed"),
         REPLACED("replaced");
@@ -151,9 +157,20 @@ final class ChaosRule {
     final Map<String, String> responseHeaders;
     final String responseBody;
     final long duration;
+    // the longest delay of a jittered delay (duration=100ms..2s), else 0
+    final long durationMax;
+    // how long an error waits before it fails (after=), else 0
+    final long after;
     final CorruptMode mode;
+    // the headers mode=remove-header removes (header=), or null for every header that is not one of Camel's own
+    final String header;
     final double probability;
     final long every;
+    // rate=burst:<on>/<period>: the rule fires at every match during the first <on> of each <period>, else 0
+    final long burstOn;
+    final long burstPeriod;
+    // how long after it is added the rule starts (from=), else 0
+    final long from;
     final long untilCount;
     final long untilDuration;
     final String expectRoute;
@@ -163,6 +180,9 @@ final class ChaosRule {
     final Action action;
     // the rule says stall, not lifecycle action=suspend
     final boolean stall;
+    // how often a lifecycle rule acts (repeat=, 1 without it), and the time from one action to the next (every=)
+    final int repeat;
+    final long repeatEvery;
     // when the rule was added, and its clock started: a rule added before the context started (camel.chaos.rules)
     // starts its clock when the context has started (see startClock)
     volatile long addedAt;
@@ -171,6 +191,8 @@ final class ChaosRule {
 
     // the state while it runs
     volatile long endsAt;
+    // when the rule starts: when it was added, plus from=
+    volatile long startsAt;
     final Expectation expectation;
     private final AtomicLong matches = new AtomicLong();
     private final LongAdder[] fired = new LongAdder[Hook.values().length];
@@ -216,20 +238,30 @@ final class ChaosRule {
         this.responseHeaders = Map.copyOf(b.responseHeaders);
         this.responseBody = b.responseBody;
         this.duration = b.duration;
+        this.durationMax = b.durationMax;
+        this.after = b.after;
         this.mode = b.mode;
+        this.header = b.header;
         this.probability = b.probability;
         this.every = b.every;
+        this.burstOn = b.burstOn;
+        this.burstPeriod = b.burstPeriod;
+        this.from = b.from;
         this.untilCount = b.untilCount;
         this.untilDuration = b.untilDuration;
         this.expectRoute = b.expectRoute;
         this.expectCount = b.expectCount;
         this.action = b.action;
         this.stall = b.stall;
+        this.repeat = Math.max(1, b.repeat);
+        this.repeatEvery = b.repeatEvery;
         this.addedAt = addedAt;
-        // a rule without an until duration ends after camel.chaos.maxDuration (also one that ends after a count)
+        // a rule without an until duration ends after camel.chaos.maxDuration (also one that ends after a count); the
+        // time counts from its start
         this.runFor = untilDuration > 0 ? untilDuration : maxDuration;
-        this.endsAt = plus(addedAt, runFor);
-        this.within = b.within > 0 ? b.within : (untilDuration > 0 ? untilDuration : maxDuration);
+        this.startsAt = plus(addedAt, from);
+        this.endsAt = plus(startsAt, runFor);
+        this.within = b.within > 0 ? b.within : plus(from, untilDuration > 0 ? untilDuration : maxDuration);
         this.expectation = expectRoute != null
                 ? new Expectation(expectRoute, b.expectKind, b.expectOp, expectCount, plus(addedAt, within)) : null;
         for (int i = 0; i < fired.length; i++) {
@@ -244,7 +276,7 @@ final class ChaosRule {
      * or its end time) does not count and does not fire.
      */
     boolean fires(long now) {
-        if (now >= endsAt) {
+        if (now >= endsAt || now < startsAt) {
             return false;
         }
         long n;
@@ -258,6 +290,9 @@ final class ChaosRule {
         if (every > 0) {
             return match % every == 0;
         }
+        if (burstPeriod > 0) {
+            return inBurst(now);
+        }
         if (probability < 1.0d) {
             return nextDouble() < probability;
         }
@@ -265,11 +300,39 @@ final class ChaosRule {
     }
 
     /**
-     * Whether the rule can still fire: before its end time and its until count. The hooks ask it before they match the
-     * pattern, so a rule that ended costs two reads until the next change of the rules drops it from the snapshot.
+     * Whether the rule can fire now: after its start, before its end time and its until count. The hooks ask it before
+     * they match the pattern, so a rule that ended costs two reads until the next change of the rules drops it from the
+     * snapshot.
      */
     boolean live(long now) {
-        return now < endsAt && (untilCount == 0 || matches.get() < untilCount);
+        return now >= startsAt && !ended(now);
+    }
+
+    /** Whether the rule ended: after its end time or its until count (a rule that did not start yet has not). */
+    boolean ended(long now) {
+        return now >= endsAt || untilCount > 0 && matches.get() >= untilCount;
+    }
+
+    /** Whether a {@code rate=burst:} rule is in a burst now: the first part of each period, from its start. */
+    boolean inBurst(long now) {
+        return now >= startsAt && (now - startsAt) % burstPeriod < burstOn;
+    }
+
+    /**
+     * How long until a {@code rate=burst:} rule changes: the end of the burst it is in, or the start of the next one.
+     */
+    long burstChangesIn(long now) {
+        long into = (Math.max(now, startsAt) - startsAt) % burstPeriod;
+        long wait = now < startsAt ? startsAt - now : 0;
+        return wait + (into < burstOn ? burstOn - into : burstPeriod - into);
+    }
+
+    /** How long a {@code delay} waits: its duration, or a draw between the two of a jittered delay. */
+    long delayFor() {
+        if (durationMax <= duration) {
+            return duration;
+        }
+        return duration + (long) (nextDouble() * (durationMax - duration + 1));
     }
 
     /** Counts that the rule fired at the hook, where there is no exchange (a poll). */
@@ -346,6 +409,9 @@ final class ChaosRule {
      * {@code rate=every:N}, else all of them.
      */
     double targetRate() {
+        if (burstPeriod > 0) {
+            return (double) burstOn / burstPeriod;
+        }
         return every > 0 ? 1.0d / every : probability;
     }
 
@@ -354,10 +420,12 @@ final class ChaosRule {
         return switch (fault) {
             case ERROR -> "error " + (status > 0
                     ? "status " + status
-                    : exceptionType != null ? exceptionType.getSimpleName() : ChaosException.class.getSimpleName());
-            case DELAY -> "delay " + ChaosRuleParser.printTime(duration);
+                    : exceptionType != null ? exceptionType.getSimpleName() : ChaosException.class.getSimpleName())
+                          + (after > 0 ? " after " + ChaosRuleParser.printTime(after) : "");
+            case DELAY -> "delay " + ChaosRuleParser.printTime(duration)
+                          + (durationMax > duration ? ".." + ChaosRuleParser.printTime(durationMax) : "");
             case DROP -> "drop";
-            case CORRUPT -> "corrupt " + mode.key;
+            case CORRUPT -> "corrupt " + mode.key + (header != null ? " " + header : "");
             case LIFECYCLE -> (stall ? "stall" : action.key) + " " + ChaosRuleParser.printTime(duration);
         };
     }
@@ -368,7 +436,8 @@ final class ChaosRule {
      */
     void startClock(long now) {
         addedAt = now;
-        endsAt = plus(now, runFor);
+        startsAt = plus(now, from);
+        endsAt = plus(startsAt, runFor);
         if (expectation != null) {
             expectation.startClock(plus(now, within));
         }
@@ -421,12 +490,15 @@ final class ChaosRule {
         }
         if (lifecycle != null) {
             // a lifecycle rule ends when it is done with its route, not by its end time
-            return lifecycle.isDone() ? State.ENDED : State.ACTIVE;
+            if (lifecycle.isDone()) {
+                return State.ENDED;
+            }
+            return lifecycle.isPending() && now < startsAt ? State.WAITING : State.ACTIVE;
         }
-        if (now >= endsAt || untilCount > 0 && matches.get() >= untilCount) {
+        if (ended(now)) {
             return State.ENDED;
         }
-        return State.ACTIVE;
+        return now < startsAt ? State.WAITING : State.ACTIVE;
     }
 
     /** The rule was removed by hand (or replaced by a change): its expectation is not decided any more. */
@@ -724,9 +796,15 @@ final class ChaosRule {
         Map<String, String> responseHeaders = Map.of();
         String responseBody;
         long duration;
+        long durationMax;
+        long after;
         CorruptMode mode;
+        String header;
         double probability = 1.0d;
         long every;
+        long burstOn;
+        long burstPeriod;
+        long from;
         long untilCount;
         long untilDuration;
         String expectRoute;
@@ -737,5 +815,7 @@ final class ChaosRule {
         Action action;
         // the rule says stall (lifecycle action=suspend)
         boolean stall;
+        int repeat;
+        long repeatEvery;
     }
 }

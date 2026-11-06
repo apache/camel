@@ -707,6 +707,7 @@ public final class ChaosManager {
         static final RuleSet EMPTY = new RuleSet(List.of(), 0);
 
         final ChaosRule[] send;
+        final ChaosRule[] reply;
         final ChaosRule[] dlq;
         final ChaosRule[] poll;
         final ChaosRule[] entry;
@@ -717,8 +718,10 @@ public final class ChaosManager {
         final ChaosRule[] expectationRules;
 
         RuleSet(List<ChaosRule> rules, long now) {
-            List<ChaosRule> live = rules.stream().filter(r -> r.live(now)).toList();
+            // also the rules that start later (from=): the hooks skip them until then
+            List<ChaosRule> live = rules.stream().filter(r -> !r.ended(now)).toList();
             send = live.stream().filter(r -> r.hooks.contains(Hook.SEND)).toArray(ChaosRule[]::new);
+            reply = live.stream().filter(r -> r.hooks.contains(Hook.REPLY)).toArray(ChaosRule[]::new);
             dlq = live.stream().filter(r -> r.hooks.contains(Hook.DLQ)).toArray(ChaosRule[]::new);
             poll = live.stream().filter(r -> r.hooks.contains(Hook.POLL)).toArray(ChaosRule[]::new);
             entry = live.stream().filter(r -> r.hooks.contains(Hook.ENTRY)).toArray(ChaosRule[]::new);
