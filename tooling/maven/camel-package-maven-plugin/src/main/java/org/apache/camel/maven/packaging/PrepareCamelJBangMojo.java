@@ -77,7 +77,9 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
             }
             String name;
             try {
-                f.trySetAccessible();
+                if (!f.trySetAccessible()) {
+                    throw new IllegalStateException("Cannot access " + clazz.getName() + "." + f.getName());
+                }
                 name = (String) f.get(null);
             } catch (IllegalAccessException e) {
                 throw new IllegalStateException("Cannot read " + clazz.getName() + "." + f.getName(), e);
@@ -117,7 +119,10 @@ public class PrepareCamelJBangMojo extends AbstractGeneratorMojo {
     static String className(File file) {
         String path = file.getPath().replace(File.separatorChar, '/');
         int root = path.indexOf("src/main/java/");
-        String relative = root >= 0 ? path.substring(root + "src/main/java/".length()) : file.getName();
+        if (root < 0) {
+            throw new IllegalArgumentException("Cannot determine the class of " + file + ": not under src/main/java/");
+        }
+        String relative = path.substring(root + "src/main/java/".length());
         return relative.substring(0, relative.length() - ".java".length()).replace('/', '.');
     }
 

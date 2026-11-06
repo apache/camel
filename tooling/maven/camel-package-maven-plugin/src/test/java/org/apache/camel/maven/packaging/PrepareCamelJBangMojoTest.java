@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PrepareCamelJBangMojoTest {
@@ -92,5 +93,11 @@ class PrepareCamelJBangMojoTest {
                 "../../dsl/camel-jbang/camel-jbang-run/src/main/java/org/apache/camel/dsl/jbang/run/common/"
                              + "CamelJBangConstants.java");
         assertEquals("org.apache.camel.dsl.jbang.run.common.CamelJBangConstants", PrepareCamelJBangMojo.className(file));
+    }
+
+    @Test
+    void aSourceFileNotUnderSrcMainJava() {
+        File file = new File("somewhere/org/apache/camel/CamelJBangConstants.java");
+        assertThrows(IllegalArgumentException.class, () -> PrepareCamelJBangMojo.className(file));
     }
 }
