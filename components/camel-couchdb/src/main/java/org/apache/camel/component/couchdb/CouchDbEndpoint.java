@@ -294,8 +294,6 @@ public class CouchDbEndpoint extends DefaultEndpoint implements EndpointServiceL
     }
 
     /**
-     * Gets the maximum number of messages as a limit to poll at each polling.
-     * <p/>
      * Gets the maximum number of messages as a limit to poll at each polling. The default value is 10. Use 0 or a
      * negative number to set it as unlimited.
      */
