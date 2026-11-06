@@ -41,9 +41,9 @@ import org.apache.camel.util.json.Jsoner;
  * plain words, as templates).
  * <p/>
  * The structure comes from the tables of {@link ChaosRuleParser}, so it cannot drift from what the parser accepts; the
- * descriptions and the recipes are written here. {@code ChaosModelTest} writes {@link #FILE} from it (and fails when
- * the committed file differs), and checks that every recipe parses. The catalog copies the file
- * ({@code CamelCatalog.chaosModelJSon()}).
+ * descriptions and the recipes are written here. The build writes {@link #FILE} from {@link #toJson()} (the
+ * {@code generate-chaos-model} goal of camel-package-maven-plugin), {@code ChaosModelTest} checks that every recipe
+ * parses, and the catalog copies the file ({@code CamelCatalog.chaosModelJSon()}).
  */
 final class ChaosModel {
 
@@ -53,7 +53,7 @@ final class ChaosModel {
     private ChaosModel() {
     }
 
-    /** The model as JSON, pretty printed (the content of {@link #FILE}). */
+    /** The model as JSON, pretty printed (the content of {@link #FILE}); the build calls it. */
     static String toJson() {
         return Jsoner.prettyPrint(model().toJson(), 2) + "\n";
     }

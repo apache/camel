@@ -44,8 +44,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The model of the chaos rules ({@link ChaosModel}): the committed file is what the model gives (write it again with
- * {@code -Dcamel.chaos.updateModel=true}), it agrees with the parser, and every recipe parses.
+ * The model of the chaos rules ({@link ChaosModel}): the build wrote it, it agrees with the parser, and every recipe
+ * parses.
  */
 class ChaosModelTest {
 
@@ -54,19 +54,13 @@ class ChaosModelTest {
     private static final long MAX = TimeUnit.MINUTES.toMillis(10);
 
     @Test
-    void theCommittedFileIsTheModel() throws Exception {
-        String expected = ChaosModel.toJson();
-        if (Boolean.getBoolean("camel.chaos.updateModel")) {
-            Files.createDirectories(GENERATED.getParent());
-            Files.writeString(GENERATED, expected, StandardCharsets.UTF_8);
-        }
-        assertThat(Files.readString(GENERATED, StandardCharsets.UTF_8))
-                .as("%s is out of date: run the test with -Dcamel.chaos.updateModel=true and commit the file", GENERATED)
-                .isEqualTo(expected);
-        // and it is in the jar, where the catalog finds it
+    void theBuildWroteTheModel() throws Exception {
+        // the generate-chaos-model goal of camel-package-maven-plugin writes it into the jar and src/generated
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(ChaosModel.FILE)) {
             assertThat(in).isNotNull();
+            assertThat(new String(in.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo(ChaosModel.toJson());
         }
+        assertThat(Files.readString(GENERATED, StandardCharsets.UTF_8)).isEqualTo(ChaosModel.toJson());
     }
 
     @Test
