@@ -236,6 +236,19 @@ nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
+=== camel-jsch - the scp producer refuses a file name with a line feed or a NUL character
+
+The `scp` producer now refuses a file name with a line feed or a NUL character, in the file name or in one of its
+directories, with a `GenericFileOperationFailedException`. It does so before it starts scp on the remote host, so
+nothing is written there. Any other character, such as a carriage return or a tab, is sent as before.
+
+scp sends each name on a protocol line that ends with a line feed. Before, a line feed in the file name ended that
+line early: the remote scp wrote a file named after the part of the name before the line feed, with the rest of the
+name at the start of its content, and the exchange did not fail. A line feed in a directory failed the exchange, but
+left a directory named after the part before it. A NUL character failed the exchange on the remote host, or, with an
+OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
+or in the `fileName` option before the message reaches the producer.
+
 == Upgrading from 4.18.4 to 4.18.5
 
 === camel-docling - output path handling
