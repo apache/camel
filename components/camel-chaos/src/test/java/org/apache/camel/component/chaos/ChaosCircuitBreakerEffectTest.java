@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.TimeSource;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
@@ -131,5 +134,30 @@ class ChaosCircuitBreakerEffectTest extends ChaosTestSupport {
         // the fault at the stock call was redelivered and recovered: the real failure after it is not chaos
         assertThat(failed.getMessage().getHeader("chaosRule")).isNull();
         assertThat(failed.getProperty(ChaosManager.CHAOS_RULE)).isNull();
+    }
+
+    @Test
+    void theFaultsOfACopyCountOnceWithItsOutcomeWhenTheExchangeIsNotDoneInAMinute() {
+        ChaosRule rule = new ChaosRule(
+                ChaosRuleParser.parse("endpoint=mock:pay error", context.getClassResolver(), TimeUnit.MINUTES.toMillis(10)),
+                "r9", 1, 0, TimeUnit.MINUTES.toMillis(10));
+        ChaosExchangeState.Faults faults = new ChaosExchangeState.Faults();
+        faults.add(rule);
+        long now = TimeSource.currentTimeMillis();
+        assertThat(chaos().waitForOriginal("ex-1", faults, false, true)).isTrue();
+        // the circuit breaker ran again for the same exchange: one message
+        ChaosExchangeState.Faults again = new ChaosExchangeState.Faults();
+        again.add(rule);
+        chaos().waitForOriginal("ex-1", again, false, true);
+
+        chaos().countWaitedTooLong(now + 30_000);
+        assertThat(chaos().isWaitingForOriginals()).isTrue();
+        assertThat(rule.effect.count(ChaosRule.Effect.Outcome.HANDLED)).isZero();
+
+        chaos().countWaitedTooLong(now + 120_000);
+        chaos().countWaitedTooLong(now + 240_000);
+        assertThat(chaos().isWaitingForOriginals()).isFalse();
+        assertThat(rule.effect.faultedCount()).isEqualTo(1);
+        assertThat(rule.effect.count(ChaosRule.Effect.Outcome.HANDLED)).isEqualTo(1);
     }
 }

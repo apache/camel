@@ -445,14 +445,14 @@ public final class ChaosManager {
         if (waitingForOriginal.isEmpty()) {
             return;
         }
-        waitingForOriginal.entrySet().removeIf(e -> {
+        for (Map.Entry<String, WaitingFaults> e : waitingForOriginal.entrySet()) {
             WaitingFaults w = e.getValue();
-            if (now - w.since < WAIT_FOR_ORIGINAL_MILLIS) {
-                return false;
+            // removed only when no copy merged into it meanwhile (a merge replaces the value), so the faults count
+            // once, and no longer in the map, as nothing else can change them
+            if (now - w.since >= WAIT_FOR_ORIGINAL_MILLIS && waitingForOriginal.remove(e.getKey(), w)) {
+                w.faults.count(w.copyFailed, w.copyHandled, false);
             }
-            w.faults.count(w.copyFailed, w.copyHandled, false);
-            return true;
-        });
+        }
     }
 
     /** Whether a rule was ever added (for the report when the context stops). */
