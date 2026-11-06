@@ -166,6 +166,11 @@ class ChaosRuleParserTest {
     void quotedValuesAndEscapes() {
         assertThat(parse("endpoint=x error message='it is \\'down\\''").message).isEqualTo("it is 'down'");
         assertThat(parse("endpoint=x error message=\"a \\\\ b ; c\"").message).isEqualTo("a \\ b ; c");
+        // either quote can be escaped inside either kind of quotes
+        assertThat(parse("endpoint=x error message=\"it\\'s \\\"down\\\"\"").message).isEqualTo("it's \"down\"");
+        assertThat(parse("endpoint=x error message='say \\\"hi\\\"'").message).isEqualTo("say \"hi\"");
+        // a backslash before any other character stays
+        assertThat(parse("endpoint=x error message=\"c:\\temp\"").message).isEqualTo("c:\\temp");
         assertThat(parse("  endpoint=x\terror  ").fault).isEqualTo(Fault.ERROR);
     }
 
@@ -300,7 +305,11 @@ class ChaosRuleParserTest {
             "endpoint=x error at=step|(the hooks of endpoint= are: at=send offers error, delay, drop",
             "step=s1 error at=send|at=send is not a hook of the target step=",
             "step=s1 delay duration=1s at=send|at=send is not a hook of the target step=",
-            "Endpoint=x error|a rule needs a target" })
+            "Endpoint=x error|a rule needs a target",
+            "component=http:localhost error|component= is matched against the scheme of the endpoint URI only",
+            "component=http:localhost error|use endpoint=http:localhost* to match the endpoint",
+            "component=http:* delay duration=1s|use endpoint=http:* to match the endpoint",
+            "endpoint=x error rate=every:10 until=5|would never fire" })
     void rejectedWithReason(String rule, String reason) {
         rejected(rule, reason.replace("\\'", "'"));
     }
@@ -320,6 +329,26 @@ class ChaosRuleParserTest {
         ChaosRule.Builder b = parse("endpoint=x error exception=" + NoArgOnly.class.getName());
         assertThat(b.exceptionTakesMessage).isFalse();
         assertThat(b.exceptionConstructor).isNotNull();
+        // the message would be dropped
+        rejected("endpoint=x error exception=" + NoArgOnly.class.getName() + " message=down",
+                "has no public constructor taking a String message, so it cannot be used with message=");
+    }
+
+    @Test
+    void interruptedExceptionIsRejected() {
+        // Camel stops routing an interrupted exchange, so the error handler would never see the fault
+        rejected("step=s1 error exception=" + InterruptedException.class.getName(), "is an InterruptedException");
+        rejected("endpoint=x error exception=" + Interrupted.class.getName() + " message=x",
+                "is an InterruptedException");
+    }
+
+    @Test
+    void everyNFiresWithinAnUntilCount() {
+        ChaosRule.Builder b = parse("endpoint=x error rate=every:5 until=5");
+        assertThat(b.every).isEqualTo(5L);
+        assertThat(b.untilCount).isEqualTo(5L);
+        // a time does not limit the matches
+        assertThat(parse("endpoint=x error rate=every:10 until=5s").every).isEqualTo(10L);
     }
 
     @Test
@@ -408,5 +437,13 @@ class ChaosRuleParserTest {
 
     public static class NoArgOnly extends RuntimeException {
         private static final long serialVersionUID = 1L;
+    }
+
+    public static class Interrupted extends InterruptedException {
+        private static final long serialVersionUID = 1L;
+
+        public Interrupted(String message) {
+            super(message);
+        }
     }
 }
