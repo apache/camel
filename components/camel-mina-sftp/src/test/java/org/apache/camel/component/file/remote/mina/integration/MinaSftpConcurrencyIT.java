@@ -38,9 +38,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Integration tests for MINA SFTP concurrency and thread safety.
+ * <p/>
+ * These tests run in their own JVM (tag {@code require-isolated-jvm}): they open many concurrent and rapidly reused
+ * SFTP connections and are sensitive to connections and threads left behind by other tests in a shared JVM.
  */
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
-@Tag("isolated")
+@Tag("require-isolated-jvm")
 public class MinaSftpConcurrencyIT extends MinaSftpServerTestSupport {
 
     private static final Logger log = LoggerFactory.getLogger(MinaSftpConcurrencyIT.class);

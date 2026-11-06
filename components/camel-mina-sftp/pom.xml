@@ -141,7 +141,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <excludedGroups>isolated</excludedGroups>
+                                    <excludedGroups>require-isolated-jvm</excludedGroups>
                                     <forkCount>1</forkCount>
                                     <reuseForks>true</reuseForks>
                                 </configuration>
@@ -157,7 +157,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <groups>isolated</groups>
+                                    <groups>require-isolated-jvm</groups>
                                     <forkCount>1</forkCount>
                                     <reuseForks>false</reuseForks>
                                 </configuration>

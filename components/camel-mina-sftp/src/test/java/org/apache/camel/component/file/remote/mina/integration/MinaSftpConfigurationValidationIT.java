@@ -47,12 +47,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * and this cache cannot be reset once populated. Running this test in a shared JVM with other tests would cause
  * interference.
  * <p>
- * <b>How isolation is achieved:</b> The {@code @Tag("isolated")} annotation marks this class for separate execution.
- * The Maven Failsafe plugin is configured in pom.xml with two executions:
+ * <b>How isolation is achieved:</b> The {@code @Tag("require-isolated-jvm")} annotation marks this class for separate
+ * execution. The Maven Failsafe plugin is configured in pom.xml with two executions:
  * <ul>
- * <li>{@code standard-integration-tests} - runs all tests EXCEPT those tagged "isolated"</li>
- * <li>{@code isolated-integration-tests} - runs ONLY tests tagged "isolated" with {@code reuseForks=false} to ensure a
- * fresh JVM</li>
+ * <li>{@code standard-integration-tests} - runs all tests EXCEPT those tagged "require-isolated-jvm"</li>
+ * <li>{@code isolated-integration-tests} - runs ONLY tests tagged "require-isolated-jvm" with {@code reuseForks=false}
+ * to ensure a fresh JVM</li>
  * </ul>
  * <p>
  * <b>Username resolution fallback:</b> When no username is specified in the URI, MINA SSHD (like JSch/camel-sftp) uses
@@ -67,7 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *      "https://github.com/apache/mina-sshd/blob/master/sshd-common/src/main/java/org/apache/sshd/client/config/hosts/HostConfigEntry.java">MINA
  *      SSHD HostConfigEntry</a>
  */
-@Tag("isolated")
+@Tag("require-isolated-jvm")
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class MinaSftpConfigurationValidationIT extends MinaSftpServerTestSupport {
 

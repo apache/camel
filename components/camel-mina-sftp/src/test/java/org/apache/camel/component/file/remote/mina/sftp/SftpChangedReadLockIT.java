@@ -35,7 +35,12 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.test.junit6.TestSupport.createDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Tag("isolated")
+/**
+ * Tests the {@code changed} read lock, which is timing sensitive (it polls the file size and modification time). It
+ * runs in its own JVM (tag {@code require-isolated-jvm}), so that load from other tests in a shared JVM does not skew
+ * the read lock check interval.
+ */
+@Tag("require-isolated-jvm")
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/sftp/hostkey.pem')")
 public class SftpChangedReadLockIT extends SftpServerTestSupport {
 
