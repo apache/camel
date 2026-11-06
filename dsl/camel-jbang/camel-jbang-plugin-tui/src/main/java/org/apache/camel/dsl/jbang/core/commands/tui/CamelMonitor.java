@@ -598,8 +598,8 @@ public class CamelMonitor extends CamelCommand {
             }
 
             @Override
-            public void explainLogError(String error) {
-                openAiWithQuestion(dir -> AiFixPrompt.ofLogError(error));
+            public void ask(String question) {
+                openAiWithQuestion(dir -> question);
             }
         };
         ctx.projectOverviewCallback = () -> {

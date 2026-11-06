@@ -491,8 +491,11 @@ class ErrorsTab extends AbstractTableTab {
     @Override
     public void renderFKeyHints(List<Span> spans) {
         // with the global F-keys (after Esc back), as fix with AI is an F-key of every screen that has it
-        if (!diagram.isShowDiagram() && ctx.askAiCallback != null && selectedError() != null) {
-            hint(spans, "Shift+F8", "fix with AI");
+        ErrorInfo error = selectedError();
+        if (!diagram.isShowDiagram() && ctx.askAiCallback != null && error != null) {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            boolean chaos = info != null && ChaosMarks.ruleOf(ctx, info, error.exchangeId, error.properties) != null;
+            hint(spans, "Shift+F8", chaos ? "explain with AI" : "fix with AI");
         }
     }
 
@@ -515,6 +518,13 @@ class ErrorsTab extends AbstractTableTab {
         IntegrationInfo info = ctx.findSelectedIntegration();
         ErrorInfo error = selectedError();
         if (info == null || error == null || ctx.askAiCallback == null) {
+            return;
+        }
+        String rule = ChaosMarks.ruleOf(ctx, info, error.exchangeId, error.properties);
+        if (rule != null) {
+            // made on purpose by a chaos rule: explain it, it is not a bug to fix (CAMEL-26702)
+            ctx.askAiCallback.ask(ChaosAiPrompt.ofError(info, info.chaos != null ? info.chaos.rule(rule) : null, rule,
+                    error));
             return;
         }
         String source = RuntimeFailures.sourceOf(info.routes, error);

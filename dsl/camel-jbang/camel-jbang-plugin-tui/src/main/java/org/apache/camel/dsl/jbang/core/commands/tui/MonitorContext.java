@@ -394,6 +394,14 @@ class MonitorContext {
          * line, the exception and its causes.
          */
         default void explainLogError(String error) {
+            ask(AiFixPrompt.ofLogError(error));
+        }
+
+        /**
+         * Opens the AI panel with a question made by the screen, such as explain with AI on the Chaos screen and on an
+         * error a chaos rule made (CAMEL-26702).
+         */
+        default void ask(String question) {
         }
     }
 }
