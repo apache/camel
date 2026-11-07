@@ -31,6 +31,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The WARN and ERROR lines of the log of each integration per second, for the Timeline (CAMEL-26691): a cause when
  * something went wrong without an exception in an exchange. Read from the log file the TUI already shows, as it grows:
@@ -38,6 +41,8 @@ import java.util.regex.Pattern;
  * part of the line before and not counted.
  */
 final class TimelineLog {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TimelineLog.class);
 
     // how much of a log is read the first time: the lines of the last minutes, not the whole file
     static final int FIRST_READ = 256 * 1024;
@@ -96,6 +101,7 @@ final class TimelineLog {
             offsets.put(pid, from + end);
         } catch (IOException e) {
             // the log is gone or cannot be read: nothing to count
+            LOG.debug("Cannot read the log of the integration with pid {} for the timeline: {}", pid, e.getMessage());
         }
     }
 

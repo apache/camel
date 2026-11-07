@@ -491,10 +491,6 @@ final class Timeline {
         return a;
     }
 
-    /**
-     * The causes in the window: the errors per second by label, then the faults of each chaos rule. Each series is
-     * oldest first.
-     */
     /** A WARN or ERROR line in the log of the integration, at the second of its time. */
     void logLine(String pid, long second, boolean error) {
         Recording rec = byPid.computeIfAbsent(pid, k -> new Recording());
@@ -505,6 +501,10 @@ final class Timeline {
         }
     }
 
+    /**
+     * The causes in the window: the errors per second by label, then the faults of each chaos rule. Each series is
+     * oldest first.
+     */
     List<CauseSeries> causes(String pid, long endSecond, int seconds) {
         Recording rec = pid != null ? byPid.get(pid) : null;
         if (rec == null) {
