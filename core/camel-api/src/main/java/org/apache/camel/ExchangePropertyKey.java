@@ -104,8 +104,7 @@ public enum ExchangePropertyKey {
     @Deprecated(since = "4.19.0")
     OTEL_ACTIVE_SPAN(Exchange.OTEL_ACTIVE_SPAN),
     @Deprecated(since = "4.19.0")
-    OTEL_CLOSE_CLIENT_SCOPE(Exchange.OTEL_CLOSE_CLIENT_SCOPE),
-    ACTIVITY_SPAN_TAGS(Exchange.ACTIVITY_SPAN_TAGS);
+    OTEL_CLOSE_CLIENT_SCOPE(Exchange.OTEL_CLOSE_CLIENT_SCOPE);
 
     private final String name;
 
@@ -259,8 +258,6 @@ public enum ExchangePropertyKey {
             // Deprecated since 4.19.0
             case Exchange.OTEL_CLOSE_CLIENT_SCOPE:
                 return OTEL_CLOSE_CLIENT_SCOPE;
-            case Exchange.ACTIVITY_SPAN_TAGS:
-                return ACTIVITY_SPAN_TAGS;
             default:
                 return null;
         }

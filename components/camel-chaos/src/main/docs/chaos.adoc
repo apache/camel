@@ -224,7 +224,7 @@ endpoint=* in=orders error at=send rate=0.1     # 10% of all the sends of route 
 
 The route is the route of the exchange: a send in a route that `orders` calls with `direct:` is in that other route,
 not in `orders`; take more routes with a pattern (`in=order*`). With `at=poll` it is the route whose consumer polls.
-`in=` is checked before the rate, so `rate` and an `until` count count only the matches in those routes. A `route=`
+`in=` is checked before the rate, so `rate` and the count of `until` see only the matches in those routes. A `route=`
 rule is about its route already, and `stall` and `lifecycle` act on the route of their `route=`, so they take no `in=`.
 When no route matches `in=`, or the target matches no send, poll or step inside those routes, adding the rule warns,
 with what is there.

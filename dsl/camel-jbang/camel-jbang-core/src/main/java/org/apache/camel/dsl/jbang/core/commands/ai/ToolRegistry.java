@@ -332,6 +332,31 @@ public final class ToolRegistry {
                     return result;
                 }));
 
+        register(tool("get_timeline",
+                "Get what happened per second in the last minutes (up to 5): per route the exchanges completed,"
+                                      + " recovered by a redelivery, handled by the error handler and failed, the mean, p95"
+                                      + " and max time, the exchanges in flight and the redelivery attempts; the errors per"
+                                      + " second by route and exception (chaosRule names the camel-chaos rule that made"
+                                      + " one); with camel-chaos the faults per second of each chaos rule (chaos) and the"
+                                      + " seconds a rule had a route down (down of the route); the seconds a circuit breaker"
+                                      + " was open (2) or half open (1) (circuitBreakers); and per second the failed,"
+                                      + " handled and recovered exchanges and the 3 slowest with the remote calls they made. Each series is"
+                                      + " oldest first and ends at the epoch second end. Use it to tell when something went wrong and what it did to which route.")
+                .param("seconds", "integer", "The number of seconds (default 60, at most what the integration records)",
+                        false)
+                .param("routeId", "string", "Route ID or pattern such as orders* (default all routes)", false)
+                .param("exchanges", "boolean", "Include the kept exchanges (default true)", false)
+                .executor((ctx, args) -> ctx.executeAction("timeline", root -> {
+                    String seconds = args.get("seconds");
+                    root.put("seconds", seconds != null ? seconds : "60");
+                    if (args.get("routeId") != null) {
+                        root.put("routeId", args.get("routeId"));
+                    }
+                    if (args.get("exchanges") != null) {
+                        root.put("exchanges", args.get("exchanges"));
+                    }
+                })));
+
         register(tool("get_top_processors",
                 "Show top processor statistics: which processors are slowest and most active.")
                 .executor((ctx, args) -> ctx.executeAction("top-processors", null)));

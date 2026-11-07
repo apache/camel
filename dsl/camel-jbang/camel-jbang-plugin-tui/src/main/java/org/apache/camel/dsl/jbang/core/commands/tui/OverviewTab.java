@@ -110,6 +110,9 @@ class OverviewTab extends AbstractTab {
     private String lastIntegrationPid;
     int chartMode = CHART_SINGLE;
     private int bottomPanelHeight = 16;
+    // Overview ▸ About (CAMEL-26700): what the integration does and what has happened; null until the user picks a view
+    private final AboutView about;
+    private Boolean aboutChosen;
     private final DragSplit vSplit = new DragSplit();
 
     private String sort = "name";
@@ -129,6 +132,7 @@ class OverviewTab extends AbstractTab {
                 Set<String> stoppingPids,
                 Runnable onPidChanged) {
         super(ctx);
+        this.about = new AboutView(ctx);
         this.throughputHistory = metrics.getThroughputHistory();
         this.failedHistory = metrics.getFailedHistory();
         this.cpuLoadAvg = metrics.getCpuLoadAvg();
@@ -140,8 +144,75 @@ class OverviewTab extends AbstractTab {
         this.actions = actions;
     }
 
+    /** The integration About is about: the selected one, else the only one running; null when none. */
+    private IntegrationInfo aboutIntegration() {
+        IntegrationInfo sel = ctx.findSelectedIntegration();
+        if (sel != null) {
+            return sel;
+        }
+        List<IntegrationInfo> infos = sortedInfos();
+        return infos.size() == 1 ? infos.get(0) : null;
+    }
+
+    /** Enter on About: opens the route or endpoint the cursor is on; false when it is on nothing. */
+    boolean openFromAbout() {
+        return showsAbout() && about.open();
+    }
+
+    /** Whether About shows: the view the user picked, else About when one integration runs. */
+    boolean showsAbout() {
+        if (ctx.isInfraSelected()) {
+            return false;
+        }
+        boolean wanted = aboutChosen != null ? aboutChosen : sortedInfos().size() == 1;
+        return wanted && aboutIntegration() != null;
+    }
+
+    /** Shows the table of the integrations, as the user does with v. */
+    OverviewTab showIntegrations() {
+        aboutChosen = false;
+        return this;
+    }
+
+    @Override
+    public SubViewBar.Spec subViewBar() {
+        if (sortedInfos().isEmpty()) {
+            return null;
+        }
+        boolean shows = showsAbout();
+        return new SubViewBar.Spec(
+                "v", List.of(
+                        new SubViewBar.View("About", shows, aboutIntegration() != null, () -> aboutChosen = true),
+                        new SubViewBar.View("Integrations", !shows, true, () -> aboutChosen = false)),
+                List.of(), false);
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        // the last minutes of the timeline, for what has happened
+        DataRefreshService data = ctx.dataService;
+        if (showsAbout() && data != null) {
+            List<Long> pids = data.selectedPidAsList();
+            if (pids.isEmpty() && aboutIntegration() != null) {
+                pids = List.of(Long.parseLong(aboutIntegration().pid));
+            }
+            data.refreshTimelineData(pids);
+        }
+    }
+
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isChar('v') && !sortedInfos().isEmpty()) {
+            aboutChosen = !showsAbout();
+            if (aboutChosen && ctx.selectedPid == null && aboutIntegration() != null) {
+                ctx.selectedPid = aboutIntegration().pid;
+            }
+            return true;
+        }
+        if (showsAbout()) {
+            // About has no table: the keys of the table do not apply, only the zoom of What happened
+            return about.handleKeyEvent(ke, aboutIntegration());
+        }
         if (ke.isChar('s')) {
             if (infraFocused) {
                 infraSortIndex = (infraSortIndex + 1) % INFRA_SORT_COLUMNS.length;
@@ -240,6 +311,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public void navigateUp() {
+        if (showsAbout()) {
+            about.moveCursor(-1);
+            return;
+        }
         if (infraFocused) {
             infraTableState.selectPrevious();
         } else {
@@ -250,6 +325,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public void navigateDown() {
+        if (showsAbout()) {
+            about.moveCursor(1);
+            return;
+        }
         if (infraFocused) {
             infraTableState.selectNext(ctx.infraData.get().size());
         } else {
@@ -273,6 +352,10 @@ class OverviewTab extends AbstractTab {
 
         if (infraCount == 0) {
             infraFocused = false;
+        }
+        if (showsAbout()) {
+            about.render(frame, area, aboutIntegration());
+            return;
         }
 
         if (ctx.selectedPid == null && !infraFocused) {
@@ -1243,6 +1326,17 @@ class OverviewTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "q", "quit");
+        if (showsAbout()) {
+            // the keys of the table do not apply to About
+            hint(spans, "↑↓", "select");
+            hint(spans, "Enter", "open");
+            hint(spans, "+/-", "zoom");
+            hint(spans, "←→", "move");
+            hint(spans, "4", "timeline");
+            hint(spans, "5", "diagram");
+            hint(spans, "v", "integrations");
+            return;
+        }
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", "unselect");
         }
@@ -1267,6 +1361,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public SelectionContext getSelectionContext() {
+        if (showsAbout() && aboutIntegration() != null) {
+            // About: the lines of In, Routes and Out the cursor moves over
+            return about.selectionContext();
+        }
         if (infraFocused) {
             List<InfraInfo> infras = ctx.infraData.get();
             if (infras.isEmpty()) {
@@ -1478,7 +1576,8 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public String description() {
-        return "Running integrations with PID, uptime, and exchange statistics";
+        return "About an integration (what it does, In, Routes, Out, what happened in the last minutes) when one runs,"
+               + " else the running integrations with PID, uptime, and exchange statistics; v switches";
     }
 
     @Override
@@ -1488,6 +1587,9 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
+        if (showsAbout() && aboutIntegration() != null) {
+            return about.tableJson(aboutIntegration());
+        }
         List<IntegrationInfo> integrations = ctx.data.get();
         if (integrations == null || integrations.isEmpty()) {
             return null;

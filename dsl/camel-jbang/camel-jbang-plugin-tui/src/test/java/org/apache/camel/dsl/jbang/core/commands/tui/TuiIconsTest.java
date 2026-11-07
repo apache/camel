@@ -45,7 +45,7 @@ class TuiIconsTest {
         assertEquals(TuiIcons.TAB_OVERVIEW, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_OVERVIEW));
         assertEquals(TuiIcons.TAB_SOURCE, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_SOURCE));
         assertEquals(TuiIcons.TAB_LOG, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_LOG));
-        assertEquals(TuiIcons.TAB_ACTIVITY, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_ACTIVITY));
+        assertEquals(TuiIcons.TAB_TIMELINE, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_TIMELINE));
         assertEquals(TuiIcons.TAB_DIAGRAM, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_DIAGRAM));
         assertEquals(TuiIcons.TAB_ROUTES, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_ROUTES));
         assertEquals(TuiIcons.TAB_ENDPOINTS, TuiIcons.PRIMARY_TAB_ICONS.get(TabRegistry.TAB_ENDPOINTS));

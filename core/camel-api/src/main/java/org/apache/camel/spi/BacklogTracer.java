@@ -44,23 +44,6 @@ import org.jspecify.annotations.Nullable;
 public interface BacklogTracer {
 
     /**
-     * Whether the activity tracking feature is enabled.
-     *
-     * @since 4.22
-     */
-    default boolean isActivityEnabled() {
-        return false;
-    }
-
-    /**
-     * To turn on or off the activity tracking feature.
-     *
-     * @since 4.22
-     */
-    default void setActivityEnabled(boolean activityEnabled) {
-    }
-
-    /**
      * Is the tracer enabled.
      */
     boolean isEnabled();
@@ -95,24 +78,6 @@ public interface BacklogTracer {
      * Number of messages to keep in the backlog (should be between 1 - 1000). Default is 100.
      */
     void setBacklogSize(int backlogSize);
-
-    /**
-     * Number of completed exchange summaries to keep in the activity queue. Default is 100.
-     * <p>
-     * The activity queue captures a lightweight summary (metadata only, no body or headers) each time an exchange
-     * completes a route. This provides a rolling window of recent exchange activity suitable for live monitoring.
-     *
-     * @since 4.22
-     */
-    int getActivitySize();
-
-    /**
-     * Number of completed exchange summaries to keep in the activity queue (should be between 1 - 1000). Default is
-     * 100.
-     *
-     * @since 4.22
-     */
-    void setActivitySize(int activitySize);
 
     /**
      * Remove the currently traced messages when dump methods are invoked
@@ -271,31 +236,6 @@ public interface BacklogTracer {
      * Get latest completed exchange message history (without removing)
      */
     Collection<BacklogTracerEventMessage> getLatestMessageHistory();
-
-    /**
-     * Get all activity summaries (without removing).
-     * <p>
-     * Activity summaries are lightweight snapshots captured when an exchange completes. They contain exchange-level
-     * metadata (exchange ID, route, elapsed time, status) and a list of remote endpoints that were called — no message
-     * body or headers.
-     *
-     * @since 4.22
-     */
-    Collection<BacklogTracerActivityMessage> getActivity();
-
-    /**
-     * Dumps all activity summaries.
-     *
-     * @since 4.22
-     */
-    List<BacklogTracerActivityMessage> dumpActivity();
-
-    /**
-     * Dumps all activity summaries as JSon.
-     *
-     * @since 4.22
-     */
-    String dumpActivityAsJSon();
 
     /**
      * Dumps all tracing data

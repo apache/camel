@@ -467,7 +467,8 @@ public final class AuthoringTools {
         registry.accept(tool("camel_project_overview",
                 "Overview of a project's integrations from its route sources, no running integration needed: "
                                                        + "routes, entry points, links between routes, external systems, "
-                                                       + "findings, and the AI-assisted parts of its "
+                                                       + "findings, its purpose, what happened when it runs (running), "
+                                                       + "and the AI-assisted parts of its "
                                                        + IntegrationSummary.FILE_NAME + " (fields starting with ai).")
                 .param("directory", "string", DIRECTORY_DESC, false)
                 .param("camelVersion", "string", VERSION_DESC, false)
@@ -477,6 +478,16 @@ public final class AuthoringTools {
                     ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ctx.catalog());
                     IntegrationSummary.Summary summary = IntegrationSummary.read(dir);
                     JsonObject result = ProjectOverview.toJson(overview, summary);
+                    // what it does in the words of its author, and what has happened when it runs (CAMEL-26700)
+                    About.Model about = About.of(dir, overview);
+                    if (about.purpose() != null) {
+                        result.put("purpose", about.purpose());
+                        result.put("purposeFrom", about.purposeFrom());
+                    }
+                    JsonObject running = AboutReport.running(dir, about);
+                    if (running != null) {
+                        result.put("running", running);
+                    }
                     if (summary == null || !overview.fingerprint().equals(summary.fingerprint())) {
                         result.put("hint", "To explain the project, write the overview, capabilities, the missing"
                                            + " descriptions and labels for the decisions with camel_save_project_summary");

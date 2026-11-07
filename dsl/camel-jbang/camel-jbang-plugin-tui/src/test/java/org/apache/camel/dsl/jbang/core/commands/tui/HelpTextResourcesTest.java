@@ -29,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class HelpTextResourcesTest {
 
     private static final List<String> HELP_PAGES = List.of(
-            "activity",
             "beans",
             "browse",
             "catalog",
@@ -53,8 +52,8 @@ class HelpTextResourcesTest {
             "kafka",
             "log",
             "maven-dependencies",
-            "memory-leak",
             "memory",
+            "memory-leak",
             "metrics",
             "network",
             "overview",
@@ -68,6 +67,7 @@ class HelpTextResourcesTest {
             "sql-trace",
             "startup",
             "threads",
+            "timeline",
             "transformers",
             "type-converters");
 

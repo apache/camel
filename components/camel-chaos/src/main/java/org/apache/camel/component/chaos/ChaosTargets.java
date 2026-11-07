@@ -48,12 +48,16 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Checks what the target of a rule finds in the context now, for the warning about a rule that matches nothing (often a
  * typo). The warning names some of what is there, so a person or a tool can fix the pattern.
  */
 final class ChaosTargets {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ChaosTargets.class);
 
     // the most endpoints, routes or steps a warning names
     private static final int NAMED = 5;
@@ -121,6 +125,8 @@ final class ChaosTargets {
             reach = reach(camelContext, routes);
         } catch (RuntimeException e) {
             // the routes changed while they were read (such as a reload)
+            LOG.debug("Cannot read what the routes of in={} reach for the chaos warning (the routes may have changed): {}",
+                    rule.in, e.getMessage(), e);
             return null;
         }
         if (!hooksThatCanFire(reach, rule).isEmpty()) {
@@ -175,7 +181,7 @@ final class ChaosTargets {
      * context has now. The other hooks, and the hooks of the other targets, are those of the rule.
      */
     static Set<Hook> hooksThatCanFire(Reach reach, ChaosRule rule) {
-        if (rule.target != ChaosRule.Target.ENDPOINT && rule.target != ChaosRule.Target.COMPONENT
+        if ((rule.target != ChaosRule.Target.ENDPOINT && rule.target != ChaosRule.Target.COMPONENT)
                 || rule.lifecycle != null || reach == null) {
             return rule.hooks;
         }
@@ -234,6 +240,8 @@ final class ChaosTargets {
             return reach(camelContext, routes);
         } catch (RuntimeException e) {
             // the routes changed while they were read (such as a reload): the hooks of the rules, as before the start
+            LOG.debug("Cannot read what the routes reach for the chaos report (the routes may have changed): {}",
+                    e.getMessage(), e);
             return null;
         }
     }

@@ -76,7 +76,7 @@ class OverviewTabRenderTest {
         info.state = 5;
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("PID"), "Should show PID header");
@@ -92,7 +92,7 @@ class OverviewTabRenderTest {
         info.ago = "2m0s";
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         JsonObject data = tab.getTableDataAsJson();
         JsonObject row = (JsonObject) ((JsonArray) data.get("rows")).get(0);
 
@@ -107,7 +107,7 @@ class OverviewTabRenderTest {
         info.state = 5;
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("1234"), "Should render PID");
@@ -122,7 +122,7 @@ class OverviewTabRenderTest {
         // overrides fg colors to WHITE.
         ctx.selectedPid = null;
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         Rect area = new Rect(0, 0, 160, 30);
         Buffer buffer = Buffer.empty(area);
@@ -142,7 +142,7 @@ class OverviewTabRenderTest {
         // overrides fg colors to WHITE.
         ctx.selectedPid = null;
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         Rect area = new Rect(0, 0, 160, 30);
         Buffer buffer = Buffer.empty(area);
@@ -162,7 +162,7 @@ class OverviewTabRenderTest {
         // overrides fg colors to WHITE.
         ctx.selectedPid = null;
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         Rect area = new Rect(0, 0, 160, 30);
         Buffer buffer = Buffer.empty(area);
@@ -186,7 +186,7 @@ class OverviewTabRenderTest {
         MonitorContext ctx2 = new MonitorContext(data, infraData);
 
         OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("test-app"), "Should render first integration");
@@ -198,7 +198,7 @@ class OverviewTabRenderTest {
         info.state = 5;
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("NAME▼") || rendered.contains("NAME▲"),
@@ -210,7 +210,7 @@ class OverviewTabRenderTest {
         info.state = 5;
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         tab.handleKeyEvent(KeyEvent.ofChar('s', KeyModifiers.NONE));
         String rendered = TuiTestHelper.renderToString(tab, 160, 30);
@@ -221,7 +221,7 @@ class OverviewTabRenderTest {
     @Test
     void renderFooterHints() {
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         List<Span> footerSpans = new ArrayList<>();
         tab.renderFooter(footerSpans);
 
@@ -241,7 +241,7 @@ class OverviewTabRenderTest {
         // overrides fg colors to WHITE.
         ctx.selectedPid = null;
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         Rect area = new Rect(0, 0, 160, 30);
         Buffer buffer = Buffer.empty(area);
@@ -269,7 +269,8 @@ class OverviewTabRenderTest {
         ctx2.selectedPid = "1234";
 
         boolean[] pidChanged = { false };
-        OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> pidChanged[0] = true);
+        OverviewTab tab
+                = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> pidChanged[0] = true).showIntegrations();
 
         Rect area = new Rect(0, 0, 160, 30);
         renderOnce(tab, area);
@@ -297,7 +298,7 @@ class OverviewTabRenderTest {
         ctx2.selectedPid = "1234";
 
         OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         String rendered = TuiTestHelper.renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("Dev/Infra Services"), "Should show infra panel title");
@@ -325,7 +326,7 @@ class OverviewTabRenderTest {
         metrics.getThroughputHistory().put("1000", new LinkedList<>(List.of(1L, 2L, 3L)));
 
         OverviewTab tab = new OverviewTab(ctx2, metrics, new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
         // a short content area: what is left of a 34-row terminal with the log pinned
         String rendered = TuiTestHelper.renderToString(tab, 150, 22);
 
@@ -349,7 +350,8 @@ class OverviewTabRenderTest {
         ctx2.selectedPid = "1234";
 
         boolean[] pidChanged = { false };
-        OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> pidChanged[0] = true);
+        OverviewTab tab
+                = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> pidChanged[0] = true).showIntegrations();
 
         Rect area = new Rect(0, 0, 160, 30);
         renderOnce(tab, area);
@@ -368,7 +370,7 @@ class OverviewTabRenderTest {
         info.state = 5;
 
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         assertFalse(tab.infraFocused);
         tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.TAB, KeyModifiers.NONE));
@@ -389,7 +391,7 @@ class OverviewTabRenderTest {
         ctx2.selectedPid = "1234";
 
         OverviewTab tab = new OverviewTab(ctx2, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         Rect area = new Rect(0, 0, 160, 30);
         renderOnce(tab, area);

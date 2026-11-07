@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The marks of the exchanges a chaos rule faulted ({@link ChaosMarks}): from the {@code CamelChaosRule} property of an
- * error, or from the recent faults of the chaos report, on the Activity and Errors tabs.
+ * error, or from the recent faults of the chaos report, on the Errors tab.
  */
 class ChaosMarksTest {
 
@@ -96,31 +96,6 @@ class ChaosMarksTest {
         assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-000000000000104E")).isEqualTo("r1");
         ctx.chaosMarks.retain(Set.of("5678"));
         assertThat(ctx.chaosMarks.ruleOf("1234", "3F2A85F3D4213-000000000000104E")).isNull();
-    }
-
-    @Test
-    void theActivityTabMarksTheExchange() {
-        ActivityEntry faulted = new ActivityEntry();
-        // a real id: the short form has four characters after the dash, so the mark needs a wider column
-        faulted.exchangeId = "3F2A85F3D4213-000000000000104E";
-        faulted.routeId = "orders";
-        faulted.failed = true;
-        faulted.timestamp = System.currentTimeMillis();
-        ActivityEntry fine = new ActivityEntry();
-        fine.exchangeId = "3F2A85F3D4213-0000000000000001F";
-        fine.routeId = "orders";
-        fine.timestamp = System.currentTimeMillis() - 1000;
-        info.activity = List.of(faulted, fine);
-
-        ActivityTab tab = new ActivityTab(ctx);
-        // the detail of the selected (latest) exchange
-        tab.navigateDown();
-        // the dice is two columns wide: the screen has a blank cell after it
-        String screen = TuiTestHelper.renderToString(tab, 160, 40).replace(TuiIcons.TAB_CHAOS + " ", TuiIcons.TAB_CHAOS);
-        assertThat(screen).contains("3F2A85…-104E " + TuiIcons.TAB_CHAOS + "r1 ");
-        // the other exchange is not faulted
-        assertThat(screen).doesNotContain("3F2A85…-1F " + TuiIcons.TAB_CHAOS);
-        assertThat(screen).contains("injected by chaos rule r1").contains("endpoint=http:stock* error status=503");
     }
 
     @Test
