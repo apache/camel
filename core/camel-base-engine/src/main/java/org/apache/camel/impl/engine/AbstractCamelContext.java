@@ -1723,16 +1723,18 @@ public abstract class AbstractCamelContext extends BaseService
     public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
         lock.lock();
         try {
+            RouteService routeService = routeServices.get(routeId);
+            if (routeService != null && !routeService.getStatus().isStarted()) {
+                // only a started route is suspended: a route that is stopped (or not auto started) must stay
+                // stopped, as starting or resuming a suspended route only resumes its consumer. This is checked
+                // before the route error is reset, so the last error of a route that failed to start is kept
+                LOG.debug("Route: {} is not suspended as its status is: {}", routeId, routeService.getStatus());
+                return;
+            }
+
             DefaultRouteError.reset(this, routeId);
 
             try {
-                RouteService routeService = routeServices.get(routeId);
-                if (routeService != null && !routeService.getStatus().isStarted()) {
-                    // only a started route is suspended: a route that is stopped (or not auto started) must stay
-                    // stopped, as starting or resuming a suspended route only resumes its consumer
-                    LOG.debug("Route: {} is not suspended as its status is: {}", routeId, routeService.getStatus());
-                    return;
-                }
                 if (!routeSupportsSuspension(routeId)) {
                     stopRoute(routeId, timeout, timeUnit);
                     return;

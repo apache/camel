@@ -260,10 +260,11 @@ pool waits, and is rejected with `Abort`, as before.
 === camel-core - suspendRoute on a route that is not started leaves it as it is
 
 `suspendRoute` on a route that is not started (stopped, or with `autoStartup=false` and never started), from the
-`RouteController`, JMX, the control bus, the CLI (`camel suspend`) or a route policy such as `DurationRoutePolicy`, now
-leaves the route in its current state, and route policies no longer get `onSuspend` for it. Before, the route became
-`Suspended`, and a later `startRoute` or `resumeRoute` resumed it without starting its consumer, so it consumed nothing.
-Code that checks the status of a route after `suspendRoute` now sees `Stopped` for such a route.
+`RouteController`, JMX, the control bus, the CLI (`camel cmd suspend-route`) or a route policy such as
+`DurationRoutePolicy`, now leaves the route in its current state, and route policies no longer get `onSuspend` for it.
+Before, the route became `Suspended`, and a later `startRoute` or `resumeRoute` resumed it without starting its
+consumer, so it consumed nothing. Code that checks the status of a route after `suspendRoute` now sees `Stopped` for
+such a route. The last error of such a route, for example from a failed start, is kept.
 
 === camel-core - Routing Slip and Dynamic Router fire the sent event of a step before the next step
 
