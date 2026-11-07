@@ -33,6 +33,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
@@ -251,6 +253,7 @@ abstract class StepWithoutErrorHandlerProcessorThrowsTestSupport extends Context
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void nextExchangeIsProcessed() throws Exception {
         start(DO_TRY, new ThrowsFirst());
         assertEquals("exception=none caught=IllegalStateException:thrown result=0 caughtMock=1 finally=0 calls=1",
@@ -284,6 +287,8 @@ abstract class StepWithoutErrorHandlerProcessorThrowsTestSupport extends Context
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackCalledAfterTheProcessorThrewIsIgnored() throws Exception {
         // the processor hands the callback to another thread and then throws. The step cannot tell this from a callback
         // that never comes, so it fails the exchange with the thrown exception (before, the exchange hung), and the
@@ -325,6 +330,8 @@ abstract class StepWithoutErrorHandlerProcessorThrowsTestSupport extends Context
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackCalledAfterTheProcessorThrewDoesNotContinueTheNextExchange() throws Exception {
         // as above, but the late callback comes while the next exchange waits for the callback of its own call of the
         // processor: it must not continue that exchange
@@ -379,6 +386,8 @@ abstract class StepWithoutErrorHandlerProcessorThrowsTestSupport extends Context
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackAndThrowAtTheSameTimeContinueEachExchangeOnce() throws Exception {
         // the processor hands the callback to another thread, which calls it at once, and throws: the callback and the
         // takeover race, and whichever wins, each exchange is continued once (as a success, or caught by the doCatch)
@@ -427,6 +436,7 @@ abstract class StepWithoutErrorHandlerProcessorThrowsTestSupport extends Context
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.COMPLETED_TWICE)
     void callbackCalledTwiceContinuesTheExchangeOnce() throws Exception {
         // a processor that calls its callback twice (also a broken processor): the second call is ignored
         AtomicReference<Throwable> secondCall = new AtomicReference<>();

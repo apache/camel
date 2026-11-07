@@ -28,6 +28,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
@@ -118,6 +120,8 @@ abstract class SimpleTaskProcessorThrowsTestSupport extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackCalledAfterTheProcessorThrewDoesNotContinueTheNextExchange() throws Exception {
         // as above, but the late callback comes while the next exchange waits for the callback of its own call of the
         // processor: it must not continue that exchange (with pooled tasks, the next exchange may get a task again)
@@ -171,6 +175,7 @@ abstract class SimpleTaskProcessorThrowsTestSupport extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.COMPLETED_TWICE)
     void callbackCalledTwiceContinuesTheExchangeOnce() throws Exception {
         // a processor that calls its callback twice (also a broken processor): the second call is ignored, also when the
         // first one released the task (pooled tasks are reset when they are released)

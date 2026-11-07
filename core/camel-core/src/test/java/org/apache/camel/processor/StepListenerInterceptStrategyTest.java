@@ -34,6 +34,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -122,6 +124,7 @@ class StepListenerInterceptStrategyTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.COMPLETED_TWICE)
     void testSecondCallbackIsSeenWithoutPlainProcessorStrategy() throws Exception {
         getMockEndpoint("mock:twice").expectedMessageCount(1);
 

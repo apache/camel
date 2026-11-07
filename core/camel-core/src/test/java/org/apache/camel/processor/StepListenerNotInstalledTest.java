@@ -22,12 +22,14 @@ import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Sanitizer;
 import org.apache.camel.spi.StepListener;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * With no {@link StepListener} installed when the routes are created, no channel has the wrapper of the listeners: the
@@ -74,6 +76,8 @@ class StepListenerNotInstalledTest extends ContextTestSupport {
 
     @Test
     void testNoWrapperWithoutListener() throws Exception {
+        // with the CI switch of camel-sanitizer on (mvn test -Psanitizer), its listener is installed in every context
+        assumeTrue(Sanitizer.get(context) == null, "the exchange sanitizer is installed");
         assertTrue(context.getCamelContextExtension().getStepListeners().isEmpty());
         int steps = 0;
         for (Route route : context.getRoutes()) {

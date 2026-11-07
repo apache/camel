@@ -256,6 +256,18 @@
             <version>${junit-pioneer-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <!-- the exchange sanitizer has no tests of its own: they are here, and profile sanitizer runs this suite with it -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-sanitizer</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- the tests of the JUnit extension of the sanitizer run test classes of their own -->
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-launcher</artifactId>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -317,6 +329,26 @@
                                 <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
                                 <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
                             </environmentVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- mvn test -Psanitizer: runs the tests with the exchange sanitizer on (the CI switch of camel-sanitizer) -->
+            <id>sanitizer</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <!-- a violation that happens now and then must fail, not pass a rerun -->
+                            <rerunFailingTestsCount>0</rerunFailingTestsCount>
+                            <systemPropertyVariables>
+                                <junit.jupiter.extensions.autodetection.enabled>true</junit.jupiter.extensions.autodetection.enabled>
+                                <junit.jupiter.extensions.autodetection.include>org.apache.camel.sanitizer.junit.*</junit.jupiter.extensions.autodetection.include>
+                                <camel.sanitizer.enabled>true</camel.sanitizer.enabled>
+                            </systemPropertyVariables>
                         </configuration>
                     </plugin>
                 </plugins>

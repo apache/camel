@@ -38,6 +38,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultComponent;
@@ -86,12 +88,14 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void noErrorHandler() throws Exception {
         start(new ThrowsFirst());
         assertFailedWithTheThrownException(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void processorThrowsError() throws Exception {
         // an Error, not an Exception: before, the reactive executor let it through (it catches only exceptions), and the
         // exchange never completed
@@ -110,6 +114,7 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void afterAnAsynchronousStep() throws Exception {
         // the step runs on the thread of the asynchronous delay, not on the caller's
         context.addRoutes(new RouteBuilder() {
@@ -124,6 +129,7 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void controlTransacted() throws Exception {
         // control: a transacted exchange runs on the reactive executor's queue, and the exchange fails with the thrown
         // exception on main too
@@ -132,6 +138,7 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void nextExchangeIsProcessed() throws Exception {
         start(new ThrowsFirst());
         assertFailedWithTheThrownException(send());
@@ -154,6 +161,7 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     void controlCallbackCalledBeforeTheProcessorThrows() throws Exception {
         // control, as before: the processor calls the callback and then throws. The callback continued the exchange, so
         // the exception is left to the reactive executor (which logs it), and the exchange completes once
@@ -178,6 +186,7 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     void controlTransactedCallbackCalledBeforeTheProcessorThrows() throws Exception {
         // control, as before: for a transacted exchange the exception thrown after the callback reaches the caller, which
         // fails the exchange (so a transaction rolls back)
@@ -197,6 +206,8 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void controlCallbackQueuedBeforeTheProcessorThrows() throws Exception {
         // control, as before: the processor queues the call of the callback on the reactive executor and then throws.
         // The thrown failure is taken over through the reactive executor, after the work already queued there, so the
@@ -223,6 +234,8 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void controlCallbackOfARouteBeforeTheProcessorThrows() throws Exception {
         // control, as before: the processor hands the exchange and the callback to a direct route (with the default
         // error handler) and then throws. Each step of that route runs ahead of the takeover queued on the reactive
@@ -263,6 +276,8 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackCalledAfterTheProcessorThrewIsIgnored() throws Exception {
         // the processor hands the callback to another thread and then throws. NoErrorHandler cannot tell this from a
         // callback that never comes, so it fails the exchange with the thrown exception (before, the exchange waited
@@ -302,6 +317,8 @@ class NoErrorHandlerProcessorThrowsTest extends SimpleTaskProcessorThrowsTestSup
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackAndThrowAtTheSameTimeContinueEachExchangeOnce() throws Exception {
         // the processor hands the callback to another thread, which calls it at once, and throws: the callback and the
         // takeover race, and whichever wins, each exchange is continued once (as a success or with the thrown failure)

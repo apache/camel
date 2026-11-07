@@ -88,6 +88,7 @@
 ** xref:salesforce-reports.adoc[Salesforce - Reports API]
 ** xref:salesforce-rest-api.adoc[Salesforce - REST API]
 ** xref:salesforce-streaming.adoc[Salesforce - Streaming and Pub/Sub]
+** xref:sanitizer.adoc[Sanitizer]
 ** xref:semantic-openai.adoc[Semantic OpenAI]
 ** xref:semantic-typesafe-ai.adoc[Semantic TypeSafe AI]
 ** xref:semantic-wolf-defender.adoc[Semantic Wolf Defender]

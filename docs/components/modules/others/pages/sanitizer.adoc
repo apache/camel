@@ -1,0 +1,1 @@
+../../../../../components/camel-sanitizer/src/main/docs/sanitizer.adoc

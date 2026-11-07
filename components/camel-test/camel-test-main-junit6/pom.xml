@@ -53,6 +53,12 @@
         </dependency>
         <!-- test dependencies -->
         <dependency>
+            <!-- the tests of the exchange sanitizer with CamelTestSupport and @CamelMainTest -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-sanitizer</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-xml-io-dsl</artifactId>
             <scope>test</scope>

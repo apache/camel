@@ -45,7 +45,8 @@ completions of an exchange. More than one listener can be installed, and they ar
 chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
 installed, the routes are built as today and a step costs nothing more.
 
-Everything in this document is design. Nothing is built yet.
+Steps 1 and 2 of the order of work are built: the step listener SPI, and the module with R1 (without "still
+pending"), the JUnit extension and the CI switch. The rest is design.
 
 == Motivation
 
@@ -456,9 +457,8 @@ the channel. So:
   called, so a step that the hook fails is not a call the listeners see.
 * The wrapper is outside the strategy loop, so it also wraps the `doTry`, `doCatch` and `doFinally` steps, which the
   strategies skip: `TryProcessor`, `CatchProcessor` and `FinallyProcessor` return `false` from `canIntercept()`. The
-  steps inside
-  `doTry`, `doCatch` and `doFinally` have their own channels, so the strategies wrap them today, and so does the
-  listener wrapper.
+  steps inside `doTry`, `doCatch` and `doFinally` have their own channels, so the strategies wrap them today, and so
+  does the listener wrapper.
 * Code that unwraps processors (`Navigate`) still finds the processor, and `Channel.getNextProcessor()` still returns
   it, so the debugger and the `DisabledAware` check are unchanged.
 
@@ -686,9 +686,9 @@ Each step is its own pull request after this document:
 
 . camel-core: the step listener SPI in camel-api, the Javadoc of the contracts of `AsyncProcessor`, `AsyncCallback`
   and `Synchronization`, the step wrapper built only when a listener is installed, and the JMH benchmark (in
-  camel-performance-tests) that shows no change without a listener.
+  camel-performance-tests) that shows no change without a listener (CAMEL-26688). Done.
 . The module, the plugin, the options, R1 (without "still pending"), the report in the log, the JUnit extension and
-  the CI switch, with the runs on the commits before the fixes, on user-code tests and on main.
+  the CI switch, with the runs on the commits before the fixes, on user-code tests and on main. Done.
 . camel-core: the on completion listener SPI, the new `UnitOfWork` method and the calls, with the JMH run; then R2.
 . R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites.
 . The dev console, `camel get sanitizer` and `camel run --sanitizer`.

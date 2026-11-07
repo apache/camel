@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +54,7 @@ abstract class RedeliveryFirstDeliveryProcessorThrowsTestSupport extends SimpleT
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     void callbackCalledBeforeTheProcessorThrowsContinuesTheExchangeOnce() throws Exception {
         // the processor calls the callback and then throws: the callback continued the exchange, so the exception is
         // only logged, and the exchange completes once (before, the catch of the task failed the exchange and completed

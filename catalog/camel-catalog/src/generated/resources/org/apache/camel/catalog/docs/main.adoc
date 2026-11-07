@@ -802,6 +802,19 @@ The camel.chaos supports 7 options, which are listed below.
 |===
 
 
+=== Camel Sanitizer configurations
+The camel.sanitizer supports 4 options, which are listed below.
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| `camel.sanitizer.checks` | The checks to run, separated by commas: callback (rule R1, the callback of each call of the processor of a step is called exactly once, and process does not throw). | callback | String
+| `camel.sanitizer.enabled` | Whether to install the exchange sanitizer. The default is false, and true with profile dev or in a test with the CamelSanitizer annotation. With profile prod the sanitizer stays off, also when this is true. | false | Boolean
+| `camel.sanitizer.reportOnShutdown` | Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation. | true | boolean
+| `camel.sanitizer.stackDepth` | How many frames of each stack a report keeps; 0 keeps only the name of the thread, which costs least. | 32 | int
+|===
+
+
 === Camel File Cluster Service configurations
 The camel.cluster.file supports 10 options, which are listed below.
 
