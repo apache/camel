@@ -374,6 +374,7 @@ public class CamelJBangMain implements Callable<Integer> {
                     .addSubcommand("sql-trace", new CommandLine(new ListSqlTrace(this)))
                     .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
                     .addSubcommand("timeline", new CommandLine(new ListTimeline(this)))
+                    .addSubcommand("about", new CommandLine(new ListAbout(this)))
                     .addSubcommand("transformer", new CommandLine(new ListTransformer(this)))
                     .addSubcommand("variable", new CommandLine(new ListVariable(this)))
                     .addSubcommand("vault", new CommandLine(new ListVault(this))));

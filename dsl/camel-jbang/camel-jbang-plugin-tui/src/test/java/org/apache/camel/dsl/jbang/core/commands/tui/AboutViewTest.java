@@ -31,6 +31,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
+import org.apache.camel.dsl.jbang.core.commands.ai.About;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -56,14 +57,14 @@ class AboutViewTest {
 
     @Test
     void thePurposeIsTheCommentAtTheTopOfTheFile() {
-        assertThat(AboutView.leadingComment("orders.camel.yaml", """
+        assertThat(About.leadingComment("orders.camel.yaml", """
                 # Each order id is accepted once.
                 # An accepted order is enriched with its customer.
 
                 - route:
                     id: orders
                 """)).isEqualTo("Each order id is accepted once. An accepted order is enriched with its customer.");
-        assertThat(AboutView.leadingComment("Shop.java", """
+        assertThat(About.leadingComment("Shop.java", """
                 //DEPS org.apache.camel:camel-http
                 import org.apache.camel.builder.RouteBuilder;
 
@@ -74,12 +75,12 @@ class AboutViewTest {
                  */
                 public class Shop extends RouteBuilder {
                 """)).isEqualTo("A small shop: every order is reserved and paid.");
-        assertThat(AboutView.leadingComment("routes.xml", "<?xml version=\"1.0\"?>\n<!-- Copies the files. -->\n<routes/>"))
+        assertThat(About.leadingComment("routes.xml", "<?xml version=\"1.0\"?>\n<!-- Copies the files. -->\n<routes/>"))
                 .isEqualTo("Copies the files.");
         // a license is no description
-        assertThat(AboutView.leadingComment("a.yaml", "# Licensed to the Apache Software Foundation (ASF)\n- route:"))
+        assertThat(About.leadingComment("a.yaml", "# Licensed to the Apache Software Foundation (ASF)\n- route:"))
                 .isNull();
-        assertThat(AboutView.leadingComment("a.yaml", "- route:\n    id: a")).isNull();
+        assertThat(About.leadingComment("a.yaml", "- route:\n    id: a")).isNull();
     }
 
     @Test
@@ -232,6 +233,10 @@ class AboutViewTest {
             assertThat(screen).contains("Last 5m").contains("30 handled")
                     .contains("HttpOperationFailedException 503 ×30").contains("Watch").contains("Next");
             assertThat(screen).contains("What happened").contains("30 handled");
+            // the sparklines of In (the route it starts) and Out (the route that sends), with the rate now
+            assertThat(screen).contains("2.0/s").contains("from orders  ");
+            assertThat(screen.lines().filter(l -> l.contains("from orders")).findFirst().orElseThrow())
+                    .contains("2.0/s");
         });
 
         // the cursor goes down In, Routes and Out; Enter opens what it is on

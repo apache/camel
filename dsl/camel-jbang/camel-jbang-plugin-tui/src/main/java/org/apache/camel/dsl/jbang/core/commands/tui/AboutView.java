@@ -16,14 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -45,8 +43,9 @@ import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
 import dev.tamboui.widgets.paragraph.Paragraph;
+import org.apache.camel.dsl.jbang.core.commands.ai.About;
+import org.apache.camel.dsl.jbang.core.commands.ai.AboutReport;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
-import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes;
 import org.apache.camel.util.TimeUtils;
 
 /**
@@ -64,10 +63,13 @@ final class AboutView {
     private static final String BLOCKS = " ▁▂▃▄▅▆▇█";
     // the strips have this many columns, whatever the zoom
     private static final int STRIP_COLUMNS = 60;
+    // the sparklines of In and Out
+    private static final int SPARK_WIDTH = 14;
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
 
     private final MonitorContext ctx;
     private volatile ProjectOverview.Overview overview;
+    private volatile About.Model model;
     private volatile String purpose;
     private volatile String purposeFrom;
     private volatile boolean loading;
@@ -118,11 +120,12 @@ final class AboutView {
         Thread t = new Thread(() -> {
             try {
                 ProjectOverview.Overview o = ProjectOverview.analyze(d, ArchitectureView.catalog());
-                String[] p = purpose(d, o);
+                About.Model m = About.of(d, o);
                 onRenderThread.accept(() -> {
                     overview = o;
-                    purpose = p != null ? p[0] : null;
-                    purposeFrom = p != null ? p[1] : null;
+                    model = m;
+                    purpose = m.purpose();
+                    purposeFrom = m.purposeFrom();
                     error = o.flows().isEmpty() ? "No routes found in " + d : null;
                     loading = false;
                 });
@@ -267,7 +270,10 @@ final class AboutView {
         List<Target> routeTargets = new ArrayList<>();
         List<Target> outTargets = new ArrayList<>();
         if (o != null) {
-            columns(o, info, in, routes, out, inTargets, routeTargets, outTargets);
+            About.Model m = model;
+            if (m != null) {
+                columns(m, info, in, routes, out, inTargets, routeTargets, outTargets);
+            }
         }
         // the cursor goes down In, then Routes, then Out
         List<Target> all = new ArrayList<>();
@@ -505,8 +511,8 @@ final class AboutView {
         }
     }
 
-    private static void columns(
-            ProjectOverview.Overview o, IntegrationInfo info, List<Line> in, List<Line> routes, List<Line> out,
+    private void columns(
+            About.Model m, IntegrationInfo info, List<Line> in, List<Line> routes, List<Line> out,
             List<Target> inTargets, List<Target> routeTargets, List<Target> outTargets) {
         Map<String, Long> totals = new LinkedHashMap<>();
         for (RouteInfo r : info.routes) {
@@ -514,62 +520,99 @@ final class AboutView {
                 totals.put(r.routeId, r.total);
             }
         }
-        for (ProjectOverview.EntryPoint e : o.entryPoints()) {
+        for (About.In e : m.in()) {
             Long total = e.route() != null ? totals.get(e.route()) : null;
-            // a consumer by the kind of system it consumes from (its scheme)
-            String kind = "consumer".equals(e.kind()) && e.label().indexOf(':') > 0
-                    ? e.label().substring(0, e.label().indexOf(':')) : e.kind();
-            in.add(Line.from(Span.raw(" " + icon(kind) + " "), Span.styled(e.label(), Style.EMPTY.bold()),
+            in.add(Line.from(Span.raw(" " + icon(e.kind()) + " "), Span.styled(e.label(), Style.EMPTY.bold()),
                     Span.styled(total != null ? "  " + total : "", Theme.success())));
             inTargets.add(e.route() != null ? new Target(e.route(), null) : null);
+            // the exchanges of the route it starts over the last minutes, and the rate now
+            long[] perSecond = e.route() != null ? routePerSecond(info, e.route()) : null;
+            if (perSecond != null) {
+                in.add(sparkLine("   ", perSecond));
+                inTargets.add(null);
+            }
         }
         if (in.isEmpty()) {
             in.add(Line.from(Span.styled(" nothing from outside", Theme.muted())));
             inTargets.add(null);
         }
 
-        // the routes that something else in the integration calls go under their caller
-        Map<String, List<ProjectOverview.Link>> calledBy = new LinkedHashMap<>();
-        Set<String> called = new LinkedHashSet<>();
-        for (ProjectOverview.Link l : o.links()) {
-            if (("call".equals(l.kind()) || "async".equals(l.kind())) && !l.from().equals(l.to())) {
-                calledBy.computeIfAbsent(l.from(), k -> new ArrayList<>()).add(l);
-                called.add(l.to());
+        for (About.RouteLine r : m.routes()) {
+            List<Span> spans = new ArrayList<>();
+            // ↳ a call that waits for the route, ⇢ a hand-off that does not
+            String how = r.how() == null ? "" : "call".equals(r.how()) ? "↳ " : "⇢ ";
+            spans.add(Span.raw(" " + "  ".repeat(r.depth()) + how));
+            spans.add(Span.styled(r.routeId(), Style.EMPTY.bold()));
+            spans.add(Span.styled("  " + r.from() + " → " + r.steps() + (r.steps() == 1 ? " step" : " steps"),
+                    Theme.muted()));
+            Long total = totals.get(r.routeId());
+            if (total != null) {
+                spans.add(Span.styled("  " + total, Theme.success()));
             }
-        }
-        Set<String> shown = new LinkedHashSet<>();
-        for (ProjectRoutes.Route r : o.flows()) {
-            if (!called.contains(r.key())) {
-                routeLines(o, r, 0, null, calledBy, totals, shown, routes, routeTargets);
-            }
-        }
-        // what is left: routes called only by routes in a cycle
-        for (ProjectRoutes.Route r : o.flows()) {
-            if (!shown.contains(r.key())) {
-                routeLines(o, r, 0, null, calledBy, totals, shown, routes, routeTargets);
-            }
+            routes.add(Line.from(spans));
+            routeTargets.add(new Target(r.routeId(), null));
         }
 
-        Set<String> systems = new LinkedHashSet<>();
-        for (ProjectOverview.SystemUse s : o.systems()) {
-            if ("in".equals(s.direction())) {
-                continue;
+        for (About.Out s : m.out()) {
+            Long hits = outHits(info, s.uri(), s.route());
+            out.add(Line.from(Span.raw(" " + icon(s.category()) + " "), Span.styled(shortUri(s.uri()), Style.EMPTY.bold()),
+                    Span.styled(hits != null ? "  " + hits : "", Theme.success())));
+            outTargets.add(new Target(s.route(), s.uri()));
+            List<Span> from = new ArrayList<>();
+            from.add(Span.styled("    from " + s.route(), Theme.muted()));
+            // the exchanges of the route that sends to it, as In has them: the integration records the last
+            // minutes, where a history of the sends would start with the TUI
+            long[] perSecond = s.route() != null ? routePerSecond(info, s.route()) : null;
+            if (perSecond != null) {
+                from.addAll(sparkLine("  ", perSecond).spans());
             }
-            String key = s.uri() + "|" + s.direction();
-            if (systems.add(key)) {
-                Long hits = outHits(info, s.uri(), s.route());
-                out.add(Line.from(Span.raw(" " + icon(s.category()) + " "), Span.styled(shortUri(s.uri()), Style.EMPTY.bold()),
-                        Span.styled("  " + s.direction(), Theme.muted()),
-                        Span.styled(hits != null ? "  " + hits : "", Theme.success())));
-                outTargets.add(new Target(s.route(), s.uri()));
-                out.add(Line.from(Span.styled("    from " + s.route(), Theme.muted())));
-                outTargets.add(null);
-            }
+            out.add(Line.from(from));
+            outTargets.add(null);
         }
         if (out.isEmpty()) {
             out.add(Line.from(Span.styled(" nothing outside the integration", Theme.muted())));
             outTargets.add(null);
         }
+    }
+
+    /** The exchanges done per second by the route over What happened, or null when nothing is recorded. */
+    private long[] routePerSecond(IntegrationInfo info, String routeId) {
+        long end = ctx.timeline.endSecond(info.pid);
+        if (end < 0) {
+            return null;
+        }
+        List<Timeline.RouteSeries> series = ctx.timeline.routes(info.pid, List.of(routeId), end, HAPPENED_SECONDS);
+        for (Timeline.RouteSeries r : series) {
+            if (routeId.equals(r.route())) {
+                long[] done = new long[HAPPENED_SECONDS];
+                for (int i = 0; i < done.length; i++) {
+                    done[i] = Math.max(0, r.completed()[i]) + Math.max(0, r.recovered()[i]) + Math.max(0, r.handled()[i])
+                              + Math.max(0, r.failed()[i]);
+                }
+                return done;
+            }
+        }
+        return null;
+    }
+
+    /** The values as a sparkline and the rate now, or only idle when there was nothing. */
+    private static Line sparkLine(String indent, long[] values) {
+        if (Arrays.stream(values).allMatch(v -> v <= 0)) {
+            return Line.from(Span.raw(indent), Span.styled("idle", Theme.muted()));
+        }
+        return Line.from(Span.raw(indent), Span.styled(spark(values, SPARK_WIDTH), Theme.info()),
+                Span.styled("  " + rate(values), Theme.muted()));
+    }
+
+    /** The rate now: the mean of the last 10 seconds, or idle. */
+    static String rate(long[] values) {
+        int n = Math.min(10, values.length);
+        long sum = 0;
+        for (int i = values.length - n; i < values.length; i++) {
+            sum += Math.max(0, values[i]);
+        }
+        double r = n > 0 ? (double) sum / n : 0;
+        return r == 0 ? "idle" : r >= 10 ? String.format(Locale.ROOT, "%.0f/s", r) : String.format(Locale.ROOT, "%.1f/s", r);
     }
 
     /**
@@ -590,41 +633,7 @@ final class AboutView {
 
     /** The URI without its options, and the same with or without the // after the scheme. */
     static String baseUri(String uri) {
-        if (uri == null) {
-            return "";
-        }
-        int q = uri.indexOf('?');
-        String answer = q >= 0 ? uri.substring(0, q) : uri;
-        answer = answer.replaceFirst("^([a-zA-Z0-9+.-]+):/{0,2}", "$1:");
-        return answer.endsWith("/") ? answer.substring(0, answer.length() - 1) : answer;
-    }
-
-    private static void routeLines(
-            ProjectOverview.Overview o, ProjectRoutes.Route r, int depth, String how,
-            Map<String, List<ProjectOverview.Link>> calledBy, Map<String, Long> totals, Set<String> shown,
-            List<Line> lines, List<Target> targets) {
-        if (!shown.add(r.key()) || depth > 6) {
-            return;
-        }
-        List<Span> spans = new ArrayList<>();
-        spans.add(Span.raw(" " + "  ".repeat(depth) + (how != null ? how + " " : "")));
-        spans.add(Span.styled(r.id() != null ? r.id() : r.key(), Style.EMPTY.bold()));
-        String from = r.from() != null ? r.from().scheme() : r.kind();
-        spans.add(Span.styled("  " + from + " → " + r.steps() + (r.steps() == 1 ? " step" : " steps"), Theme.muted()));
-        Long total = totals.get(r.id());
-        if (total != null) {
-            spans.add(Span.styled("  " + total, Theme.success()));
-        }
-        lines.add(Line.from(spans));
-        targets.add(new Target(r.id() != null ? r.id() : r.key(), null));
-        for (ProjectOverview.Link l : calledBy.getOrDefault(r.key(), List.of())) {
-            ProjectRoutes.Route target = o.route(l.to());
-            if (target != null) {
-                // ↳ a call that waits for the route, ⇢ a hand-off that does not
-                routeLines(o, target, depth + 1, "call".equals(l.kind()) ? "↳" : "⇢", calledBy, totals, shown, lines,
-                        targets);
-            }
-        }
+        return AboutReport.baseUri(uri);
     }
 
     private static String icon(String kind) {
@@ -806,98 +815,6 @@ final class AboutView {
     }
 
     // ---- the purpose line ----
-
-    /**
-     * What the integration does, in the words of its author: the comment at the top of a route file (the files in the
-     * order of the analysis), else the descriptions of the routes that something outside starts. Returns the text and
-     * where it comes from, or null.
-     */
-    static String[] purpose(Path dir, ProjectOverview.Overview o) {
-        for (String file : o.files()) {
-            try {
-                String text = leadingComment(file, Files.readString(dir.resolve(file), StandardCharsets.UTF_8));
-                if (text != null) {
-                    return new String[] { text, "from the comment at the top of " + file };
-                }
-            } catch (IOException e) {
-                // an unreadable file has no comment
-            }
-        }
-        List<String> descriptions = new ArrayList<>();
-        Set<String> entryRoutes = new LinkedHashSet<>();
-        o.entryPoints().forEach(e -> entryRoutes.add(e.route()));
-        for (ProjectRoutes.Route r : o.flows()) {
-            if (r.hasDescription() && entryRoutes.contains(r.key())) {
-                descriptions.add(r.description());
-            }
-        }
-        for (ProjectRoutes.Route r : o.flows()) {
-            if (r.hasDescription() && !entryRoutes.contains(r.key()) && descriptions.size() < 2) {
-                descriptions.add(r.description());
-            }
-        }
-        if (!descriptions.isEmpty()) {
-            return new String[] {
-                    String.join(" ", descriptions.subList(0, Math.min(2, descriptions.size()))),
-                    "from the descriptions of the routes" };
-        }
-        return null;
-    }
-
-    /**
-     * The comment a file starts with: the {@code #} lines of YAML, the Javadoc or {@code //} lines before the class of
-     * Java, the first {@code <!-- -->} of XML. A license header is no description.
-     */
-    static String leadingComment(String file, String content) {
-        String text = null;
-        if (file.endsWith(".yaml") || file.endsWith(".yml")) {
-            StringBuilder sb = new StringBuilder();
-            for (String line : content.lines().toList()) {
-                String l = line.strip();
-                if (l.startsWith("#")) {
-                    sb.append(l.replaceFirst("^#+\\s?", "")).append(' ');
-                } else if (!l.isEmpty() || !sb.isEmpty()) {
-                    break;
-                }
-            }
-            text = sb.toString();
-        } else if (file.endsWith(".java")) {
-            int cls = content.indexOf(" class ");
-            String before = cls > 0 ? content.substring(0, cls) : content;
-            int doc = before.lastIndexOf("/**");
-            if (doc >= 0) {
-                int end = before.indexOf("*/", doc);
-                text = end > 0 ? before.substring(doc + 3, end).replaceAll("(?m)^\\s*\\*\\s?", " ") : null;
-            } else {
-                StringBuilder sb = new StringBuilder();
-                for (String line : before.lines().toList()) {
-                    String l = line.strip();
-                    if (l.startsWith("//") && !l.startsWith("///") && !l.startsWith("//DEPS")
-                            && !l.startsWith("//JAVA")) {
-                        sb.append(l.substring(2).strip()).append(' ');
-                    }
-                }
-                text = sb.toString();
-            }
-        } else if (file.endsWith(".xml")) {
-            int start = content.indexOf("<!--");
-            int end = start >= 0 ? content.indexOf("-->", start) : -1;
-            text = end > 0 ? content.substring(start + 4, end) : null;
-        }
-        if (text == null) {
-            return null;
-        }
-        // a Javadoc tag ends the description
-        int tag = text.indexOf(" @");
-        if (tag > 0) {
-            text = text.substring(0, tag);
-        }
-        text = text.replaceAll("\\s+", " ").strip();
-        if (text.isEmpty() || text.contains("Licensed to the Apache") || text.contains("SPDX-License")) {
-            return null;
-        }
-        return text.length() > 300 ? text.substring(0, 297) + "…" : text;
-    }
 
     static List<String> wrap(String text, int width, int maxLines) {
         List<String> lines = new ArrayList<>();
