@@ -167,18 +167,32 @@ public final class SendHelper {
      * One send with a hook. The hook is called before the producer, the producer is called right away, after a delay
      * (that this thread waits for), or not at all, and then the hook is called after it and the callback is called,
      * each exactly once.
+     * <p/>
+     * With several hooks (a {@link CompositeSendHook}) the hooks are asked one by one, see {@link CompositeSendHook}:
+     * the send keeps how many were asked, so only those are called after it, in the reverse order.
      */
     private static final class HookedSend implements AsyncCallback {
 
+        // the one hook, or null when there are several
         private final SendHook hook;
+        // the hooks of a composite, in the order they are asked, or null when there is one
+        private final SendHook[] hooks;
         private final Exchange exchange;
         private final Endpoint endpoint;
         private final AsyncProcessor producer;
         private final AsyncCallback callback;
+        // how many hooks returned from beforeSend: they, and only they, are called after the send
+        private int asked;
 
         private HookedSend(SendHook hook, Exchange exchange, Endpoint endpoint, AsyncProcessor producer,
                            AsyncCallback callback) {
-            this.hook = hook;
+            if (hook instanceof CompositeSendHook composite) {
+                this.hook = null;
+                this.hooks = composite.hooks();
+            } else {
+                this.hook = hook;
+                this.hooks = null;
+            }
             this.exchange = exchange;
             this.endpoint = endpoint;
             this.producer = producer;
@@ -190,10 +204,12 @@ public final class SendHelper {
             final Exception existing = exchange.getException();
             final long delay;
             try {
-                delay = hook.beforeSend(exchange, endpoint);
+                delay = beforeSend(existing);
             } catch (Exception e) {
-                // the hook failed: the producer is not called, and there is no after
+                // a hook failed: the producer is not called, and there is no after for that hook (the hooks asked
+                // before it are called after the send, as for any send they proceeded with)
                 exchange.setException(e);
+                afterSend();
                 callback.done(true);
                 return true;
             }
@@ -239,6 +255,38 @@ public final class SendHelper {
             }
         }
 
+        /**
+         * Asks the hooks before the send.
+         *
+         * @param  existing the exception the exchange had before the send
+         * @return          what the hooks decided: {@link SendHook#PROCEED}, a delay, {@link SendHook#SKIP} or a
+         *                  reserved value (ignored when a hook set an exception on the exchange)
+         */
+        private long beforeSend(Exception existing) {
+            if (hooks == null) {
+                long answer = hook.beforeSend(exchange, endpoint);
+                asked = 1;
+                return answer;
+            }
+            long answer = SendHook.PROCEED;
+            for (SendHook h : hooks) {
+                long value = h.beforeSend(exchange, endpoint);
+                asked++;
+                Exception exception = exchange.getException();
+                if (exception != null && exception != existing) {
+                    // this hook stopped the send: the later hooks are not asked
+                    return SendHook.PROCEED;
+                }
+                if (value < 0) {
+                    // the first SKIP wins (or a reserved value fails the send): the later hooks are not asked
+                    return value;
+                }
+                // the longest delay wins
+                answer = Math.max(answer, value);
+            }
+            return answer;
+        }
+
         private boolean completeWithoutProducer() {
             afterSend();
             callback.done(true);
@@ -254,9 +302,24 @@ public final class SendHelper {
             callback.done(doneSync);
         }
 
+        /**
+         * Calls the hooks that were asked before the send, in the reverse order.
+         */
         private void afterSend() {
+            if (hooks == null) {
+                if (asked > 0) {
+                    afterSend(hook);
+                }
+                return;
+            }
+            for (int i = asked - 1; i >= 0; i--) {
+                afterSend(hooks[i]);
+            }
+        }
+
+        private void afterSend(SendHook h) {
             try {
-                hook.afterSend(exchange, endpoint);
+                h.afterSend(exchange, endpoint);
             } catch (Exception e) {
                 Exception existing = exchange.getException();
                 if (existing == null) {

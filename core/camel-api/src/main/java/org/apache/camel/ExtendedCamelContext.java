@@ -521,7 +521,8 @@ public interface ExtendedCamelContext {
     List<InterceptStrategy> getInterceptStrategies();
 
     /**
-     * Gets the {@link StepHook} that is asked before every processing step of a route.
+     * Gets the {@link StepHook} that is asked before every processing step of a route: the one hook that is installed,
+     * or a hook that asks all the installed hooks in their order (see {@link #addStepHook(StepHook)}).
      *
      * @return the hook, or <tt>null</tt> if no hook is installed
      * @since  4.24
@@ -531,16 +532,28 @@ public interface ExtendedCamelContext {
     }
 
     /**
-     * Installs a {@link StepHook} that is asked before every processing step of a route, or removes it with
-     * <tt>null</tt>. There is one hook; a new hook replaces the one installed before. A step that waits for a delay of
-     * the hook already is called when the delay ends. The CamelContext does not start or stop the hook, and the hook
-     * stays installed when the CamelContext is stopped and started again.
+     * Installs a {@link StepHook} that is asked before every processing step of a route. More than one hook can be
+     * installed: they are asked in their {@link Ordered order} (a hook that does not implement {@link Ordered} has
+     * order 0, and hooks with the same order are asked in the order they were added), see {@link StepHook} for how they
+     * combine. Adding a hook that is installed already does nothing. The CamelContext does not start or stop the hook,
+     * and the hook stays installed when the CamelContext is stopped and started again.
      *
-     * @param stepHook the hook, or <tt>null</tt> to remove it
+     * @param stepHook the hook
      * @since          4.24
      */
-    default void setStepHook(@Nullable StepHook stepHook) {
+    default void addStepHook(StepHook stepHook) {
         throw new UnsupportedOperationException("This CamelContext does not support a StepHook");
+    }
+
+    /**
+     * Removes a {@link StepHook} that was installed with {@link #addStepHook(StepHook)}; a hook that is not installed
+     * is ignored. A step that waits for a delay of the hook already is called when the delay ends.
+     *
+     * @param stepHook the hook
+     * @since          4.24
+     */
+    default void removeStepHook(StepHook stepHook) {
+        // a CamelContext without hooks has nothing to remove
     }
 
     /**
@@ -645,7 +658,8 @@ public interface ExtendedCamelContext {
 
     /**
      * Gets the {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
-     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}.
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}: the one hook that is installed, or a hook that runs
+     * all the installed hooks in their order (see {@link #addSendHook(SendHook)}).
      *
      * @return the hook, or <tt>null</tt> if no hook is installed
      * @since  4.24
@@ -656,15 +670,27 @@ public interface ExtendedCamelContext {
 
     /**
      * Installs a {@link SendHook} that runs around the sends to the producer of an endpoint that fire the
-     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}, or removes it with <tt>null</tt>. There is one
-     * hook; a new hook replaces the one installed before. Sends that are already in the hook complete with the hook
-     * that started them.
+     * {@link org.apache.camel.spi.CamelEvent.ExchangeSendingEvent}. More than one hook can be installed: they are asked
+     * before the send in their {@link Ordered order} (a hook that does not implement {@link Ordered} has order 0, and
+     * hooks with the same order are asked in the order they were added), and after the send in the reverse order, see
+     * {@link SendHook} for how they combine. Adding a hook that is installed already does nothing.
      *
-     * @param sendHook the hook, or <tt>null</tt> to remove it
+     * @param sendHook the hook
      * @since          4.24
      */
-    default void setSendHook(@Nullable SendHook sendHook) {
+    default void addSendHook(SendHook sendHook) {
         throw new UnsupportedOperationException("This CamelContext does not support a SendHook");
+    }
+
+    /**
+     * Removes a {@link SendHook} that was installed with {@link #addSendHook(SendHook)}; a hook that is not installed
+     * is ignored. Sends that are already in the hook complete with the hooks that started them.
+     *
+     * @param sendHook the hook
+     * @since          4.24
+     */
+    default void removeSendHook(SendHook sendHook) {
+        // a CamelContext without hooks has nothing to remove
     }
 
     /**

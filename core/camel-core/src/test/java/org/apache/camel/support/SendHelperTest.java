@@ -68,6 +68,7 @@ class SendHelperTest extends ContextTestSupport {
     private static final String PRODUCER_COUNT = "producerCount";
     private static final String FIXED_DELAY = "fixedDelay";
 
+    private final ModeHook modeHook = new ModeHook();
     private ExecutorService producerThreads;
     private Endpoint endpoint;
 
@@ -94,7 +95,7 @@ class SendHelperTest extends ContextTestSupport {
         super.setUp();
         producerThreads = Executors.newFixedThreadPool(4);
         endpoint = context.getEndpoint("mock:target");
-        context.getCamelContextExtension().setSendHook(new ModeHook());
+        context.getCamelContextExtension().addSendHook(modeHook);
     }
 
     @Override
@@ -229,7 +230,7 @@ class SendHelperTest extends ContextTestSupport {
 
     @Test
     void testNoHookCallsTheProducerOnly() {
-        context.getCamelContextExtension().setSendHook(null);
+        context.getCamelContextExtension().removeSendHook(modeHook);
         Exchange exchange = newExchange(Mode.STOP, Kind.SYNC);
         Completion completion = new Completion();
 

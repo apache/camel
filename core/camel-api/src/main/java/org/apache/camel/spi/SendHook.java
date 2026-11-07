@@ -28,9 +28,20 @@ import org.apache.camel.Exchange;
  * Before the producer is called, the hook can change the message, stop the send, skip it or delay it. After the
  * producer is done, it can change the reply.
  * <p/>
- * The hook is installed with {@link org.apache.camel.ExtendedCamelContext#setSendHook(SendHook)}. There is one hook per
- * {@link org.apache.camel.CamelContext}; to use more than one, combine them in one hook. Without a hook, a send costs
- * one check whether a hook is installed.
+ * The hook is installed with {@link org.apache.camel.ExtendedCamelContext#addSendHook(SendHook)}. Without a hook, a
+ * send costs one check whether a hook is installed.
+ * <p/>
+ * <b>More than one hook.</b> Several hooks can be installed. {@link #beforeSend(Exchange, Endpoint)} is called on them
+ * one after the other, in their {@link org.apache.camel.Ordered order} (lower first; a hook that does not implement
+ * {@link org.apache.camel.Ordered} has order 0, and hooks with the same order are asked in the order they were added).
+ * A hook that stops the send (it throws an exception or sets one on the exchange), skips it ({@link #SKIP}, so the
+ * first {@link #SKIP} wins) or returns a reserved value ends it: the hooks after it are not asked, and the send does
+ * not wait for a delay. Otherwise the longest of the delays wins, and the send waits for it once.
+ * {@link #afterSend(Exchange, Endpoint)} is called only on the hooks whose {@link #beforeSend(Exchange, Endpoint)}
+ * returned, in the reverse order: the hook asked first before the send is called last after it, so the hooks nest. A
+ * hook that only observes the sends takes a low order, so it is outside the hooks that change the outcome and sees the
+ * send as the route sees it; a hook that changes the outcome of a send (such as the faults of camel-chaos, with
+ * {@link org.apache.camel.Ordered#LOWEST}) takes a high order, to run innermost, right next to the producer.
  * <p/>
  * <b>Where it runs.</b> The hook runs right around the call of the producer, inside the error handler that handles a
  * failure of that producer: the error handler of the route for {@code to}, {@code toD} and {@code enrich}, the error

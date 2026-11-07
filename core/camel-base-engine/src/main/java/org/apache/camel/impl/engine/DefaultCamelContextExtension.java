@@ -86,6 +86,8 @@ import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.support.CompositeSendHook;
+import org.apache.camel.support.CompositeStepHook;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.PluginHelper;
@@ -127,7 +129,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile boolean eventNotificationApplicable;
+    // null, the one hook, or a composite of the hooks: the senders read this field only
     private volatile SendHook sendHook;
+    // the installed hooks, in the order they were added (guarded by the lock)
+    private final List<SendHook> sendHooks = new ArrayList<>();
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile PropertiesComponent propertiesComponent;
@@ -141,7 +146,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ErrorRegistry errorRegistry;
     private volatile UuidGenerator uuidGenerator;
     private volatile Tracer tracer;
+    // null, the one hook, or a composite of the hooks: the steps read this field only
     private volatile StepHook stepHook;
+    // the installed hooks, in the order they were added (guarded by the lock)
+    private final List<StepHook> stepHooks = new ArrayList<>();
     private volatile TransformerRegistry transformerRegistry;
     private volatile ValidatorRegistry validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
@@ -536,8 +544,29 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public void setStepHook(StepHook stepHook) {
-        this.stepHook = stepHook;
+    public void addStepHook(StepHook stepHook) {
+        ObjectHelper.notNull(stepHook, "stepHook");
+        lock.lock();
+        try {
+            if (stepHooks.stream().noneMatch(h -> h == stepHook)) {
+                stepHooks.add(stepHook);
+                this.stepHook = CompositeStepHook.of(stepHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void removeStepHook(StepHook stepHook) {
+        lock.lock();
+        try {
+            if (stepHooks.removeIf(h -> h == stepHook)) {
+                this.stepHook = CompositeStepHook.of(stepHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -595,8 +624,29 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public void setSendHook(SendHook sendHook) {
-        this.sendHook = sendHook;
+    public void addSendHook(SendHook sendHook) {
+        ObjectHelper.notNull(sendHook, "sendHook");
+        lock.lock();
+        try {
+            if (sendHooks.stream().noneMatch(h -> h == sendHook)) {
+                sendHooks.add(sendHook);
+                this.sendHook = CompositeSendHook.of(sendHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void removeSendHook(SendHook sendHook) {
+        lock.lock();
+        try {
+            if (sendHooks.removeIf(h -> h == sendHook)) {
+                this.sendHook = CompositeSendHook.of(sendHooks);
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override

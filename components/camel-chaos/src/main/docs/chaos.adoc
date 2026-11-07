@@ -386,6 +386,11 @@ The steps inside `onException` and `doCatch` are steps of the route, and the sen
 letter channel) are sends: so `step=*` also fails the steps that handle a failure, and `endpoint=*` the sends of
 `onException`. Name the endpoints or steps under test in the pattern to keep them out.
 
+Chaos shares the send hook and the step hook of camel-core with the other tools that use them: they all run, each
+send and step asks every hook. The hooks of chaos have the lowest order (`Ordered.LOWEST`), so they are asked last
+and run innermost, right next to the producer or the processor: a hook that observes the sends or steps sees the
+faults of chaos as failures of the producer or the step.
+
 == Route lifecycle faults
 
 `stall` and `lifecycle` act on a route, not on its messages: `route=poller stall duration=20s` suspends route
@@ -667,7 +672,5 @@ expectation is decided) into the report history, where their ids can no longer b
 keeps the last 100 removed, replaced or ended ones. An unmet expectation of a rule that leaves the report still counts
 in the verdict and in `lost`.
 * A rule is at most 2000 characters long.
-* There is one send hook and one step hook per `CamelContext`: when another one is installed already, chaos keeps it,
-logs a WARN, and its rules do not fire at those hooks.
 * A `stall` or `lifecycle` rule acts on one route, once, or `repeat=` times (at most 100). To take a route down again
 after that, add the rule again.

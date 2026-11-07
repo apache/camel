@@ -77,7 +77,7 @@ class SendHookTest extends ContextTestSupport {
                 }
             }
         });
-        context.getCamelContextExtension().setSendHook(hook);
+        context.getCamelContextExtension().addSendHook(hook);
         return context;
     }
 
@@ -283,21 +283,21 @@ class SendHookTest extends ContextTestSupport {
         String hooked = SendHelper.class.getName() + "$SendHookProducer";
 
         // no hook: the error handler of the recipient calls the producer itself, as when there is no send hook at all
-        context.getCamelContextExtension().setSendHook(null);
+        context.getCamelContextExtension().removeSendHook(hook);
         template.sendBodyAndHeader("direct:recipientList", "Hello", "to", "mock:rl");
         assertTrue(stack.get(stack.size() - 1).startsWith(RedeliveryErrorHandler.class.getName()), stack::toString);
         assertFalse(stack.contains(hooked), stack::toString);
 
         // a hook installed later runs for the same recipient, through another error handler
         stack.clear();
-        context.getCamelContextExtension().setSendHook(hook);
+        context.getCamelContextExtension().addSendHook(hook);
         template.sendBodyAndHeader("direct:recipientList", "Hello", "to", "mock:rl");
         assertTrue(stack.contains(hooked), stack::toString);
         assertEquals(1, hook.before("mock://rl"));
 
         // and when it is removed again, the producer is called by itself again
         stack.clear();
-        context.getCamelContextExtension().setSendHook(null);
+        context.getCamelContextExtension().removeSendHook(hook);
         template.sendBodyAndHeader("direct:recipientList", "Hello", "to", "mock:rl");
         assertFalse(stack.contains(hooked), stack::toString);
         assertEquals(1, hook.before("mock://rl"));
@@ -411,7 +411,7 @@ class SendHookTest extends ContextTestSupport {
         assertEquals(List.of("sending:mock://a", "before:mock://a", "after:mock://a", "sent:mock://a"),
                 calls("mock://a"));
 
-        context.getCamelContextExtension().setSendHook(null);
+        context.getCamelContextExtension().removeSendHook(hook);
         assertNull(context.getCamelContextExtension().getSendHook());
         List<String> withoutHook = runAllPaths();
 

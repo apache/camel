@@ -76,7 +76,7 @@ class StepHookJtaTest {
                 commits.incrementAndGet();
             }
         });
-        camelContext.getCamelContextExtension().setStepHook(new FailingHook());
+        camelContext.getCamelContextExtension().addStepHook(new FailingHook());
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {

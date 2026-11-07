@@ -17,6 +17,7 @@
 package org.apache.camel.component.chaos;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
 import org.apache.camel.component.chaos.ChaosRule.Fault;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.spi.StepHook;
@@ -28,7 +29,7 @@ import org.apache.camel.util.TimeSource;
  * {@code delay} (the thread that runs the step waits, through {@link TimeSource}, before it calls the processor). The
  * first rule that fires decides the fault of a step.
  */
-final class ChaosStepHook implements StepHook {
+final class ChaosStepHook implements StepHook, Ordered {
 
     private final ChaosManager manager;
 
@@ -56,6 +57,14 @@ final class ChaosStepHook implements StepHook {
             }
         }
         return PROCEED;
+    }
+
+    /**
+     * The lowest order: the hook runs innermost, after the other hooks, right next to the processor of the step.
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST;
     }
 
     @Override

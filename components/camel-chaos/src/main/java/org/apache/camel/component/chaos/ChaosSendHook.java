@@ -18,6 +18,7 @@ package org.apache.camel.component.chaos;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.spi.SendHook;
 import org.apache.camel.util.TimeSource;
@@ -31,7 +32,7 @@ import org.apache.camel.util.TimeSource;
  * rules with {@code at=reply} are asked after the producer succeeded: {@code error} fails the send after its side
  * effect happened, and {@code corrupt} changes the reply.
  */
-final class ChaosSendHook implements SendHook {
+final class ChaosSendHook implements SendHook, Ordered {
 
     private final ChaosManager manager;
 
@@ -122,6 +123,14 @@ final class ChaosSendHook implements SendHook {
                 return;
             }
         }
+    }
+
+    /**
+     * The lowest order: the hook runs innermost, after the other hooks, right next to the producer.
+     */
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST;
     }
 
     @Override
