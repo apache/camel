@@ -1426,7 +1426,8 @@ NOTE: The `watermarkExpression` option uses the Simple language for expression e
 
 NOTE: The watermark is only updated when the split completes successfully. If the split is aborted
 (e.g., due to exceeding `maxFailedRecords`), the watermark is not updated, which allows the
-failed batch to be retried.
+failed batch to be retried. The same applies when the `watermarkExpression` fails, or when the resume
+strategy fails to store the watermark: the split fails with that exception, and the items are processed again.
 
 IMPORTANT: Watermark tracking assumes sequential route invocations (e.g., batch jobs triggered by
 a `timer` or `scheduler`). If multiple exchanges hit the same route concurrently, they will read
