@@ -137,7 +137,7 @@ public class LuceneIndexAndQueryProducerIT extends CamelTestSupport {
                         for (int i = 0; i < hits.getNumberOfHits(); i++) {
                             LOG.debug("Hit {} Index Location: {}", i, hits.getHit().get(i).getHitLocation());
                             LOG.debug("Hit {} Score: {}", i, hits.getHit().get(i).getScore());
-                            LOG.debug("Hit {} Data: {}", hits.getHit().get(i).getData());
+                            LOG.debug("Hit {} Data: {}", i, hits.getHit().get(i).getData());
                         }
                     }
                 }).to("mock:searchResult");
