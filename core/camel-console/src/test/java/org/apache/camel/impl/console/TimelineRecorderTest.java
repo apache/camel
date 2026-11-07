@@ -101,10 +101,33 @@ class TimelineRecorderTest {
         assertThat(s.routes.get("stock").attempts).isEqualTo(2);
         assertThat(s.routes.get("orders").recovered).isZero();
         assertThat(s.routes.get("orders").completed).isEqualTo(1);
-        assertThat(s.slowest).singleElement().satisfies(k -> {
+        // kept with the failed and handled ones, as an exchange of the second worth a look
+        assertThat(s.failed).singleElement().satisfies(k -> {
             assertThat(k.redelivered()).isTrue();
             assertThat(k.routeId()).isEqualTo("orders");
         });
+        assertThat(s.slowest).isEmpty();
+    }
+
+    @Test
+    void aRecoveredExchangeIsKeptWithTheFailureItWasRedeliveredFor() {
+        recorder.exchangeCreated("A", "orders", T + 10);
+        recorder.redelivery("A", "stock", T + 100, "Connection refused");
+        recorder.redelivery("A", "stock", T + 200, "Read timed out");
+        recorder.exchangeDone("A", "orders", "direct:orders", T + 300, 5, false, false, null, null, null, false);
+        // a quick exchange that is not one of the slowest: the recovered one is kept all the same
+        for (int i = 0; i < 5; i++) {
+            recorder.exchangeDone("S" + i, "orders", "direct:orders", T + 400, 50, false, false, null, null, null, false);
+        }
+
+        Second s = recorder.seconds(second(T), 1).get(0);
+        assertThat(s.failed).singleElement().satisfies(k -> {
+            assertThat(k.exchangeId()).isEqualTo("A");
+            assertThat(k.redelivered()).isTrue();
+            assertThat(k.failed()).isFalse();
+            assertThat(k.exception()).isEqualTo("Read timed out");
+        });
+        assertThat(s.slowest).extracting(TimelineRecorder.Kept::exchangeId).doesNotContain("A");
     }
 
     @Test

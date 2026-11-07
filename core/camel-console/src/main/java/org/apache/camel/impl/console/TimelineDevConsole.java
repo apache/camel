@@ -94,7 +94,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "Whether the exchange failed") boolean failed,
             @Metadata(description = "Whether the error handler handled a failure of the exchange") boolean handled,
             @Metadata(description = "Whether the exchange was redelivered") boolean redelivered,
-            @Metadata(description = "The exception message (only present when the exchange failed)") String exception,
+            @Metadata(description = "The exception message (only present when the exchange failed, or when it recovered: the failure it was redelivered for)") String exception,
             @Metadata(description = "The camel-chaos rule that faulted the exchange (only present when one did)") String chaosRule,
             @Metadata(description = "The remote endpoints the exchange was sent to (only present when any)") List<Send> endpointSends) {
     }
@@ -105,7 +105,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "Exchanges done per second, in the routes they came in") List<Long> exchangesDone,
             @Metadata(description = "The routes") List<RouteSeries> routes,
             @Metadata(description = "The errors by route and exception (only present when there are any)") List<ErrorSeries> errors,
-            @Metadata(description = "Per second the failed and handled exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)") List<TimelineExchange> exchanges) {
+            @Metadata(description = "Per second the failed, handled and recovered exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)") List<TimelineExchange> exchanges) {
     }
 
     @Metadata(label = "query", description = "The number of seconds, up to the recorded seconds (the default)",
@@ -320,7 +320,10 @@ public class TimelineDevConsole extends AbstractDevConsole {
             rec.exchangeSent(se.getExchange().getExchangeId(), se.getExchange().getFromRouteId(),
                     se.getEndpoint().isRemote() ? se.getEndpoint().getEndpointUri() : null, se.getTimeTaken());
         } else if (event instanceof CamelEvent.ExchangeRedeliveryEvent re) {
-            rec.redelivery(re.getExchange().getExchangeId(), ExchangeHelper.getRouteId(re.getExchange()), timestamp(re));
+            // the exception is cleared for the redelivery: the failure is still the caught exception
+            Throwable cause = re.getExchange().getProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, Throwable.class);
+            rec.redelivery(re.getExchange().getExchangeId(), ExchangeHelper.getRouteId(re.getExchange()), timestamp(re),
+                    cause != null ? cause.getMessage() : null);
         } else if (event instanceof CamelEvent.ExchangeFailureHandledEvent fe) {
             Exchange exchange = fe.getExchange();
             ExchangeExtension ee = exchange.getExchangeExtension();

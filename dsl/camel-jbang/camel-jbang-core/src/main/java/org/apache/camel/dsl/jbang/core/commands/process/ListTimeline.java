@@ -85,7 +85,7 @@ public class ListTimeline extends ProcessWatchCommand {
     String filter;
 
     @CommandLine.Option(names = { "--exchanges" },
-                        description = "List the exchanges kept per second (the failed and handled ones and the 3 slowest) instead of the routes")
+                        description = "List the exchanges kept per second (the failed, handled and recovered ones and the 3 slowest) instead of the routes")
     boolean exchanges;
 
     @CommandLine.Option(names = { "--errors" },

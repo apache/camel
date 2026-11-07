@@ -246,7 +246,7 @@ Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still upda
 The activity tracking of the backlog tracer (since 4.22) is removed. It kept the last 100 completed exchanges, which
 under load was only the last seconds. The new `timeline` dev console takes its place: for each second of the last 5
 minutes it records what each route did (completed, recovered by a redelivery, handled by the error handler, failed),
-the mean, p95 and max time, the errors by route and exception, and per second the failed and handled exchanges and
+the mean, p95 and max time, the errors by route and exception, and per second the failed, handled and recovered exchanges and
 the 3 slowest with the remote calls they made. It is on whenever the dev consoles are, as with `camel run` (profile `dev`), and the
 number of seconds is set with `camel.devConsole.timeline.seconds` (60 to 3600, default 300).
 
