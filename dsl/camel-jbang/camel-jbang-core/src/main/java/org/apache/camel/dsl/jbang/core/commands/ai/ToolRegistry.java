@@ -28,7 +28,9 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
 import org.apache.camel.tooling.model.ComponentModel;
@@ -699,7 +701,9 @@ public final class ToolRegistry {
 
     // ---- camel-chaos: the rules, the report and the chaos action of the CLI connector (design/chaos.adoc) ----
 
-    private static final String CHAOS_NAME = "Name or PID of the integration (default: the selected or only one)";
+    private static final String CHAOS_NAME
+            = "Name or PID of the integration (default: the selected one, else the only one running, else the only one"
+              + " with chaos switched on)";
 
     /**
      * The chaos tools, the six operations of camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear and camel get
@@ -711,15 +715,16 @@ public final class ToolRegistry {
      */
     private static void registerChaosTools() {
         register(tool("chaos_list",
-                "List the chaos rules of the integration (camel-chaos, development only): id, version, the rule, state, "
-                                    + "where it fires, matches, faults fired, time left, the expectation, and the live "
+                "List the chaos rules of the integration (camel-chaos, development only): id, version, the rule, the "
+                                    + "rule in plain words (description), state, where it can fire now (hooks), "
+                                    + "matches, faults fired, time left, the expectation, and the live "
                                     + "state: observed rate next to the rate of the rule, when it last fired, faults "
                                     + "per second over the last minute, and the effect of its faults (exchanges "
                                     + "completed, recovered by redelivery, handled by the error handler, failed, in "
                                     + "flight); or why chaos is off.")
                 .param("name", "string", CHAOS_NAME, false)
                 .executor((ctx, args) -> {
-                    selectNamedProcess(ctx, args);
+                    selectChaosProcess(ctx, args);
                     return chaosSection(ctx, "rules").toJson();
                 }));
 
@@ -730,14 +735,15 @@ public final class ToolRegistry {
                                       + "fault, route, endpoint or step, exchange id); or why chaos is off.")
                 .param("name", "string", CHAOS_NAME, false)
                 .executor((ctx, args) -> {
-                    selectNamedProcess(ctx, args);
+                    selectChaosProcess(ctx, args);
                     return chaosSection(ctx, "report").toJson();
                 }));
 
         register(tool("chaos_add",
                 "Add a chaos rule to the integration, in the one-line form of camel.chaos.rules, e.g. "
                                    + "'endpoint=kafka:orders* error rate=0.1 until=5m'; several rules separated by ; "
-                                   + "are added together (all or none). Returns the ids of the rules, and warnings for "
+                                   + "are added together (all or none). Returns the ids of the rules, each rule in "
+                                   + "plain words (description, or descriptions for several), and warnings for "
                                    + "a rule that matches nothing in the integration now (often a typo: fix it with "
                                    + "chaos_change). Chaos must be on in the integration; a rule that is not valid is "
                                    + "refused with the reason.")
@@ -748,14 +754,15 @@ public final class ToolRegistry {
                 .readOnly(false).destructive(true)
                 .executor((ctx, args) -> {
                     String rule = AuthoringTools.required(args, "rule");
-                    selectNamedProcess(ctx, args);
+                    selectChaosProcess(ctx, args);
                     return chaos(ctx, "add", null, rule);
                 }));
 
         register(tool("chaos_change",
                 "Change a chaos rule of the integration: the rule with the id gets the new one-line rule and one more "
-                                      + "version; the report keeps the version it replaces. Returns the id and the new "
-                                      + "version, and warnings when the new rule matches nothing in the integration now.")
+                                      + "version; the report keeps the version it replaces. Returns the id, the new "
+                                      + "version and the new rule in plain words (description), and warnings when the "
+                                      + "new rule matches nothing in the integration now.")
                 .param("id", "string", "The id of the rule, such as r1 (chaos_list shows them)", true)
                 .param("rule", "string", "The new rule in its one-line text form", true)
                 .param("name", "string", CHAOS_NAME, false)
@@ -763,7 +770,7 @@ public final class ToolRegistry {
                 .executor((ctx, args) -> {
                     String id = AuthoringTools.required(args, "id");
                     String rule = AuthoringTools.required(args, "rule");
-                    selectNamedProcess(ctx, args);
+                    selectChaosProcess(ctx, args);
                     return chaos(ctx, "change", id, rule);
                 }));
 
@@ -774,7 +781,7 @@ public final class ToolRegistry {
                 .readOnly(false).destructive(false)
                 .executor((ctx, args) -> {
                     String id = AuthoringTools.required(args, "id");
-                    selectNamedProcess(ctx, args);
+                    selectChaosProcess(ctx, args);
                     return chaos(ctx, "remove", id, null);
                 }));
 
@@ -788,7 +795,7 @@ public final class ToolRegistry {
                         false)
                 .readOnly(false).destructive(false)
                 .executor((ctx, args) -> {
-                    selectNamedProcess(ctx, args);
+                    selectChaosProcess(ctx, args);
                     boolean reset = "true".equalsIgnoreCase(args.get("reset"));
                     return ctx.executeAction("chaos", root -> {
                         root.put("command", "clear");
@@ -797,6 +804,24 @@ public final class ToolRegistry {
                         }
                     });
                 }));
+    }
+
+    /**
+     * Selects the integration of a chaos tool, as camel cmd chaos-add picks it: the one the call names, else the
+     * selected one, else the only one running, else the only one with chaos switched on. When none of them is clear,
+     * the error lists the running integrations, so the agent can name one.
+     */
+    private static void selectChaosProcess(ToolContext ctx, Map<String, String> args) {
+        String name = args.get("name");
+        if (name != null && !name.isBlank()) {
+            ctx.selectProcess(name);
+        } else if (!ctx.hasProcess() && ctx.isAutoSelectSingleProcess()) {
+            try {
+                ctx.selectProcess(ProcessFinder.requireOneForChaos(null).pid());
+            } catch (CliException e) {
+                throw new ToolExecutionException(e.getMessage());
+            }
+        }
     }
 
     /** Sends the chaos action, and returns the answer of the integration; a refusal is an error with its reason. */

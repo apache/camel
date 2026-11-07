@@ -641,10 +641,11 @@ Examples:
 
 == camel cmd chaos-add --help
 Usage: camel cmd chaos-add [-h] [--timeout=<timeout>] --rule=<rules>
-                           [--rule=<rules>]... <name>
+                           [--rule=<rules>]... [<name>]
 Add chaos rules to a running integration (camel-chaos, for development only)
-      <name>                Name or pid of the running Camel integration (must
-                              match one)
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
   -h, --help                Display the help and sub-commands
       --timeout=<timeout>   How long to wait for the integration to answer, in
                               millis or as a duration such as 30s
@@ -658,10 +659,15 @@ refused with the reason. Its id (r1, r2, ...) is printed, for chaos-change and
 chaos-remove. Several --rule options (or rules separated by ;) are added
 together, all or none, so they are in place at the same time. A rule that
 matches nothing in the integration now (often a typo) is added with a warning.
+The rule is printed in plain words too, to check it does what was meant.
+
+Without a name or pid, the rule goes to the only integration that runs, or the
+only one with chaos switched on; when that is not clear, the command fails with
+the list of the running integrations (exit code 2).
 
 Examples:
-  camel cmd chaos-add myApp --rule='endpoint=kafka:orders* delay duration=2s
-rate=0.2 until=5m'
+  camel cmd chaos-add --rule='endpoint=kafka:orders* delay duration=2s rate=0.2
+until=5m'
   camel cmd chaos-add myApp --rule='endpoint=file:inbox* drop at=poll rate=0.5
 until=2m'
   camel cmd chaos-add myApp --rule='step=enrich* error exception=java.sql.
@@ -671,10 +677,11 @@ SQLException rate=0.1'
 
 == camel cmd chaos-change --help
 Usage: camel cmd chaos-change [-h] --id=<id> --rule=<rule>
-                              [--timeout=<timeout>] <name>
+                              [--timeout=<timeout>] [<name>]
 Change a chaos rule of a running integration (camel-chaos, for development only)
-      <name>                Name or pid of the running Camel integration (must
-                              match one)
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
   -h, --help                Display the help and sub-commands
       --timeout=<timeout>   How long to wait for the integration to answer, in
                               millis or as a duration such as 30s
@@ -687,9 +694,15 @@ The new rule replaces the rule with that id, and starts with new counts and a
 new end time;
 it is the next version of the id. The report keeps the replaced version.
 
+Without a name or pid, it changes the rule of the only integration that runs,
+or of the only one with chaos switched on; when that is not clear, it fails
+with the list of the running integrations (exit code 2).
+
 Examples:
-  camel cmd chaos-change myApp --id=r1 --rule='endpoint=kafka:orders* delay
+  camel cmd chaos-change --id=r1 --rule='endpoint=kafka:orders* delay
 duration=5s rate=0.5 until=5m'
+  camel cmd chaos-change myApp --id=r2 --rule='endpoint=http:stock* error
+status=503 rate=0.5'
 
 == camel cmd chaos-clear --help
 Usage: camel cmd chaos-clear [-h] [--reset] [--timeout=<timeout>] [<name>]
@@ -714,10 +727,11 @@ Examples:
   camel cmd chaos-clear myApp --reset
 
 == camel cmd chaos-remove --help
-Usage: camel cmd chaos-remove [-h] --id=<id> [--timeout=<timeout>] <name>
+Usage: camel cmd chaos-remove [-h] --id=<id> [--timeout=<timeout>] [<name>]
 Remove a chaos rule of a running integration (camel-chaos, for development only)
-      <name>                Name or pid of the running Camel integration (must
-                              match one)
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
   -h, --help                Display the help and sub-commands
       --timeout=<timeout>   How long to wait for the integration to answer, in
                               millis or as a duration such as 30s
@@ -725,8 +739,12 @@ Remove a chaos rule of a running integration (camel-chaos, for development only)
       --id=<id>             The id of the rule, such as r1
 
 The rule stays in the report as removed. Use chaos-clear to remove all rules.
+Without a name or pid, it removes the rule of the only integration that runs,
+or of the only one with chaos switched on; when that is not clear, it fails
+with the list of the running integrations (exit code 2).
 
 Examples:
+  camel cmd chaos-remove --id=r1
   camel cmd chaos-remove myApp --id=r1
 
 == camel cmd disable-processor --help
@@ -3447,10 +3465,10 @@ Get the chaos rules of running integrations, or their report (camel-chaos)
 
 Lists the current rules of the integrations that have camel-chaos switched on:
 id, version, state,
-matches, the faults that fired, the observed rate, when a rule last fired and
-the effect of its faults
-on the exchanges. With --report it shows the report instead: the verdict, the
-seed, all rules (also
+matches, the faults that fired, the observed rate, when a rule last fired, the
+effect of its faults
+on the exchanges, and the rule with what it does in plain words. With --report
+it shows the report instead: the verdict, the seed, all rules (also
 the removed and replaced versions), the counts per route, the recent faults and
 the reasons of a FAIL.
 

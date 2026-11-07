@@ -41,8 +41,8 @@ import picocli.CommandLine.Command;
          showDefaultValues = true,
          footer = {
                  "%nLists the current rules of the integrations that have camel-chaos switched on: id, version, state,",
-                 "matches, the faults that fired, the observed rate, when a rule last fired and the effect of its faults",
-                 "on the exchanges. With --report it shows the report instead: the verdict, the seed, all rules (also",
+                 "matches, the faults that fired, the observed rate, when a rule last fired, the effect of its faults",
+                 "on the exchanges, and the rule with what it does in plain words. With --report it shows the report instead: the verdict, the seed, all rules (also",
                  "the removed and replaced versions), the counts per route, the recent faults and the reasons of a FAIL.",
                  "%nExamples:",
                  "  camel get chaos",
@@ -123,6 +123,9 @@ public class ListChaos extends ProcessWatchCommand {
                 jo.put("version", r.rule.get("version"));
                 jo.put("state", r.rule.getString("state"));
                 jo.put("rule", r.rule.getString("rule"));
+                if (r.rule.get("description") != null) {
+                    jo.put("description", r.rule.getString("description"));
+                }
                 jo.put("hooks", r.rule.get("hooks"));
                 jo.put("matches", r.rule.get("matches"));
                 jo.put("fired", r.rule.get("fired"));
@@ -181,7 +184,7 @@ public class ListChaos extends ProcessWatchCommand {
                 new Column().header("NOTE").visible(notes).dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(40, OverflowBehaviour.NEWLINE).with(r -> note(r.rule)),
                 new Column().header("RULE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                        .with(r -> r.rule.getString("rule")))));
+                        .with(r -> ruleText(r.rule)))));
     }
 
     private void printReports(List<Row> integrations) {
@@ -255,7 +258,7 @@ public class ListChaos extends ProcessWatchCommand {
                     new Column().header("NOTE").visible(notes).dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(40, OverflowBehaviour.NEWLINE).with(ListChaos::note),
                     new Column().header("RULE").dataAlign(HorizontalAlign.LEFT).maxWidth(80, OverflowBehaviour.NEWLINE)
-                            .with(r -> r.getString("rule")))));
+                            .with(ListChaos::ruleText))));
         }
         JsonArray routes = report.getCollection("routes");
         if (routes != null && !routes.isEmpty()) {
@@ -358,6 +361,13 @@ public class ListChaos extends ProcessWatchCommand {
             reasons.forEach((reason, count) -> sj.add("skipped " + count + ": " + reason));
         }
         return sj.toString();
+    }
+
+    /** The rule, and below it the rule in plain words (an integration before Camel 4.24 has none). */
+    static String ruleText(JsonObject rule) {
+        String text = rule.getString("rule");
+        String words = rule.getString("description");
+        return words != null && !words.isBlank() ? text + "\n" + words : text;
     }
 
     private static long fired(JsonObject rule) {

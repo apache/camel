@@ -517,6 +517,31 @@
   wideUri=true
 > cmd browse --wide-uri=false
   (defaults)
+> cmd chaos-add --rule v
+  cmd:helpRequested=false
+  helpRequested=false
+  name=null
+  rules=["v"]
+  timeoutOption.timeout=10000
+> cmd chaos-add --rule v --timeout 7
+  timeoutOption.timeout=7
+> cmd chaos-change --id v --rule v
+  cmd:helpRequested=false
+  helpRequested=false
+  id="v"
+  name=null
+  rule="v"
+  timeoutOption.timeout=10000
+> cmd chaos-change --id v --rule v --timeout 7
+  timeoutOption.timeout=7
+> cmd chaos-remove --id v
+  cmd:helpRequested=false
+  helpRequested=false
+  id="v"
+  name=null
+  timeoutOption.timeout=10000
+> cmd chaos-remove --id v --timeout 7
+  timeoutOption.timeout=7
 > cmd disable-processor
   cmd:helpRequested=false
   helpRequested=false

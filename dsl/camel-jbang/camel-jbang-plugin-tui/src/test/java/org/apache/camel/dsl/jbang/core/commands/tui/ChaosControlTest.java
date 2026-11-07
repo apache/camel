@@ -116,12 +116,16 @@ class ChaosControlTest {
         enter();
         reply.put("id", "r1");
         reply.put("version", 2);
+        // the integration says the rule in plain words
+        reply.put("description", "fail half of the sends to http:stock* with HTTP status 503");
         key('y');
 
         assertThat(requests.get(0).getString("command")).isEqualTo("change");
         assertThat(requests.get(0).getString("id")).isEqualTo("r1");
         assertThat(requests.get(0).getString("rule")).isEqualTo("endpoint=http:stock* error status=503 rate=0.5");
-        assertThat(notifications).containsExactly("Changed chaos rule r1 (version 2)");
+        assertThat(notifications)
+                .containsExactly(
+                        "Changed chaos rule r1 (version 2): fail half of the sends to http:stock* with HTTP status 503");
     }
 
     @Test

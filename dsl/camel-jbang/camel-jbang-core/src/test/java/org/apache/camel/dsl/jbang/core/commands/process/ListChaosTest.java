@@ -49,6 +49,8 @@ class ListChaosTest extends ProcessCommandTestSupport {
         String out = printer.getStdout();
         assertThat(out).contains("ID").contains("VER").contains("STATE").contains("FIRED").contains("ENDS IN");
         assertThat(out).contains("r1").contains("active").contains("endpoint=kafka:orders* error rate=0.5");
+        // below the rule, what it does in plain words
+        assertThat(out).contains("fail half of the sends to kafka:orders*");
         // the replaced version is only in the report
         assertThat(out).doesNotContain("replaced").doesNotContain("rate=0.1");
         // fired: 4 at the sends + 1 at the steps
@@ -69,6 +71,7 @@ class ListChaosTest extends ProcessCommandTestSupport {
         assertThat(row.getString("id")).isEqualTo("r1");
         assertThat(row.getInteger("version")).isEqualTo(2);
         assertThat(row.getString("state")).isEqualTo("active");
+        assertThat(row.getString("description")).isEqualTo("fail half of the sends to kafka:orders*");
         assertThat(row.getLong("endsIn")).isEqualTo(30000);
         JsonArray hooks = row.getCollection("hooks");
         assertThat(hooks).containsExactly("send", "step");
@@ -366,6 +369,7 @@ class ListChaosTest extends ProcessCommandTestSupport {
     private static JsonObject chaosOn() {
         JsonObject current = rule(2, "active", "endpoint=kafka:orders* error rate=0.5 expect=orders:100 within=1m");
         current.put("endsIn", 30000L);
+        current.put("description", "fail half of the sends to kafka:orders*");
         JsonObject replaced = rule(1, "replaced", "endpoint=kafka:orders* error rate=0.1");
         JsonObject expectation = new JsonObject();
         expectation.put("route", "orders");

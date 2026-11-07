@@ -165,6 +165,8 @@ class RuntimeToolsChaosTest {
         JsonObject added = tools.camel_runtime_chaos_add("shop", RULE_ERROR);
         assertThat(added.getString("id")).isEqualTo("r1");
         assertThat(added.getInteger("version")).isEqualTo(1);
+        // the rule in plain words: route start sends to direct:target
+        assertThat(added.getString("description")).isEqualTo("fail every send to direct:target");
         // the fault is in place
         assertThat(send()).isNotNull();
 
@@ -310,11 +312,34 @@ class RuntimeToolsChaosTest {
         assertThatThrownBy(() -> tools.camel_runtime_chaos_add("orders", RULE_ERROR))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageStartingWith("No unique Camel process found matching 'orders'");
+        // without a name, neither has chaos switched on: the agent gets the list to name one
         assertThatThrownBy(() -> tools.camel_runtime_chaos_clear(null, null))
                 .isInstanceOf(ToolCallException.class)
-                .hasMessageStartingWith("Multiple Camel processes running");
+                .hasMessageStartingWith("2 Camel integrations are running and none has chaos switched on: ")
+                // named as camel ps names them (here from the command line of the process), with their pid
+                .hasMessageContaining("pid " + parent.pid())
+                .hasMessageContaining("pid " + grandparent.pid())
+                .hasMessageContaining("chaos off)")
+                .hasMessageEndingWith(". Give the name or pid of one.");
         assertThatThrownBy(() -> tools.camel_runtime_chaos_list("billing"))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageStartingWith("No unique Camel process found matching 'billing'");
+
+        // the only one with chaos switched on is the one without a name
+        Files.writeString(dir.resolve(grandparent.pid() + "-status.json"),
+                "{\"context\":{\"name\":\"orders-b\",\"state\":\"Started\"},\"chaos\":{\"enabled\":true,\"rules\":[]}}");
+        JsonObject list = tools.camel_runtime_chaos_list(null);
+        assertThat(list.getBoolean("enabled")).isTrue();
+        assertThat(list.<List<Object>> getCollection("rules")).isEmpty();
+    }
+
+    @Test
+    void withoutANameThisJvmIsNeverTheIntegration() throws Exception {
+        // the integration of the test runs in this JVM, which the lookup without a name never takes
+        start(null, Map.of("camel.chaos.enabled", "true"));
+
+        assertThatThrownBy(() -> tools.camel_runtime_chaos_add(null, RULE_ERROR))
+                .isInstanceOf(ToolCallException.class)
+                .hasMessageStartingWith("No running Camel integrations");
     }
 }

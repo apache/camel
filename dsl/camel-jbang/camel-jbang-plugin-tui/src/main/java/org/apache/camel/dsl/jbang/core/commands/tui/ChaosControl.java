@@ -371,8 +371,8 @@ final class ChaosControl {
             return;
         }
         String done = switch (command) {
-            case ADD -> "Added chaos rule " + idsOf(reply);
-            case CHANGE -> "Changed chaos rule " + id + " (version " + reply.get("version") + ")";
+            case ADD -> "Added chaos rule " + idsOf(reply) + inWords(reply);
+            case CHANGE -> "Changed chaos rule " + id + " (version " + reply.get("version") + ")" + inWords(reply);
             case REMOVE -> "Removed chaos rule " + id;
             case CLEAR -> "Removed all chaos rules";
             case RESET -> "New chaos experiment: no rules, a new report";
@@ -392,6 +392,12 @@ final class ChaosControl {
         if (ctx.notificationCallback != null) {
             ctx.notificationCallback.accept(done, false);
         }
+    }
+
+    /** The rule in plain words after a colon, as the integration says it, so the user sees what it does. */
+    private static String inWords(JsonObject reply) {
+        String words = reply.getString("description");
+        return words != null && !words.isBlank() ? ": " + words : "";
     }
 
     private static String idsOf(JsonObject reply) {

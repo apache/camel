@@ -78,9 +78,17 @@ abstract class CamelChaosAction extends ActionBaseCommand {
     }
 
     private boolean chaosOn(CamelProcess process) {
-        JsonObject status = loadStatus(process.pid());
-        return status != null && status.get("chaos") instanceof JsonObject chaos
-                && chaos.getBooleanOrDefault("enabled", false);
+        return ProcessFinder.chaosOn(process);
+    }
+
+    /**
+     * The one integration that chaos-add, chaos-change and chaos-remove act on: the one the name or pid matches, else
+     * the only one running, else the only one with chaos switched on (a rule id is known only in its integration). It
+     * fails with exit code 3 when the name matches none or several, and with exit code 2 without a name when it is not
+     * clear which one, with the list of the running integrations (see {@link ProcessFinder#requireOneForChaos}).
+     */
+    protected CamelProcess findChaosTarget(String name) {
+        return ProcessFinder.requireOneForChaos(name);
     }
 
     /**
@@ -115,6 +123,15 @@ abstract class CamelChaosAction extends ActionBaseCommand {
      * The line printed for the answer of an integration that took the command.
      */
     protected abstract String describe(JsonObject answer);
+
+    /**
+     * The rule of the answer in plain words, after a colon (empty when the integration does not send it, as before
+     * Camel 4.24).
+     */
+    protected static String inWords(JsonObject answer) {
+        String words = answer.getString("description");
+        return words != null && !words.isBlank() ? ": " + words : "";
+    }
 
     /**
      * The warnings of the answer, one per line after the line of the answer: the rules that match nothing in the
