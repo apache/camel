@@ -727,6 +727,28 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 }
             }
 
+            if (!suspendOnly && !deferredConsumers.isEmpty()) {
+                if (timeoutOccurred.get()) {
+                    // the shutdown timed out while the deferred consumers were prepared (such as a seda consumer
+                    // draining its queue), and the thread that called it shuts down the routes now
+                    LOG.debug("Timeout occurred during graceful shutdown, the shutdown task stops now");
+                    return;
+                }
+                // the deferred consumers have routed messages while this task waited, so prepare the services again
+                // (such as an aggregator with forceCompletionOnStop completing the groups of these messages) while
+                // the routes can still process them, as stopping a consumer stops the processors of its route
+                boolean forced = context.getShutdownStrategy().isForceShutdown();
+                boolean suppress = context.getShutdownStrategy().isSuppressLoggingOnTimeout();
+                for (RouteStartupOrder order : routes) {
+                    for (Service service : order.getServices()) {
+                        if (service instanceof Consumer) {
+                            continue;
+                        }
+                        prepareShutdown(service, false, forced, true, suppress);
+                    }
+                }
+            }
+
             // now all messages has been completed then stop the deferred consumers
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
                 Consumer consumer = deferred.getConsumer();
