@@ -17,6 +17,8 @@
 package org.apache.camel.maven.htmlxlsx.model;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.camel.maven.htmlxlsx.TestUtil;
 import org.junit.jupiter.api.Test;
@@ -99,5 +101,53 @@ public class EipAttributeTest extends GetterAndSetterTest<EipAttribute> {
         attribute2.setId(SOME_VALUE);
         result = attribute1.equals(attribute2);
         assertFalse(result);
+    }
+
+    @Test
+    public void testEqualsWithoutId() {
+
+        // The id is only set when the deserialized key happens to be "id",
+        // so an attribute carrying any other key has a null id.
+        EipAttribute noId = new EipAttribute();
+        EipAttribute otherNoId = new EipAttribute();
+
+        assertEquals(noId, otherNoId);
+        assertNotEquals(noId, getInstance());
+        assertNotEquals(getInstance(), noId);
+    }
+
+    @Test
+    public void testHashCode() {
+
+        EipAttribute attribute1 = getInstance();
+        EipAttribute attribute2 = getInstance();
+
+        // Equal attributes must agree on their hash code, so that they
+        // collapse to one entry in a hash based collection.
+        assertEquals(attribute1, attribute2);
+        assertEquals(attribute1.hashCode(), attribute2.hashCode());
+
+        attribute2.setIndex(attribute1.getIndex() + 1);
+        assertEquals(attribute1.hashCode(), attribute2.hashCode());
+
+        Set<EipAttribute> set = new HashSet<>();
+        set.add(attribute1);
+        set.add(attribute2);
+        assertEquals(1, set.size());
+
+        assertEquals(new EipAttribute().hashCode(), new EipAttribute().hashCode());
+    }
+
+    @Test
+    public void testCompareToDoesNotOverflow() {
+
+        EipAttribute high = getInstance();
+        high.setIndex(Integer.MAX_VALUE);
+
+        EipAttribute low = getInstance();
+        low.setIndex(-1);
+
+        assertTrue(high.compareTo(low) > 0);
+        assertTrue(low.compareTo(high) < 0);
     }
 }

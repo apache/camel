@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
@@ -155,7 +156,7 @@ public class EipAttribute implements Comparable<EipAttribute> {
         if (o == null) {
             return 1;
         }
-        return index - o.index;
+        return Integer.compare(index, o.index);
     }
 
     @Override
@@ -169,7 +170,13 @@ public class EipAttribute implements Comparable<EipAttribute> {
             return false;
         }
 
-        return id.equals(((EipAttribute) o).id);
+        return Objects.equals(id, ((EipAttribute) o).id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hashCode(id);
     }
 
     @Override
