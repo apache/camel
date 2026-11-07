@@ -425,6 +425,34 @@ class EndpointsTab extends AbstractTableTab {
         ChaosHere.hint(spans, ctx.findSelectedIntegration());
     }
 
+    /**
+     * Selects the endpoint a route sends to (from About, where the URI is as the sources have it), with its details;
+     * the filter is cleared when it hides the endpoint.
+     */
+    void selectEndpoint(String uri, String routeId) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return;
+        }
+        String base = AboutView.baseUri(uri);
+        for (int attempt = 0; attempt < 2; attempt++) {
+            List<EndpointInfo> sorted = new ArrayList<>(info.endpoints);
+            sorted.removeIf(ep -> !matchesFilter(ep));
+            sorted.sort(this::sortEndpoint);
+            for (int i = 0; i < sorted.size(); i++) {
+                EndpointInfo ep = sorted.get(i);
+                if ("out".equals(ep.direction) && (routeId == null || routeId.equals(ep.routeId))
+                        && base.equals(AboutView.baseUri(ep.uri))) {
+                    tableState.select(i);
+                    panelMode = PANEL_DETAIL;
+                    detailScroll = 0;
+                    return;
+                }
+            }
+            filter = 0;
+        }
+    }
+
     /** The endpoint selected in the table, as filtered and sorted. */
     private EndpointInfo selectedEndpoint(IntegrationInfo info) {
         Integer sel = tableState.selected();

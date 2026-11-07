@@ -36,6 +36,18 @@ class CamelMonitorParseKeyTest {
     }
 
     @Test
+    void parseKeyPlus() {
+        KeyEvent ke = McpFacade.parseKey("+");
+        assertNotNull(ke);
+        assertEquals(KeyCode.CHAR, ke.code());
+        assertEquals('+', ke.character());
+        ke = McpFacade.parseKey("Ctrl++");
+        assertNotNull(ke);
+        assertEquals('+', ke.character());
+        assertTrue(ke.hasCtrl());
+    }
+
+    @Test
     void parseKeyEnter() {
         KeyEvent ke = McpFacade.parseKey("enter");
         assertNotNull(ke);

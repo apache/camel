@@ -809,7 +809,7 @@ final class ChaosRule {
 
     /** Whether the route is one of {@code in=} (true for a rule without it). */
     boolean matchesIn(String routeId) {
-        return in == null || routeId != null && ChaosPatterns.matches(in, routeId);
+        return in == null || (routeId != null && ChaosPatterns.matches(in, routeId));
     }
 
     /** Whether the rule targets this route id or step id (for {@code route=} and {@code step=}). */

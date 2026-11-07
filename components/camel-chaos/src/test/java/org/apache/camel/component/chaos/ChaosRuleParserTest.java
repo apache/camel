@@ -164,8 +164,13 @@ class ChaosRuleParserTest {
         assertThat(ChaosRuleParser.readsBody("${bodyAs(String)} == 'x'")).isTrue();
         assertThat(ChaosRuleParser.readsBody("${in.body.length} > 10")).isTrue();
         assertThat(ChaosRuleParser.readsBody("${jsonpath($.country)} == 'ES'")).isTrue();
+        assertThat(ChaosRuleParser.readsBody("${mandatoryBodyAs(String)} == 'x'")).isTrue();
+        assertThat(ChaosRuleParser.readsBody("${prettyBody} contains 'x'")).isTrue();
+        assertThat(ChaosRuleParser.readsBody("${bodyOneLine} contains 'x'")).isTrue();
         assertThat(ChaosRuleParser.readsBody("${bodyType} == 'java.lang.String'")).isFalse();
         assertThat(ChaosRuleParser.readsBody("${header.country} == 'ES'")).isFalse();
+        assertThat(ChaosRuleParser.readsBody("${header.somebody} == 'x'")).isFalse();
+        assertThat(ChaosRuleParser.readsBody("${header.antibody} == 'x' && ${bodyType} != null")).isFalse();
     }
 
     @Test

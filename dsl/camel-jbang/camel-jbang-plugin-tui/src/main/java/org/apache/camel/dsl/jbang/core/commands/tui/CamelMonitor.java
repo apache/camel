@@ -1354,7 +1354,7 @@ public class CamelMonitor extends CamelCommand {
             }
             if (!isPhantomSelected()) {
                 if (ke.isChar('4')) {
-                    return tabRegistry.handleTabKey(TAB_ACTIVITY);
+                    return tabRegistry.handleTabKey(TAB_TIMELINE);
                 }
                 if (ke.isChar('5')) {
                     return tabRegistry.handleTabKey(TAB_DIAGRAM);
@@ -1513,6 +1513,9 @@ public class CamelMonitor extends CamelCommand {
 
         int tab = tabRegistry.selectedTabIndex();
         if (ke.isConfirm() && tab == TAB_OVERVIEW) {
+            if (tabRegistry.overviewTab().openFromAbout()) {
+                return true;
+            }
             tabRegistry.overviewTab().selectCurrentIntegration();
             if (ctx.selectedPid != null) {
                 if (isPhantomSelected()) {
@@ -2041,7 +2044,7 @@ public class CamelMonitor extends CamelCommand {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_SOURCE, "2", "Source")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "3", "Log")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "4", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_TIMELINE, "4", "Timeline")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "5", "Diagram")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "6", "Route")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "7", "Endpoint")),
@@ -2165,10 +2168,6 @@ public class CamelMonitor extends CamelCommand {
             badgeTexts[TAB_ERRORS] = "(" + errorCount + ")";
             badgeStyles[TAB_ERRORS] = red;
         }
-        int activityCount = hasSelection ? sel.activity.size() : 0;
-        if (activityCount > 0) {
-            badgeTexts[TAB_ACTIVITY] = "(" + activityCount + ")";
-        }
     }
 
     private void openFilesPopup() {
@@ -2203,7 +2202,6 @@ public class CamelMonitor extends CamelCommand {
         ctx.fireAction(pid, root);
         dataService.metrics().resetStats(pid);
 
-        info.activity = List.of();
         info.errors = new ArrayList<>();
         dataService.traces().set(Collections.emptyList());
         dataService.traceFilePositions().clear();

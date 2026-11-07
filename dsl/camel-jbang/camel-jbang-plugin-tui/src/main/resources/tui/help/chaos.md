@@ -109,9 +109,9 @@ Only when chaos is on in the integration.
 ## The 🎲 marks
 
 An exchange that a chaos rule faulted is marked with the dice and the id
-of the rule (`🎲r1`) on the Activity tab (after the exchange) and the Errors
-tab (before the exception), and its detail on the Activity, Errors and
-Inspect tabs says "injected by chaos rule r1" with the rule. So a failure
+of the rule (`🎲r1`) in the exchanges of a second on the Timeline tab and
+on the Errors tab (before the exception), and its detail on the Timeline,
+Errors and Inspect tabs says "injected by chaos rule r1" with the rule. So a failure
 made on purpose is not debugged as a real one. An error knows its rule
 from the `CamelChaosRule` exchange property; for the other tabs the screen
 remembers the exchanges of the recent faults of the chaos report while it
