@@ -139,7 +139,7 @@ final class AboutView {
 
     /**
      * The keys of What happened: + zooms in on the last trouble in the window (a failure, a handled error, a
-     * redelivery, a route down), - zooms out, and ← → move a zoomed window.
+     * redelivery, a route down, a circuit breaker open), - zooms out, and ← → move a zoomed window.
      */
     boolean handleKeyEvent(KeyEvent ke, IntegrationInfo info) {
         if (info == null) {
@@ -226,7 +226,7 @@ final class AboutView {
         for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, routeOrder(info), windowEnd, seconds)) {
             for (int i = seconds - 1; i >= 0; i--) {
                 if (r.failed()[i] > 0 || r.handled()[i] > 0 || r.recovered()[i] > 0 || r.attempts()[i] > 0
-                        || r.down()[i] > 0) {
+                        || r.down()[i] > 0 || r.open()[i] > 0) {
                     last = Math.max(last, windowEnd - seconds + 1 + i);
                     break;
                 }
@@ -350,7 +350,7 @@ final class AboutView {
             long max = 1;
             // completed, recovered, handled, failed, down, redelivery attempts: the height is the exchanges done, the
             // attempts only colour the column (an exchange retried many times is still one exchange)
-            long[][] col = new long[columns][6];
+            long[][] col = new long[columns][7];
             for (int i = 0; i < seconds; i++) {
                 long[] c = col[i / per];
                 c[0] += Math.max(0, r.completed()[i]);
@@ -359,6 +359,7 @@ final class AboutView {
                 c[3] += Math.max(0, r.failed()[i]);
                 c[4] += Math.max(0, r.down()[i]);
                 c[5] += Math.max(0, r.attempts()[i]);
+                c[6] = Math.max(c[6], r.open()[i]);
             }
             for (long[] c : col) {
                 max = Math.max(max, c[0] + c[1] + c[2] + c[3]);
@@ -367,6 +368,9 @@ final class AboutView {
                 long t = c[0] + c[1] + c[2] + c[3];
                 if (c[4] > 0) {
                     spans.add(Span.styled("░", Theme.error()));
+                } else if (c[6] > 0) {
+                    // a circuit breaker of the route was open (half open dim), as on the Timeline
+                    spans.add(Span.styled("▒", c[6] >= 2 ? Theme.notice() : Theme.muted()));
                 } else if (t == 0 && c[5] == 0) {
                     spans.add(Span.styled("·", Theme.muted()));
                 } else {
@@ -379,6 +383,10 @@ final class AboutView {
             }
             long done = r.total(r.completed()) + r.total(r.recovered()) + r.total(r.handled()) + r.total(r.failed());
             spans.add(Span.styled("  " + done, Theme.success()));
+            if (r.openSeconds() > 0) {
+                spans.add(Span.styled("  ⚡ open " + r.openSeconds() + "s " + ago(last - lastAt(r.open(), end, seconds)),
+                        Theme.notice()));
+            }
             // the worst that happened, when it last did, and for a recovery the failure it recovered from (a failed or
             // handled one has its cause on the Last 5m line and on the Timeline)
             long[] worst = r.total(r.failed()) > 0 ? r.failed() : r.total(r.handled()) > 0 ? r.handled()

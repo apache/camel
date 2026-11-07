@@ -145,6 +145,27 @@ class AboutViewTest {
     }
 
     @Test
+    void theSecondsACircuitBreakerOfARouteWasOpen() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        RouteInfo r = new RouteInfo();
+        r.routeId = "orders";
+        info.routes.add(r);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        TimelineJson t = new TimelineJson(T0 / 1000 + 299, 300);
+        long[] states = new long[300];
+        for (int i = 0; i < 300; i++) {
+            t.route("orders", "completed", i, 1);
+            states[i] = i >= 230 && i < 240 ? 2 : 0;
+        }
+        ctx.timeline.merge("1234", t.breaker("orders", "cb1", states).json(), true);
+        AboutView about = new AboutView(ctx);
+        // the bolt is two columns wide: the screen has a blank cell after it
+        String screen = render(about, info).replace("⚡ ", "⚡");
+        assertThat(screen).contains("⚡ open 10s 1m ago").contains("▒");
+    }
+
+    @Test
     void theSendsOfARouteToAnEndpoint() {
         IntegrationInfo info = new IntegrationInfo();
         info.endpoints.add(endpoint("http://localhost:8765/ship?bridgeEndpoint=true", "out", "orders", 7));
