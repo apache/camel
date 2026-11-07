@@ -2086,6 +2086,10 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        if (suspendOnly) {
+            // only complete the groups when stopping (not when suspending)
+            return;
+        }
         // we are shutting down, so force completion if this option was enabled
         // but only do this when forced=false, as that is when we have chance to
         // send out new messages to be routed by Camel. When forced=true, then
@@ -2099,6 +2103,12 @@ public class AggregateProcessor extends BaseProcessorSupport
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         // not in use
         return true;
+    }
+
+    @Override
+    public int getPendingExchangesSize(boolean suspendOnly) {
+        // a suspend keeps the groups (they are not completed), so there is nothing to wait for
+        return suspendOnly ? 0 : getPendingExchangesSize();
     }
 
     @Override
