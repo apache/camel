@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Category;
@@ -48,6 +49,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
@@ -341,7 +343,9 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                 Set<SedaConsumer> queueConsumers = getQueueConsumers();
                 List<Processor> processors = new ArrayList<>(queueConsumers.size());
                 for (SedaConsumer consumer : queueConsumers) {
-                    processors.add(consumer.getProcessor());
+                    // the consumer starts and stops its own processor (its route), so the multicast processor, which
+                    // is stopped and created again when a consumer starts or stops, must not stop it
+                    processors.add(new ConsumerProcessor(consumer.getAsyncProcessor()));
                 }
                 // create multicast processor
                 multicastStarted = false;
@@ -774,5 +778,28 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         // clear queue, as we are shutdown, so if re-created then the queue must be updated
         queue = null;
         ref = null;
+    }
+
+    /**
+     * The processor of a consumer, as an output of the multicast processor of the consumers, which does not start or
+     * stop the processor of the consumer.
+     */
+    private static final class ConsumerProcessor extends AsyncProcessorSupport {
+
+        private final AsyncProcessor processor;
+
+        private ConsumerProcessor(AsyncProcessor processor) {
+            this.processor = processor;
+        }
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            return processor.process(exchange, callback);
+        }
+
+        @Override
+        public String toString() {
+            return processor.toString();
+        }
     }
 }
