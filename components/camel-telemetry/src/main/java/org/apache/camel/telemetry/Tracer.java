@@ -24,13 +24,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.spi.BacklogTracer;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.CamelTracingService;
@@ -70,7 +68,6 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
     private final TracingEventNotifier eventNotifier = new TracingEventNotifier();
     private final SpanStorageManager spanStorageManager = new SpanStorageManagerExchange();
     private final SpanDecoratorManager spanDecoratorManager = new SpanDecoratorManagerImpl();
-    private BacklogTracer backlogTracer;
 
     /*
      * It has to be provided by the specific implementation
@@ -211,8 +208,6 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
         camelContext.getCamelContextExtension().addLogListener(new TracingLogListener());
         InterceptStrategy interceptStrategy = new TraceProcessorsInterceptStrategy(this);
         camelContext.getCamelContextExtension().addInterceptStrategy(interceptStrategy);
-
-        backlogTracer = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
 
         initTracer();
         ServiceHelper.startService(eventNotifier);
@@ -355,19 +350,7 @@ public abstract class Tracer extends ServiceSupport implements CamelTracingServi
                 spanDecorator.getExtractor(exchange));
         span.setTag(TagConstants.OP, op.toString());
 
-        if (backlogTracer != null && backlogTracer.isActivityEnabled() && op == Op.EVENT_SENT) {
-            // wrap with recording span to capture decorator attributes for activity enrichment
-            RecordingSpan recording = new RecordingSpan(span);
-            spanDecorator.beforeTracingEvent(recording, exchange, endpoint);
-            // store recorded tags on exchange for BacklogTracer activity to pick up
-            Map<String, String> tags = recording.getRecordedTags();
-            if (!tags.isEmpty()) {
-                exchange.setProperty(ExchangePropertyKey.ACTIVITY_SPAN_TAGS, tags);
-            }
-            // continue with the real span for activation/storage
-        } else {
-            spanDecorator.beforeTracingEvent(span, exchange, endpoint);
-        }
+        spanDecorator.beforeTracingEvent(span, exchange, endpoint);
 
         spanLifecycleManager.activate(span);
         spanStorageManager.push(exchange, span);

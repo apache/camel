@@ -179,7 +179,7 @@ final class ChaosTargets {
      * context has now. The other hooks, and the hooks of the other targets, are those of the rule.
      */
     static Set<Hook> hooksThatCanFire(Reach reach, ChaosRule rule) {
-        if (rule.target != ChaosRule.Target.ENDPOINT && rule.target != ChaosRule.Target.COMPONENT
+        if ((rule.target != ChaosRule.Target.ENDPOINT && rule.target != ChaosRule.Target.COMPONENT)
                 || rule.lifecycle != null || reach == null) {
             return rule.hooks;
         }

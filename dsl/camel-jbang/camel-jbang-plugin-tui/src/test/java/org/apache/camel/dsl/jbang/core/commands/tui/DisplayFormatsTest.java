@@ -48,11 +48,11 @@ class DisplayFormatsTest {
 
     @Test
     void exchangeIdsByTheirCounter() {
-        assertThat(ActivityTab.shortExchangeId("AD50EEC2B14A8A3-0000000000000001")).isEqualTo("AD50EE…-1");
-        assertThat(ActivityTab.shortExchangeId("AD50EEC2B14A8A3-000000000000000A")).isEqualTo("AD50EE…-A");
-        assertThat(ActivityTab.shortExchangeId("AD50EEC2B14A8A3-0000000000000000")).isEqualTo("AD50EE…-0");
-        assertThat(ActivityTab.shortExchangeId("no-dash-")).isEqualTo("no-dash-");
-        assertThat(ActivityTab.shortExchangeId("plain")).isEqualTo("plain");
-        assertThat(ActivityTab.shortExchangeId(null)).isEmpty();
+        assertThat(ErrorsTab.shortExchangeId("AD50EEC2B14A8A3-0000000000000001")).isEqualTo("AD50EE…-1");
+        assertThat(ErrorsTab.shortExchangeId("AD50EEC2B14A8A3-000000000000000A")).isEqualTo("AD50EE…-A");
+        assertThat(ErrorsTab.shortExchangeId("AD50EEC2B14A8A3-0000000000000000")).isEqualTo("AD50EE…-0");
+        assertThat(ErrorsTab.shortExchangeId("no-dash-")).isEqualTo("no-dash-");
+        assertThat(ErrorsTab.shortExchangeId("plain")).isEqualTo("plain");
+        assertThat(ErrorsTab.shortExchangeId(null)).isEmpty();
     }
 }

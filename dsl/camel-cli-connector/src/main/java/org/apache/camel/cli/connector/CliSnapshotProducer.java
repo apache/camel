@@ -71,7 +71,7 @@ public interface CliSnapshotProducer {
     JsonObject receive() throws Exception;
 
     /**
-     * Route activity.
+     * The last seconds of the timeline (what the routes did per second, the errors and the kept exchanges).
      */
-    JsonObject activity() throws Exception;
+    JsonObject timeline() throws Exception;
 }

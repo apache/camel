@@ -3325,7 +3325,6 @@ Get status of Camel integrations (use get --help to see sub commands)
   -h, --help    Display the help and sub-commands
       --watch   Execute periodically and showing output fullscreen
 Commands:
-  activity          Get recent completed exchange activity
   bean              List beans in a running Camel integration
   blocked           Get blocked messages of Camel integrations
   chaos             Get the chaos rules of running integrations, or their
@@ -3357,6 +3356,11 @@ Commands:
   source            Display Camel route source code
   sql-trace         Get SQL query trace data
   startup-recorder  Display startup recording
+  timeline          Get what the routes did per second, the errors, and the
+                      failed and slowest exchanges
+  about             Get what an integration does and what has happened: its
+                      purpose, what comes in, its routes, what goes out, and
+                      the last minutes
   transformer       Get list of data type transformers
   variable          List variables of Camel integrations
   vault             List secrets from security vaults
@@ -3367,34 +3371,28 @@ Examples:
   camel get health
   camel get endpoint
 
-== camel get activity --help
-Usage: camel get activity [-h] [--json] [--short-uri] [--watch] [--wide-uri]
-                          [--duration=<duration>] [--filter=<filter>]
-                          [--limit=<limit>] [--sort=<sort>] [<name>]
-Get recent completed exchange activity
-      [<name>]            Name or pid of running Camel integration
-                            Default: *
-  -h, --help              Display the help and sub-commands
-      --watch             Execute periodically and showing output fullscreen
-      --json              Output in JSON Format
+== camel get about --help
+Usage: camel get about [-h] [--json] [--watch] [--duration=<duration>] [<name>]
+Get what an integration does and what has happened: its purpose, what comes in,
+its routes, what goes out, and the last minutes
+      [<name>]   Name or pid of running Camel integration
+                   Default: *
+  -h, --help     Display the help and sub-commands
+      --watch    Execute periodically and showing output fullscreen
+      --json     Output in JSON Format
       --duration=<duration>
-                          How long to keep watching or following, in millis or
-                            as a duration such as 30s (default: until Enter is
-                            pressed)
-                            Default: 0
-      --sort=<sort>       Sort by pid, name, age, elapsed, or since
-                            Default: since
-      --limit=<limit>     Filter activity by limiting to the given number of
-                            rows
-                            Default: 0
-      --filter=<filter>   Filter activity by route ID
-      --short-uri         List endpoint URI without query parameters (short)
-      --wide-uri          List endpoint URI in full details
+                 How long to keep watching or following, in millis or as a
+                   duration such as 30s (default: until Enter is pressed)
+                   Default: 0
+
+The purpose is the comment at the top of the main source file, else the
+descriptions of the routes.
+The last minutes come from the timeline the integration records (the timeline
+dev console, on in profile dev).
 
 Examples:
-  camel get activity
-  camel get activity --filter=route1
-  camel get activity --watch
+  camel get about
+  camel get about myapp --json
 
 == camel get bean --help
 Usage: camel get bean [-h] [--dsl] [--internal] [--json] [--nulls[=<nulls>]]
@@ -4235,6 +4233,50 @@ Display startup recording
 Examples:
   camel get startup-recorder
   camel get startup-recorder --json
+
+== camel get timeline --help
+Usage: camel get timeline [-h] [--errors] [--exchanges] [--json] [--short-uri]
+                          [--watch] [--wide-uri] [--duration=<duration>]
+                          [--filter=<filter>] [--limit=<limit>]
+                          [--seconds=<seconds>] [--sort=<sort>] [<name>]
+Get what the routes did per second, the errors, and the failed and slowest
+exchanges
+      [<name>]              Name or pid of running Camel integration
+                              Default: *
+  -h, --help                Display the help and sub-commands
+      --watch               Execute periodically and showing output fullscreen
+      --json                Output in JSON Format
+      --duration=<duration> How long to keep watching or following, in millis
+                              or as a duration such as 30s (default: until
+                              Enter is pressed)
+                              Default: 0
+      --seconds=<seconds>   The number of seconds to show, up to the seconds
+                              the integration records
+                              Default: 60
+      --filter=<filter>     Filter by route ID (pattern)
+      --exchanges           List the exchanges kept per second (the failed,
+                              handled and recovered ones and the 3 slowest)
+                              instead of the routes
+      --errors              List the errors by route and exception instead of
+                              the routes
+      --sort=<sort>         Sort the exchanges by pid, name, age, elapsed (the
+                              slowest first), or since (the newest first)
+                              Default: since
+      --limit=<limit>       Filter the exchanges by limiting to the given
+                              number of rows
+                              Default: 0
+      --short-uri           List endpoint URI without query parameters (short)
+      --wide-uri            List endpoint URI in full details
+
+The integration records the last 5 minutes (the timeline dev console, on in
+profile dev).
+
+Examples:
+  camel get timeline
+  camel get timeline --seconds=300
+  camel get timeline --exchanges --sort=elapsed
+  camel get timeline --errors
+  camel get timeline --filter=orders --watch
 
 == camel get transformer --help
 Usage: camel get transformer [-h] [--json] [--sort=<sort>] [<name>]
