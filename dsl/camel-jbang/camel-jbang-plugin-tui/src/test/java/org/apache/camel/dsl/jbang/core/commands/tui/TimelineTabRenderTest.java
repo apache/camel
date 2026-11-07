@@ -258,6 +258,23 @@ class TimelineTabRenderTest {
     }
 
     @Test
+    void theSecondsACircuitBreakerWasOpen() {
+        long[] states = new long[60];
+        for (int i = 40; i < 52; i++) {
+            states[i] = i < 50 ? 2 : 1;
+        }
+        TimelineJson t = TimelineTabRenderTest.outage(T0 / 1000 + 59, 60, 0).breaker("orders", "cb1", states);
+        ctx.timeline.merge("1234", t.json(), true);
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        // the bolt is two columns wide: the screen has a blank cell after it
+        String screen = TuiTestHelper.renderToString(tab, 160, 40).replace("⚡ ", "⚡");
+        assertThat(screen).contains("▒ circuit breaker open").contains("⚡ open 10s");
+        String orders = screen.lines().filter(l -> l.contains("orders") && l.contains("⚡")).findFirst().orElseThrow();
+        assertThat(orders.chars().filter(c -> c == '▒').count()).isGreaterThanOrEqualTo(12);
+        assertThat(screen.lines().filter(l -> l.contains("shipping")).findFirst().orElseThrow()).doesNotContain("▒");
+    }
+
+    @Test
     void enterShowsTheExchangesOfTheSecondAtTheCursorAndOneInDetail() {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         TuiTestHelper.renderToString(tab, 160, 40);

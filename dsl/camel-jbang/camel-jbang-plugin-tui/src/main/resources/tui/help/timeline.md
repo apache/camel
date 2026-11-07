@@ -42,7 +42,12 @@ The colour is the worst that happened to them that second:
 - red: failed
 
 A `·` is a second with no exchange, and a red `░` is a second a chaos
-rule had the route down (`stall` or a lifecycle fault). A mark says what
+rule had the route down (`stall` or a lifecycle fault). A `▒` is a second
+a circuit breaker of the route was open (dim: half open), so its calls
+went to the fallback or failed fast, and the route says `⚡ open 12s`:
+the Circuit Breaker EIP (camel-resilience4j,
+camel-microprofile-fault-tolerance) or the throttling exception route
+policy. A mark says what
 happened to the route then: `▶` started, `■` stopped, `↻` reloaded, `✕`
 removed, `!` a restart failed. At the right: the
 exchanges per second over the window, and the worst count.

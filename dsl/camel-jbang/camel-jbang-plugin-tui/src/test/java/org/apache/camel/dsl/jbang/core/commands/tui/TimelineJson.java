@@ -34,6 +34,7 @@ final class TimelineJson {
     private final Map<String, Map<String, long[]>> routes = new LinkedHashMap<>();
     private final List<JsonObject> errors = new ArrayList<>();
     private final List<JsonObject> exchanges = new ArrayList<>();
+    private final List<JsonObject> breakers = new ArrayList<>();
     private final long[] done;
 
     TimelineJson(long end, int seconds) {
@@ -63,6 +64,17 @@ final class TimelineJson {
         }
         e.put("counts", list(counts));
         errors.add(e);
+        return this;
+    }
+
+    /** A circuit breaker of a route, per second 2 open, 1 half open, 0 closed. */
+    TimelineJson breaker(String routeId, String id, long[] states) {
+        JsonObject cb = new JsonObject();
+        cb.put("routeId", routeId);
+        cb.put("id", id);
+        cb.put("kind", "resilience4j");
+        cb.put("states", list(states));
+        breakers.add(cb);
         return this;
     }
 
@@ -116,6 +128,9 @@ final class TimelineJson {
         root.put("routes", rs);
         if (!errors.isEmpty()) {
             root.put("errors", errors);
+        }
+        if (!breakers.isEmpty()) {
+            root.put("circuitBreakers", breakers);
         }
         root.put("exchanges", exchanges);
         try {

@@ -63,7 +63,18 @@ final class Timeline {
      * exchange completed after a redelivery in this route; the attempts are the redeliveries tried in it.
      */
     record RouteSeries(String route, long[] completed, long[] recovered, long[] handled, long[] failed, long[] inflight,
-            long[] mean, long[] p95, long[] max, long[] down, long[] attempts, String[] events) {
+            long[] mean, long[] p95, long[] max, long[] down, long[] attempts, String[] events, long[] open) {
+
+        /** The seconds a circuit breaker of the route was open (not half open). */
+        long openSeconds() {
+            long n = 0;
+            for (long v : open) {
+                if (v >= 2) {
+                    n++;
+                }
+            }
+            return n;
+        }
 
         long total(long[] values) {
             long sum = 0;
@@ -123,6 +134,8 @@ final class Timeline {
         // the faults per second of each chaos rule, and the routes a rule had down
         final TreeMap<Long, Map<String, Long>> faults = new TreeMap<>();
         final TreeMap<Long, Set<String>> down = new TreeMap<>();
+        // the routes with a circuit breaker not closed per second: 2 open, 1 half open
+        final TreeMap<Long, Map<String, Integer>> open = new TreeMap<>();
         final Map<String, String> ruleLabels = new LinkedHashMap<>();
         // the last second the integration reported, and whether all of its seconds were read
         long end = -1;
@@ -139,6 +152,7 @@ final class Timeline {
             routeEvents.headMap(oldest).clear();
             faults.headMap(oldest).clear();
             down.headMap(oldest).clear();
+            open.headMap(oldest).clear();
         }
     }
 
@@ -223,6 +237,20 @@ final class Timeline {
                     }
                 }
                 rec.chaosRecorded = true;
+            }
+            rec.open.subMap(start, true, end, true).clear();
+            if (timeline.get("circuitBreakers") instanceof List<?> breakers) {
+                for (Object o : breakers) {
+                    if (o instanceof JsonObject cb && cb.getString("routeId") != null) {
+                        long[] states = values(cb, "states", n);
+                        for (int i = 0; i < n; i++) {
+                            if (states[i] > 0) {
+                                rec.open.computeIfAbsent(start + i, s -> new LinkedHashMap<>())
+                                        .merge(cb.getString("routeId"), (int) states[i], Math::max);
+                            }
+                        }
+                    }
+                }
             }
             rec.routeEvents.subMap(start, true, end, true).clear();
             if (timeline.get("routeEvents") instanceof List<?> events) {
@@ -434,6 +462,13 @@ final class Timeline {
                 down[(int) (en.getKey() - start)] = 1;
             }
         }
+        long[] open = new long[seconds];
+        for (Map.Entry<Long, Map<String, Integer>> en : rec.open.subMap(start, true, endSecond, true).entrySet()) {
+            Integer state = en.getValue().get(route);
+            if (state != null) {
+                open[(int) (en.getKey() - start)] = state;
+            }
+        }
         // what happened to the route: started, stopped, reloaded, removed, restartFailed
         String[] events = new String[seconds];
         for (Map.Entry<Long, Map<String, String>> en : rec.routeEvents.subMap(start, true, endSecond, true).entrySet()) {
@@ -444,7 +479,7 @@ final class Timeline {
         }
         return new RouteSeries(
                 route, values[COMPLETED], values[RECOVERED], values[HANDLED], values[FAILED],
-                values[INFLIGHT], values[MEAN], values[P95], values[MAX], down, values[ATTEMPTS], events);
+                values[INFLIGHT], values[MEAN], values[P95], values[MAX], down, values[ATTEMPTS], events, open);
     }
 
     private static long[] filled(int seconds) {

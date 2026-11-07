@@ -346,12 +346,15 @@ class TimelineTab extends AbstractTableTab {
 
         List<Line> lines = new ArrayList<>();
         renderCauses(lines, causes, anyCause, info, columns, per, label);
+        boolean anyOpen = routes.stream().anyMatch(r -> r.total(r.open()) > 0);
         lines.add(Line.from(Span.raw(pad("", label)), Span.styled("Routes  ", Theme.label()),
                 Span.styled("█", Theme.success()), Span.raw(" completed  "),
                 Span.styled("█", Theme.warning()), Span.raw(" recovered  "),
                 Span.styled("█", handledStyle()), Span.raw(" handled  "),
                 Span.styled("█", Theme.error()), Span.raw(" failed  "),
                 Span.styled("░", Theme.error()), Span.raw(" down"),
+                Span.raw(anyOpen ? "  " : ""), Span.styled(anyOpen ? "▒" : "", Theme.notice()),
+                Span.raw(anyOpen ? " circuit breaker open" : ""),
                 Span.raw(routes.stream().anyMatch(r -> Arrays.stream(r.events()).anyMatch(e -> e != null))
                         ? "   ▶ started  ■ stopped  ↻ reloaded" : "")));
         Integer sel = tableState.selected();
@@ -453,6 +456,7 @@ class TimelineTab extends AbstractTableTab {
         long[] handled = cols(r.handled(), false);
         long[] failed = cols(r.failed(), false);
         long[] down = cols(r.down(), true);
+        long[] open = cols(r.open(), true);
         long[] attempts = cols(r.attempts(), false);
         long max = 1;
         for (int c = 0; c < columns; c++) {
@@ -467,6 +471,9 @@ class TimelineTab extends AbstractTableTab {
                 spans.add(eventMark(event));
             } else if (down[c] > 0) {
                 spans.add(Span.styled("░", Theme.error()));
+            } else if (open[c] > 0) {
+                // the circuit breaker was open (half open dim): the calls went to the fallback, or failed fast
+                spans.add(Span.styled("▒", open[c] >= 2 ? Theme.notice() : Theme.muted()));
             } else if (completed[c] < 0) {
                 spans.add(Span.raw(" "));
             } else if (t == 0) {
@@ -522,6 +529,9 @@ class TimelineTab extends AbstractTableTab {
         }
         if (r.total(r.down()) > 0) {
             spans.add(Span.styled("down " + r.total(r.down()) + "s ", Theme.error()));
+        }
+        if (r.openSeconds() > 0) {
+            spans.add(Span.styled("⚡ open " + r.openSeconds() + "s ", Theme.notice()));
         }
         spans.add(Span.raw(rate(done, known)));
         if (r.total(r.failed()) > 0) {
@@ -892,6 +902,7 @@ class TimelineTab extends AbstractTableTab {
             row.put("handled", r.total(r.handled()));
             row.put("failed", r.total(r.failed()));
             row.put("downSeconds", r.total(r.down()));
+            row.put("circuitBreakerOpenSeconds", r.openSeconds());
             row.put("redeliveryAttempts", r.total(r.attempts()));
             JsonObject perSecond = new JsonObject();
             perSecond.put("completed", array(r.completed()));

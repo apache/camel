@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -185,6 +187,16 @@ public class ListTimeline extends ProcessWatchCommand {
         if (routes == null) {
             return;
         }
+        // the seconds a circuit breaker of the route was open
+        Map<String, Long> open = new HashMap<>();
+        JsonArray breakers = (JsonArray) timeline.get("circuitBreakers");
+        if (breakers != null) {
+            for (Object o : breakers) {
+                JsonObject cb = (JsonObject) o;
+                long seconds = Arrays.stream(values(cb, "states")).filter(v -> v == 2).count();
+                open.merge(cb.getString("routeId"), seconds, Math::max);
+            }
+        }
         for (Object o : routes) {
             JsonObject r = (JsonObject) o;
             RouteRow row = new RouteRow();
@@ -205,6 +217,7 @@ public class ListTimeline extends ProcessWatchCommand {
             row.attempts = sum(values(r, "redeliveryAttempts"));
             // with camel-chaos: the seconds a rule had the route down
             row.down = r.get("down") != null ? sum(values(r, "down")) : -1;
+            row.open = breakers != null ? open.getOrDefault(row.routeId, 0L) : -1;
             row.total = row.completed + row.recovered + row.handled + row.failed;
             long[] done = new long[completed.length];
             long weighted = 0;
@@ -356,6 +369,9 @@ public class ListTimeline extends ProcessWatchCommand {
                 jo.put("handled", r.handled);
                 jo.put("failed", r.failed);
                 jo.put("redeliveryAttempts", r.attempts);
+                if (r.open >= 0) {
+                    jo.put("circuitBreakerOpenSeconds", r.open);
+                }
                 if (r.down >= 0) {
                     jo.put("downSeconds", r.down);
                 }
@@ -383,6 +399,9 @@ public class ListTimeline extends ProcessWatchCommand {
                 new Column().header("DOWN").visible(rows.stream().anyMatch(r -> r.down >= 0))
                         .headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> r.down > 0 ? r.down + "s" : ""),
+                new Column().header("CB OPEN").visible(rows.stream().anyMatch(r -> r.open > 0))
+                        .headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.open > 0 ? r.open + "s" : ""),
                 new Column().header("ATTEMPTS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> count(r.attempts)),
                 new Column().header("MEAN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
@@ -541,6 +560,7 @@ public class ListTimeline extends ProcessWatchCommand {
         long failed;
         long attempts;
         long down = -1;
+        long open = -1;
         long mean;
         long p95;
         long max;
