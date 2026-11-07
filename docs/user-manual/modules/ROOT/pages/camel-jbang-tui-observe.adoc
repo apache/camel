@@ -44,7 +44,8 @@ image::jbang/camel-tui-timeline-exchanges.png[The exchanges of a second in the o
 *Shift+F8* asks the AI to explain what happened, as a story of cause and effect.
 
 The integration records the timeline itself, for the last 5 minutes, with the `timeline` dev console, which is on in
-the `dev` profile of `camel run`. So the tab opens with the last minutes, also when the TUI started after the
+the `dev` profile of `camel run`. With camel-chaos it records the faults of the chaos rules and the seconds they had a
+route down too. So the tab opens with the last minutes, also when the TUI started after the
 integration, and `camel get timeline` shows the same from the command line
 (see xref:camel-jbang-diagnostics.adoc#_timeline[Diagnostics]).
 

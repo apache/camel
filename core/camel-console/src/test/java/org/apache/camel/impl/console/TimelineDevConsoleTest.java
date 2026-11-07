@@ -16,15 +16,20 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.support.PluginHelper;
+import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -167,6 +172,50 @@ public class TimelineDevConsoleTest extends ContextTestSupport {
             assertThat(out.<List<Number>> getCollection("exchangesDone").stream().mapToLong(Number::longValue).sum())
                     .isEqualTo(2);
         });
+    }
+
+    @Test
+    public void withChaosTheFaultsOfTheRulesAndTheRoutesTheyHaveDown() {
+        AtomicBoolean askedWithoutReport = new AtomicBoolean();
+        // camel-chaos is not on the classpath here: a console of its id that answers as it does
+        AbstractDevConsole chaos = new AbstractDevConsole("camel", "chaos", "Chaos", "fake") {
+            @Override
+            protected String doCallText(Map<String, Object> options) {
+                return "";
+            }
+
+            @Override
+            protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                // the timeline asks without the report
+                askedWithoutReport.set("false".equals(options.get("report")));
+                JsonObject rule = new JsonObject();
+                rule.put("id", "r1");
+                rule.put("rule", "route=failing stall duration=20s");
+                List<Long> faults = new ArrayList<>(Collections.nCopies(60, 1L));
+                rule.put("faultsPerSecond", faults);
+                rule.put("lifecycle", Map.of("route", "failing", "state", "down"));
+                JsonObject root = new JsonObject();
+                root.put("enabled", true);
+                root.put("rules", List.of(rule));
+                return root;
+            }
+        };
+        chaos.setCamelContext(context);
+        context.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).register(chaos);
+        startConsole();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of(TimelineDevConsole.SECONDS, "10"));
+            JsonArray series = out.getCollection("chaos");
+            assertThat(series).isNotNull();
+            JsonObject r1 = (JsonObject) series.get(0);
+            assertThat(r1.getString("id")).isEqualTo("r1");
+            assertThat(r1.getString("rule")).isEqualTo("route=failing stall duration=20s");
+            assertThat(r1.<List<Number>> getCollection("faults")).contains(1L);
+            assertThat(sum(route(out, "failing"), "down")).isGreaterThan(0);
+            assertThat(sum(route(out, "orders"), "down")).isZero();
+        });
+        assertThat(askedWithoutReport.get()).isTrue();
     }
 
     @Override

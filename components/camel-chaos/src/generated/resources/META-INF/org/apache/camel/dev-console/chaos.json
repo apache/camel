@@ -12,6 +12,23 @@
     "artifactId": "camel-chaos",
     "version": "4.24.0-SNAPSHOT"
   },
+  "options": {
+    "report": {
+      "index": 0,
+      "kind": "option",
+      "displayName": "Report",
+      "group": "query",
+      "label": "query",
+      "required": false,
+      "type": "boolean",
+      "javaType": "java.lang.Boolean",
+      "deprecated": false,
+      "autowired": false,
+      "secret": false,
+      "defaultValue": true,
+      "description": "Whether to include the report; without it only the rules, as the timeline console reads them each second"
+    }
+  },
   "response": {
     "type": "object",
     "properties": {

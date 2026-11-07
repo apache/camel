@@ -122,6 +122,9 @@ final class TimelineRecorder {
         final Map<ErrorKind, long[]> errors = new LinkedHashMap<>();
         final List<Kept> failed = new ArrayList<>();
         final List<Kept> slowest = new ArrayList<>();
+        // with camel-chaos: the faults of each rule, and the routes a rule had down
+        Map<String, Long> faults;
+        Set<String> down;
         long done;
         boolean closed;
 
@@ -187,6 +190,8 @@ final class TimelineRecorder {
     private final Second[] ring;
     private final Map<String, Inflight> inflight = new ConcurrentHashMap<>();
     private final Map<String, Counters> lastCounters = new HashMap<>();
+    // the text of each chaos rule seen, by its id
+    private final Map<String, String> chaosRules = new LinkedHashMap<>();
     private long lastSampleSecond = -1;
 
     TimelineRecorder(int seconds) {
@@ -368,6 +373,51 @@ final class TimelineRecorder {
         }
         long cutoff = now - EVICT_MILLIS;
         inflight.values().removeIf(f -> f.created < cutoff);
+    }
+
+    /**
+     * Takes the state of the chaos rules at the given time: the faults per second of each rule (the last seconds, the
+     * last one the current second), and the routes a rule has down now. The faults replace the ones of those seconds,
+     * as a rule counts the faults of a second until it is over; the routes down are the ones of the second before.
+     *
+     * @param faults the faults per second of each rule by its id, the oldest first and the current second last
+     * @param rules  the text of each rule by its id
+     * @param down   the routes a rule has down now
+     */
+    synchronized void chaos(long now, Map<String, long[]> faults, Map<String, String> rules, Set<String> down) {
+        long second = now / 1000;
+        chaosRules.putAll(rules);
+        for (Map.Entry<String, long[]> e : faults.entrySet()) {
+            long[] values = e.getValue();
+            // the seconds that are over, at most the window
+            int n = Math.min(values.length - 1, seconds);
+            for (int i = 1; i <= n; i++) {
+                long value = values[values.length - 1 - i];
+                Second s = value > 0 ? slot(second - i) : existing(second - i);
+                if (s == null) {
+                    continue;
+                }
+                if (value > 0) {
+                    if (s.faults == null) {
+                        s.faults = new LinkedHashMap<>();
+                    }
+                    s.faults.put(e.getKey(), value);
+                } else if (s.faults != null) {
+                    s.faults.remove(e.getKey());
+                }
+            }
+        }
+        if (!down.isEmpty()) {
+            Second s = slot(second - 1);
+            if (s.down == null) {
+                s.down = new LinkedHashSet<>();
+            }
+            s.down.addAll(down);
+        }
+    }
+
+    Map<String, String> chaosRules() {
+        return chaosRules;
     }
 
     private static long rise(long before, long now) {

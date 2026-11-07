@@ -150,6 +150,13 @@
                 "type": "integer"
               },
               "description": "Redelivery attempts per second in this route"
+            },
+            "down": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)"
             }
           }
         },
@@ -186,6 +193,30 @@
           }
         },
         "description": "The errors by route and exception (only present when there are any)"
+      },
+      "chaos": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "The id of the camel-chaos rule"
+            },
+            "rule": {
+              "type": "string",
+              "description": "The rule in its one-line text form"
+            },
+            "faults": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "The faults the rule fired per second"
+            }
+          }
+        },
+        "description": "The faults per second of each camel-chaos rule that fired in the seconds (only present when one did)"
       },
       "exchanges": {
         "type": "array",
