@@ -180,18 +180,28 @@ public final class About {
 
     /**
      * The comment a file starts with: the {@code #} lines of YAML, the Javadoc or {@code //} lines before the class of
-     * Java, the first {@code <!-- -->} of XML. A license header is no description.
+     * Java, the {@code <!-- -->} of XML before its first element. A license header is no description: the comment after
+     * it is.
      */
     public static String leadingComment(String file, String content) {
+        if (file == null || content == null) {
+            return null;
+        }
         String text = null;
         if (file.endsWith(".yaml") || file.endsWith(".yml")) {
+            // the blocks of # lines before the first line that is not a comment, the license header first
             StringBuilder sb = new StringBuilder();
             for (String line : content.lines().toList()) {
                 String l = line.strip();
                 if (l.startsWith("#")) {
                     sb.append(l.replaceFirst("^#+\\s?", "")).append(' ');
-                } else if (!l.isEmpty() || !sb.isEmpty()) {
+                } else if (!l.isEmpty()) {
                     break;
+                } else if (!sb.isEmpty()) {
+                    if (!isLicense(sb.toString())) {
+                        break;
+                    }
+                    sb.setLength(0);
                 }
             }
             text = sb.toString();
@@ -214,9 +224,23 @@ public final class About {
                 text = sb.toString();
             }
         } else if (file.endsWith(".xml")) {
-            int start = content.indexOf("<!--");
-            int end = start >= 0 ? content.indexOf("-->", start) : -1;
-            text = end > 0 ? content.substring(start + 4, end) : null;
+            // the comments before the first element, the license header first
+            int pos = 0;
+            while (text == null || isLicense(text)) {
+                text = null;
+                while (pos < content.length() && Character.isWhitespace(content.charAt(pos))) {
+                    pos++;
+                }
+                int end = content.startsWith("<?", pos) ? content.indexOf("?>", pos)
+                        : content.startsWith("<!--", pos) ? content.indexOf("-->", pos) : -1;
+                if (end < 0) {
+                    break;
+                }
+                if (content.startsWith("<!--", pos)) {
+                    text = content.substring(pos + 4, end);
+                }
+                pos = end + (content.startsWith("<?", pos) ? 2 : 3);
+            }
         }
         if (text == null) {
             return null;
@@ -227,9 +251,13 @@ public final class About {
             text = text.substring(0, tag);
         }
         text = text.replaceAll("\\s+", " ").strip();
-        if (text.isEmpty() || text.contains("Licensed to the Apache") || text.contains("SPDX-License")) {
+        if (text.isEmpty() || isLicense(text)) {
             return null;
         }
         return text.length() > 300 ? text.substring(0, 297) + "…" : text;
+    }
+
+    private static boolean isLicense(String text) {
+        return text.contains("Licensed to the Apache") || text.contains("SPDX-License");
     }
 }

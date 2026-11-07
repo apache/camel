@@ -394,18 +394,22 @@ final class AboutView {
     }
 
     void render(Frame frame, Rect area, IntegrationInfo info) {
-        load(info, Runnable::run);
+        // the sources are read in the background, and what they say is set on the render thread
+        load(info, ctx.runner != null ? ctx.runner::runOnRenderThread : Runnable::run);
         ProjectOverview.Overview o = overview;
+        About.Model m = model;
+        String p = purpose;
+        String pFrom = purposeFrom;
         int width = area.width();
         List<Line> head = new ArrayList<>();
         head.add(Line.from(Span.raw(" "), Span.raw(meta(info, o)),
                 Span.styled(info.vanishing ? "  ○ stopped" : "  ● running",
                         info.vanishing ? Theme.muted() : Theme.success())));
-        if (purpose != null) {
-            for (String l : wrap(purpose, Math.max(20, width - 6), 2)) {
+        if (p != null) {
+            for (String l : wrap(p, Math.max(20, width - 6), 2)) {
                 head.add(Line.from(Span.styled(" " + l, Style.EMPTY.bold())));
             }
-            head.add(Line.from(Span.styled(" " + purposeFrom, Theme.muted())));
+            head.add(Line.from(Span.styled(" " + pFrom, Theme.muted())));
         } else if (o != null) {
             head.add(Line.from(Span.styled(" No description yet: a comment at the top of " + mainFile(o)
                                            + " says what it does, or ask the AI (Shift+F8 on a route)",
@@ -420,18 +424,15 @@ final class AboutView {
         List<Target> inTargets = new ArrayList<>();
         List<Target> routeTargets = new ArrayList<>();
         List<Target> outTargets = new ArrayList<>();
-        if (o != null) {
-            About.Model m = model;
-            if (m != null) {
-                columns(m, info, in, routes, out, inTargets, routeTargets, outTargets);
-            }
+        if (o != null && m != null) {
+            columns(m, info, in, routes, out, inTargets, routeTargets, outTargets);
         }
         // the cursor goes down In, then Routes, then Out
         List<Target> all = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         List<String> inLabels = new ArrayList<>();
-        if (model != null) {
-            model.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(e.label()));
+        if (o != null && m != null) {
+            m.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(e.label()));
         }
         String[] names = { "in", "route", "out" };
         List<List<Target>> columns = List.of(inTargets, routeTargets, outTargets);

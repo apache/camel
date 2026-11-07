@@ -86,6 +86,27 @@ class AboutTest {
         assertThat(About.leadingComment("a.yaml", "# Licensed to the Apache Software Foundation (ASF)\n- route:")).isNull();
         assertThat(About.leadingComment("Shop.java", "/** Takes the orders. */\npublic class Shop {}"))
                 .isEqualTo("Takes the orders.");
+        assertThat(About.leadingComment("a.yaml", null)).isNull();
+    }
+
+    @Test
+    void thePurposeIsTheCommentAfterTheLicenseHeader() {
+        String yaml = "# Licensed to the Apache Software Foundation (ASF)\n# under the License.\n\n"
+                      + "# Takes the orders\n# and ships them.\n\n- route:\n    from: {}\n";
+        assertThat(About.leadingComment("a.yaml", yaml)).isEqualTo("Takes the orders and ships them.");
+        String xml = "<?xml version=\"1.0\"?>\n<!-- Licensed to the Apache Software Foundation (ASF) -->\n"
+                     + "<!-- Takes the orders. -->\n<routes>\n  <!-- not this one -->\n</routes>";
+        assertThat(About.leadingComment("a.xml", xml)).isEqualTo("Takes the orders.");
+        // a comment inside the routes says nothing about the integration
+        assertThat(About.leadingComment("a.xml", "<!-- Licensed to the Apache -->\n<routes><!-- inner --></routes>"))
+                .isNull();
+    }
+
+    @Test
+    void theSameEndpointWithOneOrThreeSlashes() {
+        assertThat(AboutReport.baseUri("file:/tmp/in?noop=true")).isEqualTo(AboutReport.baseUri("file:///tmp/in"));
+        assertThat(AboutReport.baseUri("kafka://orders")).isEqualTo("kafka:orders");
+        assertThat(AboutReport.baseUri("direct:orders")).isEqualTo("direct:orders");
     }
 
     @Test

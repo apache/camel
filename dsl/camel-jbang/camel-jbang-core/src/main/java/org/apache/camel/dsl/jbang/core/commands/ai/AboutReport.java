@@ -255,8 +255,9 @@ public final class AboutReport {
             if (states != null) {
                 jo.put("circuitBreakerOpenSeconds", Arrays.stream(states).filter(v -> v >= 2).count());
             }
-            if (r.get("down") != null && sum(values(r, "down", n)) > 0) {
-                jo.put("downSeconds", sum(values(r, "down", n)));
+            long down = r.get("down") != null ? sum(values(r, "down", n)) : 0;
+            if (down > 0) {
+                jo.put("downSeconds", down);
             }
             routes.add(jo);
         }
@@ -338,14 +339,14 @@ public final class AboutReport {
         return answer;
     }
 
-    /** The URI without its options, and the same with or without the // after the scheme. */
+    /** The URI without its options, and the same however many slashes follow the scheme: file:/x is file:///x. */
     public static String baseUri(String uri) {
         if (uri == null) {
             return "";
         }
         int q = uri.indexOf('?');
         String answer = q >= 0 ? uri.substring(0, q) : uri;
-        answer = answer.replaceFirst("^([a-zA-Z0-9+.-]+):/{0,2}", "$1:");
+        answer = answer.replaceFirst("^([a-zA-Z0-9+.-]+):/{0,3}", "$1:");
         return answer.endsWith("/") ? answer.substring(0, answer.length() - 1) : answer;
     }
 
