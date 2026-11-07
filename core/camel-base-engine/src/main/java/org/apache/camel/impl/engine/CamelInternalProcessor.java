@@ -1249,7 +1249,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
      * Advice to inject new {@link UnitOfWork} to the {@link Exchange} if needed, and as well to ensure the
      * {@link UnitOfWork} is done and stopped.
      */
-    public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
+    public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork>, Ordered {
 
         private final Route route;
         private String routeId;
@@ -1327,6 +1327,21 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             } else {
                 return PluginHelper.getUnitOfWorkFactory(exchange.getContext()).createUnitOfWork(exchange);
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // UnitOfWorkProcessorAdvice must run first in before() (to set up the UoW) and
+            // last in after() (to tear it down). Using HIGHEST (Integer.MIN_VALUE) places it
+            // at position 0 in the sorted advice list; before() runs in ascending order (UoW
+            // first), after() runs in reverse (UoW last).
+            //
+            // StreamCachingAdvice uses HIGHEST + 1 so that:
+            //   before(): UoW → StreamCaching → tracers/debuggers (stream is cached before being read)
+            //   after():  tracers → StreamCaching → UoW (stream is reset before TempFileManager
+            //             onCompletion deletes the spool file)
+            // This fixes CAMEL-26640 without regressing CAMEL-10096 or CAMEL-24392.
+            return Ordered.HIGHEST;
         }
 
     }
@@ -1448,8 +1463,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public int getOrder() {
-            // we want stream caching first
-            return Ordered.HIGHEST;
+            // StreamCachingAdvice must run after UnitOfWorkProcessorAdvice in before() (so the
+            // stream is cached before tracers/debuggers read it) but before UoW in after() (so
+            // the spool file is still alive when reset() is called, fixing CAMEL-26640).
+            //
+            // UnitOfWorkProcessorAdvice is at Ordered.HIGHEST (Integer.MIN_VALUE). Using
+            // HIGHEST + 1 here places StreamCachingAdvice immediately after it:
+            //   before(): UoW → StreamCaching → tracers/debuggers  (preserves CAMEL-10096 / CAMEL-24392)
+            //   after():  tracers → StreamCaching → UoW            (fixes CAMEL-26640)
+            return Ordered.HIGHEST + 1;
         }
     }
 
