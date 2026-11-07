@@ -173,6 +173,36 @@ class TimelineTabRenderTest {
     }
 
     @Test
+    void aQuietMinuteOpensOnTheWindowWithTheLastExchange() {
+        IntegrationInfo batch = new IntegrationInfo();
+        batch.pid = "88";
+        batch.name = "batch";
+        batch.routes.add(route("files", 0, 0));
+        MonitorContext bctx = new MonitorContext(new AtomicReference<>(List.of(batch)), new AtomicReference<>(List.of()));
+        bctx.selectedPid = "88";
+        // the files were picked up at startup, 3 minutes ago
+        bctx.timeline.merge("88", new TimelineJson(T0 / 1000 + 59, 300).route("files", "completed", 60, 3)
+                .route("files", "meanMillis", 60, 40).route("files", "maxMillis", 60, 90).json(), true);
+        TimelineTab tab = new TimelineTab(bctx, now::get);
+
+        tab.onTabSelected();
+
+        assertThat(tab.seconds()).isEqualTo(300);
+        String screen = TuiTestHelper.renderToString(tab, 160, 40);
+        assertThat(screen).contains("last 5m").contains("avg 40ms");
+        tab.handleKeyEvent(KeyEvent.ofChar('w'));
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("the last exchange 3m59s ago");
+    }
+
+    @Test
+    void theCallsAreShownDecoded() {
+        assertThat(TimelineExchanges.uri("file://parked?fileName=%24%7Bheader.CamelFileName%7D"))
+                .isEqualTo("file://parked?fileName=${header.CamelFileName}");
+        assertThat(TimelineExchanges.uri("http://stock?q=a+b")).isEqualTo("http://stock?q=a+b");
+        assertThat(TimelineExchanges.uri("http://stock")).isEqualTo("http://stock");
+    }
+
+    @Test
     void theScreenOpensOnTheRouteWithTheWorstTime() {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         TuiTestHelper.renderToString(tab, 160, 40);
@@ -225,6 +255,30 @@ class TimelineTabRenderTest {
                 .contains("(the failed, handled and recovered, and the slowest)");
         tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
         assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("recovered after: Connection refused");
+    }
+
+    @Test
+    void theSecondsACircuitBreakerWasOpen() {
+        long[] states = new long[60];
+        for (int i = 40; i < 52; i++) {
+            states[i] = i < 50 ? 2 : 1;
+        }
+        TimelineJson t = TimelineTabRenderTest.outage(T0 / 1000 + 59, 60, 0).breaker("orders", "cb1", states);
+        ctx.timeline.merge("1234", t.json(), true);
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        // the bolt is two columns wide: the screen has a blank cell after it
+        String screen = TuiTestHelper.renderToString(tab, 160, 40).replace("⚡ ", "⚡");
+        assertThat(screen).contains("▒ circuit breaker open").contains("⚡ open 10s");
+        String orders = screen.lines().filter(l -> l.contains("orders") && l.contains("⚡")).findFirst().orElseThrow();
+        assertThat(orders.chars().filter(c -> c == '▒').count()).isGreaterThanOrEqualTo(12);
+        assertThat(screen.lines().filter(l -> l.contains("shipping")).findFirst().orElseThrow()).doesNotContain("▒");
+
+        // the same for an agent (tui_get_table)
+        JsonObject row = ((JsonArray) tab.getTableDataAsJson().get("rows")).stream().map(JsonObject.class::cast)
+                .filter(r -> "orders".equals(r.getString("route"))).findFirst().orElseThrow();
+        assertThat(row.getLong("circuitBreakerOpenSeconds")).isEqualTo(10);
+        JsonArray recorded = (JsonArray) ((JsonObject) row.get("perSecond")).get("circuitBreaker");
+        assertThat(recorded.stream().filter(v -> ((Number) v).longValue() == 2).count()).isEqualTo(10);
     }
 
     @Test

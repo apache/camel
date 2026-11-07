@@ -65,6 +65,10 @@ With xref:next@components:others:chaos.adoc[camel-chaos], the timeline also has 
 second (listed by `--errors` as `chaos faults`), and the seconds a stall or lifecycle rule had a route down (the `DOWN`
 column).
 
+A route with a circuit breaker (the Circuit Breaker EIP with camel-resilience4j or
+camel-microprofile-fault-tolerance, or the throttling exception route policy) has the seconds its circuit breaker was
+open in the `CB OPEN` column: why a route went quiet, or ran its fallback, without failing.
+
 The integration records the timeline itself, for the last 5 minutes, with the `timeline` dev console. It is on when
 the dev consoles are, as with the `dev` profile that `camel run` uses by default. The number of seconds is set with
 `camel.devConsole.timeline.seconds` (60 to 3600).

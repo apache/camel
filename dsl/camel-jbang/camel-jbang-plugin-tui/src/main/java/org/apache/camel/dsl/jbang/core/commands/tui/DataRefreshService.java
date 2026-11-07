@@ -80,6 +80,8 @@ class DataRefreshService {
     // Sparkline/chart history for all metric families
     private final MetricsCollector metrics = new MetricsCollector();
     private final RateEstimator rates = new RateEstimator();
+    // the WARN and ERROR lines of the logs per second, for the Timeline
+    private final TimelineLog timelineLog = new TimelineLog();
 
     // Cached PID list -- full process scan throttled to every 2 seconds (1 second in burst mode)
     private volatile List<Long> cachedPids = Collections.emptyList();
@@ -325,6 +327,7 @@ class DataRefreshService {
                     ctx.chaosMarks.record(info);
                     ctx.timeline.record(info, writtenAt(pid));
                     mergeTimelineFile(pid);
+                    timelineLog.read(info.pid, logFile(info), ctx.timeline);
                 }
                 if (info != null) {
                     IntegrationInfo prev = previousByPid.get(info.pid);
@@ -347,6 +350,7 @@ class DataRefreshService {
             Set<String> live = pids.stream().map(String::valueOf).collect(Collectors.toSet());
             ctx.chaosMarks.retain(live);
             ctx.timeline.retain(live);
+            timelineLog.retain(live);
         }
         if (!fullScan && ctx.selectedPid != null && !overviewTab) {
             boolean checkLiveness = now - lastLivenessCheckTime >= LIVENESS_CHECK_INTERVAL_MS;
@@ -824,6 +828,19 @@ class DataRefreshService {
                 // ignore
             }
         }
+    }
+
+    /** The log file of the integration: by its pid, else by its name (as Quarkus names it). */
+    private static Path logFile(IntegrationInfo info) {
+        Path dir = CommandLineHelper.getCamelDir();
+        Path byPid = dir.resolve(info.pid + ".log");
+        if (!Files.exists(byPid) && info.name != null) {
+            Path byName = dir.resolve(info.name + ".log");
+            if (Files.exists(byName)) {
+                return byName;
+            }
+        }
+        return byPid;
     }
 
     /** The last seconds of the timeline, which the integration writes each second. */

@@ -9223,6 +9223,58 @@
 											},
 											"description": "The faults per second of each camel-chaos rule that fired in the seconds (only present when one did)"
 										},
+										"routeEvents": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"event": {
+														"type": "string",
+														"description": "What happened to the route: started, stopped, reloaded, removed or restartFailed"
+													},
+													"second": {
+														"type": "integer",
+														"description": "The epoch second it happened"
+													}
+												},
+												"required": [
+													"second"
+												]
+											},
+											"description": "What happened to the routes in the seconds: started, stopped, reloaded, removed (only present when anything did)"
+										},
+										"circuitBreakers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"id": {
+														"type": "string",
+														"description": "The id of the circuit breaker EIP (not present for a route policy)"
+													},
+													"kind": {
+														"type": "string",
+														"description": "The kind of circuit breaker: resilience4j, fault-tolerance or route-policy"
+													},
+													"states": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Per second 2 when the circuit breaker was open, 1 half open, else 0"
+													}
+												}
+											},
+											"description": "The circuit breakers that were open or half open in the seconds (only present when one was)"
+										},
 										"exchanges": {
 											"type": "array",
 											"items": {

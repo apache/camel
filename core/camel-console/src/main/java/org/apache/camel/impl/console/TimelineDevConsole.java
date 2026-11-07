@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -62,6 +63,11 @@ public class TimelineDevConsole extends AbstractDevConsole {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimelineDevConsole.class);
 
+    // the dev consoles with circuit breakers, and the kind of circuit breaker each reports
+    private static final String[][] BREAKER_CONSOLES = {
+            { "resilience4j", "resilience4j" }, { "fault-tolerance", "fault-tolerance" },
+            { "circuit-breaker", "route-policy" } };
+
     /** The exchange property camel-chaos marks a faulted exchange with, with the id of the rule. */
     static final String CHAOS_RULE = "CamelChaosRule";
 
@@ -85,10 +91,23 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)") List<Long> down) {
     }
 
+    public record RouteEvent(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "What happened to the route: started, stopped, reloaded, removed or restartFailed") String event,
+            @Metadata(description = "The epoch second it happened") long second) {
+    }
+
     public record ChaosSeries(
             @Metadata(description = "The id of the camel-chaos rule") String id,
             @Metadata(description = "The rule in its one-line text form") String rule,
             @Metadata(description = "The faults the rule fired per second") List<Long> faults) {
+    }
+
+    public record CircuitBreakerSeries(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "The id of the circuit breaker EIP (not present for a route policy)") String id,
+            @Metadata(description = "The kind of circuit breaker: resilience4j, fault-tolerance or route-policy") String kind,
+            @Metadata(description = "Per second 2 when the circuit breaker was open, 1 half open, else 0") List<Long> states) {
     }
 
     public record ErrorSeries(
@@ -120,6 +139,8 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "The routes") List<RouteSeries> routes,
             @Metadata(description = "The errors by route and exception (only present when there are any)") List<ErrorSeries> errors,
             @Metadata(description = "The faults per second of each camel-chaos rule that fired in the seconds (only present when one did)") List<ChaosSeries> chaos,
+            @Metadata(description = "What happened to the routes in the seconds: started, stopped, reloaded, removed (only present when anything did)") List<RouteEvent> routeEvents,
+            @Metadata(description = "The circuit breakers that were open or half open in the seconds (only present when one was)") List<CircuitBreakerSeries> circuitBreakers,
             @Metadata(description = "Per second the failed, handled and recovered exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)") List<TimelineExchange> exchanges) {
     }
 
@@ -194,6 +215,56 @@ public class TimelineDevConsole extends AbstractDevConsole {
         long now = System.currentTimeMillis();
         recorder.sample(now, counters());
         sampleChaos(now);
+        sampleBreakers(now);
+    }
+
+    /**
+     * The circuit breakers that are open or half open, from the dev consoles of camel-resilience4j and
+     * camel-microprofile-fault-tolerance and the circuit-breaker console (the throttling exception route policy), so
+     * this console depends on neither.
+     */
+    private void sampleBreakers(long now) {
+        DevConsoleRegistry registry = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
+        if (registry == null) {
+            return;
+        }
+        Map<TimelineRecorder.Breaker, Integer> states = new LinkedHashMap<>();
+        for (String[] console : BREAKER_CONSOLES) {
+            DevConsole dc = registry.resolveById(console[0]);
+            if (dc == null) {
+                continue;
+            }
+            Object json;
+            try {
+                json = dc.call(DevConsole.MediaType.JSON);
+            } catch (Exception e) {
+                LOG.debug("Failed to sample the {} dev console", console[0], e);
+                continue;
+            }
+            if (json instanceof Map<?, ?> root && root.get("circuitBreakers") instanceof List<?> list) {
+                for (Object o : list) {
+                    if (o instanceof Map<?, ?> cb && cb.get("routeId") instanceof String routeId) {
+                        int state = breakerState(cb.get("state"));
+                        if (state > 0) {
+                            String id = cb.get("id") instanceof String s ? s : null;
+                            states.put(new TimelineRecorder.Breaker(routeId, id, console[1]), state);
+                        }
+                    }
+                }
+            }
+        }
+        recorder.breakers(now, states);
+    }
+
+    /** 2 open (also forced open), 1 half open, else 0, whichever way the circuit breaker spells its state. */
+    static int breakerState(Object state) {
+        // OPEN and HALF_OPEN (resilience4j, fault-tolerance), opened and half opened (the route policy)
+        String s = state != null ? state.toString().toUpperCase(Locale.ROOT).replaceAll("[ _-]", "") : "";
+        return switch (s) {
+            case "OPEN", "OPENED", "FORCEDOPEN" -> 2;
+            case "HALFOPEN", "HALFOPENED" -> 1;
+            default -> 0;
+        };
     }
 
     /**
@@ -272,6 +343,15 @@ public class TimelineDevConsole extends AbstractDevConsole {
                         es.chaosRule() != null ? " (chaos rule " + es.chaosRule() + ")" : ""));
             }
         }
+        if (r.circuitBreakers() != null) {
+            sb.append("Circuit breakers:\n");
+            for (CircuitBreakerSeries cb : r.circuitBreakers()) {
+                long open = cb.states().stream().filter(v -> v == 2).count();
+                long halfOpen = cb.states().stream().filter(v -> v == 1).count();
+                sb.append(String.format("    %s in %s (%s): open %ds, half open %ds%n",
+                        cb.id() != null ? cb.id() : "route policy", cb.routeId(), cb.kind(), open, halfOpen));
+            }
+        }
         return sb.toString();
     }
 
@@ -293,6 +373,8 @@ public class TimelineDevConsole extends AbstractDevConsole {
         List<TimelineExchange> kept = new ArrayList<>();
         List<Long> done = new ArrayList<>(count);
         List<ChaosSeries> chaos = new ArrayList<>();
+        List<RouteEvent> routeEvents = new ArrayList<>();
+        List<CircuitBreakerSeries> breakers = new ArrayList<>();
         // the from endpoint of each route, read before the recorder is locked: the routes have a lock of their own, and
         // the exchange events wait for the recorder
         Map<String, String> fromUris = new HashMap<>();
@@ -327,6 +409,27 @@ public class TimelineDevConsole extends AbstractDevConsole {
                 }
             }
             faults.forEach((id, v) -> chaos.add(new ChaosSeries(id, rec.chaosRules().get(id), List.of(v))));
+            Map<TimelineRecorder.Breaker, Long[]> byBreaker = new LinkedHashMap<>();
+            for (int i = 0; i < secs.size(); i++) {
+                TimelineRecorder.Second s = secs.get(i);
+                if (s != null && s.breakers != null) {
+                    for (Map.Entry<TimelineRecorder.Breaker, Integer> e : s.breakers.entrySet()) {
+                        if (accept.test(e.getKey().routeId())) {
+                            byBreaker.computeIfAbsent(e.getKey(), k -> zeros(secs.size()))[i] = (long) e.getValue();
+                        }
+                    }
+                }
+            }
+            byBreaker.forEach((b, v) -> breakers.add(new CircuitBreakerSeries(b.routeId(), b.id(), b.kind(), List.of(v))));
+            for (TimelineRecorder.Second s : secs) {
+                if (s != null && s.routeEvents != null) {
+                    s.routeEvents.forEach((routeId, event) -> {
+                        if (accept.test(routeId)) {
+                            routeEvents.add(new RouteEvent(routeId, event, s.second));
+                        }
+                    });
+                }
+            }
             Map<TimelineRecorder.ErrorKind, Long[]> byKind = new LinkedHashMap<>();
             for (int i = 0; i < secs.size(); i++) {
                 TimelineRecorder.Second s = secs.get(i);
@@ -356,6 +459,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
         }
         return new Response(
                 end, count, done, routes, errors.isEmpty() ? null : errors, chaos.isEmpty() ? null : chaos,
+                routeEvents.isEmpty() ? null : routeEvents, breakers.isEmpty() ? null : breakers,
                 exchanges ? kept : null);
     }
 
@@ -401,6 +505,17 @@ public class TimelineDevConsole extends AbstractDevConsole {
 
     private void onEvent(CamelEvent event) {
         TimelineRecorder rec = recorder;
+        if (event instanceof CamelEvent.RouteEvent re) {
+            String what = event instanceof CamelEvent.RouteStartedEvent ? "started"
+                    : event instanceof CamelEvent.RouteStoppedEvent ? "stopped"
+                    : event instanceof CamelEvent.RouteReloadedEvent ? "reloaded"
+                    : event instanceof CamelEvent.RouteRemovedEvent ? "removed"
+                    : event instanceof CamelEvent.RouteRestartingFailureEvent ? "restartFailed" : null;
+            if (what != null && re.getRoute() != null) {
+                rec.routeEvent(re.getRoute().getRouteId(), what, timestamp(event));
+            }
+            return;
+        }
         if (event instanceof CamelEvent.ExchangeCreatedEvent ce) {
             rec.exchangeCreated(ce.getExchange().getExchangeId(), ce.getExchange().getFromRouteId(), timestamp(ce));
         } else if (event instanceof CamelEvent.ExchangeSentEvent se) {
@@ -466,7 +581,6 @@ public class TimelineDevConsole extends AbstractDevConsole {
         private TimelineEventNotifier() {
             setIgnoreCamelContextInitEvents(true);
             setIgnoreCamelContextEvents(true);
-            setIgnoreRouteEvents(true);
             setIgnoreServiceEvents(true);
             setIgnoreStepEvents(true);
             setIgnoreAiEvents(true);

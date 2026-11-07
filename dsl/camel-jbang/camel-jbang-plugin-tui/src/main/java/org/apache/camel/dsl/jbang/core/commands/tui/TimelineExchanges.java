@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -134,7 +136,7 @@ final class TimelineExchanges {
         }
         if (slowest != null) {
             spans.add(Span.styled(k.calls().size() + (k.calls().size() == 1 ? " call, " : " calls, slowest ")
-                                  + ChaosTab.shortTime(slowest.elapsed()) + " " + slowest.endpointUri(),
+                                  + ChaosTab.shortTime(slowest.elapsed()) + " " + uri(slowest.endpointUri()),
                     Theme.muted()));
         }
         if (k.chaosRule() != null) {
@@ -165,7 +167,7 @@ final class TimelineExchanges {
             if (lines.size() >= rows) {
                 break;
             }
-            lines.add(Line.from(Span.raw("   " + pad(ChaosTab.shortTime(c.elapsed()), 8)), Span.raw(c.endpointUri())));
+            lines.add(Line.from(Span.raw("   " + pad(ChaosTab.shortTime(c.elapsed()), 8)), Span.raw(uri(c.endpointUri()))));
         }
         return lines;
     }
@@ -191,10 +193,22 @@ final class TimelineExchanges {
                     if (!spans.isEmpty()) {
                         spans.add(Span.styled(" · ", Theme.muted()));
                     }
-                    spans.add(Span.raw(e.getKey() + " "));
+                    spans.add(Span.raw(uri(e.getKey()) + " "));
                     spans.add(Span.styled("max " + ChaosTab.shortTime(e.getValue()[0]), Theme.info()));
                 });
         return spans;
+    }
+
+    /** An endpoint URI as people write it: decoded (%24%7B is ${), as the endpoint keeps it encoded. */
+    static String uri(String uri) {
+        if (uri == null || uri.indexOf('%') < 0) {
+            return uri;
+        }
+        try {
+            return URLDecoder.decode(uri.replace("+", "%2B"), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return uri;
+        }
     }
 
     private static Style style(Timeline.Kept k) {

@@ -63,7 +63,18 @@ final class Timeline {
      * exchange completed after a redelivery in this route; the attempts are the redeliveries tried in it.
      */
     record RouteSeries(String route, long[] completed, long[] recovered, long[] handled, long[] failed, long[] inflight,
-            long[] mean, long[] p95, long[] max, long[] down, long[] attempts) {
+            long[] mean, long[] p95, long[] max, long[] down, long[] attempts, String[] events, long[] open) {
+
+        /** The seconds a circuit breaker of the route was open (not half open). */
+        long openSeconds() {
+            long n = 0;
+            for (long v : open) {
+                if (v >= 2) {
+                    n++;
+                }
+            }
+            return n;
+        }
 
         long total(long[] values) {
             long sum = 0;
@@ -118,9 +129,15 @@ final class Timeline {
         // the exchanges kept per second, and the exchanges done per second in the routes they came in
         final TreeMap<Long, List<Kept>> exchanges = new TreeMap<>();
         final TreeMap<Long, Long> done = new TreeMap<>();
+        // what happened to the routes per second: started, stopped, reloaded
+        final TreeMap<Long, Map<String, String>> routeEvents = new TreeMap<>();
         // the faults per second of each chaos rule, and the routes a rule had down
         final TreeMap<Long, Map<String, Long>> faults = new TreeMap<>();
         final TreeMap<Long, Set<String>> down = new TreeMap<>();
+        // the routes with a circuit breaker not closed per second: 2 open, 1 half open
+        final TreeMap<Long, Map<String, Integer>> open = new TreeMap<>();
+        // the WARN and ERROR lines of the log per second, as the TUI read them from the log file
+        final TreeMap<Long, long[]> logs = new TreeMap<>();
         final Map<String, String> ruleLabels = new LinkedHashMap<>();
         // the last second the integration reported, and whether all of its seconds were read
         long end = -1;
@@ -134,8 +151,11 @@ final class Timeline {
             errors.headMap(oldest).clear();
             exchanges.headMap(oldest).clear();
             done.headMap(oldest).clear();
+            routeEvents.headMap(oldest).clear();
             faults.headMap(oldest).clear();
             down.headMap(oldest).clear();
+            open.headMap(oldest).clear();
+            logs.headMap(oldest).clear();
         }
     }
 
@@ -221,6 +241,29 @@ final class Timeline {
                 }
                 rec.chaosRecorded = true;
             }
+            rec.open.subMap(start, true, end, true).clear();
+            if (timeline.get("circuitBreakers") instanceof List<?> breakers) {
+                for (Object o : breakers) {
+                    if (o instanceof JsonObject cb && cb.getString("routeId") != null) {
+                        long[] states = values(cb, "states", n);
+                        for (int i = 0; i < n; i++) {
+                            if (states[i] > 0) {
+                                rec.open.computeIfAbsent(start + i, s -> new LinkedHashMap<>())
+                                        .merge(cb.getString("routeId"), (int) states[i], Math::max);
+                            }
+                        }
+                    }
+                }
+            }
+            rec.routeEvents.subMap(start, true, end, true).clear();
+            if (timeline.get("routeEvents") instanceof List<?> events) {
+                for (Object o : events) {
+                    if (o instanceof JsonObject e && e.getString("routeId") != null) {
+                        rec.routeEvents.computeIfAbsent(e.getLongOrDefault("second", 0), s -> new LinkedHashMap<>())
+                                .put(e.getString("routeId"), e.getString("event"));
+                    }
+                }
+            }
             long[] done = values(timeline, "exchangesDone", n);
             for (int i = 0; i < n; i++) {
                 rec.done.put(start + i, Math.max(0, done[i]));
@@ -234,8 +277,13 @@ final class Timeline {
                     }
                 }
             }
+            if (full) {
+                rec.full = true;
+            } else if (rec.end >= 0 && start > rec.end + 1) {
+                // seconds were missed (the integration was not the selected one): read all of it again
+                rec.full = false;
+            }
             rec.end = Math.max(rec.end, end);
-            rec.full |= full;
             rec.trim(rec.end);
         }
     }
@@ -417,15 +465,40 @@ final class Timeline {
                 down[(int) (en.getKey() - start)] = 1;
             }
         }
+        long[] open = new long[seconds];
+        for (Map.Entry<Long, Map<String, Integer>> en : rec.open.subMap(start, true, endSecond, true).entrySet()) {
+            Integer state = en.getValue().get(route);
+            if (state != null) {
+                open[(int) (en.getKey() - start)] = state;
+            }
+        }
+        // what happened to the route: started, stopped, reloaded, removed, restartFailed
+        String[] events = new String[seconds];
+        for (Map.Entry<Long, Map<String, String>> en : rec.routeEvents.subMap(start, true, endSecond, true).entrySet()) {
+            String event = en.getValue().get(route);
+            if (event != null) {
+                events[(int) (en.getKey() - start)] = event;
+            }
+        }
         return new RouteSeries(
                 route, values[COMPLETED], values[RECOVERED], values[HANDLED], values[FAILED],
-                values[INFLIGHT], values[MEAN], values[P95], values[MAX], down, values[ATTEMPTS]);
+                values[INFLIGHT], values[MEAN], values[P95], values[MAX], down, values[ATTEMPTS], events, open);
     }
 
     private static long[] filled(int seconds) {
         long[] a = new long[seconds];
         Arrays.fill(a, -1);
         return a;
+    }
+
+    /** A WARN or ERROR line in the log of the integration, at the second of its time. */
+    void logLine(String pid, long second, boolean error) {
+        Recording rec = byPid.computeIfAbsent(pid, k -> new Recording());
+        synchronized (rec) {
+            if (rec.end < 0 || second > rec.end - SECONDS) {
+                rec.logs.computeIfAbsent(second, s -> new long[2])[error ? 1 : 0]++;
+            }
+        }
     }
 
     /**
@@ -453,6 +526,22 @@ final class Timeline {
             errors.forEach((label, values) -> answer.add(new CauseSeries(label, null, values)));
             faults.forEach((rule, values) -> answer
                     .add(new CauseSeries(rec.ruleLabels.getOrDefault(rule, rule), rule, values)));
+            if (answer.isEmpty()) {
+                // nothing failed in an exchange: what the log said went wrong (an exception there is logged too)
+                long[] warn = new long[seconds];
+                long[] error = new long[seconds];
+                for (Map.Entry<Long, long[]> en : rec.logs.subMap(start, true, endSecond, true).entrySet()) {
+                    int i = (int) (en.getKey() - start);
+                    warn[i] = en.getValue()[0];
+                    error[i] = en.getValue()[1];
+                }
+                if (Arrays.stream(error).sum() > 0) {
+                    answer.add(new CauseSeries("log ERROR", null, error));
+                }
+                if (Arrays.stream(warn).sum() > 0) {
+                    answer.add(new CauseSeries("log WARN", null, warn));
+                }
+            }
             return answer;
         }
     }
@@ -479,6 +568,22 @@ final class Timeline {
         }
         synchronized (rec) {
             return rec.done.subMap(from, true, to, true).values().stream().mapToLong(Long::longValue).sum();
+        }
+    }
+
+    /** The last second an exchange was done in, or -1 when none in the seconds kept. */
+    long lastActive(String pid) {
+        Recording rec = pid != null ? byPid.get(pid) : null;
+        if (rec == null) {
+            return -1;
+        }
+        synchronized (rec) {
+            for (Map.Entry<Long, Long> e : rec.done.descendingMap().entrySet()) {
+                if (e.getValue() > 0) {
+                    return e.getKey();
+                }
+            }
+            return -1;
         }
     }
 

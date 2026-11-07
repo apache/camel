@@ -336,7 +336,8 @@ public final class ToolRegistry {
                                       + " and max time, the exchanges in flight and the redelivery attempts; the errors per"
                                       + " second by route and exception (chaosRule names the camel-chaos rule that made"
                                       + " one); with camel-chaos the faults per second of each chaos rule (chaos) and the"
-                                      + " seconds a rule had a route down (down of the route); and per second the failed,"
+                                      + " seconds a rule had a route down (down of the route); the seconds a circuit breaker"
+                                      + " was open (2) or half open (1) (circuitBreakers); and per second the failed,"
                                       + " handled and recovered exchanges and the 3 slowest with the remote calls they made. Each series is"
                                       + " oldest first and ends at the epoch second end. Use it to tell when something went wrong and what it did to which route.")
                 .param("seconds", "integer", "The number of seconds (default 60, at most what the integration records)",

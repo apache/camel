@@ -97,6 +97,15 @@ class TimelineTab extends AbstractTableTab {
     @Override
     public void onTabSelected() {
         refreshWhileVisible();
+        // nothing in the last minute (an app that worked at startup, a batch): open on the window with the last exchange
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        long last = info != null ? ctx.timeline.lastActive(info.pid) : -1;
+        if (pausedAt < 0 && window == 0 && last >= 0) {
+            long ago = nowSecond() - last;
+            for (int i = 0; i < WINDOWS.length && ago >= WINDOWS[window]; i++) {
+                window = Math.min(WINDOWS.length - 1, window + 1);
+            }
+        }
         // the detail opens on the route that had the worst time in the window
         List<Timeline.RouteSeries> routes = routes(ctx.findSelectedIntegration());
         int worst = worst(routes);
@@ -323,7 +332,7 @@ class TimelineTab extends AbstractTableTab {
                 .split(area);
         int inner = Math.max(20, area.width() - 2);
         int label = Math.min(MAX_LABEL,
-                Math.max(11, routes.stream().mapToInt(r -> r.route().length()).max().orElse(0))) + 3;
+                Math.max(11, routes.stream().mapToInt(r -> r.route().length()).max().orElse(0))) + 4;
         // a second is 1 to 3 characters wide as the screen allows, or a character is several seconds
         int room = Math.max(10, inner - label - SUFFIX - 1);
         int per = room >= seconds() ? 1 : (int) Math.ceil((double) seconds() / room);
@@ -337,12 +346,17 @@ class TimelineTab extends AbstractTableTab {
 
         List<Line> lines = new ArrayList<>();
         renderCauses(lines, causes, anyCause, info, columns, per, label);
+        boolean anyOpen = routes.stream().anyMatch(r -> r.total(r.open()) > 0);
         lines.add(Line.from(Span.raw(pad("", label)), Span.styled("Routes  ", Theme.label()),
                 Span.styled("█", Theme.success()), Span.raw(" completed  "),
                 Span.styled("█", Theme.warning()), Span.raw(" recovered  "),
                 Span.styled("█", handledStyle()), Span.raw(" handled  "),
                 Span.styled("█", Theme.error()), Span.raw(" failed  "),
-                Span.styled("░", Theme.error()), Span.raw(" down")));
+                Span.styled("░", Theme.error()), Span.raw(" down"),
+                Span.raw(anyOpen ? "  " : ""), Span.styled(anyOpen ? "▒" : "", Theme.notice()),
+                Span.raw(anyOpen ? " circuit breaker open" : ""),
+                Span.raw(routes.stream().anyMatch(r -> Arrays.stream(r.events()).anyMatch(e -> e != null))
+                        ? "   ▶ started  ■ stopped  ↻ reloaded" : "")));
         Integer sel = tableState.selected();
         routeLinesY = lines.size();
         for (int i = 0; i < routes.size(); i++) {
@@ -373,6 +387,14 @@ class TimelineTab extends AbstractTableTab {
         String span = seconds() >= 120 ? (seconds() / 60) + "m" : seconds() + "s";
         StringBuilder sb = new StringBuilder(" Timeline ─ ").append(info.name != null ? info.name : info.pid)
                 .append(" ─ last ").append(span).append(' ');
+        long last = ctx.timeline.lastActive(info.pid);
+        long quiet = nowSecond() - last;
+        if (pausedAt < 0 && last >= 0 && quiet >= seconds()) {
+            // a quiet window: when the last exchange was, out of the window
+            sb.append("─ the last exchange ").append(ChaosTab.shortTime(quiet * 1000)).append(" ago ");
+        } else if (pausedAt < 0 && last < 0 && ctx.timeline.endSecond(info.pid) >= 0) {
+            sb.append("─ no exchange in the last 5m ");
+        }
         if (pausedAt >= 0) {
             long ago = nowSecond() - pausedAt;
             sb.append("─ paused").append(ago > 0 ? ", " + ChaosTab.shortTime(ago * 1000) + " ago " : " ");
@@ -434,15 +456,24 @@ class TimelineTab extends AbstractTableTab {
         long[] handled = cols(r.handled(), false);
         long[] failed = cols(r.failed(), false);
         long[] down = cols(r.down(), true);
+        long[] open = cols(r.open(), true);
         long[] attempts = cols(r.attempts(), false);
         long max = 1;
         for (int c = 0; c < columns; c++) {
             max = Math.max(max, total(completed[c], recovered[c], handled[c], failed[c]));
         }
+        String[] events = eventsOf(r.events(), per);
         for (int c = 0; c < columns; c++) {
             long t = total(completed[c], recovered[c], handled[c], failed[c]);
-            if (down[c] > 0) {
+            String event = c / width < events.length && c % width == 0 ? events[c / width] : null;
+            if (event != null) {
+                // what happened to the route then, in place of its exchanges
+                spans.add(eventMark(event));
+            } else if (down[c] > 0) {
                 spans.add(Span.styled("░", Theme.error()));
+            } else if (open[c] > 0) {
+                // the circuit breaker was open (half open dim): the calls went to the fallback, or failed fast
+                spans.add(Span.styled("▒", open[c] >= 2 ? Theme.notice() : Theme.muted()));
             } else if (completed[c] < 0) {
                 spans.add(Span.raw(" "));
             } else if (t == 0) {
@@ -458,6 +489,28 @@ class TimelineTab extends AbstractTableTab {
         spans.add(Span.raw("  "));
         spans.addAll(summary(r));
         return Line.from(spans);
+    }
+
+    /** The event of each column of several seconds: the last in the column. */
+    static String[] eventsOf(String[] seconds, int per) {
+        String[] answer = new String[(seconds.length + per - 1) / per];
+        for (int i = 0; i < seconds.length; i++) {
+            if (seconds[i] != null) {
+                answer[i / per] = seconds[i];
+            }
+        }
+        return answer;
+    }
+
+    /** The mark of what happened to a route: ▶ started, ■ stopped, ↻ reloaded, ✕ removed, ! restart failed. */
+    static Span eventMark(String event) {
+        return switch (event) {
+            case "started" -> Span.styled("▶", Theme.success().bold());
+            case "stopped" -> Span.styled("■", Theme.warning().bold());
+            case "reloaded" -> Span.styled("↻", Theme.info().bold());
+            case "removed" -> Span.styled("✕", Theme.muted());
+            default -> Span.styled("!", Theme.error().bold());
+        };
     }
 
     /** The rate of the route over the window, and the worst that happened to its exchanges. */
@@ -476,6 +529,9 @@ class TimelineTab extends AbstractTableTab {
         }
         if (r.total(r.down()) > 0) {
             spans.add(Span.styled("down " + r.total(r.down()) + "s ", Theme.error()));
+        }
+        if (r.openSeconds() > 0) {
+            spans.add(Span.styled("⚡ open " + r.openSeconds() + "s ", Theme.notice()));
         }
         spans.add(Span.raw(rate(done, known)));
         if (r.total(r.failed()) > 0) {
@@ -570,8 +626,10 @@ class TimelineTab extends AbstractTableTab {
         long maxMean = 0;
         long sumMean = 0;
         int n = 0;
-        for (long m : r.mean()) {
-            if (m >= 0) {
+        for (int i = 0; i < r.mean().length; i++) {
+            long m = r.mean()[i];
+            // the average of the seconds that had exchanges, not of the idle ones
+            if (m >= 0 && r.completed()[i] + r.recovered()[i] + r.handled()[i] > 0) {
                 maxMean = Math.max(maxMean, m);
                 sumMean += m;
                 n++;
@@ -803,7 +861,9 @@ class TimelineTab extends AbstractTableTab {
 
     @Override
     public String description() {
-        return "A timeline of the integration: errors and route outcomes per second, with chaos rules as a layer";
+        return "A timeline of the integration: per second the errors by exception (else the WARN and ERROR lines of the log),"
+               + " what each route did, when a route started, stopped or reloaded, and the seconds a circuit breaker was"
+               + " open, with chaos rules as a layer; paused, the exchanges of a second";
     }
 
     @Override
@@ -844,6 +904,7 @@ class TimelineTab extends AbstractTableTab {
             row.put("handled", r.total(r.handled()));
             row.put("failed", r.total(r.failed()));
             row.put("downSeconds", r.total(r.down()));
+            row.put("circuitBreakerOpenSeconds", r.openSeconds());
             row.put("redeliveryAttempts", r.total(r.attempts()));
             JsonObject perSecond = new JsonObject();
             perSecond.put("completed", array(r.completed()));
@@ -855,6 +916,23 @@ class TimelineTab extends AbstractTableTab {
             perSecond.put("p95Millis", array(r.p95()));
             perSecond.put("maxMillis", array(r.max()));
             perSecond.put("redeliveryAttempts", array(r.attempts()));
+            // 1 a second a chaos rule had the route down; 2 a circuit breaker of the route open, 1 half open
+            perSecond.put("down", array(r.down()));
+            perSecond.put("circuitBreaker", array(r.open()));
+            // what happened to the route: started, stopped, reloaded, removed, restartFailed, and the second
+            JsonArray events = new JsonArray();
+            long first = endSecond() - seconds() + 1;
+            for (int i = 0; i < r.events().length; i++) {
+                if (r.events()[i] != null) {
+                    JsonObject ev = new JsonObject();
+                    ev.put("event", r.events()[i]);
+                    ev.put("second", first + i);
+                    events.add(ev);
+                }
+            }
+            if (!events.isEmpty()) {
+                row.put("events", events);
+            }
             row.put("perSecond", perSecond);
             rows.add(row);
         }

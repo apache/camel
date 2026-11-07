@@ -9,7 +9,10 @@ went to the dead letter channel, and it recovered by itself".
 The integration records the timeline itself, for the last 5 minutes (the
 `timeline` dev console, on with `camel run`), so the screen opens with
 the last minutes, also when the TUI was started after the integration.
-`camel get timeline` shows the same from the command line.
+When nothing happened in the last minute (an integration that did its
+work at startup), it opens on the window with the last exchange, and the
+title says how long ago that was. `camel get timeline` shows the same
+from the command line.
 
 ## Errors per second
 
@@ -25,6 +28,11 @@ integration records them too, with the seconds a rule had a route down,
 so they are there also for an outage before the TUI started. An
 error that a rule made is not counted again as an error, so an injected
 fault and a real one stay apart.
+
+When no exchange failed, the WARN and ERROR lines of the log are the
+cause instead (`log ERROR`, `log WARN`): something that went wrong outside
+an exchange, such as a consumer that cannot connect. They are read from
+the log file, from the last part of it when the TUI starts.
 
 When nothing went wrong, the band is one line: `Errors/s none`.
 
@@ -42,7 +50,14 @@ The colour is the worst that happened to them that second:
 - red: failed
 
 A `·` is a second with no exchange, and a red `░` is a second a chaos
-rule had the route down (`stall` or a lifecycle fault). At the right: the
+rule had the route down (`stall` or a lifecycle fault). A `▒` is a second
+a circuit breaker of the route was open (dim: half open), so its calls
+went to the fallback or failed fast, and the route says `⚡ open 12s`:
+the Circuit Breaker EIP (camel-resilience4j,
+camel-microprofile-fault-tolerance) or the throttling exception route
+policy. A mark says what
+happened to the route then: `▶` started, `■` stopped, `↻` reloaded, `✕`
+removed, `!` a restart failed. At the right: the
 exchanges per second over the window, and the worst count.
 
 ## The selected route
@@ -57,11 +72,12 @@ slowest exchanges. The last line has the totals of the window.
 
 Paused, a cursor `▲` under the time axis picks a second (or a column of
 seconds). **Enter** lists the exchanges the integration kept of it: the
-failed and handled ones (up to 10 a second) and the 3 slowest, with their outcome,
-time and slowest call, and the chaos rule that faulted one. **Enter**
-again shows the selected exchange: its calls with their times and its
-exception. The title says how many exchanges were done then, of which
-these were kept.
+failed, handled and recovered ones (up to 10 a second) and the 3 slowest,
+with their outcome, time and slowest call, and the chaos rule that
+faulted one. **Enter** again shows the selected exchange: its calls with
+their times and its exception, or for a recovered one the failure it was
+redelivered for (`recovered after:`). The title says how many exchanges
+were done then, of which these were kept.
 
 ## Keys
 
@@ -80,5 +96,6 @@ these were kept.
 - **Shift+F8** — Explain with AI what happened, as cause and effect
 
 An AI can read the same per second series with `tui_get_table` on the
-Timeline tab, and the exchanges of the second at the cursor while the
-list is open.
+Timeline tab (with the causes, the seconds a route was down or its
+circuit breaker open, and when a route started, stopped or reloaded),
+and the exchanges of the second at the cursor while the list is open.

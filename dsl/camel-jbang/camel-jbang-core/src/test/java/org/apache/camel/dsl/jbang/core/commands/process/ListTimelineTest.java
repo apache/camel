@@ -113,12 +113,23 @@ class ListTimelineTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void theSecondsACircuitBreakerOfTheRouteWasOpen() throws Exception {
+        JsonObject timeline = timeline();
+        timeline.put("circuitBreakers", Jsoner.deserialize(
+                "[{\"routeId\":\"orders\",\"id\":\"cb1\",\"kind\":\"resilience4j\",\"states\":[2,2,1]}]"));
+        String routes = run(command(timeline));
+        assertThat(routes).contains("CB OPEN");
+        assertThat(routes.lines().filter(l -> l.contains("orders")).findFirst().orElseThrow()).contains(" 2s");
+    }
+
+    @Test
     void withoutChaosNoDownColumn() throws Exception {
         JsonObject timeline = timeline();
         for (Object r : (List<?>) timeline.get("routes")) {
             ((JsonObject) r).remove("down");
         }
-        assertThat(run(command(timeline))).doesNotContain("DOWN");
+        // and no circuit breaker was open: no column for it either
+        assertThat(run(command(timeline))).doesNotContain("DOWN").doesNotContain("CB OPEN");
     }
 
     @Test

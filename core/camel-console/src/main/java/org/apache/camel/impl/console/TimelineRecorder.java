@@ -70,6 +70,13 @@ final class TimelineRecorder {
             List<Send> sends) {
     }
 
+    /**
+     * A circuit breaker: of a circuit breaker EIP in a route (resilience4j or fault-tolerance, with its id), or the
+     * throttling exception route policy of a route (route-policy, without an id).
+     */
+    record Breaker(String routeId, String id, String kind) {
+    }
+
     /** The kind of error that is counted per second. */
     record ErrorKind(String routeId, String exception, Integer statusCode, String chaosRule) {
     }
@@ -122,9 +129,13 @@ final class TimelineRecorder {
         final Map<ErrorKind, long[]> errors = new LinkedHashMap<>();
         final List<Kept> failed = new ArrayList<>();
         final List<Kept> slowest = new ArrayList<>();
+        // what happened to the routes: started, stopped, reloaded, removed, restart failed
+        Map<String, String> routeEvents;
         // with camel-chaos: the faults of each rule, and the routes a rule had down
         Map<String, Long> faults;
         Set<String> down;
+        // the circuit breakers that were not closed: 2 open, 1 half open
+        Map<Breaker, Integer> breakers;
         long done;
         boolean closed;
 
@@ -269,6 +280,15 @@ final class TimelineRecorder {
                 slot(now / 1000).route(routeId).attempts++;
             }
         }
+    }
+
+    /** A route was started, stopped, reloaded or removed: the last of a second is kept. */
+    synchronized void routeEvent(String routeId, String event, long now) {
+        Second s = slot(now / 1000);
+        if (s.routeEvents == null) {
+            s.routeEvents = new LinkedHashMap<>();
+        }
+        s.routeEvents.put(routeId, event);
     }
 
     /** An error handler handled a failure, or an exchange failed: it is counted as an error of its second. */
@@ -418,6 +438,23 @@ final class TimelineRecorder {
 
     Map<String, String> chaosRules() {
         return chaosRules;
+    }
+
+    /**
+     * Takes the state of the circuit breakers at the given time, as the state of the second before (the sample is taken
+     * just after a whole second): only the ones that are not closed.
+     *
+     * @param states the circuit breakers that are open (2) or half open (1)
+     */
+    synchronized void breakers(long now, Map<Breaker, Integer> states) {
+        if (states.isEmpty()) {
+            return;
+        }
+        Second s = slot(now / 1000 - 1);
+        if (s.breakers == null) {
+            s.breakers = new LinkedHashMap<>();
+        }
+        states.forEach((b, state) -> s.breakers.merge(b, state, Math::max));
     }
 
     private static long rise(long before, long now) {

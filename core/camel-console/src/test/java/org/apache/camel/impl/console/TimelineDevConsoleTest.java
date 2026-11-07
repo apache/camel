@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -216,6 +217,88 @@ public class TimelineDevConsoleTest extends ContextTestSupport {
             assertThat(sum(route(out, "orders"), "down")).isZero();
         });
         assertThat(askedWithoutReport.get()).isTrue();
+    }
+
+    @Test
+    public void theSecondsACircuitBreakerWasOpen() {
+        AtomicReference<String> state = new AtomicReference<>("OPEN");
+        // camel-resilience4j is not on the classpath here: a console of its id that answers as it does
+        AbstractDevConsole resilience = new AbstractDevConsole("camel", "resilience4j", "Resilience", "fake") {
+            @Override
+            protected String doCallText(Map<String, Object> options) {
+                return "";
+            }
+
+            @Override
+            protected Map<String, Object> doCallJson(Map<String, Object> options) {
+                JsonObject cb = new JsonObject();
+                cb.put("id", "cb1");
+                cb.put("routeId", "orders");
+                cb.put("state", state.get());
+                JsonObject closed = new JsonObject();
+                closed.put("id", "cb2");
+                closed.put("routeId", "batch");
+                closed.put("state", "CLOSED");
+                JsonObject root = new JsonObject();
+                root.put("circuitBreakers", List.of(cb, closed));
+                return root;
+            }
+        };
+        resilience.setCamelContext(context);
+        context.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).register(resilience);
+        startConsole();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of(TimelineDevConsole.SECONDS, "10"));
+            JsonArray series = out.getCollection("circuitBreakers");
+            assertThat(series).isNotNull().hasSize(1);
+            JsonObject cb1 = (JsonObject) series.get(0);
+            assertThat(cb1.getString("id")).isEqualTo("cb1");
+            assertThat(cb1.getString("routeId")).isEqualTo("orders");
+            assertThat(cb1.getString("kind")).isEqualTo("resilience4j");
+            assertThat(cb1.<List<Number>> getCollection("states")).contains(2L);
+        });
+        state.set("HALF_OPEN");
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON, Map.of(TimelineDevConsole.SECONDS, "10"));
+            JsonObject cb1 = (JsonObject) out.<JsonArray> getCollection("circuitBreakers").get(0);
+            assertThat(cb1.<List<Number>> getCollection("states")).contains(1L, 2L);
+        });
+        assertThat((String) console.call(DevConsole.MediaType.TEXT))
+                .contains("cb1 in orders (resilience4j): open");
+    }
+
+    @Test
+    public void aCircuitBreakerSpellsItsStateItsOwnWay() {
+        assertThat(TimelineDevConsole.breakerState("OPEN")).isEqualTo(2);
+        assertThat(TimelineDevConsole.breakerState("FORCED_OPEN")).isEqualTo(2);
+        assertThat(TimelineDevConsole.breakerState("Open")).isEqualTo(2);
+        assertThat(TimelineDevConsole.breakerState("HALF_OPEN")).isEqualTo(1);
+        assertThat(TimelineDevConsole.breakerState("HalfOpen")).isEqualTo(1);
+        assertThat(TimelineDevConsole.breakerState("opened")).isEqualTo(2);
+        assertThat(TimelineDevConsole.breakerState("half opened")).isEqualTo(1);
+        assertThat(TimelineDevConsole.breakerState("closed")).isZero();
+        assertThat(TimelineDevConsole.breakerState(null)).isZero();
+    }
+
+    @Test
+    public void whatHappenedToTheRoutes() throws Exception {
+        startConsole();
+
+        context.getRouteController().stopRoute("failing");
+        context.getRouteController().startRoute("failing");
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON);
+            JsonArray events = out.getCollection("routeEvents");
+            assertThat(events).isNotNull();
+            // the last of a second is kept: the route was started again
+            assertThat(events).anySatisfy(e -> {
+                JsonObject ev = (JsonObject) e;
+                assertThat(ev.getString("routeId")).isEqualTo("failing");
+                assertThat(ev.getString("event")).isEqualTo("started");
+            });
+        });
     }
 
     @Override

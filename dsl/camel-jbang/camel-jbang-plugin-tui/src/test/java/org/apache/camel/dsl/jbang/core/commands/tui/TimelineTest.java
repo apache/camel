@@ -157,6 +157,34 @@ class TimelineTest {
     }
 
     @Test
+    void missedSecondsAreReadAgain() {
+        timeline.merge("1234", new TimelineJson(S0 + 9, 10).route("orders", "completed", 9, 1).json(), true);
+        assertThat(timeline.isFull("1234")).isTrue();
+        // the next seconds come right after: nothing missed
+        timeline.merge("1234", new TimelineJson(S0 + 12, 3).route("orders", "completed", 2, 1).json(), false);
+        assertThat(timeline.isFull("1234")).isTrue();
+        // the integration was not the selected one for a while: seconds missed
+        timeline.merge("1234", new TimelineJson(S0 + 40, 3).route("orders", "completed", 2, 1).json(), false);
+        assertThat(timeline.isFull("1234")).isFalse();
+        assertThat(timeline.lastActive("1234")).isEqualTo(S0 + 40);
+    }
+
+    @Test
+    void whatHappenedToTheRoutes() throws Exception {
+        JsonObject json = new TimelineJson(S0 + 2, 3).route("orders", "completed", 0, 1).json();
+        JsonObject stopped = new JsonObject();
+        stopped.put("routeId", "orders");
+        stopped.put("event", "stopped");
+        stopped.put("second", S0 + 1);
+        json.put("routeEvents", List.of(stopped));
+        timeline.merge("1234", json, true);
+
+        assertThat(orders(S0 + 2, 3).events()).containsExactly(null, "stopped", null);
+        assertThat(TimelineTab.eventsOf(new String[] { null, "stopped", "started", null }, 2))
+                .containsExactly("stopped", "started");
+    }
+
+    @Test
     void notATimelineIsIgnored() {
         timeline.merge("1234", new JsonObject(), true);
         timeline.merge("1234", null, true);

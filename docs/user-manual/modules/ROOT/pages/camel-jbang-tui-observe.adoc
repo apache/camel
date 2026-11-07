@@ -26,18 +26,26 @@ image::jbang/camel-tui-timeline.png[The Timeline tab in an outage of the stock s
 
 * *Errors/s* stacks the errors per second by the kind of exception, with the HTTP status when there is one. With
 camel-chaos, the faults of each chaos rule are a layer of their own, marked 🎲, so an injected fault and a real one stay
-apart. When nothing went wrong the band is one line.
+apart. When no exchange failed, the WARN and ERROR lines of the log are the cause instead (`log ERROR`, `log WARN`),
+read from the log file of the integration: something that went wrong outside an exchange, such as a consumer that
+cannot connect. When nothing went wrong the band is one line.
 * *Routes* has a line per route. The height is the exchanges done that second, and the colour the worst that happened to
 them: completed, recovered by redelivery, handled by the error handler (such as the dead letter channel), or failed. A
-second a chaos rule had the route down is shaded.
+second a chaos rule had the route down is shaded, and a mark says what happened to the route then: `▶` started, `■`
+stopped, `↻` reloaded, `✕` removed. A `▒` is a second a circuit breaker of the route was open (the Circuit Breaker EIP
+with camel-resilience4j or camel-microprofile-fault-tolerance, or the throttling exception route policy), and the route
+says `⚡ open 10s`: why it went quiet, or ran its fallback, without failing.
+
+image::jbang/camel-tui-timeline-circuit-breaker.png[The Timeline of the circuit breaker example: the supplier fails three times, then the circuit breaker of stock-check is open for 10 seconds]
 * The selected route is shown in detail: its outcomes stacked per second, its mean processing time with the p95 and max
 of its slowest second, its exchanges in flight, its redelivery attempts and its slowest remote calls. The screen opens
 on the route that had the worst time.
 
 *w* switches the window between 1, 2 and 5 minutes, and *Space* pauses so a moment does not scroll away. Paused, *Left*
 and *Right* move a cursor over the seconds (*Shift* with them goes back and forth in the 5 minutes kept), and *Enter*
-lists the exchanges of the second at the cursor: the failed and handled ones and the 3 slowest, with their outcome, time and
-slowest call. *Enter* again shows the selected exchange with the remote calls it made and its exception.
+lists the exchanges of the second at the cursor: the failed, handled and recovered ones and the 3 slowest, with their
+outcome, time and slowest call. *Enter* again shows the selected exchange with the remote calls it made and its exception,
+or for a recovered one the failure it was redelivered for.
 
 image::jbang/camel-tui-timeline-exchanges.png[The exchanges of a second in the outage: the orders handled by the dead letter channel, one of them faulted by chaos rule r1]
 
@@ -45,7 +53,7 @@ image::jbang/camel-tui-timeline-exchanges.png[The exchanges of a second in the o
 
 The integration records the timeline itself, for the last 5 minutes, with the `timeline` dev console, which is on in
 the `dev` profile of `camel run`. With camel-chaos it records the faults of the chaos rules and the seconds they had a
-route down too. So the tab opens with the last minutes, also when the TUI started after the
+route down too, and the seconds a circuit breaker was open. So the tab opens with the last minutes, also when the TUI started after the
 integration, and `camel get timeline` shows the same from the command line
 (see xref:camel-jbang-diagnostics.adoc#_timeline[Diagnostics]).
 
