@@ -76,7 +76,8 @@ public final class ChaosManager {
 
     private final CamelContext camelContext;
     private final long seed;
-    private final boolean seedGiven;
+    // where the seed came from (camel.chaos.seed, or a scenario), or null when it was picked at startup
+    private final String seedFrom;
     private final long maxDuration;
 
     private final Object lock = new Object();
@@ -103,10 +104,10 @@ public final class ChaosManager {
     private final ChaosLifecycle lifecycle;
     private boolean routesCreated;
 
-    ChaosManager(CamelContext camelContext, long seed, boolean seedGiven, long maxDuration) {
+    ChaosManager(CamelContext camelContext, long seed, String seedFrom, long maxDuration) {
         this.camelContext = camelContext;
         this.seed = seed;
-        this.seedGiven = seedGiven;
+        this.seedFrom = seedFrom;
         this.maxDuration = maxDuration;
         this.lifecycle = new ChaosLifecycle(camelContext);
     }
@@ -168,6 +169,69 @@ public final class ChaosManager {
         synchronized (lock) {
             return add(definitions);
         }
+    }
+
+    /**
+     * Loads a scenario (see {@link ChaosScenario}): an experiment of its own, so the rules there are now are removed,
+     * the report starts again (as with {@link #reset()}), and the rules of the scenario are added, all of them or none
+     * when one is not valid. With a {@code seed=} line the rules of the scenario draw from that seed, by their place in
+     * it, so loading the scenario again fails the same messages.
+     *
+     * @param  name                     the name of the scenario, such as the name of its file
+     * @param  text                     the content of the scenario: one rule per line, {@code #} comments and an
+     *                                  optional {@code seed=} line
+     * @return                          the ids of the rules, in their order
+     * @throws IllegalArgumentException when a line is not valid, with its line number; the rules there are now stay
+     * @throws IllegalStateException    when the scenario has more than {@link #MAX_RULES} rules
+     */
+    public List<String> loadScenario(String name, String text) {
+        List<ChaosRule.Builder> definitions = parse(ChaosScenario.parse(name, text));
+        if (definitions.size() > MAX_RULES) {
+            throw new IllegalStateException(
+                    "The chaos scenario " + name + " has " + definitions.size() + " rules, and at most " + MAX_RULES
+                                            + " are allowed");
+        }
+        synchronized (lock) {
+            for (ChaosRule.Builder definition : definitions) {
+                // checked before the rules there are now are removed
+                checkRoute(definition);
+            }
+            reset();
+            List<String> ids = add(definitions);
+            LOG.info("Chaos scenario {} loaded: {} rules", name, ids.size());
+            return ids;
+        }
+    }
+
+    /**
+     * Adds the rules of the scenario of {@code camel.chaos.scenario} when the context initializes, before the rules of
+     * {@code camel.chaos.rules}.
+     */
+    List<String> addScenario(ChaosScenario scenario) {
+        List<ChaosRule.Builder> definitions = parse(scenario);
+        synchronized (lock) {
+            return add(definitions);
+        }
+    }
+
+    /** Parses the rules of a scenario, all of them before any is added, with the line of a rule that is not valid. */
+    private List<ChaosRule.Builder> parse(ChaosScenario scenario) {
+        List<ChaosRule.Builder> definitions = new ArrayList<>();
+        List<String> texts = scenario.getRules();
+        for (int i = 0; i < texts.size(); i++) {
+            ChaosRule.Builder b;
+            try {
+                b = parse(texts.get(i));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(scenario.where(scenario.lineOf(i)) + e.getMessage(), e);
+            }
+            b.scenario = scenario.getName();
+            b.seed = scenario.getSeed();
+            // the id the rule gets when the scenario is the first thing loaded, so it draws the same wherever it is
+            b.drawKey = "r" + (i + 1);
+            definitions.add(b);
+        }
+        return definitions;
     }
 
     /**
@@ -479,7 +543,7 @@ public final class ChaosManager {
         }
         Map<String, RouteCounts> counts = new TreeMap<>(routes);
         return new ChaosReport(
-                seed, seedGiven, TimeSource.currentTimeMillis(), current, removed, counts, unmet, lost, pending,
+                seed, seedFrom, TimeSource.currentTimeMillis(), current, removed, counts, unmet, lost, pending,
                 lostAtDlq, recentFaults.latestFirst(), ChaosTargets.reach(camelContext));
     }
 

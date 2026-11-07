@@ -80,6 +80,17 @@ public class RunRequest extends ExportRequest {
     public boolean chaos;
 
     /**
+     * The chaos scenario to start with (camel run --chaos=file), as an absolute path, or null.
+     */
+    public String chaosScenario;
+
+    /**
+     * The file to write the chaos report to when the run ends (camel run --chaos-report=file), as an absolute path, or
+     * null.
+     */
+    public String chaosReport;
+
+    /**
      * Enables tracing.
      */
     public boolean trace;

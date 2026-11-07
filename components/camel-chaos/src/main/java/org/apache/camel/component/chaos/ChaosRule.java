@@ -159,6 +159,8 @@ final class ChaosRule {
     // 1 when the rule is added, one more each time it is changed (the report has an entry per version of an id)
     final int version;
     final String text;
+    // the scenario the rule came from (ChaosManager.loadScenario), else null
+    final String scenario;
     final Target target;
     final String pattern;
     // the routes the rule is narrowed to (in=, a route id or a pattern), else null
@@ -248,6 +250,7 @@ final class ChaosRule {
         this.id = id;
         this.version = version;
         this.text = b.text;
+        this.scenario = b.scenario;
         this.target = b.target;
         this.pattern = b.pattern;
         this.in = b.in;
@@ -294,7 +297,11 @@ final class ChaosRule {
         for (int i = 0; i < fired.length; i++) {
             fired[i] = new LongAdder();
         }
-        this.random = new AtomicLong(mix(seed + GOLDEN_GAMMA * mix(id.hashCode())));
+        // a rule of a scenario draws from the seed of the scenario, by its place in it, so the scenario fails the same
+        // messages whenever it is loaded, whatever the ids of its rules are then
+        long base = b.seed != null ? b.seed : seed;
+        String key = b.drawKey != null ? b.drawKey : id;
+        this.random = new AtomicLong(mix(base + GOLDEN_GAMMA * mix(key.hashCode())));
         this.lifecycle = action != null ? new ChaosLifecycle.Fault(this) : null;
     }
 
@@ -1062,6 +1069,10 @@ final class ChaosRule {
     /** The definition of a rule, as the parser builds it. */
     static final class Builder {
         String text;
+        // set by a scenario: its name, its seed (null when it has none), and the key of the draws of the rule
+        String scenario;
+        Long seed;
+        String drawKey;
         Target target;
         String pattern;
         String in;

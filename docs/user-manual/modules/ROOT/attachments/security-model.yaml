@@ -161,7 +161,7 @@ config_variants:
       default: false                 # CVE-2016-8749 (Jackson); the unmarshal type header selects the class
     - option: camel.chaos.enabled           # camel-chaos
       insecure_value: true
-      default: unset                 # on with profile dev, never with prod; rules from camel.chaos.rules (insecure:dev), Java, camel cmd chaos-* or the chaos tools (camel ask, MCP); exception= names any public Throwable class
+      default: unset                 # on with profile dev, never with prod; rules from camel.chaos.rules and camel.chaos.scenario (insecure:dev), Java, camel cmd chaos-* or the chaos tools (camel ask, MCP); exception= names any public Throwable class
 
 properties_provided:
   # id, violation symptom, indicative severity tier (the range published at the advisory index since 2015)

@@ -519,10 +519,15 @@
   (defaults)
 > cmd chaos-add --rule v
   cmd:helpRequested=false
+  dryRun=false
   helpRequested=false
   name=null
   rules=["v"]
   timeoutOption.timeout=10000
+> cmd chaos-add --rule v --dry-run
+  dryRun=true
+> cmd chaos-add --rule v --dry-run=false
+  (defaults)
 > cmd chaos-add --rule v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-change --id v --rule v
@@ -545,6 +550,14 @@
 > cmd chaos-clear --reset=false
   (defaults)
 > cmd chaos-clear --timeout 7
+  timeoutOption.timeout=7
+> cmd chaos-load v
+  cmd:helpRequested=false
+  file="v"
+  helpRequested=false
+  name=null
+  timeoutOption.timeout=10000
+> cmd chaos-load v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-remove --id v
   cmd:helpRequested=false
@@ -1425,6 +1438,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -1531,6 +1545,8 @@
   chaos=true
 > debug --chaos=false
   (defaults)
+> debug --chaos-report v
+  chaosReport="v"
 > debug --code v
   code="v"
 > debug --console
@@ -2434,6 +2450,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -2521,6 +2538,8 @@
   chaos=true
 > dev --chaos=false
   (defaults)
+> dev --chaos-report v
+  chaosReport="v"
 > dev --code v
   code="v"
 > dev --console
@@ -4770,6 +4789,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -4857,6 +4877,8 @@
   chaos=true
 > run --chaos=false
   (defaults)
+> run --chaos-report v
+  chaosReport="v"
 > run --code v
   code="v"
 > run --console
@@ -6232,6 +6254,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -6372,6 +6395,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false

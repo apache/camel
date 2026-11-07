@@ -558,6 +558,8 @@ Commands:
                        for development only)
   chaos-clear        Remove all chaos rules of running integrations
                        (camel-chaos, for development only)
+  chaos-load         Load a chaos scenario into a running integration
+                       (camel-chaos, for development only)
   chaos-remove       Remove a chaos rule of a running integration (camel-chaos,
                        for development only)
   disable-processor  Disable Camel processor
@@ -736,6 +738,36 @@ Examples:
   camel cmd chaos-clear
   camel cmd chaos-clear myApp
   camel cmd chaos-clear myApp --reset
+
+== camel cmd chaos-load --help
+Usage: camel cmd chaos-load [-h] [--timeout=<timeout>] <file> [<name>]
+Load a chaos scenario into a running integration (camel-chaos, for development
+only)
+      <file>                The scenario file, such as chaos/outage.chaos
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+
+A scenario is a file of the project, such as chaos/outage.chaos, with one rule
+per line, # comments and an optional seed= line, which makes it fail the same
+messages each time. The phases of an experiment come from from= and until= of
+its rules. Loading it removes the rules there are and starts a new report, then
+adds the rules of the scenario, all or none: a line that is not valid is refused
+with its line number, and the rules there are stay.
+
+To start with a scenario: camel run --chaos=chaos/outage.chaos
+
+Without a name or pid, the scenario goes to the only integration that runs, or
+the only one with chaos switched on; when that is not clear, the command fails
+with the list of the running integrations (exit code 2).
+
+Examples:
+  camel cmd chaos-load chaos/outage.chaos
+  camel cmd chaos-load chaos/outage.chaos myApp
 
 == camel cmd chaos-remove --help
 Usage: camel cmd chaos-remove [-h] --id=<id> [--timeout=<timeout>] [<name>]
@@ -1647,16 +1679,16 @@ Examples:
   camel config unset myKey
 
 == camel debug --help
-Usage: camel debug [-h] [--ago] [--background] [--backlog-trace] [--chaos]
-                   [--console] [--dev] [--empty] [--fresh] [--health]
+Usage: camel debug [-h] [--ago] [--background] [--backlog-trace] [--console]
+                   [--dev] [--empty] [--fresh] [--health]
                    [--ignore-loading-error] [--jfr] [--lazy-bean]
                    [--logging-json] [--mask] [--mcp] [--mcp-stdio] [--metrics]
                    [--observe] [--open-telemetry-agent] [--openapi-ui]
                    [--package-scan-jars] [--pretty] [--prompt]
                    [--remote-attach] [--show-exchange-properties]
-                   [--skip-plugins] [--source] [--trace] [--verbose] [--download
-                   [=<download>]] [--example[=<example>]] [--logging
-                   [=<logging>]] [--logging-color[=<loggingColor>]]
+                   [--skip-plugins] [--source] [--trace] [--verbose] [--chaos
+                   [=<file>]] [--download[=<download>]] [--example[=<example>]]
+                   [--logging[=<logging>]] [--logging-color[=<loggingColor>]]
                    [--maven-apache-snapshot-enabled
                    [=<mavenApacheSnapshotEnabled>]] [--maven-central-enabled
                    [=<mavenCentralEnabled>]] [--modeline[=<modeline>]]
@@ -1667,10 +1699,10 @@ Usage: camel debug [-h] [--ago] [--background] [--backlog-trace] [--chaos]
                    [--background-wait=<backgroundWait>]
                    [--breakpoint=<breakpoint>]
                    [--camel-spring-boot-version=<camelSpringBootVersion>]
-                   [--camel-version=<camelVersion>] [--code=<code>]
-                   [--data-dir=<dataDir>] [--gav=<gav>] [--java=<javaVersion>]
-                   [--jfr-profile=<jfrProfile>] [--jvm-args=<jvmArgs>]
-                   [--jvm-debug=<true|false|port>]
+                   [--camel-version=<camelVersion>] [--chaos-report=<file>]
+                   [--code=<code>] [--data-dir=<dataDir>] [--gav=<gav>]
+                   [--java=<javaVersion>] [--jfr-profile=<jfrProfile>]
+                   [--jvm-args=<jvmArgs>] [--jvm-debug=<true|false|port>]
                    [--kamelets-version=<kameletsVersion>]
                    [--local-kamelet-dir=<localKameletDir>]
                    [--log-lines=<logLines>]
@@ -1824,9 +1856,15 @@ Debug local Camel integration
                                component name or pattern. Multiple names can be
                                separated by comma. (all = stub all endpoints,
                                remote = stub only remote components).
-      --chaos                Add camel-chaos, to turn on faults while running
+      --chaos[=<file>]       Add camel-chaos, to turn on faults while running
                                (camel cmd chaos-add); on with profile dev,
-                               never with prod. Not with Spring Boot or Quarkus
+                               never with prod. With a scenario file (such as
+                               --chaos=chaos/outage.chaos) its rules are added
+                               at startup. A run with chaos ends with exit code
+                               1 when the chaos verdict is FAIL. Not with
+                               Spring Boot or Quarkus
+      --chaos-report=<file>  Write the chaos report as JSON to this file when
+                               the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
                              Local directory (or github link) for loading
                                Kamelets (takes precedence). Multiple
@@ -2639,23 +2677,23 @@ Examples:
   camel dependency update
 
 == camel dev --help
-Usage: camel dev [-h] [--background] [--backlog-trace] [--chaos] [--console]
-                 [--dev] [--empty] [--fresh] [--health]
-                 [--ignore-loading-error] [--jfr] [--lazy-bean]
-                 [--logging-json] [--mcp] [--mcp-stdio] [--metrics] [--observe]
-                 [--open-telemetry-agent] [--openapi-ui] [--package-scan-jars]
-                 [--prompt] [--skip-plugins] [--trace] [--verbose] [--download
-                 [=<download>]] [--example[=<example>]] [--logging[=<logging>]]
-                 [--logging-color[=<loggingColor>]]
+Usage: camel dev [-h] [--background] [--backlog-trace] [--console] [--dev]
+                 [--empty] [--fresh] [--health] [--ignore-loading-error]
+                 [--jfr] [--lazy-bean] [--logging-json] [--mcp] [--mcp-stdio]
+                 [--metrics] [--observe] [--open-telemetry-agent]
+                 [--openapi-ui] [--package-scan-jars] [--prompt]
+                 [--skip-plugins] [--trace] [--verbose] [--chaos[=<file>]]
+                 [--download[=<download>]] [--example[=<example>]] [--logging
+                 [=<logging>]] [--logging-color[=<loggingColor>]]
                  [--maven-apache-snapshot-enabled
                  [=<mavenApacheSnapshotEnabled>]] [--maven-central-enabled
                  [=<mavenCentralEnabled>]] [--modeline[=<modeline>]]
                  [--background-wait=<backgroundWait>]
                  [--camel-spring-boot-version=<camelSpringBootVersion>]
-                 [--camel-version=<camelVersion>] [--code=<code>]
-                 [--data-dir=<dataDir>] [--gav=<gav>] [--java=<javaVersion>]
-                 [--jfr-profile=<jfrProfile>] [--jvm-args=<jvmArgs>]
-                 [--jvm-debug=<true|false|port>]
+                 [--camel-version=<camelVersion>] [--chaos-report=<file>]
+                 [--code=<code>] [--data-dir=<dataDir>] [--gav=<gav>]
+                 [--java=<javaVersion>] [--jfr-profile=<jfrProfile>]
+                 [--jvm-args=<jvmArgs>] [--jvm-debug=<true|false|port>]
                  [--kamelets-version=<kameletsVersion>]
                  [--local-kamelet-dir=<localKameletDir>]
                  [--logging-config-path=<loggingConfigPath>]
@@ -2807,9 +2845,15 @@ Run in dev mode with live reload
                                component name or pattern. Multiple names can be
                                separated by comma. (all = stub all endpoints,
                                remote = stub only remote components).
-      --chaos                Add camel-chaos, to turn on faults while running
+      --chaos[=<file>]       Add camel-chaos, to turn on faults while running
                                (camel cmd chaos-add); on with profile dev,
-                               never with prod. Not with Spring Boot or Quarkus
+                               never with prod. With a scenario file (such as
+                               --chaos=chaos/outage.chaos) its rules are added
+                               at startup. A run with chaos ends with exit code
+                               1 when the chaos verdict is FAIL. Not with
+                               Spring Boot or Quarkus
+      --chaos-report=<file>  Write the chaos report as JSON to this file when
+                               the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
                              Local directory (or github link) for loading
                                Kamelets (takes precedence). Multiple
@@ -4784,23 +4828,23 @@ Examples:
   camel restart 12345
 
 == camel run --help
-Usage: camel run [-h] [--background] [--backlog-trace] [--chaos] [--console]
-                 [--dev] [--empty] [--fresh] [--health]
-                 [--ignore-loading-error] [--jfr] [--lazy-bean]
-                 [--logging-json] [--mcp] [--mcp-stdio] [--metrics] [--observe]
-                 [--open-telemetry-agent] [--openapi-ui] [--package-scan-jars]
-                 [--prompt] [--skip-plugins] [--trace] [--verbose] [--download
-                 [=<download>]] [--example[=<example>]] [--logging[=<logging>]]
-                 [--logging-color[=<loggingColor>]]
+Usage: camel run [-h] [--background] [--backlog-trace] [--console] [--dev]
+                 [--empty] [--fresh] [--health] [--ignore-loading-error]
+                 [--jfr] [--lazy-bean] [--logging-json] [--mcp] [--mcp-stdio]
+                 [--metrics] [--observe] [--open-telemetry-agent]
+                 [--openapi-ui] [--package-scan-jars] [--prompt]
+                 [--skip-plugins] [--trace] [--verbose] [--chaos[=<file>]]
+                 [--download[=<download>]] [--example[=<example>]] [--logging
+                 [=<logging>]] [--logging-color[=<loggingColor>]]
                  [--maven-apache-snapshot-enabled
                  [=<mavenApacheSnapshotEnabled>]] [--maven-central-enabled
                  [=<mavenCentralEnabled>]] [--modeline[=<modeline>]]
                  [--background-wait=<backgroundWait>]
                  [--camel-spring-boot-version=<camelSpringBootVersion>]
-                 [--camel-version=<camelVersion>] [--code=<code>]
-                 [--data-dir=<dataDir>] [--gav=<gav>] [--java=<javaVersion>]
-                 [--jfr-profile=<jfrProfile>] [--jvm-args=<jvmArgs>]
-                 [--jvm-debug=<true|false|port>]
+                 [--camel-version=<camelVersion>] [--chaos-report=<file>]
+                 [--code=<code>] [--data-dir=<dataDir>] [--gav=<gav>]
+                 [--java=<javaVersion>] [--jfr-profile=<jfrProfile>]
+                 [--jvm-args=<jvmArgs>] [--jvm-debug=<true|false|port>]
                  [--kamelets-version=<kameletsVersion>]
                  [--local-kamelet-dir=<localKameletDir>]
                  [--logging-config-path=<loggingConfigPath>]
@@ -4952,9 +4996,15 @@ Run as local Camel integration
                                component name or pattern. Multiple names can be
                                separated by comma. (all = stub all endpoints,
                                remote = stub only remote components).
-      --chaos                Add camel-chaos, to turn on faults while running
+      --chaos[=<file>]       Add camel-chaos, to turn on faults while running
                                (camel cmd chaos-add); on with profile dev,
-                               never with prod. Not with Spring Boot or Quarkus
+                               never with prod. With a scenario file (such as
+                               --chaos=chaos/outage.chaos) its rules are added
+                               at startup. A run with chaos ends with exit code
+                               1 when the chaos verdict is FAIL. Not with
+                               Spring Boot or Quarkus
+      --chaos-report=<file>  Write the chaos report as JSON to this file when
+                               the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
                              Local directory (or github link) for loading
                                Kamelets (takes precedence). Multiple
@@ -6177,23 +6227,23 @@ stderr:
 exit: 2
 stderr:
   Unknown option: '--no-such-option'
-  Usage: camel run [-h] [--background] [--backlog-trace] [--chaos] [--console]
-                   [--dev] [--empty] [--fresh] [--health]
-                   [--ignore-loading-error] [--jfr] [--lazy-bean]
-                   [--logging-json] [--mcp] [--mcp-stdio] [--metrics] [--observe]
-                   [--open-telemetry-agent] [--openapi-ui] [--package-scan-jars]
-                   [--prompt] [--skip-plugins] [--trace] [--verbose] [--download
-                   [=<download>]] [--example[=<example>]] [--logging[=<logging>]]
-                   [--logging-color[=<loggingColor>]]
+  Usage: camel run [-h] [--background] [--backlog-trace] [--console] [--dev]
+                   [--empty] [--fresh] [--health] [--ignore-loading-error]
+                   [--jfr] [--lazy-bean] [--logging-json] [--mcp] [--mcp-stdio]
+                   [--metrics] [--observe] [--open-telemetry-agent]
+                   [--openapi-ui] [--package-scan-jars] [--prompt]
+                   [--skip-plugins] [--trace] [--verbose] [--chaos[=<file>]]
+                   [--download[=<download>]] [--example[=<example>]] [--logging
+                   [=<logging>]] [--logging-color[=<loggingColor>]]
                    [--maven-apache-snapshot-enabled
                    [=<mavenApacheSnapshotEnabled>]] [--maven-central-enabled
                    [=<mavenCentralEnabled>]] [--modeline[=<modeline>]]
                    [--background-wait=<backgroundWait>]
                    [--camel-spring-boot-version=<camelSpringBootVersion>]
-                   [--camel-version=<camelVersion>] [--code=<code>]
-                   [--data-dir=<dataDir>] [--gav=<gav>] [--java=<javaVersion>]
-                   [--jfr-profile=<jfrProfile>] [--jvm-args=<jvmArgs>]
-                   [--jvm-debug=<true|false|port>]
+                   [--camel-version=<camelVersion>] [--chaos-report=<file>]
+                   [--code=<code>] [--data-dir=<dataDir>] [--gav=<gav>]
+                   [--java=<javaVersion>] [--jfr-profile=<jfrProfile>]
+                   [--jvm-args=<jvmArgs>] [--jvm-debug=<true|false|port>]
                    [--kamelets-version=<kameletsVersion>]
                    [--local-kamelet-dir=<localKameletDir>]
                    [--logging-config-path=<loggingConfigPath>]

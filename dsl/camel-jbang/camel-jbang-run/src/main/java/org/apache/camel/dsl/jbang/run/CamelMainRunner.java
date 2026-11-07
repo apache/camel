@@ -37,6 +37,7 @@ import org.apache.maven.model.Model;
 
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.CAMEL_MAIN_RUN_LOG_CONFIG;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.addDependency;
+import static org.apache.camel.dsl.jbang.run.MavenRunSupport.chaosArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.durationLimitArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.existingCamelMainSystemProperties;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.jfrJvmArgs;
@@ -177,6 +178,7 @@ final class CamelMainRunner {
             javaCmd.addAll(reloadArgs(files));
         }
         javaCmd.addAll(durationLimitArgs(request));
+        javaCmd.addAll(chaosArgs(request));
         javaCmd.add("-jar");
         javaCmd.add(jar.toAbsolutePath().toString());
 

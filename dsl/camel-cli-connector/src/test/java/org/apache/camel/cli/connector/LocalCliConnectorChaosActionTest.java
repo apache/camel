@@ -177,6 +177,40 @@ class LocalCliConnectorChaosActionTest {
         assertThat(chaos("check", null, " ").error()).isEqualTo("A rule is required");
     }
 
+    private CliActionOutcome load(String name, String text) throws Exception {
+        JsonObject action = new JsonObject();
+        action.put("action", "chaos");
+        action.put("command", "load");
+        action.put("name", name);
+        action.put("text", text);
+        return CliActionOutcome.dispatch(connector, (JsonObject) Jsoner.deserialize(action.toJson()))
+                .get(10, TimeUnit.SECONDS);
+    }
+
+    @Test
+    void loadAScenarioInPlaceOfTheRules() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+        chaos("add", null, "step=* delay duration=1ms");
+
+        CliActionOutcome loaded
+                = load("outage.chaos", "# down\nseed=1\nendpoint=mock:target error\nendpoint=mock:nowhere drop\n");
+        assertThat(loaded.error()).isNull();
+        assertThat((JsonArray) loaded.result().get("ids")).containsExactly("r2", "r3");
+        assertThat(loaded.result().getBoolean("reset")).isTrue();
+        assertThat((JsonArray) loaded.result().get("descriptions"))
+                .containsExactly("fail every send to mock:target", "drop every send and poll of mock:nowhere");
+        assertThat((JsonArray) loaded.result().get("warnings")).singleElement().asString().startsWith("r3: ");
+        // the rule there was is gone with its report
+        assertThat(reportRules()).hasSize(2);
+
+        // a line that is not valid, with its number: the rules stay
+        assertThat(load("bad.chaos", "endpoint=mock:target bang").error())
+                .startsWith("Chaos scenario bad.chaos, line 1: Invalid chaos rule");
+        assertThat(load("empty.chaos", "# nothing\n").error()).isEqualTo("The chaos scenario empty.chaos has no rules");
+        assertThat(load("none.chaos", " ").error()).isEqualTo("The scenario is required");
+        assertThat(reportRules()).hasSize(2);
+    }
+
     @Test
     void rulesAreAddedTogetherWithWarningsForTheOnesThatMatchNothing() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
