@@ -69,6 +69,13 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- the pool the component uses by default, for the unit tests -->
+        <dependency>
+            <groupId>org.messaginghub</groupId>
+            <artifactId>pooled-jms</artifactId>
+            <version>${pooled-jms-version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
