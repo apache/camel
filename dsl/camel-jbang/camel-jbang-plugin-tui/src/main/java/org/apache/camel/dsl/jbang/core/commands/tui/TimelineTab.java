@@ -861,7 +861,9 @@ class TimelineTab extends AbstractTableTab {
 
     @Override
     public String description() {
-        return "A timeline of the integration: errors and route outcomes per second, with chaos rules as a layer";
+        return "A timeline of the integration: per second the errors by exception (else the WARN and ERROR lines of the log),"
+               + " what each route did, when a route started, stopped or reloaded, and the seconds a circuit breaker was"
+               + " open, with chaos rules as a layer; paused, the exchanges of a second";
     }
 
     @Override
@@ -914,6 +916,23 @@ class TimelineTab extends AbstractTableTab {
             perSecond.put("p95Millis", array(r.p95()));
             perSecond.put("maxMillis", array(r.max()));
             perSecond.put("redeliveryAttempts", array(r.attempts()));
+            // 1 a second a chaos rule had the route down; 2 a circuit breaker of the route open, 1 half open
+            perSecond.put("down", array(r.down()));
+            perSecond.put("circuitBreaker", array(r.open()));
+            // what happened to the route: started, stopped, reloaded, removed, restartFailed, and the second
+            JsonArray events = new JsonArray();
+            long first = endSecond() - seconds() + 1;
+            for (int i = 0; i < r.events().length; i++) {
+                if (r.events()[i] != null) {
+                    JsonObject ev = new JsonObject();
+                    ev.put("event", r.events()[i]);
+                    ev.put("second", first + i);
+                    events.add(ev);
+                }
+            }
+            if (!events.isEmpty()) {
+                row.put("events", events);
+            }
             row.put("perSecond", perSecond);
             rows.add(row);
         }
