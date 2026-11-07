@@ -57,6 +57,10 @@
               "type": "string",
               "description": "The rule in its one-line text form"
             },
+            "description": {
+              "type": "string",
+              "description": "The rule in plain words, such as: fail half of the sends to http:stock* with HTTP status 503, for 5 minutes"
+            },
             "state": {
               "type": "string",
               "description": "The state of the rule: active, waiting (before its start, from=) or ended"
@@ -66,7 +70,7 @@
               "items": {
                 "type": "string"
               },
-              "description": "Where the rule fires: send, reply, dlq, poll, entry or step"
+              "description": "Where the rule can fire in the integration now: send, reply, dlq, poll, entry or step. Of the hooks of an endpoint= or component= rule, poll only when a route consumes a matching endpoint with a scheduled poll, send and reply only when something sends to a matching endpoint, and any hook where it fired already; empty when it can fire nowhere now"
             },
             "matches": {
               "type": "integer",
@@ -77,7 +81,7 @@
               "additionalProperties": {
                 "type": "integer"
               },
-              "description": "The faults the rule fired, per hook"
+              "description": "The faults the rule fired, per hook of the rule (also the hooks where it cannot fire now)"
             },
             "skipped": {
               "type": "integer",

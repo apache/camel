@@ -517,22 +517,22 @@
   wideUri=true
 > cmd browse --wide-uri=false
   (defaults)
-> cmd chaos-add v --rule v
+> cmd chaos-add --rule v
   cmd:helpRequested=false
   helpRequested=false
-  name="v"
+  name=null
   rules=["v"]
   timeoutOption.timeout=10000
-> cmd chaos-add v --rule v --timeout 7
+> cmd chaos-add --rule v --timeout 7
   timeoutOption.timeout=7
-> cmd chaos-change v --id v --rule v
+> cmd chaos-change --id v --rule v
   cmd:helpRequested=false
   helpRequested=false
   id="v"
-  name="v"
+  name=null
   rule="v"
   timeoutOption.timeout=10000
-> cmd chaos-change v --id v --rule v --timeout 7
+> cmd chaos-change --id v --rule v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-clear
   cmd:helpRequested=false
@@ -546,13 +546,13 @@
   (defaults)
 > cmd chaos-clear --timeout 7
   timeoutOption.timeout=7
-> cmd chaos-remove v --id v
+> cmd chaos-remove --id v
   cmd:helpRequested=false
   helpRequested=false
   id="v"
-  name="v"
+  name=null
   timeoutOption.timeout=10000
-> cmd chaos-remove v --id v --timeout 7
+> cmd chaos-remove --id v --timeout 7
   timeoutOption.timeout=7
 > cmd disable-processor
   cmd:helpRequested=false
@@ -3098,6 +3098,24 @@
 > get --watch
   watch=true
 > get --watch=false
+  (defaults)
+> get about
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  watch=false
+> get about --duration 7
+  durationOption.duration=7
+> get about --json
+  jsonOutput=true
+> get about --json=false
+  (defaults)
+> get about --watch
+  watch=true
+> get about --watch=false
   (defaults)
 > get bean
   dsl=false

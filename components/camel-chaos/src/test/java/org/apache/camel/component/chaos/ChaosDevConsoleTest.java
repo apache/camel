@@ -103,6 +103,9 @@ class ChaosDevConsoleTest {
         assertThat(rule.getInteger("version")).isEqualTo(2);
         assertThat(rule.getString("state")).isEqualTo("active");
         assertThat(rule.getString("rule")).isEqualTo("endpoint=mock:target error rate=1 until=5");
+        // in plain words, at the hooks where it can fire: route start sends to mock:target, which nothing polls
+        assertThat(rule.getString("description")).isEqualTo("fail every send to mock:target, for the next 5 sends");
+        assertThat((JsonArray) rule.get("hooks")).containsExactly("send");
         assertThat(rule.getLong("matches")).isEqualTo(1);
         assertThat(((JsonObject) rule.get("fired")).getLong("send")).isEqualTo(1);
         assertThat(rule.getLong("endsIn")).isPositive();
@@ -139,7 +142,7 @@ class ChaosDevConsoleTest {
         String text = (String) console.call(DevConsole.MediaType.TEXT);
 
         assertThat(text).startsWith("Chaos report: PASS").contains("seed: 7 (camel.chaos.seed)")
-                .contains("r1 active: endpoint=mock:target drop");
+                .contains("r1 active: endpoint=mock:target drop\n      drop every send to mock:target\n");
     }
 
     @Test

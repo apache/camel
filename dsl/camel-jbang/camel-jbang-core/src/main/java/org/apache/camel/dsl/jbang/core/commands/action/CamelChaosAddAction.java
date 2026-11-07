@@ -34,14 +34,20 @@ import picocli.CommandLine;
                              "chaos-remove. Several --rule options (or rules separated by ;) are added",
                              "together, all or none, so they are in place at the same time. A rule that",
                              "matches nothing in the integration now (often a typo) is added with a warning.",
+                             "The rule is printed in plain words too, to check it does what was meant.",
+                             "%nWithout a name or pid, the rule goes to the only integration that runs, or the",
+                             "only one with chaos switched on; when that is not clear, the command fails with",
+                             "the list of the running integrations (exit code 2).",
                              "%nExamples:",
-                             "  camel cmd chaos-add myApp --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'",
+                             "  camel cmd chaos-add --rule='endpoint=kafka:orders* delay duration=2s rate=0.2 until=5m'",
                              "  camel cmd chaos-add myApp --rule='endpoint=file:inbox* drop at=poll rate=0.5 until=2m'",
                              "  camel cmd chaos-add myApp --rule='step=enrich* error exception=java.sql.SQLException rate=0.1'",
                              "  camel cmd chaos-add myApp --rule='endpoint=seda:dlq error at=dlq' --rule='endpoint=http:stock* error'" })
 public class CamelChaosAddAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one)", arity = "1")
+    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one); without it,"
+                                          + " the only one running, or the only one with chaos switched on",
+                            arity = "0..1")
     String name;
 
     @CommandLine.Option(names = { "--rule" }, required = true,
@@ -56,7 +62,7 @@ public class CamelChaosAddAction extends CamelChaosAction {
     @Override
     public Integer doCall() throws Exception {
         // a rule goes to one integration: its id is only known there
-        CamelProcess process = findOne(name);
+        CamelProcess process = findChaosTarget(name);
         // the rules go together, separated by ; as in camel.chaos.rules (a ; inside a rule is quoted)
         String text = String.join(";", rules);
         printer().println(describe(chaos(process, "add", root -> root.put("rule", text))));
@@ -66,9 +72,18 @@ public class CamelChaosAddAction extends CamelChaosAction {
     @Override
     protected String describe(JsonObject answer) {
         List<Object> ids = answer.getCollection("ids");
-        String added = ids != null && ids.size() > 1
-                ? "Added chaos rules " + ids.stream().map(String::valueOf).collect(Collectors.joining(", "))
-                : "Added chaos rule " + answer.getString("id");
-        return added + warnings(answer);
+        if (ids != null && ids.size() > 1) {
+            StringBuilder sb = new StringBuilder("Added chaos rules ")
+                    .append(ids.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+            // the rules in plain words, one per line (an integration before 4.24 does not send them)
+            List<Object> words = answer.getCollection("descriptions");
+            if (words != null && words.size() == ids.size()) {
+                for (int i = 0; i < ids.size(); i++) {
+                    sb.append("\n  ").append(ids.get(i)).append(": ").append(words.get(i));
+                }
+            }
+            return sb + warnings(answer);
+        }
+        return "Added chaos rule " + answer.getString("id") + inWords(answer) + warnings(answer);
     }
 }

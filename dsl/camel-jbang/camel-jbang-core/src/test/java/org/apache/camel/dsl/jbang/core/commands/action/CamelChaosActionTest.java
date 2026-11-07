@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -96,16 +97,120 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     }
 
     @Test
-    void addAndChangeNeedTheIntegration() {
-        // the id of a rule is only known in one integration
-        assertThatThrownBy(() -> command(new CamelChaosAddAction(main()), "--rule=endpoint=* drop"))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
-        assertThatThrownBy(() -> command(new CamelChaosChangeAction(main()), "--id=r1", "--rule=endpoint=* drop"))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+    void addAndChangeNeedTheirOptions() {
         assertThatThrownBy(() -> command(new CamelChaosAddAction(main()), "orders"))
+                .isInstanceOf(CommandLine.MissingParameterException.class);
+        assertThatThrownBy(() -> command(new CamelChaosAddAction(main())))
                 .isInstanceOf(CommandLine.MissingParameterException.class);
         assertThatThrownBy(() -> command(new CamelChaosChangeAction(main()), "orders", "--rule=endpoint=* drop"))
                 .isInstanceOf(CommandLine.MissingParameterException.class);
+        assertThatThrownBy(() -> command(new CamelChaosChangeAction(main()), "--id=r1"))
+                .isInstanceOf(CommandLine.MissingParameterException.class);
+    }
+
+    @Test
+    void addPrintsTheRuleInPlainWords() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject answer = new JsonObject(
+                Map.of("id", "r1", "ids", new JsonArray(List.of("r1")), "version", 1,
+                        "description", "fail half of the sends to http:stock* with HTTP status 503, for 5 minutes"));
+
+        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders",
+                "--rule=endpoint=http:stock* error status=503 rate=0.5 until=5m"), answer)).isZero();
+
+        assertThat(printer.getLines()).containsExactly(
+                "Added chaos rule r1: fail half of the sends to http:stock* with HTTP status 503, for 5 minutes");
+    }
+
+    @Test
+    void addOfSeveralRulesPrintsEachInPlainWords() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject answer = new JsonObject(
+                Map.of("ids", new JsonArray(List.of("r1", "r2")), "version", 1,
+                        "descriptions", new JsonArray(
+                                List.of("fail every dead letter send to seda:dlq",
+                                        "fail every send to http:stock*"))));
+
+        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders",
+                "--rule=endpoint=seda:dlq error at=dlq", "--rule=endpoint=http:stock* error"), answer)).isZero();
+
+        assertThat(printer.getStdout()).startsWith("Added chaos rules r1, r2\n"
+                                                   + "  r1: fail every dead letter send to seda:dlq\n"
+                                                   + "  r2: fail every send to http:stock*");
+    }
+
+    @Test
+    void withoutANameTheOnlyIntegrationRunningIsUsed() throws Exception {
+        // chaos is off by its status, but it is the only one: it answers for itself
+        writeStatusFile(TEST_PID, "orders");
+
+        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "--rule=endpoint=kafka:orders* drop"),
+                new JsonObject(Map.of("id", "r1", "version", 1)))).isZero();
+
+        assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("add");
+        assertThat(printer.getLines()).containsExactly("Added chaos rule r1");
+    }
+
+    @Test
+    void withoutANameTheOnlyIntegrationWithChaosOnIsUsed() throws Exception {
+        writeChaosStatus(TEST_PID, "orders", true);
+        writeChaosStatus(2001, "billing", false);
+        // an integration without camel-chaos
+        writeStatusFile(2002, "shop");
+
+        assertThat(callWithResponse(command(new CamelChaosChangeAction(main()), "--id=r1",
+                "--rule=endpoint=kafka:orders* delay duration=5s"),
+                new JsonObject(
+                        Map.of("id", "r1", "version", 2, "description",
+                                "delay every send to kafka:orders* by 5 seconds")),
+                2001, 2002)).isZero();
+        assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("change");
+        assertThat(printer.getLines())
+                .containsExactly("Changed chaos rule r1 (version 2): delay every send to kafka:orders* by 5 seconds");
+
+        assertThat(callWithResponse(command(new CamelChaosRemoveAction(main()), "--id=r1"),
+                new JsonObject(Map.of("id", "r1", "removed", 1)), 2001, 2002)).isZero();
+        assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("remove");
+    }
+
+    @Test
+    void withoutANameSeveralWithChaosOnIsAUsageErrorWithTheList() throws Exception {
+        writeChaosStatus(TEST_PID, "orders", true);
+        writeChaosStatus(2001, "billing", true);
+        writeChaosStatus(2002, "shop", false);
+
+        assertThatThrownBy(() -> callWithResponse(command(new CamelChaosAddAction(main()), "--rule=endpoint=* drop"),
+                new JsonObject(Map.of("id", "r1")), 2001, 2002))
+                .isInstanceOf(CliException.class)
+                .hasMessage("3 Camel integrations are running and 2 have chaos switched on: billing (pid 2001, chaos on),"
+                            + " shop (pid 2002, chaos off), orders (pid 12345, chaos on). Give the name or pid of one.")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        // add never means all of them
+        assertThat(readActionFile(TEST_PID)).isNull();
+    }
+
+    @Test
+    void withoutANameNoneWithChaosOnAmongSeveralIsAUsageError() throws Exception {
+        writeChaosStatus(TEST_PID, "orders", false);
+        writeStatusFile(2001, "billing");
+
+        assertThatThrownBy(() -> callWithResponse(command(new CamelChaosRemoveAction(main()), "--id=r1"),
+                new JsonObject(Map.of("id", "r1")), 2001))
+                .isInstanceOf(CliException.class)
+                .hasMessageStartingWith("2 Camel integrations are running and none has chaos switched on: ")
+                .hasMessageContaining("orders (pid 12345, chaos off)")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThat(readActionFile(TEST_PID)).isNull();
+    }
+
+    @Test
+    void withoutANameAndNoIntegrationIsAUsageError() {
+        // no status file: nothing runs
+        assertThatThrownBy(() -> callWithResponse(command(new CamelChaosAddAction(main()), "--rule=endpoint=* drop"),
+                new JsonObject(Map.of("id", "r1"))))
+                .isInstanceOf(CliException.class)
+                .hasMessageStartingWith("No running Camel integrations")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
     @Test
@@ -190,11 +295,10 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     }
 
     @Test
-    void removeNeedsTheIntegrationAndTheId() {
-        // ids are per integration
-        assertThatThrownBy(() -> command(new CamelChaosRemoveAction(main()), "--id=r1"))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+    void removeNeedsTheId() {
         assertThatThrownBy(() -> command(new CamelChaosRemoveAction(main()), "orders"))
+                .isInstanceOf(CommandLine.MissingParameterException.class);
+        assertThatThrownBy(() -> command(new CamelChaosRemoveAction(main())))
                 .isInstanceOf(CommandLine.MissingParameterException.class);
     }
 
@@ -228,6 +332,16 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         root.put("context", new JsonObject(Map.of("name", "orders")));
         root.put("chaos", chaos);
         writeStatusFile(TEST_PID, root);
+    }
+
+    /** The status of an integration, with chaos on or off as the chaos dev console puts it there. */
+    private static void writeChaosStatus(long pid, String name, boolean enabled) throws Exception {
+        JsonObject chaos = new JsonObject();
+        chaos.put("enabled", enabled);
+        JsonObject root = new JsonObject();
+        root.put("context", new JsonObject(Map.of("name", name)));
+        root.put("chaos", chaos);
+        writeStatusFile(pid, root);
     }
 
     private CamelJBangMain main() {

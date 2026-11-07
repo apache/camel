@@ -274,6 +274,26 @@ public final class ChaosManager {
     }
 
     /**
+     * A rule in plain words, such as {@code fail half of the sends to http:stock* with HTTP status 503, for 5 minutes},
+     * at the hooks where it can fire in the context now (see the {@code hooks} of the report).
+     *
+     * @param  id                       the id of the rule
+     * @return                          the rule in plain words
+     * @throws IllegalArgumentException when there is no rule with that id
+     */
+    public String describeRule(String id) {
+        ChaosRule rule;
+        synchronized (lock) {
+            int index = indexOf(id);
+            if (index < 0) {
+                throw new IllegalArgumentException("There is no chaos rule " + id);
+            }
+            rule = rules.get(index);
+        }
+        return rule.describe(ChaosTargets.hooksThatCanFire(ChaosTargets.reach(camelContext), rule));
+    }
+
+    /**
      * Whether there is a rule with that id that can be changed or removed: one that was added and is not removed, nor
      * moved to the report history.
      *
@@ -374,7 +394,7 @@ public final class ChaosManager {
         Map<String, RouteCounts> counts = new TreeMap<>(routes);
         return new ChaosReport(
                 seed, seedGiven, TimeSource.currentTimeMillis(), current, removed, counts, unmet, lost, pending,
-                lostAtDlq, recentFaults.latestFirst());
+                lostAtDlq, recentFaults.latestFirst(), ChaosTargets.reach(camelContext));
     }
 
     // -- for the hooks, the event notifier and the plugin

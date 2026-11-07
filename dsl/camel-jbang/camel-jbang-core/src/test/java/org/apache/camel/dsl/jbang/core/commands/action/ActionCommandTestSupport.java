@@ -21,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
@@ -148,11 +150,19 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
         return call(step, response);
     }
 
+    /**
+     * Runs the command as {@link #callWithResponse(CamelCommand, JsonObject)} does, with more integrations running
+     * besides the test process (each needs a status file): only the test process answers an action.
+     */
+    protected int callWithResponse(CamelCommand command, JsonObject response, long... otherPids) throws Exception {
+        return call(command::doCall, response, otherPids);
+    }
+
     private static int call(CamelCommand command, JsonObject response) throws Exception {
         return call(command::doCall, response);
     }
 
-    private static int call(Callable<Integer> step, JsonObject response) throws Exception {
+    private static int call(Callable<Integer> step, JsonObject response, long... otherPids) throws Exception {
         lastAction = null;
         AtomicBoolean running = new AtomicBoolean(true);
         Thread responder = new Thread(() -> {
@@ -170,10 +180,14 @@ abstract class ActionCommandTestSupport extends CamelCommandBaseTestSupport {
         responder.setDaemon(true);
         responder.start();
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
-            ProcessHandle ph = mockProcessHandle(TEST_PID);
+            List<ProcessHandle> handles = new ArrayList<>();
+            handles.add(mockProcessHandle(TEST_PID));
+            for (long pid : otherPids) {
+                handles.add(mockProcessHandle(pid));
+            }
             ProcessHandle current = mockCurrentHandle();
             mocked.when(ProcessHandle::current).thenReturn(current);
-            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> Stream.of(ph));
+            mocked.when(ProcessHandle::allProcesses).thenAnswer(inv -> handles.stream());
             return step.call();
         } finally {
             running.set(false);

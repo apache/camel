@@ -391,8 +391,11 @@ pending is not final.
   reads under `camel get` (as `camel get circuit-breaker`): `camel cmd chaos-add`, `chaos-change`, `chaos-remove`,
   `chaos-clear`, and `camel get chaos` (the rules, or the report with `--report`), the same six operations as the MCP
   tools. Each takes the integration name or pid first. The ids of the rules are per integration, so `chaos-add`,
-  `chaos-change` and `chaos-remove` need it to match exactly one integration, as `camel cmd sql` does; `chaos-clear`
-  and `camel get chaos` may omit it and then act on all that have chaos switched on, as `stop-route` does.
+  `chaos-change` and `chaos-remove` act on exactly one integration, as `camel cmd sql` does: the one the name matches,
+  and without a name the only one running, or else the only one with chaos switched on; otherwise they fail with the
+  list of the running integrations (exit code 2), never acting on all of them (CAMEL-26717). The MCP tools pick the
+  integration the same way. `chaos-clear` and `camel get chaos` may omit it and then act on all that have chaos
+  switched on, as `stop-route` does.
 - The camel-jbang MCP server gets a `chaos` runtime tool group next to `sql`, `tracing`, `resilience` and `http`,
   loaded when the status of the application has the chaos console (`camel-chaos` on its classpath). The tools are in
   `RuntimeTools` (`@McpSecured`) and go through the CLI connector and the status, as the other runtime tools do; the

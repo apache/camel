@@ -27,11 +27,17 @@ import picocli.CommandLine;
                      footer = {
                              "%nThe new rule replaces the rule with that id, and starts with new counts and a new end time;",
                              "it is the next version of the id. The report keeps the replaced version.",
+                             "%nWithout a name or pid, it changes the rule of the only integration that runs,",
+                             "or of the only one with chaos switched on; when that is not clear, it fails",
+                             "with the list of the running integrations (exit code 2).",
                              "%nExamples:",
-                             "  camel cmd chaos-change myApp --id=r1 --rule='endpoint=kafka:orders* delay duration=5s rate=0.5 until=5m'" })
+                             "  camel cmd chaos-change --id=r1 --rule='endpoint=kafka:orders* delay duration=5s rate=0.5 until=5m'",
+                             "  camel cmd chaos-change myApp --id=r2 --rule='endpoint=http:stock* error status=503 rate=0.5'" })
 public class CamelChaosChangeAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one)", arity = "1")
+    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one); without it,"
+                                          + " the only one running, or the only one with chaos switched on",
+                            arity = "0..1")
     String name;
 
     @CommandLine.Option(names = { "--id" }, required = true, description = "The id of the rule, such as r1")
@@ -47,7 +53,7 @@ public class CamelChaosChangeAction extends CamelChaosAction {
 
     @Override
     public Integer doCall() throws Exception {
-        CamelProcess process = findOne(name);
+        CamelProcess process = findChaosTarget(name);
         printer().println(describe(chaos(process, "change", root -> {
             root.put("id", id);
             root.put("rule", rule);
@@ -58,6 +64,6 @@ public class CamelChaosChangeAction extends CamelChaosAction {
     @Override
     protected String describe(JsonObject answer) {
         return "Changed chaos rule " + answer.getString("id") + " (version " + answer.get("version") + ")"
-               + warnings(answer);
+               + inWords(answer) + warnings(answer);
     }
 }

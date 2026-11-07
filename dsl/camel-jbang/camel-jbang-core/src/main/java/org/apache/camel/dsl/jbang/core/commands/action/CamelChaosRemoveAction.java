@@ -26,11 +26,17 @@ import picocli.CommandLine;
                      sortOptions = false, showDefaultValues = true,
                      footer = {
                              "%nThe rule stays in the report as removed. Use chaos-clear to remove all rules.",
+                             "Without a name or pid, it removes the rule of the only integration that runs,",
+                             "or of the only one with chaos switched on; when that is not clear, it fails",
+                             "with the list of the running integrations (exit code 2).",
                              "%nExamples:",
+                             "  camel cmd chaos-remove --id=r1",
                              "  camel cmd chaos-remove myApp --id=r1" })
 public class CamelChaosRemoveAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one)", arity = "1")
+    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one); without it,"
+                                          + " the only one running, or the only one with chaos switched on",
+                            arity = "0..1")
     String name;
 
     @CommandLine.Option(names = { "--id" }, required = true, description = "The id of the rule, such as r1")
@@ -43,7 +49,7 @@ public class CamelChaosRemoveAction extends CamelChaosAction {
     @Override
     public Integer doCall() throws Exception {
         // ids are per integration: r1 of one integration is not r1 of another
-        CamelProcess process = findOne(name);
+        CamelProcess process = findChaosTarget(name);
         printer().println(describe(chaos(process, "remove", root -> root.put("id", id))));
         return 0;
     }

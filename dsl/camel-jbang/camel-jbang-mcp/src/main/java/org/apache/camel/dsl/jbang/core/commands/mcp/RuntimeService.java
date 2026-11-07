@@ -30,7 +30,9 @@ import java.util.function.Consumer;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import io.quarkiverse.mcp.server.ToolCallException;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -92,6 +94,25 @@ public class RuntimeService {
                                     + processes.stream().map(p -> p.name() + " (PID " + p.pid() + ")").toList()
                                     + ". Specify nameOrPid to select one.",
                 null);
+    }
+
+    /**
+     * The process of a chaos tool, as {@code camel cmd chaos-add} picks it: the one the name or pid matches; without a
+     * name the only one running, else the only one with chaos switched on, else an error with the list of the running
+     * integrations.
+     *
+     * @since 4.24
+     */
+    public ProcessInfo findChaosProcess(String nameOrPid) {
+        if (nameOrPid != null && !nameOrPid.isBlank()) {
+            return findSingleProcess(nameOrPid);
+        }
+        try {
+            ProcessFinder.CamelProcess p = ProcessFinder.requireOneForChaos(null);
+            return new ProcessInfo(p.pid(), p.name(), p.contextName());
+        } catch (CliException e) {
+            throw new ToolCallException(e.getMessage(), null);
+        }
     }
 
     public JsonObject readStatus(long pid) {
