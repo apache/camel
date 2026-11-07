@@ -33,7 +33,7 @@ class TabBarRenderTest {
 
     @Test
     void primaryTabHeadersStartWithIconAndTwoSpaces() {
-        String[] names = { "Overview", "Source", "Log", "Activity", "Diagram", "Route", "Endpoint", "Inspect", "Errors" };
+        String[] names = { "Overview", "Source", "Log", "Timeline", "Diagram", "Route", "Endpoint", "Inspect", "Errors" };
         for (int i = 0; i < names.length; i++) {
             String header
                     = Line.from(TuiIcons.primaryTabHeader(TuiIcons.PRIMARY_TAB_ICONS.get(i), String.valueOf(i + 1), names[i]))
@@ -81,7 +81,7 @@ class TabBarRenderTest {
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_OVERVIEW, "1", "Overview")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_SOURCE, "2", "Source")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_LOG, "3", "Log")),
-                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ACTIVITY, "4", "Activity")),
+                Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_TIMELINE, "4", "Timeline")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_DIAGRAM, "5", "Diagram")),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ROUTES, "6", routesLabel)),
                 Line.from(TuiIcons.primaryTabHeader(TuiIcons.TAB_ENDPOINTS, "7", "Endpoint")),

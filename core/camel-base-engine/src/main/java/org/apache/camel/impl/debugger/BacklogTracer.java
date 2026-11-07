@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
@@ -33,19 +32,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchLanguageException;
-import org.apache.camel.NonManagedService;
 import org.apache.camel.Predicate;
 import org.apache.camel.Route;
-import org.apache.camel.spi.BacklogTracerActivityMessage;
 import org.apache.camel.spi.BacklogTracerEventMessage;
-import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
-import org.apache.camel.support.SimpleEventNotifierSupport;
-import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
@@ -78,12 +72,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     // use tracer to capture additional information for capturing latest completed exchange message-history
     private final Queue<BacklogTracerEventMessage> provisionalHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     private final Queue<BacklogTracerEventMessage> completeHistoryQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE + 1);
-    // rolling window of completed exchange activity for live monitoring
-    private final Queue<BacklogTracerActivityMessage> activityQueue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
-    private final ConcurrentHashMap<String, DefaultBacklogTracerActivityMessage> inflightActivity = new ConcurrentHashMap<>();
-    private final ActivityEventNotifier activityEventNotifier = new ActivityEventNotifier();
-    private volatile int activitySize = 100;
-    private static final long INFLIGHT_EVICTION_MILLIS = 5 * 60 * 1000;
     private static final Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
     private static final Pattern LANGUAGE_NAME = Pattern.compile("[a-zA-Z][a-zA-Z0-9-]*");
     private final Object historyLock = new Object();
@@ -95,7 +83,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
     private volatile boolean includeExchangeProperties = true;
     private volatile boolean includeExchangeVariables = true;
     private volatile boolean includeException = true;
-    private volatile boolean activityEnabled;
     private volatile boolean traceRests;
     private volatile boolean traceTemplates;
 
@@ -330,15 +317,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         }
     }
 
-    private void drainActivity() {
-        int drain = activityQueue.size() - activitySize + 1;
-        if (drain > 0) {
-            for (int i = 0; i < drain; i++) {
-                activityQueue.poll();
-            }
-        }
-    }
-
     private boolean shouldTraceFilter(Exchange exchange, Predicate predicate) {
         try {
             return predicate.matches(exchange);
@@ -348,11 +326,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                     exchange.getExchangeId(), e.getMessage(), e);
             return false;
         }
-    }
-
-    @Override
-    public boolean isActivityEnabled() {
-        return activityEnabled;
     }
 
     @Override
@@ -390,23 +363,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
                     "The backlog size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + backlogSize);
         }
         this.backlogSize = backlogSize;
-    }
-
-    @Override
-    public int getActivitySize() {
-        return activitySize;
-    }
-
-    @Override
-    public void setActivitySize(int activitySize) {
-        if (activitySize <= 0) {
-            throw new IllegalArgumentException("The activity size must be a positive number, was: " + activitySize);
-        }
-        if (activitySize > MAX_BACKLOG_SIZE) {
-            throw new IllegalArgumentException(
-                    "The activity size cannot be greater than the max size of " + MAX_BACKLOG_SIZE + ", was: " + activitySize);
-        }
-        this.activitySize = activitySize;
     }
 
     @Override
@@ -570,62 +526,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         return Collections.unmodifiableCollection(completeHistoryQueue);
     }
 
-    @Override
-    public Collection<BacklogTracerActivityMessage> getActivity() {
-        return Collections.unmodifiableCollection(activityQueue);
-    }
-
-    @Override
-    public List<BacklogTracerActivityMessage> dumpActivity() {
-        List<BacklogTracerActivityMessage> answer = new ArrayList<>(activityQueue);
-        if (isRemoveOnDump()) {
-            activityQueue.clear();
-        }
-        return answer;
-    }
-
-    @Override
-    public String dumpActivityAsJSon() {
-        List<BacklogTracerActivityMessage> events = dumpActivity();
-
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
-        root.put("activity", arr);
-        for (BacklogTracerActivityMessage event : events) {
-            JsonObject jo = new JsonObject();
-            jo.put("uid", event.getUid());
-            jo.put("exchangeId", event.getExchangeId());
-            if (event.getRouteId() != null) {
-                jo.put("routeId", event.getRouteId());
-            }
-            if (event.getFromEndpointUri() != null) {
-                jo.put("fromEndpointUri", event.getFromEndpointUri());
-            }
-            if (event.getTimestamp() > 0) {
-                jo.put("timestamp", event.getTimestamp());
-            }
-            jo.put("elapsed", event.getElapsed());
-            jo.put("failed", event.isFailed());
-            if (event.getExceptionMessage() != null) {
-                jo.put("exception", event.getExceptionMessage());
-            }
-            List<BacklogTracerActivityMessage.EndpointSend> sends = event.getEndpointSends();
-            if (sends != null && !sends.isEmpty()) {
-                JsonArray sa = new JsonArray();
-                for (BacklogTracerActivityMessage.EndpointSend send : sends) {
-                    JsonObject so = new JsonObject();
-                    so.put("endpointUri", send.getEndpointUri());
-                    so.put("remoteEndpoint", send.isRemoteEndpoint());
-                    so.put("elapsed", send.getElapsed());
-                    sa.add(so);
-                }
-                jo.put("endpointSends", sa);
-            }
-            arr.add(jo);
-        }
-        return root.toJson();
-    }
-
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId) {
         List<BacklogTracerEventMessage> answer = new ArrayList<>();
         if (nodeId != null) {
@@ -733,8 +633,6 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         queue.clear();
         completeHistoryQueue.clear();
         provisionalHistoryQueue.clear();
-        activityQueue.clear();
-        inflightActivity.clear();
     }
 
     @Override
@@ -742,134 +640,8 @@ public class BacklogTracer extends ServiceSupport implements org.apache.camel.sp
         return traceCounter.incrementAndGet();
     }
 
-    public void setActivityEnabled(boolean activityEnabled) {
-        this.activityEnabled = activityEnabled;
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        camelContext.getManagementStrategy().addEventNotifier(activityEventNotifier);
-        ServiceHelper.startService(activityEventNotifier);
-    }
-
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(activityEventNotifier);
-        camelContext.getManagementStrategy().removeEventNotifier(activityEventNotifier);
-        inflightActivity.clear();
         clear();
-    }
-
-    private void onExchangeCreated(CamelEvent.ExchangeCreatedEvent event) {
-        evictStaleInflight();
-
-        Exchange exchange = event.getExchange();
-        String exchangeId = exchange.getExchangeId();
-        long timestamp = event.getTimestamp() > 0 ? event.getTimestamp() : System.currentTimeMillis();
-
-        DefaultBacklogTracerActivityMessage activity = new DefaultBacklogTracerActivityMessage(
-                incrementTraceCounter(), timestamp, exchangeId);
-        inflightActivity.put(exchangeId, activity);
-    }
-
-    private void onExchangeSent(CamelEvent.ExchangeSentEvent event) {
-        Endpoint endpoint = event.getEndpoint();
-        if (!endpoint.isRemote()) {
-            return;
-        }
-
-        String exchangeId = event.getExchange().getExchangeId();
-        DefaultBacklogTracerActivityMessage activity = inflightActivity.get(exchangeId);
-        if (activity != null) {
-            activity.addEndpointSend(endpoint.getEndpointUri(), endpoint.isRemote(), event.getTimeTaken());
-        }
-    }
-
-    private void onExchangeCompleted(CamelEvent.ExchangeCompletedEvent event) {
-        Exchange exchange = event.getExchange();
-        String exchangeId = exchange.getExchangeId();
-        DefaultBacklogTracerActivityMessage activity = inflightActivity.remove(exchangeId);
-        if (activity != null) {
-            String routeId = exchange.getFromRouteId();
-            String fromEndpointUri = resolveFromEndpointUri(routeId);
-            activity.complete(routeId, fromEndpointUri, exchange.getClock().elapsed(), false, null);
-            drainActivity();
-            activityQueue.offer(activity);
-        }
-    }
-
-    private void onExchangeFailed(CamelEvent.ExchangeFailedEvent event) {
-        Exchange exchange = event.getExchange();
-        String exchangeId = exchange.getExchangeId();
-        DefaultBacklogTracerActivityMessage activity = inflightActivity.remove(exchangeId);
-        if (activity != null) {
-            String exMessage = null;
-            Exception cause = exchange.getException();
-            if (cause != null) {
-                exMessage = cause.getMessage();
-            }
-            String routeId = exchange.getFromRouteId();
-            String fromEndpointUri = resolveFromEndpointUri(routeId);
-            activity.complete(routeId, fromEndpointUri, exchange.getClock().elapsed(), true, exMessage);
-            drainActivity();
-            activityQueue.offer(activity);
-        }
-    }
-
-    private String resolveFromEndpointUri(String routeId) {
-        if (routeId != null) {
-            Route route = camelContext.getRoute(routeId);
-            if (route != null && route.getConsumer() != null) {
-                return route.getConsumer().getEndpoint().getEndpointUri();
-            }
-        }
-        return null;
-    }
-
-    private void evictStaleInflight() {
-        if (inflightActivity.isEmpty()) {
-            return;
-        }
-        long cutoff = System.currentTimeMillis() - INFLIGHT_EVICTION_MILLIS;
-        inflightActivity.entrySet().removeIf(e -> e.getValue().getTimestamp() < cutoff);
-    }
-
-    /**
-     * Inner EventNotifier that captures exchange lifecycle events for activity monitoring.
-     */
-    private class ActivityEventNotifier extends SimpleEventNotifierSupport implements NonManagedService {
-
-        ActivityEventNotifier() {
-            // enable the exchange events we need for activity tracking
-            setIgnoreExchangeEvents(false);
-            setIgnoreExchangeCreatedEvent(false);
-            setIgnoreExchangeCompletedEvent(false);
-            setIgnoreExchangeFailedEvents(false);
-            setIgnoreExchangeSentEvents(false);
-            // ignore all non-exchange events
-            setIgnoreCamelContextInitEvents(true);
-            setIgnoreCamelContextEvents(true);
-            setIgnoreRouteEvents(true);
-            setIgnoreServiceEvents(true);
-            setIgnoreStepEvents(true);
-        }
-
-        @Override
-        public boolean isDisabled() {
-            return !activityEnabled || (!enabled && !standby);
-        }
-
-        @Override
-        public void notify(CamelEvent event) throws Exception {
-            if (event instanceof CamelEvent.ExchangeCreatedEvent ece) {
-                onExchangeCreated(ece);
-            } else if (event instanceof CamelEvent.ExchangeSentEvent ese) {
-                onExchangeSent(ese);
-            } else if (event instanceof CamelEvent.ExchangeCompletedEvent ece) {
-                onExchangeCompleted(ece);
-            } else if (event instanceof CamelEvent.ExchangeFailedEvent efe) {
-                onExchangeFailed(efe);
-            }
-        }
     }
 }

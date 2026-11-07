@@ -359,7 +359,7 @@ class FileCliConnectorTransportTest {
         }
 
         @Override
-        public JsonObject activity() {
+        public JsonObject timeline() {
             return null;
         }
     }

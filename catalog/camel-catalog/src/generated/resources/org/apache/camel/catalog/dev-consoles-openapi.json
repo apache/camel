@@ -5,106 +5,6 @@
 		"version": "4.24.0-SNAPSHOT"
 	},
 	"paths": {
-		"\/q\/dev\/activity": {
-			"get": {
-				"summary": "Camel Activity",
-				"description": "Recent completed exchange activity",
-				"operationId": "activity",
-				"responses": {
-					"200": {
-						"description": "Camel Activity output",
-						"content": {
-							"application\/json": {
-								"schema": {
-									"type": "object",
-									"properties": {
-										"activityEnabled": {
-											"type": "boolean",
-											"description": "Whether activity tracking is enabled"
-										},
-										"activitySize": {
-											"type": "integer",
-											"description": "The maximum number of activity entries retained"
-										},
-										"activity": {
-											"type": "array",
-											"items": {
-												"type": "object",
-												"properties": {
-													"uid": {
-														"type": "integer",
-														"description": "Unique ID of the activity entry"
-													},
-													"exchangeId": {
-														"type": "string",
-														"description": "The exchange ID"
-													},
-													"routeId": {
-														"type": "string",
-														"description": "The route ID (only present when known)"
-													},
-													"fromEndpointUri": {
-														"type": "string",
-														"description": "The from endpoint URI (only present when known)"
-													},
-													"timestamp": {
-														"type": "integer",
-														"description": "Epoch time in milliseconds (only present when known)"
-													},
-													"elapsed": {
-														"type": "integer",
-														"description": "Elapsed time in milliseconds"
-													},
-													"failed": {
-														"type": "boolean",
-														"description": "Whether the exchange failed"
-													},
-													"exception": {
-														"type": "string",
-														"description": "The exception message (only present when the exchange failed)"
-													},
-													"endpointSends": {
-														"type": "array",
-														"items": {
-															"type": "object",
-															"properties": {
-																"endpointUri": {
-																	"type": "string",
-																	"description": "The endpoint URI"
-																},
-																"remoteEndpoint": {
-																	"type": "boolean",
-																	"description": "Whether the endpoint is remote"
-																},
-																"elapsed": {
-																	"type": "integer",
-																	"description": "Elapsed time in milliseconds"
-																}
-															},
-															"required": [
-																"remoteEndpoint",
-																"elapsed"
-															]
-														},
-														"description": "The endpoints this exchange was sent to (only present when any)"
-													}
-												},
-												"required": [
-													"uid",
-													"elapsed",
-													"failed"
-												]
-											},
-											"description": "The recent activity entries"
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		},
 		"\/q\/dev\/api": {
 			"get": {
 				"summary": "API",
@@ -862,6 +762,18 @@
 				"summary": "Chaos",
 				"description": "The chaos rules and their report",
 				"operationId": "chaos",
+				"parameters": [
+					{
+						"name": "report",
+						"in": "query",
+						"description": "Whether to include the report; without it only the rules, as the timeline console reads them each second",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					}
+				],
 				"responses": {
 					"200": {
 						"description": "Chaos output",
@@ -9107,6 +9019,347 @@
 											"description": "The threads"
 										}
 									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"\/q\/dev\/timeline": {
+			"get": {
+				"summary": "Camel Timeline",
+				"description": "Per second, what each route did, the errors, and the failed and slowest exchanges",
+				"operationId": "timeline",
+				"parameters": [
+					{
+						"name": "exchanges",
+						"in": "query",
+						"description": "Whether to include the kept exchanges",
+						"required": false,
+						"schema": {
+							"type": "boolean",
+							"default": true
+						}
+					},
+					{
+						"name": "routeId",
+						"in": "query",
+						"description": "Filter by route id (pattern)",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "seconds",
+						"in": "query",
+						"description": "The number of seconds, up to the recorded seconds (the default)",
+						"required": false,
+						"schema": {
+							"type": "integer"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Camel Timeline output",
+						"content": {
+							"application\/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"end": {
+											"type": "integer",
+											"description": "Epoch second of the last second (the oldest is end - seconds + 1)"
+										},
+										"seconds": {
+											"type": "integer",
+											"description": "The number of seconds of each series, oldest first"
+										},
+										"exchangesDone": {
+											"type": "array",
+											"items": {
+												"type": "integer"
+											},
+											"description": "Exchanges done per second, in the routes they came in"
+										},
+										"routes": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"from": {
+														"type": "string",
+														"description": "The from endpoint URI (only present when known)"
+													},
+													"completed": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Exchanges completed per second, not counting the recovered and handled ones"
+													},
+													"recovered": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Exchanges per second that completed after a redelivery in this route"
+													},
+													"handled": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Exchanges per second whose failure the error handler handled"
+													},
+													"failed": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Exchanges failed per second"
+													},
+													"inflight": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Exchanges in flight at the end of each second"
+													},
+													"meanMillis": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Mean processing time per second in milliseconds"
+													},
+													"p95Millis": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "p95 processing time per second in milliseconds, of the exchanges that came into this route"
+													},
+													"maxMillis": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Max processing time per second in milliseconds, of the exchanges that came into this route"
+													},
+													"redeliveryAttempts": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Redelivery attempts per second in this route"
+													},
+													"down": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)"
+													}
+												}
+											},
+											"description": "The routes"
+										},
+										"errors": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID where the exchange failed"
+													},
+													"exception": {
+														"type": "string",
+														"description": "The exception class name"
+													},
+													"statusCode": {
+														"type": "integer",
+														"description": "The HTTP status code of the exception (only present when known)"
+													},
+													"chaosRule": {
+														"type": "string",
+														"description": "The camel-chaos rule that made the error (only present for a chaos fault)"
+													},
+													"counts": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Errors per second"
+													}
+												}
+											},
+											"description": "The errors by route and exception (only present when there are any)"
+										},
+										"chaos": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"id": {
+														"type": "string",
+														"description": "The id of the camel-chaos rule"
+													},
+													"rule": {
+														"type": "string",
+														"description": "The rule in its one-line text form"
+													},
+													"faults": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "The faults the rule fired per second"
+													}
+												}
+											},
+											"description": "The faults per second of each camel-chaos rule that fired in the seconds (only present when one did)"
+										},
+										"routeEvents": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"event": {
+														"type": "string",
+														"description": "What happened to the route: started, stopped, reloaded, removed or restartFailed"
+													},
+													"second": {
+														"type": "integer",
+														"description": "The epoch second it happened"
+													}
+												},
+												"required": [
+													"second"
+												]
+											},
+											"description": "What happened to the routes in the seconds: started, stopped, reloaded, removed (only present when anything did)"
+										},
+										"circuitBreakers": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"id": {
+														"type": "string",
+														"description": "The id of the circuit breaker EIP (not present for a route policy)"
+													},
+													"kind": {
+														"type": "string",
+														"description": "The kind of circuit breaker: resilience4j, fault-tolerance or route-policy"
+													},
+													"states": {
+														"type": "array",
+														"items": {
+															"type": "integer"
+														},
+														"description": "Per second 2 when the circuit breaker was open, 1 half open, else 0"
+													}
+												}
+											},
+											"description": "The circuit breakers that were open or half open in the seconds (only present when one was)"
+										},
+										"exchanges": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"exchangeId": {
+														"type": "string",
+														"description": "The exchange ID"
+													},
+													"routeId": {
+														"type": "string",
+														"description": "The route ID the exchange came in"
+													},
+													"fromEndpointUri": {
+														"type": "string",
+														"description": "The from endpoint URI (only present when known)"
+													},
+													"timestamp": {
+														"type": "integer",
+														"description": "Epoch time in milliseconds the exchange was created"
+													},
+													"elapsed": {
+														"type": "integer",
+														"description": "Elapsed time in milliseconds"
+													},
+													"failed": {
+														"type": "boolean",
+														"description": "Whether the exchange failed"
+													},
+													"handled": {
+														"type": "boolean",
+														"description": "Whether the error handler handled a failure of the exchange"
+													},
+													"redelivered": {
+														"type": "boolean",
+														"description": "Whether the exchange was redelivered"
+													},
+													"exception": {
+														"type": "string",
+														"description": "The exception message (only present when the exchange failed, or when it recovered: the failure it was redelivered for)"
+													},
+													"chaosRule": {
+														"type": "string",
+														"description": "The camel-chaos rule that faulted the exchange (only present when one did)"
+													},
+													"endpointSends": {
+														"type": "array",
+														"items": {
+															"type": "object",
+															"properties": {
+																"endpointUri": {
+																	"type": "string",
+																	"description": "The endpoint URI"
+																},
+																"elapsed": {
+																	"type": "integer",
+																	"description": "Elapsed time of the call in milliseconds"
+																}
+															},
+															"required": [
+																"elapsed"
+															]
+														},
+														"description": "The remote endpoints the exchange was sent to (only present when any)"
+													}
+												},
+												"required": [
+													"timestamp",
+													"elapsed",
+													"failed",
+													"handled",
+													"redelivered"
+												]
+											},
+											"description": "Per second the failed, handled and recovered exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)"
+										}
+									},
+									"required": [
+										"end",
+										"seconds"
+									]
 								}
 							}
 						}
