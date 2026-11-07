@@ -121,6 +121,28 @@ class AboutViewTest {
     }
 
     @Test
+    void aRecoveryShowsWhenAndTheFailureItRecoveredFrom() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        for (String id : List.of("orders", "stock")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            info.routes.add(r);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        TimelineJson t = new TimelineJson(T0 / 1000 + 299, 300);
+        for (int i = 0; i < 300; i++) {
+            t.route("orders", "completed", i, 1);
+        }
+        // redelivered in stock 2 minutes ago, kept under orders where it came in
+        t.route("stock", "recovered", 179, 1).route("stock", "redeliveryAttempts", 179, 1);
+        t.exchange("R1", "orders", 179, 40, "recovered", "Connection refused", null);
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+        assertThat(render(about, info)).contains("1 recovered 2m ago · Connection refused");
+    }
+
+    @Test
     void theSendsOfARouteToAnEndpoint() {
         IntegrationInfo info = new IntegrationInfo();
         info.endpoints.add(endpoint("http://localhost:8765/ship?bridgeEndpoint=true", "out", "orders", 7));

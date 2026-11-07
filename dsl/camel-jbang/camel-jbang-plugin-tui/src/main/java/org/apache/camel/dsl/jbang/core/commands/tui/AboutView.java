@@ -318,12 +318,26 @@ final class AboutView {
             }
             long done = r.total(r.completed()) + r.total(r.recovered()) + r.total(r.handled()) + r.total(r.failed());
             spans.add(Span.styled("  " + done, Theme.success()));
-            if (r.total(r.failed()) > 0) {
-                spans.add(Span.styled("  " + r.total(r.failed()) + " failed", Theme.error()));
-            } else if (r.total(r.handled()) > 0) {
-                spans.add(Span.styled("  " + r.total(r.handled()) + " handled", Style.EMPTY.fg(Theme.ACCENT)));
-            } else if (r.total(r.recovered()) > 0) {
-                spans.add(Span.styled("  " + r.total(r.recovered()) + " recovered", Theme.warning()));
+            // the worst that happened, when it last did, and for a recovery the failure it recovered from (a failed or
+            // handled one has its cause on the Last 5m line and on the Timeline)
+            long[] worst = r.total(r.failed()) > 0 ? r.failed() : r.total(r.handled()) > 0 ? r.handled()
+                    : r.total(r.recovered()) > 0 ? r.recovered() : null;
+            if (worst != null) {
+                String what = worst == r.failed() ? " failed" : worst == r.handled() ? " handled" : " recovered";
+                Style style = worst == r.failed() ? Theme.error()
+                        : worst == r.handled() ? Style.EMPTY.fg(Theme.ACCENT) : Theme.warning();
+                long at = lastAt(worst, end, seconds);
+                spans.add(Span.styled("  " + r.total(worst) + what, style));
+                spans.add(Span.styled(" " + ago(last - at), Theme.muted()));
+                String cause = worst == r.recovered() ? recoveredFrom(info, r.route(), end - seconds + 1, end) : null;
+                if (cause != null) {
+                    int room = width - label - columns - 40;
+                    if (room > 10) {
+                        spans.add(Span.styled(" · ", Theme.muted()));
+                        spans.add(Span.styled(cause.length() > room ? cause.substring(0, room - 1) + "…" : cause,
+                                Theme.warning()));
+                    }
+                }
             }
             lines.add(Line.from(spans));
         }
@@ -334,6 +348,39 @@ final class AboutView {
                                         + " ".repeat(Math.max(1, columns - from.length() - to.length())) + to,
                 Theme.muted())));
         return lines;
+    }
+
+    /** The last second of the window with a value, or the end. */
+    private static long lastAt(long[] values, long end, int seconds) {
+        for (int i = values.length - 1; i >= 0; i--) {
+            if (values[i] > 0) {
+                return end - seconds + 1 + i;
+            }
+        }
+        return end;
+    }
+
+    private static String ago(long seconds) {
+        return seconds > 0 ? ChaosTab.shortTime(seconds * 1000) + " ago" : "now";
+    }
+
+    /**
+     * The failure the last recovered exchange of the route was redelivered for, from the exchanges the integration
+     * kept; as a route called by another keeps its exchanges under the caller, any recovered exchange of the window
+     * will do.
+     */
+    private String recoveredFrom(IntegrationInfo info, String routeId, long from, long to) {
+        String any = null;
+        for (Timeline.Kept k : ctx.timeline.exchanges(info.pid, from, to)) {
+            if (k.redelivered() && !k.failed() && !k.handled() && k.exception() != null) {
+                if (routeId.equals(k.routeId())) {
+                    any = k.exception();
+                } else if (any == null) {
+                    any = k.exception();
+                }
+            }
+        }
+        return any;
     }
 
     private static String meta(IntegrationInfo info, ProjectOverview.Overview o) {
