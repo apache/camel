@@ -83,6 +83,11 @@ class ChaosTab extends AbstractTableTab {
         control.openAt(ctx.findSelectedIntegration(), target);
     }
 
+    /** Opens the rule typed as one line, such as a rule that makes a real error again. */
+    void openRule(String rule) {
+        control.openRule(ctx.findSelectedIntegration(), rule);
+    }
+
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
         IntegrationInfo info = ctx.findSelectedIntegration();

@@ -173,6 +173,13 @@ Inspect tab):
 * Compare the message body and headers before and after the failing step
   to understand what triggered the error
 
+With chaos on in the integration (`camel run --chaos`), press *!* on a real error to make a chaos rule of it: the Chaos
+screen opens with a rule that makes the same error again ten times, at the same step with the same exception and
+message, or at the same endpoint with the same HTTP status, such as
+`step=callStock error exception=java.net.ConnectException message="Connection refused" until=10`. Change it if needed,
+and Enter adds it after you confirm. Fix the bug, then prove the fix against the same failure without waiting for it
+to happen again.
+
 This combination of error details + visual diagram replay gives you a complete picture of
 what went wrong and why -- without leaving the terminal.
 
@@ -325,7 +332,8 @@ image::jbang/camel-tui-chaos-recipes.png[Adding a chaos rule from the known rule
 * *!* on the Endpoint tab, the Consumers tab or a node of the Diagram opens the known rules for what is selected, with
 it filled in: for a `to` or an endpoint the routes send to, the faults of that endpoint (an HTTP status only for an
 HTTP endpoint) and of the step; for the `from` of a route, a consumer or an endpoint a route consumes, the faults of
-the route, and of its polls when it polls.
+the route, and of its polls when it polls. On the Errors tab, *!* makes a rule of the selected error instead, which
+fails the same way again (see <<_troubleshooting_errors,Troubleshooting Errors>>).
 +
 image::jbang/camel-tui-chaos-here.png[! on the to callStock of the Diagram: the known rules for its HTTP endpoint and its step, with the endpoint filled in]
 * *x* removes the selected rule, *c* removes all rules (the report keeps what they did), and *R* starts a new experiment:

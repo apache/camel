@@ -255,7 +255,9 @@ there are stay. The ids of the rules go on from the last one (`r4` above, after 
 of a scenario says which one it came from (`(scenario outage.chaos)` in the text, `scenario` in the JSON).
 
 The chaos screen of the Camel TUI saves the rules there are as a scenario (key `s`), with the seed: rules tried by hand
-become a file of the project, to run again.
+become a file of the project, to run again. On its Errors tab, `!` makes a rule of a real error, which fails the same
+way again (the same exception and message at the same step, or the same HTTP status at the same endpoint, ten times):
+fix the bug, then prove the fix against the same failure, and keep the rule in a scenario.
 
 == Rules
 

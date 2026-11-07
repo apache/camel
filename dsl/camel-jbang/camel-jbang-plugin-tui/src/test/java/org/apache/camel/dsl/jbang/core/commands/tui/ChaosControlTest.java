@@ -274,6 +274,20 @@ class ChaosControlTest {
     }
 
     @Test
+    void aRuleOpenedTypedInIsAddedAfterTheConfirmation() {
+        tab.openRule("step=callStock error exception=java.net.ConnectException until=10");
+        // the input shows the end of the line, where the cursor is
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Add a chaos rule to chaosdemo")
+                .contains("ConnectException until=10");
+        enter();
+        assertThat(tab.isConfirming()).isTrue();
+        reply.put("id", "r2");
+        key('y');
+        assertThat(requests.get(0).getString("rule"))
+                .isEqualTo("step=callStock error exception=java.net.ConnectException until=10");
+    }
+
+    @Test
     void theFooterHasTheKeys() {
         List<Span> footer = new ArrayList<>();
         tab.renderFooter(footer);

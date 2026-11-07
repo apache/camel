@@ -94,6 +94,8 @@ class MonitorContext {
     BiConsumer<String, Boolean> notificationCallback;
     // opens the Chaos screen with the known rules for a target ({@code !} on an endpoint, a consumer or a diagram node)
     Consumer<ChaosHere.Target> chaosHere;
+    // ! on the Errors tab: opens the Chaos screen with a rule that makes the selected error again (CAMEL-26723)
+    Consumer<String> chaosRule;
     // opens what a line of About is about (Enter): a route on the Diagram, an endpoint on the Endpoint tab
     Consumer<AboutView.Target> openFromAbout;
     // the exchanges chaos rules faulted, for the marks on the Activity, Errors and Inspect tabs
