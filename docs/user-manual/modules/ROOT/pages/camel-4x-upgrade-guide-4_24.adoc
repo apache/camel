@@ -241,6 +241,14 @@ at most once per millisecond, so that the JMX statistics no longer generate an e
 several exchanges complete within the same millisecond, the attribute has the id of the first one, not of the last one.
 Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still updated for every failed exchange.
 
+=== camel-management - an exchange recovered by a redelivery is counted when the route removes the Camel headers
+
+The `Redeliveries` statistics of the routes, processors and the `CamelContext` count an exchange that completed after a
+redelivery also when the route removed the `CamelRedelivered` header afterwards (such as `removeHeaders("Camel*")`
+before calling an endpoint). Before, such a recovery was not counted. `ExchangeHelper.isRedelivered` now also returns
+`true` when the error handler redelivered the exchange, without looking at the header only. An exchange whose failure
+is continued (`continued(true)`) no longer keeps its redelivery counter, as with a handled failure.
+
 === camel-core - a nested split no longer changes the processed items of the outer split
 
 With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
