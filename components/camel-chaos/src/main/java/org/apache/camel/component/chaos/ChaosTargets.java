@@ -125,6 +125,8 @@ final class ChaosTargets {
             reach = reach(camelContext, routes);
         } catch (RuntimeException e) {
             // the routes changed while they were read (such as a reload)
+            LOG.debug("Cannot read what the routes of in={} reach for the chaos warning (the routes may have changed): {}",
+                    rule.in, e.getMessage(), e);
             return null;
         }
         if (!hooksThatCanFire(reach, rule).isEmpty()) {
