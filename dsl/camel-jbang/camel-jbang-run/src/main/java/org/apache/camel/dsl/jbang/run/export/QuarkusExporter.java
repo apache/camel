@@ -530,6 +530,8 @@ class QuarkusExporter extends Exporter {
         // replace dependencies with special quarkus dependencies if we can find any
         replaceQuarkusDependencies(gavs);
 
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         // sort artifacts
         gavs.sort(ExportHelper.mavenGavComparator());
 
@@ -572,8 +574,8 @@ class QuarkusExporter extends Exporter {
     }
 
     @Override
-    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
-        Set<String> answer = super.resolveDependencies(settings, profile);
+    protected Set<String> doResolveDependencies(Path settings, Path profile) throws Exception {
+        Set<String> answer = super.doResolveDependencies(settings, profile);
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));

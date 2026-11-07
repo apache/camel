@@ -160,6 +160,8 @@ abstract class Exporter {
             gavs.add(gav);
         }
 
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         // sort artifacts
         gavs.sort(ExportHelper.mavenGavComparator());
 
@@ -243,7 +245,24 @@ abstract class Exporter {
         return context;
     }
 
-    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
+    /**
+     * The dependencies of the exported project, with a single one per groupId:artifactId, whatever notation each of
+     * them uses, as a pom.xml may name an artifact only once (Maven 3.10 onwards fails the build when it does).
+     */
+    protected final Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
+        Set<String> answer = doResolveDependencies(settings, profile);
+        removeDuplicateDependencies(answer);
+        return answer;
+    }
+
+    /**
+     * Collects the dependencies of the exported project. A runtime exporter adds its own dependencies by overriding
+     * this method and calling super first. The duplicates are removed afterwards by
+     * {@link #resolveDependencies(Path, Path)}, as the same artifact can be named in another notation
+     * ({@code camel:micrometer-prometheus} and {@code mvn:org.apache.camel:camel-micrometer-prometheus:4.23.0} are the
+     * same artifact).
+     */
+    protected Set<String> doResolveDependencies(Path settings, Path profile) throws Exception {
         Set<String> answer = new TreeSet<>((o1, o2) -> {
             // favour org.apache.camel first
             boolean c1 = o1.contains("org.apache.camel:");
@@ -446,9 +465,15 @@ abstract class Exporter {
         }
         GenAiDependencyHelper.addAiObservabilityIfNeeded(answer, exportProperties, request.observe);
 
-        // remove duplicate versions (keep first) but an explicit --dep version always wins over
-        // an auto-detected dependency for the same groupId:artifactId (e.g. a JDBC driver whose
-        // version is inferred from the camel-dependencies BOM)
+        return answer;
+    }
+
+    /**
+     * Keeps a single dependency per groupId:artifactId (the first), whatever notation each of them uses, but an
+     * explicit --dep version always wins over an auto-detected dependency for the same groupId:artifactId (e.g. a JDBC
+     * driver whose version is inferred from the camel-dependencies BOM).
+     */
+    private void removeDuplicateDependencies(Set<String> answer) {
         Set<String> preferred = new HashSet<>();
         for (String d : request.dependencies) {
             String line = normalizeDependency(d);
@@ -474,8 +499,26 @@ abstract class Exporter {
             }
         }
         answer.removeAll(toBeRemoved);
+    }
 
-        return answer;
+    /**
+     * Whether the dependencies name the given {@code org.apache.camel} artifact, in any of the notations they use
+     * ({@code camel:platform-http} and {@code mvn:org.apache.camel:camel-platform-http:4.23.0} are the same artifact).
+     */
+    protected static boolean hasCamelArtifact(Set<String> deps, String artifactId) {
+        return deps.stream().anyMatch(d -> isCamelArtifact(d, artifactId));
+    }
+
+    /**
+     * Removes the given {@code org.apache.camel} artifact from the dependencies, in any of the notations they use.
+     */
+    protected static void removeCamelArtifact(Set<String> deps, String artifactId) {
+        deps.removeIf(d -> isCamelArtifact(d, artifactId));
+    }
+
+    private static boolean isCamelArtifact(String dep, String artifactId) {
+        MavenGav gav = MavenGav.parseGav(dep);
+        return "org.apache.camel".equals(gav.getGroupId()) && artifactId.equals(gav.getArtifactId());
     }
 
     private static void addRuntimeSpecificDependencies(String deps, Set<String> answer) {

@@ -138,7 +138,8 @@ class SpringBootExporter extends Exporter {
                 prop.remove("camel.main.modeline");
             }
             // ensure spring-boot keeps running if no HTTP server included
-            boolean http = deps.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
+            boolean http = hasCamelArtifact(deps, "camel-platform-http")
+                    || hasCamelArtifact(deps, "camel-platform-http-vertx");
             if (!http) {
                 prop.put("camel.main.run-controller", "true");
             }
@@ -297,6 +298,8 @@ class SpringBootExporter extends Exporter {
             gavs.add(gav);
         }
 
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         gavs.sort(ExportHelper.mavenGavComparator());
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -356,6 +359,9 @@ class SpringBootExporter extends Exporter {
             }
             gavs.add(gav);
         }
+
+        ExportHelper.removeDuplicateArtifacts(gavs);
+
         gavs.sort(ExportHelper.mavenGavComparator());
 
         StringBuilder sb = new StringBuilder();
@@ -434,13 +440,14 @@ class SpringBootExporter extends Exporter {
     }
 
     @Override
-    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
-        Set<String> answer = super.resolveDependencies(settings, profile);
+    protected Set<String> doResolveDependencies(Path settings, Path profile) throws Exception {
+        Set<String> answer = super.doResolveDependencies(settings, profile);
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
 
-        boolean http = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http"));
+        boolean http = hasCamelArtifact(answer, "camel-platform-http")
+                || hasCamelArtifact(answer, "camel-platform-http-vertx");
         if (hasOpenapi(answer) && !http) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http");

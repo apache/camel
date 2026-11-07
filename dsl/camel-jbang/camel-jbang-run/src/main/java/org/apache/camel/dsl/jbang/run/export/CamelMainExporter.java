@@ -307,8 +307,8 @@ class CamelMainExporter extends Exporter {
     }
 
     @Override
-    protected Set<String> resolveDependencies(Path settings, Path profile) throws Exception {
-        Set<String> answer = super.resolveDependencies(settings, profile);
+    protected Set<String> doResolveDependencies(Path settings, Path profile) throws Exception {
+        Set<String> answer = super.doResolveDependencies(settings, profile);
 
         // remove out of the box dependencies
         answer.removeIf(s -> s.contains("camel-core"));
@@ -341,7 +341,7 @@ class CamelMainExporter extends Exporter {
             answer.add("mvn:org.apache.camel:camel-platform-http-jolokia");
         }
 
-        boolean main = answer.stream().anyMatch(s -> s.contains("mvn:org.apache.camel:camel-platform-http-main"));
+        boolean main = hasCamelArtifact(answer, "camel-platform-http-main");
         if (hasOpenapi(answer) && !main) {
             // include http server if using openapi
             answer.add("mvn:org.apache.camel:camel-platform-http-main");
@@ -352,8 +352,8 @@ class CamelMainExporter extends Exporter {
             main = true;
         }
         if (main) {
-            answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http:"));
-            answer.removeIf(s -> s.contains("org.apache.camel:camel-platform-http-vertx:"));
+            removeCamelArtifact(answer, "camel-platform-http");
+            removeCamelArtifact(answer, "camel-platform-http-vertx");
         }
 
         return answer;

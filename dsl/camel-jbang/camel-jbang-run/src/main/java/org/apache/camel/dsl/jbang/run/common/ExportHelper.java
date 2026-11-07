@@ -216,6 +216,31 @@ public final class ExportHelper {
         return sb.toString();
     }
 
+    /**
+     * Keeps a single dependency per groupId:artifactId in the dependencies of a pom.xml, which may name an artifact
+     * only once (Maven 3.10 onwards fails the build of a project that names one twice). Two dependencies with other
+     * coordinates become the same artifact through the mapping of a runtime: {@code org.apache.camel:camel-console} and
+     * {@code org.apache.camel.quarkus:camel-quarkus-console} are the same artifact of the Quarkus runtime. The first is
+     * kept, in its position, except that a dependency with a version wins over one without: the mapping of a runtime
+     * leaves the version of its own artifacts to the BOM, so the coordinates a user gave with a version survive it.
+     */
+    public static void removeDuplicateArtifacts(List<MavenGav> gavs) {
+        Map<String, MavenGav> kept = new LinkedHashMap<>();
+        for (MavenGav gav : gavs) {
+            String ga = gav.getGroupId() + ":" + gav.getArtifactId();
+            MavenGav existing = kept.get(ga);
+            if (existing == null || (!hasVersion(existing) && hasVersion(gav))) {
+                kept.put(ga, gav);
+            }
+        }
+        gavs.clear();
+        gavs.addAll(kept.values());
+    }
+
+    private static boolean hasVersion(MavenGav gav) {
+        return gav.getVersion() != null && !gav.getVersion().isBlank();
+    }
+
     public static Comparator<MavenGav> mavenGavComparator() {
         return new Comparator<MavenGav>() {
             @Override
