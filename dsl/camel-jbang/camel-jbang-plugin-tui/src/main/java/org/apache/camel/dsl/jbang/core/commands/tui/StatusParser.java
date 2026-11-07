@@ -1538,52 +1538,6 @@ final class StatusParser {
         return parsed;
     }
 
-    static List<ActivityEntry> parseActivityEntries(JsonObject root) {
-        JsonArray activityList = (JsonArray) root.get("activity");
-        if (activityList == null) {
-            return List.of();
-        }
-        List<ActivityEntry> parsed = new ArrayList<>();
-        for (Object e : activityList) {
-            JsonObject aj = (JsonObject) e;
-            ActivityEntry ae = new ActivityEntry();
-            Object uidObj = aj.get("uid");
-            if (uidObj instanceof Number n) {
-                ae.uid = n.longValue();
-            }
-            ae.exchangeId = aj.getString("exchangeId");
-            ae.routeId = aj.getString("routeId");
-            ae.fromRouteId = aj.getString("fromRouteId");
-            Long ts = aj.getLong("timestamp");
-            if (ts != null) {
-                ae.timestamp = ts;
-            }
-            Object elapsedObj = aj.get("elapsed");
-            if (elapsedObj instanceof Number n) {
-                ae.elapsed = n.longValue();
-            }
-            ae.failed = aj.getBooleanOrDefault("failed", false);
-            ae.fromEndpointUri = aj.getString("fromEndpointUri");
-            JsonArray sends = aj.getCollection("endpointSends");
-            if (sends != null) {
-                for (Object s : sends) {
-                    JsonObject so = (JsonObject) s;
-                    ActivityEntry.EndpointSendEntry se = new ActivityEntry.EndpointSendEntry();
-                    se.endpointUri = so.getString("endpointUri");
-                    se.remoteEndpoint = so.getBooleanOrDefault("remoteEndpoint", false);
-                    Object sendElapsed = so.get("elapsed");
-                    if (sendElapsed instanceof Number sn) {
-                        se.elapsed = sn.longValue();
-                    }
-                    ae.endpointSends.add(se);
-                }
-            }
-            ae.exceptionMessage = aj.getString("exception");
-            parsed.add(ae);
-        }
-        return parsed;
-    }
-
     static String stringValue(Object obj) {
         return obj != null ? obj.toString() : null;
     }

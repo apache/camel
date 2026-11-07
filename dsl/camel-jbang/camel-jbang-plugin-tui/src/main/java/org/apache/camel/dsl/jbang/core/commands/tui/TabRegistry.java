@@ -33,7 +33,7 @@ class TabRegistry {
     static final int TAB_OVERVIEW = 0;
     static final int TAB_SOURCE = 1;
     static final int TAB_LOG = 2;
-    static final int TAB_ACTIVITY = 3;
+    static final int TAB_TIMELINE = 3;
     static final int TAB_DIAGRAM = 4;
     static final int TAB_ROUTES = 5;
     static final int TAB_ENDPOINTS = 6;
@@ -74,8 +74,8 @@ class TabRegistry {
     private HistoryTab historyTab;
     private CircuitBreakerTab circuitBreakerTab;
     private ChaosTab chaosTab;
+    private TimelineTab timelineTab;
     private ErrorsTab errorsTab;
-    private ActivityTab activityTab;
     private MetricsTab metricsTab;
     private StartupTab startupTab;
     private ConfigurationTab configurationTab;
@@ -143,8 +143,8 @@ class TabRegistry {
         historyTab = new HistoryTab(ctx, dataService.traces(), dataService.traceFilePositions());
         circuitBreakerTab = new CircuitBreakerTab(ctx, dataService.metrics());
         chaosTab = new ChaosTab(ctx);
+        timelineTab = new TimelineTab(ctx);
         errorsTab = new ErrorsTab(ctx);
-        activityTab = new ActivityTab(ctx);
         metricsTab = new MetricsTab(ctx);
         startupTab = new StartupTab(ctx);
         configurationTab = new ConfigurationTab(ctx);
@@ -275,7 +275,7 @@ class TabRegistry {
         return switch (index) {
             case TAB_OVERVIEW -> overviewTab;
             case TAB_LOG -> logTab;
-            case TAB_ACTIVITY -> activityTab;
+            case TAB_TIMELINE -> timelineTab;
             case TAB_DIAGRAM -> diagramTab;
             case TAB_ROUTES -> routesTab;
             case TAB_ENDPOINTS -> endpointsTab;
@@ -411,8 +411,8 @@ class TabRegistry {
         return errorsTab;
     }
 
-    ActivityTab activityTab() {
-        return activityTab;
+    TimelineTab timelineTab() {
+        return timelineTab;
     }
 
     BeansTab beansTab() {
@@ -572,7 +572,7 @@ class TabRegistry {
         entries.add(new TabEntry(icon(TAB_SOURCE), "Source", sourceTab.description(), "2", TAB_SOURCE, -1, sourceTab));
         entries.add(new TabEntry(icon(TAB_LOG), "Log", logTab.description(), "3", TAB_LOG, -1, logTab));
         entries.add(
-                new TabEntry(icon(TAB_ACTIVITY), "Activity", activityTab.description(), "4", TAB_ACTIVITY, -1, activityTab));
+                new TabEntry(icon(TAB_TIMELINE), "Timeline", timelineTab.description(), "4", TAB_TIMELINE, -1, timelineTab));
         entries.add(new TabEntry(icon(TAB_DIAGRAM), "Diagram", diagramTab.description(), "5", TAB_DIAGRAM, -1, diagramTab));
         entries.add(new TabEntry(icon(TAB_ROUTES), "Routes", routesTab.description(), "6", TAB_ROUTES, -1, routesTab));
         entries.add(new TabEntry(
