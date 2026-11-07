@@ -171,8 +171,8 @@ only the list and the report.
 
 == Rules
 
-A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `rate`, `from` and `until`,
-and optionally an expectation. A value with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes
+A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `in`, `rate`, `from` and
+`until`, and optionally an expectation. A value with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes
 are a quote and a backslash).
 
 [source]
@@ -180,6 +180,8 @@ are a quote and a backslash).
 target:  route=<id> | endpoint=<uri> | component=<name> | step=<id>    (* matches any characters)
 fault:   error | delay | drop | corrupt | duplicate | stall | lifecycle, with its parameters
 at:      send | reply | dlq | poll | entry | step    (optional)
+in:      in=<route id> narrows the sends, polls and steps of endpoint=, component= and step= to a route
+         (* matches any characters; optional)
 rate:    a probability (rate=0.3), every Nth match (rate=every:5), or bursts (rate=burst:5s/30s: every match
          during the first 5s of each 30s); without it every match fires
 from:    when the rule starts after it is added (from=+30s), such as after the warm-up; without it at once
@@ -204,6 +206,26 @@ not a name of the component in the context, chaos puts the default name of the c
 the endpoint URI `netty-http://http://inventory/stock`, and a camel-netty-http component added under another name is
 matched with `netty-http` in front too. A `route=` pattern is matched against the route id, and a `step=` pattern against the id of the step
 (`to1`, or the id set with `id("enrich")`).
+
+=== The sends and steps of a route
+
+`in=` narrows the target of a rule to the routes whose id it matches, for the sends, steps and polls that you know by
+their route rather than by an endpoint URI or a step id (which are often generated, such as `to3`):
+
+[source]
+----
+endpoint=http:* in=orders error status=503      # the HTTP calls of route orders
+step=* in=orders delay duration=500ms           # every step of route orders
+component=kafka in=order* drop                  # the Kafka sends of the routes whose id starts with order
+endpoint=* in=orders error at=send rate=0.1     # 10% of all the sends of route orders
+----
+
+The route is the route of the exchange: a send in a route that `orders` calls with `direct:` is in that other route,
+not in `orders`; take more routes with a pattern (`in=order*`). With `at=poll` it is the route whose consumer polls.
+`in=` is checked before the rate, so `rate` and an `until` count count only the matches in those routes. A `route=`
+rule is about its route already, and `stall` and `lifecycle` act on the route of their `route=`, so they take no `in=`.
+When no route matches `in=`, or the target matches no send, poll or step inside those routes, adding the rule warns,
+with what is there.
 
 A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove take. A change replaces the rule with a
 new one with the same id and the next version (a rule is version 1 when it is added), and the replaced one stays in the
@@ -239,7 +261,7 @@ target offers, is rejected when it is added, with an error that names the hooks 
 
 |`route=`
 |The messages that enter the route (`entry`), and the route itself.
-|`entry`: `corrupt`. The route itself: `stall`, `lifecycle` (they take no `at`).
+|`entry`: `error`, `delay`, `corrupt`. The route itself: `stall`, `lifecycle` (they take no `at`).
 
 |`step=`
 |The matching steps (`step`).
@@ -253,9 +275,10 @@ the hooks where a rule can fire in the integration now (`hooks`): of the hooks o
 JMS), `send` (and `reply`) only when something sends to a matching endpoint (a `to`, a `toD`, `wireTap`, `enrich`,
 `recipientList`, `routingSlip` or `dynamicRouter` whose URI may match, or an endpoint a template sent to), and any hook
 where the rule fired already. The rule still fires at all its hooks, so a send that comes later (such as from a
-`ProducerTemplate` to the endpoint of a route) is faulted too, and its `fired` counts have every hook of the rule. `route=orders error` is rejected: the
-entry of a route offers only `corrupt`, and `route=` does not reach the sends and steps of the route (they are
-targeted with `endpoint=`, `component=` or `step=`). A rule that matches nothing, such as a poll rule for a consumer
+`ProducerTemplate` to the endpoint of a route) is faulted too, and its `fired` counts have every hook of the rule.
+`route=orders error rate=0.05` fails 5% of the exchanges that enter the route, each once (see the `entry` hook below);
+the sends and steps of the route are targeted with `endpoint=`, `component=` or `step=`, narrowed to the route with
+`in=orders`. A rule that matches nothing, such as a poll rule for a consumer
 that does not poll on a schedule (Kafka, JMS), fires 0 times, as the report shows.
 
 When several rules match the same send, poll, message or step, they are asked in the order they were added, and the
@@ -392,9 +415,17 @@ stopped or suspended meanwhile. The consumers that `pollEnrich` and a `ConsumerT
 route, and chaos does not reach their polls.
 
 |`entry`
-|Each exchange that enters a matching route (a route policy, `onExchangeBegin`), before the first step. There is no
-`drop` at the entry: the exchange already belongs to its consumer, and dropping it would make the consumer commit a
-message the route never processed.
+|Each exchange that enters a matching route (a route policy, `onExchangeBegin`), once, also when it enters the route
+again (a loop, a redelivery). A `corrupt` changes the message before the first step. An `error` or a `delay` fires
+there, and acts at the first step of the route, through the step hook: inside the error handler of the route, so
+`onException`, redelivery and the dead letter channel of the route apply, as for a real failure inside it, and a
+redelivery of that step runs the step itself. When the route does not handle the error, its consumer gets the failed
+exchange, as it would for any failure of the route: a JMS message is rolled back, a file stays where it was, an HTTP
+client gets a 500. A `delay` waits on the thread of the consumer (for most consumers), so the consumer takes fewer
+messages. This is the honest form of "fail 5% of the order route": `step=* rate=0.05` would compound the rate over
+every step. There is no `drop` at the entry: the exchange already belongs to its consumer, and dropping it would make
+the consumer commit a message the route never processed. A fault of the consumer itself, before there is an exchange,
+is a poll fault (`at=poll`) for a scheduled poll consumer, or a route that is down (`stall`, `lifecycle`).
 
 |`step`
 |Each step of a route, through the step hook of camel-core, right before the processor of the step is called, once for
@@ -608,6 +639,12 @@ seconds
 
 |`step=enrich* error exception=java.sql.SQLException expect=orders:handled<=0`
 |fail every run of step enrich* with SQLException; expects no exchanges handled by the error handler in route orders
+
+|`endpoint=http:stock* in=orders error status=503 rate=0.5`
+|fail half of the sends to http:stock* in route orders with HTTP status 503
+
+|`route=orders error rate=0.05`
+|fail 5% of the messages entering route orders
 
 |`route=poller lifecycle action=remove duration=30s repeat=3 every=1m`
 |remove route poller for 30 seconds, then add it back, 3 times, every 1 minute

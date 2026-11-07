@@ -30,7 +30,7 @@ minute, and the seed of the random draws.
 
 - **ID** — The id of the rule (r1, r2, ...), with its version when it was changed
 - **STATE** — `active`, `waiting` (it starts later, `from=`) or `ended`
-- **TARGET** — What the rule matches: `endpoint=`, `component=`, `route=` or `step=`
+- **TARGET** — What the rule matches: `endpoint=`, `component=`, `route=` or `step=`, with `in=` when it is narrowed to the sends and steps of a route
 - **FAULT** — What it does, in a few words: `error status 503`, `error ConnectException`, `delay 500ms..1s`, `stop 5s ×3 every 20s` (the rule in full is the title of the panel under the table)
 - **RATE** — The share of the matches it fired at, next to its own: `24% of 25%`, `20% of 1 in 5`, `16% of 5s in 30s`; for a flapping route the round
 - **FIRED** — How many faults it fired

@@ -795,6 +795,9 @@ public final class ChaosManager {
         final ChaosRule[] poll;
         final ChaosRule[] entry;
         final ChaosRule[] step;
+        // some rules with route= fail or delay the exchanges at the first step of their route, so the step hook looks
+        // for them
+        final boolean entryAtStep;
         // the lifecycle rules (stall and lifecycle), for the exchanges sent to their route while it is down
         final ChaosRule[] lifecycle;
         final ChaosRule.Expectation[] expectations;
@@ -809,6 +812,7 @@ public final class ChaosManager {
             poll = live.stream().filter(r -> r.hooks.contains(Hook.POLL)).toArray(ChaosRule[]::new);
             entry = live.stream().filter(r -> r.hooks.contains(Hook.ENTRY)).toArray(ChaosRule[]::new);
             step = live.stream().filter(r -> r.hooks.contains(Hook.STEP)).toArray(ChaosRule[]::new);
+            entryAtStep = Arrays.stream(entry).anyMatch(r -> r.fault != ChaosRule.Fault.CORRUPT);
             lifecycle = rules.stream().filter(r -> r.lifecycle != null).toArray(ChaosRule[]::new);
             // all of them, for the WARN about a route that does not exist when the context starts
             expectationRules = rules.stream().filter(r -> r.expectation != null).toArray(ChaosRule[]::new);

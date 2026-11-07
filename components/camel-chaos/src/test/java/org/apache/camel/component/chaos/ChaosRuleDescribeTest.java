@@ -72,6 +72,12 @@ class ChaosRuleDescribeTest {
                        endpoint=x error at=send expect=orders:failed=3 | fail every send to x; expects exactly 3 exchanges failed in route orders
                        endpoint=x error at=send expect=orders:redeliveries>=2 | fail every send to x; expects at least 2 redeliveries in route orders
                        endpoint=x error at=send expect=orders:completed<=1 | fail every send to x; expects at most 1 exchange completed in route orders
+                       endpoint=http:stock* in=orders error status=503 rate=0.5 | fail half of the sends to http:stock* in route orders with HTTP status 503
+                       step=* in=order* delay duration=500ms | delay every run of step * in routes order* by 500 milliseconds
+                       component=file drop at=poll in=inbox | drop every poll of the file endpoints in route inbox
+                       route=orders error rate=0.05 | fail 5% of the messages entering route orders
+                       route=orders error exception=java.net.ConnectException | fail every message entering route orders with ConnectException
+                       route=order* delay duration=2s until=10 | delay every message entering routes order* by 2 seconds, for the next 10 messages
                        route=poller stall duration=20s | suspend route poller for 20 seconds
                        route=poller lifecycle action=stop duration=1m30s | stop route poller for 1 minute 30 seconds
                        route=poller lifecycle action=remove duration=30s repeat=3 every=1m from=+10s | remove route poller for 30 seconds, then add it back, 3 times, every 1 minute, starting after 10 seconds

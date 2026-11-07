@@ -21,7 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeSet;
@@ -67,11 +69,70 @@ final class ChaosTargets {
         if (rule.lifecycle != null) {
             return null;
         }
-        return switch (rule.target) {
+        String answer = switch (rule.target) {
             case ENDPOINT, COMPONENT -> checkEndpoints(camelContext, rule);
             case ROUTE -> checkRoutes(camelContext, rule);
             case STEP -> checkSteps(camelContext, rule);
         };
+        return answer == null && rule.in != null ? checkIn(camelContext, rule) : answer;
+    }
+
+    /**
+     * Why a rule with {@code in=} finds nothing to fire at in its routes: no route matches {@code in=}, or its target
+     * matches nothing inside those routes (a send, a step, or the poll of the consumer of the route). A send inside a
+     * route that one of them calls ({@code direct:}) is in that other route.
+     */
+    private static String checkIn(CamelContext camelContext, ChaosRule rule) {
+        List<Route> routes = new ArrayList<>();
+        TreeSet<String> ids = new TreeSet<>();
+        for (Route route : camelContext.getRoutes()) {
+            ids.add(route.getRouteId());
+            if (rule.matchesIn(route.getRouteId())) {
+                routes.add(route);
+            }
+        }
+        if (routes.isEmpty()) {
+            return "in=" + rule.in + " matches no route of the context now, so the rule fires 0 times; the routes are: "
+                   + some(ids);
+        }
+        String in = (routes.size() == 1 ? "route " : "routes ") + rule.in + " (in=" + rule.in + ")";
+        if (rule.target == ChaosRule.Target.STEP) {
+            TreeSet<String> steps = new TreeSet<>();
+            for (Route route : routes) {
+                for (Processor processor : route.filter("*")) {
+                    String id = processor instanceof IdAware idAware ? idAware.getId() : null;
+                    if (id != null) {
+                        if (rule.matchesId(id)) {
+                            return null;
+                        }
+                        steps.add(id);
+                    }
+                }
+            }
+            return "step=" + rule.pattern + " matches no step of " + in + ", so the rule fires 0 times; the steps there"
+                   + " are: " + some(steps);
+        }
+        if (rule.hooks.contains(Hook.DLQ)) {
+            // the dead letter channel is the error handler's, not a send of the route
+            return null;
+        }
+        Reach reach;
+        try {
+            reach = reach(camelContext, routes);
+        } catch (RuntimeException e) {
+            // the routes changed while they were read (such as a reload)
+            return null;
+        }
+        if (!hooksThatCanFire(reach, rule).isEmpty()) {
+            return null;
+        }
+        TreeSet<String> uris = new TreeSet<>();
+        reach.routes().values().forEach(r -> r.sentTo().forEach(uri -> uris.add(withoutQuery(uri))));
+        return rule.target.key + "=" + rule.pattern + " matches no " + (rule.hooks.contains(Hook.POLL)
+                ? "send or poll"
+                : "send")
+               + " of " + in + ", so the rule fires 0 times (in= is the route of the exchange, not the routes"
+               + " it calls); the sends there are: " + some(uris);
     }
 
     private static String checkEndpoints(CamelContext camelContext, ChaosRule rule) {
@@ -118,15 +179,34 @@ final class ChaosTargets {
                 || rule.lifecycle != null || reach == null) {
             return rule.hooks;
         }
+        // with in=, what the routes of in= reach, else what all of them do (and the sends of a ProducerTemplate)
+        List<String> polled = reach.polled;
+        List<String> sentTo = reach.sentTo;
+        List<String> dynamic = reach.dynamic;
+        if (rule.in != null) {
+            polled = new ArrayList<>();
+            sentTo = new ArrayList<>();
+            dynamic = new ArrayList<>();
+            for (Map.Entry<String, RouteReach> entry : reach.routes.entrySet()) {
+                if (rule.matchesIn(entry.getKey())) {
+                    RouteReach r = entry.getValue();
+                    if (r.polled() != null) {
+                        polled.add(r.polled());
+                    }
+                    sentTo.addAll(r.sentTo());
+                    dynamic.addAll(r.dynamic());
+                }
+            }
+        }
         Set<Hook> answer = EnumSet.noneOf(Hook.class);
         Boolean sent = null;
         for (Hook hook : rule.hooks) {
             boolean can = switch (hook) {
-                case POLL -> reach.polled.stream().anyMatch(rule::matchesUri);
+                case POLL -> polled.stream().anyMatch(rule::matchesUri);
                 case SEND, REPLY -> {
                     if (sent == null) {
-                        sent = reach.sentTo.stream().anyMatch(rule::matchesUri)
-                                || reach.dynamic.stream().anyMatch(uri -> mayMatch(rule, uri));
+                        sent = sentTo.stream().anyMatch(rule::matchesUri)
+                                || dynamic.stream().anyMatch(uri -> mayMatch(rule, uri));
                     }
                     yield sent;
                 }
@@ -163,23 +243,31 @@ final class ChaosTargets {
         Set<Endpoint> sentTo = Collections.newSetFromMap(new IdentityHashMap<>());
         List<String> polled = new ArrayList<>();
         List<String> dynamic = new ArrayList<>();
+        Map<String, RouteReach> byRoute = new LinkedHashMap<>();
         for (Route route : routes) {
             Endpoint from = route.getEndpoint();
+            String polledHere = null;
             if (from != null) {
                 consumed.add(from);
                 if (route.getConsumer() instanceof ScheduledPollConsumer) {
-                    polled.add(ChaosPatterns.endpointUri(from));
+                    polledHere = ChaosPatterns.endpointUri(from);
+                    polled.add(polledHere);
                 }
             }
+            List<String> sentHere = new ArrayList<>();
             for (Processor processor : route.filter("*")) {
                 // a to, whose endpoint is known when the route starts (also one a route consumes, such as direct)
                 if (processor instanceof EndpointAware aware && aware.getEndpoint() != null) {
                     sentTo.add(aware.getEndpoint());
+                    sentHere.add(ChaosPatterns.endpointUri(aware.getEndpoint()));
                 }
             }
+            List<String> dynamicHere = new ArrayList<>();
             if (route.getRoute() instanceof RouteDefinition definition) {
-                dynamicSends(definition.getOutputs(), dynamic);
+                dynamicSends(definition.getOutputs(), dynamicHere);
+                dynamic.addAll(dynamicHere);
             }
+            byRoute.put(route.getRouteId(), new RouteReach(sentHere, dynamicHere, polledHere));
         }
         List<String> uris = new ArrayList<>();
         for (Endpoint endpoint : camelContext.getEndpoints()) {
@@ -188,7 +276,7 @@ final class ChaosTargets {
                 uris.add(ChaosPatterns.endpointUri(endpoint));
             }
         }
-        return new Reach(uris, dynamic, polled);
+        return new Reach(uris, dynamic, polled, byRoute);
     }
 
     private static void dynamicSends(List<ProcessorDefinition<?>> outputs, List<String> uris) {
@@ -263,8 +351,18 @@ final class ChaosTargets {
         return answer;
     }
 
-    /** What the routes of a context reach, see {@link #reach(CamelContext)}. */
-    record Reach(List<String> sentTo, List<String> dynamic, List<String> polled) {
+    /**
+     * What the routes of a context reach, see {@link #reach(CamelContext)}, and what each route does, by its id (for
+     * the rules with {@code in=}).
+     */
+    record Reach(List<String> sentTo, List<String> dynamic, List<String> polled, Map<String, RouteReach> routes) {
+    }
+
+    /**
+     * What one route reaches: the URIs of the endpoints its steps send to, of the sends known only when they send, and
+     * of the endpoint it consumes with a scheduled poll (null when its consumer does not poll on a schedule).
+     */
+    record RouteReach(List<String> sentTo, List<String> dynamic, String polled) {
     }
 
     private static String checkRoutes(CamelContext camelContext, ChaosRule rule) {

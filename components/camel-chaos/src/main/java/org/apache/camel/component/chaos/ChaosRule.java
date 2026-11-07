@@ -149,6 +149,8 @@ final class ChaosRule {
     final String text;
     final Target target;
     final String pattern;
+    // the routes the rule is narrowed to (in=, a route id or a pattern), else null
+    final String in;
     // the endpoint= pattern without the // after its scheme, made once (the hooks match it on every send and poll)
     private final String uriPattern;
     final Set<Hook> hooks;
@@ -231,6 +233,7 @@ final class ChaosRule {
         this.text = b.text;
         this.target = b.target;
         this.pattern = b.pattern;
+        this.in = b.in;
         this.uriPattern = target == Target.ENDPOINT ? ChaosPatterns.withoutSlashes(pattern) : null;
         this.hooks = Set.copyOf(b.hooks);
         this.fault = b.fault;
@@ -526,9 +529,17 @@ final class ChaosRule {
     private String noun(Set<Hook> at, boolean plural) {
         return switch (target) {
             case ROUTE -> (plural ? "messages" : "message") + " entering " + routeWords();
-            case STEP -> (plural ? "runs" : "run") + " of step " + pattern;
-            case ENDPOINT, COMPONENT -> endpointNoun(at, plural);
+            case STEP -> (plural ? "runs" : "run") + " of step " + pattern + inWords();
+            case ENDPOINT, COMPONENT -> endpointNoun(at, plural) + inWords();
         };
+    }
+
+    // the routes of in=, after what the rule matches
+    private String inWords() {
+        if (in == null) {
+            return "";
+        }
+        return (in.indexOf('*') >= 0 ? " in routes " : " in route ") + in;
     }
 
     private String endpointNoun(Set<Hook> at, boolean plural) {
@@ -725,6 +736,19 @@ final class ChaosRule {
             return ChaosPatterns.matchesScheme(pattern, uri);
         }
         return ChaosPatterns.matchesUriPattern(uriPattern, uri);
+    }
+
+    /**
+     * Whether the exchange is in a route of {@code in=}: the route of its unit of work, which is the route a
+     * {@code direct} call is in, not the route that called it. True for a rule without {@code in=}.
+     */
+    boolean matchesIn(Exchange exchange) {
+        return in == null || matchesIn(ChaosExchangeState.routeId(exchange));
+    }
+
+    /** Whether the route is one of {@code in=} (true for a rule without it). */
+    boolean matchesIn(String routeId) {
+        return in == null || routeId != null && ChaosPatterns.matches(in, routeId);
     }
 
     /** Whether the rule targets this route id or step id (for {@code route=} and {@code step=}). */
@@ -979,6 +1003,7 @@ final class ChaosRule {
         String text;
         Target target;
         String pattern;
+        String in;
         Hook at;
         Set<Hook> hooks;
         Fault fault;

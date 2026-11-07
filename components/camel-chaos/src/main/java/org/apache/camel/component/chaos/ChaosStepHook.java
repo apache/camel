@@ -39,22 +39,50 @@ final class ChaosStepHook implements StepHook, Ordered {
 
     @Override
     public long beforeStep(Exchange exchange, String nodeId) {
-        ChaosRule[] rules = manager.ruleSet().step;
+        ChaosManager.RuleSet ruleSet = manager.ruleSet();
+        if (ruleSet.entryAtStep) {
+            ChaosRule entry = entryFault(exchange);
+            if (entry != null) {
+                // fired as the exchange entered the route: it counted there
+                return fault(entry, exchange);
+            }
+        }
+        ChaosRule[] rules = ruleSet.step;
         if (rules.length == 0 || nodeId == null) {
             return PROCEED;
         }
         long now = TimeSource.currentTimeMillis();
         for (ChaosRule rule : rules) {
-            if (rule.live(now) && rule.matchesId(nodeId) && rule.fires(now)) {
+            if (rule.live(now) && rule.matchesId(nodeId) && rule.matchesIn(exchange) && rule.fires(now)) {
                 rule.fired(Hook.STEP, exchange, null, nodeId);
-                if (rule.fault == Fault.DELAY) {
-                    return rule.delayFor();
-                }
-                if (ChaosFaults.waitBeforeError(rule, exchange)) {
-                    exchange.setException(ChaosFaults.newException(rule));
-                }
-                return PROCEED;
+                return fault(rule, exchange);
             }
+        }
+        return PROCEED;
+    }
+
+    /**
+     * The rule with route= that fired as the exchange entered the route it is in now, which acts at this step, the
+     * first step of the route, once: a redelivery of the step by the error handler runs the step itself.
+     */
+    private static ChaosRule entryFault(Exchange exchange) {
+        ChaosExchangeState state = ChaosExchangeState.peek(exchange);
+        if (state == null || state.entryFault == null) {
+            return null;
+        }
+        ChaosRule rule = state.entryFault;
+        String route = state.entryRoute;
+        state.entryFault = null;
+        state.entryRoute = null;
+        return route.equals(ChaosExchangeState.routeId(exchange)) ? rule : null;
+    }
+
+    private static long fault(ChaosRule rule, Exchange exchange) {
+        if (rule.fault == Fault.DELAY) {
+            return rule.delayFor();
+        }
+        if (ChaosFaults.waitBeforeError(rule, exchange)) {
+            exchange.setException(ChaosFaults.newException(rule));
         }
         return PROCEED;
     }

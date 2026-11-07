@@ -5,7 +5,7 @@
     "targets": [
       {
         "name": "route",
-        "description": "A route id, with * for any characters; one route id (no pattern) for stall and lifecycle",
+        "description": "A route id, with * for any characters; one route id (no pattern) for stall and lifecycle. Its exchanges are faulted as they enter: error and delay at the first step of the route, where its error handler applies; to reach the sends and steps of a route, use in= with another target",
         "pattern": true,
         "pick": "routes"
       },
@@ -89,11 +89,13 @@
       },
       {
         "name": "entry",
-        "description": "Each exchange that enters a matching route, before the first step",
+        "description": "Each exchange that enters a matching route, once: corrupt changes it before the first step, error and delay act at the first step, inside the error handler of the route",
         "targets": [
           "route"
         ],
         "faults": [
+          "error",
+          "delay",
           "corrupt"
         ],
         "onlyWithAt": false
@@ -118,6 +120,7 @@
         "targets": [
           "component",
           "endpoint",
+          "route",
           "step"
         ],
         "hooks": [
@@ -125,6 +128,7 @@
           "reply",
           "dlq",
           "poll",
+          "entry",
           "step"
         ],
         "parameters": [
@@ -188,6 +192,7 @@
           "at",
           "expect",
           "from",
+          "in",
           "rate",
           "until",
           "within"
@@ -199,12 +204,14 @@
         "targets": [
           "component",
           "endpoint",
+          "route",
           "step"
         ],
         "hooks": [
           "send",
           "dlq",
           "poll",
+          "entry",
           "step"
         ],
         "parameters": [
@@ -221,6 +228,7 @@
           "at",
           "expect",
           "from",
+          "in",
           "rate",
           "until",
           "within"
@@ -245,6 +253,7 @@
           "at",
           "expect",
           "from",
+          "in",
           "rate",
           "until",
           "within"
@@ -291,6 +300,7 @@
           "at",
           "expect",
           "from",
+          "in",
           "rate",
           "until",
           "within"
@@ -313,6 +323,7 @@
           "at",
           "expect",
           "from",
+          "in",
           "rate",
           "until",
           "within"
@@ -441,6 +452,15 @@
         "required": false,
         "description": "When the rule starts after it is added, such as after the warm-up (+30s or 30s)",
         "example": "+30s"
+      },
+      {
+        "name": "in",
+        "type": "string",
+        "required": false,
+        "description": "Narrows the sends, replies, polls and steps of the target to a route id, with * for any characters: the route of the exchange, not the routes it calls; with at=poll the route whose consumer polls. Not with route=, stall or lifecycle",
+        "example": "orders",
+        "pattern": true,
+        "pick": "routes"
       },
       {
         "name": "rate",
@@ -1211,6 +1231,145 @@
             "description": "How long it is gone",
             "default": "30s",
             "example": "30s"
+          }
+        ]
+      },
+      {
+        "id": "route-error",
+        "group": "Consumers and routes",
+        "title": "The route fails",
+        "description": "An exchange fails at the first step of the route, and the error handling of the route applies (onException, redelivery, the dead letter channel). When the route does not handle it, the consumer sees the failure: a JMS rollback, the file left in place, an HTTP 500",
+        "uncovers": [
+          "A route without error handling, whose consumer then gets the failure: is that what the sender expects (a rollback, a retry, an HTTP 500)?",
+          "onException and redelivery that do not cover the route",
+          "Callers of the route that do not handle its failure"
+        ],
+        "avoid": [
+          "To fail one call of the route: use the sends of the route (in=) or a step instead"
+        ],
+        "watch": [
+          "The effect: recovered, handled and failed",
+          "What the consumer does with a failed exchange, such as a message going back to the broker"
+        ],
+        "rule": "route=${route} error rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "route",
+            "type": "route",
+            "description": "The route",
+            "example": "orders",
+            "pick": {
+              "from": "routes"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.05",
+            "example": "0.05"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "route-slow",
+        "group": "Consumers and routes",
+        "title": "The route is slow",
+        "description": "Each exchange waits before the first step of the route. It waits on the thread of the consumer, so the consumer takes fewer messages",
+        "uncovers": [
+          "A consumer that falls behind, and the backlog in front of it",
+          "Timeouts of the callers of the route",
+          "How the route behaves with fewer messages per second"
+        ],
+        "avoid": [
+          "On a route others call and wait for, unless their timeouts are the test"
+        ],
+        "watch": [
+          "The mean and the slowest time of the route",
+          "The queue or the lag in front of the route"
+        ],
+        "rule": "route=${route} delay duration=${duration} rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "route",
+            "type": "route",
+            "description": "The route",
+            "example": "orders",
+            "pick": {
+              "from": "routes"
+            }
+          },
+          {
+            "name": "duration",
+            "type": "duration",
+            "description": "The time, or a range of times",
+            "default": "500ms..2s",
+            "example": "500ms..2s"
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "route-sends-error",
+        "group": "Consumers and routes",
+        "title": "The sends of the route fail",
+        "description": "Each send of the route (to, enrich, wireTap...) fails with a ChaosException at the rate, whatever it sends to. The sends of the routes it calls are not in it",
+        "uncovers": [
+          "Which calls of the route have no error handling of their own",
+          "A route that goes on after a failed send, with half of its work done",
+          "The error handler of the route against each kind of send"
+        ],
+        "avoid": [
+          "When one call is the test: pick its endpoint instead of *"
+        ],
+        "watch": [
+          "The effect: recovered, handled and failed",
+          "The sends of the route that failed, on the Routes tab"
+        ],
+        "rule": "endpoint=* in=${route} error at=send rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "route",
+            "type": "route",
+            "description": "The route",
+            "example": "orders",
+            "pick": {
+              "from": "routes"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.1",
+            "example": "0.1"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
           }
         ]
       },

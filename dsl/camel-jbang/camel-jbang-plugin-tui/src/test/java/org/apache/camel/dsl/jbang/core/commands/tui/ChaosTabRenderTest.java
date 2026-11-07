@@ -296,5 +296,16 @@ class ChaosTabRenderTest {
         assertThat(all.target()).isEqualTo("step=a");
         assertThat(ChaosTab.target(all)).isEqualTo("step a");
         assertThat(all.fault()).isEqualTo("delay duration='1s'");
+
+        // narrowed to the sends and steps of a route (in=): with the target, not with the fault
+        ChaosInfo.Rule in = new ChaosInfo.Rule();
+        in.text = "endpoint=http:* in=orders error status=503 rate=0.1";
+        assertThat(in.target()).isEqualTo("endpoint=http:* in=orders");
+        assertThat(ChaosTab.target(in)).isEqualTo("http:* in orders");
+        assertThat(in.fault()).isEqualTo("error status=503");
+        ChaosInfo.Rule steps = new ChaosInfo.Rule();
+        steps.text = "step=* in=order* delay duration=1s";
+        assertThat(ChaosTab.target(steps)).isEqualTo("step * in order*");
+        assertThat(steps.fault()).isEqualTo("delay duration=1s");
     }
 }

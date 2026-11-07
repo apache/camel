@@ -318,10 +318,11 @@ class ChaosTab extends AbstractTableTab {
 
     /**
      * The target of a rule for the table: the URI pattern of an {@code endpoint=} target (the most common one), else
-     * the kind and the pattern, such as {@code route poller}.
+     * the kind and the pattern, such as {@code route poller}, and the route it is narrowed to
+     * ({@code http:* in orders}).
      */
     static String target(ChaosInfo.Rule r) {
-        String t = r.target();
+        String t = r.target().replace(" in=", " in ");
         if (t.startsWith("endpoint=")) {
             return t.substring(9);
         }
