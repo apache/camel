@@ -50,6 +50,9 @@ public class IdempotentOnCompletion implements Synchronization {
             // the exchange did not process successfully but was failure handled by the dead letter channel
             // and thus moved to the dead letter queue. We should thus not consider it as complete.
             onFailedMessage(exchange, messageId);
+        } else if (exchange.isRollbackOnly() || exchange.isRollbackOnlyLast()) {
+            // a rollback only exchange (without an exception) did not complete successfully either
+            onFailedMessage(exchange, messageId);
         } else {
             onCompletedMessage(exchange, messageId);
         }

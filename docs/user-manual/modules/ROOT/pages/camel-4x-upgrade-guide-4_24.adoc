@@ -712,6 +712,19 @@ A route that relies on a regular expression as token, such as `\s+` or `(\W+)\s*
 In the XML and YAML DSL, a token with the escapes `\n`, `\r` or `\t` (for example `\r\n`) is turned into the new line,
 carriage return and tab characters, so it works as before. Before, only a leading `\n` was turned into a new line.
 
+=== camel-core - Idempotent Consumer: an exchange marked rollback only removes its message id
+
+The xref:components:eips:idempotentConsumer-eip.adoc[Idempotent Consumer] now treats an exchange marked with
+`markRollbackOnly()` or `markRollbackOnlyLast()` (without an exception) as failed, as the SQL consumer already does:
+with `removeOnFailure=true` (the default) its message id is removed from the idempotent repository, so a redelivered
+message is processed instead of being dropped as a duplicate. Before, the message id was kept.
+
+With a consumer that does not redeliver a rollback only exchange, such as the file consumer, a later message with the
+same id is now processed instead of being dropped as a duplicate.
+
+To keep the message id, set `removeOnFailure=false`. Note that this also keeps the message id of an exchange that
+failed with an exception.
+
 === camel-cyberark-vault - credentials are checked at endpoint start, and a rejected token is retried only once
 
 A `cyberark-vault` endpoint now fails to start when it has no usable credentials, with a message that names the
