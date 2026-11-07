@@ -17,6 +17,8 @@
 package org.apache.camel.support;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
@@ -25,7 +27,9 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.ShutdownableService;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.SendHook;
 import org.apache.camel.support.service.ServiceHelper;
@@ -170,6 +174,10 @@ public final class SendHelper {
      * <p/>
      * With several hooks (a {@link CompositeSendHook}) the hooks are asked one by one, see {@link CompositeSendHook}:
      * the send keeps how many were asked, so only those are called after it, in the reverse order.
+     * <p/>
+     * When a hook returns {@link SendHook#SEND_TWICE}, the message is copied before the first send, and when the first
+     * send succeeded the copy is sent again: by this thread when the first send completed synchronously, else by the
+     * thread that completed it, so the exchange is on one thread at a time. The hooks are called after the second send.
      */
     private static final class HookedSend implements AsyncCallback {
 
@@ -183,6 +191,12 @@ public final class SendHelper {
         private final AsyncCallback callback;
         // how many hooks returned from beforeSend: they, and only they, are called after the send
         private int asked;
+        // a hook returned SEND_TWICE
+        private boolean twice;
+        // the exception the exchange had before the send, which is not a failure of the send
+        private Exception existing;
+        // the copy of the message for the second send, while the first one runs
+        private Message again;
 
         private HookedSend(SendHook hook, Exchange exchange, Endpoint endpoint, AsyncProcessor producer,
                            AsyncCallback callback) {
@@ -201,10 +215,10 @@ public final class SendHelper {
 
         boolean send() {
             // an exchange can be sent with an exception on it already, which does not stop the send
-            final Exception existing = exchange.getException();
+            existing = exchange.getException();
             final long delay;
             try {
-                delay = beforeSend(existing);
+                delay = beforeSend();
             } catch (Exception e) {
                 // a hook failed: the producer is not called, and there is no after for that hook (the hooks asked
                 // before it are called after the send, as for any send they proceeded with)
@@ -222,7 +236,8 @@ public final class SendHelper {
             if (delay < 0) {
                 // the other negative values are reserved, so a hook that returns one fails the send
                 exchange.setException(new IllegalArgumentException(
-                        "SendHook.beforeSend returned " + delay + ": negative values other than SKIP are reserved"));
+                        "SendHook.beforeSend returned " + delay
+                                                                   + ": negative values other than SKIP and SEND_TWICE are reserved"));
                 return completeWithoutProducer();
             }
 
@@ -246,9 +261,19 @@ public final class SendHelper {
             }
 
             try {
-                return producer.process(exchange, this);
+                if (!twice) {
+                    return producer.process(exchange, this);
+                }
+                again = copyForSecondSend();
+                if (!producer.process(exchange, this::firstSendDone)) {
+                    // the first send goes on asynchronously: the thread that completes it makes the second send
+                    return false;
+                }
+                // the first send completed on this thread, which makes the second send
+                return secondSend(true);
             } catch (RuntimeException e) {
                 // the caller handles a producer that throws as it does without a hook
+                again = null;
                 exchange.setException(e);
                 afterSend();
                 throw e;
@@ -256,16 +281,83 @@ public final class SendHelper {
         }
 
         /**
-         * Asks the hooks before the send.
-         *
-         * @param  existing the exception the exchange had before the send
-         * @return          what the hooks decided: {@link SendHook#PROCEED}, a delay, {@link SendHook#SKIP} or a
-         *                  reserved value (ignored when a hook set an exception on the exchange)
+         * Copies the message for the second send of {@link SendHook#SEND_TWICE}. A stream body is cached first, so both
+         * sends can read it.
          */
-        private long beforeSend(Exception existing) {
+        private Message copyForSecondSend() {
+            Message message = exchange.getMessage();
+            Object body = message.getBody();
+            if ((body instanceof InputStream || body instanceof Reader) && !(body instanceof StreamCache)) {
+                StreamCache cache = exchange.getContext().getTypeConverter().tryConvertTo(StreamCache.class, exchange,
+                        body);
+                if (cache != null) {
+                    message.setBody(cache);
+                }
+            }
+            return message.copy();
+        }
+
+        /**
+         * The first of two sends is done. When it completed synchronously, {@link #send()} makes the second send on the
+         * same thread after the producer returned; else this thread makes it.
+         */
+        private void firstSendDone(boolean doneSync) {
+            if (doneSync) {
+                return;
+            }
+            try {
+                secondSend(false);
+            } catch (RuntimeException e) {
+                // the producer threw instead of calling the callback: the send fails
+                exchange.setException(e);
+                done(false);
+            }
+        }
+
+        /**
+         * Makes the second send of {@link SendHook#SEND_TWICE}, with the copy of the message, unless the first send
+         * failed.
+         *
+         * @param  sync whether the first send completed synchronously (and the caller of {@link #send()} waits for the
+         *              return value)
+         * @return      whether the send completed synchronously
+         */
+        private boolean secondSend(boolean sync) {
+            final Message message = again;
+            again = null;
+            final Exception exception = exchange.getException();
+            if (exception != null && exception != existing) {
+                // the first send failed: there is no second send
+                done(sync);
+                return sync;
+            }
+            // the copy is the in message, and the out message too if the first send made one
+            exchange.setIn(message);
+            exchange.setMessage(message);
+            // the first send read the cached stream of the body
+            MessageHelper.resetStreamCache(message);
+            if (sync) {
+                return producer.process(exchange, this);
+            }
+            // the caller was told the send goes on asynchronously
+            producer.process(exchange, doneSync -> done(false));
+            return false;
+        }
+
+        /**
+         * Asks the hooks before the send. A {@link SendHook#SEND_TWICE} is kept in {@link #twice}.
+         *
+         * @return what the hooks decided: {@link SendHook#PROCEED}, a delay, {@link SendHook#SKIP} or a reserved value
+         *         (ignored when a hook set an exception on the exchange)
+         */
+        private long beforeSend() {
             if (hooks == null) {
                 long answer = hook.beforeSend(exchange, endpoint);
                 asked = 1;
+                if (answer == SendHook.SEND_TWICE) {
+                    twice = true;
+                    return SendHook.PROCEED;
+                }
                 return answer;
             }
             long answer = SendHook.PROCEED;
@@ -276,6 +368,11 @@ public final class SendHelper {
                 if (exception != null && exception != existing) {
                     // this hook stopped the send: the later hooks are not asked
                     return SendHook.PROCEED;
+                }
+                if (value == SendHook.SEND_TWICE) {
+                    // the later hooks are asked too, and a SKIP of one of them still wins
+                    twice = true;
+                    continue;
                 }
                 if (value < 0) {
                     // the first SKIP wins (or a reserved value fails the send): the later hooks are not asked

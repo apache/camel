@@ -111,6 +111,11 @@ final class ChaosFaults {
                 corrupt(rule, exchange, hook, null, endpoint.getEndpointUri());
                 return SendHook.PROCEED;
             }
+            case DUPLICATE -> {
+                // the message is sent twice, as a sender that delivers it again
+                rule.fired(hook, exchange, null, endpoint.getEndpointUri());
+                return SendHook.SEND_TWICE;
+            }
             default -> throw new IllegalStateException("Unknown fault " + rule.fault);
         }
     }

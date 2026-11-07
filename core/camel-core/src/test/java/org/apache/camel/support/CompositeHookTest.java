@@ -264,6 +264,41 @@ class CompositeHookTest extends ContextTestSupport {
     }
 
     @Test
+    void testSendTwiceAsksTheLaterHooksAndSendsTwice() {
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
+        ecc.addSendHook(new TestSendHook("twice", 1, SendHook.SEND_TWICE));
+        ecc.addSendHook(new TestSendHook("c", 2, SendHook.PROCEED));
+
+        Exchange exchange = send();
+
+        // the hooks are asked once and called once after the two sends
+        assertEquals(List.of("before:twice", "before:c", "producer", "producer", "after:c", "after:twice"), calls);
+        assertNull(exchange.getException());
+    }
+
+    @Test
+    void testSkipWinsOverSendTwice() {
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
+        ecc.addSendHook(new TestSendHook("twice", 1, SendHook.SEND_TWICE));
+        ecc.addSendHook(new TestSendHook("skip", 2, SendHook.SKIP));
+
+        Exchange exchange = send();
+
+        assertEquals(List.of("before:twice", "before:skip", "after:skip", "after:twice"), calls);
+        assertNull(exchange.getException());
+    }
+
+    @Test
+    void testCompositeCalledDirectlyReturnsSendTwice() {
+        SendHook composite = CompositeSendHook.of(List.of(
+                new TestSendHook("delay", 1, 30),
+                new TestSendHook("twice", 2, SendHook.SEND_TWICE)));
+
+        assertEquals(SendHook.SEND_TWICE, composite.beforeSend(new DefaultExchange(context),
+                context.getEndpoint("mock:target")));
+    }
+
+    @Test
     void testLongestSendDelayWins() {
         SendHook composite = CompositeSendHook.of(List.of(
                 new TestSendHook("a", 1, 10),

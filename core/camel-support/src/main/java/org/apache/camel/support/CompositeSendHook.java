@@ -34,13 +34,15 @@ import org.apache.camel.spi.SendHook;
  * <li>{@link #beforeSend(Exchange, Endpoint)} is called on the hooks in their order. A hook that throws an exception,
  * sets one on the exchange, returns {@link SendHook#SKIP} or a reserved negative value ends it: the hooks after it are
  * not asked. So the first {@link SendHook#SKIP} wins.</li>
- * <li>When all the hooks proceed, the longest of their delays wins: the send waits for it, once.</li>
+ * <li>When all the hooks proceed, the longest of their delays wins: the send waits for it, once. When a hook returned
+ * {@link SendHook#SEND_TWICE}, the message is then sent twice.</li>
  * <li>{@link #afterSend(Exchange, Endpoint)} is called only on the hooks whose {@code beforeSend} returned, in the
  * reverse order, so the hook that was asked first is called last, as for nested hooks.</li>
  * </ul>
  * <p/>
  * Code that calls a composite itself does not know which hooks were asked: its {@code beforeSend} combines the hooks as
- * above, and its {@code afterSend} calls every hook, in the reverse order.
+ * above (as it returns one value, {@link SendHook#SEND_TWICE} wins over a delay), and its {@code afterSend} calls every
+ * hook, in the reverse order.
  * <p/>
  * It is immutable: the {@link org.apache.camel.CamelContext} creates a new one when a hook is added or removed (see
  * {@link org.apache.camel.ExtendedCamelContext#addSendHook(SendHook)}).
@@ -93,6 +95,7 @@ public final class CompositeSendHook implements SendHook {
     public long beforeSend(Exchange exchange, Endpoint endpoint) {
         final Exception existing = exchange.getException();
         long answer = PROCEED;
+        boolean twice = false;
         for (SendHook hook : hooks) {
             long value = hook.beforeSend(exchange, endpoint);
             Exception exception = exchange.getException();
@@ -100,13 +103,17 @@ public final class CompositeSendHook implements SendHook {
                 // the hook stopped the send: the return value is ignored
                 return PROCEED;
             }
-            if (value < 0) {
+            if (value == SEND_TWICE) {
+                twice = true;
+            } else if (value < 0) {
                 // SKIP, or a reserved value that fails the send
                 return value;
+            } else {
+                answer = Math.max(answer, value);
             }
-            answer = Math.max(answer, value);
         }
-        return answer;
+        // one value only: sending twice wins over a delay
+        return twice ? SEND_TWICE : answer;
     }
 
     @Override

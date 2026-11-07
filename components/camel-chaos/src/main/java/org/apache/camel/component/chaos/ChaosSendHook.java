@@ -26,11 +26,11 @@ import org.apache.camel.util.TimeSource;
 /**
  * Raises the faults of the rules at the sends to an endpoint: {@code error} (the producer is not called), {@code delay}
  * (the sending thread waits, through {@link TimeSource}, before it calls the producer), {@code drop} (the send reports
- * success without calling the producer) and {@code corrupt} (the message that is sent). The first rule that fires
- * decides the fault of a send; the rules are asked in the order they were added. The send of the dead letter channel
- * meets only the rules with {@code at=dlq}: the event notifier marks the exchange while the channel delivers it. The
- * rules with {@code at=reply} are asked after the producer succeeded: {@code error} fails the send after its side
- * effect happened, and {@code corrupt} changes the reply.
+ * success without calling the producer), {@code corrupt} (the message that is sent) and {@code duplicate} (the message
+ * is sent twice). The first rule that fires decides the fault of a send; the rules are asked in the order they were
+ * added. The send of the dead letter channel meets only the rules with {@code at=dlq}: the event notifier marks the
+ * exchange while the channel delivers it. The rules with {@code at=reply} are asked after the producer succeeded:
+ * {@code error} fails the send after its side effect happened, and {@code corrupt} changes the reply.
  */
 final class ChaosSendHook implements SendHook, Ordered {
 

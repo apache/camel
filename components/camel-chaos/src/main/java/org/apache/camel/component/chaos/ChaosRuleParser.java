@@ -88,6 +88,7 @@ final class ChaosRuleParser {
             case DELAY -> Set.of("duration");
             case DROP -> Set.of();
             case CORRUPT -> Set.of("mode", "header");
+            case DUPLICATE -> Set.of();
             case LIFECYCLE -> stall ? Set.of("duration", "repeat", "every") : Set.of("action", "duration", "repeat", "every");
         };
     }
@@ -219,7 +220,8 @@ final class ChaosRuleParser {
                                                + (unknown != null ? " (" + unknown + "= is not a target)" : ""));
         }
         if (b.fault == null) {
-            throw new IllegalArgumentException("a rule needs a fault: error, delay, drop, corrupt, stall or lifecycle");
+            throw new IllegalArgumentException(
+                    "a rule needs a fault: error, delay, drop, corrupt, duplicate, stall or lifecycle");
         }
         if (b.target == Target.COMPONENT && b.pattern.indexOf(':') >= 0) {
             // matched against the scheme only, so a pattern with a colon would never match
@@ -278,6 +280,7 @@ final class ChaosRuleParser {
                 }
             }
             case DROP -> checkKeys(params, faultKeys(Fault.DROP, false), b.fault);
+            case DUPLICATE -> checkKeys(params, faultKeys(Fault.DUPLICATE, false), b.fault);
             case CORRUPT -> {
                 checkKeys(params, faultKeys(Fault.CORRUPT, false), b.fault);
                 String mode = params.get("mode");
@@ -436,10 +439,11 @@ final class ChaosRuleParser {
             case "delay" -> Fault.DELAY;
             case "drop" -> Fault.DROP;
             case "corrupt" -> Fault.CORRUPT;
+            case "duplicate" -> Fault.DUPLICATE;
             case "stall", "lifecycle" -> Fault.LIFECYCLE;
             default -> throw new IllegalArgumentException(
                     "unknown fault " + word
-                                                          + " (the faults are error, delay, drop, corrupt, stall and lifecycle;"
+                                                          + " (the faults are error, delay, drop, corrupt, duplicate, stall and lifecycle;"
                                                           + " a parameter is name=value)");
         };
     }
@@ -776,6 +780,9 @@ final class ChaosRuleParser {
         if (target == Target.STEP && fault == Fault.DROP) {
             return "; drop is a fault of the sends and polls: target them with endpoint= or component=";
         }
+        if (target == Target.STEP && fault == Fault.DUPLICATE) {
+            return "; duplicate is a fault of the sends: target them with endpoint= or component=";
+        }
         if (target == Target.STEP && fault == Fault.CORRUPT) {
             return "; corrupt is a fault of the sends (endpoint=, component=) and of the entry of a route (route=)";
         }
@@ -800,7 +807,7 @@ final class ChaosRuleParser {
         Map<Hook, Set<Fault>> answer = new LinkedHashMap<>();
         switch (target) {
             case ENDPOINT, COMPONENT -> {
-                answer.put(Hook.SEND, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
+                answer.put(Hook.SEND, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT, Fault.DUPLICATE));
                 answer.put(Hook.REPLY, EnumSet.of(Fault.ERROR, Fault.CORRUPT));
                 answer.put(Hook.DLQ, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
                 answer.put(Hook.POLL, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP));

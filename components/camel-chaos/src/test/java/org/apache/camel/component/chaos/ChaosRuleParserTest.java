@@ -121,6 +121,17 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void duplicate() {
+        ChaosRule.Builder duplicate = parse("endpoint=kafka:orders* duplicate rate=0.05");
+        assertThat(duplicate.fault).isEqualTo(Fault.DUPLICATE);
+        assertThat(duplicate.target).isEqualTo(Target.ENDPOINT);
+        assertThat(duplicate.pattern).isEqualTo("kafka:orders*");
+        // a fault of the sends only: not at the polls, the reply or the dead letter channel
+        assertThat(duplicate.hooks).containsExactly(Hook.SEND);
+        assertThat(parse("component=kafka duplicate at=send until=10").hooks).containsExactly(Hook.SEND);
+    }
+
+    @Test
     void lifecycle() {
         ChaosRule.Builder stall = parse("route=poller stall duration=20s");
         assertThat(stall.fault).isEqualTo(Fault.LIFECYCLE);
@@ -288,6 +299,12 @@ class ChaosRuleParserTest {
             "route=orders error|route= does not reach the sends and steps of the route: target them with endpoint=,"
                                                                                                                + " component= or step=",
             "step=s1 drop|drop is a fault of the sends and polls: target them with endpoint= or component=",
+            "step=s1 duplicate|duplicate is a fault of the sends: target them with endpoint= or component=",
+            "route=orders duplicate|route= does not reach the sends and steps of the route",
+            "endpoint=x duplicate at=poll|the fault duplicate is not offered at=poll",
+            "endpoint=x duplicate at=reply|the fault duplicate is not offered at=reply",
+            "endpoint=x duplicate at=dlq|the fault duplicate is not offered at=dlq",
+            "endpoint=x duplicate rate=0.5 mode=headers|unknown parameter mode for the fault duplicate",
             "Endpoint=x error|(Endpoint= is not a target)",
             "endpoint=x|needs a fault",
             "endpoint=x error drop|has one fault",
@@ -501,7 +518,8 @@ class ChaosRuleParserTest {
         // random rules built from the tokens and characters of the syntax: every input either parses or is rejected
         // with an IllegalArgumentException that has a reason, and nothing hangs
         String[] pieces = {
-                "route=", "endpoint=", "component=", "step=", "error", "delay", "drop", "corrupt", "stall", "at=", "send",
+                "route=", "endpoint=", "component=", "step=", "error", "delay", "drop", "corrupt", "duplicate", "stall", "at=",
+                "send",
                 "poll", "entry", "step", "rate=", "every:", "until=", "expect=", "within=", "duration=", "mode=",
                 "headers", "charset", "truncate", "exception=", "java.io.IOException", "message=", "status=", "503",
                 "header.", "body=", "\"", "'", "\\", " ", " ", "\t", "=", ":", ";", "*", "0", "1", "0.5", "1m", "ms",

@@ -80,7 +80,8 @@ class SendHelperTest extends ContextTestSupport {
         DELAY,
         RESERVED,
         BEFORE_THROWS,
-        AFTER_THROWS
+        AFTER_THROWS,
+        TWICE
     }
 
     enum Kind {
@@ -208,7 +209,7 @@ class SendHelperTest extends ContextTestSupport {
         assertEquals(1, completion.count.get());
         assertTrue(completion.doneSync);
         assertInstanceOf(IllegalArgumentException.class, exchange.getException());
-        assertEquals("SendHook.beforeSend returned -2: negative values other than SKIP are reserved",
+        assertEquals("SendHook.beforeSend returned -3: negative values other than SKIP and SEND_TWICE are reserved",
                 exchange.getException().getMessage());
         assertEquals(0, count(exchange, PRODUCER_COUNT));
         assertEquals(1, count(exchange, AFTER_COUNT));
@@ -372,11 +373,11 @@ class SendHelperTest extends ContextTestSupport {
 
         void assertCompletedOnce() {
             assertEquals(1, completion.count.get(), this::toString);
-            boolean producerCalled = count(exchange, PRODUCER_COUNT) == 1;
-            assertTrue(count(exchange, PRODUCER_COUNT) <= 1, this::toString);
             boolean stoppedByHook
                     = mode == Mode.STOP || mode == Mode.SKIP || mode == Mode.RESERVED || mode == Mode.BEFORE_THROWS;
-            assertEquals(!stoppedByHook, producerCalled, this::toString);
+            // SEND_TWICE calls the producer again after a first send that did not fail
+            int producerCalls = stoppedByHook ? 0 : mode == Mode.TWICE && kind != Kind.THROWS ? 2 : 1;
+            assertEquals(producerCalls, count(exchange, PRODUCER_COUNT), this::toString);
             // the after hook runs once for every before hook that returned
             assertEquals(mode == Mode.BEFORE_THROWS ? 0 : 1, count(exchange, AFTER_COUNT), this::toString);
 
@@ -526,9 +527,11 @@ class SendHelperTest extends ContextTestSupport {
                     Long fixed = exchange.getProperty(FIXED_DELAY, Long.class);
                     return fixed != null ? fixed : 1 + ThreadLocalRandom.current().nextInt(3);
                 case RESERVED:
-                    return -2;
+                    return -3;
                 case BEFORE_THROWS:
                     throw new IllegalStateException("Before failed");
+                case TWICE:
+                    return SEND_TWICE;
                 default:
                     return PROCEED;
             }
