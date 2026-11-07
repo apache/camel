@@ -157,6 +157,19 @@ class TimelineTest {
     }
 
     @Test
+    void missedSecondsAreReadAgain() {
+        timeline.merge("1234", new TimelineJson(S0 + 9, 10).route("orders", "completed", 9, 1).json(), true);
+        assertThat(timeline.isFull("1234")).isTrue();
+        // the next seconds come right after: nothing missed
+        timeline.merge("1234", new TimelineJson(S0 + 12, 3).route("orders", "completed", 2, 1).json(), false);
+        assertThat(timeline.isFull("1234")).isTrue();
+        // the integration was not the selected one for a while: seconds missed
+        timeline.merge("1234", new TimelineJson(S0 + 40, 3).route("orders", "completed", 2, 1).json(), false);
+        assertThat(timeline.isFull("1234")).isFalse();
+        assertThat(timeline.lastActive("1234")).isEqualTo(S0 + 40);
+    }
+
+    @Test
     void notATimelineIsIgnored() {
         timeline.merge("1234", new JsonObject(), true);
         timeline.merge("1234", null, true);

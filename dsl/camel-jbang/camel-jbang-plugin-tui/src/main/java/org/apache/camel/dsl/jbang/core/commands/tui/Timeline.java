@@ -234,8 +234,13 @@ final class Timeline {
                     }
                 }
             }
+            if (full) {
+                rec.full = true;
+            } else if (rec.end >= 0 && start > rec.end + 1) {
+                // seconds were missed (the integration was not the selected one): read all of it again
+                rec.full = false;
+            }
             rec.end = Math.max(rec.end, end);
-            rec.full |= full;
             rec.trim(rec.end);
         }
     }
@@ -479,6 +484,22 @@ final class Timeline {
         }
         synchronized (rec) {
             return rec.done.subMap(from, true, to, true).values().stream().mapToLong(Long::longValue).sum();
+        }
+    }
+
+    /** The last second an exchange was done in, or -1 when none in the seconds kept. */
+    long lastActive(String pid) {
+        Recording rec = pid != null ? byPid.get(pid) : null;
+        if (rec == null) {
+            return -1;
+        }
+        synchronized (rec) {
+            for (Map.Entry<Long, Long> e : rec.done.descendingMap().entrySet()) {
+                if (e.getValue() > 0) {
+                    return e.getKey();
+                }
+            }
+            return -1;
         }
     }
 

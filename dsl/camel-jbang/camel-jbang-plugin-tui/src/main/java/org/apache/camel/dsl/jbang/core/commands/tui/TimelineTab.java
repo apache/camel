@@ -97,6 +97,15 @@ class TimelineTab extends AbstractTableTab {
     @Override
     public void onTabSelected() {
         refreshWhileVisible();
+        // nothing in the last minute (an app that worked at startup, a batch): open on the window with the last exchange
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        long last = info != null ? ctx.timeline.lastActive(info.pid) : -1;
+        if (pausedAt < 0 && window == 0 && last >= 0) {
+            long ago = nowSecond() - last;
+            for (int i = 0; i < WINDOWS.length && ago >= WINDOWS[window]; i++) {
+                window = Math.min(WINDOWS.length - 1, window + 1);
+            }
+        }
         // the detail opens on the route that had the worst time in the window
         List<Timeline.RouteSeries> routes = routes(ctx.findSelectedIntegration());
         int worst = worst(routes);
@@ -373,6 +382,14 @@ class TimelineTab extends AbstractTableTab {
         String span = seconds() >= 120 ? (seconds() / 60) + "m" : seconds() + "s";
         StringBuilder sb = new StringBuilder(" Timeline ─ ").append(info.name != null ? info.name : info.pid)
                 .append(" ─ last ").append(span).append(' ');
+        long last = ctx.timeline.lastActive(info.pid);
+        long quiet = nowSecond() - last;
+        if (pausedAt < 0 && last >= 0 && quiet >= seconds()) {
+            // a quiet window: when the last exchange was, out of the window
+            sb.append("─ the last exchange ").append(ChaosTab.shortTime(quiet * 1000)).append(" ago ");
+        } else if (pausedAt < 0 && last < 0 && ctx.timeline.endSecond(info.pid) >= 0) {
+            sb.append("─ no exchange in the last 5m ");
+        }
         if (pausedAt >= 0) {
             long ago = nowSecond() - pausedAt;
             sb.append("─ paused").append(ago > 0 ? ", " + ChaosTab.shortTime(ago * 1000) + " ago " : " ");
@@ -570,8 +587,10 @@ class TimelineTab extends AbstractTableTab {
         long maxMean = 0;
         long sumMean = 0;
         int n = 0;
-        for (long m : r.mean()) {
-            if (m >= 0) {
+        for (int i = 0; i < r.mean().length; i++) {
+            long m = r.mean()[i];
+            // the average of the seconds that had exchanges, not of the idle ones
+            if (m >= 0 && r.completed()[i] + r.recovered()[i] + r.handled()[i] > 0) {
                 maxMean = Math.max(maxMean, m);
                 sumMean += m;
                 n++;
