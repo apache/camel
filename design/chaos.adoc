@@ -383,6 +383,11 @@ when the context stops first (the report of `reportOnShutdown`) or the rule is r
 arrive, so they are not called lost. A tool must treat a pending expectation as not yet decided, so a PASS with one
 pending is not final.
 
+In a test (stage 2, CAMEL-26724), `ChaosAssertions` of camel-chaos waits for the report to be final and asserts the
+verdict, an expectation and the faults of a rule, throwing an `AssertionError` with the report. It needs no test
+framework, so camel-test does not depend on camel-chaos; the rules come from the properties (`camel.chaos.rules`,
+`camel.chaos.scenario`) or `ChaosManager`.
+
 === Control
 
 - A `chaos` dev console lists the rules and shows the report, so it is `@DevConsole(readOnly = true)`. It does not add,
