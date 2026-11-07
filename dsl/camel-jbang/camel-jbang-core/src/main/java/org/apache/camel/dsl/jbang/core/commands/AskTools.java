@@ -71,6 +71,7 @@ public class AskTools {
             Map.entry(ToolGroups.HTTP_REQUEST_TOOL, "http_request"),
             Map.entry(ToolGroups.CHAOS_LIST_TOOL, "chaos_list"),
             Map.entry(ToolGroups.CHAOS_REPORT_TOOL, "chaos_report"),
+            Map.entry(ToolGroups.CHAOS_CHECK_TOOL, "chaos_check"),
             Map.entry(ToolGroups.CHAOS_ADD_TOOL, "chaos_add"),
             Map.entry(ToolGroups.CHAOS_CHANGE_TOOL, "chaos_change"),
             Map.entry(ToolGroups.CHAOS_REMOVE_TOOL, "chaos_remove"),

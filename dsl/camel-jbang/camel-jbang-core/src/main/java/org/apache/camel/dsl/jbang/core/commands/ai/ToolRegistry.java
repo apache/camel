@@ -81,7 +81,10 @@ public final class ToolRegistry {
      * over HTTP chaos only lists and reports, as its developer console does (design/chaos.adoc).
      */
     public static List<ToolDescriptor> httpTools() {
-        return TOOLS.stream().filter(t -> !t.name().startsWith("chaos_") || t.isReadOnly()).toList();
+        // chaos_check is read-only, but the integration parses the rule, and exception= loads a class: off HTTP too
+        return TOOLS.stream()
+                .filter(t -> !t.name().startsWith("chaos_") || t.isReadOnly() && !"chaos_check".equals(t.name()))
+                .toList();
     }
 
     public static ToolDescriptor findTool(String name) {
@@ -731,12 +734,12 @@ public final class ToolRegistry {
               + " with chaos switched on)";
 
     /**
-     * The chaos tools, the six operations of camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear and camel get
-     * chaos [--report]. The list and the report read the chaos console in the status of the integration; the others
-     * send the chaos action of the CLI connector, which works only when chaos is switched on and answers a rule that is
-     * not valid with the reason of the parser of camel.chaos.rules. Adding and changing a rule is destructive: a rule
-     * makes messages fail, wait or get lost, and exception= can name any exception class. Removing and clearing only
-     * take faults away, and the report keeps the removed rules.
+     * The chaos tools, the seven operations of camel cmd chaos-add [--dry-run], chaos-change, chaos-remove, chaos-clear
+     * and camel get chaos [--report]. The list and the report read the chaos console in the status of the integration;
+     * the others send the chaos action of the CLI connector, which works only when chaos is switched on and answers a
+     * rule that is not valid with the reason of the parser of camel.chaos.rules. Adding and changing a rule is
+     * destructive: a rule makes messages fail, wait or get lost, and exception= can name any exception class. Removing
+     * and clearing only take faults away, and the report keeps the removed rules.
      */
     private static void registerChaosTools() {
         register(tool("chaos_list",
@@ -781,6 +784,22 @@ public final class ToolRegistry {
                     String rule = AuthoringTools.required(args, "rule");
                     selectChaosProcess(ctx, args);
                     return chaos(ctx, "add", null, rule);
+                }));
+
+        register(tool("chaos_check",
+                "Check chaos rules without adding them (as camel cmd chaos-add --dry-run): each rule in plain words, "
+                                     + "where it can fire, warnings, and what it would hit now (hits: the sends, polls, "
+                                     + "routes or steps, each with its route). A rule that is not valid is refused "
+                                     + "with the reason, as chaos_add would; nothing changes.")
+                .param("rule", "string",
+                        "The rule in its one-line text form, as an entry of camel.chaos.rules; several rules separated by ;",
+                        true)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(true).destructive(false)
+                .executor((ctx, args) -> {
+                    String rule = AuthoringTools.required(args, "rule");
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "check", null, rule);
                 }));
 
         register(tool("chaos_change",

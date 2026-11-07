@@ -232,7 +232,7 @@ class AskToolsTest {
         assertThat(change.title()).isEqualTo("change chaos rule r1 of the selected integration");
         assertThat(change.target()).isEqualTo("endpoint=* drop");
         // the others only read or take faults away
-        for (String name : List.of("chaos_remove", "chaos_clear", "chaos_list", "chaos_report")) {
+        for (String name : List.of("chaos_check", "chaos_remove", "chaos_clear", "chaos_list", "chaos_report")) {
             assertThat(tools.confirmation(name, Map.of("id", "r1"))).as(name).isNull();
         }
     }

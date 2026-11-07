@@ -45,7 +45,8 @@ import picocli.CommandLine;
                              "  camel cmd chaos-add myApp --rule='endpoint=http:* in=orders error status=503 rate=0.1'",
                              "  camel cmd chaos-add myApp --rule='route=orders error rate=0.05'",
                              "  camel cmd chaos-add myApp --rule='endpoint=http:stock* error when=\"$${header.country} == \\\"ES\\\"\"'",
-                             "  camel cmd chaos-add myApp --rule='endpoint=seda:dlq error at=dlq' --rule='endpoint=http:stock* error'" })
+                             "  camel cmd chaos-add myApp --rule='endpoint=seda:dlq error at=dlq' --rule='endpoint=http:stock* error'",
+                             "  camel cmd chaos-add myApp --dry-run --rule='endpoint=http:* in=orders error status=503'" })
 public class CamelChaosAddAction extends CamelChaosAction {
 
     @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one); without it,"
@@ -58,6 +59,11 @@ public class CamelChaosAddAction extends CamelChaosAction {
                                       + " than once")
     List<String> rules;
 
+    @CommandLine.Option(names = { "--dry-run" },
+                        description = "Check the rules without adding them: each in plain words, and what it would hit in"
+                                      + " the integration now (the sends, polls, routes or steps, with their route)")
+    boolean dryRun;
+
     public CamelChaosAddAction(CamelJBangMain main) {
         super(main);
     }
@@ -68,8 +74,73 @@ public class CamelChaosAddAction extends CamelChaosAction {
         CamelProcess process = findChaosTarget(name);
         // the rules go together, separated by ; as in camel.chaos.rules (a ; inside a rule is quoted)
         String text = String.join(";", rules);
+        if (dryRun) {
+            printer().println(describeCheck(chaos(process, "check", root -> root.put("rule", text))));
+            return 0;
+        }
         printer().println(describe(chaos(process, "add", root -> root.put("rule", text))));
         return 0;
+    }
+
+    /**
+     * The rules of a dry run: each in plain words, then what it would hit now, by kind, and its warnings.
+     */
+    static String describeCheck(JsonObject answer) {
+        StringBuilder sb = new StringBuilder();
+        List<Object> checked = answer.getCollection("rules");
+        if (checked == null) {
+            return "The integration did not check the rules";
+        }
+        for (Object o : checked) {
+            JsonObject rule = (JsonObject) o;
+            if (!sb.isEmpty()) {
+                sb.append('\n');
+            }
+            sb.append("Would add: ").append(rule.getString("rule"));
+            String words = rule.getString("description");
+            if (words != null) {
+                sb.append("\n  ").append(words);
+            }
+            JsonObject hits = (JsonObject) rule.get("hits");
+            if (hits != null) {
+                hits(sb, hits, "sends", "send", "endpoint");
+                hits(sb, hits, "dynamicSends", "send (known when it sends)", "uri");
+                hits(sb, hits, "polls", "poll", "endpoint");
+                hits(sb, hits, "routes", "route", "from");
+                hits(sb, hits, "steps", "step", "step");
+                Integer more = hits.getInteger("more");
+                if (more != null && more > 0) {
+                    sb.append("\n  and ").append(more).append(" more");
+                }
+                if (hits.isEmpty()) {
+                    sb.append("\n  hits nothing in the integration now");
+                }
+            }
+            List<Object> warnings = rule.getCollection("warnings");
+            if (warnings != null) {
+                warnings.forEach(w -> sb.append("\n  Warning: ").append(w));
+            }
+        }
+        return sb + "\n(dry run: nothing was added)";
+    }
+
+    private static void hits(StringBuilder sb, JsonObject hits, String key, String kind, String field) {
+        List<Object> list = hits.getCollection(key);
+        if (list == null) {
+            return;
+        }
+        for (Object o : list) {
+            JsonObject hit = (JsonObject) o;
+            sb.append("\n  ").append(kind).append(' ');
+            if ("route".equals(kind)) {
+                sb.append(hit.getString("route")).append(" (from ").append(hit.getString(field)).append(')');
+            } else {
+                sb.append(hit.getString(field)).append(" in route ").append(hit.getString("route"));
+                if (hit.getString("step") != null && !"step".equals(kind)) {
+                    sb.append(" (step ").append(hit.getString("step")).append(')');
+                }
+            }
+        }
     }
 
     @Override

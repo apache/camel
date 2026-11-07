@@ -162,6 +162,13 @@ class RuntimeToolsChaosTest {
         start(null, Map.of("camel.chaos.enabled", "true"));
         assertThat(awaitList(l -> l.getBoolean("enabled")).<List<Object>> getCollection("rules")).isEmpty();
 
+        // the check says what the rule would hit, and adds nothing
+        JsonObject checked = tools.camel_runtime_chaos_check("shop", RULE_ERROR);
+        Map<String, Object> rule = checked.<List<Map<String, Object>>> getCollection("rules").get(0);
+        assertThat(rule.get("description")).isEqualTo("fail every send to direct:target");
+        assertThat(rule.get("hits").toString()).contains("direct://target").contains("start");
+        assertThat(send()).isNull();
+
         JsonObject added = tools.camel_runtime_chaos_add("shop", RULE_ERROR);
         assertThat(added.getString("id")).isEqualTo("r1");
         assertThat(added.getInteger("version")).isEqualTo(1);

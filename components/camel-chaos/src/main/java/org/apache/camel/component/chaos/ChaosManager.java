@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,6 +40,8 @@ import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.component.chaos.ChaosRule.State;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.TimeSource;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -284,6 +287,64 @@ public final class ChaosManager {
             }
             rule = rules.get(index);
         }
+        return warnings(rule);
+    }
+
+    /**
+     * Checks rules without adding them ({@code chaos-add --dry-run}, the chaos_check tool): each is parsed and checked
+     * as {@link #addRules(String)} does, so a rule that is not valid is refused with the same reason, and nothing
+     * changes in the context. For each rule, in their order: the rule, the rule in plain words at the hooks where it
+     * can fire now, those hooks, the warnings of a rule that matches nothing now, and what it would hit now (the sends,
+     * polls, routes or steps, each with its route; see {@link ChaosTargets#hits}).
+     *
+     * @param  rules                    the rules in their one-line text form, separated by {@code ;}
+     * @return                          {@code {"rules": [...]}}, as JSON
+     * @throws IllegalArgumentException when a rule is not valid, with the reason
+     */
+    public Map<String, Object> checkRules(String rules) {
+        List<String> texts = ChaosRuleParser.splitRules(rules);
+        if (texts.isEmpty()) {
+            throw new IllegalArgumentException("The chaos rule is empty");
+        }
+        List<ChaosRule.Builder> definitions = new ArrayList<>();
+        for (String text : texts) {
+            ChaosRule.Builder definition = parse(text);
+            checkRoute(definition);
+            definitions.add(definition);
+        }
+        long now = TimeSource.currentTimeMillis();
+        ChaosTargets.Reach reach = ChaosTargets.reach(camelContext);
+        JsonArray checked = new JsonArray();
+        for (ChaosRule.Builder definition : definitions) {
+            // a rule of its own, which no hook sees: its id is only for the words of the warnings
+            ChaosRule rule = new ChaosRule(definition, "check", seed, now, maxDuration);
+            Set<Hook> hooks = ChaosTargets.hooksThatCanFire(reach, rule);
+            JsonObject jo = new JsonObject();
+            jo.put("rule", rule.text);
+            jo.put("description", rule.describe(hooks));
+            JsonArray names = new JsonArray();
+            hooks.forEach(h -> names.add(h.key));
+            jo.put("hooks", names);
+            List<String> warnings = warnings(rule);
+            if (!warnings.isEmpty()) {
+                jo.put("warnings", new JsonArray(warnings));
+            }
+            if (camelContext.isStarted()) {
+                jo.put("hits", ChaosTargets.hits(camelContext, rule));
+            }
+            if (rule.when != null) {
+                // the condition is checked on each message as it comes
+                jo.put("when", rule.when);
+            }
+            checked.add(jo);
+        }
+        JsonObject answer = new JsonObject();
+        answer.put("rules", checked);
+        return answer;
+    }
+
+    /** The warnings of a rule that matches nothing in the context now (none before the context started). */
+    private List<String> warnings(ChaosRule rule) {
         List<String> answer = new ArrayList<>();
         if (!camelContext.isStarted()) {
             return answer;

@@ -640,8 +640,8 @@ Examples:
   camel cmd browse --endpoint=seda:foo --limit=10
 
 == camel cmd chaos-add --help
-Usage: camel cmd chaos-add [-h] [--timeout=<timeout>] --rule=<rules>
-                           [--rule=<rules>]... [<name>]
+Usage: camel cmd chaos-add [-h] [--dry-run] [--timeout=<timeout>]
+                           --rule=<rules> [--rule=<rules>]... [<name>]
 Add chaos rules to a running integration (camel-chaos, for development only)
       [<name>]              Name or pid of the running Camel integration (must
                               match one); without it, the only one running, or
@@ -652,6 +652,10 @@ Add chaos rules to a running integration (camel-chaos, for development only)
                               Default: 10000
       --rule=<rules>        A rule in its one-line text form, as an entry of
                               camel.chaos.rules; can be given more than once
+      --dry-run             Check the rules without adding them: each in plain
+                              words, and what it would hit in the integration
+                              now (the sends, polls, routes or steps, with
+                              their route)
 
 The integration must have camel-chaos switched on (camel run --chaos, profile
 dev). The rule is checked as camel.chaos.rules is; a rule that is not valid is
@@ -679,6 +683,8 @@ rate=0.1'
 country} == \"ES\""'
   camel cmd chaos-add myApp --rule='endpoint=seda:dlq error at=dlq'
 --rule='endpoint=http:stock* error'
+  camel cmd chaos-add myApp --dry-run --rule='endpoint=http:* in=orders error
+status=503'
 
 == camel cmd chaos-change --help
 Usage: camel cmd chaos-change [-h] --id=<id> --rule=<rule>

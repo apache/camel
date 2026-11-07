@@ -145,6 +145,23 @@ names some of the endpoints, routes or steps there are. It is not an error, as t
 creates its endpoints when it sends, and a route can be added later). The rules of `camel.chaos.rules` are checked when
 the context has started.
 
+To see what a rule would hit before it is added, `chaos-add --dry-run` checks it as `chaos-add` would, and adds
+nothing. It prints the rule in plain words, then each send, poll, route or step it matches now, with its route (and the
+step that sends), the sends known only when they send that may match (a `toD`), and the warnings:
+
+[source]
+----
+$ camel cmd chaos-add --dry-run --rule='endpoint=http:* in=orders error status=503'
+Would add: endpoint=http:* in=orders error status=503
+  fail every send to http:* in route orders with HTTP status 503
+  send http://inventory/stock in route orders (step callStock)
+(dry run: nothing was added)
+----
+
+A rule that is not valid is refused with the same reason as for `chaos-add`. A condition (`when=`) is checked on each
+message as it comes, so the check lists what the rule would hit if the messages met it, and the send of the dead letter
+channel (`at=dlq`) is not listed, as it is the error handler's.
+
 The commands go through the `chaos` action of the CLI connector, which calls `ChaosManager`: a rule goes through the
 same parser as `camel.chaos.rules`, and one that is not valid is refused with the reason. They work only when chaos is
 switched on in the integration (see <<_switching_it_on,Switching it on>>): they cannot switch it on, and with profile
@@ -155,9 +172,10 @@ JSON. It only reads: a rule cannot be added, changed or removed over HTTP.
 
 === From an AI agent (MCP)
 
-The Camel MCP server (`camel mcp`, see xref:manual::camel-jbang-mcp.adoc[Camel MCP server]) has the same six operations
+The Camel MCP server (`camel mcp`, see xref:manual::camel-jbang-mcp.adoc[Camel MCP server]) has the same operations
 as tools, for an AI agent that tries a route against failures: `camel_runtime_chaos_list`, `camel_runtime_chaos_report`,
-`camel_runtime_chaos_add`, `camel_runtime_chaos_change`, `camel_runtime_chaos_remove` and `camel_runtime_chaos_clear`.
+`camel_runtime_chaos_check` (the dry run), `camel_runtime_chaos_add`, `camel_runtime_chaos_change`,
+`camel_runtime_chaos_remove` and `camel_runtime_chaos_clear`.
 Without `nameOrPid` they pick the integration as the commands do: the only one that runs, or else the only one with
 chaos switched on, and otherwise they fail with the list of the running integrations. They take the same one-line
 rules: adding, changing, removing and clearing go through the same `chaos` action of the CLI connector, and the list and the report read the console from the status of the application. So chaos must be switched
@@ -165,9 +183,10 @@ on, and a rule that is not valid is refused with the reason; `camel_runtime_chao
 `chaos-clear --reset` does. `camel_runtime_chaos_add` takes several rules separated by `;`, and the add and change
 tools return the warnings of a rule that matches nothing, so an agent can fix a typo with a change. Adding and changing a rule are marked destructive, so a
 client that honours `destructiveHint` asks before it runs them, and the `read-write` access level of the MCP security
-layer does not offer them; the list and the report are read-only. `camel ask` has the same tools, and asks before it
+layer does not offer them; the list, the report and the check are read-only, so an agent can check a rule it made from
+a loose request (what it would hit, in plain words) and show it before it asks to add it. `camel ask` has the same tools, and asks before it
 adds or changes a rule. The development MCP tools that `camel run --mcp` (`camel.jbang.mcp=true`) serves over HTTP have
-only the list and the report.
+only the list and the report (not the check either: the integration parses the rule, and `exception=` loads a class).
 
 == Rules
 
