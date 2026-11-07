@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.json.JsonArray;
@@ -80,6 +81,15 @@ final class ChaosAction {
                 answer.put("version", 1);
                 descriptions(type, chaos, ids, answer);
                 warnings(type, chaos, ids, answer);
+            } else if ("check".equals(command)) {
+                if (isBlank(rule)) {
+                    output.error("A rule is required");
+                    return;
+                }
+                // checked as add checks it, and not added: what it would hit now, in plain words
+                @SuppressWarnings("unchecked")
+                Map<String, Object> checked = (Map<String, Object>) call(type, chaos, "checkRules", rule);
+                answer.putAll(checked);
             } else if ("change".equals(command)) {
                 if (isBlank(id) || isBlank(rule)) {
                     output.error("The id of the rule and the new rule are required");
@@ -112,7 +122,7 @@ final class ChaosAction {
                     answer.put("reset", true);
                 }
             } else {
-                output.error("Unknown chaos command: " + command + " (add, change, remove or clear)");
+                output.error("Unknown chaos command: " + command + " (add, check, change, remove or clear)");
                 return;
             }
         } catch (IllegalArgumentException | IllegalStateException e) {

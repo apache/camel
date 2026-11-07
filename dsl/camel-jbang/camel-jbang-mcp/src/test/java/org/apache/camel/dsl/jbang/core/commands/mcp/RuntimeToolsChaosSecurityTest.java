@@ -45,6 +45,7 @@ class RuntimeToolsChaosSecurityTest {
     static {
         MARKS.put("camel_runtime_chaos_list", new boolean[] { true, false });
         MARKS.put("camel_runtime_chaos_report", new boolean[] { true, false });
+        MARKS.put("camel_runtime_chaos_check", new boolean[] { true, false });
         MARKS.put("camel_runtime_chaos_add", new boolean[] { false, true });
         MARKS.put("camel_runtime_chaos_change", new boolean[] { false, true });
         MARKS.put("camel_runtime_chaos_remove", new boolean[] { false, false });
@@ -98,11 +99,11 @@ class RuntimeToolsChaosSecurityTest {
     @Test
     void theAccessLevelsOfferTheToolsByTheirMarks() {
         assertThat(offered(McpSecurityConfig.AccessLevel.READ_ONLY))
-                .containsExactly("camel_runtime_chaos_list", "camel_runtime_chaos_report");
+                .containsExactly("camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_check");
         // as for route_control, sql, send and receive: no destructive tool at read-write
         assertThat(offered(McpSecurityConfig.AccessLevel.READ_WRITE)).containsExactly(
-                "camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_remove",
-                "camel_runtime_chaos_clear");
+                "camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_check",
+                "camel_runtime_chaos_remove", "camel_runtime_chaos_clear");
         assertThat(offered(McpSecurityConfig.AccessLevel.ADMIN)).containsExactlyElementsOf(MARKS.keySet());
         // with the security layer on, the interceptor of @McpSecured audits each call (and redacts the answer when
         // camel.mcp.security.redaction.enabled=true)

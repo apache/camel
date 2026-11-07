@@ -123,6 +123,42 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void dryRunChecksTheRuleAndPrintsWhatItWouldHit() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject hits = new JsonObject(
+                Map.of(
+                        "sends", new JsonArray(
+                                List.of(new JsonObject(
+                                        Map.of("route", "orders", "endpoint", "http://stock", "step", "callStock")))),
+                        "dynamicSends", new JsonArray(
+                                List.of(new JsonObject(
+                                        Map.of("route", "orders", "uri", "http:stock/${header.id}"))))));
+        JsonObject rule = new JsonObject(
+                Map.of("rule", "endpoint=http:stock* error status=503",
+                        "description", "fail every send to http:stock* with HTTP status 503", "hits", hits));
+        JsonObject nothing = new JsonObject(
+                Map.of("rule", "step=tpyo error",
+                        "description", "fail every run of step tpyo", "hits", new JsonObject(),
+                        "warnings", new JsonArray(List.of("step=tpyo matches no step of the context now"))));
+        JsonObject answer = new JsonObject(Map.of("rules", new JsonArray(List.of(rule, nothing))));
+
+        assertThat(callWithResponse(command(new CamelChaosAddAction(main()), "orders", "--dry-run",
+                "--rule=endpoint=http:stock* error status=503", "--rule=step=tpyo error"), answer)).isZero();
+
+        assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("check");
+        assertThat(printer.getStdout()).isEqualTo("""
+                Would add: endpoint=http:stock* error status=503
+                  fail every send to http:stock* with HTTP status 503
+                  send http://stock in route orders (step callStock)
+                  send (known when it sends) http:stock/${header.id} in route orders
+                Would add: step=tpyo error
+                  fail every run of step tpyo
+                  hits nothing in the integration now
+                  Warning: step=tpyo matches no step of the context now
+                (dry run: nothing was added)""");
+    }
+
+    @Test
     void addOfSeveralRulesPrintsEachInPlainWords() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         JsonObject answer = new JsonObject(

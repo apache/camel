@@ -156,6 +156,28 @@ class LocalCliConnectorChaosActionTest {
     }
 
     @Test
+    void checkSaysWhatARuleWouldHitWithoutAddingIt() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+
+        CliActionOutcome checked = chaos("check", null, "endpoint=mock:target error rate=0.5");
+        assertThat(checked.error()).isNull();
+        JsonObject rule = (JsonObject) checked.result().getCollection("rules").iterator().next();
+        assertThat(rule.getString("description")).isEqualTo("fail half of the sends to mock:target");
+        JsonObject send = (JsonObject) ((JsonObject) rule.get("hits")).getCollection("sends").iterator().next();
+        assertThat(send.getString("route")).isEqualTo("start");
+        assertThat(send.getString("endpoint")).isEqualTo("mock://target");
+        // nothing was added, and the messages go through
+        assertThat(reportRules()).isEmpty();
+        assertThat(context.createProducerTemplate().send("direct:start", e -> e.getMessage().setBody("x"))
+                .getException()).isNull();
+
+        // refused with the reason, as add would refuse it
+        assertThat(chaos("check", null, "endpoint=mock:target error rate=2").error())
+                .contains("rate=2 is not a probability above 0 and at most 1");
+        assertThat(chaos("check", null, " ").error()).isEqualTo("A rule is required");
+    }
+
+    @Test
     void rulesAreAddedTogetherWithWarningsForTheOnesThatMatchNothing() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
 

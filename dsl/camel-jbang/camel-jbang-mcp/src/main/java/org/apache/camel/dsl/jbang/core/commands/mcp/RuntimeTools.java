@@ -1103,6 +1103,20 @@ public class RuntimeTools {
     }
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Check chaos rules without adding them (as camel cmd chaos-add --dry-run): each rule in plain words, \
+                  where it can fire, warnings, and what it would hit now (hits: the sends, polls, routes or steps, \
+                  each with its route). A rule that is not valid is refused with the reason; nothing changes.""")
+    public JsonObject camel_runtime_chaos_check(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The rule in its one-line text form, as an entry of camel.chaos.rules; several"
+                                   + " rules separated by ;") String rule) {
+        requireArg("rule", rule);
+        return delegateChaos("chaos_check", nameOrPid, Map.of("rule", rule));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
           description = """
                   Add a chaos rule to the Camel application, in the one-line form of camel.chaos.rules, e.g. \

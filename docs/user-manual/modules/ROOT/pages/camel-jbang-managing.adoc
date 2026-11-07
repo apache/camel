@@ -902,7 +902,9 @@ camel cmd chaos-clear
 
 `chaos-add`, `chaos-change` and `chaos-remove` take the name or pid of the integration; without it they act on the
 only integration that runs, or the only one with chaos switched on, and otherwise fail with the list of the running
-integrations. `chaos-add` prints the rule in plain words too (`fail 30% of the sends to kafka:orders*, for 1 minute`).
+integrations. `chaos-add` prints the rule in plain words too (`fail 30% of the sends to kafka:orders*, for 1 minute`),
+and with `--dry-run` it adds nothing, and prints what the rule would hit now: the sends, polls, routes or steps, with
+their route.
 `camel get chaos` lists the current rules with their id, version, state, matches and the faults that fired, and
 `--report` shows the report: the verdict, the seed, every version of every rule and the counts per route. Chaos is for
 development only: it stays off with profile `prod`, and the commands cannot switch it on.

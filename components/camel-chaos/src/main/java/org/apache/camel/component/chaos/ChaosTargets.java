@@ -48,6 +48,8 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * Checks what the target of a rule finds in the context now, for the warning about a rule that matches nothing (often a
@@ -75,6 +77,108 @@ final class ChaosTargets {
             case STEP -> checkSteps(camelContext, rule);
         };
         return answer == null && rule.in != null ? checkIn(camelContext, rule) : answer;
+    }
+
+    /**
+     * What a rule would hit in the context now, for a check before it is added ({@code chaos-add --dry-run}): the sends
+     * of the routes to a matching endpoint (with the route and the step that sends), the sends known only when they
+     * send that may match, the polls of a matching endpoint, the routes of a {@code route=} target, or the steps of a
+     * {@code step=} target, each in the routes of {@code in=} when it has one. At most {@link #HITS} of each, with
+     * {@code more} for the rest. The send of the dead letter channel is not listed, as it is the error handler's.
+     */
+    static JsonObject hits(CamelContext camelContext, ChaosRule rule) {
+        JsonObject answer = new JsonObject();
+        List<Route> routes;
+        try {
+            routes = new ArrayList<>(camelContext.getRoutes());
+        } catch (RuntimeException e) {
+            return answer;
+        }
+        int[] more = new int[1];
+        JsonArray sends = new JsonArray();
+        JsonArray dynamic = new JsonArray();
+        JsonArray polls = new JsonArray();
+        JsonArray routeHits = new JsonArray();
+        JsonArray steps = new JsonArray();
+        boolean endpoints = rule.target == ChaosRule.Target.ENDPOINT || rule.target == ChaosRule.Target.COMPONENT;
+        boolean atSends = rule.hooks.contains(Hook.SEND) || rule.hooks.contains(Hook.REPLY);
+        for (Route route : routes) {
+            String routeId = route.getRouteId();
+            if (rule.target == ChaosRule.Target.ROUTE) {
+                if (rule.matchesId(routeId)) {
+                    add(routeHits, more, hit("route", routeId, "from", withoutQuery(endpointUri(route.getEndpoint()))));
+                }
+                continue;
+            }
+            if (!rule.matchesIn(routeId)) {
+                continue;
+            }
+            if (endpoints && rule.hooks.contains(Hook.POLL) && route.getConsumer() instanceof ScheduledPollConsumer
+                    && rule.matchesUri(endpointUri(route.getEndpoint()))) {
+                add(polls, more, hit("route", routeId, "endpoint", withoutQuery(endpointUri(route.getEndpoint()))));
+            }
+            for (Processor processor : route.filter("*")) {
+                String id = processor instanceof IdAware idAware ? idAware.getId() : null;
+                if (rule.target == ChaosRule.Target.STEP) {
+                    if (id != null && rule.matchesId(id)) {
+                        add(steps, more, hit("route", routeId, "step", id));
+                    }
+                } else if (endpoints && atSends && processor instanceof EndpointAware aware && aware.getEndpoint() != null
+                        && rule.matchesUri(ChaosPatterns.endpointUri(aware.getEndpoint()))) {
+                    JsonObject send = hit("route", routeId, "endpoint", withoutQuery(endpointUri(aware.getEndpoint())));
+                    if (id != null) {
+                        send.put("step", id);
+                    }
+                    add(sends, more, send);
+                }
+            }
+            if (endpoints && atSends && route.getRoute() instanceof RouteDefinition definition) {
+                List<String> uris = new ArrayList<>();
+                dynamicSends(definition.getOutputs(), uris);
+                for (String uri : uris) {
+                    if (mayMatch(rule, uri)) {
+                        add(dynamic, more, hit("route", routeId, "uri", withoutQuery(uri)));
+                    }
+                }
+            }
+        }
+        putIfAny(answer, "sends", sends);
+        putIfAny(answer, "dynamicSends", dynamic);
+        putIfAny(answer, "polls", polls);
+        putIfAny(answer, "routes", routeHits);
+        putIfAny(answer, "steps", steps);
+        if (more[0] > 0) {
+            answer.put("more", more[0]);
+        }
+        return answer;
+    }
+
+    // the most hits of each kind a check lists
+    static final int HITS = 25;
+
+    private static String endpointUri(Endpoint endpoint) {
+        return endpoint != null ? ChaosPatterns.endpointUri(endpoint) : "";
+    }
+
+    private static JsonObject hit(String k1, String v1, String k2, String v2) {
+        JsonObject jo = new JsonObject();
+        jo.put(k1, v1);
+        jo.put(k2, v2);
+        return jo;
+    }
+
+    private static void add(JsonArray hits, int[] more, JsonObject hit) {
+        if (hits.size() < HITS) {
+            hits.add(hit);
+        } else {
+            more[0]++;
+        }
+    }
+
+    private static void putIfAny(JsonObject answer, String key, JsonArray hits) {
+        if (!hits.isEmpty()) {
+            answer.put(key, hits);
+        }
     }
 
     /**

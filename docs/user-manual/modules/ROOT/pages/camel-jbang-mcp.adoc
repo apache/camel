@@ -1079,6 +1079,12 @@ that changes rules is refused. The list and the report read the chaos console fr
 | The report: the verdict and whether it is final, the seed, every version of every rule with its live state, the
   expectations, the counts per route and the last 20 faults.
 
+| `camel_runtime_chaos_check`
+| `true` | `false`
+| Checks a rule (`rule`), or several separated by `;`, without adding it, as `camel cmd chaos-add --dry-run` does:
+  each in plain words, where it can fire, `warnings`, and what it would hit now (`hits`: the sends, polls, routes or
+  steps, each with its route). A rule that is not valid is refused with the reason.
+
 | `camel_runtime_chaos_add`
 | `false` | `true`
 | Adds a rule (`rule`), or several separated by `;` (all or none), and returns the ids (`r1`, `r2`, ...), with
@@ -1102,11 +1108,11 @@ that changes rules is refused. The list and the report read the chaos console fr
 Adding and changing a rule are marked destructive: a rule makes messages fail, wait or get lost, and its
 `exception=` can name any exception class. So a client that honours `destructiveHint` asks before it runs them, and
 the `read-write` access level of the security layer (`camel.mcp.security.access-level`) does not offer them, as it does
-not offer `camel_runtime_route_control` or `camel_runtime_sql`; `read-only` offers the list and the report. Removing
+not offer `camel_runtime_route_control` or `camel_runtime_sql`; `read-only` offers the list, the report and the check. Removing
 and clearing only take faults away, and the report keeps the removed rules, so they are not destructive. `camel ask`
 has the same tools (`chaos_add` and the others), and asks the user before it adds or changes a rule. The development
-MCP tools that `camel run --mcp` serves over HTTP have only the list and the report: a rule is never added, changed or
-removed over the HTTP server of the application.
+MCP tools that `camel run --mcp` serves over HTTP have only the list and the report: a rule is never added, changed,
+removed or checked over the HTTP server of the application.
 
 ==== Tool groups for local models
 

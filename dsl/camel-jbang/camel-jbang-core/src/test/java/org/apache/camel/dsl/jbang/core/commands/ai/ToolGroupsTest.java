@@ -144,15 +144,17 @@ class ToolGroupsTest {
     }
 
     @Test
-    void chaosLoadsItsSixToolsWhenOnAndOnlyTheReadsWhenOff() {
+    void chaosLoadsItsSevenToolsWhenOnAndOnlyTheReadsWhenOff() {
         AppFeatures on = AppFeatures.fromStatus(new JsonObject(Map.of("chaos", Map.of("enabled", true))));
         ToolGroups.Selection s = ToolGroups.select(on);
         assertEquals(List.of(ToolGroup.CHAOS), s.toolGroups());
-        assertEquals(List.of("camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_add",
-                "camel_runtime_chaos_change", "camel_runtime_chaos_remove", "camel_runtime_chaos_clear"), s.mcpTools());
+        assertEquals(List.of("camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_check",
+                "camel_runtime_chaos_add", "camel_runtime_chaos_change", "camel_runtime_chaos_remove",
+                "camel_runtime_chaos_clear"), s.mcpTools());
         assertEquals("Chaos: camel-chaos is on, so failures may be injected on purpose; camel_runtime_chaos_list and"
                      + " camel_runtime_chaos_report show the rules and what they did; camel_runtime_chaos_add takes a rule"
-                     + " such as endpoint=kafka:orders* error rate=0.1 until=5m.",
+                     + " such as endpoint=kafka:orders* error rate=0.1 until=5m, and camel_runtime_chaos_check says what it"
+                     + " would hit without adding it.",
                 s.guidance().get(0));
         assertEquals("chaos|", s.fingerprint());
 
