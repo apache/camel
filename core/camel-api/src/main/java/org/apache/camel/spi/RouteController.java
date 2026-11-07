@@ -202,6 +202,8 @@ public interface RouteController extends CamelContextAware, StaticService {
      * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
      * <p/>
      * If the route does <b>not</b> support suspension the route will be stopped instead
+     * <p/>
+     * A route that is not started (such as a stopped route) is left as is.
      *
      * @param  routeId   the route id
      * @throws Exception is thrown if the route could not be suspended for whatever reason
@@ -217,6 +219,8 @@ public interface RouteController extends CamelContextAware, StaticService {
      * By suspending the route services will be kept running (if possible) and therefore its faster to resume the route.
      * <p/>
      * If the route does <b>not</b> support suspension the route will be stopped instead
+     * <p/>
+     * A route that is not started (such as a stopped route) is left as is.
      *
      * @param  routeId   the route id
      * @param  timeout   timeout

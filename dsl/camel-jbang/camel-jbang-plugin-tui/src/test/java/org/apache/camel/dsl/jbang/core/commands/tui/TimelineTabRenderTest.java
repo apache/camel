@@ -212,6 +212,22 @@ class TimelineTabRenderTest {
     }
 
     @Test
+    void aRecoveredExchangeShowsTheFailureItWasRedeliveredFor() {
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        t.route("orders", "recovered", 59, 1).route("orders", "redeliveryAttempts", 59, 1);
+        t.exchange("R59", "orders", 59, 40, "recovered", "Connection refused", null, "http://localhost:8765/stock@20");
+        ctx.timeline.merge("1234", t.json(), true);
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("R59").contains("recovered")
+                .contains("(the failed, handled and recovered, and the slowest)");
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("recovered after: Connection refused");
+    }
+
+    @Test
     void enterShowsTheExchangesOfTheSecondAtTheCursorAndOneInDetail() {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         TuiTestHelper.renderToString(tab, 160, 40);

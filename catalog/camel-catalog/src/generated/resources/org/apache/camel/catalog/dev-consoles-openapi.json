@@ -9262,7 +9262,7 @@
 													},
 													"exception": {
 														"type": "string",
-														"description": "The exception message (only present when the exchange failed)"
+														"description": "The exception message (only present when the exchange failed, or when it recovered: the failure it was redelivered for)"
 													},
 													"chaosRule": {
 														"type": "string",
@@ -9297,7 +9297,7 @@
 													"redelivered"
 												]
 											},
-											"description": "Per second the failed and handled exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)"
+											"description": "Per second the failed, handled and recovered exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)"
 										}
 									},
 									"required": [

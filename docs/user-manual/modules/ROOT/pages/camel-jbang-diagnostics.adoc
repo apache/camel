@@ -58,7 +58,7 @@ camel get timeline --watch
 ----
 
 `--errors` lists the errors by route and exception, with the HTTP status code, and the camel-chaos rule that made an
-error. `--exchanges` lists the exchanges kept per second: the failed and handled ones and the 3 slowest, with their
+error. `--exchanges` lists the exchanges kept per second: the failed, handled and recovered ones and the 3 slowest, with their
 status (`OK`, `RECOVERED`, `HANDLED` or `FAILED`), elapsed time, and the number of calls to remote endpoints.
 
 With xref:next@components:others:chaos.adoc[camel-chaos], the timeline also has the faults of each chaos rule per

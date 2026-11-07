@@ -50,7 +50,8 @@ public class LoopProcessor extends BaseDelegateProcessorSupport
     private String id;
     private String routeId;
     private String stepId;
-    private boolean shutdownPending;
+    // set when stopping (not on suspend), and reset on start
+    private volatile boolean shutdownPending;
     private final ReactiveExecutor reactiveExecutor;
     private final Expression expression;
     private final Predicate predicate;
@@ -89,6 +90,13 @@ public class LoopProcessor extends BaseDelegateProcessorSupport
     }
 
     @Override
+    protected void doStart() throws Exception {
+        // reset flag as the route may be restarted
+        shutdownPending = false;
+        super.doStart();
+    }
+
+    @Override
     public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
         return !breakOnShutdown;
     }
@@ -101,6 +109,10 @@ public class LoopProcessor extends BaseDelegateProcessorSupport
 
     @Override
     public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        if (suspendOnly) {
+            // a suspended route is resumed later without being started again
+            return;
+        }
         shutdownPending = true;
     }
 

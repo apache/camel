@@ -21,7 +21,7 @@ camel get timeline [options]
 | Option | Description | Default | Type
 | `--duration` | How long to keep watching or following, in millis or as a duration such as 30s (default: until Enter is pressed) |  | long
 | `--errors` | List the errors by route and exception instead of the routes |  | boolean
-| `--exchanges` | List the exchanges kept per second (the failed and handled ones and the 3 slowest) instead of the routes |  | boolean
+| `--exchanges` | List the exchanges kept per second (the failed, handled and recovered ones and the 3 slowest) instead of the routes |  | boolean
 | `--filter` | Filter by route ID (pattern) |  | String
 | `--json` | Output in JSON Format |  | boolean
 | `--limit` | Filter the exchanges by limiting to the given number of rows |  | int

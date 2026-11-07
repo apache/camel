@@ -30,8 +30,8 @@ import dev.tamboui.text.Span;
 
 /**
  * The exchanges of a second of the timeline (Enter on the Timeline screen, CAMEL-26691): the ones the integration kept
- * of it (the failed and handled ones, and the slowest), and the selected one in detail, with the calls it made and its
- * exception. It takes the place of the Activity tab, which listed the last exchanges without their time.
+ * of it (the failed, handled and recovered ones, and the slowest), and the selected one in detail, with the calls it
+ * made and its exception. It takes the place of the Activity tab, which listed the last exchanges without their time.
  */
 final class TimelineExchanges {
 
@@ -98,7 +98,7 @@ final class TimelineExchanges {
         String when
                 = TIME.format(Instant.ofEpochSecond(from)) + (to > from ? "–" + TIME.format(Instant.ofEpochSecond(to)) : "");
         return " Exchanges at " + when + " ─ " + done + " done, " + kept.size()
-               + " kept (the failed and handled, and the slowest) ";
+               + " kept (the failed, handled and recovered, and the slowest) ";
     }
 
     /** The lines of the panel, as many as fit in the given rows. */
@@ -151,7 +151,11 @@ final class TimelineExchanges {
         lines.add(Line.from(Span.raw("   "), Span.styled(k.outcome(), style(k)),
                 Span.raw(" in " + ChaosTab.shortTime(k.elapsed()) + " at " + TIME.format(Instant.ofEpochMilli(k.timestamp()))),
                 Span.raw(k.chaosRule() != null ? "  " + TuiIcons.TAB_CHAOS + " faulted by chaos rule " + k.chaosRule() : "")));
-        if (k.exception() != null) {
+        if (k.exception() != null && !k.failed() && !k.handled()) {
+            // a recovered exchange: the failure it was redelivered for
+            lines.add(Line.from(Span.styled("   recovered after: ", Theme.muted()),
+                    Span.styled(k.exception(), Theme.warning())));
+        } else if (k.exception() != null) {
             lines.add(Line.from(Span.styled("   " + k.exception(), Theme.error())));
         }
         if (k.calls().isEmpty()) {

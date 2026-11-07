@@ -33,8 +33,9 @@ import java.util.regex.Pattern;
 /**
  * The recording behind the timeline console: for each second of the last minutes, what each route did (completed,
  * recovered by a redelivery, handled by the error handler, failed), its mean, p95 and max time, the exchanges in flight
- * and the redelivery attempts; the errors of that second by exception; and a few exchanges of that second (the failed
- * and handled ones, and the slowest), with the calls they made.
+ * and the redelivery attempts; the errors of that second by exception; and a few exchanges of that second (the failed,
+ * handled and recovered ones, and the slowest), with the calls they made. A recovered exchange is kept with the failure
+ * it was redelivered for, as its exception is gone once it completes.
  * <p/>
  * The route outcomes come from the counters of the routes, which {@link #sample(long, Map)} takes once a second. The
  * rest comes from the exchange events, as they happen. An exchange counts as recovered in the route where it was
@@ -136,7 +137,7 @@ final class TimelineRecorder {
         }
 
         void keep(Kept kept) {
-            if (kept.failed() || kept.handled()) {
+            if (kept.failed() || kept.handled() || kept.redelivered()) {
                 if (failed.size() < KEEP_FAILED) {
                     failed.add(kept);
                 }
@@ -166,6 +167,8 @@ final class TimelineRecorder {
         volatile String routeId;
         final List<Send> sends = new ArrayList<>();
         Set<String> redeliveredIn;
+        // the failure of the last redelivery: the exception of a recovered exchange
+        String redeliveredFor;
 
         Inflight(long created, String routeId) {
             this.created = created;
@@ -242,6 +245,15 @@ final class TimelineRecorder {
     }
 
     void redelivery(String exchangeId, String routeId, long now) {
+        redelivery(exchangeId, routeId, now, null);
+    }
+
+    /**
+     * An exchange is redelivered in a route.
+     *
+     * @param cause the message of the failure it is redelivered for, if known
+     */
+    void redelivery(String exchangeId, String routeId, long now, String cause) {
         if (routeId != null) {
             Inflight f = inflight.computeIfAbsent(exchangeId, k -> new Inflight(now, null));
             synchronized (f) {
@@ -249,6 +261,9 @@ final class TimelineRecorder {
                     f.redeliveredIn = new LinkedHashSet<>();
                 }
                 f.redeliveredIn.add(routeId);
+                if (cause != null) {
+                    f.redeliveredFor = cause;
+                }
             }
             synchronized (this) {
                 slot(now / 1000).route(routeId).attempts++;
@@ -286,6 +301,9 @@ final class TimelineRecorder {
             synchronized (f) {
                 redeliveredIn = f.redeliveredIn;
                 sends = List.copyOf(f.sends);
+                if (exception == null && !failed && !handled) {
+                    exception = f.redeliveredFor;
+                }
             }
         }
         if (copy && parent != null && !sends.isEmpty()) {
