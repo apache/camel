@@ -324,11 +324,11 @@ class DataRefreshService {
                 if (info != null && ctx != null) {
                     ctx.chaosMarks.record(info);
                     ctx.timeline.record(info, writtenAt(pid));
+                    mergeTimelineFile(pid);
                 }
                 if (info != null) {
                     IntegrationInfo prev = previousByPid.get(info.pid);
                     if (prev != null) {
-                        info.activity = prev.activity;
                         info.errors = prev.errors;
                     }
                     rates.fill(info, now);
@@ -761,7 +761,6 @@ class DataRefreshService {
                 if (root != null) {
                     List<ErrorInfo> parsed = StatusParser.parseErrors(root);
                     sel.errors = List.copyOf(parsed);
-                    ctx.timeline.recordErrors(sel.pid, sel.errors, System.currentTimeMillis());
                 }
             } catch (Exception e) {
                 // ignore
@@ -806,28 +805,39 @@ class DataRefreshService {
         return allEntries;
     }
 
-    void refreshActivityData(List<Long> pids) {
+    /**
+     * Reads the timeline of the integrations once in full (the timeline action): the last seconds come with each
+     * refresh ({@link #mergeTimelineFile(long)}).
+     */
+    void refreshTimelineData(List<Long> pids) {
         for (Long pid : pids) {
-            IntegrationInfo sel = ctx.data.get().stream()
-                    .filter(i -> String.valueOf(pid).equals(i.pid) && !i.vanishing)
-                    .findFirst().orElse(null);
-            if (sel == null) {
+            String id = String.valueOf(pid);
+            if (ctx.timeline.isFull(id)) {
                 continue;
             }
             try {
-                Path activityFile = CommandLineHelper.getCamelDir().resolve(pid + "-activity.json");
-                if (!Files.exists(activityFile)) {
-                    continue;
-                }
-                String content = Files.readString(activityFile);
-                if (content != null && !content.isBlank()) {
-                    JsonObject json = (JsonObject) Jsoner.deserialize(content);
-                    List<ActivityEntry> parsed = StatusParser.parseActivityEntries(json);
-                    sel.activity = List.copyOf(parsed);
-                }
+                JsonObject action = new JsonObject();
+                action.put("action", "timeline");
+                action.put("seconds", String.valueOf(Timeline.SECONDS));
+                ctx.timeline.merge(id, ctx.executeAction(id, action, 3000), true);
             } catch (Exception e) {
                 // ignore
             }
+        }
+    }
+
+    /** The last seconds of the timeline, which the integration writes each second. */
+    private void mergeTimelineFile(long pid) {
+        try {
+            Path file = CommandLineHelper.getCamelDir().resolve(pid + "-timeline.json");
+            if (Files.exists(file)) {
+                String content = Files.readString(file);
+                if (content != null && !content.isBlank()) {
+                    ctx.timeline.merge(String.valueOf(pid), (JsonObject) Jsoner.deserialize(content), false);
+                }
+            }
+        } catch (Exception e) {
+            // ignore
         }
     }
 

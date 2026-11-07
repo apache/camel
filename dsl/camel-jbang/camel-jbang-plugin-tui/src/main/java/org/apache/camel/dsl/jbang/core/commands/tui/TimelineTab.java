@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.LongSupplier;
 
 import dev.tamboui.layout.Constraint;
@@ -47,8 +48,10 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
  * cause, the errors per second by kind, and with camel-chaos the faults of each rule marked 🎲. Under it the effect, a
  * line per route of the exchanges per second, coloured by the worst that happened to them that second (failed, handled
  * by the error handler, recovered by redelivery, completed), with the seconds a chaos rule had the route down shaded.
- * The selected route is shown in detail at the bottom: its outcomes stacked per second, its mean processing time and
- * its exchanges in flight. A quiet integration is a calm screen.
+ * The selected route is shown in detail at the bottom: its outcomes stacked per second, its mean, p95 and max time, its
+ * exchanges in flight, its redelivery attempts and its slowest calls. Paused, a cursor picks a second, and Enter shows
+ * the exchanges the integration kept of it (the failed and handled ones, and the slowest) with their calls. The
+ * integration records all of it (the timeline dev console); a quiet integration is a calm screen.
  */
 class TimelineTab extends AbstractTableTab {
 
@@ -56,7 +59,8 @@ class TimelineTab extends AbstractTableTab {
     private static final String BLOCKS = "▁▂▃▄▅▆▇█";
     private static final int CAUSE_ROWS = 4;
     private static final int DETAIL_ROWS = 4;
-    private static final int SUFFIX = 24;
+    private static final int DETAIL_LINES = DETAIL_ROWS + 5;
+    private static final int SUFFIX = 30;
     private static final int MAX_LABEL = 18;
 
     private final LongSupplier clock;
@@ -66,7 +70,10 @@ class TimelineTab extends AbstractTableTab {
     private int window;
     // the second the screen stays at while paused, or -1 to follow now
     private long pausedAt = -1;
+    // the column of the cursor while paused
+    private int cursor = -1;
     private int routeLinesY = -1;
+    private final TimelineExchanges drill = new TimelineExchanges();
 
     TimelineTab(MonitorContext ctx) {
         this(ctx, System::currentTimeMillis);
@@ -126,11 +133,11 @@ class TimelineTab extends AbstractTableTab {
 
     @Override
     public void refreshWhileVisible() {
-        // the errors are read while the screen shows (the refresh records them in the timeline)
+        // the whole timeline once, when the screen first shows an integration (each refresh reads the last seconds)
         DataRefreshService data = ctx.dataService;
         List<Long> pids = data != null ? data.selectedPidAsList() : List.of();
         if (!pids.isEmpty()) {
-            data.refreshErrorData(pids);
+            data.refreshTimelineData(pids);
         }
     }
 
@@ -150,26 +157,118 @@ class TimelineTab extends AbstractTableTab {
             return true;
         }
         if (ke.isChar(' ')) {
-            pausedAt = pausedAt < 0 ? nowSecond() : -1;
+            if (pausedAt < 0) {
+                pause();
+            } else {
+                follow();
+            }
+            return true;
+        }
+        if (ke.isConfirm()) {
+            // the exchanges of the second at the cursor, or the selected one in detail
+            if (drill.isOpen()) {
+                drill.toggleDetail();
+            } else {
+                if (pausedAt < 0) {
+                    pause();
+                }
+                drill.open(cursorFrom(), cursorTo());
+            }
             return true;
         }
         if (pausedAt >= 0 && (ke.isLeft() || ke.isRight())) {
-            IntegrationInfo info = ctx.findSelectedIntegration();
-            long first = info != null ? ctx.timeline.firstSecond(info.pid) : -1;
-            long now = nowSecond();
-            long step = Math.max(5, seconds() / 4);
-            long to = pausedAt + (ke.isLeft() ? -step : step);
-            long earliest = first >= 0 ? Math.min(now, first + seconds() - 1) : now;
-            pausedAt = Math.max(earliest, Math.min(now, to));
+            int last = columnCount() - 1;
+            if (ke.hasShift()) {
+                shift(ke.isLeft() ? -Math.max(5, seconds() / 4) : Math.max(5, seconds() / 4));
+            } else if (ke.isLeft()) {
+                if (cursor > 0) {
+                    cursor--;
+                } else {
+                    shift(-per);
+                }
+            } else if (cursor < last) {
+                cursor++;
+            } else {
+                shift(per);
+            }
+            if (drill.isOpen()) {
+                drill.open(cursorFrom(), cursorTo());
+            }
             return true;
         }
         return false;
     }
 
+    private void pause() {
+        pausedAt = nowSecond();
+        cursor = columnCount() - 1;
+    }
+
+    private void follow() {
+        pausedAt = -1;
+        cursor = -1;
+        drill.close();
+    }
+
+    /** Moves the paused window, between the first second recorded and now. */
+    private void shift(long by) {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        long first = info != null ? ctx.timeline.firstSecond(info.pid) : -1;
+        long now = nowSecond();
+        long earliest = first >= 0 ? Math.min(now, first + seconds() - 1) : now;
+        pausedAt = Math.max(earliest, Math.min(now, pausedAt + by));
+    }
+
+    private int columnCount() {
+        return (seconds() + per - 1) / per;
+    }
+
+    /** The first second of the column at the cursor. */
+    long cursorFrom() {
+        return endSecond() - seconds() + 1 + (long) Math.max(0, cursor) * per;
+    }
+
+    long cursorTo() {
+        return Math.min(endSecond(), cursorFrom() + per - 1);
+    }
+
+    @Override
+    public void navigateUp() {
+        if (drill.isOpen() && !drill.isDetail()) {
+            drill.move(-1, keptAtCursor().size());
+        } else {
+            super.navigateUp();
+        }
+    }
+
+    @Override
+    public void navigateDown() {
+        if (drill.isOpen() && !drill.isDetail()) {
+            drill.move(1, keptAtCursor().size());
+        } else {
+            super.navigateDown();
+        }
+    }
+
+    private List<Timeline.Kept> keptAtCursor() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (info == null) {
+            return List.of();
+        }
+        // the rule of an exchange that no longer has the chaos property, from the recent faults of the chaos report
+        return ctx.timeline.exchanges(info.pid, drill.from(), drill.to()).stream()
+                .map(k -> k.chaosRule() != null ? k : k.withChaosRule(ChaosMarks.ruleOf(ctx, info, k.exchangeId(), null)))
+                .toList();
+    }
+
     @Override
     public boolean handleEscape() {
+        if (drill.isOpen()) {
+            drill.back();
+            return true;
+        }
         if (pausedAt >= 0) {
-            pausedAt = -1;
+            follow();
             return true;
         }
         return false;
@@ -191,9 +290,11 @@ class TimelineTab extends AbstractTableTab {
         return pausedAt >= 0;
     }
 
-    /** The last whole second: the current one is still counting. */
+    /** The last second the integration reported, or else the last whole second (the current one is still counting). */
     private long nowSecond() {
-        return clock.getAsLong() / 1000 - 1;
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        long end = info != null ? ctx.timeline.endSecond(info.pid) : -1;
+        return end >= 0 ? end : clock.getAsLong() / 1000 - 1;
     }
 
     private long endSecond() {
@@ -215,20 +316,24 @@ class TimelineTab extends AbstractTableTab {
         boolean anyCause = causes.stream().anyMatch(c -> sum(c.values()) > 0);
         int causeHeight = anyCause ? CAUSE_ROWS + 1 : 1;
         // the cause, the legend of the routes, a line per route and the time axis, in a border
-        int detailHeight = DETAIL_ROWS + 6;
+        int detailHeight = DETAIL_LINES + 2;
         int topHeight = Math.max(6, Math.min(area.height() - detailHeight, causeHeight + routes.size() + 4));
         List<Rect> rows = Layout.vertical()
                 .constraints(Constraint.length(topHeight), Constraint.length(detailHeight), Constraint.fill())
                 .split(area);
         int inner = Math.max(20, area.width() - 2);
         int label = Math.min(MAX_LABEL,
-                Math.max(10, routes.stream().mapToInt(r -> r.route().length()).max().orElse(0))) + 3;
+                Math.max(11, routes.stream().mapToInt(r -> r.route().length()).max().orElse(0))) + 3;
         // a second is 1 to 3 characters wide as the screen allows, or a character is several seconds
         int room = Math.max(10, inner - label - SUFFIX - 1);
         int per = room >= seconds() ? 1 : (int) Math.ceil((double) seconds() / room);
         width = per == 1 ? Math.max(1, Math.min(3, room / seconds())) : 1;
         this.per = per;
         int columns = (seconds() + per - 1) / per * width;
+        if (cursor >= 0) {
+            // the window or the width changed since the cursor was put
+            cursor = Math.min(cursor, columnCount() - 1);
+        }
 
         List<Line> lines = new ArrayList<>();
         renderCauses(lines, causes, anyCause, info, columns, per, label);
@@ -252,8 +357,15 @@ class TimelineTab extends AbstractTableTab {
         lastTableArea = new Rect(top.x(), top.y() + 1 + routeLinesY - 2, top.width(), routes.size() + 2);
         frame.renderWidget(Paragraph.builder().text(Text.from(lines)).block(block(title(info))).build(), top);
 
+        if (drill.isOpen()) {
+            List<Timeline.Kept> kept = keptAtCursor();
+            frame.renderWidget(Paragraph.builder().text(Text.from(drill.lines(kept, DETAIL_LINES)))
+                    .block(block(drill.title(kept, ctx.timeline.done(info.pid, drill.from(), drill.to())))).build(),
+                    rows.get(1));
+            return;
+        }
         Timeline.RouteSeries selected = sel != null && sel >= 0 && sel < routes.size() ? routes.get(sel) : null;
-        renderDetail(frame, rows.get(1), selected, columns, per, label);
+        renderDetail(frame, rows.get(1), selected, columns, per, label, info);
 
     }
 
@@ -399,12 +511,28 @@ class TimelineTab extends AbstractTableTab {
         put(axis, columns / 2 - middle.length() / 2, middle);
         put(axis, columns - end.length(), pausedAt >= 0 ? "" : end);
         if (pausedAt >= 0) {
-            String at = "-" + ChaosTab.shortTime(Math.max(0, nowSecond() - pausedAt) * 1000);
+            long ago = Math.max(0, nowSecond() - pausedAt);
+            String at = ago > 0 ? "-" + ChaosTab.shortTime(ago * 1000) : end;
             put(axis, columns - at.length(), at);
+        }
+        if (cursor >= 0) {
+            // the cursor under its column, the time of it at the right of the axis
+            for (int i = 0; i < width; i++) {
+                int at = cursor * width + i;
+                if (at < axis.length) {
+                    axis[at] = '▲';
+                }
+            }
         }
         String text = new String(axis);
         if (per > 1) {
             text += "  " + per + "s a column";
+        }
+        if (cursor >= 0) {
+            long ago = nowSecond() - cursorTo();
+            return Line.from(Span.raw(pad("", label)), Span.styled(text, Theme.muted()),
+                    Span.styled("  ▲ " + (ago > 0 ? ChaosTab.shortTime(ago * 1000) + " ago" : "now"), Theme.label()),
+                    Span.styled(drill.isOpen() ? "" : "  Enter: its exchanges", Theme.muted()));
         }
         return Line.from(Span.raw(pad("", label)), Span.styled(text, Theme.muted()));
     }
@@ -424,7 +552,8 @@ class TimelineTab extends AbstractTableTab {
 
     // ---- the selected route ----
 
-    private void renderDetail(Frame frame, Rect area, Timeline.RouteSeries r, int columns, int per, int label) {
+    private void renderDetail(
+            Frame frame, Rect area, Timeline.RouteSeries r, int columns, int per, int label, IntegrationInfo info) {
         List<Line> lines = new ArrayList<>();
         if (r == null) {
             frame.renderWidget(Paragraph.builder().text(Text.from(Line.from(Span.raw(""))))
@@ -434,7 +563,7 @@ class TimelineTab extends AbstractTableTab {
         List<long[]> values = List.of(cols(r.completed(), false), cols(r.recovered(), false),
                 cols(r.handled(), false), cols(r.failed(), false));
         List<Style> styles = List.of(Theme.success(), Theme.warning(), handledStyle(), Theme.error());
-        int rows = Math.max(2, Math.min(DETAIL_ROWS, area.height() - 6));
+        int rows = Math.max(2, Math.min(DETAIL_ROWS, area.height() - 7));
         lines.addAll(stacked(values, styles, rows, columns, label));
 
         long[] mean = cols(r.mean(), true);
@@ -448,15 +577,22 @@ class TimelineTab extends AbstractTableTab {
                 n++;
             }
         }
+        long p95 = 0;
+        long max = 0;
+        for (int i = 0; i < r.p95().length; i++) {
+            p95 = Math.max(p95, r.p95()[i]);
+            max = Math.max(max, r.max()[i]);
+        }
         List<Span> meanLine = new ArrayList<>();
         meanLine.add(Span.styled(pad("   mean time", label), Theme.label()));
         // relative to twice the average, so a steady time is a calm line and a slow second stands out
         long scale = n > 0 ? Math.max(maxMean, 2 * sumMean / n) : 0;
         meanLine.add(Span.styled(spark(mean, scale), Theme.info()));
-        meanLine.add(Span.raw("  " + (n > 0
-                ? "avg " + ChaosTab.shortTime(sumMean / n) + ", max "
-                  + ChaosTab.shortTime(maxMean)
-                : "no exchange")));
+        meanLine.add(Span.raw("  " + (n > 0 ? "avg " + ChaosTab.shortTime(sumMean / n) : "no exchange")));
+        if (max > 0) {
+            // of the exchanges that came into the route, in their slowest second
+            meanLine.add(Span.raw(" p95 " + ChaosTab.shortTime(p95) + " max " + ChaosTab.shortTime(max)));
+        }
         lines.add(Line.from(meanLine));
 
         long[] inflight = cols(r.inflight(), true);
@@ -480,6 +616,17 @@ class TimelineTab extends AbstractTableTab {
         lines.add(Line.from(Span.styled(pad("   redelivery", label), Theme.label()),
                 Span.styled(spark(attempts, maxAttempts), Theme.warning()),
                 Span.raw("  " + r.total(r.attempts()) + " attempts")));
+
+        List<Span> calls = TimelineExchanges.slowestCalls(
+                ctx.timeline.exchanges(info.pid, endSecond() - seconds() + 1, endSecond()), r.route(), 3);
+        List<Span> callLine = new ArrayList<>();
+        callLine.add(Span.styled(pad("   calls", label), Theme.label()));
+        if (calls.isEmpty()) {
+            callLine.add(Span.styled("no remote calls in the exchanges kept", Theme.muted()));
+        } else {
+            callLine.addAll(calls);
+        }
+        lines.add(Line.from(callLine));
 
         List<Span> totals = new ArrayList<>();
         totals.add(Span.raw(pad("", label)));
@@ -636,9 +783,11 @@ class TimelineTab extends AbstractTableTab {
         hint(spans, "w", "window " + (seconds() >= 120 ? seconds() / 60 + "m" : seconds() + "s"));
         hint(spans, "Space", pausedAt >= 0 ? "follow" : "pause");
         if (pausedAt >= 0) {
-            hint(spans, "←→", "back and forth");
+            hint(spans, "←→", "second");
+            hint(spans, "Shift+←→", "back and forth");
         }
-        hint(spans, "Esc", pausedAt >= 0 ? "follow" : "back");
+        hint(spans, "Enter", drill.isOpen() ? (drill.isDetail() ? "list" : "exchange") : "exchanges");
+        hint(spans, "Esc", drill.isOpen() || pausedAt >= 0 ? "close" : "back");
     }
 
     @Override
@@ -673,7 +822,7 @@ class TimelineTab extends AbstractTableTab {
         result.put("seconds", seconds());
         result.put("endSecond", endSecond());
         result.put("paused", pausedAt >= 0);
-        result.put("order", "oldest first, one value per second; -1 is a second before the first sample");
+        result.put("order", "oldest first, one value per second; -1 is a second the integration did not report");
         JsonArray causes = new JsonArray();
         for (Timeline.CauseSeries c : ctx.timeline.causes(info.pid, endSecond(), seconds())) {
             JsonObject jo = new JsonObject();
@@ -703,12 +852,38 @@ class TimelineTab extends AbstractTableTab {
             perSecond.put("failed", array(r.failed()));
             perSecond.put("inflight", array(r.inflight()));
             perSecond.put("meanMillis", array(r.mean()));
+            perSecond.put("p95Millis", array(r.p95()));
+            perSecond.put("maxMillis", array(r.max()));
             perSecond.put("redeliveryAttempts", array(r.attempts()));
             row.put("perSecond", perSecond);
             rows.add(row);
         }
         result.put("rows", rows);
         result.put("totalRows", rows.size());
+        if (drill.isOpen()) {
+            JsonArray exchanges = new JsonArray();
+            for (Timeline.Kept k : keptAtCursor()) {
+                JsonObject jo = new JsonObject();
+                jo.put("exchangeId", k.exchangeId());
+                jo.put("routeId", k.routeId());
+                jo.put("outcome", k.outcome());
+                jo.put("elapsed", k.elapsed());
+                if (k.exception() != null) {
+                    jo.put("exception", k.exception());
+                }
+                if (k.chaosRule() != null) {
+                    jo.put("chaosRule", k.chaosRule());
+                }
+                JsonArray calls = new JsonArray();
+                k.calls().forEach(
+                        c -> calls.add(new JsonObject(Map.of("endpointUri", c.endpointUri(), "elapsed", c.elapsed()))));
+                jo.put("calls", calls);
+                exchanges.add(jo);
+            }
+            result.put("exchangesFrom", drill.from());
+            result.put("exchangesTo", drill.to());
+            result.put("exchanges", exchanges);
+        }
         Integer sel = tableState.selected();
         result.put("selectedIndex", sel != null ? sel : -1);
         return result;

@@ -26,7 +26,8 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * The timeline (CAMEL-26691) worked out from the samples of the route counters, the errors and the chaos rules.
+ * The timeline (CAMEL-26691) as the integration reports it (the timeline dev console), with the chaos rules of the
+ * status.
  */
 class TimelineTest {
 
@@ -35,18 +36,12 @@ class TimelineTest {
 
     private final Timeline timeline = new Timeline();
 
-    private static IntegrationInfo info(long total, long failed, long handled, long redeliveries, long mean) {
+    private static IntegrationInfo info() {
         IntegrationInfo info = new IntegrationInfo();
         info.pid = "1234";
         info.name = "shop";
         RouteInfo r = new RouteInfo();
         r.routeId = "orders";
-        r.total = total;
-        r.failed = failed;
-        r.failuresHandled = handled;
-        r.redeliveries = redeliveries;
-        r.meanTime = mean;
-        r.inflight = 2;
         info.routes.add(r);
         return info;
     }
@@ -58,67 +53,80 @@ class TimelineTest {
     }
 
     @Test
-    void theOutcomesOfASecondAreTheRiseOfTheCounters() {
-        timeline.record(info(10, 0, 0, 0, 4), T0);
-        // 3 more exchanges: one handled by the error handler, one recovered by redelivery, one completed
-        timeline.record(info(13, 0, 1, 1, 6), T0 + 1000);
+    void theSecondsOfTheIntegrationAreTakenAsTheyAre() {
+        timeline.merge("1234", new TimelineJson(S0 + 2, 3)
+                .route("orders", "completed", 0, 4).route("orders", "recovered", 1, 1).route("orders", "handled", 1, 2)
+                .route("orders", "failed", 2, 1).route("orders", "meanMillis", 1, 30).route("orders", "p95Millis", 1, 80)
+                .route("orders", "maxMillis", 1, 90).route("orders", "redeliveryAttempts", 1, 3)
+                .route("orders", "inflight", 2, 5).json(), true);
 
-        Timeline.RouteSeries r = orders(S0 + 1, 3);
-        // the second before the first sample, the first sample (no rise yet), then the rise
-        assertThat(r.completed()).containsExactly(-1, -1, 1);
-        assertThat(r.recovered()).containsExactly(-1, -1, 1);
-        assertThat(r.handled()).containsExactly(-1, -1, 1);
-        assertThat(r.failed()).containsExactly(-1, -1, 0);
-        assertThat(r.inflight()).containsExactly(-1, 2, 2);
-        // the mean of the 3 exchanges of that second: (13 * 6 - 10 * 4) / 3
-        assertThat(r.mean()[2]).isEqualTo(12);
-        assertThat(r.quiet()).isFalse();
-    }
-
-    @Test
-    void aSlowRefreshIsSpreadOverItsSeconds() {
-        timeline.record(info(0, 0, 0, 0, 0), T0);
-        timeline.record(info(7, 1, 0, 0, 0), T0 + 3000);
-
-        Timeline.RouteSeries r = orders(S0 + 3, 3);
-        // 6 completed and 1 failed over 3 seconds: the later seconds take the remainder
-        assertThat(r.completed()).containsExactly(2, 2, 2);
+        Timeline.RouteSeries r = orders(S0 + 2, 3);
+        assertThat(r.completed()).containsExactly(4, 0, 0);
+        assertThat(r.recovered()).containsExactly(0, 1, 0);
+        assertThat(r.handled()).containsExactly(0, 2, 0);
         assertThat(r.failed()).containsExactly(0, 0, 1);
+        assertThat(r.mean()).containsExactly(0, 30, 0);
+        assertThat(r.p95()).containsExactly(0, 80, 0);
+        assertThat(r.max()).containsExactly(0, 90, 0);
+        assertThat(r.attempts()).containsExactly(0, 3, 0);
+        assertThat(r.inflight()).containsExactly(0, 0, 5);
+        assertThat(timeline.endSecond("1234")).isEqualTo(S0 + 2);
+        assertThat(timeline.isFull("1234")).isTrue();
+        assertThat(timeline.done("1234", S0, S0 + 2)).isEqualTo(4 + 3 + 1);
     }
 
     @Test
-    void aResetOfTheStatisticsIsNoNegativeRate() {
-        timeline.record(info(50, 3, 0, 0, 0), T0);
-        timeline.record(info(2, 0, 0, 0, 0), T0 + 1000);
+    void aSecondNotReportedIsUnknownAndTheLastSecondsReplaceTheOnesKept() {
+        timeline.merge("1234", new TimelineJson(S0 + 1, 2).route("orders", "completed", 1, 4).json(), true);
+        // the next refresh: the last seconds again, one of them done since
+        timeline.merge("1234", new TimelineJson(S0 + 2, 2).route("orders", "completed", 0, 5)
+                .route("orders", "completed", 1, 6).json(), false);
 
-        Timeline.RouteSeries r = orders(S0 + 1, 1);
-        assertThat(r.completed()).containsExactly(0);
-        assertThat(r.failed()).containsExactly(0);
+        assertThat(orders(S0 + 2, 4).completed()).containsExactly(-1, 0, 5, 6);
+        assertThat(timeline.endSecond("1234")).isEqualTo(S0 + 2);
     }
 
     @Test
     void theErrorsArePerSecondByKindWithoutTheOnesChaosMade() {
-        ErrorInfo first = error("orders", "callStock", "HTTP operation failed with statusCode: 503", 1, T0 - 2000);
-        ErrorInfo chaos = error("orders", "callStock", "HTTP operation failed with statusCode: 500", 1, T0 - 1000);
-        chaos.properties.put(ChaosMarks.PROPERTY, "r1");
-        timeline.recordErrors("1234", List.of(first, chaos), T0);
-        // the same kind failed 3 more times; the registry keeps the newest entries of a kind
-        ErrorInfo second = error("orders", "callStock", "HTTP operation failed with statusCode: 503", 3, T0 + 1500);
-        ErrorInfo third = error("orders", "callStock", "HTTP operation failed with statusCode: 503", 4, T0 + 2500);
-        timeline.recordErrors("1234", List.of(third, second, first, chaos), T0 + 3000);
+        timeline.merge("1234", new TimelineJson(S0 + 1, 2)
+                .error("orders", "org.apache.camel.http.base.HttpOperationFailedException", 503, null, new long[] { 2, 1 })
+                .error("orders", "java.net.ConnectException", null, null, new long[] { 0, 1 })
+                .error("orders", "org.apache.camel.component.chaos.ChaosException", null, "r1", new long[] { 5, 5 })
+                .json(), false);
 
-        List<Timeline.CauseSeries> causes = timeline.causes("1234", S0 + 2, 5);
-        assertThat(causes).hasSize(1);
-        assertThat(causes.get(0).label()).isEqualTo("HttpOperationFailedException 503");
-        assertThat(causes.get(0).rule()).isNull();
-        // the first at its own second, then 3 new ones: the entry at +1.5s, and the rest at the newest (+2.5s)
-        assertThat(causes.get(0).values()).containsExactly(1, 0, 0, 1, 2);
+        List<Timeline.CauseSeries> causes = timeline.causes("1234", S0 + 1, 2);
+        assertThat(causes).extracting(Timeline.CauseSeries::label)
+                .containsExactly("HttpOperationFailedException 503", "ConnectException");
+        assertThat(causes.get(0).values()).containsExactly(2, 1);
         assertThat(timeline.errorsSeen("1234")).isTrue();
+        assertThat(timeline.errorsSeen("999")).isFalse();
+    }
+
+    @Test
+    void theExchangesKeptAreFoundByTheSecondTheyWereDone() {
+        timeline.merge("1234", new TimelineJson(S0 + 2, 3)
+                .exchange("A", "orders", 0, 20, "completed", null, null)
+                .exchange("B", "orders", 2, 900, "handled", "HTTP 503", "r1", "http://stock@850", "kafka:orders@5")
+                .json(), false);
+
+        assertThat(timeline.exchanges("1234", S0, S0 + 1)).extracting(Timeline.Kept::exchangeId).containsExactly("A");
+        Timeline.Kept b = timeline.exchanges("1234", S0 + 2, S0 + 2).get(0);
+        assertThat(b.outcome()).isEqualTo("handled");
+        assertThat(b.chaosRule()).isEqualTo("r1");
+        assertThat(b.calls()).containsExactly(new Timeline.Call("http://stock", 850), new Timeline.Call("kafka:orders", 5));
+    }
+
+    @Test
+    void notATimelineIsIgnored() {
+        timeline.merge("1234", new JsonObject(), true);
+        timeline.merge("1234", null, true);
+        assertThat(timeline.endSecond("1234")).isEqualTo(-1);
+        assertThat(timeline.isFull("1234")).isFalse();
     }
 
     @Test
     void theFaultsOfAChaosRuleAndTheSecondsItHadARouteDown() throws Exception {
-        IntegrationInfo info = info(0, 0, 0, 0, 0);
+        IntegrationInfo info = info();
         info.chaos = ChaosInfo.parse((JsonObject) Jsoner.deserialize("""
                 {"enabled": true,
                  "rules": [{"id": "r1", "version": 1, "state": "active",
@@ -142,7 +150,7 @@ class TimelineTest {
 
     @Test
     void aStoppedIntegrationIsForgotten() {
-        timeline.record(info(1, 0, 0, 0, 0), T0);
+        timeline.merge("1234", new TimelineJson(S0, 1).route("orders", "completed", 0, 1).json(), false);
         assertThat(timeline.firstSecond("1234")).isEqualTo(S0);
         timeline.retain(Set.of("999"));
         assertThat(timeline.firstSecond("1234")).isEqualTo(-1);
@@ -151,7 +159,7 @@ class TimelineTest {
 
     @Test
     void aRouteDownAtTwoSamplesWasDownInTheSecondsBetween() throws Exception {
-        IntegrationInfo info = info(0, 0, 0, 0, 0);
+        IntegrationInfo info = info();
         info.chaos = ChaosInfo.parse((JsonObject) Jsoner.deserialize("""
                 {"enabled": true,
                  "rules": [{"id": "r3", "version": 1, "state": "active", "rule": "route=orders stall duration=20s",
@@ -166,34 +174,4 @@ class TimelineTest {
         assertThat(orders(S0 + 3, 4).down()).containsExactly(1, 1, 1, 1);
     }
 
-    @Test
-    void theRedeliveryAttemptsOfTheProcessorsShowARecoveryTheRouteDidNotCount() {
-        IntegrationInfo info = info(10, 0, 0, 0, 0);
-        ProcessorInfo call = new ProcessorInfo();
-        call.redeliveries = 4;
-        info.routes.get(0).processors.add(call);
-        timeline.record(info, T0);
-        // a removeHeaders("Camel*") after the call took the redelivered header away: the route counted no recovery
-        IntegrationInfo later = info(12, 0, 0, 0, 0);
-        ProcessorInfo again = new ProcessorInfo();
-        again.redeliveries = 7;
-        later.routes.get(0).processors.add(again);
-        timeline.record(later, T0 + 1000);
-
-        Timeline.RouteSeries r = orders(S0 + 1, 1);
-        assertThat(r.recovered()).containsExactly(0);
-        assertThat(r.attempts()).containsExactly(3);
-        assertThat(r.completed()).containsExactly(2);
-    }
-
-    private static ErrorInfo error(String route, String node, String message, long repeat, long timestamp) {
-        ErrorInfo e = new ErrorInfo();
-        e.routeId = route;
-        e.nodeId = node;
-        e.exceptionType = "org.apache.camel.http.base.HttpOperationFailedException";
-        e.exceptionMessage = message;
-        e.repeatCount = repeat;
-        e.timestamp = timestamp;
-        return e;
-    }
 }

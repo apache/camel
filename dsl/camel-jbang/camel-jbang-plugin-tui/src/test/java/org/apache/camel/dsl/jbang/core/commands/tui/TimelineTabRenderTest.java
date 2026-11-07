@@ -51,40 +51,38 @@ class TimelineTabRenderTest {
         info = new IntegrationInfo();
         info.pid = "1234";
         info.name = "shop";
+        for (String id : List.of("orders", "shipping", "dlq")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            info.routes.add(r);
+        }
         ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
         ctx.selectedPid = "1234";
-        long orders = 0;
-        long handled = 0;
-        long shipping = 0;
-        List<ErrorInfo> errors = new ArrayList<>();
-        for (int s = 0; s < 60; s++) {
+        ctx.timeline.merge("1234", outage(T0 / 1000 + 59, 60, 0).json(), true);
+    }
+
+    /** The seconds of the shop: the outage from second 25 to 39 of the minute that ends at end. */
+    static TimelineJson outage(long end, int seconds, int offset) {
+        TimelineJson t = new TimelineJson(end, seconds);
+        long[] errors = new long[seconds];
+        for (int i = 0; i < seconds; i++) {
+            int s = i + offset;
             boolean outage = s >= 25 && s < 40;
-            orders += 2;
+            t.route("orders", "meanMillis", i, outage ? 300 : 4).route("orders", "p95Millis", i, outage ? 800 : 6)
+                    .route("orders", "maxMillis", i, outage ? 950 : 9);
             if (outage) {
-                for (int k = 0; k < 2; k++) {
-                    handled++;
-                    ErrorInfo e = new ErrorInfo();
-                    e.routeId = "orders";
-                    e.nodeId = "callStock";
-                    e.exceptionType = "org.apache.camel.http.base.HttpOperationFailedException";
-                    e.exceptionMessage = "HTTP operation failed invoking http://localhost:8765/stock with statusCode: 503";
-                    e.handled = true;
-                    e.repeatCount = handled;
-                    e.repeatFirstTimestamp = T0 + 25_000;
-                    e.timestamp = T0 + s * 1000L + k * 400;
-                    errors.add(0, e);
-                }
+                t.route("orders", "handled", i, 2).route("dlq", "completed", i, 2)
+                        .route("orders", "redeliveryAttempts", i, 6);
+                errors[i] = 2;
+                t.exchange("H" + s, "orders", i, 900, "handled",
+                        "HTTP operation failed invoking http://localhost:8765/stock with statusCode: 503",
+                        s == 30 ? "r1" : null, "http://localhost:8765/stock@850");
             } else {
-                shipping += 2;
+                t.route("orders", "completed", i, 2).route("shipping", "completed", i, 2);
+                t.exchange("C" + s, "orders", i, 12, "completed", null, null, "http://localhost:8765/stock@8");
             }
-            info.routes.clear();
-            info.routes.add(route("orders", orders, handled));
-            info.routes.add(route("shipping", shipping, 0));
-            info.routes.add(route("dlq", handled, 0));
-            ctx.timeline.record(info, T0 + s * 1000L);
         }
-        // the error registry keeps the newest 3 of a kind, with the count of the kind
-        ctx.timeline.recordErrors("1234", errors.subList(0, 3), T0 + 59_000);
+        return t.error("orders", "org.apache.camel.http.base.HttpOperationFailedException", 503, null, errors);
     }
 
     private static RouteInfo route(String id, long total, long handled) {
@@ -92,7 +90,6 @@ class TimelineTabRenderTest {
         r.routeId = id;
         r.total = total;
         r.failuresHandled = handled;
-        r.meanTime = 4;
         return r;
     }
 
@@ -107,6 +104,7 @@ class TimelineTabRenderTest {
                 .contains(">> orders").contains("shipping").contains("dlq")
                 .contains("-60s").contains("-30s").contains("now")
                 .contains("orders ─ per second").contains("mean time").contains("in flight")
+                .contains("p95 800ms max 950ms").contains("   calls").contains("http://localhost:8765/stock max 850ms")
                 .contains("30 handled by the error handler");
         // shipping had nothing to ship in the outage: 15 quiet seconds
         String shipping = screen.lines().filter(l -> l.contains("   shipping")).findFirst().orElseThrow();
@@ -122,14 +120,13 @@ class TimelineTabRenderTest {
         assertThat(table.getString("tab")).isEqualTo("Timeline");
         JsonArray causes = (JsonArray) table.get("causes");
         assertThat(causes).hasSize(1);
-        // 3 entries kept, and the 27 before them spread from the first failure of the kind
         assertThat(((JsonObject) causes.get(0)).getLong("total")).isEqualTo(30);
         JsonArray rows = (JsonArray) table.get("rows");
         JsonObject orders = (JsonObject) rows.get(0);
         assertThat(orders.getString("route")).isEqualTo("orders");
         assertThat(orders.getLong("handled")).isEqualTo(30);
-        // the first second has no rise yet
-        assertThat(orders.getLong("completed")).isEqualTo(118 - 30);
+        assertThat(orders.getLong("completed")).isEqualTo(90);
+        assertThat((JsonArray) ((JsonObject) orders.get("perSecond")).get("p95Millis")).hasSize(60);
     }
 
     @Test
@@ -137,12 +134,14 @@ class TimelineTabRenderTest {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         tab.handleKeyEvent(KeyEvent.ofChar(' '));
         assertThat(tab.isPaused()).isTrue();
+        // 10 seconds go by, which the next refreshes read
         now.addAndGet(10_000);
+        ctx.timeline.merge("1234", outage(T0 / 1000 + 69, 10, 60).json(), false);
         String screen = TuiTestHelper.renderToString(tab, 160, 40);
-        assertThat(screen).contains("paused, 10s ago");
+        assertThat(screen).contains("paused, 10s ago").contains("▲ 10s ago");
         List<Span> hints = new ArrayList<>();
         tab.renderFooter(hints);
-        assertThat(text(hints)).contains("follow").contains("back and forth");
+        assertThat(text(hints)).contains("follow").contains("back and forth").contains("exchanges");
 
         assertThat(tab.handleEscape()).isTrue();
         assertThat(tab.isPaused()).isFalse();
@@ -167,10 +166,7 @@ class TimelineTabRenderTest {
         quiet.routes.add(r);
         MonitorContext qctx = new MonitorContext(new AtomicReference<>(List.of(quiet)), new AtomicReference<>(List.of()));
         qctx.selectedPid = "77";
-        for (int s = 0; s < 60; s++) {
-            qctx.timeline.record(quiet, T0 + s * 1000L);
-        }
-        qctx.timeline.recordErrors("77", List.of(), T0 + 59_000);
+        qctx.timeline.merge("77", new TimelineJson(T0 / 1000 + 59, 60).route("timer", "completed", 0, 0).json(), true);
         String screen = TuiTestHelper.renderToString(new TimelineTab(qctx, now::get), 160, 40);
 
         assertThat(screen).contains("Errors/s  none").contains("idle");
@@ -210,9 +206,42 @@ class TimelineTabRenderTest {
         assertThat(asked).hasSize(1);
         assertThat(asked.get(0)).startsWith("Explain what happened in the last 60s of the running integration shop")
                 .contains("error HttpOperationFailedException 503: 30 in 15 seconds, from 34s to 20s ago")
-                .contains("orders: 88 completed, 0 recovered by redelivery, 30 handled by the error handler, 0 failed"
+                .contains("orders: 90 completed, 0 recovered by redelivery, 30 handled by the error handler, 0 failed"
                           + " (handled or failed from 34s to 20s ago)")
-                .contains("shipping: 88 completed").endsWith("Make no changes to the files unless I agree.");
+                .contains("shipping: 90 completed").endsWith("Make no changes to the files unless I agree.");
+    }
+
+    @Test
+    void enterShowsTheExchangesOfTheSecondAtTheCursorAndOneInDetail() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        // from the last second (59) back to second 30, in the outage
+        for (int i = 0; i < 29; i++) {
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT));
+        }
+        assertThat(tab.cursorFrom()).isEqualTo(T0 / 1000 + 30);
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        // the dice is two columns wide: the screen has a blank cell after it
+        String list = TuiTestHelper.renderToString(tab, 160, 40).replace(TuiIcons.TAB_CHAOS + " ", TuiIcons.TAB_CHAOS);
+        assertThat(list).contains("Exchanges at").contains("4 done, 1 kept").contains("H30")
+                .contains("handled").contains("1 call").contains(TuiIcons.TAB_CHAOS + " r1");
+
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        String detail = TuiTestHelper.renderToString(tab, 160, 40);
+        assertThat(detail).contains("H30").contains("statusCode: 503").contains("850ms")
+                .contains("faulted by chaos rule r1");
+        JsonObject table = tab.getTableDataAsJson();
+        assertThat((JsonArray) table.get("exchanges")).hasSize(1);
+
+        // Esc: the list, then the route again, then follow now
+        assertThat(tab.handleEscape()).isTrue();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Exchanges at");
+        assertThat(tab.handleEscape()).isTrue();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("orders ─ per second");
+        assertThat(tab.isPaused()).isTrue();
+        assertThat(tab.handleEscape()).isTrue();
+        assertThat(tab.isPaused()).isFalse();
     }
 
     private static String text(List<Span> spans) {

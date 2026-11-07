@@ -138,7 +138,7 @@ final class TuiIcons {
     static final String TAB_HEALTH = DOCTOR;
     static final String TAB_INSPECT = GO_TO;
     static final String TAB_ERRORS = FAIL;
-    static final String TAB_ACTIVITY = "🔔";
+    static final String TAB_TIMELINE = "🕒";
     static final String TAB_MORE = FOLDER_OPEN;
 
     // ---- More submenu tabs ----
@@ -168,7 +168,6 @@ final class TuiIcons {
     static final String TAB_PROCESS = CLIPBOARD;
     static final String TAB_STARTUP = QUARKUS;
     static final String TAB_THREADS = "🧵";
-    static final String TAB_TIMELINE = "🕒";
     static final String TAB_PRODUCERS = "📤";
     static final String TAB_EVENTS = "📣";
     static final String TAB_RECOVERY_TASKS = "🔁";
@@ -179,7 +178,7 @@ final class TuiIcons {
 
     /** Icons for {@link TabRegistry#TAB_OVERVIEW}..{@link TabRegistry#TAB_MORE} (in order). */
     static final List<String> PRIMARY_TAB_ICONS = List.of(
-            TAB_OVERVIEW, TAB_SOURCE, TAB_LOG, TAB_ACTIVITY, TAB_DIAGRAM,
+            TAB_OVERVIEW, TAB_SOURCE, TAB_LOG, TAB_TIMELINE, TAB_DIAGRAM,
             TAB_ROUTES, TAB_ENDPOINTS, TAB_INSPECT, TAB_ERRORS, TAB_MORE);
 
     /** Marker placed immediately before a label's keyboard-shortcut letter (Windows-style mnemonic). */
