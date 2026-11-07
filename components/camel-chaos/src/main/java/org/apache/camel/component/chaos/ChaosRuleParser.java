@@ -1028,16 +1028,26 @@ final class ChaosRuleParser {
     }
 
     /**
-     * Whether a condition reads the body of the message: it names the body (${body}, ${bodyAs(String)}, ${in.body}, not
-     * ${bodyType}), or a language of the body (jsonpath, jq, xpath). Reading a stream body consumes it.
+     * Whether a condition reads the body of the message: a word of it names the body (${body}, ${bodyAs(String)},
+     * ${in.body}, ${mandatoryBodyAs(String)}, ${prettyBody}, not ${bodyType} or ${header.somebody}), or it uses a
+     * language of the body (jsonpath, jq, xpath). Reading a stream body consumes it, so when in doubt it says yes: that
+     * only turns on stream caching.
      */
     static boolean readsBody(String when) {
-        int i = when.indexOf("body");
-        while (i >= 0) {
-            if (!when.startsWith("bodyType", i)) {
+        int i = 0;
+        while (i < when.length()) {
+            if (!Character.isLetterOrDigit(when.charAt(i))) {
+                i++;
+                continue;
+            }
+            int start = i;
+            while (i < when.length() && Character.isLetterOrDigit(when.charAt(i))) {
+                i++;
+            }
+            String word = when.substring(start, i);
+            if ((word.startsWith("body") || word.contains("Body")) && !word.equals("bodyType")) {
                 return true;
             }
-            i = when.indexOf("body", i + 4);
         }
         return when.contains("jsonpath(") || when.contains("jq(") || when.contains("xpath(");
     }
