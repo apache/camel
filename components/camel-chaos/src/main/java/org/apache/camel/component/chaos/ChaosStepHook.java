@@ -72,6 +72,8 @@ final class ChaosStepHook implements StepHook, Ordered {
         }
         ChaosRule rule = state.entryFault;
         String route = state.entryRoute;
+        // cleared whatever route this step is in: the fault is for the first step of the route, and kept it would act
+        // at a later step that is not
         state.entryFault = null;
         state.entryRoute = null;
         return route.equals(ChaosExchangeState.routeId(exchange)) ? rule : null;
