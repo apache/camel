@@ -265,7 +265,8 @@ class AboutViewTest {
         about.moveCursor(2);
         render(about, info);
         assertThat(about.selected()).isEqualTo(new AboutView.Target("stock", null));
-        assertThat(about.selectionContext().items()).contains("orders", "stock");
+        assertThat(about.selectionContext().items()).contains("in: timer:orders (period=500) → orders", "route: orders",
+                "route: stock");
         assertThat(about.selectionContext().selectedIndex()).isEqualTo(2);
         about.moveCursor(5);
         render(about, info);

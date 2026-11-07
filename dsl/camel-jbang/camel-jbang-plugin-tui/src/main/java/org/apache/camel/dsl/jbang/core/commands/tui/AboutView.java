@@ -85,6 +85,7 @@ final class AboutView {
     // the line of In, Routes or Out the cursor is on (↑ ↓), in the order of the columns; -1 when none is
     private int cursor = -1;
     private volatile List<Target> targets = List.of();
+    private volatile List<String> targetLabels = List.of();
 
     /**
      * What a line of In, Routes or Out is about, for Enter: a route (opened on the Diagram) or an endpoint a route
@@ -184,10 +185,8 @@ final class AboutView {
 
     /** The lines the cursor can be on, for an agent (tui_get_state): the route, or the endpoint and its route. */
     SelectionContext selectionContext() {
-        List<Target> t = targets;
-        List<String> items = t.stream().map(x -> x.endpoint() != null ? x.endpoint() + " (" + x.routeId() + ")" : x.routeId())
-                .toList();
-        return new SelectionContext("list", items, cursor < t.size() ? cursor : -1, items.size(), "About");
+        List<String> items = targetLabels;
+        return new SelectionContext("list", items, cursor < items.size() ? cursor : -1, items.size(), "About");
     }
 
     /**
@@ -429,14 +428,27 @@ final class AboutView {
         }
         // the cursor goes down In, then Routes, then Out
         List<Target> all = new ArrayList<>();
-        for (List<Target> column : List.of(inTargets, routeTargets, outTargets)) {
-            for (Target t : column) {
+        List<String> labels = new ArrayList<>();
+        List<String> inLabels = new ArrayList<>();
+        if (model != null) {
+            model.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(e.label()));
+        }
+        String[] names = { "in", "route", "out" };
+        List<List<Target>> columns = List.of(inTargets, routeTargets, outTargets);
+        for (int c = 0; c < columns.size(); c++) {
+            int n = 0;
+            for (Target t : columns.get(c)) {
                 if (t != null) {
                     all.add(t);
+                    // what an agent sees of the line: its column, and what it is about
+                    labels.add(names[c] + ": " + (c == 0 && n < inLabels.size() ? inLabels.get(n) + " → " + t.routeId()
+                            : t.endpoint() != null ? t.endpoint() + " from " + t.routeId() : t.routeId()));
+                    n++;
                 }
             }
         }
         targets = all;
+        targetLabels = labels;
         if (cursor >= all.size()) {
             cursor = all.size() - 1;
         }
