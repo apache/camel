@@ -77,6 +77,15 @@ error handler (HAND) and the redeliveries (REDEL).
   says what the fault simulates and how the routes coped, and suggests how
   to make them cope better, changing the routes only when you agree.
   Press Enter to send the question, or change it first
+- **d** — Describe with AI: say the chaos you want in your own words, such
+  as "the order route fails 5% of the time, or when the country is Spain".
+  Enter sends it to the AI panel with the routes, the sends and the rules
+  of the integration. The AI writes the rules, checks them with
+  `tui_chaos_check` (each rule in plain words, and what it would hit),
+  shows them to you, and adds them with `tui_chaos_add` (or changes a rule
+  with `tui_chaos_change`, which keeps its id and gives it a new version),
+  asking you to confirm each one. It does not change the routes. The AI
+  panel has these tools only while chaos is on in the integration
 
 Each asks to confirm with **y**, showing the rule. The integration checks
 the rule as `camel.chaos.rules` is checked: a rule that is not valid comes

@@ -403,5 +403,14 @@ class MonitorContext {
          */
         default void ask(String question) {
         }
+
+        /**
+         * Opens the AI panel and sends the question at once, for a request the user typed and confirmed on a screen
+         * ({@code d} on the Chaos screen). When the panel is busy, the question waits in its input, as with
+         * {@link #ask(String)}.
+         */
+        default void askNow(String question) {
+            ask(question);
+        }
     }
 }

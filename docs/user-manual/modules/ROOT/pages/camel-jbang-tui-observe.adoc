@@ -285,6 +285,14 @@ the route, and of its polls when it polls.
 image::jbang/camel-tui-chaos-here.png[! on the to callStock of the Diagram: the known rules for its HTTP endpoint and its step, with the endpoint filled in]
 * *x* removes the selected rule, *c* removes all rules (the report keeps what they did), and *R* starts a new experiment:
 no rules and a new report, with the same seed.
+* *d* describes the chaos with AI, when the AI panel is there: say the chaos you want in your own words, such as "the
+order route fails 5% of the time, or when the country is Spain". Enter sends it to the AI panel with the routes, the
+sends and the rules of the integration. The AI writes the rules, checks them with `tui_chaos_check` (each in plain
+words, and what it would hit), shows them, and adds them with `tui_chaos_add` (or changes a rule with
+`tui_chaos_change`, which keeps its id and gives it a new version), asking you to confirm each one. It does not change
+the routes. The AI panel has these tools only while chaos is on in the integration.
++
+image::jbang/camel-tui-chaos-describe.png[Describe with AI: the AI checked the two rules of "the order route should fail 5% of the time, or when the country is spain", and asks to add them]
 
 Each asks to confirm with *y*, with the rule shown. A rule that is not valid comes back with the reason, and a rule that
 matches nothing in the integration (often a typo) with a warning; press *e* there to change it.

@@ -259,10 +259,14 @@ class TuiToolRegistry {
         return tools;
     }
 
+    // the tools that only the tool groups of the integration add, also to the full set: the semantic history, and
+    // the chaos rules when camel-chaos is on
+    private static final Set<String> GROUP_ONLY_TOOLS = Set.of("tui_get_audit", "tui_get_monitoring",
+            TuiToolGroups.CHAOS_CHECK_TOOL, TuiToolGroups.CHAOS_ADD_TOOL, TuiToolGroups.CHAOS_CHANGE_TOOL);
+
     List<ToolDef> getAvailableToolDefinitions(Collection<String> selected) {
         return getToolDefinitions().stream()
-                .filter(tool -> !Set.of("tui_get_audit", "tui_get_monitoring").contains(tool.name())
-                        || selected.contains(tool.name()))
+                .filter(tool -> !GROUP_ONLY_TOOLS.contains(tool.name()) || selected.contains(tool.name()))
                 .toList();
     }
 
@@ -1339,6 +1343,44 @@ class TuiToolRegistry {
             return "Error: no integration selected or PID unavailable";
         }
         return Jsoner.serialize(response);
+    }
+
+    /** Checks chaos rules in the selected integration (chaos_check), which adds nothing. */
+    String callChaosCheck(Map<String, Object> args) {
+        String rule = args.get("rule") instanceof String s ? s : null;
+        if (rule == null || rule.isBlank()) {
+            return "Error: rule is required";
+        }
+        return executeShared("chaos_check", Map.of("rule", rule));
+    }
+
+    /** Adds chaos rules to the selected integration (chaos_add), after the user confirms. */
+    String callChaosAdd(Map<String, Object> args) {
+        String rule = args.get("rule") instanceof String s ? s : null;
+        if (rule == null || rule.isBlank()) {
+            return "Error: rule is required";
+        }
+        JsonObject rejected = facade != null
+                ? facade.confirm(ToolConfirms.chaos("add", facade.getSelectedIntegrationName(), null, rule)) : null;
+        if (rejected != null) {
+            return Jsoner.serialize(rejected);
+        }
+        return executeShared("chaos_add", Map.of("rule", rule));
+    }
+
+    /** Changes a chaos rule of the selected integration (chaos_change), after the user confirms. */
+    String callChaosChange(Map<String, Object> args) {
+        String id = args.get("id") instanceof String s ? s : null;
+        String rule = args.get("rule") instanceof String s ? s : null;
+        if (id == null || id.isBlank() || rule == null || rule.isBlank()) {
+            return "Error: id and rule are required";
+        }
+        JsonObject rejected = facade != null
+                ? facade.confirm(ToolConfirms.chaos("change", facade.getSelectedIntegrationName(), id, rule)) : null;
+        if (rejected != null) {
+            return Jsoner.serialize(rejected);
+        }
+        return executeShared("chaos_change", Map.of("id", id, "rule", rule));
     }
 
     String callUpdateRow(Map<String, Object> args) {

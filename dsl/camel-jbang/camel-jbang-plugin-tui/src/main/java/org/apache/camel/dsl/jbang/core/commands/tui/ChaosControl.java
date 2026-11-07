@@ -65,7 +65,10 @@ final class ChaosControl {
         CHANGE,
         REMOVE,
         CLEAR,
-        RESET
+        RESET,
+        // the chaos the user wants, in their own words, for the AI panel to turn into rules (not sent to the
+        // integration)
+        DESCRIBE
     }
 
     private final MonitorContext ctx;
@@ -87,6 +90,8 @@ final class ChaosControl {
     private String resultTitle;
     private final List<String> resultLines = new ArrayList<>();
     private boolean resultError;
+    // the integration the user describes the chaos for
+    private IntegrationInfo describing;
 
     ChaosControl(MonitorContext ctx) {
         this(ctx, null, ChaosRecipes::load);
@@ -200,6 +205,12 @@ final class ChaosControl {
             ask(Command.RESET);
             return true;
         }
+        if (ke.isChar('d') && ctx.askAiCallback != null) {
+            // the chaos the user wants in their own words, which the AI turns into rules, checks and adds (CAMEL-26721)
+            describing = info;
+            openInput(Command.DESCRIBE, "");
+            return true;
+        }
         return false;
     }
 
@@ -260,7 +271,13 @@ final class ChaosControl {
             close();
         } else if (ke.isConfirm()) {
             String text = input.text().strip();
-            if (!text.isEmpty()) {
+            if (!text.isEmpty() && command == Command.DESCRIBE) {
+                // the AI panel asks right away: the user typed the request and pressed Enter; the rules it makes are
+                // added only through the add tool, which asks the user first
+                IntegrationInfo info = describing;
+                close();
+                ctx.askAiCallback.askNow(ChaosAiPrompt.ofRequest(info, text));
+            } else if (!text.isEmpty()) {
                 rule = text;
                 ask(command);
             }
@@ -310,6 +327,7 @@ final class ChaosControl {
         step = Step.NONE;
         input = null;
         form = null;
+        describing = null;
     }
 
     /** The request of the chaos action for the command, as {@code camel cmd chaos-*} sends it. */
@@ -376,6 +394,8 @@ final class ChaosControl {
             case REMOVE -> "Removed chaos rule " + id;
             case CLEAR -> "Removed all chaos rules";
             case RESET -> "New chaos experiment: no rules, a new report";
+            // never sent to the integration
+            case DESCRIBE -> "";
         };
         if (reply.get("warnings") instanceof List<?> warnings && !warnings.isEmpty()) {
             List<String> lines = new ArrayList<>();
@@ -424,9 +444,16 @@ final class ChaosControl {
     void render(Frame frame, Rect area) {
         switch (step) {
             case RECIPES -> form.render(frame, area);
-            case INPUT -> DialogHelper.renderInputDialog(frame, area,
-                    command == Command.CHANGE ? "Change chaos rule " + id : "Add a chaos rule to " + name, input,
-                    "endpoint=kafka:orders* error rate=0.1 until=5m");
+            case INPUT -> {
+                if (command == Command.DESCRIBE) {
+                    DialogHelper.renderInputDialog(frame, area, "Describe the chaos you want in " + name, input,
+                            "the order route fails 5% of the time, or when the country is Spain");
+                } else {
+                    DialogHelper.renderInputDialog(frame, area,
+                            command == Command.CHANGE ? "Change chaos rule " + id : "Add a chaos rule to " + name, input,
+                            "endpoint=kafka:orders* error rate=0.1 until=5m");
+                }
+            }
             case CONFIRM -> DialogHelper.renderConfirm(frame, area, title(), question(), detail(), "y", "yes", null, null);
             case RESULT -> renderResult(frame, area);
             default -> {
@@ -442,6 +469,7 @@ final class ChaosControl {
             case REMOVE -> "Remove Chaos Rule";
             case CLEAR -> "Clear Chaos Rules";
             case RESET -> "New Chaos Experiment";
+            case DESCRIBE -> "Describe the Chaos";
         };
     }
 
@@ -453,6 +481,7 @@ final class ChaosControl {
             case REMOVE -> "Remove chaos rule " + id + " from " + name + "?";
             case CLEAR -> "Remove all chaos rules from " + name + "? The report keeps what they did";
             case RESET -> "Start a new chaos experiment in " + name + "? No rules, and a new report (same seed)";
+            case DESCRIBE -> "Ask the AI to turn this into chaos rules?";
         };
     }
 
@@ -501,7 +530,7 @@ final class ChaosControl {
         switch (step) {
             case RECIPES -> form.renderFooter(spans);
             case INPUT -> {
-                TuiHelper.hint(spans, "Enter", "confirm");
+                TuiHelper.hint(spans, "Enter", command == Command.DESCRIBE ? "ask the AI" : "confirm");
                 TuiHelper.hint(spans, "Esc", "cancel");
             }
             case CONFIRM -> {
@@ -518,6 +547,9 @@ final class ChaosControl {
                     TuiHelper.hint(spans, "c", "clear");
                 }
                 TuiHelper.hint(spans, "R", "new experiment");
+                if (ctx.askAiCallback != null) {
+                    TuiHelper.hint(spans, "d", "describe with AI");
+                }
             }
         }
     }

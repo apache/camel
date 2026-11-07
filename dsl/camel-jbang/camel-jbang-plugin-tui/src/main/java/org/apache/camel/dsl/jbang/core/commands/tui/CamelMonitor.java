@@ -601,6 +601,14 @@ public class CamelMonitor extends CamelCommand {
             public void ask(String question) {
                 openAiWithQuestion(dir -> question);
             }
+
+            @Override
+            public void askNow(String question) {
+                if (shellPanel.isOpen()) {
+                    shellPanel.close();
+                }
+                aiPanel.askNow(question);
+            }
         };
         ctx.projectOverviewCallback = () -> {
             if (shellPanel.isOpen()) {

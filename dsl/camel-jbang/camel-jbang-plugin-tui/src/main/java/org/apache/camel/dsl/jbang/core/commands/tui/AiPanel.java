@@ -598,6 +598,17 @@ class AiPanel {
         inputLine.replace(question);
     }
 
+    /**
+     * Opens the panel and sends the question, which the user typed and confirmed on a screen. While the panel answers
+     * another question, or asks about an edit, the question waits in the input for the user to send.
+     */
+    void askNow(String question) {
+        openWithQuestion(question);
+        if (!thinking.get() && editQuestionHandler == null && activeCliCommand == null) {
+            submitInput();
+        }
+    }
+
     boolean isAskingAboutEdit() {
         return editQuestionHandler != null;
     }
