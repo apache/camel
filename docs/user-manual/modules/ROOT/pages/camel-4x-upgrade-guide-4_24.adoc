@@ -314,6 +314,13 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
 
+=== camel-core - Loop EIP breakOnShutdown
+
+The Loop EIP with `breakOnShutdown` now only breaks out when the route (or Camel) is stopped, and no longer on suspend.
+A suspend waits for the loop like any other inflight exchange. A loop that never ends on its own (such as a
+`doWhile` with `breakOnShutdown`) is therefore no longer broken at once by a suspend: the suspend waits until the
+shutdown timeout, and the forced suspend then breaks the loop and stops the consumer of the route.
+
 === camel-core - doFinally runs all its steps after a called route handled a failure
 
 When a `doTry` calls a route (such as with `direct`) whose error handler handles a failure (a dead letter channel or a
