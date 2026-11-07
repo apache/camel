@@ -363,7 +363,7 @@ class ErrorsTab extends AbstractTableTab {
 
             rows.add(Row.from(
                     // short, as on the Activity tab, so MESSAGE has room; the detail below has the full id
-                    Cell.from(ActivityTab.shortExchangeId(ei.exchangeId != null ? ei.exchangeId : "")),
+                    Cell.from(shortExchangeId(ei.exchangeId != null ? ei.exchangeId : "")),
                     Cell.from(ago),
                     Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
@@ -893,6 +893,22 @@ class ErrorsTab extends AbstractTableTab {
                 diagram.endLoad();
             }
         });
+    }
+
+    /**
+     * The part of an exchange id that tells the exchanges apart: Camel ids are the context's prefix and a counter
+     * (AD50EEC2B14A8A3-0000000000000001), so the counter without its leading zeros (…-1). The detail shows the full id.
+     */
+    static String shortExchangeId(String id) {
+        if (id == null) {
+            return "";
+        }
+        int dash = id.lastIndexOf('-');
+        if (dash < 0 || dash == id.length() - 1) {
+            return id;
+        }
+        String counter = id.substring(dash + 1).replaceFirst("^0+(?=.)", "");
+        return id.substring(0, Math.min(dash, 6)) + "…-" + counter;
     }
 
     @Override

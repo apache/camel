@@ -111,7 +111,6 @@ class IntegrationInfo {
     final List<KafkaConsumerInfo> kafkaConsumers = new ArrayList<>();
     int errorCount;
     volatile List<ErrorInfo> errors = new ArrayList<>();
-    volatile List<ActivityEntry> activity = List.of();
     boolean inflightBrowseEnabled;
     final List<InflightInfo> inflightExchanges = new ArrayList<>();
     final List<MicrometerMeterInfo> meters = new ArrayList<>();

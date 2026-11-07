@@ -270,7 +270,7 @@ class TabRegistryTest {
         assertEquals(0, TabRegistry.TAB_OVERVIEW, "TAB_OVERVIEW should be 0");
         assertEquals(1, TabRegistry.TAB_SOURCE, "TAB_SOURCE should be 1");
         assertEquals(2, TabRegistry.TAB_LOG, "TAB_LOG should be 2");
-        assertEquals(3, TabRegistry.TAB_ACTIVITY, "TAB_ACTIVITY should be 3");
+        assertEquals(3, TabRegistry.TAB_TIMELINE, "TAB_TIMELINE should be 3");
         assertEquals(4, TabRegistry.TAB_DIAGRAM, "TAB_DIAGRAM should be 4");
         assertEquals(5, TabRegistry.TAB_ROUTES, "TAB_ROUTES should be 5");
         assertEquals(6, TabRegistry.TAB_ENDPOINTS, "TAB_ENDPOINTS should be 6");
@@ -293,7 +293,7 @@ class TabRegistryTest {
     @Test
     void tabConstantsAreUnique() {
         int[] tabs = {
-                TabRegistry.TAB_OVERVIEW, TabRegistry.TAB_LOG, TabRegistry.TAB_ACTIVITY,
+                TabRegistry.TAB_OVERVIEW, TabRegistry.TAB_LOG, TabRegistry.TAB_TIMELINE,
                 TabRegistry.TAB_DIAGRAM, TabRegistry.TAB_ROUTES, TabRegistry.TAB_ENDPOINTS,
                 TabRegistry.TAB_SOURCE, TabRegistry.TAB_HISTORY, TabRegistry.TAB_ERRORS,
                 TabRegistry.TAB_MORE
@@ -310,7 +310,7 @@ class TabRegistryTest {
     void allTabIndicesAreNonNegative() {
         assertTrue(TabRegistry.TAB_OVERVIEW >= 0, "TAB_OVERVIEW should be non-negative");
         assertTrue(TabRegistry.TAB_LOG >= 0, "TAB_LOG should be non-negative");
-        assertTrue(TabRegistry.TAB_ACTIVITY >= 0, "TAB_ACTIVITY should be non-negative");
+        assertTrue(TabRegistry.TAB_TIMELINE >= 0, "TAB_TIMELINE should be non-negative");
         assertTrue(TabRegistry.TAB_DIAGRAM >= 0, "TAB_DIAGRAM should be non-negative");
         assertTrue(TabRegistry.TAB_ROUTES >= 0, "TAB_ROUTES should be non-negative");
         assertTrue(TabRegistry.TAB_ENDPOINTS >= 0, "TAB_ENDPOINTS should be non-negative");
@@ -324,7 +324,7 @@ class TabRegistryTest {
     void allTabIndicesAreLessThanNumTabs() {
         assertTrue(TabRegistry.TAB_OVERVIEW < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_LOG < TabRegistry.NUM_TABS);
-        assertTrue(TabRegistry.TAB_ACTIVITY < TabRegistry.NUM_TABS);
+        assertTrue(TabRegistry.TAB_TIMELINE < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_DIAGRAM < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ROUTES < TabRegistry.NUM_TABS);
         assertTrue(TabRegistry.TAB_ENDPOINTS < TabRegistry.NUM_TABS);

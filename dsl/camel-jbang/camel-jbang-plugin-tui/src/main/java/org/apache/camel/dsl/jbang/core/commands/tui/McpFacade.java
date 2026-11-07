@@ -212,7 +212,7 @@ class McpFacade {
     }
 
     static final String[] TAB_NAMES = {
-            "Overview", "Source", "Log", "Activity", "Diagram",
+            "Overview", "Source", "Log", "Timeline", "Diagram",
             "Routes", "Endpoints", "Inspect", "Errors", "More"
     };
 
