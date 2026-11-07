@@ -1793,11 +1793,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             }
             // a recover check of an earlier start may still run (a stop does not wait for it): two checks must not run
             // at the same time, as they share the exchanges in progress
+            LOG.trace("Starting recover check");
             if (!recoveryInProgress.compareAndSet(false, true)) {
                 LOG.debug("Skipping recover check as the previous recover check is still running");
                 return;
             }
-            LOG.trace("Starting recover check");
             try {
                 // copy the current in progress before doing scan
                 inProgressCompleteExchangesForRecoveryTask.clear();
