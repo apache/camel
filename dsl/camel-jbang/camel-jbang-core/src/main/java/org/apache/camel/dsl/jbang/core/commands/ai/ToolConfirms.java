@@ -316,7 +316,8 @@ public final class ToolConfirms {
     }
 
     /**
-     * The rules of a text with several separated by {@code ;}, as camel.chaos.rules: a {@code ;} in quotes does not.
+     * Splits a text with several rules separated by {@code ;}, as in camel.chaos.rules; a {@code ;} inside quotes does
+     * not split.
      */
     static List<String> splitRules(String text) {
         List<String> answer = new ArrayList<>();
