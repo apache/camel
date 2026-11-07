@@ -81,6 +81,9 @@ class ChaosVerdictTest {
         assertThat(ChaosVerdict.apply(report("{\"verdict\": \"PASS\", \"rules\": []}"), 0, printer)).isZero();
         assertThat(ChaosVerdict.apply(dir.resolve("missing.json"), 0, printer)).isZero();
         assertThat(ChaosVerdict.apply(report("not json"), 0, printer)).isZero();
-        assertThat(printer.getOutput()).isEmpty();
+        // a rule that is not an object, or an expectation that is not one, says nothing
+        assertThat(ChaosVerdict.apply(report("{\"verdict\": \"PASS\", \"rules\": [1, {\"expectation\": \"x\"}]}"), 0,
+                printer)).isZero();
+        assertThat(printer.getOutput()).doesNotContain("Chaos verdict");
     }
 }

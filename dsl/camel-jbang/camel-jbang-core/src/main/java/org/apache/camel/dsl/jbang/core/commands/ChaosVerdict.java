@@ -68,14 +68,15 @@ final class ChaosVerdict {
         int decided = 0;
         int cancelled = 0;
         for (Object o : rules) {
-            JsonObject expectation = (JsonObject) ((JsonObject) o).get("expectation");
-            if (expectation != null) {
-                String outcome = expectation.getString("outcome");
-                if ("cancelled".equals(outcome)) {
-                    cancelled++;
-                } else if ("met".equals(outcome) || "unmet".equals(outcome)) {
-                    decided++;
-                }
+            // a report written by another version, or by hand, may hold other values: those say nothing
+            if (!(o instanceof JsonObject rule) || !(rule.get("expectation") instanceof JsonObject expectation)) {
+                continue;
+            }
+            String outcome = expectation.getString("outcome");
+            if ("cancelled".equals(outcome)) {
+                cancelled++;
+            } else if ("met".equals(outcome) || "unmet".equals(outcome)) {
+                decided++;
             }
         }
         if (decided > 0) {
