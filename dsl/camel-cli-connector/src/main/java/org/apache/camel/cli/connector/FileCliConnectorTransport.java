@@ -90,7 +90,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
     private File errorFile;
     private File receiveFile;
     private long receiveFilePos; // keep track of receive offset
-    private File activityFile;
+    private File timelineFile;
 
     @Override
     public void configure(
@@ -132,7 +132,7 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             errorFile = createLockFile(lockFile.getName() + "-error.json");
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
-            activityFile = createLockFile(lockFile.getName() + "-activity.json");
+            timelineFile = createLockFile(lockFile.getName() + "-timeline.json");
             scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI connector enabled");
         } else {
@@ -426,16 +426,16 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
                     receiveFile, e.getMessage(), e);
         }
         try {
-            JsonObject json = snapshots.activity();
+            JsonObject json = snapshots.timeline();
             if (json != null) {
-                LOG.trace("Updating activity file: {}", activityFile);
+                LOG.trace("Updating timeline file: {}", timelineFile);
                 String data = json.toJson() + System.lineSeparator();
-                IOHelper.writeText(data, activityFile);
+                IOHelper.writeText(data, timelineFile);
             }
         } catch (Exception e) {
             // ignore
-            LOG.trace("Error updating activity file: {} due to: {}. This exception is ignored.",
-                    activityFile, e.getMessage(), e);
+            LOG.trace("Error updating timeline file: {} due to: {}. This exception is ignored.",
+                    timelineFile, e.getMessage(), e);
         }
     }
 
@@ -483,8 +483,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         if (receiveFile != null) {
             FileUtil.deleteFile(receiveFile);
         }
-        if (activityFile != null) {
-            FileUtil.deleteFile(activityFile);
+        if (timelineFile != null) {
+            FileUtil.deleteFile(timelineFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);

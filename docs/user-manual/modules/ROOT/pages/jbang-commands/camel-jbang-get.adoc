@@ -18,7 +18,6 @@ camel get [options]
 [cols="2,5",options="header"]
 |===
 | Subcommand | Description
-| xref:jbang-commands/camel-jbang-get-activity.adoc[activity] | Get recent completed exchange activity
 | xref:jbang-commands/camel-jbang-get-bean.adoc[bean] | List beans in a running Camel integration
 | xref:jbang-commands/camel-jbang-get-blocked.adoc[blocked] | Get blocked messages of Camel integrations
 | xref:jbang-commands/camel-jbang-get-chaos.adoc[chaos] | Get the chaos rules of running integrations, or their report (camel-chaos)
@@ -49,6 +48,7 @@ camel get [options]
 | xref:jbang-commands/camel-jbang-get-source.adoc[source] | Display Camel route source code
 | xref:jbang-commands/camel-jbang-get-sql-trace.adoc[sql-trace] | Get SQL query trace data
 | xref:jbang-commands/camel-jbang-get-startup-recorder.adoc[startup-recorder] | Display startup recording
+| xref:jbang-commands/camel-jbang-get-timeline.adoc[timeline] | Get what the routes did per second, the errors, and the failed and slowest exchanges
 | xref:jbang-commands/camel-jbang-get-transformer.adoc[transformer] | Get list of data type transformers
 | xref:jbang-commands/camel-jbang-get-variable.adoc[variable] | List variables of Camel integrations
 | xref:jbang-commands/camel-jbang-get-vault.adoc[vault] | List secrets from security vaults

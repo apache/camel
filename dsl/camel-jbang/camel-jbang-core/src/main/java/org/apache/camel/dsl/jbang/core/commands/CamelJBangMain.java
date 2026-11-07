@@ -343,7 +343,6 @@ public class CamelJBangMain implements Callable<Integer> {
         }
         if (shouldCreate(only, "get")) {
             commandLine.addSubcommand("get", new CommandLine(new CamelStatus(this))
-                    .addSubcommand("activity", new CommandLine(new ListActivity(this)))
                     .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
                     .addSubcommand("blocked", new CommandLine(new ListBlocked(this)))
                     .addSubcommand("chaos", new CommandLine(new ListChaos(this)))
@@ -374,6 +373,7 @@ public class CamelJBangMain implements Callable<Integer> {
                     .addSubcommand("source", new CommandLine(new CamelSourceAction(this)))
                     .addSubcommand("sql-trace", new CommandLine(new ListSqlTrace(this)))
                     .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
+                    .addSubcommand("timeline", new CommandLine(new ListTimeline(this)))
                     .addSubcommand("transformer", new CommandLine(new ListTransformer(this)))
                     .addSubcommand("variable", new CommandLine(new ListVariable(this)))
                     .addSubcommand("vault", new CommandLine(new ListVault(this))));

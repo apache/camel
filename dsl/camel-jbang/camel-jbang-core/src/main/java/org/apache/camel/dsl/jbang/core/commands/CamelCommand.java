@@ -232,8 +232,8 @@ public abstract class CamelCommand implements Callable<Integer> {
         return CommandLineHelper.getCamelDir().resolve(pid + "-history.json");
     }
 
-    public Path getActivityFile(String pid) {
-        return CommandLineHelper.getCamelDir().resolve(pid + "-activity.json");
+    public Path getTimelineFile(String pid) {
+        return CommandLineHelper.getCamelDir().resolve(pid + "-timeline.json");
     }
 
     protected Printer printer() {

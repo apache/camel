@@ -9,7 +9,7 @@ The `camel get` commands also accept `--watch` to refresh continuously and `--js
 TIP: The xref:camel-jbang-tui.adoc[Camel TUI] shows the same data in tabs, see
 xref:camel-jbang-tui-observe.adoc[Camel TUI Observing Integrations].
 
-== Errors and activity
+== Errors and timeline
 
 === Routing errors
 
@@ -42,19 +42,28 @@ and `--show` picks the sections (`body`, `headers`, `properties`, `variables`, `
 NOTE: The error registry is enabled by the `dev` profile, which `camel run` uses by default.
 For another profile, or for a Spring Boot or Quarkus application, set `camel.errorRegistry.enabled=true`.
 
-=== Recent activity
+=== Timeline
 
-`camel get activity` lists the most recently completed exchanges, with their route, status, elapsed time,
-the number of messages sent to endpoints, and the endpoint they came from:
+`camel get timeline` shows what each route did in the last minute: how many exchanges completed, were recovered by a
+redelivery, were handled by the error handler, or failed, the redelivery attempts, the mean and max time, and the
+exchanges per second as a sparkline:
 
 [source,bash]
 ----
-camel get activity
-camel get activity --filter=route1
-camel get activity --watch
+camel get timeline
+camel get timeline myApp --seconds=300 --filter=orders
+camel get timeline --errors
+camel get timeline --exchanges --sort=elapsed
+camel get timeline --watch
 ----
 
-Activity tracking is enabled by the `dev` profile.
+`--errors` lists the errors by route and exception, with the HTTP status code, and the camel-chaos rule that made an
+error. `--exchanges` lists the exchanges kept per second: the failed and handled ones and the 3 slowest, with their
+status (`OK`, `RECOVERED`, `HANDLED` or `FAILED`), elapsed time, and the number of calls to remote endpoints.
+
+The integration records the timeline itself, for the last 5 minutes, with the `timeline` dev console. It is on when
+the dev consoles are, as with the `dev` profile that `camel run` uses by default. The number of seconds is set with
+`camel.devConsole.timeline.seconds` (60 to 3600).
 
 === Inflight and blocked messages
 
