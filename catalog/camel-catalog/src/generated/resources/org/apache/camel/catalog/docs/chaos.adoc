@@ -257,7 +257,10 @@ of a scenario says which one it came from (`(scenario outage.chaos)` in the text
 The chaos screen of the Camel TUI saves the rules there are as a scenario (key `s`), with the seed: rules tried by hand
 become a file of the project, to run again. On its Errors tab, `!` makes a rule of a real error, which fails the same
 way again (the same exception and message at the same step, or the same HTTP status at the same endpoint, ten times):
-fix the bug, then prove the fix against the same failure, and keep the rule in a scenario.
+fix the bug, then prove the fix against the same failure, and keep the rule in a scenario. And `t` on a rule asks its
+AI panel to make a test of it: a JUnit test with `ChaosAssertions` for a Maven project, or a scenario with an
+expectation and the `camel run --chaos=<file> --max-seconds=<seconds>` command, whose exit code is the verdict, for a
+folder that runs with `camel run`.
 
 == Rules
 
