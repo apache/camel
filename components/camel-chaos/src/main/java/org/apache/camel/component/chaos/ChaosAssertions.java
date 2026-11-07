@@ -17,6 +17,7 @@
 package org.apache.camel.component.chaos;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.json.JsonArray;
@@ -138,7 +139,8 @@ public final class ChaosAssertions {
     }
 
     /**
-     * Asserts that a rule fired at least so many faults.
+     * Asserts that a rule fired at least so many faults, as the report says now: it does not wait, so send the messages
+     * first (a fault fires as a message is sent).
      *
      * @param camelContext the context, with chaos switched on
      * @param ruleId       the id of the rule, such as {@code r1}
@@ -161,7 +163,7 @@ public final class ChaosAssertions {
     }
 
     private static void checkVerdict(ChaosReport report, String verdict) {
-        if (!report.getVerdict().equals(verdict)) {
+        if (!Objects.equals(verdict, report.getVerdict())) {
             throw new AssertionError(
                     "The chaos verdict is " + report.getVerdict() + ", expected " + verdict
                                      + (report.getReasons().isEmpty() ? "" : ": " + String.join("; ", report.getReasons()))
@@ -172,10 +174,11 @@ public final class ChaosAssertions {
     /** The latest version of a rule in the report. */
     private static JsonObject rule(ChaosReport report, String ruleId) {
         // the report lists the versions of an id from the latest
-        for (Object o : (JsonArray) report.toJson().get("rules")) {
-            JsonObject rule = (JsonObject) o;
-            if (ruleId.equals(rule.getString("id"))) {
-                return rule;
+        if (report.toJson().get("rules") instanceof JsonArray rules) {
+            for (Object o : rules) {
+                if (o instanceof JsonObject rule && ruleId.equals(rule.getString("id"))) {
+                    return rule;
+                }
             }
         }
         throw new AssertionError("There is no chaos rule " + ruleId + "\n" + report.toText());
