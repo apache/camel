@@ -54,6 +54,8 @@ final class ChaosControl {
         NONE,
         // the known rules to pick from, and the form of the one picked
         RECIPES,
+        // what to try, the rules the integration suggests (null while it is asked)
+        SUGGEST,
         INPUT,
         CONFIRM,
         RESULT
@@ -79,6 +81,7 @@ final class ChaosControl {
     private ChaosRecipes recipes;
     private boolean recipesLoaded;
     private ChaosRecipeForm form;
+    private volatile ChaosSuggestList suggestions;
     // set by the background task that sends the action, read when the screen is drawn
     private volatile Step step = Step.NONE;
     private Command command;
@@ -117,7 +120,7 @@ final class ChaosControl {
 
     boolean isTextInputActive() {
         // the list of known rules takes the keys too, so a digit or a letter does not leave the screen
-        return step == Step.INPUT || step == Step.RECIPES;
+        return step == Step.INPUT || step == Step.RECIPES || step == Step.SUGGEST;
     }
 
     boolean isConfirming() {
@@ -139,6 +142,9 @@ final class ChaosControl {
         switch (step) {
             case RECIPES -> {
                 return handleRecipeKey(ke);
+            }
+            case SUGGEST -> {
+                return handleSuggestKey(ke);
             }
             case INPUT -> {
                 return handleInputKey(ke);
@@ -205,6 +211,11 @@ final class ChaosControl {
             ask(Command.RESET);
             return true;
         }
+        if (ke.isChar('w')) {
+            // what to try: the rules the integration suggests from what its routes do (CAMEL-26727)
+            askWhatToTry();
+            return true;
+        }
         if (ke.isChar('d') && ctx.askAiCallback != null) {
             // the chaos the user wants in their own words, which the AI turns into rules, checks and adds (CAMEL-26721)
             describing = info;
@@ -234,6 +245,61 @@ final class ChaosControl {
         } else {
             openInput(Command.ADD, target.rulePrefix());
         }
+    }
+
+    /** Asks the integration what to try, in the background; the list shows when it answers. */
+    private void askWhatToTry() {
+        suggestions = null;
+        step = Step.SUGGEST;
+        JsonObject request = new JsonObject();
+        request.put("action", "chaos");
+        request.put("command", "suggest");
+        String target = pid;
+        String of = name;
+        Runnable task = () -> {
+            JsonObject reply = sender != null ? sender.apply(request) : ctx.executeAction(target, request, 5000);
+            if (step != Step.SUGGEST) {
+                // closed while it was asked
+                return;
+            }
+            if (reply == null || reply.getString("error") != null) {
+                step = Step.NONE;
+                resultLines.clear();
+                rule = null;
+                command = Command.ADD;
+                result("What to try", true, reply == null
+                        ? "The integration " + of + " did not answer"
+                        : reply.getString("error"));
+                return;
+            }
+            suggestions = new ChaosSuggestList(of, reply);
+        };
+        if (sender != null) {
+            task.run();
+        } else {
+            ctx.backgroundExecutor.execute(task);
+        }
+    }
+
+    private boolean handleSuggestKey(KeyEvent ke) {
+        ChaosSuggestList list = suggestions;
+        if (list == null) {
+            if (ke.isCancel()) {
+                close();
+            }
+            return true;
+        }
+        switch (list.handleKey(ke)) {
+            case CLOSED -> close();
+            case PICKED -> {
+                id = null;
+                openInput(Command.ADD, list.selected().rule());
+            }
+            default -> {
+                // the list used the key
+            }
+        }
+        return true;
     }
 
     private ChaosRecipes knownRules() {
@@ -319,6 +385,10 @@ final class ChaosControl {
             // the form goes back to the list, the list closes
             return handleRecipeKey(KeyEvent.ofKey(KeyCode.ESCAPE));
         }
+        if (step == Step.SUGGEST) {
+            close();
+            return true;
+        }
         close();
         return true;
     }
@@ -327,6 +397,7 @@ final class ChaosControl {
         step = Step.NONE;
         input = null;
         form = null;
+        suggestions = null;
         describing = null;
     }
 
@@ -444,6 +515,15 @@ final class ChaosControl {
     void render(Frame frame, Rect area) {
         switch (step) {
             case RECIPES -> form.render(frame, area);
+            case SUGGEST -> {
+                ChaosSuggestList list = suggestions;
+                if (list != null) {
+                    list.render(frame, area);
+                } else {
+                    DialogHelper.renderConfirm(frame, area, "What to Try", "Asking " + name + " what to try...", null,
+                            "Esc", "cancel", null, null);
+                }
+            }
             case INPUT -> {
                 if (command == Command.DESCRIBE) {
                     DialogHelper.renderInputDialog(frame, area, "Describe the chaos you want in " + name, input,
@@ -529,6 +609,14 @@ final class ChaosControl {
     void renderFooter(List<Span> spans, boolean hasRules) {
         switch (step) {
             case RECIPES -> form.renderFooter(spans);
+            case SUGGEST -> {
+                ChaosSuggestList list = suggestions;
+                if (list != null) {
+                    list.renderFooter(spans);
+                } else {
+                    TuiHelper.hint(spans, "Esc", "cancel");
+                }
+            }
             case INPUT -> {
                 TuiHelper.hint(spans, "Enter", command == Command.DESCRIBE ? "ask the AI" : "confirm");
                 TuiHelper.hint(spans, "Esc", "cancel");
@@ -541,6 +629,7 @@ final class ChaosControl {
             default -> {
                 TuiHelper.hint(spans, "Esc", "back");
                 TuiHelper.hint(spans, "a", "add");
+                TuiHelper.hint(spans, "w", "what to try");
                 if (hasRules) {
                     TuiHelper.hint(spans, "e", "change");
                     TuiHelper.hint(spans, "x", "remove");

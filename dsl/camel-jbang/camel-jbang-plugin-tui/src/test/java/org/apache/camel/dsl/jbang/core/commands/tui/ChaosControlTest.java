@@ -222,11 +222,47 @@ class ChaosControlTest {
     }
 
     @Test
+    void whatToTryListsTheSuggestionsAndTypesThePickedOneIn() throws Exception {
+        reply = (JsonObject) Jsoner.deserialize("""
+                {"suggestions": [
+                  {"route": "orders", "kind": "errors", "recipe": "http-error", "title": "Returns an error (HTTP status)",
+                   "rule": "endpoint=http://stock/check error status=503 rate=0.25 until=10m",
+                   "why": "an HTTP call to http://stock/check without a circuit breaker"},
+                  {"route": "shipping", "kind": "dead letter channel", "recipe": "dlq-unreachable",
+                   "title": "The dead letter channel is unreachable", "rule": "endpoint=seda:dlq error at=dlq",
+                   "why": "route shipping sends what fails to the dead letter channel seda:dlq"}]}
+                """);
+        key('w');
+        assertThat(requests).singleElement().satisfies(r -> assertThat(r.getString("command")).isEqualTo("suggest"));
+        String screen = TuiTestHelper.renderToString(tab, 160, 40);
+        assertThat(screen).contains("What to try in chaosdemo").contains("Returns an error (HTTP status)")
+                .contains("without a circuit breaker").contains("The dead letter channel is unreachable");
+
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
+        enter();
+        assertThat(tab.isTextInputActive()).isTrue();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Add a chaos rule to chaosdemo")
+                .contains("endpoint=seda:dlq error at=dlq");
+        // only added after Enter and the confirmation
+        assertThat(requests).hasSize(1);
+    }
+
+    @Test
+    void whatToTryWithNothingToSuggest() throws Exception {
+        reply = (JsonObject) Jsoner.deserialize("{\"suggestions\": []}");
+        key('w');
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Nothing to suggest");
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        assertThat(tab.control().isOpen()).isFalse();
+    }
+
+    @Test
     void theFooterHasTheKeys() {
         List<Span> footer = new ArrayList<>();
         tab.renderFooter(footer);
         assertThat(footer.stream().map(Span::content).reduce("", String::concat))
-                .contains("add").contains("change").contains("remove").contains("clear").contains("new experiment");
+                .contains("add").contains("what to try").contains("change").contains("remove").contains("clear")
+                .contains("new experiment");
         key('x');
         footer.clear();
         tab.renderFooter(footer);

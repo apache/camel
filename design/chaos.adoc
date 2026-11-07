@@ -392,6 +392,10 @@ of an exchange in the route measured by chaos through `TimeSource` (from enterin
 - A `chaos` dev console lists the rules and shows the report, so it is `@DevConsole(readOnly = true)`. It does not add,
   change or remove: the flag is metadata only, and `/q/dev/*` (`ManagementHttpServer`) takes GET and POST with the
   options in the query string, without checking it. So over HTTP chaos only lists and reports.
+- What to try (stage 2, CAMEL-26727): `ChaosManager.suggest()` and `camel cmd chaos-suggest` suggest rules per route
+  from the running routes (their sends, circuit breakers, dead letter channel, input and hand-offs), each a recipe of
+  the chaos model with its target filled in and why. The About screen hints (CAMEL-26716) are meant to be one shared
+  rule set; these facts come from the running context, and can become the chaos part of that set.
 - A `chaos` action of the CLI connector (`LocalCliConnector`) adds, changes and removes rules through the
   `ChaosManager`. The CLI has the flat verb-noun shape of every `camel cmd` today (`stop-route`, `stub`), with the
   reads under `camel get` (as `camel get circuit-breaker`): `camel cmd chaos-add`, `chaos-change`, `chaos-remove`,

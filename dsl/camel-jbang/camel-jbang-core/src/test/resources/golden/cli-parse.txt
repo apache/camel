@@ -519,10 +519,15 @@
   (defaults)
 > cmd chaos-add --rule v
   cmd:helpRequested=false
+  dryRun=false
   helpRequested=false
   name=null
   rules=["v"]
   timeoutOption.timeout=10000
+> cmd chaos-add --rule v --dry-run
+  dryRun=true
+> cmd chaos-add --rule v --dry-run=false
+  (defaults)
 > cmd chaos-add --rule v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-change --id v --rule v
@@ -553,6 +558,13 @@
   name=null
   timeoutOption.timeout=10000
 > cmd chaos-remove --id v --timeout 7
+  timeoutOption.timeout=7
+> cmd chaos-suggest
+  cmd:helpRequested=false
+  helpRequested=false
+  name=null
+  timeoutOption.timeout=10000
+> cmd chaos-suggest --timeout 7
   timeoutOption.timeout=7
 > cmd disable-processor
   cmd:helpRequested=false

@@ -23,6 +23,7 @@ camel cmd [options]
 | xref:jbang-commands/camel-jbang-cmd-chaos-change.adoc[chaos-change] | Change a chaos rule of a running integration (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-chaos-clear.adoc[chaos-clear] | Remove all chaos rules of running integrations (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-chaos-remove.adoc[chaos-remove] | Remove a chaos rule of a running integration (camel-chaos, for development only)
+| xref:jbang-commands/camel-jbang-cmd-chaos-suggest.adoc[chaos-suggest] | Suggest chaos rules to try in a running integration, per route (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-disable-processor.adoc[disable-processor] | Disable Camel processor
 | xref:jbang-commands/camel-jbang-cmd-enable-processor.adoc[enable-processor] | Enable Camel processor
 | xref:jbang-commands/camel-jbang-cmd-gc.adoc[gc] | Trigger Java Memory Garbage Collector

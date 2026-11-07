@@ -33,8 +33,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * camel cmd chaos-add, chaos-change, chaos-remove and chaos-clear: the chaos action they send, what they print, and
- * that a refused rule is an error with the reason of the integration.
+ * camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear and chaos-suggest: the chaos action they send, what they
+ * print, and that a refused rule is an error with the reason of the integration.
  */
 @ExtendWith(MockitoExtension.class)
 class CamelChaosActionTest extends ActionCommandTestSupport {
@@ -94,6 +94,33 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                 command(new CamelChaosAddAction(main()), "orders", "--rule=endpoint=* drop"), answer))
                 .isInstanceOf(CliException.class)
                 .hasMessageStartingWith("Chaos is off in this integration");
+    }
+
+    @Test
+    void suggestPrintsWhatToTryWithTheCommandThatAddsIt() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject suggestion = new JsonObject(
+                Map.of("route", "orders", "kind", "errors", "recipe", "http-error",
+                        "title", "Returns an error (HTTP status)",
+                        "rule", "endpoint=http://stock/check error status=503 rate=0.25 until=10m",
+                        "why", "an HTTP call to http://stock/check without a circuit breaker: what does the route do when the"
+                               + " service answers 503?"));
+        JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(suggestion))));
+
+        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+
+        assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("suggest");
+        assertThat(printer.getLines()).contains("Chaos rules to try, the most worth trying first:",
+                "1. route orders: Returns an error (HTTP status) (errors)",
+                "camel cmd chaos-add --rule='endpoint=http://stock/check error status=503 rate=0.25 until=10m'");
+    }
+
+    @Test
+    void suggestSaysWhenThereIsNothingToTry() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"),
+                new JsonObject(Map.of("suggestions", new JsonArray())))).isZero();
+        assertThat(printer.getOutput()).startsWith("Nothing to suggest");
     }
 
     @Test

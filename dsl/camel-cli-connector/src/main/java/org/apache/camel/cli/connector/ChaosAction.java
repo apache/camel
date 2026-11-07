@@ -81,6 +81,12 @@ final class ChaosAction {
                 answer.put("version", 1);
                 descriptions(type, chaos, ids, answer);
                 warnings(type, chaos, ids, answer);
+            } else if ("suggest".equals(command)) {
+                // what to try: rules suggested per route from what the routes do (read only)
+                Method suggest = type.getMethod("suggest");
+                @SuppressWarnings("unchecked")
+                Map<String, Object> suggested = (Map<String, Object>) suggest.invoke(chaos);
+                answer.putAll(suggested);
             } else if ("check".equals(command)) {
                 if (isBlank(rule)) {
                     output.error("A rule is required");
@@ -122,7 +128,7 @@ final class ChaosAction {
                     answer.put("reset", true);
                 }
             } else {
-                output.error("Unknown chaos command: " + command + " (add, check, change, remove or clear)");
+                output.error("Unknown chaos command: " + command + " (add, check, change, remove, clear or suggest)");
                 return;
             }
         } catch (IllegalArgumentException | IllegalStateException e) {

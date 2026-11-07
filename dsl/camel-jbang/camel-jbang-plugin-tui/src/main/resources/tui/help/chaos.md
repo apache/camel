@@ -67,6 +67,11 @@ error handler (HAND) and the redeliveries (REDEL).
   the rule is shown as it is built. The last entry, "Write the rule
   yourself", types it as one line, such as
   `endpoint=kafka:orders* error rate=0.1 until=5m`
+- **w** — What to try: the integration suggests rules per route from what
+  its routes do (an HTTP call without a circuit breaker, a dead letter
+  channel, a hand-off over seda, an input from outside), the most worth
+  trying first, each with why. Enter types the selected rule in, to change
+  it or add it after you confirm
 - **e** — Change the selected rule: the line starts with the rule as it is
 - **x** — Remove the selected rule
 - **c** — Clear: remove all rules (the report keeps what they did)

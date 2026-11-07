@@ -321,6 +321,9 @@ values start with a default, and the rule is shown as it is built. The last entr
 (`endpoint=kafka:orders* error rate=0.1 until=5m`).
 +
 image::jbang/camel-tui-chaos-recipes.png[Adding a chaos rule from the known rules: the HTTP endpoint of the route is picked]
+* *w* shows what to try: the integration suggests rules per route from what its routes do, the most worth trying
+first, each with why (see the camel-chaos documentation, "What to try"). Enter types the selected rule in, to change
+or add.
 * *e* changes the selected rule, starting from the rule as it is.
 * *!* on the Endpoint tab, the Consumers tab or a node of the Diagram opens the known rules for what is selected, with
 it filled in: for a `to` or an endpoint the routes send to, the faults of that endpoint (an HTTP status only for an
