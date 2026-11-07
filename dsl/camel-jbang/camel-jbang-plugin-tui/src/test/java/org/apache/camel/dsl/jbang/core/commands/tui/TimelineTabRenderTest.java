@@ -272,6 +272,13 @@ class TimelineTabRenderTest {
         String orders = screen.lines().filter(l -> l.contains("orders") && l.contains("⚡")).findFirst().orElseThrow();
         assertThat(orders.chars().filter(c -> c == '▒').count()).isGreaterThanOrEqualTo(12);
         assertThat(screen.lines().filter(l -> l.contains("shipping")).findFirst().orElseThrow()).doesNotContain("▒");
+
+        // the same for an agent (tui_get_table)
+        JsonObject row = ((JsonArray) tab.getTableDataAsJson().get("rows")).stream().map(JsonObject.class::cast)
+                .filter(r -> "orders".equals(r.getString("route"))).findFirst().orElseThrow();
+        assertThat(row.getLong("circuitBreakerOpenSeconds")).isEqualTo(10);
+        JsonArray recorded = (JsonArray) ((JsonObject) row.get("perSecond")).get("circuitBreaker");
+        assertThat(recorded.stream().filter(v -> ((Number) v).longValue() == 2).count()).isEqualTo(10);
     }
 
     @Test

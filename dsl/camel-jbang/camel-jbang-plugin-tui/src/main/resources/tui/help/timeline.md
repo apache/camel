@@ -9,7 +9,10 @@ went to the dead letter channel, and it recovered by itself".
 The integration records the timeline itself, for the last 5 minutes (the
 `timeline` dev console, on with `camel run`), so the screen opens with
 the last minutes, also when the TUI was started after the integration.
-`camel get timeline` shows the same from the command line.
+When nothing happened in the last minute (an integration that did its
+work at startup), it opens on the window with the last exchange, and the
+title says how long ago that was. `camel get timeline` shows the same
+from the command line.
 
 ## Errors per second
 
@@ -69,11 +72,12 @@ slowest exchanges. The last line has the totals of the window.
 
 Paused, a cursor `▲` under the time axis picks a second (or a column of
 seconds). **Enter** lists the exchanges the integration kept of it: the
-failed and handled ones (up to 10 a second) and the 3 slowest, with their outcome,
-time and slowest call, and the chaos rule that faulted one. **Enter**
-again shows the selected exchange: its calls with their times and its
-exception. The title says how many exchanges were done then, of which
-these were kept.
+failed, handled and recovered ones (up to 10 a second) and the 3 slowest,
+with their outcome, time and slowest call, and the chaos rule that
+faulted one. **Enter** again shows the selected exchange: its calls with
+their times and its exception, or for a recovered one the failure it was
+redelivered for (`recovered after:`). The title says how many exchanges
+were done then, of which these were kept.
 
 ## Keys
 
@@ -92,5 +96,6 @@ these were kept.
 - **Shift+F8** — Explain with AI what happened, as cause and effect
 
 An AI can read the same per second series with `tui_get_table` on the
-Timeline tab, and the exchanges of the second at the cursor while the
-list is open.
+Timeline tab (with the causes, the seconds a route was down or its
+circuit breaker open, and when a route started, stopped or reloaded),
+and the exchanges of the second at the cursor while the list is open.
