@@ -572,6 +572,38 @@ public class RuntimeTools {
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  What happened per second in the last minutes (up to 5) of the running application: per route the \
+                  exchanges completed, recovered by a redelivery, handled by the error handler and failed, the mean, \
+                  p95 and max time, the exchanges in flight and the redelivery attempts; the errors per second by \
+                  route and exception (chaosRule names the camel-chaos rule that made one); and per second the failed, \
+                  handled and recovered exchanges (a recovered one with the failure it was redelivered for) and the 3 \
+                  slowest with the remote calls they made. Each series is oldest first and ends at \
+                  the epoch second end. Use it to tell when something went wrong and what it did to which route; \
+                  camel_runtime_chaos_report has the chaos rules.""")
+    public JsonObject camel_runtime_timeline(
+            @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The number of seconds (default 60, at most what the application records)",
+                     required = false) Integer seconds,
+            @ToolArg(description = "Route ID or pattern such as orders* (default all routes)",
+                     required = false) String routeId,
+            @ToolArg(description = "Include the failed, handled, recovered and slowest exchanges (default true)",
+                     required = false) Boolean exchanges) {
+        Map<String, String> args = new HashMap<>();
+        if (seconds != null) {
+            args.put("seconds", seconds.toString());
+        }
+        if (routeId != null && !routeId.isBlank()) {
+            args.put("routeId", routeId);
+        }
+        if (exchanges != null) {
+            args.put("exchanges", exchanges.toString());
+        }
+        return delegateToRegistry("get_timeline", nameOrPid, args);
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
           description = "Show top processor statistics: which processors are slowest and most active.")
     public JsonObject camel_runtime_top(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid) {
