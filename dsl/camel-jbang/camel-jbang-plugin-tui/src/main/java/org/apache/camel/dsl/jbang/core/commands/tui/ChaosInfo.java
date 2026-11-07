@@ -92,8 +92,21 @@ final class ChaosInfo {
         long lifecycleBackIn = -1;
         String lifecycleReason;
 
-        /** The target of the rule as it is written, such as {@code endpoint=kafka:orders*}. */
+        /**
+         * The target of the rule as it is written, such as {@code endpoint=kafka:orders*}, with the route it is
+         * narrowed to ({@code endpoint=http:* in=orders}).
+         */
         String target() {
+            String target = targetToken();
+            for (String token : tokens()) {
+                if (token.startsWith("in=")) {
+                    return target.isEmpty() ? token : target + " " + token;
+                }
+            }
+            return target;
+        }
+
+        private String targetToken() {
             for (String token : tokens()) {
                 if (token.startsWith("endpoint=") || token.startsWith("component=") || token.startsWith("route=")
                         || token.startsWith("step=")) {
@@ -105,14 +118,15 @@ final class ChaosInfo {
 
         /**
          * The fault of the rule with its parameters, as it is written, without the target and the options of the rule
-         * (at, rate, until, from, expect, within), such as {@code error status=503}.
+         * (at, in, rate, until, from, expect, within), such as {@code error status=503}.
          */
         String fault() {
             StringBuilder sb = new StringBuilder();
+            String target = targetToken();
             for (String token : tokens()) {
                 int eq = token.indexOf('=');
                 String key = eq > 0 ? token.substring(0, eq) : null;
-                if (token.equals(target()) || key != null && OPTIONS.contains(key)) {
+                if (token.equals(target) || key != null && OPTIONS.contains(key)) {
                     continue;
                 }
                 if (!sb.isEmpty()) {
@@ -228,7 +242,7 @@ final class ChaosInfo {
     }
 
     // the options of a rule besides its target and its fault
-    private static final List<String> OPTIONS = List.of("at", "rate", "until", "from", "expect", "within");
+    private static final List<String> OPTIONS = List.of("at", "in", "rate", "until", "from", "expect", "within");
 
     /** The counts of a route in the report. */
     record RouteCounts(String route, long completed, long failed, long failedKept, long handled, long redeliveries) {

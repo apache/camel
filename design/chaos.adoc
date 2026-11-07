@@ -228,9 +228,11 @@ poll rule for a consumer that does not poll on a schedule (Kafka, JMS), fires 0 
 - `endpoint=file:inbox* drop` (or `error`) fires at both hooks: a poll of the `file:inbox` consumer is skipped, and a
   send to `file:inbox` reports success without writing. `at=poll` or `at=send` keeps one. With `corrupt` the rule
   fires at the sends only.
-- `route=orders error` and `route=orders delay` are rejected: the entry of a route offers only `corrupt`. `route=`
-  does not reach the sends and steps of the route; they are targeted with `endpoint=`, `component=` or `step=`. One
-  kind of target per hook keeps a rule, and its counts in the report, in one kind of place.
+- `route=orders error` and `route=orders delay` fire once per exchange as it enters the route, and act at the first
+  step of the route, inside its error handler (stage 2, CAMEL-26718; stage 1 offered only `corrupt` at the entry).
+  `route=` does not reach the sends and steps of the route; they are targeted with `endpoint=`, `component=` or
+  `step=`, narrowed to the route with `in=orders`. One kind of target per hook keeps a rule, and its counts in the
+  report, in one kind of place.
 - `component=kafka` matches the sends to `kafka:` endpoints and the polls of its consumers (none: they do not poll
   on a schedule), not the entry of a route that starts from Kafka, which is `route=`.
 

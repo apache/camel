@@ -44,10 +44,11 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
     }
 
     /**
-     * Changes the message of an exchange as it enters the route ({@code onExchangeBegin}); the first rule that fires
-     * decides the fault. Counts the exchange when the route is done with it ({@code onExchangeDone}), while there are
-     * rules. camel-core calls both each time the exchange goes through the route, but an exchange meets the entry rules
-     * of a route, and counts in it, once (see {@link ChaosExchangeState}).
+     * Changes the message of an exchange as it enters the route ({@code onExchangeBegin}), or marks it for an error or
+     * a delay at the first step of the route, where the error handler of the route applies (see {@link ChaosStepHook});
+     * the first rule that fires decides the fault. Counts the exchange when the route is done with it
+     * ({@code onExchangeDone}), while there are rules. camel-core calls both each time the exchange goes through the
+     * route, but an exchange meets the entry rules of a route, and counts in it, once (see {@link ChaosExchangeState}).
      */
     static final class ChaosRoutePolicy extends RoutePolicySupport {
 
@@ -66,7 +67,15 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
             long now = TimeSource.currentTimeMillis();
             for (ChaosRule rule : rules) {
                 if (rule.live(now) && rule.matchesId(route.getRouteId()) && rule.fires(now)) {
-                    ChaosFaults.corrupt(rule, exchange, Hook.ENTRY, route.getRouteId(), null);
+                    if (rule.fault == ChaosRule.Fault.CORRUPT) {
+                        ChaosFaults.corrupt(rule, exchange, Hook.ENTRY, route.getRouteId(), null);
+                    } else {
+                        // the step hook fails or delays the exchange at the first step of the route
+                        rule.fired(Hook.ENTRY, exchange, route.getRouteId(), null);
+                        ChaosExchangeState state = ChaosExchangeState.of(exchange);
+                        state.entryFault = rule;
+                        state.entryRoute = route.getRouteId();
+                    }
                     return;
                 }
             }

@@ -98,7 +98,9 @@ final class ChaosModel {
                 }
                 case ROUTE -> {
                     jo.put("description", "A route id, with * for any characters; one route id (no pattern) for"
-                                          + " stall and lifecycle");
+                                          + " stall and lifecycle. Its exchanges are faulted as they enter: error and"
+                                          + " delay at the first step of the route, where its error handler applies;"
+                                          + " to reach the sends and steps of a route, use in= with another target");
                     jo.put("pattern", true);
                     jo.put("pick", "routes");
                 }
@@ -136,7 +138,8 @@ final class ChaosModel {
                               + " with at=reply)";
                 case DLQ -> "The send of the dead letter channel to a matching endpoint (only with at=dlq)";
                 case POLL -> "The polls of the scheduled poll consumers of the routes";
-                case ENTRY -> "Each exchange that enters a matching route, before the first step";
+                case ENTRY -> "Each exchange that enters a matching route, once: corrupt changes it before the first"
+                              + " step, error and delay act at the first step, inside the error handler of the route";
                 case STEP -> "Each matching step of a route, right before its processor is called";
             });
             jo.put("targets", new JsonArray(targets.getOrDefault(hook, List.of())));
@@ -295,6 +298,17 @@ final class ChaosModel {
                         hooks.add(hook.key);
                     }
                     p.put("enum", hooks);
+                    yield p;
+                }
+                case "in" -> {
+                    JsonObject p = param("in", "string", false,
+                            "Narrows the sends, replies, polls and steps of the target to a route id, with * for any"
+                                                                + " characters: the route of the exchange, not the routes"
+                                                                + " it calls; with at=poll the route whose consumer polls."
+                                                                + " Not with route=, stall or lifecycle",
+                            "orders");
+                    p.put("pattern", true);
+                    p.put("pick", "routes");
                     yield p;
                 }
                 case "rate" -> {
@@ -481,6 +495,30 @@ final class ChaosModel {
                                                                            + "one route is reloaded or redeployed",
                 "route=${route} lifecycle action=remove duration=${duration}",
                 List.of(route(), new Placeholder("duration", "duration", "How long it is gone", "30s", "30s", null))));
+        answer.add(new Recipe(
+                "route-error", "Consumers and routes", "The route fails",
+                "An exchange fails at the first step of the route, and the error handling of the "
+                                                                          + "route applies (onException, redelivery, the dead letter "
+                                                                          + "channel). When the route does not handle it, the consumer "
+                                                                          + "sees the failure: a JMS rollback, the file left in place, "
+                                                                          + "an HTTP 500",
+                "route=${route} error rate=${rate} until=${until}",
+                List.of(route(), rate("0.05"), until("10m"))));
+        answer.add(new Recipe(
+                "route-slow", "Consumers and routes", "The route is slow",
+                "Each exchange waits before the first step of the route. It waits on the thread "
+                                                                           + "of the consumer, so the consumer takes fewer messages",
+                "route=${route} delay duration=${duration} rate=${rate} until=${until}",
+                List.of(route(), new Placeholder(
+                        "duration", "duration", "The time, or a range of times", "500ms..2s",
+                        "500ms..2s", null), rate("0.25"), until("10m"))));
+        answer.add(new Recipe(
+                "route-sends-error", "Consumers and routes", "The sends of the route fail",
+                "Each send of the route (to, enrich, wireTap...) fails with a ChaosException at "
+                                                                                            + "the rate, whatever it sends to. The sends of the routes it "
+                                                                                            + "calls are not in it",
+                "endpoint=* in=${route} error at=send rate=${rate} until=${until}",
+                List.of(route(), rate("0.1"), until("10m"))));
         // error handling
         answer.add(new Recipe(
                 "dlq-unreachable", "Error handling", "The dead letter channel is unreachable",
@@ -663,6 +701,38 @@ final class ChaosModel {
                 List.of(
                         "The state of the route",
                         "The callers, and the queue in front of the route")));
+        answer.put("route-error", new Guide(
+                List.of(
+                        "A route without error handling, whose consumer then gets the failure: is that "
+                        + "what the sender expects (a rollback, a retry, an HTTP 500)?",
+                        "onException and redelivery that do not cover the route",
+                        "Callers of the route that do not handle its failure"),
+                List.of(
+                        "To fail one call of the route: use the sends of the route (in=) or a step instead"),
+                List.of(
+                        "The effect: recovered, handled and failed",
+                        "What the consumer does with a failed exchange, such as a message going back to "
+                                                                     + "the broker")));
+        answer.put("route-slow", new Guide(
+                List.of(
+                        "A consumer that falls behind, and the backlog in front of it",
+                        "Timeouts of the callers of the route",
+                        "How the route behaves with fewer messages per second"),
+                List.of(
+                        "On a route others call and wait for, unless their timeouts are the test"),
+                List.of(
+                        "The mean and the slowest time of the route",
+                        "The queue or the lag in front of the route")));
+        answer.put("route-sends-error", new Guide(
+                List.of(
+                        "Which calls of the route have no error handling of their own",
+                        "A route that goes on after a failed send, with half of its work done",
+                        "The error handler of the route against each kind of send"),
+                List.of(
+                        "When one call is the test: pick its endpoint instead of *"),
+                List.of(
+                        "The effect: recovered, handled and failed",
+                        "The sends of the route that failed, on the Routes tab")));
         answer.put("flap", new Guide(
                 List.of(
                         "Messages lost or delivered twice across a restart",

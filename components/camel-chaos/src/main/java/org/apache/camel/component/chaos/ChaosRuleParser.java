@@ -57,7 +57,7 @@ final class ChaosRuleParser {
 
     // the options of a rule besides the parameters of its fault: all of them for the faults at a hook, and those of a
     // stall or lifecycle rule, which acts on its route at no hook
-    static final Set<String> GENERAL_KEYS = Set.of("at", "rate", "until", "from", "expect", "within");
+    static final Set<String> GENERAL_KEYS = Set.of("at", "in", "rate", "until", "from", "expect", "within");
     static final Set<String> LIFECYCLE_KEYS = Set.of("from", "expect", "within");
     // the prefix of the response headers of error status=: header.<name>=<value>
     static final String HEADER_PREFIX = "header.";
@@ -232,6 +232,7 @@ final class ChaosRuleParser {
                                                + " to match the endpoint");
         }
         from(b, params.get("from"), maxDuration);
+        in(b, params.get("in"));
         if (b.fault == Fault.LIFECYCLE) {
             // stall and lifecycle act on the route: no hook, rate or until
             lifecycle(b, params, maxDuration);
@@ -773,9 +774,10 @@ final class ChaosRuleParser {
 
     /** What to use instead, when a target does not offer a fault at all. */
     private static String hint(Target target, Fault fault) {
-        if (target == Target.ROUTE) {
-            return "; route= does not reach the sends and steps of the route: target them with endpoint=,"
-                   + " component= or step=";
+        if (target == Target.ROUTE && (fault == Fault.DROP || fault == Fault.DUPLICATE)) {
+            return "; " + fault.key + " is a fault of the sends" + (fault == Fault.DROP ? " and polls" : "")
+                   + ": target the sends of the route with endpoint=* in=<route>, or one of them with endpoint=<uri>"
+                   + " in=<route>";
         }
         if (target == Target.STEP && fault == Fault.DROP) {
             return "; drop is a fault of the sends and polls: target them with endpoint= or component=";
@@ -812,7 +814,8 @@ final class ChaosRuleParser {
                 answer.put(Hook.DLQ, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP, Fault.CORRUPT));
                 answer.put(Hook.POLL, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.DROP));
             }
-            case ROUTE -> answer.put(Hook.ENTRY, EnumSet.of(Fault.CORRUPT));
+            // error and delay act at the first step of the route, inside its error handler
+            case ROUTE -> answer.put(Hook.ENTRY, EnumSet.of(Fault.ERROR, Fault.DELAY, Fault.CORRUPT));
             case STEP -> answer.put(Hook.STEP, EnumSet.of(Fault.ERROR, Fault.DELAY));
             default -> throw new IllegalStateException("Unknown target " + target);
         }
@@ -981,6 +984,29 @@ final class ChaosRuleParser {
                                                    + (b.from > 0 ? " after the start of the rule (from=)" : ""));
             }
         }
+    }
+
+    /**
+     * The routes a rule is narrowed to ({@code in=orders}, or a pattern such as {@code in=order*}): the sends, replies,
+     * steps and polls of its target in those routes only. A route is the target of {@code route=} already, and
+     * {@code stall} and {@code lifecycle} act on the route of their {@code route=}.
+     */
+    private static void in(ChaosRule.Builder b, String in) {
+        if (in == null) {
+            return;
+        }
+        if (b.fault == Fault.LIFECYCLE) {
+            String word = b.stall ? "stall" : "lifecycle";
+            throw new IllegalArgumentException(
+                    "in= narrows the sends and steps of a rule to a route, but the fault " + word
+                                               + " acts on the route of its route=<id>");
+        }
+        if (b.target == Target.ROUTE) {
+            throw new IllegalArgumentException(
+                    "in= narrows the sends and steps of endpoint=, component= and step= to a route, but route="
+                                               + b.pattern + " is a route already");
+        }
+        b.in = in;
     }
 
     /**

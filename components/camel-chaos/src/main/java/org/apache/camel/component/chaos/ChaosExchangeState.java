@@ -79,6 +79,10 @@ final class ChaosExchangeState implements SafeCopyProperty {
     boolean deadLetter;
     // chaos skipped the send the exchange is in (drop), so afterSend asks no rule with at=reply
     boolean skippedSend;
+    // a rule with route= that fired as the exchange entered its route (error or delay), which acts at the next step: the
+    // first step of the route, inside its error handler; and that route
+    ChaosRule entryFault;
+    String entryRoute;
     // the rule that failed or dropped that delivery, which loses the message when the dead letter channel then handles
     // it
     ChaosRule deadLetterFault;

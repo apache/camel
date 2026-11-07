@@ -132,6 +132,30 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void inNarrowsTheTargetToTheRoutes() {
+        ChaosRule.Builder send = parse("endpoint=http:* in=orders error status=503");
+        assertThat(send.in).isEqualTo("orders");
+        assertThat(send.hooks).containsExactlyInAnyOrder(Hook.SEND);
+        ChaosRule.Builder step = parse("step=* in=order* delay duration=500ms");
+        assertThat(step.in).isEqualTo("order*");
+        assertThat(step.hooks).containsExactly(Hook.STEP);
+        assertThat(parse("component=file in=inbox drop at=poll").in).isEqualTo("inbox");
+        assertThat(parse("endpoint=x error").in).isNull();
+    }
+
+    @Test
+    void errorAndDelayAtTheEntryOfARoute() {
+        ChaosRule.Builder error = parse("route=orders error exception=java.net.ConnectException rate=0.05");
+        assertThat(error.fault).isEqualTo(Fault.ERROR);
+        assertThat(error.hooks).containsExactly(Hook.ENTRY);
+        assertThat(error.exceptionType).isEqualTo(ConnectException.class);
+        ChaosRule.Builder delay = parse("route=order* delay duration=2s");
+        assertThat(delay.hooks).containsExactly(Hook.ENTRY);
+        assertThat(delay.duration).isEqualTo(2000L);
+        assertThat(parse("route=orders error after=1s at=entry").after).isEqualTo(1000L);
+    }
+
+    @Test
     void lifecycle() {
         ChaosRule.Builder stall = parse("route=poller stall duration=20s");
         assertThat(stall.fault).isEqualTo(Fault.LIFECYCLE);
@@ -296,11 +320,18 @@ class ChaosRuleParserTest {
             "endpoint=x error when=x|when= (a condition on the message) is not supported yet",
             "endpoint=x error action=stop|action= is a parameter of the fault lifecycle (route=<id> lifecycle action=",
             "component=kafka error status=503|(http, https, netty-http, undertow, vertx-http), not for kafka",
-            "route=orders error|route= does not reach the sends and steps of the route: target them with endpoint=,"
-                                                                                                               + " component= or step=",
+            "route=orders drop|drop is a fault of the sends and polls: target the sends of the route with endpoint=*"
+                                                                                                               + " in=<route>, or one of them with endpoint=<uri> in=<route>",
             "step=s1 drop|drop is a fault of the sends and polls: target them with endpoint= or component=",
             "step=s1 duplicate|duplicate is a fault of the sends: target them with endpoint= or component=",
-            "route=orders duplicate|route= does not reach the sends and steps of the route",
+            "route=orders duplicate|duplicate is a fault of the sends: target the sends of the route with endpoint=*",
+            "route=orders error status=503|status= is the failure of a send to an HTTP component, so it fires at the"
+                                                                                                                       + " sends of an endpoint= or component= target (not route=)",
+            "route=orders error in=orders|in= narrows the sends and steps of endpoint=, component= and step= to a route,"
+                                                                                                                                                                                     + " but route=orders is a route already",
+            "route=orders stall duration=1m in=orders|in= narrows the sends and steps of a rule to a route, but the"
+                                                                                                                                                                                                                               + " fault stall acts on the route of its route=<id>",
+            "route=orders lifecycle action=stop duration=1m in=x|but the fault lifecycle acts on the route of its route=<id>",
             "endpoint=x duplicate at=poll|the fault duplicate is not offered at=poll",
             "endpoint=x duplicate at=reply|the fault duplicate is not offered at=reply",
             "endpoint=x duplicate at=dlq|the fault duplicate is not offered at=dlq",
@@ -338,8 +369,7 @@ class ChaosRuleParserTest {
                                                                                    + " pattern",
             "route=orders stall error duration=1m|has one fault",
             "rate=1 duration=1m stall|needs a target",
-            "route=orders error|the fault error is not offered at any hook of the target route=",
-            "route=orders delay duration=1s|the hooks of route= are: at=entry offers corrupt",
+            "route=orders duplicate|the hooks of route= are: at=entry offers error, delay, corrupt",
             "route=orders drop|is not offered",
             "step=s1 drop|is not offered",
             "step=s1 corrupt mode=headers|is not offered",
@@ -508,8 +538,8 @@ class ChaosRuleParserTest {
 
     @Test
     void theReasonNamesTheRule() {
-        assertThatThrownBy(() -> parse("route=orders error"))
-                .hasMessageStartingWith("Invalid chaos rule [route=orders error]: ");
+        assertThatThrownBy(() -> parse("route=orders drop"))
+                .hasMessageStartingWith("Invalid chaos rule [route=orders drop]: ");
     }
 
     @Test
