@@ -36,3 +36,41 @@ mvn verify -Dollama.instance.type=openai -Dopenai.api.key=sk-...
 # enable GPU for the Ollama container
 mvn verify -Dollama.container.enable.gpu=enabled
 ```
+
+## Official MCP conformance suite
+
+```bash
+mvn verify -Poc
+```
+
+Runs `OfficialMcpConformanceIT`, which starts a Camel Main HTTP server with the tool
+routes required by each conformance scenario and executes:
+
+```
+npx @modelcontextprotocol/conformance server \
+    --url http://localhost:<port>/mcp \
+    --expected-failures src/test/resources/expected-failures.yaml
+```
+
+**Prerequisites:** Node.js ≥ 18 and npm registry access (the `@modelcontextprotocol/conformance`
+package is downloaded on the first run and cached by npm).
+
+Known gaps (features not yet implemented by Camel's MCP server) are listed in
+`src/test/resources/expected-failures.yaml` with a comment explaining the missing
+capability. Remove an entry from that file once the corresponding feature is implemented
+— the stale-baseline check will then enforce that the implementation actually passes.
+
+You can also enable the IT without the profile:
+
+```bash
+mvn verify -Dofficial-mcp-conformance
+```
+
+Or run a single scenario manually against a live server:
+
+```bash
+npx @modelcontextprotocol/conformance server \
+    --url http://localhost:8080/mcp \
+    --scenario tools-call-simple-text
+```
+

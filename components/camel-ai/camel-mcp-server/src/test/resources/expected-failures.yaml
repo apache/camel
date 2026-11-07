@@ -1,0 +1,90 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# MCP conformance baseline — known failures for the Camel Main HTTP MCP server
+#
+# Exit-code semantics (npx @modelcontextprotocol/conformance server --expected-failures):
+#   - Scenario in baseline AND fails  → exit 0  (expected failure, do not block CI)
+#   - Scenario in baseline AND passes → exit 1  (stale entry, remove it!)
+#   - Scenario NOT in baseline AND fails → exit 1  (unexpected regression, fix it!)
+#
+# When Camel gains a capability listed here, remove the corresponding line and
+# let the entry drive the fix (exit 1 = stale baseline).
+
+server:
+  # --- completion/complete endpoint (not yet implemented) ---
+  # Camel MCP server does not expose a completion/complete endpoint.
+  - completion-complete
+
+  # --- Tool content types beyond plain text (not yet implemented) ---
+  # Camel's MCP bridge wraps all tool results as plain TextContent. The conformance
+  # suite expects the server to return typed content (image, audio, embedded-resource)
+  # for these scenarios. Tracking issue: improve McpToolCallResult to support typed content.
+  - tools-call-image
+  - tools-call-audio
+  - tools-call-embedded-resource
+  - tools-call-mixed-content
+
+  # --- Server-to-client notifications during tool execution (not yet implemented) ---
+  # Progress notifications (notifications/progress) and log forwarding to the client
+  # during tool execution require reactive plumbing that is not yet wired.
+  - tools-call-with-logging
+  - tools-call-with-progress
+
+  # --- Client-side sampling (not yet implemented) ---
+  # The sampling/createMessage round-trip (server requests the client to call an LLM)
+  # is not yet implemented.
+  - tools-call-sampling
+
+  # --- Client-side elicitation (not yet implemented) ---
+  # The elicitation/create round-trip (server requests the user to fill in a form)
+  # is not yet implemented.
+  - tools-call-elicitation
+  - elicitation-sep1034-defaults
+  - elicitation-sep1330-enums
+
+  # --- resources/read (not yet implemented in the standard resource route) ---
+  # The conformance suite expects specific resources (test://static-text,
+  # test://static-binary) registered via the resources API. Camel's ai-resource routes
+  # expose resources but the bridge does not yet implement the resources/read dispatch
+  # required by these scenarios.
+  - resources-read-text
+  - resources-read-binary
+
+  # --- resources/templates (not yet implemented) ---
+  # URI template expansion (test://template/{id}/data) is not yet supported.
+  - resources-templates-read
+
+  # --- resources/subscribe and resources/unsubscribe (not yet implemented) ---
+  # The bridge does not yet track per-URI subscriptions or send update notifications.
+  - resources-subscribe
+  - resources-unsubscribe
+
+  # --- prompts/* (not yet implemented) ---
+  # Camel MCP server does not expose a prompts endpoint. Prompts are distinct from
+  # ai-tool and ai-resource routes and have no Camel DSL equivalent yet.
+  - prompts-list
+  - prompts-get-simple
+  - prompts-get-with-args
+  - prompts-get-embedded-resource
+  - prompts-get-with-image
+
+  # --- DNS rebinding protection (partial — one of two checks fails) ---
+  # Camel's HTTP server accepts requests with a valid localhost Host/Origin header,
+  # but does not yet reject requests with a non-localhost Host/Origin header.
+  # The passing check (valid-localhost-accepted) is NOT listed here (it already passes).
+  - dns-rebinding-protection
