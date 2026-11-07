@@ -1313,6 +1313,13 @@ class OverviewTab extends AbstractTab {
     @Override
     public void renderFooter(List<Span> spans) {
         hint(spans, "q", "quit");
+        if (showsAbout()) {
+            // the keys of the table do not apply to About
+            hint(spans, "4", "timeline");
+            hint(spans, "5", "diagram");
+            hint(spans, "v", "integrations");
+            return;
+        }
         if (ctx.selectedPid != null) {
             hint(spans, "Esc", "unselect");
         }
