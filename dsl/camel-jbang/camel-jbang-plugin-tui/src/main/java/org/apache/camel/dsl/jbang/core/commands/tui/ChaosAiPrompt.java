@@ -48,6 +48,106 @@ final class ChaosAiPrompt {
         return sb.toString();
     }
 
+    /** The most routes and sends quoted in a request, so a big integration does not flood it. */
+    static final int MAX_LISTED = 20;
+
+    /**
+     * The question for a request in the user's own words ({@code d} on the Chaos screen, CAMEL-26721), such as "the
+     * order route should fail 5% of the time": the request, the routes and the sends of the integration and its rules
+     * now, the rule syntax in short, and what to do - write the rules, check them with tui_chaos_check (which says what
+     * each would hit, in plain words), show them, and add them only with tui_chaos_add (or change one with
+     * tui_chaos_change), which ask the user first.
+     */
+    static String ofRequest(IntegrationInfo info, String request) {
+        return ofRequest(info, request, null);
+    }
+
+    /**
+     * The question for a request in the user's own words, with the known rules of camel-chaos (the recipes of the chaos
+     * model, a line each with its rule), which show the forms a short syntax leaves out: a timeout, a stalled route,
+     * the polls of a consumer, the dead letter channel.
+     *
+     * @param recipes the known rules, or null when the catalog has none
+     */
+    static String ofRequest(IntegrationInfo info, String request, ChaosRecipes recipes) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Turn my request into camel-chaos rules for the running integration ").append(name(info))
+                .append(" (development only, faults injected on purpose). My request: ").append(request.strip())
+                .append('\n');
+        int listed = 0;
+        StringBuilder routes = new StringBuilder();
+        for (RouteInfo route : info.routes) {
+            if (route.routeId != null && listed++ < MAX_LISTED) {
+                routes.append("  ").append(route.routeId);
+                if (route.from != null) {
+                    routes.append(" from ").append(route.from);
+                }
+                routes.append('\n');
+            }
+        }
+        if (!routes.isEmpty()) {
+            sb.append("Its routes:\n").append(routes);
+        }
+        // the endpoint a route consumes is not one of its sends (a send to it from another route is)
+        List<String> consumed = new ArrayList<>();
+        info.routes.forEach(r -> {
+            if (r.from != null && r.routeId != null) {
+                consumed.add(r.routeId + " " + sameUri(r.from));
+            }
+        });
+        List<String> sends = new ArrayList<>();
+        for (EndpointInfo endpoint : info.endpoints) {
+            if ("out".equals(endpoint.direction) && endpoint.uri != null && sends.size() < MAX_LISTED
+                    && !consumed.contains(endpoint.routeId + " " + sameUri(endpoint.uri))) {
+                String send = withoutQuery(endpoint.uri) + (endpoint.routeId != null ? " (from " + endpoint.routeId + ")" : "");
+                if (!sends.contains(send)) {
+                    sends.add(send);
+                }
+            }
+        }
+        if (!sends.isEmpty()) {
+            sb.append("It sends to:\n");
+            sends.forEach(s -> sb.append("  ").append(s).append('\n'));
+        }
+        ChaosInfo chaos = info.chaos;
+        if (chaos != null && !chaos.rules.isEmpty()) {
+            sb.append("Its chaos rules now, which are active already (add only new rules; change one of these with ")
+                    .append(TuiToolGroups.CHAOS_CHANGE_TOOL).append(" and its id):\n");
+            chaos.rules.forEach(r -> sb.append("  ").append(r.id).append(": ").append(r.text).append('\n'));
+        }
+        sb.append("A rule is one line: <target> <fault> [<parameter>=<value> ...] [<option>=<value> ...]. Targets:")
+                .append(" endpoint=<uri pattern>, component=<scheme>, route=<route id>, step=<step id>, with * for any")
+                .append(" characters. Faults: error (exception=<class>, message=, status=<http code> for http),")
+                .append(" delay (duration=500ms or 100ms..2s), drop, corrupt (mode=headers|charset|truncate|empty),")
+                .append(" duplicate, stall (route=, duration=). Options: rate=0.05 (or every:N), until=10m,")
+                .append(" in=<route id> for the sends and steps of a route, when=\"${header.country} == 'ES'\" for")
+                .append(" the messages that meet a condition (simple language). route=<id> error fails 5% of the")
+                .append(" exchanges of a route with rate=0.05; \"or\" is two rules. Each rule has its own rate: without")
+                .append(" rate= a rule fails every message it matches.\n");
+        if (recipes != null && !recipes.recipes().isEmpty()) {
+            sb.append("Known rules, with ${...} to fill in:\n");
+            recipes.recipes().forEach(r -> sb.append("  ").append(r.title()).append(": ").append(r.rule()).append('\n'));
+        }
+        sb.append("The routes and sends above are all you need: do not look around with other tools. First call ")
+                .append(TuiToolGroups.CHAOS_CHECK_TOOL).append(" with the rules (several separated by ;): it says each")
+                .append(" rule in plain words and what it would hit, or why it is not valid. Fix the rules until it")
+                .append(" accepts them and they hit what I asked for. Then show me each rule with its plain words and")
+                .append(" what it hits, and add them with ").append(TuiToolGroups.CHAOS_ADD_TOOL)
+                .append(" (or change a rule above with ").append(TuiToolGroups.CHAOS_CHANGE_TOOL)
+                .append("), which asks me to confirm first. Do not change the routes.");
+        return sb.toString();
+    }
+
+    // a URI without its query and the // after its scheme, to tell the endpoint a route consumes
+    private static String sameUri(String uri) {
+        return withoutQuery(uri).replaceFirst(":/+", ":");
+    }
+
+    private static String withoutQuery(String uri) {
+        int query = uri.indexOf('?');
+        return query > 0 ? uri.substring(0, query) : uri;
+    }
+
     /** The question for an error a chaos rule made, on the Errors tab: it is not a bug to fix. */
     static String ofError(IntegrationInfo info, ChaosInfo.Rule rule, String ruleId, ErrorInfo error) {
         StringBuilder sb = new StringBuilder();

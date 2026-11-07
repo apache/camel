@@ -292,6 +292,12 @@ class ToolConfirmsTest {
         assertThat(add.target()).isEqualTo("endpoint=* error exception=java.sql.SQLException");
         assertThat(add.reason()).contains("fail, wait or get lost", "exception=");
 
+        // several rules are added together: one per line, and a ; inside quotes does not separate
+        ToolConfirms.Call two = ToolConfirms.chaos("add", "chaosdemo", null,
+                "route=orders error rate=0.05; route=orders error when=\"${header.note} == 'a;b'\"");
+        assertThat(two.title()).isEqualTo("add 2 chaos rules to chaosdemo");
+        assertThat(two.target()).isEqualTo("route=orders error rate=0.05\nroute=orders error when=\"${header.note} == 'a;b'\"");
+
         ToolConfirms.Call change = ToolConfirms.chaos("change", null, "r1", "endpoint=* drop");
         assertThat(change.title()).isEqualTo("change chaos rule r1 of the selected integration");
         assertThat(change.target()).isEqualTo("endpoint=* drop");

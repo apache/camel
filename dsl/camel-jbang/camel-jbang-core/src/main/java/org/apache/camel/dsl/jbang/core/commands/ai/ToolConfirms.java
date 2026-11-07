@@ -303,12 +303,54 @@ public final class ToolConfirms {
         String where = integration != null && !integration.isBlank() ? integration : "the selected integration";
         String reason = "While the rule is active, the integration's messages fail, wait or get lost; exception= can name"
                         + " any exception class";
+        List<String> rules = c.isEmpty() ? List.of() : splitRules(rule);
         return switch (c) {
-            case "add" -> new Call("add a chaos rule to " + where, rule, reason);
+            // several rules separated by ; are added together: one per line, so each can be read
+            case "add" -> rules.size() > 1
+                    ? new Call("add " + rules.size() + " chaos rules to " + where, String.join("\n", rules), reason)
+                    : new Call("add a chaos rule to " + where, rule, reason);
             case "change" -> id != null && !id.isBlank()
                     ? new Call("change chaos rule " + id + " of " + where, rule, reason) : null;
             default -> null;
         };
+    }
+
+    /**
+     * Splits a text with several rules separated by {@code ;}, as in camel.chaos.rules; a {@code ;} inside quotes does
+     * not split.
+     */
+    static List<String> splitRules(String text) {
+        List<String> answer = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        char quote = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (quote != 0) {
+                current.append(ch);
+                if (ch == '\\' && i + 1 < text.length()) {
+                    current.append(text.charAt(++i));
+                } else if (ch == quote) {
+                    quote = 0;
+                }
+            } else if (ch == ';') {
+                addRule(answer, current);
+            } else {
+                if (ch == '"' || ch == '\'') {
+                    quote = ch;
+                }
+                current.append(ch);
+            }
+        }
+        addRule(answer, current);
+        return answer;
+    }
+
+    private static void addRule(List<String> rules, StringBuilder text) {
+        String rule = text.toString().strip();
+        if (!rule.isEmpty()) {
+            rules.add(rule);
+        }
+        text.setLength(0);
     }
 
     /** Running an integration on this machine. */

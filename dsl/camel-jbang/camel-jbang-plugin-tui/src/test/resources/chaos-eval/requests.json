@@ -1,0 +1,277 @@
+{
+  "description": "Loose requests for chaos rules, against the routes of the chaos demo (orders calls inventory, the stock service over http, payment and shipping; payment calls the pay service over http; returns polls a folder; seda:dlq is the dead letter channel). Each expected rule matches one rule the model adds: target is a regular expression of the target token, the other keys a regular expression of the option or parameter value (null: it must be absent), the fault one of a list, and when the texts its condition must contain. change names the rule a change must replace, one of the existingRules of the request: the rules the integration has when the request is made (none for the others).",
+  "requests": [
+    {
+      "id": "fail-or-spain",
+      "request": "the order route should fail 5% of the time, or when the country is spain",
+      "expect": [
+        {
+          "target": "route=orders",
+          "fault": [
+            "error"
+          ],
+          "rate": "0\\.05"
+        },
+        {
+          "target": "route=orders",
+          "fault": [
+            "error"
+          ],
+          "rate": null,
+          "when": [
+            "country",
+            "ES"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stock-503",
+      "request": "make the stock service return 503 for a fifth of the calls",
+      "expect": [
+        {
+          "target": "endpoint=http.*stock.*",
+          "fault": [
+            "error"
+          ],
+          "status": "503",
+          "rate": "0\\.20?"
+        }
+      ]
+    },
+    {
+      "id": "payment-slow",
+      "request": "the payment service is slow, between 1 and 3 seconds",
+      "expect": [
+        {
+          "target": "endpoint=http.*pay.*",
+          "fault": [
+            "delay"
+          ],
+          "duration": "(1s|1000ms)\\.\\.(3s|3000ms)"
+        }
+      ]
+    },
+    {
+      "id": "payment-timeout",
+      "request": "calls to the payment service time out after 5 seconds",
+      "expect": [
+        {
+          "target": "endpoint=http.*pay.*",
+          "fault": [
+            "error"
+          ],
+          "after": "5s|5000ms|5000",
+          "exception": ".*Timeout.*"
+        }
+      ]
+    },
+    {
+      "id": "lost-shipments",
+      "request": "every 10th shipment is lost",
+      "expect": [
+        {
+          "target": "endpoint=seda:(//)?shipping.*|component=seda",
+          "fault": [
+            "drop"
+          ],
+          "rate": "every:10"
+        }
+      ]
+    },
+    {
+      "id": "duplicate-shipments",
+      "request": "send each shipment twice, to see if shipping copes with duplicates",
+      "expect": [
+        {
+          "target": "endpoint=seda:(//)?shipping.*",
+          "fault": [
+            "duplicate"
+          ],
+          "rate": null
+        }
+      ]
+    },
+    {
+      "id": "spain-not-shipped",
+      "request": "orders from Spain should never reach shipping",
+      "expect": [
+        {
+          "target": "endpoint=seda:(//)?shipping.*",
+          "fault": [
+            "drop"
+          ],
+          "rate": null,
+          "when": [
+            "country",
+            "ES"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "returns-stall",
+      "request": "pause the returns route for 30 seconds",
+      "expect": [
+        {
+          "target": "route=returns",
+          "fault": [
+            "stall",
+            "lifecycle"
+          ],
+          "duration": "30s|30000ms"
+        }
+      ]
+    },
+    {
+      "id": "returns-polls",
+      "request": "half of the polls of the returns folder fail",
+      "expect": [
+        {
+          "target": "endpoint=file.*inbox.*|component=file",
+          "fault": [
+            "error"
+          ],
+          "at": "poll",
+          "rate": "0\\.50?"
+        }
+      ]
+    },
+    {
+      "id": "dlq-down",
+      "request": "the dead letter queue is down",
+      "expect": [
+        {
+          "target": "endpoint=seda:(//)?dlq.*",
+          "fault": [
+            "error"
+          ],
+          "at": "dlq"
+        }
+      ]
+    },
+    {
+      "id": "reserve-bug",
+      "request": "the step that reserves the stock in the inventory route throws an IllegalStateException now and then, say 10%",
+      "expect": [
+        {
+          "target": "step=reserve",
+          "fault": [
+            "error"
+          ],
+          "exception": "(java\\.lang\\.)?IllegalStateException",
+          "rate": "0\\.10?"
+        }
+      ]
+    },
+    {
+      "id": "orders-http-500",
+      "request": "every http call the orders route makes fails with a 500, for the next 2 minutes",
+      "expect": [
+        {
+          "target": "endpoint=http.*|component=http",
+          "fault": [
+            "error"
+          ],
+          "status": "500",
+          "until": "2m|120s",
+          "in": "orders"
+        }
+      ]
+    },
+    {
+      "id": "truncate-shipping",
+      "request": "cut the messages sent to shipping in half, a quarter of the time",
+      "expect": [
+        {
+          "target": "endpoint=seda:(//)?shipping.*",
+          "fault": [
+            "corrupt"
+          ],
+          "mode": "truncate",
+          "rate": "0\\.25"
+        }
+      ]
+    },
+    {
+      "id": "stock-outage",
+      "request": "the stock service is down for 10 seconds every minute",
+      "expect": [
+        {
+          "target": "endpoint=http.*stock.*",
+          "fault": [
+            "error"
+          ],
+          "rate": "burst:(10s|10000ms)/(1m|60s)"
+        }
+      ]
+    },
+    {
+      "id": "warm-up",
+      "request": "after a 30 second warm-up, fail 5% of the orders",
+      "expect": [
+        {
+          "target": "route=orders",
+          "fault": [
+            "error"
+          ],
+          "rate": "0\\.05",
+          "from": "\\+?(30s|30000ms)"
+        }
+      ]
+    },
+    {
+      "id": "fewer-payment-failures",
+      "request": "the payment failures are too many, make it 10%",
+      "expect": [
+        {
+          "change": "r1",
+          "target": "endpoint=http.*pay.*",
+          "fault": [
+            "error"
+          ],
+          "status": "503",
+          "rate": "0\\.10?"
+        }
+      ],
+      "existingRules": [
+        {
+          "id": "r1",
+          "rule": "endpoint=http://localhost:8765/pay error status=503 rate=0.5"
+        }
+      ]
+    },
+    {
+      "id": "spain-payments",
+      "request": "payments of Spanish orders fail with a 503",
+      "expect": [
+        {
+          "target": "endpoint=http.*pay.*",
+          "fault": [
+            "error"
+          ],
+          "status": "503",
+          "rate": null,
+          "when": [
+            "country",
+            "ES"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "payment-route-slow",
+      "request": "every step of the payment route is 200 milliseconds slower",
+      "expect": [
+        {
+          "target": "step=\\*",
+          "fault": [
+            "delay"
+          ],
+          "duration": "200ms",
+          "in": "payment"
+        }
+      ]
+    }
+  ]
+}

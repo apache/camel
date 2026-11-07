@@ -78,7 +78,109 @@ class ChaosAiPromptTest {
             public void ask(String question) {
                 asked.add(question);
             }
+
+            @Override
+            public void askNow(String question) {
+                asked.add("now: " + question);
+            }
         };
+    }
+
+    @Test
+    void aRequestInTheUsersWordsWithTheRoutesTheSendsAndTheRules() {
+        RouteInfo orders = new RouteInfo();
+        orders.routeId = "orders";
+        orders.from = "timer://orders?period=500";
+        info.routes.add(orders);
+        EndpointInfo stock = new EndpointInfo();
+        stock.uri = "http://localhost:8765/stock?bridgeEndpoint=true";
+        stock.direction = "out";
+        stock.routeId = "orders";
+        info.endpoints.add(stock);
+        EndpointInfo in = new EndpointInfo();
+        in.uri = "timer://orders";
+        in.direction = "in";
+        info.endpoints.add(in);
+        // a route that serves HTTP: its own endpoint is not a send, a send to it from orders is
+        RouteInfo stockRoute = new RouteInfo();
+        stockRoute.routeId = "stock";
+        stockRoute.from = "platform-http:/stock";
+        info.routes.add(stockRoute);
+        EndpointInfo served = new EndpointInfo();
+        served.uri = "platform-http:///stock";
+        served.direction = "out";
+        served.routeId = "stock";
+        info.endpoints.add(served);
+        EndpointInfo direct = new EndpointInfo();
+        direct.uri = "direct://inventory";
+        direct.direction = "out";
+        direct.routeId = "orders";
+        info.endpoints.add(direct);
+
+        String question = ChaosAiPrompt.ofRequest(info, " the order route fails 5% of the time, or for Spain ");
+
+        assertThat(question).startsWith("Turn my request into camel-chaos rules for the running integration chaosdemo"
+                                        + " (development only, faults injected on purpose). My request: the order route"
+                                        + " fails 5% of the time, or for Spain\n")
+                .contains("Its routes:\n  orders from timer://orders?period=500\n")
+                // the sends, without their query; not the consumers
+                .contains("It sends to:\n  http://localhost:8765/stock (from orders)\n  direct://inventory (from orders)\n")
+                .doesNotContain("platform-http:///stock (from stock)")
+                .doesNotContain("bridgeEndpoint").doesNotContain("  timer://orders (from")
+                .contains("Its chaos rules now, which are active already (add only new rules; change one of these with"
+                          + " tui_chaos_change and its id):\n  r1: endpoint=http://localhost:8765/stock* error status=503")
+                .contains("in=<route id>").contains("when=\"${header.country} == 'ES'\"").contains("\"or\" is two rules")
+                .contains("Each rule has its own rate: without rate= a rule fails every message it matches.")
+                .contains("do not look around with other tools").contains("First call tui_chaos_check with the rules")
+                .endsWith("add them with tui_chaos_add (or change a rule above with tui_chaos_change), which asks me to"
+                          + " confirm first. Do not change the routes.");
+    }
+
+    @Test
+    void theKnownRulesShowTheFormsTheShortSyntaxLeavesOut() {
+        ChaosRecipes recipes = ChaosRecipes.parse(ChaosRecipesTest.MODEL);
+        String question = ChaosAiPrompt.ofRequest(info, "calls to stock time out", recipes);
+        assertThat(question).contains("Known rules, with ${...} to fill in:\n");
+        recipes.recipes().forEach(r -> assertThat(question).contains("  " + r.title() + ": " + r.rule() + "\n"));
+        // without a catalog that has them, none
+        assertThat(ChaosAiPrompt.ofRequest(info, "calls to stock time out")).doesNotContain("Known rules");
+    }
+
+    @Test
+    void dOnTheChaosScreenAsksTheAiWithTheRequest() {
+        ChaosTab tab = new ChaosTab(ctx);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        List<Span> footer = new ArrayList<>();
+        tab.renderFooter(footer);
+        assertThat(text(footer)).contains("describe with AI");
+
+        tab.handleKeyEvent(KeyEvent.ofChar('d', KeyModifiers.NONE));
+        assertThat(tab.isTextInputActive()).isTrue();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Describe the chaos you want in chaosdemo");
+        // Enter on an empty request does nothing
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+        assertThat(asked).isEmpty();
+        for (char ch : "shipping is slow".toCharArray()) {
+            tab.handleKeyEvent(KeyEvent.ofChar(ch, KeyModifiers.NONE));
+        }
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE));
+
+        // asked at once, as the user typed it and pressed Enter; nothing goes to the integration
+        assertThat(asked).singleElement().asString().startsWith("now: Turn my request into camel-chaos rules")
+                .contains("My request: shipping is slow");
+        assertThat(tab.control().isOpen()).isFalse();
+    }
+
+    @Test
+    void withoutTheAiThereIsNoDescribe() {
+        ctx.askAiCallback = null;
+        ChaosTab tab = new ChaosTab(ctx);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        tab.handleKeyEvent(KeyEvent.ofChar('d', KeyModifiers.NONE));
+        assertThat(tab.control().isOpen()).isFalse();
+        List<Span> footer = new ArrayList<>();
+        tab.renderFooter(footer);
+        assertThat(text(footer)).doesNotContain("describe");
     }
 
     @Test

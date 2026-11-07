@@ -116,6 +116,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- the eval of the chaos requests answers the check tool with camel-chaos itself -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-chaos</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>

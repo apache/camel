@@ -79,5 +79,40 @@ How to read it:
   request takes about a minute. Mixture-of-experts models such as `qwen3.6:35b-a3b` are several times
   faster, which is why the TUI recommends them.
 
+### `ChaosRequestEvalTest` (opt-in)
+
+The eval set of "describe the chaos you want" (`d` on the Chaos screen): 18 loose requests in
+`src/test/resources/chaos-eval/requests.json`, such as "the order route should fail 5% of the time, or
+when the country is spain", each with the rules it should become. Each request goes to a local model as
+the AI panel sends it (its system prompt, the core tools and the chaos tools, and the question of
+`ChaosAiPrompt.ofRequest`). camel-chaos answers `tui_chaos_check` over routes shaped like the chaos
+demo; the rules the model adds or changes are recorded, as if the user confirmed them, and scored: each
+expected rule must match one rule (its target, fault and options as regular expressions, `null` for an
+option that must be absent, the texts of its `when=`), and no rule may be left over. It is skipped unless
+`CAMEL_TUI_CHAOS_EVAL` names the model:
+
+```bash
+CAMEL_TUI_CHAOS_EVAL=qwen3.6:35b-mlx mvn test -Dtest=ChaosRequestEvalTest
+```
+
+`CAMEL_TUI_CHAOS_EVAL_RUNS=3` runs each request three times, `CAMEL_TUI_CHAOS_EVAL_ONLY=<id>` runs only
+the requests whose id contains it, and `CAMEL_TUI_CHAOS_EVAL_VERBOSE=true` prints each tool call. It
+measures a model and the prompt; it does not fail on a wrong answer. A line per request and a summary:
+
+```
+FAIL fail-or-spain             12.0s  2 calls  1 checks  14177 tok  rate=0.05, expected none in [route=orders error rate=0.05]
+PASS stock-503                 13.0s  3 calls  1 checks  28456 tok  [endpoint=http://localhost:8765/stock error status=503 rate=0.2]
+...
+7 of 18 passed (39%), 11.1s and 4 tool calls on average
+```
+
+With `qwen3.6:35b-mlx` (Apple M4 Pro, 2026-11-07) single runs pass 6 or 7 of 18; one run of the same
+prompt can differ from the next by several requests, so compare a change of the prompt over three runs.
+The known rules of the catalog in the question took it from 3 to 6: timeouts, stalled routes, the polls
+of a consumer and outages then come out right. What it still gets wrong: the same fault at two places
+(the service and the route that calls it), a value of the examples (`rate=0.05`) in rules that did not
+ask for one, `drop` for "cut in half" (`corrupt mode=truncate`), and a check repeated with the same
+mistake.
+
 The same figures are available live inside the TUI: `/context` in the F8 panel shows the prefix and
 history size of the next request, and `/usage` the tokens and latency spent so far.
