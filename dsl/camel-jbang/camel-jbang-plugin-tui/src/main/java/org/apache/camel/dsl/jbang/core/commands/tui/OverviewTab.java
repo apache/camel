@@ -205,8 +205,8 @@ class OverviewTab extends AbstractTab {
             return true;
         }
         if (showsAbout()) {
-            // About has no table: the keys of the table do not apply
-            return false;
+            // About has no table: the keys of the table do not apply, only the zoom of What happened
+            return about.handleKeyEvent(ke, aboutIntegration());
         }
         if (ke.isChar('s')) {
             if (infraFocused) {
@@ -1315,6 +1315,8 @@ class OverviewTab extends AbstractTab {
         hint(spans, "q", "quit");
         if (showsAbout()) {
             // the keys of the table do not apply to About
+            hint(spans, "+/-", "zoom");
+            hint(spans, "←→", "move");
             hint(spans, "4", "timeline");
             hint(spans, "5", "diagram");
             hint(spans, "v", "integrations");

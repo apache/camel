@@ -18,6 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -88,6 +92,55 @@ class AboutViewTest {
     }
 
     @Test
+    void zoomingInGoesToTheTrouble() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        RouteInfo r = new RouteInfo();
+        r.routeId = "orders";
+        info.routes.add(r);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        long end = T0 / 1000 + 299;
+        // the outage was 4.5 minutes ago, for 15 seconds
+        ctx.timeline.merge("1234", TimelineTabRenderTest.outage(end, 300, 0).json(), true);
+        AboutView about = new AboutView(ctx);
+        assertThat(render(about, info)).contains("What happened ─ last 5m, a column is 5s ─ + zoom in, 4 for each");
+
+        assertThat(about.handleKeyEvent(KeyEvent.ofChar('+'), info)).isTrue();
+        // 2 minutes from the first second recorded, with the outage in it
+        String to = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault())
+                .format(Instant.ofEpochSecond(end - 180));
+        assertThat(render(about, info)).contains("What happened ─ 2m to " + to + ", a column is 2s")
+                .contains("+ zoom in, - out, ← → move").contains(to).contains("30 handled");
+
+        assertThat(about.handleKeyEvent(KeyEvent.ofChar('+'), info)).isTrue();
+        assertThat(render(about, info)).contains("a column is 1s");
+        assertThat(about.handleKeyEvent(KeyEvent.ofChar('-'), info)).isTrue();
+        assertThat(about.handleKeyEvent(KeyEvent.ofChar('-'), info)).isTrue();
+        assertThat(render(about, info)).contains("What happened ─ last 5m").contains("now");
+        assertThat(about.handleKeyEvent(KeyEvent.ofChar('x'), info)).isFalse();
+    }
+
+    @Test
+    void theSendsOfARouteToAnEndpoint() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.endpoints.add(endpoint("http://localhost:8765/ship?bridgeEndpoint=true", "out", "orders", 7));
+        info.endpoints.add(endpoint("http://localhost:8765/ship", "out", "returns", 2));
+        info.endpoints.add(endpoint("http://localhost:8765/ship", "in", "orders", 99));
+        assertThat(AboutView.outHits(info, "http:localhost:8765/ship", "orders")).isEqualTo(7);
+        assertThat(AboutView.outHits(info, "http://localhost:8765/ship/", "returns")).isEqualTo(2);
+        assertThat(AboutView.outHits(info, "{{ship.url}}", "orders")).isNull();
+    }
+
+    private static EndpointInfo endpoint(String uri, String direction, String routeId, long hits) {
+        EndpointInfo ep = new EndpointInfo();
+        ep.uri = uri;
+        ep.direction = direction;
+        ep.routeId = routeId;
+        ep.hits = hits;
+        return ep;
+    }
+
+    @Test
     void aboutAnIntegrationWithWhatHasHappened() throws Exception {
         Files.writeString(dir.resolve("shop.camel.yaml"), """
                 # Every order is checked against the stock and shipped.
@@ -119,6 +172,7 @@ class AboutViewTest {
             r.total = 120;
             info.routes.add(r);
         }
+        info.endpoints.add(endpoint("http://localhost:8765/ship", "out", "orders", 118));
         MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
         ctx.timeline.merge("1234", TimelineTabRenderTest.outage(T0 / 1000 + 59, 60, 0).json(), true);
         AboutView about = new AboutView(ctx);
@@ -128,7 +182,8 @@ class AboutViewTest {
             assertThat(screen).contains("Every order is checked against the stock and shipped.")
                     .contains("from the comment at the top of shop.camel.yaml");
             assertThat(screen).contains(" In ").contains("timer:orders").contains(" Routes ").contains("orders")
-                    .contains("↳ stock").contains(" Out ").contains("localhost:8765/ship").contains("from orders");
+                    .contains("↳ stock").contains(" Out ").contains("localhost:8765/ship").contains("118")
+                    .contains("from orders");
             assertThat(screen).contains("Last 5m").contains("30 handled")
                     .contains("HttpOperationFailedException 503 ×30").contains("Watch").contains("Next");
             assertThat(screen).contains("What happened").contains("30 handled");

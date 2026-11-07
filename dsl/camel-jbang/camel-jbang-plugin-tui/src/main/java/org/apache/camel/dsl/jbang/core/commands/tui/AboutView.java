@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -37,6 +40,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
+import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -58,6 +62,9 @@ final class AboutView {
     private static final long RELOAD_MILLIS = 10_000;
     private static final int HAPPENED_SECONDS = 300;
     private static final String BLOCKS = " ▁▂▃▄▅▆▇█";
+    // the strips have this many columns, whatever the zoom
+    private static final int STRIP_COLUMNS = 60;
+    private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
 
     private final MonitorContext ctx;
     private volatile ProjectOverview.Overview overview;
@@ -67,6 +74,10 @@ final class AboutView {
     private volatile String error;
     private Path dir;
     private long loadedAt;
+    // the zoom of What happened, as the windows of the Timeline tab (+ and -), and its last second when moved (← →);
+    // -1 follows the last second recorded
+    private int zoom = TimelineTab.WINDOWS.length - 1;
+    private long stripsEnd = -1;
 
     AboutView(MonitorContext ctx) {
         this.ctx = ctx;
@@ -113,6 +124,77 @@ final class AboutView {
         t.start();
     }
 
+    /**
+     * The keys of What happened: + zooms in on the last trouble in the window (a failure, a handled error, a
+     * redelivery, a route down), - zooms out, and ← → move a zoomed window.
+     */
+    boolean handleKeyEvent(KeyEvent ke, IntegrationInfo info) {
+        if (info == null) {
+            return false;
+        }
+        long end = ctx.timeline.endSecond(info.pid);
+        if (ke.isChar('+') || ke.isChar('=')) {
+            if (zoom > 0 && end >= 0) {
+                long trouble = lastTrouble(info, windowEnd(end), seconds());
+                zoom--;
+                if (trouble >= 0) {
+                    // the trouble in the middle of the window, when there is time after it
+                    moveTo(trouble + seconds() / 2, end);
+                }
+            }
+            return true;
+        }
+        if (ke.isChar('-')) {
+            if (zoom < TimelineTab.WINDOWS.length - 1) {
+                zoom++;
+                if (end >= 0) {
+                    moveTo(windowEnd(end) + seconds() / 4, end);
+                }
+            }
+            return true;
+        }
+        if ((ke.isLeft() || ke.isRight()) && end >= 0) {
+            int by = Math.max(1, seconds() / 4);
+            moveTo(windowEnd(end) + (ke.isLeft() ? -by : by), end);
+            return true;
+        }
+        return false;
+    }
+
+    private int seconds() {
+        return TimelineTab.WINDOWS[zoom];
+    }
+
+    private long windowEnd(long end) {
+        return stripsEnd >= 0 ? Math.min(stripsEnd, end) : end;
+    }
+
+    /** Moves the window to end at the given second, as far as there are seconds recorded; at the end it follows. */
+    private void moveTo(long second, long end) {
+        long first = Math.max(0, end - Timeline.SECONDS + 1);
+        long to = Math.max(first + seconds() - 1, second);
+        stripsEnd = to >= end ? -1 : to;
+    }
+
+    /** The last second in the window that a route had trouble in, or -1. */
+    private long lastTrouble(IntegrationInfo info, long windowEnd, int seconds) {
+        long last = -1;
+        for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, routeOrder(info), windowEnd, seconds)) {
+            for (int i = seconds - 1; i >= 0; i--) {
+                if (r.failed()[i] > 0 || r.handled()[i] > 0 || r.recovered()[i] > 0 || r.attempts()[i] > 0
+                        || r.down()[i] > 0) {
+                    last = Math.max(last, windowEnd - seconds + 1 + i);
+                    break;
+                }
+            }
+        }
+        return last;
+    }
+
+    private static List<String> routeOrder(IntegrationInfo info) {
+        return info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+    }
+
     void render(Frame frame, Rect area, IntegrationInfo info) {
         load(info, Runnable::run);
         ProjectOverview.Overview o = overview;
@@ -156,7 +238,7 @@ final class AboutView {
                 .split(area);
         if (happenedHeight > 2) {
             frame.renderWidget(Paragraph.builder().text(Text.from(routeStrips))
-                    .block(block(" What happened ─ last 5m, a column is 5s ─ 4 for each second ")).build(), rows.get(3));
+                    .block(block(happenedTitle(info))).build(), rows.get(3));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(head))
                 .block(block(" " + (info.name != null ? info.name : info.pid) + " ")).build(), rows.get(0));
@@ -173,30 +255,49 @@ final class AboutView {
      * A line per route over the last 5 minutes, a column of 5 seconds coloured by the worst that happened to its
      * exchanges then (failed, handled, recovered, completed), as the Timeline tab colours its seconds.
      */
+    private String happenedTitle(IntegrationInfo info) {
+        int seconds = seconds();
+        String window = seconds % 60 == 0 ? seconds / 60 + "m" : seconds + "s";
+        long end = ctx.timeline.endSecond(info.pid);
+        String when = stripsEnd >= 0 && end >= 0
+                ? window + " to " + TIME.format(Instant.ofEpochSecond(windowEnd(end))) : "last " + window;
+        String keys = zoom == 0 ? "- zoom out" : zoom < TimelineTab.WINDOWS.length - 1 ? "+ zoom in, - out" : "+ zoom in";
+        if (seconds < Timeline.SECONDS) {
+            keys += ", ← → move";
+        }
+        return " What happened ─ " + when + ", a column is " + seconds / STRIP_COLUMNS + "s ─ " + keys
+               + ", 4 for each second ";
+    }
+
     private List<Line> routeStrips(IntegrationInfo info, int width) {
         List<Line> lines = new ArrayList<>();
-        long end = ctx.timeline.endSecond(info.pid);
-        if (end < 0) {
+        long last = ctx.timeline.endSecond(info.pid);
+        if (last < 0) {
             return lines;
         }
-        List<String> order = info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+        long end = windowEnd(last);
+        int seconds = seconds();
+        List<String> order = routeOrder(info);
         // the names, then one space: every line starts its columns at the same place
         int label = Math.min(18, Math.max(8, order.stream().mapToInt(String::length).max().orElse(8))) + 4;
-        int per = 5;
-        int columns = HAPPENED_SECONDS / per;
-        for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, order, end, HAPPENED_SECONDS)) {
+        int per = seconds / STRIP_COLUMNS;
+        int columns = STRIP_COLUMNS;
+        for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, order, end, seconds)) {
             List<Span> spans = new ArrayList<>();
             String name = r.route().length() > label - 3 ? r.route().substring(0, label - 4) + "…" : r.route();
             spans.add(Span.raw("   " + name + " ".repeat(Math.max(1, label - 3 - name.length()))));
             long max = 1;
-            long[][] col = new long[columns][5];
-            for (int i = 0; i < HAPPENED_SECONDS; i++) {
+            // completed, recovered, handled, failed, down, redelivery attempts: the height is the exchanges done, the
+            // attempts only colour the column (an exchange retried many times is still one exchange)
+            long[][] col = new long[columns][6];
+            for (int i = 0; i < seconds; i++) {
                 long[] c = col[i / per];
                 c[0] += Math.max(0, r.completed()[i]);
-                c[1] += Math.max(0, r.recovered()[i]) + Math.max(0, r.attempts()[i]);
+                c[1] += Math.max(0, r.recovered()[i]);
                 c[2] += Math.max(0, r.handled()[i]);
                 c[3] += Math.max(0, r.failed()[i]);
                 c[4] += Math.max(0, r.down()[i]);
+                c[5] += Math.max(0, r.attempts()[i]);
             }
             for (long[] c : col) {
                 max = Math.max(max, c[0] + c[1] + c[2] + c[3]);
@@ -205,17 +306,18 @@ final class AboutView {
                 long t = c[0] + c[1] + c[2] + c[3];
                 if (c[4] > 0) {
                     spans.add(Span.styled("░", Theme.error()));
-                } else if (t == 0) {
+                } else if (t == 0 && c[5] == 0) {
                     spans.add(Span.styled("·", Theme.muted()));
                 } else {
                     int level = (int) Math.max(1, Math.min(8, Math.ceil(t * 8.0 / max)));
                     Style style = c[3] > 0 ? Theme.error()
-                            : c[2] > 0 ? Style.EMPTY.fg(Theme.ACCENT) : c[1] > 0 ? Theme.warning() : Theme.success();
+                            : c[2] > 0 ? Style.EMPTY.fg(Theme.ACCENT)
+                            : c[1] > 0 || c[5] > 0 ? Theme.warning() : Theme.success();
                     spans.add(Span.styled(String.valueOf(BLOCKS.charAt(level)), style));
                 }
             }
             long done = r.total(r.completed()) + r.total(r.recovered()) + r.total(r.handled()) + r.total(r.failed());
-            spans.add(Span.raw("  " + done));
+            spans.add(Span.styled("  " + done, Theme.success()));
             if (r.total(r.failed()) > 0) {
                 spans.add(Span.styled("  " + r.total(r.failed()) + " failed", Theme.error()));
             } else if (r.total(r.handled()) > 0) {
@@ -225,6 +327,12 @@ final class AboutView {
             }
             lines.add(Line.from(spans));
         }
+        // the time axis: the first second of the window and the last
+        String from = TIME.format(Instant.ofEpochSecond(end - seconds + 1));
+        String to = stripsEnd >= 0 ? TIME.format(Instant.ofEpochSecond(end)) : "now";
+        lines.add(Line.from(Span.styled(" ".repeat(label) + from
+                                        + " ".repeat(Math.max(1, columns - from.length() - to.length())) + to,
+                Theme.muted())));
         return lines;
     }
 
@@ -308,14 +416,43 @@ final class AboutView {
             }
             String key = s.uri() + "|" + s.direction();
             if (systems.add(key)) {
+                Long hits = outHits(info, s.uri(), s.route());
                 out.add(Line.from(Span.raw(" " + icon(s.category()) + " "), Span.styled(shortUri(s.uri()), Style.EMPTY.bold()),
-                        Span.styled("  " + s.direction(), Theme.muted())));
+                        Span.styled("  " + s.direction(), Theme.muted()),
+                        Span.styled(hits != null ? "  " + hits : "", Theme.success())));
                 out.add(Line.from(Span.styled("    from " + s.route(), Theme.muted())));
             }
         }
         if (out.isEmpty()) {
             out.add(Line.from(Span.styled(" nothing outside the integration", Theme.muted())));
         }
+    }
+
+    /**
+     * How many times the route sent to the endpoint, from the endpoint statistics of the integration; null when the
+     * integration has no such endpoint (a URI with a placeholder, or no statistics).
+     */
+    static Long outHits(IntegrationInfo info, String uri, String route) {
+        String base = baseUri(uri);
+        Long answer = null;
+        for (EndpointInfo ep : info.endpoints) {
+            if ("out".equals(ep.direction) && (route == null || route.equals(ep.routeId))
+                    && base.equals(baseUri(ep.uri))) {
+                answer = (answer != null ? answer : 0) + ep.hits;
+            }
+        }
+        return answer;
+    }
+
+    /** The URI without its options, and the same with or without the // after the scheme. */
+    private static String baseUri(String uri) {
+        if (uri == null) {
+            return "";
+        }
+        int q = uri.indexOf('?');
+        String answer = q >= 0 ? uri.substring(0, q) : uri;
+        answer = answer.replaceFirst("^([a-zA-Z0-9+.-]+):/{0,2}", "$1:");
+        return answer.endsWith("/") ? answer.substring(0, answer.length() - 1) : answer;
     }
 
     private static void routeLines(
@@ -434,7 +571,8 @@ final class AboutView {
         }
         spans.add(Span.styled(spark(perSecond, 30), Theme.info()));
         long done = completed + recovered + handled + failed;
-        spans.add(Span.raw("  " + done + (done == 1 ? " exchange" : " exchanges")));
+        spans.add(Span.styled("  " + done, Theme.success()));
+        spans.add(Span.raw(done == 1 ? " exchange" : " exchanges"));
         if (recovered > 0) {
             spans.add(Span.styled(" · " + recovered + " recovered", Theme.warning()));
         }

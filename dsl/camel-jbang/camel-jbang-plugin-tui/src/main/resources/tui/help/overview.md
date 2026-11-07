@@ -17,6 +17,10 @@ The Overview has two views, switched with **v**:
   it records (the exchanges, how they ended, the error that happened
   most), what to **Watch**, and where to go **Next**: **4** the
   Timeline second by second, **5** the Diagram, **2** the source.
+  **What happened** has a line per route, coloured as the Timeline:
+  **+/-** zooms between 5, 2 and 1 minutes (zooming in centres on the
+  last trouble, so you see what the other routes did at that moment)
+  and **←→** moves a zoomed window back and forward.
 - **Integrations** — the table of all running integrations below, shown
   when several run.
 
