@@ -532,6 +532,17 @@ public interface ExtendedCamelContext {
     }
 
     /**
+     * Gets the {@link StepHook}s that are installed, in the order they are asked (see {@link #addStepHook(StepHook)}),
+     * for the tools that list them; a step asks {@link #getStepHook()}.
+     *
+     * @return the hooks, empty if none is installed (an unmodifiable snapshot)
+     * @since  4.24
+     */
+    default List<StepHook> getStepHooks() {
+        return Collections.emptyList();
+    }
+
+    /**
      * Installs a {@link StepHook} that is asked before every processing step of a route. More than one hook can be
      * installed: they are asked in their {@link Ordered order} (a hook that does not implement {@link Ordered} has
      * order 0, and hooks with the same order are asked in the order they were added), see {@link StepHook} for how they
@@ -666,6 +677,17 @@ public interface ExtendedCamelContext {
      */
     default @Nullable SendHook getSendHook() {
         return null;
+    }
+
+    /**
+     * Gets the {@link SendHook}s that are installed, in the order they run (see {@link #addSendHook(SendHook)}), for
+     * the tools that list them; a send asks {@link #getSendHook()}.
+     *
+     * @return the hooks, empty if none is installed (an unmodifiable snapshot)
+     * @since  4.24
+     */
+    default List<SendHook> getSendHooks() {
+        return Collections.emptyList();
     }
 
     /**

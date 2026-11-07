@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.SendHook;
@@ -31,6 +32,10 @@ import org.apache.camel.spi.StepHook;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Two step hooks and two send hooks active together (CAMEL-26607): a hook that fails the first attempt, as chaos does,
@@ -87,6 +92,26 @@ class MultipleHooksTest extends ContextTestSupport {
                 "step:toResult",
                 "before:mock://result", "after:mock://result:ok"),
                 recorded);
+    }
+
+    @Test
+    void testTheHooksAreListedInTheirOrder() {
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
+        // added failing first, listed last: as they are asked
+        assertEquals(List.of(RecordingStepHook.class, FailingStepHook.class),
+                ecc.getStepHooks().stream().map(Object::getClass).toList());
+        assertEquals(List.of(RecordingSendHook.class, FailingSendHook.class),
+                ecc.getSendHooks().stream().map(Object::getClass).toList());
+        assertThrows(UnsupportedOperationException.class, () -> ecc.getStepHooks().clear());
+
+        StepHook failing = ecc.getStepHooks().get(1);
+        ecc.removeStepHook(failing);
+        assertEquals(List.of(RecordingStepHook.class), ecc.getStepHooks().stream().map(Object::getClass).toList());
+        // one hook left: the step asks it, not a composite of one
+        assertSame(ecc.getStepHooks().get(0), ecc.getStepHook());
+        ecc.removeStepHook(ecc.getStepHooks().get(0));
+        assertTrue(ecc.getStepHooks().isEmpty());
+        assertNull(ecc.getStepHook());
     }
 
     private final class RecordingStepHook implements StepHook {

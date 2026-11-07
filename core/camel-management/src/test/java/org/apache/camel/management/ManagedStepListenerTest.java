@@ -77,7 +77,7 @@ class ManagedStepListenerTest extends ManagementTestSupport {
                 events.add("callback " + state);
             }
         });
-        context.getCamelContextExtension().setStepHook(this::beforeStep);
+        context.getCamelContextExtension().addStepHook(this::beforeStep);
         return context;
     }
 

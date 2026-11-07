@@ -90,6 +90,7 @@ import org.apache.camel.support.CompositeSendHook;
 import org.apache.camel.support.CompositeStepHook;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
+import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
@@ -133,6 +134,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile SendHook sendHook;
     // the installed hooks, in the order they were added (guarded by the lock)
     private final List<SendHook> sendHooks = new ArrayList<>();
+    private volatile List<SendHook> sendHooksInOrder = List.of();
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
     private volatile PropertiesComponent propertiesComponent;
@@ -150,6 +152,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile StepHook stepHook;
     // the installed hooks, in the order they were added (guarded by the lock)
     private final List<StepHook> stepHooks = new ArrayList<>();
+    private volatile List<StepHook> stepHooksInOrder = List.of();
     private volatile TransformerRegistry transformerRegistry;
     private volatile ValidatorRegistry validatorRegistry;
     private volatile TypeConverterRegistry typeConverterRegistry;
@@ -544,6 +547,19 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public List<StepHook> getStepHooks() {
+        return stepHooksInOrder;
+    }
+
+    /** The hooks in the order they are asked: by their order, and as they were added for the same order. */
+    private static <T> List<T> inOrder(List<T> hooks) {
+        List<T> answer = new ArrayList<>(hooks);
+        // a stable sort, as the composite hooks sort
+        answer.sort(OrderedComparator.get());
+        return Collections.unmodifiableList(answer);
+    }
+
+    @Override
     public void addStepHook(StepHook stepHook) {
         ObjectHelper.notNull(stepHook, "stepHook");
         lock.lock();
@@ -551,6 +567,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             if (stepHooks.stream().noneMatch(h -> h == stepHook)) {
                 stepHooks.add(stepHook);
                 this.stepHook = CompositeStepHook.of(stepHooks);
+                this.stepHooksInOrder = inOrder(stepHooks);
             }
         } finally {
             lock.unlock();
@@ -563,6 +580,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         try {
             if (stepHooks.removeIf(h -> h == stepHook)) {
                 this.stepHook = CompositeStepHook.of(stepHooks);
+                this.stepHooksInOrder = inOrder(stepHooks);
             }
         } finally {
             lock.unlock();
@@ -624,6 +642,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
+    public List<SendHook> getSendHooks() {
+        return sendHooksInOrder;
+    }
+
+    @Override
     public void addSendHook(SendHook sendHook) {
         ObjectHelper.notNull(sendHook, "sendHook");
         lock.lock();
@@ -631,6 +654,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             if (sendHooks.stream().noneMatch(h -> h == sendHook)) {
                 sendHooks.add(sendHook);
                 this.sendHook = CompositeSendHook.of(sendHooks);
+                this.sendHooksInOrder = inOrder(sendHooks);
             }
         } finally {
             lock.unlock();
@@ -643,6 +667,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         try {
             if (sendHooks.removeIf(h -> h == sendHook)) {
                 this.sendHook = CompositeSendHook.of(sendHooks);
+                this.sendHooksInOrder = inOrder(sendHooks);
             }
         } finally {
             lock.unlock();
