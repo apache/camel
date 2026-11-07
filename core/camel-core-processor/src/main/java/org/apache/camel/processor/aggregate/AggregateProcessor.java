@@ -1098,22 +1098,23 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     /**
      * Sends the aggregated exchanges (more than one when the batch consumer completes all its groups). None of them is
-     * in the repository any more, so when the thread pool rejects one of them, the others are still sent (or failed if
-     * rejected too), and then the first rejection is thrown.
+     * in the repository any more, so when one of them fails to be submitted (the thread pool rejects it, or the
+     * aggregation strategy throws an exception on completion), the others are still sent (or failed too), and then the
+     * first failure is thrown.
      */
     private void submitCompletions(String key, List<Exchange> aggregated) {
-        RejectedExecutionException rejected = null;
+        RuntimeException failure = null;
         for (Exchange agg : aggregated) {
             try {
                 onSubmitCompletion(key, agg);
-            } catch (RejectedExecutionException e) {
-                if (rejected == null) {
-                    rejected = e;
+            } catch (RuntimeException e) {
+                if (failure == null) {
+                    failure = e;
                 }
             }
         }
-        if (rejected != null) {
-            throw rejected;
+        if (failure != null) {
+            throw failure;
         }
     }
 
@@ -1129,7 +1130,15 @@ public class AggregateProcessor extends BaseProcessorSupport
         // registered as in progress, so no longer needs to be marked as being completed
         unmarkCompleting(exchange.getExchangeId());
         // invoke the on completion callback
-        aggregationStrategy.onCompletion(exchange);
+        try {
+            aggregationStrategy.onCompletion(exchange);
+        } catch (Throwable e) {
+            // it must not throw, but the exchange is in progress already: fail it as when the thread pool rejects it
+            exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
+            failCompletion(exchange, e, "Error processing aggregated exchange: AggregationStrategy onCompletion failed");
+            // and let the caller fail as before
+            throw e;
+        }
 
         if (getStatistics().isStatisticsEnabled()) {
             totalCompleted.incrementAndGet();
@@ -1172,23 +1181,23 @@ public class AggregateProcessor extends BaseProcessorSupport
                 }
             });
         } catch (RejectedExecutionException e) {
-            onRejectedCompletion(exchange, e);
+            failCompletion(exchange, e, "Error processing aggregated exchange: the thread pool rejected it");
             // and let the caller fail as before (such as the exchange that completed the group)
             throw e;
         }
     }
 
     /**
-     * The thread pool rejected the task that sends the aggregated exchange. The group has already been removed from the
-     * aggregation repository, so the aggregated exchange fails as if its processing had failed: its on completions run
-     * (the aggregator then no longer counts it as in progress, and does not confirm it, so a recoverable repository
-     * recovers it), and it is passed to the exception handler.
+     * The aggregated exchange cannot be sent: the thread pool rejected the task that sends it, or the aggregation
+     * strategy failed on completion. The group has already been removed from the aggregation repository, so the
+     * aggregated exchange fails as if its processing had failed: its on completions run (the aggregator then no longer
+     * counts it as in progress, and does not confirm it, so a recoverable repository recovers it), and it is passed to
+     * the exception handler.
      */
-    private void onRejectedCompletion(Exchange exchange, RejectedExecutionException e) {
-        exchange.setException(e);
+    private void failCompletion(Exchange exchange, Throwable cause, String message) {
+        exchange.setException(cause);
         UnitOfWorkHelper.doneSynchronizations(exchange, exchange.getExchangeExtension().handoverCompletions());
-        getExceptionHandler().handleException("Error processing aggregated exchange: the thread pool rejected it",
-                exchange, e);
+        getExceptionHandler().handleException(message, exchange, cause);
     }
 
     private void aggregateCompletionCounter(Exchange exchange) {
@@ -1888,7 +1897,13 @@ public class AggregateProcessor extends BaseProcessorSupport
                                             data.redeliveryCounter, exchangeId);
 
                                     // not exhaust so resubmit the recovered exchange
-                                    onSubmitCompletion(key, exchange);
+                                    try {
+                                        onSubmitCompletion(key, exchange);
+                                    } catch (RuntimeException e) {
+                                        // it has been failed and passed to the exception handler, and is recovered
+                                        // again on a later run, so go on with the other exchanges
+                                        LOG.debug("Error resubmitting recovered exchange with id: {}", exchangeId, e);
+                                    }
                                 }
                             }
                         }
