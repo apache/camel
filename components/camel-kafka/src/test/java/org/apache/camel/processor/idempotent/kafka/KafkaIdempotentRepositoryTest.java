@@ -17,12 +17,15 @@
 package org.apache.camel.processor.idempotent.kafka;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.MockProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -99,6 +102,40 @@ public class KafkaIdempotentRepositoryTest {
         sender.join(5000);
 
         assertFalse(cache.containsKey("key1"));
+    }
+
+    @Test
+    void testAddRollbackKeepsTheKeyAddedByAPeer() throws Exception {
+        MockProducer<String, String> failingProducer
+                = new MockProducer<>(false, null, new StringSerializer(), new StringSerializer());
+        setField(repository, "changelog", changelog(failingProducer));
+
+        AtomicReference<Exception> failure = new AtomicReference<>();
+        Thread sender = new Thread(() -> {
+            try {
+                repository.add("key1");
+            } catch (RuntimeCamelException e) {
+                failure.set(e);
+            }
+        });
+        sender.start();
+
+        // the add record is sent and add() waits for the result
+        await().atMost(5, TimeUnit.SECONDS).until(() -> failingProducer.history().size() == 1);
+
+        // meanwhile the poller applies the add of the same key by a peer
+        Method addToCache = KafkaIdempotentRepository.class.getDeclaredMethod("addToCache", ConsumerRecord.class);
+        addToCache.setAccessible(true);
+        addToCache.invoke(repository, new ConsumerRecord<>("test-topic", 0, 0L, "key1", "add"));
+
+        failingProducer.errorNext(new RuntimeException("Simulated send failure"));
+        sender.join(5000);
+
+        assertFalse(sender.isAlive());
+        assertNotNull(failure.get());
+        // the rollback only undoes the add of this call, the key of the peer stays
+        assertTrue(cache.containsKey("key1"));
+        assertFalse(repository.add("key1"));
     }
 
     @Test
