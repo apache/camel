@@ -109,10 +109,14 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
      *
      */
     protected void produce(byte[] key, byte[] message, UpdateCallBack updateCallBack) {
+        Producer<byte[], byte[]> current = producer;
+        if (current == null) {
+            throw new IllegalStateException("Cannot update the offset as the Kafka resume strategy is not started");
+        }
         ProducerRecord<byte[], byte[]> producerRecord
                 = new ProducerRecord<>(resumeStrategyConfiguration.getTopic(), key, message);
 
-        producer.send(producerRecord, (recordMetadata, e) -> {
+        current.send(producerRecord, (recordMetadata, e) -> {
             if (e != null) {
                 LOG.error("Failed to send message {}", e.getMessage(), e);
             }
@@ -205,6 +209,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
         try {
             consumer = createConsumer();
+            // a new consumer (such as after a restart) must subscribe again
+            subscribed = false;
 
             subscribe(consumer);
 
@@ -241,9 +247,16 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
                             consumerRecord.timestampType(), value);
                 }
 
-                if (!deserializable.deserialize(ByteBuffer.wrap(consumerRecord.key()),
-                        ByteBuffer.wrap(consumerRecord.value()))) {
-                    LOG.warn("Deserializer indicates that this is the last record to deserialize");
+                try {
+                    if (!deserializable.deserialize(ByteBuffer.wrap(consumerRecord.key()),
+                            ByteBuffer.wrap(consumerRecord.value()))) {
+                        LOG.warn("Deserializer indicates that this is the last record to deserialize");
+                    }
+                } catch (Exception e) {
+                    // for example a record without a key or value: skip it and keep loading the others
+                    LOG.warn("Ignoring the record at offset {} of {}-{} because it cannot be deserialized: {}",
+                            consumerRecord.offset(), consumerRecord.topic(), consumerRecord.partition(), e.getMessage(),
+                            e);
                 }
             }
 
@@ -398,6 +411,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
             LOG.info("Closing the Kafka producer");
             IOHelper.close(producer, "Kafka producer", LOG);
+            // a new producer is created when this strategy is started again
+            producer = null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
@@ -418,12 +433,19 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
             }
 
             if (executorService != null) {
-                executorService.shutdown();
+                if (camelContext != null) {
+                    // also removes the executor from the manager (and JMX)
+                    camelContext.getExecutorServiceManager().shutdownGraceful(executorService, 2000);
+                } else {
+                    executorService.shutdown();
 
-                if (!executorService.awaitTermination(2, TimeUnit.SECONDS)) {
-                    LOG.warn("Kafka consumer did not shutdown within 2 seconds");
-                    executorService.shutdownNow();
+                    if (!executorService.awaitTermination(2, TimeUnit.SECONDS)) {
+                        LOG.warn("Kafka consumer did not shutdown within 2 seconds");
+                        executorService.shutdownNow();
+                    }
                 }
+                // a new executor is created when this strategy is started again
+                executorService = null;
             } else {
                 // This may happen if the start up has failed in some other part
                 LOG.trace("There's no executor service to shutdown");
@@ -454,6 +476,10 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
 
     protected Producer<byte[], byte[]> getProducer() {
         return producer;
+    }
+
+    protected ExecutorService getExecutorService() {
+        return executorService;
     }
 
     @Override
