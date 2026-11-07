@@ -146,9 +146,18 @@ final class AboutView {
         int available = Math.max(3, area.height() - headHeight - strips.size());
         int columnHeight = Math.min(columnRows + 2, available);
 
+        List<Line> routeStrips = routeStrips(info, width);
+        int stripsHeight = strips.size();
+        int happenedHeight = routeStrips.isEmpty()
+                ? 0 : Math.max(0, Math.min(routeStrips.size() + 2, area.height() - headHeight - columnHeight - stripsHeight));
         List<Rect> rows = Layout.vertical()
-                .constraints(Constraint.length(headHeight), Constraint.length(columnHeight), Constraint.fill())
+                .constraints(Constraint.length(headHeight), Constraint.length(columnHeight), Constraint.length(stripsHeight),
+                        Constraint.length(happenedHeight), Constraint.fill())
                 .split(area);
+        if (happenedHeight > 2) {
+            frame.renderWidget(Paragraph.builder().text(Text.from(routeStrips))
+                    .block(block(" What happened ─ last 5m, a column is 5s ─ 4 for each second ")).build(), rows.get(3));
+        }
         frame.renderWidget(Paragraph.builder().text(Text.from(head))
                 .block(block(" " + (info.name != null ? info.name : info.pid) + " ")).build(), rows.get(0));
         List<Rect> cols = Layout.horizontal()
@@ -158,6 +167,65 @@ final class AboutView {
         frame.renderWidget(Paragraph.builder().text(Text.from(routes)).block(block(" Routes ")).build(), cols.get(1));
         frame.renderWidget(Paragraph.builder().text(Text.from(out)).block(block(" Out ")).build(), cols.get(2));
         frame.renderWidget(Paragraph.builder().text(Text.from(strips)).build(), rows.get(2));
+    }
+
+    /**
+     * A line per route over the last 5 minutes, a column of 5 seconds coloured by the worst that happened to its
+     * exchanges then (failed, handled, recovered, completed), as the Timeline tab colours its seconds.
+     */
+    private List<Line> routeStrips(IntegrationInfo info, int width) {
+        List<Line> lines = new ArrayList<>();
+        long end = ctx.timeline.endSecond(info.pid);
+        if (end < 0) {
+            return lines;
+        }
+        List<String> order = info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+        // the names, then one space: every line starts its columns at the same place
+        int label = Math.min(18, Math.max(8, order.stream().mapToInt(String::length).max().orElse(8))) + 4;
+        int per = 5;
+        int columns = HAPPENED_SECONDS / per;
+        for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, order, end, HAPPENED_SECONDS)) {
+            List<Span> spans = new ArrayList<>();
+            String name = r.route().length() > label - 3 ? r.route().substring(0, label - 4) + "…" : r.route();
+            spans.add(Span.raw("   " + name + " ".repeat(Math.max(1, label - 3 - name.length()))));
+            long max = 1;
+            long[][] col = new long[columns][5];
+            for (int i = 0; i < HAPPENED_SECONDS; i++) {
+                long[] c = col[i / per];
+                c[0] += Math.max(0, r.completed()[i]);
+                c[1] += Math.max(0, r.recovered()[i]) + Math.max(0, r.attempts()[i]);
+                c[2] += Math.max(0, r.handled()[i]);
+                c[3] += Math.max(0, r.failed()[i]);
+                c[4] += Math.max(0, r.down()[i]);
+            }
+            for (long[] c : col) {
+                max = Math.max(max, c[0] + c[1] + c[2] + c[3]);
+            }
+            for (long[] c : col) {
+                long t = c[0] + c[1] + c[2] + c[3];
+                if (c[4] > 0) {
+                    spans.add(Span.styled("░", Theme.error()));
+                } else if (t == 0) {
+                    spans.add(Span.styled("·", Theme.muted()));
+                } else {
+                    int level = (int) Math.max(1, Math.min(8, Math.ceil(t * 8.0 / max)));
+                    Style style = c[3] > 0 ? Theme.error()
+                            : c[2] > 0 ? Style.EMPTY.fg(Theme.ACCENT) : c[1] > 0 ? Theme.warning() : Theme.success();
+                    spans.add(Span.styled(String.valueOf(BLOCKS.charAt(level)), style));
+                }
+            }
+            long done = r.total(r.completed()) + r.total(r.recovered()) + r.total(r.handled()) + r.total(r.failed());
+            spans.add(Span.raw("  " + done));
+            if (r.total(r.failed()) > 0) {
+                spans.add(Span.styled("  " + r.total(r.failed()) + " failed", Theme.error()));
+            } else if (r.total(r.handled()) > 0) {
+                spans.add(Span.styled("  " + r.total(r.handled()) + " handled", Style.EMPTY.fg(Theme.ACCENT)));
+            } else if (r.total(r.recovered()) > 0) {
+                spans.add(Span.styled("  " + r.total(r.recovered()) + " recovered", Theme.warning()));
+            }
+            lines.add(Line.from(spans));
+        }
+        return lines;
     }
 
     private static String meta(IntegrationInfo info, ProjectOverview.Overview o) {

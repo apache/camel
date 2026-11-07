@@ -42,7 +42,7 @@ class AboutViewTest {
     Path dir;
 
     private static String render(AboutView about, IntegrationInfo info) {
-        Rect area = new Rect(0, 0, 160, 30);
+        Rect area = new Rect(0, 0, 160, 34);
         Buffer buffer = Buffer.empty(area);
         about.render(Frame.forTesting(buffer), area, info);
         return TuiTestHelper.bufferToString(buffer);
@@ -131,6 +131,7 @@ class AboutViewTest {
                     .contains("↳ stock").contains(" Out ").contains("localhost:8765/ship").contains("from orders");
             assertThat(screen).contains("Last 5m").contains("30 handled")
                     .contains("HttpOperationFailedException 503 ×30").contains("Watch").contains("Next");
+            assertThat(screen).contains("What happened").contains("30 handled");
         });
     }
 }
