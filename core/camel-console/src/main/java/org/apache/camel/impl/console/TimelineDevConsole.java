@@ -293,6 +293,14 @@ public class TimelineDevConsole extends AbstractDevConsole {
         List<TimelineExchange> kept = new ArrayList<>();
         List<Long> done = new ArrayList<>(count);
         List<ChaosSeries> chaos = new ArrayList<>();
+        // the from endpoint of each route, read before the recorder is locked: the routes have a lock of their own, and
+        // the exchange events wait for the recorder
+        Map<String, String> fromUris = new HashMap<>();
+        for (Route route : getCamelContext().getRoutes()) {
+            if (route.getConsumer() != null) {
+                fromUris.put(route.getRouteId(), route.getConsumer().getEndpoint().getEndpointUri());
+            }
+        }
         synchronized (rec) {
             secs = rec.seconds(end, count);
             boolean chaosSeen = !rec.chaosRules().isEmpty();
@@ -300,9 +308,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
                 done.add(s != null ? s.done : 0L);
             }
             for (String routeId : TimelineRecorder.routes(secs, accept)) {
-                Route route = getCamelContext().getRoute(routeId);
-                String from = route != null && route.getConsumer() != null
-                        ? route.getConsumer().getEndpoint().getEndpointUri() : null;
+                String from = fromUris.get(routeId);
                 routes.add(new RouteSeries(
                         routeId, from,
                         series(secs, routeId, rs -> rs.completed), series(secs, routeId, rs -> rs.recovered),
