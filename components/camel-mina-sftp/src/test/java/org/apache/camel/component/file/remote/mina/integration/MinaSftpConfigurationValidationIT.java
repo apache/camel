@@ -27,6 +27,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.sshd.common.util.io.PathUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -40,6 +41,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Integration tests for MINA SFTP configuration validation and error messages.
  * <p>
+ * <b>Why this test requires isolation:</b> This test class modifies the global
+ * {@code PathUtils.setUserHomeFolderResolver()} to test username resolution fallback behavior. MINA SSHD's
+ * {@code PathUtils} lazily caches the home folder path on first access via {@code DefaultConfigFileHostEntryResolver},
+ * and this cache cannot be reset once populated. Running this test in a shared JVM with other tests would cause
+ * interference.
+ * <p>
+ * <b>How isolation is achieved:</b> The {@code @Tag("require-isolated-jvm")} annotation marks this class for separate
+ * execution. The Maven Failsafe plugin is configured in pom.xml with two executions:
+ * <ul>
+ * <li>{@code standard-integration-tests} - runs all tests EXCEPT those tagged "require-isolated-jvm"</li>
+ * <li>{@code isolated-integration-tests} - runs ONLY tests tagged "require-isolated-jvm" with {@code reuseForks=false}
+ * to ensure a fresh JVM</li>
+ * </ul>
+ * <p>
  * <b>Username resolution fallback:</b> When no username is specified in the URI, MINA SSHD (like JSch/camel-sftp) uses
  * this priority order:
  * <ol>
@@ -52,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *      "https://github.com/apache/mina-sshd/blob/master/sshd-common/src/main/java/org/apache/sshd/client/config/hosts/HostConfigEntry.java">MINA
  *      SSHD HostConfigEntry</a>
  */
+@Tag("require-isolated-jvm")
 @EnabledIf(value = "org.apache.camel.test.infra.ftp.services.embedded.SftpUtil#hasRequiredAlgorithms('src/test/resources/hostkey.pem')")
 public class MinaSftpConfigurationValidationIT extends MinaSftpServerTestSupport {
 
@@ -375,7 +391,7 @@ public class MinaSftpConfigurationValidationIT extends MinaSftpServerTestSupport
     @Timeout(30)
     public void testSpecialCharactersInPassword() throws Exception {
         // Password with special characters
-        String specialPassword = "p@ss#word!$%^&*()";
+        String specialPassword = "p@ss#word!$%^&*()"; // gitleaks:allow (test fixture, not a secret)
         String uri = "mina-sftp://localhost:" + service.getPort() + "/" + ftpRootDir
                      + "?username=admin&password=" + specialPassword
                      + "&strictHostKeyChecking=no&useUserKnownHostsFile=false";
