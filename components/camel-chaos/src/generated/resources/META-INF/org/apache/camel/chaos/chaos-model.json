@@ -448,7 +448,7 @@
         "name": "expect",
         "type": "expectation",
         "required": false,
-        "description": "An expectation of a route after the rule is added: <route>:<count> (at least that many completed) or <route>:<kind><op><count>",
+        "description": "An expectation of a route after the rule is added: <route>:<count> (at least that many completed), <route>:<kind><op><count>, a time (<route>:meanTime<=2s) or the messages lost between two routes (<route>-><route>:lost<=0)",
         "example": "orders:handled<=0"
       },
       {
@@ -519,6 +519,18 @@
         {
           "name": "redeliveries",
           "description": "The redeliveries in the route"
+        },
+        {
+          "name": "meanTime",
+          "description": "The mean time of the exchanges in the route, from entering it until done, such as meanTime<=2s"
+        },
+        {
+          "name": "maxTime",
+          "description": "The longest time of an exchange in the route, from entering it until done, such as maxTime<=5s"
+        },
+        {
+          "name": "lost",
+          "description": "The messages completed in the route and not in the next one, such as orders->shipping:lost<=0"
         }
       ],
       "ops": [

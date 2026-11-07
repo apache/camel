@@ -197,6 +197,8 @@ final class ChaosRule {
     final long untilCount;
     final long untilDuration;
     final String expectRoute;
+    // the next route of a lost expectation (orders->shipping:lost<=0), else null
+    final String expectToRoute;
     final long expectCount;
     final long within;
     // the action of a lifecycle rule (stall is suspend), else null
@@ -277,6 +279,7 @@ final class ChaosRule {
         this.untilCount = b.untilCount;
         this.untilDuration = b.untilDuration;
         this.expectRoute = b.expectRoute;
+        this.expectToRoute = b.expectToRoute;
         this.expectCount = b.expectCount;
         this.action = b.action;
         this.stall = b.stall;
@@ -290,7 +293,8 @@ final class ChaosRule {
         this.endsAt = plus(startsAt, runFor);
         this.within = b.within > 0 ? b.within : plus(from, untilDuration > 0 ? untilDuration : maxDuration);
         this.expectation = expectRoute != null
-                ? new Expectation(expectRoute, b.expectKind, b.expectOp, expectCount, plus(addedAt, within)) : null;
+                ? new Expectation(expectRoute, expectToRoute, b.expectKind, b.expectOp, expectCount, plus(addedAt, within))
+                : null;
         for (int i = 0; i < fired.length; i++) {
             fired[i] = new LongAdder();
         }
@@ -510,12 +514,24 @@ final class ChaosRule {
         if (expectation != null) {
             Expectation e = expectation;
             sb.append("; expects ");
-            if (e.op == Expectation.Op.AT_MOST && e.count == 0) {
-                sb.append("no ").append(e.kind.words(0));
+            if (e.kind == Expectation.Kind.MEAN_TIME) {
+                sb.append("a mean time of ").append(e.op.words).append(' ').append(ChaosWords.time(e.count))
+                        .append(" in route ").append(e.route);
+            } else if (e.kind == Expectation.Kind.MAX_TIME) {
+                sb.append("every exchange in route ").append(e.route).append(" to take ").append(e.op.words).append(' ')
+                        .append(ChaosWords.time(e.count));
+            } else if (e.kind == Expectation.Kind.LOST) {
+                sb.append(e.count == 0 ? "no message" : e.op.words + " " + e.count + " " + e.kind.words(e.count))
+                        .append(e.count == 0 ? " lost" : "").append(" between route ").append(e.route).append(" and route ")
+                        .append(e.toRoute);
             } else {
-                sb.append(e.op.words).append(' ').append(e.count).append(' ').append(e.kind.words(e.count));
+                if (e.op == Expectation.Op.AT_MOST && e.count == 0) {
+                    sb.append("no ").append(e.kind.words(0));
+                } else {
+                    sb.append(e.op.words).append(' ').append(e.count).append(' ').append(e.kind.words(e.count));
+                }
+                sb.append(" in route ").append(e.route);
             }
-            sb.append(" in route ").append(e.route);
             if (within != plus(from, runFor)) {
                 // a within= of its own (the default is until the rule ends)
                 sb.append(" within ").append(ChaosWords.time(within));
@@ -863,24 +879,40 @@ final class ChaosRule {
 
         /** What an expectation counts in its route. */
         enum Kind {
-            COMPLETED("completed", "exchange completed", "exchanges completed"),
-            HANDLED("handled", "exchange handled by the error handler", "exchanges handled by the error handler"),
-            FAILED("failed", "exchange failed", "exchanges failed"),
-            REDELIVERIES("redeliveries", "redelivery", "redeliveries");
+            COMPLETED("completed", "exchange completed", "exchanges completed", "The exchanges completed in the route"),
+            HANDLED("handled", "exchange handled by the error handler", "exchanges handled by the error handler",
+                    "The exchanges handled by the error handler in the route"),
+            FAILED("failed", "exchange failed", "exchanges failed", "The exchanges failed in the route"),
+            REDELIVERIES("redeliveries", "redelivery", "redeliveries", "The redeliveries in the route"),
+            // the time an exchange is in the route, from when it enters until the route is done with it (CAMEL-26726)
+            MEAN_TIME("meanTime", "mean time", "mean time",
+                      "The mean time of the exchanges in the route, from entering it until done, such as meanTime<=2s"),
+            MAX_TIME("maxTime", "max time", "max time",
+                     "The longest time of an exchange in the route, from entering it until done, such as maxTime<=5s"),
+            // the messages one route completed that the next one did not: <route>-><next route>:lost<=0
+            LOST("lost", "message lost", "messages lost",
+                 "The messages completed in the route and not in the next one, such as orders->shipping:lost<=0");
 
             final String key;
             // for the reason of an unmet expectation
             private final String one;
             private final String many;
+            final String description;
 
-            Kind(String key, String one, String many) {
+            Kind(String key, String one, String many, String description) {
                 this.key = key;
                 this.one = one;
                 this.many = many;
+                this.description = description;
             }
 
             String words(long n) {
                 return n == 1 ? one : many;
+            }
+
+            /** Whether the count of the kind is a time (in milliseconds), not a number of exchanges. */
+            boolean time() {
+                return this == MEAN_TIME || this == MAX_TIME;
             }
         }
 
@@ -900,11 +932,19 @@ final class ChaosRule {
         }
 
         final String route;
+        // the next route of a lost expectation, else null
+        final String toRoute;
         final Kind kind;
         final Op op;
+        // a number, or a time in milliseconds for a time kind
         final long count;
         private long deadline;
         private long value;
+        // a time kind: the exchanges done, their time together and the longest; lost: the completed of both routes
+        private long samples;
+        private long sum;
+        private long max;
+        private long toValue;
         // when it was decided before the time was up (met for at least, unmet for at most and exactly), and how
         private long decidedAt = -1;
         private Outcome decided;
@@ -915,7 +955,12 @@ final class ChaosRule {
         }
 
         Expectation(String route, Kind kind, Op op, long count, long deadline) {
+            this(route, null, kind, op, count, deadline);
+        }
+
+        Expectation(String route, String toRoute, Kind kind, Op op, long count, long deadline) {
             this.route = route;
+            this.toRoute = toRoute;
             this.kind = kind;
             this.op = op;
             this.count = count;
@@ -943,6 +988,39 @@ final class ChaosRule {
             }
         }
 
+        /** An exchange was done in the route, after it was so long in it (a time kind). */
+        synchronized void recordTime(long millis) {
+            recordTimeAt(millis, TimeSource.currentTimeMillis());
+        }
+
+        synchronized void recordTimeAt(long millis, long now) {
+            if (frozenAt >= 0 || now > deadline) {
+                return;
+            }
+            samples++;
+            sum += millis;
+            max = Math.max(max, millis);
+            if (decided == null && kind == Kind.MAX_TIME && op == Op.AT_MOST && millis > count) {
+                // one exchange took too long: it cannot become met
+                decided = Outcome.UNMET;
+                decidedAt = now;
+            }
+        }
+
+        /**
+         * An exchange completed in the route ({@code next} false) or in the next route (true) of a lost expectation.
+         */
+        synchronized void recordLost(boolean next) {
+            if (frozenAt >= 0 || TimeSource.currentTimeMillis() > deadline) {
+                return;
+            }
+            if (next) {
+                toValue++;
+            } else {
+                samples++;
+            }
+        }
+
         synchronized long deadline() {
             return deadline;
         }
@@ -961,7 +1039,12 @@ final class ChaosRule {
         }
 
         synchronized long value() {
-            return value;
+            return switch (kind) {
+                case MEAN_TIME -> samples > 0 ? sum / samples : 0;
+                case MAX_TIME -> max;
+                case LOST -> Math.max(0, samples - toValue);
+                default -> value;
+            };
         }
 
         synchronized Outcome outcome(long now) {
@@ -975,12 +1058,17 @@ final class ChaosRule {
             if (now <= deadline) {
                 return Outcome.PENDING;
             }
-            // the time is up
-            return switch (op) {
-                case AT_LEAST -> Outcome.UNMET;
-                case AT_MOST -> Outcome.MET;
-                case EXACTLY -> value == count ? Outcome.MET : Outcome.UNMET;
+            // the time is up: a time of no exchange says nothing, so it is not met
+            if (kind.time() && samples == 0) {
+                return Outcome.UNMET;
+            }
+            long v = value();
+            boolean met = switch (op) {
+                case AT_LEAST -> v >= count;
+                case AT_MOST -> v <= count;
+                case EXACTLY -> v == count;
             };
+            return met ? Outcome.MET : Outcome.UNMET;
         }
 
         synchronized boolean frozen() {
@@ -989,7 +1077,7 @@ final class ChaosRule {
 
         /** The outcome, the counted value and whether it is frozen, read together (for the report). */
         synchronized Reading read(long now) {
-            return new Reading(outcome(now), value, frozenAt >= 0);
+            return new Reading(outcome(now), value(), frozenAt >= 0, samples, toValue);
         }
 
         /**
@@ -997,18 +1085,40 @@ final class ChaosRule {
          * many, misses the ones that did not complete.
          */
         long lost(Reading reading) {
-            return reading.outcome() == Outcome.UNMET && kind == Kind.COMPLETED && op != Op.AT_MOST
-                    ? Math.max(0, count - reading.value()) : 0;
+            if (reading.outcome() != Outcome.UNMET) {
+                return 0;
+            }
+            if (kind == Kind.LOST) {
+                // the messages the next route did not complete
+                return reading.value();
+            }
+            return kind == Kind.COMPLETED && op != Op.AT_MOST ? Math.max(0, count - reading.value()) : 0;
         }
 
         /** The expectation as the rule writes it, such as orders:100 or orders:handled<=0. */
         String spec() {
-            return kind == Kind.COMPLETED && op == Op.AT_LEAST
-                    ? route + ":" + count : route + ":" + kind.key + op.key + count;
+            if (kind == Kind.COMPLETED && op == Op.AT_LEAST) {
+                return route + ":" + count;
+            }
+            String routes = toRoute != null ? route + "->" + toRoute : route;
+            return routes + ":" + kind.key + op.key + (kind.time() ? ChaosRuleParser.printTime(count) : count);
+        }
+
+        /** The value as the report says it, such as {@code 3 completed} or {@code mean 1s200ms of 12 exchanges}. */
+        String valueText(Reading reading) {
+            return switch (kind) {
+                case MEAN_TIME, MAX_TIME -> reading.samples() == 0
+                        ? "no exchange done yet"
+                        : (kind == Kind.MEAN_TIME ? "mean " : "max ") + ChaosRuleParser.printTime(reading.value()) + " of "
+                          + reading.samples() + (reading.samples() == 1 ? " exchange" : " exchanges");
+                case LOST -> reading.value() + " lost (" + reading.samples() + " completed in " + route + ", "
+                             + reading.next() + " in " + toRoute + ")";
+                default -> reading.value() + " " + kind.key;
+            };
         }
 
         /** What an expectation reads at one time. */
-        record Reading(Outcome outcome, long value, boolean frozen) {
+        record Reading(Outcome outcome, long value, boolean frozen, long samples, long next) {
         }
     }
 
@@ -1091,6 +1201,7 @@ final class ChaosRule {
         long untilCount;
         long untilDuration;
         String expectRoute;
+        String expectToRoute;
         Expectation.Kind expectKind = Expectation.Kind.COMPLETED;
         Expectation.Op expectOp = Expectation.Op.AT_LEAST;
         long expectCount;

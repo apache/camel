@@ -103,6 +103,13 @@ public final class ChaosReport {
                     reasons.add("route " + e.route + " completed " + entry.value + " of " + e.count + " exchanges within "
                                 + ChaosRuleParser.printTime(rule.within) + " (rule " + rule.id + "): " + entry.lost
                                 + " lost");
+                } else if (e.kind.time() || e.kind == ChaosRule.Expectation.Kind.LOST) {
+                    // a time, or the messages lost between two routes (CAMEL-26726)
+                    String limit = e.kind.time() ? ChaosRuleParser.printTime(e.count) : Long.toString(e.count);
+                    reasons.add((e.toRoute != null ? "routes " + e.route + "->" + e.toRoute : "route " + e.route) + ": "
+                                + entry.valueText + " within " + ChaosRuleParser.printTime(rule.within) + ", "
+                                + e.op.words + " " + limit + " expected (rule " + rule.id + ")"
+                                + (entry.lost > 0 ? ": " + entry.lost + " lost" : ""));
                 } else {
                     reasons.add("route " + e.route + ": " + entry.value + " " + e.kind.words(entry.value) + " within "
                                 + ChaosRuleParser.printTime(rule.within) + ", " + e.op.words + " " + e.count
@@ -231,7 +238,7 @@ public final class ChaosReport {
             if (r.outcome != null) {
                 sb.append("\n      expect ").append(r.expectSpec).append(" within ")
                         .append(ChaosRuleParser.printTime(r.within)).append(": ").append(r.outcome.key)
-                        .append(", ").append(r.value).append(' ').append(r.expectKind.key);
+                        .append(", ").append(r.valueText);
                 if (r.outcome == Outcome.PENDING) {
                     sb.append(", ").append(ChaosRuleParser.printTime(r.timeLeft)).append(" left");
                 } else if (r.outcome == Outcome.CANCELLED) {
@@ -468,6 +475,15 @@ public final class ChaosReport {
                 if (r.expectKind == ChaosRule.Expectation.Kind.COMPLETED) {
                     e.put("completed", r.value);
                 }
+                // the expectation as the rule writes it, and for a time (count and value in milliseconds) or the
+                // messages lost between two routes, the exchanges it counted (CAMEL-26726)
+                e.put("spec", r.expectSpec);
+                if (r.expectToRoute != null) {
+                    e.put("toRoute", r.expectToRoute);
+                }
+                if (r.expectKind.time() || r.expectToRoute != null) {
+                    e.put("samples", r.samples);
+                }
                 e.put("outcome", r.outcome.key);
                 if (r.outcome == Outcome.PENDING) {
                     e.put("timeLeft", r.timeLeft);
@@ -658,6 +674,11 @@ public final class ChaosReport {
         final long within;
         final Outcome outcome;
         final long value;
+        // the value as the report says it, such as 3 completed or mean 1s200ms of 12 exchanges
+        final String valueText;
+        // the next route of a lost expectation, and the exchanges a time or a lost expectation counted
+        final String expectToRoute;
+        final long samples;
         final long lost;
         final long timeLeft;
         // a lifecycle rule: its action, route, duration and what it did, else null
@@ -726,6 +747,9 @@ public final class ChaosReport {
                 ChaosRule.Expectation.Reading reading = expectation.read(now);
                 outcome = reading.outcome();
                 value = reading.value();
+                valueText = expectation.valueText(reading);
+                expectToRoute = expectation.toRoute;
+                samples = reading.samples();
                 lost = expectation.lost(reading);
                 timeLeft = Math.max(0, expectation.deadline() - now);
             } else {
@@ -736,6 +760,9 @@ public final class ChaosReport {
                 expectCount = 0;
                 outcome = null;
                 value = 0;
+                valueText = null;
+                expectToRoute = null;
+                samples = 0;
                 lost = 0;
                 timeLeft = 0;
             }

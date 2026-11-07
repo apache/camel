@@ -70,6 +70,10 @@ final class ChaosExchangeState implements SafeCopyProperty {
         boolean expectedCompleted;
         boolean expectedHandled;
         boolean expectedFailed;
+        // when the exchange entered the route, for the expectations on time (meanTime, maxTime), else -1; and whether
+        // they counted its time
+        long enteredAt = -1;
+        boolean expectedTime;
     }
 
     private final Map<String, RouteState> routes = new HashMap<>(4);

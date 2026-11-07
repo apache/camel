@@ -82,6 +82,8 @@ final class ChaosInfo {
         long expectValue;
         String expectOutcome;
         long expectTimeLeft = -1;
+        // the expectation as the rule writes it, such as orders:meanTime<=2s (null before CAMEL-26726)
+        String expectSpec;
         // what a stall or lifecycle rule did to its route, or null
         String lifecycleAction;
         String lifecycleRoute;
@@ -373,6 +375,7 @@ final class ChaosInfo {
             r.expectValue = num(e.get("value") != null ? e.get("value") : e.get("completed"), 0);
             r.expectOutcome = e.getString("outcome");
             r.expectTimeLeft = num(e.get("timeLeft"), -1);
+            r.expectSpec = e.getString("spec");
         }
         if (jo.get("lifecycle") instanceof JsonObject l) {
             r.lifecycleAction = l.getString("action");

@@ -211,7 +211,10 @@ until:   a number of matches (until=100) or a time (until=2m), counted from the 
 time:    a number with a unit (ms, s, m, h, d), also combined as 1m30s; a number alone is milliseconds
 expect:  expect=<route id>:<count> (at least that many completed exchanges), or
          expect=<route id>:<kind><op><count> with kind completed | handled | failed | redeliveries
-         and op >= | <= | = (such as expect=orders:handled<=0); with an optional within=<time>
+         and op >= | <= | = (such as expect=orders:handled<=0), or a time
+         expect=<route id>:meanTime|maxTime<op><time> (such as expect=orders:meanTime<=2s), or the
+         messages lost between two routes expect=<route id>-><route id>:lost<op><count> (such as
+         expect=orders->shipping:lost<=0); with an optional within=<time>
 ----
 
 The patterns of the targets are matched as text, with `*` for any characters; they are not regular expressions. The
@@ -656,6 +659,50 @@ give their reason only.
 
 In JSON an expectation has its `kind`, `op`, `count` and the `value` counted so far (and `completed`, the same value, for
 an expectation of completed exchanges).
+
+=== Expectations on time and loss
+
+The delay faults slow a route down, and the question is whether the route stays fast enough: an expectation on time
+checks it. The question people ask about a lost message is often "did every order reach shipping", and an expectation on
+two routes checks that.
+
+[cols="2,3"]
+|===
+|Expectation |Is met when
+
+|`orders:meanTime<=2s` |The mean time of the exchanges in route `orders` is at most 2 s when the time is up.
+|`orders:maxTime<=5s` |No exchange of route `orders` took longer than 5 s. One that does makes it unmet at once.
+|`orders->shipping:lost<=0` (or `lost=0`) |Every message that completed in route `orders` also completed in route
+`shipping`: the count of `shipping` is at most 0 behind the count of `orders` when the time is up.
+|===
+
+* The time of an exchange in a route is measured by chaos, from when the exchange enters the route until the route is
+done with it the first time (whether it completed, was handled by the error handler or failed), including the
+redeliveries in between. It is read through `TimeSource`, so in a deterministic simulation test it is virtual time. A
+time is any time of the rules, such as `500ms`, `2s` or `1m30s`; the op is `<=` or `>=` (a `meanTime>=1s` checks that a
+delay rule slows the route as it should).
+* A time of no exchange says nothing, so an expectation on time whose route did no exchange in the time is unmet.
+* A loss counts the exchanges completed in both routes from when the rule is added until the time is up, and the
+difference is the messages lost (never below 0, as the second route may also get messages from elsewhere). Messages still
+on their way when the time is up count as lost too: let `within=` run past the `until=` of the faults, so the last ones
+can arrive. The messages it counts as lost are added to the lost of the report. The op is `<=` or `=`.
+
+For example, a stock service that is slow for a minute, and the orders that must still ship, fast enough:
+
+[source,properties]
+----
+camel.chaos.rules = \
+  endpoint=http:stock* delay duration=1s..3s rate=0.3 until=1m expect=orders:meanTime<=2s within=2m;\
+  endpoint=seda:shipping drop rate=0.01 until=1m expect=orders->shipping:lost<=0 within=2m
+----
+
+An unmet one gives its reason in the report, such as `route orders: mean 2s340ms of 118 exchanges within 2m0s, at most
+2s expected (rule r1)` or `routes orders->shipping: 1 lost (118 completed in orders, 117 in shipping) within 2m0s, at
+most 0 expected (rule r2): 1 lost`. In JSON these expectations have their `spec` as the rule writes it, the `count` and
+the `value` in milliseconds for a time, the `toRoute` of a loss, and the `samples` (the exchanges of the time, or the
+ones completed in the first route).
+
+The route statistics of Camel have no percentiles, so there is no `p99` yet.
 
 === A rule in plain words
 

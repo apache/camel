@@ -927,7 +927,17 @@ final class ChaosRuleParser {
                                                + " or expect=orders:handled<=0");
         }
         b.expectRoute = expect.substring(0, colon);
-        if (b.expectRoute.indexOf('*') >= 0) {
+        int arrow = b.expectRoute.indexOf("->");
+        if (arrow >= 0) {
+            // the messages one route completed that the next one did not (CAMEL-26726)
+            b.expectToRoute = b.expectRoute.substring(arrow + 2);
+            b.expectRoute = b.expectRoute.substring(0, arrow);
+            if (b.expectRoute.isEmpty() || b.expectToRoute.isEmpty() || b.expectRoute.equals(b.expectToRoute)) {
+                throw new IllegalArgumentException(
+                        "expect=" + expect + " needs two routes, such as expect=orders->shipping:lost<=0");
+            }
+        }
+        if (b.expectRoute.indexOf('*') >= 0 || b.expectToRoute != null && b.expectToRoute.indexOf('*') >= 0) {
             throw new IllegalArgumentException(
                     "expect=" + expect + " needs the id of one route, not a pattern, such as expect=orders:100");
         }
@@ -949,8 +959,9 @@ final class ChaosRuleParser {
             if (b.expectKind == null) {
                 throw new IllegalArgumentException(
                         "expect=" + expect + " counts " + (kind.isEmpty() ? "nothing" : kind)
-                                                   + ": the kinds are completed, handled, failed and redeliveries,"
-                                                   + " such as expect=orders:handled<=0");
+                                                   + ": the kinds are completed, handled, failed, redeliveries, meanTime,"
+                                                   + " maxTime and lost, such as expect=orders:handled<=0,"
+                                                   + " expect=orders:meanTime<=2s or expect=orders->shipping:lost<=0");
             }
             String rest = spec.substring(op);
             if (rest.startsWith(">=")) {
@@ -966,6 +977,32 @@ final class ChaosRuleParser {
             }
             count = rest.substring(b.expectOp.key.length());
         }
+        if ((b.expectKind == ChaosRule.Expectation.Kind.LOST) != (b.expectToRoute != null)) {
+            throw new IllegalArgumentException(
+                    b.expectToRoute != null
+                            ? "expect=" + expect + " has two routes, which only lost counts: such as"
+                              + " expect=" + b.expectRoute + "->" + b.expectToRoute + ":lost<=0"
+                            : "expect=" + expect + " counts the messages lost between two routes, such as"
+                              + " expect=orders->shipping:lost<=0");
+        }
+        if (b.expectKind.time()) {
+            if (b.expectOp == ChaosRule.Expectation.Op.EXACTLY) {
+                throw new IllegalArgumentException(
+                        "expect=" + expect + " needs <= or >= for a time, such as expect=" + b.expectRoute + ":"
+                                                   + b.expectKind.key + "<=2s");
+            }
+            b.expectCount = duration("expect", count);
+            if (b.expectCount < 1) {
+                throw new IllegalArgumentException("expect=" + expect + " needs a time longer than 0");
+            }
+            withinOf(b, within, maxDuration);
+            return;
+        }
+        if (b.expectKind == ChaosRule.Expectation.Kind.LOST && b.expectOp == ChaosRule.Expectation.Op.AT_LEAST) {
+            throw new IllegalArgumentException(
+                    "expect=" + expect + " needs <= or = for the messages lost, such as expect=" + b.expectRoute + "->"
+                                               + b.expectToRoute + ":lost<=0");
+        }
         if (!isDigits(count) || count.length() > 18) {
             throw new IllegalArgumentException(
                     "expect=" + expect + " needs a count that is a whole number of at most 18 digits");
@@ -975,6 +1012,11 @@ final class ChaosRuleParser {
             // at least 0 is always met
             throw new IllegalArgumentException("expect=" + expect + " needs a count of 1 or more");
         }
+        withinOf(b, within, maxDuration);
+    }
+
+    /** The time of the expectation (within=), at most camel.chaos.maxDuration after the start of the rule. */
+    private static void withinOf(ChaosRule.Builder b, String within, long maxDuration) {
         if (within != null) {
             b.within = duration("within", within);
             if (b.within > maxDuration + b.from) {

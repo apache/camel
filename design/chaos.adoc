@@ -383,6 +383,10 @@ when the context stops first (the report of `reportOnShutdown`) or the rule is r
 arrive, so they are not called lost. A tool must treat a pending expectation as not yet decided, so a PASS with one
 pending is not final.
 
+Stage 2 (CAMEL-26726) adds expectations on time and loss: `orders:meanTime<=2s` and `orders:maxTime<=5s`, with the time
+of an exchange in the route measured by chaos through `TimeSource` (from entering the route until done), and
+`orders->shipping:lost<=0`, the messages one route completed and the next did not, which count as lost.
+
 === Control
 
 - A `chaos` dev console lists the rules and shows the report, so it is `@DevConsole(readOnly = true)`. It does not add,
