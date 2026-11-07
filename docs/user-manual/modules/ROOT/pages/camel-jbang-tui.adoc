@@ -65,7 +65,7 @@ to any tab, or *Shift+F2* to go to a tab by name.
 |===
 | Key | Tab | What It Shows
 
-| 1 | Overview | All running integrations and infrastructure services. Start here.
+| 1 | Overview | About an integration, what it does and what has happened, or all running integrations and infrastructure services. Start here.
 | 2 | Source | File explorer and editor for your project code, with Camel checks, completion and documentation.
 | 3 | Log | Real-time application logs with search and filtering.
 | 4 | Timeline | Per second, the errors and what each route did, and the failed, handled and slowest exchanges of a second.

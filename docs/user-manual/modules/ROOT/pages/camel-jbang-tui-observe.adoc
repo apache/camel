@@ -8,12 +8,35 @@ See xref:camel-jbang-tui.adoc[Camel TUI] for getting started and the other pages
 
 == Key Features
 
+* <<_about,*About*>> -- what an integration does and what has happened, at a glance and without an AI
 * <<_timeline,*Timeline*>> -- per second what went wrong and what it did to each route, and the exchanges of a second
 * <<_message_insight,*Message insight*>> -- step through the history of an exchange, as a list, a waterfall or on the diagram
 * <<_troubleshooting_errors,*Errors*>> -- failures with the stack trace, the message and the path that led there
 * <<_opentelemetry_spans,*OpenTelemetry spans*>> -- the traces of the integration, without a tracing backend
 * <<_http_probe,*HTTP probe*>> -- call the HTTP endpoints of the integration from the TUI
 * <<_highlighted_features,*Deep dives*>> -- CVE audit, Kafka, SQL, memory leaks, JFR profiling and the catalog
+
+== About
+
+The Overview tab (key *1*) has two views, switched with *v*: *About* an integration, shown when one runs, and
+*Integrations*, the table of all of them. About tells what an integration you have not seen before does, and what has
+happened to it, with no AI:
+
+image::jbang/camel-tui-about.png[About the chaos demo: its purpose, what comes in, its routes and what goes out, the last 5 minutes after an outage of the stock service, and a line per route of what happened]
+
+* The header has the Camel version, runtime, files, routes and uptime, and the purpose: the comment at the top of the
+main source file (a YAML `#` comment, a Javadoc or `//` comment in Java, an XML comment), else the descriptions of the
+routes.
+* *In*, *Routes* and *Out* say what starts it, its routes (a route called with `direct` sits under its caller with `↳`,
+one handed off with `seda` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
+last 5 minutes. *Up* and *Down* select a line, and *Enter* opens a route drilled down on the Diagram, or an endpoint with
+its details on the Endpoint tab.
+* *Last 5m* has the exchanges and how they ended, with the cause that happened most, and *What happened* a line per route
+over the last 5 minutes, coloured as on the Timeline, with when the worst happened. *+* and *-* zoom between 5, 2 and 1
+minutes (zooming in centres on the last trouble, so you see what the other routes did then), and *Left* and *Right*
+move a zoomed window. *4* opens the Timeline for each second.
+
+`camel get about` shows the same from the command line (see xref:camel-jbang-diagnostics.adoc#_about[Diagnostics]).
 
 == Timeline
 

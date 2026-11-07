@@ -787,10 +787,14 @@ final class AboutView {
             }
         }
         if (total > done) {
-            spans.add(Span.styled("  ·  since it started: " + total + (total == 1 ? " exchange" : " exchanges")
-                                  + (totalHandled > 0 ? ", " + totalHandled + " handled" : "")
-                                  + (totalFailed > 0 ? ", " + totalFailed + " failed" : ""),
-                    Theme.muted()));
+            String since = "  ·  since it started: " + total + (total == 1 ? " exchange" : " exchanges")
+                           + (totalHandled > 0 ? ", " + totalHandled + " handled" : "")
+                           + (totalFailed > 0 ? ", " + totalFailed + " failed" : "");
+            // only when it fits: the line is about the last minutes first
+            int used = spans.stream().mapToInt(sp -> sp.content().length()).sum();
+            if (used + since.length() < width - 1) {
+                spans.add(Span.styled(since, Theme.muted()));
+            }
         }
         return Line.from(spans);
     }

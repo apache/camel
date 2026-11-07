@@ -42,6 +42,22 @@ and `--show` picks the sections (`body`, `headers`, `properties`, `variables`, `
 NOTE: The error registry is enabled by the `dev` profile, which `camel run` uses by default.
 For another profile, or for a Spring Boot or Quarkus application, set `camel.errorRegistry.enabled=true`.
 
+=== About
+
+`camel get about` says what an integration does and what has happened, without an AI: its purpose (the comment at the
+top of its main source file, else the descriptions of its routes), what comes in, its routes (a route called with
+`direct` or `seda` under the route that calls it), what goes out, the exchanges of each route and the sends to each
+endpoint since it started, and the last minutes from its timeline.
+
+[source,bash]
+----
+camel get about
+camel get about myApp --json
+----
+
+It is the About view of the TUI as text. The `camel_project_overview` MCP tool has the same purpose, and the running
+part when the project runs.
+
 === Timeline
 
 `camel get timeline` shows what each route did in the last minute: how many exchanges completed, were recovered by a
