@@ -909,7 +909,8 @@ their route.
 breaker, a dead letter channel, a hand-off over seda, an input from outside), the most worth trying first, each with
 why and the `chaos-add` command that adds it.
 `camel get chaos` lists the current rules with their id, version, state, matches and the faults that fired, and
-`--report` shows the report: the verdict, the seed, every version of every rule and the counts per route. Chaos is for
+`--report` shows the report: the verdict, the seed, every version of every rule, the counts per route, and what has
+been tried per route (the kinds of fault, how it went, and what the suggestions offer that no rule tried yet). Chaos is for
 development only: it stays off with profile `prod`, and the commands cannot switch it on.
 
 == Using Jolokia and Hawtio

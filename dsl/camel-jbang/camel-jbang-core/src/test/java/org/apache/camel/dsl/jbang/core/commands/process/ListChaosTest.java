@@ -172,6 +172,33 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void whatHasBeenTriedInTheReport() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject kind = new JsonObject();
+        kind.put("kind", "errors");
+        kind.put("rules", new JsonArray(List.of("r1 v2")));
+        kind.put("fired", 24L);
+        kind.put("recovered", 21L);
+        kind.put("handled", 1L);
+        kind.put("failed", 0L);
+        kind.put("expectations", new JsonArray(List.of("orders:100 unmet")));
+        JsonObject route = new JsonObject();
+        route.put("route", "orders");
+        route.put("kinds", new JsonArray(List.of(kind)));
+        route.put("notTried", new JsonArray(List.of("slow", "duplicate")));
+        ((JsonObject) chaos.get("report")).put("tried", new JsonArray(List.of(route)));
+        writeStatus(chaos);
+
+        assertThat(run("--report")).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("tried, per route:").contains("OUTCOME");
+        assertThat(lineOf(out, "r1 v2")).contains("orders").contains("errors").contains("24")
+                .contains("21 recovered, 1 handled, 0 failed; expect orders:100 unmet");
+        assertThat(lineOf(out, "not tried yet")).contains("slow, duplicate");
+    }
+
+    @Test
     void reportAsJson() throws Exception {
         writeStatus(chaosOn());
 

@@ -240,6 +240,9 @@ final class ChaosRule {
     private final long[] faultsPerSecond = new long[MINUTE];
     private final long[] secondOf = new long[MINUTE];
     final Effect effect = new Effect();
+    // the faults of the rule per route, for what has been tried (CAMEL-26728); bounded, as the routes are
+    final ConcurrentMap<String, LongAdder> firedInRoute = new ConcurrentHashMap<>();
+    static final int MAX_ROUTES = 200;
     ChaosRecentFaults recentFaults;
 
     ChaosRule(Builder b, String id, long seed, long addedAt, long maxDuration) {
@@ -387,16 +390,24 @@ final class ChaosRule {
         if (exchange != null) {
             ChaosExchangeState.faulted(this, exchange);
         }
+        String route = routeId != null || exchange == null ? routeId : ChaosExchangeState.routeId(exchange);
+        countInRoute(route);
         ChaosRecentFaults recent = recentFaults;
         if (recent != null) {
-            recent.add(now, this, hook, routeId != null || exchange == null ? routeId : ChaosExchangeState.routeId(exchange),
-                    where, exchange != null ? exchange.getExchangeId() : null);
+            recent.add(now, this, hook, route, where, exchange != null ? exchange.getExchangeId() : null);
+        }
+    }
+
+    private void countInRoute(String route) {
+        if (route != null && (firedInRoute.size() < MAX_ROUTES || firedInRoute.containsKey(route))) {
+            firedInRoute.computeIfAbsent(route, k -> new LongAdder()).increment();
         }
     }
 
     /** A lifecycle rule (or stall) took its route down: counted in its live state, as the faults at a hook are. */
     void firedLifecycle(String routeId, long now) {
         countFault(now);
+        countInRoute(routeId);
         ChaosRecentFaults recent = recentFaults;
         if (recent != null) {
             recent.add(now, this, null, routeId, null, null);

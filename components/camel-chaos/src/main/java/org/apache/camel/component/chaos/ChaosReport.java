@@ -69,10 +69,21 @@ public final class ChaosReport {
     private final long now;
     // the last faults, the latest first
     private final List<ChaosRecentFaults.Entry> recentFaults;
+    // what has been tried per route, and what not yet (CAMEL-26728)
+    private final List<ChaosAdvisor.RouteTried> tried;
 
     ChaosReport(long seed, boolean seedGiven, long now, List<ChaosRule> current, List<ChaosRule> removed,
                 Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
                 long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults, ChaosTargets.Reach reach) {
+        this(seed, seedGiven, now, current, removed, counts, evictedUnmet, evictedLost, evictedPending, evictedLostAtDlq,
+             recentFaults, reach, List.of());
+    }
+
+    ChaosReport(long seed, boolean seedGiven, long now, List<ChaosRule> current, List<ChaosRule> removed,
+                Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
+                long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults, ChaosTargets.Reach reach,
+                List<ChaosAdvisor.RouteTried> tried) {
+        this.tried = List.copyOf(tried);
         this.seed = seed;
         this.seedGiven = seedGiven;
         this.now = now;
@@ -255,6 +266,38 @@ public final class ChaosReport {
                     .append(r.failed).append(" (kept by the consumer ").append(r.failedKept).append("), handled ")
                     .append(r.handled).append(", redeliveries ").append(r.redeliveries);
         }
+        if (!tried.isEmpty()) {
+            sb.append("\n  tried, per route:");
+            for (ChaosAdvisor.RouteTried r : tried) {
+                sb.append("\n    ").append(r.route()).append(':');
+                if (r.tried().isEmpty()) {
+                    sb.append(" nothing yet");
+                }
+                for (ChaosAdvisor.KindTried k : r.tried()) {
+                    sb.append("\n      ").append(k.kind().key).append(" (").append(String.join(", ", k.rules()))
+                            .append("): fired ").append(k.fired());
+                    StringJoiner effect = new StringJoiner(", ", ", ", "");
+                    effect.setEmptyValue("");
+                    if (k.recovered() > 0) {
+                        effect.add(k.recovered() + " recovered");
+                    }
+                    if (k.handled() > 0) {
+                        effect.add(k.handled() + " handled");
+                    }
+                    if (k.failed() > 0) {
+                        effect.add(k.failed() + " failed");
+                    }
+                    sb.append(effect);
+                    for (String e : k.expectations()) {
+                        sb.append(", expect ").append(e);
+                    }
+                }
+                if (!r.notTried().isEmpty()) {
+                    sb.append("\n      not tried yet: ")
+                            .append(String.join(", ", r.notTried().stream().map(k -> k.key).toList()));
+                }
+            }
+        }
         if (!recentFaults.isEmpty()) {
             sb.append("\n  recent faults:");
             for (ChaosRecentFaults.Entry f : recentFaults) {
@@ -360,6 +403,33 @@ public final class ChaosReport {
         return (tenths == Math.rint(tenths) ? Long.toString((long) tenths) : Double.toString(tenths)) + "%";
     }
 
+    /** What has been tried per route, and what not yet, as JSON. */
+    private JsonArray triedJson() {
+        JsonArray answer = new JsonArray();
+        for (ChaosAdvisor.RouteTried r : tried) {
+            JsonObject jo = new JsonObject();
+            jo.put("route", r.route());
+            JsonArray kinds = new JsonArray();
+            for (ChaosAdvisor.KindTried k : r.tried()) {
+                JsonObject ko = new JsonObject();
+                ko.put("kind", k.kind().key);
+                ko.put("rules", new JsonArray(k.rules()));
+                ko.put("fired", k.fired());
+                ko.put("recovered", k.recovered());
+                ko.put("handled", k.handled());
+                ko.put("failed", k.failed());
+                if (!k.expectations().isEmpty()) {
+                    ko.put("expectations", new JsonArray(k.expectations()));
+                }
+                kinds.add(ko);
+            }
+            jo.put("kinds", kinds);
+            jo.put("notTried", new JsonArray(r.notTried().stream().map(k -> k.key).toList()));
+            answer.add(jo);
+        }
+        return answer;
+    }
+
     /**
      * The report as JSON, for a tool.
      */
@@ -385,6 +455,7 @@ public final class ChaosReport {
         }
         root.put("routes", routeArray);
         root.put("recentFaults", recentFaultsJson());
+        root.put("tried", triedJson());
         return root;
     }
 

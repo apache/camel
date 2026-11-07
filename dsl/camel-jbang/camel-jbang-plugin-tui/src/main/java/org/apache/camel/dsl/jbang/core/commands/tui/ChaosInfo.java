@@ -43,6 +43,8 @@ final class ChaosInfo {
     final List<Rule> rules = new ArrayList<>();
     final List<RouteCounts> routes = new ArrayList<>();
     final List<RecentFault> recentFaults = new ArrayList<>();
+    // what has been tried per route, by the route (CAMEL-26728)
+    final Map<String, TriedRoute> tried = new LinkedHashMap<>();
 
     /** A current rule, with its live state. */
     static final class Rule {
@@ -251,6 +253,10 @@ final class ChaosInfo {
     }
 
     /** A recent fault of a rule. */
+    /** The kinds of fault tried in a route, and those the suggestions offer that no rule tried yet. */
+    record TriedRoute(String route, List<String> tried, List<String> notTried) {
+    }
+
     record RecentFault(long ago, String rule, String fault, String hook, String route, String where, String exchangeId) {
     }
 
@@ -299,6 +305,25 @@ final class ChaosInfo {
             info.seed = num(report.get("seed"), 0);
             info.seedGiven = report.getBooleanOrDefault("seedGiven", false);
             info.lost = num(report.get("lost"), 0);
+            if (report.get("tried") instanceof JsonArray tried) {
+                for (Object o : tried) {
+                    if (o instanceof JsonObject jo && jo.getString("route") != null) {
+                        List<String> kinds = new ArrayList<>();
+                        if (jo.get("kinds") instanceof JsonArray ks) {
+                            ks.forEach(k -> {
+                                if (k instanceof JsonObject ko && ko.getString("kind") != null) {
+                                    kinds.add(ko.getString("kind"));
+                                }
+                            });
+                        }
+                        List<String> notTried = new ArrayList<>();
+                        if (jo.get("notTried") instanceof JsonArray nt) {
+                            nt.forEach(k -> notTried.add(String.valueOf(k)));
+                        }
+                        info.tried.put(jo.getString("route"), new TriedRoute(jo.getString("route"), kinds, notTried));
+                    }
+                }
+            }
             if (report.get("reasons") instanceof JsonArray reasons) {
                 reasons.forEach(r -> info.reasons.add(String.valueOf(r)));
             }

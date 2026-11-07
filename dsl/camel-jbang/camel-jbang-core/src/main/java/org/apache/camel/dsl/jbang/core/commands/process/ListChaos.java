@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -296,6 +297,57 @@ public class ListChaos extends ProcessWatchCommand {
                     new Column().header("EXCHANGE").dataAlign(HorizontalAlign.LEFT)
                             .with(r -> r.getStringOrDefault("exchangeId", "")))));
         }
+        printTried(report);
+    }
+
+    /**
+     * What has been tried per route (CAMEL-26728): a row per kind of fault, with the rules, the faults in the route and
+     * how the exchanges came out, and the kinds the suggestions offer that no rule tried yet.
+     */
+    private void printTried(JsonObject report) {
+        JsonArray tried = report.getCollection("tried");
+        if (tried == null || tried.isEmpty()) {
+            return;
+        }
+        List<String[]> rows = new ArrayList<>();
+        for (Object o : tried) {
+            JsonObject route = (JsonObject) o;
+            JsonArray kinds = route.getCollection("kinds");
+            if (kinds != null) {
+                for (Object k : kinds) {
+                    JsonObject kind = (JsonObject) k;
+                    List<Object> rules = kind.getCollection("rules");
+                    List<Object> expectations = kind.getCollection("expectations");
+                    rows.add(new String[] {
+                            route.getString("route"), kind.getString("kind"),
+                            rules != null ? rules.stream().map(String::valueOf).collect(Collectors.joining(", ")) : "",
+                            String.valueOf(kind.get("fired")),
+                            kind.get("recovered") + " recovered, " + kind.get("handled") + " handled, " + kind.get("failed")
+                                                               + " failed"
+                                                               + (expectations != null && !expectations.isEmpty()
+                                                                       ? "; expect "
+                                                                         + expectations.stream().map(String::valueOf)
+                                                                                 .collect(Collectors.joining(", "))
+                                                                       : "") });
+                }
+            }
+            List<Object> notTried = route.getCollection("notTried");
+            if (notTried != null && !notTried.isEmpty()) {
+                rows.add(new String[] {
+                        route.getString("route"),
+                        notTried.stream().map(String::valueOf).collect(Collectors.joining(", ")), "", "", "not tried yet" });
+            }
+        }
+        printer().println("  tried, per route:");
+        printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, List.of(
+                new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r[0]),
+                new Column().header("KIND").dataAlign(HorizontalAlign.LEFT).maxWidth(40, OverflowBehaviour.NEWLINE)
+                        .with(r -> r[1]),
+                new Column().header("RULES").dataAlign(HorizontalAlign.LEFT).with(r -> r[2]),
+                new Column().header("FIRED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r[3]),
+                new Column().header("OUTCOME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.NEWLINE)
+                        .with(r -> r[4]))));
     }
 
     /**
