@@ -78,6 +78,19 @@ final class AboutView {
     // -1 follows the last second recorded
     private int zoom = TimelineTab.WINDOWS.length - 1;
     private long stripsEnd = -1;
+    // the line of In, Routes or Out the cursor is on (↑ ↓), in the order of the columns; -1 when none is
+    private int cursor = -1;
+    private volatile List<Target> targets = List.of();
+
+    /**
+     * What a line of In, Routes or Out is about, for Enter: a route (opened on the Diagram) or an endpoint a route
+     * sends to (opened on the Endpoint tab).
+     *
+     * @param routeId  the route
+     * @param endpoint the URI of the endpoint as the sources have it, or null for a route
+     */
+    record Target(String routeId, String endpoint) {
+    }
 
     AboutView(MonitorContext ctx) {
         this.ctx = ctx;
@@ -132,6 +145,9 @@ final class AboutView {
         if (info == null) {
             return false;
         }
+        if (ke.isConfirm()) {
+            return open();
+        }
         long end = ctx.timeline.endSecond(info.pid);
         if (ke.isChar('+') || ke.isChar('=')) {
             if (zoom > 0 && end >= 0) {
@@ -159,6 +175,34 @@ final class AboutView {
             return true;
         }
         return false;
+    }
+
+    /** ↑ ↓: the cursor moves over the lines of In, Routes and Out that are about a route or an endpoint. */
+    void moveCursor(int delta) {
+        int n = targets.size();
+        if (n == 0) {
+            cursor = -1;
+        } else if (cursor < 0) {
+            cursor = delta > 0 ? 0 : n - 1;
+        } else {
+            cursor = Math.max(0, Math.min(n - 1, cursor + delta));
+        }
+    }
+
+    /** The line the cursor is on, or null. */
+    Target selected() {
+        List<Target> t = targets;
+        return cursor >= 0 && cursor < t.size() ? t.get(cursor) : null;
+    }
+
+    /** Enter: opens what the cursor is on; false when it is on nothing. */
+    boolean open() {
+        Target t = selected();
+        if (t == null || ctx.openFromAbout == null) {
+            return false;
+        }
+        ctx.openFromAbout.accept(t);
+        return true;
     }
 
     private int seconds() {
@@ -219,9 +263,26 @@ final class AboutView {
         List<Line> in = new ArrayList<>();
         List<Line> routes = new ArrayList<>();
         List<Line> out = new ArrayList<>();
+        List<Target> inTargets = new ArrayList<>();
+        List<Target> routeTargets = new ArrayList<>();
+        List<Target> outTargets = new ArrayList<>();
         if (o != null) {
-            columns(o, info, in, routes, out);
+            columns(o, info, in, routes, out, inTargets, routeTargets, outTargets);
         }
+        // the cursor goes down In, then Routes, then Out
+        List<Target> all = new ArrayList<>();
+        for (List<Target> column : List.of(inTargets, routeTargets, outTargets)) {
+            for (Target t : column) {
+                if (t != null) {
+                    all.add(t);
+                }
+            }
+        }
+        targets = all;
+        if (cursor >= all.size()) {
+            cursor = all.size() - 1;
+        }
+        highlight(in, inTargets, routes, routeTargets, out, outTargets);
         int columnRows = Math.max(1, Math.max(in.size(), Math.max(routes.size(), out.size())));
         List<Line> strips = strips(info, width);
         int headHeight = head.size() + 2;
@@ -414,8 +475,31 @@ final class AboutView {
 
     // ---- In, Routes, Out ----
 
+    /** The line the cursor is on, in the selection colour. */
+    private void highlight(
+            List<Line> in, List<Target> inTargets, List<Line> routes, List<Target> routeTargets, List<Line> out,
+            List<Target> outTargets) {
+        int n = 0;
+        List<List<Line>> columns = List.of(in, routes, out);
+        List<List<Target>> columnTargets = List.of(inTargets, routeTargets, outTargets);
+        for (int c = 0; c < columns.size(); c++) {
+            List<Target> t = columnTargets.get(c);
+            for (int i = 0; i < t.size(); i++) {
+                if (t.get(i) != null && n++ == cursor) {
+                    List<Span> spans = new ArrayList<>();
+                    for (Span s : columns.get(c).get(i).spans()) {
+                        spans.add(Span.styled(s.content(), s.style().patch(Theme.selectionBg())));
+                    }
+                    columns.get(c).set(i, Line.from(spans));
+                    return;
+                }
+            }
+        }
+    }
+
     private static void columns(
-            ProjectOverview.Overview o, IntegrationInfo info, List<Line> in, List<Line> routes, List<Line> out) {
+            ProjectOverview.Overview o, IntegrationInfo info, List<Line> in, List<Line> routes, List<Line> out,
+            List<Target> inTargets, List<Target> routeTargets, List<Target> outTargets) {
         Map<String, Long> totals = new LinkedHashMap<>();
         for (RouteInfo r : info.routes) {
             if (r.routeId != null) {
@@ -429,9 +513,11 @@ final class AboutView {
                     ? e.label().substring(0, e.label().indexOf(':')) : e.kind();
             in.add(Line.from(Span.raw(" " + icon(kind) + " "), Span.styled(e.label(), Style.EMPTY.bold()),
                     Span.styled(total != null ? "  " + total : "", Theme.success())));
+            inTargets.add(e.route() != null ? new Target(e.route(), null) : null);
         }
         if (in.isEmpty()) {
             in.add(Line.from(Span.styled(" nothing from outside", Theme.muted())));
+            inTargets.add(null);
         }
 
         // the routes that something else in the integration calls go under their caller
@@ -446,13 +532,13 @@ final class AboutView {
         Set<String> shown = new LinkedHashSet<>();
         for (ProjectRoutes.Route r : o.flows()) {
             if (!called.contains(r.key())) {
-                routeLines(o, r, 0, null, calledBy, totals, shown, routes);
+                routeLines(o, r, 0, null, calledBy, totals, shown, routes, routeTargets);
             }
         }
         // what is left: routes called only by routes in a cycle
         for (ProjectRoutes.Route r : o.flows()) {
             if (!shown.contains(r.key())) {
-                routeLines(o, r, 0, null, calledBy, totals, shown, routes);
+                routeLines(o, r, 0, null, calledBy, totals, shown, routes, routeTargets);
             }
         }
 
@@ -467,11 +553,14 @@ final class AboutView {
                 out.add(Line.from(Span.raw(" " + icon(s.category()) + " "), Span.styled(shortUri(s.uri()), Style.EMPTY.bold()),
                         Span.styled("  " + s.direction(), Theme.muted()),
                         Span.styled(hits != null ? "  " + hits : "", Theme.success())));
+                outTargets.add(new Target(s.route(), s.uri()));
                 out.add(Line.from(Span.styled("    from " + s.route(), Theme.muted())));
+                outTargets.add(null);
             }
         }
         if (out.isEmpty()) {
             out.add(Line.from(Span.styled(" nothing outside the integration", Theme.muted())));
+            outTargets.add(null);
         }
     }
 
@@ -492,7 +581,7 @@ final class AboutView {
     }
 
     /** The URI without its options, and the same with or without the // after the scheme. */
-    private static String baseUri(String uri) {
+    static String baseUri(String uri) {
         if (uri == null) {
             return "";
         }
@@ -505,7 +594,7 @@ final class AboutView {
     private static void routeLines(
             ProjectOverview.Overview o, ProjectRoutes.Route r, int depth, String how,
             Map<String, List<ProjectOverview.Link>> calledBy, Map<String, Long> totals, Set<String> shown,
-            List<Line> lines) {
+            List<Line> lines, List<Target> targets) {
         if (!shown.add(r.key()) || depth > 6) {
             return;
         }
@@ -519,11 +608,13 @@ final class AboutView {
             spans.add(Span.styled("  " + total, Theme.success()));
         }
         lines.add(Line.from(spans));
+        targets.add(new Target(r.id() != null ? r.id() : r.key(), null));
         for (ProjectOverview.Link l : calledBy.getOrDefault(r.key(), List.of())) {
             ProjectRoutes.Route target = o.route(l.to());
             if (target != null) {
                 // ↳ a call that waits for the route, ⇢ a hand-off that does not
-                routeLines(o, target, depth + 1, "call".equals(l.kind()) ? "↳" : "⇢", calledBy, totals, shown, lines);
+                routeLines(o, target, depth + 1, "call".equals(l.kind()) ? "↳" : "⇢", calledBy, totals, shown, lines,
+                        targets);
             }
         }
     }

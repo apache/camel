@@ -54,6 +54,9 @@ class DiagramTab extends AbstractDiagramTab {
     }
 
     private int infoPanelWidth = 30;
+    // a route to open drilled down once the diagram has loaded (Enter on About), and until when to wait for it
+    private volatile String pendingRoute;
+    private long pendingRouteUntil;
     private final DragSplit hSplit = new DragSplit();
 
     private final ArchitectureView architecture
@@ -578,6 +581,9 @@ class DiagramTab extends AbstractDiagramTab {
 
     @Override
     public void render(Frame frame, Rect area) {
+        if (pendingRoute != null && isDiagramShown()) {
+            openPendingRoute();
+        }
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
             renderNoSelection(frame, area);
@@ -768,6 +774,23 @@ class DiagramTab extends AbstractDiagramTab {
     /** Whether the diagram has loaded and is drawn: a route or node not found then is not there. */
     boolean isDiagramShown() {
         return !diagram.isLoading() && !diagram.getNodeBoxes().isEmpty();
+    }
+
+    /**
+     * Opens the route drilled down, as Enter on it does (from About): now, or once the diagram has loaded, for up to 10
+     * seconds.
+     */
+    void openRoute(String routeId) {
+        pendingRoute = routeId;
+        pendingRouteUntil = System.currentTimeMillis() + 10_000;
+        openPendingRoute();
+    }
+
+    private void openPendingRoute() {
+        String routeId = pendingRoute;
+        if (routeId != null && (selectNode(routeId, null) || System.currentTimeMillis() > pendingRouteUntil)) {
+            pendingRoute = null;
+        }
     }
 
     boolean selectRoute(String routeId) {

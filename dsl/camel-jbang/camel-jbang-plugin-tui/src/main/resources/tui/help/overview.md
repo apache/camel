@@ -20,7 +20,10 @@ The Overview has two views, switched with **v**:
   **What happened** has a line per route, coloured as the Timeline:
   **+/-** zooms between 5, 2 and 1 minutes (zooming in centres on the
   last trouble, so you see what the other routes did at that moment)
-  and **←→** moves a zoomed window back and forward.
+  and **←→** moves a zoomed window back and forward. **↑↓** select a
+  line of In, Routes or Out, and **Enter** opens it: a route drilled
+  down on the Diagram, an endpoint a route sends to with its details on
+  the Endpoint tab.
 - **Integrations** — the table of all running integrations below, shown
   when several run.
 

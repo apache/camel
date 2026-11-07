@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -210,5 +212,21 @@ class AboutViewTest {
                     .contains("HttpOperationFailedException 503 ×30").contains("Watch").contains("Next");
             assertThat(screen).contains("What happened").contains("30 handled");
         });
+
+        // the cursor goes down In, Routes and Out; Enter opens what it is on
+        List<AboutView.Target> opened = new ArrayList<>();
+        ctx.openFromAbout = opened::add;
+        assertThat(about.open()).isFalse();
+        about.moveCursor(1);
+        render(about, info);
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", null));
+        about.moveCursor(2);
+        render(about, info);
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("stock", null));
+        about.moveCursor(5);
+        render(about, info);
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
+        assertThat(about.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER), info)).isTrue();
+        assertThat(opened).containsExactly(new AboutView.Target("orders", "http:localhost:8765/ship"));
     }
 }

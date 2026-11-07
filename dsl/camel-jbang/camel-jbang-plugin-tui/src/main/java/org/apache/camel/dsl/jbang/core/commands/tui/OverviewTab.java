@@ -154,6 +154,11 @@ class OverviewTab extends AbstractTab {
         return infos.size() == 1 ? infos.get(0) : null;
     }
 
+    /** Enter on About: opens the route or endpoint the cursor is on; false when it is on nothing. */
+    boolean openFromAbout() {
+        return showsAbout() && about.open();
+    }
+
     /** Whether About shows: the view the user picked, else About when one integration runs. */
     boolean showsAbout() {
         if (ctx.isInfraSelected()) {
@@ -306,6 +311,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public void navigateUp() {
+        if (showsAbout()) {
+            about.moveCursor(-1);
+            return;
+        }
         if (infraFocused) {
             infraTableState.selectPrevious();
         } else {
@@ -316,6 +325,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public void navigateDown() {
+        if (showsAbout()) {
+            about.moveCursor(1);
+            return;
+        }
         if (infraFocused) {
             infraTableState.selectNext(ctx.infraData.get().size());
         } else {
@@ -1315,6 +1328,8 @@ class OverviewTab extends AbstractTab {
         hint(spans, "q", "quit");
         if (showsAbout()) {
             // the keys of the table do not apply to About
+            hint(spans, "↑↓", "select");
+            hint(spans, "Enter", "open");
             hint(spans, "+/-", "zoom");
             hint(spans, "←→", "move");
             hint(spans, "4", "timeline");
