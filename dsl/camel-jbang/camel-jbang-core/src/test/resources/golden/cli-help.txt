@@ -4207,9 +4207,9 @@ exchanges
                               the integration records
                               Default: 60
       --filter=<filter>     Filter by route ID (pattern)
-      --exchanges           List the exchanges kept per second (the failed and
-                              handled ones and the 3 slowest) instead of the
-                              routes
+      --exchanges           List the exchanges kept per second (the failed,
+                              handled and recovered ones and the 3 slowest)
+                              instead of the routes
       --errors              List the errors by route and exception instead of
                               the routes
       --sort=<sort>         Sort the exchanges by pid, name, age, elapsed (the

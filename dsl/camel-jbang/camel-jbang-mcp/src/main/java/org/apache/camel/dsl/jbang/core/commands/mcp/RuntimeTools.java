@@ -578,7 +578,8 @@ public class RuntimeTools {
                   p95 and max time, the exchanges in flight and the redelivery attempts; the errors per second by \
                   route and exception (chaosRule names the camel-chaos rule that made one); with camel-chaos the faults \
                   per second of each chaos rule (chaos) and the seconds a rule had a route down (down of the route); \
-                  and per second the failed and handled exchanges and the 3 slowest with the remote calls they made. Each series is oldest first and ends at \
+                  and per second the failed, handled and recovered exchanges (a recovered one with the failure it was \
+                  redelivered for) and the 3 slowest with the remote calls they made. Each series is oldest first and ends at \
                   the epoch second end. Use it to tell when something went wrong and what it did to which route; \
                   camel_runtime_chaos_report has the chaos rules.""")
     public JsonObject camel_runtime_timeline(
@@ -587,7 +588,7 @@ public class RuntimeTools {
                      required = false) Integer seconds,
             @ToolArg(description = "Route ID or pattern such as orders* (default all routes)",
                      required = false) String routeId,
-            @ToolArg(description = "Include the failed and slowest exchanges (default true)",
+            @ToolArg(description = "Include the failed, handled, recovered and slowest exchanges (default true)",
                      required = false) Boolean exchanges) {
         Map<String, String> args = new HashMap<>();
         if (seconds != null) {
