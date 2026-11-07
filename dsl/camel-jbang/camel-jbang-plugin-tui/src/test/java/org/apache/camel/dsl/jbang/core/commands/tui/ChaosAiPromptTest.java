@@ -127,12 +127,23 @@ class ChaosAiPromptTest {
                 .contains("It sends to:\n  http://localhost:8765/stock (from orders)\n  direct://inventory (from orders)\n")
                 .doesNotContain("platform-http:///stock (from stock)")
                 .doesNotContain("bridgeEndpoint").doesNotContain("  timer://orders (from")
-                .contains("Its chaos rules now:\n  r1: endpoint=http://localhost:8765/stock* error status=503")
+                .contains("Its chaos rules now, which are active already (add only new rules; change one of these with"
+                          + " tui_chaos_change and its id):\n  r1: endpoint=http://localhost:8765/stock* error status=503")
                 .contains("in=<route id>").contains("when=\"${header.country} == 'ES'\"").contains("\"or\" is two rules")
                 .contains("Each rule has its own rate: without rate= a rule fails every message it matches.")
                 .contains("do not look around with other tools").contains("First call tui_chaos_check with the rules")
                 .endsWith("add them with tui_chaos_add (or change a rule above with tui_chaos_change), which asks me to"
                           + " confirm first. Do not change the routes.");
+    }
+
+    @Test
+    void theKnownRulesShowTheFormsTheShortSyntaxLeavesOut() {
+        ChaosRecipes recipes = ChaosRecipes.parse(ChaosRecipesTest.MODEL);
+        String question = ChaosAiPrompt.ofRequest(info, "calls to stock time out", recipes);
+        assertThat(question).contains("Known rules, with ${...} to fill in:\n");
+        recipes.recipes().forEach(r -> assertThat(question).contains("  " + r.title() + ": " + r.rule() + "\n"));
+        // without a catalog that has them, none
+        assertThat(ChaosAiPrompt.ofRequest(info, "calls to stock time out")).doesNotContain("Known rules");
     }
 
     @Test

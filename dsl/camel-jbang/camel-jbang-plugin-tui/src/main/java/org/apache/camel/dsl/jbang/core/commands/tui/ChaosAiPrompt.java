@@ -59,6 +59,17 @@ final class ChaosAiPrompt {
      * tui_chaos_change), which ask the user first.
      */
     static String ofRequest(IntegrationInfo info, String request) {
+        return ofRequest(info, request, null);
+    }
+
+    /**
+     * The question for a request in the user's own words, with the known rules of camel-chaos (the recipes of the chaos
+     * model, a line each with its rule), which show the forms a short syntax leaves out: a timeout, a stalled route,
+     * the polls of a consumer, the dead letter channel.
+     *
+     * @param recipes the known rules, or null when the catalog has none
+     */
+    static String ofRequest(IntegrationInfo info, String request, ChaosRecipes recipes) {
         StringBuilder sb = new StringBuilder();
         sb.append("Turn my request into camel-chaos rules for the running integration ").append(name(info))
                 .append(" (development only, faults injected on purpose). My request: ").append(request.strip())
@@ -100,7 +111,8 @@ final class ChaosAiPrompt {
         }
         ChaosInfo chaos = info.chaos;
         if (chaos != null && !chaos.rules.isEmpty()) {
-            sb.append("Its chaos rules now:\n");
+            sb.append("Its chaos rules now, which are active already (add only new rules; change one of these with ")
+                    .append(TuiToolGroups.CHAOS_CHANGE_TOOL).append(" and its id):\n");
             chaos.rules.forEach(r -> sb.append("  ").append(r.id).append(": ").append(r.text).append('\n'));
         }
         sb.append("A rule is one line: <target> <fault> [<parameter>=<value> ...] [<option>=<value> ...]. Targets:")
@@ -112,6 +124,10 @@ final class ChaosAiPrompt {
                 .append(" the messages that meet a condition (simple language). route=<id> error fails 5% of the")
                 .append(" exchanges of a route with rate=0.05; \"or\" is two rules. Each rule has its own rate: without")
                 .append(" rate= a rule fails every message it matches.\n");
+        if (recipes != null && !recipes.recipes().isEmpty()) {
+            sb.append("Known rules, with ${...} to fill in:\n");
+            recipes.recipes().forEach(r -> sb.append("  ").append(r.title()).append(": ").append(r.rule()).append('\n'));
+        }
         sb.append("The routes and sends above are all you need: do not look around with other tools. First call ")
                 .append(TuiToolGroups.CHAOS_CHECK_TOOL).append(" with the rules (several separated by ;): it says each")
                 .append(" rule in plain words and what it would hit, or why it is not valid. Fix the rules until it")

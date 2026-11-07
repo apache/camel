@@ -276,7 +276,7 @@ final class ChaosControl {
                 // added only through the add tool, which asks the user first
                 IntegrationInfo info = describing;
                 close();
-                ctx.askAiCallback.askNow(ChaosAiPrompt.ofRequest(info, text));
+                ctx.askAiCallback.askNow(ChaosAiPrompt.ofRequest(info, text, knownRules()));
             } else if (!text.isEmpty()) {
                 rule = text;
                 ask(command);
