@@ -110,6 +110,9 @@ class OverviewTab extends AbstractTab {
     private String lastIntegrationPid;
     int chartMode = CHART_SINGLE;
     private int bottomPanelHeight = 16;
+    // Overview ▸ About (CAMEL-26700): what the integration does and what has happened; null until the user picks a view
+    private final AboutView about;
+    private Boolean aboutChosen;
     private final DragSplit vSplit = new DragSplit();
 
     private String sort = "name";
@@ -129,6 +132,7 @@ class OverviewTab extends AbstractTab {
                 Set<String> stoppingPids,
                 Runnable onPidChanged) {
         super(ctx);
+        this.about = new AboutView(ctx);
         this.throughputHistory = metrics.getThroughputHistory();
         this.failedHistory = metrics.getFailedHistory();
         this.cpuLoadAvg = metrics.getCpuLoadAvg();
@@ -140,8 +144,70 @@ class OverviewTab extends AbstractTab {
         this.actions = actions;
     }
 
+    /** The integration About is about: the selected one, else the only one running; null when none. */
+    private IntegrationInfo aboutIntegration() {
+        IntegrationInfo sel = ctx.findSelectedIntegration();
+        if (sel != null) {
+            return sel;
+        }
+        List<IntegrationInfo> infos = sortedInfos();
+        return infos.size() == 1 ? infos.get(0) : null;
+    }
+
+    /** Whether About shows: the view the user picked, else About when one integration runs. */
+    boolean showsAbout() {
+        if (ctx.isInfraSelected()) {
+            return false;
+        }
+        boolean wanted = aboutChosen != null ? aboutChosen : sortedInfos().size() == 1;
+        return wanted && aboutIntegration() != null;
+    }
+
+    /** Shows the table of the integrations, as the user does with v. */
+    OverviewTab showIntegrations() {
+        aboutChosen = false;
+        return this;
+    }
+
+    @Override
+    public SubViewBar.Spec subViewBar() {
+        if (sortedInfos().isEmpty()) {
+            return null;
+        }
+        boolean shows = showsAbout();
+        return new SubViewBar.Spec(
+                "v", List.of(
+                        new SubViewBar.View("About", shows, aboutIntegration() != null, () -> aboutChosen = true),
+                        new SubViewBar.View("Integrations", !shows, true, () -> aboutChosen = false)),
+                List.of(), false);
+    }
+
+    @Override
+    public void refreshWhileVisible() {
+        // the last minutes of the timeline, for what has happened
+        DataRefreshService data = ctx.dataService;
+        if (showsAbout() && data != null) {
+            List<Long> pids = data.selectedPidAsList();
+            if (pids.isEmpty() && aboutIntegration() != null) {
+                pids = List.of(Long.parseLong(aboutIntegration().pid));
+            }
+            data.refreshTimelineData(pids);
+        }
+    }
+
     @Override
     public boolean handleKeyEvent(KeyEvent ke) {
+        if (ke.isChar('v') && !sortedInfos().isEmpty()) {
+            aboutChosen = !showsAbout();
+            if (aboutChosen && ctx.selectedPid == null && aboutIntegration() != null) {
+                ctx.selectedPid = aboutIntegration().pid;
+            }
+            return true;
+        }
+        if (showsAbout()) {
+            // About has no table: the keys of the table do not apply
+            return false;
+        }
         if (ke.isChar('s')) {
             if (infraFocused) {
                 infraSortIndex = (infraSortIndex + 1) % INFRA_SORT_COLUMNS.length;
@@ -273,6 +339,10 @@ class OverviewTab extends AbstractTab {
 
         if (infraCount == 0) {
             infraFocused = false;
+        }
+        if (showsAbout()) {
+            about.render(frame, area, aboutIntegration());
+            return;
         }
 
         if (ctx.selectedPid == null && !infraFocused) {

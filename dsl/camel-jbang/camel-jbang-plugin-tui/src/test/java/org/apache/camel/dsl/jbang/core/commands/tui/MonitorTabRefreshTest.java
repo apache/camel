@@ -123,7 +123,7 @@ class MonitorTabRefreshTest {
     @Test
     void escOnTheOverviewTabDeselectsTheIntegration() {
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         assertThat(tab.handleEscape()).isTrue();
         assertThat(ctx.selectedPid).isNull();

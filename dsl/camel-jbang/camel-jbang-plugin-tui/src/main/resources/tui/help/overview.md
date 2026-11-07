@@ -3,6 +3,23 @@
 The Overview tab shows all running Camel integrations at a glance.
 Select an integration to monitor it in detail on the other tabs.
 
+## About and Integrations
+
+The Overview has two views, switched with **v**:
+
+- **About** — what the selected integration does and what has happened,
+  shown when one integration runs. A header with what it is and its
+  purpose (the comment at the top of its main file, else the
+  descriptions of its routes); what comes **In** (timers, HTTP,
+  consumers), its **Routes** (a route called with `direct:` sits under
+  its caller with `↳`, one handed off with `seda:` with `⇢`) and what
+  goes **Out**, from its sources; then the **Last 5m** from the timeline
+  it records (the exchanges, how they ended, the error that happened
+  most), what to **Watch**, and where to go **Next**: **4** the
+  Timeline second by second, **5** the Diagram, **2** the source.
+- **Integrations** — the table of all running integrations below, shown
+  when several run.
+
 ## Integration List
 
 Each row represents one running Camel integration:
