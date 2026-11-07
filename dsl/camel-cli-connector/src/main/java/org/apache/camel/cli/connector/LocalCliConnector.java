@@ -340,6 +340,8 @@ public class LocalCliConnector extends ServiceSupport
                 doActionRestSpecTask(root);
             } else if ("route-dump".equals(action)) {
                 doActionRouteDumpTask(root);
+            } else if ("timeline".equals(action)) {
+                doActionTimelineTask(root);
             } else if ("route-structure".equals(action)) {
                 doActionRouteStructureTask(root);
             } else if ("route-topology".equals(action)) {
@@ -768,6 +770,24 @@ public class LocalCliConnector extends ServiceSupport
             }
             JsonObject json
                     = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
+            writeOutput(json);
+        } else {
+            writeOutput(new JsonObject());
+        }
+    }
+
+    private void doActionTimelineTask(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("timeline");
+        if (dc != null) {
+            Map<String, Object> params = new HashMap<>();
+            for (String key : new String[] { "seconds", "routeId", "exchanges" }) {
+                String value = root.getString(key);
+                if (value != null) {
+                    params.put(key, value);
+                }
+            }
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, params);
             writeOutput(json);
         } else {
             writeOutput(new JsonObject());
@@ -1824,8 +1844,9 @@ public class LocalCliConnector extends ServiceSupport
     }
 
     @Override
-    public JsonObject activity() throws Exception {
-        return callConsole("activity", Map.of());
+    public JsonObject timeline() throws Exception {
+        // the last seconds only: a tool keeps the history, and asks for all of it with the timeline action
+        return callConsole("timeline", Map.of("seconds", "10"));
     }
 
     private JsonObject callConsole(String id, Map<String, Object> options) {

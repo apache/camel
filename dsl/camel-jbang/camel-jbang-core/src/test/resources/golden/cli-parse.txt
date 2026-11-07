@@ -534,6 +534,18 @@
   timeoutOption.timeout=10000
 > cmd chaos-change --id v --rule v --timeout 7
   timeoutOption.timeout=7
+> cmd chaos-clear
+  cmd:helpRequested=false
+  helpRequested=false
+  name="*"
+  reset=false
+  timeoutOption.timeout=10000
+> cmd chaos-clear --reset
+  reset=true
+> cmd chaos-clear --reset=false
+  (defaults)
+> cmd chaos-clear --timeout 7
+  timeoutOption.timeout=7
 > cmd chaos-remove --id v
   cmd:helpRequested=false
   helpRequested=false
@@ -1412,6 +1424,7 @@
   breakpoint=null
   camelSpringBootVersion=null
   camelVersion=null
+  chaos=false
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -1514,6 +1527,10 @@
   camelSpringBootVersion="v"
 > debug --camel-version v
   camelVersion="v"
+> debug --chaos
+  chaos=true
+> debug --chaos=false
+  (defaults)
 > debug --code v
   code="v"
 > debug --console
@@ -2416,6 +2433,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
+  chaos=false
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -2499,6 +2517,10 @@
   camelSpringBootVersion="v"
 > dev --camel-version v
   camelVersion="v"
+> dev --chaos
+  chaos=true
+> dev --chaos=false
+  (defaults)
 > dev --code v
   code="v"
 > dev --console
@@ -3077,42 +3099,23 @@
   watch=true
 > get --watch=false
   (defaults)
-> get activity
+> get about
   durationOption.duration=0
-  filter=null
   get:helpRequested=false
   get:watch=false
   helpRequested=false
   jsonOutput=false
-  limit=0
   name="*"
-  shortUri=false
-  sort="since"
   watch=false
-  wideUri=false
-> get activity --duration 7
+> get about --duration 7
   durationOption.duration=7
-> get activity --filter v
-  filter="v"
-> get activity --json
+> get about --json
   jsonOutput=true
-> get activity --json=false
+> get about --json=false
   (defaults)
-> get activity --limit 7
-  limit=7
-> get activity --short-uri
-  shortUri=true
-> get activity --short-uri=false
-  (defaults)
-> get activity --sort pid
-  sort="pid"
-> get activity --watch
+> get about --watch
   watch=true
-> get activity --watch=false
-  (defaults)
-> get activity --wide-uri
-  wideUri=true
-> get activity --wide-uri=false
+> get about --watch=false
   (defaults)
 > get bean
   dsl=false
@@ -3176,6 +3179,32 @@
 > get blocked --watch
   watch=true
 > get blocked --watch=false
+  (defaults)
+> get chaos
+  durationOption.duration=0
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  name="*"
+  report=false
+  sort="pid"
+  watch=false
+> get chaos --duration 7
+  durationOption.duration=7
+> get chaos --json
+  jsonOutput=true
+> get chaos --json=false
+  (defaults)
+> get chaos --report
+  report=true
+> get chaos --report=false
+  (defaults)
+> get chaos --sort pid
+  (defaults)
+> get chaos --watch
+  watch=true
+> get chaos --watch=false
   (defaults)
 > get circuit-breaker
   durationOption.duration=0
@@ -4183,6 +4212,56 @@
   watch=true
 > get startup-recorder --watch=false
   (defaults)
+> get timeline
+  durationOption.duration=0
+  errors=false
+  exchanges=false
+  filter=null
+  get:helpRequested=false
+  get:watch=false
+  helpRequested=false
+  jsonOutput=false
+  limit=0
+  name="*"
+  seconds=60
+  shortUri=false
+  sort="since"
+  watch=false
+  wideUri=false
+> get timeline --duration 7
+  durationOption.duration=7
+> get timeline --errors
+  errors=true
+> get timeline --errors=false
+  (defaults)
+> get timeline --exchanges
+  exchanges=true
+> get timeline --exchanges=false
+  (defaults)
+> get timeline --filter v
+  filter="v"
+> get timeline --json
+  jsonOutput=true
+> get timeline --json=false
+  (defaults)
+> get timeline --limit 7
+  limit=7
+> get timeline --seconds 7
+  seconds=7
+> get timeline --short-uri
+  shortUri=true
+> get timeline --short-uri=false
+  (defaults)
+> get timeline --sort pid
+  sort="pid"
+> get timeline --watch
+  watch=true
+> get timeline --watch=false
+  (defaults)
+> get timeline --wide-uri
+  wideUri=true
+> get timeline --wide-uri=false
+  (defaults)
 > get transformer
   get:helpRequested=false
   get:watch=false
@@ -4690,6 +4769,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
+  chaos=false
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -4773,6 +4853,10 @@
   camelSpringBootVersion="v"
 > run --camel-version v
   camelVersion="v"
+> run --chaos
+  chaos=true
+> run --chaos=false
+  (defaults)
 > run --code v
   code="v"
 > run --console
@@ -6147,6 +6231,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
+  chaos=false
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -6286,6 +6371,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
+  chaos=false
   code=null
   dataDir=null
   debugOptions.backlogTrace=false

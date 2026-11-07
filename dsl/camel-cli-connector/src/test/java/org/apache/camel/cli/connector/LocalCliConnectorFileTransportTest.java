@@ -160,7 +160,7 @@ class LocalCliConnectorFileTransportTest extends CamelTestSupport {
         assertThat(dir).isDirectoryContaining(f -> f.getName().equals(PID));
         // {pid}-action.json is created too, but the connector removes it a little later (it is empty)
         for (String suffix : List.of("status", "output", "trace", "history", "error", "debug", "receive",
-                "activity")) {
+                "timeline")) {
             assertThat(file(PID + "-" + suffix + ".json")).exists();
         }
     }

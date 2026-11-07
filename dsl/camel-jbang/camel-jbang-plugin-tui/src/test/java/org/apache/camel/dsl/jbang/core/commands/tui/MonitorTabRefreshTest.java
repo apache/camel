@@ -69,13 +69,13 @@ class MonitorTabRefreshTest {
     }
 
     @Test
-    void activityIsReadWhenTheTabOpensAndWhileItIsShown() {
-        ActivityTab tab = new ActivityTab(ctx);
+    void theTimelineIsReadWhenTheTabOpensAndWhileItIsShown() {
+        TimelineTab tab = new TimelineTab(ctx);
 
         tab.onTabSelected();
         tab.refreshWhileVisible();
 
-        verify(data, times(2)).refreshActivityData(PIDS);
+        verify(data, times(2)).refreshTimelineData(PIDS);
     }
 
     @Test
@@ -123,7 +123,7 @@ class MonitorTabRefreshTest {
     @Test
     void escOnTheOverviewTabDeselectsTheIntegration() {
         OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
-        });
+        }).showIntegrations();
 
         assertThat(tab.handleEscape()).isTrue();
         assertThat(ctx.selectedPid).isNull();

@@ -473,9 +473,11 @@ public class AuthoringTools {
           description = "A high-level overview of a project's integrations from its route sources (no running "
                         + "integration needed): routes, entry points, how routes connect (call, hand-off, event), "
                         + "external systems by category, findings (missing routes, cycles, routes without a "
-                        + "description), and the AI-assisted parts of its camel-summary.md (fields starting "
-                        + "with ai). Use it to explain a project, then camel_save_project_summary to keep the "
-                        + "explanation.")
+                        + "description), the purpose (the comment at the top of the main file), and the "
+                        + "AI-assisted parts of its camel-summary.md (fields starting with ai). When the project "
+                        + "runs, running has what happened: the exchanges per route and endpoint since the start, "
+                        + "and the last minutes (lastMinutes). Use it to explain a project, then "
+                        + "camel_save_project_summary to keep the explanation.")
     public JsonObject camel_project_overview(
             @ToolArg(description = DIRECTORY_DESC, required = false) String directory,
             @ToolArg(description = VERSION_DESC, required = false) String camelVersion) {
