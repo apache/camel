@@ -16,6 +16,7 @@
  */
 package org.apache.camel;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,7 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StepHook;
+import org.apache.camel.spi.StepListener;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -539,6 +541,41 @@ public interface ExtendedCamelContext {
      */
     default void setStepHook(@Nullable StepHook stepHook) {
         throw new UnsupportedOperationException("This CamelContext does not support a StepHook");
+    }
+
+    /**
+     * Adds a {@link StepListener} that observes each call of the processor of a step of a route. Many listeners can be
+     * installed; adding a listener that is already installed (equal to one installed) is ignored. Whether a route calls
+     * the listeners is decided when it is created, so add them before the routes are created: a route created while no
+     * listener was installed is not seen. The CamelContext does not start or stop the listeners, and they stay
+     * installed when the CamelContext is stopped and started again.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void addStepListener(StepListener listener) {
+        throw new UnsupportedOperationException("This CamelContext does not support a StepListener");
+    }
+
+    /**
+     * Removes a {@link StepListener} (one equal to it). A call of a step that started before keeps the listener for its
+     * callback.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void removeStepListener(StepListener listener) {
+        // no listener can be installed, so there is nothing to remove
+    }
+
+    /**
+     * Gets the {@link StepListener}s, in the order they were added.
+     *
+     * @return an unmodifiable view of the listeners (empty if none is installed), which reflects later adds and removes
+     * @since  4.24
+     */
+    default List<StepListener> getStepListeners() {
+        return Collections.emptyList();
     }
 
     /**

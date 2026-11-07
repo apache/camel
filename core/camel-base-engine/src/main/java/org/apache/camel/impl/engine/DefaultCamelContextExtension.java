@@ -17,6 +17,7 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -78,6 +79,7 @@ import org.apache.camel.spi.SendHook;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StepHook;
+import org.apache.camel.spi.StepListener;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -89,6 +91,7 @@ import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.startup.DefaultStartupStepRecorder;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.ContextValue;
@@ -105,6 +108,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
+    private final CopyOnWriteArrayList<StepListener> stepListeners = new CopyOnWriteArrayList<>();
+    private final List<StepListener> stepListenersView = Collections.unmodifiableList(stepListeners);
     private final PluginManager pluginManager = new DefaultContextPluginManager();
     private final RouteController internalRouteController;
 
@@ -533,6 +538,23 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setStepHook(StepHook stepHook) {
         this.stepHook = stepHook;
+    }
+
+    @Override
+    public void addStepListener(StepListener listener) {
+        ObjectHelper.notNull(listener, "listener");
+        // a listener equal to one already installed is ignored
+        stepListeners.addIfAbsent(listener);
+    }
+
+    @Override
+    public void removeStepListener(StepListener listener) {
+        stepListeners.remove(listener);
+    }
+
+    @Override
+    public List<StepListener> getStepListeners() {
+        return stepListenersView;
     }
 
     @Override
