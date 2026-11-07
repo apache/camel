@@ -38,6 +38,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.StepHook;
 import org.apache.camel.spi.StepListener;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -48,6 +49,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -55,8 +57,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The {@link StepListener}s see each call of the processor of each step: each attempt of the error handler, the steps
- * without an error handler, the steps of doTry, doCatch and doFinally, and callbacks on another thread. They run with a
- * {@link StepHook}, and a listener that fails does not change the routing.
+ * without an error handler, the steps of doTry, doCatch and doFinally, a multicast and its branches, and callbacks on
+ * another thread. They run with a {@link StepHook}, and a listener that fails does not change the routing.
  */
 class StepListenerTest extends ContextTestSupport {
 
@@ -128,6 +130,19 @@ class StepListenerTest extends ContextTestSupport {
                             }
                         }).id("throwsOnce")
                         .to("mock:afterThrowOnce").id("afterThrowOnce");
+
+                AtomicInteger branchCalls = new AtomicInteger();
+                from("direct:multicast").routeId("multicast")
+                        .errorHandler(defaultErrorHandler().maximumRedeliveries(1).redeliveryDelay(0))
+                        .multicast().id("multicastStep")
+                        .process(e -> {
+                            if (branchCalls.incrementAndGet() == 1) {
+                                e.setException(new IllegalArgumentException("Failed branch"));
+                            }
+                        }).id("failingBranch")
+                        .to("mock:otherBranch").id("otherBranch")
+                        .end()
+                        .to("mock:afterMulticast").id("afterMulticast");
 
                 from("direct:noErrorHandler").routeId("noErrorHandler")
                         .errorHandler(noErrorHandler())
@@ -247,6 +262,70 @@ class StepListenerTest extends ContextTestSupport {
                 "call throwOnce/afterThrowOnce", "callback throwOnce/afterThrowOnce true",
                 "return throwOnce/afterThrowOnce true"),
                 recorder.of("throwOnce"));
+    }
+
+    @Test
+    void testErrorHandlerAwareStepAndItsBranches() throws Exception {
+        getMockEndpoint("mock:otherBranch").expectedMessageCount(1);
+        getMockEndpoint("mock:afterMulticast").expectedMessageCount(1);
+
+        template.sendBody("direct:multicast", "Hello");
+
+        assertMockEndpointsSatisfied();
+        List<String> events = recorder.of("multicast");
+        // the multicast once, and the failing branch once for each attempt of the error handler that the multicast
+        // wraps its branches in
+        assertEquals(1, count(events, "call multicast/multicastStep"), events.toString());
+        assertEquals(1, count(events, "callback multicast/multicastStep"), events.toString());
+        assertEquals(1, count(events, "return multicast/multicastStep"), events.toString());
+        assertEquals(2, count(events, "call multicast/failingBranch"), events.toString());
+        assertEquals(2, count(events, "callback multicast/failingBranch"), events.toString());
+        assertEquals(1, count(events, "call multicast/otherBranch"), events.toString());
+        assertEquals(1, count(events, "callback multicast/otherBranch"), events.toString());
+        assertEquals(1, count(events, "call multicast/afterMulticast"), events.toString());
+        assertTrue(events.indexOf("call multicast/multicastStep") < events.indexOf("call multicast/failingBranch"),
+                events.toString());
+        assertTrue(events.indexOf("call multicast/otherBranch") < firstIndex(events, "callback multicast/multicastStep"),
+                events.toString());
+
+        // the wrapper of the multicast is ErrorHandlerAware, and passes the error handler of the step through
+        Channel channel = StepListenerRecorder.channels(context.getRoute("multicast")).stream()
+                .filter(c -> c.getNextProcessor() instanceof MulticastProcessor)
+                .findFirst().orElseThrow();
+        MulticastProcessor multicast = (MulticastProcessor) channel.getNextProcessor();
+        Processor call = StepListenerRecorder.callOf(channel);
+        assertEquals("ErrorHandlerAwareStepListenerProcessor", call.getClass().getSimpleName());
+        ErrorHandlerAware wrapper = assertInstanceOf(ErrorHandlerAware.class, call);
+        Processor errorHandler = multicast.getErrorHandler();
+        assertNotNull(errorHandler);
+        assertSame(errorHandler, wrapper.getErrorHandler());
+        Processor other = e -> {
+        };
+        wrapper.setErrorHandler(other);
+        assertSame(other, multicast.getErrorHandler());
+        wrapper.setErrorHandler(errorHandler);
+        assertSame(errorHandler, multicast.getErrorHandler());
+    }
+
+    /**
+     * The number of events of one kind for one step, such as {@code "callback multicast/otherBranch"}, whatever their
+     * value.
+     */
+    private static long count(List<String> events, String event) {
+        return events.stream().filter(e -> isEvent(e, event)).count();
+    }
+
+    private static int firstIndex(List<String> events, String event) {
+        for (int i = 0; i < events.size(); i++) {
+            if (isEvent(events.get(i), event)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean isEvent(String recorded, String event) {
+        return recorded.equals(event) || recorded.startsWith(event + " ");
     }
 
     @Test

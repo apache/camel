@@ -32,14 +32,16 @@ import org.jspecify.annotations.Nullable;
  * once (unless it is removed with {@link UnitOfWork#removeSynchronization(Synchronization)}).</li>
  * <li>It runs where it is held at the end: when the unit of work it was added to is done, with the outcome of its
  * exchange; or, when it was handed over, where it was handed over to. An exchange that has no unit of work yet (such as
- * a copy waiting in a {@code seda} queue) holds its commits itself, and they move into the unit of work it gets.</li>
- * <li>It moves only by a handover made by the exchange its unit of work was created for:
- * {@link org.apache.camel.ExchangeExtension#handoverCompletions(Exchange)} moves it to a copy that is routed on its own
- * (such as an {@code InOnly} exchange sent to {@code seda}), and it runs when the copy is done, with the outcome of the
- * copy; {@link org.apache.camel.ExchangeExtension#handoverCompletions()} takes it out to be run by someone else (such
- * as the aggregator, the enrichers or {@code onCompletion}). A {@link SynchronizationVetoable} can refuse to be handed
- * over. The parts of a split, multicast or recipient list with {@code shareUnitOfWork} use the unit of work of their
- * parent, and do not hand over the commit of the parent.</li>
+ * a copy waiting in a {@code seda} queue) holds its commits itself, and they move into the unit of work it gets, or
+ * back to the exchange that handed them over when the copy is not routed (such as a copy that {@code seda} does not
+ * queue).</li>
+ * <li>While it is in a unit of work, it moves only by a handover through that unit of work made by the exchange the
+ * unit of work was created for: {@link org.apache.camel.ExchangeExtension#handoverCompletions(Exchange)} moves it to a
+ * copy that is routed on its own (such as an {@code InOnly} exchange sent to {@code seda}), and it runs when the copy
+ * is done, with the outcome of the copy; {@link org.apache.camel.ExchangeExtension#handoverCompletions()} takes it out
+ * to be run by someone else (such as the aggregator, the enrichers or {@code onCompletion}). A
+ * {@link SynchronizationVetoable} can refuse to be handed over. The parts of a split, multicast or recipient list with
+ * {@code shareUnitOfWork} use the unit of work of their parent, and do not hand over the commit of the parent.</li>
  * </ul>
  */
 public interface Synchronization {

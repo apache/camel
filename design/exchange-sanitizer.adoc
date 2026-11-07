@@ -424,7 +424,7 @@ target, Predicate<Synchronization> filter)`), as today only `DefaultUnitOfWork` 
 Rules for listeners, in the Javadoc:
 
 * Many can be installed, each kind in a copy-on-write array on the context extension (the getter returns a cached
-  unmodifiable view, so a call site checks `isEmpty()` without copying; the same instance twice is ignored). They are
+  unmodifiable view, so a call site checks `isEmpty()` without copying; an equal listener is ignored). They are
   called in the order they were added, on the thread of the event, by many threads at once: they must be thread-safe
   and quick (the R3 pauses are a deliberate exception of the sanitizer), and must not depend on the order.
 * A call of a step reads the listeners when it starts and keeps them for its callback, so a listener removed meanwhile
