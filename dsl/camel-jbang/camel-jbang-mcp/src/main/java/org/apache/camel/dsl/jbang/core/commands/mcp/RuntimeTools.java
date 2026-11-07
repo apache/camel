@@ -576,8 +576,9 @@ public class RuntimeTools {
                   What happened per second in the last minutes (up to 5) of the running application: per route the \
                   exchanges completed, recovered by a redelivery, handled by the error handler and failed, the mean, \
                   p95 and max time, the exchanges in flight and the redelivery attempts; the errors per second by \
-                  route and exception (chaosRule names the camel-chaos rule that made one); and per second the failed \
-                  and handled exchanges and the 3 slowest with the remote calls they made. Each series is oldest first and ends at \
+                  route and exception (chaosRule names the camel-chaos rule that made one); with camel-chaos the faults \
+                  per second of each chaos rule (chaos) and the seconds a rule had a route down (down of the route); \
+                  and per second the failed and handled exchanges and the 3 slowest with the remote calls they made. Each series is oldest first and ends at \
                   the epoch second end. Use it to tell when something went wrong and what it did to which route; \
                   camel_runtime_chaos_report has the chaos rules.""")
     public JsonObject camel_runtime_timeline(

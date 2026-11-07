@@ -61,6 +61,10 @@ camel get timeline --watch
 error. `--exchanges` lists the exchanges kept per second: the failed and handled ones and the 3 slowest, with their
 status (`OK`, `RECOVERED`, `HANDLED` or `FAILED`), elapsed time, and the number of calls to remote endpoints.
 
+With xref:next@components:others:chaos.adoc[camel-chaos], the timeline also has the faults of each chaos rule per
+second (listed by `--errors` as `chaos faults`), and the seconds a stall or lifecycle rule had a route down (the `DOWN`
+column).
+
 The integration records the timeline itself, for the last 5 minutes, with the `timeline` dev console. It is on when
 the dev consoles are, as with the `dev` profile that `camel run` uses by default. The number of seconds is set with
 `camel.devConsole.timeline.seconds` (60 to 3600).

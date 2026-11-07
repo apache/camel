@@ -18,6 +18,7 @@ package org.apache.camel.impl.console;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.impl.console.TimelineRecorder.Counters;
 import org.apache.camel.impl.console.TimelineRecorder.RouteSecond;
@@ -214,6 +215,25 @@ class TimelineRecorderTest {
         assertThat(recorder.inflightCount()).isEqualTo(1);
         recorder.sample(T + 6 * 60 * 1000, Map.of());
         assertThat(recorder.inflightCount()).isZero();
+    }
+
+    @Test
+    void theFaultsOfTheChaosRulesAndTheRoutesTheyHaveDown() {
+        // at T + 2s: r1 fired 3 faults two seconds ago, 1 a second ago, and 2 in the second going on
+        recorder.chaos(T + 2000, Map.of("r1", new long[] { 0, 3, 1, 2 }), Map.of("r1", "endpoint=http:stock* error"),
+                Set.of("shipping"));
+
+        List<Second> secs = recorder.seconds(second(T) + 1, 2);
+        assertThat(secs.get(0).faults).containsEntry("r1", 3L);
+        assertThat(secs.get(1).faults).containsEntry("r1", 1L);
+        assertThat(secs.get(1).down).containsExactly("shipping");
+        assertThat(secs.get(0).down).isNull();
+        assertThat(recorder.chaosRules()).containsEntry("r1", "endpoint=http:stock* error");
+
+        // a second later the rule counts the second before differently: it replaces it
+        recorder.chaos(T + 3000, Map.of("r1", new long[] { 3, 1, 4, 0 }), Map.of(), Set.of());
+        assertThat(recorder.seconds(second(T) + 2, 1).get(0).faults).containsEntry("r1", 4L);
+        assertThat(recorder.seconds(second(T) + 1, 1).get(0).faults).containsEntry("r1", 1L);
     }
 
     @Test

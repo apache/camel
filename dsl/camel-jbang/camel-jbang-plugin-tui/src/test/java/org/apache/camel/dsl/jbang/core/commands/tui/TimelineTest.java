@@ -117,6 +117,46 @@ class TimelineTest {
     }
 
     @Test
+    void theIntegrationRecordsTheFaultsOfTheChaosRulesAndTheRoutesTheyHadDown() throws Exception {
+        JsonObject json = new TimelineJson(S0 + 2, 3).route("orders", "completed", 0, 1)
+                .route("orders", "down", 1, 1).route("orders", "down", 2, 1).json();
+        JsonObject r2 = new JsonObject();
+        r2.put("id", "r2");
+        r2.put("rule", "route=orders stall duration=20s");
+        r2.put("faults", List.of(0L, 1L, 0L));
+        json.put("chaos", List.of(r2));
+        timeline.merge("1234", json, true);
+
+        assertThat(orders(S0 + 2, 3).down()).containsExactly(0, 1, 1);
+        List<Timeline.CauseSeries> causes = timeline.causes("1234", S0 + 2, 3);
+        assertThat(causes).singleElement().satisfies(c -> {
+            assertThat(c.rule()).isEqualTo("r2");
+            assertThat(c.label()).isEqualTo("r2 stall (orders)");
+            assertThat(c.values()).containsExactly(0, 1, 0);
+        });
+
+        // the status then only gives the labels: the TUI no longer samples the state of the rules
+        IntegrationInfo info = info();
+        info.chaos = ChaosInfo.parse((JsonObject) Jsoner.deserialize("""
+                {"enabled": true,
+                 "rules": [{"id": "r2", "version": 1, "state": "active", "rule": "route=orders stall duration=20s",
+                            "matches": 1, "fired": {"lifecycle": 1}, "faultsPerSecond": [9, 9, 9],
+                            "lifecycle": {"action": "suspend", "route": "orders", "state": "down"}}],
+                 "report": {"verdict": "PASS", "routes": [], "recentFaults": []}}
+                """));
+        timeline.record(info, (S0 + 2) * 1000);
+        assertThat(timeline.causes("1234", S0 + 2, 3).get(0).values()).containsExactly(0, 1, 0);
+        assertThat(timeline.causes("1234", S0 + 2, 3).get(0).label()).isEqualTo("r2 stall 20s (route orders)");
+    }
+
+    @Test
+    void theLabelOfARuleFromItsText() {
+        assertThat(Timeline.ruleLabel("r1", "endpoint=http://localhost:8765/stock* error status=503 rate=1"))
+                .isEqualTo("r1 error (stock)");
+        assertThat(Timeline.ruleLabel("r2", "route=shipping stall duration=15s")).isEqualTo("r2 stall (shipping)");
+    }
+
+    @Test
     void notATimelineIsIgnored() {
         timeline.merge("1234", new JsonObject(), true);
         timeline.merge("1234", null, true);

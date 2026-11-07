@@ -70,6 +70,11 @@ public class ChaosDevConsole extends AbstractDevConsole {
             @Metadata(description = "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, the counts per route, and the recent faults (the last 20, the latest first: timestamp, ago, rule, version, fault, hook, route, endpoint or step, exchangeId) (only when chaos is on)") Map<String, Object> report) {
     }
 
+    @Metadata(label = "query",
+              description = "Whether to include the report; without it only the rules, as the timeline console reads them each second",
+              javaType = "java.lang.Boolean", defaultValue = "true")
+    public static final String REPORT = "report";
+
     public ChaosDevConsole() {
         super("camel", "chaos", "Chaos", "The chaos rules and their report");
     }
@@ -95,7 +100,9 @@ public class ChaosDevConsole extends AbstractDevConsole {
         // one report, so the rules and the report are of the same moment
         ChaosReport report = chaos.report();
         root.put("rules", report.rulesJson(true));
-        root.put("report", report.toJson());
+        if (optionBoolean(options, REPORT, true)) {
+            root.put("report", report.toJson());
+        }
         return root;
     }
 

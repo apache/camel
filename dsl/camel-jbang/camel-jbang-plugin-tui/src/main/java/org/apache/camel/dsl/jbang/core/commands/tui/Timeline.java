@@ -125,6 +125,8 @@ final class Timeline {
         // the last second the integration reported, and whether all of its seconds were read
         long end = -1;
         boolean full;
+        // whether the integration records the chaos rules itself (else the TUI samples their state)
+        boolean chaosRecorded;
 
         void trim(long second) {
             long oldest = second - SECONDS;
@@ -185,6 +187,40 @@ final class Timeline {
                     }
                 }
             }
+            // with camel-chaos the routes have their down seconds: the integration records the chaos rules
+            boolean chaosRecorded = ((List<?>) timeline.get("routes")).stream()
+                    .anyMatch(o -> o instanceof JsonObject r && r.get("down") instanceof List<?>);
+            if (chaosRecorded) {
+                // the faults of the chaos rules and the routes they had down, as the integration recorded them
+                rec.faults.subMap(start, true, end, true).clear();
+                rec.down.subMap(start, true, end, true).clear();
+                List<?> chaos = timeline.get("chaos") instanceof List<?> l ? l : List.of();
+                for (Object o : chaos) {
+                    if (o instanceof JsonObject c && c.getString("id") != null) {
+                        String id = c.getString("id");
+                        if (c.getString("rule") != null) {
+                            rec.ruleLabels.putIfAbsent(id, ruleLabel(id, c.getString("rule")));
+                        }
+                        long[] faults = values(c, "faults", n);
+                        for (int i = 0; i < n; i++) {
+                            if (faults[i] > 0) {
+                                rec.faults.computeIfAbsent(start + i, s -> new LinkedHashMap<>()).put(id, faults[i]);
+                            }
+                        }
+                    }
+                }
+                for (Object o : (List<?>) timeline.get("routes")) {
+                    if (o instanceof JsonObject r && r.get("down") instanceof List<?>) {
+                        long[] down = values(r, "down", n);
+                        for (int i = 0; i < n; i++) {
+                            if (down[i] > 0) {
+                                rec.down.computeIfAbsent(start + i, s -> new LinkedHashSet<>()).add(r.getString("routeId"));
+                            }
+                        }
+                    }
+                }
+                rec.chaosRecorded = true;
+            }
             long[] done = values(timeline, "exchangesDone", n);
             for (int i = 0; i < n; i++) {
                 rec.done.put(start + i, Math.max(0, done[i]));
@@ -238,6 +274,15 @@ final class Timeline {
         long second = now / 1000;
         Recording rec = byPid.computeIfAbsent(info.pid, k -> new Recording());
         synchronized (rec) {
+            if (rec.chaosRecorded) {
+                // the integration records the faults and the routes down: only the labels of the rules from here
+                for (ChaosInfo.Rule r : info.chaos.rules) {
+                    if (r.id != null) {
+                        rec.ruleLabels.put(r.id, ruleLabel(r));
+                    }
+                }
+                return;
+            }
             recordChaos(rec, info.chaos, second);
             rec.trim(Math.max(second, rec.end));
         }
@@ -281,6 +326,31 @@ final class Timeline {
         } else {
             rec.down.remove(second);
         }
+    }
+
+    /** A short label of a chaos rule from its text, when the status no longer has the rule: r1 error (stock). */
+    static String ruleLabel(String id, String rule) {
+        String fault = "";
+        String where = "";
+        for (String part : rule.split(" ")) {
+            int eq = part.indexOf('=');
+            if (eq < 0 && fault.isEmpty()) {
+                fault = part;
+            } else if (where.isEmpty() && eq > 0
+                    && List.of("endpoint", "route", "step", "component", "consumer").contains(part.substring(0, eq))) {
+                where = part.substring(eq + 1);
+            }
+        }
+        int colon = where.lastIndexOf(':');
+        if (colon >= 0 && colon < where.length() - 1) {
+            where = where.substring(colon + 1);
+        }
+        where = where.replace("*", "").replaceAll("^/+", "");
+        int slash = where.lastIndexOf('/');
+        if (slash >= 0 && slash < where.length() - 1) {
+            where = where.substring(slash + 1);
+        }
+        return id + (fault.isEmpty() ? "" : " " + fault) + (where.isEmpty() ? "" : " (" + where + ")");
     }
 
     /** A short label of a chaos rule for the legend: r1 error 503 (stock). */
