@@ -136,6 +136,8 @@ final class Timeline {
         final TreeMap<Long, Set<String>> down = new TreeMap<>();
         // the routes with a circuit breaker not closed per second: 2 open, 1 half open
         final TreeMap<Long, Map<String, Integer>> open = new TreeMap<>();
+        // the WARN and ERROR lines of the log per second, as the TUI read them from the log file
+        final TreeMap<Long, long[]> logs = new TreeMap<>();
         final Map<String, String> ruleLabels = new LinkedHashMap<>();
         // the last second the integration reported, and whether all of its seconds were read
         long end = -1;
@@ -153,6 +155,7 @@ final class Timeline {
             faults.headMap(oldest).clear();
             down.headMap(oldest).clear();
             open.headMap(oldest).clear();
+            logs.headMap(oldest).clear();
         }
     }
 
@@ -492,6 +495,16 @@ final class Timeline {
      * The causes in the window: the errors per second by label, then the faults of each chaos rule. Each series is
      * oldest first.
      */
+    /** A WARN or ERROR line in the log of the integration, at the second of its time. */
+    void logLine(String pid, long second, boolean error) {
+        Recording rec = byPid.computeIfAbsent(pid, k -> new Recording());
+        synchronized (rec) {
+            if (rec.end < 0 || second > rec.end - SECONDS) {
+                rec.logs.computeIfAbsent(second, s -> new long[2])[error ? 1 : 0]++;
+            }
+        }
+    }
+
     List<CauseSeries> causes(String pid, long endSecond, int seconds) {
         Recording rec = pid != null ? byPid.get(pid) : null;
         if (rec == null) {
@@ -513,6 +526,22 @@ final class Timeline {
             errors.forEach((label, values) -> answer.add(new CauseSeries(label, null, values)));
             faults.forEach((rule, values) -> answer
                     .add(new CauseSeries(rec.ruleLabels.getOrDefault(rule, rule), rule, values)));
+            if (answer.isEmpty()) {
+                // nothing failed in an exchange: what the log said went wrong (an exception there is logged too)
+                long[] warn = new long[seconds];
+                long[] error = new long[seconds];
+                for (Map.Entry<Long, long[]> en : rec.logs.subMap(start, true, endSecond, true).entrySet()) {
+                    int i = (int) (en.getKey() - start);
+                    warn[i] = en.getValue()[0];
+                    error[i] = en.getValue()[1];
+                }
+                if (Arrays.stream(error).sum() > 0) {
+                    answer.add(new CauseSeries("log ERROR", null, error));
+                }
+                if (Arrays.stream(warn).sum() > 0) {
+                    answer.add(new CauseSeries("log WARN", null, warn));
+                }
+            }
             return answer;
         }
     }
