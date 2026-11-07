@@ -77,6 +77,11 @@ error handler (HAND) and the redeliveries (REDEL).
 - **x** — Remove the selected rule
 - **c** — Clear: remove all rules (the report keeps what they did)
 - **R** — A new experiment: no rules and a new report, with the same seed
+- **s** — Save the rules as a scenario: a file of the integration's
+  folder, `chaos/<name>.chaos` unless you type another, with the seed and
+  one rule per line. Load it again with `camel cmd chaos-load`, or start
+  with it: `camel run --chaos=chaos/<name>.chaos`. A file that is there
+  already is replaced only when you say yes
 - **Shift+F8** — Explain with AI: the AI panel opens with a question about
   the selected rule and what it did (its rate, its effect, the
   expectation, the routes its faults were in, the recent faults). The AI

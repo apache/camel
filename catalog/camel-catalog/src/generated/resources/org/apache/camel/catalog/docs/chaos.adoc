@@ -254,6 +254,9 @@ refused with its line number (`Chaos scenario outage.chaos, line 4: Invalid chao
 there are stay. The ids of the rules go on from the last one (`r4` above, after three rules). In the report, each rule
 of a scenario says which one it came from (`(scenario outage.chaos)` in the text, `scenario` in the JSON).
 
+The chaos screen of the Camel TUI saves the rules there are as a scenario (key `s`), with the seed: rules tried by hand
+become a file of the project, to run again.
+
 == Rules
 
 A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `in`, `when`, `rate`,
