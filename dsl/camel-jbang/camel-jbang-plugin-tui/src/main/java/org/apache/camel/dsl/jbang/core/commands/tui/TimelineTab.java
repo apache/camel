@@ -332,7 +332,7 @@ class TimelineTab extends AbstractTableTab {
                 .split(area);
         int inner = Math.max(20, area.width() - 2);
         int label = Math.min(MAX_LABEL,
-                Math.max(11, routes.stream().mapToInt(r -> r.route().length()).max().orElse(0))) + 3;
+                Math.max(11, routes.stream().mapToInt(r -> r.route().length()).max().orElse(0))) + 4;
         // a second is 1 to 3 characters wide as the screen allows, or a character is several seconds
         int room = Math.max(10, inner - label - SUFFIX - 1);
         int per = room >= seconds() ? 1 : (int) Math.ceil((double) seconds() / room);
