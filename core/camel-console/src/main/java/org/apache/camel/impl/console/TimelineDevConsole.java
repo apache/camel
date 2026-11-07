@@ -47,6 +47,8 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonRecordSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The timeline of the integration: per second, for the last minutes, what each route did, the errors by exception, and
@@ -57,6 +59,8 @@ import org.apache.camel.util.json.JsonRecordSupport;
                                              description = "Per second, what each route did, the errors, and the failed and slowest exchanges")
 @Configurer(extended = true)
 public class TimelineDevConsole extends AbstractDevConsole {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TimelineDevConsole.class);
 
     /** The exchange property camel-chaos marks a faulted exchange with, with the id of the rule. */
     static final String CHAOS_RULE = "CamelChaosRule";
@@ -206,6 +210,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
         try {
             json = chaos.call(DevConsole.MediaType.JSON, Map.of("report", "false"));
         } catch (Exception e) {
+            LOG.debug("Failed to sample the chaos dev console", e);
             return;
         }
         if (json instanceof Map<?, ?> root && root.get("rules") instanceof List<?> rules) {
