@@ -142,3 +142,29 @@ YAML::
             message: "Received a message - ${body}"
 ----
 ====
+
+== Connection factory and transactions
+
+With only `brokerURL` set, each endpoint creates its own connection factory, and with `usePooledConnection=true` (the
+default) its own pool, which needs `org.messaginghub:pooled-jms` on the classpath. A message sent from a transacted
+route, for example `from("activemq:queue:in?transacted=true").to("activemq:queue:out")`, is then not part of the
+transaction of the consumed message: when the route fails, the consumed message is rolled back and delivered again,
+but the message sent to `out` is not rolled back.
+
+To send in the transaction of the consumer, set one `connectionFactory` on the component, for example a pooled one,
+so that the endpoints share it. A `transactionManager` that you set must use that same connection factory: a
+transaction manager on another connection factory does not make the message part of the transaction.
+
+[source,properties]
+----
+camel.beans.activemqCF = #class:org.apache.activemq.ActiveMQConnectionFactory
+camel.beans.activemqCF.brokerURL = tcp://localhost:61616
+camel.beans.pooledCF = #class:org.messaginghub.pooled.jms.JmsPoolConnectionFactory
+camel.beans.pooledCF.connectionFactory = #bean:activemqCF
+camel.component.activemq.connection-factory = #bean:pooledCF
+----
+
+When the endpoints share one pool, they get the same connection, whose client id cannot be changed: give an endpoint
+with its own `clientId` (for example for a durable subscription) a `connectionFactory` of its own, otherwise its
+consumer cannot connect and keeps retrying. `useSingleConnection=true` cannot be combined with a `clientId`: the shared
+connection of the Spring `SingleConnectionFactory` refuses to set a client id.
