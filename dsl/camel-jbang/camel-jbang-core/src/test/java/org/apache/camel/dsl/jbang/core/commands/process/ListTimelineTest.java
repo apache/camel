@@ -100,6 +100,28 @@ class ListTimelineTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void withChaosTheSecondsARouteWasDownAndTheFaultsOfTheRules() throws Exception {
+        String routes = run(command(timeline()));
+        assertThat(routes).contains("DOWN");
+        assertThat(routes.lines().filter(l -> l.contains("orders")).findFirst().orElseThrow()).contains("2s");
+
+        ListTimeline command = command(timeline());
+        command.errors = true;
+        String errors = run(command);
+        String line = errors.lines().filter(l -> l.contains("chaos faults")).findFirst().orElseThrow();
+        assertThat(line).contains("endpoint=http:stock*", "r1", " 3 ");
+    }
+
+    @Test
+    void withoutChaosNoDownColumn() throws Exception {
+        JsonObject timeline = timeline();
+        for (Object r : (List<?>) timeline.get("routes")) {
+            ((JsonObject) r).remove("down");
+        }
+        assertThat(run(command(timeline))).doesNotContain("DOWN");
+    }
+
+    @Test
     void aSparklineTakesTheMaxOfItsSeconds() {
         assertThat(ListTimeline.spark(new long[] { 0, 0, 4, 8 }, 4)).isEqualTo("  ▄█");
         assertThat(ListTimeline.spark(new long[] { 0, 8, 0, 0 }, 2)).isEqualTo("█ ");
@@ -138,6 +160,8 @@ class ListTimelineTest extends ProcessCommandTestSupport {
         orders.put("maxMillis", List.of(20L, 900L, 50L));
         orders.put("redeliveryAttempts", List.of(0L, 4L, 0L));
         orders.put("from", "platform-http:/orders");
+        // with camel-chaos: a rule had orders down for 2 seconds
+        orders.put("down", List.of(0L, 1L, 1L));
         JsonObject dlq = route("dlq", List.of(0L, 0L, 1L), List.of(0L, 0L, 0L), List.of(0L, 0L, 0L),
                 List.of(0L, 0L, 0L));
 
@@ -158,6 +182,11 @@ class ListTimelineTest extends ProcessCommandTestSupport {
         root.put("routes", List.of(orders, dlq));
         root.put("errors", List.of(error));
         root.put("exchanges", List.of(ex1, ex2));
+        JsonObject r1 = new JsonObject();
+        r1.put("id", "r1");
+        r1.put("rule", "endpoint=http:stock* error status=503");
+        r1.put("faults", List.of(0L, 3L, 0L));
+        root.put("chaos", List.of(r1));
         // as the integration answers it: parsed JSON
         try {
             return (JsonObject) Jsoner.deserialize(root.toJson());

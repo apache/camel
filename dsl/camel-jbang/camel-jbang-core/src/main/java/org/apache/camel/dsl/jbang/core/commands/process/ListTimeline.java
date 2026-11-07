@@ -203,6 +203,8 @@ public class ListTimeline extends ProcessWatchCommand {
             row.handled = sum(handled);
             row.failed = sum(failed);
             row.attempts = sum(values(r, "redeliveryAttempts"));
+            // with camel-chaos: the seconds a rule had the route down
+            row.down = r.get("down") != null ? sum(values(r, "down")) : -1;
             row.total = row.completed + row.recovered + row.handled + row.failed;
             long[] done = new long[completed.length];
             long weighted = 0;
@@ -248,11 +250,26 @@ public class ListTimeline extends ProcessWatchCommand {
     }
 
     private static void addErrors(Row base, JsonObject timeline, List<ErrorRow> rows) {
+        long end = timeline.getLongOrDefault("end", 0);
+        JsonArray chaos = (JsonArray) timeline.get("chaos");
+        if (chaos != null) {
+            // the faults of the chaos rules, which made the errors marked with the rule
+            for (Object o : chaos) {
+                JsonObject c = (JsonObject) o;
+                ErrorRow row = new ErrorRow();
+                row.copy(base);
+                row.exception = "chaos faults: " + c.getStringOrDefault("rule", "");
+                row.statusCode = "";
+                row.chaosRule = c.getString("id");
+                long[] counts = values(c, "faults");
+                count(row, counts, end);
+                rows.add(row);
+            }
+        }
         JsonArray list = (JsonArray) timeline.get("errors");
         if (list == null) {
             return;
         }
-        long end = timeline.getLongOrDefault("end", 0);
         for (Object o : list) {
             JsonObject e = (JsonObject) o;
             ErrorRow row = new ErrorRow();
@@ -262,18 +279,21 @@ public class ListTimeline extends ProcessWatchCommand {
             Object status = e.get("statusCode");
             row.statusCode = status != null ? status.toString() : "";
             row.chaosRule = e.getString("chaosRule");
-            long[] counts = values(e, "counts");
-            row.count = sum(counts);
-            for (int i = counts.length - 1; i >= 0; i--) {
-                if (counts[i] > 0) {
-                    long second = end - (counts.length - 1 - i);
-                    row.last = TimeUtils.printSince(second * 1000);
-                    break;
-                }
-            }
-            row.spark = spark(counts, SPARK_WIDTH);
+            count(row, values(e, "counts"), end);
             rows.add(row);
         }
+    }
+
+    private static void count(ErrorRow row, long[] counts, long end) {
+        row.count = sum(counts);
+        for (int i = counts.length - 1; i >= 0; i--) {
+            if (counts[i] > 0) {
+                long second = end - (counts.length - 1 - i);
+                row.last = TimeUtils.printSince(second * 1000);
+                break;
+            }
+        }
+        row.spark = spark(counts, SPARK_WIDTH);
     }
 
     private static long[] values(JsonObject o, String key) {
@@ -336,6 +356,9 @@ public class ListTimeline extends ProcessWatchCommand {
                 jo.put("handled", r.handled);
                 jo.put("failed", r.failed);
                 jo.put("redeliveryAttempts", r.attempts);
+                if (r.down >= 0) {
+                    jo.put("downSeconds", r.down);
+                }
                 jo.put("meanMillis", r.mean);
                 jo.put("p95Millis", r.p95);
                 jo.put("maxMillis", r.max);
@@ -357,6 +380,9 @@ public class ListTimeline extends ProcessWatchCommand {
                         .with(r -> count(r.handled)),
                 new Column().header("FAILED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> count(r.failed)),
+                new Column().header("DOWN").visible(rows.stream().anyMatch(r -> r.down >= 0))
+                        .headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
+                        .with(r -> r.down > 0 ? r.down + "s" : ""),
                 new Column().header("ATTEMPTS").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                         .with(r -> count(r.attempts)),
                 new Column().header("MEAN").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
@@ -444,8 +470,8 @@ public class ListTimeline extends ProcessWatchCommand {
                         .with(r -> r.name),
                 new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.routeId != null ? r.routeId : ""),
-                new Column().header("EXCEPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_LEFT)
-                        .with(r -> r.exception),
+                new Column().header("EXCEPTION").dataAlign(HorizontalAlign.LEFT).maxWidth(50, OverflowBehaviour.ELLIPSIS_RIGHT)
+                        .with(r -> simpleName(r.exception)),
                 new Column().header("STATUS").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER)
                         .with(r -> r.statusCode),
                 new Column().header("CHAOS").dataAlign(HorizontalAlign.LEFT)
@@ -454,6 +480,14 @@ public class ListTimeline extends ProcessWatchCommand {
                         .with(r -> Long.toString(r.count)),
                 new Column().header("LAST").headerAlign(HorizontalAlign.CENTER).with(r -> r.last),
                 new Column().header("ERRORS/S").dataAlign(HorizontalAlign.LEFT).with(r -> r.spark))));
+    }
+
+    /** The simple name of an exception class (the JSON output has the full name). */
+    private static String simpleName(String exception) {
+        if (exception == null || exception.contains(" ")) {
+            return exception != null ? exception : "";
+        }
+        return exception.substring(exception.lastIndexOf('.') + 1);
     }
 
     private static String count(long n) {
@@ -506,6 +540,7 @@ public class ListTimeline extends ProcessWatchCommand {
         long handled;
         long failed;
         long attempts;
+        long down = -1;
         long mean;
         long p95;
         long max;

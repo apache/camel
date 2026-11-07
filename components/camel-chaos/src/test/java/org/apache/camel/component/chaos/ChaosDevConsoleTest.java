@@ -120,6 +120,18 @@ class ChaosDevConsoleTest {
     }
 
     @Test
+    void withoutTheReportOnlyTheRules() throws Exception {
+        DevConsole console = start(null, Map.of("camel.chaos.enabled", "true"));
+        ChaosManager.get(context).addRule("endpoint=mock:target error rate=1 until=1m");
+
+        // as the timeline console reads the rules each second
+        JsonObject root = json(console, Map.of(ChaosDevConsole.REPORT, "false"));
+        assertThat(root.getBoolean("enabled")).isTrue();
+        assertThat(root.<JsonArray> getCollection("rules")).hasSize(1);
+        assertThat(root).doesNotContainKey("report");
+    }
+
+    @Test
     void text() throws Exception {
         DevConsole console = start(null, Map.of("camel.chaos.enabled", "true", "camel.chaos.seed", "7"));
         ChaosManager.get(context).addRule("endpoint=mock:target drop");

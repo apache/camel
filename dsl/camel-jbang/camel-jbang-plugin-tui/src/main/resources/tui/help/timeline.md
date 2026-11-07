@@ -20,7 +20,9 @@ handled. A failure that a redelivery recovered is not an error of the
 exchange: look for it in the yellow of the routes.
 
 With camel-chaos on, the faults of each chaos rule are a layer of their
-own, marked 🎲 with the id of the rule (`🎲 r1 error 503 (stock)`). An
+own, marked 🎲 with the id of the rule (`🎲 r1 error 503 (stock)`). The
+integration records them too, with the seconds a rule had a route down,
+so they are there also for an outage before the TUI started. An
 error that a rule made is not counted again as an error, so an injected
 fault and a real one stay apart.
 

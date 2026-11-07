@@ -21,8 +21,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -35,10 +37,11 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.console.DevConsole;
+import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
@@ -50,8 +53,8 @@ import org.apache.camel.util.json.JsonRecordSupport;
  * a few exchanges of each second with the calls they made. It records from the start of the console, so the history is
  * there when a tool first looks.
  */
-@DevConsole(name = "timeline", displayName = "Camel Timeline",
-            description = "Per second, what each route did, the errors, and the failed and slowest exchanges")
+@org.apache.camel.spi.annotations.DevConsole(name = "timeline", displayName = "Camel Timeline",
+                                             description = "Per second, what each route did, the errors, and the failed and slowest exchanges")
 @Configurer(extended = true)
 public class TimelineDevConsole extends AbstractDevConsole {
 
@@ -74,7 +77,14 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "Mean processing time per second in milliseconds") List<Long> meanMillis,
             @Metadata(description = "p95 processing time per second in milliseconds, of the exchanges that came into this route") List<Long> p95Millis,
             @Metadata(description = "Max processing time per second in milliseconds, of the exchanges that came into this route") List<Long> maxMillis,
-            @Metadata(description = "Redelivery attempts per second in this route") List<Long> redeliveryAttempts) {
+            @Metadata(description = "Redelivery attempts per second in this route") List<Long> redeliveryAttempts,
+            @Metadata(description = "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)") List<Long> down) {
+    }
+
+    public record ChaosSeries(
+            @Metadata(description = "The id of the camel-chaos rule") String id,
+            @Metadata(description = "The rule in its one-line text form") String rule,
+            @Metadata(description = "The faults the rule fired per second") List<Long> faults) {
     }
 
     public record ErrorSeries(
@@ -105,6 +115,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "Exchanges done per second, in the routes they came in") List<Long> exchangesDone,
             @Metadata(description = "The routes") List<RouteSeries> routes,
             @Metadata(description = "The errors by route and exception (only present when there are any)") List<ErrorSeries> errors,
+            @Metadata(description = "The faults per second of each camel-chaos rule that fired in the seconds (only present when one did)") List<ChaosSeries> chaos,
             @Metadata(description = "Per second the failed and handled exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)") List<TimelineExchange> exchanges) {
     }
 
@@ -176,7 +187,51 @@ public class TimelineDevConsole extends AbstractDevConsole {
     }
 
     void sample() {
-        recorder.sample(System.currentTimeMillis(), counters());
+        long now = System.currentTimeMillis();
+        recorder.sample(now, counters());
+        sampleChaos(now);
+    }
+
+    /**
+     * With camel-chaos, the faults per second of its rules and the routes they have down, from its dev console (so this
+     * console does not depend on camel-chaos).
+     */
+    private void sampleChaos(long now) {
+        DevConsoleRegistry registry = getCamelContext().getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
+        DevConsole chaos = registry != null ? registry.resolveById("chaos") : null;
+        if (chaos == null) {
+            return;
+        }
+        Object json;
+        try {
+            json = chaos.call(DevConsole.MediaType.JSON, Map.of("report", "false"));
+        } catch (Exception e) {
+            return;
+        }
+        if (json instanceof Map<?, ?> root && root.get("rules") instanceof List<?> rules) {
+            Map<String, long[]> faults = new LinkedHashMap<>();
+            Map<String, String> texts = new LinkedHashMap<>();
+            Set<String> down = new LinkedHashSet<>();
+            for (Object o : rules) {
+                if (o instanceof Map<?, ?> r && r.get("id") instanceof String id) {
+                    if (r.get("rule") instanceof String text) {
+                        texts.put(id, text);
+                    }
+                    if (r.get("faultsPerSecond") instanceof List<?> perSecond) {
+                        long[] values = new long[perSecond.size()];
+                        for (int i = 0; i < values.length; i++) {
+                            values[i] = perSecond.get(i) instanceof Number n ? n.longValue() : 0;
+                        }
+                        faults.put(id, values);
+                    }
+                    if (r.get("lifecycle") instanceof Map<?, ?> lifecycle && "down".equals(lifecycle.get("state"))
+                            && lifecycle.get("route") instanceof String route) {
+                        down.add(route);
+                    }
+                }
+            }
+            recorder.chaos(now, faults, texts, down);
+        }
     }
 
     private Map<String, TimelineRecorder.Counters> counters() {
@@ -232,8 +287,10 @@ public class TimelineDevConsole extends AbstractDevConsole {
         List<ErrorSeries> errors = new ArrayList<>();
         List<TimelineExchange> kept = new ArrayList<>();
         List<Long> done = new ArrayList<>(count);
+        List<ChaosSeries> chaos = new ArrayList<>();
         synchronized (rec) {
             secs = rec.seconds(end, count);
+            boolean chaosSeen = !rec.chaosRules().isEmpty();
             for (TimelineRecorder.Second s : secs) {
                 done.add(s != null ? s.done : 0L);
             }
@@ -247,8 +304,18 @@ public class TimelineDevConsole extends AbstractDevConsole {
                         series(secs, routeId, rs -> rs.handled), series(secs, routeId, rs -> rs.failed),
                         series(secs, routeId, rs -> rs.inflight), series(secs, routeId, TimelineRecorder.RouteSecond::mean),
                         series(secs, routeId, rs -> rs.p95), series(secs, routeId, rs -> rs.max),
-                        series(secs, routeId, rs -> rs.attempts)));
+                        series(secs, routeId, rs -> rs.attempts), chaosSeen ? downSeries(secs, routeId) : null));
             }
+            Map<String, Long[]> faults = new LinkedHashMap<>();
+            for (int i = 0; i < secs.size(); i++) {
+                TimelineRecorder.Second s = secs.get(i);
+                if (s != null && s.faults != null) {
+                    for (Map.Entry<String, Long> e : s.faults.entrySet()) {
+                        faults.computeIfAbsent(e.getKey(), k -> zeros(secs.size()))[i] = e.getValue();
+                    }
+                }
+            }
+            faults.forEach((id, v) -> chaos.add(new ChaosSeries(id, rec.chaosRules().get(id), List.of(v))));
             Map<TimelineRecorder.ErrorKind, Long[]> byKind = new LinkedHashMap<>();
             for (int i = 0; i < secs.size(); i++) {
                 TimelineRecorder.Second s = secs.get(i);
@@ -277,7 +344,16 @@ public class TimelineDevConsole extends AbstractDevConsole {
                     new ErrorSeries(k.routeId(), k.exception(), k.statusCode(), k.chaosRule(), List.of(v))));
         }
         return new Response(
-                end, count, done, routes, errors.isEmpty() ? null : errors, exchanges ? kept : null);
+                end, count, done, routes, errors.isEmpty() ? null : errors, chaos.isEmpty() ? null : chaos,
+                exchanges ? kept : null);
+    }
+
+    private static List<Long> downSeries(List<TimelineRecorder.Second> secs, String routeId) {
+        List<Long> answer = new ArrayList<>(secs.size());
+        for (TimelineRecorder.Second s : secs) {
+            answer.add(s != null && s.down != null && s.down.contains(routeId) ? 1L : 0L);
+        }
+        return answer;
     }
 
     private static TimelineExchange exchange(TimelineRecorder.Kept k) {
