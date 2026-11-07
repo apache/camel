@@ -1361,6 +1361,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public SelectionContext getSelectionContext() {
+        if (showsAbout() && aboutIntegration() != null) {
+            // About: the lines of In, Routes and Out the cursor moves over
+            return about.selectionContext();
+        }
         if (infraFocused) {
             List<InfraInfo> infras = ctx.infraData.get();
             if (infras.isEmpty()) {
@@ -1572,7 +1576,8 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public String description() {
-        return "Running integrations with PID, uptime, and exchange statistics";
+        return "About an integration (what it does, In, Routes, Out, what happened in the last minutes) when one runs,"
+               + " else the running integrations with PID, uptime, and exchange statistics; v switches";
     }
 
     @Override
@@ -1582,6 +1587,9 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public JsonObject getTableDataAsJson() {
+        if (showsAbout() && aboutIntegration() != null) {
+            return about.tableJson(aboutIntegration());
+        }
         List<IntegrationInfo> integrations = ctx.data.get();
         if (integrations == null || integrations.isEmpty()) {
             return null;

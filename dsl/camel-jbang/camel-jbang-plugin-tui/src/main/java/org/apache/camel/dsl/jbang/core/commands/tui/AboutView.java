@@ -47,6 +47,8 @@ import org.apache.camel.dsl.jbang.core.commands.ai.About;
 import org.apache.camel.dsl.jbang.core.commands.ai.AboutReport;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * About an integration (Overview ▸ About, CAMEL-26700): what it does at a glance and without an AI, and what has
@@ -178,6 +180,156 @@ final class AboutView {
             return true;
         }
         return false;
+    }
+
+    /** The lines the cursor can be on, for an agent (tui_get_state): the route, or the endpoint and its route. */
+    SelectionContext selectionContext() {
+        List<Target> t = targets;
+        List<String> items = t.stream().map(x -> x.endpoint() != null ? x.endpoint() + " (" + x.routeId() + ")" : x.routeId())
+                .toList();
+        return new SelectionContext("list", items, cursor < t.size() ? cursor : -1, items.size(), "About");
+    }
+
+    /**
+     * About the integration as data, for an agent (tui_get_table): what the screen shows, with what happened over the
+     * window of What happened.
+     */
+    JsonObject tableJson(IntegrationInfo info) {
+        JsonObject result = new JsonObject();
+        result.put("tab", "Overview");
+        result.put("view", "About");
+        result.put("integration", info.name != null ? info.name : info.pid);
+        result.put("pid", info.pid);
+        About.Model m = model;
+        if (m == null) {
+            result.put("loading", error != null ? error : "reading the sources");
+            return result;
+        }
+        if (m.purpose() != null) {
+            result.put("purpose", m.purpose());
+            result.put("purposeFrom", m.purposeFrom());
+        }
+        Map<String, Long> totals = new LinkedHashMap<>();
+        info.routes.forEach(r -> {
+            if (r.routeId != null) {
+                totals.put(r.routeId, r.total);
+            }
+        });
+        JsonArray in = new JsonArray();
+        for (About.In e : m.in()) {
+            JsonObject jo = new JsonObject();
+            jo.put("label", e.label());
+            jo.put("kind", e.kind());
+            jo.put("routeId", e.route());
+            putTotalAndRate(jo, info, e.route(), totals);
+            in.add(jo);
+        }
+        result.put("in", in);
+        JsonArray routes = new JsonArray();
+        for (About.RouteLine r : m.routes()) {
+            JsonObject jo = new JsonObject();
+            jo.put("routeId", r.routeId());
+            jo.put("depth", r.depth());
+            if (r.how() != null) {
+                jo.put("calledHow", r.how());
+            }
+            jo.put("from", r.from());
+            jo.put("steps", r.steps());
+            if (totals.get(r.routeId()) != null) {
+                jo.put("exchangesTotal", totals.get(r.routeId()));
+            }
+            routes.add(jo);
+        }
+        result.put("routes", routes);
+        JsonArray out = new JsonArray();
+        for (About.Out o : m.out()) {
+            JsonObject jo = new JsonObject();
+            jo.put("uri", o.uri());
+            jo.put("category", o.category());
+            jo.put("routeId", o.route());
+            Long hits = outHits(info, o.uri(), o.route());
+            if (hits != null) {
+                jo.put("sends", hits);
+            }
+            out.add(jo);
+        }
+        result.put("out", out);
+        long last = ctx.timeline.endSecond(info.pid);
+        if (last >= 0) {
+            long end = windowEnd(last);
+            int seconds = seconds();
+            JsonObject happened = new JsonObject();
+            happened.put("seconds", seconds);
+            happened.put("endSecond", end);
+            happened.put("following", stripsEnd < 0);
+            JsonArray lines = new JsonArray();
+            for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, routeOrder(info), end, seconds)) {
+                JsonObject jo = new JsonObject();
+                jo.put("routeId", r.route());
+                jo.put("exchanges", r.total(r.completed()) + r.total(r.recovered()) + r.total(r.handled())
+                                    + r.total(r.failed()));
+                long[] worst = r.total(r.failed()) > 0 ? r.failed() : r.total(r.handled()) > 0 ? r.handled()
+                        : r.total(r.recovered()) > 0 ? r.recovered() : null;
+                if (worst != null) {
+                    jo.put("worst", worst == r.failed() ? "failed" : worst == r.handled() ? "handled" : "recovered");
+                    jo.put("worstCount", r.total(worst));
+                    jo.put("worstSecondsAgo", last - lastAt(worst, end, seconds));
+                    if (worst == r.recovered()) {
+                        String from = recoveredFrom(info, r.route(), end - seconds + 1, end);
+                        if (from != null) {
+                            jo.put("recoveredFrom", from);
+                        }
+                    }
+                }
+                if (r.openSeconds() > 0) {
+                    jo.put("circuitBreakerOpenSeconds", r.openSeconds());
+                }
+                if (r.total(r.down()) > 0) {
+                    jo.put("downSeconds", r.total(r.down()));
+                }
+                lines.add(jo);
+            }
+            happened.put("routes", lines);
+            JsonArray causes = new JsonArray();
+            for (Timeline.CauseSeries c : ctx.timeline.causes(info.pid, end, seconds)) {
+                long total = Arrays.stream(c.values()).sum();
+                if (total > 0) {
+                    JsonObject jo = new JsonObject();
+                    jo.put("label", c.label());
+                    if (c.rule() != null) {
+                        jo.put("chaosRule", c.rule());
+                    }
+                    jo.put("count", total);
+                    causes.add(jo);
+                }
+            }
+            happened.put("causes", causes);
+            result.put("whatHappened", happened);
+        }
+        Target t = selected();
+        if (t != null) {
+            JsonObject sel = new JsonObject();
+            sel.put("routeId", t.routeId());
+            if (t.endpoint() != null) {
+                sel.put("endpoint", t.endpoint());
+            }
+            result.put("selected", sel);
+        }
+        result.put("keys", "v all integrations, Up/Down select a line, Enter opens it, +/- zoom, Left/Right move, 4 Timeline");
+        return result;
+    }
+
+    private void putTotalAndRate(JsonObject jo, IntegrationInfo info, String routeId, Map<String, Long> totals) {
+        if (routeId == null) {
+            return;
+        }
+        if (totals.get(routeId) != null) {
+            jo.put("exchangesTotal", totals.get(routeId));
+        }
+        long[] perSecond = routePerSecond(info, routeId);
+        if (perSecond != null) {
+            jo.put("rate", rate(perSecond));
+        }
     }
 
     /** ↑ ↓: the cursor moves over the lines of In, Routes and Out that are about a route or an endpoint. */

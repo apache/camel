@@ -1,31 +1,59 @@
 # Overview
 
-The Overview tab shows all running Camel integrations at a glance.
-Select an integration to monitor it in detail on the other tabs.
+What a running integration does and what has happened to it (**About**),
+or all running Camel integrations at a glance (**Integrations**). Select
+an integration to monitor it in detail on the other tabs.
 
 ## About and Integrations
 
-The Overview has two views, switched with **v**:
+The Overview has two views, switched with **v**: **About**, shown when
+one integration runs, and **Integrations**, the table of all running
+integrations below, shown when several run.
 
-- **About** — what the selected integration does and what has happened,
-  shown when one integration runs. A header with what it is and its
-  purpose (the comment at the top of its main file, else the
-  descriptions of its routes); what comes **In** (timers, HTTP,
-  consumers), its **Routes** (a route called with `direct:` sits under
-  its caller with `↳`, one handed off with `seda:` with `⇢`) and what
-  goes **Out**, from its sources; then the **Last 5m** from the timeline
-  it records (the exchanges, how they ended, the error that happened
-  most), what to **Watch**, and where to go **Next**: **4** the
-  Timeline second by second, **5** the Diagram, **2** the source.
-  **What happened** has a line per route, coloured as the Timeline:
-  **+/-** zooms between 5, 2 and 1 minutes (zooming in centres on the
-  last trouble, so you see what the other routes did at that moment)
-  and **←→** moves a zoomed window back and forward. **↑↓** select a
-  line of In, Routes or Out, and **Enter** opens it: a route drilled
-  down on the Diagram, an endpoint a route sends to with its details on
-  the Endpoint tab.
-- **Integrations** — the table of all running integrations below, shown
-  when several run.
+## About
+
+What an integration you have not seen before does, and what has
+happened to it, with no AI:
+
+- **The header** — the Camel version, runtime, files, routes and uptime,
+  and its purpose: the comment at the top of its main file (a YAML `#`
+  comment, a Javadoc or `//` comment in Java, an XML comment), else the
+  descriptions of its routes.
+- **In, Routes, Out** — what starts it (timers, HTTP, consumers), its
+  routes (a route called with `direct:` sits under its caller with `↳`,
+  one handed off with `seda:` with `⇢`) and what it talks to, from its
+  sources. Each line has the exchanges since it started (for an
+  endpoint, the sends to it), and In and Out a sparkline of the last 5
+  minutes with the rate now, or `idle`.
+- **Last 5m** — the exchanges and how they ended, the cause that
+  happened most and when (a chaos rule marked 🎲), and the exchanges
+  since it started.
+- **Watch** — errors, routes not started, exchanges in flight.
+- **Next** — the keys that lead deeper: **4** the Timeline, **5** the
+  Diagram, **2** the source.
+- **What happened** — a line per route over the last 5 minutes, coloured
+  as on the Timeline: green completed, yellow recovered by redelivery,
+  orange handled by the error handler, red failed, a red `░` a second a
+  chaos rule had the route down, a `▒` a second a circuit breaker of the
+  route was open. At the right: the exchanges, the worst that happened
+  and when (for a recovery, the failure it recovered from), and
+  `⚡ open 10s` for a circuit breaker.
+
+Keys of About:
+
+- **Up/Down** — Select a line of In, Routes or Out
+- **Enter** — Open the selected line: a route drilled down on the
+  Diagram, an endpoint a route sends to with its details on the Endpoint
+  tab
+- **+/-** — Zoom What happened between 5, 2 and 1 minutes; zooming in
+  centres on the last trouble, so you see what the other routes did at
+  that moment
+- **Left/Right** — Move a zoomed window back and forward
+- **v** — All integrations
+
+`camel get about` shows the same from the command line. An AI reads it
+with `tui_get_table` on the Overview while About shows, and the selected
+line with `tui_get_state`.
 
 ## Integration List
 

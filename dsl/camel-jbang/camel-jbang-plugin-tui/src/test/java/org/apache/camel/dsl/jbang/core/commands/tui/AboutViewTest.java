@@ -32,6 +32,7 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import org.apache.camel.dsl.jbang.core.commands.ai.About;
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -239,6 +240,21 @@ class AboutViewTest {
                     .contains("2.0/s");
         });
 
+        // the same for an agent (tui_get_table)
+        JsonObject table = about.tableJson(info);
+        assertThat(table.getString("view")).isEqualTo("About");
+        assertThat(table.getString("purpose")).isEqualTo("Every order is checked against the stock and shipped.");
+        JsonObject in = (JsonObject) ((List<?>) table.get("in")).get(0);
+        assertThat(in.getString("routeId")).isEqualTo("orders");
+        assertThat(in.getString("rate")).isEqualTo("2.0/s");
+        assertThat((List<?>) table.get("routes")).hasSize(2);
+        assertThat(((JsonObject) ((List<?>) table.get("out")).get(0)).getLong("sends")).isEqualTo(118);
+        JsonObject happened = (JsonObject) table.get("whatHappened");
+        JsonObject orders = ((List<?>) happened.get("routes")).stream().map(JsonObject.class::cast)
+                .filter(r -> "orders".equals(r.getString("routeId"))).findFirst().orElseThrow();
+        assertThat(orders.getString("worst")).isEqualTo("handled");
+        assertThat(orders.getLong("worstCount")).isEqualTo(30);
+
         // the cursor goes down In, Routes and Out; Enter opens what it is on
         List<AboutView.Target> opened = new ArrayList<>();
         ctx.openFromAbout = opened::add;
@@ -249,6 +265,8 @@ class AboutViewTest {
         about.moveCursor(2);
         render(about, info);
         assertThat(about.selected()).isEqualTo(new AboutView.Target("stock", null));
+        assertThat(about.selectionContext().items()).contains("orders", "stock");
+        assertThat(about.selectionContext().selectedIndex()).isEqualTo(2);
         about.moveCursor(5);
         render(about, info);
         assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
