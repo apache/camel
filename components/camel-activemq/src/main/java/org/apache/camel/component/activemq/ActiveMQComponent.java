@@ -247,7 +247,7 @@ public class ActiveMQComponent extends JmsComponent {
             try {
                 s.resetConnection();
             } catch (Exception e) {
-                // ignore
+                LOG.debug("Error resetting the connection of {}. This exception is ignored.", s, e);
             }
         }
 
@@ -265,7 +265,7 @@ public class ActiveMQComponent extends JmsComponent {
             try {
                 s.destroy();
             } catch (Exception e) {
-                // ignore
+                LOG.debug("Error destroying {}. This exception is ignored.", s, e);
             }
         }
         singleConnectionFactoryList.clear();
@@ -278,8 +278,10 @@ public class ActiveMQComponent extends JmsComponent {
             // invoke the method if it exists
             Method m = pooledConnectionFactory.getClass().getMethod(method);
             org.apache.camel.support.ObjectHelper.invokeMethod(m, pooledConnectionFactory);
+        } catch (NoSuchMethodException e) {
+            // the connection factory does not have this method
         } catch (Exception e) {
-            // ignore
+            LOG.debug("Error invoking {} on {}. This exception is ignored.", method, pooledConnectionFactory, e);
         }
     }
 
