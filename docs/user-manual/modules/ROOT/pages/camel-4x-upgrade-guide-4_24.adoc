@@ -257,6 +257,14 @@ rejected policy. Before, it could wait for a permit it held itself, until `keepA
 than `maxQueueSize` allows, and with `maxQueueSize` 1 it was rejected after `keepAliveTime`. A submitter outside the
 pool waits, and is rejected with `Abort`, as before.
 
+=== camel-core - suspendRoute on a route that is not started leaves it as it is
+
+`suspendRoute` on a route that is not started (stopped, or with `autoStartup=false` and never started), from the
+`RouteController`, JMX, the control bus, the CLI (`camel suspend`) or a route policy such as `DurationRoutePolicy`, now
+leaves the route in its current state, and route policies no longer get `onSuspend` for it. Before, the route became
+`Suspended`, and a later `startRoute` or `resumeRoute` resumed it without starting its consumer, so it consumed nothing.
+Code that checks the status of a route after `suspendRoute` now sees `Stopped` for such a route.
+
 === camel-core - Routing Slip and Dynamic Router fire the sent event of a step before the next step
 
 The `ExchangeSentEvent` of a step of a `routingSlip` or `dynamicRouter` is now fired when that step is done, before the
