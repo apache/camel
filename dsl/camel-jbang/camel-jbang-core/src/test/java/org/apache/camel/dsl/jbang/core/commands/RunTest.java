@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.RunPipeline;
@@ -281,6 +282,48 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(RunPipeline.sourceDirReloadPattern("inbox")).isEqualTo("*,!test/**,!inbox/**");
         assertThat(RunPipeline.sourceDirReloadPattern(" inbox , ./archive/ ,data\\in,"))
                 .isEqualTo("*,!test/**,!inbox/**,!archive/**,!data/in/**");
+    }
+
+    @Test
+    void chaosWithAScenarioFileOrAFileToRun(@TempDir Path dir) throws Exception {
+        Run command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--chaos", "route.yaml");
+        assertThat(command.chaos).isTrue();
+        assertThat(command.chaosScenario).isNull();
+        assertThat(command.files).containsExactly("route.yaml");
+
+        for (String[] args : new String[][] {
+                { "--chaos=chaos/outage.chaos", "route.yaml" }, { "--chaos", "chaos/outage.chaos", "route.yaml" } }) {
+            command = new Run(new CamelJBangMain());
+            CommandLineTestHelper.parse(command, args);
+            assertThat(command.chaos).isTrue();
+            assertThat(command.chaosScenario).isEqualTo("chaos/outage.chaos");
+            assertThat(command.files).containsExactly("route.yaml");
+        }
+
+        command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--chaos=false", "route.yaml");
+        assertThat(command.chaos).isFalse();
+
+        // the scenario must be there; it is passed on as an absolute path
+        Path scenario = Files.writeString(dir.resolve("outage.chaos"), "endpoint=http:* error\n");
+        command = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(command, "--chaos=" + scenario, "--chaos-report=" + dir.resolve("chaos.json"),
+                "route.yaml");
+        command.prepareChaos();
+        assertThat(command.toRunRequest(dir).chaosScenario).isEqualTo(scenario.toAbsolutePath().toString());
+        assertThat(command.toRunRequest(dir).chaosReport).isEqualTo(dir.resolve("chaos.json").toString());
+
+        Run missing = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(missing, "--chaos=" + dir.resolve("missing.chaos"), "route.yaml");
+        CliException e = Assertions.assertThrows(CliException.class, missing::prepareChaos);
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
+
+        Run report = new Run(new CamelJBangMain());
+        CommandLineTestHelper.parse(report, "--chaos-report=chaos.json", "route.yaml");
+        e = Assertions.assertThrows(CliException.class, report::prepareChaos);
+        assertThat(e.getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThat(e).hasMessage("--chaos-report needs --chaos");
     }
 
     @Test

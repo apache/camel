@@ -354,6 +354,16 @@ class SecurityUtilsTest {
     }
 
     @Test
+    void testChaosScenarioIsInsecureWithAnyValue() {
+        // a scenario file holds rules (CAMEL-26722)
+        SecurityUtils.SecurityOption option = SecurityUtils.getSecurityOption("camel.chaos.scenario");
+        assertNotNull(option);
+        assertEquals("insecure:dev", option.category());
+        assertTrue(SecurityUtils.isInsecureValue("camel.chaos.scenario", "chaos/outage.chaos"));
+        assertFalse(SecurityUtils.isInsecureValue("camel.chaos.scenario", ""));
+    }
+
+    @Test
     void testOtherRulesOptionsAreNotChaos() {
         // the schematron endpoint has an option rules, and other keys may end with rules
         assertNull(SecurityUtils.getSecurityOption("camel.component.schematron.rules"));

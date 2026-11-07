@@ -35,6 +35,10 @@ public class ChaosConfigurationProperties implements BootstrapCloseable {
     private Long seed;
     @Metadata(security = "insecure:dev")
     private String rules;
+    @Metadata(security = "insecure:dev")
+    private String scenario;
+    @Metadata
+    private String reportFile;
     @Metadata(defaultValue = "10m")
     private String maxDuration = "10m";
     @Metadata(defaultValue = "true")
@@ -87,6 +91,30 @@ public class ChaosConfigurationProperties implements BootstrapCloseable {
         this.rules = rules;
     }
 
+    public String getScenario() {
+        return scenario;
+    }
+
+    /**
+     * A scenario to load at startup: a file with one rule per line, # comments and an optional seed= line (such as
+     * chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used unless
+     * the seed option is set.
+     */
+    public void setScenario(String scenario) {
+        this.scenario = scenario;
+    }
+
+    public String getReportFile() {
+        return reportFile;
+    }
+
+    /**
+     * A file to write the chaos report to as JSON when the CamelContext stops, such as target/chaos-report.json.
+     */
+    public void setReportFile(String reportFile) {
+        this.reportFile = reportFile;
+    }
+
     public String getMaxDuration() {
         return maxDuration;
     }
@@ -132,6 +160,24 @@ public class ChaosConfigurationProperties implements BootstrapCloseable {
      */
     public ChaosConfigurationProperties withRules(String rules) {
         this.rules = rules;
+        return this;
+    }
+
+    /**
+     * A scenario to load at startup: a file with one rule per line, # comments and an optional seed= line (such as
+     * chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used unless
+     * the seed option is set.
+     */
+    public ChaosConfigurationProperties withScenario(String scenario) {
+        this.scenario = scenario;
+        return this;
+    }
+
+    /**
+     * A file to write the chaos report to as JSON when the CamelContext stops, such as target/chaos-report.json.
+     */
+    public ChaosConfigurationProperties withReportFile(String reportFile) {
+        this.reportFile = reportFile;
         return this;
     }
 

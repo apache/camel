@@ -45,6 +45,14 @@ class RunFilesTest {
         assertThat(RunFiles.isCitrusTest(dir.resolve("test").resolve(name))).isTrue();
     }
 
+    @Test
+    void aChaosScenarioIsNotRunNorExported() {
+        // camel run * and camel export: camel run --chaos=file and camel cmd chaos-load read it
+        assertThat(RunFiles.skipFile("outage.chaos", List.of(), "")).isTrue();
+        assertThat(RunFiles.skipFile("chaos/outage.chaos", List.of(), "")).isTrue();
+        assertThat(RunFiles.skipFile("orders.camel.yaml", List.of(), "")).isFalse();
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {
             "orders.camel.yaml", "orders.yaml", "citrus.yaml", "orders.camel.xml", "Orders.java", "orders.groovy",

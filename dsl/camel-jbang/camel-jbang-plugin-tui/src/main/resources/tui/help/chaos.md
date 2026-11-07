@@ -12,7 +12,13 @@ remove rules on this screen (see Keys below), or with the Camel CLI:
 camel cmd chaos-add myapp --rule='endpoint=http:stock* error status=503 rate=0.25 until=10m'
 camel cmd chaos-remove myapp --id=r1
 camel cmd chaos-clear myapp --reset
+camel cmd chaos-load chaos/outage.chaos myapp
 ```
+
+A scenario (`chaos/outage.chaos`) keeps the rules of an experiment in
+the project: one rule per line, `#` comments and a `seed=` line.
+`camel run --chaos=chaos/outage.chaos` starts with one, and
+`chaos-load` loads one into a running integration (a new report).
 
 While a rule injects faults, the title bar shows a badge on every
 screen (`🎲 chaos 3 rules · FAIL`), so a failure made on purpose is not

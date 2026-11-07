@@ -263,6 +263,23 @@ class ProjectRunnerTest {
     }
 
     @Test
+    void aCamelMainRunWithAChaosScenarioAndReport() throws Exception {
+        RunRequest request = request();
+        request.chaos = true;
+        request.chaosScenario = "/work/chaos/outage.chaos";
+        request.chaosReport = "/work/target/chaos.json";
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            assertThat(started.get(started.size() - 1).command())
+                    .contains("-Dcamel.chaos.scenario=/work/chaos/outage.chaos",
+                            "-Dcamel.chaos.reportFile=/work/target/chaos.json");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
     void anExistingCamelMainProjectRunsWithChaos() throws Exception {
         RunRequest request = existingProject(RuntimeType.main);
         request.chaos = true;

@@ -9,6 +9,7 @@ package
 # command
 ${java.home}/bin/java
 -Dcamel.main.profile=dev
+-Dcamel.chaos.reportFile=${camel.dir}/chaos-report-${temp}.json
 -jar
 ${run-dir}/target/runner.jar
 
