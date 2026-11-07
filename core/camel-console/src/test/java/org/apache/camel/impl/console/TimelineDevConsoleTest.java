@@ -127,6 +127,9 @@ public class TimelineDevConsoleTest extends ContextTestSupport {
         assertThat(sum(orders, "completed")).isZero();
         JsonObject ex = (JsonObject) out.<JsonArray> getCollection("exchanges").get(0);
         assertThat(ex.getBoolean("redelivered")).isTrue();
+        assertThat(ex.getBoolean("failed")).isFalse();
+        // kept with the failure it was redelivered for
+        assertThat(ex.getString("exception")).isEqualTo("stock down");
     }
 
     @Test

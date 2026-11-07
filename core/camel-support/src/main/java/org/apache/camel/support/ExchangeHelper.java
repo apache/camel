@@ -689,12 +689,18 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Checks whether the exchange {@link UnitOfWork} is redelivered
+     * Checks whether the exchange {@link UnitOfWork} is redelivered: the error handler redelivered it (its redelivery
+     * counter, which a route cannot remove), or the {@link Exchange#REDELIVERED} header says so.
      *
      * @param  exchange the exchange
      * @return          <tt>true</tt> if redelivered, <tt>false</tt> otherwise
      */
     public static boolean isRedelivered(Exchange exchange) {
+        // the counter of the exchange first: a route that removes the Camel headers after the redelivery (such as
+        // removeHeaders("Camel*") before calling an endpoint) takes the header away (CAMEL-26712)
+        if (exchange.getExchangeExtension().getRedeliveryCounter() > 0) {
+            return true;
+        }
         return exchange.getIn().hasHeaders() && exchange.getIn().getHeader(Exchange.REDELIVERED, false, Boolean.class);
     }
 

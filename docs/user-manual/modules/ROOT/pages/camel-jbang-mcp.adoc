@@ -972,7 +972,7 @@ given, and a call that names its pid is refused.
 | `camel_runtime_timeline`
 | What happened per second in the last minutes (up to 5): per route the exchanges completed, recovered by a
   redelivery, handled by the error handler and failed, with their mean, p95 and max time and the redelivery attempts;
-  the errors per second by route and exception; and per second the failed and handled exchanges and the 3 slowest
+  the errors per second by route and exception; and per second the failed, handled and recovered exchanges and the 3 slowest
   with the remote calls they made. It is recorded by the `timeline` dev console, which `camel run` (dev profile) turns on.
 
 | `camel_runtime_memory`

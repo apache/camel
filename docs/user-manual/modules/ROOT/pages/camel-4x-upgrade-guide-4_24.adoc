@@ -246,7 +246,7 @@ Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still upda
 The activity tracking of the backlog tracer (since 4.22) is removed. It kept the last 100 completed exchanges, which
 under load was only the last seconds. The new `timeline` dev console takes its place: for each second of the last 5
 minutes it records what each route did (completed, recovered by a redelivery, handled by the error handler, failed),
-the mean, p95 and max time, the errors by route and exception, and per second the failed and handled exchanges and
+the mean, p95 and max time, the errors by route and exception, and per second the failed, handled and recovered exchanges and
 the 3 slowest with the remote calls they made. It is on whenever the dev consoles are, as with `camel run` (profile `dev`), and the
 number of seconds is set with `camel.devConsole.timeline.seconds` (60 to 3600, default 300).
 
@@ -265,6 +265,14 @@ Removed:
 * The `<pid>-activity.json` file and the `activity` snapshot of the CLI connector, which are now `<pid>-timeline.json`
   (the last 10 seconds) and `timeline`. The new action `timeline` returns the whole timeline.
 
+=== camel-management - an exchange recovered by a redelivery is counted when the route removes the Camel headers
+
+The `Redeliveries` statistics of the routes, processors and the `CamelContext` count an exchange that completed after a
+redelivery also when the route removed the `CamelRedelivered` header afterwards (such as `removeHeaders("Camel*")`
+before calling an endpoint). Before, such a recovery was not counted. `ExchangeHelper.isRedelivered` now also returns
+`true` when the error handler redelivered the exchange, without looking at the header only. An exchange whose failure
+is continued (`continued(true)`) no longer keeps its redelivery counter, as with a handled failure.
+
 === camel-core - a nested split no longer changes the processed items of the outer split
 
 With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
@@ -280,6 +288,15 @@ rejected policy. Before, it could wait for a permit it held itself, until `keepA
 `Block`. A split with a `timeout` could lose items that way. With `Abort`, a parallel split ran one item fewer at a time
 than `maxQueueSize` allows, and with `maxQueueSize` 1 it was rejected after `keepAliveTime`. A submitter outside the
 pool waits, and is rejected with `Abort`, as before.
+
+=== camel-core - suspendRoute on a route that is not started leaves it as it is
+
+`suspendRoute` on a route that is not started (stopped, or with `autoStartup=false` and never started), from the
+`RouteController`, JMX, the control bus, the CLI (`camel cmd suspend-route`) or a route policy such as
+`DurationRoutePolicy`, now leaves the route in its current state, and route policies no longer get `onSuspend` for it.
+Before, the route became `Suspended`, and a later `startRoute` or `resumeRoute` resumed it without starting its
+consumer, so it consumed nothing. Code that checks the status of a route after `suspendRoute` now sees `Stopped` for
+such a route. The last error of such a route, for example from a failed start, is kept.
 
 === camel-core - Routing Slip and Dynamic Router fire the sent event of a step before the next step
 
@@ -328,6 +345,13 @@ or payload from the body after a timed out `pollEnrich` must keep it before the 
 `variableReceive`, which leaves the body as it was. To keep the body empty, the message is replaced by a plain message
 with the same message id, headers and attachments, so after a timeout it is no longer of the message type of the
 consumer (such as `GenericFileMessage` or `JmsMessage`).
+
+=== camel-core - Loop EIP breakOnShutdown
+
+The Loop EIP with `breakOnShutdown` now only breaks out when the route (or Camel) is stopped, and no longer on suspend.
+A suspend waits for the loop like any other inflight exchange. A loop that never ends on its own (such as a
+`doWhile` with `breakOnShutdown`) is therefore no longer broken at once by a suspend: the suspend waits until the
+shutdown timeout, and the forced suspend then breaks the loop and stops the consumer of the route.
 
 === camel-core - doFinally runs all its steps after a called route handled a failure
 

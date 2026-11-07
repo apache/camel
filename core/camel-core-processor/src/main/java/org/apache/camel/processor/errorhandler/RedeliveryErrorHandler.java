@@ -1676,6 +1676,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+            // also reset the exchange counter; a continued exchange is not redelivered
+            exchange.getExchangeExtension().setRedeliveryCounter(-1);
+            exchange.getExchangeExtension().setRedeliveryMaxCounter(-1);
             exchange.getExchangeExtension().setFailureHandled(false);
             // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
             // and mark it as handled (continued), so it is not regarded as a previous exception of a later failure
