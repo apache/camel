@@ -596,10 +596,10 @@ YAML DSL::
 ----
 ====
 
-NOTE: `JdbcKeyValueRepository` does not implement atomic `putIfAbsent` — concurrent inserts
-may produce duplicate-key exceptions that are caught and treated as a "key already exists"
-condition. This is safe for idempotency at low concurrency, but for high-throughput
-exactly-once semantics, prefer a backend with native CAS.
+NOTE: `JdbcKeyValueRepository.putIfAbsent` relies on the primary key of the table: when concurrent
+inserts of the same key fail with a duplicate key, the transaction is rolled back and the key is read
+again in a new transaction, which returns the value stored by the other caller. When `putIfAbsent`
+runs in a transaction of the caller, the `DuplicateKeyException` is thrown instead.
 
 === JpaKeyValueRepository
 
@@ -657,9 +657,8 @@ YAML DSL::
 ----
 ====
 
-NOTE: Like `JdbcKeyValueRepository`, the JPA backend does not provide atomic
-`putIfAbsent`. Idempotency under concurrent load relies on unique-constraint violations
-being caught at the database level.
+NOTE: The JPA backend does not provide atomic `putIfAbsent`. Idempotency under concurrent
+load relies on unique-constraint violations being caught at the database level.
 
 === CassandraKeyValueRepository
 
