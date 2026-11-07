@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 public class ObjectHelperLoadClassTest {
 
     @Test
-    public void testLoadClass() {
+    void testLoadClass() {
         Class<?> clazz = ObjectHelper.loadClass("int");
         Assertions.assertEquals("int", clazz.getName());
 
@@ -38,6 +38,50 @@ public class ObjectHelperLoadClassTest {
 
         clazz = ObjectHelper.loadClass("org.apache.camel.util.MyPojo[]");
         Assertions.assertTrue(clazz.isArray());
+    }
+
+    /**
+     * CAMEL-26589: ObjectHelper.loadClass must resolve JVM internal binary names for array types such as {@code [B}
+     * (byte[]), {@code [I} (int[]), and {@code [Ljava.lang.String;} (String[]). These names are produced by
+     * {@link Class#getName()} on array types and appear in DataType when a byte[] body is tagged with
+     * {@code new DataType(body.getClass())}.
+     */
+    @Test
+    void testLoadClassArrayBinaryNames() {
+        // Primitive array binary names
+        Class<?> clazz = ObjectHelper.loadClass("[B");
+        Assertions.assertNotNull(clazz, "[B should resolve to byte[]");
+        Assertions.assertEquals(byte[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[S");
+        Assertions.assertEquals(short[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[I");
+        Assertions.assertEquals(int[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[J");
+        Assertions.assertEquals(long[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[F");
+        Assertions.assertEquals(float[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[D");
+        Assertions.assertEquals(double[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[Z");
+        Assertions.assertEquals(boolean[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[C");
+        Assertions.assertEquals(char[].class, clazz);
+
+        // Object array binary name: [Ljava.lang.String;
+        // Note: loadClass() normalises the name, stripping ';', so the full binary form is not supported here.
+        // Object arrays are handled via the existing "java.lang.String[]" / "String[]" aliases in loadSimpleType().
+
+        // Multi-dimensional array: [[B (byte[][])
+        clazz = ObjectHelper.loadClass("[[B");
+        Assertions.assertNotNull(clazz, "[[B should resolve to byte[][]");
+        Assertions.assertEquals(byte[][].class, clazz);
     }
 
 }
