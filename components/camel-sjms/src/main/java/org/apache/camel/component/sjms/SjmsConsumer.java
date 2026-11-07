@@ -38,7 +38,9 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(SjmsConsumer.class);
 
     private volatile boolean initialized;
-    // serializes the start and the stop of the listener container by doStart and the asynchronous start and stop tasks
+    // serializes the start and the stop of the listener container by doStart and the asynchronous start and stop tasks.
+    // A synchronous start (doStart, under the lock of the consumer) may therefore wait for an asynchronous stop task
+    // that is still in a slow container.stop()
     private final Lock listenerContainerLock = new ReentrantLock();
     private final MessageListenerContainer listenerContainer;
 

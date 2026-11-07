@@ -158,17 +158,23 @@ public class SjmsAsyncStartStopListenerRestartTest extends JmsTestSupport {
         stopGate = gate;
         held.hold = false;
         held.ownThread = true;
-        consumer(id).stop();
-        assertTrue(stopEntered.await(20, TimeUnit.SECONDS), "the stop task stopped the listener container");
-
-        // the consumer is started again after the stop task stopped the listener container and before it shuts it down
         Thread starter = new Thread(() -> consumer(id).start(), "starter");
-        starter.start();
-        // the start either waits for the stop task, or is done
-        await().atMost(20, TimeUnit.SECONDS).until(
-                () -> consumer(id).isStarting() && starter.getState() == Thread.State.WAITING
-                        || starter.getState() == Thread.State.TERMINATED);
-        gate.countDown();
+        try {
+            consumer(id).stop();
+            assertTrue(stopEntered.await(20, TimeUnit.SECONDS), "the stop task stopped the listener container");
+
+            // the consumer is started again after the stop task stopped the listener container and before it shuts
+            // it down
+            starter.start();
+            // the start either waits for the stop task, or is done
+            await().atMost(20, TimeUnit.SECONDS).until(
+                    () -> consumer(id).isStarting() && starter.getState() == Thread.State.WAITING
+                            || starter.getState() == Thread.State.TERMINATED);
+        } finally {
+            // the stop task took the gate, so the cleanup cannot open it: a failed wait must not leave the starter and
+            // the stop task blocking each other
+            gate.countDown();
+        }
         starter.join(TimeUnit.SECONDS.toMillis(20));
         assertFalse(starter.isAlive(), "the start of the consumer completed");
 
@@ -295,7 +301,7 @@ public class SjmsAsyncStartStopListenerRestartTest extends JmsTestSupport {
     }
 
     @Override
-    public void doPostTearDown() throws Exception {
+    protected void cleanupResources() throws Exception {
         // release and run what a failed test left
         CountDownLatch gate = stopGate;
         if (gate != null) {
@@ -303,6 +309,7 @@ public class SjmsAsyncStartStopListenerRestartTest extends JmsTestSupport {
         }
         held.hold = false;
         held.runPending();
+        super.cleanupResources();
     }
 
     private final class TestListenerContainer extends SimpleMessageListenerContainer {
