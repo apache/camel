@@ -118,7 +118,7 @@ final class ChaosInfo {
 
         /**
          * The fault of the rule with its parameters, as it is written, without the target and the options of the rule
-         * (at, in, rate, until, from, expect, within), such as {@code error status=503}.
+         * (at, in, when, rate, until, from, expect, within), such as {@code error status=503}.
          */
         String fault() {
             StringBuilder sb = new StringBuilder();
@@ -242,7 +242,7 @@ final class ChaosInfo {
     }
 
     // the options of a rule besides its target and its fault
-    private static final List<String> OPTIONS = List.of("at", "in", "rate", "until", "from", "expect", "within");
+    private static final List<String> OPTIONS = List.of("at", "in", "when", "rate", "until", "from", "expect", "within");
 
     /** The counts of a route in the report. */
     record RouteCounts(String route, long completed, long failed, long failedKept, long handled, long redeliveries) {

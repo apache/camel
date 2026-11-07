@@ -137,7 +137,7 @@ public final class ChaosManager {
      *                                  expectation is still pending)
      */
     public String addRule(String rule) {
-        ChaosRule.Builder definition = ChaosRuleParser.parse(rule, camelContext.getClassResolver(), maxDuration);
+        ChaosRule.Builder definition = parse(rule);
         synchronized (lock) {
             return add(List.of(definition)).get(0);
         }
@@ -160,11 +160,36 @@ public final class ChaosManager {
         }
         List<ChaosRule.Builder> definitions = new ArrayList<>();
         for (String text : texts) {
-            definitions.add(ChaosRuleParser.parse(text, camelContext.getClassResolver(), maxDuration));
+            definitions.add(parse(text));
         }
         synchronized (lock) {
             return add(definitions);
         }
+    }
+
+    /**
+     * Parses and checks a rule, and makes the predicate of its condition ({@code when=}) with the simple language of
+     * the context, once.
+     */
+    private ChaosRule.Builder parse(String text) {
+        ChaosRule.Builder b = ChaosRuleParser.parse(text, camelContext.getClassResolver(), maxDuration);
+        if (b.when != null) {
+            if (b.whenReadsBody && !camelContext.isStreamCaching()) {
+                throw new IllegalArgumentException(
+                        "Invalid chaos rule [" + b.text + "]: when=" + b.when + " reads the body, which consumes a"
+                                                   + " stream body when stream caching is off (it is on by default)");
+            }
+            try {
+                b.condition = camelContext.resolveLanguage("simple").createPredicate(b.when);
+                b.condition.init(camelContext);
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException(
+                        "Invalid chaos rule [" + b.text + "]: when=" + b.when + " is not a valid simple predicate: "
+                                                   + e.getMessage(),
+                        e);
+            }
+        }
+        return b;
     }
 
     /** Adds parsed rules, all or none. Called with the lock held. */
@@ -215,7 +240,7 @@ public final class ChaosManager {
      * @throws IllegalArgumentException when there is no rule with that id, or the new rule is not valid
      */
     public int changeRule(String id, String rule) {
-        ChaosRule.Builder definition = ChaosRuleParser.parse(rule, camelContext.getClassResolver(), maxDuration);
+        ChaosRule.Builder definition = parse(rule);
         synchronized (lock) {
             int index = indexOf(id);
             if (index < 0) {

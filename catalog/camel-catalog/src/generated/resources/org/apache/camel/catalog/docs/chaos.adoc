@@ -171,8 +171,8 @@ only the list and the report.
 
 == Rules
 
-A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `in`, `rate`, `from` and
-`until`, and optionally an expectation. A value with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes
+A rule is one line: the target, the fault and its parameters as `name=value`, then `at`, `in`, `when`, `rate`,
+`from` and `until`, and optionally an expectation. A value with spaces or a `;` is quoted with `"` or `'` (`\"`, `\'` and `\\` inside quotes
 are a quote and a backslash).
 
 [source]
@@ -182,6 +182,8 @@ fault:   error | delay | drop | corrupt | duplicate | stall | lifecycle, with it
 at:      send | reply | dlq | poll | entry | step    (optional)
 in:      in=<route id> narrows the sends, polls and steps of endpoint=, component= and step= to a route
          (* matches any characters; optional)
+when:    a condition on the message in the simple language, in quotes (when="${header.country} == 'ES'");
+         the rule fires only for the messages that meet it (optional)
 rate:    a probability (rate=0.3), every Nth match (rate=every:5), or bursts (rate=burst:5s/30s: every match
          during the first 5s of each 30s); without it every match fires
 from:    when the rule starts after it is added (from=+30s), such as after the warm-up; without it at once
@@ -226,6 +228,32 @@ not in `orders`; take more routes with a pattern (`in=order*`). With `at=poll` i
 rule is about its route already, and `stall` and `lifecycle` act on the route of their `route=`, so they take no `in=`.
 When no route matches `in=`, or the target matches no send, poll or step inside those routes, adding the rule warns,
 with what is there.
+
+=== A condition on the message
+
+`when=` fires a rule only for the messages that meet a condition, written in the
+xref:languages:simple-language.adoc[Simple] language, in quotes:
+
+[source]
+----
+endpoint=http:stock* error status=503 when="${header.country} == 'ES'"
+route=orders error rate=0.1 when="${header.priority} == 'high'"
+endpoint=kafka:orders* duplicate when="${body} contains 'refund'"
+----
+
+The condition is made into a predicate once, when the rule is added (a condition that is not valid simple is refused,
+with the reason of the simple language), and checked before the rate: `rate` and an `until` count count only the
+messages that meet it, and the seed gives the same faults for the same matching messages. "Fail 5% of the orders, or
+the ones from Spain" is two rules, one with `rate=0.05` and one with `when=`. A condition that fails, such as a method
+call on a header that is not there, is not met: the exchange goes on, and the report counts it in `skippedReasons`.
+
+A poll has no message, so a rule with `when=` leaves out the polls of its target, and `at=poll`, `stall` and
+`lifecycle` take no `when=`. A condition that reads the body (`+${body}+`, `+${bodyAs(...)}+`, `jsonpath`, `jq`, `xpath`)
+reads a stream body from the stream cache, and resets the cache after the check, so the route reads the whole body; a
+reply that is a stream (`at=reply`) is cached first. Without stream caching a stream would be consumed, so such a
+condition is refused when stream caching is off. Only simple is supported for now (a language in front, such as
+`groovy:`, is refused). On the command line, quote the rule with `'` and a text in the condition with `\"`:
+`+--rule='endpoint=http:stock* error when="${header.country} == \"ES\""'+`.
 
 A rule gets an id when it is added (`r1`, `r2`, ...), which change and remove take. A change replaces the rule with a
 new one with the same id and the next version (a rule is version 1 when it is added), and the replaced one stays in the
@@ -645,6 +673,9 @@ seconds
 
 |`route=orders error rate=0.05`
 |fail 5% of the messages entering route orders
+
+|`+endpoint=http:stock* error status=503 when="${header.country} == 'ES'"+`
+|+fail every send to http:stock* with HTTP status 503, when ${header.country} == 'ES'+
 
 |`route=poller lifecycle action=remove duration=30s repeat=3 every=1m`
 |remove route poller for 30 seconds, then add it back, 3 times, every 1 minute

@@ -69,7 +69,8 @@ final class ChaosSendHook implements SendHook, Ordered {
         long now = TimeSource.currentTimeMillis();
         String uri = ChaosPatterns.endpointUri(endpoint);
         for (ChaosRule rule : rules) {
-            if (rule.live(now) && rule.matchesUri(uri) && rule.matchesIn(exchange) && rule.fires(now)) {
+            if (rule.live(now) && rule.matchesUri(uri) && rule.matchesIn(exchange) && rule.matchesWhen(exchange)
+                    && rule.fires(now)) {
                 if (deadLetter && (rule.fault == ChaosRule.Fault.ERROR || rule.fault == ChaosRule.Fault.DROP)) {
                     // the message does not reach the dead letter channel: lost, when the channel then handles it
                     state.deadLetterFault = rule;
@@ -118,7 +119,8 @@ final class ChaosSendHook implements SendHook, Ordered {
         long now = TimeSource.currentTimeMillis();
         String uri = ChaosPatterns.endpointUri(endpoint);
         for (ChaosRule rule : rules) {
-            if (rule.live(now) && rule.matchesUri(uri) && rule.matchesIn(exchange) && rule.fires(now)) {
+            if (rule.live(now) && rule.matchesUri(uri) && rule.matchesIn(exchange) && rule.matchesWhen(exchange)
+                    && rule.fires(now)) {
                 ChaosFaults.atReply(rule, exchange, endpoint);
                 return;
             }

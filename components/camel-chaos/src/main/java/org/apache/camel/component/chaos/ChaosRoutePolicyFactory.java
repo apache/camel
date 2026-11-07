@@ -66,7 +66,8 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
             }
             long now = TimeSource.currentTimeMillis();
             for (ChaosRule rule : rules) {
-                if (rule.live(now) && rule.matchesId(route.getRouteId()) && rule.fires(now)) {
+                if (rule.live(now) && rule.matchesId(route.getRouteId()) && rule.matchesWhen(exchange)
+                        && rule.fires(now)) {
                     if (rule.fault == ChaosRule.Fault.CORRUPT) {
                         ChaosFaults.corrupt(rule, exchange, Hook.ENTRY, route.getRouteId(), null);
                     } else {

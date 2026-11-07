@@ -307,5 +307,9 @@ class ChaosTabRenderTest {
         steps.text = "step=* in=order* delay duration=1s";
         assertThat(ChaosTab.target(steps)).isEqualTo("step * in order*");
         assertThat(steps.fault()).isEqualTo("delay duration=1s");
+        // a condition (when=) is an option, not a parameter of the fault
+        ChaosInfo.Rule when = new ChaosInfo.Rule();
+        when.text = "endpoint=http:stock* error status=503 when=\"${header.country} == 'ES'\" rate=0.5";
+        assertThat(when.fault()).isEqualTo("error status=503");
     }
 }

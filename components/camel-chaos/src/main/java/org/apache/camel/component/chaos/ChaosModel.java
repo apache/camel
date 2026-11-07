@@ -311,6 +311,17 @@ final class ChaosModel {
                     p.put("pick", "routes");
                     yield p;
                 }
+                case "when" -> {
+                    JsonObject p = param("when", "predicate", false,
+                            "A condition on the message in the simple language, in quotes: the rule fires only for the"
+                                                                     + " messages that meet it, and its rate and until"
+                                                                     + " count only those. Not with at=poll, stall or"
+                                                                     + " lifecycle; a condition on the body needs stream"
+                                                                     + " caching",
+                            "\"${header.country} == 'ES'\"");
+                    p.put("language", "simple");
+                    yield p;
+                }
                 case "rate" -> {
                     JsonObject p = param("rate", "rate", false,
                             "How often the rule fires: a probability above 0 and at most 1, every Nth match, or bursts"

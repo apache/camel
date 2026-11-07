@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +30,12 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
+import org.apache.camel.StreamCache;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.TimeSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A rule that was added: what it targets and does (parsed by {@link ChaosRuleParser}, immutable), and its state while
@@ -136,6 +143,11 @@ final class ChaosRule {
         }
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(ChaosRule.class);
+
+    // the reason of a skip when the condition (when=) threw, one of the fixed texts of the skipped reasons
+    static final String CONDITION_FAILED = "the condition (when=) failed with an exception";
+
     // the golden ratio increment of SplitMix64
     private static final long GOLDEN_GAMMA = 0x9e3779b97f4a7c15L;
 
@@ -151,6 +163,11 @@ final class ChaosRule {
     final String pattern;
     // the routes the rule is narrowed to (in=, a route id or a pattern), else null
     final String in;
+    // the condition on the message (when=, in the simple language), else null; the predicate is made when the rule is
+    // added, so it is null in a rule made without a context
+    final String when;
+    private final Predicate condition;
+    private final boolean conditionReadsBody;
     // the endpoint= pattern without the // after its scheme, made once (the hooks match it on every send and poll)
     private final String uriPattern;
     final Set<Hook> hooks;
@@ -234,6 +251,9 @@ final class ChaosRule {
         this.target = b.target;
         this.pattern = b.pattern;
         this.in = b.in;
+        this.when = b.when;
+        this.condition = b.condition;
+        this.conditionReadsBody = b.whenReadsBody;
         this.uriPattern = target == Target.ENDPOINT ? ChaosPatterns.withoutSlashes(pattern) : null;
         this.hooks = Set.copyOf(b.hooks);
         this.fault = b.fault;
@@ -469,6 +489,9 @@ final class ChaosRule {
         } else {
             sb.append(verb()).append(' ').append(share(at));
             sb.append(faultWords());
+            if (when != null) {
+                sb.append(", when ").append(when);
+            }
             if (burstPeriod > 0) {
                 sb.append(", during the first ").append(ChaosWords.time(burstOn)).append(" of every ")
                         .append(ChaosWords.time(burstPeriod));
@@ -746,6 +769,44 @@ final class ChaosRule {
         return in == null || matchesIn(ChaosExchangeState.routeId(exchange));
     }
 
+    /**
+     * Whether the message meets the condition of {@code when=} (true for a rule without one). A condition that throws
+     * is not met, and counts as skipped. A condition on the body reads a stream body from its cache: a stream that is
+     * not cached yet (such as the reply of a send) is cached first, and the cache is reset after the check, so the
+     * route reads the body as before.
+     */
+    boolean matchesWhen(Exchange exchange) {
+        Predicate c = condition;
+        if (c == null) {
+            return true;
+        }
+        try {
+            if (conditionReadsBody) {
+                cacheStreamBody(exchange);
+            }
+            return c.matches(exchange);
+        } catch (Exception e) {
+            LOG.debug("The condition of chaos rule {} (when={}) failed on exchange {}: {}", id, when,
+                    exchange.getExchangeId(), e.getMessage(), e);
+            skipped(CONDITION_FAILED);
+            return false;
+        } finally {
+            if (conditionReadsBody) {
+                MessageHelper.resetStreamCache(exchange.getMessage());
+            }
+        }
+    }
+
+    private static void cacheStreamBody(Exchange exchange) {
+        Object body = exchange.getMessage().getBody();
+        if ((body instanceof InputStream || body instanceof Reader) && !(body instanceof StreamCache)) {
+            StreamCache cache = exchange.getContext().getStreamCachingStrategy().cache(exchange);
+            if (cache != null) {
+                exchange.getMessage().setBody(cache);
+            }
+        }
+    }
+
     /** Whether the route is one of {@code in=} (true for a rule without it). */
     boolean matchesIn(String routeId) {
         return in == null || (routeId != null && ChaosPatterns.matches(in, routeId));
@@ -1004,6 +1065,9 @@ final class ChaosRule {
         Target target;
         String pattern;
         String in;
+        String when;
+        boolean whenReadsBody;
+        Predicate condition;
         Hook at;
         Set<Hook> hooks;
         Fault fault;
