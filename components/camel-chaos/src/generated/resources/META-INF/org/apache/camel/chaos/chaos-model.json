@@ -195,6 +195,7 @@
           "in",
           "rate",
           "until",
+          "when",
           "within"
         ]
       },
@@ -231,6 +232,7 @@
           "in",
           "rate",
           "until",
+          "when",
           "within"
         ]
       },
@@ -256,6 +258,7 @@
           "in",
           "rate",
           "until",
+          "when",
           "within"
         ]
       },
@@ -303,6 +306,7 @@
           "in",
           "rate",
           "until",
+          "when",
           "within"
         ]
       },
@@ -326,6 +330,7 @@
           "in",
           "rate",
           "until",
+          "when",
           "within"
         ]
       },
@@ -480,6 +485,14 @@
         "required": false,
         "description": "When the rule ends: a number of matches or a time from its start (at most camel.chaos.maxDuration, its default)",
         "example": "10m"
+      },
+      {
+        "name": "when",
+        "type": "predicate",
+        "required": false,
+        "description": "A condition on the message in the simple language, in quotes: the rule fires only for the messages that meet it, and its rate and until count only those. Not with at=poll, stall or lifecycle; a condition on the body needs stream caching",
+        "example": "\"${header.country} == 'ES'\"",
+        "language": "simple"
       },
       {
         "name": "within",

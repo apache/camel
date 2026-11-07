@@ -44,6 +44,7 @@ import picocli.CommandLine;
                              "  camel cmd chaos-add myApp --rule='step=enrich* error exception=java.sql.SQLException rate=0.1'",
                              "  camel cmd chaos-add myApp --rule='endpoint=http:* in=orders error status=503 rate=0.1'",
                              "  camel cmd chaos-add myApp --rule='route=orders error rate=0.05'",
+                             "  camel cmd chaos-add myApp --rule='endpoint=http:stock* error when=\"$${header.country} == \\\"ES\\\"\"'",
                              "  camel cmd chaos-add myApp --rule='endpoint=seda:dlq error at=dlq' --rule='endpoint=http:stock* error'" })
 public class CamelChaosAddAction extends CamelChaosAction {
 

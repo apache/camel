@@ -57,7 +57,7 @@ final class ChaosRuleParser {
 
     // the options of a rule besides the parameters of its fault: all of them for the faults at a hook, and those of a
     // stall or lifecycle rule, which acts on its route at no hook
-    static final Set<String> GENERAL_KEYS = Set.of("at", "in", "rate", "until", "from", "expect", "within");
+    static final Set<String> GENERAL_KEYS = Set.of("at", "in", "when", "rate", "until", "from", "expect", "within");
     static final Set<String> LIFECYCLE_KEYS = Set.of("from", "expect", "within");
     // the prefix of the response headers of error status=: header.<name>=<value>
     static final String HEADER_PREFIX = "header.";
@@ -69,9 +69,6 @@ final class ChaosRuleParser {
     private static final Set<String> FAULT_KEYS
             = Set.of("exception", "message", "status", "body", "after", "duration", "mode", "header", "action", "repeat",
                     "every");
-    // parameters of the design that are not supported yet, with what to use instead
-    private static final Map<String, String> NOT_SUPPORTED = Map.of(
-            "when", "when= (a condition on the message) is not supported yet; a rule fires by rate= and ends by until=");
 
     private ChaosRuleParser() {
     }
@@ -211,7 +208,7 @@ final class ChaosRuleParser {
             String unknown = null;
             for (String key : params.keySet()) {
                 if (unknown == null && !GENERAL_KEYS.contains(key) && !FAULT_KEYS.contains(key)
-                        && !key.startsWith(HEADER_PREFIX) && !NOT_SUPPORTED.containsKey(key)) {
+                        && !key.startsWith(HEADER_PREFIX)) {
                     unknown = key;
                 }
             }
@@ -233,6 +230,11 @@ final class ChaosRuleParser {
         }
         from(b, params.get("from"), maxDuration);
         in(b, params.get("in"));
+        if (b.fault == Fault.LIFECYCLE && params.containsKey("when")) {
+            throw new IllegalArgumentException(
+                    "when= is a condition on the message, but the fault " + (b.stall ? "stall" : "lifecycle")
+                                               + " acts on the route, with no message");
+        }
         if (b.fault == Fault.LIFECYCLE) {
             // stall and lifecycle act on the route: no hook, rate or until
             lifecycle(b, params, maxDuration);
@@ -299,6 +301,7 @@ final class ChaosRuleParser {
         }
 
         hooks(b, params.get("at"), http);
+        when(b, params.get("when"));
         if (b.after > 0 && b.at == Hook.REPLY) {
             // the reply hook runs on the thread that completes the send, which can be an I/O thread of the component
             throw new IllegalArgumentException(
@@ -474,10 +477,6 @@ final class ChaosRuleParser {
                 throw new IllegalArgumentException(
                         "action= is a parameter of the fault lifecycle (route=<id> lifecycle action=suspend|stop|remove"
                                                    + " duration=<time>), not of the fault " + fault);
-            }
-            String notSupported = NOT_SUPPORTED.get(key);
-            if (notSupported != null) {
-                throw new IllegalArgumentException(notSupported);
             }
             StringJoiner known = new StringJoiner(", ");
             faultKeys.stream().sorted().forEach(k -> known.add(k.equals(HEADER_PREFIX) ? "header.<name>" : k));
@@ -984,6 +983,63 @@ final class ChaosRuleParser {
                                                    + (b.from > 0 ? " after the start of the rule (from=)" : ""));
             }
         }
+    }
+
+    /**
+     * A condition on the message ({@code when="${header.country} == 'ES'"}), in the simple language: the rule fires
+     * only for the messages that meet it. It is checked as text here, and made into a predicate when the rule is added
+     * (the language of the context). A poll has no message, so a rule with a condition leaves out the polls of its
+     * target, and is refused with {@code at=poll}.
+     */
+    private static void when(ChaosRule.Builder b, String when) {
+        if (when == null) {
+            return;
+        }
+        if (languagePrefix(when) != null) {
+            throw new IllegalArgumentException(
+                    "when= takes a condition in the simple language, without a language in front ("
+                                               + languagePrefix(when) + ": is not supported), such as"
+                                               + " when=\"${header.country} == 'ES'\"");
+        }
+        if (b.at == Hook.POLL) {
+            throw new IllegalArgumentException(
+                    "when= is a condition on the message, but a poll (at=poll) has no message");
+        }
+        b.hooks.remove(Hook.POLL);
+        if (b.hooks.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "when= is a condition on the message, and the rule fires only at polls, which have no message");
+        }
+        b.when = when;
+        b.whenReadsBody = readsBody(when);
+    }
+
+    // a language in front of the condition, such as groovy: (letters, digits and - before a colon at the start), or null
+    private static String languagePrefix(String when) {
+        int i = 0;
+        while (i < when.length()) {
+            char ch = when.charAt(i);
+            if (!(ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || i > 0 && (ch >= '0' && ch <= '9' || ch == '-'))) {
+                break;
+            }
+            i++;
+        }
+        return i > 0 && i < when.length() && when.charAt(i) == ':' ? when.substring(0, i) : null;
+    }
+
+    /**
+     * Whether a condition reads the body of the message: it names the body (${body}, ${bodyAs(String)}, ${in.body}, not
+     * ${bodyType}), or a language of the body (jsonpath, jq, xpath). Reading a stream body consumes it.
+     */
+    static boolean readsBody(String when) {
+        int i = when.indexOf("body");
+        while (i >= 0) {
+            if (!when.startsWith("bodyType", i)) {
+                return true;
+            }
+            i = when.indexOf("body", i + 4);
+        }
+        return when.contains("jsonpath(") || when.contains("jq(") || when.contains("xpath(");
     }
 
     /**

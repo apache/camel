@@ -80,6 +80,17 @@ class ChaosMainTest {
     }
 
     @Test
+    void aConditionInTheRulesOfTheProperties() throws Exception {
+        main().addInitialProperty("camel.main.profile", "dev");
+        main.addInitialProperty("camel.chaos.rules", "endpoint=mock:target error when=\"${header.country} == 'ES'\"");
+        main.start();
+
+        assertThat(send().getException()).isNull();
+        Exchange es = main.getCamelTemplate().send("direct:start", e -> e.getMessage().setHeader("country", "ES"));
+        assertThat(es.getException()).isInstanceOf(ChaosException.class);
+    }
+
+    @Test
     void profileProdRefusesToStartWithRules() {
         main().addInitialProperty("camel.main.profile", "prod");
         main.addInitialProperty("camel.chaos.rules", "endpoint=mock:target error");

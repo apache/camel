@@ -144,6 +144,31 @@ class ChaosRuleParserTest {
     }
 
     @Test
+    void whenIsAConditionOnTheMessage() {
+        ChaosRule.Builder b = parse("endpoint=http:stock* error status=503 when=\"${header.country} == 'ES'\"");
+        assertThat(b.when).isEqualTo("${header.country} == 'ES'");
+        assertThat(b.whenReadsBody).isFalse();
+        // a poll has no message: without at=, the rule leaves out the polls of its target
+        assertThat(parse("endpoint=x error when=\"${header.a} == 1\"").hooks).containsExactly(Hook.SEND);
+        assertThat(parse("route=orders error when=\"${header.a} == 1\"").hooks).containsExactly(Hook.ENTRY);
+        assertThat(parse("step=s1 delay duration=1s when='${header.a} == 1'").when).isEqualTo("${header.a} == 1");
+        // the predicate is made when the rule is added
+        assertThat(b.condition).isNull();
+        // a time such as 08:00 is not a language
+        assertThat(parse("endpoint=x error when=\"${date:now:HH:mm} == '08:00'\"").when).startsWith("${date");
+    }
+
+    @Test
+    void aConditionThatReadsTheBody() {
+        assertThat(ChaosRuleParser.readsBody("${body} contains 'boom'")).isTrue();
+        assertThat(ChaosRuleParser.readsBody("${bodyAs(String)} == 'x'")).isTrue();
+        assertThat(ChaosRuleParser.readsBody("${in.body.length} > 10")).isTrue();
+        assertThat(ChaosRuleParser.readsBody("${jsonpath($.country)} == 'ES'")).isTrue();
+        assertThat(ChaosRuleParser.readsBody("${bodyType} == 'java.lang.String'")).isFalse();
+        assertThat(ChaosRuleParser.readsBody("${header.country} == 'ES'")).isFalse();
+    }
+
+    @Test
     void errorAndDelayAtTheEntryOfARoute() {
         ChaosRule.Builder error = parse("route=orders error exception=java.net.ConnectException rate=0.05");
         assertThat(error.fault).isEqualTo(Fault.ERROR);
@@ -317,7 +342,12 @@ class ChaosRuleParserTest {
             "error|needs a target",
             "rout=orders error|a rule needs a target: route=<id>, endpoint=<uri>, component=<name> or step=<id>"
                                     + " (rout= is not a target)",
-            "endpoint=x error when=x|when= (a condition on the message) is not supported yet",
+            "endpoint=x error at=poll when=\"${header.a} == 1\"|when= is a condition on the message, but a poll (at=poll) has"
+                                                                  + " no message",
+            "route=orders stall duration=1m when=x|when= is a condition on the message, but the fault stall acts on the"
+                                                                                   + " route, with no message",
+            "endpoint=x error when=\"groovy:headers.a == 1\"|when= takes a condition in the simple language, without a"
+                                                                                                                + " language in front (groovy: is not supported)",
             "endpoint=x error action=stop|action= is a parameter of the fault lifecycle (route=<id> lifecycle action=",
             "component=kafka error status=503|(http, https, netty-http, undertow, vertx-http), not for kafka",
             "route=orders drop|drop is a fault of the sends and polls: target the sends of the route with endpoint=*"

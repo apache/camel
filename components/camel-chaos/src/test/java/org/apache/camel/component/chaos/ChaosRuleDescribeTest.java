@@ -78,6 +78,8 @@ class ChaosRuleDescribeTest {
                        route=orders error rate=0.05 | fail 5% of the messages entering route orders
                        route=orders error exception=java.net.ConnectException | fail every message entering route orders with ConnectException
                        route=order* delay duration=2s until=10 | delay every message entering routes order* by 2 seconds, for the next 10 messages
+                       endpoint=http:stock* error status=503 when="${header.country} == 'ES'" | fail every send to http:stock* with HTTP status 503, when ${header.country} == 'ES'
+                       route=orders error rate=0.05 when='${header.vip}' until=10m | fail 5% of the messages entering route orders, when ${header.vip}, for 10 minutes
                        route=poller stall duration=20s | suspend route poller for 20 seconds
                        route=poller lifecycle action=stop duration=1m30s | stop route poller for 1 minute 30 seconds
                        route=poller lifecycle action=remove duration=30s repeat=3 every=1m from=+10s | remove route poller for 30 seconds, then add it back, 3 times, every 1 minute, starting after 10 seconds
