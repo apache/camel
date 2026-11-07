@@ -122,6 +122,8 @@ final class TimelineRecorder {
         final Map<ErrorKind, long[]> errors = new LinkedHashMap<>();
         final List<Kept> failed = new ArrayList<>();
         final List<Kept> slowest = new ArrayList<>();
+        // what happened to the routes: started, stopped, reloaded, removed, restart failed
+        Map<String, String> routeEvents;
         // with camel-chaos: the faults of each rule, and the routes a rule had down
         Map<String, Long> faults;
         Set<String> down;
@@ -269,6 +271,15 @@ final class TimelineRecorder {
                 slot(now / 1000).route(routeId).attempts++;
             }
         }
+    }
+
+    /** A route was started, stopped, reloaded or removed: the last of a second is kept. */
+    synchronized void routeEvent(String routeId, String event, long now) {
+        Second s = slot(now / 1000);
+        if (s.routeEvents == null) {
+            s.routeEvents = new LinkedHashMap<>();
+        }
+        s.routeEvents.put(routeId, event);
     }
 
     /** An error handler handled a failure, or an exchange failed: it is counted as an error of its second. */

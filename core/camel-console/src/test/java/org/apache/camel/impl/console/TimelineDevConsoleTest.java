@@ -218,6 +218,26 @@ public class TimelineDevConsoleTest extends ContextTestSupport {
         assertThat(askedWithoutReport.get()).isTrue();
     }
 
+    @Test
+    public void whatHappenedToTheRoutes() throws Exception {
+        startConsole();
+
+        context.getRouteController().stopRoute("failing");
+        context.getRouteController().startRoute("failing");
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            JsonObject out = (JsonObject) console.call(DevConsole.MediaType.JSON);
+            JsonArray events = out.getCollection("routeEvents");
+            assertThat(events).isNotNull();
+            // the last of a second is kept: the route was started again
+            assertThat(events).anySatisfy(e -> {
+                JsonObject ev = (JsonObject) e;
+                assertThat(ev.getString("routeId")).isEqualTo("failing");
+                assertThat(ev.getString("event")).isEqualTo("started");
+            });
+        });
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

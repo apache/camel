@@ -351,7 +351,9 @@ class TimelineTab extends AbstractTableTab {
                 Span.styled("█", Theme.warning()), Span.raw(" recovered  "),
                 Span.styled("█", handledStyle()), Span.raw(" handled  "),
                 Span.styled("█", Theme.error()), Span.raw(" failed  "),
-                Span.styled("░", Theme.error()), Span.raw(" down")));
+                Span.styled("░", Theme.error()), Span.raw(" down"),
+                Span.raw(routes.stream().anyMatch(r -> Arrays.stream(r.events()).anyMatch(e -> e != null))
+                        ? "   ▶ started  ■ stopped  ↻ reloaded" : "")));
         Integer sel = tableState.selected();
         routeLinesY = lines.size();
         for (int i = 0; i < routes.size(); i++) {
@@ -456,9 +458,14 @@ class TimelineTab extends AbstractTableTab {
         for (int c = 0; c < columns; c++) {
             max = Math.max(max, total(completed[c], recovered[c], handled[c], failed[c]));
         }
+        String[] events = eventsOf(r.events(), per);
         for (int c = 0; c < columns; c++) {
             long t = total(completed[c], recovered[c], handled[c], failed[c]);
-            if (down[c] > 0) {
+            String event = c / width < events.length && c % width == 0 ? events[c / width] : null;
+            if (event != null) {
+                // what happened to the route then, in place of its exchanges
+                spans.add(eventMark(event));
+            } else if (down[c] > 0) {
                 spans.add(Span.styled("░", Theme.error()));
             } else if (completed[c] < 0) {
                 spans.add(Span.raw(" "));
@@ -475,6 +482,28 @@ class TimelineTab extends AbstractTableTab {
         spans.add(Span.raw("  "));
         spans.addAll(summary(r));
         return Line.from(spans);
+    }
+
+    /** The event of each column of several seconds: the last in the column. */
+    static String[] eventsOf(String[] seconds, int per) {
+        String[] answer = new String[(seconds.length + per - 1) / per];
+        for (int i = 0; i < seconds.length; i++) {
+            if (seconds[i] != null) {
+                answer[i / per] = seconds[i];
+            }
+        }
+        return answer;
+    }
+
+    /** The mark of what happened to a route: ▶ started, ■ stopped, ↻ reloaded, ✕ removed, ! restart failed. */
+    static Span eventMark(String event) {
+        return switch (event) {
+            case "started" -> Span.styled("▶", Theme.success().bold());
+            case "stopped" -> Span.styled("■", Theme.warning().bold());
+            case "reloaded" -> Span.styled("↻", Theme.info().bold());
+            case "removed" -> Span.styled("✕", Theme.muted());
+            default -> Span.styled("!", Theme.error().bold());
+        };
     }
 
     /** The rate of the route over the window, and the worst that happened to its exchanges. */

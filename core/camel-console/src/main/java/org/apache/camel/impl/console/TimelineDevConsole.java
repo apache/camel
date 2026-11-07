@@ -85,6 +85,12 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "Per second 1 when a camel-chaos rule had the route down (stall or a lifecycle fault), else 0 (only present with camel-chaos)") List<Long> down) {
     }
 
+    public record RouteEvent(
+            @Metadata(description = "The route ID") String routeId,
+            @Metadata(description = "What happened to the route: started, stopped, reloaded, removed or restartFailed") String event,
+            @Metadata(description = "The epoch second it happened") long second) {
+    }
+
     public record ChaosSeries(
             @Metadata(description = "The id of the camel-chaos rule") String id,
             @Metadata(description = "The rule in its one-line text form") String rule,
@@ -120,6 +126,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
             @Metadata(description = "The routes") List<RouteSeries> routes,
             @Metadata(description = "The errors by route and exception (only present when there are any)") List<ErrorSeries> errors,
             @Metadata(description = "The faults per second of each camel-chaos rule that fired in the seconds (only present when one did)") List<ChaosSeries> chaos,
+            @Metadata(description = "What happened to the routes in the seconds: started, stopped, reloaded, removed (only present when anything did)") List<RouteEvent> routeEvents,
             @Metadata(description = "Per second the failed, handled and recovered exchanges (up to 10) and the 3 slowest, oldest first (only present when asked for)") List<TimelineExchange> exchanges) {
     }
 
@@ -293,6 +300,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
         List<TimelineExchange> kept = new ArrayList<>();
         List<Long> done = new ArrayList<>(count);
         List<ChaosSeries> chaos = new ArrayList<>();
+        List<RouteEvent> routeEvents = new ArrayList<>();
         synchronized (rec) {
             secs = rec.seconds(end, count);
             boolean chaosSeen = !rec.chaosRules().isEmpty();
@@ -321,6 +329,15 @@ public class TimelineDevConsole extends AbstractDevConsole {
                 }
             }
             faults.forEach((id, v) -> chaos.add(new ChaosSeries(id, rec.chaosRules().get(id), List.of(v))));
+            for (TimelineRecorder.Second s : secs) {
+                if (s != null && s.routeEvents != null) {
+                    s.routeEvents.forEach((routeId, event) -> {
+                        if (accept.test(routeId)) {
+                            routeEvents.add(new RouteEvent(routeId, event, s.second));
+                        }
+                    });
+                }
+            }
             Map<TimelineRecorder.ErrorKind, Long[]> byKind = new LinkedHashMap<>();
             for (int i = 0; i < secs.size(); i++) {
                 TimelineRecorder.Second s = secs.get(i);
@@ -350,6 +367,7 @@ public class TimelineDevConsole extends AbstractDevConsole {
         }
         return new Response(
                 end, count, done, routes, errors.isEmpty() ? null : errors, chaos.isEmpty() ? null : chaos,
+                routeEvents.isEmpty() ? null : routeEvents,
                 exchanges ? kept : null);
     }
 
@@ -395,6 +413,17 @@ public class TimelineDevConsole extends AbstractDevConsole {
 
     private void onEvent(CamelEvent event) {
         TimelineRecorder rec = recorder;
+        if (event instanceof CamelEvent.RouteEvent re) {
+            String what = event instanceof CamelEvent.RouteStartedEvent ? "started"
+                    : event instanceof CamelEvent.RouteStoppedEvent ? "stopped"
+                    : event instanceof CamelEvent.RouteReloadedEvent ? "reloaded"
+                    : event instanceof CamelEvent.RouteRemovedEvent ? "removed"
+                    : event instanceof CamelEvent.RouteRestartingFailureEvent ? "restartFailed" : null;
+            if (what != null && re.getRoute() != null) {
+                rec.routeEvent(re.getRoute().getRouteId(), what, timestamp(event));
+            }
+            return;
+        }
         if (event instanceof CamelEvent.ExchangeCreatedEvent ce) {
             rec.exchangeCreated(ce.getExchange().getExchangeId(), ce.getExchange().getFromRouteId(), timestamp(ce));
         } else if (event instanceof CamelEvent.ExchangeSentEvent se) {
@@ -460,7 +489,6 @@ public class TimelineDevConsole extends AbstractDevConsole {
         private TimelineEventNotifier() {
             setIgnoreCamelContextInitEvents(true);
             setIgnoreCamelContextEvents(true);
-            setIgnoreRouteEvents(true);
             setIgnoreServiceEvents(true);
             setIgnoreStepEvents(true);
             setIgnoreAiEvents(true);

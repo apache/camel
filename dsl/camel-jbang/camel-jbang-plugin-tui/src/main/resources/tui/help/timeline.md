@@ -42,7 +42,9 @@ The colour is the worst that happened to them that second:
 - red: failed
 
 A `·` is a second with no exchange, and a red `░` is a second a chaos
-rule had the route down (`stall` or a lifecycle fault). At the right: the
+rule had the route down (`stall` or a lifecycle fault). A mark says what
+happened to the route then: `▶` started, `■` stopped, `↻` reloaded, `✕`
+removed, `!` a restart failed. At the right: the
 exchanges per second over the window, and the worst count.
 
 ## The selected route

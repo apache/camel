@@ -9223,6 +9223,30 @@
 											},
 											"description": "The faults per second of each camel-chaos rule that fired in the seconds (only present when one did)"
 										},
+										"routeEvents": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"routeId": {
+														"type": "string",
+														"description": "The route ID"
+													},
+													"event": {
+														"type": "string",
+														"description": "What happened to the route: started, stopped, reloaded, removed or restartFailed"
+													},
+													"second": {
+														"type": "integer",
+														"description": "The epoch second it happened"
+													}
+												},
+												"required": [
+													"second"
+												]
+											},
+											"description": "What happened to the routes in the seconds: started, stopped, reloaded, removed (only present when anything did)"
+										},
 										"exchanges": {
 											"type": "array",
 											"items": {
