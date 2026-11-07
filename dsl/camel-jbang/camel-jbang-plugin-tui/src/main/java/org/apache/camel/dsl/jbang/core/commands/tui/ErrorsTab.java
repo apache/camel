@@ -106,9 +106,7 @@ class ErrorsTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
-            // fix with AI: the selected error, on the source line it happened at
-            askAiToFixSelectedError();
+        if (handleErrorActionKey(ke)) {
             return true;
         }
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
@@ -485,7 +483,40 @@ class ErrorsTab extends AbstractTableTab {
         }
         hint(spans, "Home/End", "top/end");
         hint(spans, "s", "sort");
+        if (chaosRuleOfSelectedError() != null) {
+            hint(spans, "!", "chaos rule of it");
+        }
         hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
+    }
+
+    /** The keys that act on the selected error: fix with AI (Shift+F8), and a chaos rule of it (!). */
+    private boolean handleErrorActionKey(KeyEvent ke) {
+        if (ke.isKey(KeyCode.F8) && ke.hasShift()) {
+            // fix with AI: the selected error, on the source line it happened at
+            askAiToFixSelectedError();
+            return true;
+        }
+        String rule = ke.isChar('!') && !diagram.isShowDiagram() ? chaosRuleOfSelectedError() : null;
+        if (rule != null) {
+            // the same failure again as a chaos rule, to prove a fix against it (CAMEL-26723)
+            ctx.chaosRule.accept(rule);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * The chaos rule that makes the selected error again, or null: when chaos is on in the integration, and the error
+     * is a real one (not made by a chaos rule).
+     */
+    String chaosRuleOfSelectedError() {
+        ErrorInfo error = selectedError();
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (error == null || ctx.chaosRule == null || !ChaosHere.available(info)
+                || ChaosMarks.ruleOf(ctx, info, error.exchangeId, error.properties) != null) {
+            return null;
+        }
+        return ChaosFromError.rule(error);
     }
 
     @Override

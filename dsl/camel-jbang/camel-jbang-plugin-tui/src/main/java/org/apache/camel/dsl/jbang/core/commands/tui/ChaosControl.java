@@ -252,6 +252,17 @@ final class ChaosControl {
         }
     }
 
+    /** Opens a rule typed as one line, to change before Enter: a rule that makes a real error again (CAMEL-26723). */
+    void openRule(IntegrationInfo info, String text) {
+        if (!ChaosHere.available(info)) {
+            return;
+        }
+        pid = info.pid;
+        name = info.name;
+        id = null;
+        openInput(Command.ADD, text);
+    }
+
     private ChaosRecipes knownRules() {
         if (!recipesLoaded) {
             recipes = recipeSource.get();

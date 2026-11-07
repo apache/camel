@@ -111,6 +111,7 @@ Press `Esc` to navigate back one route in drill-down mode.
 - `Up/Down` — select error (list) / navigate path steps (diagram)
 - `Enter` — view error details
 - `Shift+F8` — fix with AI: ask the AI about the selected error, on the source line it happened at. For an error a chaos rule made (marked 🎲), it is explain with AI instead: the error was made on purpose, so the AI explains what the fault did and how the route coped, and does not chase it as a bug
+- `!` — a chaos rule of the selected error, when chaos is on: the Chaos screen opens with a rule that makes the same error again (the same exception and message at the same step, or the same HTTP status at the same endpoint), ten times, such as `step=callStock error exception=java.net.ConnectException message="Connection refused" until=10`. Change it if you like, and Enter adds it after you confirm. Fix the bug, then prove the fix against the same failure without waiting for it to happen again
 - `d` — toggle error diagram (open and close)
 - `Esc` — back to list / back one route in diagram drill-down
 - `i` — cycle info panel size (narrow / wide / full) in diagram
