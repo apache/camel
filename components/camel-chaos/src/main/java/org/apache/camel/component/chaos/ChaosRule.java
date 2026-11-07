@@ -17,6 +17,8 @@
 package org.apache.camel.component.chaos;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -430,6 +432,189 @@ final class ChaosRule {
             case CORRUPT -> "corrupt " + mode.key + (header != null ? " " + header : "");
             case DUPLICATE -> "duplicate";
             case LIFECYCLE -> (stall ? "stall" : action.key) + " " + ChaosRuleParser.printTime(duration);
+        };
+    }
+
+    /**
+     * The rule in plain words, at all its hooks, such as {@code fail half of the sends to http:stock* with HTTP status
+     * 503, for 5 minutes}.
+     */
+    String describe() {
+        return describe(hooks);
+    }
+
+    /**
+     * The rule in plain words, such as {@code fail half of the sends to http:stock* with HTTP status 503, for 5
+     * minutes}: what it does, to which share of what, with the parameters of its fault, then when it starts and ends
+     * and what it expects. It starts with a lower case verb, so a tool can put it after a colon.
+     *
+     * @param where the hooks to name, such as only those that can fire in the context now (the hooks of the rule when
+     *              it is empty)
+     */
+    String describe(Set<Hook> where) {
+        Set<Hook> at = where == null || where.isEmpty() ? hooks : where;
+        StringBuilder sb = new StringBuilder();
+        if (fault == Fault.LIFECYCLE) {
+            Action a = action != null ? action : Action.SUSPEND;
+            sb.append(a.key).append(' ').append(routeWords()).append(" for ").append(ChaosWords.time(duration));
+            if (a == Action.REMOVE) {
+                sb.append(", then add it back");
+            }
+            if (repeat > 1) {
+                sb.append(", ").append(repeat).append(" times, every ").append(ChaosWords.time(repeatEvery));
+            }
+        } else {
+            sb.append(verb()).append(' ').append(share(at));
+            sb.append(faultWords());
+            if (burstPeriod > 0) {
+                sb.append(", during the first ").append(ChaosWords.time(burstOn)).append(" of every ")
+                        .append(ChaosWords.time(burstPeriod));
+            }
+        }
+        if (from > 0) {
+            sb.append(", starting after ").append(ChaosWords.time(from));
+        }
+        if (untilCount > 0) {
+            sb.append(", for the next ")
+                    .append(untilCount == 1 ? kind(at, false) : ChaosWords.count(untilCount, kind(at, false), kind(at, true)));
+        }
+        if (untilDuration > 0) {
+            sb.append(", for ").append(ChaosWords.time(untilDuration));
+        }
+        if (expectation != null) {
+            Expectation e = expectation;
+            sb.append("; expects ");
+            if (e.op == Expectation.Op.AT_MOST && e.count == 0) {
+                sb.append("no ").append(e.kind.words(0));
+            } else {
+                sb.append(e.op.words).append(' ').append(e.count).append(' ').append(e.kind.words(e.count));
+            }
+            sb.append(" in route ").append(e.route);
+            if (within != plus(from, runFor)) {
+                // a within= of its own (the default is until the rule ends)
+                sb.append(" within ").append(ChaosWords.time(within));
+            }
+        }
+        return sb.toString();
+    }
+
+    // the verb of the fault
+    private String verb() {
+        return switch (fault) {
+            case ERROR -> "fail";
+            case DELAY -> "delay";
+            case DROP -> "drop";
+            case CORRUPT -> "corrupt";
+            case DUPLICATE -> "duplicate";
+            case LIFECYCLE -> action != null ? action.key : "suspend";
+        };
+    }
+
+    // the share of the matches the rule fires at, with what it matches: every send to x, half of the sends to x
+    private String share(Set<Hook> at) {
+        if (every > 1) {
+            return "1 in " + every + " " + noun(at, true);
+        }
+        if (every == 1 || burstPeriod > 0 || probability >= 1.0d) {
+            return "every " + noun(at, false);
+        }
+        String of = probability == 0.5d ? "half" : ChaosWords.percent(probability);
+        return of + " of the " + noun(at, true);
+    }
+
+    // what the rule matches at the hooks, such as "send to http:stock*" or "polls of file:inbox*"
+    private String noun(Set<Hook> at, boolean plural) {
+        return switch (target) {
+            case ROUTE -> (plural ? "messages" : "message") + " entering " + routeWords();
+            case STEP -> (plural ? "runs" : "run") + " of step " + pattern;
+            case ENDPOINT, COMPONENT -> endpointNoun(at, plural);
+        };
+    }
+
+    private String endpointNoun(Set<Hook> at, boolean plural) {
+        String what = target == Target.COMPONENT ? "the " + pattern + " endpoints" : pattern;
+        List<String> kinds = new ArrayList<>();
+        if (at.contains(Hook.SEND)) {
+            kinds.add(plural ? "sends" : "send");
+        }
+        if (at.contains(Hook.REPLY)) {
+            kinds.add(plural ? "replies" : "reply");
+        }
+        if (at.contains(Hook.DLQ)) {
+            kinds.add(plural ? "dead letter sends" : "dead letter send");
+        }
+        if (at.contains(Hook.POLL)) {
+            kinds.add(plural ? "polls" : "poll");
+        }
+        if (kinds.size() == 1) {
+            String kind = kinds.get(0);
+            String prep = at.contains(Hook.POLL) ? " of " : at.contains(Hook.REPLY) ? " from " : " to ";
+            return kind + prep + what;
+        }
+        return String.join(" and ", kinds) + " of " + what;
+    }
+
+    // what the rule matches, without the target: sends, polls, messages, runs (matches when it is more than one kind)
+    private String kind(Set<Hook> at, boolean plural) {
+        String one = switch (target) {
+            case ROUTE -> "message";
+            case STEP -> "run";
+            case ENDPOINT, COMPONENT -> at.size() == 1
+                    ? switch (at.iterator().next()) {
+                        case POLL -> "poll";
+                        case REPLY -> "reply";
+                        case DLQ -> "dead letter send";
+                        default -> "send";
+                    }
+                    : "match";
+        };
+        if (!plural) {
+            return one;
+        }
+        return switch (one) {
+            case "reply" -> "replies";
+            case "match" -> "matches";
+            default -> one + "s";
+        };
+    }
+
+    private String routeWords() {
+        return (pattern.indexOf('*') >= 0 ? "routes " : "route ") + pattern;
+    }
+
+    // the parameters of the fault, after what it matches
+    private String faultWords() {
+        return switch (fault) {
+            case ERROR -> {
+                StringBuilder sb = new StringBuilder();
+                if (status > 0) {
+                    sb.append(" with HTTP status ").append(status);
+                } else if (exceptionType != null) {
+                    sb.append(" with ").append(exceptionType.getSimpleName());
+                    if (message != null) {
+                        sb.append(" \"").append(message).append('"');
+                    }
+                } else if (message != null) {
+                    sb.append(" with \"").append(message).append('"');
+                }
+                if (after > 0) {
+                    sb.append(" after waiting ").append(ChaosWords.time(after));
+                }
+                yield sb.toString();
+            }
+            case DELAY -> " by " + (durationMax > duration
+                    ? ChaosWords.time(duration) + " to " + ChaosWords.time(durationMax) : ChaosWords.time(duration));
+            case CORRUPT -> switch (mode) {
+                case HEADERS -> " with random header values";
+                case CHARSET -> " by encoding the text body in UTF-16";
+                case TRUNCATE -> " by cutting the body in half";
+                case EMPTY -> " by emptying the body";
+                case REMOVE_HEADER -> header == null
+                        ? " by removing its headers"
+                        : header.indexOf('*') >= 0 ? " by removing the headers " + header
+                        : " by removing the header " + header;
+            };
+            default -> "";
         };
     }
 

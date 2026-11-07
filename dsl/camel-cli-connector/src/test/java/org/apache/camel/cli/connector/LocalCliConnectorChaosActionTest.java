@@ -121,6 +121,8 @@ class LocalCliConnectorChaosActionTest {
         assertThat(added.error()).isNull();
         assertThat(added.result().getString("id")).isEqualTo("r1");
         assertThat(added.result().getInteger("version")).isEqualTo(1);
+        // in plain words, for the tool to show
+        assertThat(added.result().getString("description")).isEqualTo("fail every send to mock:target");
         assertThat(context.createProducerTemplate().send("direct:start", e -> e.getMessage().setBody("x"))
                 .getException()).isNotNull();
 
@@ -128,6 +130,7 @@ class LocalCliConnectorChaosActionTest {
         assertThat(changed.error()).isNull();
         assertThat(changed.result().getString("id")).isEqualTo("r1");
         assertThat(changed.result().getInteger("version")).isEqualTo(2);
+        assertThat(changed.result().getString("description")).isEqualTo("drop every send to mock:target");
         assertThat(context.createProducerTemplate().send("direct:start", e -> e.getMessage().setBody("x"))
                 .getException()).isNull();
 
@@ -161,6 +164,9 @@ class LocalCliConnectorChaosActionTest {
         assertThat(added.result().<List<Object>> getCollection("ids")).containsExactly("r1", "r2");
         // the id of a single rule only
         assertThat(added.result().containsKey("id")).isFalse();
+        assertThat(added.result().containsKey("description")).isFalse();
+        assertThat(added.result().<List<Object>> getCollection("descriptions")).containsExactly(
+                "fail every dead letter send to mock:target", "delay every run of step tpyo by 1 millisecond");
         assertThat(added.result().<List<Object>> getCollection("warnings")).singleElement().asString()
                 .startsWith("r2: step=tpyo matches no step of the context now");
 

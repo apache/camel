@@ -72,7 +72,7 @@ public final class ChaosReport {
 
     ChaosReport(long seed, boolean seedGiven, long now, List<ChaosRule> current, List<ChaosRule> removed,
                 Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
-                long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults) {
+                long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults, ChaosTargets.Reach reach) {
         this.seed = seed;
         this.seedGiven = seedGiven;
         this.now = now;
@@ -80,10 +80,10 @@ public final class ChaosReport {
         long lostCount = 0;
         boolean anyPending = false;
         for (ChaosRule rule : current) {
-            rules.add(new RuleEntry(rule, now, true));
+            rules.add(new RuleEntry(rule, now, true, reach));
         }
         for (ChaosRule rule : removed) {
-            rules.add(new RuleEntry(rule, now, false));
+            rules.add(new RuleEntry(rule, now, false, reach));
         }
         rules.sort(Comparator.comparingInt((RuleEntry r) -> idNumber(r.id))
                 .thenComparing(Comparator.comparingInt((RuleEntry r) -> r.version).reversed()));
@@ -195,6 +195,7 @@ public final class ChaosReport {
                 sb.append(" v").append(r.version);
             }
             sb.append(' ').append(r.state.key).append(": ").append(r.text);
+            sb.append("\n      ").append(r.description);
             sb.append("\n      matches ").append(r.matches).append(", fired ").append(r.firedTotal);
             StringJoiner at = new StringJoiner(", ", " (", ")");
             at.setEmptyValue("");
@@ -421,10 +422,12 @@ public final class ChaosReport {
             jo.put("id", r.id);
             jo.put("version", r.version);
             jo.put("rule", r.text);
+            jo.put("description", r.description);
             jo.put("state", r.state.key);
+            // where it can fire in the context now; fired has each hook of the rule
             JsonArray hooks = new JsonArray();
             for (Hook hook : Hook.values()) {
-                if (r.hooks.contains(hook)) {
+                if (r.canFire.contains(hook)) {
                     hooks.add(hook.key);
                 }
             }
@@ -617,7 +620,11 @@ public final class ChaosReport {
         final int version;
         final String text;
         final State state;
+        // the rule in plain words, at the hooks where it can fire
+        final String description;
+        // the hooks of the rule, and those where it can fire in the context now
         final Set<Hook> hooks;
+        final Set<Hook> canFire;
         final long matches;
         final long[] fired = new long[Hook.values().length];
         final long firedTotal;
@@ -659,7 +666,7 @@ public final class ChaosReport {
         final long duration;
         final ChaosLifecycle.Fault.Reading lifecycle;
 
-        RuleEntry(ChaosRule rule, long now, boolean current) {
+        RuleEntry(ChaosRule rule, long now, boolean current, ChaosTargets.Reach reach) {
             this.rule = rule;
             this.current = current;
             id = rule.id;
@@ -667,6 +674,8 @@ public final class ChaosReport {
             text = rule.text;
             state = rule.state(now);
             hooks = rule.hooks;
+            canFire = ChaosTargets.hooksThatCanFire(reach, rule);
+            description = rule.describe(canFire);
             matches = rule.matches();
             long total = 0;
             for (Hook hook : Hook.values()) {

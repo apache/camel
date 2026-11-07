@@ -89,7 +89,7 @@ class ChaosReportTest extends ChaosTestSupport {
 
         assertThat(chaos().report().toText())
                 .contains("seed: 42 (camel.chaos.seed)")
-                .contains(send + " active: endpoint=mock:kafka error rate=every:2")
+                .contains(send + " active: endpoint=mock:kafka error rate=every:2\n      fail 1 in 2 sends to mock:kafka\n")
                 .contains("matches 4, fired 2 (send 2), skipped 0, ends in ")
                 .contains(step + " ended: step=done delay duration=1ms until=1")
                 .contains("matches 1, fired 1 (step 1), skipped 0\n");
@@ -100,7 +100,9 @@ class ChaosReportTest extends ChaosTestSupport {
         JsonObject first = (JsonObject) ((JsonArray) json.get("rules")).get(0);
         assertThat(first.getString("id")).isEqualTo(send);
         assertThat(first.getString("state")).isEqualTo("active");
-        assertThat((JsonArray) first.get("hooks")).containsExactly("send", "poll");
+        // mock:kafka is sent to, and no route polls it: the rule can fire at the sends only
+        assertThat((JsonArray) first.get("hooks")).containsExactly("send");
+        assertThat(first.getString("description")).isEqualTo("fail 1 in 2 sends to mock:kafka");
         assertThat(first.getLong("matches")).isEqualTo(4);
         assertThat(((JsonObject) first.get("fired")).getLong("send")).isEqualTo(2);
         assertThat(first.getLong("endsIn")).isPositive();

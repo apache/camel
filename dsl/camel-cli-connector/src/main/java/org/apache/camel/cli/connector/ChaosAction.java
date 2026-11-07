@@ -78,6 +78,7 @@ final class ChaosAction {
                 }
                 answer.put("ids", new JsonArray(ids));
                 answer.put("version", 1);
+                descriptions(type, chaos, ids, answer);
                 warnings(type, chaos, ids, answer);
             } else if ("change".equals(command)) {
                 if (isBlank(id) || isBlank(rule)) {
@@ -90,6 +91,7 @@ final class ChaosAction {
                 }
                 answer.put("id", id);
                 answer.put("version", call(type, chaos, "changeRule", id, rule));
+                descriptions(type, chaos, List.of(id), answer);
                 warnings(type, chaos, List.of(id), answer);
             } else if ("remove".equals(command)) {
                 if (isBlank(id)) {
@@ -139,6 +141,30 @@ final class ChaosAction {
         }
         if (!warnings.isEmpty()) {
             answer.put("warnings", warnings);
+        }
+    }
+
+    /**
+     * The rules in plain words, in the order of their ids ({@code descriptions}), and as {@code description} for one
+     * rule, such as {@code fail half of the sends to http:stock* with HTTP status 503, for 5 minutes}. A rule removed
+     * meanwhile has none.
+     */
+    private static void descriptions(Class<?> type, Object chaos, List<?> ids, JsonObject answer) throws Exception {
+        JsonArray words = new JsonArray();
+        for (Object id : ids) {
+            try {
+                words.add(call(type, chaos, "describeRule", (String) id));
+            } catch (IllegalArgumentException e) {
+                // removed by another command meanwhile
+                words.add(null);
+            } catch (NoSuchMethodException e) {
+                // a manager without the words
+                return;
+            }
+        }
+        answer.put("descriptions", words);
+        if (words.size() == 1 && words.get(0) != null) {
+            answer.put("description", words.get(0));
         }
     }
 
