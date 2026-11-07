@@ -241,6 +241,30 @@ at most once per millisecond, so that the JMX statistics no longer generate an e
 several exchanges complete within the same millisecond, the attribute has the id of the first one, not of the last one.
 Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still updated for every failed exchange.
 
+=== camel-core - the activity of the backlog tracer is replaced by the timeline dev console
+
+The activity tracking of the backlog tracer (since 4.22) is removed. It kept the last 100 completed exchanges, which
+under load was only the last seconds. The new `timeline` dev console takes its place: for each second of the last 5
+minutes it records what each route did (completed, recovered by a redelivery, handled by the error handler, failed),
+the mean, p95 and max time, the errors by route and exception, and per second the failed and handled exchanges and
+the 3 slowest with the remote calls they made. It is on whenever the dev consoles are, as with `camel run` (profile `dev`), and the
+number of seconds is set with `camel.devConsole.timeline.seconds` (60 to 3600, default 300).
+
+Removed:
+
+* `BacklogTracer.isActivityEnabled`, `setActivityEnabled`, `getActivitySize`, `setActivitySize`, `getActivity`,
+  `dumpActivity` and `dumpActivityAsJSon`, and the interface `org.apache.camel.spi.BacklogTracerActivityMessage`.
+* The JMX attributes `ActivityEnabled` and `ActivitySize`, and the operation `dumpActivityAsJSon`, of the backlog
+  tracer MBean.
+* The options `camel.trace.activityEnabled` and `camel.trace.activitySize` (also of Spring Boot and Quarkus).
+* The exchange property `Exchange.ACTIVITY_SPAN_TAGS` (`CamelActivitySpanTags`), which camel-telemetry set when
+  activity tracking was on.
+* The `activity` dev console, which the `timeline` dev console replaces.
+* `camel get activity`, which `camel get timeline --exchanges` replaces. `camel get timeline` shows a line per route,
+  and `--errors` the errors by route and exception.
+* The `<pid>-activity.json` file and the `activity` snapshot of the CLI connector, which are now `<pid>-timeline.json`
+  (the last 10 seconds) and `timeline`. The new action `timeline` returns the whole timeline.
+
 === camel-core - a nested split no longer changes the processed items of the outer split
 
 With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
@@ -2349,9 +2373,8 @@ line.
 * `camel get health` takes a name or pid, like the other listings.
 * `camel get endpoint`, `consumer` and `producer --limit` keep the first rows after sorting (they kept the first rows
   found), and `camel get processor --limit` counts routes, as its description says.
-* `camel get activity` shows how long ago an exchange happened (it showed decades), and `camel dirty` no longer keeps
-  the files of another pid that starts with the same digits (pid `12` kept `123-status.json`), nor removes the files of a
-  process that is alive.
+* `camel dirty` no longer keeps the files of another pid that starts with the same digits (pid `12` kept
+  `123-status.json`), nor removes the files of a process that is alive.
 
 The JSON of the listings (`--json`) changes, so that a script can use the values without parsing text:
 
