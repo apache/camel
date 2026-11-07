@@ -27,6 +27,7 @@ import org.apache.camel.component.chaos.ChaosRoutePolicyFactory.ChaosRoutePolicy
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.SendHook;
+import org.apache.camel.support.CompositeSendHook;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
 import org.apache.camel.util.json.JsonArray;
 import org.junit.jupiter.api.AfterEach;
@@ -283,7 +284,7 @@ class ChaosActivationTest {
     }
 
     @Test
-    void anotherSendHookIsKept() throws Exception {
+    void anotherSendHookRunsWithChaos() throws Exception {
         context = new DefaultCamelContext();
         SendHook mine = new SendHook() {
             @Override
@@ -296,10 +297,16 @@ class ChaosActivationTest {
                 // nothing
             }
         };
-        context.getCamelContextExtension().setSendHook(mine);
+        context.getCamelContextExtension().addSendHook(mine);
         context.getPropertiesComponent().addInitialProperty("camel.chaos.enabled", "true");
         context.start();
-        assertThat(context.getCamelContextExtension().getSendHook()).isSameAs(mine);
+        // both run: the hook of chaos has the lowest order, so it is asked last, next to the producer
+        assertThat(context.getCamelContextExtension().getSendHook()).isInstanceOf(CompositeSendHook.class);
+        assertThat(((CompositeSendHook) context.getCamelContextExtension().getSendHook()).getHooks())
+                .hasSize(2)
+                .first().isSameAs(mine);
+        assertThat(((CompositeSendHook) context.getCamelContextExtension().getSendHook()).getHooks().get(1))
+                .isInstanceOf(ChaosSendHook.class);
         assertThat(context.getCamelContextExtension().getStepHook()).isInstanceOf(ChaosStepHook.class);
     }
 }

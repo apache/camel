@@ -744,21 +744,15 @@ public final class ChaosManager {
      */
     void install() {
         ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
+        // the hooks of chaos take the lowest order, so they run innermost, next to the producer and the processor,
+        // after the other hooks that may be installed (such as hooks that observe the sends and steps)
         try {
-            if (ecc.getSendHook() != null) {
-                LOG.warn("A SendHook is installed already ({}), so chaos rules do not fire at sends", ecc.getSendHook());
-            } else {
-                ecc.setSendHook(new ChaosSendHook(this));
-            }
+            ecc.addSendHook(new ChaosSendHook(this));
         } catch (UnsupportedOperationException e) {
             LOG.warn("This CamelContext does not support a SendHook, so chaos rules do not fire at sends");
         }
         try {
-            if (ecc.getStepHook() != null) {
-                LOG.warn("A StepHook is installed already ({}), so chaos rules do not fire at steps", ecc.getStepHook());
-            } else {
-                ecc.setStepHook(new ChaosStepHook(this));
-            }
+            ecc.addStepHook(new ChaosStepHook(this));
         } catch (UnsupportedOperationException e) {
             LOG.warn("This CamelContext does not support a StepHook, so chaos rules do not fire at steps");
         }

@@ -77,7 +77,7 @@ class SendHookStressTest extends ContextTestSupport {
                 }
             }
         });
-        context.getCamelContextExtension().setSendHook(new RandomHook());
+        context.getCamelContextExtension().addSendHook(new RandomHook());
         return context;
     }
 

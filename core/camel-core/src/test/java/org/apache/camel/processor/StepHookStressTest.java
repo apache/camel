@@ -75,7 +75,7 @@ class StepHookStressTest extends ContextTestSupport {
                 }
             }
         });
-        context.getCamelContextExtension().setStepHook(new RandomHook());
+        context.getCamelContextExtension().addStepHook(new RandomHook());
         return context;
     }
 

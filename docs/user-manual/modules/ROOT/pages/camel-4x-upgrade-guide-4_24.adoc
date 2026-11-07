@@ -7198,7 +7198,7 @@ an older offset, so the consumer can process again the messages after that offse
 
 === camel-core - a hook before each step of a route
 
-A new SPI `org.apache.camel.spi.StepHook`, set with `ExtendedCamelContext.setStepHook`, can fail or delay each step of
+A new SPI `org.apache.camel.spi.StepHook`, added with `ExtendedCamelContext.addStepHook`, can fail or delay each step of
 a route. `ErrorHandlerRedeliveryCustomizer` has a new default method `useStepHook(String)`, so existing implementations
 need no change. A custom error handler that wants a failure from the hook handled like a failure of the step's
 processor (with `onException` and redelivery) can override it.

@@ -65,6 +65,7 @@ class StepHelperTest extends ContextTestSupport {
     private static final String FIXED_DELAY = "fixedDelay";
     private static final String RESERVED = "StepHook.beforeStep returned -5: negative values are reserved";
 
+    private final ModeHook modeHook = new ModeHook();
     private ExecutorService processorThreads;
 
     enum Mode {
@@ -86,7 +87,7 @@ class StepHelperTest extends ContextTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         processorThreads = Executors.newFixedThreadPool(4);
-        context.getCamelContextExtension().setStepHook(new ModeHook());
+        context.getCamelContextExtension().addStepHook(modeHook);
     }
 
     @Override
@@ -282,7 +283,7 @@ class StepHelperTest extends ContextTestSupport {
 
     @Test
     void testNoHookCallsTheProcessorOnly() {
-        context.getCamelContextExtension().setStepHook(null);
+        context.getCamelContextExtension().removeStepHook(modeHook);
         Exchange exchange = newExchange(Mode.FAIL, Kind.SYNC);
         Completion completion = new Completion();
 

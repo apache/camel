@@ -72,6 +72,8 @@ final class ChaosRule {
         DELAY("delay"),
         DROP("drop"),
         CORRUPT("corrupt"),
+        // a send that happens twice
+        DUPLICATE("duplicate"),
         // stall and lifecycle: they act once on the route, at no hook
         LIFECYCLE("lifecycle");
 
@@ -426,6 +428,7 @@ final class ChaosRule {
                           + (durationMax > duration ? ".." + ChaosRuleParser.printTime(durationMax) : "");
             case DROP -> "drop";
             case CORRUPT -> "corrupt " + mode.key + (header != null ? " " + header : "");
+            case DUPLICATE -> "duplicate";
             case LIFECYCLE -> (stall ? "stall" : action.key) + " " + ChaosRuleParser.printTime(duration);
         };
     }

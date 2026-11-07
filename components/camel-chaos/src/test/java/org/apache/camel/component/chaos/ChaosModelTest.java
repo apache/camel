@@ -85,7 +85,8 @@ class ChaosModelTest {
                 assertThat(new HashSet<>((JsonArray) hook.get("faults"))).containsAll(faults);
             }
         }
-        assertThat(names("faults")).containsExactly("error", "delay", "drop", "corrupt", "lifecycle", "stall");
+        assertThat(names("faults")).containsExactly("error", "delay", "drop", "corrupt", "duplicate", "lifecycle",
+                "stall");
         JsonObject stall = byName("faults", "stall");
         assertThat(stall.getString("shortFor")).isEqualTo("lifecycle action=suspend");
         assertThat(paramNames(stall)).containsExactly("duration", "every", "repeat");
@@ -94,6 +95,10 @@ class ChaosModelTest {
                 .containsExactly("after", "body", "exception", "header.<name>", "message", "status");
         assertThat(strings(byName("faults", "lifecycle").get("options"))).containsExactly("expect", "from", "within");
         assertThat(strings(byName("faults", "error").get("hooks"))).containsExactly("send", "reply", "dlq", "poll", "step");
+        // duplicate is a fault of the sends only
+        assertThat(strings(byName("faults", "duplicate").get("hooks"))).containsExactly("send");
+        assertThat(strings(byName("faults", "duplicate").get("targets"))).containsExactly("component", "endpoint");
+        assertThat(paramNames(byName("faults", "duplicate"))).isEmpty();
         assertThat(names("options")).containsExactly("at", "expect", "from", "rate", "until", "within");
     }
 

@@ -172,7 +172,7 @@ are a quote and a backslash).
 [source]
 ----
 target:  route=<id> | endpoint=<uri> | component=<name> | step=<id>    (* matches any characters)
-fault:   error | delay | drop | corrupt | stall | lifecycle, with its parameters
+fault:   error | delay | drop | corrupt | duplicate | stall | lifecycle, with its parameters
 at:      send | reply | dlq | poll | entry | step    (optional)
 rate:    a probability (rate=0.3), every Nth match (rate=every:5), or bursts (rate=burst:5s/30s: every match
          during the first 5s of each 30s); without it every match fires
@@ -228,7 +228,8 @@ target offers, is rejected when it is added, with an error that names the hooks 
 |The sends to a matching endpoint (`send`), the reply of such a send after the producer succeeded (`reply`, only with
 `at=reply`), the send of the dead letter channel to it (`dlq`, only with `at=dlq`), and the polls of its consumer
 (`poll`).
-|`send` and `dlq`: `error`, `delay`, `drop`, `corrupt`. `reply`: `error`, `corrupt`. `poll`: `error`, `delay`, `drop`.
+|`send`: `error`, `delay`, `drop`, `corrupt`, `duplicate`. `dlq`: `error`, `delay`, `drop`, `corrupt`. `reply`:
+`error`, `corrupt`. `poll`: `error`, `delay`, `drop`.
 
 |`route=`
 |The messages that enter the route (`entry`), and the route itself.
@@ -299,6 +300,15 @@ delays again.
 |`drop`
 |none
 |A send that reports success without calling the producer, or a poll that is skipped.
+
+|`duplicate`
+|none
+|Sends the message twice, as a sender or a broker that delivers a message again (`endpoint=kafka:orders* duplicate
+rate=0.05`), to test that the receiver is idempotent, such as a route with an `idempotentConsumer`. The message is
+copied before the first send (a stream body is cached first, so both sends read all of it), and when the first send
+succeeded the copy is sent again; a first send that failed is not sent again. With a reply (InOut), the reply of the
+second send is the one the route goes on with. The sending and sent events fire once, and the report counts one
+fault. A fault of the sends only (`at=send`): not at the reply, the polls or the dead letter channel.
 
 |`corrupt`
 |`mode=headers\|charset\|truncate\|empty\|remove-header`, and `header=<name>` for `remove-header`
@@ -385,6 +395,11 @@ processors of the step, and a `delay` waits before them. A step that is disabled
 The steps inside `onException` and `doCatch` are steps of the route, and the sends there (other than the one of the dead
 letter channel) are sends: so `step=*` also fails the steps that handle a failure, and `endpoint=*` the sends of
 `onException`. Name the endpoints or steps under test in the pattern to keep them out.
+
+Chaos shares the send hook and the step hook of camel-core with the other tools that use them: they all run, each
+send and step asks every hook. The hooks of chaos have the lowest order (`Ordered.LOWEST`), so they are asked last
+and run innermost, right next to the producer or the processor: a hook that observes the sends or steps sees the
+faults of chaos as failures of the producer or the step.
 
 == Route lifecycle faults
 
@@ -667,7 +682,5 @@ expectation is decided) into the report history, where their ids can no longer b
 keeps the last 100 removed, replaced or ended ones. An unmet expectation of a rule that leaves the report still counts
 in the verdict and in `lost`.
 * A rule is at most 2000 characters long.
-* There is one send hook and one step hook per `CamelContext`: when another one is installed already, chaos keeps it,
-logs a WARN, and its rules do not fire at those hooks.
 * A `stall` or `lifecycle` rule acts on one route, once, or `repeat=` times (at most 100). To take a route down again
 after that, add the rule again.

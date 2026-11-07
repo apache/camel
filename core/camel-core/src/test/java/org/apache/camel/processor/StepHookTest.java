@@ -59,7 +59,7 @@ class StepHookTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getCamelContextExtension().setStepHook(hook);
+        context.getCamelContextExtension().addStepHook(hook);
         return context;
     }
 
@@ -434,7 +434,7 @@ class StepHookTest extends ContextTestSupport {
 
     @Test
     void testNoHook() throws Exception {
-        context.getCamelContextExtension().setStepHook(null);
+        context.getCamelContextExtension().removeStepHook(hook);
         failures.put("flaky", -1);
         getMockEndpoint("mock:flaky").expectedBodiesReceived("Hello");
         getMockEndpoint("mock:dead").expectedMessageCount(0);
@@ -447,7 +447,7 @@ class StepHookTest extends ContextTestSupport {
         assertTrue(asked.isEmpty(), asked::toString);
 
         // installed again, it is asked by the routes that already run
-        context.getCamelContextExtension().setStepHook(hook);
+        context.getCamelContextExtension().addStepHook(hook);
         template.sendBody("direct:steps", "Hello");
         assertEquals(List.of("setHeader", "log", "process", "toResult"), new ArrayList<>(asked));
     }

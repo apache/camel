@@ -165,6 +165,8 @@ final class ChaosModel {
                     case DELAY -> "Waits before the send, the poll or the step, as for a slow endpoint";
                     case DROP -> "A send that reports success without calling the producer, or a poll that is skipped";
                     case CORRUPT -> "Changes the message: its headers, the charset of its body, or its body";
+                    case DUPLICATE -> "Sends the message twice, as a sender that delivers a message again; the reply"
+                                      + " of the second send is the reply of the send";
                     default -> throw new IllegalStateException("Unknown fault " + fault);
                 }));
             }
@@ -439,6 +441,12 @@ final class ChaosModel {
                 List.of(producer(), new Placeholder(
                         "header", "string", "The header, or a pattern with *", "X-Trace-Id",
                         null, pick("headers", null, null)), rate("0.25"), until("10m"))));
+        answer.add(new Recipe(
+                "duplicate", "Messages", "Is delivered twice",
+                "The message is sent to the endpoint twice, as a sender or a broker that delivers "
+                                                               + "a message again. The receiver must not do the work twice",
+                "endpoint=${endpoint} duplicate rate=${rate} until=${until}",
+                List.of(producer(), rate("0.1"), until("10m"))));
         // consumers and routes
         answer.add(new Recipe(
                 "poll-error", "Consumers and routes", "Polls fail",
@@ -610,6 +618,19 @@ final class ChaosModel {
                         + "changes"),
                 List.of(
                         "The route or the service that receives it")));
+        answer.put("duplicate", new Guide(
+                List.of(
+                        "Duplicates: an order booked twice, a payment taken twice",
+                        "A receiving route without an idempotent consumer, or with a key that is not "
+                                                                                    + "the same for both copies",
+                        "An aggregator or a counter that counts the message twice"),
+                List.of(
+                        "Against a real service where a duplicate costs, such as one that charges or "
+                        + "sends mail to people",
+                        "To test that a failed send is sent again: use Did the work, then failed"),
+                List.of(
+                        "What the other side received: two of the same",
+                        "The messages the idempotent consumer of the receiver dropped as duplicates")));
         answer.put("poll-error", new Guide(
                 List.of(
                         "A consumer without a backoff, which fails every poll and fills the log",

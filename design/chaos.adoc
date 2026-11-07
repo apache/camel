@@ -129,7 +129,7 @@ A rule has a target, a fault, how often it fires, and when it ends:
 ----
 target:  route=<id or pattern> | endpoint=<uri pattern> | component=<name> | step=<processor id pattern>
 at:      send | poll | entry | step   (optional, see Target and hooks)
-fault:   error | delay | drop | corrupt | lifecycle (stall)   (parameters: see Rule syntax)
+fault:   error | delay | drop | corrupt | duplicate | lifecycle (stall)   (parameters: see Rule syntax)
 rate:    a probability (0.3), or every Nth match
 until:   a number of matches, a duration, or removed by hand
 ----
@@ -180,6 +180,11 @@ an `InputStream` body that ends too soon. `charset` applies to a body that is te
 to an `InputStream` or stream cache body; on another body the message is left as it is and the report counts the rule
 as skipped for that message, so a fault that did nothing is visible.
 
+|`duplicate`
+|none
+|Sends the message twice (CAMEL-26607), with `SendHook.SEND_TWICE`: the message is copied before the send, and the
+copy is sent again when the first send succeeded. For the sends only, to test idempotent receivers.
+
 |`lifecycle`
 |`action=suspend\|stop\|remove`, `duration=<time>`
 |Suspends, stops or removes the target route, then resumes it, starts it or adds its definition again after the
@@ -204,7 +209,7 @@ Each target has these hooks, and each hook offers some of the faults:
 
 |`endpoint=`, `component=`
 |The sends to a matching endpoint (`send`) and the polls of its consumer (`poll`).
-|`send`: `error`, `delay`, `drop`, `corrupt`. `poll`: `error`, `delay`, `drop`.
+|`send`: `error`, `delay`, `drop`, `corrupt`, `duplicate`. `poll`: `error`, `delay`, `drop`.
 
 |`route=`
 |The messages that enter the route (`entry`), and the route lifecycle.

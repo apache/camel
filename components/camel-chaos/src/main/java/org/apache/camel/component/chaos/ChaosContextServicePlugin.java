@@ -129,7 +129,8 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
             chaos.install();
             context.getCamelContextExtension().addContextPlugin(ChaosManager.class, chaos);
             manager = chaos;
-            LOG.warn("Chaos is switched on ({}): rules can fail, delay, drop and corrupt the messages of this application."
+            LOG.warn(
+                    "Chaos is switched on ({}): rules can fail, delay, drop, duplicate and corrupt the messages of this application."
                      + " Do not use in production. Seed: {}, rules from {}: {}",
                     enabled != null ? ENABLED + "=true" : "profile dev", chaos.getSeed(), RULES, startup.size());
         }

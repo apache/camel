@@ -23,11 +23,19 @@ import org.apache.camel.Exchange;
  * of a route, with its node id: {@code to}, {@code process}, {@code log}, {@code split}, {@code choice} and each step
  * inside them, not only the {@code step} EIP.
  * <p/>
- * The hook is installed with {@link org.apache.camel.ExtendedCamelContext#setStepHook(StepHook)}. There is one hook per
- * {@link org.apache.camel.CamelContext}; to use more than one, combine them in one hook. Without a hook, a step costs
- * one check whether a hook is installed (with JMX and an error handler that can redeliver, one more small processor
- * inside the JMX instrumentation of the step makes that check). The {@link org.apache.camel.CamelContext} does not
- * start or stop the hook, also when it is a {@link org.apache.camel.Service}: whoever installs it manages it.
+ * The hook is installed with {@link org.apache.camel.ExtendedCamelContext#addStepHook(StepHook)}. Without a hook, a
+ * step costs one check whether a hook is installed (with JMX and an error handler that can redeliver, one more small
+ * processor inside the JMX instrumentation of the step makes that check). The {@link org.apache.camel.CamelContext}
+ * does not start or stop the hook, also when it is a {@link org.apache.camel.Service}: whoever installs it manages it.
+ * <p/>
+ * <b>More than one hook.</b> Several hooks can be installed. They are asked one after the other, in their
+ * {@link org.apache.camel.Ordered order} (lower first; a hook that does not implement {@link org.apache.camel.Ordered}
+ * has order 0, and hooks with the same order are asked in the order they were added). A hook that fails the step (it
+ * throws an exception or sets one on the exchange) ends it: the hooks after it are not asked. The delays of the hooks
+ * add up, and the step waits for their sum once, after all the hooks were asked. So a hook that only observes the steps
+ * takes a low order, to be asked before the hooks that can fail a step; a hook that changes the outcome of a step (such
+ * as the faults of camel-chaos, with {@link org.apache.camel.Ordered#LOWEST}) takes a high order, to be asked last,
+ * right next to the processor.
  * <p/>
  * <b>Where it is asked.</b> Each step runs through its {@link org.apache.camel.Channel}, which runs its advices (such
  * as tracing, the debuggers and JMX) and calls the error handler of the step, which calls the processor of the step.

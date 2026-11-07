@@ -507,19 +507,18 @@ of the cached view it gets from the context extension, and goes on. The JMH run 
 
 === Relation to StepHook
 
-`StepHook` (CAMEL-26338) acts: it can delay or fail a step, before the processor is called. There is one per
-`CamelContext`, because two hooks that act on the same step need a rule for how they combine (chaos logs a WARN and does
-not fire at steps when another hook is installed). The step listener only observes, also after the call (R1 and R3 are
+`StepHook` (CAMEL-26338) acts: it can delay or fail a step, before the processor is called. Two hooks that act on
+the same step need a rule for how they combine (see below). The step listener only observes, also after the call (R1 and R3 are
 about what happens after it), so any number can be installed with no rule for combining them. The hook is asked first,
 outside the `InterceptStrategy` wrappers; if it fails the step, the processor is not called and the listeners see no
 call (`StepHelper` calls the callback, which R1 does not check). The `StepHook` stays as it is: it cannot be expressed
 on a listener, which cannot act. A later version could let chaos count its faults through a listener; that is not
 proposed here.
 
-Making the `StepHook` composable is future work, outside this design. Acting hooks can compose with a fixed rule: ask
-them in the order they were added, stop at the first that fails the step, and wait for the sum of the delays. The
-Javadoc of `StepHook` already tells users to combine their hooks in one; a composite in camel-support, installed in the
-one slot, would do that for them, and chaos would then no longer need its WARN. The sanitizer does not need it.
+Since CAMEL-26607 more than one `StepHook` (and `SendHook`) can be installed, with `addStepHook`: the hooks compose
+with a fixed rule, ask them in their `Ordered` order, stop at the first that fails the step, and wait for the sum of
+the delays (a `CompositeStepHook` of camel-support, kept in the one field the steps read). Chaos takes the lowest
+order, so it is asked last, and no longer needs a WARN. The sanitizer does not need a hook.
 
 === The sanitizer module
 
@@ -713,7 +712,7 @@ Each step is its own pull request after this document:
   attempt, and R2 and R4 are not about steps, so nothing would be left for the advice to do; the wrapper is needed at
   every step either way. Two mechanisms for the same steps would cost more than one. The hybrid becomes worth it if a
   later rule needs one event per step only.
-* *The `StepHook`.* One per context, and before the call only (see Relation to StepHook).
+* *The `StepHook`.* It acts, and before the call only (see Relation to StepHook).
 * *Listener calls in `StepHelper`, next to the hook.* `StepHelper` is called just outside the chosen wrapper in most
   cases: by the error handler for each attempt, or by the `StepHook` processor or the channel. Every step
   already reads the `stepHook` field there, so holding the hook and the listeners in one field would add no read per

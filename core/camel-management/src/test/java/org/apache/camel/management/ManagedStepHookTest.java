@@ -53,7 +53,7 @@ class ManagedStepHookTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getCamelContextExtension().setStepHook(this::beforeStep);
+        context.getCamelContextExtension().addStepHook(this::beforeStep);
         return context;
     }
 

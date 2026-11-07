@@ -78,7 +78,7 @@ class StepListenerTest extends ContextTestSupport {
         // the failing listener first, so its failures come before the recorder is called
         context.getCamelContextExtension().addStepListener(failing);
         context.getCamelContextExtension().addStepListener(recorder);
-        context.getCamelContextExtension().setStepHook(this::beforeStep);
+        context.getCamelContextExtension().addStepHook(this::beforeStep);
         return context;
     }
 

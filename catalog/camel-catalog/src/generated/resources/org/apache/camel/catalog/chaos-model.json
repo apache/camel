@@ -40,7 +40,8 @@
           "error",
           "delay",
           "drop",
-          "corrupt"
+          "corrupt",
+          "duplicate"
         ],
         "onlyWithAt": false
       },
@@ -285,6 +286,28 @@
               "remove-header"
             ]
           }
+        ],
+        "options": [
+          "at",
+          "expect",
+          "from",
+          "rate",
+          "until",
+          "within"
+        ]
+      },
+      {
+        "name": "duplicate",
+        "description": "Sends the message twice, as a sender that delivers a message again; the reply of the second send is the reply of the send",
+        "targets": [
+          "component",
+          "endpoint"
+        ],
+        "hooks": [
+          "send"
+        ],
+        "parameters": [
+          
         ],
         "options": [
           "at",
@@ -926,6 +949,51 @@
             "description": "How often: a probability, every:N or burst:<time>\/<period>",
             "default": "0.25",
             "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "duplicate",
+        "group": "Messages",
+        "title": "Is delivered twice",
+        "description": "The message is sent to the endpoint twice, as a sender or a broker that delivers a message again. The receiver must not do the work twice",
+        "uncovers": [
+          "Duplicates: an order booked twice, a payment taken twice",
+          "A receiving route without an idempotent consumer, or with a key that is not the same for both copies",
+          "An aggregator or a counter that counts the message twice"
+        ],
+        "avoid": [
+          "Against a real service where a duplicate costs, such as one that charges or sends mail to people",
+          "To test that a failed send is sent again: use Did the work, then failed"
+        ],
+        "watch": [
+          "What the other side received: two of the same",
+          "The messages the idempotent consumer of the receiver dropped as duplicates"
+        ],
+        "rule": "endpoint=${endpoint} duplicate rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.1",
+            "example": "0.1"
           },
           {
             "name": "until",
