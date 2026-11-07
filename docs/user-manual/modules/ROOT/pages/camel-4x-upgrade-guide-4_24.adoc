@@ -678,6 +678,16 @@ and retry the call once, and only when they have an `apiKey` or a `password` to 
 component get a new token when the current one expires: when the `authToken` is set, the component uses only that
 token.
 
+=== camel-seda - receive without a timeout returns when the polling consumer stops
+
+A `receive()` without a timeout on a seda endpoint, such as `consumerTemplate.receive("seda:foo")` or a `pollEnrich`
+from seda without a timeout, waited for a message for ever, also after the CamelContext, the consumer template or the
+route of the `pollEnrich` was stopped. It now returns `null` (no message) within about a second once the polling
+consumer is stopped, as `EventDrivenPollingConsumer`, used by most other endpoints, does. This also happens when the
+consumer cache of a consumer template evicts the polling consumer (see `maximumCacheSize`). A message that is in the
+queue is still returned. A polling consumer that was never started still waits for a message, as before. A caller that
+loops on `receive()` should stop on a `null` result.
+
 === camel-main - a failure to start is logged
 
 A Camel Main application that fails to start now logs why, at ERROR: `Error starting Camel: ...` with the stack trace,

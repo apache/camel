@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.seda;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
@@ -24,8 +25,15 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.PollingConsumerSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SedaPollingConsumer extends PollingConsumerSupport implements IsSingleton {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SedaPollingConsumer.class);
+
+    // how often receive() checks, while it waits for a message, whether this consumer was stopped
+    private static final long RUN_ALLOWED_CHECK_INTERVAL = 1000;
 
     public SedaPollingConsumer(Endpoint endpoint) {
         super(endpoint);
@@ -43,8 +51,20 @@ public class SedaPollingConsumer extends PollingConsumerSupport implements IsSin
 
     @Override
     public Exchange receive() {
+        BlockingQueue<Exchange> queue = getEndpoint().getQueue();
         try {
-            return getEndpoint().getQueue().take();
+            while (true) {
+                Exchange answer = queue.poll(RUN_ALLOWED_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
+                if (answer != null) {
+                    return answer;
+                }
+                // once this consumer is stopped (such as when the CamelContext, the consumer template or the route of a
+                // pollEnrich stops) stop waiting; a consumer that was never started keeps waiting, as before
+                if (isStoppedAfterStart()) {
+                    LOG.trace("Consumer is stopped, so returning null");
+                    return null;
+                }
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -74,6 +94,11 @@ public class SedaPollingConsumer extends PollingConsumerSupport implements IsSin
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+    private boolean isStoppedAfterStart() {
+        // stopping, stopped, shutting down, shut down or failed
+        return status >= STOPPING;
     }
 
     @Override
