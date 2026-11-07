@@ -3337,6 +3337,9 @@ Commands:
   startup-recorder  Display startup recording
   timeline          Get what the routes did per second, the errors, and the
                       failed and slowest exchanges
+  about             Get what an integration does and what has happened: its
+                      purpose, what comes in, its routes, what goes out, and
+                      the last minutes
   transformer       Get list of data type transformers
   variable          List variables of Camel integrations
   vault             List secrets from security vaults
@@ -3346,6 +3349,29 @@ Examples:
   camel get route
   camel get health
   camel get endpoint
+
+== camel get about --help
+Usage: camel get about [-h] [--json] [--watch] [--duration=<duration>] [<name>]
+Get what an integration does and what has happened: its purpose, what comes in,
+its routes, what goes out, and the last minutes
+      [<name>]   Name or pid of running Camel integration
+                   Default: *
+  -h, --help     Display the help and sub-commands
+      --watch    Execute periodically and showing output fullscreen
+      --json     Output in JSON Format
+      --duration=<duration>
+                 How long to keep watching or following, in millis or as a
+                   duration such as 30s (default: until Enter is pressed)
+                   Default: 0
+
+The purpose is the comment at the top of the main source file, else the
+descriptions of the routes.
+The last minutes come from the timeline the integration records (the timeline
+dev console, on in profile dev).
+
+Examples:
+  camel get about
+  camel get about myapp --json
 
 == camel get bean --help
 Usage: camel get bean [-h] [--dsl] [--internal] [--json] [--nulls[=<nulls>]]

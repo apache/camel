@@ -18,6 +18,7 @@ camel get [options]
 [cols="2,5",options="header"]
 |===
 | Subcommand | Description
+| xref:jbang-commands/camel-jbang-get-about.adoc[about] | Get what an integration does and what has happened: its purpose, what comes in, its routes, what goes out, and the last minutes
 | xref:jbang-commands/camel-jbang-get-bean.adoc[bean] | List beans in a running Camel integration
 | xref:jbang-commands/camel-jbang-get-blocked.adoc[blocked] | Get blocked messages of Camel integrations
 | xref:jbang-commands/camel-jbang-get-chaos.adoc[chaos] | Get the chaos rules of running integrations, or their report (camel-chaos)

@@ -232,6 +232,20 @@ class EndpointsTabRenderTest {
 
     // ---- Helper methods ----
 
+    @Test
+    void anEndpointOfARouteIsSelectedWithItsDetails() {
+        addEndpoint("timer", "timer://tick", "in", "a", 10);
+        addEndpoint("http", "http://example.com/api", "out", "a", 5);
+        addEndpoint("http", "http://example.com/api", "out", "b", 5);
+        EndpointsTab tab = new EndpointsTab(ctx, new MetricsCollector());
+        TuiTestHelper.renderToString(tab, 140, 30);
+
+        // as About has it: the URI as the sources write it
+        tab.selectEndpoint("http:example.com/api", "b");
+        assertThat(tab.tableState.selected()).isEqualTo(2);
+        assertThat(TuiTestHelper.renderToString(tab, 140, 30)).contains("http://example.com/api");
+    }
+
     private EndpointInfo addEndpoint(String component, String uri, String direction, String routeId, long hits) {
         EndpointInfo ep = new EndpointInfo();
         ep.component = component;

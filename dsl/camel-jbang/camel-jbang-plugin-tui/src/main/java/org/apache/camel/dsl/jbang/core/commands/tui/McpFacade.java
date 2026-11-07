@@ -678,7 +678,8 @@ class McpFacade {
         boolean ctrl = false;
         boolean shift = false;
         String remainder = key;
-        while (remainder.contains("+")) {
+        // a + on its own (or last, as in Shift++) is the key itself, not the + between a modifier and a key
+        while (remainder.length() > 1 && remainder.indexOf('+') >= 0 && remainder.indexOf('+') < remainder.length() - 1) {
             int plus = remainder.indexOf('+');
             String mod = remainder.substring(0, plus).trim();
             remainder = remainder.substring(plus + 1).trim();

@@ -335,6 +335,15 @@ class TabRegistry {
             selectMoreTab(moreTabIndex("Chaos"));
             chaosTab.openAt(target);
         };
+        ctx.openFromAbout = target -> {
+            if (target.endpoint() != null) {
+                handleTabKey(TAB_ENDPOINTS);
+                endpointsTab.selectEndpoint(target.endpoint(), target.routeId());
+            } else {
+                handleTabKey(TAB_DIAGRAM);
+                diagramTab.openRoute(target.routeId());
+            }
+        };
         sqlTraceTab.setEditSqlAction(sql -> {
             selectMoreTab(moreTabIndex("SQL Query"));
             sqlQueryTab.setInputValue("sql", sql);

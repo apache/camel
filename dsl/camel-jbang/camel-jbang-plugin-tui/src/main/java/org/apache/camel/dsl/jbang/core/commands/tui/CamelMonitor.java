@@ -1505,6 +1505,9 @@ public class CamelMonitor extends CamelCommand {
 
         int tab = tabRegistry.selectedTabIndex();
         if (ke.isConfirm() && tab == TAB_OVERVIEW) {
+            if (tabRegistry.overviewTab().openFromAbout()) {
+                return true;
+            }
             tabRegistry.overviewTab().selectCurrentIntegration();
             if (ctx.selectedPid != null) {
                 if (isPhantomSelected()) {
