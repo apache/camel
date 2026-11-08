@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ import java.util.List;
  * error a rule made on the Errors tab), CAMEL-26702: the rule, its live state and the counts of the routes, and what to
  * do with them - say in plain words what the fault simulates and what the routes did with it, then suggest how they
  * should cope, and change the routes only when the user agrees. It is put in the input of the panel, for the user to
- * send with Enter or change first.
+ * send with Enter or change first. The question to make a test of a rule ({@code t}, CAMEL-26725) is put there too.
  */
 final class ChaosAiPrompt {
 
@@ -46,6 +48,57 @@ final class ChaosAiPrompt {
                 .append(" the routes should cope with this in production, such as redelivery with a delay, an idempotent")
                 .append(" consumer, a circuit breaker or a timeout. ").append(onlyWhenAgreed());
         return sb.toString();
+    }
+
+    /**
+     * The question to make a test of a rule ({@code t} on the Chaos screen, CAMEL-26725), so the finding runs again
+     * with the same faults: the rule, the seed and what the rule did, then a JUnit test with {@code ChaosAssertions}
+     * for a Maven project, or a scenario with an expectation and the run whose exit code is the verdict for a folder
+     * that runs with {@code camel run}. The AI writes the file with the file tools of the panel, which ask first.
+     */
+    static String ofTest(IntegrationInfo info, ChaosInfo.Rule rule) {
+        long seed = info.chaos != null ? info.chaos.seed : 0;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Make a test of chaos rule ").append(rule.id).append(" of the running integration ").append(name(info))
+                .append(", so this finding runs again with the same faults. The rule (camel-chaos, injected on purpose):\n")
+                .append("  ").append(rule.text).append('\n').append("The seed of its random draws: ").append(seed)
+                .append(".\n");
+        state(sb, info, rule);
+        String expectation = rule.expectRoute != null
+                ? "The rule has an expectation: keep it."
+                : "The rule has no expectation (expect=): add one that says what must hold, such as"
+                  + " expect=<route>:<count> within=10s (at least that many exchanges complete in the route) or"
+                  + " expect=<route>:handled<=0 (no message goes to the dead letter channel).";
+        if (isMavenProject(info)) {
+            sb.append("The integration is a Maven project. Read its routes first, then write a JUnit test in src/test/java")
+                    .append(" that runs them with chaos switched on: add org.apache.camel:camel-chaos as a test dependency")
+                    .append(" when the pom.xml does not have it, and set the properties camel.chaos.enabled=true,")
+                    .append(" camel.chaos.seed=").append(seed).append(" and camel.chaos.rules=<the rule> (CamelTestSupport:")
+                    .append(" override configureContext and call config.withUseOverridePropertiesWithPropertiesComponent(props);")
+                    .append(" a camel-test-main-junit6 test sets the same properties in its configuration). ")
+                    .append(expectation)
+                    .append(" Send the messages the test needs to the route (replace a consumer that needs a broker or a")
+                    .append(" server with a direct endpoint, using AdviceWith), and assert with")
+                    .append(" org.apache.camel.component.chaos.ChaosAssertions: assertFired(context, \"").append(rule.id)
+                    .append("\", <at least>), assertExpectationMet(context, \"").append(rule.id)
+                    .append("\", Duration.ofSeconds(10)) and assertVerdict(context, ChaosReport.PASS, Duration.ofSeconds(10)).");
+        } else {
+            sb.append("The integration runs with camel run, without a Maven project, so the test is a scenario with an")
+                    .append(" expectation, and a run whose exit code is the verdict. Write the scenario chaos/")
+                    .append(rule.id).append("-test.chaos: a comment line that says what it tests, seed=").append(seed)
+                    .append(", and the rule. ").append(expectation)
+                    .append(" Then give the command that runs it, with --max-seconds longer than the within= of the")
+                    .append(" expectation: camel run * --chaos=chaos/").append(rule.id)
+                    .append("-test.chaos --max-seconds=<seconds> --chaos-report=target/chaos-report.json. It ends with exit")
+                    .append(" code 1 when the verdict is FAIL, so it can run in a pipeline.");
+        }
+        sb.append(" Write the file with camel_write_file, which asks me first, and change no route.");
+        return sb.toString();
+    }
+
+    /** Whether the folder of the integration is a Maven project, which can have a JUnit test. */
+    static boolean isMavenProject(IntegrationInfo info) {
+        return info.directory != null && Files.isRegularFile(Path.of(info.directory, "pom.xml"));
     }
 
     /** The most routes and sends quoted in a request, so a big integration does not flood it. */

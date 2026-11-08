@@ -25,8 +25,10 @@ public class ChaosConfigurationPropertiesConfigurer extends org.apache.camel.sup
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Enabled", java.lang.Boolean.class);
         map.put("MaxDuration", java.lang.String.class);
+        map.put("ReportFile", java.lang.String.class);
         map.put("ReportOnShutdown", boolean.class);
         map.put("Rules", java.lang.String.class);
+        map.put("Scenario", java.lang.String.class);
         map.put("Seed", java.lang.Long.class);
         ALL_OPTIONS = map;
     }
@@ -38,9 +40,12 @@ public class ChaosConfigurationPropertiesConfigurer extends org.apache.camel.sup
         case "enabled": target.setEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "maxduration":
         case "maxDuration": target.setMaxDuration(property(camelContext, java.lang.String.class, value)); return true;
+        case "reportfile":
+        case "reportFile": target.setReportFile(property(camelContext, java.lang.String.class, value)); return true;
         case "reportonshutdown":
         case "reportOnShutdown": target.setReportOnShutdown(property(camelContext, boolean.class, value)); return true;
         case "rules": target.setRules(property(camelContext, java.lang.String.class, value)); return true;
+        case "scenario": target.setScenario(property(camelContext, java.lang.String.class, value)); return true;
         case "seed": target.setSeed(property(camelContext, java.lang.Long.class, value)); return true;
         default: return false;
         }
@@ -57,9 +62,12 @@ public class ChaosConfigurationPropertiesConfigurer extends org.apache.camel.sup
         case "enabled": return java.lang.Boolean.class;
         case "maxduration":
         case "maxDuration": return java.lang.String.class;
+        case "reportfile":
+        case "reportFile": return java.lang.String.class;
         case "reportonshutdown":
         case "reportOnShutdown": return boolean.class;
         case "rules": return java.lang.String.class;
+        case "scenario": return java.lang.String.class;
         case "seed": return java.lang.Long.class;
         default: return null;
         }
@@ -72,9 +80,12 @@ public class ChaosConfigurationPropertiesConfigurer extends org.apache.camel.sup
         case "enabled": return target.getEnabled();
         case "maxduration":
         case "maxDuration": return target.getMaxDuration();
+        case "reportfile":
+        case "reportFile": return target.getReportFile();
         case "reportonshutdown":
         case "reportOnShutdown": return target.isReportOnShutdown();
         case "rules": return target.getRules();
+        case "scenario": return target.getScenario();
         case "seed": return target.getSeed();
         default: return null;
         }

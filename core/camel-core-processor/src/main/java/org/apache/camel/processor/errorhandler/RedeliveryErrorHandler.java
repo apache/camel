@@ -2339,6 +2339,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             int prev = Math.max(base - 1, 0);
             in.setHeader(Exchange.REDELIVERY_COUNTER, prev);
             in.setHeader(Exchange.REDELIVERED, prev > 0 ? Boolean.TRUE : Boolean.FALSE);
+            // and the counter of the exchange, which ExchangeHelper.isRedelivered reads first (CAMEL-26729)
+            exchange.getExchangeExtension().setRedeliveryCounter(prev);
         }
 
         /**

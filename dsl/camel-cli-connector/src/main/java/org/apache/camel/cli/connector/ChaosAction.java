@@ -28,8 +28,9 @@ import org.apache.camel.util.json.JsonObject;
 
 /**
  * The {@code chaos} action: adds, changes and removes the rules of camel-chaos in the running integration, as
- * {@code camel cmd chaos-add}, {@code chaos-change}, {@code chaos-remove} and {@code chaos-clear} send it, for example
- * {@code {"action":"chaos","command":"add","rule":"endpoint=kafka:orders* error rate=0.3 until=1m"}}.
+ * {@code camel cmd chaos-add}, {@code chaos-change}, {@code chaos-remove}, {@code chaos-clear} and {@code chaos-load}
+ * (a scenario) send it, for example {@code {"action":"chaos","command":"add","rule":"endpoint=kafka:orders* error
+ * rate=0.3 until=1m"}}.
  * <p/>
  * It works only when chaos is switched on in the integration (profile {@code dev} or {@code camel.chaos.enabled=true},
  * never profile {@code prod}): only then has the context a {@code ChaosManager}, and the action never creates one. A
@@ -81,6 +82,19 @@ final class ChaosAction {
                 answer.put("version", 1);
                 descriptions(type, chaos, ids, answer);
                 warnings(type, chaos, ids, answer);
+            } else if ("load".equals(command)) {
+                String text = root.getString("text");
+                if (isBlank(text)) {
+                    output.error("The scenario is required");
+                    return;
+                }
+                String scenario = root.getString("name");
+                // the rules there are now are removed and the report starts again, unless a line is not valid
+                List<?> ids = (List<?>) call(type, chaos, "loadScenario", isBlank(scenario) ? "scenario" : scenario, text);
+                answer.put("ids", new JsonArray(ids));
+                answer.put("reset", true);
+                descriptions(type, chaos, ids, answer);
+                warnings(type, chaos, ids, answer);
             } else if ("check".equals(command)) {
                 if (isBlank(rule)) {
                     output.error("A rule is required");
@@ -122,7 +136,7 @@ final class ChaosAction {
                     answer.put("reset", true);
                 }
             } else {
-                output.error("Unknown chaos command: " + command + " (add, check, change, remove or clear)");
+                output.error("Unknown chaos command: " + command + " (add, check, change, remove, clear or load)");
                 return;
             }
         } catch (IllegalArgumentException | IllegalStateException e) {

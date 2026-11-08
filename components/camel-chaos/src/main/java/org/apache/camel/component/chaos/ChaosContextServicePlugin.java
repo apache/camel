@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.List;
@@ -27,8 +32,12 @@ import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +50,10 @@ import org.slf4j.LoggerFactory;
  * installed, and {@code camel.chaos.rules} is ignored. When it installs the hooks, it logs a WARN that chaos is
  * switched on, adds the rules of {@code camel.chaos.rules} (a rule that is not valid stops the context from starting,
  * as does a {@code stall} or {@code lifecycle} rule whose route is not among the routes of the context once they are
- * created), and makes the {@link ChaosManager} available with {@link ChaosManager#get(CamelContext)}. Without rules the
- * hooks do nothing.
+ * created), and makes the {@link ChaosManager} available with {@link ChaosManager#get(CamelContext)}. The rules of the
+ * scenario of {@code camel.chaos.scenario} (a file, see {@link ChaosScenario}) are added first, and its seed is used
+ * unless {@code camel.chaos.seed} is set. Without rules the hooks do nothing. When the context stops, the report is
+ * logged, and written as JSON to {@code camel.chaos.reportFile} when that is set.
  *
  * @since 4.24
  */
@@ -51,6 +62,8 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
     static final String ENABLED = "camel.chaos.enabled";
     static final String SEED = "camel.chaos.seed";
     static final String RULES = "camel.chaos.rules";
+    static final String SCENARIO = "camel.chaos.scenario";
+    static final String REPORT_FILE = "camel.chaos.reportFile";
     static final String MAX_DURATION = "camel.chaos.maxDuration";
     static final String REPORT_ON_SHUTDOWN = "camel.chaos.reportOnShutdown";
 
@@ -75,6 +88,7 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
 
         private volatile ChaosManager manager;
         private volatile boolean reportOnShutdown;
+        private volatile Path reportFile;
 
         @Override
         public void onContextInitializing(CamelContext context) throws VetoCamelContextStartException {
@@ -84,11 +98,12 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
             PropertiesComponent pc = context.getPropertiesComponent();
             String profile = context.getCamelContextExtension().getProfile();
             String rules = property(pc, RULES);
+            String scenarioUri = property(pc, SCENARIO);
             if ("prod".equalsIgnoreCase(profile)) {
                 // checked first, so nothing of chaos, not even an invalid option, can stop an application in prod
-                if ("true".equalsIgnoreCase(property(pc, ENABLED)) || rules != null) {
-                    LOG.warn("camel-chaos is on the classpath but stays off with profile prod: {} and {} are ignored",
-                            ENABLED, RULES);
+                if ("true".equalsIgnoreCase(property(pc, ENABLED)) || rules != null || scenarioUri != null) {
+                    LOG.warn("camel-chaos is on the classpath but stays off with profile prod: {}, {} and {} are ignored",
+                            ENABLED, RULES, SCENARIO);
                 }
                 return;
             }
@@ -101,10 +116,10 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
             }
             boolean on = enabled != null ? enabled : "dev".equalsIgnoreCase(profile);
             if (!on) {
-                if (rules != null) {
+                if (rules != null || scenarioUri != null) {
                     LOG.info("camel-chaos is on the classpath but off (it is switched on with profile dev or {}=true),"
-                             + " so {} is ignored",
-                            ENABLED, RULES);
+                             + " so {} and {} are ignored",
+                            ENABLED, RULES, SCENARIO);
                 } else {
                     LOG.debug("camel-chaos is on the classpath but off (it is switched on with profile dev or {}=true)",
                             ENABLED);
@@ -114,12 +129,32 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
 
             ChaosManager chaos;
             List<String> startup = ChaosRuleParser.splitRules(rules);
+            ChaosScenario scenario = null;
             try {
                 long maxDuration = duration(MAX_DURATION, property(pc, MAX_DURATION), "10m");
+                String text = property(pc, REPORT_FILE);
+                reportFile = text != null ? Path.of(text) : null;
+                if (scenarioUri != null) {
+                    scenario = ChaosScenario.parse(FileUtil.stripPath(scenarioUri), loadScenario(context, scenarioUri));
+                }
                 String seedText = property(pc, SEED);
-                long seed = seedText != null ? parseLong(SEED, seedText) : new SecureRandom().nextLong();
+                long seed;
+                String seedFrom;
+                if (seedText != null) {
+                    seed = parseLong(SEED, seedText);
+                    seedFrom = SEED;
+                } else if (scenario != null && scenario.getSeed() != null) {
+                    seed = scenario.getSeed();
+                    seedFrom = "scenario " + scenario.getName();
+                } else {
+                    seed = new SecureRandom().nextLong();
+                    seedFrom = null;
+                }
                 reportOnShutdown = parseBoolean(REPORT_ON_SHUTDOWN, orElse(property(pc, REPORT_ON_SHUTDOWN), "true"));
-                chaos = new ChaosManager(context, seed, seedText != null, maxDuration);
+                chaos = new ChaosManager(context, seed, seedFrom, maxDuration);
+                if (scenario != null) {
+                    chaos.addScenario(scenario);
+                }
                 for (String rule : startup) {
                     chaos.addRule(rule);
                 }
@@ -131,8 +166,10 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
             manager = chaos;
             LOG.warn(
                     "Chaos is switched on ({}): rules can fail, delay, drop, duplicate and corrupt the messages of this application."
-                     + " Do not use in production. Seed: {}, rules from {}: {}",
-                    enabled != null ? ENABLED + "=true" : "profile dev", chaos.getSeed(), RULES, startup.size());
+                     + " Do not use in production. Seed: {}, rules from {}: {}{}",
+                    enabled != null ? ENABLED + "=true" : "profile dev", chaos.getSeed(), RULES, startup.size(),
+                    scenario != null
+                            ? ", from scenario " + scenario.getName() + ": " + scenario.getRules().size() : "");
         }
 
         @Override
@@ -175,8 +212,41 @@ public class ChaosContextServicePlugin implements ContextServicePlugin {
         @Override
         public void onContextStopped(CamelContext context) {
             ChaosManager chaos = manager;
-            if (chaos != null && reportOnShutdown && chaos.isUsed()) {
-                LOG.info("{}", chaos.report().toText());
+            if (chaos == null) {
+                return;
+            }
+            ChaosReport report = null;
+            if (reportOnShutdown && chaos.isUsed()) {
+                report = chaos.report();
+                LOG.info("{}", report.toText());
+            }
+            Path file = reportFile;
+            if (file != null) {
+                // also without rules, so a pipeline that reads it finds it
+                writeReport(file, report != null ? report : chaos.report());
+            }
+        }
+
+        private static void writeReport(Path file, ChaosReport report) {
+            try {
+                Path dir = file.toAbsolutePath().getParent();
+                if (dir != null) {
+                    Files.createDirectories(dir);
+                }
+                Files.writeString(file, Jsoner.prettyPrint(report.toJson().toJson()) + "\n", StandardCharsets.UTF_8);
+                LOG.info("Chaos report written to {}", file);
+            } catch (IOException e) {
+                LOG.warn("Cannot write the chaos report to {} ({}): {}", file, REPORT_FILE, e.getMessage(), e);
+            }
+        }
+
+        /** The content of the scenario: a file, unless the uri has a scheme such as classpath:. */
+        private static String loadScenario(CamelContext context, String uri) {
+            String location = ResourceHelper.hasScheme(uri) ? uri : "file:" + uri;
+            try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, location)) {
+                return IOHelper.loadText(is);
+            } catch (IOException e) {
+                throw new IllegalArgumentException(SCENARIO + "=" + uri + " cannot be read: " + e.getMessage(), e);
             }
         }
 

@@ -160,6 +160,21 @@ final class MavenRunSupport {
     }
 
     /**
+     * The chaos scenario ({@code --chaos=file}) and the report file ({@code --chaos-report}) as {@code camel.chaos.*}
+     * system properties, for a run with Camel Main.
+     */
+    static List<String> chaosArgs(RunRequest request) {
+        List<String> args = new ArrayList<>();
+        if (request.chaos && request.chaosScenario != null) {
+            args.add("-Dcamel.chaos.scenario=" + request.chaosScenario);
+        }
+        if (request.chaos && request.chaosReport != null) {
+            args.add("-Dcamel.chaos.reportFile=" + request.chaosReport);
+        }
+        return args;
+    }
+
+    /**
      * The JVM arguments the exported Quarkus or Spring Boot project is run with ({@code jvm.args} and
      * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording and the execution limits. Returns
      * null when there are none.
@@ -207,6 +222,7 @@ final class MavenRunSupport {
         }
         args.add("-Dcamel.main.name=" + appName);
         args.addAll(existingProjectSystemProperties(request, "camel.server.port"));
+        args.addAll(chaosArgs(request));
         return args;
     }
 

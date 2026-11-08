@@ -402,6 +402,15 @@ of an exchange in the route measured by chaos through `TimeSource` (from enterin
   list of the running integrations (exit code 2), never acting on all of them (CAMEL-26717). The MCP tools pick the
   integration the same way. `chaos-clear` and `camel get chaos` may omit it and then act on all that have chaos
   switched on, as `stop-route` does.
+- A scenario (stage 2, CAMEL-26722) keeps the rules of an experiment in a file of the project, `chaos/<name>.chaos`:
+  one rule per line, `#` comments and a `seed=` line, with the phases from `from=`/`until=`. `camel cmd chaos-load`
+  sends its text through the same `chaos` action (`ChaosManager.loadScenario`: a new report, then all its rules or
+  none), and `camel run --chaos=<file>` starts with it (`camel.chaos.scenario`, `insecure:dev` like
+  `camel.chaos.rules`). A rule of a scenario draws from the seed of the scenario by its place in it, so it replays
+  wherever it is loaded. `camel run *` and `camel export` leave `.chaos` files out.
+- CI mode (stage 2, CAMEL-26722): camel-chaos writes its report as JSON to `camel.chaos.reportFile` when the context
+  stops, and `camel run` in the foreground reads it (its `--chaos-report` file, else a temporary one) and ends with exit
+  code 1 on FAIL. Without an expectation there is no verdict: exit 0, and a line says so.
 - The camel-jbang MCP server gets a `chaos` runtime tool group next to `sql`, `tracing`, `resilience` and `http`,
   loaded when the status of the application has the chaos console (`camel-chaos` on its classpath). The tools are in
   `RuntimeTools` (`@McpSecured`) and go through the CLI connector and the status, as the other runtime tools do; the
