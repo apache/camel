@@ -125,6 +125,25 @@ class ChaosScenarioTest extends ChaosTestSupport {
     }
 
     @Test
+    void drawReplaysARuleThatWasAddedWhileRunning() {
+        // rule r2 was added while the application ran (seed 42, camel.chaos.seed)
+        assertThat(chaos().addRule("endpoint=mock:nowhere error")).isEqualTo("r1");
+        assertThat(chaos().addRule("endpoint=mock:stock error rate=0.5")).isEqualTo("r2");
+        List<Boolean> live = failures();
+        assertThat(live).contains(true, false);
+
+        // a scenario with the rule alone: it is r1 there, so it draws other choices, unless draw= says it is r2
+        chaos().loadScenario("other.chaos", "seed=42\nendpoint=mock:stock error rate=0.5\n");
+        assertThat(failures()).isNotEqualTo(live);
+        chaos().loadScenario("r2-test.chaos", "# rule r2 again\nseed=42\nendpoint=mock:stock error rate=0.5 draw=r2\n");
+        assertThat(failures()).isEqualTo(live);
+
+        assertThatThrownBy(() -> chaos().addRule("endpoint=mock:stock error rate=0.5 draw=orders"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("draw=orders is not the id of a rule");
+    }
+
+    @Test
     void withoutASeedTheRulesDrawFromTheSeedOfTheApplication() {
         chaos().loadScenario("outage.chaos", OUTAGE);
         List<Boolean> withSeed = failures();

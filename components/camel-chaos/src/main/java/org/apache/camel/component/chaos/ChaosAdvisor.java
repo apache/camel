@@ -34,6 +34,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,8 +86,15 @@ final class ChaosAdvisor {
      * @param rule   the rule, ready to add
      * @param why    why it is worth trying for this route
      * @param rank   higher is tried first
+     * @param routes the routes a rule of its kind tries it in: the route, and the other routes of a dead letter channel
+     *               they share, which is suggested once
      */
-    record Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank) {
+    record Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank,
+            List<String> routes) {
+
+        Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank) {
+            this(route, kind, recipe, title, rule, why, rank, List.of(route));
+        }
     }
 
     /**
@@ -124,15 +132,26 @@ final class ChaosAdvisor {
      * What has been tried per route: the kinds of fault of the rules (current and removed) that fired in it, and the
      * kinds the suggestions offer for it that none tried. The routes in the order of the suggestions, then the others.
      */
-    static List<RouteTried> tried(List<ChaosRule> rules, Map<String, Set<Kind>> suggested, long now) {
+    static List<RouteTried> tried(List<ChaosRule> rules, Map<String, Map<Kind, List<String>>> suggested, long now) {
         // route -> kind -> the rules of that kind that fired in the route
         Map<String, Map<Kind, List<ChaosRule>>> byRoute = new LinkedHashMap<>();
         suggested.keySet().forEach(route -> byRoute.put(route, new LinkedHashMap<>()));
         for (ChaosRule rule : rules) {
+            boolean fired = false;
             for (Map.Entry<String, ChaosRule.InRoute> e : rule.inRoute.entrySet()) {
                 if (e.getValue().fired.sum() > 0) {
+                    fired = true;
                     byRoute.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>())
                             .computeIfAbsent(kindOf(rule), k -> new ArrayList<>()).add(rule);
+                }
+            }
+            // a rule that expects no message lost between two routes (orders->shipping:lost<=0) tries what a hand-off
+            // loses for the first route, wherever its faults are: the hand-off suggestion fails the next route
+            if (fired && rule.expectation != null && rule.expectation.toRoute != null) {
+                List<ChaosRule> lost = byRoute.computeIfAbsent(rule.expectation.route, k -> new LinkedHashMap<>())
+                        .computeIfAbsent(Kind.LOST, k -> new ArrayList<>());
+                if (!lost.contains(rule)) {
+                    lost.add(rule);
                 }
             }
         }
@@ -152,12 +171,15 @@ final class ChaosAdvisor {
                     if (!ids.contains(id)) {
                         ids.add(id);
                     }
-                    // the outcomes of the exchanges the rule faulted in this route, not in all of them
+                    // the outcomes of the exchanges the rule faulted in this route, not in all of them; a rule that
+                    // tries a hand-off for this route (by its expectation) faulted the next route: all of them
                     ChaosRule.InRoute in = rule.inRoute.get(route);
-                    fired += in.fired.sum();
-                    recovered += in.effect.count(ChaosRule.Effect.Outcome.RECOVERED);
-                    handled += in.effect.count(ChaosRule.Effect.Outcome.HANDLED);
-                    failed += in.effect.count(ChaosRule.Effect.Outcome.FAILED);
+                    for (ChaosRule.InRoute r : in != null ? List.of(in) : List.copyOf(rule.inRoute.values())) {
+                        fired += r.fired.sum();
+                        recovered += r.effect.count(ChaosRule.Effect.Outcome.RECOVERED);
+                        handled += r.effect.count(ChaosRule.Effect.Outcome.HANDLED);
+                        failed += r.effect.count(ChaosRule.Effect.Outcome.FAILED);
+                    }
                     if (rule.expectation != null) {
                         expectations.add(rule.expectation.spec() + " " + rule.expectation.read(now).outcome().key);
                     }
@@ -165,8 +187,11 @@ final class ChaosAdvisor {
                 tried.add(new KindTried(k.getKey(), ids, fired, recovered, handled, failed, expectations));
             }
             List<Kind> notTried = new ArrayList<>();
+            Map<Kind, List<String>> kinds = suggested.getOrDefault(route, Map.of());
             for (Kind kind : Kind.values()) {
-                if (suggested.getOrDefault(route, Set.of()).contains(kind) && !entry.getValue().containsKey(kind)) {
+                // a kind suggested for several routes (a dead letter channel they share) is tried in any of them
+                if (kinds.containsKey(kind) && kinds.get(kind).stream()
+                        .noneMatch(r -> byRoute.getOrDefault(r, Map.of()).containsKey(kind))) {
                     notTried.add(kind);
                 }
             }
@@ -177,11 +202,14 @@ final class ChaosAdvisor {
         return answer;
     }
 
-    /** The kinds of fault the suggestions offer per route, in the order of the routes. */
-    static Map<String, Set<Kind>> suggestedKinds(List<Suggestion> suggestions) {
-        Map<String, Set<Kind>> answer = new LinkedHashMap<>();
+    /**
+     * The kinds of fault the suggestions offer per route, in the order of the routes, each with the routes a rule of
+     * that kind tries it in.
+     */
+    static Map<String, Map<Kind, List<String>>> suggestedKinds(List<Suggestion> suggestions) {
+        Map<String, Map<Kind, List<String>>> answer = new LinkedHashMap<>();
         for (Suggestion s : suggestions) {
-            answer.computeIfAbsent(s.route(), k -> new LinkedHashSet<>()).add(s.kind());
+            answer.computeIfAbsent(s.route(), k -> new LinkedHashMap<>()).putIfAbsent(s.kind(), s.routes());
         }
         return answer;
     }
@@ -203,10 +231,22 @@ final class ChaosAdvisor {
                 consumers.put(uri(route.getEndpoint()), route.getRouteId());
             }
         }
+        // the routes of each dead letter channel, which is suggested once, not for the route that consumes it
+        Map<String, List<String>> deadLetters = new LinkedHashMap<>();
+        for (Route route : routes) {
+            try {
+                String dead = deadLetterUri(route);
+                if (dead != null && !route.getRouteId().equals(consumers.get(URISupport.normalizeUri(dead)))) {
+                    deadLetters.computeIfAbsent(dead, k -> new ArrayList<>()).add(route.getRouteId());
+                }
+            } catch (Exception e) {
+                LOG.debug("No dead letter channel for route {}: {}", route.getRouteId(), e.getMessage(), e);
+            }
+        }
         List<Suggestion> answer = new ArrayList<>();
         for (Route route : routes) {
             try {
-                suggest(route, recipes, consumers, answer);
+                suggest(route, recipes, consumers, deadLetters, answer);
             } catch (RuntimeException e) {
                 // the route changed while it was read (such as a reload): nothing to say for it now
                 LOG.debug("No chaos suggestions for route {}: {}", route.getRouteId(), e.getMessage(), e);
@@ -217,7 +257,8 @@ final class ChaosAdvisor {
     }
 
     private static void suggest(
-            Route route, Map<String, ChaosModel.Recipe> recipes, Map<String, String> consumers, List<Suggestion> answer) {
+            Route route, Map<String, ChaosModel.Recipe> recipes, Map<String, String> consumers,
+            Map<String, List<String>> deadLetters, List<Suggestion> answer) {
         String id = route.getRouteId();
         Endpoint from = route.getEndpoint();
         boolean breaker = route.getRoute() instanceof RouteDefinition definition
@@ -281,14 +322,15 @@ final class ChaosAdvisor {
             }
         }
 
-        // the dead letter channel of the route
-        if (route.getErrorHandlerFactory() instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
-            String dead = dlc.getDeadLetterUri().indexOf('?') > 0
-                    ? dlc.getDeadLetterUri().substring(0, dlc.getDeadLetterUri().indexOf('?')) : dlc.getDeadLetterUri();
+        // the dead letter channel of the route: once for the routes that share it, with the first of them
+        String dead = deadLetterUri(route);
+        List<String> shared = dead != null ? deadLetters.getOrDefault(dead, List.of()) : List.of();
+        if (!shared.isEmpty() && id.equals(shared.get(0))) {
+            String who = shared.size() == 1 ? "route " + id + " sends" : "routes " + names(shared) + " send";
             add(answer, recipes, "dlq-unreachable", id, Kind.DEAD_LETTER, Map.of("endpoint", dead),
-                    "route " + id + " sends what fails to the dead letter channel " + dead
-                                                                                                    + ": when that fails too, is the message lost? Add it with a rule that fails the route",
-                    78);
+                    who + " what fails to the dead letter channel " + dead
+                                                                                                    + ": when that fails too, is the message lost? Add it with a rule that fails a route",
+                    78, shared);
         }
 
         // the input of the route
@@ -320,10 +362,33 @@ final class ChaosAdvisor {
         return query > 0 ? uri.substring(0, query) : uri;
     }
 
+    /** The dead letter channel of the route, without its options, or null when its error handler has none. */
+    private static String deadLetterUri(Route route) {
+        if (route.getErrorHandlerFactory() instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
+            String uri = dlc.getDeadLetterUri();
+            return uri.indexOf('?') > 0 ? uri.substring(0, uri.indexOf('?')) : uri;
+        }
+        return null;
+    }
+
+    /** The first three routes and how many more: orders, inventory, stock and 2 more. */
+    private static String names(List<String> routes) {
+        if (routes.size() <= 3) {
+            return String.join(routes.size() == 2 ? " and " : ", ", routes);
+        }
+        return String.join(", ", routes.subList(0, 3)) + " and " + (routes.size() - 3) + " more";
+    }
+
     /** A suggestion from a known rule, with its placeholders filled in: the given values, else their defaults. */
     private static void add(
             List<Suggestion> answer, Map<String, ChaosModel.Recipe> recipes, String recipeId, String route, Kind kind,
             Map<String, String> values, String why, int rank) {
+        add(answer, recipes, recipeId, route, kind, values, why, rank, List.of(route));
+    }
+
+    private static void add(
+            List<Suggestion> answer, Map<String, ChaosModel.Recipe> recipes, String recipeId, String route, Kind kind,
+            Map<String, String> values, String why, int rank, List<String> routes) {
         ChaosModel.Recipe recipe = recipes.get(recipeId);
         if (recipe == null) {
             return;
@@ -337,6 +402,6 @@ final class ChaosAdvisor {
             }
             rule = rule.replace("${" + p.name() + "}", value);
         }
-        answer.add(new Suggestion(route, kind, recipe.id(), recipe.title(), rule, why, rank));
+        answer.add(new Suggestion(route, kind, recipe.id(), recipe.title(), rule, why, rank, routes));
     }
 }

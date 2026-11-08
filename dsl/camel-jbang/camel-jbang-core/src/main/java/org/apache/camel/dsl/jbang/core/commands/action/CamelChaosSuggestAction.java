@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -69,8 +70,17 @@ public class CamelChaosSuggestAction extends CamelChaosAction {
         int n = 0;
         for (Object o : suggestions) {
             JsonObject s = (JsonObject) o;
-            sb.append("\n\n").append(++n).append(". route ").append(s.getString("route")).append(": ")
+            // a dead letter channel that routes share is suggested once, for all of them
+            List<Object> routes = s.getCollection("routes");
+            String where = routes != null && routes.size() > 1
+                    ? "routes " + routes.stream().map(String::valueOf).collect(Collectors.joining(", "))
+                    : "route " + s.getString("route");
+            sb.append("\n\n").append(++n).append(". ").append(where).append(": ")
                     .append(s.getString("title")).append(" (").append(s.getString("kind")).append(')');
+            if (s.getBooleanOrDefault("tried", false)) {
+                // a rule of this kind faulted the route already (camel get chaos --report shows how it went)
+                sb.append(" - tried");
+            }
             sb.append("\n   ").append(s.getString("why"));
             sb.append("\n   camel cmd chaos-add --rule='").append(s.getString("rule")).append('\'');
         }

@@ -58,6 +58,9 @@ final class ChaosAiPrompt {
      */
     static String ofTest(IntegrationInfo info, ChaosInfo.Rule rule) {
         long seed = info.chaos != null ? info.chaos.seed : 0;
+        // a rule draws its random choices by a key: its id here, its place in a scenario or camel.chaos.rules there, so
+        // the test names it with draw= to fail the same messages (CAMEL-26732)
+        String replay = replayRule(rule);
         StringBuilder sb = new StringBuilder();
         sb.append("Make a test of chaos rule ").append(rule.id).append(" of the running integration ").append(name(info))
                 .append(", so this finding runs again with the same faults. The rule (camel-chaos, injected on purpose):\n")
@@ -73,7 +76,9 @@ final class ChaosAiPrompt {
             sb.append("The integration is a Maven project. Read its routes first, then write a JUnit test in src/test/java")
                     .append(" that runs them with chaos switched on: add org.apache.camel:camel-chaos as a test dependency")
                     .append(" when the pom.xml does not have it, and set the properties camel.chaos.enabled=true,")
-                    .append(" camel.chaos.seed=").append(seed).append(" and camel.chaos.rules=<the rule> (CamelTestSupport:")
+                    .append(" camel.chaos.seed=").append(seed).append(" and camel.chaos.rules=").append(replay)
+                    .append(" (draw=").append(rule.id).append(" makes it fail the same messages as rule ").append(rule.id)
+                    .append(" did; CamelTestSupport:")
                     .append(" override configureContext and call config.withUseOverridePropertiesWithPropertiesComponent(props);")
                     .append(" a camel-test-main-junit6 test sets the same properties in its configuration). ")
                     .append(expectation)
@@ -85,8 +90,10 @@ final class ChaosAiPrompt {
         } else {
             sb.append("The integration runs with camel run, without a Maven project, so the test is a scenario with an")
                     .append(" expectation, and a run whose exit code is the verdict. Write the scenario chaos/")
-                    .append(rule.id).append("-test.chaos: a comment line that says what it tests, seed=").append(seed)
-                    .append(", and the rule. ").append(expectation)
+                    .append(rule.id).append("-test.chaos: a comment line that says in words what it tests (not the rule")
+                    .append(" again), seed=").append(seed).append(", and the rule as the line ").append(replay)
+                    .append(" (draw=").append(rule.id).append(" makes it fail the same messages as rule ").append(rule.id)
+                    .append(" did). ").append(expectation)
                     .append(" Then give the command that runs it, with --max-seconds longer than the within= of the")
                     .append(" expectation: camel run * --chaos=chaos/").append(rule.id)
                     .append("-test.chaos --max-seconds=<seconds> --chaos-report=target/chaos-report.json. It ends with exit")
@@ -94,6 +101,12 @@ final class ChaosAiPrompt {
         }
         sb.append(" Write the file with camel_write_file, which asks me first, and change no route.");
         return sb.toString();
+    }
+
+    /** The rule as a test writes it: with draw=<its id>, unless it has a draw= already. */
+    static String replayRule(ChaosInfo.Rule rule) {
+        String text = rule.text.strip();
+        return text.contains(" draw=") ? text : text + " draw=" + rule.id;
     }
 
     /** Whether the folder of the integration is a Maven project, which can have a JUnit test. */
