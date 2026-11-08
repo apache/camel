@@ -22,11 +22,18 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Detects where the currently running Camel CLI launcher lives, and discovers other Camel CLI installations on the same
@@ -55,7 +62,61 @@ public final class InstallDetector {
     private static final boolean IS_WINDOWS
             = System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
 
+    // A nightly build as the Apache snapshot repository names it, which the web installer uses as its directory name:
+    // X.Y.Z-YYYYMMDD.HHMMSS-N, the UTC timestamp and build number of the deploy.
+    private static final Pattern NIGHTLY_BUILD
+            = Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+-([0-9]{8}\\.[0-9]{6})-[0-9]{1,9}");
+    private static final DateTimeFormatter NIGHTLY_TIMESTAMP = DateTimeFormatter.ofPattern("yyyyMMdd.HHmmss");
+
     private InstallDetector() {
+    }
+
+    /**
+     * The nightly build the running launcher was installed as by the web installer ({@code camel self-update --version
+     * SNAPSHOT}), such as {@code 4.24.0-20261108.143653-24}: the name of its directory under
+     * {@link #webInstallerVersionsRoot()}, when that is a nightly build.
+     */
+    public static Optional<String> runningNightlyBuild() {
+        String jarPath = System.getProperty("camel.launcher.jar");
+        if (jarPath == null || jarPath.isBlank()) {
+            return Optional.empty();
+        }
+        return nightlyBuildOf(Paths.get(jarPath), webInstallerVersionsRoot());
+    }
+
+    /**
+     * The nightly build a launcher JAR belongs to: the name of its directory under the web installer's
+     * {@code versionsRoot}, when that is a nightly build ({@code X.Y.Z-YYYYMMDD.HHMMSS-N}).
+     */
+    public static Optional<String> nightlyBuildOf(Path launcherJar, Path versionsRoot) {
+        if (launcherJar == null) {
+            return Optional.empty();
+        }
+        Path jar = launcherJar.toAbsolutePath().normalize();
+        Path root = versionsRoot.toAbsolutePath().normalize();
+        if (!jar.startsWith(root) || jar.getNameCount() <= root.getNameCount()) {
+            return Optional.empty();
+        }
+        String dir = jar.getName(root.getNameCount()).toString();
+        return isNightlyBuild(dir) ? Optional.of(dir) : Optional.empty();
+    }
+
+    /** Whether {@code value} is a nightly build, {@code X.Y.Z-YYYYMMDD.HHMMSS-N}. */
+    public static boolean isNightlyBuild(String value) {
+        return value != null && NIGHTLY_BUILD.matcher(value).matches();
+    }
+
+    /** When a nightly build was deployed to the snapshot repository (its timestamp is UTC). */
+    public static Optional<ZonedDateTime> nightlyBuildTime(String build) {
+        Matcher m = build != null ? NIGHTLY_BUILD.matcher(build) : null;
+        if (m == null || !m.matches()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(LocalDateTime.parse(m.group(1), NIGHTLY_TIMESTAMP).atZone(ZoneOffset.UTC));
+        } catch (DateTimeParseException e) {
+            return Optional.empty();
+        }
     }
 
     /**

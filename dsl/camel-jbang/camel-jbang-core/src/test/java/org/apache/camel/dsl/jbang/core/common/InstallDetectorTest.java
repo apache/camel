@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
@@ -181,6 +183,30 @@ class InstallDetectorTest {
         Files.createSymbolicLink(b, a);
 
         assertThat(InstallDetector.followLinks(a)).isIn(a, b);
+    }
+
+    @Test
+    void nightlyBuildIsTheVersionDirectoryOfTheLauncher() {
+        Path versions = Path.of("/home/user/.local/share/camel-cli/versions");
+
+        assertThat(InstallDetector.nightlyBuildOf(
+                versions.resolve("4.24.0-20261108.143653-24/lib/camel-launcher-4.24.0-SNAPSHOT.jar"), versions))
+                .contains("4.24.0-20261108.143653-24");
+        assertThat(InstallDetector.nightlyBuildOf(versions.resolve("4.23.0/lib/camel-launcher-4.23.0.jar"), versions))
+                .isEmpty();
+        assertThat(InstallDetector.nightlyBuildOf(Path.of("/opt/camel/lib/camel-launcher.jar"), versions)).isEmpty();
+        assertThat(InstallDetector.nightlyBuildOf(versions, versions)).isEmpty();
+        assertThat(InstallDetector.nightlyBuildOf(null, versions)).isEmpty();
+    }
+
+    @Test
+    void nightlyBuildTimeIsTheUtcDeployTimestamp() {
+        assertThat(InstallDetector.nightlyBuildTime("4.24.0-20261108.143653-24"))
+                .contains(ZonedDateTime.of(2026, 11, 8, 14, 36, 53, 0, ZoneOffset.UTC));
+        // not a valid date or time
+        assertThat(InstallDetector.nightlyBuildTime("4.24.0-20261308.143653-24")).isEmpty();
+        assertThat(InstallDetector.nightlyBuildTime("4.24.0")).isEmpty();
+        assertThat(InstallDetector.nightlyBuildTime(null)).isEmpty();
     }
 
     @Test

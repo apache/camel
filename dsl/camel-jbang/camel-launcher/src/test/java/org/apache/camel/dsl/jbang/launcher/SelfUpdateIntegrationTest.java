@@ -122,8 +122,8 @@ class SelfUpdateIntegrationTest {
 
     private int run(WebsiteInstallerFixture fixture, Path home, Path xdgDataHome, String... args) throws Exception {
         HttpClient httpClient = trustingHttpClient(fixture);
-        ManifestFetcher fetcher
-                = new ManifestFetcher(fixture.baseUrl() + "/camel-cli/releases", fixture.mavenUrl(), httpClient);
+        ManifestFetcher fetcher = new ManifestFetcher(
+                fixture.baseUrl() + "/camel-cli/releases", fixture.mavenUrl(), fixture.snapshotUrl(), httpClient);
         InstallScriptFetcher scriptFetcher = new InstallScriptFetcher(fixture.baseUrl(), httpClient);
         Map<String, String> installerEnv = fixture.environment(home);
         SelfUpdateCommand cmd
@@ -468,6 +468,119 @@ class SelfUpdateIntegrationTest {
 
             assertThat(exit).isEqualTo(1);
             assertThat(printer.getOutput()).contains("Homebrew");
+        }
+    }
+
+    private static final String OLD_NIGHTLY = "9.9.0-20261101.010000-1";
+
+    @Test
+    void installsNewestNightlyOfMainAndPinsSnapshot(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, "1.0.0");
+            publishRealInstallSh(fixture);
+            WebsiteInstallTest.publishSnapshotVersions(fixture, "9.9.0-SNAPSHOT", "9.8.1-SNAPSHOT");
+            WebsiteInstallTest.publishNightly(fixture, "9.9.0-SNAPSHOT", WebsiteInstallTest.NIGHTLY, null);
+
+            int exit = run(fixture, home, xdgDataHome, "--version", "snapshot");
+
+            assertThat(exit).isZero();
+            assertThat(printer.getOutput()).contains("Installed Camel CLI " + WebsiteInstallTest.NIGHTLY);
+            // once: install.sh leaves the note to camel self-update
+            assertThat(printer.getOutput().split("is a nightly development build of Apache Camel", -1)).hasSize(2);
+            assertThat(xdgDataHome.resolve("camel-cli/versions/" + WebsiteInstallTest.NIGHTLY)).isDirectory();
+            assertThat(xdgDataHome.resolve("camel-cli/pinned-version")).hasContent("SNAPSHOT");
+        }
+    }
+
+    @Test
+    void snapshotPinMovesToNewerNightly(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, OLD_NIGHTLY);
+            Path pinFile = pin(xdgDataHome, "9.9.0-SNAPSHOT");
+            publishRealInstallSh(fixture);
+            WebsiteInstallTest.publishNightly(fixture, "9.9.0-SNAPSHOT", WebsiteInstallTest.NIGHTLY, null);
+
+            int exit = run(fixture, home, xdgDataHome);
+
+            assertThat(exit).isZero();
+            assertThat(xdgDataHome.resolve("camel-cli/versions/" + WebsiteInstallTest.NIGHTLY)).isDirectory();
+            assertThat(pinFile).hasContent("9.9.0-SNAPSHOT");
+        }
+    }
+
+    @Test
+    void snapshotPinOnNewestNightlySkipsDelegation(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, WebsiteInstallTest.NIGHTLY);
+            pin(xdgDataHome, "SNAPSHOT");
+            // install.sh is deliberately not published: delegating would fail
+            WebsiteInstallTest.publishSnapshotVersions(fixture, "9.9.0-SNAPSHOT");
+            WebsiteInstallTest.publishNightly(fixture, "9.9.0-SNAPSHOT", WebsiteInstallTest.NIGHTLY, null);
+
+            int exit = run(fixture, home, xdgDataHome);
+
+            assertThat(exit).isZero();
+            assertThat(printer.getOutput()).contains("already on the newest nightly build for the nightly builds of main");
+        }
+    }
+
+    @Test
+    void checksForNewerNightlyWithoutDelegating(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, OLD_NIGHTLY);
+            pin(xdgDataHome, "9.9.0-SNAPSHOT");
+            WebsiteInstallTest.publishNightly(fixture, "9.9.0-SNAPSHOT", WebsiteInstallTest.NIGHTLY, null);
+
+            int exit = run(fixture, home, xdgDataHome, "--check");
+
+            assertThat(exit).isZero();
+            assertThat(printer.getOutput())
+                    .contains("A new nightly build is available (" + OLD_NIGHTLY + " -> " + WebsiteInstallTest.NIGHTLY + ")");
+            assertThat(xdgDataHome.resolve("camel-cli/versions/" + WebsiteInstallTest.NIGHTLY)).doesNotExist();
+        }
+    }
+
+    @Test
+    void explicitReleaseLeavesTheNightlies(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, WebsiteInstallTest.NIGHTLY);
+            Path pinFile = pin(xdgDataHome, "SNAPSHOT");
+            publishRealInstallSh(fixture);
+            WebsiteInstallTest.publishVersion(fixture, NEWER_VERSION);
+
+            int exit = run(fixture, home, xdgDataHome, "--version", NEWER_VERSION);
+
+            assertThat(exit).isZero();
+            assertThat(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION)).isDirectory();
+            // back to following the releases
+            assertThat(pinFile).doesNotExist();
+        }
+    }
+
+    @Test
+    void exactPinRefusesNightlies(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, "1.0.0");
+            pin(xdgDataHome, "1.0.0");
+            WebsiteInstallTest.publishNightly(fixture, "9.9.0-SNAPSHOT", WebsiteInstallTest.NIGHTLY, null);
+
+            int exit = run(fixture, home, xdgDataHome, "--version", "9.9.0-SNAPSHOT");
+
+            assertThat(exit).isEqualTo(1);
+            assertThat(printer.getOutput()).contains("pinned to version 1.0.0");
+            assertThat(xdgDataHome.resolve("camel-cli/versions/" + WebsiteInstallTest.NIGHTLY)).doesNotExist();
         }
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.launcher.selfupdate;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -42,12 +43,18 @@ import picocli.CommandLine;
                              "%nExamples:",
                              "  camel self-update",
                              "  camel self-update --version 4.23.0",
+                             "  camel self-update --version SNAPSHOT",
                              "  camel self-update --check",
                              "%nAn install pinned with the web installer's --version X.Y.Z never moves; one pinned with",
-                             "--version X.Y or --version LTS moves to the newest release of that line, or the newest LTS." })
+                             "--version X.Y or --version LTS moves to the newest release of that line, or the newest LTS.",
+                             "%n--version SNAPSHOT (main) or X.Y.Z-SNAPSHOT installs the newest nightly build from the Apache",
+                             "snapshot repository, and pins it, so camel self-update follows the nightly builds. Nightly",
+                             "builds are development builds for testing, not Apache releases." })
 public class SelfUpdateCommand extends CamelCommand {
 
-    @CommandLine.Option(names = { "--version" }, description = "Install a specific version instead of the latest")
+    @CommandLine.Option(names = { "--version" },
+                        description = "Install a specific version instead of the latest: X.Y.Z, or the nightly builds of"
+                                      + " SNAPSHOT (main) or X.Y.Z-SNAPSHOT")
     String version;
 
     @CommandLine.Option(names = { "--check" }, description = "Only report whether a newer version is available")
@@ -86,12 +93,12 @@ public class SelfUpdateCommand extends CamelCommand {
         // only within its selector, so an explicit --version, which could leave it, is refused as well.
         Optional<String> pinned = InstallDetector.pinnedVersion();
         Pin pin = pinned.map(Pin::parse).orElse(null);
-        if (pin != null && !pin.tracksAlias()) {
+        if (pin != null && !pin.tracksAlias() && !pin.followsNightlies()) {
             printer().printErr("this install is pinned to version " + pinned.get() + " - remove "
                                + InstallDetector.pinnedVersionFile() + " to resume tracking new releases");
             return 1;
         }
-        if (pin != null && version != null) {
+        if (pin != null && pin.tracksAlias() && version != null) {
             // Removing the pin file would make the install track the latest release, which is not what asking for
             // one version means, so point at the installer, which replaces the selector pin with an exact one.
             printer().printErr(selectorPinRefusal(pin, version));
@@ -99,6 +106,18 @@ public class SelfUpdateCommand extends CamelCommand {
         }
 
         ManifestFetcher fetcher = fetcherOverride != null ? fetcherOverride : ManifestFetcher.fromEnvironment();
+        if (version != null && Nightly.isNightly(version)) {
+            return updateToNightly(fetcher, info, Nightly.normalize(version), true);
+        }
+        if (version == null && pin != null && pin.followsNightlies()) {
+            return updateToNightly(fetcher, info, pin.value(), false);
+        }
+
+        // From here on a release. An explicit --version leaves a nightly pin (the pin is removed once installed).
+        boolean leavesNightlies = pin != null && pin.followsNightlies();
+        if (leavesNightlies) {
+            pin = null;
+        }
         ManifestFetcher.Manifest manifest;
         try {
             if (pin != null) {
@@ -147,7 +166,75 @@ public class SelfUpdateCommand extends CamelCommand {
         // script's own manifest fetch below, and the script would silently install a version this command never
         // actually decided on. For an X.Y or LTS pin this is the version the alias resolved to; the delegated run
         // (CAMEL_INSTALL_SELF_UPDATE=true) leaves the selector in the pin file untouched.
-        return runInstaller(manifest.version());
+        int exit = runInstaller(manifest.version());
+        if (exit == 0 && leavesNightlies) {
+            return writePin(null);
+        }
+        return exit;
+    }
+
+    // Installs the newest nightly build of the selector (SNAPSHOT or X.Y.Z-SNAPSHOT), or the nightly build it names.
+    // An explicit --version pins the selector, so a later camel self-update follows the nightly builds; following the
+    // pin (explicit=false) only installs a newer build.
+    private Integer updateToNightly(
+            ManifestFetcher fetcher, InstallDetector.InstallInfo info, String selector, boolean explicit) {
+        String build;
+        try {
+            if (Nightly.isBuild(selector)) {
+                build = selector;
+            } else {
+                String snapshotVersion = Nightly.isLatest(selector) ? fetcher.fetchLatestSnapshotVersion() : selector;
+                build = fetcher.fetchNewestBuild(snapshotVersion);
+            }
+        } catch (SelfUpdateException e) {
+            printer().printErr(e.getMessage());
+            return 1;
+        }
+
+        Optional<String> running = Nightly.runningBuild(info.location(), InstallDetector.webInstallerVersionsRoot());
+        boolean same = running.isPresent() && running.get().equals(build);
+        boolean newer = running.isEmpty()
+                || !Nightly.snapshotVersionOf(running.get()).equals(Nightly.snapshotVersionOf(build))
+                || Nightly.compare(build, running.get()) > 0;
+        String current = running.orElseGet(() -> new DefaultCamelCatalog().getCatalogVersion());
+
+        if (checkOnly) {
+            printer().println(same || !newer
+                    ? "Camel CLI is already on the newest nightly build for " + Nightly.describe(selector) + " (" + current
+                      + ")"
+                    : "A new nightly build is available (" + current + " -> " + build + ")");
+            return 0;
+        }
+        if (same || (!newer && !explicit)) {
+            printer().println(
+                    "Camel CLI is already on the newest nightly build for " + Nightly.describe(selector) + " (" + current
+                              + ")");
+            return explicit && !Nightly.isBuild(selector) ? writePin(selector) : 0;
+        }
+
+        printer().println(Nightly.notice(build));
+        int exit = runInstaller(build);
+        if (exit == 0 && explicit && !Nightly.isBuild(selector)) {
+            return writePin(selector);
+        }
+        return exit;
+    }
+
+    // Writes (or, for null, removes) the pin of the web installer, as install.sh does for an explicit --version.
+    private int writePin(String selector) {
+        Path file = InstallDetector.pinnedVersionFile();
+        try {
+            if (selector == null) {
+                Files.deleteIfExists(file);
+            } else {
+                Files.createDirectories(file.getParent());
+                Files.writeString(file, selector + "\n", StandardCharsets.UTF_8);
+            }
+            return 0;
+        } catch (IOException e) {
+            printer().printErr("installed, but failed to update the pin in " + file, e);
+            return 1;
+        }
     }
 
     private Integer runInstaller(String targetVersion) {

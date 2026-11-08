@@ -127,6 +127,52 @@ one (for example after a `--version LTS` install that resolved to 4.22.2), `came
 with a "pinned to version LTS" message. Re-run the installer with `--version LTS` (or `--version 4.22`)
 to update instead.
 
+== Nightly development builds
+
+Apache publishes a nightly build of the Camel CLI to the Apache snapshot repository, for main and for the
+maintenance branches. It lets you try the latest development code, or a fix before its patch release, without
+building Camel yourself.
+
+IMPORTANT: A nightly build is a development build for testing, not an Apache release. Do not use it in production.
+
+[source,bash]
+----
+camel self-update --version SNAPSHOT          # the newest nightly build of main
+camel self-update --version 4.22.3-SNAPSHOT   # the newest nightly build of a maintenance branch
+camel self-update --version LTS               # back to a release (or --version X.Y.Z)
+----
+
+The installer takes the same values:
+
+[source,bash]
+----
+curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version SNAPSHOT
+----
+
+`SNAPSHOT` and `X.Y.Z-SNAPSHOT` are recorded as the pin, so a later `camel self-update` installs the newest nightly
+build of main, or of that version. Installing a release with `--version` (or running the installer without
+`--version`) leaves the nightly builds and goes back to the releases. A pin to nightly builds gets no update notice, as
+a new build lands every day.
+
+Each nightly build is installed in its own directory, named after it, such as
+`versions/4.24.0-20261108.143653-24` (the version, the UTC time it was built, and the build number). A command that
+still runs from the previous build keeps its files. The installer keeps the three newest nightly builds and removes the
+older ones; it never removes a release. `camel version` shows which nightly build runs, and when it was built:
+
+[source]
+----
+$ camel version
+Camel CLI version: 4.24.0-SNAPSHOT
+Nightly build: 4.24.0-20261108.143653-24 (built 2026-11-08 14:36:53 UTC)
+----
+
+A release is verified against a SHA-256 recorded in a manifest on the Camel website, a different server than the one
+it is downloaded from. A nightly build is verified only against the SHA-1 published next to it in the snapshot
+repository: this catches a broken download, not a tampered one.
+
+NOTE: Installing nightly builds needs a Camel CLI and installer that support them. The Windows installer
+(`install.ps1`) does not install nightly builds yet.
+
 == Requirements
 
 * A Java 21+ runtime available at install and run time. The launcher locates Java from

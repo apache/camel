@@ -197,4 +197,157 @@ class ManifestFetcherTest {
 
         assertThatThrownBy(() -> fetcher.fetchAlias(name)).isInstanceOf(IllegalArgumentException.class);
     }
+
+    // As the Apache snapshot repository publishes them (trimmed).
+    static final String ROOT_METADATA = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <metadata>
+              <groupId>org.apache.camel</groupId>
+              <artifactId>camel-launcher</artifactId>
+              <versioning>
+                <latest>4.22.3-SNAPSHOT</latest>
+                <release></release>
+                <versions>
+                  <version>4.14.10-SNAPSHOT</version>
+                  <version>4.24.0-SNAPSHOT</version>
+                  <version>4.22.3-SNAPSHOT</version>
+                  <version>4.9.0</version>
+                </versions>
+              </versioning>
+            </metadata>
+            """;
+
+    static String versionMetadata(String snapshotVersion, String build) {
+        return """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <metadata modelVersion="1.1.0">
+                  <groupId>org.apache.camel</groupId>
+                  <artifactId>camel-launcher</artifactId>
+                  <version>%1$s</version>
+                  <versioning>
+                    <snapshot>
+                      <timestamp>20261108.143653</timestamp>
+                      <buildNumber>24</buildNumber>
+                    </snapshot>
+                    <snapshotVersions>
+                      <snapshotVersion>
+                        <extension>pom</extension>
+                        <value>%2$s</value>
+                      </snapshotVersion>
+                      <snapshotVersion>
+                        <classifier>bin</classifier>
+                        <extension>zip</extension>
+                        <value>%2$s</value>
+                      </snapshotVersion>
+                      <snapshotVersion>
+                        <classifier>bin</classifier>
+                        <extension>tar.gz</extension>
+                        <value>%2$s</value>
+                      </snapshotVersion>
+                    </snapshotVersions>
+                  </versioning>
+                </metadata>
+                """.formatted(snapshotVersion, build);
+    }
+
+    @Test
+    void latestSnapshotVersionIsTheHighestNotTheLastDeployed() {
+        // <latest> names whatever deployed last, which can be a maintenance branch
+        assertThat(ManifestFetcher.parseLatestSnapshotVersion(ROOT_METADATA.getBytes(StandardCharsets.UTF_8)))
+                .isEqualTo("4.24.0-SNAPSHOT");
+    }
+
+    @Test
+    void latestSnapshotVersionRequiresOne() {
+        String metadata = "<metadata><versioning><versions><version>4.9.0</version></versions></versioning></metadata>";
+
+        assertThatThrownBy(() -> ManifestFetcher.parseLatestSnapshotVersion(metadata.getBytes(StandardCharsets.UTF_8)))
+                .isInstanceOf(SelfUpdateException.class)
+                .hasMessageContaining("no X.Y.Z-SNAPSHOT version");
+    }
+
+    @Test
+    void newestBuildIsTheValueOfTheLauncherArchive() {
+        byte[] metadata = versionMetadata("4.24.0-SNAPSHOT", "4.24.0-20261108.143653-24").getBytes(StandardCharsets.UTF_8);
+
+        assertThat(ManifestFetcher.parseNewestBuild(metadata, "4.24.0-SNAPSHOT")).isEqualTo("4.24.0-20261108.143653-24");
+    }
+
+    // Nexus 2 serves this Maven 2 metadata to the JDK HTTP client: no <snapshotVersions>
+    @Test
+    void newestBuildFromMaven2Metadata() {
+        String metadata = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <metadata>
+                  <groupId>org.apache.camel</groupId>
+                  <artifactId>camel-launcher</artifactId>
+                  <version>4.24.0-SNAPSHOT</version>
+                  <versioning>
+                    <snapshot>
+                      <timestamp>20261108.143653</timestamp>
+                      <buildNumber>24</buildNumber>
+                    </snapshot>
+                    <lastUpdated>20261108143653</lastUpdated>
+                  </versioning>
+                </metadata>
+                """;
+
+        assertThat(ManifestFetcher.parseNewestBuild(metadata.getBytes(StandardCharsets.UTF_8), "4.24.0-SNAPSHOT"))
+                .isEqualTo("4.24.0-20261108.143653-24");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "20261108.143653</timestamp><x>", "2026/../../x", "" })
+    void rejectsAnInvalidMaven2Snapshot(String timestamp) {
+        String metadata = "<metadata><versioning><snapshot><timestamp>" + timestamp
+                          + "</timestamp><buildNumber>24</buildNumber></snapshot></versioning></metadata>";
+
+        assertThatThrownBy(() -> ManifestFetcher.parseNewestBuild(metadata.getBytes(StandardCharsets.UTF_8),
+                "4.24.0-SNAPSHOT"))
+                .isInstanceOf(SelfUpdateException.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "4.24.0-20261108.143653-24/../../x", "4.22.3-20261108.143653-24", "4.24.0-SNAPSHOT", "" })
+    void rejectsAnInvalidOrForeignBuild(String build) {
+        byte[] metadata = versionMetadata("4.24.0-SNAPSHOT", build).getBytes(StandardCharsets.UTF_8);
+
+        assertThatThrownBy(() -> ManifestFetcher.parseNewestBuild(metadata, "4.24.0-SNAPSHOT"))
+                .isInstanceOf(SelfUpdateException.class)
+                .hasMessageContaining("invalid nightly build of 4.24.0-SNAPSHOT");
+    }
+
+    @Test
+    void rejectsMetadataWithADoctype() {
+        String metadata = "<?xml version=\"1.0\"?><!DOCTYPE metadata [<!ENTITY x SYSTEM \"file:///etc/passwd\">]>"
+                          + "<metadata><versioning><versions><version>&x;</version></versions></versioning></metadata>";
+
+        assertThatThrownBy(() -> ManifestFetcher.parseLatestSnapshotVersion(metadata.getBytes(StandardCharsets.UTF_8)))
+                .isInstanceOf(SelfUpdateException.class)
+                .hasMessageContaining("the snapshot metadata is not valid");
+    }
+
+    @Test
+    void fetchesTheNewestBuildOverHttp() throws Exception {
+        HttpServer server = serve(Map.of(
+                "/snapshots/maven-metadata.xml", ROOT_METADATA,
+                "/snapshots/4.24.0-SNAPSHOT/maven-metadata.xml",
+                versionMetadata("4.24.0-SNAPSHOT", "4.24.0-20261108.143653-24")));
+        try {
+            String base = "http://127.0.0.1:" + server.getAddress().getPort();
+            ManifestFetcher fetcher = new ManifestFetcher(base + "/releases", base + "/maven2", base + "/snapshots");
+
+            String snapshotVersion = fetcher.fetchLatestSnapshotVersion();
+
+            assertThat(snapshotVersion).isEqualTo("4.24.0-SNAPSHOT");
+            assertThat(fetcher.fetchNewestBuild(snapshotVersion)).isEqualTo("4.24.0-20261108.143653-24");
+            assertThatThrownBy(() -> fetcher.fetchNewestBuild("4.22.3-SNAPSHOT"))
+                    .isInstanceOf(SelfUpdateException.class)
+                    .hasMessageContaining("no nightly builds of 4.22.3-SNAPSHOT at");
+            assertThatThrownBy(() -> fetcher.fetchNewestBuild("../x"))
+                    .isInstanceOf(IllegalArgumentException.class);
+        } finally {
+            server.stop(0);
+        }
+    }
 }
