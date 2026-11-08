@@ -1721,6 +1721,8 @@ public class LocalCliConnector extends ServiceSupport
                     summary.put("size", json.get("size"));
                     summary.put("maximumEntries", json.get("maximumEntries"));
                     summary.put("timeToLive", json.get("timeToLive"));
+                    // size is the entries kept (a few of each kind); total is the errors that happened
+                    ErrorCounts.summarize(json, summary);
                     root.put("errors", summary);
                 }
             }

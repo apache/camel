@@ -21,6 +21,11 @@ import java.util.List;
 import java.util.Set;
 
 class IntegrationInfo {
+
+    /** A kind of error that happened: in a route, of an exception type, this many times. */
+    record ErrorKind(String routeId, String exceptionType, long count) {
+    }
+
     String pid;
     String name;
     String camelVersion;
@@ -109,7 +114,9 @@ class IntegrationInfo {
     // the chaos rules and report (camel-chaos), or null without camel-chaos
     ChaosInfo chaos;
     final List<KafkaConsumerInfo> kafkaConsumers = new ArrayList<>();
+    // the errors that happened (the registry keeps only a few entries of each kind), and the kinds that happened most
     int errorCount;
+    volatile List<ErrorKind> errorKinds = List.of();
     volatile List<ErrorInfo> errors = new ArrayList<>();
     boolean inflightBrowseEnabled;
     final List<InflightInfo> inflightExchanges = new ArrayList<>();

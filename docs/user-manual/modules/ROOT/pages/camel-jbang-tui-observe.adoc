@@ -31,8 +31,9 @@ routes.
 one handed off with `seda` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
 last 5 minutes. *Up* and *Down* select a line, and *Enter* opens a route drilled down on the Diagram, or an endpoint with
 its details on the Endpoint tab.
-* *Last 5m* has the exchanges and how they ended, with the cause that happened most, and *What happened* a line per route
-over the last 5 minutes, coloured as on the Timeline, with when the worst happened. *+* and *-* zoom between 5, 2 and 1
+* *Last 5m* has the exchanges and how they ended, with the cause that happened most, and *What happened* a strip per route
+over the last 5 minutes, coloured as on the Timeline, with when the worst happened. The strips are as wide as the screen
+allows, and on a tall screen up to two rows high, with room around the panels. *+* and *-* zoom between 5, 2 and 1
 minutes (zooming in centres on the last trouble, so you see what the other routes did then), and *Left* and *Right*
 move a zoomed window. *4* opens the Timeline for each second.
 
@@ -160,7 +161,9 @@ Press *F5* to clear captured traces.
 == Troubleshooting Errors
 
 The Errors tab collects failures with full stack traces and exchange context.
-When errors occur, a red badge appears on the tab.
+When errors occur, a red badge appears on the tab with the number of errors that happened. The tab keeps only the
+newest few of each kind of error (the same route, step and exception), and its *COUNT* column says how many times that
+kind happened.
 
 For deeper troubleshooting, press *d* on an error to see its Diagram view: the path the failed
 exchange took through the routes, replayed from its message history (the same replay as in the
