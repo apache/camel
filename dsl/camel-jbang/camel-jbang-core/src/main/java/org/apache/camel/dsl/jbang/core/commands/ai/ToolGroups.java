@@ -45,6 +45,8 @@ public final class ToolGroups {
     public static final String CHAOS_CHANGE_TOOL = "camel_runtime_chaos_change";
     public static final String CHAOS_REMOVE_TOOL = "camel_runtime_chaos_remove";
     public static final String CHAOS_CLEAR_TOOL = "camel_runtime_chaos_clear";
+    public static final String CHAOS_SUGGEST_TOOL = "camel_runtime_chaos_suggest";
+    public static final String CHAOS_LOAD_TOOL = "camel_runtime_chaos_load";
 
     /**
      * A loaded group.
@@ -139,8 +141,9 @@ public final class ToolGroups {
                 case CHAOS -> groups.add(new Group(
                         group,
                         f.chaosOn()
-                                ? List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL, CHAOS_CHECK_TOOL, CHAOS_ADD_TOOL,
-                                        CHAOS_CHANGE_TOOL, CHAOS_REMOVE_TOOL, CHAOS_CLEAR_TOOL)
+                                ? List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL, CHAOS_SUGGEST_TOOL, CHAOS_CHECK_TOOL,
+                                        CHAOS_ADD_TOOL, CHAOS_CHANGE_TOOL, CHAOS_REMOVE_TOOL, CHAOS_CLEAR_TOOL,
+                                        CHAOS_LOAD_TOOL)
                                 : List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL),
                         describeChaos(f)));
             }
@@ -238,7 +241,8 @@ public final class ToolGroups {
         return "Chaos: camel-chaos is on, so failures may be injected on purpose; " + CHAOS_LIST_TOOL + " and "
                + CHAOS_REPORT_TOOL + " show the rules and what they did; " + CHAOS_ADD_TOOL
                + " takes a rule such as endpoint=kafka:orders* error rate=0.1 until=5m, and " + CHAOS_CHECK_TOOL
-               + " says what it would hit without adding it.";
+               + " says what it would hit without adding it; " + CHAOS_SUGGEST_TOOL
+               + " suggests rules from what the routes do, and " + CHAOS_LOAD_TOOL + " loads a scenario.";
     }
 
     /** {@code Circuit breakers in routes a, b}, or without the routes when they are not known. */

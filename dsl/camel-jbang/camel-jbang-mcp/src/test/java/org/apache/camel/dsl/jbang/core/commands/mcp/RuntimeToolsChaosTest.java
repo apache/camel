@@ -158,6 +158,51 @@ class RuntimeToolsChaosTest {
     }
 
     @Test
+    void whatToTryAndAScenarioAgainstARunningIntegration() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+        awaitList(l -> l.getBoolean("enabled"));
+
+        // a hand-off over seda, which what to try suggests failing the route after it for
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:hand").routeId("hand").to("seda:handed");
+                from("seda:handed").routeId("handed").log("handed");
+            }
+        });
+
+        // what to try only reads the routes: each suggestion is a rule the check takes, and nothing is added
+        JsonObject suggested = tools.camel_runtime_chaos_suggest("shop");
+        List<Map<String, Object>> suggestions = suggested.getCollection("suggestions");
+        assertThat(suggestions).anySatisfy(s -> {
+            assertThat(s.get("route")).isEqualTo("hand");
+            assertThat((String) s.get("rule")).startsWith("route=handed error");
+        });
+        for (Map<String, Object> s : suggestions) {
+            assertThat(s).containsKeys("route", "kind", "rule", "why");
+            assertThat(tools.camel_runtime_chaos_check("shop", (String) s.get("rule")).<List<Object>> getCollection(
+                    "rules")).hasSize(1);
+        }
+        assertThat(send()).isNull();
+
+        // a scenario replaces the rules there are
+        tools.camel_runtime_chaos_add("shop", "step=* delay duration=1ms");
+        JsonObject loaded = tools.camel_runtime_chaos_load("shop",
+                "# the target is down\nendpoint=direct:target error\n", "outage");
+        assertThat(loaded.<List<Object>> getCollection("ids")).hasSize(1);
+        assertThat(loaded.getBoolean("reset")).isTrue();
+        assertThat(rules(awaitList(l -> rules(l).size() == 1 && rules(l).get(0).contains("error"))).get(0))
+                .endsWith("endpoint=direct:target error");
+        assertThat(send()).isNotNull();
+
+        // a scenario with a line that is not valid changes nothing
+        assertThatThrownBy(() -> tools.camel_runtime_chaos_load("shop", "endpoint=direct:target explode\n", null))
+                .isInstanceOf(ToolCallException.class);
+        assertThat(rules(tools.camel_runtime_chaos_list("shop"))).hasSize(1);
+        assertThat(send()).isNotNull();
+    }
+
+    @Test
     void everyToolAgainstARunningIntegration() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
         assertThat(awaitList(l -> l.getBoolean("enabled")).<List<Object>> getCollection("rules")).isEmpty();

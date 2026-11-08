@@ -232,7 +232,13 @@ class AskToolsTest {
         assertThat(change.title()).isEqualTo("change chaos rule r1 of the selected integration");
         assertThat(change.target()).isEqualTo("endpoint=* drop");
         // the others only read or take faults away
-        for (String name : List.of("chaos_check", "chaos_remove", "chaos_clear", "chaos_list", "chaos_report")) {
+        ToolConfirms.Call load = tools.confirmation("chaos_load",
+                Map.of("scenario", "# outage\nendpoint=http:* error\n", "scenarioName", "outage"));
+        assertThat(load.title()).isEqualTo("load chaos scenario outage into the selected integration");
+        // the user sees the rules of the scenario
+        assertThat(load.target()).isEqualTo("# outage\nendpoint=http:* error");
+        for (String name : List.of("chaos_check", "chaos_suggest", "chaos_remove", "chaos_clear", "chaos_list",
+                "chaos_report")) {
             assertThat(tools.confirmation(name, Map.of("id", "r1"))).as(name).isNull();
         }
     }

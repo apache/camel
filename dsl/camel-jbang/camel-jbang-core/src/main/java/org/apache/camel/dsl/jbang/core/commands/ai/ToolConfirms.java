@@ -316,6 +316,22 @@ public final class ToolConfirms {
     }
 
     /**
+     * The call of loading a chaos scenario (chaos_load): the rules there are now are replaced by those of the scenario,
+     * shown as they are, and the report starts again. Null without a scenario, which the tool refuses.
+     */
+    public static Call chaosLoad(String integration, String scenarioName, String scenario) {
+        if (scenario == null || scenario.isBlank()) {
+            return null;
+        }
+        String where = integration != null && !integration.isBlank() ? integration : "the selected integration";
+        String name = scenarioName != null && !scenarioName.isBlank() ? " " + scenarioName.strip() : "";
+        return new Call(
+                "load chaos scenario" + name + " into " + where, scenario.strip(),
+                "The rules of the integration are replaced by those of the scenario and the report starts again; while"
+                                                                                   + " they are active, the integration's messages fail, wait or get lost");
+    }
+
+    /**
      * Splits a text with several rules separated by {@code ;}, as in camel.chaos.rules; a {@code ;} inside quotes does
      * not split.
      */
