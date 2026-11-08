@@ -58,7 +58,7 @@ class ManagedSanitizerTest extends ManagementTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.getPropertiesComponent().addOverrideProperty("camel.sanitizer.enabled", "true");
-        context.getCamelContextExtension().setStepHook(this::beforeStep);
+        context.getCamelContextExtension().addStepHook(this::beforeStep);
         return context;
     }
 
