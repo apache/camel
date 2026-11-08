@@ -65,7 +65,8 @@ import org.slf4j.LoggerFactory;
 public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(SingleNodeKafkaResumeStrategy.class);
 
-    private Consumer<byte[], byte[]> consumer;
+    // the consumer of the running refresh task, for wakeup() in stop(); each task closes only its own consumer
+    private volatile Consumer<byte[], byte[]> consumer;
     private Producer<byte[], byte[]> producer;
     private Duration pollDuration = Duration.ofSeconds(1);
 
@@ -207,24 +208,28 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
     private void refresh(CountDownLatch latch) {
         LOG.trace("Creating a offset cache refresher");
 
+        // a local consumer: a task of an earlier start that outlives stop() must close its own consumer, not the one of
+        // the task that runs now
+        Consumer<byte[], byte[]> current = null;
         try {
-            consumer = createConsumer();
+            current = createConsumer();
+            consumer = current;
             // a new consumer (such as after a restart) must subscribe again
             subscribed = false;
 
-            subscribe(consumer);
+            subscribe(current);
 
             LOG.debug("Loading records from topic {}", resumeStrategyConfiguration.getTopic());
-            poll(consumer, latch);
+            poll(current, latch);
         } catch (WakeupException e) {
             LOG.info("Kafka consumer was interrupted during a blocking call");
         } catch (Exception e) {
             LOG.error("Error while refreshing the local cache: {}", e.getMessage(), e);
         } finally {
-            if (consumer != null) {
-                consumer.unsubscribe();
+            if (current != null) {
+                current.unsubscribe();
                 try {
-                    consumer.close(CloseOptions.timeout(Duration.ofSeconds(5)));
+                    current.close(CloseOptions.timeout(Duration.ofSeconds(5)));
                 } catch (Exception e) {
                     LOG.warn("Error closing the consumer: {} (this error will be ignored)", e.getMessage(), e);
                 }
@@ -247,13 +252,22 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
                             consumerRecord.timestampType(), value);
                 }
 
+                if (value == null) {
+                    // a tombstone, which on a compacted topic means "delete this key". Camel never writes tombstones
+                    // to the resume topic, so it is skipped, and the key keeps the offset it has in the cache
+                    LOG.warn("Ignoring the tombstone (a record without a value) at offset {} of {}-{}: Camel does not write"
+                             + " tombstones to the resume topic, so the offset of its key is kept",
+                            consumerRecord.offset(), consumerRecord.topic(), consumerRecord.partition());
+                    continue;
+                }
+
                 try {
                     if (!deserializable.deserialize(ByteBuffer.wrap(consumerRecord.key()),
                             ByteBuffer.wrap(consumerRecord.value()))) {
                         LOG.warn("Deserializer indicates that this is the last record to deserialize");
                     }
                 } catch (Exception e) {
-                    // for example a record without a key or value: skip it and keep loading the others
+                    // for example a record without a key: skip it and keep loading the others
                     LOG.warn("Ignoring the record at offset {} of {}-{} because it cannot be deserialized: {}",
                             consumerRecord.offset(), consumerRecord.topic(), consumerRecord.partition(), e.getMessage(),
                             e);
@@ -397,7 +411,8 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
         }
     }
 
-    private Consumer<byte[], byte[]> createConsumer() {
+    // package-private for the tests
+    Consumer<byte[], byte[]> createConsumer() {
         return new KafkaConsumer<>(resumeStrategyConfiguration.getConsumerProperties());
     }
 
