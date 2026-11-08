@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -71,6 +72,67 @@ class LogTabRenderTest {
         assertEquals(100, entries.get(1).repeat);
         assertEquals("10:01:39.000", entries.get(1).time, "the entry keeps the newest timestamp");
         assertEquals(1, entries.get(0).repeat, "a line that happened once is not a repeat");
+    }
+
+    @Test
+    void cSwitchesBetweenCompactWideAndWideCollapsed() {
+        List<LogEntry> entries = new ArrayList<>();
+        for (int i = 0; i < 17; i++) {
+            entries.add(LogTab.parseLogLine("2026-11-08 10:00:" + String.format("%02d", i)
+                                            + ".000  INFO 42 --- [ - timer://java] route1 : Hello World"));
+        }
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(entries);
+
+        // compact: the short heading, and the same line in a row is one line with a count
+        assertEquals(LogTab.View.COMPACT, tab.view());
+        String compact = TuiTestHelper.renderToString(tab, 140, 30);
+        assertTrue(compact.contains("10:00:16.000  INFO route1") && compact.contains("Hello World  (x17)"), compact);
+        assertTrue(footer(tab).contains("view [compact]"), footer(tab));
+
+        // wide: every line as logged, one by one
+        tab.handleKeyEvent(KeyEvent.ofChar('c'));
+        String wide = TuiTestHelper.renderToString(tab, 140, 30);
+        assertTrue(wide.contains("2026-11-08 10:00:00.000  INFO 42 --- [ - timer://java] route1 : Hello World"), wide);
+        assertTrue(wide.contains("2026-11-08 10:00:16.000"), wide);
+        assertFalse(wide.contains("(x"), wide);
+        assertTrue(footer(tab).contains("view [wide]"), footer(tab));
+
+        // wide and collapsed: the line as logged, with the repeats collapsed
+        tab.handleKeyEvent(KeyEvent.ofChar('c'));
+        String collapsed = TuiTestHelper.renderToString(tab, 140, 30);
+        assertTrue(collapsed.contains("2026-11-08 10:00:16.000  INFO 42 --- [ - timer://java] route1 : Hello World  (x17)"),
+                collapsed);
+        assertFalse(collapsed.contains("2026-11-08 10:00:00.000"), collapsed);
+        assertTrue(footer(tab).contains("view [wide, collapsed]"), footer(tab));
+
+        tab.handleKeyEvent(KeyEvent.ofChar('c'));
+        assertEquals(LogTab.View.COMPACT, tab.view());
+    }
+
+    private static String footer(LogTab tab) {
+        List<Span> spans = new ArrayList<>();
+        tab.renderFooter(spans);
+        return spans.stream().map(Span::content).reduce("", String::concat);
+    }
+
+    @Test
+    void switchingTheViewKeepsTheLineAtTheTop() {
+        List<LogEntry> lines = new ArrayList<>();
+        lines.add(LogTab.parseLogLine("2026-11-08 10:00:00.000  INFO 42 --- [main] route1 : Started"));
+        for (int i = 0; i < 5; i++) {
+            lines.add(LogTab.parseLogLine("2026-11-08 10:00:0" + (i + 1) + ".000  INFO 42 --- [main] route1 : Hello"));
+        }
+        lines.add(LogTab.parseLogLine("2026-11-08 10:00:07.000  INFO 42 --- [main] route1 : Done"));
+        List<LogEntry> shown = LogTab.fold(lines);
+
+        assertEquals(3, shown.size());
+        assertEquals(1, shown.get(1).line, "the folded entry starts at the first of its lines");
+        assertEquals(1, lines.get(3).repeat, "the lines read stay one by one");
+        // line 4 (a Hello) is in the folded entry 1, and line 6 (Done) is entry 2
+        assertEquals(1, LogTab.shownIndexOf(shown, 4, true));
+        assertEquals(2, LogTab.shownIndexOf(shown, 6, true));
+        assertEquals(4, LogTab.shownIndexOf(lines, 4, false));
     }
 
     @Test
