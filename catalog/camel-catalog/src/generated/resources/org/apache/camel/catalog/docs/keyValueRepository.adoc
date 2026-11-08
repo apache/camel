@@ -74,7 +74,7 @@ Choosing the right backend is typically a matter of:
 | `JdbcKeyValueRepository`
 | `camel-sql`
 | Any JDBC DataSource; portable; optional auto-DDL; ACID via DataSource transactions
-| ✗ (non-atomic)
+| ✓ (primary key)
 | ✗ (client-side)
 
 | `JpaKeyValueRepository`
@@ -588,7 +588,7 @@ YAML DSL::
 ----
 - beans:
     - name: jdbcKvr
-      type: org.apache.camel.component.sql.JdbcKeyValueRepository
+      type: org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository
       properties:
         dataSource: "#bean:myDataSource"
         tableName: product_cache
@@ -600,6 +600,10 @@ NOTE: `JdbcKeyValueRepository.putIfAbsent` relies on the primary key of the tabl
 inserts of the same key fail with a duplicate key, the transaction is rolled back and the key is read
 again in a new transaction, which returns the value stored by the other caller. When `putIfAbsent`
 runs in a transaction of the caller, the `DuplicateKeyException` is thrown instead.
+
+An entry with a TTL expires lazily: the node that reads it compares its own clock with the `EXPIRES_AT`
+value written by the node that stored it, so all nodes need synchronised clocks. A node whose clock runs
+ahead treats the entry as expired, and deletes it, before its TTL has passed.
 
 === JpaKeyValueRepository
 
