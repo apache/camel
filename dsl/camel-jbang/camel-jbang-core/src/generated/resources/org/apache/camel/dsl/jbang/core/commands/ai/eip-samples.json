@@ -590,7 +590,7 @@
     },
     {
       "source": "keyValueRepository.adoc",
-      "yaml": "- beans:\n    - name: jdbcKvr\n      type: org.apache.camel.component.sql.JdbcKeyValueRepository\n      properties:\n        dataSource: \"#bean:myDataSource\"\n        tableName: product_cache\n        createTableIfNotExists: true\n"
+      "yaml": "- beans:\n    - name: jdbcKvr\n      type: org.apache.camel.processor.keyvalue.jdbc.JdbcKeyValueRepository\n      properties:\n        dataSource: \"#bean:myDataSource\"\n        tableName: product_cache\n        createTableIfNotExists: true\n"
     },
     {
       "source": "keyValueRepository.adoc",

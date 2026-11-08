@@ -2865,6 +2865,21 @@ A single `Map` body is now one batch item, and so is a single `Map` in the `Came
 (sql-stored). Before, its entries were used as the batch items and the call failed (sql: no value found for the named
 parameters, sql-stored: an `SQLException`).
 
+=== camel-sql - JdbcKeyValueRepository: deleteIfExpiredString, and putIfAbsent after a duplicate key
+
+When `JdbcKeyValueRepository` reads an entry that has expired, it deletes the row with the new `deleteIfExpiredString`
+statement (`DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND EXPIRES_AT > 0 AND EXPIRES_AT <= ?`) instead of
+`deleteString`, so that an entry another node stored for the key in the meantime is kept. If you set `selectString`,
+`insertString` and `deleteString` for a table with other column names, set `deleteIfExpiredString` as well; otherwise
+reading an expired entry fails with an SQL error. With `tableName` it is derived from the default statement, as the
+other statements are.
+
+When the INSERT of `putIfAbsent` fails with a duplicate key, the key is read again in a new transaction, which returns
+the value stored by the other caller (before, the key was read again in the failed transaction, which could return
+`null` although nothing was stored). `putIfAbsent` now throws the `DuplicateKeyException` when the INSERT fails three
+times, or at once when it runs in a transaction of the caller, as that transaction cannot be used to read the key
+again.
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the

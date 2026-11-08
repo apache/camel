@@ -32,6 +32,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": target.setCreateTableIfNotExists(property(camelContext, boolean.class, value)); return true;
         case "deleteexpiredstring":
         case "deleteExpiredString": target.setDeleteExpiredString(property(camelContext, java.lang.String.class, value)); return true;
+        case "deleteifexpiredstring":
+        case "deleteIfExpiredString": target.setDeleteIfExpiredString(property(camelContext, java.lang.String.class, value)); return true;
         case "deleteifvaluestring":
         case "deleteIfValueString": target.setDeleteIfValueString(property(camelContext, java.lang.String.class, value)); return true;
         case "deletestring":
@@ -69,6 +71,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": return boolean.class;
         case "deleteexpiredstring":
         case "deleteExpiredString": return java.lang.String.class;
+        case "deleteifexpiredstring":
+        case "deleteIfExpiredString": return java.lang.String.class;
         case "deleteifvaluestring":
         case "deleteIfValueString": return java.lang.String.class;
         case "deletestring":
@@ -107,6 +111,8 @@ public class JdbcKeyValueRepositoryConfigurer extends org.apache.camel.support.c
         case "createTableIfNotExists": return target.isCreateTableIfNotExists();
         case "deleteexpiredstring":
         case "deleteExpiredString": return target.getDeleteExpiredString();
+        case "deleteifexpiredstring":
+        case "deleteIfExpiredString": return target.getDeleteIfExpiredString();
         case "deleteifvaluestring":
         case "deleteIfValueString": return target.getDeleteIfValueString();
         case "deletestring":
