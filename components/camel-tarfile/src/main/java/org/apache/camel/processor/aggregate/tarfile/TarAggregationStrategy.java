@@ -72,7 +72,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
 
     @Metadata(description = "Sets the prefix that will be used when creating the TAR filename.")
     private String filePrefix;
-    @Metadata(description = "Sets the suffix that will be used when creating the TAR filename.", defaultValue = "tar")
+    @Metadata(description = "Sets the suffix that will be used when creating the TAR filename.", defaultValue = ".tar")
     private String fileSuffix = ".tar";
     @Metadata(label = "advanced",
               description = "If the incoming message is from a file, then the folder structure of said file can be preserved")
