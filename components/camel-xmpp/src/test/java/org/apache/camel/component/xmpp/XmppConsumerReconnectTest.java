@@ -18,18 +18,22 @@ package org.apache.camel.component.xmpp;
 
 import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ReconnectionManager;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * The consumer must consume again after its connection to the XMPP server was lost: it connects again, logs in again
@@ -97,6 +101,39 @@ class XmppConsumerReconnectTest extends CamelTestSupport {
         await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() == 1);
 
         server.dropConnections();
+
+        await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, server.occupants(ROOM), "The consumer did not enter the room again"));
+        server.sendGroupChat(ROOM, "alice", "after");
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void connectionMonitorConnectsAgainUnderTheLockOfTheAccount() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:room");
+        mock.expectedBodiesReceived("before", "after");
+
+        await().atMost(20, TimeUnit.SECONDS).until(() -> server.occupants(ROOM) == 1);
+        server.sendGroupChat(ROOM, "alice", "before");
+        await().atMost(10, TimeUnit.SECONDS).until(() -> mock.getReceivedCounter() == 1);
+
+        XmppConsumer consumer = (XmppConsumer) context.getRoute("room").getConsumer();
+        XMPPTCPConnection connection = consumer.connection;
+        // only the connection monitors of the two consumers connect again here
+        ReconnectionManager.getInstanceFor(connection).disableAutomaticReconnection();
+        XmppEndpoint endpoint = (XmppEndpoint) consumer.getEndpoint();
+        ReentrantLock lock = endpoint.getComponent().connectionLock(endpoint);
+        // a producer of the account holds the lock while it connects and logs in the shared connection again
+        lock.lock();
+        try {
+            server.dropConnections();
+            // the monitors (connectionPollDelay=1) find the connection lost, and wait for the lock
+            await().atMost(10, TimeUnit.SECONDS).until(lock::hasQueuedThreads);
+            assertFalse(connection.isConnected(), "The connection was connected again without the lock of the account");
+        } finally {
+            lock.unlock();
+        }
 
         await().atMost(20, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(1, server.occupants(ROOM), "The consumer did not enter the room again"));

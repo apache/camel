@@ -168,7 +168,9 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     }
 
     /**
-     * Connects and logs in the connection again when it was lost, and enters the room again when needed. Smack's
+     * Connects and logs in the connection again when it was lost, and enters the room again when needed. The connection
+     * is shared by the consumers and producers of the account, so it is connected and logged in again under the
+     * account's lock, as the producers do ({@link XmppEndpoint#reconnect(XMPPTCPConnection)}). Smack's
      * ReconnectionManager can connect and log in the same connection at the same time: whichever comes second gets
      * AlreadyConnectedException or AlreadyLoggedInException, which only means that the other one did it.
      * Package-private for tests.
@@ -176,24 +178,16 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
     void checkConnection() throws Exception {
         if (!connection.isConnected()) {
             LOG.info("Attempting to reconnect to: {}", XmppEndpoint.getConnectionMessage(connection));
+        }
+        if (!connection.isConnected() || !connection.isAuthenticated()) {
+            // connecting again does not log in: the server delivers nothing to the connection until it logs in again
+            // (Smack's ReconnectionManager only logs in when its attempt found the connection not connected). A login
+            // calls authenticated, which enters the room again
             try {
-                connection.connect();
-                LOG.debug("Successfully connected to XMPP server through: {}", connection);
-            } catch (SmackException.AlreadyConnectedException e) {
-                LOG.debug("Already connected again to XMPP server through: {}", connection);
+                endpoint.reconnect(connection);
             } catch (SmackException e) {
                 LOG.warn("Connection to XMPP server failed. Will try to reconnect later again.", e);
                 return;
-            }
-        }
-        if (!connection.isAuthenticated() && (endpoint.getUser() == null || endpoint.isLogin())) {
-            // connecting again does not log in: the server delivers nothing to the connection until it logs in again
-            // (Smack's ReconnectionManager only logs in when its attempt found the connection not connected)
-            try {
-                endpoint.login(connection);
-            } catch (SmackException.AlreadyLoggedInException e) {
-                // its login calls authenticated, which enters the room again
-                LOG.debug("Already logged in again to XMPP server through: {}", connection);
             }
         }
         rejoinRoomIfNeeded();
