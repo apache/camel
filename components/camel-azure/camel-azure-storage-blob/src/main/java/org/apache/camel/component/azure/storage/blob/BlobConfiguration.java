@@ -89,7 +89,7 @@ public class BlobConfiguration implements Cloneable {
     private Long blobSequenceNumber;
     @UriParam(label = "producer", defaultValue = "512")
     private Long pageBlobSize = BlobConstants.PAGE_BLOB_DEFAULT_SIZE;
-    @UriParam(label = "producer", defaultValue = "COMMITTED")
+    @UriParam(label = "producer", defaultValue = "committed")
     private BlockListType blockListType = BlockListType.COMMITTED;
     @UriParam(label = "producer")
     private OffsetDateTime changeFeedStartTime;

@@ -53,7 +53,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private ProxyOptions proxyOptions;
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;
-    @UriParam(label = "common", defaultValue = "AMQP")
+    @UriParam(label = "common", defaultValue = "Amqp")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
     @UriParam(label = "common",
               description = "To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from Camel message headers.")

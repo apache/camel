@@ -27,7 +27,7 @@ public class HazelcastQueueConfiguration {
 
     @UriParam(label = "consumer", defaultValue = "10000")
     private long pollingTimeout = 10000L;
-    @UriParam(label = "consumer", defaultValue = "Listen")
+    @UriParam(label = "consumer", defaultValue = "listen")
     private HazelcastQueueConsumerMode queueConsumerMode = HazelcastQueueConsumerMode.LISTEN;
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
