@@ -38,10 +38,10 @@ class LoggingHttpActivityListenerTest {
         assertTrue(listener.isShowBody());
         assertTrue(listener.isShowHeaders());
         assertTrue(listener.isShowStreams());
-        assertTrue(listener.isMultiline());
         assertTrue(listener.isSourceLocationLoggerName());
 
         assertFalse(listener.isShowBinary());
+        assertFalse(listener.isMultiline());
 
         assertEquals(50000, listener.getMaxChars());
     }
