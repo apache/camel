@@ -46,6 +46,9 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository {
 
+    protected static final String DEFAULT_UPDATE_TIMESTAMP_QUERY
+            = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
+
     private final StampedLock sl = new StampedLock();
 
     private final Set<ProcessorNameAndMessageId> processorNameMessageIdSet = new HashSet<>();
@@ -62,8 +65,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     /** intervals after which keep alive is sent for the locks held by an instance **/
     private long lockKeepAliveIntervalMillis;
 
-    private String updateTimestampQuery
-            = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
+    private String updateTimestampQuery = DEFAULT_UPDATE_TIMESTAMP_QUERY;
 
     public JdbcOrphanLockAwareIdempotentRepository(CamelContext camelContext) {
         super();
@@ -150,8 +152,15 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
 
         super.doInit();
         if (getTableName() != null) {
-            updateTimestampQuery = updateTimestampQuery.replaceFirst(DEFAULT_TABLENAME, getTableName());
+            // update query string from default table name to the new table name
+            updateTimestampQuery = DEFAULT_UPDATE_TIMESTAMP_QUERY.replace(DEFAULT_TABLENAME, getTableName());
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         executorServiceManager = context.getExecutorServiceManager();
         executorService = executorServiceManager.newSingleThreadScheduledExecutor(this, this.getClass().getSimpleName());
 
@@ -162,10 +171,12 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     }
 
     @Override
-    protected void doShutdown() throws Exception {
+    protected void doStop() throws Exception {
         if (executorServiceManager != null && executorService != null) {
             executorServiceManager.shutdownGraceful(executorService);
+            executorService = null;
         }
+        super.doStop();
     }
 
     @Override

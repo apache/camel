@@ -387,6 +387,11 @@ Stage 2 (CAMEL-26726) adds expectations on time and loss: `orders:meanTime<=2s` 
 of an exchange in the route measured by chaos through `TimeSource` (from entering the route until done), and
 `orders->shipping:lost<=0`, the messages one route completed and the next did not, which count as lost.
 
+In a test (stage 2, CAMEL-26724), `ChaosAssertions` of camel-chaos waits for the report to be final and asserts the
+verdict, an expectation and the faults of a rule, throwing an `AssertionError` with the report. It needs no test
+framework, so camel-test does not depend on camel-chaos; the rules come from the properties (`camel.chaos.rules`,
+`camel.chaos.scenario`) or `ChaosManager`.
+
 === Control
 
 - A `chaos` dev console lists the rules and shows the report, so it is `@DevConsole(readOnly = true)`. It does not add,
