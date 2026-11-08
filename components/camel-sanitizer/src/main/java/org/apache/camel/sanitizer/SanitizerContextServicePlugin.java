@@ -171,8 +171,8 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             if (s != null && reportOnShutdown) {
                 if (s.hasViolations()) {
                     LOG.warn("{}", s.summary());
-                    LOG.debug("{}", s.report());
-                } else {
+                }
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("{}", s.report());
                 }
             }

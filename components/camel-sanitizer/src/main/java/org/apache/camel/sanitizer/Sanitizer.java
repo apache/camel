@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,6 +35,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -54,7 +56,8 @@ import org.slf4j.LoggerFactory;
 public final class Sanitizer {
 
     /**
-     * The most violations kept for {@link #getViolations()} and the report; they are all counted.
+     * The most violations kept for {@link #getViolations()} and the report, and waiting in a test session; they are all
+     * counted, and charged to the test session.
      */
     static final int MAX_KEPT = 1000;
 
@@ -189,14 +192,22 @@ public final class Sanitizer {
      */
     void record(
             Violation violation, String exchangeId, String routeId, String stepId, String details) {
+        record(violation, exchangeId, routeId, stepId, details, violation.getFix());
+    }
+
+    /**
+     * Reports a violation with its own usual fix. The first 1000 are kept for the report and logged; the others are
+     * counted and still charged to the test session, so a test that breaks the rule fails also when a long-lived
+     * context (such as a cached test context) passed the bound before it.
+     */
+    void record(
+            Violation violation, String exchangeId, String routeId, String stepId, String details, String fix) {
         counts.get(violation).increment();
-        if (kept.incrementAndGet() > MAX_KEPT) {
-            // a route that breaks the rule at each message: counted, not logged or charged again
-            if (overflowLogged.compareAndSet(false, true)) {
-                LOG.warn("Exchange sanitizer: more than {} violations in CamelContext {}; the others are counted only",
-                        MAX_KEPT, camelContext.getName());
-            }
-            return;
+        boolean keep = kept.incrementAndGet() <= MAX_KEPT;
+        if (!keep && overflowLogged.compareAndSet(false, true)) {
+            LOG.warn("Exchange sanitizer: more than {} violations in CamelContext {}; the others are counted and charged"
+                     + " to the test, but not logged or listed in the report",
+                    MAX_KEPT, camelContext.getName());
         }
         String processor = processorOf(routeId, stepId);
         StringBuilder sb = new StringBuilder(512);
@@ -211,11 +222,13 @@ public final class Sanitizer {
         sb.append(details);
         sb.append("  The callback of process(exchange, callback) must be called exactly once, and process must not throw"
                   + " (see AsyncProcessor).\n");
-        sb.append("  Usual fix: ").append(violation.getFix()).append('.');
+        sb.append("  Usual fix: ").append(fix).append('.');
         SanitizerViolation v = new SanitizerViolation(
                 violation, camelContext.getName(), exchangeId, routeId, stepId, processor, sb.toString());
-        violations.add(v);
-        LOG.warn("{}", v.getText());
+        if (keep) {
+            violations.add(v);
+            LOG.warn("{}", v.getText());
+        }
         if (session != null) {
             session.charge(v);
         } else {
@@ -254,23 +267,52 @@ public final class Sanitizer {
 
     private void collect(String routeId, List<ProcessorDefinition<?>> outputs) {
         for (ProcessorDefinition<?> output : outputs) {
-            if (output instanceof ProcessDefinition process && output.getId() != null) {
-                Object processor = process.getProcessor();
-                if (processor == null && process.getRef() != null) {
-                    // a processor given by reference (process(ref), and the ref of XML and YAML routes)
-                    String ref = process.getRef();
-                    ref = ref.startsWith("#bean:") ? ref.substring(6) : ref.startsWith("#") ? ref.substring(1) : ref;
-                    processor = camelContext.getRegistry().lookupByName(ref);
-                }
-                if (processor != null) {
-                    String name = processor instanceof Processor p
-                            ? unwrap(p).getClass().getName()
-                            : processor.getClass().getName();
-                    userProcessors.put(routeId + "|" + output.getId(), name);
-                }
+            String name = output.getId() != null ? userClassOf(output) : null;
+            if (name != null) {
+                userProcessors.put(routeId + "|" + output.getId(), name);
             }
             collect(routeId, output.getOutputs());
         }
+    }
+
+    /**
+     * The class of the code of a user that a step calls: the processor of {@code process}, or the bean of {@code bean}
+     * (not Camel's BeanProcessor that calls it).
+     */
+    private String userClassOf(ProcessorDefinition<?> output) {
+        if (output instanceof ProcessDefinition process) {
+            Object processor = process.getProcessor();
+            if (processor == null && process.getRef() != null) {
+                // a processor given by reference (process(ref), and the ref of XML and YAML routes)
+                processor = lookup(process.getRef());
+            }
+            if (processor instanceof Processor p) {
+                return unwrap(p).getClass().getName();
+            }
+            return processor != null ? processor.getClass().getName() : null;
+        } else if (output instanceof BeanDefinition bean) {
+            return beanClassOf(bean);
+        }
+        return null;
+    }
+
+    private String beanClassOf(BeanDefinition bean) {
+        if (bean.getBean() != null) {
+            return bean.getBean().getClass().getName();
+        } else if (bean.getBeanClass() != null) {
+            return bean.getBeanClass().getName();
+        } else if (bean.getBeanType() != null) {
+            return bean.getBeanType().startsWith("#class:") ? bean.getBeanType().substring(7) : bean.getBeanType();
+        } else if (bean.getRef() != null) {
+            Object found = lookup(bean.getRef());
+            return found != null ? found.getClass().getName() : null;
+        }
+        return null;
+    }
+
+    private Object lookup(String ref) {
+        String name = ref.startsWith("#bean:") ? ref.substring(6) : ref.startsWith("#") ? ref.substring(1) : ref;
+        return camelContext.getRegistry().lookupByName(name);
     }
 
     /**
@@ -332,6 +374,27 @@ public final class Sanitizer {
      * The report: the counts per kind and the violations kept.
      */
     public String report() {
+        StringBuilder sb = counts();
+        for (SanitizerViolation v : violations) {
+            sb.append("\n\n").append(v.getText());
+        }
+        return sb.toString();
+    }
+
+    /**
+     * The counts per kind and one line per violation kept (the full reports were logged when they happened).
+     */
+    String summary() {
+        StringBuilder sb = counts();
+        for (SanitizerViolation v : violations) {
+            sb.append("\n  ").append(v.getKind().getTitle()).append(": exchange ").append(v.getExchangeId())
+                    .append(", route ").append(v.getRouteId()).append(", step ").append(v.getStepId())
+                    .append(", processor ").append(v.getProcessor());
+        }
+        return sb.toString();
+    }
+
+    private StringBuilder counts() {
         StringBuilder sb = new StringBuilder(256);
         sb.append("Exchange sanitizer report of CamelContext ").append(camelContext.getName()).append(": ");
         sb.append(getCallCount()).append(" calls of steps checked");
@@ -340,8 +403,7 @@ public final class Sanitizer {
             total += getViolationCount(v);
         }
         if (total == 0) {
-            sb.append(", no violations");
-            return sb.toString();
+            return sb.append(", no violations");
         }
         sb.append(", ").append(total).append(" violations");
         for (Violation v : Violation.values()) {
@@ -353,26 +415,7 @@ public final class Sanitizer {
         if (total > MAX_KEPT) {
             sb.append("\n  (the first ").append(MAX_KEPT).append(" are listed)");
         }
-        for (SanitizerViolation v : violations) {
-            sb.append("\n\n").append(v.getText());
-        }
-        return sb.toString();
-    }
-
-    /**
-     * The counts per kind and one line per violation kept (the full reports were logged when they happened).
-     */
-    String summary() {
-        StringBuilder sb = new StringBuilder(256);
-        String counts = report();
-        int full = counts.indexOf("\n\n");
-        sb.append(full > 0 ? counts.substring(0, full) : counts);
-        for (SanitizerViolation v : violations) {
-            sb.append("\n  ").append(v.getKind().getTitle()).append(": exchange ").append(v.getExchangeId())
-                    .append(", route ").append(v.getRouteId()).append(", step ").append(v.getStepId())
-                    .append(", processor ").append(v.getProcessor());
-        }
-        return sb.toString();
+        return sb;
     }
 
     boolean hasViolations() {
@@ -383,12 +426,42 @@ public final class Sanitizer {
      * A thread name and its stack, kept for a report.
      */
     static final class Trace {
+
+        /**
+         * The methods of Camel that call a plain {@link Processor} and then its callback in {@code finally}, catching
+         * only exceptions: an {@link Error} of the processor goes through after the callback (class names, as the bean
+         * one is in camel-bean; a rename must be followed here).
+         */
+        static final Set<String> SYNC_ADAPTERS = Set.of(
+                DelegateSyncProcessor.class.getName() + ".process",
+                "org.apache.camel.support.AsyncProcessorConverterHelper$ProcessorToAsyncProcessorBridge.process",
+                "org.apache.camel.component.bean.AbstractBeanProcessor.useCustomAdapter");
+
         private final String thread;
         private final StackTraceElement[] frames;
 
         Trace(String thread, StackTraceElement[] frames) {
             this.thread = thread;
             this.frames = frames;
+        }
+
+        /**
+         * Whether the callback was called by an adapter Camel puts around a plain {@link Processor}, and not by the
+         * code of the processor: the first frame that is not a callback (a {@code done} method or a lambda of one) is
+         * one of {@link #SYNC_ADAPTERS}. Unknown (false) without stacks ({@code stackDepth=0}).
+         */
+        boolean calledBySyncAdapter() {
+            if (frames == null) {
+                return false;
+            }
+            for (StackTraceElement f : frames) {
+                String method = f.getMethodName();
+                if ("done".equals(method) || method.startsWith("lambda$")) {
+                    continue;
+                }
+                return SYNC_ADAPTERS.contains(f.getClassName() + "." + method);
+            }
+            return false;
         }
 
         void appendTo(StringBuilder sb, String what) {

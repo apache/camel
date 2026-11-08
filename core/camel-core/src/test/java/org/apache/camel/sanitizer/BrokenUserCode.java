@@ -181,7 +181,19 @@ final class BrokenUserCode {
     }
 
     /**
-     * An error a strategy throws, which is not an Exception.
+     * A plain Processor (not an AsyncProcessor) that throws an Error, as an assertion of a test in a processor does.
+     * Camel's adapter around it calls the callback, and lets the Error through.
+     */
+    static final class ThrowsError implements Processor {
+
+        @Override
+        public void process(Exchange exchange) {
+            throw new StrategyBug("Forced by ThrowsError");
+        }
+    }
+
+    /**
+     * An error a strategy or a processor throws, which is not an Exception.
      */
     static final class StrategyBug extends Error {
         private static final long serialVersionUID = 1L;

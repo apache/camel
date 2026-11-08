@@ -16,6 +16,7 @@
  */
 package org.apache.camel.sanitizer;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CyclicBarrier;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -105,6 +107,45 @@ class SanitizerRecordTest {
         String summary = sanitizer.summary();
         assertTrue(summary.contains("callback called twice: " + n), summary);
         assertTrue(summary.contains("callback called twice: exchange ex0, route r, step s"), summary);
+    }
+
+    @Test
+    void aViolationPastTheBoundIsStillChargedToTheTest() {
+        Sanitizer sanitizer = new Sanitizer(context, 0, session);
+        for (int i = 0; i < Sanitizer.MAX_KEPT; i++) {
+            SanitizerStepListener.StepCall call = new SanitizerStepListener.StepCall(sanitizer, "ex" + i, "r", "s");
+            call.callback();
+            call.callback();
+        }
+        // an earlier test of a long-lived context (such as a cached test context) reached the bound
+        assertEquals(Sanitizer.MAX_KEPT, session.drain().size());
+
+        // a later test breaks the rule: not kept for the report or logged, but charged, so the test still fails
+        SanitizerStepListener.StepCall call = new SanitizerStepListener.StepCall(sanitizer, "later", "r", "late");
+        call.threw(new IllegalStateException("Forced"));
+        List<SanitizerViolation> charged = session.drain();
+        assertEquals(1, charged.size());
+        assertEquals(Violation.THREW_BEFORE_CALLBACK, charged.get(0).getKind());
+        assertEquals("late", charged.get(0).getStepId());
+        assertTrue(charged.get(0).getText().contains("java.lang.IllegalStateException: Forced"), charged.get(0).getText());
+        assertEquals(Sanitizer.MAX_KEPT, sanitizer.getViolations().size());
+        assertEquals(1, sanitizer.getViolationCount(Violation.THREW_BEFORE_CALLBACK));
+    }
+
+    @Test
+    void theRecordOfACallDoesNotKeepWhatWasThrown() {
+        // what was thrown can hold the exchange (such as CamelExchangeException), and the record lives as long as the
+        // callback: it keeps the class, the message and the stack only
+        for (Field f : SanitizerStepListener.StepCall.class.getDeclaredFields()) {
+            assertFalse(Throwable.class.isAssignableFrom(f.getType()) || f.getType() == Object.class, f.toString());
+        }
+        Sanitizer sanitizer = new Sanitizer(context, 32, session);
+        SanitizerStepListener.StepCall call = new SanitizerStepListener.StepCall(sanitizer, "ex", "r", "s");
+        call.threw(new IllegalStateException("Forced"));
+        call.callback();
+        String text = sanitizer.getViolations().get(1).getText();
+        assertTrue(text.contains("process threw java.lang.IllegalStateException: Forced"), text);
+        assertTrue(text.contains("at " + SanitizerRecordTest.class.getName()), text);
     }
 
     private static void await(CyclicBarrier barrier, Runnable action) {

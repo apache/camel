@@ -61,6 +61,10 @@ class SanitizerUserCodeTest extends ContextTestSupport {
                 from("direct:byRef").process("throwsByRef").id("byRef");
                 from("direct:throws").process(new BrokenUserCode.ThrowsInProcess()).id("throws").to("mock:throws");
                 from("direct:after").process(new BrokenUserCode.ThrowsAfterCallback()).id("after");
+                // no id: the step has the id Camel generates, as process1
+                from("direct:autoId").routeId("autoId").process(new BrokenUserCode.ThrowsInProcess());
+                from("direct:plainError").process(new BrokenUserCode.ThrowsError()).id("plainError");
+                from("direct:beanError").bean(new BrokenUserCode.ThrowsError()).id("beanError");
                 from("direct:late").process(throwsThenCallsBack).id("late");
                 from("direct:aggregateError")
                         .aggregate(constant(true), new BrokenUserCode.ErrorStrategy()).completionSize(2).id("aggregate")
@@ -139,6 +143,61 @@ class SanitizerUserCodeTest extends ContextTestSupport {
         SanitizerViolation v = awaitOne(Violation.THREW_AFTER_CALLBACK);
         assertEquals(BrokenUserCode.ThrowsAfterCallback.class.getName(), v.getProcessor());
         assertTrue(v.getText().contains("Forced by ThrowsAfterCallback"), v.getText());
+    }
+
+    @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
+    void aStepWithAGeneratedIdIsNamed() {
+        template.send("direct:autoId", e -> e.getMessage().setBody("x"));
+
+        SanitizerViolation v = awaitOne(Violation.THREW_BEFORE_CALLBACK);
+        assertEquals("autoId", v.getRouteId());
+        // the id Camel gave the step when the route was added, which the processor of the user is found by
+        assertTrue(v.getStepId().matches("process\\d+"), v.getStepId());
+        assertEquals(context.getRouteDefinition("autoId").getOutputs().get(0).getId(), v.getStepId());
+        assertEquals(BrokenUserCode.ThrowsInProcess.class.getName(), v.getProcessor());
+    }
+
+    @Test
+    @ExpectSanitizerViolation(value = Violation.THREW_AFTER_CALLBACK, step = "plainError")
+    void anErrorOfAPlainProcessorIsReportedAsCamelsAdapter() {
+        sendAndCatchTheError("direct:plainError");
+
+        SanitizerViolation v = awaitOne(Violation.THREW_AFTER_CALLBACK);
+        assertEquals(BrokenUserCode.ThrowsError.class.getName(), v.getProcessor());
+        assertAdapterReport(v);
+    }
+
+    @Test
+    @ExpectSanitizerViolation(value = Violation.THREW_AFTER_CALLBACK, step = "beanError")
+    void aBeanIsNamedByItsClass() {
+        sendAndCatchTheError("direct:beanError");
+
+        SanitizerViolation v = awaitOne(Violation.THREW_AFTER_CALLBACK);
+        // the bean, not Camel's BeanProcessor that calls it
+        assertEquals(BrokenUserCode.ThrowsError.class.getName(), v.getProcessor());
+        assertAdapterReport(v);
+    }
+
+    private void sendAndCatchTheError(String uri) {
+        // the exchange stays inflight after the Error went through, so the stop of the context does not wait the
+        // default 10 seconds for it
+        context.getShutdownStrategy().setTimeout(1);
+        try {
+            template.send(uri, e -> e.getMessage().setBody("x"));
+        } catch (BrokenUserCode.StrategyBug e) {
+            // the Error goes through Camel's adapter, after the callback; only the report matters here
+        }
+    }
+
+    private static void assertAdapterReport(SanitizerViolation v) {
+        // the callback was called by Camel's adapter around the plain Processor, not by the processor: the report says
+        // so, and does not tell the author of the processor to stop throwing after the callback
+        assertTrue(v.getText().contains("the callback was called by Camel's adapter for a plain Processor"), v.getText());
+        assertTrue(v.getText().contains(BrokenUserCode.StrategyBug.class.getName() + ": Forced by ThrowsError"),
+                v.getText());
+        assertTrue(v.getText().contains("Usual fix: " + SanitizerStepListener.StepCall.SYNC_ADAPTER_FIX), v.getText());
+        assertTrue(v.getText().contains("at " + BrokenUserCode.ThrowsError.class.getName() + ".process"), v.getText());
     }
 
     @Test

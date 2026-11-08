@@ -71,15 +71,22 @@ final class SanitizerStepListener implements StepListener {
      */
     static final class StepCall {
 
+        // the usual fix when a plain Processor threw an Error after Camel's adapter called the callback
+        static final String SYNC_ADAPTER_FIX
+                = "fix what threw the Error. The processor is a plain Processor, so the callback is not its own: Camel's"
+                  + " adapter around it (such as DelegateSyncProcessor for process(...)) calls the callback in finally and"
+                  + " then lets the Error through";
+
         private final Sanitizer sanitizer;
         private final String exchangeId;
         private final String routeId;
         private final String nodeId;
 
-        // guarded by this
+        // guarded by this; what was thrown is kept as its class and message (and its stack in throwTrace), never as the
+        // Throwable, which can hold the exchange (such as CamelExchangeException) for as long as the callback lives
         private int callbacks;
         private Sanitizer.Trace firstCallback;
-        private Throwable thrown;
+        private String thrown;
         private Sanitizer.Trace throwTrace;
 
         StepCall(Sanitizer sanitizer, String exchangeId, String routeId, String nodeId) {
@@ -95,7 +102,7 @@ final class SanitizerStepListener implements StepListener {
             Violation violation;
             Sanitizer.Trace first;
             Sanitizer.Trace threw;
-            Throwable cause;
+            String cause;
             synchronized (this) {
                 callbacks++;
                 if (callbacks == 1) {
@@ -116,7 +123,7 @@ final class SanitizerStepListener implements StepListener {
                 first.appendTo(sb, "first call of the callback");
                 trace.appendTo(sb, "second call of the callback");
             } else {
-                threw.appendTo(sb, "process threw " + describe(cause));
+                threw.appendTo(sb, "process threw " + cause);
                 trace.appendTo(sb, "then the callback was called");
             }
             sanitizer.record(violation, exchangeId, routeId, nodeId, sb.toString());
@@ -128,26 +135,32 @@ final class SanitizerStepListener implements StepListener {
                 return;
             }
             Sanitizer.Trace trace = sanitizer.trace(cause);
+            String description = describe(cause);
             Sanitizer.Trace first;
             synchronized (this) {
                 if (thrown != null) {
                     return;
                 }
-                thrown = cause;
+                thrown = description;
                 throwTrace = trace;
                 first = firstCallback;
             }
             StringBuilder sb = new StringBuilder(256);
-            Violation violation;
             if (first == null) {
-                violation = Violation.THREW_BEFORE_CALLBACK;
-                trace.appendTo(sb, "process threw " + describe(cause));
+                trace.appendTo(sb, "process threw " + description);
+                sanitizer.record(Violation.THREW_BEFORE_CALLBACK, exchangeId, routeId, nodeId, sb.toString());
+            } else if (cause instanceof Error && first.calledBySyncAdapter()) {
+                // a plain Processor threw an Error: Camel's adapter called the callback in finally and let the Error
+                // through, so the adapter breaks the rule, not the processor
+                first.appendTo(sb, "the callback was called by Camel's adapter for a plain Processor");
+                trace.appendTo(sb, "then the Error of the processor went through the adapter: " + description);
+                sanitizer.record(Violation.THREW_AFTER_CALLBACK, exchangeId, routeId, nodeId, sb.toString(),
+                        SYNC_ADAPTER_FIX);
             } else {
-                violation = Violation.THREW_AFTER_CALLBACK;
                 first.appendTo(sb, "the callback was called");
-                trace.appendTo(sb, "then process threw " + describe(cause));
+                trace.appendTo(sb, "then process threw " + description);
+                sanitizer.record(Violation.THREW_AFTER_CALLBACK, exchangeId, routeId, nodeId, sb.toString());
             }
-            sanitizer.record(violation, exchangeId, routeId, nodeId, sb.toString());
         }
 
         private static String describe(Throwable cause) {

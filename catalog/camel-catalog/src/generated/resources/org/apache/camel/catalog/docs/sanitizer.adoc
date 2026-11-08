@@ -47,8 +47,12 @@ fails the exchange with what was thrown, and the callback and that failure race 
 
 An exception that a processor throws on through an outer step is reported once, at the step that threw it first.
 
-An `Error` (such as an `AssertionError` of a test) that a plain `Processor` throws is not caught by the adapter Camel
-puts around it, which has already called the callback: it is reported as `THREW_AFTER_CALLBACK` at that step.
+An `Error` (such as an `AssertionError` of a test) that a plain `Processor` throws breaks the rule in Camel, not in the
+processor: the adapter Camel puts around a plain `Processor` (`DelegateSyncProcessor` for `process(...)`, the bridge of
+`AsyncProcessorConverterHelper`, and the bean component for a bean that is a `Processor`) calls the callback in
+`finally` and then lets the `Error` through. It is reported as `THREW_AFTER_CALLBACK` at that step, naming the
+processor, and the report says the callback was called by Camel's adapter and that the fix is in what threw the
+`Error`. Without stacks (`stackDepth=0`) the adapter cannot be seen, and the report is the one of an `AsyncProcessor`.
 
 A report looks like this:
 
@@ -67,7 +71,8 @@ Exchange sanitizer: callback called twice (R1)
 ----
 
 The processor named is the one of the step, looking through the delegates Camel puts around a processor (such as the one
-that `process(...)` uses for an `AsyncProcessor` that is not a `Service`). For a step that sends to an endpoint, such as
+that `process(...)` uses for an `AsyncProcessor` that is not a `Service`); for `bean(...)` it is the class of the bean,
+not Camel's `BeanProcessor`. For a step that sends to an endpoint, such as
 `to`, that is Camel's `SendProcessor`, and the report adds the endpoint (its URI, sanitized, and its class), as the
 producer that broke the rule is behind it. The stacks start at the code that called the callback, or at what threw, so
 they show the class of the producer or the bean. The report holds ids, names, threads, stacks, and the class and message
@@ -92,7 +97,9 @@ It does not support pooled exchanges (`exchangeFactory=pooled`, deprecated): it 
 
 Violations are logged at WARN when they happen, and the report of a context, with the counts per kind since the context
 was created, is logged when the context stops if there was a violation (the counts and one line per violation at WARN,
-the full reports again at DEBUG). After 1000 violations in a context, the others are counted only (one WARN says so).
+the full reports again at DEBUG). After 1000 violations in a context, the others are counted and still charged to the
+test that runs when they happen, but not logged or listed in the report (one WARN says so), so a later test of a
+long-lived context, such as a cached test context, still fails.
 From Java, `Sanitizer.get(camelContext)` gives the violations.
 
 Spring Boot and Quarkus: the plugin uses only the `CamelContext` API, and reads `camel.sanitizer.*` from the

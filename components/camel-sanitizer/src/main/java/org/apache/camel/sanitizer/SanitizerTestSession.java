@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The tie between a test class and the CamelContexts built for it, used by the JUnit extension
@@ -41,6 +42,9 @@ public final class SanitizerTestSession {
 
     private final String name;
     private final ConcurrentLinkedQueue<SanitizerViolation> violations = new ConcurrentLinkedQueue<>();
+    // how many violations wait for drain(): at most Sanitizer.MAX_KEPT are kept, so a route that breaks the rule at each
+    // message does not fill the memory; the test fails with the first ones
+    private final AtomicInteger pending = new AtomicInteger();
     private volatile boolean closed;
     private volatile boolean installed;
     private volatile boolean turnedOff;
@@ -96,6 +100,7 @@ public final class SanitizerTestSession {
         List<SanitizerViolation> answer = new ArrayList<>();
         for (SanitizerViolation v = violations.poll(); v != null; v = violations.poll()) {
             answer.add(v);
+            pending.decrementAndGet();
         }
         return answer;
     }
@@ -148,7 +153,7 @@ public final class SanitizerTestSession {
     void charge(SanitizerViolation violation) {
         synchronized (this) {
             if (!closed) {
-                violations.add(violation);
+                add(violation);
                 return;
             }
         }
@@ -160,7 +165,18 @@ public final class SanitizerTestSession {
      */
     static void chargeUntied(SanitizerViolation violation) {
         for (SanitizerTestSession session : OPEN) {
-            session.violations.add(violation);
+            session.add(violation);
+        }
+    }
+
+    /**
+     * Keeps the violation for {@link #drain()}, unless 1000 already wait there: the test fails with those.
+     */
+    private void add(SanitizerViolation violation) {
+        if (pending.incrementAndGet() <= Sanitizer.MAX_KEPT) {
+            violations.add(violation);
+        } else {
+            pending.decrementAndGet();
         }
     }
 

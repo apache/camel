@@ -5,8 +5,8 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-11-05
-last-updated: 2026-11-06
-status: proposed
+last-updated: 2026-11-08
+status: implementable
 see-also:
   - "CAMEL-26630"
   - "CAMEL-26338"

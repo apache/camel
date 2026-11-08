@@ -32,6 +32,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junitpioneer.jupiter.ClearSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,6 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * classes that run at the same time (see {@link SanitizerUntiedContextTest}).
  */
 @ClearSystemProperty(key = "camel.sanitizer.enabled")
+// the JVM-wide property is cleared while the class runs: alone, so a class of the CI switch that starts meanwhile still
+// sees it
+@Isolated
 class SanitizerActivationTest {
 
     private final ExecutorService builder = Executors.newSingleThreadExecutor(r -> new Thread(r, "context-builder"));
