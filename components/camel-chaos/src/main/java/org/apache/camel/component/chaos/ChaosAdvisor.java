@@ -34,6 +34,8 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * What to try (CAMEL-26727): chaos rules suggested per route from what the route does, ranked, each a known rule of the
@@ -42,6 +44,8 @@ import org.apache.camel.support.ScheduledPollConsumer;
  * between them.
  */
 final class ChaosAdvisor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ChaosAdvisor.class);
 
     /** The most suggestions in all, so a big integration does not flood a tool. */
     static final int MAX = 40;
@@ -205,6 +209,7 @@ final class ChaosAdvisor {
                 suggest(route, recipes, consumers, answer);
             } catch (RuntimeException e) {
                 // the route changed while it was read (such as a reload): nothing to say for it now
+                LOG.debug("No chaos suggestions for route {}: {}", route.getRouteId(), e.getMessage(), e);
             }
         }
         answer.sort(Comparator.comparingInt(Suggestion::rank).reversed());
