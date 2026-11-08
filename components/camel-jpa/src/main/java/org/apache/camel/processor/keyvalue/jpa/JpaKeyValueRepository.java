@@ -528,7 +528,7 @@ public class JpaKeyValueRepository extends ServiceSupport implements KeyValueRep
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             return 0;
         }
-        return System.currentTimeMillis() + ttl.toMillis();
+        return KeyValueRepositoryHelper.expiresAt(ttl);
     }
 
     private static void closeEntityManager(EntityManager entityManager) {

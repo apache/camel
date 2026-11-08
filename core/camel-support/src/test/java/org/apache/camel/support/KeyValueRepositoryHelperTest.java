@@ -21,6 +21,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -343,6 +345,27 @@ class KeyValueRepositoryHelperTest {
         assertThat(KeyValueRepositoryHelper.deserialize(
                 KeyValueRepositoryHelper.serializeToByteBuffer(original), "java.net.**;java.**;!*"))
                 .isEqualTo(original);
+    }
+
+    // -------------------------------------------------------------------------
+    // expiresAt
+    // -------------------------------------------------------------------------
+
+    @Test
+    void testExpiresAtAddsTtlToCurrentTime() {
+        long before = System.currentTimeMillis();
+        long expiresAt = KeyValueRepositoryHelper.expiresAt(Duration.ofSeconds(10));
+        long after = System.currentTimeMillis();
+
+        assertThat(expiresAt).isBetween(before + 10_000, after + 10_000);
+    }
+
+    @Test
+    void testExpiresAtSaturatesInsteadOfWrappingAround() {
+        // the sum overflows
+        assertThat(KeyValueRepositoryHelper.expiresAt(Duration.ofMillis(Long.MAX_VALUE))).isEqualTo(Long.MAX_VALUE);
+        // Duration.toMillis() overflows
+        assertThat(KeyValueRepositoryHelper.expiresAt(ChronoUnit.FOREVER.getDuration())).isEqualTo(Long.MAX_VALUE);
     }
 
     // -------------------------------------------------------------------------
