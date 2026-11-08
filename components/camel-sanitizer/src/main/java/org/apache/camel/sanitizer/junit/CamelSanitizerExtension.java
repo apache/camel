@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.sanitizer.SanitizerTestSession;
 import org.apache.camel.sanitizer.SanitizerViolation;
@@ -37,6 +38,8 @@ import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The JUnit Jupiter extension of the exchange sanitizer, registered by {@link CamelSanitizer}, or for every test class
@@ -71,6 +74,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
  */
 public class CamelSanitizerExtension implements BeforeAllCallback, AfterAllCallback, BeforeEachCallback, AfterEachCallback {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CamelSanitizerExtension.class);
     private static final ExtensionContext.Namespace NAMESPACE
             = ExtensionContext.Namespace.create(CamelSanitizerExtension.class);
     private static final String SESSION = "session";
@@ -79,6 +83,7 @@ public class CamelSanitizerExtension implements BeforeAllCallback, AfterAllCallb
     private static final String BETWEEN_TESTS = "betweenTests:";
     private static final Object REPORT_LOCK = new Object();
     private static final Set<Path> CLEARED = ConcurrentHashMap.newKeySet();
+    private static final AtomicBoolean WRITE_FAILED = new AtomicBoolean();
 
     @Override
     public void beforeAll(ExtensionContext context) {
@@ -283,7 +288,12 @@ public class CamelSanitizerExtension implements BeforeAllCallback, AfterAllCallb
                 Files.writeString(file, sb, StandardCharsets.UTF_8, StandardOpenOption.CREATE,
                         StandardOpenOption.APPEND);
             } catch (IOException e) {
-                // the violations still fail the test; the file is only a copy
+                // the violations still fail the test; the file is only a copy, so a warning once is enough
+                if (WRITE_FAILED.compareAndSet(false, true)) {
+                    LOG.warn("Cannot write the exchange sanitizer report to {}", file, e);
+                } else {
+                    LOG.debug("Cannot write the exchange sanitizer report to {}", file, e);
+                }
             }
         }
     }

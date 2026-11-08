@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateProcessor;
@@ -41,6 +42,7 @@ import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.DelegateSyncProcessor;
 import org.apache.camel.util.URISupport;
@@ -209,6 +211,32 @@ public final class Sanitizer {
                      + " to the test, but not logged or listed in the report",
                     MAX_KEPT, camelContext.getName());
         }
+        // the text is built only when the violation is kept here or by a test session: past the bound usually by
+        // neither, but it is still charged, so a test session that has room keeps it
+        Supplier<SanitizerViolation> v = new Supplier<>() {
+            private SanitizerViolation built;
+
+            @Override
+            public SanitizerViolation get() {
+                if (built == null) {
+                    built = violationOf(violation, exchangeId, routeId, stepId, details, fix);
+                }
+                return built;
+            }
+        };
+        if (keep) {
+            violations.add(v.get());
+            LOG.warn("{}", v.get().getText());
+        }
+        if (session != null) {
+            session.charge(v);
+        } else {
+            SanitizerTestSession.chargeUntied(v);
+        }
+    }
+
+    private SanitizerViolation violationOf(
+            Violation violation, String exchangeId, String routeId, String stepId, String details, String fix) {
         String processor = processorOf(routeId, stepId);
         StringBuilder sb = new StringBuilder(512);
         sb.append("Exchange sanitizer: ").append(violation.getTitle()).append(" (R1)\n");
@@ -223,17 +251,8 @@ public final class Sanitizer {
         sb.append("  The callback of process(exchange, callback) must be called exactly once, and process must not throw"
                   + " (see AsyncProcessor).\n");
         sb.append("  Usual fix: ").append(fix).append('.');
-        SanitizerViolation v = new SanitizerViolation(
+        return new SanitizerViolation(
                 violation, camelContext.getName(), exchangeId, routeId, stepId, processor, sb.toString());
-        if (keep) {
-            violations.add(v);
-            LOG.warn("{}", v.getText());
-        }
-        if (session != null) {
-            session.charge(v);
-        } else {
-            SanitizerTestSession.chargeUntied(v);
-        }
     }
 
     /**
@@ -429,12 +448,13 @@ public final class Sanitizer {
 
         /**
          * The methods of Camel that call a plain {@link Processor} and then its callback in {@code finally}, catching
-         * only exceptions: an {@link Error} of the processor goes through after the callback (class names, as the bean
-         * one is in camel-bean; a rename must be followed here).
+         * only exceptions: an {@link Error} of the processor goes through after the callback (by name, as the bridge is
+         * a private nested class, binary name with {@code $}, and the bean one is in camel-bean; a rename must be
+         * followed here, which SanitizerUserCodeTest checks).
          */
         static final Set<String> SYNC_ADAPTERS = Set.of(
                 DelegateSyncProcessor.class.getName() + ".process",
-                "org.apache.camel.support.AsyncProcessorConverterHelper$ProcessorToAsyncProcessorBridge.process",
+                AsyncProcessorConverterHelper.class.getName() + "$ProcessorToAsyncProcessorBridge.process",
                 "org.apache.camel.component.bean.AbstractBeanProcessor.useCustomAdapter");
 
         private final String thread;

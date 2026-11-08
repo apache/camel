@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 /**
  * The tie between a test class and the CamelContexts built for it, used by the JUnit extension
@@ -150,7 +151,7 @@ public final class SanitizerTestSession {
     /**
      * Charges a violation of a context tied to this session; to every open session if this one is closed.
      */
-    void charge(SanitizerViolation violation) {
+    void charge(Supplier<SanitizerViolation> violation) {
         synchronized (this) {
             if (!closed) {
                 add(violation);
@@ -163,18 +164,19 @@ public final class SanitizerTestSession {
     /**
      * Charges a violation of a context that is not tied to an open session to every open session.
      */
-    static void chargeUntied(SanitizerViolation violation) {
+    static void chargeUntied(Supplier<SanitizerViolation> violation) {
         for (SanitizerTestSession session : OPEN) {
             session.add(violation);
         }
     }
 
     /**
-     * Keeps the violation for {@link #drain()}, unless 1000 already wait there: the test fails with those.
+     * Keeps the violation for {@link #drain()}, unless 1000 already wait there: the test fails with those (the
+     * violation is then not built).
      */
-    private void add(SanitizerViolation violation) {
+    private void add(Supplier<SanitizerViolation> violation) {
         if (pending.incrementAndGet() <= Sanitizer.MAX_KEPT) {
-            violations.add(violation);
+            violations.add(violation.get());
         } else {
             pending.decrementAndGet();
         }

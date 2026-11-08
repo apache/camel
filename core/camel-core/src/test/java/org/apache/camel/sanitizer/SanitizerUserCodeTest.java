@@ -17,6 +17,7 @@
 package org.apache.camel.sanitizer;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -177,6 +178,18 @@ class SanitizerUserCodeTest extends ContextTestSupport {
         // the bean, not Camel's BeanProcessor that calls it
         assertEquals(BrokenUserCode.ThrowsError.class.getName(), v.getProcessor());
         assertAdapterReport(v);
+    }
+
+    @Test
+    void theAdaptersOfCamelAreFoundByTheirNames() throws Exception {
+        // the adapters are known by class and method name (one is a private nested class, one is in camel-bean): a
+        // rename or a move of one must be followed in Sanitizer.Trace.SYNC_ADAPTERS
+        for (String adapter : Sanitizer.Trace.SYNC_ADAPTERS) {
+            int dot = adapter.lastIndexOf('.');
+            Class<?> type = Class.forName(adapter.substring(0, dot));
+            String method = adapter.substring(dot + 1);
+            assertTrue(Arrays.stream(type.getDeclaredMethods()).anyMatch(m -> m.getName().equals(method)), adapter);
+        }
     }
 
     private void sendAndCatchTheError(String uri) {
