@@ -62,7 +62,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class LogTab extends AbstractTab {
 
-    private static final int MAX_LOG_LINES = 3000;
+    // the lines read, one by one: the collapsed views fold them when they are shown
+    private static final int MAX_LOG_LINES = 10000;
     private static final int MOUSE_SCROLL_LINES = 3;
     private static final String[] LOG_LEVELS = { "ERROR", "WARN", "INFO", "DEBUG", "TRACE" };
 
@@ -94,8 +95,7 @@ class LogTab extends AbstractTab {
     private long evictedSeen;
     private boolean followMode = true;
     private boolean wordWrap = true;
-    // time, level, logger and message only: the date, pid and thread take most of a row in a terminal
-    private boolean compact = true;
+    private View view = View.COMPACT;
     private boolean cachedCompact;
     private int hScroll;
     private boolean showLogLevelPopup;
@@ -214,8 +214,7 @@ class LogTab extends AbstractTab {
             return true;
         }
         if (ke.isCharIgnoreCase('c')) {
-            compact = !compact;
-            hScroll = 0;
+            switchView(view.next());
             return true;
         }
         if (!wordWrap) {
@@ -384,17 +383,17 @@ class LogTab extends AbstractTab {
         int hSkip = wordWrap ? 0 : hScroll;
 
         boolean entriesChanged = entries != cachedLogEntries;
-        if (entriesChanged || hSkip != cachedLogHSkip || compact != cachedCompact) {
+        if (entriesChanged || hSkip != cachedLogHSkip || view.compact != cachedCompact) {
             cachedLogEntries = entries;
             cachedLogHSkip = hSkip;
-            cachedCompact = compact;
+            cachedCompact = view.compact;
             List<Line> built = new ArrayList<>(entries.size());
             int maxW = 0;
             for (int i = 0; i < entries.size(); i++) {
                 LogEntry entry = entries.get(i);
                 String raw = entry.raw != null ? entry.raw : "";
                 Line line;
-                if (compact && !entry.time.isEmpty()) {
+                if (view.compact && !entry.time.isEmpty()) {
                     line = compactLine(entry);
                     if (!wordWrap) {
                         maxW = Math.max(maxW, line.width());
@@ -505,7 +504,7 @@ class LogTab extends AbstractTab {
         }
         search.renderSearchHints(spans);
         hint(spans, "w", "wrap" + (wordWrap ? " [on]" : " [off]"));
-        hint(spans, "c", "compact" + (compact ? " [on]" : " [off]"));
+        hint(spans, "c", "view [" + view.label + "]");
         if (!ctx.isInfraSelected()) {
             hint(spans, "l", "level");
         }
@@ -628,7 +627,9 @@ class LogTab extends AbstractTab {
 
     /** The entries of the tab, as read from the log file (tests). */
     void setEntriesForTesting(List<LogEntry> entries) {
-        filteredLogEntries = new ArrayList<>(entries);
+        mutableFilteredEntries.clear();
+        mutableFilteredEntries.addAll(entries);
+        filteredLogEntries = view.entries(mutableFilteredEntries);
         logLoading = false;
     }
 
@@ -670,6 +671,7 @@ class LogTab extends AbstractTab {
             logLoading = true;
         }
         boolean changed = false;
+        int olderRead = 0;
         boolean loadAll = loadAllRequested;
         if (logFileStartPos > 0
                 && (loadAll || (!followMode && scroll == 0))) {
@@ -680,11 +682,11 @@ class LogTab extends AbstractTab {
                 changed = true;
                 List<LogEntry> olderEntries = new ArrayList<>();
                 for (String line : olderLines) {
-                    addFolded(olderEntries, parseLogLine(line));
+                    olderEntries.add(parseLogLine(line));
                 }
                 mutableFilteredEntries.addAll(0, olderEntries);
                 logTotalLinesRead += olderLines.size();
-                scroll = olderEntries.size();
+                olderRead = olderEntries.size();
             }
         }
         List<String> newRawLines = new ArrayList<>();
@@ -693,7 +695,7 @@ class LogTab extends AbstractTab {
         if (changed) {
             logTotalLinesRead += newRawLines.size();
             for (String line : newRawLines) {
-                addFolded(mutableFilteredEntries, parseLogLine(line));
+                mutableFilteredEntries.add(parseLogLine(line));
             }
             if (mutableFilteredEntries.size() > MAX_LOG_LINES) {
                 mutableFilteredEntries.subList(0, mutableFilteredEntries.size() - MAX_LOG_LINES)
@@ -701,7 +703,11 @@ class LogTab extends AbstractTab {
             }
         }
         if (changed || logLoading) {
-            filteredLogEntries = new ArrayList<>(mutableFilteredEntries);
+            filteredLogEntries = view.entries(mutableFilteredEntries);
+            if (olderRead > 0) {
+                // the older lines go above: keep the line that was at the top of the screen there
+                scroll = shownIndexOf(filteredLogEntries, olderRead, view.collapse);
+            }
         }
         logLoading = false;
     }
@@ -919,9 +925,79 @@ class LogTab extends AbstractTab {
                 && !entry.message.isEmpty()) {
             // keep the newest line, so its timestamp is the last time this happened
             entry.repeat = last.repeat + 1;
+            entry.line = last.line;
             entries.set(entries.size() - 1, entry);
         } else {
             entries.add(entry);
+        }
+    }
+
+    /** The lines read, folded as {@link #addFolded}: copies, so the lines themselves stay one by one. */
+    static List<LogEntry> fold(List<LogEntry> lines) {
+        List<LogEntry> answer = new ArrayList<>();
+        for (int i = 0; i < lines.size(); i++) {
+            LogEntry entry = lines.get(i).copy();
+            entry.line = i;
+            addFolded(answer, entry);
+        }
+        return answer;
+    }
+
+    /** The index in the shown entries of the line read at {@code line}: the entry it is folded into, if collapsed. */
+    static int shownIndexOf(List<LogEntry> shown, int line, boolean collapsed) {
+        if (!collapsed) {
+            return Math.min(line, Math.max(0, shown.size() - 1));
+        }
+        int answer = 0;
+        for (int i = 0; i < shown.size() && shown.get(i).line <= line; i++) {
+            answer = i;
+        }
+        return answer;
+    }
+
+    /** The next view (c): the line at the top of the screen stays there. */
+    void switchView(View next) {
+        List<LogEntry> shown = filteredLogEntries;
+        int top = scroll < shown.size() ? scroll : Math.max(0, shown.size() - 1);
+        int line = view.collapse && !shown.isEmpty() ? Math.max(0, shown.get(top).line) : top;
+        view = next;
+        hScroll = 0;
+        if (!mutableFilteredEntries.isEmpty()) {
+            filteredLogEntries = view.entries(mutableFilteredEntries);
+            scroll = shownIndexOf(filteredLogEntries, line, view.collapse);
+        }
+    }
+
+    View view() {
+        return view;
+    }
+
+    /**
+     * How the log is shown (c): compact is the time, level, logger and message, as the date, pid and thread take most
+     * of a row in a terminal, with the same line in a row collapsed into one with a count (CAMEL-24911); wide is the
+     * line as logged, one by one; wide and collapsed is the line as logged, with the repeats collapsed.
+     */
+    enum View {
+        COMPACT("compact", true, true),
+        WIDE("wide", false, false),
+        WIDE_COLLAPSED("wide, collapsed", false, true);
+
+        final String label;
+        final boolean compact;
+        final boolean collapse;
+
+        View(String label, boolean compact, boolean collapse) {
+            this.label = label;
+            this.compact = compact;
+            this.collapse = collapse;
+        }
+
+        View next() {
+            return values()[(ordinal() + 1) % values().length];
+        }
+
+        List<LogEntry> entries(List<LogEntry> lines) {
+            return collapse ? fold(lines) : new ArrayList<>(lines);
         }
     }
 

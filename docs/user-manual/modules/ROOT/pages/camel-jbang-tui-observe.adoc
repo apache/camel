@@ -197,6 +197,15 @@ listed once.
 
 image::jbang/camel-tui-log-fix-with-ai-pick.png[Shift+F8 in the Log tab with two different ERRORs on the screen]
 
+The Log tab shows the log in one of three views, and *c* goes to the next one:
+
+* *compact* (the default): the time, level, logger and message of each line, as the date, pid and thread take most of
+a row in a terminal. The same line logged again and again is one line with a count, such as `Hello World  (x17)`.
+* *wide*: every line as it was logged, one by one, with the date, pid and thread.
+* *wide, collapsed*: the lines as they were logged, with the repeats as one line with a count.
+
+The line at the top of the screen stays there when you change the view.
+
 image::jbang/camel-tui-observe-error-diagram.png[A failed order: the path from checkout to payment-provider, and the onException handler that parked it]
 
 == OpenTelemetry Spans

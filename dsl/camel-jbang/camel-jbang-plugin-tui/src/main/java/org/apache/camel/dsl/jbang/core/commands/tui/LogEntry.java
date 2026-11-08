@@ -24,4 +24,16 @@ class LogEntry {
     String message = "";
     /** How many identical lines in a row this entry stands for (CAMEL-24911); 1 for a line that happened once. */
     int repeat = 1;
+    /** In a collapsed view: the index of the first line it stands for in the lines read, else -1. */
+    int line = -1;
+
+    LogEntry copy() {
+        LogEntry answer = new LogEntry();
+        answer.raw = raw;
+        answer.time = time;
+        answer.level = level;
+        answer.logger = logger;
+        answer.message = message;
+        return answer;
+    }
 }
