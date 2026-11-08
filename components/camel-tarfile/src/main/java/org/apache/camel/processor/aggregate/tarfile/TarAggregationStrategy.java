@@ -122,7 +122,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
     }
 
     /**
-     * Sets the suffix that will be used when creating the ZIP filename.
+     * Sets the suffix that will be used when creating the TAR filename.
      */
     public void setFileSuffix(String fileSuffix) {
         this.fileSuffix = fileSuffix;
