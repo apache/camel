@@ -960,6 +960,53 @@ exchange gets which draw: with several threads (concurrent consumers, parallel p
 so two runs with the same seed can give different reports. With one thread and the same exchanges in the same order,
 the same seed gives the same faults.
 
+== Chaos in a test
+
+A finding of a chaos session becomes a regression test: the same rules, the same seed, and assertions on the report.
+`ChaosAssertions` throws an `AssertionError` with the report when it fails, so it works with any test framework. Add
+`camel-chaos` as a test dependency, and switch chaos on in the test with `camel.chaos.enabled=true`:
+
+[source,java]
+----
+class OrdersChaosTest extends CamelTestSupport {
+
+    @Override
+    public void configureContext(CamelContextConfiguration config) {
+        super.configureContext(config);
+        Properties props = new Properties();
+        props.put("camel.chaos.enabled", "true");
+        props.put("camel.chaos.seed", "42");
+        // every second call to the stock service fails: the redelivery must recover it, and every order ships
+        props.put("camel.chaos.rules", "step=callStock error rate=every:2 expect=ship:4 within=10s");
+        config.withUseOverridePropertiesWithPropertiesComponent(props);
+    }
+
+    @Test
+    void theOrdersShipWhenTheStockServiceFails() {
+        for (int i = 0; i < 4; i++) {
+            template.sendBody("direct:orders", "order " + i);
+        }
+        ChaosAssertions.assertFired(context, "r1", 2);
+        ChaosAssertions.assertExpectationMet(context, "r1", Duration.ofSeconds(10));
+        ChaosAssertions.assertVerdict(context, ChaosReport.PASS, Duration.ofSeconds(10));
+    }
+}
+----
+
+* `assertVerdict(context, verdict, timeout)` waits until the report is final (no expectation pending), and checks the
+verdict; `assertVerdict(context, verdict)` checks it now, and fails when the report is not final yet.
+* `assertExpectationMet(context, ruleId, timeout)` waits until the expectation of a rule is decided. An expectation of
+at least so many exchanges is decided as soon as they completed; one of at most so many (`expect=orders:handled<=0`)
+only when its `within` time is up, so keep that time short in a test.
+* `assertFired(context, ruleId, atLeast)` checks that a rule fired at least so many faults: a rule that fires 0 times
+is often a typo in its target.
+* `awaitFinalReport(context, timeout)` returns the final report, for other checks (`getLost()`, `toJson()`).
+
+The rules can also come from a scenario (`camel.chaos.scenario=classpath:chaos/outage.chaos`), or be added in the test
+with `ChaosManager.get(context).addRule(...)`. With `camel-test-main-junit6`, set the same properties in the test
+configuration. In a deterministic simulation test (see <<_time_and_the_seed,Time and the seed>>), the times of the
+rules run in virtual time, and the report is read with `ChaosManager.report()` when the simulation is done.
+
 == The model of the rules
 
 The rules are also described as data, for the tools that help to write them (a form in a terminal UI, an AI that turns

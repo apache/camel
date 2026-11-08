@@ -74,7 +74,9 @@ public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimist
     }
 
     public static boolean isConstraintViolation(SQLException e) {
-        return e.getSQLState().startsWith("23");
+        // the SQLState is optional, for example connection pools report a pool timeout without one
+        String state = e.getSQLState();
+        return state != null && state.startsWith("23");
     }
 
     private boolean hasClassName(String name) {
