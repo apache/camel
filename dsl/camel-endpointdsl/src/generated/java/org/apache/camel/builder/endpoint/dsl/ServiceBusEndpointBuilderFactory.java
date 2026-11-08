@@ -77,7 +77,7 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AMQP.
+         * Service Bus occurs. Default value is Amqp.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
@@ -94,7 +94,7 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AMQP.
+         * Service Bus occurs. Default value is Amqp.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
@@ -825,7 +825,7 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AMQP.
+         * Service Bus occurs. Default value is Amqp.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
@@ -842,7 +842,7 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AMQP.
+         * Service Bus occurs. Default value is Amqp.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
@@ -1364,7 +1364,7 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AMQP.
+         * Service Bus occurs. Default value is Amqp.
          * 
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
@@ -1381,7 +1381,7 @@ public interface ServiceBusEndpointBuilderFactory {
         }
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AMQP.
+         * Service Bus occurs. Default value is Amqp.
          * 
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.

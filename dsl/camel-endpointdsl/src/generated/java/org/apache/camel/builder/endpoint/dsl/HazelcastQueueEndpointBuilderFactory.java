@@ -203,7 +203,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the Queue Consumer mode: Listen or Poll.
+         * Define the Queue Consumer mode: listen or poll.
          * 
          * The option is a:
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
@@ -219,7 +219,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
             return this;
         }
         /**
-         * Define the Queue Consumer mode: Listen or Poll.
+         * Define the Queue Consumer mode: listen or poll.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.

@@ -218,7 +218,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is AMQP.
+     * Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is Amqp.
      */
     public AmqpTransportType getAmqpTransportType() {
         return amqpTransportType;

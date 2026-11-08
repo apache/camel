@@ -44,7 +44,7 @@ public class HazelcastQueueConfiguration {
     }
 
     /**
-     * Define the Queue Consumer mode: Listen or Poll
+     * Define the Queue Consumer mode: listen or poll
      */
     public HazelcastQueueConsumerMode getQueueConsumerMode() {
         return queueConsumerMode;

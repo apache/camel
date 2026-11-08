@@ -70,7 +70,7 @@ public interface AzureServicebusComponentBuilderFactory {
         
         /**
          * Sets the transport type by which all the communication with Azure
-         * Service Bus occurs. Default value is AMQP.
+         * Service Bus occurs. Default value is Amqp.
          * 
          * The option is a:
          * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
