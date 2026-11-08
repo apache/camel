@@ -3016,15 +3016,18 @@ Examples:
   camel dev --port=8080
 
 == camel dirty --help
-Usage: camel dirty [-h] [--clean]
+Usage: camel dirty [-h] [--clean] [--previous]
 Check if there are dirty files from previous Camel runs that did not terminate
 gracefully
-      --clean   Clean dirty files which are no longer in use
-  -h, --help    Display the help and sub-commands
+      --clean      Clean dirty files which are no longer in use
+  -h, --help       Display the help and sub-commands
+      --previous   Also clean the logs of the previous runs of the integrations
+                     (camel log --previous), which are kept until then
 
 Examples:
   camel dirty
   camel dirty --clean
+  camel dirty --clean --previous
 
 == camel doc --help
 Usage: camel doc [-h] [--example] [--fresh] [--header] [--json] [--open-url]

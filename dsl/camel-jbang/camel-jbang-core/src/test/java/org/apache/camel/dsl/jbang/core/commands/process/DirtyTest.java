@@ -126,6 +126,50 @@ class DirtyTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void testPreviousCleansTheLogsOfPreviousRuns() throws Exception {
+        Path dir = CommandLineHelper.getCamelDir();
+        Files.writeString(dir.resolve("orders-previous.log"), "Started");
+        Files.writeString(dir.resolve("orders-previous.json"), "{}");
+        Files.writeString(dir.resolve("billing-previous.log"), "Started");
+        Files.writeString(dir.resolve("billing-previous.json"), "{}");
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            // without --clean it says how many there are, and how to clean them
+            assertEquals(0, new Dirty(new CamelJBangMain().withPrinter(printer)).doCall());
+            assertEquals("There are logs of the previous runs of 2 integrations (camel dirty --clean --previous cleans"
+                         + " them)",
+                    printer.getOutput().trim());
+            assertTrue(Files.exists(dir.resolve("orders-previous.log")));
+
+            Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+            command.clean = true;
+            command.previous = true;
+            assertEquals(0, command.doCall());
+            assertTrue(printer.getOutput().contains("Cleaned 4 files of the previous runs of 2 integrations"),
+                    printer.getOutput());
+            for (String name : new String[] {
+                    "orders-previous.log", "orders-previous.json", "billing-previous.log", "billing-previous.json" }) {
+                assertFalse(Files.exists(dir.resolve(name)), name + " is cleaned");
+            }
+        }
+    }
+
+    @Test
+    void testTheLogOfAnUnsetPidIsAnOrphan() throws Exception {
+        Path stray = CommandLineHelper.getCamelDir().resolve("${sys:pid}.log");
+        Files.writeString(stray, "WARN");
+
+        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
+        command.clean = true;
+
+        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
+            assertEquals(0, command.doCall());
+            assertEquals("Cleaned 1 orphan files", printer.getOutput().trim());
+            assertFalse(Files.exists(stray));
+        }
+    }
+
+    @Test
     void testFilesThatBelongToNoProcessAreNotDirty() throws Exception {
         Path dir = CommandLineHelper.getCamelDir();
         // the log of a Spring Boot or Quarkus app, which writes it while it runs

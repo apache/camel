@@ -32,12 +32,21 @@ import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.getCamelD
                      footer = {
                              "%nExamples:",
                              "  camel dirty",
-                             "  camel dirty --clean" })
+                             "  camel dirty --clean",
+                             "  camel dirty --clean --previous" })
 public class Dirty extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--clean" }, defaultValue = "false",
                         description = "Clean dirty files which are no longer in use")
     boolean clean;
+
+    @CommandLine.Option(names = { "--previous" }, defaultValue = "false",
+                        description = "Also clean the logs of the previous runs of the integrations (camel log"
+                                      + " --previous), which are kept until then")
+    boolean previous;
+
+    // the log a log4j configuration of the CLI writes when the pid system property is not set yet
+    static final String STRAY_LOG = "${sys:pid}.log";
 
     public Dirty(CamelJBangMain main) {
         super(main);
@@ -51,9 +60,19 @@ public class Dirty extends ProcessBaseCommand {
         }
 
         List<File> dirty = new ArrayList<>();
+        List<File> previousRuns = new ArrayList<>();
         for (File f : files) {
             if (PreviousRun.isPreviousRunFile(f.getName())) {
-                // kept on purpose: the log of the previous run of an integration (camel log --previous)
+                // kept on purpose: the log of the previous run of an integration (camel log --previous), one for
+                // each name that ever ran, until --previous cleans them
+                if (f.isFile()) {
+                    previousRuns.add(f);
+                }
+                continue;
+            }
+            if (STRAY_LOG.equals(f.getName())) {
+                // the log of a logging configuration whose ${sys:pid} was not set, which no process writes again
+                dirty.add(f);
                 continue;
             }
             // only the files of a process that is gone: a file named after its pid. The files of a process that is
@@ -65,29 +84,50 @@ public class Dirty extends ProcessBaseCommand {
                 dirty.add(f);
             }
         }
-        if (dirty.isEmpty()) {
-            return 0;
-        }
-
         if (clean) {
-            int cleaned = 0;
             List<String> left = new ArrayList<>();
-            for (File f : dirty) {
-                if (FileUtil.deleteFile(f)) {
-                    cleaned++;
-                } else {
-                    left.add(f.getName());
-                }
+            if (!dirty.isEmpty()) {
+                printer().println("Cleaned " + delete(dirty, left) + " orphan files");
             }
-            printer().println("Cleaned " + cleaned + " orphan files");
+            if (previous && !previousRuns.isEmpty()) {
+                int runs = runs(previousRuns);
+                int cleaned = delete(previousRuns, left);
+                printer().println("Cleaned " + cleaned + " files of the previous runs of " + runs + " integrations");
+            }
             if (!left.isEmpty()) {
                 printer().printWarn("Cannot delete: " + String.join(", ", left));
             }
         } else {
-            printer().println("There are " + dirty.size() + " orphan files");
+            if (!dirty.isEmpty()) {
+                printer().println("There are " + dirty.size() + " orphan files");
+            }
+            if (!previousRuns.isEmpty()) {
+                printer().println("There are logs of the previous runs of " + runs(previousRuns)
+                                  + " integrations (camel dirty --clean --previous cleans them)");
+            }
         }
 
         return 0;
+    }
+
+    /** Deletes the files, and returns how many; those that cannot be deleted are added to left. */
+    private static int delete(List<File> files, List<String> left) {
+        int cleaned = 0;
+        for (File f : files) {
+            if (FileUtil.deleteFile(f)) {
+                cleaned++;
+            } else {
+                left.add(f.getName());
+            }
+        }
+        return cleaned;
+    }
+
+    /** How many integrations the files of previous runs are of: a log and what it says about the run, per name. */
+    private static int runs(List<File> previousRuns) {
+        return (int) previousRuns.stream()
+                .map(f -> f.getName().substring(0, f.getName().lastIndexOf('-')))
+                .distinct().count();
     }
 
     /**

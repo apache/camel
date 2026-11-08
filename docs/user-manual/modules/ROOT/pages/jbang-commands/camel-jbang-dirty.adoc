@@ -20,6 +20,7 @@ camel dirty [options]
 |===
 | Option | Description | Default | Type
 | `--clean` | Clean dirty files which are no longer in use | false | boolean
+| `--previous` | Also clean the logs of the previous runs of the integrations (camel log --previous), which are kept until then | false | boolean
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
