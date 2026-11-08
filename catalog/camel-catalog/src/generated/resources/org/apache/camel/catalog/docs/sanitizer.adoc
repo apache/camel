@@ -1,0 +1,203 @@
+= Sanitizer Component
+:doctitle: Sanitizer
+:shortname: sanitizer
+:artifactid: camel-sanitizer
+:description: Check during development and tests that the processors of the routes keep the contract of AsyncProcessor, and report where they break it
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+
+*Since Camel {since}*
+
+The `camel-sanitizer` module is a checker for development and tests. It watches the calls of the steps of the routes
+of a running Camel application and reports, when it happens, that a processor breaks the contract of `AsyncProcessor`:
+a callback called twice, or a processor that throws instead of calling its callback. It checks the code of Camel users
+as much as Camel's own: a custom `AsyncProcessor`, the producer of a custom component, a bean. A test that runs a
+broken path fails with a report that names the step and the class.
+
+It checks the paths the tests run; it does not find untested ones.
+
+[IMPORTANT]
+====
+The sanitizer is for development and tests only. It stays off with profile `prod`, and costs time at each step when it
+is on.
+====
+
+== Getting it
+
+Add the `camel-sanitizer` dependency, in test scope for tests (see <<_in_a_test,In a test>>), or with
+`camel run --dep camel:sanitizer` for a run in development (profile `dev`, the default of `camel run`, switches it
+on).
+
+== The rule it checks
+
+The sanitizer checks one rule in this version (R1): each time the processor of a step is called (each attempt, also
+each redelivery of the error handler), its callback must be called exactly once, and `process(exchange, callback)` must
+not throw. A step is any node of a route with its node id (`to`, `process`, `split`, ...). It reports:
+
+* *callback called twice* (`COMPLETED_TWICE`): the callback of a call is called a second time. The report is logged at
+the second call, before that call continues the exchange, with the thread and stack of the first call and of the second
+call.
+* *process threw before calling the callback* (`THREW_BEFORE_CALLBACK`): `process` throws and the callback has not been
+called. Camel catches this in most places and fails the exchange, but the processor still breaks the contract, and on
+older Camel versions the exchange hangs. The report names the exception. A processor that throws after it called its
+callback is reported too (`THREW_AFTER_CALLBACK`).
+* *callback called after process threw* (`CALLBACK_AFTER_THROW`): the callback comes after `process` threw. Camel then
+fails the exchange with what was thrown, and the callback and that failure race to continue the exchange.
+
+An exception that a processor throws on through an outer step is reported once, at the step that threw it first.
+
+An `Error` (such as an `AssertionError` of a test) that a plain `Processor` throws breaks the rule in Camel, not in the
+processor: the adapter Camel puts around a plain `Processor` (`DelegateSyncProcessor` for `process(...)`, the bridge of
+`AsyncProcessorConverterHelper`, and the bean component for a bean that is a `Processor`) calls the callback in
+`finally` and then lets the `Error` through. It is reported as `THREW_AFTER_CALLBACK` at that step, naming the
+processor, and the report says the callback was called by Camel's adapter and that the fix is in what threw the
+`Error`. Without stacks (`stackDepth=0`) the adapter cannot be seen, and the report is the one of an `AsyncProcessor`.
+
+A report looks like this:
+
+[source,text]
+----
+Exchange sanitizer: callback called twice (R1)
+  exchange 5A1B...-0000000000000001, route route1, step lookup, processor com.acme.PriceLookup
+  first call of the callback: thread price-timeout-1
+      at com.acme.PriceLookup.lambda$process$0(PriceLookup.java:41)
+      ...
+  second call of the callback: thread price-client-3
+      at com.acme.PriceLookup.lambda$process$1(PriceLookup.java:47)
+      ...
+  The callback of process(exchange, callback) must be called exactly once, and process must not throw (see AsyncProcessor).
+  Usual fix: let only the first path call the callback (for example with a compareAndSet on the outcome).
+----
+
+The processor named is the one of the step, looking through the delegates Camel puts around a processor (such as the one
+that `process(...)` uses for an `AsyncProcessor` that is not a `Service`); for `bean(...)` it is the class of the bean,
+not Camel's `BeanProcessor`. For a step that sends to an endpoint, such as
+`to`, that is Camel's `SendProcessor`, and the report adds the endpoint (its URI, sanitized, and its class), as the
+producer that broke the rule is behind it. The stacks start at the code that called the callback, or at what threw, so
+they show the class of the producer or the bean. The report holds ids, names, threads, stacks, and the class and message
+of an exception; never bodies or headers. An exception message can carry message data, so the report is for development.
+
+The check is at the processor of each step, below the error handler of the step, as the step listener SPI of camel-core
+sees it (see `StepListener`). A processor that is not a step, such as the producer of a recipient of a recipient list,
+is seen through its step. An `InterceptStrategy` can hide part of the call: `intercept()` calls the processor later, so
+its own return or throw is not seen, and a strategy that returns a plain `Processor` makes a second callback of an
+asynchronous processor go to the await manager, not to the sanitizer.
+
+== Switching it on
+
+With the `camel-sanitizer` JAR on the classpath, the sanitizer is switched on with profile `dev`, with
+`camel.sanitizer.enabled=true`, or for a CamelContext built by a test marked with `@CamelSanitizer` (see
+<<_in_a_test,In a test>>). It is never switched on with profile `prod`, also when `camel.sanitizer.enabled=true`.
+Without a profile it stays off unless enabled. It is installed when the `CamelContext` initializes, before the routes
+are created, and logs a WARN that it is on (for a context tied to a test, once per JVM and then at DEBUG). A route
+created while the sanitizer was not installed is not checked.
+
+It does not support pooled exchanges (`exchangeFactory=pooled`, deprecated): it then stays off and logs a WARN.
+
+Violations are logged at WARN when they happen, and the report of a context, with the counts per kind since the context
+was created, is logged when the context stops if there was a violation (the counts and one line per violation at WARN,
+the full reports again at DEBUG). After 1000 violations in a context, the others are counted and still charged to the
+test that runs when they happen, but not logged or listed in the report (one WARN says so), so a later test of a
+long-lived context, such as a cached test context, still fails.
+From Java, `Sanitizer.get(camelContext)` gives the violations.
+
+Spring Boot and Quarkus: the plugin uses only the `CamelContext` API, and reads `camel.sanitizer.*` from the
+properties component, so `camel.sanitizer.enabled=true` in the application properties is meant to switch it on there
+too (this version is tested with plain contexts, `CamelTestSupport` and `@CamelMainTest`); the tooling metadata of the
+options is in camel-main only.
+
+== Options
+
+The options are read from the properties component, and are camel-main options (`SanitizerConfigurationProperties`).
+
+[cols="2,1,4"]
+|===
+|Option |Default |Description
+
+|`camel.sanitizer.enabled` |`false` (`true` with profile `dev` or `@CamelSanitizer`) |Install the sanitizer. Ignored
+with profile `prod`.
+|`camel.sanitizer.checks` |`callback` |The checks to run, separated by commas. This version has one: `callback`
+(R1); `none` installs nothing, and an empty value is the default. An unknown check stops the application from
+starting.
+|`camel.sanitizer.stackDepth` |`32` |How many frames of each stack a report keeps; `0` keeps only the name of the
+thread, which costs least.
+|`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops, if there was a violation.
+|===
+
+== In a test
+
+Add the dependency in test scope:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-sanitizer</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+and `@CamelSanitizer` to the test class. It is the only change to the test:
+
+[source,java]
+----
+@CamelSanitizer
+class PriceRouteTest extends CamelTestSupport {
+    ...
+}
+----
+
+`@CamelSanitizer` registers the JUnit Jupiter extension `CamelSanitizerExtension` (in
+`org.apache.camel.sanitizer.junit`). It marks the thread that runs the test class, and a CamelContext built on that
+thread gets the sanitizer and is tied to the class; profile `prod` and `camel.sanitizer.enabled=false` still win. A
+violation is charged to the test that runs when it happens, and the extension fails that test after it ran, with the
+first violation and the reports of the others (up to ten); when the test also fails on its own, the sanitizer's failure
+is added to it as a suppressed exception. A violation that comes between tests or after the last one, such as a late
+second callback, fails the test class at its end. When the class ends, its contexts are untied; a violation of a context
+that is not tied (one still running, or built on another thread) fails the test classes that run when it happens.
+Nothing is set for the whole JVM, so test classes that run in parallel do not see each other's violations; the tests of
+one class must run one at a time (the default of JUnit).
+
+The extension uses only the JUnit Jupiter extension API, so it works with `camel-test-junit5`, `camel-test-junit6`,
+`@CamelMainTest`, and tests that use none of them.
+
+A test that breaks the rule on purpose says so, and the extension then checks that the violation was reported instead
+of failing the test:
+
+[source,java]
+----
+@Test
+@ExpectSanitizerViolation(value = Violation.THREW_BEFORE_CALLBACK, step = "process1")
+void aProcessorThatThrowsFailsTheExchange() { ... }
+----
+
+The test fails if the expected violation was not reported, or if a violation was reported that no expectation of the
+test matches. The annotation can be repeated, and can list more than one kind, any of which meets it (for a processor
+that throws and calls its callback on another thread, the order the sanitizer sees decides the kinds). An expected
+violation is not required when the contexts of the test class stayed off on purpose (profile `prod`,
+`camel.sanitizer.enabled=false`, pooled exchanges).
+
+== In CI
+
+The module registers the extension for the automatic detection of JUnit. A pipeline adds the test dependency and runs
+the existing tests with
+
+[source,bash]
+----
+mvn test -Djunit.jupiter.extensions.autodetection.enabled=true \
+    -Djunit.jupiter.extensions.autodetection.include=org.apache.camel.sanitizer.junit.* \
+    -Dcamel.sanitizer.enabled=true -Dsurefire.rerunFailingTestsCount=0
+----
+
+and every test fails on its first violation, without a change to the tests. Detected automatically for a class without
+`@CamelSanitizer`, the extension acts only when `camel.sanitizer.enabled` is `true`, so a project that has JUnit detect
+its own extensions does not switch the sanitizer on by accident. The include pattern keeps JUnit from turning on other
+extensions found on the classpath. Reruns are turned off because a violation that happens now and then would pass a
+rerun; the extension also writes every violation of a run to `target/camel-sanitizer/<test class>.txt` of the module (or
+the directory of the system property `camel.sanitizer.reportDir`), the expected ones marked `(expected)`; the file is
+started again once per JVM, so a rerun in the same JVM cannot hide what the first attempt reported. Surefire passes the
+`-D` options to the forked test JVM; Gradle needs `systemProperty` in its `test` task. Here `camel.sanitizer.enabled` is
+a system property, so every context of the run gets the sanitizer.
+
+In the Camel build, `mvn test -Psanitizer` in `core/camel-core` does the same.

@@ -23,6 +23,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.junit.jupiter.api.Test;
 
@@ -34,18 +36,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandlerProcessorThrowsTestSupport {
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void doTry() throws Exception {
         assertSameAsSettingTheException(DO_TRY,
                 "exception=none caught=IllegalStateException:thrown result=0 caughtMock=1 finally=0 calls=1");
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void doTryWithDoFinally() throws Exception {
         assertSameAsSettingTheException(DO_TRY_FINALLY,
                 "exception=IllegalStateException:thrown caught=IllegalStateException:thrown result=0 caughtMock=0 finally=1 calls=1");
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void doTryWithDoFinallyProcessorThrowsError() throws Exception {
         // an Error (such as NoClassDefFoundError) thrown before the callback fails the exchange as well, as in the
         // other fixes of this kind
@@ -65,6 +70,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void doCatch() throws Exception {
         assertSameAsSettingTheException(DO_CATCH,
                 "exception=IllegalStateException:thrown caught=IllegalStateException:thrown result=0 caughtMock=0"
@@ -72,12 +78,14 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void doFinally() throws Exception {
         assertSameAsSettingTheException(DO_FINALLY,
                 "exception=IllegalStateException:thrown caught=none result=0 caughtMock=0 finally=0 calls=1");
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void onException() throws Exception {
         assertSameAsSettingTheException(ON_EXCEPTION,
                 "exception=IllegalStateException:thrown caught=IllegalStateException:thrown result=0 caughtMock=0"
@@ -85,6 +93,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void onExceptionNotHandled() throws Exception {
         assertSameAsSettingTheException(ON_EXCEPTION_NOT_HANDLED,
                 "exception=IllegalStateException:thrown caught=IllegalStateException:thrown result=0 caughtMock=0"
@@ -92,6 +101,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void multicastOutput() throws Exception {
         // the failed output fails the exchange at the end of the multicast, and the next output still runs
         assertSameAsSettingTheException(MULTICAST,
@@ -99,6 +109,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void multicastOutputRedelivered() throws Exception {
         // the output is redelivered as when it sets the exception, and succeeds on the second call
         assertSameAsSettingTheException(MULTICAST_REDELIVERY,
@@ -106,6 +117,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void afterAnAsynchronousStep() throws Exception {
         // the step runs on the thread of the asynchronous delay, not on the caller's
         start((b, id, p) -> b
@@ -122,6 +134,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void withMdcLogging() throws Exception {
         // with MDC logging the unit of work wraps the callback of each step (the takeover runs its after processing
         // instead of that wrapper)
@@ -133,6 +146,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void controlTransacted() throws Exception {
         // control: a transacted exchange calls the step synchronously, which catches the exception, on main too
         start(DO_TRY, new ThrowsFirst());
@@ -159,6 +173,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     void controlCallbackCalledBeforeTheProcessorThrows() throws Exception {
         // control, as before: the processor calls the callback and then throws. The callback continued the exchange, so
         // the exception is left to the caller (the reactive executor, which logs it), and the exchange completes once
@@ -178,6 +193,7 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     void controlCallbackCalledBeforeTheProcessorThrowsReachesASynchronousCaller() throws Exception {
         // control, as before: a caller that calls the step through the synchronous API (as a circuit breaker does with
         // its steps) gets the exception that the processor throws after it called the callback, as the callback only
@@ -201,6 +217,8 @@ class StepWithoutErrorHandlerProcessorThrowsTest extends StepWithoutErrorHandler
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void controlCallbackQueuedBeforeTheProcessorThrows() throws Exception {
         // control, as before: the processor queues the call of the callback on the reactive executor and then throws.
         // The thrown failure is taken over through the reactive executor, after the work already queued there, so the

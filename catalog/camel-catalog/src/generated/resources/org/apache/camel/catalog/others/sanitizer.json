@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "sanitizer",
+    "title": "Sanitizer",
+    "description": "Check during development and tests that the processors of the routes keep the contract of AsyncProcessor, and report where they break it",
+    "deprecated": false,
+    "firstVersion": "4.24.0",
+    "label": "tooling,testing",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-sanitizer",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}

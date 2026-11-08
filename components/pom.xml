@@ -293,6 +293,7 @@
         <module>camel-rxjava</module>
         <module>camel-saga</module>
         <module>camel-salesforce</module>
+        <module>camel-sanitizer</module>
         <module>camel-sap-netweaver</module>
         <module>camel-saxon</module>
         <module>camel-scheduler</module>

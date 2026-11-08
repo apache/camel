@@ -29,6 +29,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
@@ -127,30 +129,35 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void immediateRedelivery() throws Exception {
         start("immediate", new FailsThenThrows());
         assertFailedWithTheThrownException(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void synchronousDelayedRedelivery() throws Exception {
         start("synchronousDelayed", new FailsThenThrows());
         assertFailedWithTheThrownException(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void asynchronousDelayedRedelivery() throws Exception {
         start("asynchronousDelayed", new FailsThenThrows());
         assertFailedWithTheThrownException(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void asynchronousDelayedRedeliveryNotAllowedWhileStopping() throws Exception {
         start("asynchronousDelayedNotWhileStopping", new FailsThenThrows());
         assertFailedWithTheThrownException(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void transactedImmediateRedelivery() throws Exception {
         // a transacted exchange runs on the reactive executor's queue, and its redelivery is always synchronous
         start("immediate", new FailsThenThrows());
@@ -158,12 +165,14 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void transactedSynchronousDelayedRedelivery() throws Exception {
         start("synchronousDelayed", new FailsThenThrows());
         assertFailedWithTheThrownException(send(true));
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void thrownFailureIsRedelivered() throws Exception {
         // the error handler handles the thrown failure as any failure of the processor: it redelivers again, and the
         // third call succeeds
@@ -176,6 +185,7 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void deadLetterChannelGetsTheThrownFailure() throws Exception {
         // with an asynchronous delayed redelivery
         MockEndpoint dead = getMockEndpoint("mock:dead");
@@ -193,6 +203,7 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void onRedeliveryRunsBeforeEachRedelivery() throws Exception {
         // the thrown failure is redelivered like any other, so the onRedelivery processor runs before each redelivery
         start("onRedelivery", new FailsThenThrows());
@@ -204,6 +215,7 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void onExceptionOfTheThrownFailureHandlesIt() throws Exception {
         // the exception policy is chosen again for the thrown failure, as for any new failure
         start("onException", new FailsThenThrows());
@@ -215,6 +227,7 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_AFTER_CALLBACK)
     void controlCallbackCalledBeforeTheProcessorThrows() throws Exception {
         // the processor calls the callback and then throws: the callback continued the exchange, so the exception is
         // left to the reactive executor (which logs it), as before, and the exchange completes once
@@ -242,6 +255,8 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void controlQueuedCallbackBeforeTheProcessorThrows() throws Exception {
         // the processor hands the callback to a direct route and then throws. The route runs on the reactive executor
         // and calls the callback through it, before the error handler would take over the thrown failure, so it
@@ -282,6 +297,8 @@ class RedeliveryProcessorThrowsTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackCalledAfterTheProcessorThrewIsIgnored() throws Exception {
         // the processor hands the callback to another thread and then throws. The error handler cannot tell this from a
         // callback that never comes, so it takes over the thrown failure (before, the exchange waited for the callback),

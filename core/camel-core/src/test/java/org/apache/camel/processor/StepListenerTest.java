@@ -38,6 +38,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.StepHook;
 import org.apache.camel.spi.StepListener;
@@ -250,6 +252,7 @@ class StepListenerTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void testProcessorThatThrowsIsSeenAndRedelivered() throws Exception {
         getMockEndpoint("mock:afterThrowOnce").expectedMessageCount(1);
 
@@ -424,6 +427,7 @@ class StepListenerTest extends ContextTestSupport {
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void testExceptionOfTheProcessorIsThrownOnUnchanged() throws Exception {
         template.sendBody("direct:throwUnchanged", "Hello");
 
@@ -469,11 +473,19 @@ class StepListenerTest extends ContextTestSupport {
     @Test
     void testManyListenersInTheOrderTheyWereAdded() {
         List<StepListener> listeners = context.getCamelContextExtension().getStepListeners();
-        assertEquals(List.of(failing, recorder), listeners);
+        assertEquals(List.of(failing, recorder), ownListeners(listeners));
         // the same instance twice is ignored
         context.getCamelContextExtension().addStepListener(recorder);
-        assertEquals(List.of(failing, recorder), context.getCamelContextExtension().getStepListeners());
+        assertEquals(List.of(failing, recorder), ownListeners(context.getCamelContextExtension().getStepListeners()));
         assertThrows(UnsupportedOperationException.class, () -> listeners.add(recorder));
+    }
+
+    /**
+     * The listeners of this test, in their order: with the CI switch of camel-sanitizer on (mvn test -Psanitizer), its
+     * listener is installed too.
+     */
+    private List<StepListener> ownListeners(List<StepListener> listeners) {
+        return listeners.stream().filter(l -> l == failing || l == recorder).toList();
     }
 
     @Test

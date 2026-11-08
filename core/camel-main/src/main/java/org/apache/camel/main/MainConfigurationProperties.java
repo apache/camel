@@ -77,6 +77,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private ErrorRegistryConfigurationProperties errorRegistryConfigurationProperties;
     private AiObservabilityConfigurationProperties aiObservabilityConfigurationProperties;
     private ChaosConfigurationProperties chaosConfigurationProperties;
+    private SanitizerConfigurationProperties sanitizerConfigurationProperties;
 
     @Override
     public void close() {
@@ -167,6 +168,10 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (chaosConfigurationProperties != null) {
             chaosConfigurationProperties.close();
             chaosConfigurationProperties = null;
+        }
+        if (sanitizerConfigurationProperties != null) {
+            sanitizerConfigurationProperties.close();
+            sanitizerConfigurationProperties = null;
         }
         if (routesBuilders != null) {
             routesBuilders.clear();
@@ -443,6 +448,27 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public boolean hasChaosConfiguration() {
         return chaosConfigurationProperties != null;
+    }
+
+    /**
+     * To configure camel-sanitizer (checks of the contract of AsyncProcessor during development and tests).
+     *
+     * @since 4.24
+     */
+    public SanitizerConfigurationProperties sanitizerConfig() {
+        if (sanitizerConfigurationProperties == null) {
+            sanitizerConfigurationProperties = new SanitizerConfigurationProperties(this);
+        }
+        return sanitizerConfigurationProperties;
+    }
+
+    /**
+     * Whether there has been any camel-sanitizer configuration specified.
+     *
+     * @since 4.24
+     */
+    public boolean hasSanitizerConfiguration() {
+        return sanitizerConfigurationProperties != null;
     }
 
     /**

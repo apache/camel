@@ -159,6 +159,9 @@ public abstract class BaseMainSupport extends BaseService {
     private static final String PREFIX_CHAOS = "camel.chaos.";
     // the plugin of camel-chaos, which reads the camel.chaos options (camel-main does not depend on camel-chaos)
     private static final String CHAOS_PLUGIN = "org.apache.camel.component.chaos.ChaosContextServicePlugin";
+    private static final String PREFIX_SANITIZER = "camel.sanitizer.";
+    // the plugin of camel-sanitizer, which reads the camel.sanitizer options (camel-main does not depend on it)
+    private static final String SANITIZER_PLUGIN = "org.apache.camel.sanitizer.SanitizerContextServicePlugin";
 
     private static final String[] GROUP_PREFIXES = new String[] {
             "camel.context.", "camel.resilience4j.", "camel.faulttolerance.",
@@ -167,7 +170,8 @@ public abstract class BaseMainSupport extends BaseService {
             "camel.telemetryDev.", "camel.management.", "camel.mdc.", "camel.metrics.", "camel.routeTemplate",
             "camel.devConsole.", "camel.variable.", "camel.beans.", "camel.globalOptions.",
             PREFIX_SERVER, PREFIX_SSL, PREFIX_SECURITY, PREFIX_DEBUG, PREFIX_TRACE,
-            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY, PREFIX_AI_OBSERVABILITY, PREFIX_CHAOS };
+            PREFIX_ROUTE_CONTROLLER, PREFIX_ERROR_REGISTRY, PREFIX_AI_OBSERVABILITY, PREFIX_CHAOS,
+            PREFIX_SANITIZER };
 
     protected final List<MainListener> listeners = new ArrayList<>();
     protected volatile CamelContext camelContext;
@@ -1484,6 +1488,7 @@ public abstract class BaseMainSupport extends BaseService {
         OrderedLocationProperties errorRegistryProperties = new OrderedLocationProperties();
         OrderedLocationProperties aiObservabilityProperties = new OrderedLocationProperties();
         OrderedLocationProperties chaosProperties = new OrderedLocationProperties();
+        OrderedLocationProperties sanitizerProperties = new OrderedLocationProperties();
 
         for (String key : prop.stringPropertyNames()) {
             String loc = prop.getLocation(key);
@@ -1655,6 +1660,12 @@ public abstract class BaseMainSupport extends BaseService {
                 String option = key.substring(PREFIX_CHAOS.length());
                 validateOptionAndValue(key, option, value);
                 chaosProperties.put(loc, optionKey(option), value);
+            } else if (startsWithIgnoreCase(key, PREFIX_SANITIZER)) {
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(PREFIX_SANITIZER.length());
+                validateOptionAndValue(key, option, value);
+                sanitizerProperties.put(loc, optionKey(option), value);
             }
         }
 
@@ -1821,6 +1832,12 @@ public abstract class BaseMainSupport extends BaseService {
                     mainConfigurationProperties.isAutoConfigurationFailFast(),
                     autoConfiguredProperties);
         }
+        if (!sanitizerProperties.isEmpty() || mainConfigurationProperties.hasSanitizerConfiguration()) {
+            LOG.debug("Auto-configuring Sanitizer from loaded properties: {}", sanitizerProperties.size());
+            setSanitizerProperties(camelContext, sanitizerProperties,
+                    mainConfigurationProperties.isAutoConfigurationFailFast(),
+                    autoConfiguredProperties);
+        }
 
         // configure which requires access to the model
         MainSupportModelConfigurer.configureModelCamelContext(camelContext, mainConfigurationProperties,
@@ -1842,6 +1859,7 @@ public abstract class BaseMainSupport extends BaseService {
         warnNotAutoConfigured(camelContext, "camel.errorRegistry.", errorRegistryProperties);
         warnNotAutoConfigured(camelContext, "camel.aiObservability.", aiObservabilityProperties);
         warnNotAutoConfigured(camelContext, PREFIX_CHAOS, chaosProperties);
+        warnNotAutoConfigured(camelContext, PREFIX_SANITIZER, sanitizerProperties);
         warnNotAutoConfigured(camelContext, "camel.devConsole.", devConsoleProperties);
         warnNotAutoConfigured(camelContext, "camel.routetemplate.", routeTemplateProperties);
         warnNotAutoConfigured(camelContext, "camel.lra.", lraProperties);
@@ -2808,6 +2826,40 @@ public abstract class BaseMainSupport extends BaseService {
             LOG.warn("Chaos would be switched on ({}), but camel-chaos is not on the classpath, so the {}* options"
                      + " are ignored. Add camel-chaos (for development only) to use them.",
                     config.getEnabled() != null ? PREFIX_CHAOS + "enabled=true" : "profile dev", PREFIX_CHAOS);
+        }
+    }
+
+    private void setSanitizerProperties(
+            CamelContext camelContext, OrderedLocationProperties properties,
+            boolean failIfNotSet, OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
+        SanitizerConfigurationProperties config = mainConfigurationProperties.sanitizerConfig();
+        setPropertiesOnTarget(camelContext, config, properties, PREFIX_SANITIZER,
+                failIfNotSet, true, autoConfiguredProperties);
+
+        // camel-sanitizer reads its options from the properties component when the context initializes, so make the
+        // options set here (also from Java) available there
+        PropertiesComponent pc = camelContext.getPropertiesComponent();
+        if (config.getEnabled() != null) {
+            pc.addOverrideProperty(PREFIX_SANITIZER + "enabled", config.getEnabled().toString());
+        }
+        if (config.getChecks() != null) {
+            pc.addOverrideProperty(PREFIX_SANITIZER + "checks", config.getChecks());
+        }
+        pc.addOverrideProperty(PREFIX_SANITIZER + "stackDepth", Integer.toString(config.getStackDepth()));
+        pc.addOverrideProperty(PREFIX_SANITIZER + "reportOnShutdown", Boolean.toString(config.isReportOnShutdown()));
+
+        // with profile dev or enabled=true the sanitizer would be switched on (never with profile prod), but the options
+        // do nothing without camel-sanitizer. Its plugin is looked up by name, as camel-main does not depend on it
+        String profile = camelContext.getCamelContextExtension().getProfile();
+        boolean on = Boolean.TRUE.equals(config.getEnabled())
+                || config.getEnabled() == null && "dev".equalsIgnoreCase(profile);
+        if (on && !"prod".equalsIgnoreCase(profile)
+                && camelContext.getClassResolver().resolveClass(SANITIZER_PLUGIN) == null) {
+            LOG.warn("The exchange sanitizer would be switched on ({}), but camel-sanitizer is not on the classpath, so the"
+                     + " {}* options are ignored. Add camel-sanitizer (for development and tests only) to use them.",
+                    config.getEnabled() != null ? PREFIX_SANITIZER + "enabled=true" : "profile dev", PREFIX_SANITIZER);
         }
     }
 

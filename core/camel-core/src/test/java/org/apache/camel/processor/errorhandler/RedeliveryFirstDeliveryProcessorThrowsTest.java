@@ -33,6 +33,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.sanitizer.Violation;
+import org.apache.camel.sanitizer.junit.ExpectSanitizerViolation;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.junit.jupiter.api.Test;
 
@@ -127,24 +129,28 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void thrownFailureIsRedelivered() throws Exception {
         start("immediate", new ThrowsFirst());
         assertRedelivered(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void thrownFailureIsRedeliveredAfterASynchronousDelay() throws Exception {
         start("synchronousDelayed", new ThrowsFirst());
         assertRedelivered(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void thrownFailureIsRedeliveredAfterAnAsynchronousDelay() throws Exception {
         start("asynchronousDelayed", new ThrowsFirst());
         assertRedelivered(send());
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void transactedThrownFailureIsRedelivered() throws Exception {
         // a transacted exchange runs on the reactive executor's queue, and its redelivery is always synchronous
         start("synchronousDelayed", new ThrowsFirst());
@@ -152,6 +158,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void exhaustedFailsWithTheFailureOfTheRedelivery() throws Exception {
         start("immediate", new ThrowsThenFails());
         Exchange out = send();
@@ -162,6 +169,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void throwsOnEveryAttempt() throws Exception {
         // the redelivery that throws is handled as since CAMEL-26430: the exchange fails with its exception
         start("immediate", new AsyncProcessorSupport() {
@@ -178,6 +186,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void errorThrownOnEveryAttempt() throws Exception {
         // an Error, not an Exception, thrown on the first delivery and on the redelivery: before, the reactive executor
         // let it through (it catches only exceptions), and the exchange never completed
@@ -195,6 +204,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void deadLetterChannelGetsTheFailureOfTheRedelivery() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(1);
@@ -209,6 +219,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void notRedeliveredWithAnOnExceptionWithoutRedeliveries() throws Exception {
         // the way to not redeliver such a failure that the upgrade guide gives: the dead letter channel still gets it
         MockEndpoint dead = getMockEndpoint("mock:dead");
@@ -219,6 +230,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void deadLetterChannelGetsTheThrownFailure() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(1);
@@ -228,6 +240,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void onExceptionOfTheThrownFailureHandlesIt() throws Exception {
         start("onException", new ThrowsFirst());
         Exchange out = send();
@@ -238,6 +251,7 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation(Violation.THREW_BEFORE_CALLBACK)
     void nextExchangeIsProcessed() throws Exception {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedMessageCount(1);
@@ -284,6 +298,8 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackOfARouteBeforeTheProcessorThrowsContinuesTheExchange() throws Exception {
         // the processor hands the exchange and the callback to a direct route (with the default error handler) and then
         // throws. Each step of that route runs on the reactive executor ahead of the takeover queued there and the route
@@ -323,6 +339,8 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackCalledAfterTheProcessorThrewIsIgnored() throws Exception {
         // the processor hands the callback to another thread and then throws. The error handler cannot tell this from a
         // callback that never comes, so it takes over the thrown failure, and the late callback must not continue the
@@ -366,6 +384,8 @@ class RedeliveryFirstDeliveryProcessorThrowsTest extends RedeliveryFirstDelivery
     }
 
     @Test
+    @ExpectSanitizerViolation({ Violation.THREW_BEFORE_CALLBACK, Violation.THREW_AFTER_CALLBACK })
+    @ExpectSanitizerViolation({ Violation.CALLBACK_AFTER_THROW, Violation.THREW_AFTER_CALLBACK })
     void callbackAndThrowAtTheSameTimeContinueEachExchangeOnce() throws Exception {
         // the processor hands the callback to another thread, which calls it at once, and throws: the callback and the
         // takeover race, and whichever wins, each exchange is continued once (to mock:result, or with the thrown
