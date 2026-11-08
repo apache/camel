@@ -745,7 +745,6 @@ class ChaosTab extends AbstractTableTab {
         return sb.toString();
     }
 
-    /** A time for a column: 800ms, 2s, 1m4s, 2h3m. */
     /**
      * The time until something happens, in whole seconds rounded up: {@code back in 1s}, not {@code back in 903ms},
      * which a narrow note column cuts to {@code 903m} (read as minutes).
@@ -754,6 +753,7 @@ class ChaosTab extends AbstractTableTab {
         return ms <= 0 ? "0s" : shortTime((ms + 999) / 1000 * 1000);
     }
 
+    /** A time for a column: 800ms, 2s, 1m4s, 2h3m. */
     static String shortTime(long ms) {
         if (ms < 1000) {
             return ms + "ms";
