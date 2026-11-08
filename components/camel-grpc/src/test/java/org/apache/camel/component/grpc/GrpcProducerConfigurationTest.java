@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.grpc;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Producer;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -42,15 +44,17 @@ class GrpcProducerConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    void googleAuthenticationWithoutServiceAccountResource() {
-        // the channel is set up with TLS (mandatory for GOOGLE authentication), but serviceAccountResource
-        // is not given, so the producer must report that option as missing
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> template.requestBody("grpc:localhost:1101/org.apache.camel.component.grpc.PingPong"
-                                           + "?method=pingSyncSync&synchronous=true"
-                                           + "&authenticationType=GOOGLE&negotiationType=TLS"
-                                           + "&keyCertChainResource=file:src/test/resources/certs/client.pem"
-                                           + "&keyResource=file:src/test/resources/certs/client.key"));
+    void googleAuthenticationWithoutServiceAccountResource() throws Exception {
+        // the channel is set up with TLS, which is mandatory for GOOGLE authentication, but
+        // serviceAccountResource is not given, so starting the producer must report that option as missing
+        Endpoint endpoint = context.getEndpoint("grpc://localhost:1101/org.apache.camel.component.grpc.PingPong"
+                                                + "?authenticationType=GOOGLE&negotiationType=TLS"
+                                                + "&keyCertChainResource=file:src/test/resources/certs/client.pem"
+                                                + "&keyResource=file:src/test/resources/certs/client.key");
+
+        Producer producer = endpoint.createProducer();
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, producer::start);
         assertEquals("serviceAccountResource must be specified", e.getMessage());
     }
 }
