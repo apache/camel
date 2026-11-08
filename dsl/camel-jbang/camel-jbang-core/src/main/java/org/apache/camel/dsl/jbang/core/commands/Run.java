@@ -276,7 +276,7 @@ public class Run extends CamelCommand {
             description = "Add camel-chaos, to turn on faults while running (camel cmd chaos-add); on with profile dev,"
                           + " never with prod. With a scenario file (such as --chaos=chaos/outage.chaos) its rules are"
                           + " added at startup. A run with chaos ends with exit code 1 when the chaos verdict is FAIL."
-                          + " Not with Spring Boot or Quarkus")
+                          + " With Quarkus it needs Camel Quarkus on Camel 4.24 or newer")
     boolean chaos;
 
     // the scenario of --chaos=file
