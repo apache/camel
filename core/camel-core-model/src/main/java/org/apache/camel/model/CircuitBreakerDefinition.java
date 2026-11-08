@@ -81,6 +81,8 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         this.faultToleranceConfiguration
                 = source.faultToleranceConfiguration != null ? source.faultToleranceConfiguration.copyDefinition() : null;
         this.onFallback = source.onFallback != null ? source.onFallback.copyDefinition() : null;
+        // the copy of the fallback belongs to this copy, not to the circuit breaker it was copied from
+        adoptFallback();
     }
 
     @Override
@@ -172,6 +174,22 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
     public void setOnFallback(OnFallbackDefinition onFallback) {
         this.onFallback = onFallback;
         this.fallbackViaFluentApi = false;
+        adoptFallback();
+    }
+
+    /**
+     * The fallback and its steps belong to this circuit breaker, as {@link #onFallback()} gives them: a loader (XML,
+     * YAML) builds the fallback with its steps before setting it, so their parent is not set, and the steps inside them
+     * (the steps of a choice) would have the first step of the fallback as their route, in the message history and the
+     * error registry.
+     */
+    private void adoptFallback() {
+        if (onFallback != null) {
+            onFallback.setParent(this);
+            for (ProcessorDefinition<?> output : onFallback.getOutputs()) {
+                output.setParent(this);
+            }
+        }
     }
 
     // Fluent API
