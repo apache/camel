@@ -229,8 +229,11 @@ public final class ChaosManager {
             }
             b.scenario = scenario.getName();
             b.seed = scenario.getSeed();
-            // the id the rule gets when the scenario is the first thing loaded, so it draws the same wherever it is
-            b.drawKey = "r" + (i + 1);
+            // the id the rule gets when the scenario is the first thing loaded, so it draws the same wherever it is;
+            // unless draw= names the rule it draws as
+            if (b.drawKey == null) {
+                b.drawKey = "r" + (i + 1);
+            }
             definitions.add(b);
         }
         return definitions;
@@ -467,8 +470,9 @@ public final class ChaosManager {
      * with the known rule it comes from and why, such as an HTTP call without a circuit breaker, a dead letter channel,
      * or a hand-off to another route over seda.
      *
-     * @return {@code suggestions}: a list of {@code route}, {@code kind}, {@code recipe}, {@code title}, {@code rule}
-     *         and {@code why}
+     * @return {@code suggestions}: a list of {@code route}, {@code kind}, {@code recipe}, {@code title}, {@code rule},
+     *         {@code why}, {@code tried} when a rule of its kind faulted the route already, and {@code routes} when it
+     *         is for several routes (a dead letter channel they share)
      */
     public Map<String, Object> suggest() {
         JsonArray list = new JsonArray();
@@ -484,10 +488,14 @@ public final class ChaosManager {
         }
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
             JsonObject jo = new JsonObject();
-            if (tried.contains(s.route() + " " + s.kind().key)) {
+            // a dead letter channel that routes share is tried by a rule of its kind in any of them
+            if (s.routes().stream().anyMatch(r -> tried.contains(r + " " + s.kind().key))) {
                 jo.put("tried", true);
             }
             jo.put("route", s.route());
+            if (s.routes().size() > 1) {
+                jo.put("routes", new JsonArray(s.routes()));
+            }
             jo.put("kind", s.kind().key);
             if (s.recipe() != null) {
                 jo.put("recipe", s.recipe());
@@ -603,10 +611,10 @@ public final class ChaosManager {
     private volatile Suggested suggested;
 
     /** The kinds the suggestions offer, with when they were read and for how many routes: one value, read as one. */
-    private record Suggested(Map<String, Set<ChaosAdvisor.Kind>> kinds, long at, int routes) {
+    private record Suggested(Map<String, Map<ChaosAdvisor.Kind, List<String>>> kinds, long at, int routes) {
     }
 
-    private Map<String, Set<ChaosAdvisor.Kind>> suggestedKinds(long now) {
+    private Map<String, Map<ChaosAdvisor.Kind, List<String>>> suggestedKinds(long now) {
         Suggested answer = suggested;
         int routeCount = camelContext.getRoutes().size();
         if (answer == null || now - answer.at() > SUGGESTED_FOR_MILLIS || routeCount != answer.routes()) {

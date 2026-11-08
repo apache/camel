@@ -306,7 +306,7 @@ final class ChaosRule {
             fired[i] = new LongAdder();
         }
         // a rule of a scenario draws from the seed of the scenario, by its place in it, so the scenario fails the same
-        // messages whenever it is loaded, whatever the ids of its rules are then
+        // messages whenever it is loaded, whatever the ids of its rules are then; draw=<id> draws as that rule did
         long base = b.seed != null ? b.seed : seed;
         String key = b.drawKey != null ? b.drawKey : id;
         this.random = new AtomicLong(mix(base + GOLDEN_GAMMA * mix(key.hashCode())));
@@ -1221,7 +1221,8 @@ final class ChaosRule {
     /** The definition of a rule, as the parser builds it. */
     static final class Builder {
         String text;
-        // set by a scenario: its name, its seed (null when it has none), and the key of the draws of the rule
+        // set by a scenario: its name, its seed (null when it has none), and the key of the draws of the rule (also
+        // set by draw=)
         String scenario;
         Long seed;
         String drawKey;

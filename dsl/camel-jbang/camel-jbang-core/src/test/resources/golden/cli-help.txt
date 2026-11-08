@@ -1891,8 +1891,8 @@ Debug local Camel integration
                                never with prod. With a scenario file (such as
                                --chaos=chaos/outage.chaos) its rules are added
                                at startup. A run with chaos ends with exit code
-                               1 when the chaos verdict is FAIL. Not with
-                               Spring Boot or Quarkus
+                               1 when the chaos verdict is FAIL. With Quarkus
+                               it needs Camel Quarkus on Camel 4.24 or newer
       --chaos-report=<file>  Write the chaos report as JSON to this file when
                                the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
@@ -2880,8 +2880,8 @@ Run in dev mode with live reload
                                never with prod. With a scenario file (such as
                                --chaos=chaos/outage.chaos) its rules are added
                                at startup. A run with chaos ends with exit code
-                               1 when the chaos verdict is FAIL. Not with
-                               Spring Boot or Quarkus
+                               1 when the chaos verdict is FAIL. With Quarkus
+                               it needs Camel Quarkus on Camel 4.24 or newer
       --chaos-report=<file>  Write the chaos report as JSON to this file when
                                the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
@@ -3019,7 +3019,8 @@ Examples:
 Usage: camel dirty [-h] [--clean]
 Check if there are dirty files from previous Camel runs that did not terminate
 gracefully
-      --clean   Clean dirty files which are no longer in use
+      --clean   Clean dirty files which are no longer in use, and the logs of
+                  the previous runs of the integrations (camel log --previous)
   -h, --help    Display the help and sub-commands
 
 Examples:
@@ -5031,8 +5032,8 @@ Run as local Camel integration
                                never with prod. With a scenario file (such as
                                --chaos=chaos/outage.chaos) its rules are added
                                at startup. A run with chaos ends with exit code
-                               1 when the chaos verdict is FAIL. Not with
-                               Spring Boot or Quarkus
+                               1 when the chaos verdict is FAIL. With Quarkus
+                               it needs Camel Quarkus on Camel 4.24 or newer
       --chaos-report=<file>  Write the chaos report as JSON to this file when
                                the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>

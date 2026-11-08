@@ -218,7 +218,9 @@ does the fallback answer?
 |A call over another protocol |The connection is refused, and the call is slow
 |An input that can deliver a message again (Kafka, JMS, AMQP, SQS and more, or a consumer that reads a failed message
 again, such as a file without `moveFailed`) |The call out is made twice (`duplicate`): is it safe to repeat?
-|A dead letter channel |It fails too (`at=dlq`): is the message then lost? Add it with a rule that fails the route.
+|A dead letter channel |It fails too (`at=dlq`): is the message then lost? Add it with a rule that fails a route. A
+dead letter channel that the routes share (the error handler of a route builder) is suggested once, for all of them,
+and not for the route that consumes it.
 |A hand-off to another route over `seda`, `vm` or `disruptor` |The next route fails, with an expectation that no
 message is lost between the two routes (see <<_expectations_on_time_and_loss,Expectations on time and loss>>)
 |An input from outside (not `direct` or `seda`) |The route fails at its entry (what does the sender see: a rollback, a
@@ -226,7 +228,8 @@ retry, an error?), or the polls fail for a polling consumer; and the route stall
 |===
 
 The rules leave the query of the endpoint out: its options do not tell which endpoint it is, and may hold a secret.
-`ChaosManager.suggest()` gives the same as JSON (`suggestions`: `route`, `kind`, `recipe`, `title`, `rule`, `why`), and
+`ChaosManager.suggest()` gives the same as JSON (`suggestions`: `route`, `kind`, `recipe`, `title`, `rule`, `why`,
+`tried`, and `routes` for a dead letter channel that several routes share), and
 the chaos screen of the Camel TUI lists them (key `w`), where Enter types the rule in to change or add.
 
 === What has been tried
@@ -249,7 +252,9 @@ $ camel get chaos --report
 `consumer` (the polls, or the entry of the route), `lifecycle` (stall and lifecycle) and `dead letter channel`
 (`at=dlq`). A rule has one kind, from its fault and where it acts.
 * A kind is tried in a route when a rule of that kind fired in it: a rule counts its faults per route, so a rule that
-reaches several routes is tried in each. The rules removed or replaced count too, so the report says what the
+reaches several routes is tried in each. A rule that expects no message lost between two routes
+(`expect=orders->shipping:lost<=0`) also tries `lost` for the first route, as the hand-off suggestion fails the next
+route. A dead letter channel that the routes share is tried by a rule of its kind in any of them. The rules removed or replaced count too, so the report says what the
 experiment tried, not only what runs now.
 * The outcome is how the exchanges the rules faulted came out (recovered by a redelivery, handled by the error handler,
 failed), counted per rule, and the outcomes of their expectations.
@@ -258,7 +263,8 @@ left, the route has been tried for what chaos can say about it.
 
 In JSON the report has `tried`: per `route` its `kinds` (`kind`, `rules`, `fired`, `recovered`, `handled`, `failed`,
 `expectations`) and `notTried`. `ChaosManager.suggest()` marks a suggestion whose kind was tried in its route already
-(`tried`), and the what to try list of the Camel TUI (key `w`) shows both.
+(`tried`): `camel cmd chaos-suggest` ends its line with `- tried`, and the what to try list of the Camel TUI (key `w`)
+shows both.
 
 === From an AI agent (MCP)
 
@@ -341,7 +347,8 @@ way again (the same exception and message at the same step, or the same HTTP sta
 fix the bug, then prove the fix against the same failure, and keep the rule in a scenario. And `t` on a rule asks its
 AI panel to make a test of it: a JUnit test with `ChaosAssertions` for a Maven project, or a scenario with an
 expectation and the `camel run --chaos=<file> --max-seconds=<seconds>` command, whose exit code is the verdict, for a
-folder that runs with `camel run`.
+folder that runs with `camel run`. The test has the seed, and the rule with `draw=<its id>`, so it fails the same
+messages as the rule did (see <<_time_and_the_seed,Time and the seed>>).
 
 == Rules
 
@@ -370,6 +377,7 @@ expect:  expect=<route id>:<count> (at least that many completed exchanges), or
          expect=<route id>:meanTime|maxTime<op><time> (such as expect=orders:meanTime<=2s), or the
          messages lost between two routes expect=<route id>-><route id>:lost<op><count> (such as
          expect=orders->shipping:lost<=0); with an optional within=<time>
+draw:    draw=<rule id> draws the random choices as the rule with that id did (draw=r2), see Time and the seed
 ----
 
 The patterns of the targets are matched as text, with `*` for any characters; they are not regular expressions. The
@@ -996,6 +1004,12 @@ The seed fixes the sequence of random draws of each rule (`rate=<probability>`, 
 exchange gets which draw: with several threads (concurrent consumers, parallel processing) the threads decide that,
 so two runs with the same seed can give different reports. With one thread and the same exchanges in the same order,
 the same seed gives the same faults.
+
+Each rule draws by a key, with the seed: its id when it is added (`r2`), and its place in a scenario (the second rule
+draws as `r2`) or in `camel.chaos.rules`. So a rule added while the application runs, written alone in a scenario or a
+test, draws other choices there (it is the first rule, `r1`). `draw=<id>` names the key: `route=shipping error rate=0.2
+draw=r2` with the same seed fails the same messages as rule `r2` did. The test that the Camel TUI makes of a rule (key
+`t`) writes it.
 
 == Chaos in a test
 

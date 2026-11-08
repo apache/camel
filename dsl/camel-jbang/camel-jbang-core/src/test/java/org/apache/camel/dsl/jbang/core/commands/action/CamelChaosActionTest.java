@@ -119,6 +119,25 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void suggestSaysWhatWasTriedAndTheRoutesOfASharedDeadLetterChannel() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject tried = new JsonObject(
+                Map.of("route", "orders", "kind", "errors", "title", "Returns an error (HTTP status)", "tried", true,
+                        "rule", "endpoint=http://stock/check error status=503", "why", "an HTTP call"));
+        JsonObject shared = new JsonObject(
+                Map.of("route", "orders", "routes", new JsonArray(List.of("orders", "billing")), "kind",
+                        "dead letter channel", "title", "The dead letter channel is unreachable",
+                        "rule", "endpoint=seda:dlq error at=dlq", "why", "routes orders and billing send what fails"));
+        JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(tried, shared))));
+
+        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+
+        assertThat(printer.getLines()).contains(
+                "1. route orders: Returns an error (HTTP status) (errors) - tried",
+                "2. routes orders, billing: The dead letter channel is unreachable (dead letter channel)");
+    }
+
+    @Test
     void suggestSaysWhenThereIsNothingToTry() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"),

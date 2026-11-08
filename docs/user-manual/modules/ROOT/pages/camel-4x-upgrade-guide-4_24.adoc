@@ -669,6 +669,16 @@ now receive the input that was split, instead of that one split item. A route th
 read the `CamelSplitResult` exchange property, set as before: `SplitResult.getFailures()` has the index and the
 exception of the failed items.
 
+=== camel-core - Split EIP processes the items again when the watermark cannot be stored
+
+When the resume strategy of a split with watermark tracking fails to store the watermark, the split now fails with that
+exception, and the next split processes the same items again. Before, with `synchronous()`, the split also failed, but
+the watermark was kept in memory anyway, so the next split skipped those items although the watermark was never stored.
+Without `synchronous()`, the exchange never completed (fixed by the same change).
+
+A `watermarkExpression` that throws on an item now fails that item, so `stopOnException`, `maxFailedRecords` and
+`errorThreshold` apply as for any failed item.
+
 === camel-core - shareUnitOfWork: a part sent to seda no longer takes the on completions of the parent exchange
 
 Since Camel 4.14 the parts of a Split, Multicast or Recipient List with `shareUnitOfWork` use the unit of work of the
@@ -711,6 +721,19 @@ A route that relies on a regular expression as token, such as `\s+` or `(\W+)\s*
 
 In the XML and YAML DSL, a token with the escapes `\n`, `\r` or `\t` (for example `\r\n`) is turned into the new line,
 carriage return and tab characters, so it works as before. Before, only a leading `\n` was turned into a new line.
+
+=== camel-core - Idempotent Consumer: an exchange marked rollback only removes its message id
+
+The xref:components:eips:idempotentConsumer-eip.adoc[Idempotent Consumer] now treats an exchange marked with
+`markRollbackOnly()` or `markRollbackOnlyLast()` (without an exception) as failed, as the SQL consumer already does:
+with `removeOnFailure=true` (the default) its message id is removed from the idempotent repository, so a redelivered
+message is processed instead of being dropped as a duplicate. Before, the message id was kept.
+
+With a consumer that does not redeliver a rollback only exchange, such as the file consumer, a later message with the
+same id is now processed instead of being dropped as a duplicate.
+
+To keep the message id, set `removeOnFailure=false`. Note that this also keeps the message id of an exchange that
+failed with an exception.
 
 === camel-cyberark-vault - credentials are checked at endpoint start, and a rejected token is retried only once
 
@@ -2851,6 +2874,21 @@ A single `Map` body is now one batch item, and so is a single `Map` in the `Came
 `useMessageBodyForSql=true` (sql) or the `CamelSqlStoredParameters` header with `useMessageBodyForTemplate=true`
 (sql-stored). Before, its entries were used as the batch items and the call failed (sql: no value found for the named
 parameters, sql-stored: an `SQLException`).
+
+=== camel-sql - JdbcKeyValueRepository: deleteIfExpiredString, and putIfAbsent after a duplicate key
+
+When `JdbcKeyValueRepository` reads an entry that has expired, it deletes the row with the new `deleteIfExpiredString`
+statement (`DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND EXPIRES_AT > 0 AND EXPIRES_AT <= ?`) instead of
+`deleteString`, so that an entry another node stored for the key in the meantime is kept. If you set `selectString`,
+`insertString` and `deleteString` for a table with other column names, set `deleteIfExpiredString` as well; otherwise
+reading an expired entry fails with an SQL error. With `tableName` it is derived from the default statement, as the
+other statements are.
+
+When the INSERT of `putIfAbsent` fails with a duplicate key, the key is read again in a new transaction, which returns
+the value stored by the other caller (before, the key was read again in the failed transaction, which could return
+`null` although nothing was stored). `putIfAbsent` now throws the `DuplicateKeyException` when the INSERT fails three
+times, or at once when it runs in a transaction of the caller, as that transaction cannot be used to read the key
+again.
 
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
@@ -5757,7 +5795,7 @@ When `camel run` ends, its log is no longer deleted. It is kept as `~/.camel/<na
 integration, with `~/.camel/<name>-previous.json`, which says when and how the run ended. The next run of that name that
 ends replaces both, and at most the last 10 MB of a log are kept. `camel log <name> --previous` prints the log, like
 `kubectl logs --previous` in Kubernetes. The log of an integration that was killed is kept the same way, the next time a
-previous run is looked up. `camel dirty` does not count these files.
+previous run is looked up. `camel dirty --clean` cleans these files too.
 
 === camel-jbang - the AI tools wait for Camel to start, and read the log of the previous run
 

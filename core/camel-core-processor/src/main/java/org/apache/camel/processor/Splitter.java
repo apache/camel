@@ -234,13 +234,20 @@ public class Splitter extends MulticastProcessor {
             return callback;
         }
         return doneSync -> {
-            if (hasErrorThreshold) {
-                buildSplitResult(exchange);
+            try {
+                if (hasErrorThreshold) {
+                    buildSplitResult(exchange);
+                }
+                if (hasWatermark) {
+                    updateWatermark(exchange);
+                }
+            } catch (Throwable e) {
+                // for example the resume strategy failed to store the watermark
+                exchange.setException(e);
+            } finally {
+                // the callback must always be called, otherwise the exchange never completes
+                callback.done(doneSync);
             }
-            if (hasWatermark) {
-                updateWatermark(exchange);
-            }
-            callback.done(doneSync);
         };
     }
 
@@ -727,7 +734,14 @@ public class Splitter extends MulticastProcessor {
             // evaluate watermark expression on completed sub-exchange (only if no exception)
             Exchange subExchange = delegate.getExchange();
             if (subExchange.getException() == null) {
-                String value = watermarkExpression.evaluate(subExchange, String.class);
+                String value;
+                try {
+                    value = watermarkExpression.evaluate(subExchange, String.class);
+                } catch (Exception e) {
+                    // fail the item, as an exception thrown here would make the split exchange hang (never complete)
+                    subExchange.setException(e);
+                    return;
+                }
                 if (value != null) {
                     int itemIndex = delegate.getIndex();
                     // Use accumulateAndGet to keep the value from the highest-indexed item.
@@ -780,12 +794,13 @@ public class Splitter extends MulticastProcessor {
     }
 
     private void persistWatermark(String value) {
-        watermarkCache.put(watermarkKey, value);
         try {
             resumeStrategy.updateLastOffset(OffsetKeys.of(watermarkKey), Offsets.of(value));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
+        // only cache the watermark once it is stored, so a failed exchange is processed again
+        watermarkCache.put(watermarkKey, value);
     }
 
     private void buildSplitResult(Exchange exchange) {
