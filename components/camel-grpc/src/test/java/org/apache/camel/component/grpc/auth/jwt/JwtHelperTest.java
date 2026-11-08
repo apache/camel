@@ -26,9 +26,8 @@ class JwtHelperTest {
     private static final String SECRET = "supersecuredsecret";
 
     /**
-     * The jwtAlgorithm endpoint option advertises exactly the constants of {@link JwtAlgorithm}, so each of them has
-     * to be backed by an implementation here. Without this, the option can offer a value that fails as soon as it is
-     * used.
+     * The jwtAlgorithm endpoint option advertises exactly the constants of {@link JwtAlgorithm}, so each of them has to
+     * be backed by an implementation here. Without this, the option can offer a value that fails as soon as it is used.
      */
     @Test
     void everyDeclaredAlgorithmIsImplemented() {
