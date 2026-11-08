@@ -24,7 +24,7 @@ camel dev [options]
 | `--backlog-trace` | Enables backlog tracing of the routed messages | false | boolean
 | `--camel-spring-boot-version` | To run using a different Camel Spring Boot version than the default version. |  | String
 | `--camel-version` | To run using a different Camel version than the default version. |  | String
-| `--chaos` | Add camel-chaos, to turn on faults while running (camel cmd chaos-add); on with profile dev, never with prod. With a scenario file (such as --chaos=chaos/outage.chaos) its rules are added at startup. A run with chaos ends with exit code 1 when the chaos verdict is FAIL. Not with Spring Boot or Quarkus | false | boolean
+| `--chaos` | Add camel-chaos, to turn on faults while running (camel cmd chaos-add); on with profile dev, never with prod. With a scenario file (such as --chaos=chaos/outage.chaos) its rules are added at startup. A run with chaos ends with exit code 1 when the chaos verdict is FAIL. With Quarkus it needs Camel Quarkus on Camel 4.24 or newer | false | boolean
 | `--chaos-report` | Write the chaos report as JSON to this file when the run ends (with --chaos) |  | String
 | `--code` | Run the given text or file as Java DSL routes |  | String
 | `--console` | Developer console on the local HTTP server (port 8080 by default): /q/dev with the jbang and Camel Main runtimes, /actuator/camel with Spring Boot, and /q/camel/dev-console with Quarkus | false | boolean

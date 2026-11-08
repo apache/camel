@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.run.common.ExportHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.dsl.jbang.run.export.DependencyResolver;
+import org.apache.maven.model.Model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -292,6 +294,112 @@ class ProjectRunnerTest {
         } finally {
             integration.stop();
         }
+    }
+
+    @Test
+    void aSpringBootRunWithChaosAddsCamelChaosAndSwitchesItOn() throws Exception {
+        RunRequest request = request();
+        request.runtime = RuntimeType.springBoot;
+        request.profile = "dev";
+        request.chaos = true;
+        request.chaosScenario = "/work/my chaos/outage.chaos";
+        request.chaosReport = "/work/target/chaos.json";
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            List<String> cmd = started.get(0).command();
+            Path project = Path.of(cmd.get(3)).getParent();
+            // there is no starter: plain camel-chaos
+            assertThat(project.resolve("pom.xml")).content().contains("<artifactId>camel-chaos</artifactId>")
+                    .doesNotContain("camel-chaos-starter");
+            // Spring Boot has no Camel profile dev, so chaos is switched on by the run, quoted where there is a space
+            assertThat(cmd).contains("-Dspring-boot.run.jvmArguments=-Dcamel.chaos.enabled=true"
+                                     + " -Dcamel.chaos.scenario=\"/work/my chaos/outage.chaos\""
+                                     + " -Dcamel.chaos.reportFile=/work/target/chaos.json");
+            // and not by the exported project
+            assertThat(project.resolve("src/main/resources/application.properties")).content()
+                    .doesNotContain("camel.chaos");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void aSpringBootRunWithChaosAndProfileProdKeepsChaosOff() throws Exception {
+        RunRequest request = request();
+        request.runtime = RuntimeType.springBoot;
+        request.profile = "prod";
+        request.chaos = true;
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            assertThat(started.get(0).command()).noneMatch(a -> a.contains("camel.chaos.enabled"));
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void anExistingSpringBootProjectRunsWithChaos() throws Exception {
+        RunRequest request = existingProject(RuntimeType.springBoot);
+        request.profile = "dev";
+        request.chaos = true;
+        Path project = dir.resolve("project");
+        Files.writeString(project.resolve("pom.xml"), """
+                <project>
+                  <modelVersion>4.0.0</modelVersion>
+                  <groupId>com.acme</groupId>
+                  <artifactId>orders</artifactId>
+                  <version>1.0</version>
+                  <dependencyManagement>
+                    <dependencies>
+                      <dependency>
+                        <groupId>org.apache.camel.springboot</groupId>
+                        <artifactId>camel-spring-boot-bom</artifactId>
+                        <version>${camel.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                      </dependency>
+                    </dependencies>
+                  </dependencyManagement>
+                </project>
+                """);
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            // camel-spring-boot-bom has the starters, not camel-chaos, which gets the version the BOM is imported with
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).content()
+                    .contains("camel-cli-connector-starter", "<artifactId>camel-chaos</artifactId>",
+                            "<version>${camel.version}</version>");
+            assertThat(started.get(0).command().get(4)).contains("-Dcamel.chaos.enabled=true");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void anExistingQuarkusProjectRunsWithChaos() throws Exception {
+        RunRequest request = existingProject(RuntimeType.quarkus);
+        request.profile = "dev";
+        request.chaos = true;
+        request.chaosReport = "/work/target/chaos.json";
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            Path project = dir.resolve("project");
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).content()
+                    .contains("camel-quarkus-cli-connector", "<artifactId>camel-quarkus-chaos</artifactId>");
+            // quarkus:run has no Camel profile dev, so chaos is switched on by the run
+            assertThat(started.get(0).command().get(4)).startsWith("-Djvm.args=")
+                    .endsWith(" -Dcamel.chaos.enabled=true -Dcamel.chaos.reportFile=/work/target/chaos.json");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
+    void theCamelVersionOfASpringBootProjectWithoutTheBomIsThisCamel() {
+        assertThat(SpringBootRunner.camelVersion(new Model())).isEqualTo(new DefaultCamelCatalog().getCatalogVersion());
     }
 
     private RunRequest existingProject(RuntimeType runtime) throws Exception {
