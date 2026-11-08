@@ -7434,6 +7434,17 @@ The return type of the protected method `JpaEndpoint.createTransactionStrategy()
 of `DefaultTransactionStrategy`. A subclass that overrides it must be recompiled: compiled against the old return type,
 its method is no longer called.
 
+=== camel-jpa - JpaKeyValueRepository: putIfAbsent after a constraint violation
+
+When the insert of `JpaKeyValueRepository.putIfAbsent` fails with a constraint violation because another caller stored
+the key, the key is read again in a new transaction, which returns the value stored by the other caller. Before, the key
+was read again in the failed transaction, which the constraint violation had marked for rollback, so `putIfAbsent`
+failed when that transaction was committed (with a `DataIntegrityViolationException` when the transaction strategy is
+Spring based). After a constraint violation, `putIfAbsent` now throws a `PersistenceException` only when the insert has
+failed three times. A constraint violation is also recognised by its SQL state (class `23`), as the PostgreSQL and SQL
+Server drivers report it. When `putIfAbsent` runs in a transaction of the caller, the failed insert marks that
+transaction for rollback, so the caller's transaction fails, as before.
+
 === camel-jbang - the export to Quarkus keeps camel-quarkus-microprofile-health
 
 `camel export --runtime=quarkus`, and `camel run --runtime=quarkus`, which exports the same way, now write
