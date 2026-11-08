@@ -58,7 +58,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     @UriParam(label = "consumer")
     private boolean matchOnUriPrefix;
     @UriParam(label = "consumer,advanced", defaultValue = "true")
-    private boolean logWarnOnBadRequest;
+    private boolean logWarnOnBadRequest = true;
     @UriParam
     private boolean bridgeEndpoint;
     @UriParam(label = "advanced")
