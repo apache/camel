@@ -30,11 +30,14 @@ import org.springframework.transaction.support.TransactionTemplate;
  * Caching version of {@link JdbcMessageIdRepository}
  */
 public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
+
+    protected static final String DEFAULT_QUERY_ALL_STRING
+            = "SELECT messageId, COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
+
     private volatile Map<String, Integer> cache = new ConcurrentHashMap<>();
     private final AtomicInteger hitCount = new AtomicInteger();
     private final AtomicInteger missCount = new AtomicInteger();
-    private String queryAllString
-            = "SELECT messageId, COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? GROUP BY messageId";
+    private String queryAllString = DEFAULT_QUERY_ALL_STRING;
 
     public JdbcCachedMessageIdRepository() {
     }
@@ -55,7 +58,8 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     protected void doInit() throws Exception {
         super.doInit();
         if (getTableName() != null) {
-            queryAllString = queryAllString.replaceFirst(DEFAULT_TABLENAME, getTableName());
+            // update query string from default table name to the new table name
+            queryAllString = DEFAULT_QUERY_ALL_STRING.replace(DEFAULT_TABLENAME, getTableName());
         }
     }
 
