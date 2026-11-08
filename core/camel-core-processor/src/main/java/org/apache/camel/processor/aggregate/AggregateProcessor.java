@@ -109,6 +109,9 @@ public class AggregateProcessor extends BaseProcessorSupport
     public static final String COMPLETED_BY_FORCE = "force";
 
     private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
+    // set by doOnCompletion on the aggregated exchange of a group that was never stored (completed by its first
+    // exchange), and removed by onSubmitCompletion
+    private static final String NOT_STORED = "CamelAggregatedNotStored";
     private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
@@ -965,6 +968,9 @@ public class AggregateProcessor extends BaseProcessorSupport
             if (spooled != null) {
                 aggregated.getExchangeExtension().addOnCompletion(spooled);
             }
+        } else if (isRecoverableRepository()) {
+            // the group was never added, so the repository has no completed exchange to confirm for it
+            aggregated.setProperty(NOT_STORED, Boolean.TRUE);
         }
 
         // cleanup timeout map if it was a incoming exchange which triggered the timeout (and not the timeout checker)
@@ -1120,6 +1126,7 @@ public class AggregateProcessor extends BaseProcessorSupport
 
     private void onSubmitCompletion(final String key, final Exchange exchange) {
         LOG.debug("Aggregation complete for correlation key {} sending aggregated exchange: {}", key, exchange);
+        final boolean stored = exchange.removeProperty(NOT_STORED) == null;
 
         // add this as in progress before we submit the task
         inProgressCount.increment();
@@ -1134,7 +1141,7 @@ public class AggregateProcessor extends BaseProcessorSupport
             aggregationStrategy.onCompletion(exchange);
         } catch (Throwable e) {
             // it must not throw, but the exchange is in progress already: fail it as when the thread pool rejects it
-            exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
+            exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId(), stored));
             failCompletion(exchange, e, "Error processing aggregated exchange: AggregationStrategy onCompletion failed");
             // and let the caller fail as before
             throw e;
@@ -1149,7 +1156,7 @@ public class AggregateProcessor extends BaseProcessorSupport
         LOG.debug("Processing aggregated exchange: {}", exchange);
 
         // add on completion task so we remember to update the inProgressCompleteExchanges
-        exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
+        exchange.getExchangeExtension().addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId(), stored));
 
         // send this exchange
         try {
@@ -1553,10 +1560,12 @@ public class AggregateProcessor extends BaseProcessorSupport
      */
     private final class AggregateOnCompletion implements Synchronization {
         private final String exchangeId;
+        private final boolean stored;
 
-        private AggregateOnCompletion(String exchangeId) {
+        private AggregateOnCompletion(String exchangeId, boolean stored) {
             // must use the original exchange id as it could potentially change if send over SEDA etc.
             this.exchangeId = exchangeId;
+            this.stored = stored;
         }
 
         @Override
@@ -1576,7 +1585,11 @@ public class AggregateProcessor extends BaseProcessorSupport
             // only confirm if we processed without a problem
             try {
                 boolean confirmed;
-                if (isRecoverableRepository()) {
+                if (!stored) {
+                    // completed by its first exchange: the group was never stored, so there is nothing to confirm (a
+                    // recoverable repository would not find it, and it would be kept as unconfirmed for good)
+                    confirmed = true;
+                } else if (isRecoverableRepository()) {
                     confirmed = ((RecoverableAggregationRepository) aggregationRepository)
                             .confirmWithResult(exchange.getContext(), exchangeId);
                 } else {
