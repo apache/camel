@@ -738,7 +738,7 @@ public final class ChaosManager {
         state.counts = counts;
         if (outcome.completed() && !state.expectedCompleted) {
             state.expectedCompleted = true;
-            record(routeId, ChaosRule.Expectation.Kind.COMPLETED);
+            record(routeId, ChaosRule.Expectation.Kind.COMPLETED, outcome == ChaosExchangeState.Outcome.HANDLED);
         }
         if (outcome == ChaosExchangeState.Outcome.HANDLED && !state.expectedHandled) {
             state.expectedHandled = true;
@@ -768,13 +768,21 @@ public final class ChaosManager {
     }
 
     private void record(String routeId, ChaosRule.Expectation.Kind kind) {
+        record(routeId, kind, false);
+    }
+
+    private void record(String routeId, ChaosRule.Expectation.Kind kind, boolean handled) {
         for (ChaosRule.Expectation expectation : ruleSet.expectations) {
             if (expectation.kind == kind && expectation.route.equals(routeId)) {
                 expectation.record();
             } else if (kind == ChaosRule.Expectation.Kind.COMPLETED && expectation.kind == ChaosRule.Expectation.Kind.LOST) {
-                // the messages one route completed, and those the next route completed
+                // the messages one route completed, and those the next route completed; a message the error handler
+                // of the first route handled (such as one parked by its dead letter channel) is not meant to reach
+                // the next route, so it is not lost
                 if (expectation.route.equals(routeId)) {
-                    expectation.recordLost(false);
+                    if (!handled) {
+                        expectation.recordLost(false);
+                    }
                 } else if (routeId.equals(expectation.toRoute)) {
                     expectation.recordLost(true);
                 }

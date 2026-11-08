@@ -283,6 +283,14 @@ class ChaosTabRenderTest {
         assertThat(ChaosTab.shortTime(800)).isEqualTo("800ms");
         assertThat(ChaosTab.shortTime(64_000)).isEqualTo("1m4s");
         assertThat(ChaosTab.shortTime(120_000)).isEqualTo("2m");
+        // a countdown in the note is in whole seconds: "903ms" cut to "903m" reads as minutes
+        assertThat(ChaosTab.countdown(903)).isEqualTo("1s");
+        assertThat(ChaosTab.countdown(64_001)).isEqualTo("1m5s");
+        assertThat(ChaosTab.countdown(0)).isEqualTo("0s");
+        ChaosInfo.Rule stalled = new ChaosInfo.Rule();
+        stalled.lifecycleState = "suspended";
+        stalled.lifecycleBackIn = 903;
+        assertThat(ChaosTab.note(stalled)).isEqualTo("suspended, back in 1s");
 
         ChaosInfo.Rule every = new ChaosInfo.Rule();
         every.text = "endpoint=x error rate=every:5";

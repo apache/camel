@@ -57,6 +57,8 @@ final class ChaosAdvisor {
             "spring-rabbitmq", "rabbitmq", "nats", "paho", "paho-mqtt5", "azure-servicebus", "ibm-mq");
     // a hand-off to another route of the same application, which does not wait for it
     private static final Set<String> HAND_OFF = Set.of("seda", "vm", "disruptor", "disruptor-vm");
+    // the endpoints that write to the local file system: remote to Camel, but with no connection to refuse
+    private static final Set<String> LOCAL_FILES = Set.of("file");
 
     /** The kinds of faults, which the report also uses for what has been tried. */
     enum Kind {
@@ -294,7 +296,11 @@ final class ChaosAdvisor {
             if (!to.isRemote()) {
                 continue;
             }
-            if (ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
+            if (LOCAL_FILES.contains(scheme)) {
+                // a local file system: nothing connects, but the write can fail
+                add(answer, recipes, "write-error", id, Kind.ERRORS, Map.of("endpoint", uri),
+                        "a write to " + uri + ": what does the route do when the file cannot be written?", 60);
+            } else if (ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
                 if (breaker) {
                     add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", uri),
                             "a call to " + uri + " in a route with a circuit breaker: when the service is down for a"

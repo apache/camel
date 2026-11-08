@@ -401,13 +401,13 @@ class ChaosTab extends AbstractTableTab {
         if (r.lifecycleState != null) {
             // the route is the target of the rule; between the rounds of repeat= the route is back
             if (r.lifecycleRound > 0 && r.lifecycleActsIn >= 0) {
-                return "next round in " + shortTime(r.lifecycleActsIn);
+                return "next round in " + countdown(r.lifecycleActsIn);
             }
             StringBuilder sb = new StringBuilder(r.lifecycleState);
             if (r.lifecycleActsIn >= 0) {
-                sb.append(", acts in ").append(shortTime(r.lifecycleActsIn));
+                sb.append(", acts in ").append(countdown(r.lifecycleActsIn));
             } else if (r.lifecycleBackIn >= 0) {
-                sb.append(", back in ").append(shortTime(r.lifecycleBackIn));
+                sb.append(", back in ").append(countdown(r.lifecycleBackIn));
             }
             if (r.lifecycleReason != null) {
                 sb.append(": ").append(r.lifecycleReason);
@@ -416,19 +416,19 @@ class ChaosTab extends AbstractTableTab {
         }
         List<String> parts = new ArrayList<>();
         if (r.startsIn >= 0) {
-            parts.add("starts in " + shortTime(r.startsIn));
+            parts.add("starts in " + countdown(r.startsIn));
         }
         if (r.burstEndsIn >= 0) {
-            parts.add("burst, " + shortTime(r.burstEndsIn) + " left");
+            parts.add("burst, " + countdown(r.burstEndsIn) + " left");
         } else if (r.nextBurstIn >= 0) {
-            parts.add("next burst in " + shortTime(r.nextBurstIn));
+            parts.add("next burst in " + countdown(r.nextBurstIn));
         }
         if (r.nextFireIn > 0) {
             // a count of matches (rate=every:N), not a time
             parts.add("fires again in " + r.nextFireIn + (r.nextFireIn == 1 ? " match" : " matches"));
         }
         if (r.endsIn >= 0) {
-            parts.add("ends in " + shortTime(r.endsIn));
+            parts.add("ends in " + countdown(r.endsIn));
         }
         if (r.skipped > 0) {
             parts.add("skipped " + r.skipped);
@@ -746,6 +746,14 @@ class ChaosTab extends AbstractTableTab {
     }
 
     /** A time for a column: 800ms, 2s, 1m4s, 2h3m. */
+    /**
+     * The time until something happens, in whole seconds rounded up: {@code back in 1s}, not {@code back in 903ms},
+     * which a narrow note column cuts to {@code 903m} (read as minutes).
+     */
+    static String countdown(long ms) {
+        return ms <= 0 ? "0s" : shortTime((ms + 999) / 1000 * 1000);
+    }
+
     static String shortTime(long ms) {
         if (ms < 1000) {
             return ms + "ms";

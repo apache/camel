@@ -57,6 +57,7 @@ class ChaosAdvisorTest extends ChaosTestSupport {
                         .onFallback().setBody(constant("later"))
                         .end();
                 from("testpoll:inbox?delay=100000&initialDelay=100000").routeId("inbox").to("mock:inbox");
+                from("direct:archive").routeId("archive").to("file:target/chaos-archive");
             }
         };
     }
@@ -89,6 +90,11 @@ class ChaosAdvisorTest extends ChaosTestSupport {
         assertThat(rules.values()).noneMatch(r -> r.contains("throwExceptionOnFailure"));
         // an internal input (direct) is not a consumer to fail
         assertThat(rules).doesNotContainKey("orders route-error consumer");
+        // a local file has no connection to refuse, but the write can fail
+        assertThat(rules)
+                .containsEntry("archive write-error errors",
+                        "endpoint=file://target/chaos-archive error exception=java.io.IOException rate=0.25 until=10m")
+                .doesNotContainKeys("archive connection-refused errors", "archive slow slow");
 
         // the most worth trying first
         assertThat(suggestions.get(0).recipe()).isEqualTo("http-error");
