@@ -115,8 +115,7 @@ public final class ChaosAssertions {
         while (true) {
             ChaosReport report = chaos.report();
             JsonObject rule = rule(report, ruleId);
-            JsonObject expectation = (JsonObject) rule.get("expectation");
-            if (expectation == null) {
+            if (!(rule.get("expectation") instanceof JsonObject expectation)) {
                 throw new AssertionError("Chaos rule " + ruleId + " has no expectation (expect=)\n" + report.toText());
             }
             String outcome = expectation.getString("outcome");
