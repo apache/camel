@@ -17,6 +17,9 @@ Camel will add the message id eagerly to the repository to detect
 duplication also for xref:manual::exchange.adoc[Exchange]'s' currently in progress.
 On completion Camel will remove the message id from the repository if
 the xref:manual::exchange.adoc[Exchange] failed, otherwise it stays there.
+An Exchange marked with `markRollbackOnly()` or `markRollbackOnlyLast()` counts as
+failed too, even without an exception. Set `removeOnFailure=false` to keep the message id
+of a failed Exchange.
 
 == Options
 
