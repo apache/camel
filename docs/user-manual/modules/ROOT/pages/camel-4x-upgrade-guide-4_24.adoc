@@ -2900,6 +2900,29 @@ the value stored by the other caller (before, the key was read again in the fail
 times, or at once when it runs in a transaction of the caller, as that transaction cannot be used to read the key
 again.
 
+=== camel-sql - JdbcKeyValueRepository: replace and delete(key, expected) do not match an expired entry
+
+`JdbcKeyValueRepository.replace(key, expected, newValue, ttl)` and `delete(key, expected)` now match only an entry that
+has not expired. Before, they matched an entry whose TTL had passed and returned `true`, although `get` returns `null`
+for it, and `replace` gave that entry a new TTL. Now they return `false` and leave the row as it is.
+
+For this, the default `updateIfValueString` and `deleteIfValueString` statements end with
+`AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)`, the condition of `selectKeysString`, and the current time is passed as their
+last parameter:
+
+[source,sql]
+----
+UPDATE CAMEL_KEYVALUE SET ITEM_VALUE = ?, EXPIRES_AT = ?
+    WHERE ITEM_KEY = ? AND ITEM_VALUE = ? AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)
+DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND ITEM_VALUE = ? AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)
+----
+
+If you set `updateIfValueString` or `deleteIfValueString` yourself, for example for a table with other column names,
+add the same condition with a parameter for the current time at the end. Otherwise the repository passes one more
+parameter than the statement has placeholders: most JDBC drivers then fail with an SQL error, while some (such as
+MariaDB Connector/J) ignore the extra parameter, so the statement still matches an expired entry. With `tableName` the
+statements are derived from the default statements, as before.
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the

@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -203,6 +205,71 @@ class JdbcKeyValueRepositoryTest {
     void testDeleteWithExpectedValueMissingKey() {
         boolean deleted = repository.delete("nonexistent", "value1");
         assertFalse(deleted);
+    }
+
+    @Test
+    void testReplaceExpiredEntry() {
+        storeExpired(repository, "key1", "value1");
+        assertFalse(repository.replace("key1", "value1", "value2", Duration.ofHours(1)),
+                "an expired entry must not be replaced");
+        assertStoredExpired(repository, "key1", "value1");
+        assertNull(repository.get("key1"));
+    }
+
+    @Test
+    void testDeleteWithExpectedValueExpiredEntry() {
+        storeExpired(repository, "key1", "value1");
+        assertFalse(repository.delete("key1", "value1"), "an expired entry must not be deleted as a match");
+        assertStoredExpired(repository, "key1", "value1");
+        assertNull(repository.get("key1"));
+    }
+
+    @Test
+    void testReplaceAndDeleteWithExpectedValueEntryWithTtl() {
+        repository.put("key1", "value1", Duration.ofHours(1));
+        assertTrue(repository.replace("key1", "value1", "value2", Duration.ofHours(1)));
+        assertEquals("value2", repository.get("key1"));
+        assertTrue(repository.delete("key1", "value2"));
+        assertNull(repository.get("key1"));
+    }
+
+    @Test
+    void testReplaceAndDeleteWithExpectedValueCustomTableName() throws Exception {
+        repository.stop();
+        repository = new JdbcKeyValueRepository(dataSource);
+        repository.setTableName("CUSTOM_KV_TABLE");
+        repository.init();
+        repository.start();
+
+        storeExpired(repository, "expired", "value1");
+        assertFalse(repository.replace("expired", "value1", "value2", null));
+        assertFalse(repository.delete("expired", "value1"));
+        assertStoredExpired(repository, "expired", "value1");
+
+        repository.put("key1", "value1", Duration.ofHours(1));
+        assertTrue(repository.replace("key1", "value1", "value2", null));
+        assertEquals("value2", repository.get("key1"));
+        assertTrue(repository.delete("key1", "value2"));
+        assertNull(repository.get("key1"));
+    }
+
+    /**
+     * Stores an entry that expired long ago, without going through the repository, which would not store it.
+     */
+    private static void storeExpired(JdbcKeyValueRepository repository, String key, Object value) {
+        repository.getJdbcTemplate().update(repository.getInsertString(), key, KeyValueRepositoryHelper.serialize(value),
+                1L);
+    }
+
+    /**
+     * Asserts that the row of the key is unchanged, read directly as {@link JdbcKeyValueRepository#get(String)} would
+     * delete it.
+     */
+    private static void assertStoredExpired(JdbcKeyValueRepository repository, String key, Object value) {
+        Object[] row = repository.getJdbcTemplate().queryForObject(repository.getSelectString(),
+                (rs, rowNum) -> new Object[] { rs.getBytes(1), rs.getLong(2) }, key);
+        assertArrayEquals(KeyValueRepositoryHelper.serialize(value), (byte[]) row[0], "the value must be unchanged");
+        assertEquals(1L, row[1], "the expiry must be unchanged");
     }
 
     @Test
