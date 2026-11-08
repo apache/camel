@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.json.JsonArray;
@@ -23,6 +25,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * CAMEL-26728: what has been tried per route, how it went, and what the suggestions offer that no rule tried yet.
@@ -127,6 +130,38 @@ class ChaosTriedTest extends ChaosTestSupport {
         }
         assertThat(slowTried).isTrue();
         assertThat(errorsTried).isFalse();
+    }
+
+    @Test
+    void theHandOffSuggestionIsTriedByARuleThatExpectsNothingLost() {
+        // the suggestion for route orders fails the next route, and expects nothing lost between them
+        chaos().addRule("route=shipping error until=1 expect=orders->shipping:lost<=0 within=10s");
+        template.sendBody("direct:orders", "order");
+        // shipping takes the order from seda on its own thread
+        await().atMost(10, TimeUnit.SECONDS).until(this::firedInShipping);
+
+        JsonObject orders = route("orders");
+        assertThat(((JsonArray) orders.get("kinds")).stream().map(k -> ((JsonObject) k).getString("kind")))
+                .contains("lost");
+        assertThat((JsonArray) orders.get("notTried")).doesNotContain("lost");
+        boolean lostTried = false;
+        for (Object o : (JsonArray) chaos().suggest().get("suggestions")) {
+            JsonObject s = (JsonObject) o;
+            if ("orders".equals(s.getString("route")) && "lost".equals(s.getString("kind"))) {
+                lostTried = s.getBooleanOrDefault("tried", false);
+            }
+        }
+        assertThat(lostTried).isTrue();
+    }
+
+    private boolean firedInShipping() {
+        for (Object o : (JsonArray) chaos().report().toJson().get("tried")) {
+            if ("shipping".equals(((JsonObject) o).getString("route"))
+                    && !((JsonArray) ((JsonObject) o).get("kinds")).isEmpty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Test

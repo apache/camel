@@ -190,6 +190,7 @@
         ],
         "options": [
           "at",
+          "draw",
           "expect",
           "from",
           "in",
@@ -227,6 +228,7 @@
         ],
         "options": [
           "at",
+          "draw",
           "expect",
           "from",
           "in",
@@ -253,6 +255,7 @@
         ],
         "options": [
           "at",
+          "draw",
           "expect",
           "from",
           "in",
@@ -301,6 +304,7 @@
         ],
         "options": [
           "at",
+          "draw",
           "expect",
           "from",
           "in",
@@ -325,6 +329,7 @@
         ],
         "options": [
           "at",
+          "draw",
           "expect",
           "from",
           "in",
@@ -443,6 +448,13 @@
           "entry",
           "step"
         ]
+      },
+      {
+        "name": "draw",
+        "type": "ruleId",
+        "required": false,
+        "description": "Draws the random choices of rate= as the rule with this id did with the same seed, so a scenario or a test fails the same messages as a rule added while the application ran",
+        "example": "r2"
       },
       {
         "name": "expect",

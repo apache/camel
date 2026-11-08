@@ -274,6 +274,9 @@ class ChaosAiPromptTest {
                 .contains("The seed of its random draws: 42.")
                 .contains("Expectation: orders:handled<=0, unmet")
                 .contains("a JUnit test in src/test/java").contains("camel.chaos.seed=42")
+                // the rule draws as it did here, as r1
+                .contains("camel.chaos.rules=endpoint=http://localhost:8765/stock* error status=503 rate=0.2"
+                          + " expect=orders:handled<=0 draw=r1 (draw=r1 makes it fail the same messages as rule r1 did")
                 .contains("assertExpectationMet(context, \"r1\", Duration.ofSeconds(10))")
                 .contains("The rule has an expectation: keep it.")
                 .endsWith("Write the file with camel_write_file, which asks me first, and change no route.");
@@ -288,9 +291,21 @@ class ChaosAiPromptTest {
         String question = ChaosAiPrompt.ofTest(info, rule);
         assertThat(question).contains("runs with camel run, without a Maven project")
                 .contains("Write the scenario chaos/r1-test.chaos").contains("seed=42")
+                .contains("says in words what it tests (not the rule again)")
+                .contains("the rule as the line endpoint=http://localhost:8765/stock* error status=503 rate=0.2"
+                          + " expect=orders:handled<=0 draw=r1")
                 .contains("The rule has no expectation (expect=): add one")
                 .contains("camel run * --chaos=chaos/r1-test.chaos --max-seconds=<seconds>")
                 .doesNotContain("JUnit");
+    }
+
+    @Test
+    void aRuleThatHasADrawAlreadyKeepsIt() {
+        ChaosInfo.Rule rule = info.chaos.rules.get(0);
+        rule.text = "endpoint=mock:stock error rate=0.5 draw=r7";
+        assertThat(ChaosAiPrompt.replayRule(rule)).isEqualTo("endpoint=mock:stock error rate=0.5 draw=r7");
+        rule.text = "endpoint=mock:stock error rate=0.5 ";
+        assertThat(ChaosAiPrompt.replayRule(rule)).isEqualTo("endpoint=mock:stock error rate=0.5 draw=r1");
     }
 
     @Test

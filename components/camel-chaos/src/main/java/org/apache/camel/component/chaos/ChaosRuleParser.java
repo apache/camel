@@ -57,7 +57,8 @@ final class ChaosRuleParser {
 
     // the options of a rule besides the parameters of its fault: all of them for the faults at a hook, and those of a
     // stall or lifecycle rule, which acts on its route at no hook
-    static final Set<String> GENERAL_KEYS = Set.of("at", "in", "when", "rate", "until", "from", "expect", "within");
+    static final Set<String> GENERAL_KEYS
+            = Set.of("at", "in", "when", "rate", "until", "from", "expect", "within", "draw");
     static final Set<String> LIFECYCLE_KEYS = Set.of("from", "expect", "within");
     // the prefix of the response headers of error status=: header.<name>=<value>
     static final String HEADER_PREFIX = "header.";
@@ -229,6 +230,7 @@ final class ChaosRuleParser {
                                                + " to match the endpoint");
         }
         from(b, params.get("from"), maxDuration);
+        draw(b, params.get("draw"));
         in(b, params.get("in"));
         if (b.fault == Fault.LIFECYCLE && params.containsKey("when")) {
             throw new IllegalArgumentException(
@@ -890,6 +892,21 @@ final class ChaosRuleParser {
             throw new IllegalArgumentException("rate=" + rate + " is not a probability above 0 and at most 1");
         }
         b.probability = probability;
+    }
+
+    /**
+     * draw=r2: the random choices (rate=) are drawn as the rule with that id drew them with the same seed, so a
+     * scenario or a test can fail the same messages as a rule that was added while the application ran.
+     */
+    private static void draw(ChaosRule.Builder b, String draw) {
+        if (draw == null) {
+            return;
+        }
+        if (!draw.matches("r[1-9][0-9]{0,8}")) {
+            throw new IllegalArgumentException(
+                    "draw=" + draw + " is not the id of a rule: draw=<id>, such as draw=r2, draws as rule r2 did");
+        }
+        b.drawKey = draw;
     }
 
     private static void until(ChaosRule.Builder b, String until, long maxDuration) {

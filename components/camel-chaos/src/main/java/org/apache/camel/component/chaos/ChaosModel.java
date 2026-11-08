@@ -345,6 +345,11 @@ final class ChaosModel {
                         "orders:handled<=0");
                 case "within" -> param("within", "duration", false,
                         "The time of the expectation (by default until the rule ends)", "2m");
+                case "draw" -> param("draw", "ruleId", false,
+                        "Draws the random choices of rate= as the rule with this id did with the same seed, so a"
+                                                              + " scenario or a test fails the same messages as a rule"
+                                                              + " added while the application ran",
+                        "r2");
                 default -> throw new IllegalStateException("The chaos model has no description of the option " + key);
             });
         }
