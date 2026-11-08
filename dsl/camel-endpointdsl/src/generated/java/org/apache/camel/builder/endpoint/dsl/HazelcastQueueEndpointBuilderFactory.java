@@ -208,7 +208,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * 
-         * Default: Listen
+         * Default: listen
          * Group: consumer
          * 
          * @param queueConsumerMode the value to set
@@ -224,7 +224,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * 
-         * Default: Listen
+         * Default: listen
          * Group: consumer
          * 
          * @param queueConsumerMode the value to set

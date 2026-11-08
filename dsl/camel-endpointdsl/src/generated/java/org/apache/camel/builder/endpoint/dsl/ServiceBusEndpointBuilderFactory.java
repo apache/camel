@@ -82,7 +82,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
-         * Default: AMQP
+         * Default: Amqp
          * Group: common
          * 
          * @param amqpTransportType the value to set
@@ -99,7 +99,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
-         * Default: AMQP
+         * Default: Amqp
          * Group: common
          * 
          * @param amqpTransportType the value to set
@@ -830,7 +830,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
-         * Default: AMQP
+         * Default: Amqp
          * Group: common
          * 
          * @param amqpTransportType the value to set
@@ -847,7 +847,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
-         * Default: AMQP
+         * Default: Amqp
          * Group: common
          * 
          * @param amqpTransportType the value to set
@@ -1369,7 +1369,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
          * type.
          * 
-         * Default: AMQP
+         * Default: Amqp
          * Group: common
          * 
          * @param amqpTransportType the value to set
@@ -1386,7 +1386,7 @@ public interface ServiceBusEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.core.amqp.AmqpTransportType</code> type.
          * 
-         * Default: AMQP
+         * Default: Amqp
          * Group: common
          * 
          * @param amqpTransportType the value to set

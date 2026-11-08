@@ -138,7 +138,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -160,7 +160,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -950,7 +950,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -972,7 +972,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -1648,7 +1648,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set
@@ -1670,7 +1670,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.azure.cosmos.ConsistencyLevel</code> type.
          * 
-         * Default: SESSION
+         * Default: Session
          * Group: common
          * 
          * @param consistencyLevel the value to set

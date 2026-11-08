@@ -554,7 +554,7 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * &lt;code&gt;com.azure.storage.blob.models.BlockListType&lt;/code&gt;
          * type.
          * 
-         * Default: COMMITTED
+         * Default: committed
          * Group: producer
          * 
          * @param blockListType the value to set

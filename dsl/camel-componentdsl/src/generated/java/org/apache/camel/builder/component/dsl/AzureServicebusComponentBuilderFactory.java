@@ -75,7 +75,7 @@ public interface AzureServicebusComponentBuilderFactory {
          * The option is a:
          * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
          * 
-         * Default: AMQP
+         * Default: Amqp
          * Group: common
          * 
          * @param amqpTransportType the value to set
