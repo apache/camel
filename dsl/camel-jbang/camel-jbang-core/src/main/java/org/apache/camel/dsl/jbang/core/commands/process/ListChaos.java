@@ -227,8 +227,11 @@ public class ListChaos extends ProcessWatchCommand {
             head.append(" (not final: an expectation is pending)");
         }
         printer().println(head.toString());
+        // where a given seed came from: camel.chaos.seed, or a scenario
+        String seedFrom = report.getStringOrDefault("seedFrom",
+                report.getBooleanOrDefault("seedGiven", false) ? "camel.chaos.seed" : null);
         printer().println("  seed: " + report.get("seed")
-                          + (report.getBooleanOrDefault("seedGiven", false) ? " (camel.chaos.seed)" : " (picked at startup)"));
+                          + (seedFrom != null ? " (" + seedFrom + ")" : " (picked at startup)"));
         printer().println("  lost: " + report.get("lost"));
         JsonArray reasons = report.getCollection("reasons");
         if (reasons != null) {

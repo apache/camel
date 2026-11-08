@@ -354,8 +354,9 @@ public final class SecurityUtils {
     // components have the same name (such as the rules option of the schematron endpoint), and that are insecure with
     // any value that is not empty: the key in lower case without dashes, and the security category
     private static final Map<String, String> SECURITY_KEYS = Map.of(
-            // the rules of camel-chaos to add at startup (CAMEL-26330)
-            "camel.chaos.rules", INSECURE_DEV);
+            // the rules of camel-chaos to add at startup (CAMEL-26330), and a scenario file of rules (CAMEL-26722)
+            "camel.chaos.rules", INSECURE_DEV,
+            "camel.chaos.scenario", INSECURE_DEV);
 
     private SecurityUtils() {
     }

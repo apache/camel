@@ -68,7 +68,7 @@ public class ChaosDevConsole extends AbstractDevConsole {
             @Metadata(description = "Whether chaos is switched on: with profile dev or camel.chaos.enabled=true, never with profile prod") boolean enabled,
             @Metadata(description = "Why chaos is off (only when it is off)") String reason,
             @Metadata(description = "The current rules (not the removed or replaced ones; only when chaos is on)") List<RuleEntry> rules,
-            @Metadata(description = "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, the counts per route, and the recent faults (the last 20, the latest first: timestamp, ago, rule, version, fault, hook, route, endpoint or step, exchangeId) (only when chaos is on)") Map<String, Object> report) {
+            @Metadata(description = "The report: verdict, final, seed, seedGiven, seedFrom, lost, reasons, all rules (with their scenario) and the removed and replaced ones, the counts per route, and the recent faults (the last 20, the latest first: timestamp, ago, rule, version, fault, hook, route, endpoint or step, exchangeId) (only when chaos is on)") Map<String, Object> report) {
     }
 
     @Metadata(label = "query",

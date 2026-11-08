@@ -24,7 +24,8 @@ Chaos is for development only. It stays off with profile `prod`, and does nothin
 
 * `camel run`: add the dependency with `--chaos` (or `--dep camel:chaos`), with the default runtime or
 `--runtime=main` (not with Spring Boot or Quarkus). `camel run` uses profile `dev` by default, which switches chaos
-on. Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>).
+on. Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>), or
+start with the rules of a scenario file with `--chaos=chaos/outage.chaos` (see <<_scenarios,Scenarios>>).
 * A plain `Main` or a test: add the `camel-chaos` dependency and set `camel.chaos.enabled=true`, for example in a
 `CamelTestSupport` test with
 `camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(props)`, where `props` has
@@ -49,10 +50,10 @@ and logs a WARN that it is on. The hooks do nothing until a rule is added. When 
 installed (only the lifecycle strategy that made this decision stays, and does nothing), and `camel.chaos.rules` is
 ignored.
 
-`camel.chaos.rules` is marked `insecure:dev`: with camel-main and profile `prod` (which sets
-`camel.security.policy=fail`) an application with rules configured refuses to start. Without camel-main this check does
-not run, and chaos stays off with profile `prod` anyway. Rules set from Java (`chaosConfig().withRules(...)`) are not
-checked either, as for every `insecure:dev` option.
+`camel.chaos.rules` and `camel.chaos.scenario` are marked `insecure:dev`: with camel-main and profile `prod` (which
+sets `camel.security.policy=fail`) an application with rules or a scenario configured refuses to start. Without
+camel-main this check does not run, and chaos stays off with profile `prod` anyway. Rules set from Java
+(`chaosConfig().withRules(...)`) are not checked either, as for every `insecure:dev` option.
 
 == Options
 
@@ -72,7 +73,13 @@ starting. They are read once, when the context starts: changing them while the a
 include the startup.
 |`camel.chaos.maxDuration` |`10m` |The longest time a rule runs: a rule without an `until` duration ends after it, and
 a longer `until` duration, `delay`, or `duration` of `stall` and `lifecycle`, is rejected when the rule is added.
+|`camel.chaos.scenario` | |A scenario to load at startup: a file with one rule per line (see
+<<_scenarios,Scenarios>>), such as `chaos/outage.chaos`, or `classpath:` and a name. Its rules are added before those of
+`camel.chaos.rules`, and its `seed=` is used unless `camel.chaos.seed` is set. A scenario that cannot be read, or has a
+line that is not valid, stops the application from starting.
 |`camel.chaos.reportOnShutdown` |`true` |Log the report when the context stops, if any rule was added.
+|`camel.chaos.reportFile` | |Write the report as JSON to this file when the context stops, also without rules (see
+<<_chaos_in_a_pipeline,Chaos in a pipeline>>).
 |===
 
 For example, in `application.properties`:
@@ -98,6 +105,7 @@ List<String> warnings = chaos.checkRule(id);
 chaos.removeRule(id);
 List<String> ids = chaos.addRules("endpoint=seda:dlq error at=dlq; endpoint=https:inventory* error status=503");
 String text = chaos.report().toText();
+List<String> loaded = chaos.loadScenario("outage.chaos", Files.readString(Path.of("chaos/outage.chaos")));
 ----
 
 `addRules` adds rules separated by `;`, as in `camel.chaos.rules`, all of them or none when one is not valid, so they
@@ -115,6 +123,7 @@ camel cmd chaos-change --id=r1 --rule='endpoint=kafka:orders* delay duration=5s 
 camel cmd chaos-remove myapp --id=r1
 camel cmd chaos-clear
 camel cmd chaos-clear myapp --reset
+camel cmd chaos-load chaos/outage.chaos
 camel get chaos
 camel get chaos myapp --report
 ----
@@ -187,6 +196,71 @@ layer does not offer them; the list, the report and the check are read-only, so 
 a loose request (what it would hit, in plain words) and show it before it asks to add it. `camel ask` has the same tools, and asks before it
 adds or changes a rule. The development MCP tools that `camel run --mcp` (`camel.jbang.mcp=true`) serves over HTTP have
 only the list and the report (not the check either: the integration parses the rule, and `exception=` loads a class).
+
+== Scenarios
+
+A scenario is the rules of an experiment in a file of the project, so it can be run again, shared and kept with the
+code, instead of rules typed once at the command line. By convention it is in a `chaos` folder, with the extension
+`.chaos`:
+
+[source]
+----
+# chaos/outage.chaos: the stock service is down for a minute, then slow for a minute
+seed=42
+
+endpoint=http:stock* error status=503 until=1m
+endpoint=http:stock* delay duration=2s from=1m until=1m
+# no order may be lost: the orders route completes 50 exchanges within 3 minutes
+endpoint=http:stock* error rate=0.01 expect=orders:50 within=3m
+----
+
+* One rule per line, in the one-line form of `camel.chaos.rules` (see <<_rules,Rules>>). A rule does not go over
+several lines, and a line holds one rule.
+* A line that starts with `#` is a comment, and empty lines are left out. A `#` later in a line is part of the rule.
+* A line `seed=<number>` fixes the random draws of the rules of the scenario, so it fails the same messages each time
+it runs (with one thread and the same messages in the same order, see <<_time_and_the_seed,Time and the seed>>). The
+draws of a rule depend on its place in the scenario, not on the ids the rules get, so the scenario draws the same when it
+is loaded into an application that had other rules before. Without `seed=` its rules draw from the seed of the
+application.
+* The phases of the experiment come from `from=` and `until=` of its rules: they start when the scenario is loaded (a
+scenario of `camel.chaos.scenario` when the context has started), so a rule with `from=1m until=1m` runs during the
+second minute. There is no other timing syntax.
+
+To start an application with a scenario:
+
+[source,bash]
+----
+camel run * --chaos=chaos/outage.chaos
+----
+
+`--chaos=<file>` adds camel-chaos as `--chaos` does, and sets `camel.chaos.scenario` to the file (it must end with
+`.chaos`; `--chaos Shop.java` still runs `Shop.java`). A plain `Main` sets `camel.chaos.scenario` itself. `camel run *`
+and `camel export` leave `.chaos` files out: they are not routes, and they do not go into an exported project.
+
+To load a scenario into an application that runs:
+
+[source,bash]
+----
+$ camel cmd chaos-load chaos/outage.chaos
+Loaded chaos scenario outage.chaos: 3 rules (the rules there were are removed, and the report starts again)
+  r4: fail every send to http:stock* with HTTP status 503, for 1 minute
+  r5: delay every send and poll of http:stock* by 2 seconds, starting after 1 minute, for 1 minute
+  r6: fail 1% of the sends and polls of http:stock*; expects at least 50 exchanges completed in route orders within 3 minutes
+----
+
+A scenario is an experiment of its own: loading one removes the rules there are and starts a new report (as
+`chaos-clear --reset` does), then adds the rules of the scenario, all of them or none. A line that is not valid is
+refused with its line number (`Chaos scenario outage.chaos, line 4: Invalid chaos rule [...]`), and then the rules
+there are stay. The ids of the rules go on from the last one (`r4` above, after three rules). In the report, each rule
+of a scenario says which one it came from (`(scenario outage.chaos)` in the text, `scenario` in the JSON).
+
+The chaos screen of the Camel TUI saves the rules there are as a scenario (key `s`), with the seed: rules tried by hand
+become a file of the project, to run again. On its Errors tab, `!` makes a rule of a real error, which fails the same
+way again (the same exception and message at the same step, or the same HTTP status at the same endpoint, ten times):
+fix the bug, then prove the fix against the same failure, and keep the rule in a scenario. And `t` on a rule asks its
+AI panel to make a test of it: a JUnit test with `ChaosAssertions` for a Maven project, or a scenario with an
+expectation and the `camel run --chaos=<file> --max-seconds=<seconds>` command, whose exit code is the verdict, for a
+folder that runs with `camel run`.
 
 == Rules
 
@@ -747,6 +821,31 @@ a rule that waits for its start), `lastFiredAgo` (milliseconds), `faultsLastMinu
 has no rate. The report has `recentFaults`, each with `timestamp`, `ago`, `rule`, `version`, `fault` (such as
 `error status 503` or `delay 2s`), `hook` (none for a lifecycle rule), `route`, `endpoint` or `step`, and `exchangeId`
 (none at a poll). `ChaosManager.reset()` (`chaos-clear --reset`) clears the recent faults too.
+
+== Chaos in a pipeline
+
+A run with chaos ends with the verdict of the report as its exit code, so a scenario can gate a build:
+
+[source,bash]
+----
+camel run * --chaos=chaos/outage.chaos --max-seconds=240 --chaos-report=target/chaos-report.json
+----
+
+* The verdict FAIL ends the run with exit code 1, and the reasons are printed (an unmet expectation, messages lost at
+the dead letter channel). A run that failed for another reason keeps its own exit code.
+* PASS ends with exit code 0, and a line that says how many expectations were met.
+* Without an expectation there is no verdict: chaos makes exchanges fail on purpose, so failed exchanges say nothing on
+their own. The run ends with exit code 0, and a line says that there is no verdict. A scenario for a pipeline needs at
+least one rule with `expect=`.
+* An expectation must be decided before the run ends: the run must last longer than its `within`. One that is still
+pending when the application stops is cancelled, and then there is no verdict either (a line says so). In the example
+the expectation is decided after 3 minutes, and the run stops after 4.
+* `--chaos-report=<file>` writes the report as JSON when the run ends (`camel.chaos.reportFile`), for the pipeline to
+keep or read; without it the CLI reads the report from a temporary file. The report is written also when no rule was
+added.
+
+This is for runs in the foreground, with the default runtime or `--runtime=main`; a run in the background has no exit
+code to give.
 
 == Time and the seed
 

@@ -899,6 +899,13 @@ public class RunPipeline {
         if (request.chaos) {
             // camel-chaos switches itself on with profile dev (the default of camel run), never with profile prod
             request.dependencies.add("camel:chaos");
+            // the command line wins over camel.chaos.scenario and camel.chaos.reportFile of the application properties
+            if (request.chaosScenario != null) {
+                main.addOverrideProperty("camel.chaos.scenario", request.chaosScenario);
+            }
+            if (request.chaosReport != null) {
+                main.addOverrideProperty("camel.chaos.reportFile", request.chaosReport);
+            }
         }
         if (request.openapiUi) {
             request.dependencies.add("camel:platform-http-main");
