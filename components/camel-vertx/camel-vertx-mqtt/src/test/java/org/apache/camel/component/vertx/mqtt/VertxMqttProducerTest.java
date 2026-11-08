@@ -114,6 +114,32 @@ class VertxMqttProducerTest {
         assertEquals(0, broker.received().peek().payload().length);
     }
 
+    /**
+     * MQTT 5 allows a key more than once, and the order of the user properties carries meaning.
+     */
+    @Test
+    void userPropertiesKeepTheirOrderAndRepeatedKeys() {
+        final List<Map.Entry<String, String>> user
+                = List.of(Map.entry("hop", "a"), Map.entry("origin", "test"), Map.entry("hop", "b"));
+        template.send(uri("a", ""), exchange -> {
+            exchange.getMessage().setHeader(VertxMqttConstants.USER_PROPERTIES, user);
+            exchange.getMessage().setBody("{}");
+        });
+        await().atMost(WAIT).until(() -> !broker.received().isEmpty());
+        final DefaultExchange read = new DefaultExchange(context);
+        VertxMqttProperties.toHeaders(broker.received().peek().properties(), read.getMessage());
+        assertEquals(user, read.getMessage().getHeader(VertxMqttConstants.USER_PROPERTIES));
+    }
+
+    @Test
+    void aUserPropertiesHeaderOfAnotherTypeFailsTheExchange() {
+        final Exchange done = template.send(uri("a", ""), exchange -> {
+            exchange.getMessage().setHeader(VertxMqttConstants.USER_PROPERTIES, "origin=test");
+            exchange.getMessage().setBody("{}");
+        });
+        assertInstanceOf(IllegalArgumentException.class, done.getException());
+    }
+
     @Test
     void mqtt5PropertiesFromTheHeaders() {
         template.send(uri("a", ""), exchange -> {
@@ -127,7 +153,7 @@ class VertxMqttProducerTest {
         await().atMost(WAIT).until(() -> !broker.received().isEmpty());
         final DefaultExchange read = new DefaultExchange(context);
         VertxMqttProperties.toHeaders(broker.received().peek().properties(), read.getMessage());
-        assertEquals(Map.of("origin", "test"), read.getMessage().getHeader(VertxMqttConstants.USER_PROPERTIES));
+        assertEquals(List.of(Map.entry("origin", "test")), read.getMessage().getHeader(VertxMqttConstants.USER_PROPERTIES));
         assertEquals("application/json", read.getMessage().getHeader(VertxMqttConstants.CONTENT_TYPE));
         assertEquals("replies", read.getMessage().getHeader(VertxMqttConstants.RESPONSE_TOPIC));
         assertArrayEquals(new byte[] { 7 },

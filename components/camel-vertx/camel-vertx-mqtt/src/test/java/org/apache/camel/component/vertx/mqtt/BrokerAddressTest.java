@@ -74,5 +74,8 @@ class BrokerAddressTest {
         final IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> BrokerAddress.parse("tcp://marker-user:marker-secret@broker.example.com"));
         assertFalse(e.getMessage().contains("marker-secret"), e.getMessage());
+        // The URL it refused, with scheme and host, so that the user knows which one
+        assertTrue(e.getMessage().contains("tcp://marker-user:"), e.getMessage());
+        assertTrue(e.getMessage().contains("@broker.example.com"), e.getMessage());
     }
 }

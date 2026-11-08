@@ -90,9 +90,17 @@ public class VertxMqttComponent extends DefaultComponent implements SSLContextPa
     @Override
     protected void doShutdown() throws Exception {
         if (managedVertx && vertx != null) {
-            vertx.close().toCompletionStage().toCompletableFuture().get(30, TimeUnit.SECONDS);
+            final Vertx closing = vertx;
             vertx = null;
             managedVertx = false;
+            try {
+                closing.close().toCompletionStage().toCompletableFuture().get(30, TimeUnit.SECONDS);
+            } catch (final Exception e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                LOG.warn("Closing the Vert.x instance of the component did not complete", e);
+            }
         }
         super.doShutdown();
     }

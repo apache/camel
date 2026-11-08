@@ -64,7 +64,7 @@ record BrokerAddress(String host, int port, boolean ssl) {
         if (uri.getRawUserInfo() != null) {
             throw new IllegalArgumentException(
                     "The broker URL must not carry user information, use the username and password options: %s"
-                            .formatted(uri.getHost()));
+                            .formatted(shown));
         }
         String host = uri.getHost();
         if (host == null || host.isEmpty()) {

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.vertx.mqtt;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.netty.handler.codec.mqtt.MqttProperties;
@@ -42,13 +44,24 @@ final class VertxMqttProperties {
      */
     static MqttProperties fromHeaders(final Message message) {
         final MqttProperties properties = new MqttProperties();
-        final Map<?, ?> user = message.getHeader(VertxMqttConstants.USER_PROPERTIES, Map.class);
-        if (user != null) {
-            user.forEach((key, value) -> {
-                if (key != null && value != null) {
-                    properties.add(new UserProperty(key.toString(), value.toString()));
+        final Object user = message.getHeader(VertxMqttConstants.USER_PROPERTIES);
+        if (user instanceof final Map<?, ?> map) {
+            map.forEach((key, value) -> addUserProperty(properties, key, value));
+        } else if (user instanceof final Iterable<?> entries) {
+            // In order and with keys that occur more than once, as MQTT 5 allows
+            for (final Object each : entries) {
+                if (!(each instanceof final Map.Entry<?, ?> entry)) {
+                    throw new IllegalArgumentException(
+                            "The header %s must be a list of Map.Entry or a Map, not a list of %s"
+                                    .formatted(VertxMqttConstants.USER_PROPERTIES,
+                                            each == null ? "null" : each.getClass().getName()));
                 }
-            });
+                addUserProperty(properties, entry.getKey(), entry.getValue());
+            }
+        } else if (user != null) {
+            throw new IllegalArgumentException(
+                    "The header %s must be a list of Map.Entry or a Map, not %s"
+                            .formatted(VertxMqttConstants.USER_PROPERTIES, user.getClass().getName()));
         }
         final String contentType = message.getHeader(VertxMqttConstants.CONTENT_TYPE, String.class);
         if (contentType != null) {
@@ -83,15 +96,16 @@ final class VertxMqttProperties {
         if (properties == null || properties.isEmpty()) {
             return;
         }
-        final Map<String, String> user = new LinkedHashMap<>();
+        // A list, not a map: a key may occur more than once, and the order carries meaning (MQTT 5, 3.3.2.3.7)
+        final List<Map.Entry<String, String>> user = new ArrayList<>();
         for (final MqttProperty<?> property : properties.getProperties(MqttProperties.USER_PROPERTY)) {
             final Object value = property.value();
             if (value instanceof final StringPair pair) {
-                user.put(pair.key, pair.value);
+                user.add(new SimpleImmutableEntry<>(pair.key, pair.value));
             } else if (value instanceof final Collection<?> pairs) {
                 for (final Object each : pairs) {
                     if (each instanceof final StringPair pair) {
-                        user.put(pair.key, pair.value);
+                        user.add(new SimpleImmutableEntry<>(pair.key, pair.value));
                     }
                 }
             }
@@ -114,6 +128,12 @@ final class VertxMqttProperties {
         final MqttProperty<?> expiry = properties.getProperty(MqttProperties.PUBLICATION_EXPIRY_INTERVAL);
         if (expiry != null && expiry.value() instanceof final Integer seconds) {
             message.setHeader(VertxMqttConstants.MESSAGE_EXPIRY_INTERVAL, Integer.toUnsignedLong(seconds));
+        }
+    }
+
+    private static void addUserProperty(final MqttProperties properties, final Object key, final Object value) {
+        if (key != null && value != null) {
+            properties.add(new UserProperty(key.toString(), value.toString()));
         }
     }
 }

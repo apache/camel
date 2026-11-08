@@ -138,7 +138,7 @@ class VertxMqttConsumerTest {
         broker.send("a", bytes("x"), 1, false, properties);
 
         await().atMost(WAIT).until(() -> !received.isEmpty());
-        assertEquals(Map.of("origin", "test"), received.peek().getHeader(VertxMqttConstants.USER_PROPERTIES));
+        assertEquals(List.of(Map.entry("origin", "test")), received.peek().getHeader(VertxMqttConstants.USER_PROPERTIES));
         assertEquals("text/plain", received.peek().getHeader(VertxMqttConstants.CONTENT_TYPE));
     }
 

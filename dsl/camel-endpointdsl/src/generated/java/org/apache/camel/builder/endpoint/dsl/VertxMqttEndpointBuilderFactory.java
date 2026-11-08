@@ -2228,10 +2228,11 @@ public interface VertxMqttEndpointBuilderFactory {
             return "CamelVertxMqttOverrideRetained";
         }
         /**
-         * MQTT 5 only. The user properties of the message. A key that occurs
-         * more than once keeps its last value.
+         * MQTT 5 only. The user properties of the message, in their order and
+         * with keys that occur more than once. The producer also takes a Map.
          * 
-         * The option is a: {@code java.util.Map<String, String>} type.
+         * The option is a: {@code java.util.List<java.util.Map.Entry<String,
+         * String>>} type.
          * 
          * Group: common
          * 

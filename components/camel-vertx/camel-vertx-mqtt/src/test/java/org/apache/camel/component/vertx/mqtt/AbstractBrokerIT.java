@@ -17,6 +17,7 @@
 package org.apache.camel.component.vertx.mqtt;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -169,7 +170,7 @@ abstract class AbstractBrokerIT {
                 prefix + "replies", VertxMqttConstants.CORRELATION_DATA, new byte[] { 4, 2 }));
         await().atMost(WAIT).until(() -> !received.isEmpty());
         final Message message = received.peek();
-        assertEquals(Map.of("origin", "it"), message.getHeader(VertxMqttConstants.USER_PROPERTIES));
+        assertEquals(List.of(Map.entry("origin", "it")), message.getHeader(VertxMqttConstants.USER_PROPERTIES));
         assertEquals("application/json", message.getHeader(VertxMqttConstants.CONTENT_TYPE));
         assertEquals(prefix + "replies", message.getHeader(VertxMqttConstants.RESPONSE_TOPIC));
         assertArrayEquals(new byte[] { 4, 2 }, message.getHeader(VertxMqttConstants.CORRELATION_DATA, byte[].class));

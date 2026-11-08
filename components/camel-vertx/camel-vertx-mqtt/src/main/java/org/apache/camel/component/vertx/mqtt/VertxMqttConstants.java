@@ -55,9 +55,9 @@ public final class VertxMqttConstants {
               description = "Whether to publish the message as retained, instead of the retained option of the endpoint.",
               javaType = "Boolean")
     public static final String OVERRIDE_RETAINED = "CamelVertxMqttOverrideRetained";
-    @Metadata(description = "MQTT 5 only. The user properties of the message. A key that occurs more than once keeps"
-                            + " its last value.",
-              javaType = "java.util.Map<String, String>")
+    @Metadata(description = "MQTT 5 only. The user properties of the message, in their order and with keys that occur"
+                            + " more than once. The producer also takes a Map.",
+              javaType = "java.util.List<java.util.Map.Entry<String, String>>")
     public static final String USER_PROPERTIES = "CamelVertxMqttUserProperties";
     @Metadata(description = "MQTT 5 only. The content type of the message.", javaType = "String")
     public static final String CONTENT_TYPE = "CamelVertxMqttContentType";
