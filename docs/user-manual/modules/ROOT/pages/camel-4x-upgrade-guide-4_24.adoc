@@ -7456,3 +7456,26 @@ Platform BOM, as for the Camel Quarkus extensions that the BOM manages. Before, 
 of the run, which can be another one than the platform of the export, for example when the export reuses the data of
 an earlier `camel run`. An `io.quarkus` dependency that is given with its version (`--dep` or
 `camel.jbang.dependencies`) keeps that version. Nothing else changes for the Quarkus runtime.
+
+=== camel-netty-http - logWarnOnBadRequest warns by default
+
+The `logWarnOnBadRequest` option of a `netty-http` consumer is documented as enabled by default, but its field was
+left at `false`, so a request that Netty could not decode got its HTTP 400 returned without a log line. The option now
+defaults to `true`, as documented, so such a request logs `Netty request decoder failure due: <reason> returning HTTP
+Status 400 to client` at `WARN` level. Set `logWarnOnBadRequest=false` on the consumer to keep the previous silence.
+
+=== camel-http - LoggingHttpActivityListener logs one event per line
+
+The `multiline` option of `LoggingHttpActivityListener` is documented as enabled by default, but its field was left at
+`false`, so `logHttpActivity=true` logged each request and response as a single event with embedded line separators.
+The option now defaults to `true`, as documented, and every line is logged as its own event.
+
+To keep the single joined event, configure a listener explicitly and pass it as `httpActivityListener` instead of
+relying on `logHttpActivity` to create the default one:
+
+[source,java]
+----
+LoggingHttpActivityListener listener = new LoggingHttpActivityListener();
+listener.setMultiline(false);
+context.getComponent("http", HttpComponent.class).setHttpActivityListener(listener);
+----
