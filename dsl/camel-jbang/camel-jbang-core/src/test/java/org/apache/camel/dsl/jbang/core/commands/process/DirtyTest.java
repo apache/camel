@@ -105,50 +105,30 @@ class DirtyTest extends ProcessCommandTestSupport {
     }
 
     @Test
-    void testTheLogOfAPreviousRunIsNotDirty() throws Exception {
-        // kept on purpose (CAMEL-25784), and the next run of that name replaces it
-        Files.writeString(CommandLineHelper.getCamelDir().resolve("orders-previous.log"), "Started");
-        Files.writeString(CommandLineHelper.getCamelDir().resolve("orders-previous.json"), "{}");
-        // a name can be a number
-        Files.writeString(CommandLineHelper.getCamelDir().resolve("123-previous.log"), "Started");
-
-        Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
-        command.clean = true;
-
-        try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
-            int exit = command.doCall();
-
-            assertEquals(0, exit);
-            assertEquals("", printer.getOutput().trim());
-            assertTrue(Files.exists(CommandLineHelper.getCamelDir().resolve("orders-previous.log")));
-            assertTrue(Files.exists(CommandLineHelper.getCamelDir().resolve("123-previous.log")));
-        }
-    }
-
-    @Test
-    void testPreviousCleansTheLogsOfPreviousRuns() throws Exception {
+    void testCleanCleansTheLogsOfPreviousRuns() throws Exception {
         Path dir = CommandLineHelper.getCamelDir();
         Files.writeString(dir.resolve("orders-previous.log"), "Started");
         Files.writeString(dir.resolve("orders-previous.json"), "{}");
+        // a name can be a number: a previous run, not the files of pid 123
+        Files.writeString(dir.resolve("123-previous.log"), "Started");
         Files.writeString(dir.resolve("billing-previous.log"), "Started");
         Files.writeString(dir.resolve("billing-previous.json"), "{}");
 
         try (MockedStatic<ProcessHandle> mocked = mockStatic(ProcessHandle.class)) {
             // without --clean it says how many there are, and how to clean them
             assertEquals(0, new Dirty(new CamelJBangMain().withPrinter(printer)).doCall());
-            assertEquals("There are logs of the previous runs of 2 integrations (camel dirty --clean --previous cleans"
-                         + " them)",
+            assertEquals("There are logs of the previous runs of 3 integrations (camel dirty --clean cleans them)",
                     printer.getOutput().trim());
             assertTrue(Files.exists(dir.resolve("orders-previous.log")));
 
             Dirty command = new Dirty(new CamelJBangMain().withPrinter(printer));
             command.clean = true;
-            command.previous = true;
             assertEquals(0, command.doCall());
-            assertTrue(printer.getOutput().contains("Cleaned 4 files of the previous runs of 2 integrations"),
+            assertTrue(printer.getOutput().contains("Cleaned 5 files of the previous runs of 3 integrations"),
                     printer.getOutput());
             for (String name : new String[] {
-                    "orders-previous.log", "orders-previous.json", "billing-previous.log", "billing-previous.json" }) {
+                    "orders-previous.log", "orders-previous.json", "billing-previous.log", "billing-previous.json",
+                    "123-previous.log" }) {
                 assertFalse(Files.exists(dir.resolve(name)), name + " is cleaned");
             }
         }

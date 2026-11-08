@@ -32,18 +32,13 @@ import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.getCamelD
                      footer = {
                              "%nExamples:",
                              "  camel dirty",
-                             "  camel dirty --clean",
-                             "  camel dirty --clean --previous" })
+                             "  camel dirty --clean" })
 public class Dirty extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--clean" }, defaultValue = "false",
-                        description = "Clean dirty files which are no longer in use")
+                        description = "Clean dirty files which are no longer in use, and the logs of the previous"
+                                      + " runs of the integrations (camel log --previous)")
     boolean clean;
-
-    @CommandLine.Option(names = { "--previous" }, defaultValue = "false",
-                        description = "Also clean the logs of the previous runs of the integrations (camel log"
-                                      + " --previous), which are kept until then")
-    boolean previous;
 
     // the log a log4j configuration of the CLI writes when the pid system property is not set yet
     static final String STRAY_LOG = "${sys:pid}.log";
@@ -63,8 +58,8 @@ public class Dirty extends ProcessBaseCommand {
         List<File> previousRuns = new ArrayList<>();
         for (File f : files) {
             if (PreviousRun.isPreviousRunFile(f.getName())) {
-                // kept on purpose: the log of the previous run of an integration (camel log --previous), one for
-                // each name that ever ran, until --previous cleans them
+                // the log of the previous run of an integration (camel log --previous), one for each name that ever
+                // ran: kept until it is cleaned
                 if (f.isFile()) {
                     previousRuns.add(f);
                 }
@@ -89,7 +84,7 @@ public class Dirty extends ProcessBaseCommand {
             if (!dirty.isEmpty()) {
                 printer().println("Cleaned " + delete(dirty, left) + " orphan files");
             }
-            if (previous && !previousRuns.isEmpty()) {
+            if (!previousRuns.isEmpty()) {
                 int runs = runs(previousRuns);
                 int cleaned = delete(previousRuns, left);
                 printer().println("Cleaned " + cleaned + " files of the previous runs of " + runs + " integrations");
@@ -103,7 +98,7 @@ public class Dirty extends ProcessBaseCommand {
             }
             if (!previousRuns.isEmpty()) {
                 printer().println("There are logs of the previous runs of " + runs(previousRuns)
-                                  + " integrations (camel dirty --clean --previous cleans them)");
+                                  + " integrations (camel dirty --clean cleans them)");
             }
         }
 

@@ -5757,8 +5757,7 @@ When `camel run` ends, its log is no longer deleted. It is kept as `~/.camel/<na
 integration, with `~/.camel/<name>-previous.json`, which says when and how the run ended. The next run of that name that
 ends replaces both, and at most the last 10 MB of a log are kept. `camel log <name> --previous` prints the log, like
 `kubectl logs --previous` in Kubernetes. The log of an integration that was killed is kept the same way, the next time a
-previous run is looked up. `camel dirty --clean` leaves these files, and `camel dirty --clean --previous` cleans them
-too.
+previous run is looked up. `camel dirty --clean` cleans these files too.
 
 === camel-jbang - the AI tools wait for Camel to start, and read the log of the previous run
 
