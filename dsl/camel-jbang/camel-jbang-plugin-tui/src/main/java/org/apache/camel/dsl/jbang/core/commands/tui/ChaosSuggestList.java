@@ -51,7 +51,7 @@ final class ChaosSuggestList {
     }
 
     /** A suggestion, as the chaos action of the integration gives it. */
-    record Item(String route, String kind, String title, String rule, String why, boolean tried) {
+    record Item(String route, String kind, String title, String rule, String why) {
     }
 
     private final String name;
@@ -65,7 +65,7 @@ final class ChaosSuggestList {
                 if (o instanceof JsonObject jo && jo.getString("rule") != null) {
                     items.add(new Item(
                             jo.getString("route"), jo.getString("kind"), jo.getString("title"),
-                            jo.getString("rule"), jo.getString("why"), jo.getBooleanOrDefault("tried", false)));
+                            jo.getString("rule"), jo.getString("why")));
                 }
             }
         }
@@ -133,9 +133,6 @@ final class ChaosSuggestList {
             List<Span> spans = new ArrayList<>();
             spans.add(Span.styled((sel ? " > " : "   ") + item.title(), style));
             spans.add(Span.styled("  " + item.route(), Theme.muted()));
-            if (item.tried()) {
-                spans.add(Span.styled("  tried", Theme.success()));
-            }
             lines.add(Line.from(spans));
         }
         // keep the selected one in sight
@@ -153,11 +150,6 @@ final class ChaosSuggestList {
         lines.add(Line.from(Span.raw(" " + item.why())));
         lines.add(Line.empty());
         lines.add(Line.from(Span.styled(" " + item.rule(), Theme.warning())));
-        if (item.tried()) {
-            lines.add(Line.empty());
-            lines.add(Line.from(Span.styled(" A rule of this kind was tried in route " + item.route() + " already",
-                    Theme.success())));
-        }
         frame.renderWidget(Paragraph.builder().overflow(Overflow.WRAP_WORD).text(Text.from(lines)).build(), area);
     }
 
