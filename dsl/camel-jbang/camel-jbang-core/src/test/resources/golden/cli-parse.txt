@@ -551,6 +551,14 @@
   (defaults)
 > cmd chaos-clear --timeout 7
   timeoutOption.timeout=7
+> cmd chaos-load v
+  cmd:helpRequested=false
+  file="v"
+  helpRequested=false
+  name=null
+  timeoutOption.timeout=10000
+> cmd chaos-load v --timeout 7
+  timeoutOption.timeout=7
 > cmd chaos-remove --id v
   cmd:helpRequested=false
   helpRequested=false
@@ -1437,6 +1445,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -1543,6 +1552,8 @@
   chaos=true
 > debug --chaos=false
   (defaults)
+> debug --chaos-report v
+  chaosReport="v"
 > debug --code v
   code="v"
 > debug --console
@@ -2446,6 +2457,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -2533,6 +2545,8 @@
   chaos=true
 > dev --chaos=false
   (defaults)
+> dev --chaos-report v
+  chaosReport="v"
 > dev --code v
   code="v"
 > dev --console
@@ -4782,6 +4796,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -4869,6 +4884,8 @@
   chaos=true
 > run --chaos=false
   (defaults)
+> run --chaos-report v
+  chaosReport="v"
 > run --code v
   code="v"
 > run --console
@@ -6244,6 +6261,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false
@@ -6384,6 +6402,7 @@
   camelSpringBootVersion=null
   camelVersion=null
   chaos=false
+  chaosReport=null
   code=null
   dataDir=null
   debugOptions.backlogTrace=false

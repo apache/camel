@@ -42,5 +42,5 @@ camel.main.profile=dev
 
 # logging to file
 quarkus.log.file.enabled=true
-quarkus.log.file.path=${basedir}/target/test-home-serial/.camel/hello.log
+quarkus.log.file.path=${camel.dir}/hello.log
 quarkus.log.file.format=%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %i --- [%15.15t] %-40.40c{3.} : %s%e%n

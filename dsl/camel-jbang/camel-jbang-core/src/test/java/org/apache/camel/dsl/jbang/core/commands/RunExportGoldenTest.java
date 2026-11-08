@@ -501,6 +501,8 @@ class RunExportGoldenTest {
         Map<String, String> replacements = new LinkedHashMap<>();
         replacements.put(dir.toRealPath().toString(), "${dir}");
         replacements.put(dir.toAbsolutePath().toString(), "${dir}");
+        // the home of the CLI of the tests, which differs per test execution
+        replacements.put(CommandLineHelper.getCamelDir().toAbsolutePath().toString(), "${camel.dir}");
         replacements.put(Path.of("").toAbsolutePath().toString(), "${basedir}");
         replacements.put(System.getProperty("user.home"), "${user.home}");
         for (Map.Entry<String, String> e : replacements.entrySet()) {
@@ -508,6 +510,8 @@ class RunExportGoldenTest {
             answer = answer.replace(e.getKey(), e.getValue())
                     .replace(e.getKey().replace(":", "\\:"), e.getValue());
         }
+        // the temporary file of the chaos report that camel run --chaos reads for the verdict
+        answer = answer.replaceAll("chaos-report-\\d+\\.json", Matcher.quoteReplacement("chaos-report-${temp}.json"));
         // a version is replaced where it is a whole value, not inside another one
         answer = replaceVersion(answer, new DefaultCamelCatalog().getCatalogVersion(), "${camel.version}");
         answer = replaceVersion(answer, RuntimeType.SPRING_BOOT_VERSION, "${spring-boot.version}");

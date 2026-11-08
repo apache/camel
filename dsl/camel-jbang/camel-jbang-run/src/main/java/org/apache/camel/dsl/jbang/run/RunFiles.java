@@ -47,6 +47,12 @@ import org.apache.camel.xml.io.util.XmlStreamInfo;
  */
 public final class RunFiles {
 
+    /**
+     * The extension of a chaos scenario (camel run --chaos=chaos/outage.chaos), which is not a file to run or to
+     * export.
+     */
+    public static final String CHAOS_SCENARIO = ".chaos";
+
     private static final String[] ACCEPTED_XML_ROOT_ELEMENT_NAMES = new String[] {
             "route", "routes",
             "routeTemplate", "routeTemplates",
@@ -126,7 +132,8 @@ public final class RunFiles {
     }
 
     /**
-     * Whether the file is not run: a build file, a hidden or excluded file, a directory, or a file without extension.
+     * Whether the file is not run: a build file, a chaos scenario, a hidden or excluded file, a directory, or a file
+     * without extension.
      *
      * @param openApiGeneratedFile the Rest DSL file generated from the OpenAPI spec, which is never skipped
      */
@@ -156,6 +163,10 @@ public final class RunFiles {
             return true;
         }
         if (name.equals("NOTICE.txt") || name.equals("LICENSE.txt")) {
+            return true;
+        }
+        if (name.endsWith(CHAOS_SCENARIO)) {
+            // a chaos scenario: camel run --chaos=file and camel cmd chaos-load read it
             return true;
         }
 

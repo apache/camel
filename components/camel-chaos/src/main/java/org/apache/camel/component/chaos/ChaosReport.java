@@ -59,7 +59,8 @@ public final class ChaosReport {
     public static final String FAIL = "FAIL";
 
     private final long seed;
-    private final boolean seedGiven;
+    // where the seed came from, or null when it was picked at startup
+    private final String seedFrom;
     // in the order of their ids, and the versions of an id from the latest
     private final List<RuleEntry> rules = new ArrayList<>();
     private final List<RouteEntry> routes = new ArrayList<>();
@@ -72,20 +73,20 @@ public final class ChaosReport {
     // what has been tried per route, and what not yet (CAMEL-26728)
     private final List<ChaosAdvisor.RouteTried> tried;
 
-    ChaosReport(long seed, boolean seedGiven, long now, List<ChaosRule> current, List<ChaosRule> removed,
+    ChaosReport(long seed, String seedFrom, long now, List<ChaosRule> current, List<ChaosRule> removed,
                 Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
                 long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults, ChaosTargets.Reach reach) {
-        this(seed, seedGiven, now, current, removed, counts, evictedUnmet, evictedLost, evictedPending, evictedLostAtDlq,
+        this(seed, seedFrom, now, current, removed, counts, evictedUnmet, evictedLost, evictedPending, evictedLostAtDlq,
              recentFaults, reach, List.of());
     }
 
-    ChaosReport(long seed, boolean seedGiven, long now, List<ChaosRule> current, List<ChaosRule> removed,
+    ChaosReport(long seed, String seedFrom, long now, List<ChaosRule> current, List<ChaosRule> removed,
                 Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
                 long evictedLostAtDlq, List<ChaosRecentFaults.Entry> recentFaults, ChaosTargets.Reach reach,
                 List<ChaosAdvisor.RouteTried> tried) {
         this.tried = List.copyOf(tried);
         this.seed = seed;
-        this.seedGiven = seedGiven;
+        this.seedFrom = seedFrom;
         this.now = now;
         this.recentFaults = List.copyOf(recentFaults);
         long lostCount = 0;
@@ -201,7 +202,7 @@ public final class ChaosReport {
         if (pending) {
             sb.append(" (not final: an expectation is pending)");
         }
-        sb.append("\n  seed: ").append(seed).append(seedGiven ? " (camel.chaos.seed)" : " (picked at startup)");
+        sb.append("\n  seed: ").append(seed).append(seedFrom != null ? " (" + seedFrom + ")" : " (picked at startup)");
         sb.append("\n  rules:");
         if (rules.isEmpty()) {
             sb.append(" none");
@@ -213,6 +214,9 @@ public final class ChaosReport {
                 sb.append(" v").append(r.version);
             }
             sb.append(' ').append(r.state.key).append(": ").append(r.text);
+            if (r.scenario != null) {
+                sb.append("  (scenario ").append(r.scenario).append(')');
+            }
             sb.append("\n      ").append(r.description);
             sb.append("\n      matches ").append(r.matches).append(", fired ").append(r.firedTotal);
             StringJoiner at = new StringJoiner(", ", " (", ")");
@@ -438,7 +442,10 @@ public final class ChaosReport {
         root.put("verdict", getVerdict());
         root.put("final", isFinal());
         root.put("seed", seed);
-        root.put("seedGiven", seedGiven);
+        root.put("seedGiven", seedFrom != null);
+        if (seedFrom != null) {
+            root.put("seedFrom", seedFrom);
+        }
         root.put("lost", lost);
         root.put("reasons", new JsonArray(reasons));
         root.put("rules", rulesJson(false));
@@ -500,6 +507,9 @@ public final class ChaosReport {
             jo.put("id", r.id);
             jo.put("version", r.version);
             jo.put("rule", r.text);
+            if (r.scenario != null) {
+                jo.put("scenario", r.scenario);
+            }
             jo.put("description", r.description);
             jo.put("state", r.state.key);
             // where it can fire in the context now; fired has each hook of the rule
@@ -706,6 +716,7 @@ public final class ChaosReport {
         final String id;
         final int version;
         final String text;
+        final String scenario;
         final State state;
         // the rule in plain words, at the hooks where it can fire
         final String description;
@@ -764,6 +775,7 @@ public final class ChaosReport {
             id = rule.id;
             version = rule.version;
             text = rule.text;
+            scenario = rule.scenario;
             state = rule.state(now);
             hooks = rule.hooks;
             canFire = ChaosTargets.hooksThatCanFire(reach, rule);

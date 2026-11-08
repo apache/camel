@@ -271,10 +271,23 @@ public class Run extends CamelCommand {
                                                 + " (all = stub all endpoints, remote = stub only remote components).")
     String stub;
 
-    @Option(names = { "--chaos" }, defaultValue = "false",
+    @Option(names = { "--chaos" }, defaultValue = "false", arity = "0..1", paramLabel = "<file>",
+            parameterConsumer = ChaosConsumer.class,
             description = "Add camel-chaos, to turn on faults while running (camel cmd chaos-add); on with profile dev,"
-                          + " never with prod. Not with Spring Boot or Quarkus")
+                          + " never with prod. With a scenario file (such as --chaos=chaos/outage.chaos) its rules are"
+                          + " added at startup. A run with chaos ends with exit code 1 when the chaos verdict is FAIL."
+                          + " Not with Spring Boot or Quarkus")
     boolean chaos;
+
+    // the scenario of --chaos=file
+    String chaosScenario;
+
+    @Option(names = { "--chaos-report" }, paramLabel = "<file>",
+            description = "Write the chaos report as JSON to this file when the run ends (with --chaos)")
+    String chaosReport;
+
+    // the report file of a run with chaos without --chaos-report, read for the verdict and deleted
+    private Path chaosReportTemp;
 
     // jfr and jfrProfile options are in DebugOptions @ArgGroup
 
@@ -739,6 +752,7 @@ public class Run extends CamelCommand {
             throw CliException.usage("Cannot specify both file(s) and source-dir at the same time.");
         }
 
+        prepareChaos();
         RunRequest request = toRunRequest(exportBaseDir != null ? exportBaseDir : Path.of("."));
         // special if user type: camel run . or camel run dirName
         Path dir = RunPipeline.detectDirectory(request);
@@ -917,7 +931,7 @@ public class Run extends CamelCommand {
         RunningIntegration integration = new ProjectRunner(runContext()).start(request);
         this.spawnPid = integration.pid();
         // wait for the application to exit as we run in foreground
-        return integration.waitFor();
+        return withChaosVerdict(integration.waitFor());
     }
 
     /**
@@ -947,6 +961,50 @@ public class Run extends CamelCommand {
                 && spec.commandLine().getParseResult().hasMatchedOption("--data-dir")) {
             printer().printWarn("--data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
                                 + " watches the given files");
+        }
+    }
+
+    /**
+     * The scenario of --chaos=file must exist, and --chaos-report needs --chaos. A run with chaos in the foreground
+     * gets a report file (a temporary one without --chaos-report), for its verdict when it ends.
+     */
+    void prepareChaos() throws IOException {
+        if (chaosReport != null && !chaos) {
+            throw CliException.usage("--chaos-report needs --chaos");
+        }
+        if (chaosScenario != null) {
+            Path scenario = Path.of(chaosScenario);
+            if (!Files.isRegularFile(scenario)) {
+                throw CliException.fileNotFound("The chaos scenario does not exist: " + chaosScenario);
+            }
+            chaosScenario = scenario.toAbsolutePath().normalize().toString();
+        }
+        if (chaosReport != null) {
+            chaosReport = Path.of(chaosReport).toAbsolutePath().normalize().toString();
+        } else if (chaos && !background && chaosReportTemp == null) {
+            Path dir = CommandLineHelper.getCamelDir();
+            Files.createDirectories(dir);
+            chaosReportTemp = Files.createTempFile(dir, "chaos-report-", ".json");
+            // camel-chaos writes it when the run ends: a file that is there then is its report
+            Files.delete(chaosReportTemp);
+            chaosReport = chaosReportTemp.toString();
+        }
+    }
+
+    /**
+     * The exit code of a run in the foreground with the chaos verdict: 1 when the run ended well and the verdict is
+     * FAIL.
+     */
+    int withChaosVerdict(int exitCode) {
+        if (!chaos || chaosReport == null) {
+            return exitCode;
+        }
+        try {
+            return ChaosVerdict.apply(Path.of(chaosReport), exitCode, printer());
+        } finally {
+            if (chaosReportTemp != null) {
+                FileUtil.deleteFile(chaosReportTemp);
+            }
         }
     }
 
@@ -988,6 +1046,8 @@ public class Run extends CamelCommand {
         request.dev = dev;
         request.stub = stub;
         request.chaos = chaos;
+        request.chaosScenario = chaosScenario;
+        request.chaosReport = chaosReport;
         request.trace = debugOptions.trace;
         request.backlogTrace = debugOptions.backlogTrace;
         request.modeline = modeline;
@@ -1402,7 +1462,7 @@ public class Run extends CamelCommand {
      * Runs Camel in this JVM, which the run configured, and waits for it to end.
      */
     protected int runKameletMain(ConfiguredRun run) throws Exception {
-        return run.start().waitFor();
+        return withChaosVerdict(run.start().waitFor());
     }
 
     /**
@@ -1700,6 +1760,32 @@ public class Run extends CamelCommand {
         protected void doConsumeParameters(Stack<String> args, Run cmd) {
             String arg = args.pop();
             cmd.files.add(arg);
+        }
+    }
+
+    /**
+     * --chaos, --chaos=true|false, or --chaos=file with a scenario file (.chaos): a file that is not a scenario is a
+     * file to run, as in camel run --chaos Shop.java.
+     */
+    static class ChaosConsumer extends ParameterConsumer<Run> {
+        @Override
+        protected void doConsumeParameters(Stack<String> args, Run cmd) {
+            String arg = args.isEmpty() ? "" : args.peek();
+            if ("true".equalsIgnoreCase(arg) || "false".equalsIgnoreCase(arg)) {
+                args.pop();
+                cmd.chaos = Boolean.parseBoolean(arg);
+            } else if (arg.endsWith(RunFiles.CHAOS_SCENARIO)) {
+                args.pop();
+                cmd.chaos = true;
+                cmd.chaosScenario = arg;
+            } else {
+                cmd.chaos = true;
+            }
+        }
+
+        @Override
+        protected boolean failIfEmptyArgs() {
+            return false;
         }
     }
 

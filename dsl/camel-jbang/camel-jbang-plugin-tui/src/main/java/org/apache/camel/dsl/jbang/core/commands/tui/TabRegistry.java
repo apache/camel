@@ -335,6 +335,10 @@ class TabRegistry {
             selectMoreTab(moreTabIndex("Chaos"));
             chaosTab.openAt(target);
         };
+        ctx.chaosRule = rule -> {
+            selectMoreTab(moreTabIndex("Chaos"));
+            chaosTab.openRule(rule);
+        };
         ctx.openFromAbout = target -> {
             if (target.endpoint() != null) {
                 handleTabKey(TAB_ENDPOINTS);

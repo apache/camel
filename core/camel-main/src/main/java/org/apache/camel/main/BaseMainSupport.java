@@ -2786,6 +2786,12 @@ public abstract class BaseMainSupport extends BaseService {
         if (config.getRules() != null) {
             pc.addOverrideProperty(PREFIX_CHAOS + "rules", config.getRules());
         }
+        if (config.getScenario() != null) {
+            pc.addOverrideProperty(PREFIX_CHAOS + "scenario", config.getScenario());
+        }
+        if (config.getReportFile() != null) {
+            pc.addOverrideProperty(PREFIX_CHAOS + "reportFile", config.getReportFile());
+        }
         if (config.getMaxDuration() != null) {
             pc.addOverrideProperty(PREFIX_CHAOS + "maxDuration", config.getMaxDuration());
         }

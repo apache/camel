@@ -413,6 +413,7 @@
                             <atom>XML_STYLE</atom>
                             <bpmn>XML_STYLE</bpmn>
                             <camel-eclipse-pmd>XML_STYLE</camel-eclipse-pmd>
+                            <chaos>SCRIPT_STYLE</chaos>
                             <cql>DOUBLEDASHES_STYLE</cql>
                             <ds>SLASHSTAR_STYLE</ds>
                             <gdsl>SLASHSTAR_STYLE</gdsl>
