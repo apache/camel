@@ -633,6 +633,9 @@ final class ChaosControl {
                 TuiHelper.hint(spans, "R", "new experiment");
                 if (ctx.askAiCallback != null) {
                     TuiHelper.hint(spans, "d", "describe with AI");
+                    if (hasRules) {
+                        TuiHelper.hint(spans, "t", "make a test with AI");
+                    }
                 }
             }
         }
