@@ -53,7 +53,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     private ProxyOptions proxyOptions;
     @UriParam(label = "common")
     private AmqpRetryOptions amqpRetryOptions;
-    @UriParam(label = "common", defaultValue = "Amqp")
+    @UriParam(label = "common", defaultValue = "AMQP")
     private AmqpTransportType amqpTransportType = AmqpTransportType.AMQP;
     @UriParam(label = "common",
               description = "To use a custom HeaderFilterStrategy to filter Service Bus application properties to and from Camel message headers.")
@@ -218,7 +218,7 @@ public class ServiceBusConfiguration implements Cloneable, HeaderFilterStrategyA
     }
 
     /**
-     * Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is Amqp.
+     * Sets the transport type by which all the communication with Azure Service Bus occurs. Default value is AMQP.
      */
     public AmqpTransportType getAmqpTransportType() {
         return amqpTransportType;

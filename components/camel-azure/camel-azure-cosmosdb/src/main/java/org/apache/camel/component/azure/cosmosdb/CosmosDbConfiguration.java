@@ -49,7 +49,7 @@ public class CosmosDbConfiguration implements Cloneable {
     @UriParam(label = "common")
     @Metadata(autowired = true)
     private CosmosAsyncClient cosmosAsyncClient;
-    @UriParam(label = "common", defaultValue = "Session")
+    @UriParam(label = "common", defaultValue = "SESSION")
     private ConsistencyLevel consistencyLevel = ConsistencyLevel.SESSION;
     @UriParam(label = "common")
     private String preferredRegions;
