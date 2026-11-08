@@ -567,6 +567,13 @@
   timeoutOption.timeout=10000
 > cmd chaos-remove --id v --timeout 7
   timeoutOption.timeout=7
+> cmd chaos-suggest
+  cmd:helpRequested=false
+  helpRequested=false
+  name=null
+  timeoutOption.timeout=10000
+> cmd chaos-suggest --timeout 7
+  timeoutOption.timeout=7
 > cmd disable-processor
   cmd:helpRequested=false
   helpRequested=false

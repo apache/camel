@@ -124,6 +124,7 @@ camel cmd chaos-remove myapp --id=r1
 camel cmd chaos-clear
 camel cmd chaos-clear myapp --reset
 camel cmd chaos-load chaos/outage.chaos
+camel cmd chaos-suggest
 camel get chaos
 camel get chaos myapp --report
 ----
@@ -178,6 +179,49 @@ switched on in the integration (see <<_switching_it_on,Switching it on>>): they 
 
 The `chaos` developer console (`/q/dev/chaos` with `camel run --console`) shows the same rules and report, as text or
 JSON. It only reads: a rule cannot be added, changed or removed over HTTP.
+
+=== What to try
+
+Where to start with a route you did not write? `camel cmd chaos-suggest` asks the running integration, and it suggests
+rules per route from what the routes do, the most worth trying first. Each is a known rule (see
+<<_the_model_of_the_rules,The model of the rules>>) with the endpoint or route filled in, why it is worth trying, and
+the command that adds it. Nothing is added.
+
+[source]
+----
+$ camel cmd chaos-suggest
+Chaos rules to try, the most worth trying first:
+
+1. route orders: Returns an error (HTTP status) (errors)
+   an HTTP call to http://stock/check without a circuit breaker: what does the route do when the service answers 503?
+   camel cmd chaos-add --rule='endpoint=http://stock/check error status=503 rate=0.25 until=10m'
+
+2. route orders: The route after a hand-off fails (lost)
+   route orders hands the message to route shipping over seda and does not wait: when shipping fails, is the message lost?
+   camel cmd chaos-add --rule='route=shipping error rate=0.2 until=2m expect=orders->shipping:lost<=0 within=3m'
+----
+
+[cols="2,3"]
+|===
+|What a route does |What is suggested
+
+|An HTTP call, without a circuit breaker |The service answers with an error (`status=503`), and does not answer in time
+(`timeout`)
+|An HTTP call, in a route with a circuit breaker |The service is down for a while (`outage`): does the breaker open, and
+does the fallback answer?
+|A call over another protocol |The connection is refused, and the call is slow
+|An input that can deliver a message again (Kafka, JMS, AMQP, SQS and more, or a consumer that reads a failed message
+again, such as a file without `moveFailed`) |The call out is made twice (`duplicate`): is it safe to repeat?
+|A dead letter channel |It fails too (`at=dlq`): is the message then lost? Add it with a rule that fails the route.
+|A hand-off to another route over `seda`, `vm` or `disruptor` |The next route fails, with an expectation that no
+message is lost between the two routes (see <<_expectations_on_time_and_loss,Expectations on time and loss>>)
+|An input from outside (not `direct` or `seda`) |The route fails at its entry (what does the sender see: a rollback, a
+retry, an error?), or the polls fail for a polling consumer; and the route stalls for a while
+|===
+
+The rules leave the query of the endpoint out: its options do not tell which endpoint it is, and may hold a secret.
+`ChaosManager.suggest()` gives the same as JSON (`suggestions`: `route`, `kind`, `recipe`, `title`, `rule`, `why`), and
+the chaos screen of the Camel TUI lists them (key `w`), where Enter types the rule in to change or add.
 
 === From an AI agent (MCP)
 

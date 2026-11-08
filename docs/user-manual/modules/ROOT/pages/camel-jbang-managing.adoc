@@ -905,6 +905,9 @@ only integration that runs, or the only one with chaos switched on, and otherwis
 integrations. `chaos-add` prints the rule in plain words too (`fail 30% of the sends to kafka:orders*, for 1 minute`),
 and with `--dry-run` it adds nothing, and prints what the rule would hit now: the sends, polls, routes or steps, with
 their route.
+`camel cmd chaos-suggest` suggests rules to try per route from what the routes do (an HTTP call without a circuit
+breaker, a dead letter channel, a hand-off over seda, an input from outside), the most worth trying first, each with
+why and the `chaos-add` command that adds it.
 `camel get chaos` lists the current rules with their id, version, state, matches and the faults that fired, and
 `--report` shows the report: the verdict, the seed, every version of every rule and the counts per route. Chaos is for
 development only: it stays off with profile `prod`, and the commands cannot switch it on.

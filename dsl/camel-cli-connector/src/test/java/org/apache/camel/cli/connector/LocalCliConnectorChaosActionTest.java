@@ -212,6 +212,17 @@ class LocalCliConnectorChaosActionTest {
     }
 
     @Test
+    void suggestWhatToTry() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+
+        CliActionOutcome suggested = chaos("suggest", null, null);
+        assertThat(suggested.error()).isNull();
+        // the route of the test only calls local endpoints: nothing to suggest, and nothing was added
+        assertThat((JsonArray) suggested.result().get("suggestions")).isNotNull();
+        assertThat(reportRules()).isEmpty();
+    }
+
+    @Test
     void rulesAreAddedTogetherWithWarningsForTheOnesThatMatchNothing() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
 

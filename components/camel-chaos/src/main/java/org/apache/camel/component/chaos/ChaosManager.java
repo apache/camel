@@ -462,6 +462,33 @@ public final class ChaosManager {
     }
 
     /**
+     * What to try (CAMEL-26727): rules suggested per route from what the routes do, the most worth trying first, each
+     * with the known rule it comes from and why, such as an HTTP call without a circuit breaker, a dead letter channel,
+     * or a hand-off to another route over seda.
+     *
+     * @return {@code suggestions}: a list of {@code route}, {@code kind}, {@code recipe}, {@code title}, {@code rule}
+     *         and {@code why}
+     */
+    public Map<String, Object> suggest() {
+        JsonArray list = new JsonArray();
+        for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
+            JsonObject jo = new JsonObject();
+            jo.put("route", s.route());
+            jo.put("kind", s.kind().key);
+            if (s.recipe() != null) {
+                jo.put("recipe", s.recipe());
+            }
+            jo.put("title", s.title());
+            jo.put("rule", s.rule());
+            jo.put("why", s.why());
+            list.add(jo);
+        }
+        JsonObject answer = new JsonObject();
+        answer.put("suggestions", list);
+        return answer;
+    }
+
+    /**
      * Removes a rule. It stays in the report, and its expectation, if not decided yet, is cancelled.
      *
      * @param  id the id of the rule

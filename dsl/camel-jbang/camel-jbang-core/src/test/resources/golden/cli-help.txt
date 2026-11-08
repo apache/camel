@@ -562,6 +562,8 @@ Commands:
                        (camel-chaos, for development only)
   chaos-remove       Remove a chaos rule of a running integration (camel-chaos,
                        for development only)
+  chaos-suggest      Suggest chaos rules to try in a running integration, per
+                       route (camel-chaos, for development only)
   disable-processor  Disable Camel processor
   enable-processor   Enable Camel processor
   gc                 Trigger Java Memory Garbage Collector
@@ -789,6 +791,34 @@ with the list of the running integrations (exit code 2).
 Examples:
   camel cmd chaos-remove --id=r1
   camel cmd chaos-remove myApp --id=r1
+
+== camel cmd chaos-suggest --help
+Usage: camel cmd chaos-suggest [-h] [--timeout=<timeout>] [<name>]
+Suggest chaos rules to try in a running integration, per route (camel-chaos,
+for development only)
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+
+The rules come from what the routes do: an HTTP call without a circuit breaker
+(the service answers with an error, or does not answer in time), a circuit
+breaker (the service is down for a while), a call that the input may repeat
+(Kafka, JMS: the call is made twice), a dead letter channel (it fails too), a
+hand-off to another route over seda (the next route fails, and no message may
+be lost between the two), an input from outside (the route fails at its entry,
+the polls fail, the route stalls). The most worth trying come first, each with
+why and the command that adds it. Nothing is added.
+
+Without a name or pid, the only integration that runs, or the only one with
+chaos switched on.
+
+Examples:
+  camel cmd chaos-suggest
+  camel cmd chaos-suggest myApp
 
 == camel cmd disable-processor --help
 Usage: camel cmd disable-processor [-h] [--id=<id>] [--timeout=<timeout>]
