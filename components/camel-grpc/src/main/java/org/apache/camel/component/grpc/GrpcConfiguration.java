@@ -57,7 +57,7 @@ public class GrpcConfiguration {
     @UriParam(label = "security", defaultValue = "NONE", enums = "NONE,GOOGLE,JWT")
     private GrpcAuthType authenticationType = GrpcAuthType.NONE;
 
-    @UriParam(label = "security", defaultValue = "HMAC256", enums = "HMAC256,HMAC384,HMAC512,RSA256,RSA384,RSA512")
+    @UriParam(label = "security", defaultValue = "HMAC256", enums = "HMAC256,HMAC384,HMAC512")
     private JwtAlgorithm jwtAlgorithm = JwtAlgorithm.HMAC256;
 
     @UriParam(label = "security", security = "secret")
