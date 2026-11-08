@@ -246,8 +246,9 @@ Failed exchanges are not affected: `LastExchangeFailureExchangeId` is still upda
 To read the clock once per processor instead of twice, the processing time of a processor now starts where the processor
 before it in the route ended. It therefore includes the routing from one processor to the next (a few microseconds), so
 the times of a processor can be slightly higher than with 4.23. A route, a processor inside another processor (such as the
-outputs of `delay`, `choice` or `onException`), a processor after a failure, and a processor after a delayer, debugger
-or tracer that did work, still read the clock when they start.
+outputs of `choice`, `filter`, `loop` or `onException`), a processor after a failure, a processor whose message body was
+read into the stream cache, and a processor after a delayer, debugger or tracer that did work, still read the clock when
+they start.
 
 === camel-core - the activity of the backlog tracer is replaced by the timeline dev console
 

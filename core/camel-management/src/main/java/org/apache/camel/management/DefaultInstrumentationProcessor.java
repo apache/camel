@@ -137,7 +137,7 @@ public class DefaultInstrumentationProcessor extends DelegateAsyncProcessor
             start = TimeSource.nanoTime();
         }
         // only the first node of a route may start where the route started: a node that runs inside this one (the
-        // outputs of a delay, choice, idempotentConsumer or onException) reads the clock
+        // outputs of a choice, filter, idempotentConsumer or onException) reads the clock
         extension.setLastNodeEndNanos(route ? start : 0);
         beginTime(exchange);
         return new StopWatch(start);

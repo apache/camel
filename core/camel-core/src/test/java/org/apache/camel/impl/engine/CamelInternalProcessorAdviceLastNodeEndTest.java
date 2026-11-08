@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.io.ByteArrayInputStream;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.debugger.BacklogTracer;
@@ -25,6 +27,7 @@ import org.apache.camel.impl.engine.CamelInternalProcessor.BacklogDebuggerAdvice
 import org.apache.camel.impl.engine.CamelInternalProcessor.BacklogTracerAdvice;
 import org.apache.camel.impl.engine.CamelInternalProcessor.DebuggerAdvice;
 import org.apache.camel.impl.engine.CamelInternalProcessor.DelayerAdvice;
+import org.apache.camel.impl.engine.CamelInternalProcessor.StreamCachingAdvice;
 import org.apache.camel.impl.engine.CamelInternalProcessor.TracingAdvice;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
@@ -116,6 +119,21 @@ public class CamelInternalProcessorAdviceLastNodeEndTest extends ContextTestSupp
         DebuggerAdvice advice = new DebuggerAdvice(new DefaultDebugger(context), null, definition);
 
         assertClearedByBeforeAndAfter(advice);
+    }
+
+    @Test
+    public void testStreamCachingClearsTheEndTimeWhenItReadsAStream() throws Exception {
+        // such as the response stream of the node before, which is read into the cache before the next node starts
+        exchange.getIn().setBody(new ByteArrayInputStream("Hello World".getBytes()));
+
+        assertClearedByBefore(new StreamCachingAdvice(context.getStreamCachingStrategy()));
+    }
+
+    @Test
+    public void testStreamCachingKeepsTheEndTimeWhenItDoesNotReadAStream() throws Exception {
+        exchange.getIn().setBody("Hello World");
+
+        assertKept(new StreamCachingAdvice(context.getStreamCachingStrategy()));
     }
 
     private <T> T assertClearedByBefore(CamelInternalProcessorAdvice<T> advice) throws Exception {

@@ -29,6 +29,7 @@ import org.apache.camel.util.TimeSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -36,7 +37,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Reading the clock is the main single threaded cost of the statistics, so a node starts at the end time of the node
  * before it. A time reported for a node must not include anything that ran outside that node, so the end time may only
  * be reused when nothing can have happened since then.
+ * <p/>
+ * A test installs a virtual clock in {@link TimeSource}, which is JVM-wide, so these tests run isolated from the other
+ * tests.
  */
+@Isolated
 public class DefaultInstrumentationProcessorTimingTest {
 
     private static final long MILLI = 1_000_000L;
@@ -174,7 +179,7 @@ public class DefaultInstrumentationProcessorTimingTest {
 
     @Test
     public void testChildOfANodeDoesNotCountWhatTheNodeDidBeforeCallingIt() {
-        // such as a delay, or the predicate of a choice, before the outputs of the node run
+        // such as the predicate of a choice, before the outputs of the node run
         run(node, 5);
         StopWatch parent = nextNode.before(exchange);
         nanos += 1000 * MILLI;

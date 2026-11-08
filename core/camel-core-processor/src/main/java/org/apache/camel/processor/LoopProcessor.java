@@ -161,6 +161,9 @@ public class LoopProcessor extends BaseDelegateProcessorSupport
                 if (cont && doWhile && doLoop && !isStopping) {
                     // and prepare for next iteration
                     current = prepareExchange(exchange, index);
+                    // the first output must not count the predicate, or the preparation of this iteration, in its
+                    // statistics
+                    current.getExchangeExtension().setLastNodeEndNanos(0);
 
                     // set current index as property
                     LOG.debug("LoopProcessor: iteration #{}", index);
