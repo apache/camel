@@ -66,6 +66,7 @@ import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.MessageSizeStrategy;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -113,6 +114,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private final CopyOnWriteArrayList<StepListener> stepListeners = new CopyOnWriteArrayList<>();
     private final List<StepListener> stepListenersView = Collections.unmodifiableList(stepListeners);
+    private final CopyOnWriteArrayList<OnCompletionListener> onCompletionListeners = new CopyOnWriteArrayList<>();
+    private final List<OnCompletionListener> onCompletionListenersView = Collections.unmodifiableList(onCompletionListeners);
     private final PluginManager pluginManager = new DefaultContextPluginManager();
     private final RouteController internalRouteController;
 
@@ -602,6 +605,23 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public List<StepListener> getStepListeners() {
         return stepListenersView;
+    }
+
+    @Override
+    public void addOnCompletionListener(OnCompletionListener listener) {
+        ObjectHelper.notNull(listener, "listener");
+        // a listener equal to one already installed is ignored
+        onCompletionListeners.addIfAbsent(listener);
+    }
+
+    @Override
+    public void removeOnCompletionListener(OnCompletionListener listener) {
+        onCompletionListeners.remove(listener);
+    }
+
+    @Override
+    public List<OnCompletionListener> getOnCompletionListeners() {
+        return onCompletionListenersView;
     }
 
     @Override
