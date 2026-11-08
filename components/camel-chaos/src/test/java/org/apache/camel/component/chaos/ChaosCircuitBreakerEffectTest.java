@@ -142,12 +142,12 @@ class ChaosCircuitBreakerEffectTest extends ChaosTestSupport {
                 ChaosRuleParser.parse("endpoint=mock:pay error", context.getClassResolver(), TimeUnit.MINUTES.toMillis(10)),
                 "r9", 1, 0, TimeUnit.MINUTES.toMillis(10));
         ChaosExchangeState.Faults faults = new ChaosExchangeState.Faults();
-        faults.add(rule);
+        faults.add(rule, null);
         long now = TimeSource.currentTimeMillis();
         assertThat(chaos().waitForOriginal("ex-1", faults, false, true)).isTrue();
         // the circuit breaker ran again for the same exchange: one message
         ChaosExchangeState.Faults again = new ChaosExchangeState.Faults();
-        again.add(rule);
+        again.add(rule, null);
         chaos().waitForOriginal("ex-1", again, false, true);
 
         chaos().countWaitedTooLong(now + 30_000);

@@ -252,11 +252,11 @@ final class ChaosInfo {
     record RouteCounts(String route, long completed, long failed, long failedKept, long handled, long redeliveries) {
     }
 
-    /** A recent fault of a rule. */
     /** The kinds of fault tried in a route, and those the suggestions offer that no rule tried yet. */
     record TriedRoute(String route, List<String> tried, List<String> notTried) {
     }
 
+    /** A recent fault of a rule. */
     record RecentFault(long ago, String rule, String fault, String hook, String route, String where, String exchangeId) {
     }
 

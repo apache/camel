@@ -44,6 +44,13 @@ class ChaosTriedTest extends ChaosTestSupport {
                 from("seda:shipping?pollTimeout=10").routeId("shipping")
                         .errorHandler(deadLetterChannel("mock:dlq"))
                         .to("mock:ship");
+                // one rule in two routes, done in another way in each
+                from("direct:handled").routeId("handled")
+                        .onException(Exception.class).handled(true).end()
+                        .to("mock:audit");
+                from("direct:unhandled").routeId("unhandled")
+                        .errorHandler(noErrorHandler())
+                        .to("mock:audit");
             }
         };
     }
@@ -82,6 +89,24 @@ class ChaosTriedTest extends ChaosTestSupport {
 
         assertThat(chaos().report().toText()).contains("tried, per route:").contains("orders:")
                 .contains("errors (" + id + "): fired").contains("not tried yet: slow");
+    }
+
+    @Test
+    void howItWentIsPerRoute() {
+        String id = chaos().addRule("endpoint=mock:audit error until=10m");
+        template.send("direct:handled", e -> e.getMessage().setBody("a"));
+        template.send("direct:unhandled", e -> e.getMessage().setBody("b"));
+
+        JsonObject handled = (JsonObject) ((JsonArray) route("handled").get("kinds")).get(0);
+        assertThat((JsonArray) handled.get("rules")).containsExactly(id);
+        assertThat(handled.getLong("fired")).isEqualTo(1);
+        assertThat(handled.getLong("handled")).isEqualTo(1);
+        assertThat(handled.getLong("failed")).isZero();
+        // the outcome of the other route does not count here
+        JsonObject unhandled = (JsonObject) ((JsonArray) route("unhandled").get("kinds")).get(0);
+        assertThat(unhandled.getLong("fired")).isEqualTo(1);
+        assertThat(unhandled.getLong("handled")).isZero();
+        assertThat(unhandled.getLong("failed")).isEqualTo(1);
     }
 
     @Test

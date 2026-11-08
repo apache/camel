@@ -475,6 +475,13 @@ final class ChaosLifecycle {
             return downUri;
         }
 
+        /** The id of the route the fault took down, where the outcomes of the exchanges sent to it count; else null. */
+        String downRouteId() {
+            // read after downEndpointUri, which is written after the route
+            Route down = route;
+            return down != null ? down.getRouteId() : null;
+        }
+
         /** Whether the fault brings its route back now (the rule was removed, or the comeback runs). */
         synchronized boolean isEnding() {
             return endRequested || endedEarly || state == FaultState.COMING_BACK;

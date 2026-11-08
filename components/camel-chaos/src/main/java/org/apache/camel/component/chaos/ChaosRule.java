@@ -242,8 +242,9 @@ final class ChaosRule {
     private final long[] faultsPerSecond = new long[MINUTE];
     private final long[] secondOf = new long[MINUTE];
     final Effect effect = new Effect();
-    // the faults of the rule per route, for what has been tried (CAMEL-26728); bounded, as the routes are
-    final ConcurrentMap<String, LongAdder> firedInRoute = new ConcurrentHashMap<>();
+    // what the rule did per route, for what has been tried (CAMEL-26728): its faults there, and how the exchanges it
+    // faulted there were done; bounded, as the routes are
+    final ConcurrentMap<String, InRoute> inRoute = new ConcurrentHashMap<>();
     static final int MAX_ROUTES = 200;
     ChaosRecentFaults recentFaults;
 
@@ -394,10 +395,10 @@ final class ChaosRule {
         fired[hook.ordinal()].increment();
         long now = TimeSource.currentTimeMillis();
         countFault(now);
-        if (exchange != null) {
-            ChaosExchangeState.faulted(this, exchange);
-        }
         String route = routeId != null || exchange == null ? routeId : ChaosExchangeState.routeId(exchange);
+        if (exchange != null) {
+            ChaosExchangeState.faulted(this, exchange, route);
+        }
         countInRoute(route);
         ChaosRecentFaults recent = recentFaults;
         if (recent != null) {
@@ -406,9 +407,32 @@ final class ChaosRule {
     }
 
     private void countInRoute(String route) {
-        if (route != null && (firedInRoute.size() < MAX_ROUTES || firedInRoute.containsKey(route))) {
-            firedInRoute.computeIfAbsent(route, k -> new LongAdder()).increment();
+        InRoute in = inRoute(route);
+        if (in != null) {
+            in.fired.increment();
         }
+    }
+
+    /**
+     * What the rule did in a route, or null when the route is null, or new while the rule follows {@link #MAX_ROUTES}
+     * routes already.
+     */
+    InRoute inRoute(String route) {
+        if (route == null) {
+            return null;
+        }
+        InRoute answer = inRoute.get(route);
+        if (answer == null) {
+            // a new route: the check of the size and the put as one, so the bound holds
+            synchronized (inRoute) {
+                answer = inRoute.get(route);
+                if (answer == null && inRoute.size() < MAX_ROUTES) {
+                    answer = new InRoute();
+                    inRoute.put(route, answer);
+                }
+            }
+        }
+        return answer;
     }
 
     /** A lifecycle rule (or stall) took its route down: counted in its live state, as the faults at a hook are. */
@@ -1146,6 +1170,13 @@ final class ChaosRule {
      * handled by the error handler (such as the dead letter channel), or failed. The others are still in flight. Only
      * the exchanges with a unit of work count, as it tells when the exchange is done.
      */
+    /** What a rule did in one route: its faults there, and how the exchanges it faulted there were done. */
+    static final class InRoute {
+
+        final LongAdder fired = new LongAdder();
+        final Effect effect = new Effect();
+    }
+
     static final class Effect {
 
         /** How an exchange was done, after the rule faulted it. */

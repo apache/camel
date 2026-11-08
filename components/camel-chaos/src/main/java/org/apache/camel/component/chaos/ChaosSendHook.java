@@ -96,7 +96,7 @@ final class ChaosSendHook implements SendHook, Ordered {
                     uri = endpoint.getEndpointBaseUri();
                 }
                 if (down.equals(uri)) {
-                    ChaosExchangeState.faulted(rule, exchange);
+                    ChaosExchangeState.faulted(rule, exchange, rule.lifecycle.downRouteId());
                 }
             }
         }

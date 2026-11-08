@@ -600,20 +600,20 @@ public final class ChaosManager {
     // the kinds of fault the suggestions offer per route, read again at most every 10 seconds (the report is read
     // every second for the status of the application), or when the routes change
     private static final long SUGGESTED_FOR_MILLIS = 10_000;
-    private volatile Map<String, Set<ChaosAdvisor.Kind>> suggested;
-    private volatile long suggestedAt;
-    private volatile int suggestedRoutes;
+    private volatile Suggested suggested;
+
+    /** The kinds the suggestions offer, with when they were read and for how many routes: one value, read as one. */
+    private record Suggested(Map<String, Set<ChaosAdvisor.Kind>> kinds, long at, int routes) {
+    }
 
     private Map<String, Set<ChaosAdvisor.Kind>> suggestedKinds(long now) {
-        Map<String, Set<ChaosAdvisor.Kind>> answer = suggested;
+        Suggested answer = suggested;
         int routeCount = camelContext.getRoutes().size();
-        if (answer == null || now - suggestedAt > SUGGESTED_FOR_MILLIS || routeCount != suggestedRoutes) {
-            answer = ChaosAdvisor.suggestedKinds(ChaosAdvisor.suggest(camelContext));
+        if (answer == null || now - answer.at() > SUGGESTED_FOR_MILLIS || routeCount != answer.routes()) {
+            answer = new Suggested(ChaosAdvisor.suggestedKinds(ChaosAdvisor.suggest(camelContext)), now, routeCount);
             suggested = answer;
-            suggestedAt = now;
-            suggestedRoutes = routeCount;
         }
-        return answer;
+        return answer.kinds();
     }
 
     // -- for the hooks, the event notifier and the plugin

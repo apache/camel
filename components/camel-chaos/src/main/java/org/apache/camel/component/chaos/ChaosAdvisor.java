@@ -23,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -126,8 +125,8 @@ final class ChaosAdvisor {
         Map<String, Map<Kind, List<ChaosRule>>> byRoute = new LinkedHashMap<>();
         suggested.keySet().forEach(route -> byRoute.put(route, new LinkedHashMap<>()));
         for (ChaosRule rule : rules) {
-            for (Map.Entry<String, LongAdder> e : rule.firedInRoute.entrySet()) {
-                if (e.getValue().sum() > 0) {
+            for (Map.Entry<String, ChaosRule.InRoute> e : rule.inRoute.entrySet()) {
+                if (e.getValue().fired.sum() > 0) {
                     byRoute.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>())
                             .computeIfAbsent(kindOf(rule), k -> new ArrayList<>()).add(rule);
                 }
@@ -149,10 +148,12 @@ final class ChaosAdvisor {
                     if (!ids.contains(id)) {
                         ids.add(id);
                     }
-                    fired += rule.firedInRoute.get(route).sum();
-                    recovered += rule.effect.count(ChaosRule.Effect.Outcome.RECOVERED);
-                    handled += rule.effect.count(ChaosRule.Effect.Outcome.HANDLED);
-                    failed += rule.effect.count(ChaosRule.Effect.Outcome.FAILED);
+                    // the outcomes of the exchanges the rule faulted in this route, not in all of them
+                    ChaosRule.InRoute in = rule.inRoute.get(route);
+                    fired += in.fired.sum();
+                    recovered += in.effect.count(ChaosRule.Effect.Outcome.RECOVERED);
+                    handled += in.effect.count(ChaosRule.Effect.Outcome.HANDLED);
+                    failed += in.effect.count(ChaosRule.Effect.Outcome.FAILED);
                     if (rule.expectation != null) {
                         expectations.add(rule.expectation.spec() + " " + rule.expectation.read(now).outcome().key);
                     }
