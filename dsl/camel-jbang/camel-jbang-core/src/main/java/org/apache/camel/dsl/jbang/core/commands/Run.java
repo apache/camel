@@ -885,8 +885,10 @@ public class Run extends CamelCommand {
             throw CliException.usage("Run Camel Quarkus with --background is not supported");
         }
         if (chaos) {
-            // the run would have to add camel-chaos to the exported Quarkus project and switch it on there (follow-up)
-            throw CliException.usage("Run Camel Quarkus with --chaos is not supported (use --runtime=jbang or main)");
+            // camel-chaos is new in Camel 4.24, and Camel Quarkus is not on it yet: the exported project would have
+            // camel-chaos of this Camel with the camel-core of Camel Quarkus (CAMEL-26479)
+            throw CliException.usage(
+                    "Run Camel Quarkus with --chaos is not supported yet (use --runtime=jbang, main or spring-boot)");
         }
         return runWithMaven();
     }
@@ -895,11 +897,7 @@ public class Run extends CamelCommand {
         if (background) {
             throw CliException.usage("Run Camel Spring Boot with --background is not supported");
         }
-        if (chaos) {
-            // the run would have to add camel-chaos to the exported Spring Boot project and switch it on there
-            // (follow-up)
-            throw CliException.usage("Run Camel Spring Boot with --chaos is not supported (use --runtime=jbang or main)");
-        }
+        warnChaosOffWithProfileProd();
         return runWithMaven();
     }
 

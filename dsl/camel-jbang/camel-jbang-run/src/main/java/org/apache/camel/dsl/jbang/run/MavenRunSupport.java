@@ -175,6 +175,32 @@ final class MavenRunSupport {
     }
 
     /**
+     * The chaos of a run with Spring Boot ({@code camel run --runtime=spring-boot --chaos}) as JVM arguments:
+     * {@code camel.chaos.enabled=true}, as an exported Spring Boot project has no Camel profile {@code dev} to switch
+     * chaos on, and the scenario and the report file. Chaos stays off with profile {@code prod}. They are arguments of
+     * the run only, so the exported project does not have chaos switched on.
+     */
+    static List<String> springBootChaosJvmArgs(RunRequest request) {
+        List<String> args = new ArrayList<>();
+        if (!request.chaos) {
+            return args;
+        }
+        if (!"prod".equalsIgnoreCase(request.profile)) {
+            args.add("-Dcamel.chaos.enabled=true");
+        }
+        // quoted when there is a space, as spring-boot.run.jvmArguments is parsed as a command line
+        for (String arg : chaosArgs(request)) {
+            args.add(arg.indexOf(' ') != -1 ? quoteValue(arg) : arg);
+        }
+        return args;
+    }
+
+    private static String quoteValue(String arg) {
+        int eq = arg.indexOf('=');
+        return arg.substring(0, eq + 1) + "\"" + arg.substring(eq + 1) + "\"";
+    }
+
+    /**
      * The JVM arguments the exported Quarkus or Spring Boot project is run with ({@code jvm.args} and
      * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording and the execution limits. Returns
      * null when there are none.
@@ -355,7 +381,8 @@ final class MavenRunSupport {
             eq.dependencies.add("camel:jfr");
         }
         if (request.chaos) {
-            // camel run --chaos with the Camel Main runtime (Spring Boot and Quarkus refuse it, see Run)
+            // camel run --chaos with Camel Main or Spring Boot (plain camel-chaos, as there is no starter); Quarkus
+            // refuses it, see Run
             eq.dependencies.add("camel:chaos");
         }
         eq.quiet = true;
@@ -378,11 +405,20 @@ final class MavenRunSupport {
      * Adds the dependency to the project, unless it has it already.
      */
     static void addDependency(Model model, String groupId, String artifactId) {
+        addDependency(model, groupId, artifactId, null);
+    }
+
+    /**
+     * Adds the dependency of the given version (null when the project manages it) to the project, unless it has it
+     * already.
+     */
+    static void addDependency(Model model, String groupId, String artifactId, String version) {
         boolean found = model.getDependencies().stream().anyMatch(d -> artifactId.equals(d.getArtifactId()));
         if (!found) {
             Dependency d = new Dependency();
             d.setGroupId(groupId);
             d.setArtifactId(artifactId);
+            d.setVersion(version);
             model.getDependencies().add(d);
         }
     }
@@ -433,6 +469,7 @@ final class MavenRunSupport {
             args.add("-Dlogging.config=" + logback.toUri());
         }
         args.addAll(existingProjectJvmArgs(request, appName, "server.port", printer));
+        args.addAll(springBootChaosJvmArgs(request));
         return args;
     }
 

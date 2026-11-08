@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.run.common.ChildProcess;
 import org.apache.camel.dsl.jbang.run.common.MavenCommand;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.addDependency;
@@ -36,11 +38,13 @@ import static org.apache.camel.dsl.jbang.run.MavenRunSupport.existingSpringBootJ
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.exportedRunJvmArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.keepLeftoverRunLog;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.keepRunLog;
+import static org.apache.camel.dsl.jbang.run.MavenRunSupport.mergeJvmArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.once;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.readPom;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.resolveExistingProjectAppName;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.resolveExportedAppName;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.runExportRequest;
+import static org.apache.camel.dsl.jbang.run.MavenRunSupport.springBootChaosJvmArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.writeRunPom;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.writeSpringBootLogbackConfig;
 
@@ -119,6 +123,10 @@ final class SpringBootRunner {
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
         String springBootRunJvmArgs = exportedRunJvmArgs(request, printer());
+        List<String> chaos = springBootChaosJvmArgs(request);
+        if (!chaos.isEmpty()) {
+            springBootRunJvmArgs = mergeJvmArgs(springBootRunJvmArgs, String.join(" ", chaos));
+        }
         if (springBootRunJvmArgs != null) {
             mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs);
         }
@@ -145,6 +153,10 @@ final class SpringBootRunner {
         addDependency(model, "org.apache.camel.springboot", "camel-cli-connector-starter");
         if (request.jfrEnabled()) {
             addDependency(model, "org.apache.camel.springboot", "camel-jfr-starter");
+        }
+        if (request.chaos) {
+            // there is no starter: plain camel-chaos, which camel-spring-boot-bom does not manage
+            addDependency(model, "org.apache.camel", "camel-chaos", camelVersion(model));
         }
         // write temporary pom with cli-connector injected
         Path tempPom = writeRunPom(projectDir, model);
@@ -188,6 +200,25 @@ final class SpringBootRunner {
         Process p = runner.getContext().startProcess(pb);
         processRef.set(p);
         return new ProcessIntegration(p, cleanup);
+    }
+
+    /**
+     * The Camel version of an existing Spring Boot project: the version it imports camel-spring-boot-bom (or
+     * camel-spring-boot-dependencies) with, as Camel Spring Boot has the version of Camel, which can be a property of
+     * the project. Without it, the version of this Camel.
+     */
+    static String camelVersion(Model model) {
+        if (model.getDependencyManagement() != null) {
+            for (Dependency d : model.getDependencyManagement().getDependencies()) {
+                if ("org.apache.camel.springboot".equals(d.getGroupId())
+                        && ("camel-spring-boot-bom".equals(d.getArtifactId())
+                                || "camel-spring-boot-dependencies".equals(d.getArtifactId()))
+                        && d.getVersion() != null) {
+                    return d.getVersion();
+                }
+            }
+        }
+        return new DefaultCamelCatalog().getCatalogVersion();
     }
 
     /**

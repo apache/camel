@@ -95,12 +95,20 @@ goes on unchanged.
 
 - `camel run --chaos` adds the `camel:chaos` dependency, as `--observe` adds `camel:observability-services` in
   `Run.java`, with the default runtime and with `--runtime=main` (also for a Maven project); `--dep camel:chaos` works
-  too. With `--runtime=spring-boot` or `quarkus` it is refused for now: the exported project would need the
-  dependency and Camel profile `dev`.
+  too.
+- With `--runtime=spring-boot` (CAMEL-26479) the exported project, or the run pom of a Spring Boot project, gets plain
+  `camel-chaos`: no starter is needed, as the plugin is found on the classpath by any `CamelContext`. The exported
+  project has no Camel profile, so the run adds `-Dcamel.chaos.enabled=true` (and the scenario and report file) to
+  `spring-boot.run.jvmArguments`, unless the profile is `prod`. It is on the command line of the run, not in the
+  exported `application.properties`, so `camel export` never gives a project chaos switched on.
+- With `--runtime=quarkus` it is refused for now: `camel-chaos` is new in Camel 4.24, and the exported project would
+  pair it with the older `camel-core` of the Camel Quarkus release. Once Camel Quarkus is on 4.24 it can follow the
+  Spring Boot way in JVM mode; native mode needs a `camel-quarkus-chaos` extension for the `ServiceLoader`.
 - A plain `Main` or a test adds the `camel-chaos` dependency and sets `camel.chaos.enabled=true`.
-- Spring Boot and Quarkus: the plugin works with any `CamelContext` and installs the hooks with Camel profile `dev`.
-  The options are camel-main only, so rules come from the CLI connector; a starter or an extension can bind
-  `camel.chaos.*` later.
+- Spring Boot and Quarkus: the plugin works with any `CamelContext` and installs the hooks with Camel profile `dev`
+  or `camel.chaos.enabled=true`. It reads `camel.chaos.*` from the properties component, so they work as system
+  properties or application properties there too (Camel Spring Boot also checks the `insecure:dev` ones against the
+  security policy); a starter or an extension can bind them as typed configuration later.
 
 === Options
 

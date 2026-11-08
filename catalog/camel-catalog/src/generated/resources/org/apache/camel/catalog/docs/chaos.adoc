@@ -22,17 +22,21 @@ Chaos is for development only. It stays off with profile `prod`, and does nothin
 
 == Getting it
 
-* `camel run`: add the dependency with `--chaos` (or `--dep camel:chaos`), with the default runtime or
-`--runtime=main` (not with Spring Boot or Quarkus). `camel run` uses profile `dev` by default, which switches chaos
-on. Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>), or
+* `camel run`: add the dependency with `--chaos` (or `--dep camel:chaos`), with the default runtime,
+`--runtime=main` or `--runtime=spring-boot` (not yet with Quarkus). `camel run` uses profile `dev` by default, which
+switches chaos on. A Spring Boot application has no Camel profile `dev`, so `camel run --runtime=spring-boot --chaos`
+switches chaos on with `-Dcamel.chaos.enabled=true` on the command line of the run (unless `--profile=prod`); the
+project that the run exports does not have it. A Spring Boot project of your own (`camel run pom.xml`) also gets
+`camel-chaos` added for the run; there is no Spring Boot starter for it. Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>), or
 start with the rules of a scenario file with `--chaos=chaos/outage.chaos` (see <<_scenarios,Scenarios>>).
 * A plain `Main` or a test: add the `camel-chaos` dependency and set `camel.chaos.enabled=true`, for example in a
 `CamelTestSupport` test with
 `camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(props)`, where `props` has
 `camel.chaos.enabled=true` (and `camel.chaos.seed` for a fixed sequence).
 * Spring Boot and Quarkus: the plugin works with any `CamelContext`. It reads `camel.chaos.*` from the properties
-component, so `camel.chaos.enabled=true` in the application properties switches it on there too; but the `camel.chaos.*`
-options are camel-main options, and only camel-main checks `camel.chaos.rules` against the security policy (see below).
+component, so `camel.chaos.enabled=true` in the application properties switches it on there too. The `camel.chaos.*`
+options are camel-main options; camel-main and Camel Spring Boot check `camel.chaos.rules` and `camel.chaos.scenario`
+against the security policy (see below).
 
 == Switching it on
 
@@ -50,9 +54,10 @@ and logs a WARN that it is on. The hooks do nothing until a rule is added. When 
 installed (only the lifecycle strategy that made this decision stays, and does nothing), and `camel.chaos.rules` is
 ignored.
 
-`camel.chaos.rules` and `camel.chaos.scenario` are marked `insecure:dev`: with camel-main and profile `prod` (which
-sets `camel.security.policy=fail`) an application with rules or a scenario configured refuses to start. Without
-camel-main this check does not run, and chaos stays off with profile `prod` anyway. Rules set from Java
+`camel.chaos.rules` and `camel.chaos.scenario` are marked `insecure:dev`: with camel-main or Camel Spring Boot and
+profile `prod` (which sets `camel.security.policy=fail`) an application with rules or a scenario configured refuses to
+start. Without a profile they are allowed with a WARN (as with `camel run --runtime=spring-boot --chaos=<file>`). Where
+this check does not run, chaos stays off with profile `prod` anyway. Rules set from Java
 (`chaosConfig().withRules(...)`) are not checked either, as for every `insecure:dev` option.
 
 == Options
