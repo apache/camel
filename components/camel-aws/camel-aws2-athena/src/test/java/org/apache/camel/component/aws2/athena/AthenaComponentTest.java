@@ -40,6 +40,7 @@ import software.amazon.awssdk.services.athena.model.QueryExecution;
 import software.amazon.awssdk.services.athena.model.QueryExecutionState;
 import software.amazon.awssdk.services.athena.model.QueryExecutionStatus;
 import software.amazon.awssdk.services.athena.model.ResultConfiguration;
+import software.amazon.awssdk.services.athena.model.StartQueryExecutionRequest;
 import software.amazon.awssdk.services.athena.paginators.GetQueryResultsIterable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AthenaComponentTest extends CamelTestSupport {
+
+    private static final String START_WITH_PREFIX
+            = "aws2-athena://label?outputLocation=s3://bucket/prefix/&waitTimeout=60000&initialDelay=1"
+              + "&accessKey=unused&secretKey=unused&region=eu-west-1";
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
@@ -180,7 +185,7 @@ public class AthenaComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("SELECT 1");
-                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, "s3://bucket/file.csv");
             }
         }).getMessage();
 
@@ -202,7 +207,7 @@ public class AthenaComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("SELECT 1");
-                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, "s3://bucket/file.csv");
                 exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
                 exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
             }
@@ -250,7 +255,7 @@ public class AthenaComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("SELECT 1");
-                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, "s3://bucket/file.csv");
                 exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
                 exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
                 exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
@@ -301,7 +306,7 @@ public class AthenaComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("SELECT 1");
-                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, "s3://bucket/file.csv");
                 exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 60_000);
                 exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
                 exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
@@ -345,7 +350,7 @@ public class AthenaComponentTest extends CamelTestSupport {
             @Override
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("SELECT 1");
-                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION, "s3://bucket/file.csv");
+                exchange.getIn().setHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, "s3://bucket/file.csv");
                 exchange.getIn().setHeader(Athena2Constants.WAIT_TIMEOUT, 100); // insufficient for query execution time (500ms)
                 exchange.getIn().setHeader(Athena2Constants.INITIAL_DELAY, 1);
                 exchange.getIn().setHeader(Athena2Constants.DELAY, 1);
@@ -367,6 +372,86 @@ public class AthenaComponentTest extends CamelTestSupport {
         assertEquals("33333333-3333-3333-3333-333333333333", result.queryExecution().queryExecutionId());
     }
 
+    @Test
+    public void secondStartQueryExecutionDoesNotReusePreviousResultLocation() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:startQueryExecutionTwice", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("SELECT 1");
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        List<StartQueryExecutionRequest> requests = client.getStartQueryExecutionRequests();
+        assertEquals(2, requests.size());
+        assertEquals("s3://bucket/prefix/", requests.get(0).resultConfiguration().outputLocation());
+        // the first query reported s3://bucket/file.csv as its result, which must not become the next output location
+        assertEquals("s3://bucket/prefix/", requests.get(1).resultConfiguration().outputLocation());
+    }
+
+    @Test
+    public void startQueryExecutionAfterGetQueryExecutionDoesNotReuseResultLocation() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:getQueryExecutionThenStart", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        List<StartQueryExecutionRequest> requests = client.getStartQueryExecutionRequests();
+        assertEquals(1, requests.size());
+        assertEquals("s3://bucket/prefix/", requests.get(0).resultConfiguration().outputLocation());
+    }
+
+    @Test
+    public void startQueryExecutionStillHonorsOutputLocationHeaderOverride() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:startQueryExecutionTwiceWithOverride", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("SELECT 1");
+            }
+        });
+
+        MockEndpoint.assertIsSatisfied(context);
+
+        List<StartQueryExecutionRequest> requests = client.getStartQueryExecutionRequests();
+        assertEquals(2, requests.size());
+        assertEquals("s3://bucket/prefix/", requests.get(0).resultConfiguration().outputLocation());
+        assertEquals("s3://other/", requests.get(1).resultConfiguration().outputLocation());
+    }
+
+    @Test
+    public void getQueryExecutionWithoutResultConfigurationDoesNotFail() throws Exception {
+        result.expectedMessageCount(1);
+
+        LinkedList<QueryExecution> queryExecutions = new LinkedList<>();
+        queryExecutions.add(QueryExecution.builder()
+                .queryExecutionId("11111111-1111-1111-1111-111111111111")
+                .status(QueryExecutionStatus.builder().state(QueryExecutionState.RUNNING).build())
+                .build());
+        client.setGetQueryExecutionResults(queryExecutions);
+
+        Message message = template.send("direct:getQueryExecution", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) {
+                exchange.getIn().setHeader(Athena2Constants.QUERY_EXECUTION_ID, "11111111-1111-1111-1111-111111111111");
+            }
+        }).getMessage();
+
+        assertNull(message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
+
+        MockEndpoint.assertIsSatisfied(context);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -386,6 +471,25 @@ public class AthenaComponentTest extends CamelTestSupport {
 
                 from("direct:startQueryExecution")
                         .to("aws2-athena://label?accessKey=unused&secretKey=unused&useMessageBodyForSql=true")
+                        .to("mock:result");
+
+                from("direct:startQueryExecutionTwice")
+                        .to(START_WITH_PREFIX)
+                        .setBody(constant("SELECT 2"))
+                        .to(START_WITH_PREFIX)
+                        .to("mock:result");
+
+                from("direct:startQueryExecutionTwiceWithOverride")
+                        .to(START_WITH_PREFIX)
+                        .setBody(constant("SELECT 2"))
+                        .setHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, constant("s3://other/"))
+                        .to(START_WITH_PREFIX)
+                        .to("mock:result");
+
+                from("direct:getQueryExecutionThenStart")
+                        .to("aws2-athena://label?operation=getQueryExecution&accessKey=unused&secretKey=unused&region=eu-west-1")
+                        .setBody(constant("SELECT 1"))
+                        .to(START_WITH_PREFIX)
                         .to("mock:result");
             }
         };

@@ -39,7 +39,6 @@ import software.amazon.awssdk.services.athena.model.GetQueryResultsRequest;
 import software.amazon.awssdk.services.athena.model.GetQueryResultsResponse;
 import software.amazon.awssdk.services.athena.model.ListQueryExecutionsRequest;
 import software.amazon.awssdk.services.athena.model.ListQueryExecutionsResponse;
-import software.amazon.awssdk.services.athena.model.QueryExecution;
 import software.amazon.awssdk.services.athena.model.QueryExecutionContext;
 import software.amazon.awssdk.services.athena.model.ResultConfiguration;
 import software.amazon.awssdk.services.athena.model.StartQueryExecutionRequest;
@@ -53,10 +52,6 @@ public class Athena2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Athena2Producer.class);
 
-    // the output location and the next token that an operation set as its result, kept in exchange properties, so a
-    // later operation does not take them as its input: the output location of a query is the file of its results, and
-    // a next token is only valid for the operation (and query) that returned it
-    private static final String OUTPUT_LOCATION_RESULT = "CamelAwsAthenaOutputLocationResult";
     private static final String NEXT_TOKEN_RESULT = "CamelAwsAthenaNextTokenResult";
     private static final String LIST_QUERY_EXECUTIONS = "listQueryExecutions";
 
@@ -72,6 +67,17 @@ public class Athena2Producer extends DefaultProducer {
 
     public static Message getMessageForResponse(final Exchange exchange) {
         return exchange.getMessage();
+    }
+
+    /**
+     * Sets the query result location as a response header.
+     */
+    private void setOutputLocationResult(Message message, GetQueryExecutionResponse response) {
+        String outputLocation = null;
+        if (response != null && response.queryExecution() != null && response.queryExecution().resultConfiguration() != null) {
+            outputLocation = response.queryExecution().resultConfiguration().outputLocation();
+        }
+        message.setHeader(Athena2Constants.OUTPUT_LOCATION, outputLocation);
     }
 
     @Override
@@ -93,7 +99,7 @@ public class Athena2Producer extends DefaultProducer {
             default:
                 throw new IllegalArgumentException(
                         "Invalid operation [" + operation + "] specified.  Must be one of "
-                                                   + Arrays.asList(Athena2Operations.values()));
+                                + Arrays.asList(Athena2Operations.values()));
         }
     }
 
@@ -115,7 +121,7 @@ public class Athena2Producer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setHeader(Athena2Constants.QUERY_EXECUTION_ID, getQueryExecutionResponse.queryExecution().queryExecutionId());
         message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, getQueryExecutionResponse.queryExecution().status().state());
-        setOutputLocationResult(exchange, outputLocationOf(getQueryExecutionResponse.queryExecution()));
+        setOutputLocationResult(message, getQueryExecutionResponse);
         message.setBody(getQueryExecutionResponse);
     }
 
@@ -148,14 +154,13 @@ public class Athena2Producer extends DefaultProducer {
             message.setBody(response);
         } else if (outputType == Athena2OutputType.S3Pointer) {
             GetQueryExecutionResponse response = doGetQueryExecution(queryExecutionId, athenaClient);
-            String outputLocation = outputLocationOf(response.queryExecution());
             message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, response.queryExecution().status().state());
-            setOutputLocationResult(exchange, outputLocation);
-            message.setBody(outputLocation);
+            setOutputLocationResult(message, response);
+            message.setBody(message.getHeader(Athena2Constants.OUTPUT_LOCATION, String.class));
         } else {
             throw new IllegalArgumentException(
                     "AWS Athena output type [" + outputType + "] is not supported.  Must be "
-                                               + "one of " + Arrays.asList(Athena2OutputType.values()));
+                            + "one of " + Arrays.asList(Athena2OutputType.values()));
         }
     }
 
@@ -230,8 +235,7 @@ public class Athena2Producer extends DefaultProducer {
         message.setHeader(Athena2Constants.QUERY_EXECUTION_ID, queryExecutionId);
         message.setHeader(Athena2Constants.QUERY_EXECUTION_STATE, getQueryExecutionResponse == null
                 ? null : getQueryExecutionResponse.queryExecution().status().state());
-        setOutputLocationResult(exchange, getQueryExecutionResponse == null
-                ? null : outputLocationOf(getQueryExecutionResponse.queryExecution()));
+        setOutputLocationResult(message, getQueryExecutionResponse);
 
         message.setHeader(Athena2Constants.START_QUERY_EXECUTION_ATTEMPTS, athena2QueryHelper.getAttempts());
         message.setHeader(Athena2Constants.START_QUERY_EXECUTION_ELAPSED_MILLIS, athena2QueryHelper.getElapsedMillis());
@@ -381,8 +385,8 @@ public class Athena2Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(queryString)) {
             throw new IllegalArgumentException(
                     "AWS Athena query string is required. Set the " + Athena2Constants.QUERY_STRING
-                                               + " header or the queryString option, or enable useMessageBodyForSql"
-                                               + " to use the message body as the query.");
+                            + " header or the queryString option, or enable useMessageBodyForSql"
+                            + " to use the message body as the query.");
         }
 
         boolean includeTrace = determineIncludeTrace(exchange);
@@ -393,10 +397,10 @@ public class Athena2Producer extends DefaultProducer {
                     ? "\"fromEndpointUri\": \"" + URISupport.sanitizeUri(fromEndpoint.getEndpointUri()) + "\", "
                     : "";
             queryString = "-- {" + fromEndpointUri
-                          + "\"exchangeId\": \"" + exchange.getExchangeId() + "\", "
-                          + "\"exchangeFromRouteId\": \"" + exchange.getFromRouteId() + "\"}"
-                          + "\n"
-                          + queryString;
+                    + "\"exchangeId\": \"" + exchange.getExchangeId() + "\", "
+                    + "\"exchangeFromRouteId\": \"" + exchange.getFromRouteId() + "\"}"
+                    + "\n"
+                    + queryString;
         }
 
         return queryString;
@@ -421,34 +425,17 @@ public class Athena2Producer extends DefaultProducer {
     }
 
     private String determineOutputLocation(final Exchange exchange) {
-        String outputLocation = exchange.getIn().getHeader(Athena2Constants.OUTPUT_LOCATION, String.class);
-        if (ObjectHelper.isNotEmpty(outputLocation)
-                && outputLocation.equals(exchange.getProperty(OUTPUT_LOCATION_RESULT, String.class))) {
-            // the file with the results of an earlier query is not where this query puts its results
-            LOG.trace("AWS Athena output location is the result of an earlier operation, not using it");
-            outputLocation = null;
-        }
+        String outputLocation = exchange.getIn().getHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, String.class);
+
         if (ObjectHelper.isEmpty(outputLocation)) {
             outputLocation = getConfiguration().getOutputLocation();
         }
+
         if (ObjectHelper.isEmpty(outputLocation)) {
             throw new IllegalArgumentException("AWS Athena output location is required.");
         }
+
         return outputLocation;
-    }
-
-    private static void setOutputLocationResult(Exchange exchange, String outputLocation) {
-        exchange.getMessage().setHeader(Athena2Constants.OUTPUT_LOCATION, outputLocation);
-        exchange.setProperty(OUTPUT_LOCATION_RESULT, outputLocation);
-    }
-
-    /**
-     * The location of the results of a query, null when the query has no result configuration, as with managed query
-     * results.
-     */
-    private static String outputLocationOf(QueryExecution queryExecution) {
-        ResultConfiguration resultConfiguration = queryExecution.resultConfiguration();
-        return resultConfiguration != null ? resultConfiguration.outputLocation() : null;
     }
 
     private String determineWorkGroup(final Exchange exchange) {

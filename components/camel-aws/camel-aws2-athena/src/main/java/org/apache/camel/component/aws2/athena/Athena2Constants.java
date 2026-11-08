@@ -62,6 +62,7 @@ public interface Athena2Constants {
                       Ensure this value ends with a forward slash ('/').""",
               javaType = "String")
     String OUTPUT_LOCATION = "CamelAwsAthenaOutputLocation";
+    String OUTPUT_LOCATION_OVERRIDE = "CamelAwsAthenaOutputLocationOverride";
     @Metadata(label = "getQueryResults",
               description = """
                       How query results should be returned.  One of
