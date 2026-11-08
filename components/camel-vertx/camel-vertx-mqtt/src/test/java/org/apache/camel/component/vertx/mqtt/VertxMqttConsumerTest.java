@@ -173,9 +173,14 @@ class VertxMqttConsumerTest {
      * quality of service 2, whose PUBREC went out on arrival, the broker never delivers it again anyway.
      */
     @ParameterizedTest
-    @CsvSource({ "1, true", "2, true", "2, false" })
-    void aFailedExchangeIsAcknowledgedWhenTheBrokerWouldNotDeliverItAgain(int qos, boolean cleanStart) throws Exception {
-        consume("a", "&manualAcksEnabled=true&clientId=manual&qos=" + qos + "&cleanStart=" + cleanStart, true);
+    @CsvSource(delimiter = '|', value = {
+            "1 | &cleanStart=true",
+            "2 | &cleanStart=true",
+            "2 | &cleanStart=false&sessionExpiryInterval=60",
+            // MQTT 5 ends the session with the connection unless it has an expiry interval: closing would lose it
+            "1 | &cleanStart=false" })
+    void aFailedExchangeIsAcknowledgedWhenTheBrokerWouldNotDeliverItAgain(int qos, String session) throws Exception {
+        consume("a", "&manualAcksEnabled=true&clientId=manual&qos=" + qos + session, true);
         broker.send("a", bytes("fails"), qos, false, null);
         await().atMost(WAIT).until(() -> !broker.acknowledged().isEmpty());
         assertEquals(1, broker.connects());
@@ -187,7 +192,9 @@ class VertxMqttConsumerTest {
      */
     @Test
     void aFailedExchangeOfAKeptSessionIsLeftForTheBrokerToDeliverAgain() throws Exception {
-        consume("a", "&manualAcksEnabled=true&clientId=manual&qos=1&cleanStart=false&reconnectDelay=50", true);
+        consume("a", "&manualAcksEnabled=true&clientId=manual&qos=1&cleanStart=false&sessionExpiryInterval=60"
+                     + "&reconnectDelay=50",
+                true);
         broker.send("a", bytes("fails"), 1, false, null);
         await().atMost(WAIT).until(() -> broker.connects() == 2 && broker.connectedClients() == 1);
         assertTrue(broker.acknowledged().isEmpty(), broker.acknowledged().toString());
@@ -210,6 +217,33 @@ class VertxMqttConsumerTest {
         broker.send("a", bytes("after"), 1, false, null);
         await().atMost(WAIT).until(() -> !received.isEmpty());
         assertArrayEquals(bytes("after"), received.peek().getBody(byte[].class));
+    }
+
+    /**
+     * Closing at once would refuse the acknowledgements of the exchanges that succeed meanwhile, and the broker would
+     * deliver those again as well.
+     */
+    @Test
+    void theExchangesReceivedBeforeARedeliveryAreAcknowledgedBeforeTheClose() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("vertx-mqtt:a?brokerUrl=" + broker.url() + "&manualAcksEnabled=true&clientId=manual&qos=1"
+                     + "&cleanStart=false&sessionExpiryInterval=60&reconnectDelay=50")
+                        .process(exchange -> {
+                            if ("fails".equals(exchange.getMessage().getBody(String.class))) {
+                                throw new IllegalStateException("marker failure");
+                            }
+                        })
+                        .delay(300).syncDelayed();
+            }
+        });
+        await().atMost(WAIT).until(() -> broker.hasSubscription("a"));
+        broker.send("a", bytes("fails"), 1, false, null);
+        broker.send("a", bytes("succeeds"), 1, false, null);
+
+        await().atMost(WAIT).until(() -> broker.connects() == 2);
+        assertEquals(1, broker.acknowledged().size(), "the message that succeeded is acknowledged before the close");
     }
 
     @Test

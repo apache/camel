@@ -59,6 +59,8 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
     private int pending;
     private boolean paused;
     private boolean draining;
+    // A failed exchange asked for a reconnect, made once the exchanges already received are done and acknowledged
+    private MqttClient redeliveryFrom;
 
     public VertxMqttConsumer(VertxMqttEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -84,6 +86,7 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
             pending = 0;
             paused = false;
             draining = false;
+            redeliveryFrom = null;
         }
         // A pool of its own for every consumer: a shared worker executor of the same name shares its threads
         worker = getEndpoint().getComponent().getVertx().createSharedWorkerExecutor(
@@ -203,13 +206,20 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
             if (running != null) {
                 running.pause(true);
             }
-        } else if (paused && !draining && pending <= maxPending / 2) {
+        } else if (paused && !draining && redeliveryFrom == null && pending <= maxPending / 2) {
             paused = false;
             if (running != null) {
                 running.pause(false);
             }
         }
         if (pending == 0) {
+            if (redeliveryFrom != null && running != null && !draining) {
+                // Everything received before is done: close for the redelivery, and read again on the next connection
+                running.redeliver(redeliveryFrom);
+                redeliveryFrom = null;
+                paused = false;
+                running.pause(false);
+            }
             notifyAll();
         }
     }
@@ -231,6 +241,21 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
         getAsyncProcessor().process(exchange, doneSync -> completed(exchange, message, receiver));
     }
 
+    /**
+     * Stops reading and remembers the redelivery, made by {@link #track(int)} once the pending exchanges are done:
+     * closing at once would refuse the acknowledgements of the exchanges that succeed meanwhile, and the broker would
+     * deliver those again as well.
+     */
+    private synchronized void requestRedelivery(VertxMqttConnection running, MqttClient receiver) {
+        if (redeliveryFrom == null) {
+            redeliveryFrom = receiver;
+            if (!paused) {
+                paused = true;
+                running.pause(true);
+            }
+        }
+    }
+
     private void completed(Exchange exchange, MqttPublishMessage message, MqttClient receiver) {
         try {
             if (exchange.getException() != null) {
@@ -239,14 +264,16 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
             }
             final VertxMqttConnection running = connection;
             final VertxMqttConfiguration configuration = getEndpoint().getConfiguration();
+            if (running != null && exchange.getException() == null) {
+                running.processed();
+            }
             if (running != null && configuration.isManualAcksEnabled() && message.qosLevel() != MqttQoS.AT_MOST_ONCE) {
                 if (exchange.getException() == null) {
                     running.acknowledge(message, receiver);
-                } else if (message.qosLevel() == MqttQoS.AT_LEAST_ONCE && !configuration.isCleanStart()
-                        && running.canRedeliver()) {
+                } else if (message.qosLevel() == MqttQoS.AT_LEAST_ONCE && running.canRedeliver()) {
                     // Left unacknowledged, the message would hold one of the in-flight slots of the broker until the
                     // next connect: a reconnect has the broker deliver it again from the session it keeps
-                    running.redeliver(receiver);
+                    requestRedelivery(running, receiver);
                 } else {
                     // Without a session to deliver it from again, or at quality of service 2, whose PUBREC went out
                     // when the message arrived, it is not delivered again: acknowledged, so that the slot is free

@@ -97,6 +97,9 @@ final class VertxMqttConnection {
     private boolean reconnect;
     // The connection was closed on purpose, so that the broker delivers an unacknowledged message again
     private boolean redelivering;
+    // Set after a reconnect for a redelivery: the reconnect delay keeps growing until an exchange succeeds, so that a
+    // message that fails every time does not reconnect once a second forever
+    private volatile boolean backingOff;
     // Whether the consumer wants the client to stop reading, applied to every new client as well
     private boolean paused;
     // Null without automaticReconnect
@@ -245,8 +248,10 @@ final class VertxMqttConnection {
                 }
                 connected = true;
                 failure = null;
+                final boolean afterRedelivery = redelivering;
                 redelivering = false;
-                if (reconnector != null) {
+                backingOff = afterRedelivery;
+                if (reconnector != null && !afterRedelivery) {
                     reconnector.succeeded();
                 }
                 LOG.info("Connected to the MQTT broker {}", broker);
@@ -526,10 +531,26 @@ final class VertxMqttConnection {
         run(() -> {
             if (receiver == client && connected && reconnector != null && !redelivering) {
                 redelivering = true;
-                LOG.debug("Closing the connection to {}, so that it delivers the unacknowledged messages again", broker);
+                LOG.warn("Closing the connection to the MQTT broker {}, so that it delivers the messages whose exchange"
+                         + " failed again. A message that fails every time comes back after every reconnect",
+                        broker);
                 receiver.disconnect();
             }
         });
+    }
+
+    /**
+     * An exchange succeeded: after a reconnect for a redelivery, the reconnect delay starts small again.
+     */
+    void processed() {
+        if (backingOff) {
+            run(() -> {
+                backingOff = false;
+                if (reconnector != null) {
+                    reconnector.succeeded();
+                }
+            });
+        }
     }
 
     boolean isConnected() {
@@ -537,10 +558,13 @@ final class VertxMqttConnection {
     }
 
     /**
-     * @return whether a reconnect after {@link #redeliver(MqttClient)} is possible
+     * @return whether the broker delivers an unacknowledged message again after a reconnect: with automatic reconnect,
+     *         and a session that outlives the connection, which with MQTT 5 needs a session expiry interval
      */
     boolean canRedeliver() {
-        return configuration.isAutomaticReconnect();
+        return configuration.isAutomaticReconnect() && !configuration.isCleanStart()
+                && (configuration.getMqttVersion() == VertxMqttVersion.MQTT_3_1_1
+                        || configuration.getSessionExpiryInterval() > 0);
     }
 
     /**

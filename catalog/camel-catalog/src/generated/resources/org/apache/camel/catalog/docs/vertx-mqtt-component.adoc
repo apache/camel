@@ -118,10 +118,14 @@ event loop.
 The consumer acknowledges a message of quality of service 1 or 2 as soon as it arrives. With `manualAcksEnabled` it
 acknowledges it once its exchange completed successfully. A message whose exchange failed is handled as follows:
 
-* At quality of service 1 with a session the broker keeps (`cleanStart=false`) and `automaticReconnect`, the consumer
-  does not acknowledge it, but closes the connection and connects again, and the broker delivers the message again
-  from the session. The route sees it again, with `CamelVertxMqttDuplicate` set by most brokers. Delivery is at least
-  once, a route must tolerate duplicates.
+* At quality of service 1 with a session that outlives the connection (`cleanStart=false`, and with MQTT 5 a
+  `sessionExpiryInterval` above 0) and `automaticReconnect`, the consumer does not acknowledge it. It stops reading,
+  lets the exchanges it already received finish and acknowledges those, then closes the connection and connects again,
+  and the broker delivers the message again from the session. The route sees it again, with `CamelVertxMqttDuplicate`
+  set by most brokers. Delivery is at least once, a route must tolerate duplicates. A message whose exchange fails
+  every time comes back after every reconnect: the error handler of the route, a dead letter channel for example, has
+  to complete it. While the failures repeat, the reconnect delay keeps growing up to `maxReconnectDelay`, and every
+  such close is logged as a warning.
 * Otherwise the consumer acknowledges it all the same, and it is not delivered again. Left unacknowledged it would hold
   one of the in-flight slots of the broker until the next connect, and after `receiveMaximum` such failures the broker
   would send nothing more. At quality of service 2 the Vert.x client sends the PUBREC as soon as the message arrives,
