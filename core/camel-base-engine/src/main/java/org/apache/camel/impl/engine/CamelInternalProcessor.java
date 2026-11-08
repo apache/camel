@@ -41,7 +41,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteStoppingException;
 import org.apache.camel.StatefulService;
-import org.apache.camel.StreamCache;
 import org.apache.camel.impl.debugger.BacklogTracer;
 import org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.BacklogDebugger;
@@ -525,9 +524,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     }
 
     /**
-     * An advice that does work between two nodes, such as a delayer, a debugger, a tracer or stream caching, calls this
-     * so that the statistics of the next node do not start at the end of the node before it, and do not count that
-     * work.
+     * An advice that does work between two nodes, such as a delayer, a debugger or a tracer, calls this so that the
+     * statistics of the next node do not start at the end of the node before it, and do not count that work.
      */
     private static void clearLastNodeEnd(Exchange exchange) {
         exchange.getExchangeExtension().setLastNodeEndNanos(0);
@@ -1449,13 +1447,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public Object before(Exchange exchange) throws Exception {
-            Object body = exchange.getIn().getBody();
-            StreamCache cache = StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
-            if (cache != null && cache != body) {
-                // the body was read into a cache here (such as the response stream of the node before), which is not
-                // the work of the next node
-                clearLastNodeEnd(exchange);
-            }
+            StreamCachingHelper.convertToStreamCache(strategy, exchange, exchange.getIn());
             return null;
         }
 

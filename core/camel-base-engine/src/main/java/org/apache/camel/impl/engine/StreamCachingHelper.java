@@ -67,6 +67,9 @@ final class StreamCachingHelper {
                 StreamCache sc = strategy.cache(exchange);
                 if (sc != null) {
                     inMessage.setBody(sc);
+                    // the body was read into a cache here (such as the response stream of the node before), which is
+                    // not the work of the next node, so its statistics must not start at the end of the node before
+                    exchange.getExchangeExtension().setLastNodeEndNanos(0);
                 }
                 return sc;
             } catch (Exception e) {
