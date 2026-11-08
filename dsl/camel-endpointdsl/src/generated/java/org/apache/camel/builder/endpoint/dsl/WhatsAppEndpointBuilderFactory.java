@@ -320,7 +320,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: webhook
+         * Default: camel-whatsapp/webhook
          * Group: advanced
          * 
          * @param webhookPath the value to set
@@ -579,7 +579,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: webhook
+         * Default: camel-whatsapp/webhook
          * Group: advanced
          * 
          * @param webhookPath the value to set
@@ -796,7 +796,7 @@ public interface WhatsAppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Default: webhook
+         * Default: camel-whatsapp/webhook
          * Group: advanced
          * 
          * @param webhookPath the value to set
