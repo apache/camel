@@ -1,0 +1,181 @@
+= Vert.x MQTT Component
+:doctitle: Vert.x MQTT
+:shortname: vertx-mqtt
+:artifactid: camel-vertx-mqtt
+:description: Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5, with the Vert.x MQTT client.
+:since: 4.24
+:supportlevel: Preview
+:tabs-sync-option:
+:component-header: Both producer and consumer are supported
+//Manually maintained attributes
+:group: Vert.x
+
+*Since Camel {since}*
+
+*{component-header}*
+
+The Vert.x MQTT component is an MQTT client for MQTT 3.1.1 and MQTT 5. A consumer subscribes to a topic filter, a
+producer publishes on a topic. It uses the https://vertx.io/docs/vertx-mqtt/java/[Vert.x MQTT] client.
+
+Maven users will need to add the following dependency to their `pom.xml` for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-vertx-mqtt</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+----
+vertx-mqtt:topic[?options]
+----
+
+The topic of a producer names one topic, the topic filter of a consumer may hold the wildcards `+` and `#`.
+
+// component-configure options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+include::partial$component-endpoint-headers.adoc[]
+// component-configure options: END
+
+== Usage
+
+=== Broker URL
+
+The `brokerUrl` option names the broker and how to reach it:
+
+[width="100%",cols="1,1,3",options="header"]
+|===
+| Scheme | Default port | Connection
+| `tcp`, `mqtt` | 1883 | plain TCP
+| `ssl`, `mqtts` | 8883 | TLS
+|===
+
+User information in the URL is refused. Credentials belong into the `username` and `password` options, so that they
+do not end up in logs together with the URL. The WebSocket schemes `ws` and `wss` are refused as well, until the
+Vert.x MQTT client supports the WebSocket transport.
+
+=== Payload
+
+The consumer sets the body to the payload as a `byte[]`, the topic it arrived on is in the `CamelVertxMqttTopic`
+header. The producer sends whatever the body converts to a `byte[]`: text, bytes, a stream or a file. A message
+without a body is sent with an empty payload.
+
+=== Connection
+
+The consumer and the producer of an endpoint share one connection. It is opened when the first of them starts and
+closed when the last of them stops. Two endpoints are two connections, and since a broker allows one connection per
+client identifier, two endpoints must not share a `clientId`.
+
+With `automaticReconnect` (the default) a lost connection is opened again, after `reconnectDelay` and then with a
+delay that doubles on every attempt, up to `maxReconnectDelay`. A consumer subscribes again after every reconnect.
+If the broker cannot be reached when a route starts, the route starts all the same and the component keeps trying. A
+producer waits up to `connectTimeout` for the connection before the exchange fails. Without `automaticReconnect` a
+broker that cannot be reached fails the start of the route.
+
+The Vert.x client keeps no session of its own: a message the broker did not acknowledge when the connection was lost
+is not sent again, its exchange fails.
+
+With `cleanStart=false` the broker keeps the session of the client, with MQTT 5 for `sessionExpiryInterval` seconds.
+A consumer that stops then keeps its subscription at the broker, which holds the messages of quality of service 1 and
+2 until the consumer connects again with the same `clientId`. With `cleanStart=true` (the default) a stopping consumer
+unsubscribes.
+
+=== Quality of service and acknowledgement
+
+The producer completes an exchange when the broker acknowledged the message, with PUBACK for quality of service 1 and
+PUBCOMP for 2. A message of quality of service 0 completes when it is written. A message without an acknowledgement
+within `ackTimeout` seconds fails, and so does a message beyond `maxInflightQueue` unacknowledged messages.
+
+The consumer acknowledges a message of quality of service 1 or 2 as soon as it arrives. With `manualAcksEnabled` it
+acknowledges it only once its exchange completed successfully. A message whose exchange failed stays unacknowledged.
+Depending on the broker and on `cleanStart` and `sessionExpiryInterval`, the broker delivers it again after the next
+connect.
+
+=== Back pressure
+
+The consumer processes the exchanges in the order the messages arrive, on a thread of its own, never on the event
+loop of the client, which also keeps the connection alive. When more than `maxPendingMessages` messages wait for
+their exchange, the client stops reading from the connection until half of them are done. The broker is then held
+back by TCP, for every quality of service. With MQTT 5 `receiveMaximum` also limits the messages of quality of
+service 1 and 2 the broker sends before they are acknowledged.
+
+=== TLS
+
+A broker URL with `ssl` or `mqtts` connects over TLS. The `sslContextParameters` give the trust managers, the key
+managers for a client certificate, the protocols and the cipher suites. Without them the trust store of the JVM is
+used. The host name of the broker is always verified against its certificate, there is no option to switch the check
+off or to trust every certificate.
+
+=== Vert.x instance
+
+The component uses the Vert.x instance set on it, or the one in the registry if there is exactly one. Otherwise it
+creates one of its own, configured by `vertxOptions`, and closes it when it shuts down.
+
+== Examples
+
+=== Receiving messages
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("vertx-mqtt:sensors/+/temperature?brokerUrl=tcp://broker.example.com:1883&qos=1")
+    .log("${header.CamelVertxMqttTopic}: ${body}");
+----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: vertx-mqtt:sensors/+/temperature
+    parameters:
+      brokerUrl: tcp://broker.example.com:1883
+      qos: 1
+    steps:
+      - log: "${header.CamelVertxMqttTopic}: ${body}"
+----
+====
+
+=== Publishing messages
+
+[source,java]
+----
+from("timer:status?period=60000")
+    .setBody(constant("online"))
+    .to("vertx-mqtt:devices/gateway-1/status?brokerUrl=ssl://broker.example.com&retained=true"
+        + "&username=gateway-1&password=RAW(secret)&sslContextParameters=#brokerTls");
+----
+
+=== MQTT 5 properties
+
+[source,java]
+----
+from("direct:request")
+    .setHeader("CamelVertxMqttResponseTopic", constant("replies/gateway-1"))
+    .setHeader("CamelVertxMqttContentType", constant("application/json"))
+    .to("vertx-mqtt:requests?brokerUrl=tcp://broker.example.com");
+----
+
+=== MQTT 3.1.1
+
+[source,java]
+----
+from("vertx-mqtt:legacy/#?brokerUrl=tcp://broker.example.com&mqttVersion=MQTT_3_1_1")
+    .to("log:legacy");
+----
+
+== Current limitations
+
+* No WebSocket transport (`ws`, `wss`) yet.
+* No connection through a proxy.
+* The client keeps no session: messages of quality of service 1 and 2 that were not acknowledged before a connection
+  was lost are not sent again by the client.
