@@ -43,7 +43,7 @@ public class WhatsAppConfiguration {
     @UriParam(description = "Webhook verify token", label = "security", security = "secret")
     private String webhookVerifyToken;
 
-    @UriParam(description = "Webhook path", label = "advanced", defaultValue = "webhook")
+    @UriParam(description = "Webhook path", label = "advanced", defaultValue = "camel-whatsapp/webhook")
     private String webhookPath = "camel-whatsapp/webhook";
 
     @UriParam(description = "The app secret used to verify the X-Hub-Signature-256 signature of inbound webhook event"
