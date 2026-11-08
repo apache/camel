@@ -98,6 +98,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
     // API. As any plain property, it shows in Exchange.getProperties() and in tracer or debugger listings, and
     // removeProperties("*") removes it.
     private static final String CONTINUED_EXCEPTION = "CamelErrorHandlerContinuedException";
+    // The redelivery counter header of a redelivery that is over: the step was redelivered and then succeeded. The
+    // headers stay on the message, so the next steps can see that it was redelivered, but a later failure (of another
+    // step, or of a route that gets the exchange or a copy of it next) does not count on from them (CAMEL-26734).
+    // Internal, as CONTINUED_EXCEPTION.
+    private static final String REDELIVERY_OVER = "CamelErrorHandlerRedeliveryOver";
 
     // factory
     protected PooledExchangeTaskFactory taskFactory;
@@ -744,6 +749,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 exchange.getIn().removeHeader(Exchange.REDELIVERED);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+                exchange.removeProperty(REDELIVERY_OVER);
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
                 exchange.getExchangeExtension().setRedeliveryCounter(-1);
                 exchange.getExchangeExtension().setRedeliveryMaxCounter(-1);
@@ -1651,6 +1657,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // only process if the exchange hasn't failed
                 // and it has not been handled by the error processor
                 if (isDone(exchange)) {
+                    if (exchange.getException() == null) {
+                        markRedeliveryOver();
+                    }
                     AsyncCallback cb = callback;
                     taskFactory.release(this);
                     reactiveExecutor.schedule(cb);
@@ -1659,6 +1668,20 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     reactiveExecutor.schedule(this);
                 }
             });
+        }
+
+        /**
+         * The redelivered step succeeded, so its redelivery is over. The redelivery headers stay, so the next steps can
+         * see that the message was redelivered, but they are marked as over: otherwise a later failure, of another step
+         * of the route or of a route that gets the exchange (or a copy of it, such as over seda) next, would count on
+         * from them (incrementRedeliveryCounter respects a higher header, for a nested error handler that failed) and
+         * get fewer redeliveries, or none (CAMEL-26734).
+         */
+        private void markRedeliveryOver() {
+            Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+            if (counter != null) {
+                exchange.setProperty(REDELIVERY_OVER, counter);
+            }
         }
 
         protected void prepareExchangeForContinue(Exchange exchange, boolean isDeadLetterChannel) {
@@ -1676,6 +1699,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+            exchange.removeProperty(REDELIVERY_OVER);
             // also reset the exchange counter; a continued exchange is not redelivered
             exchange.getExchangeExtension().setRedeliveryCounter(-1);
             exchange.getExchangeExtension().setRedeliveryMaxCounter(-1);
@@ -1896,6 +1920,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 exchange.getIn().removeHeader(Exchange.REDELIVERED);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
                 exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
+                exchange.removeProperty(REDELIVERY_OVER);
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
                 exchange.getExchangeExtension().setRedeliveryCounter(-1);
                 exchange.getExchangeExtension().setRedeliveryMaxCounter(-1);
@@ -2313,9 +2338,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             // because user routes may remove headers (e.g. removeHeaders("*"))
             // however, if the header carries a higher value from a nested error handler
             // (e.g. per-endpoint redelivery in routing slip), respect that accumulated count
-            Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+            // (but not one of a redelivery that is over, see markRedeliveryOver)
+            Integer counter = liveRedeliveryCounter(exchange);
             int base = counter != null ? Math.max(redeliveryCounter, counter) : redeliveryCounter;
             int next = base + 1;
+            // the header counts this redelivery now, so it is no longer of one that is over
+            exchange.removeProperty(REDELIVERY_OVER);
             in.setHeader(Exchange.REDELIVERY_COUNTER, next);
             in.setHeader(Exchange.REDELIVERED, Boolean.TRUE);
             exchange.getExchangeExtension().setRedeliveryCounter(next);
@@ -2328,13 +2356,24 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         }
 
         /**
+         * The redelivery counter header, unless it is of a redelivery that is over (see markRedeliveryOver).
+         */
+        private Integer liveRedeliveryCounter(Exchange exchange) {
+            Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+            if (counter != null && counter.equals(exchange.getProperty(REDELIVERY_OVER))) {
+                return null;
+            }
+            return counter;
+        }
+
+        /**
          * Decrements the redelivery counter when the failure handler takes over without processing the redelivery.
          */
         private void decrementRedeliveryCounter() {
             Message in = exchange.getIn();
             // use the same Math.max(header, field) pattern as incrementRedeliveryCounter:
             // a nested error handler may have bumped the counter in the header beyond our field
-            Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+            Integer counter = liveRedeliveryCounter(exchange);
             int base = counter != null ? Math.max(redeliveryCounter, counter) : redeliveryCounter;
             int prev = Math.max(base - 1, 0);
             in.setHeader(Exchange.REDELIVERY_COUNTER, prev);

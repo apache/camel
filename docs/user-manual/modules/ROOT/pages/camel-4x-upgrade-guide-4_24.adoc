@@ -273,6 +273,16 @@ before calling an endpoint). Before, such a recovery was not counted. `ExchangeH
 `true` when the error handler redelivered the exchange, without looking at the header only. An exchange whose failure
 is continued (`continued(true)`) no longer keeps its redelivery counter, as with a handled failure.
 
+=== camel-core - a step after a redelivered step gets all its redeliveries
+
+When a step of a route was redelivered and then succeeded, a later failure (of another step of the route, or of a
+route that gets the exchange or a copy of it next, such as over `seda`) counted its redeliveries on from the
+`CamelRedeliveryCounter` header that the first step left on the message. With `maximumRedeliveries(2)`, a step after one
+that needed two redeliveries was not redelivered at all: the message went to the dead letter channel at its first
+failure. Now such a failure is redelivered as any other, from attempt 1, so such routes can redeliver more often than
+before. The `CamelRedelivered`, `CamelRedeliveryCounter` and `CamelRedeliveryMaxCounter` headers stay on the message
+after the redelivered step succeeded, as before.
+
 === camel-core - a nested split no longer changes the processed items of the outer split
 
 With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
