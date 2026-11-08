@@ -591,6 +591,179 @@ class AuthoringToolsLenientTest {
         assertThat(result.get("errors").toString()).contains("mesage");
     }
 
+    /**
+     * r29 of the local-model benchmark, contracts-rest-code-first step 1: a line break escaped twice in the tool call,
+     * so the line holds the two characters \n before the next key. Told what they are and given the two lines to write,
+     * the model sent the same lines 15, 10 and 16 times in three runs. They cannot be text there: the write makes them
+     * a line break, and says so.
+     */
+    @Test
+    void theTwoCharactersOfALineBreakBeforeTheNextKeyAreWrittenAsALineBreak(@TempDir Path dir) throws IOException {
+        JsonObject result = write(dir, """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.id}')]"\\n                resultType: java.util.List
+                        - log: "${body}"
+                """);
+        assertRepairedAndValid(dir, result,
+                "lines 8-9: the two characters \\n after the value of expression written as a line break");
+        assertThat(result.getString("message")).startsWith("Written with these repairs of the YAML (the file has them"
+                                                           + " now): lines 8-9: the two characters \\n after the value of"
+                                                           + " expression written as a line break. ");
+        assertThat(Files.readString(dir.resolve(FILE))).contains("""
+                              jsonpath:
+                                expression: "$[?(@.orderId == '${header.id}')]"
+                                resultType: java.util.List
+                        - log: "${body}"
+                """);
+    }
+
+    /** Several in one write: two on one line, one on another line, after a plain value, and before a list item. */
+    @Test
+    void eachLineBreakEscapedTwiceIsWrittenAsALineBreak(@TempDir Path dir) throws IOException {
+        JsonObject result = write(dir,
+                """
+                        - route:
+                            from:
+                              uri: direct:get-order
+                              steps:
+                                - setBody:
+                                    expression:
+                                      jsonpath:
+                                        expression: '$[0]'\\n                resultType: java.util.Map\\n                suppressExceptions: true
+                                - setHeader:
+                                    name: orderId
+                                    expression:
+                                      simple:
+                                        expression: ${body[orderId]}\\n                trim: true
+                                - to: direct:audit\\n        - log: "${header.orderId}"
+                        - route:
+                            from:
+                              uri: direct:audit
+                              steps:
+                                - log: "audit"
+                        """);
+        assertRepairedAndValid(dir, result,
+                "lines 8-10: the two characters \\n after the values of expression and resultType written as line breaks",
+                "lines 15-16: the two characters \\n after the value of expression written as a line break",
+                "lines 17-18: the two characters \\n after the value of - to written as a line break");
+        assertThat(Files.readString(dir.resolve(FILE))).contains("""
+                              jsonpath:
+                                expression: '$[0]'
+                                resultType: java.util.Map
+                                suppressExceptions: true
+                        - setHeader:
+                            name: orderId
+                            expression:
+                              simple:
+                                expression: ${body[orderId]}
+                                trim: true
+                        - to: direct:audit
+                        - log: "${header.orderId}"
+                """);
+    }
+
+    /** The edit tool writes through the write, so a replacement with the two characters \n is repaired the same way. */
+    @Test
+    void anEditWithALineBreakEscapedTwiceIsRepairedAsAWriteIs(@TempDir Path dir) throws IOException {
+        Files.writeString(dir.resolve(FILE), """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[0]"
+                        - log: "${body}"
+                """);
+        JsonObject result = AuthoringTools.editFile(new ToolContext(), dir, FILE,
+                "                expression: \"$[0]\"",
+                "                expression: \"$[?(@.orderId == '${header.id}')]\"\\n                resultType: java.util.List");
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("edited");
+        assertThat(result.get("repaired").toString())
+                .contains("lines 8-9: the two characters \\n after the value of expression written as a line break");
+        assertThat(Files.readString(dir.resolve(FILE))).contains("""
+                                expression: "$[?(@.orderId == '${header.id}')]"
+                                resultType: java.util.List
+                        - log: "${body}"
+                """);
+    }
+
+    /**
+     * A \n inside quotes is an escape (double quotes) or text (single quotes), and a block scalar or Groovy code holds
+     * it as written: none of them is a line break escaped twice, so the file is written as it is.
+     */
+    @Test
+    void theTwoCharactersAsTextAreNotRepaired(@TempDir Path dir) throws IOException {
+        String content = """
+                - route:
+                    from:
+                      uri: timer:tick
+                      steps:
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: "body.split('\\n').collect { it + ': x' }.join('\\n')"
+                        - setBody:
+                            expression:
+                              simple:
+                                expression: "line one\\nresultType: ${body}"
+                        - setBody:
+                            expression:
+                              groovy:
+                                expression: |
+                                  def lines = "a\\nb: c".split('\\n')
+                                  return lines.size()
+                        - log:
+                            message: 'first\\n  second: ${body}'
+                        - log:
+                            message: Hello\\nWorld
+                """;
+        JsonObject result = write(dir, content);
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("created");
+        assertThat(result.get("repaired")).isNull();
+        assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(content);
+    }
+
+    /**
+     * After a \n, text that starts in no column of a key of the lines above is not a key the line break was meant for:
+     * not repaired, and the answer is the one the validator gives. A key in the column of a mapping above is repaired,
+     * and when that is not its place, the repair says its lines still have errors.
+     */
+    @Test
+    void aLineBreakEscapedTwiceBeforeAKeyInNoColumnOfTheLinesAboveIsNotRepaired(@TempDir Path dir) {
+        String route = """
+                - route:
+                    from:
+                      uri: direct:get-order
+                      steps:
+                        - setBody:
+                            expression:
+                              jsonpath:
+                                expression: "$[0]"\\n%sresultType: java.util.List
+                """;
+        for (String indent : List.of("", "                  ")) {
+            JsonObject result = write(dir, route.formatted(indent));
+            assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+            assertThat(result.get("repaired")).isNull();
+            assertThat(result.get("repairable")).isNull();
+            assertThat(result.get("errors").toString()).contains("the value of expression is followed by \\n");
+        }
+        JsonObject result = write(dir, route.formatted("              "));
+        assertThat(result.getString("status")).as(String.valueOf(result)).isEqualTo("invalid");
+        assertThat(result.get("errors").toString()).contains("property 'resultType' is not defined");
+        assertThat(result.get("repairable").toString()).contains("lines 8-9: the two characters \\n after the value of"
+                                                                 + " expression written as a line break (these lines still"
+                                                                 + " have errors)");
+        assertThat(result.getString("message")).doesNotContain("needs no change from you");
+    }
+
     // -------------------------------------------------------------------------------------------------------------
     // the snippet to find, written from memory
     // -------------------------------------------------------------------------------------------------------------

@@ -2052,8 +2052,11 @@ public final class AuthoringTools {
             "is not defined in the schema|must have at most \\d+ propert|found, \\w+ expected|starts in column"
                                                                  + "|required property");
 
-    /** The line a repair or a problem names: "line 101: otherwise: its steps put under steps:", "Line 102: ...". */
-    private static final Pattern NAMED_LINE = Pattern.compile("^[Ll]ine (\\d+)\\b");
+    /**
+     * The line a repair or a problem names: "line 101: otherwise: its steps put under steps:", "Line 102: ...", or the
+     * lines: "lines 45-46: the two characters \n after the value of expression written as a line break".
+     */
+    private static final Pattern NAMED_LINE = Pattern.compile("^[Ll]ines? (\\d+)(?:-(\\d+))?\\b");
 
     /** What a repair says when a problem of the shape is left in the lines it changed. */
     static final String SHAPE_LEFT = " (these lines still have errors)";
@@ -2079,7 +2082,8 @@ public final class AuthoringTools {
             boolean left = false;
             if (m.find()) {
                 int start = Integer.parseInt(m.group(1));
-                int end = blockEnd(lines, start);
+                // a line split in two has its second line beside the first, not in its block
+                int end = Math.max(blockEnd(lines, start), m.group(2) != null ? Integer.parseInt(m.group(2)) : start);
                 left = shapeLines.stream().anyMatch(l -> l >= start && l <= end);
             }
             answer.add(left ? applied + SHAPE_LEFT : applied);

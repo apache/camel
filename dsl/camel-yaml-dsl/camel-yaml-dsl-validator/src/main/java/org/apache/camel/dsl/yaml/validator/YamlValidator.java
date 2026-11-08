@@ -297,6 +297,9 @@ public class YamlValidator {
     /** The two characters \n before a key or a list item, as a line break escaped twice writes them. */
     private static final Pattern ESCAPED_LINE_BREAK = Pattern.compile("\\\\n(?=\\s*(?:-\\s|[A-Za-z_][\\w.-]*:))");
 
+    /** The key or the list item after the two characters \n: the - of the item, and the key up to its colon. */
+    private static final Pattern AFTER_ESCAPED_LINE_BREAK = Pattern.compile("( *)(-\\s+)?[A-Za-z_][\\w.-]*:");
+
     /**
      * A YAML parse error whose line is a line of text at column 1 after the routes (an explanation appended to the
      * file, or a markdown fence) says so; the parser's "while scanning a simple key" does not.
@@ -371,10 +374,7 @@ public class YamlValidator {
                               + " quotes belong): YAML reads them as text, so the line is one value. Write each part on"
                               + " a line of its own, with real line breaks and quotes"
                             : escaped
-                                    ? "line " + last + ": the value of " + key + " is followed by \\n, the two characters"
-                                      + " \\ and n: YAML reads them as text, not as a line break, so what comes after them"
-                                      + " is not a key. Write line " + last + " as these " + parts.size() + " lines:\n"
-                                      + String.join("\n", parts.stream().map(String::stripTrailing).toList())
+                                    ? escapedLineBreak(last, key, parts)
                             // the value was corrected twice: it ends with two quotes, not with a concatenation
                             // (CAMEL-24906)
                             : "\"".equals(tail)
@@ -429,6 +429,61 @@ public class YamlValidator {
                            + "\"): a route file holds only the YAML, put explanations in a # comment or leave them out"
                            + " (" + head + ")")
                 .build();
+    }
+
+    /**
+     * The value of a key followed by the two characters \n of a line break escaped twice, before the next key: said
+     * with the lines to write, the parts of the line between the \n (the AI write tool repairs the line with them).
+     */
+    private static String escapedLineBreak(int line, String key, List<String> parts) {
+        return "line " + line + ": the value of " + key + " is followed by \\n, the two characters \\ and n: YAML reads"
+               + " them as text, not as a line break, so what comes after them is not a key. Write line " + line
+               + " as these " + parts.size() + " lines:\n"
+               + String.join("\n", parts.stream().map(String::stripTrailing).toList());
+    }
+
+    /**
+     * The parts of a line whose plain value is followed by the two characters \n and the next key, which the parser
+     * reads as a colon in the value; null when the value holds that colon in its text: the key after the \n is not the
+     * one the parser stopped at, or it is not in a column that the lines above have for a key (or a list item).
+     */
+    private static List<String> escapedLineBreakParts(Mark problem, String[] lines) {
+        String text = lines[problem.line() - 1];
+        int valueStart = text.indexOf(':') + 1;
+        Matcher escaped = ESCAPED_LINE_BREAK.matcher(text);
+        if (!escaped.find(valueStart) || text.substring(valueStart, escaped.start()).isBlank()) {
+            return null;
+        }
+        Matcher next = AFTER_ESCAPED_LINE_BREAK.matcher(text).region(escaped.end(), text.length());
+        if (!next.lookingAt() || next.end() != problem.column()
+                || !openColumn(lines, problem.line() - 1, next.group(1).length(), next.group(2) != null)) {
+            return null;
+        }
+        List<String> parts = new ArrayList<>(List.of(ESCAPED_LINE_BREAK.split(text.substring(escaped.start()), -1)));
+        parts.set(0, text.substring(0, escaped.start()) + parts.get(0));
+        return parts;
+    }
+
+    /**
+     * Whether a line after the line at index can start a key (or a list item) in the column: the column of the key of
+     * that line or of a mapping that holds it (of the - of that line or of a list item that holds it).
+     */
+    private static boolean openColumn(String[] lines, int index, int column, boolean item) {
+        int limit = Integer.MAX_VALUE;
+        for (int i = index; i >= 0 && limit > 0; i--) {
+            String stripped = lines[i].stripLeading();
+            int indent = lines[i].length() - stripped.length();
+            if (stripped.isEmpty() || stripped.startsWith("#") || indent >= limit) {
+                continue;
+            }
+            boolean dash = stripped.startsWith("- ");
+            int key = dash ? indent + stripped.length() - stripped.substring(1).stripLeading().length() : indent;
+            if (item ? dash && indent == column : key == column) {
+                return true;
+            }
+            limit = indent;
+        }
+        return false;
     }
 
     /** A value (of a key or a list item) that starts with a property placeholder without quotes. */
@@ -909,6 +964,11 @@ public class YamlValidator {
                     : hint("line " + problem.line() + ": " + keyName(text) + " starts in column " + (indent + 1)
                            + ", but the keys of the mapping that starts at line " + mapping.line() + " are in column "
                            + mapping.column() + "; every key of a mapping must start in the same column");
+        }
+        // a line break escaped twice after a plain value, as after a quoted one: the next key is not text to quote
+        List<String> parts = escapedLineBreakParts(problem, lines);
+        if (parts != null) {
+            return hint(escapedLineBreak(problem.line(), keyName(text), parts));
         }
         String value = text.substring(text.indexOf(':') + 1).trim();
         String quoted = value.contains("\"") ? "'" + value + "'" : "\"" + value + "\"";
