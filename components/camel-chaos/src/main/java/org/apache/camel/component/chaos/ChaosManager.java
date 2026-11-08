@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -416,6 +417,10 @@ public final class ChaosManager {
         if (rule.expectation != null && camelContext.getRoute(rule.expectation.route) == null) {
             answer.add("expects route " + rule.expectation.route + ", but there is no route with that id (yet)");
         }
+        if (rule.expectation != null && rule.expectation.toRoute != null
+                && camelContext.getRoute(rule.expectation.toRoute) == null) {
+            answer.add("expects route " + rule.expectation.toRoute + ", but there is no route with that id (yet)");
+        }
         String target = ChaosTargets.check(camelContext, rule);
         if (target != null) {
             answer.add(target);
@@ -671,6 +676,17 @@ public final class ChaosManager {
             state.expectedFailed = true;
             record(routeId, ChaosRule.Expectation.Kind.FAILED);
         }
+        if (state.enteredAt >= 0 && !state.expectedTime && outcome != ChaosExchangeState.Outcome.ENTERED) {
+            // the time of the exchange in the route, from when it entered it until the route was done with it the
+            // first time
+            state.expectedTime = true;
+            long millis = Math.max(0, TimeSource.currentTimeMillis() - state.enteredAt);
+            for (ChaosRule.Expectation expectation : ruleSet.expectations) {
+                if (expectation.kind.time() && expectation.route.equals(routeId)) {
+                    expectation.recordTime(millis);
+                }
+            }
+        }
     }
 
     /** The error handler redelivers a step of the route: counted for the report and the expectations. */
@@ -683,6 +699,13 @@ public final class ChaosManager {
         for (ChaosRule.Expectation expectation : ruleSet.expectations) {
             if (expectation.kind == kind && expectation.route.equals(routeId)) {
                 expectation.record();
+            } else if (kind == ChaosRule.Expectation.Kind.COMPLETED && expectation.kind == ChaosRule.Expectation.Kind.LOST) {
+                // the messages one route completed, and those the next route completed
+                if (expectation.route.equals(routeId)) {
+                    expectation.recordLost(false);
+                } else if (routeId.equals(expectation.toRoute)) {
+                    expectation.recordLost(true);
+                }
             }
         }
     }
@@ -952,6 +975,8 @@ public final class ChaosManager {
         final ChaosRule[] lifecycle;
         final ChaosRule.Expectation[] expectations;
         final ChaosRule[] expectationRules;
+        // the routes with an expectation on their time, whose route policy notes when an exchange enters
+        final Set<String> timedRoutes;
 
         RuleSet(List<ChaosRule> rules, long now) {
             // also the rules that start later (from=): the hooks skip them until then
@@ -969,6 +994,8 @@ public final class ChaosManager {
             expectations = Arrays.stream(expectationRules).map(r -> r.expectation)
                     .filter(e -> e.outcome(now) == ChaosRule.Expectation.Outcome.PENDING && !e.frozen())
                     .toArray(ChaosRule.Expectation[]::new);
+            timedRoutes = Arrays.stream(expectations).filter(e -> e.kind.time()).map(e -> e.route)
+                    .collect(Collectors.toUnmodifiableSet());
         }
     }
 

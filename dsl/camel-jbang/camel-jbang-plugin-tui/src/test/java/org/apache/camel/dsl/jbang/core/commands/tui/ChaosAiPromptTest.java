@@ -139,6 +139,17 @@ class ChaosAiPromptTest {
     }
 
     @Test
+    void aTimeExpectationIsAskedAsATime() {
+        ChaosInfo.Rule rule = info.chaos.rules.get(0);
+        rule.expectKind = "meanTime";
+        rule.expectOp = "<=";
+        rule.expectCount = 2000;
+        rule.expectValue = 2340;
+        rule.expectSpec = "orders:meanTime<=2s";
+        assertThat(ChaosAiPrompt.of(info, rule)).contains("Expectation: orders:meanTime<=2s, unmet (2s meanTime)");
+    }
+
+    @Test
     void theKnownRulesShowTheFormsTheShortSyntaxLeavesOut() {
         ChaosRecipes recipes = ChaosRecipes.parse(ChaosRecipesTest.MODEL);
         String question = ChaosAiPrompt.ofRequest(info, "calls to stock time out", recipes);

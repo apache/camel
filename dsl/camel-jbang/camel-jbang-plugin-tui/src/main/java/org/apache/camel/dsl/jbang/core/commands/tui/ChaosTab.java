@@ -479,8 +479,9 @@ class ChaosTab extends AbstractTableTab {
         }
         addImpact(lines, info, chaos, r);
         if (r.expectRoute != null) {
-            String spec = "completed".equals(r.expectKind) && ">=".equals(r.expectOp)
-                    ? r.expectRoute + ":" + r.expectCount
+            String spec = r.expectSpec != null ? r.expectSpec
+                    : "completed".equals(r.expectKind) && ">=".equals(r.expectOp)
+                            ? r.expectRoute + ":" + r.expectCount
                     : r.expectRoute + ":" + r.expectKind + r.expectOp + r.expectCount;
             Style outcome = switch (r.expectOutcome != null ? r.expectOutcome : "") {
                 case "met" -> Theme.success().bold();
@@ -492,7 +493,10 @@ class ChaosTab extends AbstractTableTab {
             expect.add(Span.styled(" Expect    ", label));
             expect.add(Span.raw(spec + "  "));
             expect.add(Span.styled(r.expectOutcome != null ? r.expectOutcome.toUpperCase(Locale.ENGLISH) : "-", outcome));
-            expect.add(Span.raw("  " + r.expectValue + " " + r.expectKind));
+            // a time (meanTime, maxTime) is in milliseconds
+            boolean time = "meanTime".equals(r.expectKind) || "maxTime".equals(r.expectKind);
+            expect.add(Span.raw("  " + (time ? shortTime(r.expectValue) : String.valueOf(r.expectValue)) + " "
+                                + r.expectKind));
             if (r.expectTimeLeft >= 0 && "pending".equals(r.expectOutcome)) {
                 expect.add(Span.styled("  " + shortTime(r.expectTimeLeft) + " left", label));
             }

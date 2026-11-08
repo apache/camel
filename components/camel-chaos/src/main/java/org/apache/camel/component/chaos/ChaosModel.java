@@ -339,7 +339,9 @@ final class ChaosModel {
                         "When the rule starts after it is added, such as after the warm-up (+30s or 30s)", "+30s");
                 case "expect" -> param("expect", "expectation", false,
                         "An expectation of a route after the rule is added: <route>:<count> (at least that many"
-                                                                       + " completed) or <route>:<kind><op><count>",
+                                                                       + " completed), <route>:<kind><op><count>, a time"
+                                                                       + " (<route>:meanTime<=2s) or the messages lost"
+                                                                       + " between two routes (<route>-><route>:lost<=0)",
                         "orders:handled<=0");
                 case "within" -> param("within", "duration", false,
                         "The time of the expectation (by default until the rule ends)", "2m");
@@ -355,7 +357,7 @@ final class ChaosModel {
         for (Expectation.Kind kind : Expectation.Kind.values()) {
             JsonObject k = new JsonObject();
             k.put("name", kind.key);
-            k.put("description", "The " + kind.words(2) + " in the route");
+            k.put("description", kind.description);
             kinds.add(k);
         }
         jo.put("kinds", kinds);

@@ -435,12 +435,24 @@ public class ListChaos extends ProcessWatchCommand {
         String op = e.getStringOrDefault("op", ">=");
         Object value = e.get("value") != null ? e.get("value") : e.get("completed");
         StringBuilder sb = new StringBuilder();
-        sb.append(e.getString("route")).append(':');
-        if (!"completed".equals(kind) || !">=".equals(op)) {
-            sb.append(kind).append(op);
+        String spec = e.getString("spec");
+        if (spec != null) {
+            // as the rule writes it, such as orders:meanTime<=2s or orders->shipping:lost<=0 (CAMEL-26726)
+            sb.append(spec);
+        } else {
+            sb.append(e.getString("route")).append(':');
+            if (!"completed".equals(kind) || !">=".equals(op)) {
+                sb.append(kind).append(op);
+            }
+            sb.append(e.get("count"));
         }
-        sb.append(e.get("count")).append(' ').append(e.getString("outcome"))
-                .append(" (").append(value).append(' ').append(kind);
+        sb.append(' ').append(e.getString("outcome")).append(" (");
+        if (("meanTime".equals(kind) || "maxTime".equals(kind)) && value instanceof Number n) {
+            // a time in milliseconds
+            sb.append(TimeUtils.printDuration(n.longValue())).append(' ').append(kind);
+        } else {
+            sb.append(value).append(' ').append(kind);
+        }
         if (e.get("timeLeft") instanceof Number n) {
             sb.append(", ").append(TimeUtils.printDuration(n.longValue())).append(" left");
         }

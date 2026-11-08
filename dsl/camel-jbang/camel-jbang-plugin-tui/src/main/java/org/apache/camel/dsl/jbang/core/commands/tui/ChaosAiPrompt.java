@@ -242,9 +242,13 @@ final class ChaosAiPrompt {
             sb.append("It fired at ").append(rule.firedAt.get("poll")).append(" polls of a consumer (no exchange).\n");
         }
         if (rule.expectRoute != null) {
-            sb.append("Expectation: ").append(rule.expectRoute).append(':').append(rule.expectKind).append(rule.expectOp)
-                    .append(rule.expectCount).append(", ").append(rule.expectOutcome != null ? rule.expectOutcome : "pending")
-                    .append(" (").append(rule.expectValue).append(' ').append(rule.expectKind).append(").\n");
+            sb.append("Expectation: ").append(rule.expectSpec != null
+                    ? rule.expectSpec : rule.expectRoute + ":" + rule.expectKind + rule.expectOp + rule.expectCount)
+                    .append(", ").append(rule.expectOutcome != null ? rule.expectOutcome : "pending")
+                    .append(" (").append("meanTime".equals(rule.expectKind) || "maxTime".equals(rule.expectKind)
+                            // a time is in milliseconds
+                            ? ChaosTab.shortTime(rule.expectValue) : String.valueOf(rule.expectValue))
+                    .append(' ').append(rule.expectKind).append(").\n");
         }
         if (rule.lostAtDlq > 0) {
             sb.append("Messages lost at the dead letter channel: ").append(rule.lostAtDlq).append(".\n");

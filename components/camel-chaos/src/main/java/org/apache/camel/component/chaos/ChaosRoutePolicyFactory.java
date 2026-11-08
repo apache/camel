@@ -60,11 +60,22 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
 
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
-            ChaosRule[] rules = manager.ruleSet().entry;
-            if (rules.length == 0 || !ChaosExchangeState.of(exchange).enter(route.getRouteId())) {
+            ChaosManager.RuleSet set = manager.ruleSet();
+            ChaosRule[] rules = set.entry;
+            // an expectation on the time of the route needs when the exchange entered it (CAMEL-26726)
+            boolean timed = set.timedRoutes.contains(route.getRouteId());
+            if (rules.length == 0 && !timed) {
                 return;
             }
+            ChaosExchangeState exchangeState = ChaosExchangeState.of(exchange);
+            boolean first = exchangeState.enter(route.getRouteId());
             long now = TimeSource.currentTimeMillis();
+            if (timed && first) {
+                exchangeState.route(route.getRouteId()).enteredAt = now;
+            }
+            if (rules.length == 0 || !first) {
+                return;
+            }
             for (ChaosRule rule : rules) {
                 if (rule.live(now) && rule.matchesId(route.getRouteId()) && rule.matchesWhen(exchange)
                         && rule.fires(now)) {

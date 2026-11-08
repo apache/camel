@@ -463,7 +463,7 @@ class ChaosRuleParserTest {
             "endpoint=x error expect=orders:|is not <route>:<count>",
             "endpoint=x error expect=orders:0|needs a count of 1 or more",
             "endpoint=x error expect=orders:completed>=0|needs a count of 1 or more",
-            "endpoint=x error expect=orders:lost<=0|counts lost: the kinds are completed, handled, failed and redeliveries",
+            "endpoint=x error expect=orders:speed<=0|counts speed: the kinds are completed, handled, failed, redeliveries, meanTime, maxTime and lost",
             "endpoint=x error expect=orders:<=0|counts nothing",
             "endpoint=x error expect=orders:handled<0|needs >=, <= or = after handled",
             "endpoint=x error expect=orders:handled<=x|needs a count that is a whole number",
