@@ -226,6 +226,57 @@ class CitrusTestChecksTest {
         assertThat(CitrusTestChecks.validate(written(test, msgs.get(0)), dir, "test/orders.citrus.it.yaml")).isEmpty();
     }
 
+    /**
+     * r29n-4 test-citrus-orders step 1: the body under http: is the name of a file. The lines to write had it under
+     * data:, the model copied them, and the test sent the name as the body. The name of a file goes under resource:, as
+     * written for a classpath: or file: resource, and from the test for a file of the project.
+     */
+    @Test
+    void theNameOfAFileAsTheBodyUnderHttpIsAResource(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("sample-order.json"), "{\"orderId\": \"ORD-1001\"}");
+        Files.createDirectories(dir.resolve("test"));
+        String test = """
+                name: orders.citrus.it
+                actions:
+                  # Send POST request with the sample order JSON to /orders endpoint
+                  - http:
+                      client: default
+                      url: http://localhost:8080/orders
+                      method: POST
+                      contentType: application/json
+                      body: classpath:test/sample-order.json
+                      outgoingHeaders:
+                        Content-Type: application/json
+                """;
+        List<String> msgs = CitrusTestChecks.validate(test, dir, "test/orders.citrus.it.yaml");
+
+        assertThat(msgs).singleElement().asString()
+                .startsWith("Line 6: url, method, contentType, body and outgoingHeaders are not keys of the http action")
+                .endsWith(" Write lines 4-11 as:\n" + """
+                          - http:
+                              client: "http://localhost:8080"
+                              sendRequest:
+                                POST:
+                                  path: "/orders"
+                                  contentType: "application/json"
+                                  body:
+                                    resource:
+                                      file: "classpath:test/sample-order.json"
+                        """.stripTrailing());
+        assertThat(CitrusTestChecks.validate(written(test, msgs.get(0)), dir, "test/orders.citrus.it.yaml")).isEmpty();
+
+        // a file of the project, named from the project, is read from the test
+        msgs = CitrusTestChecks.validate(test.replace("classpath:test/sample-order.json", "sample-order.json"), dir,
+                "test/orders.citrus.it.yaml");
+        assertThat(msgs).singleElement().asString()
+                .endsWith("          body:\n            resource:\n              file: \"../sample-order.json\"");
+        // text that names no file is the body itself, under data:
+        msgs = CitrusTestChecks.validate(test.replace("classpath:test/sample-order.json", "missing-order.json"), dir,
+                "test/orders.citrus.it.yaml");
+        assertThat(msgs).singleElement().asString()
+                .endsWith("          body:\n            data: \"missing-order.json\"");
+    }
+
     @Test
     void theTextOfTheRequestUnderHttpGoesUnderData() {
         // r28n-3 step 1: url, the order as text, and statusCode
@@ -374,6 +425,31 @@ class CitrusTestChecksTest {
                  text goes under data:, which is the body to send. Write line 8 as:
                           body:
                             data: '{"orderId": "ORD-1002", "country": "US"}'""");
+        assertThat(CitrusTestChecks.validate(written(test, msgs.get(0)))).isEmpty();
+    }
+
+    /** The name of a file as the body of a request in its place: a resource, not the text to send. */
+    @Test
+    void theNameOfAFileAsTheBodyOfARequestIsAResource() {
+        String test = """
+                name: t
+                actions:
+                  - http:
+                      client: "http://localhost:8080"
+                      sendRequest:
+                        POST:
+                          path: "/orders"
+                          body: classpath:test/sample-order.json
+                """;
+        List<String> msgs = CitrusTestChecks.validate(test);
+
+        assertThat(msgs).singleElement().asString().isEqualTo("""
+                Line 8: http.sendRequest.POST.body: string found, object expected; body takes data, resource, script;\
+                 "classpath:test/sample-order.json" names a file: it goes under resource: {file: ...}, and the body to\
+                 send is read from that file (under data:, the name itself would be the body). Write line 8 as:
+                          body:
+                            resource:
+                              file: "classpath:test/sample-order.json\"""");
         assertThat(CitrusTestChecks.validate(written(test, msgs.get(0)))).isEmpty();
     }
 

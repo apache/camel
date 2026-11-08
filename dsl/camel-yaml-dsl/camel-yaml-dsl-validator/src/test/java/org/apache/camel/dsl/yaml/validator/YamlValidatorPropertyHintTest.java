@@ -1311,6 +1311,60 @@ public class YamlValidatorPropertyHintTest {
     }
 
     /**
+     * The line break escaped twice after a plain value: the parser reads the next key as a colon in the value, and the
+     * value is not text to quote. With the key after the \n in a column the lines above have for a key or a list item,
+     * the lines to write are the parts of the line, as after a quoted value.
+     */
+    @Test
+    public void testTheTwoCharactersOfALineBreakAfterAPlainValueAreNamed() throws Exception {
+        List<Error> errors = validator.validate("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - setBody:
+                          expression:
+                            jsonpath:
+                              expression: $[0]\\n              resultType: java.util.Map
+                """);
+        assertThat(errors).hasSize(1);
+        assertThat(errors.get(0).getMessage()).isEqualTo(
+                "line 7: the value of expression is followed by \\n, the two characters \\ and n: YAML reads them as text,"
+                                                         + " not as a line break, so what comes after them is not a key."
+                                                         + " Write line 7 as these 2 lines:\n"
+                                                         + "              expression: $[0]\n"
+                                                         + "              resultType: java.util.Map");
+        // the next step after the \n, in the column of the - of its list
+        errors = validator.validate("""
+                - from:
+                    uri: direct:get-order
+                    steps:
+                      - to: direct:audit\\n      - log: done
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .endsWith("Write line 4 as these 2 lines:\n      - to: direct:audit\n      - log: done");
+        // text with a colon after the \n, in no column of a key: a value to quote, as before
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log:
+                          message: Order failed\\nCause: unknown
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .startsWith("line 5: the value of message holds a colon");
+        // a key deeper than the key of the value has no place there either
+        errors = validator.validate("""
+                - from:
+                    uri: timer:tick
+                    steps:
+                      - log:
+                          message: Order failed\\n              cause: unknown
+                """);
+        assertThat(errors).singleElement().extracting(Error::getMessage).asString()
+                .startsWith("line 5: the value of message holds a colon");
+    }
+
+    /**
      * r28 of the local-model benchmark, connect-sftp-transfer step 2: - route: in column 3 after a top-level
      * onException was told to line up with the steps of the onException, and the model sent the same lines 12 times. It
      * is an entry of the file, so it belongs to the list of the entries, in column 1.

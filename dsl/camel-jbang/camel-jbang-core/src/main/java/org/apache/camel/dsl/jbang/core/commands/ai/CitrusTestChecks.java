@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -413,6 +414,36 @@ public final class CitrusTestChecks {
             return Files.exists(inProject) ? testDir.relativize(inProject).toString().replace('\\', '/') : file;
         }
 
+        /**
+         * The file a body written as text names, as Citrus loads it: a classpath: or file: resource as written, or a
+         * file of the project, from the test; null for text, which is the body itself. Written under data:, the name of
+         * the file was sent as the body (r29n-4 test-citrus-orders step 1 copied body: {data:
+         * "classpath:test/sample-order.json"} from the lines of a refused write, and the service answered 500).
+         */
+        private String bodyFile(String text) {
+            String name = text.strip();
+            if (name.isEmpty() || name.chars().anyMatch(Character::isWhitespace)) {
+                return null;
+            }
+            if (name.matches("(classpath|file):.+")) {
+                return name;
+            }
+            try {
+                return testDir != null
+                        && (Files.isRegularFile(testDir.resolve(name)) || Files.isRegularFile(project.resolve(name)))
+                                ? fromTest(name) : null;
+            } catch (InvalidPathException e) {
+                return null;
+            }
+        }
+
+        /** The body loaded from a file: {resource: {file: ...}}. */
+        private static ObjectNode resource(String file) {
+            ObjectNode body = JSON.createObjectNode();
+            body.set("resource", JSON.createObjectNode().put("file", file));
+            return body;
+        }
+
         List<String> problems() {
             // the actions first, also those of a container (sequential, parallel...), which the schema takes as any
             // object: that each item is one Citrus test action, and what the actions of a container have
@@ -691,16 +722,27 @@ public final class CitrusTestChecks {
                                : "");
             }
             if (!at.equals(bodyAt)) {
-                return "; the body the test expects goes under body: {data: " + quoted(text) + "}";
+                String file = bodyFile(text);
+                return "; the body the test expects goes under body: "
+                       + (file != null ? "{resource: {file: " + quoted(file) + "}}" : "{data: " + quoted(text) + "}");
             }
             return bodyText(at, text);
         }
 
         /**
          * The lines of a body written as text, under data:, and what data is; for an expected JSON body, jsonPath too.
+         * The name of a file goes under resource:, which loads the body from the file.
          */
         private String bodyText(String at, String text) {
             boolean expected = isReceived(at);
+            String file = bodyFile(text);
+            if (file != null) {
+                String written = keyLines(at, resource(file));
+                return "; " + quoted(text.strip()) + " names a file: it goes under resource: {file: ...}, and the body "
+                       + (expected ? "the test expects" : "to send") + " is read from that file (under data:, the name"
+                       + " itself would be the body)."
+                       + (written != null ? written : " Write body: {resource: {file: " + quoted(file) + "}}");
+            }
             Map<String, String> fields = expected ? jsonFields(text) : Map.of();
             String jsonPath = fields.isEmpty() ? null : jsonPathCheck(at, fields);
             String written = keyLines(at, JSON.createObjectNode().put("data", text));
@@ -1007,12 +1049,11 @@ public final class CitrusTestChecks {
                 } else if (forRequest && METHOD_KEYS.contains(key) && value.isTextual()) {
                     method = value.asText().strip().toUpperCase(Locale.ROOT);
                 } else if (forRequest && FILE_KEYS.contains(key) && value.isTextual()) {
-                    request.set("body", JSON.createObjectNode().set("resource",
-                            JSON.createObjectNode().put("file", fromTest(value.asText().strip()))));
+                    request.set("body", resource(fromTest(value.asText().strip())));
                 } else if (!"request".equals(side) && STATUS_KEYS.contains(key) && value.isValueNode()) {
                     response.put("status", value.asText());
                 } else if (side == null && RESPONSE_BODY_KEYS.contains(key) && value.isTextual()) {
-                    response.set("body", JSON.createObjectNode().put("data", value.asText()));
+                    response.set("body", body(value));
                 } else if ("body".equals(key) || forRequest && BODY_KEYS.contains(key)) {
                     JsonNode body = body(value);
                     if (body == null) {
@@ -1029,8 +1070,15 @@ public final class CitrusTestChecks {
                 return true;
             }
 
-            /** The body of a request or a response: text as data, or a map of one of data, resource or script. */
-            private static JsonNode body(JsonNode value) {
+            /**
+             * The body of a request or a response: the name of a file as a resource to load, other text as data, or a
+             * map of one of data, resource or script.
+             */
+            private JsonNode body(JsonNode value) {
+                String file = value.isTextual() ? bodyFile(value.asText()) : null;
+                if (file != null) {
+                    return resource(file);
+                }
                 if (value.isValueNode() && !value.isNull()) {
                     return JSON.createObjectNode().put("data", value.asText());
                 }
