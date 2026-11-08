@@ -539,18 +539,28 @@ Required property:
 
 Optional properties:
 
-* `tableName` — the table used for storage (default: `"camel_kvr"`).
+* `tableName` — the table used for storage (default: `CAMEL_KEYVALUE`).
 * `createTableIfNotExists` — auto-create the table at startup if absent (default: `true`).
 
-The auto-created table schema:
+The auto-created table schema is shown below; with `tableName` set, the table has that name and the
+same columns. `ITEM_VALUE` holds the serialized value, and `EXPIRES_AT` the expiry time in epoch
+milliseconds (`0` for an entry without a TTL):
 
 [source,sql]
 ----
-CREATE TABLE camel_kvr (
-    kvr_key   VARCHAR(255) NOT NULL PRIMARY KEY,
-    kvr_value TEXT
+CREATE TABLE CAMEL_KEYVALUE (
+    ITEM_KEY   VARCHAR(512) NOT NULL,
+    ITEM_VALUE BLOB NOT NULL,
+    EXPIRES_AT BIGINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (ITEM_KEY)
 );
 ----
+
+On a database that does not accept this statement, for example one without a `BLOB` type such as
+PostgreSQL (`BYTEA`), create the table yourself before the repository starts. A custom `createString`
+is used only without `tableName`, as `tableName` derives all statements from the default ones. The
+PostgreSQL example below therefore needs the `product_cache` table created beforehand, with `BYTEA`
+for `ITEM_VALUE`.
 
 [tabs]
 ====
@@ -680,7 +690,7 @@ Required property:
 
 Optional properties:
 
-* `table` — Cassandra table name (default: `"camel_kvr"`).
+* `table` — Cassandra table name (default: `"camel_keyvalue"`). The repository does not create the table.
 * `readConsistencyLevel` — `ConsistencyLevel` for reads (default: `LOCAL_ONE`).
 * `writeConsistencyLevel` — `ConsistencyLevel` for writes (default: `LOCAL_ONE`).
 
