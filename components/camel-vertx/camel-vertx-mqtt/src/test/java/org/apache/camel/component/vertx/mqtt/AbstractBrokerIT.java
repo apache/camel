@@ -125,7 +125,7 @@ abstract class AbstractBrokerIT {
      * consumer drops probes, a late one does not count as a message of the test.
      */
     private void awaitSubscribed(String topic, String options) {
-        String probe = topic.replace("+", "probe").replace("#", "probe");
+        final String probe = topic.replace("+", "probe").replace("#", "probe");
         probeSeen = false;
         await().atMost(WAIT).pollInterval(Duration.ofMillis(200)).until(() -> {
             publish(probe, options, PROBE, Map.of());
@@ -136,14 +136,14 @@ abstract class AbstractBrokerIT {
     @ParameterizedTest
     @CsvSource({ "MQTT_3_1_1, 0", "MQTT_3_1_1, 1", "MQTT_3_1_1, 2", "MQTT_5_0, 0", "MQTT_5_0, 1", "MQTT_5_0, 2" })
     void roundTrip(String version, int qos) throws Exception {
-        String options = "&mqttVersion=" + version + "&qos=" + qos;
+        final String options = "&mqttVersion=" + version + "&qos=" + qos;
         consume("consumer", "sensors/+/temp", options);
         awaitSubscribed("sensors/+/temp", options);
 
-        Exchange done = publish("sensors/1/temp", options, "21.5", Map.of());
+        final Exchange done = publish("sensors/1/temp", options, "21.5", Map.of());
         assertNull(done.getException());
         await().atMost(WAIT).until(() -> !received.isEmpty());
-        Message message = received.peek();
+        final Message message = received.peek();
         assertEquals("21.5", message.getBody(String.class));
         assertEquals(prefix + "sensors/1/temp", message.getHeader(VertxMqttConstants.TOPIC));
         assertEquals(qos, message.getHeader(VertxMqttConstants.QOS));
@@ -168,7 +168,7 @@ abstract class AbstractBrokerIT {
                 VertxMqttConstants.CONTENT_TYPE, "application/json", VertxMqttConstants.RESPONSE_TOPIC,
                 prefix + "replies", VertxMqttConstants.CORRELATION_DATA, new byte[] { 4, 2 }));
         await().atMost(WAIT).until(() -> !received.isEmpty());
-        Message message = received.peek();
+        final Message message = received.peek();
         assertEquals(Map.of("origin", "it"), message.getHeader(VertxMqttConstants.USER_PROPERTIES));
         assertEquals("application/json", message.getHeader(VertxMqttConstants.CONTENT_TYPE));
         assertEquals(prefix + "replies", message.getHeader(VertxMqttConstants.RESPONSE_TOPIC));
@@ -179,7 +179,7 @@ abstract class AbstractBrokerIT {
     void aLargeMessage() throws Exception {
         consume("consumer", "large", "");
         awaitSubscribed("large", "");
-        byte[] large = new byte[512 * 1024];
+        final byte[] large = new byte[512 * 1024];
         for (int i = 0; i < large.length; i++) {
             large[i] = (byte) (i * 31);
         }
@@ -194,8 +194,8 @@ abstract class AbstractBrokerIT {
     @ParameterizedTest
     @CsvSource({ "MQTT_3_1_1, ''", "MQTT_5_0, &sessionExpiryInterval=300" })
     void aKeptSessionReceivesWhatWasPublishedMeanwhile(String version, String sessionOptions) throws Exception {
-        String options = "&mqttVersion=" + version + "&qos=1&cleanStart=false&clientId=it-" + UUID.randomUUID()
-                         + sessionOptions;
+        final String options = "&mqttVersion=" + version + "&qos=1&cleanStart=false&clientId=it-" + UUID.randomUUID()
+                               + sessionOptions;
         consume("consumer", "session", options);
         awaitSubscribed("session", "&mqttVersion=" + version + "&qos=1");
         context.getRouteController().stopRoute("consumer");

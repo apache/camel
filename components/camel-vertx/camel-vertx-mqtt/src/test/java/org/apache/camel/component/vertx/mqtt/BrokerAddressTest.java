@@ -29,8 +29,8 @@ class BrokerAddressTest {
 
     @Test
     void plainSchemesWithTheirDefaultPort() {
-        for (String scheme : new String[] { "tcp", "mqtt", "TCP" }) {
-            BrokerAddress broker = BrokerAddress.parse(scheme + "://broker.example.com");
+        for (final String scheme : new String[] { "tcp", "mqtt", "TCP" }) {
+            final BrokerAddress broker = BrokerAddress.parse(scheme + "://broker.example.com");
             assertEquals("broker.example.com", broker.host());
             assertEquals(1883, broker.port());
             assertFalse(broker.ssl());
@@ -39,8 +39,8 @@ class BrokerAddressTest {
 
     @Test
     void tlsSchemesWithTheirDefaultPort() {
-        for (String scheme : new String[] { "ssl", "mqtts" }) {
-            BrokerAddress broker = BrokerAddress.parse(scheme + "://broker.example.com/");
+        for (final String scheme : new String[] { "ssl", "mqtts" }) {
+            final BrokerAddress broker = BrokerAddress.parse(scheme + "://broker.example.com/");
             assertEquals(8883, broker.port());
             assertTrue(broker.ssl());
         }
@@ -48,7 +48,7 @@ class BrokerAddressTest {
 
     @Test
     void explicitPortAndIpv6() {
-        BrokerAddress broker = BrokerAddress.parse("tcp://[2001:db8::1]:21883");
+        final BrokerAddress broker = BrokerAddress.parse("tcp://[2001:db8::1]:21883");
         assertEquals("2001:db8::1", broker.host());
         assertEquals(21883, broker.port());
         assertEquals("tcp://[2001:db8::1]:21883", broker.toString());
@@ -57,7 +57,7 @@ class BrokerAddressTest {
     @ParameterizedTest
     @ValueSource(strings = { "ws://broker.example.com", "wss://broker.example.com/mqtt" })
     void webSocketIsRefusedForNow(String url) {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> BrokerAddress.parse(url));
+        final IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> BrokerAddress.parse(url));
         assertTrue(e.getMessage().contains("WebSocket"), e.getMessage());
     }
 
@@ -71,7 +71,7 @@ class BrokerAddressTest {
 
     @Test
     void credentialsInTheUrlAreRefusedWithoutEchoingThem() {
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+        final IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> BrokerAddress.parse("tcp://marker-user:marker-secret@broker.example.com"));
         assertFalse(e.getMessage().contains("marker-secret"), e.getMessage());
     }

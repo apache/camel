@@ -66,13 +66,13 @@ public class VertxMqttConsumerHealthCheck implements HealthCheck {
 
     @Override
     public Result call(Map<String, Object> options) {
-        HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this)
+        final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this)
                 .detail(ENDPOINT_URI, consumer.getEndpoint().getEndpointBaseUri());
-        VertxMqttConnection connection = consumer.connection();
+        final VertxMqttConnection connection = consumer.connection();
         if (connection == null) {
             return builder.unknown().message("The consumer is not started").build();
         }
-        Throwable failure = connection.failure();
+        final Throwable failure = connection.failure();
         if (failure != null) {
             return builder.down().message(failure.getMessage()).error(failure).build();
         }

@@ -107,7 +107,7 @@ class VertxMqttConsumerTest {
         broker.send("sensors/1/temp", bytes("21.5"), qos, false, null);
 
         await().atMost(WAIT).until(() -> !received.isEmpty());
-        Message message = received.peek();
+        final Message message = received.peek();
         assertArrayEquals(bytes("21.5"), message.getBody(byte[].class));
         assertEquals("sensors/1/temp", message.getHeader(VertxMqttConstants.TOPIC));
         assertEquals(qos, message.getHeader(VertxMqttConstants.QOS));
@@ -131,7 +131,7 @@ class VertxMqttConsumerTest {
     @Test
     void mqtt5PropertiesBecomeHeaders() throws Exception {
         consume("a", "");
-        MqttProperties properties = new MqttProperties();
+        final MqttProperties properties = new MqttProperties();
         properties.add(new UserProperty("origin", "test"));
         properties.add(new StringProperty(MqttProperties.CONTENT_TYPE, "text/plain"));
         broker.send("a", bytes("x"), 1, false, properties);
@@ -148,7 +148,7 @@ class VertxMqttConsumerTest {
     @Test
     void receivesAMessageLargerThan8092Bytes() throws Exception {
         consume("a", "");
-        byte[] large = new byte[64 * 1024];
+        final byte[] large = new byte[64 * 1024];
         for (int i = 0; i < large.length; i++) {
             large[i] = (byte) i;
         }
@@ -214,7 +214,7 @@ class VertxMqttConsumerTest {
             }
         });
         await().atMost(WAIT).until(() -> broker.hasSubscription("a"));
-        List<String> sent = new ArrayList<>();
+        final List<String> sent = new ArrayList<>();
         for (int i = 0; i < 50; i++) {
             sent.add(Integer.toString(i));
             broker.send("a", bytes(Integer.toString(i)), 0, false, null);
@@ -227,7 +227,7 @@ class VertxMqttConsumerTest {
     @Test
     void reportsWhyItCannotConnectUntilItDoes() throws Exception {
         broker.reject(MqttConnectReturnCode.CONNECTION_REFUSED_IDENTIFIER_REJECTED);
-        List<Throwable> handled = new CopyOnWriteArrayList<>();
+        final List<Throwable> handled = new CopyOnWriteArrayList<>();
         context.getRegistry().bind("handler", new ExceptionHandler() {
             @Override
             public void handleException(Throwable exception) {
@@ -251,10 +251,10 @@ class VertxMqttConsumerTest {
                         .routeId("consumer").process(exchange -> received.add(exchange.getMessage().copy()));
             }
         });
-        HealthCheck check = ((HealthCheckAware) context.getRoute("consumer").getConsumer()).getHealthCheck();
+        final HealthCheck check = ((HealthCheckAware) context.getRoute("consumer").getConsumer()).getHealthCheck();
 
         await().atMost(WAIT).untilAsserted(() -> {
-            HealthCheck.Result result = check.call();
+            final HealthCheck.Result result = check.call();
             assertEquals(HealthCheck.State.DOWN, result.getState());
             assertTrue(result.getMessage().orElse("").contains("Cannot connect to the MQTT broker"),
                     result.getMessage().orElse(""));

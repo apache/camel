@@ -40,8 +40,8 @@ class VertxMqttReconnectorTest {
 
     @Test
     void theDelayDoublesUpToTheMaximumAndStartsAgainAfterASuccess() {
-        List<Long> delays = new CopyOnWriteArrayList<>();
-        VertxMqttReconnector[] reconnector = new VertxMqttReconnector[1];
+        final List<Long> delays = new CopyOnWriteArrayList<>();
+        final VertxMqttReconnector[] reconnector = new VertxMqttReconnector[1];
         // Every attempt fails and asks for the next one, four times
         reconnector[0] = new VertxMqttReconnector(vertx, BROKER, 10, 35, () -> {
             if (delays.size() < 4) {
@@ -63,8 +63,8 @@ class VertxMqttReconnectorTest {
 
     @Test
     void anAttemptConnectsOnceAndNotAfterACancel() {
-        List<Long> attempts = new CopyOnWriteArrayList<>();
-        VertxMqttReconnector reconnector = new VertxMqttReconnector(vertx, BROKER, 10, 10, () -> attempts.add(1L));
+        final List<Long> attempts = new CopyOnWriteArrayList<>();
+        final VertxMqttReconnector reconnector = new VertxMqttReconnector(vertx, BROKER, 10, 10, () -> attempts.add(1L));
 
         vertx.runOnContext(v -> {
             reconnector.schedule();

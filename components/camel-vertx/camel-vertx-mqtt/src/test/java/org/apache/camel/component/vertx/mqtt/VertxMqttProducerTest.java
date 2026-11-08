@@ -77,11 +77,11 @@ class VertxMqttProducerTest {
     @ParameterizedTest
     @CsvSource({ "MQTT_3_1_1, 0", "MQTT_3_1_1, 1", "MQTT_3_1_1, 2", "MQTT_5_0, 0", "MQTT_5_0, 1", "MQTT_5_0, 2" })
     void publishes(String version, int qos) {
-        Exchange done = template.send(uri("sensors/1/temp", "&mqttVersion=" + version + "&qos=" + qos),
+        final Exchange done = template.send(uri("sensors/1/temp", "&mqttVersion=" + version + "&qos=" + qos),
                 exchange -> exchange.getMessage().setBody("21.5"));
         assertNull(done.getException());
         await().atMost(WAIT).until(() -> !broker.received().isEmpty());
-        TestBroker.Received received = broker.received().peek();
+        final TestBroker.Received received = broker.received().peek();
         assertEquals("sensors/1/temp", received.topic());
         assertEquals("21.5", new String(received.payload(), StandardCharsets.UTF_8));
         assertEquals(qos, received.qos());
@@ -97,7 +97,7 @@ class VertxMqttProducerTest {
             exchange.getMessage().setBody(new byte[] { 1, 2, 3 });
         });
         await().atMost(WAIT).until(() -> !broker.received().isEmpty());
-        TestBroker.Received received = broker.received().peek();
+        final TestBroker.Received received = broker.received().peek();
         assertEquals("b/c", received.topic());
         assertEquals(2, received.qos());
         assertTrue(received.retain());
@@ -122,7 +122,7 @@ class VertxMqttProducerTest {
             exchange.getMessage().setBody("{}");
         });
         await().atMost(WAIT).until(() -> !broker.received().isEmpty());
-        DefaultExchange read = new DefaultExchange(context);
+        final DefaultExchange read = new DefaultExchange(context);
         VertxMqttProperties.toHeaders(broker.received().peek().properties(), read.getMessage());
         assertEquals(Map.of("origin", "test"), read.getMessage().getHeader(VertxMqttConstants.USER_PROPERTIES));
         assertEquals("application/json", read.getMessage().getHeader(VertxMqttConstants.CONTENT_TYPE));
@@ -139,14 +139,14 @@ class VertxMqttProducerTest {
             exchange.getMessage().setBody("{}");
         });
         await().atMost(WAIT).until(() -> !broker.received().isEmpty());
-        MqttProperties properties = broker.received().peek().properties();
+        final MqttProperties properties = broker.received().peek().properties();
         assertTrue(properties == null || properties.isEmpty());
     }
 
     @Test
     void aWildcardTopicIsRefused() {
-        for (String topic : new String[] { "a/+/b", "a/#" }) {
-            Exchange done = template.send(uri("a", ""),
+        for (final String topic : new String[] { "a/+/b", "a/#" }) {
+            final Exchange done = template.send(uri("a", ""),
                     exchange -> exchange.getMessage().setHeader(VertxMqttConstants.OVERRIDE_TOPIC, topic));
             assertInstanceOf(IllegalArgumentException.class, done.getException(), topic);
         }
@@ -156,7 +156,7 @@ class VertxMqttProducerTest {
     @Test
     void anUnacknowledgedMessageFailsAfterTheAckTimeout() {
         broker.acknowledgePublications(false);
-        Exchange done = template.send(uri("a", "&ackTimeout=1"), exchange -> exchange.getMessage().setBody("x"));
+        final Exchange done = template.send(uri("a", "&ackTimeout=1"), exchange -> exchange.getMessage().setBody("x"));
         assertInstanceOf(IllegalStateException.class, done.getException());
         assertTrue(done.getException().getMessage().contains("ack timeout"), done.getException().getMessage());
     }
@@ -164,11 +164,11 @@ class VertxMqttProducerTest {
     @Test
     void aFullInflightQueueFailsTheMessage() throws Exception {
         broker.acknowledgePublications(false);
-        String uri = uri("a", "&maxInflightQueue=1&ackTimeout=30");
-        CompletableFuture<Exchange> first = template.asyncSend(uri, exchange -> exchange.getMessage().setBody("1"));
+        final String uri = uri("a", "&maxInflightQueue=1&ackTimeout=30");
+        final CompletableFuture<Exchange> first = template.asyncSend(uri, exchange -> exchange.getMessage().setBody("1"));
         await().atMost(WAIT).until(() -> broker.connectedClients() == 1);
         Thread.sleep(200);
-        Exchange second = template.send(uri, exchange -> exchange.getMessage().setBody("2"));
+        final Exchange second = template.send(uri, exchange -> exchange.getMessage().setBody("2"));
         assertTrue(second.getException() != null, "the second message is beyond the inflight queue");
         assertFalse(first.isDone());
     }
@@ -176,12 +176,12 @@ class VertxMqttProducerTest {
     @Test
     void aLostConnectionFailsTheUnacknowledgedMessage() throws Exception {
         broker.acknowledgePublications(false);
-        CompletableFuture<Exchange> sent = template.asyncSend(uri("a", "&ackTimeout=30"),
+        final CompletableFuture<Exchange> sent = template.asyncSend(uri("a", "&ackTimeout=30"),
                 exchange -> exchange.getMessage().setBody("x"));
         await().atMost(WAIT).until(() -> broker.connectedClients() == 1);
         Thread.sleep(200);
         broker.dropConnections();
-        Exchange done = sent.get(10, TimeUnit.SECONDS);
+        final Exchange done = sent.get(10, TimeUnit.SECONDS);
         assertInstanceOf(IllegalStateException.class, done.getException());
         assertTrue(done.getException().getMessage().contains("lost"), done.getException().getMessage());
     }
@@ -189,7 +189,7 @@ class VertxMqttProducerTest {
     @Test
     void waitsForTheFirstConnection() throws Exception {
         broker.stop();
-        CompletableFuture<Exchange> sent = template.asyncSend(
+        final CompletableFuture<Exchange> sent = template.asyncSend(
                 uri("a", "&reconnectDelay=50&maxReconnectDelay=100&connectTimeout=10000"),
                 exchange -> exchange.getMessage().setBody("late"));
         Thread.sleep(300);

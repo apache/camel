@@ -93,7 +93,7 @@ final class TestBroker implements AutoCloseable {
      * @param clientTrust the certificates of clients the broker requires a client certificate of, null for none
      */
     static TestBroker start(Vertx vertx, KeyCertOptions keyCert, TrustOptions clientTrust) throws Exception {
-        MqttServerOptions options = new MqttServerOptions().setHost("127.0.0.1")
+        final MqttServerOptions options = new MqttServerOptions().setHost("127.0.0.1")
                 .setMaxMessageSize(VertxMqttConstants.MAX_MESSAGE_SIZE);
         if (keyCert != null) {
             options.setSsl(true).setKeyCertOptions(keyCert);
@@ -101,10 +101,10 @@ final class TestBroker implements AutoCloseable {
         if (clientTrust != null) {
             options.setTrustOptions(clientTrust).setClientAuth(ClientAuth.REQUIRED);
         }
-        TestBroker broker = new TestBroker(vertx, options);
+        final TestBroker broker = new TestBroker(vertx, options);
         Exception last = null;
         for (int attempt = 0; attempt < 20; attempt++) {
-            int candidate = ThreadLocalRandom.current().nextInt(FIRST_PORT, LAST_PORT);
+            final int candidate = ThreadLocalRandom.current().nextInt(FIRST_PORT, LAST_PORT);
             try {
                 broker.listen(candidate);
                 return broker;
@@ -116,7 +116,7 @@ final class TestBroker implements AutoCloseable {
     }
 
     private void listen(int candidate) throws Exception {
-        MqttServer created = MqttServer.create(vertx, new MqttServerOptions(options).setPort(candidate));
+        final MqttServer created = MqttServer.create(vertx, new MqttServerOptions(options).setPort(candidate));
         created.endpointHandler(this::accept);
         created.listen().toCompletionStage().toCompletableFuture().get(10, TimeUnit.SECONDS);
         server = created;
@@ -160,7 +160,7 @@ final class TestBroker implements AutoCloseable {
     private void accept(MqttEndpoint endpoint) {
         connects.incrementAndGet();
         lastConnect = endpoint;
-        MqttConnectReturnCode refusal = reject;
+        final MqttConnectReturnCode refusal = reject;
         if (refusal != null) {
             endpoint.reject(refusal);
             return;
@@ -168,16 +168,16 @@ final class TestBroker implements AutoCloseable {
         endpoints.add(endpoint);
         endpoint.publishAutoAck(false);
         endpoint.subscribeHandler(subscribe -> {
-            Map<String, Integer> filters = subscriptions.computeIfAbsent(endpoint, e -> new ConcurrentHashMap<>());
-            List<MqttQoS> granted = new CopyOnWriteArrayList<>();
-            for (MqttTopicSubscription subscription : subscribe.topicSubscriptions()) {
+            final Map<String, Integer> filters = subscriptions.computeIfAbsent(endpoint, e -> new ConcurrentHashMap<>());
+            final List<MqttQoS> granted = new CopyOnWriteArrayList<>();
+            for (final MqttTopicSubscription subscription : subscribe.topicSubscriptions()) {
                 filters.put(subscription.topicName(), subscription.qualityOfService().value());
                 granted.add(subscription.qualityOfService());
             }
             endpoint.subscribeAcknowledge(subscribe.messageId(), granted);
         });
         endpoint.unsubscribeHandler(unsubscribe -> {
-            Map<String, Integer> filters = subscriptions.get(endpoint);
+            final Map<String, Integer> filters = subscriptions.get(endpoint);
             if (filters != null) {
                 unsubscribe.topics().forEach(filters::remove);
             }
@@ -224,9 +224,9 @@ final class TestBroker implements AutoCloseable {
     private void route(String topic, Buffer payload, int qos, boolean retain, MqttProperties properties) {
         subscriptions.forEach((subscriber, filters) -> filters.forEach((filter, granted) -> {
             if (matches(filter, topic) && subscriber.isConnected()) {
-                int effective = Math.min(qos, granted);
+                final int effective = Math.min(qos, granted);
                 // A packet identifier for quality of service 1 and 2 is 1 to 65535, 0 for 0
-                int packetId = effective == 0 ? 0 : packetIds.getAndUpdate(id -> id >= 65_535 ? 1 : id + 1);
+                final int packetId = effective == 0 ? 0 : packetIds.getAndUpdate(id -> id >= 65_535 ? 1 : id + 1);
                 subscriber.publish(topic, payload, MqttQoS.valueOf(effective), false, retain, packetId,
                         properties == null ? MqttProperties.NO_PROPERTIES : properties);
             }
@@ -237,8 +237,8 @@ final class TestBroker implements AutoCloseable {
      * @return whether an MQTT topic filter, with + and #, matches a topic
      */
     static boolean matches(String filter, String topic) {
-        String[] f = filter.split("/", -1);
-        String[] t = topic.split("/", -1);
+        final String[] f = filter.split("/", -1);
+        final String[] t = topic.split("/", -1);
         for (int i = 0; i < f.length; i++) {
             if ("#".equals(f[i])) {
                 return true;

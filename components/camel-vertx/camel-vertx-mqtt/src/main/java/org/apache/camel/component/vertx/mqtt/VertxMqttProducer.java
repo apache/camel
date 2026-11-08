@@ -59,17 +59,17 @@ public class VertxMqttProducer extends DefaultAsyncProducer {
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            VertxMqttConfiguration configuration = getEndpoint().getConfiguration();
-            Message message = exchange.getMessage();
-            String topic = message.getHeader(VertxMqttConstants.OVERRIDE_TOPIC, getEndpoint().getTopic(), String.class);
+            final VertxMqttConfiguration configuration = getEndpoint().getConfiguration();
+            final Message message = exchange.getMessage();
+            final String topic = message.getHeader(VertxMqttConstants.OVERRIDE_TOPIC, getEndpoint().getTopic(), String.class);
             checkTopic(topic);
-            int qos = message.getHeader(VertxMqttConstants.QOS, configuration.getQos(), Integer.class);
+            final int qos = message.getHeader(VertxMqttConstants.QOS, configuration.getQos(), Integer.class);
             if (qos < 0 || qos > 2) {
                 throw new IllegalArgumentException("The quality of service must be 0, 1 or 2, not %s".formatted(qos));
             }
-            boolean retain = message.getHeader(VertxMqttConstants.RETAINED, configuration.isRetained(), Boolean.class);
-            byte[] body = message.getBody(byte[].class);
-            MqttProperties properties = configuration.getMqttVersion() == VertxMqttVersion.MQTT_5_0
+            final boolean retain = message.getHeader(VertxMqttConstants.RETAINED, configuration.isRetained(), Boolean.class);
+            final byte[] body = message.getBody(byte[].class);
+            final MqttProperties properties = configuration.getMqttVersion() == VertxMqttVersion.MQTT_5_0
                     ? VertxMqttProperties.fromHeaders(message) : null;
             connection.publish(topic, Buffer.buffer(body == null ? new byte[0] : body), MqttQoS.valueOf(qos), retain,
                     properties).onComplete(done -> {

@@ -83,7 +83,7 @@ class VertxMqttTlsTest {
     }
 
     private static KeyStoreParameters keyStore(String name) {
-        KeyStoreParameters keyStore = new KeyStoreParameters();
+        final KeyStoreParameters keyStore = new KeyStoreParameters();
         keyStore.setResource("classpath:tls/" + name);
         keyStore.setType("PKCS12");
         keyStore.setPassword(PASSWORD);
@@ -91,12 +91,12 @@ class VertxMqttTlsTest {
     }
 
     private static SSLContextParameters parameters(boolean clientCertificate) {
-        SSLContextParameters parameters = new SSLContextParameters();
-        TrustManagersParameters trust = new TrustManagersParameters();
+        final SSLContextParameters parameters = new SSLContextParameters();
+        final TrustManagersParameters trust = new TrustManagersParameters();
         trust.setKeyStore(keyStore("client-trust.p12"));
         parameters.setTrustManagers(trust);
         if (clientCertificate) {
-            KeyManagersParameters keys = new KeyManagersParameters();
+            final KeyManagersParameters keys = new KeyManagersParameters();
             keys.setKeyStore(keyStore("client.p12"));
             keys.setKeyPassword(PASSWORD);
             parameters.setKeyManagers(keys);
@@ -109,7 +109,7 @@ class VertxMqttTlsTest {
      */
     private Throwable publish(String options) {
         try {
-            Exchange done = template.send("vertx-mqtt:a?brokerUrl=" + broker.url() + NO_RETRY + options,
+            final Exchange done = template.send("vertx-mqtt:a?brokerUrl=" + broker.url() + NO_RETRY + options,
                     exchange -> exchange.getMessage().setBody("x"));
             return done.getException();
         } catch (RuntimeException e) {

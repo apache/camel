@@ -38,12 +38,12 @@ class VertxMqttCatalogTest {
 
     @Test
     void theCatalogOffersNoOptionThatLowersTheTlsChecks() throws Exception {
-        JsonObject catalog = catalog();
-        Map<?, ?> properties = (Map<?, ?>) catalog.get("properties");
+        final JsonObject catalog = catalog();
+        final Map<?, ?> properties = (Map<?, ?>) catalog.get("properties");
         assertTrue(properties.containsKey("brokerUrl"), properties.keySet().toString());
         assertTrue(properties.containsKey("sslContextParameters"), properties.keySet().toString());
-        for (Object name : properties.keySet()) {
-            String option = name.toString().toLowerCase(Locale.ROOT);
+        for (final Object name : properties.keySet()) {
+            final String option = name.toString().toLowerCase(Locale.ROOT);
             assertFalse(option.contains("trustall"), option);
             assertFalse(option.contains("hostnameverif"), option);
             assertFalse(option.contains("proxy"), option);
@@ -52,21 +52,21 @@ class VertxMqttCatalogTest {
 
     @Test
     void theCatalogDescribesTheComponent() throws Exception {
-        JsonObject catalog = catalog();
-        Map<?, ?> component = (Map<?, ?>) catalog.get("component");
+        final JsonObject catalog = catalog();
+        final Map<?, ?> component = (Map<?, ?>) catalog.get("component");
         assertEquals("vertx-mqtt", component.get("scheme"));
         assertEquals("vertx-mqtt:topic", component.get("syntax"));
-        Map<?, ?> headers = (Map<?, ?>) catalog.get("headers");
+        final Map<?, ?> headers = (Map<?, ?>) catalog.get("headers");
         assertTrue(headers.containsKey(VertxMqttConstants.OVERRIDE_TOPIC), headers.keySet().toString());
-        Map<?, ?> properties = (Map<?, ?>) catalog.get("properties");
-        Map<?, ?> password = (Map<?, ?>) properties.get("password");
+        final Map<?, ?> properties = (Map<?, ?>) catalog.get("properties");
+        final Map<?, ?> password = (Map<?, ?>) properties.get("password");
         assertEquals(Boolean.TRUE, password.get("secret"));
     }
 
     private static JsonObject catalog() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             context.build();
-            String json = ((CatalogCamelContext) context).getComponentParameterJsonSchema(VertxMqttConstants.SCHEME);
+            final String json = ((CatalogCamelContext) context).getComponentParameterJsonSchema(VertxMqttConstants.SCHEME);
             assertNotNull(json, "no catalog JSON for " + VertxMqttConstants.SCHEME);
             return (JsonObject) Jsoner.deserialize(json);
         }

@@ -110,7 +110,7 @@ public class VertxMqttConsumer extends DefaultConsumer {
      * On the context of the connection.
      */
     private void received(MqttPublishMessage message) {
-        ExecutorService running = executor;
+        final ExecutorService running = executor;
         if (running == null) {
             return;
         }
@@ -123,9 +123,9 @@ public class VertxMqttConsumer extends DefaultConsumer {
      * follows it reach the client in that order.
      */
     private synchronized void track(int delta) {
-        int maxPending = Math.max(1, getEndpoint().getConfiguration().getMaxPendingMessages());
+        final int maxPending = Math.max(1, getEndpoint().getConfiguration().getMaxPendingMessages());
         pending += delta;
-        VertxMqttConnection running = connection;
+        final VertxMqttConnection running = connection;
         if (!paused && pending >= maxPending) {
             paused = true;
             if (running != null) {
@@ -140,8 +140,8 @@ public class VertxMqttConsumer extends DefaultConsumer {
     }
 
     private void process(MqttPublishMessage message) {
-        Exchange exchange = createExchange(false);
-        Message in = exchange.getIn();
+        final Exchange exchange = createExchange(false);
+        final Message in = exchange.getIn();
         in.setBody(message.payload().getBytes());
         in.setHeader(VertxMqttConstants.TOPIC, message.topicName());
         in.setHeader(VertxMqttConstants.QOS, message.qosLevel().value());
@@ -158,13 +158,13 @@ public class VertxMqttConsumer extends DefaultConsumer {
 
     private void completed(Exchange exchange, MqttPublishMessage message) {
         try {
-            boolean acknowledge = getEndpoint().getConfiguration().isManualAcksEnabled()
+            final boolean acknowledge = getEndpoint().getConfiguration().isManualAcksEnabled()
                     && message.qosLevel() != MqttQoS.AT_MOST_ONCE && exchange.getException() == null;
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing the MQTT message on %s".formatted(message.topicName()),
                         exchange, exchange.getException());
             }
-            VertxMqttConnection running = connection;
+            final VertxMqttConnection running = connection;
             if (acknowledge && running != null) {
                 running.run(message::ack);
             }

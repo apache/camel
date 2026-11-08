@@ -66,9 +66,9 @@ class VertxMqttConnectionTest {
 
     @Test
     void connectsAndDisconnectsWithItsUsers() throws Exception {
-        VertxMqttEndpoint endpoint = endpoint("");
-        VertxMqttConnection first = endpoint.acquireConnection();
-        VertxMqttConnection second = endpoint.acquireConnection();
+        final VertxMqttEndpoint endpoint = endpoint("");
+        final VertxMqttConnection first = endpoint.acquireConnection();
+        final VertxMqttConnection second = endpoint.acquireConnection();
         assertSame(first, second);
         await().atMost(WAIT).until(() -> first.isConnected() && broker.connectedClients() == 1);
 
@@ -82,7 +82,7 @@ class VertxMqttConnectionTest {
 
     @Test
     void reconnectsAfterTheBrokerRestarted() throws Exception {
-        VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
+        final VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
         await().atMost(WAIT).until(connection::isConnected);
 
         broker.stop();
@@ -93,7 +93,7 @@ class VertxMqttConnectionTest {
 
     @Test
     void reconnectsAfterTheConnectionDropped() throws Exception {
-        VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
+        final VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
         await().atMost(WAIT).until(connection::isConnected);
 
         broker.dropConnections();
@@ -103,7 +103,7 @@ class VertxMqttConnectionTest {
     @Test
     void keepsTryingWhileTheBrokerRefuses() throws Exception {
         broker.reject(MqttConnectReturnCode.CONNECTION_REFUSED_NOT_AUTHORIZED);
-        VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
+        final VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
         await().atMost(WAIT).until(() -> broker.connects() >= 3);
         assertFalse(connection.isConnected());
 
@@ -114,14 +114,14 @@ class VertxMqttConnectionTest {
     @Test
     void withoutAutomaticReconnectAFailedConnectFailsTheStart() throws Exception {
         broker.stop();
-        VertxMqttEndpoint endpoint = endpoint("&automaticReconnect=false&connectTimeout=2000");
+        final VertxMqttEndpoint endpoint = endpoint("&automaticReconnect=false&connectTimeout=2000");
         assertThrows(IllegalStateException.class, endpoint::acquireConnection);
     }
 
     @Test
     void aStoppedConnectionNoLongerReconnects() throws Exception {
         broker.stop();
-        VertxMqttEndpoint endpoint = endpoint(FAST_RECONNECT);
+        final VertxMqttEndpoint endpoint = endpoint(FAST_RECONNECT);
         endpoint.acquireConnection();
         endpoint.releaseConnection();
 
@@ -133,8 +133,8 @@ class VertxMqttConnectionTest {
     @Test
     void waitingForTheConnectionEndsWithTheConnectTimeout() throws Exception {
         broker.stop();
-        VertxMqttConnection connection = endpoint(FAST_RECONNECT + "&connectTimeout=300").acquireConnection();
-        ExecutionException e = assertThrows(ExecutionException.class,
+        final VertxMqttConnection connection = endpoint(FAST_RECONNECT + "&connectTimeout=300").acquireConnection();
+        final ExecutionException e = assertThrows(ExecutionException.class,
                 () -> connection.whenConnected().toCompletionStage().toCompletableFuture().get(5, TimeUnit.SECONDS));
         assertTrue(e.getCause().getMessage().contains("connect timeout"), e.getCause().getMessage());
 
