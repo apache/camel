@@ -236,11 +236,15 @@ class ChaosControlTest {
                    "title": "The dead letter channel is unreachable", "rule": "endpoint=seda:dlq error at=dlq",
                    "why": "route shipping sends what fails to the dead letter channel seda:dlq"}]}
                 """);
+        // what has been tried in route orders, from the report (CAMEL-26728)
+        info.chaos.tried.put("orders",
+                new ChaosInfo.TriedRoute("orders", List.of("slow"), List.of("errors", "lost")));
         key('w');
         assertThat(requests).singleElement().satisfies(r -> assertThat(r.getString("command")).isEqualTo("suggest"));
         String screen = TuiTestHelper.renderToString(tab, 160, 40);
         assertThat(screen).contains("What to try in chaosdemo").contains("Returns an error (HTTP status)")
-                .contains("without a circuit breaker").contains("The dead letter channel is unreachable");
+                .contains("without a circuit breaker").contains("The dead letter channel is unreachable")
+                .contains("Tried in route orders: slow").contains("Not tried yet: errors, lost");
 
         tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.DOWN, KeyModifiers.NONE));
         enter();

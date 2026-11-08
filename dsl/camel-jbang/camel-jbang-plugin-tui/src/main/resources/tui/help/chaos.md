@@ -77,7 +77,9 @@ error handler (HAND) and the redeliveries (REDEL).
   its routes do (an HTTP call without a circuit breaker, a dead letter
   channel, a hand-off over seda, an input from outside), the most worth
   trying first, each with why. Enter types the selected rule in, to change
-  it or add it after you confirm
+  it or add it after you confirm. A suggestion whose kind of fault was
+  tried in its route already is marked tried, and the detail says what
+  was tried in the route and what is not tried yet
 - **e** — Change the selected rule: the line starts with the rule as it is
 - **x** — Remove the selected rule
 - **c** — Clear: remove all rules (the report keeps what they did)

@@ -223,6 +223,37 @@ The rules leave the query of the endpoint out: its options do not tell which end
 `ChaosManager.suggest()` gives the same as JSON (`suggestions`: `route`, `kind`, `recipe`, `title`, `rule`, `why`), and
 the chaos screen of the Camel TUI lists them (key `w`), where Enter types the rule in to change or add.
 
+=== What has been tried
+
+When is a route done? The report says per route which kinds of fault were tried, how it went, and which kinds the
+suggestions offer (see <<_what_to_try,What to try>>) that no rule tried yet:
+
+[source]
+----
+$ camel get chaos --report
+...
+  tried, per route:
+  ROUTE     KIND                     RULES  FIRED  OUTCOME
+  orders    errors                   r1        24  21 recovered, 1 handled, 0 failed; expect orders:handled<=0 unmet
+  orders    slow, lost, duplicate                  not tried yet
+  shipping  dead letter channel                    not tried yet
+----
+
+* The kinds are `errors` (a send or a step fails), `slow` (a delay), `lost` (a send is dropped), `corrupt`, `duplicate`,
+`consumer` (the polls, or the entry of the route), `lifecycle` (stall and lifecycle) and `dead letter channel`
+(`at=dlq`). A rule has one kind, from its fault and where it acts.
+* A kind is tried in a route when a rule of that kind fired in it: a rule counts its faults per route, so a rule that
+reaches several routes is tried in each. The rules removed or replaced count too, so the report says what the
+experiment tried, not only what runs now.
+* The outcome is how the exchanges the rules faulted came out (recovered by a redelivery, handled by the error handler,
+failed), counted per rule, and the outcomes of their expectations.
+* What is not tried yet comes from the suggestions for the route, read again at most every 10 seconds: when nothing is
+left, the route has been tried for what chaos can say about it.
+
+In JSON the report has `tried`: per `route` its `kinds` (`kind`, `rules`, `fired`, `recovered`, `handled`, `failed`,
+`expectations`) and `notTried`. `ChaosManager.suggest()` marks a suggestion whose kind was tried in its route already
+(`tried`), and the what to try list of the Camel TUI (key `w`) shows both.
+
 === From an AI agent (MCP)
 
 The Camel MCP server (`camel mcp`, see xref:manual::camel-jbang-mcp.adoc[Camel MCP server]) has the same operations

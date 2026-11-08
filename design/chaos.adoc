@@ -401,6 +401,8 @@ framework, so camel-test does not depend on camel-chaos; the rules come from the
   from the running routes (their sends, circuit breakers, dead letter channel, input and hand-offs), each a recipe of
   the chaos model with its target filled in and why. The About screen hints (CAMEL-26716) are meant to be one shared
   rule set; these facts come from the running context, and can become the chaos part of that set.
+- What has been tried (stage 2, CAMEL-26728): the report has per route the kinds of fault tried (a rule counts its
+  faults per route), how the exchanges came out, and the kinds the suggestions offer that no rule tried yet.
 - A `chaos` action of the CLI connector (`LocalCliConnector`) adds, changes and removes rules through the
   `ChaosManager`. The CLI has the flat verb-noun shape of every `camel cmd` today (`stop-route`, `stub`), with the
   reads under `camel get` (as `camel get circuit-breaker`): `camel cmd chaos-add`, `chaos-change`, `chaos-remove`,

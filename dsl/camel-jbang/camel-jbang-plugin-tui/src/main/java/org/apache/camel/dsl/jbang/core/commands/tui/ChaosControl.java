@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -265,6 +266,8 @@ final class ChaosControl {
 
     /** Asks the integration what to try, in the background; the list shows when it answers. */
     private void askWhatToTry() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        describing = info;
         suggestions = null;
         step = Step.SUGGEST;
         JsonObject request = new JsonObject();
@@ -288,7 +291,9 @@ final class ChaosControl {
                         : reply.getString("error"));
                 return;
             }
-            suggestions = new ChaosSuggestList(of, reply);
+            suggestions = new ChaosSuggestList(
+                    of, reply, describing != null && describing.chaos != null
+                            ? describing.chaos.tried : Map.of());
         };
         if (sender != null) {
             task.run();

@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -51,21 +52,28 @@ final class ChaosSuggestList {
     }
 
     /** A suggestion, as the chaos action of the integration gives it. */
-    record Item(String route, String kind, String title, String rule, String why) {
+    record Item(String route, String kind, String title, String rule, String why, boolean tried) {
     }
 
     private final String name;
     private final List<Item> items = new ArrayList<>();
+    // what has been tried per route, from the report (CAMEL-26728)
+    private final Map<String, ChaosInfo.TriedRoute> tried;
     private int selected;
 
     ChaosSuggestList(String name, JsonObject reply) {
+        this(name, reply, Map.of());
+    }
+
+    ChaosSuggestList(String name, JsonObject reply, Map<String, ChaosInfo.TriedRoute> tried) {
         this.name = name;
+        this.tried = tried;
         if (reply != null && reply.getCollection("suggestions") != null) {
             for (Object o : reply.getCollection("suggestions")) {
                 if (o instanceof JsonObject jo && jo.getString("rule") != null) {
                     items.add(new Item(
                             jo.getString("route"), jo.getString("kind"), jo.getString("title"),
-                            jo.getString("rule"), jo.getString("why")));
+                            jo.getString("rule"), jo.getString("why"), jo.getBooleanOrDefault("tried", false)));
                 }
             }
         }
@@ -133,6 +141,9 @@ final class ChaosSuggestList {
             List<Span> spans = new ArrayList<>();
             spans.add(Span.styled((sel ? " > " : "   ") + item.title(), style));
             spans.add(Span.styled("  " + item.route(), Theme.muted()));
+            if (item.tried()) {
+                spans.add(Span.styled("  tried", Theme.success()));
+            }
             lines.add(Line.from(spans));
         }
         // keep the selected one in sight
@@ -150,6 +161,22 @@ final class ChaosSuggestList {
         lines.add(Line.from(Span.raw(" " + item.why())));
         lines.add(Line.empty());
         lines.add(Line.from(Span.styled(" " + item.rule(), Theme.warning())));
+        if (item.tried()) {
+            lines.add(Line.empty());
+            lines.add(Line.from(Span.styled(" A rule of this kind was tried in route " + item.route() + " already",
+                    Theme.success())));
+        }
+        ChaosInfo.TriedRoute route = tried.get(item.route());
+        if (route != null) {
+            // what has been tried in the route, and what not yet: when it is all tried, the route is done
+            lines.add(Line.empty());
+            lines.add(Line.from(Span.styled(" Tried in route " + item.route() + ": ", Theme.label()),
+                    Span.raw(route.tried().isEmpty() ? "nothing yet" : String.join(", ", route.tried()))));
+            if (!route.notTried().isEmpty()) {
+                lines.add(Line.from(Span.styled(" Not tried yet: ", Theme.label()),
+                        Span.styled(String.join(", ", route.notTried()), Theme.warning())));
+            }
+        }
         frame.renderWidget(Paragraph.builder().overflow(Overflow.WRAP_WORD).text(Text.from(lines)).build(), area);
     }
 

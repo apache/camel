@@ -89,6 +89,103 @@ final class ChaosAdvisor {
     record Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank) {
     }
 
+    /**
+     * A kind of fault tried in a route (CAMEL-26728): by which rules, how often they fired there, how the exchanges
+     * they faulted came out (counted per rule, so a rule that fired in more routes counts in each), and the outcomes of
+     * their expectations.
+     */
+    record KindTried(Kind kind, List<String> rules, long fired, long recovered, long handled, long failed,
+            List<String> expectations) {
+    }
+
+    /** What has been tried in a route, and the kinds that the suggestions offer for it and no rule tried yet. */
+    record RouteTried(String route, List<KindTried> tried, List<Kind> notTried) {
+    }
+
+    /** The kind of fault of a rule. */
+    static Kind kindOf(ChaosRule rule) {
+        if (rule.lifecycle != null || rule.fault == ChaosRule.Fault.LIFECYCLE) {
+            return Kind.LIFECYCLE;
+        }
+        if (rule.hooks.size() == 1 && rule.hooks.contains(ChaosRule.Hook.DLQ)) {
+            return Kind.DEAD_LETTER;
+        }
+        boolean consumer = rule.hooks.stream().allMatch(h -> h == ChaosRule.Hook.POLL || h == ChaosRule.Hook.ENTRY);
+        return switch (rule.fault) {
+            case DELAY -> Kind.SLOW;
+            case DROP -> consumer ? Kind.CONSUMER : Kind.LOST;
+            case CORRUPT -> Kind.CORRUPT;
+            case DUPLICATE -> Kind.DUPLICATE;
+            default -> consumer ? Kind.CONSUMER : Kind.ERRORS;
+        };
+    }
+
+    /**
+     * What has been tried per route: the kinds of fault of the rules (current and removed) that fired in it, and the
+     * kinds the suggestions offer for it that none tried. The routes in the order of the suggestions, then the others.
+     */
+    static List<RouteTried> tried(List<ChaosRule> rules, Map<String, Set<Kind>> suggested, long now) {
+        // route -> kind -> the rules of that kind that fired in the route
+        Map<String, Map<Kind, List<ChaosRule>>> byRoute = new LinkedHashMap<>();
+        suggested.keySet().forEach(route -> byRoute.put(route, new LinkedHashMap<>()));
+        for (ChaosRule rule : rules) {
+            for (Map.Entry<String, ChaosRule.InRoute> e : rule.inRoute.entrySet()) {
+                if (e.getValue().fired.sum() > 0) {
+                    byRoute.computeIfAbsent(e.getKey(), k -> new LinkedHashMap<>())
+                            .computeIfAbsent(kindOf(rule), k -> new ArrayList<>()).add(rule);
+                }
+            }
+        }
+        List<RouteTried> answer = new ArrayList<>();
+        for (Map.Entry<String, Map<Kind, List<ChaosRule>>> entry : byRoute.entrySet()) {
+            String route = entry.getKey();
+            List<KindTried> tried = new ArrayList<>();
+            for (Map.Entry<Kind, List<ChaosRule>> k : entry.getValue().entrySet()) {
+                List<String> ids = new ArrayList<>();
+                List<String> expectations = new ArrayList<>();
+                long fired = 0;
+                long recovered = 0;
+                long handled = 0;
+                long failed = 0;
+                for (ChaosRule rule : k.getValue()) {
+                    String id = rule.version > 1 ? rule.id + " v" + rule.version : rule.id;
+                    if (!ids.contains(id)) {
+                        ids.add(id);
+                    }
+                    // the outcomes of the exchanges the rule faulted in this route, not in all of them
+                    ChaosRule.InRoute in = rule.inRoute.get(route);
+                    fired += in.fired.sum();
+                    recovered += in.effect.count(ChaosRule.Effect.Outcome.RECOVERED);
+                    handled += in.effect.count(ChaosRule.Effect.Outcome.HANDLED);
+                    failed += in.effect.count(ChaosRule.Effect.Outcome.FAILED);
+                    if (rule.expectation != null) {
+                        expectations.add(rule.expectation.spec() + " " + rule.expectation.read(now).outcome().key);
+                    }
+                }
+                tried.add(new KindTried(k.getKey(), ids, fired, recovered, handled, failed, expectations));
+            }
+            List<Kind> notTried = new ArrayList<>();
+            for (Kind kind : Kind.values()) {
+                if (suggested.getOrDefault(route, Set.of()).contains(kind) && !entry.getValue().containsKey(kind)) {
+                    notTried.add(kind);
+                }
+            }
+            if (!tried.isEmpty() || !notTried.isEmpty()) {
+                answer.add(new RouteTried(route, tried, notTried));
+            }
+        }
+        return answer;
+    }
+
+    /** The kinds of fault the suggestions offer per route, in the order of the routes. */
+    static Map<String, Set<Kind>> suggestedKinds(List<Suggestion> suggestions) {
+        Map<String, Set<Kind>> answer = new LinkedHashMap<>();
+        for (Suggestion s : suggestions) {
+            answer.computeIfAbsent(s.route(), k -> new LinkedHashSet<>()).add(s.kind());
+        }
+        return answer;
+    }
+
     private ChaosAdvisor() {
     }
 

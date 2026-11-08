@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -471,8 +472,21 @@ public final class ChaosManager {
      */
     public Map<String, Object> suggest() {
         JsonArray list = new JsonArray();
+        // a suggestion whose kind of fault a rule tried in its route already is marked (CAMEL-26728)
+        List<ChaosRule> all;
+        synchronized (lock) {
+            all = new ArrayList<>(rules);
+            all.addAll(history);
+        }
+        Set<String> tried = new HashSet<>();
+        for (ChaosAdvisor.RouteTried route : ChaosAdvisor.tried(all, Map.of(), TimeSource.currentTimeMillis())) {
+            route.tried().forEach(k -> tried.add(route.route() + " " + k.kind().key));
+        }
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
             JsonObject jo = new JsonObject();
+            if (tried.contains(s.route() + " " + s.kind().key)) {
+                jo.put("tried", true);
+            }
             jo.put("route", s.route());
             jo.put("kind", s.kind().key);
             if (s.recipe() != null) {
@@ -574,9 +588,32 @@ public final class ChaosManager {
             lostAtDlq = evictedLostAtDlq;
         }
         Map<String, RouteCounts> counts = new TreeMap<>(routes);
+        long now = TimeSource.currentTimeMillis();
+        List<ChaosRule> all = new ArrayList<>(current);
+        all.addAll(removed);
+        List<ChaosAdvisor.RouteTried> tried = ChaosAdvisor.tried(all, suggestedKinds(now), now);
         return new ChaosReport(
-                seed, seedFrom, TimeSource.currentTimeMillis(), current, removed, counts, unmet, lost, pending,
-                lostAtDlq, recentFaults.latestFirst(), ChaosTargets.reach(camelContext));
+                seed, seedFrom, now, current, removed, counts, unmet, lost, pending,
+                lostAtDlq, recentFaults.latestFirst(), ChaosTargets.reach(camelContext), tried);
+    }
+
+    // the kinds of fault the suggestions offer per route, read again at most every 10 seconds (the report is read
+    // every second for the status of the application), or when the routes change
+    private static final long SUGGESTED_FOR_MILLIS = 10_000;
+    private volatile Suggested suggested;
+
+    /** The kinds the suggestions offer, with when they were read and for how many routes: one value, read as one. */
+    private record Suggested(Map<String, Set<ChaosAdvisor.Kind>> kinds, long at, int routes) {
+    }
+
+    private Map<String, Set<ChaosAdvisor.Kind>> suggestedKinds(long now) {
+        Suggested answer = suggested;
+        int routeCount = camelContext.getRoutes().size();
+        if (answer == null || now - answer.at() > SUGGESTED_FOR_MILLIS || routeCount != answer.routes()) {
+            answer = new Suggested(ChaosAdvisor.suggestedKinds(ChaosAdvisor.suggest(camelContext)), now, routeCount);
+            suggested = answer;
+        }
+        return answer.kinds();
     }
 
     // -- for the hooks, the event notifier and the plugin

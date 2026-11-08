@@ -136,7 +136,7 @@ final class ChaosExchangeState implements SafeCopyProperty {
      * a producer template to an endpoint, not to a route) is not counted in the effect, as nothing tells when it is
      * done.
      */
-    static void faulted(ChaosRule rule, Exchange exchange) {
+    static void faulted(ChaosRule rule, Exchange exchange, String routeId) {
         exchange.setProperty(ChaosManager.CHAOS_RULE, rule.id);
         if (exchange.getUnitOfWork() == null) {
             return;
@@ -146,7 +146,7 @@ final class ChaosExchangeState implements SafeCopyProperty {
             state.faults = new Faults();
             exchange.getExchangeExtension().addOnCompletion(state.faults);
         }
-        state.faults.add(rule);
+        state.faults.add(rule, routeId);
     }
 
     /** The error handler redelivers the exchange: a rule that faulted it before is recovered when it then completes. */
@@ -161,13 +161,20 @@ final class ChaosExchangeState implements SafeCopyProperty {
 
         private final List<ChaosRule> rules = new ArrayList<>(2);
         private final List<Boolean> redelivered = new ArrayList<>(2);
+        // the route each rule first faulted the exchange in, where its outcome counts too (null when not followed)
+        private final List<ChaosRule.InRoute> inRoutes = new ArrayList<>(2);
 
-        void add(ChaosRule rule) {
+        void add(ChaosRule rule, String routeId) {
             int i = rules.indexOf(rule);
             if (i < 0) {
                 rules.add(rule);
                 redelivered.add(Boolean.FALSE);
                 rule.effect.faulted();
+                ChaosRule.InRoute in = rule.inRoute(routeId);
+                inRoutes.add(in);
+                if (in != null) {
+                    in.effect.faulted();
+                }
             } else {
                 // faulted again (such as at a redelivery): the redelivery that follows counts from now
                 redelivered.set(i, Boolean.FALSE);
@@ -189,9 +196,14 @@ final class ChaosExchangeState implements SafeCopyProperty {
                 ChaosRule rule = other.rules.get(i);
                 if (rules.contains(rule)) {
                     rule.effect.unfaulted();
+                    ChaosRule.InRoute in = other.inRoutes.get(i);
+                    if (in != null) {
+                        in.effect.unfaulted();
+                    }
                 } else {
                     rules.add(rule);
                     redelivered.add(other.redelivered.get(i));
+                    inRoutes.add(other.inRoutes.get(i));
                 }
             }
         }
@@ -248,6 +260,10 @@ final class ChaosExchangeState implements SafeCopyProperty {
                     outcome = ChaosRule.Effect.Outcome.COMPLETED;
                 }
                 rules.get(i).effect.done(outcome);
+                ChaosRule.InRoute in = inRoutes.get(i);
+                if (in != null) {
+                    in.effect.done(outcome);
+                }
             }
         }
 
