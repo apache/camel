@@ -18,8 +18,10 @@ package org.apache.camel.component.vertx.mqtt;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.mqtt.MqttProperties;
@@ -27,6 +29,7 @@ import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
@@ -92,8 +95,8 @@ class VertxMqttProducerTest {
     void headersOverrideTopicQosAndRetained() {
         template.send(uri("a", ""), exchange -> {
             exchange.getMessage().setHeader(VertxMqttConstants.OVERRIDE_TOPIC, "b/c");
-            exchange.getMessage().setHeader(VertxMqttConstants.QOS, 2);
-            exchange.getMessage().setHeader(VertxMqttConstants.RETAINED, true);
+            exchange.getMessage().setHeader(VertxMqttConstants.OVERRIDE_QOS, 2);
+            exchange.getMessage().setHeader(VertxMqttConstants.OVERRIDE_RETAINED, true);
             exchange.getMessage().setBody(new byte[] { 1, 2, 3 });
         });
         await().atMost(WAIT).until(() -> !broker.received().isEmpty());
@@ -166,8 +169,7 @@ class VertxMqttProducerTest {
         broker.acknowledgePublications(false);
         final String uri = uri("a", "&maxInflightQueue=1&ackTimeout=30");
         final CompletableFuture<Exchange> first = template.asyncSend(uri, exchange -> exchange.getMessage().setBody("1"));
-        await().atMost(WAIT).until(() -> broker.connectedClients() == 1);
-        Thread.sleep(200);
+        await().atMost(WAIT).until(() -> broker.packetIdsByConnection().size() == 1);
         final Exchange second = template.send(uri, exchange -> exchange.getMessage().setBody("2"));
         assertTrue(second.getException() != null, "the second message is beyond the inflight queue");
         assertFalse(first.isDone());
@@ -178,12 +180,31 @@ class VertxMqttProducerTest {
         broker.acknowledgePublications(false);
         final CompletableFuture<Exchange> sent = template.asyncSend(uri("a", "&ackTimeout=30"),
                 exchange -> exchange.getMessage().setBody("x"));
-        await().atMost(WAIT).until(() -> broker.connectedClients() == 1);
-        Thread.sleep(200);
+        await().atMost(WAIT).until(() -> broker.packetIdsByConnection().size() == 1);
         broker.dropConnections();
         final Exchange done = sent.get(10, TimeUnit.SECONDS);
         assertInstanceOf(IllegalStateException.class, done.getException());
         assertTrue(done.getException().getMessage().contains("lost"), done.getException().getMessage());
+    }
+
+    /**
+     * The rest of the route must not run on the event loop that carries the connection: a blocking step would block its
+     * keep alive, and that of every other connection on the loop.
+     */
+    @Test
+    void completesTheExchangeOffTheEventLoop() throws Exception {
+        final List<String> threads = new CopyOnWriteArrayList<>();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:in").to(uri("a", "&qos=1")).process(exchange -> threads.add(Thread.currentThread().getName()));
+            }
+        });
+        for (int i = 0; i < 5; i++) {
+            assertNull(template.send("direct:in", exchange -> exchange.getMessage().setBody("x")).getException());
+        }
+        assertEquals(5, threads.size());
+        assertTrue(threads.stream().noneMatch(name -> name.startsWith("vert.x-eventloop")), threads.toString());
     }
 
     @Test
@@ -192,7 +213,7 @@ class VertxMqttProducerTest {
         final CompletableFuture<Exchange> sent = template.asyncSend(
                 uri("a", "&reconnectDelay=50&maxReconnectDelay=100&connectTimeout=10000"),
                 exchange -> exchange.getMessage().setBody("late"));
-        Thread.sleep(300);
+        await().during(Duration.ofMillis(300)).atMost(WAIT).until(() -> !sent.isDone());
         broker.restart();
         assertNull(sent.get(10, TimeUnit.SECONDS).getException());
         await().atMost(WAIT).until(() -> !broker.received().isEmpty());

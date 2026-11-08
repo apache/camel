@@ -15,7 +15,8 @@
 *{component-header}*
 
 The Vert.x MQTT component is an MQTT client for MQTT 3.1.1 and MQTT 5. A consumer subscribes to a topic filter, a
-producer publishes on a topic. It uses the https://vertx.io/docs/vertx-mqtt/java/[Vert.x MQTT] client.
+producer publishes on a topic. It uses the https://vertx.io/docs/vertx-mqtt/java/[Vert.x MQTT] client, which the
+Vert.x project marks as a technology preview, its MQTT 5 support included.
 
 Maven users will need to add the following dependency to their `pom.xml` for this component:
 
@@ -66,6 +67,12 @@ The consumer sets the body to the payload as a `byte[]`, the topic it arrived on
 header. The producer sends whatever the body converts to a `byte[]`: text, bytes, a stream or a file. A message
 without a body is sent with an empty payload.
 
+The headers the consumer sets, `CamelVertxMqttQos` and `CamelVertxMqttRetained` among them, describe the message
+that arrived. The producer does not read them: a route that bridges one broker to another would otherwise publish
+every retained message it receives as retained again. To choose the quality of service, the retained flag or the
+topic of a single message, the producer reads `CamelVertxMqttOverrideQos`, `CamelVertxMqttOverrideRetained` and
+`CamelVertxMqttOverrideTopic`.
+
 === Connection
 
 The consumer and the producer of an endpoint share one connection. It is opened when the first of them starts and
@@ -73,18 +80,30 @@ closed when the last of them stops. Two endpoints are two connections, and since
 client identifier, two endpoints must not share a `clientId`.
 
 With `automaticReconnect` (the default) a lost connection is opened again, after `reconnectDelay` and then with a
-delay that doubles on every attempt, up to `maxReconnectDelay`. A consumer subscribes again after every reconnect.
-If the broker cannot be reached when a route starts, the route starts all the same and the component keeps trying. A
-producer waits up to `connectTimeout` for the connection before the exchange fails. Without `automaticReconnect` a
-broker that cannot be reached fails the start of the route.
+delay that doubles on every attempt, up to `maxReconnectDelay`, plus up to a fifth of it at random, so that the
+clients of a broker that went away do not all come back at the same moment. Every attempt uses a new Vert.x client,
+so that nothing of the lost connection carries over. If the broker cannot be reached when a route starts, the route
+starts all the same and the component keeps trying. A producer waits up to `connectTimeout` for the connection before
+the exchange fails. Without `automaticReconnect` a broker that cannot be reached fails the start of the route.
 
 The Vert.x client keeps no session of its own: a message the broker did not acknowledge when the connection was lost
-is not sent again, its exchange fails.
+is not sent again, its exchange fails. A redelivery by the error handler of the route sends it as a new message, so
+across a lost connection quality of service 2 gives at least once, not exactly once: the broker can receive the
+message twice.
+
+After a reconnect the exchanges that waited for the connection are sent at once. More of them than
+`maxInflightQueue` fail right away, as they would while connected.
 
 With `cleanStart=false` the broker keeps the session of the client, with MQTT 5 for `sessionExpiryInterval` seconds.
 A consumer that stops then keeps its subscription at the broker, which holds the messages of quality of service 1 and
-2 until the consumer connects again with the same `clientId`. With `cleanStart=true` (the default) a stopping consumer
-unsubscribes.
+2 until the consumer connects again with the same `clientId`. After a reconnect to a session the broker kept, the
+consumer does not subscribe again: the session still holds the subscription, and subscribing again would deliver the
+retained messages once more. With `cleanStart=true` (the default) a consumer subscribes after every connect, and
+unsubscribes when it stops.
+
+The keep alive of the Vert.x client only sends a PINGREQ when it wrote nothing for `keepAliveInterval` seconds. A
+producer that publishes continuously therefore does not notice a broker that stopped answering, until `ackTimeout`
+fails its messages of quality of service 1 and 2.
 
 === Quality of service and acknowledgement
 
@@ -92,18 +111,39 @@ The producer completes an exchange when the broker acknowledged the message, wit
 PUBCOMP for 2. A message of quality of service 0 completes when it is written. A message without an acknowledgement
 within `ackTimeout` seconds fails, and so does a message beyond `maxInflightQueue` unacknowledged messages.
 
+The producer completes the exchange on a worker thread, never on the event loop of the client: the rest of the
+route, and a redelivery delay of its error handler, would otherwise block the keep alive of every connection on that
+event loop.
+
 The consumer acknowledges a message of quality of service 1 or 2 as soon as it arrives. With `manualAcksEnabled` it
-acknowledges it only once its exchange completed successfully. A message whose exchange failed stays unacknowledged.
-Depending on the broker and on `cleanStart` and `sessionExpiryInterval`, the broker delivers it again after the next
-connect.
+acknowledges it once its exchange completed successfully. A message whose exchange failed is handled as follows:
+
+* At quality of service 1 with a session the broker keeps (`cleanStart=false`) and `automaticReconnect`, the consumer
+  does not acknowledge it, but closes the connection and connects again, and the broker delivers the message again
+  from the session. The route sees it again, with `CamelVertxMqttDuplicate` set by most brokers. Delivery is at least
+  once, a route must tolerate duplicates.
+* Otherwise the consumer acknowledges it all the same, and it is not delivered again. Left unacknowledged it would hold
+  one of the in-flight slots of the broker until the next connect, and after `receiveMaximum` such failures the broker
+  would send nothing more. At quality of service 2 the Vert.x client sends the PUBREC as soon as the message arrives,
+  whatever `manualAcksEnabled` says, and the broker never sends a message again after its PUBREC, so manual
+  acknowledgement only holds back the PUBCOMP.
 
 === Back pressure
 
-The consumer processes the exchanges in the order the messages arrive, on a thread of its own, never on the event
-loop of the client, which also keeps the connection alive. When more than `maxPendingMessages` messages wait for
-their exchange, the client stops reading from the connection until half of them are done. The broker is then held
-back by TCP, for every quality of service. With MQTT 5 `receiveMaximum` also limits the messages of quality of
-service 1 and 2 the broker sends before they are acknowledged.
+The consumer processes the exchanges in the order the messages arrive, on a Vert.x worker of one thread, never on
+the event loop of the client, which also keeps the connection alive. When more than `maxPendingMessages` messages
+wait for their exchange, the client stops reading from the connection until half of them are done, also across a
+reconnect. The broker is then held back by TCP, for every quality of service. The bound is a soft one: messages the
+client had already read when it paused still arrive, and are acknowledged on arrival unless `manualAcksEnabled` is
+set. With MQTT 5 `receiveMaximum` also limits the messages of quality of service 1 and 2 the broker sends before they
+are acknowledged.
+
+The consumer and the producer of an endpoint share the connection, so while the consumer holds the client back, the
+acknowledgements for the producer wait as well. Use two endpoints when both carry load.
+
+When the consumer stops, and during a graceful shutdown, it first stops reading, then waits for the exchanges of the
+messages it already received, and only then unsubscribes and disconnects: a message acknowledged on arrival would
+otherwise be lost.
 
 === TLS
 
@@ -179,3 +219,7 @@ from("vertx-mqtt:legacy/#?brokerUrl=tcp://broker.example.com&mqttVersion=MQTT_3_
 * No connection through a proxy.
 * The client keeps no session: messages of quality of service 1 and 2 that were not acknowledged before a connection
   was lost are not sent again by the client.
+* The Vert.x client does not reconnect by itself yet (https://github.com/vert-x3/vertx-mqtt/pull/197[vertx-mqtt#197]),
+  the component does it.
+* With a kept session, a PUBREL the broker sends again after a reconnect is not answered by the Vert.x client, so a
+  message of quality of service 2 whose PUBCOMP was lost with the connection stays incomplete at the broker.

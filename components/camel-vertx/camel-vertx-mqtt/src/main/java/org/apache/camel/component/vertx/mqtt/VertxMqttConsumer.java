@@ -16,34 +16,49 @@
  */
 package org.apache.camel.component.vertx.mqtt;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import io.netty.handler.codec.mqtt.MqttQoS;
+import io.vertx.core.WorkerExecutor;
+import io.vertx.mqtt.MqttClient;
 import io.vertx.mqtt.messages.MqttPublishMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Subscribes to the topic filter of the endpoint and turns every message into an exchange.
  * <p>
- * Exchanges are processed in the order the messages arrive, on a thread of the consumer, never on the event loop of the
- * client, which also keeps the connection alive. With more than {@code maxPendingMessages} waiting the client stops
- * reading from the connection until half of them are done.
+ * Exchanges are processed in the order the messages arrive, on a Vert.x worker of one thread, never on the event loop
+ * of the client, which also keeps the connection alive. The worker has no queue bound and never falls back to the
+ * calling thread: with more than {@code maxPendingMessages} waiting the client stops reading from the connection until
+ * half of them are done, which bounds the queue. Messages the client had already read when it paused still arrive, so
+ * the bound is a soft one.
+ * <p>
+ * Stopping, and a graceful shutdown, pause the client first and wait for the pending exchanges: a message is
+ * acknowledged when it arrives (unless manual acknowledgements are enabled), dropping it afterwards would lose it.
  * <p>
  * A connection or a subscription that fails is handed to the exception handler of the consumer once, and reported by
  * its health check until it succeeds: with automatic reconnect the consumer starts all the same.
  */
-public class VertxMqttConsumer extends DefaultConsumer {
+public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VertxMqttConsumer.class);
+    private static final long DRAIN_TIMEOUT = TimeUnit.SECONDS.toMillis(30);
 
     private volatile VertxMqttConnection connection;
     private final Consumer<Throwable> failureListener = this::failed;
-    private ExecutorService executor;
+    private volatile WorkerExecutor worker;
     // Under the lock of the consumer
     private int pending;
     private boolean paused;
+    private boolean draining;
 
     public VertxMqttConsumer(VertxMqttEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -65,8 +80,14 @@ public class VertxMqttConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        executor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
-                "VertxMqttConsumer[" + getEndpoint().getTopic() + "]");
+        synchronized (this) {
+            pending = 0;
+            paused = false;
+            draining = false;
+        }
+        // A pool of its own for every consumer: a shared worker executor of the same name shares its threads
+        worker = getEndpoint().getComponent().getVertx().createSharedWorkerExecutor(
+                "VertxMqttConsumer[%s]@%x".formatted(getEndpoint().getTopic(), System.identityHashCode(this)), 1);
         connection = getEndpoint().acquireConnection();
         connection.addFailureListener(failureListener);
         connection.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos(), this::received);
@@ -74,22 +95,65 @@ public class VertxMqttConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (connection != null) {
+        final VertxMqttConnection running = connection;
+        if (running != null) {
+            // Stop reading first and finish what was read: the messages were acknowledged when they arrived
+            stopReading();
+            drain();
+            running.removeFailureListener(failureListener);
             // A session the broker keeps (no clean start) keeps the subscription, messages wait there meanwhile
-            connection.removeFailureListener(failureListener);
-            connection.unsubscribe(getEndpoint().getConfiguration().isCleanStart());
+            running.unsubscribe(getEndpoint().getConfiguration().isCleanStart());
             connection = null;
             getEndpoint().releaseConnection();
         }
-        if (executor != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(executor);
-            executor = null;
-        }
-        synchronized (this) {
-            pending = 0;
-            paused = false;
+        final WorkerExecutor stopping = worker;
+        worker = null;
+        if (stopping != null) {
+            stopping.close();
         }
         super.doStop();
+    }
+
+    @Override
+    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
+        return false;
+    }
+
+    @Override
+    public synchronized int getPendingExchangesSize() {
+        return pending;
+    }
+
+    @Override
+    public void prepareShutdown(boolean suspendOnly, boolean forced) {
+        stopReading();
+    }
+
+    private synchronized void stopReading() {
+        draining = true;
+        if (!paused) {
+            paused = true;
+            final VertxMqttConnection running = connection;
+            if (running != null) {
+                running.pause(true);
+            }
+        }
+    }
+
+    /**
+     * Waits for the pending exchanges, the messages already read included, for a while.
+     */
+    private synchronized void drain() throws InterruptedException {
+        final long until = System.currentTimeMillis() + DRAIN_TIMEOUT;
+        long left = DRAIN_TIMEOUT;
+        while (pending > 0 && left > 0) {
+            wait(left);
+            left = until - System.currentTimeMillis();
+        }
+        if (pending > 0) {
+            LOG.warn("Stopping the consumer of {} with {} messages still being processed", getEndpoint().getTopic(),
+                    pending);
+        }
     }
 
     /**
@@ -109,13 +173,21 @@ public class VertxMqttConsumer extends DefaultConsumer {
     /**
      * On the context of the connection.
      */
-    private void received(MqttPublishMessage message) {
-        final ExecutorService running = executor;
+    private void received(MqttPublishMessage message, MqttClient receiver) {
+        final WorkerExecutor running = worker;
         if (running == null) {
+            LOG.debug("Message on {} after the consumer stopped", message.topicName());
             return;
         }
         track(1);
-        running.execute(() -> process(message));
+        // Ordered: the tasks of one context run one after the other, in the order they were submitted
+        running.executeBlocking(() -> {
+            process(message, receiver);
+            return null;
+        }, true).onFailure(e -> {
+            LOG.warn("Cannot process the MQTT message on {}", message.topicName(), e);
+            track(-1);
+        });
     }
 
     /**
@@ -131,15 +203,18 @@ public class VertxMqttConsumer extends DefaultConsumer {
             if (running != null) {
                 running.pause(true);
             }
-        } else if (paused && pending <= maxPending / 2) {
+        } else if (paused && !draining && pending <= maxPending / 2) {
             paused = false;
             if (running != null) {
                 running.pause(false);
             }
         }
+        if (pending == 0) {
+            notifyAll();
+        }
     }
 
-    private void process(MqttPublishMessage message) {
+    private void process(MqttPublishMessage message, MqttClient receiver) {
         final Exchange exchange = createExchange(false);
         final Message in = exchange.getIn();
         in.setBody(message.payload().getBytes());
@@ -153,20 +228,30 @@ public class VertxMqttConsumer extends DefaultConsumer {
         if (getEndpoint().getConfiguration().getMqttVersion() == VertxMqttVersion.MQTT_5_0) {
             VertxMqttProperties.toHeaders(message.properties(), in);
         }
-        getAsyncProcessor().process(exchange, doneSync -> completed(exchange, message));
+        getAsyncProcessor().process(exchange, doneSync -> completed(exchange, message, receiver));
     }
 
-    private void completed(Exchange exchange, MqttPublishMessage message) {
+    private void completed(Exchange exchange, MqttPublishMessage message, MqttClient receiver) {
         try {
-            final boolean acknowledge = getEndpoint().getConfiguration().isManualAcksEnabled()
-                    && message.qosLevel() != MqttQoS.AT_MOST_ONCE && exchange.getException() == null;
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing the MQTT message on %s".formatted(message.topicName()),
                         exchange, exchange.getException());
             }
             final VertxMqttConnection running = connection;
-            if (acknowledge && running != null) {
-                running.run(message::ack);
+            final VertxMqttConfiguration configuration = getEndpoint().getConfiguration();
+            if (running != null && configuration.isManualAcksEnabled() && message.qosLevel() != MqttQoS.AT_MOST_ONCE) {
+                if (exchange.getException() == null) {
+                    running.acknowledge(message, receiver);
+                } else if (message.qosLevel() == MqttQoS.AT_LEAST_ONCE && !configuration.isCleanStart()
+                        && running.canRedeliver()) {
+                    // Left unacknowledged, the message would hold one of the in-flight slots of the broker until the
+                    // next connect: a reconnect has the broker deliver it again from the session it keeps
+                    running.redeliver(receiver);
+                } else {
+                    // Without a session to deliver it from again, or at quality of service 2, whose PUBREC went out
+                    // when the message arrived, it is not delivered again: acknowledged, so that the slot is free
+                    running.acknowledge(message, receiver);
+                }
             }
         } finally {
             releaseExchange(exchange, false);

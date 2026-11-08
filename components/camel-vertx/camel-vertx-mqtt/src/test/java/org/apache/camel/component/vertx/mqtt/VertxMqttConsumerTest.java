@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +34,7 @@ import io.netty.handler.codec.mqtt.MqttProperties.StringProperty;
 import io.netty.handler.codec.mqtt.MqttProperties.UserProperty;
 import io.vertx.core.Vertx;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.health.HealthCheck;
@@ -121,9 +124,7 @@ class VertxMqttConsumerTest {
         broker.send("sensors/1/humidity", bytes("no"), 1, false, null);
         broker.send("sensors/1/temp", bytes("yes"), 1, true, null);
 
-        await().atMost(WAIT).until(() -> !received.isEmpty());
-        Thread.sleep(200);
-        assertEquals(1, received.size());
+        await().during(Duration.ofMillis(200)).atMost(WAIT).until(() -> received.size() == 1);
         assertEquals("sensors/1/temp", received.peek().getHeader(VertxMqttConstants.TOPIC));
         assertEquals(Boolean.TRUE, received.peek().getHeader(VertxMqttConstants.RETAINED));
     }
@@ -158,19 +159,38 @@ class VertxMqttConsumerTest {
         assertArrayEquals(large, received.peek().getBody(byte[].class));
     }
 
-    @Test
-    void manualAcknowledgementAfterSuccessOnly() throws Exception {
-        consume("a", "&manualAcksEnabled=true&qos=1", true);
-        broker.send("a", bytes("fails"), 1, false, null);
-        await().atMost(WAIT).until(() -> !received.isEmpty());
-        Thread.sleep(300);
-        assertTrue(broker.acknowledged().isEmpty(), "a failed exchange must not be acknowledged");
-
-        context.getRouteController().removeAllRoutes();
-        received.clear();
-        consume("b", "&manualAcksEnabled=true&qos=1");
-        broker.send("b", bytes("succeeds"), 1, false, null);
+    @ParameterizedTest
+    @CsvSource({ "1", "2" })
+    void manualAcknowledgementOfASuccessfulExchange(int qos) throws Exception {
+        consume("a", "&manualAcksEnabled=true&qos=" + qos);
+        broker.send("a", bytes("succeeds"), qos, false, null);
         await().atMost(WAIT).until(() -> !broker.acknowledged().isEmpty());
+    }
+
+    /**
+     * Left unacknowledged, a failed message would hold one of the in-flight slots of the broker until the next connect,
+     * and the consumer would stall after receiveMaximum failures. Without a session to deliver it from again, or at
+     * quality of service 2, whose PUBREC went out on arrival, the broker never delivers it again anyway.
+     */
+    @ParameterizedTest
+    @CsvSource({ "1, true", "2, true", "2, false" })
+    void aFailedExchangeIsAcknowledgedWhenTheBrokerWouldNotDeliverItAgain(int qos, boolean cleanStart) throws Exception {
+        consume("a", "&manualAcksEnabled=true&clientId=manual&qos=" + qos + "&cleanStart=" + cleanStart, true);
+        broker.send("a", bytes("fails"), qos, false, null);
+        await().atMost(WAIT).until(() -> !broker.acknowledged().isEmpty());
+        assertEquals(1, broker.connects());
+    }
+
+    /**
+     * At quality of service 1 with a session the broker keeps, the consumer reconnects instead of acknowledging, so
+     * that the broker delivers the message again.
+     */
+    @Test
+    void aFailedExchangeOfAKeptSessionIsLeftForTheBrokerToDeliverAgain() throws Exception {
+        consume("a", "&manualAcksEnabled=true&clientId=manual&qos=1&cleanStart=false&reconnectDelay=50", true);
+        broker.send("a", bytes("fails"), 1, false, null);
+        await().atMost(WAIT).until(() -> broker.connects() == 2 && broker.connectedClients() == 1);
+        assertTrue(broker.acknowledged().isEmpty(), broker.acknowledged().toString());
     }
 
     @Test
@@ -193,6 +213,70 @@ class VertxMqttConsumerTest {
     }
 
     @Test
+    void aReconnectToASessionTheBrokerKeptDoesNotSubscribeAgain() throws Exception {
+        consume("a", "&cleanStart=false&clientId=kept&reconnectDelay=50&maxReconnectDelay=200");
+        assertEquals(1, broker.subscribes());
+        broker.sessionPresent(true);
+
+        broker.dropConnections();
+        await().atMost(WAIT).until(() -> broker.connects() == 2 && broker.connectedClients() == 1);
+        // A kept session still holds the subscription: subscribing again would replay its retained messages
+        await().during(Duration.ofMillis(300)).atMost(WAIT).until(() -> broker.subscribes() == 1);
+    }
+
+    /**
+     * The queue of the consumer is bounded by the pause of the client only. With a bounded queue that runs the task on
+     * the caller once full, a burst beyond its size would run the route on the event loop of the client.
+     */
+    @Test
+    void neverProcessesOnTheEventLoopOfTheClient() throws Exception {
+        final Set<String> threads = ConcurrentHashMap.newKeySet();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("vertx-mqtt:a?brokerUrl=" + broker.url() + "&maxPendingMessages=1500&qos=0")
+                        .process(exchange -> threads.add(Thread.currentThread().getName()))
+                        .delay(1).syncDelayed()
+                        .process(exchange -> received.add(exchange.getMessage()));
+            }
+        });
+        await().atMost(WAIT).until(() -> broker.hasSubscription("a"));
+        for (int i = 0; i < 1300; i++) {
+            broker.send("a", bytes(Integer.toString(i)), 0, false, null);
+        }
+        await().atMost(Duration.ofSeconds(60)).until(() -> received.size() == 1300);
+        assertTrue(threads.stream().noneMatch(name -> name.startsWith("vert.x-eventloop")), threads.toString());
+    }
+
+    /**
+     * Every message the client acknowledged when it arrived has to be processed before the consumer stops: the broker
+     * will not deliver it again.
+     */
+    @Test
+    void stoppingProcessesEveryMessageItAcknowledged() throws Exception {
+        final Set<Integer> processed = ConcurrentHashMap.newKeySet();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("vertx-mqtt:a?brokerUrl=" + broker.url() + "&qos=1").routeId("consumer")
+                        .delay(1).syncDelayed()
+                        .process(exchange -> processed
+                                .add(exchange.getMessage().getHeader(VertxMqttConstants.MESSAGE_ID, Integer.class)));
+            }
+        });
+        await().atMost(WAIT).until(() -> broker.hasSubscription("a"));
+        for (int i = 0; i < 1000; i++) {
+            broker.send("a", bytes(Integer.toString(i)), 1, false, null);
+        }
+        await().atMost(WAIT).until(() -> broker.acknowledged().size() >= 100);
+
+        context.getRouteController().stopRoute("consumer");
+        final List<Integer> acknowledged = List.copyOf(broker.acknowledged());
+        final List<Integer> lost = acknowledged.stream().filter(id -> !processed.contains(id)).toList();
+        assertEquals(List.of(), lost, "acknowledged, but not processed");
+    }
+
+    @Test
     void stoppingTheRouteEndsTheSubscriptionAndTheConnection() throws Exception {
         consume("a", "");
         await().atMost(WAIT).until(() -> broker.connectedClients() == 1);
@@ -207,10 +291,8 @@ class VertxMqttConsumerTest {
             @Override
             public void configure() {
                 from("vertx-mqtt:a?brokerUrl=" + broker.url() + "&maxPendingMessages=2&qos=0")
-                        .process(exchange -> {
-                            Thread.sleep(5);
-                            received.add(exchange.getMessage().copy());
-                        });
+                        .delay(5).syncDelayed()
+                        .process(exchange -> received.add(exchange.getMessage().copy()));
             }
         });
         await().atMost(WAIT).until(() -> broker.hasSubscription("a"));
@@ -240,7 +322,7 @@ class VertxMqttConsumerTest {
             }
 
             @Override
-            public void handleException(String message, org.apache.camel.Exchange exchange, Throwable exception) {
+            public void handleException(String message, Exchange exchange, Throwable exception) {
                 handled.add(exception);
             }
         });
@@ -260,8 +342,7 @@ class VertxMqttConsumerTest {
                     result.getMessage().orElse(""));
         });
         // Every attempt fails the same way, the handler hears of it once
-        Thread.sleep(300);
-        assertEquals(1, handled.size(), handled.toString());
+        await().during(Duration.ofMillis(300)).atMost(WAIT).until(() -> handled.size() == 1);
 
         broker.reject(null);
         await().atMost(WAIT).until(() -> check.call().getState() == HealthCheck.State.UP);

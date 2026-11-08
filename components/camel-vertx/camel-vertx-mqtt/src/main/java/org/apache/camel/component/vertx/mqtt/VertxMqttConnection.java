@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 
 import io.netty.handler.codec.mqtt.MqttProperties;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Context;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -43,14 +44,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The connection of an endpoint to its broker, shared by its consumer and producer: one Vert.x MQTT client, connected
- * again by a {@link VertxMqttReconnector} when the connection is lost and {@code automaticReconnect} is on.
+ * The connection of an endpoint to its broker, shared by its consumer and producer, connected again by a
+ * {@link VertxMqttReconnector} when the connection is lost and {@code automaticReconnect} is on.
  * <p>
- * Every call of the client runs on one Vert.x context, the one the client was connected on, so its state needs no locks
- * and an acknowledgement can never overtake the bookkeeping of the message it acknowledges. The client is held in a
- * field until the connection stops: Vert.x 5 closes a client that is no longer reachable, open connection included.
+ * Every connection attempt gets a client of its own. Vert.x keeps the in-flight bookkeeping of a client across a lost
+ * connection (the slots of unacknowledged messages, the inbound state of quality of service 2, the topic aliases), so a
+ * client reused for the next connection would carry the leftovers of the last one.
+ * <p>
+ * Every call of a client runs on one Vert.x context, the one the connection started on, so the state needs no locks,
+ * packets leave in the order they were published, and an acknowledgement can never overtake the bookkeeping of the
+ * message it acknowledges. The current client is held in a field until the connection stops: Vert.x 5 closes a client
+ * that is no longer reachable, open connection included.
  */
 final class VertxMqttConnection {
+
+    /**
+     * Receives the messages of the subscription.
+     */
+    interface MessageHandler {
+
+        /**
+         * On the context of the connection.
+         *
+         * @param receiver the client the message arrived on, which an acknowledgement has to go to: a later client
+         *                 holds another session state and possibly the same packet identifier for another message
+         */
+        void handle(MqttPublishMessage message, MqttClient receiver);
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxMqttConnection.class);
     private static final Pattern IP_ADDRESS = Pattern.compile("[0-9.]+|.*:.*");
@@ -61,7 +81,6 @@ final class VertxMqttConnection {
     private final VertxMqttConfiguration configuration;
 
     private Context context;
-    private MqttClient client;
     private volatile boolean started;
     private volatile boolean stopping;
     private volatile boolean connected;
@@ -71,15 +90,21 @@ final class VertxMqttConnection {
     private final List<Consumer<Throwable>> failureListeners = new CopyOnWriteArrayList<>();
 
     // Below on the context only
+    // The client of the current attempt, null once stopped
+    private MqttClient client;
     private boolean connecting;
+    // Whether this start connected before: a reconnect to a session the broker kept does not subscribe again
+    private boolean reconnect;
+    // The connection was closed on purpose, so that the broker delivers an unacknowledged message again
+    private boolean redelivering;
+    // Whether the consumer wants the client to stop reading, applied to every new client as well
+    private boolean paused;
     // Null without automaticReconnect
     private VertxMqttReconnector reconnector;
     private final List<Promise<MqttClient>> waiting = new ArrayList<>();
-    // The subscription of the consumer, made on every connect, the first and every reconnect: the client keeps no
-    // session of its own
     private String subscription;
     private int subscriptionQos;
-    private Handler<MqttPublishMessage> messageHandler;
+    private MessageHandler messageHandler;
     // Messages of quality of service 1 and 2 waiting for their acknowledgement, by packet identifier
     private final Map<Integer, Promise<Void>> unacknowledged = new HashMap<>();
 
@@ -108,34 +133,8 @@ final class VertxMqttConnection {
                         vertx, broker, configuration.getReconnectDelay(), configuration.getMaxReconnectDelay(),
                         () -> connect(null))
                 : null;
-        client = MqttClient.create(vertx, options);
         final CompletableFuture<Void> first = new CompletableFuture<>();
-        context.runOnContext(v -> {
-            client.closeHandler(closed -> closed());
-            client.exceptionHandler(e -> LOG.debug("Error on the connection to {}", broker, e));
-            client.publishCompletionHandler(this::acknowledged);
-            client.publishCompletionExpirationHandler(packetId -> unacknowledged(packetId,
-                    "The MQTT broker %s did not acknowledge the message within the ack timeout of %s seconds"
-                            .formatted(broker, configuration.getAckTimeout())));
-            client.publishCompletionUnknownPacketIdHandler(
-                    packetId -> LOG.debug("Acknowledgement of the unknown packet {} from {}", packetId, broker));
-            client.publishHandler(message -> {
-                final Handler<MqttPublishMessage> handler = messageHandler;
-                if (handler != null) {
-                    handler.handle(message);
-                } else {
-                    LOG.debug("Message on {} from {} without a subscriber", message.topicName(), broker);
-                }
-            });
-            client.subscribeCompletionHandler(ack -> {
-                if (ack.grantedQoSLevels().stream().anyMatch(granted -> granted == null || granted > 2)) {
-                    LOG.warn("The MQTT broker {} refused the subscription to {}", broker, subscription);
-                    failed(new IllegalStateException(
-                            "The MQTT broker %s refused the subscription to %s".formatted(broker, subscription)));
-                }
-            });
-            connect(first);
-        });
+        context.runOnContext(v -> connect(first));
         if (!configuration.isAutomaticReconnect()) {
             try {
                 first.get(configuration.getConnectTimeout() + 5_000, TimeUnit.MILLISECONDS);
@@ -150,7 +149,8 @@ final class VertxMqttConnection {
     }
 
     /**
-     * Disconnects and stops reconnecting. Waits for the disconnect for a while, never fails.
+     * Disconnects and stops reconnecting, also while an attempt is under way. Waits for the disconnect for a while,
+     * never fails.
      */
     synchronized void stop() {
         if (!started) {
@@ -164,14 +164,21 @@ final class VertxMqttConnection {
                 reconnector.cancel();
             }
             final IllegalStateException stopped = new IllegalStateException("The connection to %s stopped".formatted(broker));
-            waiting.forEach(promise -> promise.tryFail(stopped));
-            waiting.clear();
+            failWaiting(stopped);
             failUnacknowledged(stopped);
-            if (client.isConnected()) {
-                client.disconnect().onComplete(ar -> done.complete(null));
-            } else {
+            final MqttClient current = client;
+            if (current == null) {
                 done.complete(null);
+                return;
             }
+            // Answers at once when closed. While connecting the client closes the socket itself once the CONNACK
+            // arrives, so no connection is left at the broker
+            current.disconnect().onComplete(ar -> {
+                if (client == current) {
+                    client = null;
+                }
+                done.complete(null);
+            });
         });
         try {
             done.get(10, TimeUnit.SECONDS);
@@ -182,38 +189,84 @@ final class VertxMqttConnection {
             LOG.debug("Disconnecting from {} did not complete", broker, e);
         }
         connected = false;
-        // Only now: until the disconnect completed, the client must stay reachable
-        client = null;
     }
 
     private void connect(final CompletableFuture<Void> first) {
         if (stopping) {
+            if (first != null) {
+                first.completeExceptionally(new IllegalStateException("The connection to %s stopped".formatted(broker)));
+            }
             return;
         }
         connecting = true;
+        final MqttClient attempt = MqttClient.create(vertx, options);
+        client = attempt;
+        attempt.closeHandler(closed -> closed(attempt));
+        attempt.exceptionHandler(e -> LOG.debug("Error on the connection to {}", broker, e));
+        attempt.publishCompletionHandler(packetId -> {
+            if (attempt == client) {
+                acknowledged(packetId);
+            }
+        });
+        attempt.publishCompletionExpirationHandler(packetId -> {
+            if (attempt == client) {
+                unacknowledged(packetId,
+                        "The MQTT broker %s did not acknowledge the message within the ack timeout of %s seconds"
+                                .formatted(broker, configuration.getAckTimeout()));
+            }
+        });
+        attempt.publishCompletionUnknownPacketIdHandler(
+                packetId -> LOG.debug("Acknowledgement of the unknown packet {} from {}", packetId, broker));
+        attempt.publishHandler(message -> {
+            final MessageHandler handler = messageHandler;
+            if (handler != null) {
+                handler.handle(message, attempt);
+            } else {
+                LOG.debug("Message on {} from {} without a subscriber", message.topicName(), broker);
+            }
+        });
+        attempt.subscribeCompletionHandler(ack -> {
+            if (ack.grantedQoSLevels().stream().anyMatch(granted -> granted == null || granted > 2)) {
+                report(new IllegalStateException(
+                        "The MQTT broker %s refused the subscription to %s".formatted(broker, subscription)));
+            }
+        });
         final String serverName = broker.ssl() && !IP_ADDRESS.matcher(broker.host()).matches() ? broker.host() : null;
-        client.connect(broker.port(), broker.host(), serverName).onComplete(ar -> {
+        attempt.connect(broker.port(), broker.host(), serverName).onComplete(ar -> {
+            if (attempt != client) {
+                attempt.disconnect();
+                return;
+            }
             connecting = false;
             if (ar.succeeded()) {
                 if (stopping) {
-                    client.disconnect();
+                    attempt.disconnect();
                     return;
                 }
                 connected = true;
                 failure = null;
+                redelivering = false;
                 if (reconnector != null) {
                     reconnector.succeeded();
                 }
                 LOG.info("Connected to the MQTT broker {}", broker);
-                subscribe();
-                waiting.forEach(promise -> promise.tryComplete(client));
+                if (paused) {
+                    attempt.pause();
+                }
+                // A session the broker kept still holds the subscription, subscribing again would replay the retained
+                // messages on every reconnect
+                if (!reconnect || !ar.result().isSessionPresent()) {
+                    subscribe();
+                }
+                reconnect = true;
+                final List<Promise<MqttClient>> released = new ArrayList<>(waiting);
                 waiting.clear();
+                released.forEach(promise -> promise.tryComplete(attempt));
                 if (first != null) {
                     first.complete(null);
                 }
             } else {
-                LOG.warn("Cannot connect to the MQTT broker {}: {}", broker, ar.cause().getMessage());
-                failed(new IllegalStateException(
+                report(new IllegalStateException(
                         "Cannot connect to the MQTT broker %s: %s".formatted(broker, ar.cause().getMessage()), ar.cause()));
                 if (first != null) {
                     first.completeExceptionally(ar.cause());
@@ -227,7 +280,10 @@ final class VertxMqttConnection {
         });
     }
 
-    private void closed() {
+    private void closed(final MqttClient closed) {
+        if (closed != client) {
+            return;
+        }
         connected = false;
         // The client keeps no session of its own, a message sent before the loss is not sent again
         failUnacknowledged(new IllegalStateException(
@@ -236,52 +292,75 @@ final class VertxMqttConnection {
         if (stopping || connecting) {
             return;
         }
-        LOG.warn("The connection to the MQTT broker {} was lost", broker);
-        failed(new IllegalStateException("The connection to the MQTT broker %s was lost".formatted(broker)));
+        if (redelivering) {
+            LOG.debug("Reconnecting to the MQTT broker {} for the messages it delivers again", broker);
+            reconnector.schedule();
+            return;
+        }
+        final IllegalStateException lost
+                = new IllegalStateException("The connection to the MQTT broker %s was lost".formatted(broker));
+        report(lost);
         if (reconnector != null) {
             reconnector.schedule();
         } else {
-            failWaiting(new IllegalStateException("The connection to the MQTT broker %s was lost".formatted(broker)));
+            failWaiting(lost);
         }
     }
 
     private void failWaiting(final Throwable cause) {
-        waiting.forEach(promise -> promise.tryFail(cause));
+        final List<Promise<MqttClient>> failing = new ArrayList<>(waiting);
         waiting.clear();
+        failing.forEach(promise -> promise.tryFail(cause));
     }
 
     /**
-     * @return the client once it is connected, on the context of the connection, failed if it does not connect within
-     *         the connect timeout
+     * On the context. Hands the client to the handler once it is connected, on the context, or fails if it does not
+     * connect within the connect timeout.
+     */
+    private void awaitConnected(final Handler<AsyncResult<MqttClient>> handler) {
+        final Promise<MqttClient> promise = Promise.promise();
+        // Attached before the promise can complete, and every completion happens on the context
+        promise.future().onComplete(handler);
+        if (stopping) {
+            promise.tryFail(new IllegalStateException("The connection to %s stopped".formatted(broker)));
+        } else if (connected && client != null && client.isConnected()) {
+            promise.tryComplete(client);
+        } else if (reconnector == null && !connecting) {
+            promise.tryFail(new IllegalStateException("Not connected to the MQTT broker %s".formatted(broker)));
+        } else {
+            waiting.add(promise);
+            vertx.setTimer(Math.max(1, configuration.getConnectTimeout()), id -> {
+                if (waiting.remove(promise)) {
+                    promise.tryFail(new IllegalStateException(
+                            "Not connected to the MQTT broker %s within the connect timeout".formatted(broker)));
+                }
+            });
+        }
+    }
+
+    /**
+     * @return the client once it is connected, failed if it does not connect within the connect timeout
      */
     Future<MqttClient> whenConnected() {
         final Promise<MqttClient> promise = Promise.promise();
-        final Context running = context;
-        if (running == null || stopping) {
+        if (!run(() -> awaitConnected(ar -> complete(promise, ar)))) {
             return Future.failedFuture(new IllegalStateException("The connection to %s is not started".formatted(broker)));
         }
-        running.runOnContext(v -> {
-            if (stopping) {
-                promise.tryFail(new IllegalStateException("The connection to %s stopped".formatted(broker)));
-            } else if (client.isConnected()) {
-                promise.tryComplete(client);
-            } else if (reconnector == null && !connecting) {
-                promise.tryFail(new IllegalStateException("Not connected to the MQTT broker %s".formatted(broker)));
-            } else {
-                waiting.add(promise);
-                vertx.setTimer(Math.max(1, configuration.getConnectTimeout()), id -> {
-                    if (waiting.remove(promise)) {
-                        promise.tryFail(new IllegalStateException(
-                                "Not connected to the MQTT broker %s within the connect timeout".formatted(broker)));
-                    }
-                });
-            }
-        });
         return promise.future();
     }
 
+    private static <T> void complete(final Promise<T> promise, final AsyncResult<T> result) {
+        if (result.succeeded()) {
+            promise.tryComplete(result.result());
+        } else {
+            promise.tryFail(result.cause());
+        }
+    }
+
     /**
-     * Publishes a message once the client is connected.
+     * Publishes a message once the client is connected. The whole publish runs on the context: the client assigns
+     * packet identifiers and topic aliases under its lock but writes outside it, so publishes from more than one thread
+     * could leave in another order than their identifiers.
      *
      * @param  properties the MQTT 5 properties, null for MQTT 3.1.1
      * @return            completed when the broker acknowledged a message of quality of service 1 or 2, when it is
@@ -290,21 +369,35 @@ final class VertxMqttConnection {
     Future<Void> publish(
             final String topic, final Buffer payload, final MqttQoS qos, final boolean retain,
             final MqttProperties properties) {
-        // Composed on the context, synchronously with the publish: the packet is registered before the event loop can
-        // read its acknowledgement
-        return whenConnected().compose(connectedClient -> {
+        final Promise<Void> result = Promise.promise();
+        final boolean running = run(() -> awaitConnected(ar -> {
+            if (ar.failed()) {
+                result.tryFail(ar.cause());
+                return;
+            }
+            final MqttClient connectedClient = ar.result();
             final Future<Integer> sent = properties == null
                     ? connectedClient.publish(topic, payload, qos, false, retain)
                     : connectedClient.publish(topic, payload, qos, false, retain, properties);
-            return sent.compose(packetId -> {
-                if (qos == MqttQoS.AT_MOST_ONCE) {
-                    return Future.succeededFuture();
+            // Completes on the context once written, before the event loop can read the acknowledgement
+            sent.onComplete(written -> {
+                if (written.failed()) {
+                    result.tryFail(written.cause());
+                } else if (qos == MqttQoS.AT_MOST_ONCE) {
+                    result.tryComplete();
+                } else if (connectedClient != client || !connected) {
+                    result.tryFail(new IllegalStateException(
+                            "The connection to the MQTT broker %s was lost before the message was acknowledged"
+                                    .formatted(broker)));
+                } else {
+                    unacknowledged.put(written.result(), result);
                 }
-                final Promise<Void> acknowledgement = Promise.promise();
-                unacknowledged.put(packetId, acknowledgement);
-                return acknowledgement.future();
             });
-        });
+        }));
+        if (!running) {
+            return Future.failedFuture(new IllegalStateException("The connection to %s is not started".formatted(broker)));
+        }
+        return result.future();
     }
 
     private void acknowledged(final int packetId) {
@@ -322,26 +415,31 @@ final class VertxMqttConnection {
     }
 
     private void failUnacknowledged(final Throwable cause) {
-        unacknowledged.values().forEach(acknowledgement -> acknowledgement.tryFail(cause));
+        final List<Promise<Void>> failing = new ArrayList<>(unacknowledged.values());
         unacknowledged.clear();
+        failing.forEach(acknowledgement -> acknowledgement.tryFail(cause));
     }
 
     /**
      * Runs a task on the context of the connection.
+     *
+     * @return whether the connection was started, false if the task does not run
      */
-    void run(final Runnable task) {
+    boolean run(final Runnable task) {
         final Context running = context;
-        if (running != null) {
-            running.runOnContext(v -> task.run());
+        if (running == null) {
+            return false;
         }
+        running.runOnContext(v -> task.run());
+        return true;
     }
 
     /**
-     * Subscribes now if connected, and again after every reconnect.
+     * Subscribes now if connected, and again after every reconnect to a new session.
      *
      * @param handler called on the context for every message the broker sends
      */
-    void subscribe(final String filter, final int qos, final Handler<MqttPublishMessage> handler) {
+    void subscribe(final String filter, final int qos, final MessageHandler handler) {
         run(() -> {
             subscription = filter;
             subscriptionQos = qos;
@@ -351,13 +449,10 @@ final class VertxMqttConnection {
     }
 
     private void subscribe() {
-        if (subscription != null && client != null && client.isConnected()) {
+        if (subscription != null && connected && client != null && client.isConnected()) {
             client.subscribe(subscription, subscriptionQos)
-                    .onFailure(e -> {
-                        LOG.warn("Cannot subscribe to {} on {}: {}", subscription, broker, e.getMessage());
-                        failed(new IllegalStateException(
-                                "Cannot subscribe to %s on %s: %s".formatted(subscription, broker, e.getMessage()), e));
-                    });
+                    .onFailure(e -> report(new IllegalStateException(
+                            "Cannot subscribe to %s on %s: %s".formatted(subscription, broker, e.getMessage()), e)));
         }
     }
 
@@ -369,20 +464,19 @@ final class VertxMqttConnection {
      */
     void unsubscribe(final boolean atBroker) {
         final CompletableFuture<Void> done = new CompletableFuture<>();
-        final Context running = context;
-        if (running == null) {
-            return;
-        }
-        running.runOnContext(v -> {
+        final boolean running = run(() -> {
             final String filter = subscription;
             subscription = null;
             messageHandler = null;
-            if (atBroker && filter != null && client != null && client.isConnected()) {
+            if (atBroker && filter != null && connected && client != null && client.isConnected()) {
                 client.unsubscribe(filter).onComplete(ar -> done.complete(null));
             } else {
                 done.complete(null);
             }
         });
+        if (!running) {
+            return;
+        }
         try {
             done.get(10, TimeUnit.SECONDS);
         } catch (final Exception e) {
@@ -394,11 +488,13 @@ final class VertxMqttConnection {
     }
 
     /**
-     * Stops reading from the connection while the consumer catches up, and goes on again.
+     * Stops reading from the connection while the consumer catches up, and goes on again. Applied to the clients of
+     * later connections too.
      */
     void pause(final boolean pause) {
         run(() -> {
-            if (client != null) {
+            paused = pause;
+            if (connected && client != null && client.isConnected()) {
                 if (pause) {
                     client.pause();
                 } else {
@@ -409,14 +505,42 @@ final class VertxMqttConnection {
     }
 
     /**
-     * @return the client while the connection is started, to be used on its context only
+     * Acknowledges a message the consumer received with manual acknowledgements, unless it arrived on an earlier
+     * connection: its packet identifier then means nothing, or another message, to the current session.
      */
-    MqttClient client() {
-        return client;
+    void acknowledge(final MqttPublishMessage message, final MqttClient receiver) {
+        run(() -> {
+            if (receiver == client && connected) {
+                message.ack();
+            } else {
+                LOG.debug("Not acknowledging the message {} of an earlier connection to {}", message.messageId(), broker);
+            }
+        });
+    }
+
+    /**
+     * Closes the connection without acknowledging a message, so that the broker delivers it again after the reconnect,
+     * from the session it keeps. Needs automatic reconnect, does nothing without it.
+     */
+    void redeliver(final MqttClient receiver) {
+        run(() -> {
+            if (receiver == client && connected && reconnector != null && !redelivering) {
+                redelivering = true;
+                LOG.debug("Closing the connection to {}, so that it delivers the unacknowledged messages again", broker);
+                receiver.disconnect();
+            }
+        });
     }
 
     boolean isConnected() {
         return connected;
+    }
+
+    /**
+     * @return whether a reconnect after {@link #redeliver(MqttClient)} is possible
+     */
+    boolean canRedeliver() {
+        return configuration.isAutomaticReconnect();
     }
 
     /**
@@ -438,10 +562,18 @@ final class VertxMqttConnection {
         failureListeners.remove(listener);
     }
 
-    private void failed(final Throwable cause) {
+    /**
+     * Records a failure and reports it once while it fails the same way: to the listeners, the exception handler of a
+     * consumer, or else to the log. Not both, a listener logs it itself.
+     */
+    private void report(final Throwable cause) {
         final Throwable previous = failure;
         failure = cause;
-        if (previous == null || !String.valueOf(previous.getMessage()).equals(cause.getMessage())) {
+        if (previous != null && String.valueOf(previous.getMessage()).equals(cause.getMessage())) {
+            LOG.debug("{}", cause.getMessage());
+        } else if (failureListeners.isEmpty()) {
+            LOG.warn("{}", cause.getMessage());
+        } else {
             failureListeners.forEach(listener -> listener.accept(cause));
         }
     }

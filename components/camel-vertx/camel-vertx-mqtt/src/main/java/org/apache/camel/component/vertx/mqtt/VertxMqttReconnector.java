@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.vertx.mqtt;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Connects the client again after a lost or failed connection, with a delay that starts at {@code reconnectDelay} and
- * doubles up to {@code maxReconnectDelay}.
+ * doubles up to {@code maxReconnectDelay}, plus up to a fifth of it at random: clients that lost the same broker do not
+ * all come back at the same moment.
  * <p>
  * The Vert.x MQTT client does not reconnect by itself yet (vert-x3/vertx-mqtt#197). This class is the whole of the
  * reconnect logic of the component, kept apart so that it can be dropped once the client reconnects on its own: the
@@ -48,7 +51,7 @@ final class VertxMqttReconnector {
 
     /**
      * @param initialDelay the delay of the first attempt in milliseconds
-     * @param maxDelay     the longest delay in milliseconds, the delay never grows beyond it
+     * @param maxDelay     the longest delay in milliseconds before the random part, the delay never grows beyond it
      * @param connect      makes one attempt to connect, on the context of the connection
      */
     VertxMqttReconnector(final Vertx vertx, final BrokerAddress broker, final long initialDelay, final long maxDelay,
@@ -68,8 +71,8 @@ final class VertxMqttReconnector {
         if (cancelled || timer != -1) {
             return;
         }
-        final long delay = nextDelay;
-        nextDelay = Math.min(nextDelay * 2, Math.max(delay, maxDelay));
+        final long delay = nextDelay + ThreadLocalRandom.current().nextLong(nextDelay / 5 + 1);
+        nextDelay = Math.min(nextDelay * 2, Math.max(nextDelay, maxDelay));
         LOG.debug("Reconnecting to the MQTT broker {} in {} ms", broker, delay);
         timer = vertx.setTimer(delay, id -> {
             timer = -1;

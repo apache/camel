@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.mqtt;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -39,6 +40,8 @@ import io.vertx.mqtt.MqttServer;
 import io.vertx.mqtt.MqttServerOptions;
 import io.vertx.mqtt.MqttTopicSubscription;
 import io.vertx.mqtt.messages.MqttPublishMessage;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * A small MQTT broker for the tests, on the Vert.x MQTT server: it accepts every client, routes publications to the
@@ -72,6 +75,12 @@ final class TestBroker implements AutoCloseable {
     private volatile MqttEndpoint lastConnect;
     private volatile boolean acknowledgePublications = true;
     private volatile MqttConnectReturnCode reject;
+    private volatile boolean holdConnects;
+    private volatile boolean sessionPresent;
+    private final Queue<MqttEndpoint> heldConnects = new ConcurrentLinkedQueue<>();
+    private final AtomicInteger subscribes = new AtomicInteger();
+    // The packet identifiers of the publications of quality of service 1 and 2, per connection in the order they arrived
+    private final Map<MqttEndpoint, List<Integer>> packetIdsByConnection = new ConcurrentHashMap<>();
 
     private TestBroker(Vertx vertx, MqttServerOptions options) {
         this.vertx = vertx;
@@ -138,18 +147,11 @@ final class TestBroker implements AutoCloseable {
     /**
      * Starts the stopped broker again on its port, retrying while the port is still taken.
      */
-    void restart() throws Exception {
-        Exception last = null;
-        for (int attempt = 0; attempt < 50; attempt++) {
-            try {
-                listen(port);
-                return;
-            } catch (Exception e) {
-                last = e;
-                Thread.sleep(100);
-            }
-        }
-        throw last;
+    void restart() {
+        await().atMost(Duration.ofSeconds(5)).pollInterval(Duration.ofMillis(100)).ignoreExceptions().until(() -> {
+            listen(port);
+            return true;
+        });
     }
 
     @Override
@@ -168,6 +170,7 @@ final class TestBroker implements AutoCloseable {
         endpoints.add(endpoint);
         endpoint.publishAutoAck(false);
         endpoint.subscribeHandler(subscribe -> {
+            subscribes.incrementAndGet();
             final Map<String, Integer> filters = subscriptions.computeIfAbsent(endpoint, e -> new ConcurrentHashMap<>());
             final List<MqttQoS> granted = new CopyOnWriteArrayList<>();
             for (final MqttTopicSubscription subscription : subscribe.topicSubscriptions()) {
@@ -194,10 +197,17 @@ final class TestBroker implements AutoCloseable {
             subscriptions.remove(endpoint);
         });
         endpoint.disconnectHandler(v -> endpoints.remove(endpoint));
-        endpoint.accept(false);
+        if (holdConnects) {
+            heldConnects.add(endpoint);
+        } else {
+            endpoint.accept(sessionPresent);
+        }
     }
 
     private void publication(MqttEndpoint endpoint, MqttPublishMessage message) {
+        if (message.qosLevel() != MqttQoS.AT_MOST_ONCE) {
+            packetIdsByConnection.computeIfAbsent(endpoint, e -> new CopyOnWriteArrayList<>()).add(message.messageId());
+        }
         if (!acknowledgePublications) {
             return;
         }
@@ -301,5 +311,54 @@ final class TestBroker implements AutoCloseable {
 
     Queue<Integer> acknowledged() {
         return acknowledged;
+    }
+
+    /**
+     * @param hold true to keep the CONNACK of every new connection back until {@link #releaseConnects()}
+     */
+    void holdConnects(boolean hold) {
+        this.holdConnects = hold;
+    }
+
+    int heldConnects() {
+        return heldConnects.size();
+    }
+
+    /**
+     * Sends the CONNACK of every connection held back, to the clients that are still there.
+     */
+    void releaseConnects() {
+        holdConnects = false;
+        vertx.runOnContext(v -> {
+            MqttEndpoint held;
+            while ((held = heldConnects.poll()) != null) {
+                // Not connected before its CONNACK, but still in the list unless its socket closed
+                if (endpoints.contains(held)) {
+                    held.accept(sessionPresent);
+                }
+            }
+        });
+    }
+
+    /**
+     * @param present whether the CONNACK of later connections says that the broker kept the session of the client
+     */
+    void sessionPresent(boolean present) {
+        this.sessionPresent = present;
+    }
+
+    /**
+     * @return how many SUBSCRIBE packets the broker received, over all connections
+     */
+    int subscribes() {
+        return subscribes.get();
+    }
+
+    /**
+     * @return the packet identifiers of the publications of quality of service 1 and 2, one list per connection in the
+     *         order they arrived
+     */
+    List<List<Integer>> packetIdsByConnection() {
+        return List.copyOf(packetIdsByConnection.values());
     }
 }

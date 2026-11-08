@@ -18,6 +18,7 @@ package org.apache.camel.component.vertx.mqtt;
 
 import io.netty.handler.codec.mqtt.MqttProperties;
 import io.netty.handler.codec.mqtt.MqttQoS;
+import io.vertx.core.Context;
 import io.vertx.core.buffer.Buffer;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -27,6 +28,10 @@ import org.apache.camel.support.DefaultAsyncProducer;
 /**
  * Publishes the body of a message. The exchange completes when the broker acknowledged a message of quality of service
  * 1 or 2, and when the message is written for quality of service 0.
+ * <p>
+ * The exchange is completed on a worker thread, never on the event loop that carries the connection: the rest of the
+ * route, and a redelivery delay of the error handler, would otherwise block it and with it the keep alive of every
+ * connection on that loop.
  */
 public class VertxMqttProducer extends DefaultAsyncProducer {
 
@@ -63,11 +68,12 @@ public class VertxMqttProducer extends DefaultAsyncProducer {
             final Message message = exchange.getMessage();
             final String topic = message.getHeader(VertxMqttConstants.OVERRIDE_TOPIC, getEndpoint().getTopic(), String.class);
             checkTopic(topic);
-            final int qos = message.getHeader(VertxMqttConstants.QOS, configuration.getQos(), Integer.class);
+            final int qos = message.getHeader(VertxMqttConstants.OVERRIDE_QOS, configuration.getQos(), Integer.class);
             if (qos < 0 || qos > 2) {
                 throw new IllegalArgumentException("The quality of service must be 0, 1 or 2, not %s".formatted(qos));
             }
-            final boolean retain = message.getHeader(VertxMqttConstants.RETAINED, configuration.isRetained(), Boolean.class);
+            final boolean retain
+                    = message.getHeader(VertxMqttConstants.OVERRIDE_RETAINED, configuration.isRetained(), Boolean.class);
             final byte[] body = message.getBody(byte[].class);
             final MqttProperties properties = configuration.getMqttVersion() == VertxMqttVersion.MQTT_5_0
                     ? VertxMqttProperties.fromHeaders(message) : null;
@@ -76,13 +82,24 @@ public class VertxMqttProducer extends DefaultAsyncProducer {
                         if (done.failed()) {
                             exchange.setException(done.cause());
                         }
-                        callback.done(false);
+                        complete(callback);
                     });
             return false;
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
+        }
+    }
+
+    private void complete(AsyncCallback callback) {
+        if (Context.isOnEventLoopThread()) {
+            getEndpoint().getComponent().getVertx().executeBlocking(() -> {
+                callback.done(false);
+                return null;
+            }, false);
+        } else {
+            callback.done(false);
         }
     }
 

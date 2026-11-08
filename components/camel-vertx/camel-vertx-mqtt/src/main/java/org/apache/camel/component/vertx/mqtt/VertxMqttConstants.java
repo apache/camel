@@ -33,12 +33,10 @@ public final class VertxMqttConstants {
 
     @Metadata(label = "consumer", description = "The topic the message was published on.", javaType = "String")
     public static final String TOPIC = "CamelVertxMqttTopic";
-    @Metadata(description = "The quality of service of the message: 0, 1 or 2. Sets it when sending, overriding the"
-                            + " qos option of the endpoint.",
+    @Metadata(label = "consumer", description = "The quality of service the message was delivered with: 0, 1 or 2.",
               javaType = "Integer")
     public static final String QOS = "CamelVertxMqttQos";
-    @Metadata(description = "Whether the message is retained. Sets it when sending, overriding the retained option of"
-                            + " the endpoint.",
+    @Metadata(label = "consumer", description = "Whether the broker delivered a retained message.",
               javaType = "Boolean")
     public static final String RETAINED = "CamelVertxMqttRetained";
     @Metadata(label = "consumer", description = "Whether the broker delivers the message again.", javaType = "Boolean")
@@ -49,6 +47,14 @@ public final class VertxMqttConstants {
     @Metadata(label = "producer", description = "The topic to publish on instead of the topic of the endpoint.",
               javaType = "String")
     public static final String OVERRIDE_TOPIC = "CamelVertxMqttOverrideTopic";
+    @Metadata(label = "producer",
+              description = "The quality of service to publish with instead of the qos option of the endpoint: 0, 1 or 2.",
+              javaType = "Integer")
+    public static final String OVERRIDE_QOS = "CamelVertxMqttOverrideQos";
+    @Metadata(label = "producer",
+              description = "Whether to publish the message as retained, instead of the retained option of the endpoint.",
+              javaType = "Boolean")
+    public static final String OVERRIDE_RETAINED = "CamelVertxMqttOverrideRetained";
     @Metadata(description = "MQTT 5 only. The user properties of the message. A key that occurs more than once keeps"
                             + " its last value.",
               javaType = "java.util.Map<String, String>")

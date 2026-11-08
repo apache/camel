@@ -17,11 +17,19 @@
 package org.apache.camel.component.vertx.mqtt;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.mqtt.MqttConnectReturnCode;
+import io.netty.handler.codec.mqtt.MqttQoS;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
@@ -126,8 +134,7 @@ class VertxMqttConnectionTest {
         endpoint.releaseConnection();
 
         broker.restart();
-        Thread.sleep(500);
-        assertEquals(0, broker.connects());
+        await().during(Duration.ofMillis(500)).atMost(WAIT).until(() -> broker.connects() == 0);
     }
 
     @Test
@@ -141,5 +148,74 @@ class VertxMqttConnectionTest {
         broker.restart();
         assertTrue(connection.whenConnected().toCompletionStage().toCompletableFuture().get(5, TimeUnit.SECONDS)
                 .isConnected());
+    }
+
+    private static void get(Future<?> future) throws Exception {
+        future.toCompletionStage().toCompletableFuture().get(10, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Vert.x keeps the in-flight slots of a client across a lost connection: a client reused for the next connection
+     * would refuse every message of quality of service 1 and 2 once maxInflightQueue messages were lost, and with
+     * ackTimeout=0 for good.
+     */
+    @Test
+    void theInFlightSlotsOfALostConnectionAreFreeAgain() throws Exception {
+        final VertxMqttConnection connection
+                = endpoint(FAST_RECONNECT + "&maxInflightQueue=10&ackTimeout=0").acquireConnection();
+        await().atMost(WAIT).until(connection::isConnected);
+        broker.acknowledgePublications(false);
+        final List<Future<Void>> lost = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            lost.add(connection.publish("a", Buffer.buffer("lost"), MqttQoS.AT_LEAST_ONCE, false, null));
+        }
+        await().atMost(WAIT).until(() -> broker.packetIdsByConnection().stream().mapToInt(List::size).sum() == 10);
+
+        broker.acknowledgePublications(true);
+        broker.dropConnections();
+        await().atMost(WAIT).until(() -> lost.stream().allMatch(Future::failed));
+        await().atMost(WAIT).until(() -> broker.connects() == 2 && connection.isConnected());
+
+        get(connection.publish("a", Buffer.buffer("after"), MqttQoS.AT_LEAST_ONCE, false, null));
+    }
+
+    /**
+     * A stop while the CONNECT waits for its CONNACK: the client must not stay connected at the broker, and nothing may
+     * fail on the event loop.
+     */
+    @Test
+    void stoppingWhileConnectingLeavesNoConnectionAndNoError() throws Exception {
+        final List<Throwable> errors = new CopyOnWriteArrayList<>();
+        vertx.exceptionHandler(errors::add);
+        broker.holdConnects(true);
+        final VertxMqttEndpoint endpoint = endpoint(FAST_RECONNECT);
+        endpoint.acquireConnection();
+        await().atMost(WAIT).until(() -> broker.heldConnects() == 1);
+
+        endpoint.releaseConnection();
+        broker.releaseConnects();
+        await().during(Duration.ofMillis(500)).atMost(WAIT).until(() -> broker.connectedClients() == 0);
+        assertEquals(List.of(), errors);
+    }
+
+    /**
+     * The consumer pauses the client while it catches up. The pause has to hold for the client of the next connection
+     * too, or the consumer runs over its bound after every reconnect.
+     */
+    @Test
+    void aPauseHoldsForTheConnectionAfterAReconnect() throws Exception {
+        final VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
+        final Queue<String> received = new ConcurrentLinkedQueue<>();
+        connection.subscribe("a", 1, (message, receiver) -> received.add(message.payload().toString()));
+        await().atMost(WAIT).until(() -> broker.hasSubscription("a"));
+        connection.pause(true);
+
+        broker.dropConnections();
+        await().atMost(WAIT).until(() -> broker.connects() == 2 && broker.hasSubscription("a"));
+        broker.send("a", "paused".getBytes(), 1, false, null);
+        await().during(Duration.ofMillis(500)).atMost(WAIT).until(received::isEmpty);
+
+        connection.pause(false);
+        await().atMost(WAIT).until(() -> received.size() == 1);
     }
 }

@@ -2142,12 +2142,11 @@ public interface VertxMqttEndpointBuilderFactory {
             return "CamelVertxMqttTopic";
         }
         /**
-         * The quality of service of the message: 0, 1 or 2. Sets it when
-         * sending, overriding the qos option of the endpoint.
+         * The quality of service the message was delivered with: 0, 1 or 2.
          * 
          * The option is a: {@code Integer} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code VertxMqttQos}.
          */
@@ -2155,12 +2154,11 @@ public interface VertxMqttEndpointBuilderFactory {
             return "CamelVertxMqttQos";
         }
         /**
-         * Whether the message is retained. Sets it when sending, overriding the
-         * retained option of the endpoint.
+         * Whether the broker delivered a retained message.
          * 
          * The option is a: {@code Boolean} type.
          * 
-         * Group: common
+         * Group: consumer
          * 
          * @return the name of the header {@code VertxMqttRetained}.
          */
@@ -2202,6 +2200,32 @@ public interface VertxMqttEndpointBuilderFactory {
          */
         public String vertxMqttOverrideTopic() {
             return "CamelVertxMqttOverrideTopic";
+        }
+        /**
+         * The quality of service to publish with instead of the qos option of
+         * the endpoint: 0, 1 or 2.
+         * 
+         * The option is a: {@code Integer} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VertxMqttOverrideQos}.
+         */
+        public String vertxMqttOverrideQos() {
+            return "CamelVertxMqttOverrideQos";
+        }
+        /**
+         * Whether to publish the message as retained, instead of the retained
+         * option of the endpoint.
+         * 
+         * The option is a: {@code Boolean} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code VertxMqttOverrideRetained}.
+         */
+        public String vertxMqttOverrideRetained() {
+            return "CamelVertxMqttOverrideRetained";
         }
         /**
          * MQTT 5 only. The user properties of the message. A key that occurs

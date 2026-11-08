@@ -32,6 +32,9 @@
     <description>Send and receive messages to/from MQTT brokers using the Vert.x MQTT client, MQTT 3.1.1 and 5</description>
 
     <properties>
+        <!-- The Mosquitto and HiveMQ images of the integration tests are not available for these architectures -->
+        <skipITs.ppc64le>true</skipITs.ppc64le>
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
