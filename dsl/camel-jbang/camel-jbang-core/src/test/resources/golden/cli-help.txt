@@ -3019,7 +3019,8 @@ Examples:
 Usage: camel dirty [-h] [--clean]
 Check if there are dirty files from previous Camel runs that did not terminate
 gracefully
-      --clean   Clean dirty files which are no longer in use
+      --clean   Clean dirty files which are no longer in use, and the logs of
+                  the previous runs of the integrations (camel log --previous)
   -h, --help    Display the help and sub-commands
 
 Examples:
