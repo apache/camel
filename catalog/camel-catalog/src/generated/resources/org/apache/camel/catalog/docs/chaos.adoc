@@ -22,12 +22,13 @@ Chaos is for development only. It stays off with profile `prod`, and does nothin
 
 == Getting it
 
-* `camel run`: add the dependency with `--chaos` (or `--dep camel:chaos`), with the default runtime,
-`--runtime=main` or `--runtime=spring-boot` (not yet with Quarkus). `camel run` uses profile `dev` by default, which
-switches chaos on. A Spring Boot application has no Camel profile `dev`, so `camel run --runtime=spring-boot --chaos`
-switches chaos on with `-Dcamel.chaos.enabled=true` on the command line of the run (unless `--profile=prod`); the
-project that the run exports does not have it. A Spring Boot project of your own (`camel run pom.xml`) also gets
-`camel-chaos` added for the run; there is no Spring Boot starter for it. Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>), or
+* `camel run`: add the dependency with `--chaos` (or `--dep camel:chaos`), with any runtime. `camel run` uses profile
+`dev` by default, which switches chaos on. A Spring Boot application has no Camel profile `dev`, and a Quarkus one only
+in dev mode, so with `--runtime=spring-boot` and `--runtime=quarkus` the run switches chaos on with
+`-Dcamel.chaos.enabled=true` on its command line (unless `--profile=prod`); the project that the run exports does not
+have it. A project of your own (`camel run pom.xml`) also gets chaos added for the run: plain `camel-chaos` for Spring
+Boot (there is no starter), and the `camel-quarkus-chaos` extension for Quarkus, which needs a Camel Quarkus release on
+Camel 4.24 (https://github.com/apache/camel-quarkus/issues/9459). Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>), or
 start with the rules of a scenario file with `--chaos=chaos/outage.chaos` (see <<_scenarios,Scenarios>>).
 * A plain `Main` or a test: add the `camel-chaos` dependency and set `camel.chaos.enabled=true`, for example in a
 `CamelTestSupport` test with

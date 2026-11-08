@@ -175,12 +175,12 @@ final class MavenRunSupport {
     }
 
     /**
-     * The chaos of a run with Spring Boot ({@code camel run --runtime=spring-boot --chaos}) as JVM arguments:
-     * {@code camel.chaos.enabled=true}, as an exported Spring Boot project has no Camel profile {@code dev} to switch
-     * chaos on, and the scenario and the report file. Chaos stays off with profile {@code prod}. They are arguments of
-     * the run only, so the exported project does not have chaos switched on.
+     * The chaos of a run with Spring Boot or Quarkus ({@code camel run --chaos}) as JVM arguments:
+     * {@code camel.chaos.enabled=true}, as Spring Boot has no Camel profile {@code dev} to switch chaos on, and Quarkus
+     * only in dev mode, and the scenario and the report file. Chaos stays off with profile {@code prod}. They are
+     * arguments of the run only, so the exported project does not have chaos switched on.
      */
-    static List<String> springBootChaosJvmArgs(RunRequest request) {
+    static List<String> projectChaosJvmArgs(RunRequest request) {
         List<String> args = new ArrayList<>();
         if (!request.chaos) {
             return args;
@@ -188,7 +188,7 @@ final class MavenRunSupport {
         if (!"prod".equalsIgnoreCase(request.profile)) {
             args.add("-Dcamel.chaos.enabled=true");
         }
-        // quoted when there is a space, as spring-boot.run.jvmArguments is parsed as a command line
+        // quoted when there is a space, as spring-boot.run.jvmArguments and jvm.args are parsed as a command line
         for (String arg : chaosArgs(request)) {
             args.add(arg.indexOf(' ') != -1 ? quoteValue(arg) : arg);
         }
@@ -202,14 +202,18 @@ final class MavenRunSupport {
 
     /**
      * The JVM arguments the exported Quarkus or Spring Boot project is run with ({@code jvm.args} and
-     * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording and the execution limits. Returns
-     * null when there are none.
+     * {@code spring-boot.run.jvmArguments}): {@code --jvm-args}, the flight recording, the execution limits and chaos.
+     * Returns null when there are none.
      */
     static String exportedRunJvmArgs(RunRequest request, Printer printer) {
         String args = mergeJvmArgs(request.jvmArgs, jfrJvmArgs(request, printer));
         List<String> limits = durationLimitArgs(request);
         if (!limits.isEmpty()) {
             args = mergeJvmArgs(args, String.join(" ", limits));
+        }
+        List<String> chaos = projectChaosJvmArgs(request);
+        if (!chaos.isEmpty()) {
+            args = mergeJvmArgs(args, String.join(" ", chaos));
         }
         return args != null && !args.isBlank() ? args.trim() : null;
     }
@@ -381,8 +385,8 @@ final class MavenRunSupport {
             eq.dependencies.add("camel:jfr");
         }
         if (request.chaos) {
-            // camel run --chaos with Camel Main or Spring Boot (plain camel-chaos, as there is no starter); Quarkus
-            // refuses it, see Run
+            // plain camel-chaos with Spring Boot (there is no starter); with Quarkus the camel-quarkus-chaos extension
+            // once the Camel Quarkus BOM has it (apache/camel-quarkus#9459), else plain camel-chaos
             eq.dependencies.add("camel:chaos");
         }
         eq.quiet = true;
@@ -469,7 +473,6 @@ final class MavenRunSupport {
             args.add("-Dlogging.config=" + logback.toUri());
         }
         args.addAll(existingProjectJvmArgs(request, appName, "server.port", printer));
-        args.addAll(springBootChaosJvmArgs(request));
         return args;
     }
 
@@ -488,6 +491,7 @@ final class MavenRunSupport {
         if (request.jvmArgs != null && !request.jvmArgs.isBlank()) {
             args.add(request.jvmArgs.trim());
         }
+        args.addAll(projectChaosJvmArgs(request));
         return args;
     }
 

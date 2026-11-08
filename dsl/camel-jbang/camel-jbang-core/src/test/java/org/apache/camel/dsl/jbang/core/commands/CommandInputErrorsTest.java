@@ -239,18 +239,6 @@ class CommandInputErrorsTest {
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
-    @Test
-    void runWithChaosOnQuarkus() throws Exception {
-        // camel-chaos is new in Camel 4.24, which Camel Quarkus is not on yet: --chaos must not be silently ignored
-        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
-
-        assertThatThrownBy(() -> call(new Run(main), file.toString(), "--runtime=quarkus", "--chaos"))
-                .isInstanceOf(CliException.class)
-                .hasMessage(
-                        "Run Camel Quarkus with --chaos is not supported yet (use --runtime=jbang, main or spring-boot)")
-                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
-    }
-
     private static int call(CamelCommand command, String... args) throws Exception {
         CommandLineTestHelper.parse(command, args);
         return command.doCall();

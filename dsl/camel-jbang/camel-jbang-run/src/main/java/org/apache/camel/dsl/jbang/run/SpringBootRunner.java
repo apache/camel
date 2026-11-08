@@ -38,13 +38,11 @@ import static org.apache.camel.dsl.jbang.run.MavenRunSupport.existingSpringBootJ
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.exportedRunJvmArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.keepLeftoverRunLog;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.keepRunLog;
-import static org.apache.camel.dsl.jbang.run.MavenRunSupport.mergeJvmArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.once;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.readPom;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.resolveExistingProjectAppName;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.resolveExportedAppName;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.runExportRequest;
-import static org.apache.camel.dsl.jbang.run.MavenRunSupport.springBootChaosJvmArgs;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.writeRunPom;
 import static org.apache.camel.dsl.jbang.run.MavenRunSupport.writeSpringBootLogbackConfig;
 
@@ -123,10 +121,6 @@ final class SpringBootRunner {
         mvnCmd.add("--file");
         mvnCmd.add(runDirPath.toRealPath().resolve("pom.xml").toString());
         String springBootRunJvmArgs = exportedRunJvmArgs(request, printer());
-        List<String> chaos = springBootChaosJvmArgs(request);
-        if (!chaos.isEmpty()) {
-            springBootRunJvmArgs = mergeJvmArgs(springBootRunJvmArgs, String.join(" ", chaos));
-        }
         if (springBootRunJvmArgs != null) {
             mvnCmd.add("-Dspring-boot.run.jvmArguments=" + springBootRunJvmArgs);
         }

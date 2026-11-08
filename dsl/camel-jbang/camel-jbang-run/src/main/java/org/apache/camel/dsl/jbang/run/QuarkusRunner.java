@@ -149,6 +149,10 @@ final class QuarkusRunner {
         if (request.jfrEnabled()) {
             addDependency(model, "org.apache.camel.quarkus", "camel-quarkus-jfr");
         }
+        if (request.chaos) {
+            // the extension, which needs a Camel Quarkus on Camel 4.24 (apache/camel-quarkus#9459)
+            addDependency(model, "org.apache.camel.quarkus", "camel-quarkus-chaos");
+        }
         // write temporary pom with cli-connector injected
         Path tempPom = writeRunPom(projectDir, model);
 

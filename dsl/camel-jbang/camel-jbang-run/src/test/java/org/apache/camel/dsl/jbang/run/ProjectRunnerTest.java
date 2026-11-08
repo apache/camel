@@ -378,6 +378,26 @@ class ProjectRunnerTest {
     }
 
     @Test
+    void anExistingQuarkusProjectRunsWithChaos() throws Exception {
+        RunRequest request = existingProject(RuntimeType.quarkus);
+        request.profile = "dev";
+        request.chaos = true;
+        request.chaosReport = "/work/target/chaos.json";
+
+        RunningIntegration integration = new ProjectRunner(context).start(request);
+        try {
+            Path project = dir.resolve("project");
+            assertThat(project.resolve("camel-jbang-run-pom.xml")).content()
+                    .contains("camel-quarkus-cli-connector", "<artifactId>camel-quarkus-chaos</artifactId>");
+            // quarkus:run has no Camel profile dev, so chaos is switched on by the run
+            assertThat(started.get(0).command().get(4)).startsWith("-Djvm.args=")
+                    .endsWith(" -Dcamel.chaos.enabled=true -Dcamel.chaos.reportFile=/work/target/chaos.json");
+        } finally {
+            integration.stop();
+        }
+    }
+
+    @Test
     void theCamelVersionOfASpringBootProjectWithoutTheBomIsThisCamel() {
         assertThat(SpringBootRunner.camelVersion(new Model())).isEqualTo(new DefaultCamelCatalog().getCatalogVersion());
     }
