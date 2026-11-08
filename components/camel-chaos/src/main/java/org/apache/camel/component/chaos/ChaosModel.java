@@ -420,6 +420,12 @@ final class ChaosModel {
                 "endpoint=${endpoint} error exception=java.net.ConnectException rate=${rate} until=${until}",
                 List.of(producer(), rate("0.25"), until("10m"))));
         answer.add(new Recipe(
+                "write-error", "Downstream", "Fails to write",
+                "The send fails with an IOException before the file is written, as when the disk "
+                                                               + "is full or the directory cannot be written",
+                "endpoint=${endpoint} error exception=java.io.IOException rate=${rate} until=${until}",
+                List.of(producer(), rate("0.25"), until("10m"))));
+        answer.add(new Recipe(
                 "slow", "Downstream", "Is slow",
                 "Each send waits a time within the range before it is made, as a slow service. "
                                                  + "The exchange then goes on as usual: the cost is time, not errors",
@@ -588,10 +594,21 @@ final class ChaosModel {
                         "Long redelivery delays that hold the consumer while the service is down",
                         "A circuit breaker that does not open"),
                 List.of(
-                        "To test an HTTP status from a service that is up: use Returns an error"),
+                        "To test an HTTP status from a service that is up: use Returns an error",
+                        "A local file has no connection: use Fails to write"),
                 List.of(
                         "The redeliveries and the exchanges handled by the error handler",
                         "The state of a circuit breaker around the call")));
+        answer.put("write-error", new Guide(
+                List.of(
+                        "Whether a failed write is retried, and whether the retry writes the file whole",
+                        "Where the message goes when the file cannot be written: when the file is how the "
+                                                                                                          + "dead letter channel parks the message, it is lost"),
+                List.of(
+                        "A remote system such as FTP or a database: use Refuses the connection"),
+                List.of(
+                        "The redeliveries and the exchanges handled by the error handler",
+                        "The files written, and the messages that are in none of them")));
         answer.put("slow", new Guide(
                 List.of(
                         "A consumer that falls behind: the throughput of the route drops and messages "

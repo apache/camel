@@ -638,13 +638,57 @@
           "A circuit breaker that does not open"
         ],
         "avoid": [
-          "To test an HTTP status from a service that is up: use Returns an error"
+          "To test an HTTP status from a service that is up: use Returns an error",
+          "A local file has no connection: use Fails to write"
         ],
         "watch": [
           "The redeliveries and the exchanges handled by the error handler",
           "The state of a circuit breaker around the call"
         ],
         "rule": "endpoint=${endpoint} error exception=java.net.ConnectException rate=${rate} until=${until}",
+        "placeholders": [
+          {
+            "name": "endpoint",
+            "type": "endpoint",
+            "description": "The endpoint the route sends to",
+            "example": "kafka:orders",
+            "pick": {
+              "from": "producers"
+            }
+          },
+          {
+            "name": "rate",
+            "type": "rate",
+            "description": "How often: a probability, every:N or burst:<time>\/<period>",
+            "default": "0.25",
+            "example": "0.25"
+          },
+          {
+            "name": "until",
+            "type": "countOrDuration",
+            "description": "When the rule ends: a number of matches or a time",
+            "default": "10m",
+            "example": "10m"
+          }
+        ]
+      },
+      {
+        "id": "write-error",
+        "group": "Downstream",
+        "title": "Fails to write",
+        "description": "The send fails with an IOException before the file is written, as when the disk is full or the directory cannot be written",
+        "uncovers": [
+          "Whether a failed write is retried, and whether the retry writes the file whole",
+          "Where the message goes when the file cannot be written: when the file is how the dead letter channel parks the message, it is lost"
+        ],
+        "avoid": [
+          "A remote system such as FTP or a database: use Refuses the connection"
+        ],
+        "watch": [
+          "The redeliveries and the exchanges handled by the error handler",
+          "The files written, and the messages that are in none of them"
+        ],
+        "rule": "endpoint=${endpoint} error exception=java.io.IOException rate=${rate} until=${until}",
         "placeholders": [
           {
             "name": "endpoint",

@@ -851,6 +851,9 @@ delay rule slows the route as it should).
 difference is the messages lost (never below 0, as the second route may also get messages from elsewhere). Messages still
 on their way when the time is up count as lost too: let `within=` run past the `until=` of the faults, so the last ones
 can arrive. The messages it counts as lost are added to the lost of the report. The op is `<=` or `=`.
+* An exchange of the first route that its error handler handled, such as an order the dead letter channel parked, is not
+counted in the first route: it is not meant to reach the second one, so it is not lost. In the second route a handled
+exchange counts as completed, as it arrived.
 
 For example, a stock service that is slow for a minute, and the orders that must still ship, fast enough:
 

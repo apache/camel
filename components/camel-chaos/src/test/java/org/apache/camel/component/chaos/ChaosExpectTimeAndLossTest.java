@@ -55,6 +55,11 @@ class ChaosExpectTimeAndLossTest extends ChaosTestSupport {
                         .to("mock:stock").id("callStock")
                         .to("direct:ship");
                 from("direct:ship").routeId("ship").to("mock:ship");
+                // the orders it cannot charge are parked by its dead letter channel, and never go to ship
+                from("direct:charged").routeId("charged")
+                        .errorHandler(deadLetterChannel("mock:parked"))
+                        .to("mock:pay").id("callPay")
+                        .to("direct:ship");
             }
         };
     }
@@ -139,6 +144,22 @@ class ChaosExpectTimeAndLossTest extends ChaosTestSupport {
                                                         + "): 2 lost");
         assertThat(chaos().describeRule(id))
                 .endsWith("; expects no message lost between route orders and route ship within 1 minute");
+    }
+
+    @Test
+    void theMessagesParkedByTheDeadLetterChannelAreNotLost() {
+        // every second payment fails, and the dead letter channel of route charged parks the order
+        String id = chaos().addRule("step=callPay error rate=every:2 expect=charged->ship:lost<=0 within=1m");
+        for (int i = 0; i < 4; i++) {
+            template.sendBody("direct:charged", "order " + i);
+        }
+        clock.advance(60_001);
+
+        assertThat(expectation(id).getString("outcome")).isEqualTo("met");
+        ChaosReport report = chaos().report();
+        assertThat(report.getVerdict()).isEqualTo(ChaosReport.PASS);
+        assertThat(report.getLost()).isZero();
+        assertThat(report.toText()).contains("met, 0 lost (2 completed in charged, 2 in ship)");
     }
 
     @Test
