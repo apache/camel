@@ -912,6 +912,41 @@ why and the `chaos-add` command that adds it.
 `--report` shows the report: the verdict, the seed, every version of every rule and the counts per route. Chaos is for
 development only: it stays off with profile `prod`, and the commands cannot switch it on.
 
+=== Chaos scenarios
+
+A scenario keeps the rules of an experiment in a file of the project, such as `chaos/outage.chaos`: one rule per line,
+`#` comments, and an optional `seed=` line so it fails the same messages each time. The phases come from `from=` and
+`until=` of its rules.
+
+[source]
+----
+# the stock service is down for a minute, then slow
+seed=42
+endpoint=http:stock* error status=503 until=1m
+endpoint=http:stock* delay duration=2s from=1m until=1m
+endpoint=http:stock* error rate=0.01 expect=orders:50 within=3m
+----
+
+Start with it, or load it into an integration that runs (which removes the rules there are and starts a new report):
+
+[source,bash]
+----
+camel run * --chaos=chaos/outage.chaos
+camel cmd chaos-load chaos/outage.chaos
+----
+
+`camel run *` and `camel export` leave `.chaos` files out. A run with chaos ends with exit code 1 when the verdict is
+FAIL, so a scenario can gate a pipeline; `--chaos-report` writes the report as JSON when the run ends:
+
+[source,bash]
+----
+camel run * --chaos=chaos/outage.chaos --max-seconds=240 --chaos-report=target/chaos-report.json
+----
+
+Without an expectation (`expect=`) there is no verdict, and the run ends with exit code 0 and a line that says so. See
+xref:next@components:others:chaos.adoc#_scenarios[Scenarios] and
+xref:next@components:others:chaos.adoc#_chaos_in_a_pipeline[Chaos in a pipeline] in the camel-chaos documentation.
+
 == Using Jolokia and Hawtio
 
 https://hawt.io/[Hawtio] provides a web console for inspecting Camel integrations via JMX,

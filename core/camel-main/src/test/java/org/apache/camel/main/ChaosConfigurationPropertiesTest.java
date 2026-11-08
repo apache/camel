@@ -42,6 +42,8 @@ class ChaosConfigurationPropertiesTest {
         main.addInitialProperty("camel.chaos.rules", "endpoint=kafka:orders* error rate=0.3");
         main.addInitialProperty("camel.chaos.max-duration", "1m");
         main.addInitialProperty("camel.chaos.reportOnShutdown", "false");
+        main.addInitialProperty("camel.chaos.scenario", "chaos/outage.chaos");
+        main.addInitialProperty("camel.chaos.report-file", "target/chaos-report.json");
 
         main.start();
         try {
@@ -51,6 +53,8 @@ class ChaosConfigurationPropertiesTest {
             assertEquals("endpoint=kafka:orders* error rate=0.3", config.getRules());
             assertEquals("1m", config.getMaxDuration());
             assertFalse(config.isReportOnShutdown());
+            assertEquals("chaos/outage.chaos", config.getScenario());
+            assertEquals("target/chaos-report.json", config.getReportFile());
 
             PropertiesComponent pc = main.getCamelContext().getPropertiesComponent();
             assertEquals("true", pc.resolveProperty("camel.chaos.enabled").orElse(null));
@@ -58,6 +62,8 @@ class ChaosConfigurationPropertiesTest {
             assertEquals("endpoint=kafka:orders* error rate=0.3", pc.resolveProperty("camel.chaos.rules").orElse(null));
             assertEquals("1m", pc.resolveProperty("camel.chaos.maxDuration").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.chaos.reportOnShutdown").orElse(null));
+            assertEquals("chaos/outage.chaos", pc.resolveProperty("camel.chaos.scenario").orElse(null));
+            assertEquals("target/chaos-report.json", pc.resolveProperty("camel.chaos.reportFile").orElse(null));
         } finally {
             main.stop();
         }
@@ -67,7 +73,8 @@ class ChaosConfigurationPropertiesTest {
     void optionsFromJavaArePublished() throws Exception {
         Main main = new Main();
         main.configure().chaosConfig().withEnabled(true).withSeed(9L).withRules("route=orders corrupt mode=headers")
-                .withMaxDuration("2m").withReportOnShutdown(false);
+                .withMaxDuration("2m").withReportOnShutdown(false).withScenario("classpath:outage.chaos")
+                .withReportFile("chaos.json");
 
         main.start();
         try {
@@ -77,6 +84,8 @@ class ChaosConfigurationPropertiesTest {
             assertEquals("route=orders corrupt mode=headers", pc.resolveProperty("camel.chaos.rules").orElse(null));
             assertEquals("2m", pc.resolveProperty("camel.chaos.maxDuration").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.chaos.reportOnShutdown").orElse(null));
+            assertEquals("classpath:outage.chaos", pc.resolveProperty("camel.chaos.scenario").orElse(null));
+            assertEquals("chaos.json", pc.resolveProperty("camel.chaos.reportFile").orElse(null));
         } finally {
             main.stop();
         }
@@ -118,6 +127,19 @@ class ChaosConfigurationPropertiesTest {
         Exception e = assertThrows(Exception.class, main::start);
         assertTrue(e.getMessage().contains("Security policy violations detected"), e.getMessage());
         assertTrue(e.getMessage().contains("camel.chaos.rules"), e.getMessage());
+        main.stop();
+    }
+
+    @Test
+    void profileProdRefusesAScenario() {
+        // a scenario is rules from a file
+        Main main = new Main();
+        main.addInitialProperty("camel.main.profile", "prod");
+        main.addInitialProperty("camel.chaos.scenario", "chaos/outage.chaos");
+
+        Exception e = assertThrows(Exception.class, main::start);
+        assertTrue(e.getMessage().contains("Security policy violations detected"), e.getMessage());
+        assertTrue(e.getMessage().contains("camel.chaos.scenario"), e.getMessage());
         main.stop();
     }
 

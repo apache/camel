@@ -83,6 +83,11 @@ class ChaosTab extends AbstractTableTab {
         control.openAt(ctx.findSelectedIntegration(), target);
     }
 
+    /** Opens the rule typed as one line, such as a rule that makes a real error again. */
+    void openRule(String rule) {
+        control.openRule(ctx.findSelectedIntegration(), rule);
+    }
+
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
         IntegrationInfo info = ctx.findSelectedIntegration();
@@ -92,6 +97,12 @@ class ChaosTab extends AbstractTableTab {
             if (rule != null && ctx.askAiCallback != null) {
                 ctx.askAiCallback.ask(ChaosAiPrompt.of(info, rule));
             }
+            return true;
+        }
+        if (ke.isChar('t') && rule != null && rule.id != null && ctx.askAiCallback != null
+                && control.step() == ChaosControl.Step.NONE) {
+            // a test of the rule, so the finding runs again with the same faults (CAMEL-26725)
+            ctx.askAiCallback.ask(ChaosAiPrompt.ofTest(info, rule));
             return true;
         }
         return control.handleKey(ke, info, rule);

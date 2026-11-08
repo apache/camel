@@ -171,7 +171,7 @@
       "report": {
         "type": "object",
         "additionalProperties": true,
-        "description": "The report: verdict, final, seed, seedGiven, lost, reasons, all rules with the removed and replaced ones, the counts per route, and the recent faults (the last 20, the latest first: timestamp, ago, rule, version, fault, hook, route, endpoint or step, exchangeId) (only when chaos is on)"
+        "description": "The report: verdict, final, seed, seedGiven, seedFrom, lost, reasons, all rules (with their scenario) and the removed and replaced ones, the counts per route, and the recent faults (the last 20, the latest first: timestamp, ago, rule, version, fault, hook, route, endpoint or step, exchangeId) (only when chaos is on)"
       }
     },
     "required": [

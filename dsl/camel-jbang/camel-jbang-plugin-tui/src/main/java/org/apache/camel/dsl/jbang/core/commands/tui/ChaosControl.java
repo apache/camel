@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -42,10 +46,11 @@ import org.apache.camel.util.json.JsonObject;
  * The actions of the chaos screen, through the {@code chaos} action of the CLI connector as {@code camel cmd chaos-*}
  * sends it: add a rule ({@code a}) or change the selected one ({@code e}) typed as a one-line rule, remove the selected
  * rule ({@code x}), clear all rules ({@code c}) and start a new experiment ({@code R}, a clear that also resets the
- * report). Each asks to confirm, with the rule shown; only the user answers ({@link Confirmations}), and while a tape
- * drives the monitor nothing asks ({@link MonitorContext#confirmFirst()}). The connector checks the rule as
- * {@code camel.chaos.rules} is checked: a rule that is not valid comes back with the reason, and a rule that matches
- * nothing in the integration with its warnings, shown in a dialog from which the rule can be changed.
+ * report), and save the rules as a scenario file of the project ({@code s}, CAMEL-26722). Each asks to confirm, with
+ * the rule shown; only the user answers ({@link Confirmations}), and while a tape drives the monitor nothing asks
+ * ({@link MonitorContext#confirmFirst()}). The connector checks the rule as {@code camel.chaos.rules} is checked: a
+ * rule that is not valid comes back with the reason, and a rule that matches nothing in the integration with its
+ * warnings, shown in a dialog from which the rule can be changed.
  */
 final class ChaosControl {
 
@@ -70,7 +75,9 @@ final class ChaosControl {
         RESET,
         // the chaos the user wants, in their own words, for the AI panel to turn into rules (not sent to the
         // integration)
-        DESCRIBE
+        DESCRIBE,
+        // the rules as a scenario file in the folder of the integration (not sent to the integration)
+        SAVE
     }
 
     private final MonitorContext ctx;
@@ -93,8 +100,11 @@ final class ChaosControl {
     private String resultTitle;
     private final List<String> resultLines = new ArrayList<>();
     private boolean resultError;
-    // the integration the user describes the chaos for
+    // the integration the user describes the chaos for, or whose rules are saved
     private IntegrationInfo describing;
+    // the scenario file to save, and its content (the rules when s was pressed)
+    private Path saveFile;
+    private String saveText;
 
     ChaosControl(MonitorContext ctx) {
         this(ctx, null, ChaosRecipes::load);
@@ -216,6 +226,12 @@ final class ChaosControl {
             askWhatToTry();
             return true;
         }
+        if (ke.isChar('s') && !info.chaos.rules.isEmpty()) {
+            // the rules as a scenario of the project, for chaos-load and camel run --chaos=<file>
+            describing = info;
+            openInput(Command.SAVE, ChaosScenarioFile.defaultPath(info));
+            return true;
+        }
         if (ke.isChar('d') && ctx.askAiCallback != null) {
             // the chaos the user wants in their own words, which the AI turns into rules, checks and adds (CAMEL-26721)
             describing = info;
@@ -302,6 +318,17 @@ final class ChaosControl {
         return true;
     }
 
+    /** Opens a rule typed as one line, to change before Enter: a rule that makes a real error again (CAMEL-26723). */
+    void openRule(IntegrationInfo info, String text) {
+        if (!ChaosHere.available(info)) {
+            return;
+        }
+        pid = info.pid;
+        name = info.name;
+        id = null;
+        openInput(Command.ADD, text);
+    }
+
     private ChaosRecipes knownRules() {
         if (!recipesLoaded) {
             recipes = recipeSource.get();
@@ -343,6 +370,8 @@ final class ChaosControl {
                 IntegrationInfo info = describing;
                 close();
                 ctx.askAiCallback.askNow(ChaosAiPrompt.ofRequest(info, text, knownRules()));
+            } else if (!text.isEmpty() && command == Command.SAVE) {
+                prepareSave(text);
             } else if (!text.isEmpty()) {
                 rule = text;
                 ask(command);
@@ -365,6 +394,49 @@ final class ChaosControl {
         // a rule is one line
         input.insert(text.replace('\n', ' ').replace('\r', ' '));
         return true;
+    }
+
+    /** The file to save the rules to: written at once, or after a question when it is there already. */
+    private void prepareSave(String path) {
+        IntegrationInfo info = describing;
+        saveFile = ChaosScenarioFile.resolve(info, path);
+        if (saveFile == null) {
+            close();
+            rule = null;
+            result("Chaos scenario not saved", true, "The folder of " + name + " is not known");
+            return;
+        }
+        String shown = Path.of(info.directory).relativize(saveFile).toString();
+        rule = shown;
+        saveText = ChaosScenarioFile.text(info, info.chaos, shown, LocalDateTime.now());
+        if (Files.exists(saveFile)) {
+            ask(Command.SAVE);
+        } else {
+            execute();
+        }
+    }
+
+    /** Writes the scenario, and says how it went. */
+    private void save() {
+        step = Step.NONE;
+        resultLines.clear();
+        try {
+            Path dir = saveFile.getParent();
+            if (dir != null) {
+                Files.createDirectories(dir);
+            }
+            Files.writeString(saveFile, saveText);
+        } catch (IOException e) {
+            result("Chaos scenario not saved", true, "Cannot write " + saveFile + ": " + e.getMessage());
+            return;
+        }
+        long rules = saveText.lines().filter(l -> !l.isBlank() && !l.startsWith("#") && !l.startsWith("seed=")).count();
+        String done = "Saved " + rules + (rules == 1 ? " chaos rule" : " chaos rules") + " to " + rule
+                      + " (camel cmd chaos-load " + rule + ")";
+        describing = null;
+        if (ctx.notificationCallback != null) {
+            ctx.notificationCallback.accept(done, false);
+        }
     }
 
     private void ask(Command what) {
@@ -431,6 +503,11 @@ final class ChaosControl {
 
     /** Sends the action in the background (the integration answers within seconds), and shows how it went. */
     private void execute() {
+        if (command == Command.SAVE) {
+            // a file of the project, not an action of the integration
+            save();
+            return;
+        }
         JsonObject request = request();
         String target = pid;
         step = Step.NONE;
@@ -466,7 +543,7 @@ final class ChaosControl {
             case CLEAR -> "Removed all chaos rules";
             case RESET -> "New chaos experiment: no rules, a new report";
             // never sent to the integration
-            case DESCRIBE -> "";
+            case DESCRIBE, SAVE -> "";
         };
         if (reply.get("warnings") instanceof List<?> warnings && !warnings.isEmpty()) {
             List<String> lines = new ArrayList<>();
@@ -528,6 +605,9 @@ final class ChaosControl {
                 if (command == Command.DESCRIBE) {
                     DialogHelper.renderInputDialog(frame, area, "Describe the chaos you want in " + name, input,
                             "the order route fails 5% of the time, or when the country is Spain");
+                } else if (command == Command.SAVE) {
+                    DialogHelper.renderInputDialog(frame, area, "Save the chaos rules of " + name + " as a scenario",
+                            input, "chaos/outage.chaos (in the folder of the integration)");
                 } else {
                     DialogHelper.renderInputDialog(frame, area,
                             command == Command.CHANGE ? "Change chaos rule " + id : "Add a chaos rule to " + name, input,
@@ -550,6 +630,7 @@ final class ChaosControl {
             case CLEAR -> "Clear Chaos Rules";
             case RESET -> "New Chaos Experiment";
             case DESCRIBE -> "Describe the Chaos";
+            case SAVE -> "Save Chaos Scenario";
         };
     }
 
@@ -562,6 +643,7 @@ final class ChaosControl {
             case CLEAR -> "Remove all chaos rules from " + name + "? The report keeps what they did";
             case RESET -> "Start a new chaos experiment in " + name + "? No rules, and a new report (same seed)";
             case DESCRIBE -> "Ask the AI to turn this into chaos rules?";
+            case SAVE -> rule + " is there already: replace it with the rules of " + name + "?";
         };
     }
 
@@ -618,7 +700,8 @@ final class ChaosControl {
                 }
             }
             case INPUT -> {
-                TuiHelper.hint(spans, "Enter", command == Command.DESCRIBE ? "ask the AI" : "confirm");
+                TuiHelper.hint(spans, "Enter",
+                        command == Command.DESCRIBE ? "ask the AI" : command == Command.SAVE ? "save" : "confirm");
                 TuiHelper.hint(spans, "Esc", "cancel");
             }
             case CONFIRM -> {
@@ -634,10 +717,14 @@ final class ChaosControl {
                     TuiHelper.hint(spans, "e", "change");
                     TuiHelper.hint(spans, "x", "remove");
                     TuiHelper.hint(spans, "c", "clear");
+                    TuiHelper.hint(spans, "s", "save as scenario");
                 }
                 TuiHelper.hint(spans, "R", "new experiment");
                 if (ctx.askAiCallback != null) {
                     TuiHelper.hint(spans, "d", "describe with AI");
+                    if (hasRules) {
+                        TuiHelper.hint(spans, "t", "make a test with AI");
+                    }
                 }
             }
         }

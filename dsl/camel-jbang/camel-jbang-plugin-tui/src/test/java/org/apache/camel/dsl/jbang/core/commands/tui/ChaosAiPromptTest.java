@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +30,13 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * CAMEL-26702: explain with AI (Shift+F8) what a chaos rule did, on the Chaos screen and on an error a rule made on the
- * Errors tab, where it takes the place of fix with AI: the error is not a bug.
+ * Errors tab, where it takes the place of fix with AI: the error is not a bug. CAMEL-26725: make a test of a rule (t).
  */
 class ChaosAiPromptTest {
 
@@ -134,6 +136,17 @@ class ChaosAiPromptTest {
                 .contains("do not look around with other tools").contains("First call tui_chaos_check with the rules")
                 .endsWith("add them with tui_chaos_add (or change a rule above with tui_chaos_change), which asks me to"
                           + " confirm first. Do not change the routes.");
+    }
+
+    @Test
+    void aTimeExpectationIsAskedAsATime() {
+        ChaosInfo.Rule rule = info.chaos.rules.get(0);
+        rule.expectKind = "meanTime";
+        rule.expectOp = "<=";
+        rule.expectCount = 2000;
+        rule.expectValue = 2340;
+        rule.expectSpec = "orders:meanTime<=2s";
+        assertThat(ChaosAiPrompt.of(info, rule)).contains("Expectation: orders:meanTime<=2s, unmet (2s meanTime)");
     }
 
     @Test
@@ -247,5 +260,48 @@ class ChaosAiPromptTest {
         StringBuilder sb = new StringBuilder();
         spans.forEach(s -> sb.append(s.content()));
         return sb.toString();
+    }
+
+    @Test
+    void aTestOfARuleForAMavenProjectIsAJUnitTestWithTheAssertions(@TempDir Path dir) throws Exception {
+        Files.writeString(dir.resolve("pom.xml"), "<project/>");
+        info.directory = dir.toString();
+        ChaosInfo.Rule rule = info.chaos.rules.get(0);
+
+        String question = ChaosAiPrompt.ofTest(info, rule);
+        assertThat(question).startsWith("Make a test of chaos rule r1 of the running integration chaosdemo")
+                .contains("endpoint=http://localhost:8765/stock* error status=503 rate=0.2 expect=orders:handled<=0")
+                .contains("The seed of its random draws: 42.")
+                .contains("Expectation: orders:handled<=0, unmet")
+                .contains("a JUnit test in src/test/java").contains("camel.chaos.seed=42")
+                .contains("assertExpectationMet(context, \"r1\", Duration.ofSeconds(10))")
+                .contains("The rule has an expectation: keep it.")
+                .endsWith("Write the file with camel_write_file, which asks me first, and change no route.");
+    }
+
+    @Test
+    void aTestOfARuleForACamelRunFolderIsAScenarioAndTheRun(@TempDir Path dir) throws Exception {
+        info.directory = dir.toString();
+        ChaosInfo.Rule rule = info.chaos.rules.get(0);
+        rule.expectRoute = null;
+
+        String question = ChaosAiPrompt.ofTest(info, rule);
+        assertThat(question).contains("runs with camel run, without a Maven project")
+                .contains("Write the scenario chaos/r1-test.chaos").contains("seed=42")
+                .contains("The rule has no expectation (expect=): add one")
+                .contains("camel run * --chaos=chaos/r1-test.chaos --max-seconds=<seconds>")
+                .doesNotContain("JUnit");
+    }
+
+    @Test
+    void tOnTheChaosScreenAsksTheAiToMakeATest() {
+        ChaosTab tab = new ChaosTab(ctx);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        List<Span> footer = new ArrayList<>();
+        tab.renderFooter(footer);
+        assertThat(footer.stream().map(Span::content).reduce("", String::concat)).contains("make a test with AI");
+
+        tab.handleKeyEvent(KeyEvent.ofChar('t', KeyModifiers.NONE));
+        assertThat(asked).singleElement().asString().startsWith("Make a test of chaos rule r1");
     }
 }

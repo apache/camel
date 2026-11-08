@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,6 +32,7 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -257,11 +261,74 @@ class ChaosControlTest {
     }
 
     @Test
+    void saveTheRulesAsAScenarioOfTheProject(@TempDir Path dir) throws Exception {
+        info.directory = dir.toString();
+        key('s');
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Save the chaos rules of chaosdemo as a scenario")
+                .contains("chaos/chaosdemo.chaos");
+        enter();
+
+        // a new file is written at once, and nothing goes to the integration
+        Path file = dir.resolve("chaos/chaosdemo.chaos");
+        assertThat(Files.readString(file)).contains("seed=42\nendpoint=http:stock* error status=503\n")
+                .contains("# camel cmd chaos-load chaos/chaosdemo.chaos, or camel run --chaos=chaos/chaosdemo.chaos");
+        assertThat(requests).isEmpty();
+        assertThat(notifications).containsExactly(
+                "Saved 1 chaos rule to chaos/chaosdemo.chaos (camel cmd chaos-load chaos/chaosdemo.chaos)");
+
+        // a file that is there is replaced only after the question
+        key('s');
+        for (int i = 0; i < "chaosdemo.chaos".length(); i++) {
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.BACKSPACE, KeyModifiers.NONE));
+        }
+        type("outage");
+        Files.writeString(dir.resolve("chaos/outage.chaos"), "endpoint=mock:x drop\n");
+        enter();
+        assertThat(tab.isConfirming()).isTrue();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40))
+                .contains("chaos/outage.chaos is there already: replace it with the rules of chaosdemo?");
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ESCAPE, KeyModifiers.NONE));
+        assertThat(Files.readString(dir.resolve("chaos/outage.chaos"))).isEqualTo("endpoint=mock:x drop\n");
+    }
+
+    @Test
+    void aScenarioIsTheSeedAndTheRules() {
+        String text = ChaosScenarioFile.text(info, info.chaos, "chaos/x.chaos", LocalDateTime.of(2026, 11, 7, 22, 40));
+        assertThat(text).isEqualTo("""
+                # Chaos rules of chaosdemo, saved on 2026-11-07 22:40
+                # camel cmd chaos-load chaos/x.chaos, or camel run --chaos=chaos/x.chaos
+                # the times of from= and until= count from when the scenario is loaded
+                seed=42
+                endpoint=http:stock* error status=503
+                """);
+        assertThat(ChaosScenarioFile.resolve(info, "chaos/x")).isNull();
+        info.directory = "/work/shop";
+        assertThat(ChaosScenarioFile.resolve(info, "chaos/x")).isEqualTo(Path.of("/work/shop/chaos/x.chaos"));
+        info.name = "my app";
+        assertThat(ChaosScenarioFile.defaultPath(info)).isEqualTo("chaos/my-app.chaos");
+    }
+
+    @Test
+    void aRuleOpenedTypedInIsAddedAfterTheConfirmation() {
+        tab.openRule("step=callStock error exception=java.net.ConnectException until=10");
+        // the input shows the end of the line, where the cursor is
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Add a chaos rule to chaosdemo")
+                .contains("ConnectException until=10");
+        enter();
+        assertThat(tab.isConfirming()).isTrue();
+        reply.put("id", "r2");
+        key('y');
+        assertThat(requests.get(0).getString("rule"))
+                .isEqualTo("step=callStock error exception=java.net.ConnectException until=10");
+    }
+
+    @Test
     void theFooterHasTheKeys() {
         List<Span> footer = new ArrayList<>();
         tab.renderFooter(footer);
         assertThat(footer.stream().map(Span::content).reduce("", String::concat))
                 .contains("add").contains("what to try").contains("change").contains("remove").contains("clear")
+                .contains("save as scenario")
                 .contains("new experiment");
         key('x');
         footer.clear();

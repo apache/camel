@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 import picocli.CommandLine;
 
@@ -33,8 +36,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear and chaos-suggest: the chaos action they send, what they
- * print, and that a refused rule is an error with the reason of the integration.
+ * camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear, chaos-load and chaos-suggest: the chaos action they
+ * send, what they print, and that a refused rule is an error with the reason of the integration.
  */
 @ExtendWith(MockitoExtension.class)
 class CamelChaosActionTest extends ActionCommandTestSupport {
@@ -121,6 +124,34 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"),
                 new JsonObject(Map.of("suggestions", new JsonArray())))).isZero();
         assertThat(printer.getOutput()).startsWith("Nothing to suggest");
+    }
+
+    @Test
+    void loadSendsTheScenario(@TempDir Path dir) throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        String text = "# the stock service is down\nseed=7\nendpoint=http:stock* error status=503 until=1m\n";
+        Path file = Files.writeString(dir.resolve("outage.chaos"), text);
+        JsonObject answer = new JsonObject(
+                Map.of("ids", new JsonArray(List.of("r1")), "reset", true, "descriptions",
+                        new JsonArray(List.of("fail every send to http:stock* with HTTP status 503, for 1 minute"))));
+
+        assertThat(callWithResponse(command(new CamelChaosLoadAction(main()), file.toString(), "orders"), answer)).isZero();
+
+        JsonObject action = readActionFile(TEST_PID);
+        assertThat(action.getString("command")).isEqualTo("load");
+        assertThat(action.getString("name")).isEqualTo("outage.chaos");
+        // the integration parses the scenario: the file as it is
+        assertThat(action.getString("text")).isEqualTo(text);
+        assertThat(printer.getLines()).containsExactly(
+                "Loaded chaos scenario outage.chaos: 1 rule (the rules there were are removed, and the report starts again)",
+                "r1: fail every send to http:stock* with HTTP status 503, for 1 minute");
+    }
+
+    @Test
+    void loadAScenarioThatIsMissing(@TempDir Path dir) {
+        assertThatThrownBy(() -> command(new CamelChaosLoadAction(main()), dir.resolve("none.chaos").toString()).doCall())
+                .isInstanceOf(CliException.class).hasMessageStartingWith("The chaos scenario does not exist: ")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.FILE_NOT_FOUND);
     }
 
     @Test
