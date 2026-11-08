@@ -297,6 +297,43 @@ class DoctorTest extends CamelCommandBaseTestSupport {
     }
 
     @Test
+    void versionsOfTheWebInstallerAreOneInstall() {
+        Path versions = Path.of("/home/user/.local/share/camel-cli/versions");
+        List<InstallDetector.InstallInfo> installs = List.of(
+                new InstallDetector.InstallInfo(versions.resolve("4.23.0"), InstallDetector.InstallMethod.WEB_INSTALLER),
+                new InstallDetector.InstallInfo(versions.resolve("4.22.2"), InstallDetector.InstallMethod.WEB_INSTALLER));
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+
+        boolean conflict = command.checkInstallLocations(installs, Optional.of(versions.resolve("4.23.0/bin/camel.sh")));
+
+        assertThat(conflict).isFalse();
+        assertThat(command.getChecks()).singleElement()
+                .satisfies(c -> assertThat(c.status()).isNotEqualTo(Doctor.FAIL));
+        assertThat(printer.getOutput())
+                .contains("Found 1 Camel CLI installation (2 versions of the web installer)")
+                .contains("4.23.0 (WEB_INSTALLER) <- active")
+                .doesNotContain("4.22.2 (WEB_INSTALLER) <- active")
+                .doesNotContain("Warning: more than one");
+    }
+
+    @Test
+    void versionsOfTheWebInstallerNextToAnotherInstallFail() {
+        Path versions = Path.of("/home/user/.local/share/camel-cli/versions");
+        List<InstallDetector.InstallInfo> installs = List.of(
+                new InstallDetector.InstallInfo(versions.resolve("4.23.0"), InstallDetector.InstallMethod.WEB_INSTALLER),
+                new InstallDetector.InstallInfo(versions.resolve("4.22.2"), InstallDetector.InstallMethod.WEB_INSTALLER),
+                new InstallDetector.InstallInfo(
+                        Path.of("/opt/homebrew/Cellar/apache-camel/4.21.0/libexec"),
+                        InstallDetector.InstallMethod.HOMEBREW));
+        Doctor command = new Doctor(new CamelJBangMain().withPrinter(printer));
+
+        boolean conflict = command.checkInstallLocations(installs, Optional.empty());
+
+        assertThat(conflict).isTrue();
+        assertThat(printer.getOutput()).contains("Found 2 Camel CLI installations (2 versions of the web installer)");
+    }
+
+    @Test
     void reportsNoConflictWhenSingleInstallFound() {
         Path location = Path.of("/home/user/.local/share/camel-cli/versions/4.22.0");
         List<InstallDetector.InstallInfo> installs = List.of(
