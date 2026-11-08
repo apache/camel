@@ -125,7 +125,8 @@ class RuntimeToolsTest {
                 "get_sql_trace",
                 "get_circuit_breakers", "get_metrics",
                 "get_eip_stats", "get_spans", "get_startup_steps", "get_route_analysis", "detect_config_drift",
-                "chaos_list", "chaos_report", "chaos_check", "chaos_add", "chaos_change", "chaos_remove", "chaos_clear")) {
+                "chaos_list", "chaos_report", "chaos_check", "chaos_add", "chaos_change", "chaos_remove", "chaos_clear",
+                "chaos_suggest", "chaos_load")) {
             assertThat(ToolRegistry.findTool(name)).as(name).isNotNull();
         }
     }

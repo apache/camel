@@ -316,12 +316,12 @@ class ToolRegistryTest {
     @Test
     void theChaosToolsHaveTheMarksOfTheMcpTools() {
         // the same marks as camel_runtime_chaos_* (design/chaos.adoc, "Control")
-        for (String name : List.of("chaos_list", "chaos_report", "chaos_check")) {
+        for (String name : List.of("chaos_list", "chaos_report", "chaos_check", "chaos_suggest")) {
             ToolDescriptor t = ToolRegistry.findTool(name);
             assertTrue(t.isReadOnly(), name);
             assertFalse(t.isDestructive(), name);
         }
-        for (String name : List.of("chaos_add", "chaos_change")) {
+        for (String name : List.of("chaos_add", "chaos_change", "chaos_load")) {
             ToolDescriptor t = ToolRegistry.findTool(name);
             assertFalse(t.isReadOnly(), name);
             assertTrue(t.isDestructive(), name);
@@ -346,6 +346,9 @@ class ToolRegistryTest {
                 .getMessage());
         assertEquals("id is required", assertThrows(ToolExecutionException.class,
                 () -> ToolRegistry.execute("chaos_remove", new ToolContext(), Map.of())).getMessage());
+        assertEquals("scenario is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_load", new ToolContext(), Map.of("scenarioName", "outage")))
+                .getMessage());
     }
 
     @Test
@@ -382,9 +385,10 @@ class ToolRegistryTest {
         List<String> http = ToolRegistry.httpTools().stream().map(ToolDescriptor::name).toList();
         List<String> all = ToolRegistry.allTools().stream().map(ToolDescriptor::name).toList();
         List<String> left = all.stream().filter(n -> !http.contains(n)).toList();
-        // only the chaos tools that change the rules, and the check (the integration parses the rule), stay off HTTP;
-        // the other tools keep what they offered
-        assertEquals(List.of("chaos_add", "chaos_check", "chaos_change", "chaos_remove", "chaos_clear"), left);
+        // only the chaos tools that change the rules, the check (the integration parses the rule) and what to try (an
+        // action of the CLI connector) stay off HTTP; the other tools keep what they offered
+        assertEquals(List.of("chaos_add", "chaos_check", "chaos_suggest", "chaos_load", "chaos_change", "chaos_remove",
+                "chaos_clear"), left);
         assertTrue(http.containsAll(List.of("chaos_list", "chaos_report", "stop_route", "execute_sql")));
     }
 }

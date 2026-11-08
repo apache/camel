@@ -75,7 +75,9 @@ public class AskTools {
             Map.entry(ToolGroups.CHAOS_ADD_TOOL, "chaos_add"),
             Map.entry(ToolGroups.CHAOS_CHANGE_TOOL, "chaos_change"),
             Map.entry(ToolGroups.CHAOS_REMOVE_TOOL, "chaos_remove"),
-            Map.entry(ToolGroups.CHAOS_CLEAR_TOOL, "chaos_clear"));
+            Map.entry(ToolGroups.CHAOS_CLEAR_TOOL, "chaos_clear"),
+            Map.entry(ToolGroups.CHAOS_SUGGEST_TOOL, "chaos_suggest"),
+            Map.entry(ToolGroups.CHAOS_LOAD_TOOL, "chaos_load"));
 
     private static final String CLI_LIST_COMMANDS = "cli_list_commands";
     private static final String CLI_COMMAND_HELP = "cli_command_help";
@@ -354,6 +356,8 @@ public class AskTools {
                     args.get("name") != null ? args.get("name") : processName());
             case "chaos_add", "chaos_change" -> ToolConfirms.chaos(name.substring("chaos_".length()),
                     args.get("name") != null ? args.get("name") : processName(), args.get("id"), args.get("rule"));
+            case "chaos_load" -> ToolConfirms.chaosLoad(args.get("name") != null ? args.get("name") : processName(),
+                    args.get("scenarioName"), args.get("scenario"));
             default -> null;
         };
     }

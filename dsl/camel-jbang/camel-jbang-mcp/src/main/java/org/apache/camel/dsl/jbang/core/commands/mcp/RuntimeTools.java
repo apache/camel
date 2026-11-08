@@ -1106,8 +1106,8 @@ public class RuntimeTools {
     }
 
     // ---- camel-chaos (the chaos tool group): the rules and the report, and the chaos action of the CLI connector ----
-    // add and change are destructive (a rule makes messages fail, wait or get lost) and the clients ask first
-    // (ToolConfirms.chaos); remove and clear change the integration only back towards normal, and the report keeps
+    // add, change and load are destructive (a rule makes messages fail, wait or get lost) and the clients ask first
+    // (ToolConfirms.chaos and chaosLoad); suggest only reads the routes; remove and clear change the integration only back towards normal, and the report keeps
     // the removed rules, so they are not destructive, as trace start and stop are not
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
@@ -1148,6 +1148,43 @@ public class RuntimeTools {
                                    + " rules separated by ;") String rule) {
         requireArg("rule", rule);
         return delegateChaos("chaos_check", nameOrPid, Map.of("rule", rule));
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = true, destructiveHint = false, openWorldHint = false),
+          description = """
+                  What to try (as camel cmd chaos-suggest): chaos rules suggested per route of the Camel application \
+                  from what the routes do, the most worth trying first, such as an HTTP call without a circuit \
+                  breaker, a dead letter channel or a hand-off to another route over seda. Each has the route, the \
+                  kind of fault, the rule, why to try it, and tried=true when a rule of that kind has already \
+                  faulted the route. Nothing is added: check a rule with camel_runtime_chaos_check and add it with \
+                  camel_runtime_chaos_add.""")
+    public JsonObject camel_runtime_chaos_suggest(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateChaos("chaos_suggest", nameOrPid, Map.of());
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Load a chaos scenario into the Camel application (as camel cmd chaos-load): the rules there are \
+                  now are removed and the report starts again, then the rules of the scenario are added, all or \
+                  none (a line that is not valid is refused with the reason, and nothing changes). Returns the ids \
+                  and each rule in plain words, and warnings for a rule that matches nothing in the application \
+                  now.""")
+    public JsonObject camel_runtime_chaos_load(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The scenario, the text of a .chaos file: one rule per line, # comments, and"
+                                   + " optionally a seed=<number> line for the same sequence of faults each run") String scenario,
+            @ToolArg(description = "The name of the scenario in the report, such as outage (default scenario)",
+                     required = false) String scenarioName) {
+        requireArg("scenario", scenario);
+        Map<String, String> args = new HashMap<>();
+        args.put("scenario", scenario);
+        if (scenarioName != null) {
+            args.put("scenarioName", scenarioName);
+        }
+        return delegateChaos("chaos_load", nameOrPid, args);
     }
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)

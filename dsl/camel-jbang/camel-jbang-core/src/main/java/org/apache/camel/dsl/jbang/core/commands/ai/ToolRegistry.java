@@ -81,9 +81,11 @@ public final class ToolRegistry {
      * over HTTP chaos only lists and reports, as its developer console does (design/chaos.adoc).
      */
     public static List<ToolDescriptor> httpTools() {
-        // chaos_check is read-only, but the integration parses the rule, and exception= loads a class: off HTTP too
+        // chaos_check is read-only, but the integration parses the rule, and exception= loads a class; chaos_suggest
+        // is read-only, but an action of the CLI connector, not of the console: off HTTP too
         return TOOLS.stream()
-                .filter(t -> !t.name().startsWith("chaos_") || t.isReadOnly() && !"chaos_check".equals(t.name()))
+                .filter(t -> !t.name().startsWith("chaos_") || "chaos_list".equals(t.name())
+                        || "chaos_report".equals(t.name()))
                 .toList();
     }
 
@@ -734,12 +736,13 @@ public final class ToolRegistry {
               + " with chaos switched on)";
 
     /**
-     * The chaos tools, the seven operations of camel cmd chaos-add [--dry-run], chaos-change, chaos-remove, chaos-clear
-     * and camel get chaos [--report]. The list and the report read the chaos console in the status of the integration;
-     * the others send the chaos action of the CLI connector, which works only when chaos is switched on and answers a
-     * rule that is not valid with the reason of the parser of camel.chaos.rules. Adding and changing a rule is
-     * destructive: a rule makes messages fail, wait or get lost, and exception= can name any exception class. Removing
-     * and clearing only take faults away, and the report keeps the removed rules.
+     * The chaos tools, the nine operations of camel cmd chaos-add [--dry-run], chaos-change, chaos-remove, chaos-clear,
+     * chaos-load, chaos-suggest and camel get chaos [--report]. The list and the report read the chaos console in the
+     * status of the integration; the others send the chaos action of the CLI connector, which works only when chaos is
+     * switched on and answers a rule that is not valid with the reason of the parser of camel.chaos.rules. Adding and
+     * changing a rule, and loading a scenario, are destructive: a rule makes messages fail, wait or get lost, and
+     * exception= can name any exception class. Removing and clearing only take faults away, and the report keeps the
+     * removed rules. What to try (suggest) only reads the routes.
      */
     private static void registerChaosTools() {
         register(tool("chaos_list",
@@ -800,6 +803,47 @@ public final class ToolRegistry {
                     String rule = AuthoringTools.required(args, "rule");
                     selectChaosProcess(ctx, args);
                     return chaos(ctx, "check", null, rule);
+                }));
+
+        register(tool("chaos_suggest",
+                "What to try (as camel cmd chaos-suggest): chaos rules suggested per route from what the routes do, "
+                                       + "the most worth trying first, such as an HTTP call without a circuit breaker, "
+                                       + "a dead letter channel or a hand-off to another route over seda. Each has the "
+                                       + "route, the kind of fault, the rule, why to try it, and tried=true when a rule "
+                                       + "of that kind has already faulted the route. Nothing is added: check a rule "
+                                       + "with chaos_check and add it with chaos_add.")
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(true).destructive(false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "suggest", null, null);
+                }));
+
+        register(tool("chaos_load",
+                "Load a chaos scenario into the integration (as camel cmd chaos-load): the rules there are now are "
+                                    + "removed and the report starts again, then the rules of the scenario are added, "
+                                    + "all or none (a line that is not valid is refused with the reason, and nothing "
+                                    + "changes). Returns the ids and each rule in plain words, and warnings for a rule "
+                                    + "that matches nothing in the integration now.")
+                .param("scenario", "string",
+                        "The scenario, the text of a .chaos file: one rule per line, # comments, and optionally a "
+                                             + "seed=<number> line for the same sequence of faults each run",
+                        true)
+                .param("scenarioName", "string",
+                        "The name of the scenario in the report, such as outage (default scenario)", false)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(true)
+                .executor((ctx, args) -> {
+                    String scenario = AuthoringTools.required(args, "scenario");
+                    String scenarioName = args.get("scenarioName");
+                    selectChaosProcess(ctx, args);
+                    return ctx.executeAction("chaos", root -> {
+                        root.put("command", "load");
+                        root.put("text", scenario);
+                        if (scenarioName != null && !scenarioName.isBlank()) {
+                            root.put("name", scenarioName);
+                        }
+                    });
                 }));
 
         register(tool("chaos_change",

@@ -286,6 +286,20 @@ class ToolConfirmsTest {
     }
 
     @Test
+    void loadingAChaosScenarioIsAskedWithItsRules() {
+        ToolConfirms.Call load = ToolConfirms.chaosLoad("orders", "outage",
+                "# the payment service is down\nseed=42\nendpoint=http:* error\n");
+        assertThat(load.title()).isEqualTo("load chaos scenario outage into orders");
+        assertThat(load.target()).isEqualTo("# the payment service is down\nseed=42\nendpoint=http:* error");
+        assertThat(load.reason()).contains("replaced", "report starts again", "fail, wait or get lost");
+
+        assertThat(ToolConfirms.chaosLoad(null, null, "endpoint=* drop").title())
+                .isEqualTo("load chaos scenario into the selected integration");
+        // without a scenario the tool refuses the call, so there is nothing to ask
+        assertThat(ToolConfirms.chaosLoad("orders", "outage", " ")).isNull();
+    }
+
+    @Test
     void addingOrChangingAChaosRuleIsAskedWithTheRule() {
         ToolConfirms.Call add = ToolConfirms.chaos("add", "orders", null, "endpoint=* error exception=java.sql.SQLException");
         assertThat(add.title()).isEqualTo("add a chaos rule to orders");

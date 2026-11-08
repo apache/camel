@@ -45,11 +45,13 @@ class RuntimeToolsChaosSecurityTest {
     static {
         MARKS.put("camel_runtime_chaos_list", new boolean[] { true, false });
         MARKS.put("camel_runtime_chaos_report", new boolean[] { true, false });
+        MARKS.put("camel_runtime_chaos_suggest", new boolean[] { true, false });
         MARKS.put("camel_runtime_chaos_check", new boolean[] { true, false });
         MARKS.put("camel_runtime_chaos_add", new boolean[] { false, true });
         MARKS.put("camel_runtime_chaos_change", new boolean[] { false, true });
         MARKS.put("camel_runtime_chaos_remove", new boolean[] { false, false });
         MARKS.put("camel_runtime_chaos_clear", new boolean[] { false, false });
+        MARKS.put("camel_runtime_chaos_load", new boolean[] { false, true });
     }
 
     private static Tool.Annotations annotations(String name) {
@@ -87,10 +89,12 @@ class RuntimeToolsChaosSecurityTest {
     void exactlyTheDestructiveToolsAreInToolConfirms() {
         MARKS.forEach((name, marks) -> {
             String command = name.substring("camel_runtime_chaos_".length());
-            ToolConfirms.Call call = ToolConfirms.chaos(command, "shop", "r1", "endpoint=kafka:* error rate=0.1");
+            ToolConfirms.Call call = "load".equals(command)
+                    ? ToolConfirms.chaosLoad("shop", "outage", "endpoint=kafka:* error rate=0.1")
+                    : ToolConfirms.chaos(command, "shop", "r1", "endpoint=kafka:* error rate=0.1");
             assertThat(call != null).as(name + " is asked first").isEqualTo(marks[1]);
             if (call != null) {
-                // the user sees the rule
+                // the user sees the rule, or the rules of the scenario
                 assertThat(call.target()).isEqualTo("endpoint=kafka:* error rate=0.1");
             }
         });
@@ -99,10 +103,12 @@ class RuntimeToolsChaosSecurityTest {
     @Test
     void theAccessLevelsOfferTheToolsByTheirMarks() {
         assertThat(offered(McpSecurityConfig.AccessLevel.READ_ONLY))
-                .containsExactly("camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_check");
+                .containsExactly("camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_suggest",
+                        "camel_runtime_chaos_check");
         // as for route_control, sql, send and receive: no destructive tool at read-write
         assertThat(offered(McpSecurityConfig.AccessLevel.READ_WRITE)).containsExactly(
-                "camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_check",
+                "camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_suggest",
+                "camel_runtime_chaos_check",
                 "camel_runtime_chaos_remove", "camel_runtime_chaos_clear");
         assertThat(offered(McpSecurityConfig.AccessLevel.ADMIN)).containsExactlyElementsOf(MARKS.keySet());
         // with the security layer on, the interceptor of @McpSecured audits each call (and redacts the answer when

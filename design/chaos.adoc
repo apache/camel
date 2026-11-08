@@ -442,10 +442,10 @@ framework, so camel-test does not depend on camel-chaos; the rules come from the
 |===
 |Tool |`readOnlyHint` |`destructiveHint`
 
-|`camel_runtime_chaos_add`, `camel_runtime_chaos_change` |`false` |`true`
+|`camel_runtime_chaos_add`, `camel_runtime_chaos_change`, `camel_runtime_chaos_load` (CAMEL-26731) |`false` |`true`
 |`camel_runtime_chaos_remove`, `camel_runtime_chaos_clear` |`false` |`false`
-|`camel_runtime_chaos_list`, `camel_runtime_chaos_report`, `camel_runtime_chaos_check` (stage 2, CAMEL-26720)
-|`true` |`false`
+|`camel_runtime_chaos_list`, `camel_runtime_chaos_report`, `camel_runtime_chaos_check` (stage 2, CAMEL-26720),
+`camel_runtime_chaos_suggest` (CAMEL-26731) |`true` |`false`
 |===
 +
 With `camel.mcp.security.enabled=true` and `camel.mcp.security.access-level=read-write`, add and change are refused,
