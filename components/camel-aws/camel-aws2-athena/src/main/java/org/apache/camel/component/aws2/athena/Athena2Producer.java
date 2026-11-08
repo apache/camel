@@ -99,7 +99,7 @@ public class Athena2Producer extends DefaultProducer {
             default:
                 throw new IllegalArgumentException(
                         "Invalid operation [" + operation + "] specified.  Must be one of "
-                                + Arrays.asList(Athena2Operations.values()));
+                                                   + Arrays.asList(Athena2Operations.values()));
         }
     }
 
@@ -160,7 +160,7 @@ public class Athena2Producer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException(
                     "AWS Athena output type [" + outputType + "] is not supported.  Must be "
-                            + "one of " + Arrays.asList(Athena2OutputType.values()));
+                                               + "one of " + Arrays.asList(Athena2OutputType.values()));
         }
     }
 
@@ -385,8 +385,8 @@ public class Athena2Producer extends DefaultProducer {
         if (ObjectHelper.isEmpty(queryString)) {
             throw new IllegalArgumentException(
                     "AWS Athena query string is required. Set the " + Athena2Constants.QUERY_STRING
-                            + " header or the queryString option, or enable useMessageBodyForSql"
-                            + " to use the message body as the query.");
+                                               + " header or the queryString option, or enable useMessageBodyForSql"
+                                               + " to use the message body as the query.");
         }
 
         boolean includeTrace = determineIncludeTrace(exchange);
@@ -397,10 +397,10 @@ public class Athena2Producer extends DefaultProducer {
                     ? "\"fromEndpointUri\": \"" + URISupport.sanitizeUri(fromEndpoint.getEndpointUri()) + "\", "
                     : "";
             queryString = "-- {" + fromEndpointUri
-                    + "\"exchangeId\": \"" + exchange.getExchangeId() + "\", "
-                    + "\"exchangeFromRouteId\": \"" + exchange.getFromRouteId() + "\"}"
-                    + "\n"
-                    + queryString;
+                          + "\"exchangeId\": \"" + exchange.getExchangeId() + "\", "
+                          + "\"exchangeFromRouteId\": \"" + exchange.getFromRouteId() + "\"}"
+                          + "\n"
+                          + queryString;
         }
 
         return queryString;

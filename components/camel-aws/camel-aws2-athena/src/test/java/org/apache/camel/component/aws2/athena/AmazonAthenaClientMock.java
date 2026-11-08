@@ -74,7 +74,8 @@ public class AmazonAthenaClientMock implements AthenaClient {
     }
 
     public StartQueryExecutionRequest getLastStartQueryExecutionRequest() {
-        return startQueryExecutionRequests.isEmpty() ? null : startQueryExecutionRequests.get(startQueryExecutionRequests.size() - 1);
+        return startQueryExecutionRequests.isEmpty()
+                ? null : startQueryExecutionRequests.get(startQueryExecutionRequests.size() - 1);
     }
 
     @Override

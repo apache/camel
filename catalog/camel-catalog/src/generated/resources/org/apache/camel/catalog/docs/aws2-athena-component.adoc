@@ -309,8 +309,8 @@ YAML::
 
 === Overriding query parameters with message headers
 
-Message headers listed in "Message headers evaluated by the Athena producer" override the corresponding
-query parameters listed in "Query Parameters".
+The `CamelAwsAthenaOutputLocationOverride` message header overrides the endpoint-level
+`outputLocation` option when starting a query execution.
 
 For example:
 
@@ -321,7 +321,7 @@ Java::
 [source,java]
 ----
 from("direct:start")
-     .setHeader(Athena2Constants.OUTPUT_LOCATION, constant("s3://other/location/"))
+     .setHeader(Athena2Constants.OUTPUT_LOCATION_OVERRIDE, constant("s3://other/location/"))
      .to("aws2-athena:label?outputLocation=s3://foo/bar/")
      .to("mock:result");
 ----
@@ -332,7 +332,7 @@ XML::
 ----
 <route>
   <from uri="direct:start"/>
-  <setHeader name="CamelAwsAthenaOutputLocation">
+  <setHeader name="CamelAwsAthenaOutputLocationOverride">
     <constant>s3://other/location/</constant>
   </setHeader>
   <to uri="aws2-athena:label?outputLocation=s3://foo/bar/"/>
@@ -349,7 +349,7 @@ YAML::
       uri: direct:start
       steps:
         - setHeader:
-            name: CamelAwsAthenaOutputLocation
+            name: CamelAwsAthenaOutputLocationOverride
             constant: "s3://other/location/"
         - to:
             uri: aws2-athena:label
@@ -360,7 +360,14 @@ YAML::
 ----
 ====
 
-Will cause the output location to be `s3://other/location/`.
+This will cause the query results to be stored at `s3://other/location/`, because
+the `CamelAwsAthenaOutputLocationOverride` header takes precedence over the endpoint-level
+`outputLocation` option.
+
+If neither the override header nor the endpoint-level `outputLocation` option is provided,
+starting a query execution will throw an `IllegalArgumentException`.
+
+The resulting S3 location is returned in the `CamelAwsAthenaOutputLocation` message header.
 
 The `CamelAwsAthenaOutputLocation` and `CamelAwsAthenaNextToken` headers are also results of the operations. A result
 is not taken as the input of a later operation in the same route:
