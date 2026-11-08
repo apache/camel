@@ -25,7 +25,9 @@ with the same step trace.
 
 This is a test tool. Nothing of it runs in production. Camel core has one internal hook for it, `TimeSource` in
 camel-util: with its default provider it reads `System` and sleeps with `Thread.sleep`, and only an open run replaces
-the provider.
+the provider (installing it, and putting the default back, is logged at INFO with the class of the provider).
+`TimeSource` is not an API for components: a component gets virtual time through the core classes it already uses
+(the "Camel core" row of the table below); `camel-chaos` is the one exception that reads it directly.
 
 == A test
 
@@ -135,7 +137,9 @@ the synchronous redelivery (`RedeliveryPolicy`, `RedeliveryErrorHandler`), `Fore
 the budgets of both tasks, the wait loop of `DefaultShutdownStrategy`, the synchronous delayer, `MulticastProcessor`,
 `OptimisticLockRetryPolicy`, `DefaultStartupConditionStrategy`, `StopWatch`, `MonotonicClock`, `BackOffTimerTask`,
 `DefaultTimeoutMap`, the clocks of the throttlers and the counters of `ThrottlingExceptionRoutePolicy`. A sleep there is
-a virtual wait on the loop thread, traced with its call site. Two waits of these classes are not virtual (see below):
+a virtual wait on the loop thread, traced with its call site. A test of camel-core (`TimeSourceDirectClockCallsTest`)
+fails when one of these classes calls `System.nanoTime()`, `System.currentTimeMillis()` or `Thread.sleep` directly.
+Two waits of these classes are not virtual (see below):
 the permit queue of `TotalRequestsThrottler` and the `Semaphore` of `ConcurrentRequestsThrottler`. The sleep of the
 route `delayer` option is not virtual either (see below). The half-open check of `ThrottlingExceptionRoutePolicy` runs
 on a scheduler of the `ExecutorServiceManager`, so the circuit is half opened after `halfOpenAfter` of virtual time.
