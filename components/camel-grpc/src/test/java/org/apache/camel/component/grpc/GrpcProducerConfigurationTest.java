@@ -19,6 +19,7 @@ package org.apache.camel.component.grpc;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GrpcProducerConfigurationTest extends CamelTestSupport {
@@ -38,5 +39,18 @@ class GrpcProducerConfigurationTest extends CamelTestSupport {
     void invalidPort() {
         assertThrows(IllegalArgumentException.class,
                 () -> template.requestBody("grpc:localhost:0/org.apache.camel.component.grpc.PingPong"));
+    }
+
+    @Test
+    void googleAuthenticationWithoutServiceAccountResource() {
+        // the channel is set up with TLS (mandatory for GOOGLE authentication), but serviceAccountResource
+        // is not given, so the producer must report that option as missing
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> template.requestBody("grpc:localhost:1101/org.apache.camel.component.grpc.PingPong"
+                                           + "?method=pingSyncSync&synchronous=true"
+                                           + "&authenticationType=GOOGLE&negotiationType=TLS"
+                                           + "&keyCertChainResource=file:src/test/resources/certs/client.pem"
+                                           + "&keyResource=file:src/test/resources/certs/client.key"));
+        assertEquals("serviceAccountResource must be specified", e.getMessage());
     }
 }
