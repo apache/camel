@@ -669,6 +669,16 @@ now receive the input that was split, instead of that one split item. A route th
 read the `CamelSplitResult` exchange property, set as before: `SplitResult.getFailures()` has the index and the
 exception of the failed items.
 
+=== camel-core - Split EIP processes the items again when the watermark cannot be stored
+
+When the resume strategy of a split with watermark tracking fails to store the watermark, the split now fails with that
+exception, and the next split processes the same items again. Before, with `synchronous()`, the split also failed, but
+the watermark was kept in memory anyway, so the next split skipped those items although the watermark was never stored.
+Without `synchronous()`, the exchange never completed (fixed by the same change).
+
+A `watermarkExpression` that throws on an item now fails that item, so `stopOnException`, `maxFailedRecords` and
+`errorThreshold` apply as for any failed item.
+
 === camel-core - shareUnitOfWork: a part sent to seda no longer takes the on completions of the parent exchange
 
 Since Camel 4.14 the parts of a Split, Multicast or Recipient List with `shareUnitOfWork` use the unit of work of the
