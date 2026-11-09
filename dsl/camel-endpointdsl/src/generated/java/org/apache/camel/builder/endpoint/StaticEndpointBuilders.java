@@ -177,6 +177,46 @@ public class StaticEndpointBuilders {
         return ActiveMQ6EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * AI Prompt (camel-ai-prompt)
+     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * 
+     * Category: ai
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-ai-prompt
+     * 
+     * Syntax: <code>ai-prompt:promptName</code>
+     * 
+     * Path parameter: promptName (required)
+     * The prompt name advertised to MCP clients.
+     * 
+     * @param path promptName
+     * @return the dsl builder
+     */
+    public static AiPromptEndpointBuilderFactory.AiPromptEndpointBuilder aiPrompt(String path) {
+        return aiPrompt("ai-prompt", path);
+    }
+    /**
+     * AI Prompt (camel-ai-prompt)
+     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * 
+     * Category: ai
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-ai-prompt
+     * 
+     * Syntax: <code>ai-prompt:promptName</code>
+     * 
+     * Path parameter: promptName (required)
+     * The prompt name advertised to MCP clients.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path promptName
+     * @return the dsl builder
+     */
+    public static AiPromptEndpointBuilderFactory.AiPromptEndpointBuilder aiPrompt(String componentName, String path) {
+        return AiPromptEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * AI Resource (camel-ai-resource)
      * Framework-agnostic consumer endpoint that registers a Camel route as a
      * read-only AI resource in the shared AiResourceRegistry.
