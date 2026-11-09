@@ -22,9 +22,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.grpc.stub.StreamObserver;
-import org.apache.camel.Exchange;
-import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcConstants;
+import org.apache.camel.component.grpc.GrpcConsumer;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 /**
