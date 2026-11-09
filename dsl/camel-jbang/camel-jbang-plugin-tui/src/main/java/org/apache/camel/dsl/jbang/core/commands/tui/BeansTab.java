@@ -49,9 +49,11 @@ class BeansTab extends AbstractTableTab {
 
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
-    private int filterIndex;
+    // the scope starts with the beans of the integration itself (user): the ones of Camel are many and the same in
+    // every integration
+    private int filterIndex = 1;
     private final FilterField filter = new FilterField(this::filterChanged);
-    private List<BeanData> allBeans = Collections.emptyList();
+    List<BeanData> allBeans = Collections.emptyList();
     private int detailScroll;
     private boolean detailFocused;
     private String lastPid;
@@ -204,11 +206,13 @@ class BeansTab extends AbstractTableTab {
                     Cell.from(Span.styled(shortType, Style.EMPTY))));
         }
 
+        String mode = filterModes()[filterIndex];
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No beans", 2));
+            rows.add(emptyRow("user".equals(mode) && !allBeans.isEmpty() && filter.term() == null
+                    ? "No beans of its own: f shows the " + allBeans.size() + " of Camel"
+                    : "No beans", 2));
         }
 
-        String mode = filterModes()[filterIndex];
         String title = filter.term() != null
                 ? String.format(" Beans [%d] scope:%s filter:\"%s\" ", visible.size(), mode, filter.term())
                 : String.format(" Beans [%d] scope:%s ", visible.size(), mode);
@@ -531,11 +535,14 @@ class BeansTab extends AbstractTableTab {
     @Override
     public JsonObject getTableDataAsJson() {
         List<BeanData> beans = sortedBeans();
-        if (beans.isEmpty()) {
+        if (allBeans.isEmpty()) {
             return null;
         }
         JsonObject result = new JsonObject();
         result.put("tab", "Beans");
+        // the rows are those of the scope (f): the beans of the integration itself at first, not those of Camel
+        result.put("scope", filterModes()[filterIndex]);
+        result.put("allBeans", allBeans.size());
         JsonArray rows = new JsonArray();
         for (BeanData b : beans) {
             JsonObject row = new JsonObject();

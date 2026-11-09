@@ -228,6 +228,21 @@ class ConsumersTabRenderTest {
 
     // ---- Helper methods ----
 
+    @Test
+    void lastAndLastFailSayHowLongAgo() {
+        ConsumerInfo ci = addConsumer("stock-check", "timer://stock", "Started", "TimerConsumer");
+        ci.sinceLastStarted = "0s";
+        ci.sinceLastCompleted = "1s";
+        ci.sinceLastFailed = "5m2s";
+
+        String rendered = TuiTestHelper.renderToString(new ConsumersTab(ctx), 200, 10);
+
+        assertThat(rendered).contains("LAST FAIL", "1s ago", "5m2s ago").doesNotContain("0s/1s/5m2s");
+        // none failed: blank
+        assertThat(ConsumersTab.ago(null)).isEmpty();
+        assertThat(ConsumersTab.ago("-")).isEmpty();
+    }
+
     private ConsumerInfo addConsumer(String id, String uri, String state, String className) {
         ConsumerInfo ci = new ConsumerInfo();
         ci.id = id;

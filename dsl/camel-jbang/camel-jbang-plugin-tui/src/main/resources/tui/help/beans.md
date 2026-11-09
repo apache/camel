@@ -27,7 +27,9 @@ right options.
 
 ## Filter Modes
 
-Press `f` to cycle through filter modes:
+The tab starts with **user**, the beans of your application: the ones of
+Camel are many and the same in every integration. When there are none,
+the table says how many Camel has. Press `f` to cycle through filter modes:
 
 - **all** — show all beans (including framework internals)
 - **user** — only your application beans (excludes Camel, Spring, Quarkus, and JDK beans)

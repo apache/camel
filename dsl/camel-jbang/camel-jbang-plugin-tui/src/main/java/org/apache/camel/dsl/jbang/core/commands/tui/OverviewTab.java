@@ -626,6 +626,7 @@ class OverviewTab extends AbstractTab {
             fixed[drop] = 0;
             nameWidth = overviewNameWidth(areaWidth, fixed);
         }
+        int nameColumn = Math.min(nameWidth, Math.max(MIN_NAME_WIDTH, namesWidth(infos) + 2));
         for (IntegrationInfo info : infos) {
             boolean isEven = (rowIndex++ % 2 == 0);
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
@@ -635,7 +636,7 @@ class OverviewTab extends AbstractTab {
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 rows.add(Row.from(
                         Cell.from(Span.styled("-", Theme.muted())),
-                        Cell.from(Span.styled(TuiHelper.truncate(nameText, nameWidth), Theme.info())),
+                        Cell.from(Span.styled(TuiHelper.truncate(nameText, nameColumn), Theme.info())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(projectStatus(info, MonotonicClock.millis())),
@@ -703,7 +704,7 @@ class OverviewTab extends AbstractTab {
                 if (hasDoc) {
                     nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
                 }
-                Line nameLine = TuiHelper.fitLine(nameSpans, nameWidth);
+                Line nameLine = TuiHelper.fitLine(nameSpans, nameColumn);
                 String throughputDisplay = info.throughput;
                 if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
                     LinkedList<Long> tpHist = throughputHistory.get(info.pid);
@@ -767,7 +768,7 @@ class OverviewTab extends AbstractTab {
 
         Constraint[] widths = new Constraint[] {
                 Constraint.length(fixed[0]),
-                Constraint.fill(),
+                Constraint.length(nameColumn),
                 Constraint.length(fixed[1]),
                 Constraint.length(fixed[2]),
                 Constraint.length(fixed[3]),
@@ -775,15 +776,33 @@ class OverviewTab extends AbstractTab {
                 Constraint.length(fixed[5]),
                 Constraint.length(fixed[6]),
                 Constraint.length(fixed[7]),
-                // fixed, so NAME gets the rest of the width, as overviewNameWidth counts it
                 Constraint.length(fixed[8]),
-                Constraint.length(0)
+                Constraint.fill()
         };
         return new TableSpec(rows, header, widths);
     }
 
     // the narrowest NAME before other columns give way: room for an icon and a name
     static final int MIN_NAME_WIDTH = 20;
+
+    /**
+     * The width the names take: the runtime icon, the name, the project it was opened as, [dev] and the readme mark.
+     * NAME is as wide as that, so the numbers stand next to the names on a wide screen; the rest goes after the last
+     * column.
+     */
+    static int namesWidth(List<IntegrationInfo> infos) {
+        int width = 0;
+        for (IntegrationInfo info : infos) {
+            String name = info.name != null ? info.name : "";
+            int w = CharWidth.of(TuiIcons.runtimeIcon(info.platform != null ? info.platform : "")) + 1 + CharWidth.of(name);
+            if (info.openedAs != null && !info.openedAs.equalsIgnoreCase(info.name)) {
+                w += 3 + CharWidth.of(info.openedAs);
+            }
+            w += (info.devMode ? 6 : 0) + 1 + CharWidth.of(TuiIcons.README);
+            width = Math.max(width, w);
+        }
+        return width;
+    }
 
     /** The width the NAME column gets beside the other columns: the table's borders, ">> " and 1 between columns. */
     static int overviewNameWidth(int areaWidth, int[] fixed) {
