@@ -77,8 +77,8 @@ public final class ManifestFetcher implements AutoCloseable {
 
     // Visible for testing: SelfUpdateIntegrationTest injects an HttpClient whose SSLContext trusts the
     // WebsiteInstallerFixture's self-signed certificate authority, since the platform default trust store
-    // (used by the two-arg constructor above) has no way to know about a test-only CA. Production callers
-    // only ever use the two-arg constructor.
+    // (used by the constructors without an HttpClient) has no way to know about a test-only CA. Production
+    // callers go through fromEnvironment(), which uses the three-arg constructor.
     public ManifestFetcher(String manifestBaseUrl, String mavenBaseUrl, HttpClient httpClient) {
         this(manifestBaseUrl, mavenBaseUrl, DEFAULT_SNAPSHOT_BASE_URL, httpClient);
     }
@@ -131,6 +131,18 @@ public final class ManifestFetcher implements AutoCloseable {
     }
 
     /**
+     * Whether release {@code version} ({@code X.Y.Z}) is published on the website. Any failure to tell (no manifest, no
+     * network) counts as not published: it only decides whether a hint is printed.
+     */
+    public boolean isReleased(String version) {
+        try {
+            return version.equals(fetch(version).version());
+        } catch (SelfUpdateException e) {
+            return false;
+        }
+    }
+
+    /**
      * Fetches a release alias published next to the per-version manifests: {@code lts} ({@code lts.properties}, the
      * newest LTS release) or a release line {@code X.Y} ({@code X.Y.properties}, the newest patch of that line). The
      * caller checks that the returned version belongs to the line it asked for.
@@ -158,8 +170,30 @@ public final class ManifestFetcher implements AutoCloseable {
      * branches publish nightly builds too, under lower versions).
      */
     public String fetchLatestSnapshotVersion() {
+        return latestSnapshotVersion(fetchSnapshotVersions());
+    }
+
+    /**
+     * The snapshot versions ({@code X.Y.Z-SNAPSHOT}) the snapshot repository publishes nightly builds of: main and the
+     * maintenance branches. The repository removes a snapshot version some time after its release.
+     */
+    public List<String> fetchSnapshotVersions() {
         String url = snapshotBaseUrl + "/maven-metadata.xml";
-        return parseLatestSnapshotVersion(get(url, "no nightly builds at " + url, "snapshot metadata"));
+        return parseSnapshotVersions(get(url, "no nightly builds at " + url, "snapshot metadata"));
+    }
+
+    /** The snapshot version of main: the highest of {@code snapshotVersions}. */
+    public static String latestSnapshotVersion(List<String> snapshotVersions) {
+        String latest = null;
+        for (String version : snapshotVersions) {
+            if (latest == null || VersionHelper.compare(base(version), base(latest)) > 0) {
+                latest = version;
+            }
+        }
+        if (latest == null) {
+            throw new SelfUpdateException("the snapshot repository lists no X.Y.Z-SNAPSHOT version");
+        }
+        return latest;
     }
 
     /**
@@ -268,19 +302,21 @@ public final class ManifestFetcher implements AutoCloseable {
 
     // Package-visible for unit testing. The highest X.Y.Z-SNAPSHOT of <versions>; other entries are ignored.
     static String parseLatestSnapshotVersion(byte[] content) {
-        String latest = null;
+        return latestSnapshotVersion(parseSnapshotVersions(content));
+    }
+
+    // Package-visible for unit testing. The X.Y.Z-SNAPSHOT entries of <versions>, in the order listed; other entries
+    // are ignored.
+    static List<String> parseSnapshotVersions(byte[] content) {
+        List<String> result = new ArrayList<>();
         NodeList versions = parseXml(content).getElementsByTagName("version");
         for (int i = 0; i < versions.getLength(); i++) {
             String version = versions.item(i).getTextContent().strip();
-            if (Nightly.isSnapshotVersion(version)
-                    && (latest == null || VersionHelper.compare(base(version), base(latest)) > 0)) {
-                latest = version;
+            if (Nightly.isSnapshotVersion(version) && !result.contains(version)) {
+                result.add(version);
             }
         }
-        if (latest == null) {
-            throw new SelfUpdateException("the snapshot repository lists no X.Y.Z-SNAPSHOT version");
-        }
-        return latest;
+        return result;
     }
 
     // Package-visible for unit testing. The <value> of the bin tar.gz <snapshotVersion> (Maven 3 metadata), or else

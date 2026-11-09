@@ -50,6 +50,12 @@ class NightlyTest {
     }
 
     @Test
+    void releaseOfSnapshotVersion() {
+        assertThat(Nightly.releaseOf("4.22.3-SNAPSHOT")).isEqualTo("4.22.3");
+        assertThatThrownBy(() -> Nightly.releaseOf("SNAPSHOT")).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void snapshotVersionOfBuild() {
         assertThat(Nightly.snapshotVersionOf("4.22.3-20261107.143456-15")).isEqualTo("4.22.3-SNAPSHOT");
         assertThatThrownBy(() -> Nightly.snapshotVersionOf("4.22.3")).isInstanceOf(IllegalArgumentException.class);

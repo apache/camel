@@ -258,6 +258,12 @@ class ManifestFetcherTest {
     }
 
     @Test
+    void snapshotVersionsAreTheSnapshotEntriesInListedOrder() {
+        assertThat(ManifestFetcher.parseSnapshotVersions(ROOT_METADATA.getBytes(StandardCharsets.UTF_8)))
+                .containsExactly("4.14.10-SNAPSHOT", "4.24.0-SNAPSHOT", "4.22.3-SNAPSHOT");
+    }
+
+    @Test
     void latestSnapshotVersionRequiresOne() {
         String metadata = "<metadata><versioning><versions><version>4.9.0</version></versions></versioning></metadata>";
 

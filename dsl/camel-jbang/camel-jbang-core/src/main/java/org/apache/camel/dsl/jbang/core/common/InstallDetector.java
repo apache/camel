@@ -62,10 +62,13 @@ public final class InstallDetector {
     private static final boolean IS_WINDOWS
             = System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows");
 
-    // A nightly build as the Apache snapshot repository names it, which the web installer uses as its directory name:
-    // X.Y.Z-YYYYMMDD.HHMMSS-N, the UTC timestamp and build number of the deploy.
-    private static final Pattern NIGHTLY_BUILD
-            = Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+-([0-9]{8}\\.[0-9]{6})-[0-9]{1,9}");
+    /**
+     * A nightly build as the Apache snapshot repository names it, which the web installer uses as its directory name:
+     * {@code X.Y.Z-YYYYMMDD.HHMMSS-N}. The groups are the version ({@code X.Y.Z}), the UTC timestamp of the deploy and
+     * its build number.
+     */
+    public static final Pattern NIGHTLY_BUILD
+            = Pattern.compile("([0-9]+\\.[0-9]+\\.[0-9]+)-([0-9]{8}\\.[0-9]{6})-([0-9]{1,9})");
     private static final DateTimeFormatter NIGHTLY_TIMESTAMP = DateTimeFormatter.ofPattern("yyyyMMdd.HHmmss");
 
     private InstallDetector() {
@@ -113,7 +116,7 @@ public final class InstallDetector {
             return Optional.empty();
         }
         try {
-            return Optional.of(LocalDateTime.parse(m.group(1), NIGHTLY_TIMESTAMP).atZone(ZoneOffset.UTC));
+            return Optional.of(LocalDateTime.parse(m.group(2), NIGHTLY_TIMESTAMP).atZone(ZoneOffset.UTC));
         } catch (DateTimeParseException e) {
             return Optional.empty();
         }

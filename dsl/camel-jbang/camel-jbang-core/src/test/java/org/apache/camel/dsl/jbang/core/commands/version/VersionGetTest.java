@@ -107,9 +107,15 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
             }
         }
 
+        // where JBang is installed, a "JBang version:" line comes first
         List<String> lines = printer.getLines();
-        Assertions.assertTrue(lines.get(0).startsWith("Camel CLI version:"));
-        Assertions.assertEquals("Nightly build: 4.24.0-20261108.143653-24 (built 2026-11-08 14:36:53 UTC)", lines.get(1));
+        int cli = 0;
+        while (cli < lines.size() && !lines.get(cli).startsWith("Camel CLI version:")) {
+            cli++;
+        }
+        Assertions.assertTrue(cli < lines.size() - 1, String.join("\n", lines));
+        Assertions.assertEquals("Nightly build: 4.24.0-20261108.143653-24 (built 2026-11-08 14:36:53 UTC)",
+                lines.get(cli + 1));
     }
 
     private void createJBangVersionFile(String version) throws IOException {

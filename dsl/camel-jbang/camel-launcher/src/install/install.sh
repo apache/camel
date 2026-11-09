@@ -351,6 +351,8 @@ prune_nightlies() {
 # Installs a nightly build from the snapshot repository, verified against the SHA-1 published next to it there: a
 # nightly build is no Apache release, so there is no manifest on camel.apache.org for it.
 install_nightly() {
+    # not taken from the environment: only the X.Y.Z-YYYYMMDD.HHMMSS-N branch below names one build
+    nightly=""
     case "$requested_version" in
         SNAPSHOT)
             metadata_file="$staging_dir/metadata.xml"
@@ -408,6 +410,25 @@ install_nightly() {
     prune_nightlies "$nightly"
     print_path_hint
     echo "Installed Camel CLI $nightly (a nightly build of $snapshot_version) to $data_root/$nightly"
+    print_maintenance_note
+}
+
+# After installing the nightly builds of a maintenance branch (X.Y.Z-SNAPSHOT below main), says how to update them:
+# the Camel CLI of a maintenance branch cannot update its nightly builds with camel self-update. Best effort: without
+# the snapshot repository metadata, no note. camel self-update prints its own note.
+print_maintenance_note() {
+    [ "${CAMEL_INSTALL_SELF_UPDATE:-}" = "true" ] && return 0
+    case "$requested_version" in
+        SNAPSHOT) return 0 ;;
+        *-SNAPSHOT) ;;
+        *) return 0 ;;
+    esac
+    mn_file="$staging_dir/root-metadata.xml"
+    fetch "$snapshot_base_url/maven-metadata.xml" "$mn_file" >/dev/null 2>&1 || return 0
+    mn_main="$(latest_snapshot_version "$mn_file")"
+    [ -n "$mn_main" ] && [ "$mn_main-SNAPSHOT" != "$requested_version" ] || return 0
+    echo "Note: $requested_version is a maintenance branch, whose Camel CLI cannot update its nightly builds with" \
+         "camel self-update - to update it, re-run this installer with --version $requested_version"
 }
 
 print_path_hint() {

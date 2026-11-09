@@ -37,7 +37,8 @@ public final class Nightly {
     public static final String LATEST = "SNAPSHOT";
 
     private static final Pattern SNAPSHOT_VERSION = Pattern.compile("([0-9]+\\.[0-9]+\\.[0-9]+)-SNAPSHOT");
-    private static final Pattern BUILD = Pattern.compile("([0-9]+\\.[0-9]+\\.[0-9]+)-([0-9]{8}\\.[0-9]{6})-([0-9]{1,9})");
+    // the same pattern camel version uses to name the nightly build that runs
+    private static final Pattern BUILD = InstallDetector.NIGHTLY_BUILD;
 
     private Nightly() {
     }
@@ -54,7 +55,7 @@ public final class Nightly {
 
     /** Whether {@code value} is one nightly build, {@code X.Y.Z-YYYYMMDD.HHMMSS-N}. */
     public static boolean isBuild(String value) {
-        return value != null && BUILD.matcher(value).matches();
+        return InstallDetector.isNightlyBuild(value);
     }
 
     /**
@@ -67,6 +68,15 @@ public final class Nightly {
     /** Normalizes a nightly selector: {@code snapshot} becomes {@code SNAPSHOT}, the others are kept. */
     public static String normalize(String value) {
         return isLatest(value) ? LATEST : value;
+    }
+
+    /** The release a snapshot version leads to: {@code 4.24.0} for {@code 4.24.0-SNAPSHOT}. */
+    public static String releaseOf(String snapshotVersion) {
+        Matcher m = SNAPSHOT_VERSION.matcher(snapshotVersion);
+        if (!m.matches()) {
+            throw new IllegalArgumentException("not a snapshot version: " + snapshotVersion);
+        }
+        return m.group(1);
     }
 
     /** The snapshot version of a nightly build: {@code 4.24.0-SNAPSHOT} for {@code 4.24.0-20261108.143653-24}. */

@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
@@ -562,6 +563,21 @@ class WebsiteInstallTest {
             }
         }
 
+        private static void assertPin(Path home, String expected) throws Exception {
+            Path file = pinnedVersionFile(home);
+            if (expected == null) {
+                assertFalse(Files.exists(file), "expected no pin at " + file);
+            } else {
+                assertEquals(expected, Files.readString(file).strip());
+            }
+        }
+
+        private static Set<String> installedVersions(Path home) throws Exception {
+            try (Stream<Path> listing = Files.list(home.resolve(".local/share/camel-cli/versions"))) {
+                return listing.map(d -> d.getFileName().toString()).collect(Collectors.toSet());
+            }
+        }
+
         private static void assertNightlyInstalled(Path home, String build, String snapshotVersion) throws Exception {
             Path shim = home.resolve(".local/bin/camel");
             Path versionDir = home.resolve(".local/share/camel-cli/versions/" + build);
@@ -569,7 +585,7 @@ class WebsiteInstallTest {
             assertEquals(versionDir.resolve("bin/camel.sh"), Files.readSymbolicLink(shim));
             String output = WebsiteInstallerFixture.execute(
                     new ProcessBuilder("/bin/sh", shim.toString(), "version").redirectErrorStream(true)).stdout();
-            assertThat(output).contains("Camel " + snapshotVersion);
+            assertTrue(output.contains("Camel " + snapshotVersion), output);
         }
 
         @Test
@@ -583,10 +599,11 @@ class WebsiteInstallTest {
                 WebsiteInstallerFixture.Result r = install(fixture, home, "snapshot");
 
                 assertEquals(0, r.exit(), r.stderr());
-                assertThat(r.stdout()).contains("is a nightly development build of Apache Camel")
-                        .contains("Installed Camel CLI " + NIGHTLY + " (a nightly build of 9.9.0-SNAPSHOT)");
+                assertTrue(r.stdout().contains("is a nightly development build of Apache Camel"), r.stdout());
+                assertTrue(r.stdout().contains("Installed Camel CLI " + NIGHTLY + " (a nightly build of 9.9.0-SNAPSHOT)"),
+                        r.stdout());
                 assertNightlyInstalled(home, NIGHTLY, "9.9.0-SNAPSHOT");
-                assertThat(pinnedVersionFile(home)).hasContent("SNAPSHOT");
+                assertPin(home, "SNAPSHOT");
             }
         }
 
@@ -600,7 +617,7 @@ class WebsiteInstallTest {
 
                 assertEquals(0, r.exit(), r.stderr());
                 assertNightlyInstalled(home, "9.8.1-20261107.010203-7", "9.8.1-SNAPSHOT");
-                assertThat(pinnedVersionFile(home)).hasContent("9.8.1-SNAPSHOT");
+                assertPin(home, "9.8.1-SNAPSHOT");
             }
         }
 
@@ -615,7 +632,7 @@ class WebsiteInstallTest {
 
                 assertEquals(0, r.exit(), r.stderr());
                 assertNightlyInstalled(home, NIGHTLY, "9.9.0-SNAPSHOT");
-                assertThat(pinnedVersionFile(home)).hasContent(NIGHTLY);
+                assertPin(home, NIGHTLY);
             }
         }
 
@@ -655,10 +672,10 @@ class WebsiteInstallTest {
                 WebsiteInstallerFixture.Result r = install(fixture, home, "9.9.0-SNAPSHOT");
 
                 assertNotEquals(0, r.exit());
-                assertThat(r.stderr()).contains("checksum mismatch for downloaded archive");
+                assertTrue(r.stderr().contains("checksum mismatch for downloaded archive"), r.stderr());
                 assertFalse(Files.exists(home.resolve(".local/bin/camel")));
                 assertFalse(Files.exists(home.resolve(".local/share/camel-cli/versions/" + NIGHTLY)));
-                assertThat(pinnedVersionFile(home)).doesNotExist();
+                assertPin(home, null);
             }
         }
 
@@ -671,7 +688,7 @@ class WebsiteInstallTest {
                 WebsiteInstallerFixture.Result r = install(fixture, home, selector);
 
                 assertNotEquals(0, r.exit());
-                assertThat(r.stderr()).contains("invalid --version value");
+                assertTrue(r.stderr().contains("invalid --version value"), r.stderr());
                 assertFalse(Files.exists(home.resolve(".local/bin/camel")));
             }
         }
@@ -688,7 +705,8 @@ class WebsiteInstallTest {
                 WebsiteInstallerFixture.Result r = install(fixture, home, "9.9.0-SNAPSHOT");
 
                 assertNotEquals(0, r.exit());
-                assertThat(r.stderr()).contains("the snapshot metadata names an invalid nightly build of 9.9.0-SNAPSHOT");
+                assertTrue(r.stderr().contains("the snapshot metadata names an invalid nightly build of 9.9.0-SNAPSHOT"),
+                        r.stderr());
                 assertFalse(Files.exists(home.resolve(".local/bin/camel")));
             }
         }
@@ -702,7 +720,7 @@ class WebsiteInstallTest {
                 WebsiteInstallerFixture.Result r = install(fixture, home, "9.9.0-SNAPSHOT");
 
                 assertNotEquals(0, r.exit());
-                assertThat(r.stderr()).contains("invalid nightly build of 9.9.0-SNAPSHOT: 9.8.1-20261107.010203-7");
+                assertTrue(r.stderr().contains("invalid nightly build of 9.9.0-SNAPSHOT: 9.8.1-20261107.010203-7"), r.stderr());
             }
         }
 
@@ -720,10 +738,8 @@ class WebsiteInstallTest {
                     assertEquals(0, r.exit(), r.stderr());
                 }
 
-                try (Stream<Path> listing = Files.list(home.resolve(".local/share/camel-cli/versions"))) {
-                    assertThat(listing.map(d -> d.getFileName().toString())).containsExactlyInAnyOrder(
-                            "1.2.3", "9.9.0-20261103.010000-3", "9.9.0-20261104.010000-4", "9.9.0-20261105.010000-5");
-                }
+                assertEquals(Set.of("1.2.3", "9.9.0-20261103.010000-3", "9.9.0-20261104.010000-4", "9.9.0-20261105.010000-5"),
+                        installedVersions(home));
                 assertNightlyInstalled(home, "9.9.0-20261105.010000-5", "9.9.0-SNAPSHOT");
             }
         }
@@ -741,10 +757,8 @@ class WebsiteInstallTest {
                     assertEquals(0, r.exit(), r.stderr());
                 }
 
-                try (Stream<Path> listing = Files.list(home.resolve(".local/share/camel-cli/versions"))) {
-                    assertThat(listing.map(d -> d.getFileName().toString())).containsExactlyInAnyOrder(
-                            "9.9.0-20261101.010000-9", "9.9.0-20261101.010000-10", "9.9.0-20261101.010000-24");
-                }
+                assertEquals(Set.of("9.9.0-20261101.010000-9", "9.9.0-20261101.010000-10", "9.9.0-20261101.010000-24"),
+                        installedVersions(home));
             }
         }
 
@@ -789,7 +803,92 @@ class WebsiteInstallTest {
 
                 assertEquals(0, r.exit(), r.stderr());
                 assertVersionInstalled(home, "1.2.3");
-                assertThat(pinnedVersionFile(home)).doesNotExist();
+                assertPin(home, null);
+            }
+        }
+
+        // an exported nightly=... must not stand in for the newest build in the metadata
+        @Test
+        void nightlyFromTheEnvironmentIsIgnored(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishNightly(fixture, "9.9.0-SNAPSHOT", "9.9.0-20261101.010000-1", null);
+                publishNightly(fixture, "9.9.0-SNAPSHOT", NIGHTLY, null);
+                Map<String, String> env = new HashMap<>(fixture.environment(home));
+                env.put("nightly", "9.9.0-20261101.010000-1");
+
+                WebsiteInstallerFixture.Result r
+                        = fixture.run(List.of("/bin/sh", SCRIPT.toString(), "--version", "9.9.0-SNAPSHOT"), env);
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertNightlyInstalled(home, NIGHTLY, "9.9.0-SNAPSHOT");
+                assertEquals(Set.of(NIGHTLY), installedVersions(home));
+            }
+        }
+
+        // the newest three by deploy, whatever their snapshot version
+        @Test
+        void keepsTheNewestThreeNightliesAcrossSnapshotVersions(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                List<String[]> builds = List.of(new String[] { "9.9.0-SNAPSHOT", "9.9.0-20261101.010000-1" },
+                        new String[] { "9.8.1-SNAPSHOT", "9.8.1-20261102.010000-1" },
+                        new String[] { "9.9.0-SNAPSHOT", "9.9.0-20261103.010000-2" },
+                        new String[] { "9.8.1-SNAPSHOT", "9.8.1-20261104.010000-2" });
+                for (String[] build : builds) {
+                    publishNightly(fixture, build[0], build[1], null);
+                    WebsiteInstallerFixture.Result r = install(fixture, home, build[0]);
+                    assertEquals(0, r.exit(), r.stderr());
+                }
+
+                assertEquals(Set.of("9.8.1-20261102.010000-1", "9.9.0-20261103.010000-2", "9.8.1-20261104.010000-2"),
+                        installedVersions(home));
+            }
+        }
+
+        // an older build installed on purpose is not pruned right away, though it is not one of the newest three
+        @Test
+        void keepsAnOlderNightlyJustInstalled(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                List<String> builds = List.of("9.9.0-20261102.010000-2", "9.9.0-20261103.010000-3",
+                        "9.9.0-20261104.010000-4");
+                for (String build : builds) {
+                    publishNightly(fixture, "9.9.0-SNAPSHOT", build, null);
+                    assertEquals(0, install(fixture, home, "9.9.0-SNAPSHOT").exit());
+                }
+                publishNightly(fixture, "9.9.0-SNAPSHOT", "9.9.0-20261101.010000-1", null);
+
+                WebsiteInstallerFixture.Result r = install(fixture, home, "9.9.0-20261101.010000-1");
+
+                assertEquals(0, r.exit(), r.stderr());
+                assertNightlyInstalled(home, "9.9.0-20261101.010000-1", "9.9.0-SNAPSHOT");
+                assertEquals(Set.of("9.9.0-20261101.010000-1", "9.9.0-20261102.010000-2", "9.9.0-20261103.010000-3",
+                        "9.9.0-20261104.010000-4"), installedVersions(home));
+                assertPin(home, "9.9.0-20261101.010000-1");
+            }
+        }
+
+        // the Camel CLI of a maintenance branch cannot update its nightly builds with camel self-update
+        @Test
+        void maintenanceBranchNightlySaysToReRunTheInstaller(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                publishSnapshotVersions(fixture, "9.9.0-SNAPSHOT", "9.8.1-SNAPSHOT");
+                publishNightly(fixture, "9.8.1-SNAPSHOT", "9.8.1-20261107.010203-7", null);
+                publishNightly(fixture, "9.9.0-SNAPSHOT", NIGHTLY, null);
+
+                WebsiteInstallerFixture.Result maintenance = install(fixture, home, "9.8.1-SNAPSHOT");
+                WebsiteInstallerFixture.Result main = install(fixture, home, "9.9.0-SNAPSHOT");
+
+                assertEquals(0, maintenance.exit(), maintenance.stderr());
+                assertTrue(maintenance.stdout().contains("Note: 9.8.1-SNAPSHOT is a maintenance branch, whose Camel CLI"
+                                                         + " cannot update its nightly builds with camel self-update - to"
+                                                         + " update it, re-run this installer with --version"
+                                                         + " 9.8.1-SNAPSHOT"),
+                        maintenance.stdout());
+                assertEquals(0, main.exit(), main.stderr());
+                assertFalse(main.stdout().contains("maintenance branch"), main.stdout());
             }
         }
 
