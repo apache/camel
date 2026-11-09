@@ -89,6 +89,7 @@ import org.apache.camel.management.mbean.ManagedTransformerRegistry;
 import org.apache.camel.management.mbean.ManagedTypeConverterRegistry;
 import org.apache.camel.management.mbean.ManagedValidatorRegistry;
 import org.apache.camel.management.mbean.ManagedVariableRepository;
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -1159,6 +1160,14 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             sw.prepareOtherwiseDefinition();
             if (sw.getOtherwiseDefinition() != null) {
                 registerPerformanceCounters(route, sw.getOtherwiseDefinition(), registeredCounters);
+            }
+        }
+
+        // The steps of a circuit breaker's fallback are not among its outputs, but they are steps of the route: the
+        // ones that run while the protected service is down.
+        if (processor instanceof CircuitBreakerDefinition cb && cb.getOnFallback() != null) {
+            for (ProcessorDefinition<?> child : cb.getOnFallback().getOutputs()) {
+                registerPerformanceCounters(route, child, registeredCounters);
             }
         }
 
