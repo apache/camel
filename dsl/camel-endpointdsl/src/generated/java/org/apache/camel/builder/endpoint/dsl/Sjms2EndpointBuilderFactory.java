@@ -1332,7 +1332,6 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
-         * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
          * client is Camel, the returned Exception is rethrown. This allows you
@@ -1345,6 +1344,7 @@ public interface Sjms2EndpointBuilderFactory {
          * and requires the received to be able to deserialize the data at Class
          * level, which forces a strong coupling between the producers and
          * consumer!.
+         * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: false
@@ -2536,8 +2536,6 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
          * client is Camel, the returned Exception is rethrown. This allows you
          * to use Camel JMS as a bridge in your routing - for example, using
@@ -2549,6 +2547,8 @@ public interface Sjms2EndpointBuilderFactory {
          * and requires the received to be able to deserialize the data at Class
          * level, which forces a strong coupling between the producers and
          * consumer!.
+         * 
+         * The option is a: <code>boolean</code> type.
          * 
          * Default: false
          * Group: advanced
@@ -2564,9 +2564,6 @@ public interface Sjms2EndpointBuilderFactory {
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the
          * client is Camel, the returned Exception is rethrown. This allows you
          * to use Camel JMS as a bridge in your routing - for example, using
          * persistent queues to enable robust routing. The caught exception is
@@ -2577,6 +2574,9 @@ public interface Sjms2EndpointBuilderFactory {
          * and requires the received to be able to deserialize the data at Class
          * level, which forces a strong coupling between the producers and
          * consumer!.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
          * Default: false
          * Group: advanced
          * 
@@ -3305,10 +3305,6 @@ public interface Sjms2EndpointBuilderFactory {
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a jakarta.jms.ObjectMessage. If the
          * client is Camel, the returned Exception is rethrown. This allows you
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the
-         * client is Camel, the returned Exception is rethrown. This allows you
          * to use Camel JMS as a bridge in your routing - for example, using
          * persistent queues to enable robust routing. The caught exception is
          * required to be serializable. The original Exception on the consumer
@@ -3318,6 +3314,10 @@ public interface Sjms2EndpointBuilderFactory {
          * and requires the received to be able to deserialize the data at Class
          * level, which forces a strong coupling between the producers and
          * consumer!.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: false
          * Group: advanced
          * 
          * @param transferException the value to set
@@ -3333,11 +3333,6 @@ public interface Sjms2EndpointBuilderFactory {
          * be send back in response as a jakarta.jms.ObjectMessage. If the
          * client is Camel, the returned Exception is rethrown. This allows you
          * to use Camel JMS as a bridge in your routing - for example, using
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the
-         * client is Camel, the returned Exception is rethrown. This allows you
-         * to use Camel JMS as a bridge in your routing - for example, using
          * persistent queues to enable robust routing. The caught exception is
          * required to be serializable. The original Exception on the consumer
          * side can be wrapped in an outer exception such as
@@ -3346,6 +3341,11 @@ public interface Sjms2EndpointBuilderFactory {
          * and requires the received to be able to deserialize the data at Class
          * level, which forces a strong coupling between the producers and
          * consumer!.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: false
+         * Group: advanced
          * 
          * @param transferException the value to set
          * @return the dsl builder
