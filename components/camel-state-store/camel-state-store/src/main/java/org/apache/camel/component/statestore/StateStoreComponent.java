@@ -89,12 +89,17 @@ public class StateStoreComponent extends DefaultComponent {
                     LOG.warn("Store '{}' already has a backend ({}). Ignoring explicit backend=# reference ({}).",
                             storeName, existingDelegate.getClass().getSimpleName(), explicitBackend.getClass().getSimpleName());
                 }
+                boolean existingNamespaced = existing instanceof NamespacedKeyValueRepository;
+                if (existingNamespaced != namespaced) {
+                    LOG.warn("Store '{}' was already initialized with namespaced={}. Ignoring namespaced={} for this endpoint.",
+                            storeName, existingNamespaced, namespaced);
+                }
                 return existing;
             }
             ServiceHelper.startService(target);
             return target;
         }
-        return backends.computeIfAbsent(storeName, k -> {
+        KeyValueRepository result = backends.computeIfAbsent(storeName, k -> {
             if (backendFactory == null && backendFactoryChecked.compareAndSet(false, true)) {
                 // checked lazily as autowiring happens after the component is initialized
                 int count = getCamelContext().getRegistry().findByType(StateStoreBackendFactory.class).size();
@@ -138,6 +143,12 @@ public class StateStoreComponent extends DefaultComponent {
                 return backend;
             }
         });
+        boolean existingNamespaced = result instanceof NamespacedKeyValueRepository;
+        if (existingNamespaced != namespaced && !(result instanceof MemoryKeyValueRepository && backendFactory == null)) {
+            LOG.warn("Store '{}' was already initialized with namespaced={}. Ignoring namespaced={} for this endpoint.",
+                    storeName, existingNamespaced, namespaced);
+        }
+        return result;
     }
 
     public boolean isNamespaced() {

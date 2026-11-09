@@ -212,6 +212,7 @@ backends, configuration examples, and instructions for writing a custom backend.
 When using a shared `KeyValueRepository` (such as a single bean auto-discovered from the registry or referenced via `backend=#shared`), `state-store` automatically isolates entries per store name under the prefix `statestore:<storeName>:`.
 
 This ensures that:
+
 * Multiple state stores sharing the same backend do not collide on keys.
 * Calling `clear()`, `keys()`, or `size()` on one store is strictly scoped to that store's entries.
 * State store operations cannot interfere with entries from other patterns sharing the repository.

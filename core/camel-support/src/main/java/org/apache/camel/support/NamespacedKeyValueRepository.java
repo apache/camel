@@ -82,7 +82,7 @@ public class NamespacedKeyValueRepository extends ServiceSupport implements KeyV
         ObjectHelper.notNull(namespace, "namespace");
         String p = namespace.endsWith(":") ? namespace : namespace + ":";
         if (repository instanceof NamespacedKeyValueRepository nkvr) {
-            if (nkvr.getPrefix().equals(p)) {
+            if (nkvr.getNamespace().equals(p)) {
                 return repository;
             }
         }
@@ -104,13 +104,6 @@ public class NamespacedKeyValueRepository extends ServiceSupport implements KeyV
     }
 
     /**
-     * Returns the namespace prefix applied to all keys.
-     */
-    public String getPrefix() {
-        return prefix;
-    }
-
-    /**
      * Returns the namespace applied to all keys.
      */
     public String getNamespace() {
@@ -123,13 +116,6 @@ public class NamespacedKeyValueRepository extends ServiceSupport implements KeyV
     public void setNamespace(String namespace) {
         ObjectHelper.notNull(namespace, "namespace");
         this.prefix = namespace.endsWith(":") ? namespace : namespace + ":";
-    }
-
-    /**
-     * Sets the namespace prefix to isolate keys.
-     */
-    public void setPrefix(String prefix) {
-        setNamespace(prefix);
     }
 
     @Override
@@ -189,6 +175,11 @@ public class NamespacedKeyValueRepository extends ServiceSupport implements KeyV
         return Collections.unmodifiableSet(filtered);
     }
 
+    /**
+     * Clears all entries within this repository's namespace by deleting matching keys individually from the underlying
+     * delegate repository. Note that on shared backends this operation is non-atomic and executes in O(n) relative to
+     * the total number of keys in the delegate.
+     */
     @Override
     public void clear() {
         ObjectHelper.notNull(delegate, "delegate");
@@ -241,7 +232,19 @@ public class NamespacedKeyValueRepository extends ServiceSupport implements KeyV
 
     @Override
     public int size() {
-        return keys().size();
+        ObjectHelper.notNull(delegate, "delegate");
+        ObjectHelper.notNull(prefix, "prefix");
+        Set<String> allKeys = delegate.keys();
+        if (allKeys == null || allKeys.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        for (String k : allKeys) {
+            if (k != null && k.startsWith(prefix)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
