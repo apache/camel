@@ -101,6 +101,18 @@ class UpdateCheckerTest {
     }
 
     @Test
+    void notifiesUnpinnedAndSelectorPinsButNeitherExactNorNightlyPins() {
+        assertThat(UpdateChecker.notifiesFor(null)).isTrue();
+        assertThat(UpdateChecker.notifiesFor(Pin.parse("LTS"))).isTrue();
+        assertThat(UpdateChecker.notifiesFor(Pin.parse("4.22"))).isTrue();
+        assertThat(UpdateChecker.notifiesFor(Pin.parse("4.22.2"))).isFalse();
+        // a new nightly build lands every day
+        assertThat(UpdateChecker.notifiesFor(Pin.parse("SNAPSHOT"))).isFalse();
+        assertThat(UpdateChecker.notifiesFor(Pin.parse("4.24.0-SNAPSHOT"))).isFalse();
+        assertThat(UpdateChecker.notifiesFor(Pin.parse("4.24.0-20261108.143653-24"))).isFalse();
+    }
+
+    @Test
     void targetsLatestWhenUnpinnedAndTheAliasForSelectorPins() {
         assertThat(UpdateChecker.targetOf(null)).isEqualTo("latest");
         assertThat(UpdateChecker.targetOf(Pin.parse("LTS"))).isEqualTo("lts");
