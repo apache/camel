@@ -293,7 +293,7 @@ final class ChaosAdvisor {
                         85));
                 continue;
             }
-            if (!to.isRemote()) {
+            if (!ChaosStubs.isRemote(to)) {
                 continue;
             }
             if (LOCAL_FILES.contains(scheme)) {
@@ -340,7 +340,7 @@ final class ChaosAdvisor {
         }
 
         // the input of the route
-        if (from != null && from.isRemote()) {
+        if (from != null && ChaosStubs.isRemote(from)) {
             if (route.getConsumer() instanceof ScheduledPollConsumer) {
                 add(answer, recipes, "poll-error", id, Kind.CONSUMER, Map.of("endpoint", uri(from)),
                         "route " + id + " polls " + uri(from)

@@ -646,8 +646,12 @@ class ChaosTab extends AbstractTableTab {
     private static void renderRoutes(Frame frame, Rect area, ChaosInfo chaos) {
         List<Row> rows = new ArrayList<>();
         for (ChaosInfo.RouteCounts c : chaos.routes) {
+            // a consumer that is a stub (camel run --stub) does not read a kept message again; the panel is narrow, so
+            // the component it stands in for is left to the report
+            Span name = Span.styled(c.route() != null ? c.route() : "", Style.EMPTY.fg(Theme.accent()));
+            Line route = c.stubbedConsumer() != null ? Line.from(name, Span.styled(" (stub)", Theme.muted())) : Line.from(name);
             rows.add(Row.from(
-                    Cell.from(Span.styled(c.route() != null ? c.route() : "", Style.EMPTY.fg(Theme.accent()))),
+                    Cell.from(route),
                     rightCell(String.valueOf(c.completed()), 6),
                     rightCell(String.valueOf(c.failed()), 5, c.failed() > 0 ? Theme.error() : Style.EMPTY),
                     rightCell(String.valueOf(c.failedKept()), 5),

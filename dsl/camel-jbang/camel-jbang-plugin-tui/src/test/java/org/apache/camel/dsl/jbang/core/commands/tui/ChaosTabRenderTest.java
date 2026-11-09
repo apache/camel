@@ -73,7 +73,7 @@ class ChaosTabRenderTest {
                   {"route": "orders", "completed": 97, "failed": 0, "failedKeptByConsumer": 0, "handled": 2,
                    "redeliveries": 44},
                   {"route": "stock", "completed": 141, "failed": 0, "failedKeptByConsumer": 0, "handled": 0,
-                   "redeliveries": 0}
+                   "redeliveries": 0, "stubbedConsumer": "kafka"}
                 ],
                 "recentFaults": [
                   {"timestamp": 1000, "ago": 2000, "rule": "r1", "version": 1, "fault": "error status 503",
@@ -132,6 +132,8 @@ class ChaosTabRenderTest {
         assertThat(screen).contains("round 1 of 3").contains("route poller").contains("down, back in 8s");
         // the routes
         assertThat(screen).contains("ROUTE").contains("orders").contains("141");
+        // a route whose consumer is a stub (camel run --stub) says so
+        assertThat(screen).contains("stock (stub)");
     }
 
     @Test

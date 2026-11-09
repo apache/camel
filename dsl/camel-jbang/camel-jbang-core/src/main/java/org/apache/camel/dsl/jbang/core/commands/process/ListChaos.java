@@ -268,7 +268,7 @@ public class ListChaos extends ProcessWatchCommand {
         if (routes != null && !routes.isEmpty()) {
             List<JsonObject> list = routes.stream().map(JsonObject.class::cast).toList();
             printer().println(AsciiTable.getTable(AsciiTable.NO_BORDERS, list, List.of(
-                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(r -> r.getString("route")),
+                    new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).with(ListChaos::routeName),
                     new Column().header("COMPLETED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> String.valueOf(r.get("completed"))),
                     new Column().header("FAILED").headerAlign(HorizontalAlign.RIGHT).dataAlign(HorizontalAlign.RIGHT)
@@ -280,6 +280,9 @@ public class ListChaos extends ProcessWatchCommand {
                     new Column().header("REDELIVERIES").headerAlign(HorizontalAlign.RIGHT)
                             .dataAlign(HorizontalAlign.RIGHT)
                             .with(r -> String.valueOf(r.get("redeliveries"))))));
+            if (list.stream().anyMatch(r -> r.getString("stubbedConsumer") != null)) {
+                printer().println("  a stub does not read a kept message again, as the component it stands in for would");
+            }
         }
         JsonArray recent = report.getCollection("recentFaults");
         if (recent != null && !recent.isEmpty()) {
@@ -416,6 +419,12 @@ public class ListChaos extends ProcessWatchCommand {
             reasons.forEach((reason, count) -> sj.add("skipped " + count + ": " + reason));
         }
         return sj.toString();
+    }
+
+    /** The route of the report, and the component its consumer is a stub of (camel run --stub). */
+    static String routeName(JsonObject route) {
+        String stub = route.getString("stubbedConsumer");
+        return route.getString("route") + (stub != null ? " (stub of " + stub + ")" : "");
     }
 
     /** The rule, and below it the rule in plain words (an integration before Camel 4.24 has none). */

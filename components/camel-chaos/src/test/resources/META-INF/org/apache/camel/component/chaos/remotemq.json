@@ -1,0 +1,10 @@
+{
+  "component": {
+    "kind": "component",
+    "name": "remotemq",
+    "title": "Remote MQ (ChaosStubsTest)",
+    "scheme": "remotemq",
+    "syntax": "remotemq:queue",
+    "remote": true
+  }
+}

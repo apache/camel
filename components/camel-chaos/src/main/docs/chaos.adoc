@@ -266,6 +266,28 @@ In JSON the report has `tried`: per `route` its `kinds` (`kind`, `rules`, `fired
 (`tried`): `camel cmd chaos-suggest` ends its line with `- tried`, and the what to try list of the Camel TUI (key `w`)
 shows both.
 
+=== With stubs
+
+`camel run --stub=remote` serves the remote components with the stub component, a queue in memory, so the integration
+runs without the systems behind it, and `camel cmd send` feeds a stubbed consumer:
+
+[source,bash]
+----
+camel run * --stub=remote --chaos
+camel cmd send --endpoint=kafka:refunds --body=file:samples/refund.json
+----
+
+The rules match a stub by its URI (`endpoint=kafka:orders`, `route=refunds`), and chaos counts a stub as the component
+it stands in for:
+
+* What to try takes a stub as remote when the component is. It reads that from the JSON of the component, which
+`camel run` downloads with the component for a stub too.
+* A stubbed consumer keeps a failed message by the options of its URI, as the component would:
+`kafka:refunds?breakOnFirstError=true` keeps it. Options set on the component do not count, as a stub does not take
+them. The stub does not read the message again, though, so the report says per route that its consumer is a stub
+(`stubbedConsumer` in the JSON, `refunds (stub of kafka)` in `camel get chaos --report`, and `refunds (stub)` on the
+chaos screen of the Camel TUI): a kept message is then not lost, though nothing reads it again while the stub runs.
+
 === From an AI agent (MCP)
 
 The Camel MCP server (`camel mcp`, see xref:manual::camel-jbang-mcp.adoc[Camel MCP server]) has the same operations
@@ -762,7 +784,9 @@ per exchange too.
 `acknowledgementModeName=CLIENT_ACKNOWLEDGE` (the endpoint option; the number set with `setAcknowledgementMode` in Java
 is not seen) and `asyncConsumer=false`; `kafka` with `breakOnFirstError=true`. The options are read through the
 configurer of the endpoint, so options set on the component count too. The component is known by the scheme of the
-endpoint URI.
+endpoint URI. A stub that stands in for one of them keeps it by the options of its URI (see <<_with_stubs,With stubs>>).
+* `stubbedConsumer`: the component the consumer of the route is a stub of (`camel run --stub`), such as `kafka`; left
+out when it is not a stub. A stub does not read a kept message again.
 * `handled`: the completed exchanges after the error handler handled a failure (the dead letter channel, or
 `onException` with `handled(true)`). A failure handled in a route called with `direct` counts as handled in the
 calling routes too.

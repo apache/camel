@@ -249,7 +249,8 @@ final class ChaosInfo {
     private static final List<String> OPTIONS = List.of("at", "in", "when", "rate", "until", "from", "expect", "within");
 
     /** The counts of a route in the report. */
-    record RouteCounts(String route, long completed, long failed, long failedKept, long handled, long redeliveries) {
+    record RouteCounts(String route, long completed, long failed, long failedKept, long handled, long redeliveries,
+            String stubbedConsumer) {
     }
 
     /** The kinds of fault tried in a route, and those the suggestions offer that no rule tried yet. */
@@ -333,7 +334,7 @@ final class ChaosInfo {
                         info.routes.add(new RouteCounts(
                                 r.getString("route"), num(r.get("completed"), 0), num(r.get("failed"), 0),
                                 num(r.get("failedKeptByConsumer"), 0), num(r.get("handled"), 0),
-                                num(r.get("redeliveries"), 0)));
+                                num(r.get("redeliveries"), 0), r.getString("stubbedConsumer")));
                     }
                 }
             }
