@@ -239,8 +239,10 @@ public class DockerEventsConsumer extends DefaultConsumer {
                 LOG.warn("The Docker event stream of {} failed, subscribing again in {} ms: {}", endpoint, delay,
                         throwable.getMessage(), throwable);
             } else {
+                // repeats for every attempt while the daemon is down, so one line, and the stack trace at DEBUG
                 LOG.warn("Failed to subscribe to the Docker events of {}, trying again in {} ms: {}", endpoint, delay,
                         throwable.getMessage());
+                LOG.debug("Failed to subscribe to the Docker events of {}", endpoint, throwable);
             }
             subscribeAgain(delay);
         }
