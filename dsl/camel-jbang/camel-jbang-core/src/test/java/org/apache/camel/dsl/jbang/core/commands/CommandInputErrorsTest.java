@@ -154,6 +154,31 @@ class CommandInputErrorsTest {
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 
+    @Test
+    void debugSpringBootInTheBackground() throws Exception {
+        // Spring Boot registers stopOnExit hooks that kill the child when this JVM exits; --background exits
+        // immediately and would stop the integration before it starts
+        Path pom = Files.writeString(dir.resolve("pom.xml"),
+                "<project><dependencyManagement><dependencies>"
+                                                             + "<dependency><groupId>org.apache.camel.springboot</groupId>"
+                                                             + "<artifactId>camel-spring-boot-bom</artifactId><version>4.9.0</version>"
+                                                             + "<type>pom</type><scope>import</scope></dependency>"
+                                                             + "</dependencies></dependencyManagement></project>");
+
+        assertThatThrownBy(() -> call(new Debug(main), "--background", pom.toString()))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Debug Camel Spring Boot with --background is not supported")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @Test
+    void debugBackgroundAndRemoteAttachAreMutuallyExclusive() {
+        assertThatThrownBy(() -> call(new Debug(main), "--background", "--remote-attach"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("--background and --remote-attach are mutually exclusive")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "missing.yaml", "missing.xml", "missing.java", "file:missing.camel.yaml" })
     void runAFileThatDoesNotExist(String file) {
