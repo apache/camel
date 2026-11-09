@@ -268,13 +268,16 @@ class JsonPathChecksTest {
         assertThat(JsonPathChecks.validateYamlJsonPath(yaml, catalog)).singleElement().isEqualTo(
                 "Line 9: jsonpath $[?(@.orderId == '${header.id}')][] does not compile: Could not parse token starting at"
                                                                                                  + " position 33 (at []). Expected ?, ', 0-9, *; JsonPath has no [], and a filter"
-                                                                                                 + " or [*] gives a list already: write $[?(@.orderId == '${header.id}')]");
+                                                                                                 + " or [*] gives a list already: write the line as expression: \"$[?(@.orderId =="
+                                                                                                 + " '${header.id}')]\"");
         // without a placeholder, and in a split
         assertThat(JsonPathChecks.validateYamlJsonPath(yaml.replace("$[?(@.orderId == '${header.id}')][]", "$.lines[]"),
                 catalog)).singleElement().asString()
                 .startsWith("Line 9: jsonpath $.lines[] does not compile: Could not parse token starting at position 7"
                             + " (at [])")
-                .endsWith("write $.lines");
+                .endsWith("write the line as expression: \"$.lines\"");
+        // without the line (the expression tool), the expression alone
+        assertThat(JsonPathChecks.compileProblem(catalog, "$.lines[]", false)).endsWith("write $.lines");
         assertThat(JsonPathChecks.validateYamlJsonPath("""
                 - route:
                     from:

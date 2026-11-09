@@ -439,9 +439,10 @@ public class YamlValidatorPropertyHintTest {
                                 resultType: java.util.List
                         - log: "done"
                 """);
+        // the line to write ends the message (CAMEL-26758: the write tool applies it on the third same write)
         assertThat(errors).extracting(Error::getMessage)
                 .anyMatch(m -> m.startsWith("line 8: the value opens a double quote and never closes it")
-                        && m.contains("write the line as expression: \"$[?(@.sku == '${header.sku}')]\""));
+                        && m.endsWith("write the line as expression: \"$[?(@.sku == '${header.sku}')]\""));
     }
 
     /** CAMEL-24906: the value corrected twice ends with two quotes, and the line to write says so. */
