@@ -195,7 +195,7 @@ public class ZooKeeperClusterService extends AbstractCamelClusterService<ZooKeep
         ObjectHelper.notNull(getCamelContext(), "Camel Context");
         ObjectHelper.notNull(configuration.getBasePath(), "ZooKeeper base path");
 
-        return new ZooKeeperClusterView(this, configuration, getOrCreateCurator(), namespace);
+        return new ZooKeeperClusterView(this, configuration, this::getOrCreateCurator, namespace);
     }
 
     @Override
