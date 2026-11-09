@@ -139,7 +139,8 @@ public final class ChaosExperimentRun {
     static JsonObject run(
             Integration integration, String hypothesis, String rules, Feed feed, long wait, String note, Clock clock)
             throws InterruptedException {
-        // the status is read once for the checks of the feed
+        // the status is read once, before the experiment, for the feed; the exploration at the end reads it again,
+        // for the state after the experiment
         JsonObject status = feed != null ? integration.status() : null;
         if (feed != null) {
             // a feed that reaches no route makes an experiment without messages, whose verdict says nothing
