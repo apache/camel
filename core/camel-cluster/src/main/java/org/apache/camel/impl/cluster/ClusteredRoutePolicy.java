@@ -43,6 +43,7 @@ import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextResumedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.spi.ThreadPoolProfile;
@@ -83,12 +84,14 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final AtomicReference<CamelClusterView> clusterView;
     private final AtomicBoolean leadershipChangePending;
     // the leadership is applied again to the routes (and not only on a change): a route of this policy was added to
-    // the CamelContext, or a route failed to start or stop
+    // the CamelContext, a route failed to start or stop, or the CamelContext resumed
     private final AtomicBoolean reapply;
     private final AtomicBoolean retryScheduled;
     private CamelClusterService clusterService;
     private volatile boolean startManagedRoutesEarly;
     private volatile boolean initialDelayElapsed;
+    // the CamelContext was resumed once (a policy attached after the start does not get the started event)
+    private volatile boolean contextResumed;
 
     private Duration initialDelay;
     private volatile ExecutorService leadershipExecutor;
@@ -413,8 +416,21 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private void doStartManagedRoutes() {
         // if we are currently starting up Camel context then defer starting routes till its fully started
         if (camelContext.isStarting()) {
+            if (contextStarted.get() || contextResumed) {
+                // the CamelContext is resuming (its status is starting until the resume completed, and the resumed
+                // event comes before that): the started event does not come again, so try again later
+                LOG.debug("Will start managed routes once camel context has resumed");
+                scheduleRetry();
+                return;
+            }
             LOG.debug("Will defer starting managed routes until camel context is fully started");
             startManagedRoutesEarly = true;
+            return;
+        }
+        // a route cannot be started while the CamelContext is suspended (startRoute does nothing then): the leadership is
+        // applied again when the CamelContext resumes (CamelContextResumedEvent)
+        if (camelContext.isSuspending() || camelContext.isSuspended()) {
+            LOG.debug("Will defer starting managed routes until camel context is resumed");
             return;
         }
         // and if the initial delay has not elapsed yet, then defer starting routes till it has
@@ -656,7 +672,14 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             implements ExtendedStartupListener, NonManagedService {
         @Override
         public void notify(CamelEvent event) throws Exception {
-            if (event instanceof RouteAddedEvent) {
+            if (event instanceof CamelContextResumedEvent) {
+                contextResumed = true;
+                // a leadership taken while the CamelContext was suspended could not start the routes, and the resume
+                // starts (or resumes) the routes that were running when it was suspended, also on a node that lost the
+                // leadership meanwhile: the policy thread applies the leadership again
+                reapply.set(true);
+                handOverLeadershipChange();
+            } else if (event instanceof RouteAddedEvent) {
                 // on the thread that adds the route, which holds the CamelContext route lock: the policy thread starts
                 // the route if this node is the leader (the route is known to the CamelContext from now on)
                 reapply.set(true);
@@ -668,9 +691,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
 
         @Override
         public boolean isEnabled(CamelEvent event) {
-            // a route added while the CamelContext starts is started (or deferred) with the others. The event also comes
+            // the resumed event: see notify. A route added while the CamelContext starts is started (or deferred) with
+            // the others. The added event also comes
             // when a stopped route is warmed up again; the extra pass then has nothing to do
-            return event instanceof CamelContextStartedEvent
+            return event instanceof CamelContextStartedEvent || event instanceof CamelContextResumedEvent
                     || event instanceof RouteAddedEvent rae && camelContext.isStarted()
                             && stoppedRoutes.contains(rae.getRoute());
         }
