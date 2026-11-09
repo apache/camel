@@ -294,7 +294,7 @@ public final class ManifestFetcher implements AutoCloseable {
         for (int i = 0; i < entries.getLength() && build == null; i++) {
             Element entry = (Element) entries.item(i);
             if ("bin".equals(childText(entry, "classifier")) && "tar.gz".equals(childText(entry, "extension"))) {
-                build = String.valueOf(childText(entry, "value"));
+                build = childText(entry, "value");
             }
         }
         if (build == null) {

@@ -296,6 +296,32 @@ class ManifestFetcherTest {
                 .isEqualTo("4.24.0-20261108.143653-24");
     }
 
+    // a bin tar.gz entry without a <value> falls back to the <snapshot>, as when there is no entry
+    @Test
+    void newestBuildFromTheSnapshotWhenTheLauncherArchiveHasNoValue() {
+        String metadata = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <metadata modelVersion="1.1.0">
+                  <version>4.24.0-SNAPSHOT</version>
+                  <versioning>
+                    <snapshot>
+                      <timestamp>20261108.143653</timestamp>
+                      <buildNumber>24</buildNumber>
+                    </snapshot>
+                    <snapshotVersions>
+                      <snapshotVersion>
+                        <classifier>bin</classifier>
+                        <extension>tar.gz</extension>
+                      </snapshotVersion>
+                    </snapshotVersions>
+                  </versioning>
+                </metadata>
+                """;
+
+        assertThat(ManifestFetcher.parseNewestBuild(metadata.getBytes(StandardCharsets.UTF_8), "4.24.0-SNAPSHOT"))
+                .isEqualTo("4.24.0-20261108.143653-24");
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "20261108.143653</timestamp><x>", "2026/../../x", "" })
     void rejectsAnInvalidMaven2Snapshot(String timestamp) {

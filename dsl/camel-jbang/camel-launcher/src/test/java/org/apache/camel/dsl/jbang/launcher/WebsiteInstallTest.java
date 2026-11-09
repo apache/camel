@@ -728,6 +728,55 @@ class WebsiteInstallTest {
             }
         }
 
+        // builds deployed in the same second differ only in the build number, which is compared as a number
+        @Test
+        void keepsTheNewestThreeNightliesByBuildNumber(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                List<String> builds = List.of("9.9.0-20261101.010000-8", "9.9.0-20261101.010000-9",
+                        "9.9.0-20261101.010000-10", "9.9.0-20261101.010000-24");
+                for (String build : builds) {
+                    publishNightly(fixture, "9.9.0-SNAPSHOT", build, null);
+                    WebsiteInstallerFixture.Result r = install(fixture, home, "9.9.0-SNAPSHOT");
+                    assertEquals(0, r.exit(), r.stderr());
+                }
+
+                try (Stream<Path> listing = Files.list(home.resolve(".local/share/camel-cli/versions"))) {
+                    assertThat(listing.map(d -> d.getFileName().toString())).containsExactlyInAnyOrder(
+                            "9.9.0-20261101.010000-9", "9.9.0-20261101.010000-10", "9.9.0-20261101.010000-24");
+                }
+            }
+        }
+
+        // the new build is already active when the old ones are pruned, so a build that cannot be removed only warns
+        @Test
+        void aNightlyThatCannotBeRemovedDoesNotFailTheInstall(@TempDir Path temp) throws Exception {
+            try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+                Path home = Files.createDirectory(temp.resolve("home"));
+                List<String> builds = List.of("9.9.0-20261101.010000-1", "9.9.0-20261102.010000-2",
+                        "9.9.0-20261103.010000-3");
+                for (String build : builds) {
+                    publishNightly(fixture, "9.9.0-SNAPSHOT", build, null);
+                    assertEquals(0, install(fixture, home, "9.9.0-SNAPSHOT").exit());
+                }
+                // a directory without write permission keeps rm from removing its files
+                Path locked = Files.createDirectories(
+                        home.resolve(".local/share/camel-cli/versions/9.9.0-20261101.010000-1/locked"));
+                Files.writeString(locked.resolve("file"), "x");
+                assertTrue(locked.toFile().setWritable(false, false));
+                try {
+                    publishNightly(fixture, "9.9.0-SNAPSHOT", "9.9.0-20261104.010000-4", null);
+
+                    WebsiteInstallerFixture.Result r = install(fixture, home, "9.9.0-SNAPSHOT");
+
+                    assertEquals(0, r.exit(), r.stderr());
+                    assertNightlyInstalled(home, "9.9.0-20261104.010000-4", "9.9.0-SNAPSHOT");
+                } finally {
+                    locked.toFile().setWritable(true, false);
+                }
+            }
+        }
+
         @Test
         void releaseAfterNightlyReplacesTheSnapshotPin(@TempDir Path temp) throws Exception {
             try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {

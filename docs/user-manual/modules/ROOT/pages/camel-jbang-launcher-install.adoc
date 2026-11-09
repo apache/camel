@@ -139,7 +139,7 @@ IMPORTANT: A nightly build is a development build for testing, not an Apache rel
 ----
 camel self-update --version SNAPSHOT          # the newest nightly build of main
 camel self-update --version 4.22.3-SNAPSHOT   # the newest nightly build of a maintenance branch
-camel self-update --version LTS               # back to a release (or --version X.Y.Z)
+camel self-update --version LTS               # back to the LTS releases (or --version X.Y or X.Y.Z)
 ----
 
 The installer takes the same values:
@@ -151,7 +151,8 @@ curl -fsSL https://camel.apache.org/install.sh | sh -s -- --version SNAPSHOT
 
 `SNAPSHOT` and `X.Y.Z-SNAPSHOT` are recorded as the pin, so a later `camel self-update` installs the newest nightly
 build of main, or of that version. Installing a release with `--version` (or running the installer without
-`--version`) leaves the nightly builds and goes back to the releases. A pin to nightly builds gets no update notice, as
+`--version`) leaves the nightly builds and goes back to the releases. `--version LTS` and `--version X.Y` install the
+newest release of that selector and pin it, from `camel self-update` as from the installer. A pin to nightly builds gets no update notice, as
 a new build lands every day.
 
 Each nightly build is installed in its own directory, named after it, such as
@@ -224,7 +225,7 @@ by `install.sh`/`install.ps1` (it was installed through Homebrew, Chocolatey, Wi
 SDKMAN, or JBang instead), the message names that manager and its own upgrade command, e.g.
 `brew upgrade apache-camel`. If the installation was pinned to an exact version by a user running
 `install.sh --version 4.22.2`/`install.ps1 -Version 4.22.2` directly (running
-`camel self-update --version ...` does not create or change a pin), the message names the pin file to
+`camel self-update --version X.Y.Z` does not create an exact pin), the message names the pin file to
 remove to resume tracking new releases. An installation pinned to a release line or to `LTS` moves
 within that selector, see <<_pinning_and_camel_self_update,Pinning and `camel self-update`>>.
 

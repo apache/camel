@@ -53,8 +53,8 @@ import picocli.CommandLine;
 public class SelfUpdateCommand extends CamelCommand {
 
     @CommandLine.Option(names = { "--version" },
-                        description = "Install a specific version instead of the latest: X.Y.Z, or the nightly builds of"
-                                      + " SNAPSHOT (main) or X.Y.Z-SNAPSHOT")
+                        description = "Install a specific version instead of the latest: X.Y.Z, the newest release of X.Y or"
+                                      + " LTS (pinned), or the nightly builds of SNAPSHOT (main) or X.Y.Z-SNAPSHOT")
     String version;
 
     @CommandLine.Option(names = { "--check" }, description = "Only report whether a newer version is available")
@@ -118,10 +118,17 @@ public class SelfUpdateCommand extends CamelCommand {
         if (leavesNightlies) {
             pin = null;
         }
+        // --version LTS or X.Y installs the newest release of that selector and pins it, as the installer does.
+        Pin selector = version != null ? Pin.parse(version) : null;
+        if (selector != null && !selector.tracksAlias()) {
+            selector = null;
+        }
         ManifestFetcher.Manifest manifest;
         try {
             if (pin != null) {
                 manifest = fetcher.fetchAlias(pin.aliasName());
+            } else if (selector != null) {
+                manifest = fetcher.fetchAlias(selector.aliasName());
             } else {
                 manifest = version != null ? fetcher.fetch(version) : fetcher.fetchLatest();
             }
@@ -130,7 +137,12 @@ public class SelfUpdateCommand extends CamelCommand {
             return 1;
         }
 
-        if (version != null && !version.equals(manifest.version())) {
+        if (selector != null && !selector.accepts(manifest.version())) {
+            printer().printErr("manifest version (" + manifest.version() + ") does not match requested version ("
+                               + selector.describe() + ")");
+            return 1;
+        }
+        if (version != null && selector == null && !version.equals(manifest.version())) {
             printer().printErr("manifest version (" + manifest.version() + ") does not match requested version ("
                                + version + ")");
             return 1;
@@ -145,8 +157,9 @@ public class SelfUpdateCommand extends CamelCommand {
         String running = catalog.getCatalogVersion();
         boolean newer = VersionHelper.compare(manifest.version(), running) > 0;
 
-        String upToDate = pin != null
-                ? "Camel CLI is already on the latest version for " + pin.describe() + " (" + running + ")"
+        Pin follows = pin != null ? pin : selector;
+        String upToDate = follows != null
+                ? "Camel CLI is already on the latest version for " + follows.describe() + " (" + running + ")"
                 : "Camel CLI is already on the latest version (" + running + ")";
 
         if (checkOnly) {
@@ -156,9 +169,9 @@ public class SelfUpdateCommand extends CamelCommand {
             return 0;
         }
 
-        if (!newer && version == null) {
+        if (!newer && (version == null || (selector != null && manifest.version().equals(running)))) {
             printer().println(upToDate);
-            return 0;
+            return selector != null ? writePin(selector.value()) : 0;
         }
 
         // Always pin the exact resolved version, even for a bare `camel self-update` with no --version: without
@@ -167,6 +180,9 @@ public class SelfUpdateCommand extends CamelCommand {
         // actually decided on. For an X.Y or LTS pin this is the version the alias resolved to; the delegated run
         // (CAMEL_INSTALL_SELF_UPDATE=true) leaves the selector in the pin file untouched.
         int exit = runInstaller(manifest.version());
+        if (exit == 0 && selector != null) {
+            return writePin(selector.value());
+        }
         if (exit == 0 && leavesNightlies) {
             return writePin(null);
         }

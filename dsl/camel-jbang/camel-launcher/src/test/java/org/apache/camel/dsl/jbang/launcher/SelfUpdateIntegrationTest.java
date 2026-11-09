@@ -568,6 +568,58 @@ class SelfUpdateIntegrationTest {
     }
 
     @Test
+    void ltsLeavesTheNightliesAndPinsLts(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, WebsiteInstallTest.NIGHTLY);
+            Path pinFile = pin(xdgDataHome, "SNAPSHOT");
+            publishRealInstallSh(fixture);
+            WebsiteInstallTest.publishAlias(fixture, "lts", NEWER_VERSION);
+
+            int exit = run(fixture, home, xdgDataHome, "--version", "LTS");
+
+            assertThat(exit).isZero();
+            assertThat(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION)).isDirectory();
+            // back to following the LTS releases, as install.sh --version LTS does
+            assertThat(pinFile).hasContent("LTS");
+        }
+    }
+
+    @Test
+    void releaseLineInstallsItsNewestPatchAndPinsTheLine(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, OLDER_VERSION);
+            publishRealInstallSh(fixture);
+            WebsiteInstallTest.publishAlias(fixture, "99.0", NEWER_VERSION);
+
+            int exit = run(fixture, home, xdgDataHome, "--version", "99.0");
+
+            assertThat(exit).isZero();
+            assertThat(xdgDataHome.resolve("camel-cli/versions/" + NEWER_VERSION)).isDirectory();
+            assertThat(xdgDataHome.resolve("camel-cli/pinned-version")).hasContent("99.0");
+        }
+    }
+
+    @Test
+    void releaseLineRefusesAnAliasOutsideTheLine(@TempDir Path temp) throws Exception {
+        try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
+            Path home = Files.createDirectories(temp.resolve("home"));
+            Path xdgDataHome = home.resolve(".local/share");
+            markRunningAsWebInstaller(home, xdgDataHome, OLDER_VERSION);
+            WebsiteInstallTest.publishAlias(fixture, "98.0", NEWER_VERSION);
+
+            int exit = run(fixture, home, xdgDataHome, "--version", "98.0");
+
+            assertThat(exit).isEqualTo(1);
+            assertThat(printer.getOutput()).contains("does not match requested version (the 98.0 release line)");
+            assertThat(xdgDataHome.resolve("camel-cli/pinned-version")).doesNotExist();
+        }
+    }
+
+    @Test
     void exactPinRefusesNightlies(@TempDir Path temp) throws Exception {
         try (WebsiteInstallerFixture fixture = WebsiteInstallerFixture.start(temp.resolve("fixture"))) {
             Path home = Files.createDirectories(temp.resolve("home"));

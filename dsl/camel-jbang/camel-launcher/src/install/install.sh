@@ -336,13 +336,15 @@ newest_nightly() {
 }
 
 # Removes all but the newest three nightly builds, never the one just installed: a command that still runs from one
-# of them keeps its files. Releases are never removed.
+# of them keeps its files. Releases are never removed. The key is <timestamp>-<buildNumber>, with the build number
+# compared as a number. Pruning is best effort: the new build is already active, so a failed removal only warns.
 prune_nightlies() {
     keep_build="$1"
     ls "$data_root" | while IFS= read -r pn_dir; do
         is_valid_nightly "$pn_dir" && printf '%s %s\n' "${pn_dir#*-}" "$pn_dir"
-    done | sort -r | awk 'NR > 3 { print $2 }' | while IFS= read -r pn_old; do
-        [ "$pn_old" = "$keep_build" ] || rm -rf "${data_root:?}/$pn_old"
+    done | sort -t- -k1,1r -k2,2nr | awk 'NR > 3 { print $2 }' | while IFS= read -r pn_old; do
+        [ "$pn_old" = "$keep_build" ] || rm -rf "${data_root:?}/$pn_old" \
+            || echo "Warning: could not remove the old nightly build $data_root/$pn_old" >&2
     done
 }
 
