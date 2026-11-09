@@ -41,7 +41,7 @@ public abstract class DoclingITestSupport extends CamelTestSupport {
         conf.setUseDoclingServe(true);
         conf.setDoclingServeUrl(doclingService.doclingServerUrl());
         // PDF processing can take longer than the default 30s, especially for complex invoices
-        conf.setProcessTimeout(300000);
+        conf.setProcessTimeout("ppc64le".equals(System.getProperty("os.arch")) ? 600000 : 300000);
         docling.setConfiguration(conf);
 
         LOG.info("Testing Docling-Serve at: {}", doclingService.doclingServerUrl());
