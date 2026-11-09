@@ -77,8 +77,9 @@ import org.apache.camel.util.ObjectHelper;
                                                 + " is sent as text (UTF-8), and bytes, a stream or a file as their content. A Map"
                                                 + " or a POJO is not"
                                                 + " marshalled: marshal it to JSON first, as a body that does not convert to bytes"
-                                                + " fails. The Content-Type is application/json unless the"
-                                                + " CamelAzureFunctionsHttpHeaders header sets one. GET and DELETE send no body."
+                                                + " fails. The Content-Type is the one the CamelAzureFunctionsHttpHeaders header"
+                                                + " sets, else the Content-Type header of the message, else application/json."
+                                                + " GET and DELETE send no body."
                                                 + " The management operations do not use the body: they take their input from"
                                                 + " headers, such as the app settings and the tags"),
            producerOut = @BodyType(value = Carrier.TEXT, javaType = "java.lang.String",

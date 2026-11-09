@@ -72,6 +72,9 @@ public final class ChaosReport {
     private final List<ChaosRecentFaults.Entry> recentFaults;
     // what has been tried per route, and what not yet (CAMEL-26728)
     private final List<ChaosAdvisor.RouteTried> tried;
+    // the exploration running now or the last one (CAMEL-26773), as JSON and text, or null
+    private JsonObject exploration;
+    private String explorationText;
 
     ChaosReport(long seed, String seedFrom, long now, List<ChaosRule> current, List<ChaosRule> removed,
                 Map<String, RouteCounts> counts, int evictedUnmet, long evictedLost, int evictedPending,
@@ -144,6 +147,12 @@ public final class ChaosReport {
         counts.forEach((route, c) -> routes.add(new RouteEntry(route, c)));
         this.lost = lostCount;
         this.pending = anyPending || evictedPending > 0;
+    }
+
+    /** The journal of the exploration running now or the last one, which the report then has. */
+    void exploration(JsonObject json, String text) {
+        this.exploration = json;
+        this.explorationText = text;
     }
 
     // the number of an id such as r12, for the order of the rules
@@ -272,6 +281,9 @@ public final class ChaosReport {
                 sb.append(", a stub of ").append(r.stubbedConsumer).append(" that does not read them again");
             }
             sb.append("), handled ").append(r.handled).append(", redeliveries ").append(r.redeliveries);
+        }
+        if (explorationText != null) {
+            sb.append(explorationText);
         }
         if (!tried.isEmpty()) {
             sb.append("\n  tried, per route:");
@@ -469,6 +481,9 @@ public final class ChaosReport {
         root.put("routes", routeArray);
         root.put("recentFaults", recentFaultsJson());
         root.put("tried", triedJson());
+        if (exploration != null) {
+            root.put("exploration", exploration);
+        }
         return root;
     }
 

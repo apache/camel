@@ -19,7 +19,6 @@ package org.apache.camel.component.azure.eventhubs.integration.operations;
 import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import com.azure.messaging.eventhubs.EventHubClientBuilder;
@@ -33,29 +32,29 @@ import org.apache.camel.component.azure.eventhubs.TestUtils;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.component.azure.eventhubs.operations.EventHubsProducerOperations;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsService;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsProducerOperationsIT extends CamelTestSupport {
+
+    @RegisterExtension
+    static AzureEventHubsService service = TestUtils.createService();
 
     private EventHubsConfiguration configuration;
     private EventHubProducerAsyncClient producerAsyncClient;
     private EventHubConsumerAsyncClient consumerAsyncClient;
 
     @BeforeAll
-    public void prepare() throws Exception {
-        final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
-
+    public void prepare() {
         configuration = new EventHubsConfiguration();
-        configuration.setConnectionString(properties.getProperty("connectionString"));
+        configuration.setConnectionString(service.connectionString());
         configuration.setConsumerGroupName(EventHubClientBuilder.DEFAULT_CONSUMER_GROUP_NAME);
 
         producerAsyncClient = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
@@ -112,6 +111,8 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
         exchanges.add(exchange2);
 
         final Exchange exchange = new DefaultExchange(context);
+        // the events are looked for in this partition only
+        exchange.getIn().setHeader(EventHubsConstants.PARTITION_ID, firstPartition);
         exchange.getIn().setBody(exchanges);
 
         operations.sendEvents(exchange, doneSync -> {
@@ -155,6 +156,8 @@ class EventHubsProducerOperationsIT extends CamelTestSupport {
         messages.add("Test String Message 2");
 
         final Exchange exchange = new DefaultExchange(context);
+        // the events are looked for in this partition only
+        exchange.getIn().setHeader(EventHubsConstants.PARTITION_ID, firstPartition);
         exchange.getIn().setBody(messages);
 
         operations.sendEvents(exchange, doneSync -> {

@@ -141,8 +141,19 @@ final class ChaosAction {
                 if (reset) {
                     answer.put("reset", true);
                 }
+            } else if ("explore-start".equals(command)) {
+                // an exploration (CAMEL-26773): camel-chaos keeps its journal and ends its rules at the deadline
+                @SuppressWarnings("unchecked")
+                Map<String, Object> started = (Map<String, Object>) call(type, chaos, "startExploration",
+                        root.getString("budget"), root.getString("focus"));
+                answer.putAll(started);
+            } else if ("explore-finish".equals(command)) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> finished = (Map<String, Object>) call(type, chaos, "finishExploration");
+                answer.putAll(finished);
             } else {
-                output.error("Unknown chaos command: " + command + " (add, check, change, remove, clear, load or suggest)");
+                output.error("Unknown chaos command: " + command
+                             + " (add, check, change, remove, clear, load, suggest, explore-start or explore-finish)");
                 return;
             }
         } catch (IllegalArgumentException | IllegalStateException e) {

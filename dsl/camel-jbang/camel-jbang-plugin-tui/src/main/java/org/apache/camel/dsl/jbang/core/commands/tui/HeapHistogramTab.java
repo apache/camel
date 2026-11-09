@@ -109,6 +109,7 @@ class HeapHistogramTab extends AbstractTableTab {
                             .text(Text.from(
                                     Line.from(Span.styled(" Loading heap histogram...", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(true))
                                     .title(" Heap Histogram ").build())
                             .build(),
                     area);
@@ -163,7 +164,8 @@ class HeapHistogramTab extends AbstractTableTab {
                         Constraint.length(15))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
+                        .title(title).build())
                 .build();
 
         frame.renderStatefulWidget(table, area, tableState);
@@ -176,6 +178,7 @@ class HeapHistogramTab extends AbstractTableTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(" Select a class to see details", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(false))
                                     .title(" Detail ").build())
                             .build(),
                     area);
@@ -262,7 +265,8 @@ class HeapHistogramTab extends AbstractTableTab {
         frame.renderWidget(
                 Paragraph.builder()
                         .text(Text.from(lines))
-                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                        .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(ctx.paneBorder(false)).title(title).build())
                         .build(),
                 area);
     }

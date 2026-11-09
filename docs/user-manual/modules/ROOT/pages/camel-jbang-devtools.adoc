@@ -57,6 +57,38 @@ $ camel cmd send mqtt --body=file:payload.json --endpoint=mqtt
 
 TIP: Run `camel cmd send --help` for all options. Full example on https://github.com/apache/camel-jbang-examples/tree/main/mqtt[GitHub].
 
+=== Sending many messages
+
+*Available since Camel 4.24*
+
+`--repeat` sends the message that many times, with `--interval` between two (in millis, or a duration such as
+`200ms`), and prints a summary instead of each reply. It exits with `1` when a message failed. A range such as
+`--interval=100..500` (or `100ms..2s`, as the `duration=` of a chaos rule) draws each pause at random, so the messages
+do not come at a steady pace:
+
+[source,bash]
+----
+$ camel cmd send shop --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=200ms
+2026-11-09 12:01:14.101  58473 ---                          kafka://refunds : Sent 50 messages (48 ok, 2 failed) (10s)
+  2 x IllegalStateException: Refund amount is missing
+----
+
+A body of `file:<folder>` sends the files of the folder in name order, one message per file. A `.properties` file
+with the same name has the headers of a message: `001.properties` for `001.json`. With `--repeat` it goes round the
+files again, and the headers of `--header` go with every message:
+
+[source,bash]
+----
+$ ls test/chaos/refunds-fails
+001.json  001.properties  002.json  003.json
+$ camel cmd send shop --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/ --interval=100ms
+----
+
+The integration reads the files, as it reads the file of a single body, and sends the messages on a thread of its own,
+so `camel get` and the other commands keep working meanwhile. At most 10000 messages are sent at a time, with at most
+60 seconds between two. A broker consumer stubbed with `camel run --stub=remote` is fed this way, which is how chaos
+rules can be tried on it (see xref:next@components:others:chaos.adoc[camel-chaos]).
+
 === Sending without a running integration
 
 *Available since Camel 4.12*

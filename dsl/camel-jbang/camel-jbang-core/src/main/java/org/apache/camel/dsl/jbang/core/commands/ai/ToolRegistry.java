@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
@@ -112,6 +113,19 @@ public final class ToolRegistry {
     private static void register(ToolDescriptor descriptor) {
         TOOLS.add(descriptor);
         BY_NAME.put(descriptor.name(), descriptor);
+    }
+
+    /** A whole number argument, or the default when it is not given. */
+    private static int intArg(Map<String, String> args, String name, int defaultValue) {
+        String value = args.get(name);
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            throw new ToolExecutionException(name + " must be a whole number, was: " + value);
+        }
     }
 
     // ---- Process discovery and selection ----
@@ -396,12 +410,22 @@ public final class ToolRegistry {
                 }));
 
         register(tool("send_message",
-                "Send a test message to a Camel endpoint in the running application.")
+                "Send a test message to a Camel endpoint in the running application. With repeat, or a body of"
+                                      + " file:<folder> (one message per file, in name order; 001.properties has the"
+                                      + " headers of 001.json), it sends several messages with interval millis between"
+                                      + " them, and answers with a summary: sent, failed and the errors.")
                 .param("endpoint", "string",
                         "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)", true)
-                .param("body", "string", "Message body to send", false)
+                .param("body", "string", "Message body to send (file:<path> for a file, file:<folder> for its files)",
+                        false)
                 .param("headers", "string",
                         "Message headers as key=value pairs separated by newlines", false)
+                .param("repeat", "string",
+                        "How many messages to send in all (at most 10000), going round the files of a folder", false)
+                .param("interval", "string",
+                        "The pause between two messages in millis, or a range such as 100..500 to draw each pause at"
+                                             + " random (at most 60000)",
+                        false)
                 // the message runs through the routes and whatever they call, so it can change data
                 .readOnly(false).destructive(true)
                 .core(true)
@@ -410,7 +434,15 @@ public final class ToolRegistry {
                     if (endpoint == null || endpoint.isBlank()) {
                         throw new ToolExecutionException("endpoint is required");
                     }
-                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers")).toJson();
+                    int repeat = intArg(args, "repeat", 0);
+                    try {
+                        RepeatedSend.interval(args.get("interval"));
+                    } catch (IllegalArgumentException e) {
+                        // an interval that is not a time or a range
+                        throw new ToolExecutionException(e.getMessage());
+                    }
+                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers"), repeat,
+                            args.get("interval")).toJson();
                 }));
 
         register(tool("eval_expression",
@@ -810,8 +842,10 @@ public final class ToolRegistry {
                                        + "the most worth trying first, such as an HTTP call without a circuit breaker, "
                                        + "a dead letter channel or a hand-off to another route over seda. Each has the "
                                        + "route, the kind of fault, the rule, why to try it, and tried=true when a rule "
-                                       + "of that kind has already faulted the route. Nothing is added: check a rule "
-                                       + "with chaos_check and add it with chaos_add.")
+                                       + "of that kind has already faulted the route, and feed: how to send messages "
+                                       + "into the route (kind self, http, file or send, a hint such as the command, and "
+                                       + "real=true when that goes to the real system rather than a stub). Nothing is "
+                                       + "added: check a rule with chaos_check and add it with chaos_add.")
                 .param("name", "string", CHAOS_NAME, false)
                 .readOnly(true).destructive(false)
                 .executor((ctx, args) -> {

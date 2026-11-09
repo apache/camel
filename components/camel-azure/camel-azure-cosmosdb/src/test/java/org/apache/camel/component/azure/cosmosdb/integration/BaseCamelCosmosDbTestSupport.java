@@ -20,9 +20,14 @@ import com.azure.cosmos.CosmosAsyncClient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbComponent;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
+import org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbService;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public abstract class BaseCamelCosmosDbTestSupport extends CamelTestSupport {
+
+    @RegisterExtension
+    static AzureCosmosDbService service = CosmosDbTestUtils.createService();
 
     protected CosmosAsyncClient client;
 

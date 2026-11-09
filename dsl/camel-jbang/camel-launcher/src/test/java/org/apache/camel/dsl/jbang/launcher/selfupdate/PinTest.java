@@ -68,12 +68,55 @@ class PinTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "", "4", "4.", "4.22.", "4..22", "4.22.2.1", "4.22.2-SNAPSHOT", "latest", "LTS2", "v4.22" })
+    @ValueSource(strings = {
+            "", "4", "4.", "4.22.", "4..22", "4.22.2.1", "4.22.2-snapshot", "4.22.2-SNAPSHOT1", "SNAPSHOTS",
+            "4.22.2-20261108.143653", "4.22.2-20261108.1436-24", "4.22.2-20261108.143653-24/..", "latest", "LTS2",
+            "v4.22" })
     void treatsAnythingElseAsInvalidAndNeverMoves(String raw) {
         Pin pin = Pin.parse(raw);
 
         assertThat(pin.kind()).isEqualTo(Pin.Kind.INVALID);
         assertThat(pin.tracksAlias()).isFalse();
         assertThat(pin.accepts("4.22.2")).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "SNAPSHOT", "snapshot", " Snapshot\r\n" })
+    void parsesNightliesOfMainPin(String raw) {
+        Pin pin = Pin.parse(raw);
+
+        assertThat(pin.kind()).isEqualTo(Pin.Kind.SNAPSHOT);
+        assertThat(pin.value()).isEqualTo("SNAPSHOT");
+        assertThat(pin.followsNightlies()).isTrue();
+        assertThat(pin.tracksAlias()).isFalse();
+        assertThat(pin.accepts("4.24.0-20261108.143653-24")).isTrue();
+        assertThat(pin.accepts("4.22.3-20261107.143456-15")).isTrue();
+        assertThat(pin.accepts("4.24.0")).isFalse();
+        assertThat(pin.describe()).isEqualTo("the nightly builds of main");
+        assertThatThrownBy(pin::aliasName).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void parsesNightliesOfSnapshotVersionPin() {
+        Pin pin = Pin.parse("4.22.3-SNAPSHOT\n");
+
+        assertThat(pin.kind()).isEqualTo(Pin.Kind.SNAPSHOT);
+        assertThat(pin.followsNightlies()).isTrue();
+        assertThat(pin.accepts("4.22.3-20261107.143456-15")).isTrue();
+        assertThat(pin.accepts("4.24.0-20261108.143653-24")).isFalse();
+        assertThat(pin.accepts("4.22.3")).isFalse();
+        assertThat(pin.describe()).isEqualTo("the nightly builds of 4.22.3-SNAPSHOT");
+    }
+
+    @Test
+    void parsesOneNightlyBuildPinWhichNeverMoves() {
+        Pin pin = Pin.parse("4.24.0-20261108.143653-24");
+
+        assertThat(pin.kind()).isEqualTo(Pin.Kind.NIGHTLY);
+        assertThat(pin.followsNightlies()).isFalse();
+        assertThat(pin.tracksAlias()).isFalse();
+        assertThat(pin.accepts("4.24.0-20261108.143653-24")).isTrue();
+        assertThat(pin.accepts("4.24.0-20261109.143653-25")).isFalse();
+        assertThat(pin.describe()).isEqualTo("version 4.24.0-20261108.143653-24");
     }
 }

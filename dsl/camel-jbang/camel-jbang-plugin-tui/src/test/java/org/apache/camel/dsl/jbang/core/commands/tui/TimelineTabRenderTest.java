@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
@@ -382,6 +383,21 @@ class TimelineTabRenderTest {
         assertThat(tab.getTableDataAsJson().getInteger("selectedIndex")).isEqualTo(1);
         assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 40, shipping + 3), area)).isTrue();
         assertThat(tab.getTableDataAsJson().getInteger("selectedIndex")).isEqualTo(2);
+    }
+
+    @Test
+    void thePanelTheKeysGoToHasTheFocusBorder() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        Buffer screen = TuiTestHelper.renderToBuffer(tab, 160, 40);
+        // ↑↓ select a route: the timeline has the focus
+        assertThat(TuiTestHelper.borderColor(screen, "Timeline ─ shop")).isEqualTo(Theme.accent());
+        assertThat(TuiTestHelper.borderColor(screen, "orders ─ per second")).isNotEqualTo(Theme.accent());
+
+        // Enter: ↑↓ go over the exchanges of the second
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        screen = TuiTestHelper.renderToBuffer(tab, 160, 40);
+        assertThat(TuiTestHelper.borderColor(screen, "Timeline ─ shop")).isNotEqualTo(Theme.accent());
+        assertThat(TuiTestHelper.borderColor(screen, "Exchanges at")).isEqualTo(Theme.accent());
     }
 
     private static int indexOf(List<String> lines, String text) {

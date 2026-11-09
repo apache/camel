@@ -16,9 +16,8 @@
  */
 package org.apache.camel.impl.console;
 
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +38,6 @@ import org.apache.camel.support.ExceptionHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonRecordSupport;
@@ -282,9 +280,6 @@ public class SendDevConsole extends AbstractDevConsole {
                             "InOut".equals(mep) ? ExchangePattern.InOut : ExchangePattern.InOnly);
                 });
             }
-            if (inputBody instanceof Closeable c) {
-                IOHelper.close(c);
-            }
         }
         return out;
     }
@@ -339,8 +334,9 @@ public class SendDevConsole extends AbstractDevConsole {
         }
         Object b = body;
         if (body.startsWith("file:")) {
-            File file = new File(body.substring(5));
-            b = new FileInputStream(file);
+            // the content of the file, not a stream: an endpoint that hands the message to another thread (seda, a
+            // stub) reads the body after the send returns, when a stream would be closed already
+            b = Files.readAllBytes(new File(body.substring(5)).toPath());
         }
         return b;
     }

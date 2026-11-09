@@ -21,8 +21,10 @@ import java.util.regex.Pattern;
 /**
  * The content of the web installer's {@code pinned-version} file, as written by {@code install.sh}/{@code install.ps1}
  * for an explicit {@code --version}/{@code -Version}: an exact release ({@code X.Y.Z}), a release line ({@code X.Y}),
- * or the newest LTS release ({@code LTS}). Anything else is {@link Kind#INVALID} and treated like an exact pin, so an
- * unexpected pin file never lets {@code camel self-update} move the install.
+ * the newest LTS release ({@code LTS}), the nightly builds of a snapshot version ({@code X.Y.Z-SNAPSHOT}) or of main
+ * ({@code SNAPSHOT}), or one nightly build ({@code X.Y.Z-YYYYMMDD.HHMMSS-N}, see {@link Nightly}). Anything else is
+ * {@link Kind#INVALID} and treated like an exact pin, so an unexpected pin file never lets {@code camel self-update}
+ * move the install.
  */
 public record Pin(Kind kind, String value) {
 
@@ -33,6 +35,10 @@ public record Pin(Kind kind, String value) {
         EXACT,
         LINE,
         LTS,
+        /** The nightly builds of a snapshot version ({@code X.Y.Z-SNAPSHOT}) or of main ({@code SNAPSHOT}). */
+        SNAPSHOT,
+        /** One nightly build, which never moves, as an exact release. */
+        NIGHTLY,
         INVALID
     }
 
@@ -47,6 +53,12 @@ public record Pin(Kind kind, String value) {
         if (LINE.matcher(value).matches()) {
             return new Pin(Kind.LINE, value);
         }
+        if (Nightly.isLatest(value) || Nightly.isSnapshotVersion(value)) {
+            return new Pin(Kind.SNAPSHOT, Nightly.normalize(value));
+        }
+        if (Nightly.isBuild(value)) {
+            return new Pin(Kind.NIGHTLY, value);
+        }
         return new Pin(Kind.INVALID, value);
     }
 
@@ -56,6 +68,14 @@ public record Pin(Kind kind, String value) {
      */
     public boolean tracksAlias() {
         return kind == Kind.LINE || kind == Kind.LTS;
+    }
+
+    /**
+     * Whether this pin follows the nightly builds of a snapshot version or of main, which {@code camel self-update}
+     * resolves from the snapshot repository rather than from a published alias.
+     */
+    public boolean followsNightlies() {
+        return kind == Kind.SNAPSHOT;
     }
 
     /**
@@ -70,14 +90,17 @@ public record Pin(Kind kind, String value) {
     }
 
     /**
-     * Whether {@code version} (a valid X.Y.Z) satisfies this pin: any release for LTS, a release of the line for X.Y,
-     * that exact release otherwise.
+     * Whether {@code version} (a valid X.Y.Z, or a nightly build for a snapshot pin) satisfies this pin: any release
+     * for LTS, a release of the line for X.Y, a nightly build of the snapshot version (or any, for {@code SNAPSHOT})
+     * for a snapshot pin, that exact release or nightly build otherwise.
      */
     public boolean accepts(String version) {
         return switch (kind) {
             case LTS -> EXACT.matcher(version).matches();
             case LINE -> EXACT.matcher(version).matches() && version.startsWith(value + ".");
-            case EXACT -> value.equals(version);
+            case EXACT, NIGHTLY -> value.equals(version);
+            case SNAPSHOT -> Nightly.isBuild(version)
+                    && (Nightly.LATEST.equals(value) || Nightly.snapshotVersionOf(version).equals(value));
             default -> false;
         };
     }
@@ -89,6 +112,7 @@ public record Pin(Kind kind, String value) {
         return switch (kind) {
             case LTS -> "LTS";
             case LINE -> "the " + value + " release line";
+            case SNAPSHOT -> Nightly.describe(value);
             default -> "version " + value;
         };
     }
