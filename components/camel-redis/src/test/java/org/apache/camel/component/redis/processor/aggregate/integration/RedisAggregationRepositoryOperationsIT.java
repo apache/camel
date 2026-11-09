@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.redis.processor.aggregate.RedisAggregationRepository;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.redis.services.RedisService;
 import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.RedisException;
 import org.redisson.config.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -146,6 +148,70 @@ public class RedisAggregationRepositoryOperationsIT extends CamelTestSupport {
 
             repo.confirm(context, exchangeId);
             assertTrue(repo.scan(context).isEmpty());
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
+    public void testOptimisticRemoveWhenRecoveryWriteFails() {
+        String mapName = "optimisticRemoveRecoveryFailure";
+        RedisAggregationRepository repo = createRepo(mapName, true);
+
+        try {
+            // 1. Add an exchange to the active map
+            Exchange exchange = createExchange("recoverable");
+            repo.add(context, "key1", null, exchange);
+
+            // 2. Create a Redis String at the recovery map's key
+            String recoveryMapName = mapName + "-completed";
+            repo.getRedisson()
+                    .getBucket(recoveryMapName)
+                    .set("wrong-type");
+
+            // 3. Attempt removal; recovery write should fail
+            assertThrows(RedisException.class,
+                    () -> repo.remove(context, "key1", exchange));
+
+            // 4. Verify the exchange still exists in the active map
+            Exchange result = repo.get(context, "key1");
+            assertNotNull(result);
+            assertEquals("recoverable", result.getIn().getBody(String.class));
+
+        } finally {
+            repo.stop();
+        }
+    }
+
+    @Test
+    public void testOptimisticRemoveCleansUpRecoveryOnLockingFailure() {
+        String mapName = "optimisticRemoveLockingFailure";
+        RedisAggregationRepository repo = createRepo(mapName, true);
+
+        try {
+            // 1. Add the original Exchange
+            Exchange original = createExchange("original");
+            repo.add(context, "key1", null, original);
+
+            // 2. Retrieve the original Exchange
+            Exchange stale = repo.get(context, "key1");
+
+            // 3. Simulate another update to the active Exchange
+            Exchange updated = createExchange("updated");
+            repo.add(context, "key1", stale, updated);
+
+            // 4. Attempt to remove the stale Exchange
+            assertThrows(OptimisticLockingException.class,
+                    () -> repo.remove(context, "key1", stale));
+
+            // 5. Verify the updated Exchange remains active
+            Exchange result = repo.get(context, "key1");
+            assertNotNull(result);
+            assertEquals("updated", result.getIn().getBody(String.class));
+
+            // 6. Verify the stale Exchange was removed from recovery storage
+            assertNull(repo.recover(context, stale.getExchangeId()));
+
         } finally {
             repo.stop();
         }

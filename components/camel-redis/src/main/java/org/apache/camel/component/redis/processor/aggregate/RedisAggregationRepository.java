@@ -296,21 +296,33 @@ public class RedisAggregationRepository extends ServiceSupport
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
         if (optimistic) {
-            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
-            if (!cache.remove(key, holder)) {
-                LOG.warn(
-                        "Optimistic locking failed for exchange with key {}: RMap#remove removed no Exchanges, while it's expected to remove one.",
-                        key);
-                throw new OptimisticLockingException();
-            }
-            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
+            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(), key);
+
             if (useRecovery) {
                 LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
                         exchange.getExchangeId(), key);
+
                 persistedCache.put(exchange.getExchangeId(), holder);
+
                 LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
                         exchange.getExchangeId(), key);
             }
+
+            if (!cache.remove(key, holder)) {
+                if (useRecovery) {
+                    persistedCache.remove(exchange.getExchangeId());
+                }
+
+                LOG.warn(
+                        "Optimistic locking failed for exchange with key {}: RMap#remove removed no Exchanges, while it's expected to remove one.",
+                        key);
+
+                throw new OptimisticLockingException();
+            }
+
+            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.",
+                    exchange.getExchangeId(), key);
         } else {
             if (useRecovery) {
                 LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
