@@ -112,8 +112,8 @@ class AboutViewTest {
         // the outage was 4.5 minutes ago, for 15 seconds
         ctx.timeline.merge("1234", TimelineTabRenderTest.outage(end, 300, 0).json(), true);
         AboutView about = new AboutView(ctx);
-        // 160 wide has room for 75 columns of 4 seconds
-        assertThat(render(about, info)).contains("What happened ─ last 5m, a column is 4s ─ + zoom in, 4 for each");
+        // 160 wide has room for 100 columns of 3 seconds next to the notes of the route
+        assertThat(render(about, info)).contains("What happened ─ last 5m, a column is 3s ─ + zoom in, 4 for each");
 
         assertThat(about.handleKeyEvent(KeyEvent.ofChar('+'), info)).isTrue();
         // 2 minutes from the first second recorded, with the outage in it
@@ -132,13 +132,58 @@ class AboutViewTest {
 
     @Test
     void theStripsAreAsWideAsTheRoomAllows() {
-        // a whole number of seconds in a column, at least 60 columns and at most 150
+        // a whole number of seconds in a column, at least 60 columns and at most 300
         assertThat(AboutView.stripColumns(300, 40)).isEqualTo(60);
         assertThat(AboutView.stripColumns(300, 94)).isEqualTo(75);
         assertThat(AboutView.stripColumns(300, 129)).isEqualTo(100);
-        assertThat(AboutView.stripColumns(300, 500)).isEqualTo(150);
+        assertThat(AboutView.stripColumns(300, 160)).isEqualTo(150);
+        assertThat(AboutView.stripColumns(300, 500)).isEqualTo(300);
         assertThat(AboutView.stripColumns(120, 129)).isEqualTo(120);
         assertThat(AboutView.stripColumns(60, 500)).isEqualTo(60);
+    }
+
+    @Test
+    void theStripsTakeTheRoomTheNotesLeave() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        RouteInfo r = new RouteInfo();
+        r.routeId = "stock-check";
+        info.routes.add(r);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", TimelineTabRenderTest.outage(T0 / 1000 + 299, 300, 0).json(), true);
+
+        // a 200 wide screen: the notes after a strip are short, so the strips get 150 columns of 2 seconds, not 100
+        assertThat(render(new AboutView(ctx), info, 200, 40)).contains("last 5m, a column is 2s");
+    }
+
+    @Test
+    void watchCalmsDownWhenTheErrorsStopped() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.errorCount = 13;
+        info.errorKinds = List.of(
+                new IntegrationInfo.ErrorKind(
+                        "stock-check", "io.github.resilience4j.circuitbreaker.CallNotPermittedException", 10),
+                new IntegrationInfo.ErrorKind("supplier", "java.net.ConnectException", 3));
+        ErrorInfo last = new ErrorInfo();
+        info.errors.add(last);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+
+        // the last error 20 seconds ago: still something to watch
+        last.timestamp = System.currentTimeMillis() - 20_000;
+        assertThat(render(new AboutView(ctx), info))
+                .contains("✗ 13 errors: CallNotPermittedException ×10 · ConnectException ×3 · the last 20s ago");
+
+        // 90 seconds ago: none in the last minute, the ones before for the record
+        last.timestamp = System.currentTimeMillis() - 90_000;
+        String rendered = render(new AboutView(ctx), info);
+        assertThat(rendered).contains("no errors in the last minute · 13 errors before: CallNotPermittedException ×10")
+                .contains("the last 1m30s ago").contains("9  show errors").doesNotContain("✗");
+
+        // the integration says when the newest error happened, without the Errors tab loading them
+        info.errors = List.of();
+        info.lastErrorTimestamp = System.currentTimeMillis() - 20_000;
+        assertThat(render(new AboutView(ctx), info)).contains("✗ 13 errors").contains("the last 20s ago");
     }
 
     @Test
