@@ -27,10 +27,10 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class FromSftpRecursiveNotStepwiseNoBasePathIT extends BaseServerTestSupport {
 
     @RegisterExtension
-    protected static SftpEmbeddedService service = new SftpEmbeddedService(true);
+    protected SftpEmbeddedService service = new SftpEmbeddedService(true);
 
     protected String getSftpUrl() {
-        return "mina-sftp://admin@localhost:{{ftp.server.port}}?password=admin&initialDelay=3000&stepwise=false"
+        return "mina-sftp://admin@localhost:{{ftp.server.port}}?password=admin&stepwise=false"
                + "&recursive=true&knownHostsFile=" + service.getKnownHostsFile();
     }
 
@@ -46,6 +46,9 @@ public class FromSftpRecursiveNotStepwiseNoBasePathIT extends BaseServerTestSupp
         // CAMEL-13400
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
+
+        context.getRouteController().startRoute("sftpConsumerRoute");
+
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -54,7 +57,8 @@ public class FromSftpRecursiveNotStepwiseNoBasePathIT extends BaseServerTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getSftpUrl()).convertBodyTo(String.class).to("mock:result");
+                from(getSftpUrl()).routeId("sftpConsumerRoute").autoStartup(false).convertBodyTo(String.class)
+                        .to("mock:result");
             }
         };
     }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -508,6 +509,7 @@ public final class ChaosManager {
         for (ChaosAdvisor.RouteTried route : ChaosAdvisor.tried(all, Map.of(), TimeSource.currentTimeMillis())) {
             route.tried().forEach(k -> tried.add(route.route() + " " + k.kind().key));
         }
+        Map<String, ChaosAdvisor.Feed> feeds = new HashMap<>();
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
             JsonObject jo = new JsonObject();
             // a dead letter channel that routes share is tried by a rule of its kind in any of them
@@ -525,6 +527,17 @@ public final class ChaosManager {
             jo.put("title", s.title());
             jo.put("rule", s.rule());
             jo.put("why", s.why());
+            Route route = camelContext.getRoute(s.route());
+            ChaosAdvisor.Feed feed = route != null ? feeds.computeIfAbsent(s.route(), k -> ChaosAdvisor.feed(route)) : null;
+            if (feed != null) {
+                JsonObject f = new JsonObject();
+                f.put("kind", feed.kind());
+                f.put("hint", feed.hint());
+                if (feed.real()) {
+                    f.put("real", true);
+                }
+                jo.put("feed", f);
+            }
             list.add(jo);
         }
         JsonObject answer = new JsonObject();

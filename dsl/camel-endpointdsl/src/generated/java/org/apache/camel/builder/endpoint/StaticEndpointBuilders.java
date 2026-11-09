@@ -17916,6 +17916,50 @@ public class StaticEndpointBuilders {
         return VertxHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Vert.x MQTT (camel-vertx-mqtt)
+     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
+     * with the Vert.x MQTT client.
+     * 
+     * Category: messaging,iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-vertx-mqtt
+     * 
+     * Syntax: <code>vertx-mqtt:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * The topic to publish on, or the topic filter to subscribe to. A filter
+     * may hold the wildcards + and #, a topic to publish on may not.
+     * 
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static VertxMqttEndpointBuilderFactory.VertxMqttEndpointBuilder vertxMqtt(String path) {
+        return vertxMqtt("vertx-mqtt", path);
+    }
+    /**
+     * Vert.x MQTT (camel-vertx-mqtt)
+     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
+     * with the Vert.x MQTT client.
+     * 
+     * Category: messaging,iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-vertx-mqtt
+     * 
+     * Syntax: <code>vertx-mqtt:topic</code>
+     * 
+     * Path parameter: topic (required)
+     * The topic to publish on, or the topic filter to subscribe to. A filter
+     * may hold the wildcards + and #, a topic to publish on may not.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path topic
+     * @return the dsl builder
+     */
+    public static VertxMqttEndpointBuilderFactory.VertxMqttEndpointBuilder vertxMqtt(String componentName, String path) {
+        return VertxMqttEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x

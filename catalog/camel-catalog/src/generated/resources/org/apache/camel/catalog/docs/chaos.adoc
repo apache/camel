@@ -190,8 +190,8 @@ JSON. It only reads: a rule cannot be added, changed or removed over HTTP.
 
 Where to start with a route you did not write? `camel cmd chaos-suggest` asks the running integration, and it suggests
 rules per route from what the routes do, the most worth trying first. Each is a known rule (see
-<<_the_model_of_the_rules,The model of the rules>>) with the endpoint or route filled in, why it is worth trying, and
-the command that adds it. Nothing is added.
+<<_the_model_of_the_rules,The model of the rules>>) with the endpoint or route filled in, why it is worth trying, the
+command that adds it, and how to feed the route with messages, so the rule has something to act on. Nothing is added.
 
 [source]
 ----
@@ -205,7 +205,26 @@ Chaos rules to try, the most worth trying first:
 2. route orders: The route after a hand-off fails (lost)
    route orders hands the message to route shipping over seda and does not wait: when shipping fails, is the message lost?
    camel cmd chaos-add --rule='route=shipping error rate=0.2 until=2m expect=orders->shipping:lost<=0 within=3m'
+   feed: camel cmd send shop --endpoint=orders --body=<message> --repeat=20 --interval=200ms
 ----
+
+How to feed a route comes from its input:
+
+[cols="2,3"]
+|===
+|The input |How to feed it
+
+|`timer`, `scheduler`, `cron`, `quartz` |It feeds itself (no `feed:` line)
+|`platform-http`, `rest` |`curl` with the method and path of the route, on the port of the HTTP server
+(`camel.server.port`, 8080 by default)
+|`jetty`, `netty-http`, `undertow`, `servlet`, `vertx-http` |`curl` to the address in its URI
+|`file` |Write a file into its folder
+|Any other (`direct`, `seda`, a broker, a stub of a broker) |`camel cmd send` to the route, with `--repeat` and
+`--interval`: the route id as the endpoint sends to the input of the route, with all its options
+|===
+
+When the input is a remote system that is not a stub (see <<_with_stubs,With stubs>>), the messages go to that real
+system: the CLI says so, and `real` is `true` in the JSON. Run with `--stub=remote` to feed a stub instead.
 
 [cols="2,3"]
 |===
@@ -228,9 +247,10 @@ retry, an error?), or the polls fail for a polling consumer; and the route stall
 |===
 
 The rules leave the query of the endpoint out: its options do not tell which endpoint it is, and may hold a secret.
-`ChaosManager.suggest()` gives the same as JSON (`suggestions`: `route`, `kind`, `recipe`, `title`, `rule`, `why`,
-`tried`, and `routes` for a dead letter channel that several routes share), and
-the chaos screen of the Camel TUI lists them (key `w`), where Enter types the rule in to change or add.
+`ChaosManager.suggest()` gives the same as JSON: `suggestions`, each with `route`, `kind`, `recipe`, `title`, `rule`,
+`why`, `tried`, `routes` for a dead letter channel that several routes share, and `feed`. A `feed` has its `kind`
+(one of `self`, `http`, `file` and `send`), a `hint` and `real`. The chaos screen of the Camel TUI lists the suggestions
+(key `w`), where Enter types the rule in to change or add.
 
 === What has been tried
 

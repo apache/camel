@@ -138,6 +138,39 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void suggestSaysHowToFeedTheRoute() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject stub = new JsonObject(
+                Map.of("route", "refunds", "kind", "consumer", "title", "The route fails", "rule", "route=refunds error",
+                        "why", "route refunds is called from outside (kafka)",
+                        "feed", new JsonObject(
+                                Map.of("kind", "send", "hint",
+                                        "camel cmd send orders --endpoint=refunds --body=<message> --repeat=20 --interval=200ms"))));
+        JsonObject real = new JsonObject(
+                Map.of("route", "payments", "kind", "consumer", "title", "The route fails", "rule", "route=payments error",
+                        "why", "route payments is called from outside (jms)",
+                        "feed", new JsonObject(
+                                Map.of("kind", "send", "real", true, "hint",
+                                        "camel cmd send orders --endpoint=payments --body=<message> --repeat=20 --interval=200ms"))));
+        JsonObject self = new JsonObject(
+                Map.of("route", "ticker", "kind", "errors", "title", "Refuses the connection", "rule", "endpoint=jms:x error",
+                        "why", "a call to jms:x", "feed",
+                        new JsonObject(Map.of("kind", "self", "hint", "the route feeds itself (timer)"))));
+        JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(stub, real, self))));
+
+        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+
+        String out = printer.getOutput();
+        assertThat(printer.getLines()).contains(
+                "feed: camel cmd send orders --endpoint=refunds --body=<message> --repeat=20 --interval=200ms",
+                "feed: camel cmd send orders --endpoint=payments --body=<message> --repeat=20 --interval=200ms",
+                "(this sends to the real system: run with --stub=remote to feed a stub instead)");
+        // a route that feeds itself needs no hint
+        assertThat(out).doesNotContain("feeds itself");
+        assertThat(out.split("real system", -1)).hasSize(2);
+    }
+
+    @Test
     void suggestSaysWhenThereIsNothingToTry() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"),

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.azure.eventhubs.integration;
 
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,21 +32,23 @@ import org.apache.camel.component.azure.eventhubs.EventHubsConstants;
 import org.apache.camel.component.azure.eventhubs.TestUtils;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsService;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsProducerIT extends CamelTestSupport {
+
+    @RegisterExtension
+    static AzureEventHubsService service = TestUtils.createService();
 
     @EndpointInject
     private ProducerTemplate template;
@@ -58,11 +59,9 @@ class EventHubsProducerIT extends CamelTestSupport {
     private EventHubConsumerAsyncClient consumerAsyncClient;
 
     @BeforeAll
-    public void prepare() throws Exception {
-        final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
-
+    public void prepare() {
         final EventHubsConfiguration configuration = new EventHubsConfiguration();
-        configuration.setConnectionString(properties.getProperty(TestUtils.CONNECTION_STRING));
+        configuration.setConnectionString(service.connectionString());
         configuration.setConsumerGroupName(EventHubClientBuilder.DEFAULT_CONSUMER_GROUP_NAME);
 
         consumerAsyncClient = EventHubsClientFactory.createEventHubConsumerAsyncClient(configuration);
@@ -137,7 +136,7 @@ class EventHubsProducerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:sendAsync")
-                        .to("azure-eventhubs:?connectionString=RAW({{connectionString}})")
+                        .to("azure-eventhubs:?connectionString=RAW(" + service.connectionString() + ")")
                         .to(result);
             }
         };

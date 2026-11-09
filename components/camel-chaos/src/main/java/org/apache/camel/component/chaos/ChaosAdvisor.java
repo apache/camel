@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,6 +60,13 @@ final class ChaosAdvisor {
     private static final Set<String> HAND_OFF = Set.of("seda", "vm", "disruptor", "disruptor-vm");
     // the endpoints that write to the local file system: remote to Camel, but with no connection to refuse
     private static final Set<String> LOCAL_FILES = Set.of("file");
+    // the inputs that feed their route by themselves
+    private static final Set<String> SELF_FEEDING = Set.of("timer", "scheduler", "cron", "quartz");
+    // the HTTP servers, which are fed with an HTTP request: platform-http and rest with the port of the HTTP server of
+    // Camel, the others with the address in their URI
+    private static final Set<String> HTTP_SERVERS = Set.of("platform-http", "rest");
+    private static final Set<String> HTTP_SERVERS_WITH_ADDRESS
+            = Set.of("jetty", "netty-http", "undertow", "servlet", "vertx-http");
 
     /** The kinds of faults, which the report also uses for what has been tried. */
     enum Kind {
@@ -97,6 +105,17 @@ final class ChaosAdvisor {
         Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank) {
             this(route, kind, recipe, title, rule, why, rank, List.of(route));
         }
+    }
+
+    /**
+     * How to feed a route with messages (CAMEL-26771), so a rule can be tried on it.
+     *
+     * @param kind {@code self} (the route feeds itself), {@code http}, {@code file} or {@code send}
+     * @param hint how, such as the command to run
+     * @param real whether the messages go to the real system the route reads, rather than a stub of it
+     *             ({@code camel run --stub=remote})
+     */
+    record Feed(String kind, String hint, boolean real) {
     }
 
     /**
@@ -217,6 +236,84 @@ final class ChaosAdvisor {
     }
 
     private ChaosAdvisor() {
+    }
+
+    /** How to feed the route with messages, or null when it has no input. */
+    static Feed feed(Route route) {
+        Endpoint from = route.getEndpoint();
+        if (from == null) {
+            return null;
+        }
+        String uri = from.getEndpointUri();
+        String scheme = ChaosPatterns.scheme(uri);
+        if (SELF_FEEDING.contains(scheme)) {
+            return new Feed("self", "the route feeds itself (" + scheme + ")", false);
+        }
+        if (HTTP_SERVERS.contains(scheme)) {
+            return new Feed(
+                    "http", "curl -X " + httpMethod(uri) + " http://localhost:" + serverPort(route.getCamelContext())
+                            + httpPath(uri) + " -d @<message>",
+                    false);
+        }
+        if (HTTP_SERVERS_WITH_ADDRESS.contains(scheme)) {
+            String address = ChaosPatterns.withoutSlashes(uri(from)).substring(scheme.length() + 1);
+            return new Feed("http", "curl -X POST " + address + " -d @<message>", false);
+        }
+        if (LOCAL_FILES.contains(scheme)) {
+            String folder = ChaosPatterns.withoutSlashes(uri(from)).substring(scheme.length() + 1);
+            return new Feed("file", "write a file into " + folder, false);
+        }
+        // the route id as the endpoint: the send console sends to the input of the route, with all its options
+        String name = route.getCamelContext().getName();
+        return new Feed(
+                "send", "camel cmd send " + name + " --endpoint=" + route.getRouteId()
+                        + " --body=<message> --repeat=20 --interval=200ms",
+                from.isRemote());
+    }
+
+    /** The method of a platform-http or rest input: the one it restricts to, else POST. */
+    static String httpMethod(String uri) {
+        if (uri.startsWith("rest:")) {
+            String[] parts = uri.split(":", 3);
+            return parts.length == 3 ? parts[1].toUpperCase(Locale.ROOT) : "POST";
+        }
+        try {
+            Object method = URISupport.parseQuery(URISupport.extractQuery(uri)).get("httpMethodRestrict");
+            if (method != null) {
+                return method.toString().split(",")[0].trim().toUpperCase(Locale.ROOT);
+            }
+        } catch (Exception e) {
+            // no options to read: the default method
+        }
+        return "POST";
+    }
+
+    /** The path of a platform-http or rest input, such as /orders. */
+    static String httpPath(String uri) {
+        String path;
+        if (uri.startsWith("rest:")) {
+            String[] parts = uri.split(":", 3);
+            path = parts.length == 3 ? parts[2] : "";
+        } else {
+            path = uri.substring(uri.indexOf(':') + 1);
+        }
+        int query = path.indexOf('?');
+        if (query >= 0) {
+            path = path.substring(0, query);
+        }
+        while (path.startsWith("//")) {
+            path = path.substring(1);
+        }
+        return path.startsWith("/") ? path : "/" + path;
+    }
+
+    /** The port of the HTTP server of Camel (camel.server.port), 8080 by default. */
+    private static String serverPort(CamelContext context) {
+        try {
+            return context.resolvePropertyPlaceholders("{{camel.server.port:8080}}");
+        } catch (Exception e) {
+            return "8080";
+        }
     }
 
     /** The rules to try for the routes of the context, the most worth trying first, at most {@link #MAX}. */

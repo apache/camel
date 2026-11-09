@@ -1,0 +1,1 @@
+../../../../../components/camel-vertx/camel-vertx-mqtt/src/main/docs/vertx-mqtt-component.adoc

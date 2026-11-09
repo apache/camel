@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.launcher.selfupdate;
 
+import java.util.List;
+
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
 
@@ -45,9 +47,35 @@ class SelfUpdateCommandTest {
     }
 
     @Test
-    void refusalOfANonExactVersionDoesNotSuggestItAsAnExactPin() {
-        assertThat(SelfUpdateCommand.selectorPinRefusal(Pin.parse("LTS"), "4.22"))
-                .isEqualTo("this install is pinned to LTS - to pin an exact version instead, re-run the installer"
-                           + " with --version X.Y.Z");
+    void nightlyPinRefusalNamesTheWaysToMoveOn() {
+        assertThat(SelfUpdateCommand.nightlyPinRefusal(Pin.parse("4.24.0-20261108.143653-24")))
+                .isEqualTo("this install is pinned to nightly build 4.24.0-20261108.143653-24 - run camel self-update"
+                           + " --version 4.24.0-SNAPSHOT (or --version SNAPSHOT) to follow the nightly builds, or"
+                           + " --version LTS to go back to the releases");
+    }
+
+    @Test
+    void waysOutOfAReleasedSnapshotVersionNameTheReleaseTheNextSnapshotAndMain() {
+        List<String> published = List.of("4.22.4-SNAPSHOT", "4.24.0-SNAPSHOT", "4.23.1-SNAPSHOT", "4.22.5-SNAPSHOT");
+
+        assertThat(SelfUpdateCommand.waysOut("4.22.3-SNAPSHOT", true, published, "4.24.0-SNAPSHOT"))
+                .isEqualTo("camel self-update --version 4.22.3 installs the release, --version 4.22.4-SNAPSHOT follows"
+                           + " the nightly builds of 4.22.4-SNAPSHOT, --version SNAPSHOT follows the nightly builds of"
+                           + " main (4.24.0-SNAPSHOT), and --version LTS installs the newest LTS release");
+    }
+
+    @Test
+    void waysOutOfMainsOldSnapshotVersionNameOnlyMain() {
+        assertThat(SelfUpdateCommand.waysOut("4.23.0-SNAPSHOT", false, List.of("4.24.0-SNAPSHOT"), "4.24.0-SNAPSHOT"))
+                .isEqualTo("camel self-update --version SNAPSHOT follows the nightly builds of main (4.24.0-SNAPSHOT),"
+                           + " and --version LTS installs the newest LTS release");
+    }
+
+    @Test
+    void maintenanceNotePointsAtTheInstaller() {
+        assertThat(SelfUpdateCommand.maintenanceNote("4.22.3-SNAPSHOT"))
+                .isEqualTo("Note: 4.22.3-SNAPSHOT is a maintenance branch, whose Camel CLI cannot update its nightly"
+                           + " builds with camel self-update - to update it, re-run the installer: curl -fsSL"
+                           + " https://camel.apache.org/install.sh | sh -s -- --version 4.22.3-SNAPSHOT");
     }
 }

@@ -26,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.UserConfigHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,6 +87,35 @@ class VersionGetTest extends CamelCommandBaseTestSupport {
         List<String> lines = printer.getLines();
         Assertions.assertEquals("User configuration:", lines.get(2));
         Assertions.assertEquals("kamelets-version = 4.18.0", lines.get(3));
+    }
+
+    @Test
+    public void shouldPrintTheNightlyBuildAndWhenItWasBuilt() throws Exception {
+        UserConfigHelper.createUserConfig("");
+        Path versions = InstallDetector.webInstallerVersionsRoot();
+        String saved = System.getProperty("camel.launcher.jar");
+        System.setProperty("camel.launcher.jar",
+                versions.resolve("4.24.0-20261108.143653-24/lib/camel-launcher-4.24.0-SNAPSHOT.jar").toString());
+        try {
+            VersionGet command = createCommand();
+            command.doCall();
+        } finally {
+            if (saved != null) {
+                System.setProperty("camel.launcher.jar", saved);
+            } else {
+                System.clearProperty("camel.launcher.jar");
+            }
+        }
+
+        // where JBang is installed, a "JBang version:" line comes first
+        List<String> lines = printer.getLines();
+        int cli = 0;
+        while (cli < lines.size() && !lines.get(cli).startsWith("Camel CLI version:")) {
+            cli++;
+        }
+        Assertions.assertTrue(cli < lines.size() - 1, String.join("\n", lines));
+        Assertions.assertEquals("Nightly build: 4.24.0-20261108.143653-24 (built 2026-11-08 14:36:53 UTC)",
+                lines.get(cli + 1));
     }
 
     private void createJBangVersionFile(String version) throws IOException {

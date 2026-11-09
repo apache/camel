@@ -319,6 +319,7 @@ class JfrTab extends AbstractTab {
         frame.renderWidget(
                 Paragraph.builder().text(Text.from(lines))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(ctx.paneBorder(false))
                                 .title(" JFR ").build())
                         .build(),
                 area);
@@ -333,6 +334,7 @@ class JfrTab extends AbstractTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled(msg, LABEL))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(true))
                                     .title(" " + activeView.label + " ").build())
                             .build(),
                     area);
@@ -397,7 +399,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Routes (" + data.size() + ") ").build())
                 .build();
         lastTableArea = chunks.get(0);
@@ -415,6 +417,7 @@ class JfrTab extends AbstractTab {
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("No routes", Style.EMPTY.dim()))))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(false))
                                     .title(" Processors ").build())
                             .build(),
                     chunks.get(1));
@@ -467,7 +470,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
                         .title(" Processors [" + routeId + "] (" + data.size() + ") ").build())
                 .build();
         frame.renderStatefulWidget(table, area, processorTableState);
@@ -521,7 +524,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Processors (" + data.size() + ") ").build())
                 .build();
         lastTableArea = area;
@@ -572,7 +575,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(10), Constraint.length(10), Constraint.length(10))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Endpoints (" + data.size() + ") ").build())
                 .build();
         lastTableArea = area;
@@ -608,7 +611,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(28), Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Failures (" + failureData.size() + ") ").build())
                 .build();
         lastTableArea = area;
@@ -641,7 +644,7 @@ class JfrTab extends AbstractTab {
                         Constraint.length(8), Constraint.length(8))
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Redeliveries (" + redeliveryData.size() + ") ").build())
                 .build();
         lastTableArea = area;

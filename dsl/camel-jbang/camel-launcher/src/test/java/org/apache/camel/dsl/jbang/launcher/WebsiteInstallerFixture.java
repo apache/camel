@@ -209,6 +209,10 @@ final class WebsiteInstallerFixture implements AutoCloseable {
         return baseUrl() + "/maven2/org/apache/camel/camel-launcher";
     }
 
+    String snapshotUrl() {
+        return baseUrl() + "/snapshots/org/apache/camel/camel-launcher";
+    }
+
     Path caCertificate() {
         return caCertPem;
     }
@@ -217,6 +221,7 @@ final class WebsiteInstallerFixture implements AutoCloseable {
         Map<String, String> env = new HashMap<>();
         env.put("CAMEL_INSTALL_MANIFEST_BASE_URL", baseUrl() + "/camel-cli/releases");
         env.put("CAMEL_INSTALL_MAVEN_BASE_URL", mavenUrl());
+        env.put("CAMEL_INSTALL_SNAPSHOT_BASE_URL", snapshotUrl());
         env.put("CAMEL_INSTALL_CA_CERT", caCertPem.toString());
         env.put("HOME", home.toString());
         env.put("USERPROFILE", home.toString());
