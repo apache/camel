@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
@@ -128,6 +129,9 @@ public class Ask extends CamelCommand {
     /** Below this size (billions of parameters) a model's answers about a running integration are often wrong. */
     static final double SMALL_MODEL_BILLIONS = 8;
 
+    // the tools the model does not get, such as starting a chaos exploration that camel cmd chaos-explore started
+    Set<String> hiddenTools = Set.of();
+
     private long targetPid;
     private AskTools askTools;
     // the chat's reader, or one made on the terminal for the first call to confirm
@@ -182,7 +186,8 @@ public class Ask extends CamelCommand {
                 process != null ? process.pid() : -1,
                 process != null ? process.name() : null,
                 core, core ? askTools.groupGuidance() : List.of());
-        List<LlmClient.ToolDef> toolDefs = askTools.buildToolDefinitions(core);
+        List<LlmClient.ToolDef> toolDefs = new ArrayList<>(askTools.buildToolDefinitions(core));
+        toolDefs.removeIf(t -> hiddenTools.contains(t.name()));
 
         if (question == null || question.isEmpty()) {
             return runInteractiveChat(client, process, systemPrompt, toolDefs);

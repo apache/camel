@@ -23,6 +23,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import io.quarkiverse.mcp.server.Prompt;
 import io.quarkiverse.mcp.server.PromptArg;
 import io.quarkiverse.mcp.server.PromptMessage;
+import org.apache.camel.dsl.jbang.core.commands.ai.ChaosExplorePlaybook;
 
 /**
  * MCP Prompt definitions that provide structured multi-step workflows for LLMs.
@@ -381,5 +382,26 @@ public class PromptDefinitions {
                 """.formatted(resolvedGoal, routeFilter, routeFilter, routeFilter);
 
         return List.of(PromptMessage.withUserRole(instructions));
+    }
+
+    /**
+     * Let there be chaos (CAMEL-26787): the AI explores chaos on a running integration by itself for a time budget, one
+     * experiment per call, and reports at the end. The playbook is the one of camel cmd chaos-explore.
+     */
+    @Prompt(name = "camel_chaos_explore",
+            description = "Let there be chaos: explore by yourself how a running Camel application copes with faults, "
+                          + "for a time budget: start a chaos exploration, run one experiment per call (rules, traffic "
+                          + "and the wait for the verdict), and report what held and what broke, with hints. "
+                          + "Needs camel-chaos switched on (camel run --chaos).")
+    public List<PromptMessage> chaosExplore(
+            @PromptArg(name = "budget", description = "How long to explore, such as 10m or 1h (default 10m, at most 2h)",
+                       required = false) String budget,
+            @PromptArg(name = "focus", description = "What to explore, such as a route id (default: all routes)",
+                       required = false) String focus,
+            @PromptArg(name = "name", description = "Name or PID of the Camel application (default: the only one"
+                                                    + " running, or the only one with chaos switched on)",
+                       required = false) String name) {
+        return List.of(PromptMessage.withUserRole(
+                ChaosExplorePlaybook.text(ChaosExplorePlaybook.MCP, name, budget, focus, false)));
     }
 }

@@ -1298,4 +1298,12 @@ instructions and executes each step by calling the referenced tools.
 | `routeId` (optional), `goal` (optional)
 | Guided workflow to optimize a Camel application's performance: analyze throughput, identify bottlenecks,
   review resource usage, and produce prioritized optimization recommendations.
+
+| `camel_chaos_explore`
+| `budget` (optional), `focus` (optional), `name` (optional)
+| Let there be chaos: the AI explores by itself how a running application with camel-chaos copes with faults, for the
+  `budget` (10 minutes by default). It starts an exploration, runs one experiment per call
+  (`camel_runtime_chaos_experiment`) from the suggestions, reads each verdict, and finishes with a report: what held,
+  what broke with the evidence and a hint, and what was not tried. It asks nothing on the way and never changes the
+  routes; camel-chaos removes the rules at the deadline. The same playbook as `camel cmd chaos-explore`.
 |===

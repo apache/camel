@@ -940,7 +940,22 @@ Experiment 1 FAIL  a failed refund is read again (r1, ended after 6s)
 
 The verdict is `FAIL` when an expectation is unmet (exit code 1), `PASS` when all are met, and `INCONCLUSIVE` when the
 wait was up before an expectation was decided. `--feed` takes the endpoint, or the id of the route, as the `feed:` line
-of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with its experiments. See
+of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with its experiments.
+
+`camel cmd chaos-explore` lets the AI of `camel ask` do it all: let there be chaos. It starts the exploration with the
+budget, and the AI reads the suggestions, runs one experiment per call, reads each verdict, and goes on while there is
+time. It asks nothing on the way, as starting the command is the consent, and it never changes the routes. When it is
+done the exploration is finished, and its report and the journal of the experiments are printed (exit code 1 when an
+experiment failed):
+
+[source,bash]
+----
+camel cmd chaos-explore --budget=10m
+camel cmd chaos-explore myApp --budget=1h --focus=refunds --api-type=anthropic
+----
+
+Run the integration with `--stub=remote`, so the experiments do not reach real systems. A route fed over HTTP or from
+files cannot be fed by an experiment yet. MCP clients have the same playbook as the prompt `camel_chaos_explore`. See
 xref:next@components:others:chaos.adoc#_an_exploration[An exploration] in the camel-chaos documentation.
 
 === Chaos scenarios

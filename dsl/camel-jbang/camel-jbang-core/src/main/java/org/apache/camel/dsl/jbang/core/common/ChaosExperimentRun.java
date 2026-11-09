@@ -235,7 +235,7 @@ public final class ChaosExperimentRun {
     }
 
     /** The exploration in the report of the chaos console in the status, or null. */
-    static JsonObject exploration(JsonObject status) {
+    public static JsonObject exploration(JsonObject status) {
         if (status == null || !(status.get("chaos") instanceof JsonObject chaos)
                 || !(chaos.get("report") instanceof JsonObject report)) {
             return null;
