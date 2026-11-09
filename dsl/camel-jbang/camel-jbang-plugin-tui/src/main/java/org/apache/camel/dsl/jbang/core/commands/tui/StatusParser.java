@@ -68,6 +68,7 @@ final class StatusParser {
         info.pid = Long.toString(ph.pid());
         info.uptime = extractSince(ph);
         info.ago = TimeUtils.printSince(info.uptime);
+        info.contextStarted = context.getLongOrDefault("startTimestamp", 0L);
         info.state = context.getIntegerOrDefault("phase", 0);
         info.camelVersion = context.getString("version");
         info.profile = context.getString("profile");
@@ -128,6 +129,7 @@ final class StatusParser {
                 }
             }
             info.errorKinds = List.copyOf(kinds);
+            info.lastErrorTimestamp = errorsObj.getLongOrDefault("lastTimestamp", 0L);
         }
 
         parseInflight(info, root);

@@ -51,6 +51,8 @@ class IntegrationInfo {
     String ready;
     int state;
     long uptime;
+    // when the CamelContext started (epoch millis), after it loaded its routes; 0 when the integration does not say
+    long contextStarted;
     String ago;
     String throughput;
     long exchangesTotal;
@@ -116,6 +118,8 @@ class IntegrationInfo {
     final List<KafkaConsumerInfo> kafkaConsumers = new ArrayList<>();
     // the errors that happened (the registry keeps only a few entries of each kind), and the kinds that happened most
     int errorCount;
+    // when the newest error happened (epoch millis), 0 when the integration does not say
+    long lastErrorTimestamp;
     volatile List<ErrorKind> errorKinds = List.of();
     volatile List<ErrorInfo> errors = new ArrayList<>();
     boolean inflightBrowseEnabled;

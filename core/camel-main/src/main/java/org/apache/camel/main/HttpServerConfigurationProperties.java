@@ -81,6 +81,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpToolTimeout = 20000;
     @Metadata(defaultValue = "20000")
     private long mcpResourceTimeout = 20000;
+    @Metadata(defaultValue = "20000")
+    private long mcpPromptTimeout = 20000;
     @Metadata(defaultValue = "/mcp")
     private String mcpPath = "/mcp";
     @Metadata(defaultValue = "30000")
@@ -362,9 +364,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
-     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
-     * subprocess integration. By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP
+     * prompts. Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose streamable
+     * HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled.
      */
     public void setMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -375,8 +377,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * MCP transport for ai-tool routes: {@code http} (streamable HTTP on the embedded server, default) or {@code stdio}
-     * (JSON-RPC on process stdin/stdout for local agent subprocesses).
+     * MCP transport selection: {@code http} (streamable HTTP on the embedded server, serving tools, resources and
+     * prompts) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and
+     * prompts only).
      */
     public void setMcpTransport(String mcpTransport) {
         this.mcpTransport = mcpTransport;
@@ -387,8 +390,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
-     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * Comma-separated list of tag patterns selecting ai-tool routes as MCP tools, ai-resource routes as MCP resources
+     * and ai-prompt routes as MCP prompts. Matching is case-insensitive and supports exact match, wildcard prefix
      * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
      * untagged default pools are never exposed. When not set, nothing is exposed.
      */
@@ -418,6 +421,18 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public void setMcpResourceTimeout(long mcpResourceTimeout) {
         this.mcpResourceTimeout = mcpResourceTimeout;
+    }
+
+    public long getMcpPromptTimeout() {
+        return mcpPromptTimeout;
+    }
+
+    /**
+     * Per-request MCP prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the
+     * MCP client; the underlying route may continue running until it completes.
+     */
+    public void setMcpPromptTimeout(long mcpPromptTimeout) {
+        this.mcpPromptTimeout = mcpPromptTimeout;
     }
 
     public String getMcpPath() {
@@ -720,9 +735,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server
-     * on the classpath. Use {@link #setMcpTransport(String)} to choose streamable HTTP (default) or stdio for IDE
-     * subprocess integration. By default, the MCP server is not enabled.
+     * Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP
+     * prompts. Requires camel-mcp-server on the classpath. Use {@link #setMcpTransport(String)} to choose streamable
+     * HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled.
      */
     public HttpServerConfigurationProperties withMcpEnabled(boolean mcpEnabled) {
         this.mcpEnabled = mcpEnabled;
@@ -730,7 +745,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * MCP transport for ai-tool routes: {@code http} (default) or {@code stdio}.
+     * MCP transport selection: {@code http} (streamable HTTP on the embedded server, serving tools, resources and
+     * prompts) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and
+     * prompts only).
      */
     public HttpServerConfigurationProperties withMcpTransport(String mcpTransport) {
         this.mcpTransport = mcpTransport;
@@ -738,8 +755,8 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource
-     * routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix
+     * Comma-separated list of tag patterns selecting ai-tool routes as MCP tools, ai-resource routes as MCP resources
+     * and ai-prompt routes as MCP prompts. Matching is case-insensitive and supports exact match, wildcard prefix
      * ({@code foo*}), and {@code *} to match all tags. Only routes registered under a matching tag are exposed; the
      * untagged default pools are never exposed. When not set, nothing is exposed.
      */
@@ -763,6 +780,14 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpResourceTimeout(long mcpResourceTimeout) {
         this.mcpResourceTimeout = mcpResourceTimeout;
+        return this;
+    }
+
+    /**
+     * Per-request MCP prompt execution timeout in milliseconds.
+     */
+    public HttpServerConfigurationProperties withMcpPromptTimeout(long mcpPromptTimeout) {
+        this.mcpPromptTimeout = mcpPromptTimeout;
         return this;
     }
 

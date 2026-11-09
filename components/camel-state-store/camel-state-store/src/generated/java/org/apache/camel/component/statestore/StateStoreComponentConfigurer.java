@@ -30,6 +30,7 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
         case "backendFactory": target.setBackendFactory(property(camelContext, org.apache.camel.component.statestore.StateStoreBackendFactory.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "namespaced": target.setNamespaced(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -48,6 +49,7 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
         case "backendFactory": return org.apache.camel.component.statestore.StateStoreBackendFactory.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "namespaced": return boolean.class;
         default: return null;
         }
     }
@@ -62,6 +64,7 @@ public class StateStoreComponentConfigurer extends PropertyConfigurerSupport imp
         case "backendFactory": return target.getBackendFactory();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "namespaced": return target.isNamespaced();
         default: return null;
         }
     }

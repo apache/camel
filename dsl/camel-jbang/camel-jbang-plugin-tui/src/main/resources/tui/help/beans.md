@@ -38,6 +38,7 @@ Press `f` to cycle through filter modes:
 ## Keys
 
 - `Tab` — switch focus between table and detail panel
+- Mouse — a click or the wheel gives the panel under the mouse the focus; the wheel scrolls it
 - `Up/Down` — navigate in focused panel
 - `PgUp/PgDn` — page in focused panel
 - `s` — cycle sort column

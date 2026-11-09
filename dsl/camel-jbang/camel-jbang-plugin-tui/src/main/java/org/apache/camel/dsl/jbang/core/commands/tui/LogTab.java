@@ -80,8 +80,13 @@ class LogTab extends AbstractTab {
     private volatile List<LogEntry> filteredLogEntries = new ArrayList<>();
     private volatile boolean logLoading;
     private volatile boolean loadAllRequested;
+    /** How much of the end of a log the tab reads when it opens it. */
+    static final int INITIAL_TAIL_BYTES = 32 * 1024;
+
     private long logFilePos = -1;
     private long logFileStartPos = -1;
+    // the first read of a log starts inside a line: it is skipped up to its end
+    private boolean skipPartialLine;
     private long logTotalLinesRead;
     private String logFilePid;
     private final StringBuilder logLineBuffer = new StringBuilder();
@@ -717,7 +722,10 @@ class LogTab extends AbstractTab {
     }
 
     void readNewLogLinesFromFile(String pid, String fileName, List<String> newLines) {
-        Path logFile = CommandLineHelper.getCamelDir().resolve(fileName);
+        readNewLogLines(pid, CommandLineHelper.getCamelDir().resolve(fileName), newLines);
+    }
+
+    void readNewLogLines(String pid, Path logFile, List<String> newLines) {
         if (!Files.exists(logFile)) {
             logFilePid = pid;
             logFilePos = -1;
@@ -727,10 +735,11 @@ class LogTab extends AbstractTab {
         try (RandomAccessFile raf = new RandomAccessFile(logFile.toFile(), "r")) {
             long length = raf.length();
             if (logFilePos < 0 || logFilePos > length) {
-                // Initial load: only read last 8KB for fast first render
-                logFilePos = Math.max(0, length - 8 * 1024);
+                // Initial load: only read the end of the file for a fast first render (enough to fill a tall screen)
+                logFilePos = Math.max(0, length - INITIAL_TAIL_BYTES);
                 logFileStartPos = logFilePos;
                 logLineBuffer.setLength(0);
+                skipPartialLine = logFilePos > 0;
             }
             if (logFilePos >= length) {
                 return;
@@ -739,9 +748,21 @@ class LogTab extends AbstractTab {
             // Cap per-tick read to 64KB to avoid blocking the refresh cycle
             byte[] buf = new byte[(int) Math.min(length - logFilePos, 64 * 1024)];
             raf.readFully(buf);
+            int from = 0;
+            if (skipPartialLine) {
+                from = indexOfNewline(buf) + 1;
+                if (from == 0) {
+                    // still inside the line the read started in
+                    logFilePos += buf.length;
+                    return;
+                }
+                skipPartialLine = false;
+                // the older lines are read up to the start of the first whole line
+                logFileStartPos = logFilePos + from;
+            }
             logFilePos += buf.length;
 
-            String chunk = logLineBuffer + new String(buf, StandardCharsets.UTF_8);
+            String chunk = logLineBuffer + new String(buf, from, buf.length - from, StandardCharsets.UTF_8);
             logLineBuffer.setLength(0);
             int start = 0;
             int end;
@@ -760,11 +781,23 @@ class LogTab extends AbstractTab {
         }
     }
 
+    private static int indexOfNewline(byte[] buf) {
+        for (int i = 0; i < buf.length; i++) {
+            if (buf[i] == '\n') {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     void readOlderLogLines(String fileName, boolean loadAll, List<String> olderLines) {
+        readOlderLogLines(CommandLineHelper.getCamelDir().resolve(fileName), loadAll, olderLines);
+    }
+
+    void readOlderLogLines(Path logFile, boolean loadAll, List<String> olderLines) {
         if (logFilePid == null || logFileStartPos <= 0) {
             return;
         }
-        Path logFile = CommandLineHelper.getCamelDir().resolve(fileName);
         if (!Files.exists(logFile)) {
             return;
         }

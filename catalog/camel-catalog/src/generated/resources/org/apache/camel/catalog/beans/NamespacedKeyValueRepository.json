@@ -1,0 +1,15 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "NamespacedKeyValueRepository",
+    "javaType": "org.apache.camel.support.NamespacedKeyValueRepository",
+    "interfaceType": "org.apache.camel.spi.KeyValueRepository",
+    "title": "Namespaced Key Value Repository",
+    "description": "A KeyValueRepository that partitions keys using a namespace prefix.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-support",
+    "version": "4.24.0-SNAPSHOT"
+  }
+}
+

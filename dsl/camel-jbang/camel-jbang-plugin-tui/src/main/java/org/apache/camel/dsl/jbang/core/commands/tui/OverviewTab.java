@@ -289,6 +289,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (showsAbout()) {
+            // About has no table: a click puts its cursor on an entry of In, Routes or Out, the wheel moves it
+            return me.isClick() && about.click(me.x(), me.y());
+        }
         if (vSplit.handleMouse(me, me.y())) {
             if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
                 bottomPanelHeight = Math.max(5, Math.min(area.y() + area.height() - me.y(), area.height() - 5));

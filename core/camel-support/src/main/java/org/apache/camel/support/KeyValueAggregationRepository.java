@@ -135,20 +135,20 @@ public class KeyValueAggregationRepository extends ServiceSupport
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Adding an Exchange with ID {} for key {}", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
-        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) repository.put(AGGREGATE_PREFIX + key, newHolder);
+        Object oldHolder = repository.put(AGGREGATE_PREFIX + key, newHolder);
         return unmarshallExchange(camelContext, oldHolder);
     }
 
     @Override
     public Exchange get(CamelContext camelContext, String key) {
-        return unmarshallExchange(camelContext, (DefaultExchangeHolder) repository.get(AGGREGATE_PREFIX + key));
+        return unmarshallExchange(camelContext, repository.get(AGGREGATE_PREFIX + key));
     }
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         LOG.trace("Removing an Exchange with ID {} for key {}", exchange.getExchangeId(), key);
-        DefaultExchangeHolder holder = (DefaultExchangeHolder) repository.delete(AGGREGATE_PREFIX + key);
-        if (useRecovery && holder != null) {
+        Object holder = repository.delete(AGGREGATE_PREFIX + key);
+        if (useRecovery && holder instanceof DefaultExchangeHolder) {
             // Store the given exchange under the exchangeId for potential recovery. The removed holder is not used as
             // it can be older than the exchange: when a group is completed by an incoming exchange, the last
             // aggregated exchange is not added to the repository before it is removed.
@@ -190,7 +190,7 @@ public class KeyValueAggregationRepository extends ServiceSupport
         if (!useRecovery) {
             return null;
         }
-        return unmarshallExchange(camelContext, (DefaultExchangeHolder) repository.get(completedPrefix + exchangeId));
+        return unmarshallExchange(camelContext, repository.get(completedPrefix + exchangeId));
     }
 
     @Override
@@ -285,12 +285,17 @@ public class KeyValueAggregationRepository extends ServiceSupport
         ServiceHelper.stopService(repository);
     }
 
-    private Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {
+    private Exchange unmarshallExchange(CamelContext camelContext, Object holder) {
         if (holder == null) {
             return null;
         }
+        if (!(holder instanceof DefaultExchangeHolder exchangeHolder)) {
+            LOG.warn("Ignoring entry of type {} in KeyValueAggregationRepository as it is not a DefaultExchangeHolder",
+                    holder.getClass().getName());
+            return null;
+        }
         Exchange exchange = new DefaultExchange(camelContext);
-        DefaultExchangeHolder.unmarshal(exchange, holder);
+        DefaultExchangeHolder.unmarshal(exchange, exchangeHolder);
         return exchange;
     }
 }

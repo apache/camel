@@ -24,9 +24,10 @@ public class StateStoreEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(5);
+        Set<String> props = new HashSet<>(6);
         props.add("backend");
         props.add("lazyStartProducer");
+        props.add("namespaced");
         props.add("operation");
         props.add("storeName");
         props.add("ttl");

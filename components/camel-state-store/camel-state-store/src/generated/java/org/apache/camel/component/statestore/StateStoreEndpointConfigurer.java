@@ -27,6 +27,7 @@ public class StateStoreEndpointConfigurer extends PropertyConfigurerSupport impl
         case "backend": target.setBackend(property(camelContext, org.apache.camel.spi.KeyValueRepository.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "namespaced": target.setNamespaced(property(camelContext, boolean.class, value)); return true;
         case "operation": target.setOperation(property(camelContext, org.apache.camel.component.statestore.StateStoreOperations.class, value)); return true;
         case "ttl": target.setTtl(property(camelContext, long.class, value)); return true;
         default: return false;
@@ -39,6 +40,7 @@ public class StateStoreEndpointConfigurer extends PropertyConfigurerSupport impl
         case "backend": return org.apache.camel.spi.KeyValueRepository.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "namespaced": return boolean.class;
         case "operation": return org.apache.camel.component.statestore.StateStoreOperations.class;
         case "ttl": return long.class;
         default: return null;
@@ -52,6 +54,7 @@ public class StateStoreEndpointConfigurer extends PropertyConfigurerSupport impl
         case "backend": return target.getBackend();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "namespaced": return target.isNamespaced();
         case "operation": return target.getOperation();
         case "ttl": return target.getTtl();
         default: return null;

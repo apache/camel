@@ -35,8 +35,9 @@ import org.apache.camel.Service;
  * <p>
  * Resources follow the same lifecycle through {@link #resourceAdded(McpServerResource)} and
  * {@link #resourceRemoved(String)}, driven by {@code ai-resource} routes. Both default to no-ops so an engine that
- * serves tools only keeps working unchanged; such an engine reports {@link #supportsResources()} as false and the
- * bridge then warns when resources are configured but cannot be served.
+ * serves tools only keeps working unchanged; such an engine reports {@link #supportsResources()} as false. Prompts
+ * follow the same opt-in lifecycle through {@link #promptAdded(McpServerPrompt)} and {@link #promptRemoved(String)},
+ * driven by {@code ai-prompt} routes.
  *
  * @since 4.22
  */
@@ -94,6 +95,35 @@ public interface McpServerEngine extends Service, CamelContextAware {
      * @since 4.23
      */
     default boolean supportsResources() {
+        return false;
+    }
+
+    /**
+     * Publishes a prompt. Called for the initial set and whenever a matching {@code ai-prompt} route starts or resumes.
+     * The bridge tracks the prompt as published only when this method returns normally: an engine that throws must
+     * leave nothing registered, as {@link #promptRemoved(String)} is not called for the prompt.
+     *
+     * @throws McpServerRefusedException to refuse the prompt, e.g. when the runtime already serves a prompt with this
+     *                                   name.
+     * @since                            4.24
+     */
+    default void promptAdded(McpServerPrompt prompt) {
+    }
+
+    /**
+     * Removes a prompt by name.
+     *
+     * @since 4.24
+     */
+    default void promptRemoved(String promptName) {
+    }
+
+    /**
+     * Whether this engine serves MCP prompts. Engines returning false ignore prompt callbacks.
+     *
+     * @since 4.24
+     */
+    default boolean supportsPrompts() {
         return false;
     }
 

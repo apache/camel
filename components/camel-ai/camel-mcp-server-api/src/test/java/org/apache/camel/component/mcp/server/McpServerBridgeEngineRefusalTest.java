@@ -31,18 +31,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * An engine refusing a tool or resource, like a runtime MCP server already serving the name or uri: the bridge does not
- * track it, so a later route can use the name or uri, and stopping the refused route removes nothing. The bridge does
- * not track a tool the engine failed to add with another exception either.
+ * An engine refusing a tool, resource or prompt, like a runtime MCP server already serving the name or uri: the bridge
+ * does not track it, so a later route can use the name or uri, and stopping the refused route removes nothing. The
+ * bridge does not track an item the engine failed to add with another exception either.
  */
 class McpServerBridgeEngineRefusalTest extends CamelTestSupport {
 
     private static final String REFUSED_TOOL = "taken_tool";
     private static final String REFUSED_URI = "camel:///taken";
+    private static final String REFUSED_PROMPT = "taken_prompt";
     private static final String FAILING_TOOL = "failing_tool";
     private static final String FAILING_URI = "camel:///failing";
 
-    private final RefusingMcpServerEngine engine = new RefusingMcpServerEngine(REFUSED_TOOL, REFUSED_URI);
+    private final RefusingMcpServerEngine engine = new RefusingMcpServerEngine(REFUSED_TOOL, REFUSED_URI, REFUSED_PROMPT);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -73,17 +74,28 @@ class McpServerBridgeEngineRefusalTest extends CamelTestSupport {
                 from("ai-resource:free_resource?resourceUri=camel:///free&tags=crm")
                         .routeId("accepted-resource-route")
                         .setBody(constant("accepted"));
+
+                from("ai-prompt:" + REFUSED_PROMPT + "?tags=crm&description=Refused prompt")
+                        .routeId("refused-prompt-route")
+                        .setBody(constant("refused"));
+
+                from("ai-prompt:free_prompt?tags=crm&description=Accepted prompt")
+                        .routeId("accepted-prompt-route")
+                        .setBody(constant("accepted"));
             }
         };
     }
 
     @Test
-    void testRefusedToolAndResourceAreNotPublishedAndTheirRoutesKeepRunning() {
+    void testRefusedToolResourceAndPromptAreNotPublishedAndTheirRoutesKeepRunning() {
         // the bridge publishes the startup routes when it starts: a refusal must not fail the CamelContext start
         assertThat(engine.tools()).containsOnlyKeys("free_tool");
         assertThat(engine.resources()).containsOnlyKeys("camel:///free");
+        assertThat(engine.prompts()).containsOnlyKeys("free_prompt");
         assertThat(context.getRouteController().getRouteStatus("refused-tool-route")).isEqualTo(ServiceStatus.Started);
         assertThat(context.getRouteController().getRouteStatus("refused-resource-route"))
+                .isEqualTo(ServiceStatus.Started);
+        assertThat(context.getRouteController().getRouteStatus("refused-prompt-route"))
                 .isEqualTo(ServiceStatus.Started);
     }
 
@@ -176,6 +188,20 @@ class McpServerBridgeEngineRefusalTest extends CamelTestSupport {
     }
 
     @Test
+    void testLaterPromptRouteWithRefusedNameIsPublished() throws Exception {
+        // The initial refusal is not tracked; a later route can use the name once the runtime releases it.
+        engine.accept(REFUSED_PROMPT);
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("ai-prompt:" + REFUSED_PROMPT + "?tags=notify&description=Later prompt")
+                        .setBody(constant("later"));
+            }
+        });
+
+        assertThat(engine.prompts()).containsKey(REFUSED_PROMPT);
+    }
+
+    @Test
     void testStoppingRefusedToolRouteRemovesNothing() throws Exception {
         context.getRouteController().stopRoute("refused-tool-route");
         context.getRouteController().stopRoute("accepted-tool-route");
@@ -191,9 +217,16 @@ class McpServerBridgeEngineRefusalTest extends CamelTestSupport {
         assertThat(engine.removedResources()).containsExactly("camel:///free");
     }
 
+    @Test
+    void testStoppingRefusedPromptRouteRemovesNothing() throws Exception {
+        context.getRouteController().stopRoute("refused-prompt-route");
+
+        assertThat(engine.removedPrompts()).isEmpty();
+    }
+
     /**
-     * Refuses the given tool names and resource uris, like a runtime MCP server whose application already serves them,
-     * and fails on {@code FAILING_TOOL} and {@code FAILING_URI} with an exception that is not a refusal.
+     * Refuses the given tool names, resource uris and prompt names, like a runtime MCP server whose application already
+     * serves them, and fails on {@code FAILING_TOOL} and {@code FAILING_URI} with an exception that is not a refusal.
      */
     private static final class RefusingMcpServerEngine extends RecordingMcpServerEngine {
 
@@ -227,6 +260,14 @@ class McpServerBridgeEngineRefusalTest extends CamelTestSupport {
                 throw new McpServerRefusedException("the uri is used by an application resource");
             }
             super.resourceAdded(resource);
+        }
+
+        @Override
+        public void promptAdded(McpServerPrompt prompt) {
+            if (refused.contains(prompt.name())) {
+                throw new McpServerRefusedException("the name is used by an application prompt");
+            }
+            super.promptAdded(prompt);
         }
     }
 }

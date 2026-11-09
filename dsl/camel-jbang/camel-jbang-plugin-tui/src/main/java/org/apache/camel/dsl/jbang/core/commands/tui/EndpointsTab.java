@@ -80,7 +80,6 @@ class EndpointsTab extends AbstractTableTab {
     private int panelMode = PANEL_CHART;
     private int detailScroll;
     private boolean detailFocused;
-    private Rect lastDetailArea;
     private int chartPanelHeight = 16;
     private final DragSplit vSplit = new DragSplit();
     private int flowPanelWidth = 38;
