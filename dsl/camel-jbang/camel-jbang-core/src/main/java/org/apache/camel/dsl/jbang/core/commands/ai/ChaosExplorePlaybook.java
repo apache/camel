@@ -91,8 +91,8 @@ public final class ChaosExplorePlaybook {
                 only when the route feeds itself (kind self). A route of kind http (platform-http or rest) is fed \
                 with HTTP requests to the server of the integration: give the id of the route as feed, or the path \
                 to call when its path has a parameter (such as POST /orders/42); the traffic counts the status codes \
-                the clients got. Routes fed from files cannot be fed by an experiment yet. An experiment refuses a \
-                feed that cannot reach its route, with the reason and \
+                the clients got. A route of kind file is fed with its id too: each message is written as a file the \
+                route takes. An experiment refuses a feed that cannot reach its route, with the reason and \
                 what to do instead, and warns when the feed goes to a real system that is not stubbed
                    - a rule at=dlq fails the dead letter channel, so it fires only when a message goes there: use \
                 the combined suggestions, which add the fault that sends messages there too. A message the \

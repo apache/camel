@@ -361,6 +361,44 @@ class ChaosExperimentRunTest {
     }
 
     @Test
+    void theFilesOfAFileFeedPassTheFilterOfTheRoute() {
+        ChaosExperimentRun.Feed json = new ChaosExperimentRun.Feed("invoices", "{\"n\": 1}", null, 5, null);
+        // the extension of the include or antInclude filter (CAMEL-26795)
+        assertThat(ChaosExperimentRun.fileName("file://invoices?delete=true&include=.*%5C.json", json, 42))
+                .isEqualTo("chaos-42.json");
+        assertThat(ChaosExperimentRun.fileName("file://in?include=%28%3Fi%29.*%5C.%28csv%7Ctxt%29", json, 42))
+                .isEqualTo("chaos-42.csv");
+        assertThat(ChaosExperimentRun.fileName("file://in?antInclude=*.xml", json, 42)).isEqualTo("chaos-42.xml");
+        assertThat(ChaosExperimentRun.fileName("file://invoices?include=.*%5C.json",
+                new ChaosExperimentRun.Feed("invoices", "plain text", null, 0, null), 42)).isEqualTo("chaos-42.json");
+        // no filter: by the body, or the file it names
+        assertThat(ChaosExperimentRun.fileName("file://in", json, 42)).isEqualTo("chaos-42.json");
+        assertThat(ChaosExperimentRun.fileName("file://in",
+                new ChaosExperimentRun.Feed("in", "<order/>", null, 0, null), 42)).isEqualTo("chaos-42.xml");
+        assertThat(ChaosExperimentRun.fileName("file://in",
+                new ChaosExperimentRun.Feed("in", "file:/feed/order.csv", null, 0, null), 42)).isEqualTo("chaos-42.csv");
+        // the feed names its files, or the route reads one file
+        assertThat(ChaosExperimentRun.fileName("file://in",
+                new ChaosExperimentRun.Feed("in", "x", "CamelFileName=mine.txt", 0, null), 42)).isNull();
+        assertThat(ChaosExperimentRun.fileName("file://in?fileName=orders.csv", json, 42)).isNull();
+    }
+
+    @Test
+    void aFileRouteIsFedWithNamedFiles() throws Exception {
+        JsonObject status = statusWith(experiment("PENDING", true));
+        status.put("routes", new JsonArray(
+                List.of(
+                        new JsonObject(Map.of("routeId", "invoices", "from", "file://invoices?include=.*%5C.json")))));
+        integration.statuses.add(status);
+        integration.shows("FAIL", true);
+
+        ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("invoices", "{}", "country=DK", 5, null), 60_000, null, clock);
+
+        assertThat(integration.sent.headers()).isEqualTo("country=DK\nCamelFileName=chaos-1000000.json");
+    }
+
+    @Test
     void aFeedToARealSystemIsWarned() {
         JsonObject report = new JsonObject(
                 Map.of("routes", new JsonArray(

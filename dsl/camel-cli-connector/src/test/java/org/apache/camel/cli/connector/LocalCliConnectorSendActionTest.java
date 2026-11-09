@@ -127,6 +127,30 @@ class LocalCliConnectorSendActionTest {
     }
 
     @Test
+    void aRepeatedFileNameIsNumbered() throws Exception {
+        // a file endpoint writes one file per message (CAMEL-26795)
+        Path inbox = dir.resolve("inbox");
+        JsonObject request = request("{}");
+        request.put("endpoint", "file:" + inbox);
+        request.put("repeat", 3);
+        JsonObject header = new JsonObject();
+        header.put("key", "CamelFileName");
+        header.put("value", "order.json");
+        request.put("headers", new JsonArray(List.of(header)));
+
+        JsonObject answer = send(request);
+
+        assertThat(answer.getLong("sent")).as(answer.toJson()).isEqualTo(3);
+        try (var files = Files.list(inbox)) {
+            assertThat(files.map(f -> f.getFileName().toString()).sorted())
+                    .containsExactly("order-1.json", "order-2.json", "order-3.json");
+        }
+        assertThat(RepeatedSend.numbered("order", 2)).isEqualTo("order-2");
+        assertThat(RepeatedSend.numbered("in.box/order", 2)).isEqualTo("in.box/order-2");
+        assertThat(RepeatedSend.numbered(".hidden", 2)).isEqualTo(".hidden-2");
+    }
+
+    @Test
     void anIntervalIsATimeOrARange() {
         assertThat(RepeatedSend.interval("200")).containsExactly(200, 200);
         assertThat(RepeatedSend.interval("200ms")).containsExactly(200, 200);

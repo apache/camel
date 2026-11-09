@@ -16,8 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -25,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
@@ -35,6 +39,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.TimeUtils;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonObject;
 
 /**
@@ -179,7 +184,17 @@ public final class ChaosExperimentRun {
             }
             // a route that serves HTTP is fed with requests to the server of the integration
             List<Object> routes = status != null ? status.getCollection("routes") : null;
-            http = ChaosHttpFeed.target(status, routes != null ? route(routes, feed.endpoint()) : null, feed.endpoint());
+            JsonObject route = routes != null && !feed.endpoint().endsWith("*") ? route(routes, feed.endpoint()) : null;
+            http = ChaosHttpFeed.target(status, route, feed.endpoint());
+            // a file route reads the files its filter takes: the messages are written as such files
+            String from = route != null ? route.getString("from") : null;
+            String name = from != null && from.startsWith("file:") ? fileName(from, feed, clock.now()) : null;
+            if (name != null) {
+                feed = new Feed(
+                        feed.endpoint(), feed.body(),
+                        (feed.headers() != null ? feed.headers() + "\n" : "") + "CamelFileName=" + name, feed.repeat(),
+                        feed.interval());
+            }
         }
         // an expectation such as failed<=0 is decided when its within= is up: a shorter wait leaves it undecided
         long within = longestWithin(rules);
@@ -256,6 +271,67 @@ public final class ChaosExperimentRun {
             answer.put("timeLeft", exploration.getLong("timeLeft"));
         }
         return answer;
+    }
+
+    // the extension in an include filter (.*\.json, .*\.(csv|txt)) or an antInclude one (*.json)
+    private static final Pattern INCLUDE_EXT = Pattern.compile("\\\\\\.\\(?([A-Za-z0-9]+)");
+    private static final Pattern ANT_EXT = Pattern.compile("\\*\\.([A-Za-z0-9]+)");
+
+    /**
+     * The name of the files of a feed to a route that starts from file:<folder> (CAMEL-26795), so the route takes them:
+     * chaos-<time>.<extension>, the extension from its include or antInclude filter, else from the body. The send
+     * numbers it per message when it repeats. Null when the feed names its files itself, or the route reads one file
+     * (fileName=), which the send writes as the endpoint has it.
+     */
+    static String fileName(String from, Feed feed, long now) {
+        if (feed.headers() != null && feed.headers().toLowerCase(Locale.ROOT).contains("camelfilename")) {
+            return null;
+        }
+        Map<String, Object> options;
+        try {
+            options = URISupport.parseQuery(URISupport.extractQuery(from));
+        } catch (URISyntaxException e) {
+            options = Map.of();
+        }
+        if (options.containsKey("fileName")) {
+            return null;
+        }
+        String ext = null;
+        if (options.get("include") instanceof String include) {
+            Matcher m = INCLUDE_EXT.matcher(decode(include));
+            ext = m.find() ? m.group(1) : null;
+        }
+        if (ext == null && options.get("antInclude") instanceof String ant) {
+            Matcher m = ANT_EXT.matcher(decode(ant));
+            ext = m.find() ? m.group(1) : null;
+        }
+        if (ext == null) {
+            ext = extension(feed.body());
+        }
+        return "chaos-" + now + "." + ext;
+    }
+
+    // an option of the endpoint URI as the status has it, %5C for a backslash; a + stays a +, as in a regular expression
+    private static String decode(String value) {
+        try {
+            return URLDecoder.decode(value.replace("+", "%2B"), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            return value;
+        }
+    }
+
+    // the extension of a body: of the file it names, else json, xml or txt by its first character
+    private static String extension(String body) {
+        if (body == null) {
+            return "txt";
+        }
+        if (body.startsWith("file:")) {
+            String name = new File(body.substring(5)).getName();
+            int dot = name.lastIndexOf('.');
+            return dot > 0 && dot < name.length() - 1 ? name.substring(dot + 1) : "txt";
+        }
+        String b = body.stripLeading();
+        return b.startsWith("{") || b.startsWith("[") ? "json" : b.startsWith("<") ? "xml" : "txt";
     }
 
     /** The longest within= of the rules, in millis, or 0 (an expectation without it has the time of its rule). */
