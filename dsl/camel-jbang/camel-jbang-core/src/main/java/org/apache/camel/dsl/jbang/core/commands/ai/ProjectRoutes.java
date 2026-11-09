@@ -1071,7 +1071,8 @@ public final class ProjectRoutes {
             for (int i = 0; i < all.getLength(); i++) {
                 Element s = (Element) all.item(i);
                 if (PRODUCER_KEYS.contains(localName(s)) && attr(s, "uri") != null) {
-                    add(produces, endpoint(attr(s, "uri"), null, false, catalog));
+                    Endpoint ep = endpoint(attr(s, "uri"), null, false, catalog);
+                    add(produces, "wireTap".equals(localName(s)) ? tappedOf(ep) : ep);
                 } else if (attr(s, "deadLetterUri") != null) {
                     add(produces, endpoint(attr(s, "deadLetterUri"), null, false, catalog));
                 }

@@ -277,6 +277,28 @@ class ProjectOverviewTest {
     }
 
     @Test
+    void aWireTapInAnXmlErrorHandlerHandsOff() {
+        String xml = """
+                <routes xmlns="http://camel.apache.org/schema/xml-io">
+                  <onException>
+                    <exception>java.lang.Exception</exception>
+                    <wireTap uri="direct:alert"/>
+                    <to uri="direct:parking"/>
+                  </onException>
+                  <route id="orders">
+                    <from uri="direct:orders"/>
+                    <to uri="log:orders"/>
+                  </route>
+                </routes>
+                """;
+        Overview o = ProjectOverview.analyze(Path.of("orders"), Map.of("orders.xml", xml), CATALOG);
+        Route handler = o.routes().stream().filter(r -> "errorHandler".equals(r.kind())).findFirst().orElseThrow();
+        assertThat(handler.produces()).allSatisfy(e -> assertThat(e.onError()).isTrue());
+        assertThat(handler.produces()).filteredOn(ProjectRoutes.Endpoint::tapped)
+                .extracting(ProjectRoutes.Endpoint::uri).containsExactly("direct:alert");
+    }
+
+    @Test
     void linksRoutesOverSharedEndpoints() {
         List<Link> links = overview().links();
         assertThat(links).contains(
