@@ -691,12 +691,12 @@ public interface MinioEndpointBuilderFactory {
             doSetProperty("moveAfterRead", moveAfterRead);
             return this;
         }
+        /**
          * Move objects from bucket to a different bucket after they have been
          * retrieved. To accomplish the operation the destinationBucketName
          * option must be set. The copy bucket operation is only performed if
          * the Exchange is committed. If a rollback occurs, the object is not
          * moved.
-         * Exchange is committed. If a rollback occurs, the object is not moved.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
