@@ -18,11 +18,11 @@ package org.apache.camel.component.kafka.integration;
 
 import java.util.Collections;
 
-import com.fasterxml.jackson.databind.node.IntNode;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.node.JsonNodeFactory;
 
 public class KafkaProducerValueNodeIT extends BaseKafkaTestSupport {
 
@@ -42,7 +42,7 @@ public class KafkaProducerValueNodeIT extends BaseKafkaTestSupport {
     public void scalarJsonNodeIsDelivered() throws Exception {
         MockEndpoint mock = contextExtension.getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("5");
-        contextExtension.getProducerTemplate().sendBody("direct:start", IntNode.valueOf(5));
+        contextExtension.getProducerTemplate().sendBody("direct:start", JsonNodeFactory.instance.numberNode(5));
         mock.assertIsSatisfied(5000);
     }
 

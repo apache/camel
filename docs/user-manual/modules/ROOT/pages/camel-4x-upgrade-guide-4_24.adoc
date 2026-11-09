@@ -7812,3 +7812,19 @@ Jackson 2 is no longer used.
 The limits on what is parsed are those of Jackson 3: nesting up to 500 levels (it was 1000) and strings up to 100 million
 characters (it was 20 million). To change them, register a mapper with your own `StreamReadConstraints`.
 
+=== Jackson 3 - camel-kafka
+
+`camel-kafka` now uses Jackson 3 (`tools.jackson`) instead of Jackson 2, and no longer brings Jackson 2 to your application.
+The transforms in `org.apache.camel.component.kafka.transform` (`DropField`, `ExtractField`, `HoistField`, `InsertField`,
+`MaskField`, `MessageTimestampRouter`, `ReplaceField` and `ValueToKey`) keep their names and work on a
+`tools.jackson.databind.JsonNode`, JSON text or bytes, and need `camel-jackson3` on the classpath for their type converters. A
+`com.fasterxml.jackson.databind.JsonNode` body is an ordinary bean to them, and `HoistField` writes it as one without an error:
+produce the node with `camel-jackson3`, or pass JSON text.
+
+The Kamelets that use these transforms (`drop-field-action`, `extract-field-action`, `hoist-field-action`,
+`insert-field-action`, `mask-field-action`, `message-timestamp-router-action`, `replace-field-action` and
+`value-to-key-action`) do so from their 4.24 release, so Camel 4.24 needs Kamelets 4.24 for them. The 4.24.0 launcher ships
+the 4.23 Kamelets: run it with `--kamelets-version=4.24.0`.
+
+The kafka producer still sends a Jackson 2 array node as one record per element, and any other Jackson 2 node as one record.
+
