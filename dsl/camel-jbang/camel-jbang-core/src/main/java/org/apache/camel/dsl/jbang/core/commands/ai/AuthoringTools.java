@@ -1733,6 +1733,7 @@ public final class AuthoringTools {
         List<String> problemsBefore = List.of();
         List<String> repaired = List.of();
         List<String> repairable = List.of();
+        boolean refusalsFixed = false;
         // a Citrus test is not a route: none of the repairs, notes and reloads of a route apply to it
         boolean citrusTest = SourceValidator.isCitrusTest(file);
         if (validate && SourceValidator.isValidatableFile(file)) {
@@ -1765,6 +1766,19 @@ public final class AuthoringTools {
                     repairable = markShapeLeft(r);
                 }
             }
+            int times = errors.isEmpty() ? 0 : refusedAgain(path, content);
+            if (times >= SAME_REFUSALS_FIXED && !citrusTest) {
+                // CAMEL-26758: the same refused content a third time, also when the refusals gave the lines to write;
+                // the write makes the fixes they gave as exact text, and goes ahead when that leaves no new problem
+                Repaired given = refusalFixes(ctx, dir, file, content, errors, before, exists);
+                if (given != null) {
+                    content = given.content();
+                    repaired = given.applied();
+                    problemsBefore = given.stillThere();
+                    errors = List.of();
+                    refusalsFixed = true;
+                }
+            }
             if (!errors.isEmpty()) {
                 JsonObject result = new JsonObject();
                 result.put("status", "invalid");
@@ -1772,7 +1786,6 @@ public final class AuthoringTools {
                 result.put("errors", new JsonArray(errors));
                 result.put("message", "The file was not written: the content has validation errors. Fix them and"
                                       + " call camel_write_file again." + startNote(dir, file, content));
-                int times = refusedAgain(path, content);
                 if (times > 1) {
                     // the same content again: a model that does not see the problem in its own lines writes them
                     // again and again, sixteen times in a row in the benchmark; say so, and what to do instead
@@ -1951,7 +1964,13 @@ public final class AuthoringTools {
         if (!repaired.isEmpty()) {
             result.put("repaired", new JsonArray(repaired));
             result.put("message", "Written with these repairs of the YAML (the file has them now): "
-                                  + String.join("; ", repaired) + ". " + result.getString("message"));
+                                  + String.join("; ", repaired) + ". "
+                                  + (refusalsFixed
+                                          ? "The same content came a third time, so the write made the fixes the"
+                                            + " refusals gave: the file is not the text you sent, read it before you"
+                                            + " edit it. "
+                                          : "")
+                                  + result.getString("message"));
         }
         if (!unusedProperties.isEmpty()) {
             // what to do next, first in the answer: "Use {{report.schedule}} again on line 7, and set
@@ -2027,6 +2046,46 @@ public final class AuthoringTools {
             }
         }
         return applied.isEmpty() ? null : new Repaired(current, applied, stillThere, left, moved);
+    }
+
+    /**
+     * How many times in a row the same content of a file is refused before the write makes the fixes the refusals gave
+     * (CAMEL-26758): twice the model had the choice of its own fix. In the benchmark, of the loops that stopped at the
+     * third refusal most passed after it, while 13 of the 14 that went on to a fourth failed.
+     */
+    private static final int SAME_REFUSALS_FIXED = 3;
+
+    /**
+     * CAMEL-26758: the content with the fixes the refusals gave as exact text ({@link RefusalFixes}), and then the
+     * shapes with one reading repaired; null when no problem gives exact text, or a problem is still left after the
+     * fixes (a problem without text often came from a line a fix rewrote, and goes with it).
+     */
+    private static Repaired refusalFixes(
+            ToolContext ctx, Path dir, String file, String content, List<String> errors, List<String> before,
+            boolean exists) {
+        LenientRepairs.Result given = RefusalFixes.apply(content, errors);
+        if (given == null) {
+            return null;
+        }
+        List<String> applied = new ArrayList<>(given.applied());
+        String fixed = given.content();
+        List<String> left = SourceValidator.validate(file, fixed, ctx.catalog(), ctx.propertyLineValidator(), dir, null,
+                false);
+        List<String> stillThere = new ArrayList<>();
+        if (!left.isEmpty() && exists) {
+            left = newProblems(before, left, stillThere);
+        }
+        if (!left.isEmpty()) {
+            // a fix can leave a shape with one reading, such as a list item one column off
+            Repaired r = repair(ctx, dir, file, fixed, left, before, exists);
+            if (r == null || !r.left().isEmpty()) {
+                return null;
+            }
+            fixed = r.content();
+            applied.addAll(r.applied());
+            stillThere = r.stillThere();
+        }
+        return new Repaired(fixed, applied, stillThere, List.of(), given.moved());
     }
 
     /**

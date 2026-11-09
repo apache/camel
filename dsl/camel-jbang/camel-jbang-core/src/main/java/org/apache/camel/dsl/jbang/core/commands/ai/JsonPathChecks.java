@@ -95,7 +95,7 @@ public final class JsonPathChecks {
             if (text.contains("[?(") || !COMPARISON.matcher(text).find() || predicate) {
                 // a path, or a condition (the easy predicate syntax reads $.status == 'paid' as $[?(@.status ==
                 // 'paid')]): compiled as the runtime does
-                String compile = compileProblem(catalog, text, predicate);
+                String compile = compileProblem(catalog, text, predicate, lines[lineNum - 1]);
                 if (compile != null) {
                     errors.add("Line " + lineNum + ": " + compile);
                 }
@@ -168,6 +168,15 @@ public final class JsonPathChecks {
      *                  predicate syntax, which camel-jsonpath turns into a filter first
      */
     static String compileProblem(CamelCatalog catalog, String text, boolean predicate) {
+        return compileProblem(catalog, text, predicate, null);
+    }
+
+    /**
+     * As {@link #compileProblem(CamelCatalog, String, boolean)}, with the YAML line that has the expression: the note
+     * on [] ends with that line to write, which the write tool applies when the model sends the same lines a third time
+     * (CAMEL-26758; r30 rest-code-first step 1 sent ...')][] 15 times in two runs, told to write it without the []).
+     */
+    static String compileProblem(CamelCatalog catalog, String text, boolean predicate, String line) {
         if (predicate && !text.contains("[?(") && COMPARISON.matcher(text).find()) {
             // the easy predicate syntax, which camel-jsonpath turns into a filter first
             return null;
@@ -212,8 +221,11 @@ public final class JsonPathChecks {
         }
         String problem = "jsonpath " + text + " does not compile: " + why.strip();
         if (EMPTY_BRACKETS.matcher(text).find()) {
-            return problem + "; JsonPath has no [], and a filter or [*] gives a list already: write "
-                   + EMPTY_BRACKETS.matcher(text).replaceAll("");
+            String fixed = EMPTY_BRACKETS.matcher(text).replaceAll("");
+            // the whole line when it has the expression as written once; else the expression alone
+            boolean once = line != null && line.contains(text) && line.indexOf(text) == line.lastIndexOf(text);
+            return problem + "; JsonPath has no [], and a filter or [*] gives a list already: "
+                   + (once ? "write the line as " + line.replace(text, fixed).strip() : "write " + fixed);
         }
         return problem;
     }

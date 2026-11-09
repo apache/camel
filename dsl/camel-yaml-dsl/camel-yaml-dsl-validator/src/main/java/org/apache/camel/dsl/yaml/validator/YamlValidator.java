@@ -594,12 +594,13 @@ public class YamlValidator {
         String value = colon >= 0 ? line.substring(colon + 1).trim() : line.trim();
         long quotes = value.chars().filter(c -> c == '"').count() - value.split("\\\\\"", -1).length + 1;
         if (value.startsWith("\"") && quotes % 2 == 1) {
-            // the line to write, not a description of the edit: a model copies the line (CAMEL-24906)
+            // the line to write, not a description of the edit: a model copies the line (CAMEL-24906); it ends the
+            // message, so the write tool can apply it when the same lines come a third time (CAMEL-26758)
             String indent = line.substring(0, line.length() - line.stripLeading().length());
             String key = colon >= 0 ? line.stripLeading().substring(0, line.stripLeading().indexOf(':') + 1) : "";
-            return hint("line " + start.line() + ": the value opens a double quote and never closes it; write the line"
-                        + " as " + (indent + key + " " + value + "\"").strip()
-                        + " (a single quote inside a double-quoted value needs no escape)");
+            return hint("line " + start.line() + ": the value opens a double quote and never closes it (a single quote"
+                        + " inside a double-quoted value needs no escape); write the line as "
+                        + (indent + key + " " + value + "\"").strip());
         }
         return null;
     }
