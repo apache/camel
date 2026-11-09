@@ -51,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * classes that run at the same time (see {@link SanitizerUntiedContextTest}).
  */
 @ClearSystemProperty(key = "camel.sanitizer.enabled")
+@ClearSystemProperty(key = "camel.sanitizer.pendingTimeout")
 // the JVM-wide property is cleared while the class runs: alone, so a class of the CI switch that starts meanwhile still
 // sees it
 @Isolated
@@ -136,6 +137,29 @@ class SanitizerActivationTest {
         e = assertThrows(Exception.class,
                 () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.stackDepth", "-1"), null, null));
         assertTrue(messages(e).contains("camel.sanitizer.stackDepth=-1 must be 0 or more"), messages(e));
+        e = assertThrows(Exception.class,
+                () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.pendingTimeout", "-1s"), null, null));
+        assertTrue(messages(e).contains("camel.sanitizer.pendingTimeout=-1s must be 0 or more"), messages(e));
+        e = assertThrows(Exception.class,
+                () -> start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.pendingTimeout", "abc"), null, null));
+        assertTrue(messages(e).contains("camel.sanitizer.pendingTimeout=abc is not a duration"), messages(e));
+    }
+
+    @Test
+    void pendingTimeoutZeroKeepsNoTableAndNoNotifier() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true", "camel.sanitizer.pendingTimeout", "0"), null, null);
+        assertNotNull(Sanitizer.get(context));
+        assertNull(Sanitizer.get(context).getPendingCalls());
+        assertTrue(context.getManagementStrategy().getEventNotifiers().stream()
+                .noneMatch(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance));
+    }
+
+    @Test
+    void theDefaultPendingTimeoutAddsTheNotifier() throws Exception {
+        start(Map.of("camel.sanitizer.enabled", "true"), null, null);
+        assertEquals(TimeUnit.SECONDS.toNanos(60), Sanitizer.get(context).getPendingCalls().getTimeoutNanos());
+        assertTrue(context.getManagementStrategy().getEventNotifiers().stream()
+                .anyMatch(SanitizerContextServicePlugin.ExchangeDoneNotifier.class::isInstance));
     }
 
     @Test

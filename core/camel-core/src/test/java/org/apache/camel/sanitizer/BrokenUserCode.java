@@ -105,6 +105,17 @@ final class BrokenUserCode {
     }
 
     /**
+     * Returns false and never calls the callback: the exchange waits for it forever (still pending).
+     */
+    static final class NeverCallsBack extends AsyncProcessorSupport {
+
+        @Override
+        public boolean process(Exchange exchange, AsyncCallback callback) {
+            return false;
+        }
+    }
+
+    /**
      * Throws from process instead of setting the exception and calling the callback.
      */
     static final class ThrowsInProcess extends AsyncProcessorSupport {

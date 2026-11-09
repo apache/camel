@@ -35,6 +35,8 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
     private String checks = "callback";
     @Metadata(defaultValue = "32")
     private int stackDepth = 32;
+    @Metadata(defaultValue = "60s")
+    private String pendingTimeout = "60s";
     @Metadata(defaultValue = "true")
     private boolean reportOnShutdown = true;
 
@@ -86,12 +88,26 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
         this.stackDepth = stackDepth;
     }
 
+    public String getPendingTimeout() {
+        return pendingTimeout;
+    }
+
+    /**
+     * How long an exchange waits, with nothing happening in it, before the call of a step whose callback has not come
+     * is reported as still pending (a warning of rule R1, which never fails a test), such as 60s or 500 (milliseconds).
+     * Only the innermost pending call of an exchange is reported. 0 turns the warning off.
+     */
+    public void setPendingTimeout(String pendingTimeout) {
+        this.pendingTimeout = pendingTimeout;
+    }
+
     public boolean isReportOnShutdown() {
         return reportOnShutdown;
     }
 
     /**
-     * Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation.
+     * Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation or a still
+     * pending warning, and the calls of steps still pending then.
      */
     public void setReportOnShutdown(boolean reportOnShutdown) {
         this.reportOnShutdown = reportOnShutdown;
@@ -124,7 +140,18 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation.
+     * How long an exchange waits, with nothing happening in it, before the call of a step whose callback has not come
+     * is reported as still pending (a warning of rule R1, which never fails a test), such as 60s or 500 (milliseconds).
+     * Only the innermost pending call of an exchange is reported. 0 turns the warning off.
+     */
+    public SanitizerConfigurationProperties withPendingTimeout(String pendingTimeout) {
+        this.pendingTimeout = pendingTimeout;
+        return this;
+    }
+
+    /**
+     * Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation or a still
+     * pending warning, and the calls of steps still pending then.
      */
     public SanitizerConfigurationProperties withReportOnShutdown(boolean reportOnShutdown) {
         this.reportOnShutdown = reportOnShutdown;
