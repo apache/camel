@@ -827,9 +827,10 @@ failed<=0 within=70s' \
   camel cmd chaos-experiment --end --note='stopped by hand'
 
 == camel cmd chaos-explore --help
-Usage: camel cmd chaos-explore [-h] [--show-tools] [--verbose] [--yes]
-                               [--api-key=<apiKey>] [--api-type=<apiType>]
-                               [--budget=<budget>] [--focus=<focus>]
+Usage: camel cmd chaos-explore [-h] [--[no-]save] [--show-tools] [--verbose]
+                               [--yes] [--api-key=<apiKey>]
+                               [--api-type=<apiType>] [--budget=<budget>]
+                               [--focus=<focus>]
                                [--max-iterations=<maxIterations>]
                                [--model=<model>] [--timeout=<timeout>]
                                [--tools=<tools>] [--url=<url>] [<name>]
@@ -867,6 +868,10 @@ with faults, for a time budget, and reports what held and what broke
                                calls that camel ask asks for first, without
                                asking
       --show-tools           Show the tool calls and results as they happen
+      --[no-]save            Save the report in test/chaos/reports (as
+                               markdown, and the journal as JSON), and each
+                               experiment that failed as a scenario in
+                               test/chaos, to replay it
       --verbose              Print debug information of the LLM calls
 
 This command starts a chaos exploration with the budget (camel cmd

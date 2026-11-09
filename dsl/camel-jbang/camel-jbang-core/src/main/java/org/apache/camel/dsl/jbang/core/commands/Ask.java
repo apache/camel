@@ -131,6 +131,10 @@ public class Ask extends CamelCommand {
 
     // the tools the model does not get, such as starting a chaos exploration that camel cmd chaos-explore started
     Set<String> hiddenTools = Set.of();
+    // the last answer of the model, such as the report of camel cmd chaos-explore, which it saves
+    String lastAnswer;
+    // the model that answered, and its API, such as qwen3.6 (ollama)
+    String usedModel;
 
     private long targetPid;
     private AskTools askTools;
@@ -170,6 +174,7 @@ public class Ask extends CamelCommand {
             return 1;
         }
         warnSmallModel(client.model, client.ollamaParameterBillions());
+        usedModel = client.model + " (" + client.apiType + ")";
 
         RuntimeHelper.ProcessInfo process = findProcess(nameOrPid);
         if (process != null) {
@@ -296,6 +301,7 @@ public class Ask extends CamelCommand {
                     continue;
                 }
                 messages.add(LlmClient.Message.assistantWithToolCalls(response.text(), List.of()));
+                lastAnswer = response.text();
                 printStats(totalUsage, startTime);
                 return 0;
             }
