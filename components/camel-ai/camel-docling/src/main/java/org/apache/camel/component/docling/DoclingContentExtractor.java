@@ -21,9 +21,10 @@ import java.io.IOException;
 import ai.docling.serve.api.convert.response.ConvertDocumentResponse;
 import ai.docling.serve.api.convert.response.DocumentResponse;
 import ai.docling.serve.api.convert.response.InBodyConvertDocumentResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Extracts the converted content from a docling-serve {@link ConvertDocumentResponse} in the requested output format.
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 final class DoclingContentExtractor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DoclingContentExtractor.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private DoclingContentExtractor() {
     }

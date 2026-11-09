@@ -7722,3 +7722,24 @@ WARNING: A Jackson 2 mapper writes a Jackson 3 `JsonNode` as a bean, without any
 `tools.jackson.core.exc.StreamReadException`. The public classes `XmlJsonStreamWriter`, `JsonXmlStreamReader`,
 `JsonSourceHandlerFactoryImpl` and the result handlers now take the Jackson 3 `JsonFactory`, `JsonGenerator` and `JsonParser`.
 
+=== Jackson 3 - vault, cloud and AI components
+
+`camel-aws-secrets-manager`, `camel-google-secret-manager`, `camel-google-firestore`, `camel-ibm-secrets-manager`,
+`camel-cyberark-vault`, `camel-knative`, `camel-elasticsearch-rest-client`, `camel-keycloak`, `camel-telemetry-dev`,
+`camel-micrometer`, `camel-docling`, `camel-huggingface` and `camel-chatscript` now use Jackson 3 internally. What they read
+and write does not change: their mappers keep the Jackson 2 defaults, including that content after the first JSON value of a
+secret is ignored.
+
+They no longer bring `com.fasterxml.jackson.core:jackson-databind` to your application (`camel-keycloak` still does, through
+the Keycloak client). If your code uses it, declare it yourself.
+
+Changes to API types:
+
+* `Knative.MAPPER` in `camel-knative-api` is a `tools.jackson.databind.ObjectMapper`.
+* `MicrometerModule` in `camel-micrometer` is a Jackson 3 module (`tools.jackson.databind.JacksonModule`).
+
+Exceptions: a response that `camel-elasticsearch-rest-client` or a model output that `camel-huggingface` cannot parse, and a
+structured CloudEvent that `camel-knative` cannot parse, now fail with the unchecked `tools.jackson.core.JacksonException`, not
+an `IOException`. `onException(IOException.class)` does not match it. Loading a `KnativeEnvironment` still fails with an
+`IOException`.
+
