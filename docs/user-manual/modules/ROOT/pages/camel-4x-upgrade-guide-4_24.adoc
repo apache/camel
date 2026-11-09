@@ -7638,12 +7638,25 @@ two artifacts each: the Jackson 2 line (`camel-jackson`, `camel-jacksonxml`, `ca
 * When both lines are on the classpath, the Jackson 3 data format and transformers are used. Before 4.24 the one
   whose service file was found first on the classpath was used. An `ObjectMapper` in the registry is only used by the
   data format of the same Jackson version.
-* `camel-kamelet-main` depends on the Jackson 3 line instead of the Jackson 2 one. The
-  `DelegatingSchemaResolver` of the Kamelet data type utilities delegates to the Jackson 3 `JsonSchemaResolver`,
+* `camel-kamelet-main` depends on the Jackson 3 line instead of the Jackson 2 one. The `DelegatingSchemaResolver` of the
+  Kamelet data type utilities (used by `resolve-pojo-schema-action`) delegates to the Jackson 3 `JsonSchemaResolver`,
   `AvroSchemaResolver` and `ProtobufSchemaResolver`, or to the Jackson 2 ones when the Jackson 3 artifact is not on the
-  classpath. A Kamelet that declares `camel:jackson` as a dependency still
-  gets `camel-jackson`, since the dependency names the artifact, and the Jackson 3 data format is used when both are
-  present.
+  classpath.
+* A Kamelet that declares `camel:jackson`, `camel:jackson-avro` or `camel:jackson-protobuf` still gets that Jackson 2
+  artifact, since the dependency names the artifact, but in Camel JBang its data formats and transformers run on
+  Jackson 3. Jackson 2 class names in a Kamelet therefore no longer work there: an `unmarshalType` of
+  `com.fasterxml.jackson.databind.JsonNode` fails on each message, and a Jackson 2 module in `moduleClassNames` or a
+  Jackson 2 `SchemaResolver` bean fails when the route starts.
+
+*Kamelets.* Camel 4.24 in Camel JBang needs Kamelets 4.24 for the Kamelets that name Jackson 2 classes:
+`json-deserialize-action`, `avro-serialize-action`, `avro-deserialize-action`, `protobuf-serialize-action`,
+`protobuf-deserialize-action`, `resolve-pojo-schema-action` (for Avro and Protobuf), `azure-storage-blob-changefeed-source`,
+`jira-source` and `jira-oauth-source`, `aws-s3-event-based-source`, `ceph-event-based-source` and
+`azure-storage-blob-event-based-source` (with `getObject` or `getBlob` enabled), and the eight kafka field actions (see
+"Jackson 3 - camel-kafka"). The 4.24.0 launcher ships the 4.23 Kamelets: run it with `--kamelets-version=4.24.0`. Kamelets
+that only use the `json` data format by name keep working, with the Jackson 3 defaults: for example, `json-serialize-action`
+writes properties in alphabetical order and dates as text. Outside Camel JBang, an application on the Jackson 2 line runs
+the 4.23 Kamelets as before, except the kafka field actions.
 
 The `camel-jackson` artifacts are unchanged and stay on Jackson 2. An application that declares them, outside Camel
 JBang, keeps using Jackson 2 as long as it does not also have the Jackson 3 line on the classpath.
@@ -7863,8 +7876,8 @@ produce the node with `camel-jackson3`, or pass JSON text.
 
 The Kamelets that use these transforms (`drop-field-action`, `extract-field-action`, `hoist-field-action`,
 `insert-field-action`, `mask-field-action`, `message-timestamp-router-action`, `replace-field-action` and
-`value-to-key-action`) do so from their 4.24 release, so Camel 4.24 needs Kamelets 4.24 for them. The 4.24.0 launcher ships
-the 4.23 Kamelets: run it with `--kamelets-version=4.24.0`.
+`value-to-key-action`) do so from their 4.24 release, so Camel 4.24 needs Kamelets 4.24 for them, also outside Camel JBang.
+See "Kamelets" in the section "Jackson 3 - camel-jackson3 is the Jackson line of the catalog, Camel JBang and the Kamelets".
 
 The kafka producer still sends a Jackson 2 array node as one record per element, and any other Jackson 2 node as one record.
 
