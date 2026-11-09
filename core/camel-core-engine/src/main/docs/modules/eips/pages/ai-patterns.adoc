@@ -225,8 +225,9 @@ generated text.
 agents.
 
 |MCP server
-|xref:others:mcp-server.adoc[MCP Server], xref:ROOT:ai-resource-component.adoc[AI Resource]
-|Expose `ai-tool` routes as MCP tools and `ai-resource` routes as MCP resources to any MCP client.
+|xref:others:mcp-server.adoc[MCP Server], xref:ROOT:ai-resource-component.adoc[AI Resource],
+xref:ROOT:ai-prompt-component.adoc[AI Prompt]
+|Expose `ai-tool` routes as MCP tools, `ai-resource` routes as MCP resources and `ai-prompt` routes as MCP prompts to any MCP client.
 
 |MCP client
 |xref:others:langchain4j-agent-mcp.adoc[LangChain4j Agent MCP], xref:others:openai-mcp.adoc[OpenAI MCP]

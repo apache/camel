@@ -63,6 +63,8 @@ class StateStoreBackendFactoryTest extends CamelTestSupport {
 
         assertThat(created).containsOnlyKeys("orders", "users");
         assertThat(created.get("orders").isStarted()).isTrue();
+        assertThat(created.get("orders").get("1")).isEqualTo("order-1");
+        assertThat(created.get("users").get("1")).isEqualTo("user-1");
         assertThat(registryBackend.keys()).isEmpty();
     }
 
@@ -71,7 +73,7 @@ class StateStoreBackendFactoryTest extends CamelTestSupport {
         template.requestBodyAndHeader("state-store:fallback?operation=put", "v", StateStoreConstants.KEY, "k");
 
         assertThat(created).doesNotContainKey("fallback");
-        assertThat(registryBackend.get("k")).isEqualTo("v");
+        assertThat(registryBackend.get("statestore:fallback:k")).isEqualTo("v");
     }
 
     @Test
@@ -79,7 +81,7 @@ class StateStoreBackendFactoryTest extends CamelTestSupport {
         template.requestBodyAndHeader("direct:explicit", "v", StateStoreConstants.KEY, "k");
 
         assertThat(created).doesNotContainKey("explicit");
-        assertThat(explicitBackend.get("k")).isEqualTo("v");
+        assertThat(explicitBackend.get("statestore:explicit:k")).isEqualTo("v");
     }
 
     @Override

@@ -33,9 +33,11 @@ import org.apache.camel.util.json.JsonObject;
  * the difference of the counts, the faults of each rule and the states of the expectations are kept in the journal,
  * with a verdict.
  * <p/>
- * The verdict is {@code FAIL} when an expectation is unmet and {@code PASS} when all are met. While it runs and an
- * expectation is not decided it is {@code PENDING}, and an experiment that ended before an expectation was decided is
- * {@code INCONCLUSIVE}: the messages may still have come. The manager guards it with its lock.
+ * The verdict is {@code FAIL} when an expectation is unmet, or a rule of it failed or dropped the send of a dead letter
+ * channel, which then handled the message without delivering it (lost, as the report counts it, CAMEL-26789), and
+ * {@code PASS} when all are met. While it runs and an expectation is not decided it is {@code PENDING}, and an
+ * experiment that ended before an expectation was decided is {@code INCONCLUSIVE}: the messages may still have come.
+ * The manager guards it with its lock.
  */
 final class ChaosExperiment {
 
@@ -135,6 +137,9 @@ final class ChaosExperiment {
         jo.put("rules", new JsonArray(rules));
         boolean unmet = false;
         boolean undecided = false;
+        // the messages its rules kept from a dead letter channel: handled there, so no expectation of a route sees them
+        long lost = 0;
+        JsonObject lostAtDlq = new JsonObject();
         JsonArray texts = new JsonArray();
         JsonObject faults = new JsonObject();
         JsonArray expectations = new JsonArray();
@@ -149,6 +154,11 @@ final class ChaosExperiment {
                 fired += r.firedAt(hook);
             }
             faults.put(id, fired);
+            long kept = r.lostAtDlqCount();
+            if (kept > 0) {
+                lostAtDlq.put(id, kept);
+                lost += kept;
+            }
             Expectation e = r.expectation;
             if (e != null) {
                 Expectation.Reading reading = e.read(now);
@@ -168,7 +178,11 @@ final class ChaosExperiment {
         jo.put("ruleTexts", texts);
         jo.put("faults", faults);
         jo.put("expectations", expectations);
-        jo.put("verdict", unmet ? FAIL : !undecided ? PASS : ended ? INCONCLUSIVE : PENDING);
+        if (lost > 0) {
+            jo.put("lostAtDeadLetterChannel", lost);
+            jo.put("lostAtDeadLetterChannelPerRule", lostAtDlq);
+        }
+        jo.put("verdict", unmet || lost > 0 ? FAIL : !undecided ? PASS : ended ? INCONCLUSIVE : PENDING);
         JsonArray routes = new JsonArray();
         counts.forEach((route, c) -> {
             long[] now0 = read(c);
@@ -224,6 +238,11 @@ final class ChaosExperiment {
             JsonObject x = (JsonObject) o;
             sb.append("\n        expect ").append(x.getString("expect")).append(": ").append(x.getString("state"))
                     .append(", ").append(x.getString("value"));
+        }
+        long lost = jo.getLongOrDefault("lostAtDeadLetterChannel", 0);
+        if (lost > 0) {
+            sb.append("\n        lost at the dead letter channel: ").append(lost)
+                    .append(lost == 1 ? " message" : " messages").append(", handled there without being delivered");
         }
         StringJoiner sj = new StringJoiner(", ");
         for (Object o : jo.getCollection("routes")) {

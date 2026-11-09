@@ -18,16 +18,17 @@ There are two types of consumers:
 - **TYPE** — The Camel component type (e.g., `kafka`, `file`, `timer`, `cron`, `seda`)
 - **POLLS** — Total number of poll cycles the scheduler has executed. This counts poll **attempts**, not messages received — a poll may check for new files and find none. For event-driven consumers (like `seda`), this column is empty
 - **SCHEDULE** — How often the consumer polls: a fixed interval like `1s` or `5000ms`, or a cron expression like `0 0/5 * * *`. Only shown for polling consumers
-- **SINCE-LAST** — Three timestamps showing **started** / **completed** / **failed**: when the last exchange was created, when the last exchange completed successfully, and when the last exchange failed. Helps identify stale consumers or recurring failures
+- **LAST** — How long ago the consumer's last exchange completed (or started, when none has completed yet). A consumer that should be busy but has a long LAST is stale
+- **LAST FAIL** — How long ago its last exchange failed, in red; blank when none did
 - **URI** — The full endpoint URI (e.g., `timer://hello?period=2000`). If the consumer health check is DOWN, the failure message is shown here instead
 
 ## Example Screen
 
 ```
- ROUTE           STATUS   TYPE     POLLS  SCHEDULE  SINCE-LAST        URI
- timer-to-log    Started  timer    17     2s        1s/1s/-           timer://hello?period=2000
- timer-to-seda   Started  timer    12     3s        0s/0s/-           timer://pump?period=3000
- seda-consumer   Started  seda                      0s/0s/-           seda://queue
+ ROUTE           STATUS   TYPE     POLLS  SCHEDULE      LAST  LAST FAIL  URI
+ timer-to-log    Started  timer    17     2s          1s ago             timer://hello?period=2000
+ timer-to-seda   Started  timer    12     3s          0s ago    5m ago   timer://pump?period=3000
+ seda-consumer   Started  seda                        0s ago             seda://queue
 ```
 
 Notice that `seda-consumer` has no POLLS or SCHEDULE because it is

@@ -33,8 +33,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -47,7 +45,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * this will test basic breakOnFirstError functionality when it is turned off and consumer uses allowManualCommit and
  * KafkaManualCommit and NOOP Commit Manager
  */
-@Tags({ @Tag("breakOnFirstError") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64" },
              disabledReason = "This test does not run reliably on some platforms")

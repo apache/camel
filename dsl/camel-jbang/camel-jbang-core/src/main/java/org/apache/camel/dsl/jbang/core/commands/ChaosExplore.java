@@ -154,7 +154,8 @@ public class ChaosExplore extends CamelCommand {
             answer = ask.doCall();
         } catch (Exception e) {
             // the LLM fails with an exit code; anything else must not cost the report of what was explored so far
-            printer().printErr("camel ask failed: " + e.getMessage());
+            // an exception without a message is known by its type
+            printer().printErr("camel ask failed: " + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
             answer = CliExitCode.FAILURE;
         } finally {
             // the AI may have finished it already; else its rules go now
@@ -166,12 +167,18 @@ public class ChaosExplore extends CamelCommand {
         printer().println();
         lines.forEach(printer()::println);
         if (save && exploration != null) {
-            Saved saved = save(Path.of("test", "chaos"), LocalDateTime.now(),
-                    new Run(integration, budget, focus, ask.usedModel, seed(status)), exploration, ask.lastAnswer,
-                    lines);
-            printer().println();
-            printer().println("Report: " + saved.report());
-            saved.scenarios().forEach(s -> printer().println("Scenario: " + s + " (replay: camel run * --chaos=" + s + ")"));
+            try {
+                Saved saved = save(Path.of("test", "chaos"), LocalDateTime.now(),
+                        new Run(integration, budget, focus, ask.usedModel, seed(status)), exploration, ask.lastAnswer,
+                        lines);
+                printer().println();
+                printer().println("Report: " + saved.report());
+                saved.scenarios()
+                        .forEach(s -> printer().println("Scenario: " + s + " (replay: camel run * --chaos=" + s + ")"));
+            } catch (IOException e) {
+                // the journal is printed already: say why it is not saved, rather than a stack trace
+                printer().printErr("Could not save the report in test/chaos: " + e.getMessage());
+            }
         }
         if (failed(exploration)) {
             return CliExitCode.FAILURE;
@@ -246,8 +253,7 @@ public class ChaosExplore extends CamelCommand {
         List<Object> experiments = exploration.getCollection("experiments");
         if (experiments != null) {
             for (Object o : experiments) {
-                JsonObject e = (JsonObject) o;
-                if (!"FAIL".equals(e.getString("verdict"))) {
+                if (!(o instanceof JsonObject e) || !"FAIL".equals(e.getString("verdict"))) {
                     continue;
                 }
                 Path scenario = dir.resolve("explore-" + stamp + "-" + e.getIntegerOrDefault("number", 0) + ".chaos");
@@ -314,7 +320,9 @@ public class ChaosExplore extends CamelCommand {
         List<Object> expectations = experiment.getCollection("expectations");
         if (expectations != null) {
             for (Object o : expectations) {
-                JsonObject x = (JsonObject) o;
+                if (!(o instanceof JsonObject x)) {
+                    continue;
+                }
                 sb.append("# expect ").append(x.getString("expect")).append(": ").append(x.getString("state"))
                         .append(", ").append(x.getString("value")).append('\n');
             }
@@ -354,7 +362,9 @@ public class ChaosExplore extends CamelCommand {
                   + (count == 1 ? " experiment" : " experiments") + ", " + failed + " failed");
         if (experiments != null) {
             for (Object o : experiments) {
-                lines.addAll(ListChaos.experimentLines((JsonObject) o, "  "));
+                if (o instanceof JsonObject e) {
+                    lines.addAll(ListChaos.experimentLines(e, "  "));
+                }
             }
         }
         return lines;
