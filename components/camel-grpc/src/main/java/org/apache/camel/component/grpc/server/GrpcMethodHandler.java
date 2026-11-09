@@ -115,7 +115,7 @@ public class GrpcMethodHandler {
      */
     public static StatusRuntimeException toStatusException(GrpcEndpoint endpoint, Exception cause) {
         String description = endpoint.getConfiguration().isMuteException()
-                ? MUTED_DESCRIPTION : cause.getMessage();
+                ? MUTED_DESCRIPTION : (cause != null ? cause.getMessage() : "Exchange processing failed");
         return Status.INTERNAL
                 .withDescription(description)
                 .withCause(cause)

@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,7 +31,6 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.grpc.GrpcConsumerReplyTypeTest.PongResponseStreamObserver;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.support.EventNotifierSupport;
@@ -174,5 +175,29 @@ public class GrpcPropagationRouteControlledTest extends GrpcTestSupport {
                         .end();
             }
         };
+    }
+
+    static class PongResponseStreamObserver implements StreamObserver<PongResponse> {
+        final List<PongResponse> pongResponses = new CopyOnWriteArrayList<>();
+        final AtomicInteger completed = new AtomicInteger();
+        final CountDownLatch latch = new CountDownLatch(1);
+        volatile Throwable error;
+
+        @Override
+        public void onNext(PongResponse value) {
+            pongResponses.add(value);
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            error = t;
+            latch.countDown();
+        }
+
+        @Override
+        public void onCompleted() {
+            completed.incrementAndGet();
+            latch.countDown();
+        }
     }
 }
