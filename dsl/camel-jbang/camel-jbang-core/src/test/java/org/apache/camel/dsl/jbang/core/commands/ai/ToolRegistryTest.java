@@ -321,12 +321,12 @@ class ToolRegistryTest {
             assertTrue(t.isReadOnly(), name);
             assertFalse(t.isDestructive(), name);
         }
-        for (String name : List.of("chaos_add", "chaos_change", "chaos_load")) {
+        for (String name : List.of("chaos_add", "chaos_change", "chaos_load", "chaos_experiment")) {
             ToolDescriptor t = ToolRegistry.findTool(name);
             assertFalse(t.isReadOnly(), name);
             assertTrue(t.isDestructive(), name);
         }
-        for (String name : List.of("chaos_remove", "chaos_clear")) {
+        for (String name : List.of("chaos_remove", "chaos_clear", "chaos_explore_start", "chaos_explore_finish")) {
             ToolDescriptor t = ToolRegistry.findTool(name);
             assertFalse(t.isReadOnly(), name);
             assertFalse(t.isDestructive(), name);
@@ -349,6 +349,17 @@ class ToolRegistryTest {
         assertEquals("scenario is required", assertThrows(ToolExecutionException.class,
                 () -> ToolRegistry.execute("chaos_load", new ToolContext(), Map.of("scenarioName", "outage")))
                 .getMessage());
+        assertEquals("rule is required", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_experiment", new ToolContext(), Map.of("feed", "orders")))
+                .getMessage());
+        assertEquals("The wait must be at most 10m, was: 1h", assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_experiment", new ToolContext(),
+                        Map.of("rule", "route=orders error expect=orders:failed<=0", "wait", "1h")))
+                .getMessage());
+        assertTrue(assertThrows(ToolExecutionException.class,
+                () -> ToolRegistry.execute("chaos_experiment", new ToolContext(),
+                        Map.of("rule", "route=orders error expect=orders:failed<=0", "interval", "500..100")))
+                .getMessage().contains("from the shortest to the longest"));
     }
 
     @Test
@@ -388,7 +399,7 @@ class ToolRegistryTest {
         // only the chaos tools that change the rules, the check (the integration parses the rule) and what to try (an
         // action of the CLI connector) stay off HTTP; the other tools keep what they offered
         assertEquals(List.of("chaos_add", "chaos_check", "chaos_suggest", "chaos_load", "chaos_change", "chaos_remove",
-                "chaos_clear"), left);
+                "chaos_clear", "chaos_explore_start", "chaos_experiment", "chaos_explore_finish"), left);
         assertTrue(http.containsAll(List.of("chaos_list", "chaos_report", "stop_route", "execute_sql")));
     }
 }

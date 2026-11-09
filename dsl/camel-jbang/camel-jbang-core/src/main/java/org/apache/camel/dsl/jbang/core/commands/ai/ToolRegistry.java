@@ -24,11 +24,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
+import org.apache.camel.dsl.jbang.core.common.ChaosExperimentRun;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
@@ -928,6 +930,120 @@ public final class ToolRegistry {
                         }
                     });
                 }));
+        // an exploration (CAMEL-26773, CAMEL-26786): camel-chaos keeps its journal and ends its rules at the deadline,
+        // so starting one is the consent to the experiments in it, which need no confirm of their own
+        register(tool("chaos_explore_start",
+                "Start a chaos exploration in the integration (as camel cmd chaos-explore-start): a time to try chaos "
+                                             + "rules in, that camel-chaos enforces. While it runs, a rule ends at the "
+                                             + "deadline at the latest, and at the deadline the rules are removed, "
+                                             + "whatever happens. Its journal (the baseline, the rules tried and the "
+                                             + "experiments) is in chaos_report. Run experiments in it with "
+                                             + "chaos_experiment, and finish it with chaos_explore_finish. One runs at a "
+                                             + "time.")
+                .param("budget", "string", "How long it runs, between 10s and 2h (default 10m)", false)
+                .param("focus", "string", "What it is about, such as a route (optional)", false)
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return ctx.executeAction("chaos", root -> {
+                        root.put("command", "explore-start");
+                        putIfSet(root, "budget", args.get("budget"));
+                        putIfSet(root, "focus", args.get("focus"));
+                    });
+                }));
+
+        register(tool("chaos_experiment",
+                "Run one chaos experiment in the running exploration (as camel cmd chaos-experiment), in one call: it "
+                                          + "adds the rules (one of them with an expectation, expect=, that decides the "
+                                          + "hypothesis), sends the messages of feed when given (as send_message, with "
+                                          + "body, headers, repeat and interval), waits until the expectations are "
+                                          + "decided or wait is up, and ends the experiment, which removes its rules. "
+                                          + "Returns the verdict (FAIL: an expectation is unmet; PASS: all are met; "
+                                          + "INCONCLUSIVE: the wait was up before one was decided, so wait longer than "
+                                          + "its within=), the expectations with their actual values, the faults per "
+                                          + "rule, what the routes did meanwhile, the traffic sent, and the time left "
+                                          + "of the exploration (timeLeft, millis). chaos_suggest has rules to try and "
+                                          + "the feed of each route.")
+                .param("rule", "string",
+                        "The rules in their one-line text form, separated by ;, one of them with expect=, such as"
+                                         + " 'route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s'",
+                        true)
+                .param("hypothesis", "string", "What the experiment tests, in a few words", false)
+                .param("feed", "string",
+                        "The endpoint, or the id of the route, to send the messages to (as the feed of chaos_suggest);"
+                                         + " leave it out when the route feeds itself (a timer)",
+                        false)
+                .param("body", "string", "The body of the messages (file:<path>, or file:<folder> for a message per file)",
+                        false)
+                .param("headers", "string", "The headers of the messages as key=value pairs separated by newlines", false)
+                .param("repeat", "string", "How many messages to send in all (at most 10000)", false)
+                .param("interval", "string",
+                        "The pause between two messages in millis, or a range such as 100..500 (at most 60000)", false)
+                .param("wait", "string",
+                        "The longest wait for the verdict after the messages were sent, such as 90s (default 2m, at most"
+                                         + " 10m)",
+                        false)
+                .param("note", "string", "What to note with the experiment in the journal", false)
+                .param("name", "string", CHAOS_NAME, false)
+                // its rules make messages fail, wait or get lost, within the exploration the user started
+                .readOnly(false).destructive(true)
+                .executor((ctx, args) -> {
+                    String rule = AuthoringTools.required(args, "rule");
+                    String feed = args.get("feed");
+                    long wait;
+                    try {
+                        RepeatedSend.interval(args.get("interval"));
+                        wait = ChaosExperimentRun.waitMillis(args.get("wait"));
+                    } catch (IllegalArgumentException e) {
+                        throw new ToolExecutionException(e.getMessage());
+                    }
+                    int repeat = intArg(args, "repeat", 0);
+                    selectChaosProcess(ctx, args);
+                    ChaosExperimentRun.Feed traffic = feed != null && !feed.isBlank()
+                            ? new ChaosExperimentRun.Feed(
+                                    feed, args.get("body"), args.get("headers"), repeat,
+                                    args.get("interval"))
+                            : null;
+                    return ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
+                        @Override
+                        public JsonObject chaos(String command, Consumer<JsonObject> options) {
+                            String answer = ctx.executeAction("chaos", root -> {
+                                root.put("command", command);
+                                options.accept(root);
+                            });
+                            return Jsoner.deserialize(answer, new JsonObject());
+                        }
+
+                        @Override
+                        public JsonObject send(ChaosExperimentRun.Feed f) {
+                            return ctx.sendMessage(f.endpoint(), f.body(), f.headers(), f.repeat(), f.interval());
+                        }
+
+                        @Override
+                        public JsonObject status() {
+                            return ctx.readFullStatus();
+                        }
+                    }, args.get("hypothesis"), rule, traffic, wait, args.get("note")).toJson();
+                }));
+
+        register(tool("chaos_explore_finish",
+                "Finish the chaos exploration of the integration before its deadline (as camel cmd chaos-explore-finish):"
+                                              + " the rules are removed (an open experiment is ended), and the journal "
+                                              + "stays in chaos_report. Returns the journal: the rules tried, the "
+                                              + "experiments with their verdicts, and the baseline.")
+                .param("name", "string", CHAOS_NAME, false)
+                .readOnly(false).destructive(false)
+                .executor((ctx, args) -> {
+                    selectChaosProcess(ctx, args);
+                    return chaos(ctx, "explore-finish", null, null);
+                }));
+    }
+
+    private static void putIfSet(JsonObject root, String key, String value) {
+        if (value != null && !value.isBlank()) {
+            root.put(key, value);
+        }
     }
 
     /**

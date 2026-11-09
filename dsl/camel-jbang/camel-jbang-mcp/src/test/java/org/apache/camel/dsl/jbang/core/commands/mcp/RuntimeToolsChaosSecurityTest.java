@@ -34,8 +34,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * The marks of the chaos tools and what they mean: adding and changing a rule is destructive and asked first
- * ({@link ToolConfirms}), the list and the report only read, and each access level of the security layer
- * ({@link McpAccessFilter} decides from the annotations) offers the tools by their marks.
+ * ({@link ToolConfirms}), an experiment is asked once with the start of its exploration, the list and the report only
+ * read, and each access level of the security layer ({@link McpAccessFilter} decides from the annotations) offers the
+ * tools by their marks.
  */
 class RuntimeToolsChaosSecurityTest {
 
@@ -52,6 +53,10 @@ class RuntimeToolsChaosSecurityTest {
         MARKS.put("camel_runtime_chaos_remove", new boolean[] { false, false });
         MARKS.put("camel_runtime_chaos_clear", new boolean[] { false, false });
         MARKS.put("camel_runtime_chaos_load", new boolean[] { false, true });
+        // an exploration bounds the faults by its deadline; an experiment adds rules, so it is destructive
+        MARKS.put("camel_runtime_chaos_explore_start", new boolean[] { false, false });
+        MARKS.put("camel_runtime_chaos_experiment", new boolean[] { false, true });
+        MARKS.put("camel_runtime_chaos_explore_finish", new boolean[] { false, false });
     }
 
     private static Tool.Annotations annotations(String name) {
@@ -89,11 +94,14 @@ class RuntimeToolsChaosSecurityTest {
     void exactlyTheDestructiveToolsAreInToolConfirms() {
         MARKS.forEach((name, marks) -> {
             String command = name.substring("camel_runtime_chaos_".length());
-            ToolConfirms.Call call = "load".equals(command)
-                    ? ToolConfirms.chaosLoad("shop", "outage", "endpoint=kafka:* error rate=0.1")
-                    : ToolConfirms.chaos(command, "shop", "r1", "endpoint=kafka:* error rate=0.1");
+            ToolConfirms.Call call = switch (command) {
+                case "load" -> ToolConfirms.chaosLoad("shop", "outage", "endpoint=kafka:* error rate=0.1");
+                // asked once, when its exploration starts (chaos_explore_start), for all its experiments
+                case "experiment" -> ToolConfirms.chaosExplore("shop", "10m", null);
+                default -> ToolConfirms.chaos(command, "shop", "r1", "endpoint=kafka:* error rate=0.1");
+            };
             assertThat(call != null).as(name + " is asked first").isEqualTo(marks[1]);
-            if (call != null) {
+            if (call != null && !"experiment".equals(command)) {
                 // the user sees the rule, or the rules of the scenario
                 assertThat(call.target()).isEqualTo("endpoint=kafka:* error rate=0.1");
             }
@@ -109,7 +117,8 @@ class RuntimeToolsChaosSecurityTest {
         assertThat(offered(McpSecurityConfig.AccessLevel.READ_WRITE)).containsExactly(
                 "camel_runtime_chaos_list", "camel_runtime_chaos_report", "camel_runtime_chaos_suggest",
                 "camel_runtime_chaos_check",
-                "camel_runtime_chaos_remove", "camel_runtime_chaos_clear");
+                "camel_runtime_chaos_remove", "camel_runtime_chaos_clear", "camel_runtime_chaos_explore_start",
+                "camel_runtime_chaos_explore_finish");
         assertThat(offered(McpSecurityConfig.AccessLevel.ADMIN)).containsExactlyElementsOf(MARKS.keySet());
         // with the security layer on, the interceptor of @McpSecured audits each call (and redacts the answer when
         // camel.mcp.security.redaction.enabled=true)
