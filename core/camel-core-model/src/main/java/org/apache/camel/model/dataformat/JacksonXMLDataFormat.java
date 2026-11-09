@@ -86,7 +86,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
     private String enableJaxbAnnotationModule;
     @XmlAttribute
     @Metadata(label = "advanced",
-              description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names."
+              description = "To use custom Jackson modules specified as a String with FQN class names."
                             + " Multiple classes can be separated by comma.")
     private String moduleClassNames;
     @XmlAttribute
@@ -94,13 +94,13 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
               description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.")
     private String moduleRefs;
     @XmlAttribute
-    @Metadata(description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+    @Metadata(description = "Set of features to enable on the Jackson ObjectMapper."
                             + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature."
                             + " Multiple features can be separated by comma."
                             + " When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.")
     private String enableFeatures;
     @XmlAttribute
-    @Metadata(description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+    @Metadata(description = "Set of features to disable on the Jackson ObjectMapper."
                             + " The features should be a name that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature."
                             + " Multiple features can be separated by comma."
                             + " When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.")
@@ -499,8 +499,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition implements Conten
         }
 
         /**
-         * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class
-         * names. Multiple classes can be separated by comma.
+         * To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated
+         * by comma.
          */
         public Builder moduleClassNames(String moduleClassNames) {
             this.moduleClassNames = moduleClassNames;

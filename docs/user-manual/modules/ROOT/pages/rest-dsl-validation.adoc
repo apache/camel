@@ -126,6 +126,7 @@ response message.
 
 NOTE: The examples below use the `com.fasterxml.jackson.core.JsonParseException` of `camel-jackson` (Jackson 2). With
 `camel-jackson3` (Jackson 3), catch `tools.jackson.core.exc.StreamReadException` instead.
+
 For example, to return an HTTP error code 400 with a
 hardcoded message, we can do as shown below:
 

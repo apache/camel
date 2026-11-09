@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
 import org.apache.camel.util.ObjectHelper;
-import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -34,32 +33,32 @@ public class NovaStreamParser implements StreamResponseParser {
     private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
-    public String extractText(String chunk) throws JacksonException {
+    public String extractText(String chunk) {
         JsonNode text = path(chunk, "contentBlockDelta", "delta", "text");
         return text != null ? text.asString() : "";
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JacksonException {
+    public String extractCompletionReason(String chunk) {
         JsonNode stopReason = path(chunk, "messageStop", "stopReason");
         return stopReason != null ? stopReason.asString() : null;
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JacksonException {
+    public Integer extractTokenCount(String chunk) {
         JsonNode outputTokens = path(chunk, "metadata", "usage", "outputTokens");
         return outputTokens != null ? outputTokens.asInt() : null;
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JacksonException {
+    public boolean isFinalChunk(String chunk) {
         return path(chunk, "messageStop") != null;
     }
 
     /**
      * The node at the given path of the chunk, or null when the chunk has no such node.
      */
-    private static JsonNode path(String chunk, String... names) throws JacksonException {
+    private static JsonNode path(String chunk, String... names) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
