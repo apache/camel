@@ -3926,7 +3926,6 @@ public interface FtpEndpointBuilderFactory {
         }
         /**
          * Whether or not to eagerly delete any existing target file. This
-         * Whether or not to eagerly delete any existing target file. This
          * option only applies when you use fileExist=Override and the
          * tempFileName option as well. You can use this to disable (set it to
          * false) deleting the target file before the temp file is written. For
@@ -3938,6 +3937,7 @@ public interface FtpEndpointBuilderFactory {
          * enabled, and an existing file exists. If this option is false, then
          * an exception will be thrown if an existing file existed, if its true,
          * then the existing file is deleted before the move operation.
+         * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
