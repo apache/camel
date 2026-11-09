@@ -71,8 +71,13 @@ public class CxfClientCallback extends ClientCallback {
             // for one way messages callback is already called in
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
-                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
-                camelAsyncCallback.done(false);
+                try {
+                    endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                } finally {
+                    // always signal the Camel callback, even if populateExchangeFromCxfResponse throws,
+                    // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
+                    camelAsyncCallback.done(false);
+                }
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} calling handleResponse", Thread.currentThread().getName());
@@ -116,8 +121,13 @@ public class CxfClientCallback extends ClientCallback {
             // for one way messages callback is already called in
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
-                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
-                camelAsyncCallback.done(false);
+                try {
+                    endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                } finally {
+                    // always signal the Camel callback, even if populateExchangeFromCxfResponse throws,
+                    // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
+                    camelAsyncCallback.done(false);
+                }
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} calling handleException", Thread.currentThread().getName());

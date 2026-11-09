@@ -192,7 +192,7 @@ public class CxfProducerTest {
     }
 
     @Test
-    public void testInvokingAWrongServer() throws Exception {
+    void testInvokingAWrongServer() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUri());
         assertNotNull(reply.getException(), "We should get the exception here");
         assertInstanceOf(IOException.class, reply.getException().getCause());
@@ -205,6 +205,17 @@ public class CxfProducerTest {
         //Test the data format MESSAGE
         reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=RAW");
         assertNotNull(reply.getException(), "We should get the exception here");
+        assertInstanceOf(IOException.class, reply.getException().getCause());
+    }
+
+    // CAMEL-26696: async producer must always complete the exchange when the connection fails,
+    // even if CxfClientCallback.handleException is called with populateExchangeFromCxfResponse throwing.
+    @Test
+    void testInvokingAWrongServerAsync() throws Exception {
+        // The @Timeout(30s) on the class guards against the exchange hanging in
+        // DefaultAsyncProcessorAwaitManager if camelAsyncCallback.done() is never called.
+        Exchange reply = sendSimpleMessage(getWrongEndpointUriAsync());
+        assertNotNull(reply.getException(), "Async wrong-server call must complete with an exception");
         assertInstanceOf(IOException.class, reply.getException().getCause());
     }
 
@@ -236,13 +247,17 @@ public class CxfProducerTest {
     }
 
     protected String getWrongEndpointUri() {
-        // CAMEL-26600: synchronous=true, as with the CXF async client the callback sometimes never completes
-        // when the connection fails, leaving the exchange waiting forever.
-        // The async error path is not covered anymore, see CAMEL-26696
         return "cxf://" + getWrongServerAddress()
                + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
                + "&cxfConfigurer=#wrongServerConfigurer"
                + "&synchronous=true";
+    }
+
+    // CAMEL-26696: async (synchronous=false) wrong-server endpoint — callback must always complete
+    protected String getWrongEndpointUriAsync() {
+        return "cxf://" + getWrongServerAddress()
+               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+               + "&cxfConfigurer=#wrongServerConfigurer";
     }
 
     protected Exchange sendSimpleMessage() {
