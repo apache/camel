@@ -19,6 +19,7 @@ camel plugin delete [options]
 [cols="2,5,1,2",options="header"]
 |===
 | Option | Description | Default | Type
+| `--plugin-config` | Path to a custom plugin configuration file or directory |  | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 
