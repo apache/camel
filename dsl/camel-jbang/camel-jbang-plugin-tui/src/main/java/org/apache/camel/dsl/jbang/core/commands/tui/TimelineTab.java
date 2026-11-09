@@ -855,12 +855,12 @@ class TimelineTab extends AbstractTableTab {
         return lines;
     }
 
-    /** A sparkline of values (-1 is unknown, blank), relative to the highest. */
     /** The height of the mean time sparkline: twice the average or the slowest second, at least 10 ms. */
     static long meanScale(long maxMean, long avg) {
         return Math.max(MIN_MEAN_SCALE_MILLIS, Math.max(maxMean, 2 * avg));
     }
 
+    /** A sparkline of values (-1 is unknown, blank), relative to the highest. */
     static String spark(long[] values, long max) {
         StringBuilder sb = new StringBuilder();
         for (long v : values) {

@@ -97,6 +97,25 @@ class MemoryTabRenderTest {
     }
 
     @Test
+    void theHalfOfOneGigabyteFitsTheAxis() {
+        info.heapMemUsed = 600L * 1024 * 1024;
+        info.heapMemCommitted = 1024L * 1024 * 1024;
+        info.heapMemMax = 2048L * 1024 * 1024;
+        MetricsCollector metrics = new MetricsCollector();
+        LinkedList<Long> history = new LinkedList<>();
+        for (int i = 0; i < 100; i++) {
+            history.add(600L * 1024 * 1024);
+        }
+        metrics.getHeapMemHistory().put("1234", history);
+
+        String rendered = TuiTestHelper.renderToString(new MemoryTab(ctx, metrics), 160, 50);
+
+        // 512M is wider than 1G: the axis is as wide as the half, and neither label overwrites the border
+        assertTrue(rendered.contains("│  1G"), rendered);
+        assertTrue(rendered.contains("│512M"), rendered);
+    }
+
+    @Test
     void renderShowsThreadCount() {
         info.threadCount = 42;
         info.peakThreadCount = 50;

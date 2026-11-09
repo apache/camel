@@ -280,7 +280,9 @@ class MemoryTab extends AbstractTab {
         }
         // the y axis at the left: the top, the half and 0
         String top = formatBytes(ceiling);
-        int axisW = top.length() + 1;
+        String half = formatBytes(ceiling / 2);
+        // the half label can be the wider one: 1G is 512M halfway
+        int axisW = Math.max(top.length(), half.length()) + 1;
         if (box.width() <= axisW + 10) {
             axisW = 0;
         }
@@ -336,9 +338,8 @@ class MemoryTab extends AbstractTab {
 
         if (axisW > 0) {
             Style axis = Style.EMPTY.dim();
-            buf.setString(box.x(), inner.y(), top, axis);
+            buf.setString(box.x() + axisW - 1 - top.length(), inner.y(), top, axis);
             if (chartH >= 5) {
-                String half = formatBytes(ceiling / 2);
                 buf.setString(box.x() + axisW - 1 - half.length(), inner.y() + chartH / 2, half, axis);
             }
             buf.setString(box.x() + axisW - 2, inner.y() + chartH - 1, "0", axis);
