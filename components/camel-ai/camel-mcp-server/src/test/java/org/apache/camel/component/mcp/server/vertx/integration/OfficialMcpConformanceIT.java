@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -104,6 +105,23 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+
+                // ---- resources-read-text ---------------------------------------------------
+                // The conformance suite reads test://static-text and expects a TextResourceContents
+                // response. VertxMcpServerEngine routes reads to ai-resource routes by URI.
+                from("ai-resource:static_text?resourceUri=test://static-text&tags=" + CONFORMANCE_TAG
+                     + "&description=A static text resource for conformance testing&mimeType=text/plain")
+                        .routeId("conformance-resource-static-text")
+                        .setBody(constant("This is a static text resource."));
+
+                // ---- resources-read-binary -------------------------------------------------
+                // The conformance suite reads test://static-binary and expects a BlobResourceContents
+                // response with mimeType=image/png. The engine returns the byte[] as a blob when
+                // the route body is a byte[] and mimeType is set.
+                from("ai-resource:static_binary?resourceUri=test://static-binary&tags=" + CONFORMANCE_TAG
+                     + "&description=A static binary resource for conformance testing&mimeType=image/png")
+                        .routeId("conformance-resource-static-binary")
+                        .setBody(constant(Base64.getDecoder().decode(MINIMAL_PNG_BASE64)));
 
                 // ---- tools-call-simple-text ------------------------------------------------
                 // Expected: text "This is a simple text response for testing."

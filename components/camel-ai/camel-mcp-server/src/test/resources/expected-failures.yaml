@@ -57,14 +57,6 @@ server:
   - elicitation-sep1034-defaults
   - elicitation-sep1330-enums
 
-  # --- resources/read (no test resources registered) ---
-  # The conformance suite expects specific resources (test://static-text,
-  # test://static-binary) to be registered. VertxMcpServerEngine implements
-  # resources/read dispatch (text and blob), but no ai-resource routes with the
-  # official-conformance tag are registered here yet.
-  - resources-read-text
-  - resources-read-binary
-
   # --- resources/templates (not yet implemented) ---
   # URI template expansion (test://template/{id}/data) is not yet supported.
   - resources-templates-read
