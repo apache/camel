@@ -104,8 +104,6 @@ public class STS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-            } else {
-                throw new IllegalArgumentException("assumeRole operation requires AssumeRoleRequest in POJO mode");
             }
         } else {
             Builder builder = AssumeRoleRequest.builder();
@@ -160,8 +158,6 @@ public class STS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-            } else {
-                throw new IllegalArgumentException("getSessionToken operation requires GetSessionTokenRequest in POJO mode");
             }
         } else {
             GetSessionTokenRequest.Builder builder = GetSessionTokenRequest.builder();
@@ -196,8 +192,6 @@ public class STS2Producer extends DefaultProducer {
                 }
                 Message message = getMessageForResponse(exchange);
                 message.setBody(result);
-            } else {
-                throw new IllegalArgumentException("getFederationToken operation requires GetFederationTokenRequest in POJO mode");
             }
         } else {
             GetFederationTokenRequest.Builder builder = GetFederationTokenRequest.builder();
