@@ -47,7 +47,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
     // room again. It is set when the connection is lost, not only when it logs in again: when another consumer or
     // producer of the account, or Smack's ReconnectionManager, logs the connection in, Smack reports the connection as
     // logged in before it calls the authenticated listeners, and a message sent in between would go to the room before
-    // the producer entered it again.
+    // the producer entered it again. The authenticated listener must not set it again: it can be called after the
+    // producer entered its room again, and entering a room it is in already is slow and can time out.
     private volatile boolean rejoinRoom;
     private final ConnectionListener connectionListener = new ConnectionListener() {
         @Override
@@ -63,7 +64,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
         @Override
         public void authenticated(XMPPConnection connection, boolean resumed) {
             // a resumed stream keeps the room membership
-            rejoinRoom = !resumed;
+            if (resumed) {
+                rejoinRoom = false;
+            }
         }
     };
 
