@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -72,6 +73,46 @@ class MemoryTabRenderTest {
         MemoryTab tab = new MemoryTab(ctx, new MetricsCollector());
         String rendered = TuiTestHelper.renderToString(tab, 120, 30);
         assertTrue(rendered.contains("Heap"), "Should show Heap memory section header");
+    }
+
+    @Test
+    void theHeapChartSaysWhatTheTopIsAndWhatIsCommitted() {
+        info.heapMemUsed = 38L * 1024 * 1024;
+        info.heapMemCommitted = 48L * 1024 * 1024;
+        info.heapMemMax = 512L * 1024 * 1024;
+        MetricsCollector metrics = new MetricsCollector();
+        // the heap was 64M a while ago, and has shrunk since
+        LinkedList<Long> history = new LinkedList<>();
+        for (int i = 0; i < 100; i++) {
+            history.add((i < 50 ? 64L : 38L) * 1024 * 1024);
+        }
+        metrics.getHeapMemHistory().put("1234", history);
+
+        String rendered = TuiTestHelper.renderToString(new MemoryTab(ctx, metrics), 160, 50);
+
+        assertTrue(rendered.contains("Heap Usage (38M used, 48M committed)"), rendered);
+        // the y axis: the top of the chart is the most the heap used, then the half
+        assertTrue(rendered.contains("│64M"), rendered);
+        assertTrue(rendered.contains("│32M"), rendered);
+    }
+
+    @Test
+    void theHalfOfOneGigabyteFitsTheAxis() {
+        info.heapMemUsed = 600L * 1024 * 1024;
+        info.heapMemCommitted = 1024L * 1024 * 1024;
+        info.heapMemMax = 2048L * 1024 * 1024;
+        MetricsCollector metrics = new MetricsCollector();
+        LinkedList<Long> history = new LinkedList<>();
+        for (int i = 0; i < 100; i++) {
+            history.add(600L * 1024 * 1024);
+        }
+        metrics.getHeapMemHistory().put("1234", history);
+
+        String rendered = TuiTestHelper.renderToString(new MemoryTab(ctx, metrics), 160, 50);
+
+        // 512M is wider than 1G: the axis is as wide as the half, and neither label overwrites the border
+        assertTrue(rendered.contains("│  1G"), rendered);
+        assertTrue(rendered.contains("│512M"), rendered);
     }
 
     @Test

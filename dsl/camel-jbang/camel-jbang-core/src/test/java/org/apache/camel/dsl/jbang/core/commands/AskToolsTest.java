@@ -238,9 +238,30 @@ class AskToolsTest {
         // the user sees the rules of the scenario
         assertThat(load.target()).isEqualTo("# outage\nendpoint=http:* error");
         for (String name : List.of("chaos_check", "chaos_suggest", "chaos_remove", "chaos_clear", "chaos_list",
-                "chaos_report")) {
+                "chaos_report", "chaos_explore_finish")) {
             assertThat(tools.confirmation(name, Map.of("id", "r1"))).as(name).isNull();
         }
+    }
+
+    @Test
+    void anExplorationIsAskedOnceAndItsExperimentsNot() {
+        AskTools tools = new AskTools(-1, call -> true);
+
+        // the consent to the experiments in it, which camel-chaos ends at its deadline
+        ToolConfirms.Call explore = tools.confirmation("chaos_explore_start",
+                Map.of("name", "shop", "budget", "30m", "focus", "refunds"));
+        assertThat(explore.title()).isEqualTo("explore chaos in shop for 30m");
+        assertThat(explore.target()).isEqualTo("focus: refunds");
+        assertThat(tools.confirmation("chaos_explore_start", Map.of()).title())
+                .isEqualTo("explore chaos in the selected integration for 10m");
+        // an experiment adds its rules without asking, and its messages to a route stay inside the integration
+        assertThat(tools.confirmation("chaos_experiment",
+                Map.of("rule", "route=refunds error expect=refunds:failed<=0", "feed", "refunds"))).isNull();
+        assertThat(tools.confirmation("chaos_experiment", Map.of("rule", "route=refunds error"))).isNull();
+        // a message that leaves the integration is asked, as send_message asks it
+        assertThat(tools.confirmation("chaos_experiment",
+                Map.of("rule", "route=refunds error", "feed", "kafka:refunds")).title())
+                .isEqualTo("send a message to an endpoint the integration does not have");
     }
 
     @Test

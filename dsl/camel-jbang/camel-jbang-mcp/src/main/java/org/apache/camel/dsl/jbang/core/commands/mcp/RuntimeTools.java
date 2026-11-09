@@ -1266,6 +1266,90 @@ public class RuntimeTools {
                 Boolean.TRUE.equals(reset) ? Map.of("reset", "true") : Map.of());
     }
 
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Start a chaos exploration in the Camel application (as camel cmd chaos-explore-start): a time to \
+                  try chaos rules in, that camel-chaos enforces. While it runs, a rule ends at the deadline at the \
+                  latest, and at the deadline the rules are removed, whatever happens. Its journal (the baseline, \
+                  the rules tried and the experiments) is in camel_runtime_chaos_report. Run experiments in it with \
+                  camel_runtime_chaos_experiment, and finish it with camel_runtime_chaos_explore_finish. One runs \
+                  at a time.""")
+    public JsonObject camel_runtime_chaos_explore_start(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "How long it runs, between 10s and 2h (default 10m)", required = false) String budget,
+            @ToolArg(description = "What it is about, such as a route", required = false) String focus) {
+        Map<String, String> args = new HashMap<>();
+        putIfSet(args, "budget", budget);
+        putIfSet(args, "focus", focus);
+        return delegateChaos("chaos_explore_start", nameOrPid, args);
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
+          description = """
+                  Run one chaos experiment in the running exploration of the Camel application (as camel cmd \
+                  chaos-experiment), in one call: it adds the rules (one of them with an expectation, expect=, that \
+                  decides the hypothesis), sends the messages of feed when given (as camel_runtime_send, with body, \
+                  headers, repeat and interval), waits until the expectations are decided or wait is up, and ends \
+                  the experiment, which removes its rules. Returns the verdict (FAIL: an expectation is unmet; PASS: \
+                  all are met; INCONCLUSIVE: the wait was up before one was decided, so wait longer than its \
+                  within=), the expectations with their actual values, the faults per rule, what the routes did \
+                  meanwhile, the traffic sent, and the time left of the exploration (timeLeft, millis). \
+                  camel_runtime_chaos_suggest has rules to try and the feed of each route.""")
+    public JsonObject camel_runtime_chaos_experiment(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
+            @ToolArg(description = "The rules in their one-line text form, separated by ;, one of them with expect=,"
+                                   + " such as 'route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s'") String rule,
+            @ToolArg(description = "What the experiment tests, in a few words", required = false) String hypothesis,
+            @ToolArg(description = "The endpoint, or the id of the route, to send the messages to (as the feed of"
+                                   + " camel_runtime_chaos_suggest); leave it out when the route feeds itself",
+                     required = false) String feed,
+            @ToolArg(description = "The body of the messages (file:<path>, or file:<folder> for a message per file)",
+                     required = false) String body,
+            @ToolArg(description = "The headers of the messages as key=value pairs separated by newlines",
+                     required = false) String headers,
+            @ToolArg(description = "How many messages to send in all (at most 10000)", required = false) Integer repeat,
+            @ToolArg(description = "The pause between two messages in millis, or a range such as 100..500",
+                     required = false) String interval,
+            @ToolArg(description = "The longest wait for the verdict after the messages were sent, such as 90s"
+                                   + " (default 2m, at most 10m)",
+                     required = false) String wait,
+            @ToolArg(description = "What to note with the experiment in the journal", required = false) String note) {
+        requireArg("rule", rule);
+        Map<String, String> args = new HashMap<>();
+        args.put("rule", rule);
+        putIfSet(args, "hypothesis", hypothesis);
+        putIfSet(args, "feed", feed);
+        putIfSet(args, "body", body);
+        putIfSet(args, "headers", headers);
+        if (repeat != null) {
+            args.put("repeat", repeat.toString());
+        }
+        putIfSet(args, "interval", interval);
+        putIfSet(args, "wait", wait);
+        putIfSet(args, "note", note);
+        return delegateChaos("chaos_experiment", nameOrPid, args);
+    }
+
+    @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
+    @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = false, openWorldHint = false),
+          description = """
+                  Finish the chaos exploration of the Camel application before its deadline (as camel cmd \
+                  chaos-explore-finish): the rules are removed (an open experiment is ended), and the journal stays \
+                  in camel_runtime_chaos_report. Returns the journal: the rules tried, the experiments with their \
+                  verdicts, and the baseline.""")
+    public JsonObject camel_runtime_chaos_explore_finish(
+            @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid) {
+        return delegateChaos("chaos_explore_finish", nameOrPid, Map.of());
+    }
+
+    private static void putIfSet(Map<String, String> args, String key, String value) {
+        if (value != null && !value.isBlank()) {
+            args.put(key, value);
+        }
+    }
+
     /**
      * As {@link #delegateToRegistry(String, String, Map)}, for a chaos tool: without a name, the only integration
      * running, else the only one with chaos switched on ({@link RuntimeService#findChaosProcess(String)}).

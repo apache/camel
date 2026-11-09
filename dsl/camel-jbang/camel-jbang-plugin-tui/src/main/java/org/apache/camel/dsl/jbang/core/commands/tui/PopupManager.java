@@ -704,6 +704,13 @@ class PopupManager {
                     badge = " " + cbOpenCount + " OPEN";
                     badgeStyle = Theme.error();
                 }
+                // the health checks that are DOWN
+                long down = "Health".equals(tab.name()) && sel != null
+                        ? sel.healthChecks.stream().filter(hc -> "DOWN".equals(hc.state)).count() : 0;
+                if (down > 0) {
+                    badge = " " + down + " DOWN";
+                    badgeStyle = Theme.error();
+                }
                 // the chaos rules that inject faults now, and a failed verdict
                 String chaosBadge = "Chaos".equals(tab.name()) ? ChaosTab.badge(sel) : null;
                 if (chaosBadge != null) {

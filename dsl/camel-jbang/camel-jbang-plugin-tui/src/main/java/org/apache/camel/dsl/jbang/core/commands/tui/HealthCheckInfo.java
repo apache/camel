@@ -23,4 +23,13 @@ class HealthCheckInfo {
     boolean readiness;
     boolean liveness;
     String message;
+    /** When the check went to its state (epoch millis): UP since, DOWN since; 0 when not known. */
+    long since;
+    /** When the check was last UP (epoch millis), 0 when not known. */
+    long lastUp;
+    /** How often the check ran, and how often it failed. */
+    long invocations;
+    long failures;
+    /** When it last failed (epoch millis), 0 when it did not. */
+    long lastFailure;
 }

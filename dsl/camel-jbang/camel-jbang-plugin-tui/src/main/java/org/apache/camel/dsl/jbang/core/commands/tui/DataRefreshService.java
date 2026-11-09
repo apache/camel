@@ -341,6 +341,9 @@ class DataRefreshService {
                     metrics.updateServiceHistory(info);
                     metrics.updateCbHistory(info);
                     metrics.updateHeapHistory(info);
+                    if (ctx != null) {
+                        ctx.healthHistory.record(info, System.currentTimeMillis() / 1000);
+                    }
                     metrics.updateLoadMetrics(ph, info);
                     detectReload(info);
                 }
@@ -400,6 +403,9 @@ class DataRefreshService {
                 boolean wasExplicitStop = stoppingPids.remove(prev.pid);
                 if (wasExplicitStop) {
                     metrics.removeVanished(prev.pid);
+                    if (ctx != null) {
+                        ctx.healthHistory.remove(prev.pid);
+                    }
                 } else {
                     vanishing.put(prev.pid, new VanishingInfo(prev, MonotonicClock.millis()));
                 }

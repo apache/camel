@@ -553,16 +553,23 @@ class DocViewerPopup {
     }
 
     void showFailureLog(String name, Path logFile) {
+        showFailureLog(name, logFile, List.of());
+    }
+
+    /** The log of a run that failed, with a hint before it that says why, when the TUI can tell (a port in use). */
+    void showFailureLog(String name, Path logFile, List<IntegrationInfo> running) {
         List<String> logLines = TuiHelper.readAllLines(logFile);
         if (logLines.isEmpty()) {
             return;
         }
-        List<Line> lines = logLines.stream()
+        List<Line> hint = PortInUse.hint(logLines, running);
+        List<Line> lines = new ArrayList<>(hint);
+        logLines.stream()
                 .map(line -> TuiHelper.ansiToLine(line.replace("\t", "        "), 0))
-                .collect(Collectors.toList());
+                .forEach(lines::add);
         openLines("Failed: " + name, lines);
-        // open at why it failed, which comes after a long startup log
-        docScroll = failureLine(logLines);
+        // open at why it failed, which comes after a long startup log; the hint says it at the top
+        docScroll = hint.isEmpty() ? failureLine(logLines) : 0;
     }
 
     /** The line to open a failure log at: a little above the last line that says why, else the top. */

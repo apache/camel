@@ -56,6 +56,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
  */
 class TimelineTab extends AbstractTableTab {
 
+    // the mean time sparkline is at least this many milliseconds high: below it, a time is noise
+    static final long MIN_MEAN_SCALE_MILLIS = 10;
     static final int[] WINDOWS = { 60, 120, 300 };
     private static final String BLOCKS = "▁▂▃▄▅▆▇█";
     private static final int CAUSE_ROWS = 4;
@@ -765,8 +767,9 @@ class TimelineTab extends AbstractTableTab {
         }
         List<Span> meanLine = new ArrayList<>();
         meanLine.add(Span.styled(pad("   mean time", label), Theme.label()));
-        // relative to twice the average, so a steady time is a calm line and a slow second stands out
-        long scale = n > 0 ? Math.max(maxMean, 2 * sumMean / n) : 0;
+        // relative to twice the average, so a steady time is a calm line and a slow second stands out; at least
+        // MIN_MEAN_SCALE_MILLIS, so a millisecond of jitter on a fast route is not a full bar
+        long scale = n > 0 ? meanScale(maxMean, sumMean / n) : 0;
         meanLine.add(Span.styled(spark(mean, scale), Theme.info()));
         meanLine.add(Span.raw("  " + (n > 0 ? "avg " + ChaosTab.shortTime(sumMean / n) : "no exchange")));
         if (max > 0) {
@@ -873,6 +876,11 @@ class TimelineTab extends AbstractTableTab {
             lines.add(Line.from(spans));
         }
         return lines;
+    }
+
+    /** The height of the mean time sparkline: twice the average or the slowest second, at least 10 ms. */
+    static long meanScale(long maxMean, long avg) {
+        return Math.max(MIN_MEAN_SCALE_MILLIS, Math.max(maxMean, 2 * avg));
     }
 
     /** A sparkline of values (-1 is unknown, blank), relative to the highest. */
