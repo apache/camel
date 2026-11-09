@@ -7789,3 +7789,26 @@ Changes to API types:
   annotations such as `@JsonSerialize`, and it writes a Jackson 2 `JsonNode` as a bean, with properties such as `nodeType`,
   instead of as its JSON. Use a Jackson 3 `JsonNode` or a `Map` instead.
 
+=== Jackson 3 - camel-jsonpath
+
+`camel-jsonpath` now uses Jackson 3 (`tools.jackson`) instead of Jackson 2, and no longer brings in Jackson 2. Code that got
+Jackson 2 through `camel-jsonpath` must declare it. The results of an expression do not change: POJO bodies are still read
+and written with the defaults of Jackson 2, so dates are numbers, properties stay in declared order and content after the
+first JSON value is ignored. Invalid JSON still fails with `com.jayway.jsonpath.InvalidJsonException`, but its cause is now a
+Jackson 3 exception, such as `tools.jackson.core.exc.StreamReadException`.
+
+A custom `ObjectMapper` in the registry must be a `tools.jackson.databind.ObjectMapper`: a Jackson 2 mapper is no longer
+found, without any error, and the default is used instead.
+
+A `JsonNode` body of either line works, and `writeAsString` writes a result that is a Jackson 2 node as its JSON. A Jackson 2
+node inside a `Map`, `List` or POJO result is written as a bean: a component on Jackson 3 treats a
+`com.fasterxml.jackson.databind.JsonNode` as an ordinary bean, so pass JSON text or produce the node with `camel-jackson3`. The
+text of a node (`"t"`) is now read as the JSON string it is, where a Jackson 2 text node failed as invalid JSON.
+
+A `java.time` value in a POJO body no longer fails: it is written as numbers. JAXB annotations on a POJO are used when
+`tools.jackson.module:jackson-module-jakarta-xmlbind-annotations` is on the classpath; `jackson-module-jaxb-annotations` of
+Jackson 2 is no longer used.
+
+The limits on what is parsed are those of Jackson 3: nesting up to 500 levels (it was 1000) and strings up to 100 million
+characters (it was 20 million). To change them, register a mapper with your own `StreamReadConstraints`.
+
