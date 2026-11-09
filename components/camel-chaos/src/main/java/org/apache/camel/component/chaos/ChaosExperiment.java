@@ -198,12 +198,15 @@ final class ChaosExperiment {
             jo.put("lostAtDeadLetterChannel", lost);
             jo.put("lostAtDeadLetterChannelPerRule", lostAtDlq);
         }
-        // nothing fired: the expectations were not put to the test (an unmet one is still a FAIL, with its evidence)
+        // nothing fired: the expectations were not put to the test (an unmet one is still a FAIL, with its evidence).
+        // This is for the experiment as a whole: when one of its rules fired, the experiment was put to the test,
+        // and the expectations still decide each rule
         boolean neverFired = firedAll == 0;
         String verdict = unmet || lost > 0
                 ? FAIL : !undecided && !neverFired ? PASS : ended ? INCONCLUSIVE : PENDING;
         jo.put("verdict", verdict);
         if (INCONCLUSIVE.equals(verdict)) {
+            // never fired comes first: when no fault ran, the expectations that did not decide are a consequence of it
             jo.put("reason", neverFired ? NEVER_FIRED : NOT_DECIDED);
         }
         JsonArray routes = new JsonArray();
