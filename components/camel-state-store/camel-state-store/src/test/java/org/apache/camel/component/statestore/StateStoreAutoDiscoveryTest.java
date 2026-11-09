@@ -52,9 +52,10 @@ class StateStoreAutoDiscoveryTest extends CamelTestSupport {
                 Map.of(StateStoreConstants.KEY, "key1"));
         assertThat(result).isEqualTo("hello");
 
-        // Verify our tracking backend was used, not the default MemoryKeyValueRepository
+        // Verify our tracking backend was used, not the default MemoryKeyValueRepository,
+        // and keys are namespaced to isolate this store from other stores and patterns
         assertThat(trackingBackend).isInstanceOf(TrackingKeyValueRepository.class);
-        assertThat(trackingBackend.keys()).containsExactly("key1");
+        assertThat(trackingBackend.keys()).containsExactly("statestore:myStore:key1");
     }
 
     @Override
