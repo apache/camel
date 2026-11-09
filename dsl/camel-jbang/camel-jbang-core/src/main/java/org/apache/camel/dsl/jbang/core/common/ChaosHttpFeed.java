@@ -102,11 +102,10 @@ public final class ChaosHttpFeed {
         if (m.matches()) {
             method = m.group(1);
             path = m.group(2);
-        } else if (route != null && ownAddress(route.getString("from")) != null) {
+        } else if (route != null && ownAddress(route.getString("from")) instanceof String address) {
             // its own server on this machine: no port to look up
-            String from = route.getString("from");
-            String m0 = method(from);
-            return new Target(m0 != null ? m0 : "POST", ownAddress(from));
+            String m0 = method(route.getString("from"));
+            return new Target(m0 != null ? m0 : "POST", address);
         } else if (route != null && servedByCamel(route.getString("from"))) {
             routeId = route.getString("routeId");
             String from = route.getString("from");
