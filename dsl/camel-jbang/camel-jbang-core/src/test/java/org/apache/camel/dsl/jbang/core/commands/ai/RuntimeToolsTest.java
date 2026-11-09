@@ -215,6 +215,17 @@ class RuntimeToolsTest {
     }
 
     @Test
+    void anIntervalThatIsNotATimeOrARangeIsAToolError() {
+        answers.put("send", Map.of("status", "success"));
+
+        assertThatThrownBy(() -> call("send_message", Map.of("endpoint", "direct:orders", "repeat", "5",
+                "interval", "500..100")))
+                .isInstanceOf(ToolExecutionException.class)
+                .hasMessageContaining("from the shortest to the longest");
+        assertThat(integration.lastAction()).isNull();
+    }
+
+    @Test
     void aSqlQuery() throws Exception {
         answers.put("sql-query", Map.of("columns", List.of("id"), "rows", List.of()));
 

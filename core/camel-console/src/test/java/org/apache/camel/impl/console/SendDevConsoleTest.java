@@ -17,6 +17,8 @@
 package org.apache.camel.impl.console;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,7 @@ import org.apache.camel.console.DevConsole;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests for SendDevConsole with various options (endpoint, body, exchange pattern, etc.).
  */
 public class SendDevConsoleTest extends AbstractDevConsoleTest {
+
+    @TempDir
+    Path dir;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -129,6 +135,25 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
 
         JsonObject jsonOut = callJson(console, options);
         assertEquals("error", jsonOut.getString("status"));
+    }
+
+    @Test
+    public void testSendConsoleFileBodyToAQueue() throws Exception {
+        // seda hands the message to another thread, which reads the body after the send returns
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:refunds").delay(200).to("mock:refunds");
+            }
+        });
+        Path file = Files.writeString(dir.resolve("refund.json"), "{\"refund\": 1}");
+        MockEndpoint mock = getMockEndpoint("mock:refunds");
+        mock.expectedBodiesReceived("{\"refund\": 1}");
+
+        JsonObject jsonOut = callJson(startedSendConsole(), createOptions("seda:refunds", "file:" + file));
+
+        assertEquals("success", jsonOut.getString("status"), jsonOut.toJson());
+        mock.assertIsSatisfied();
     }
 
     @Test
