@@ -175,7 +175,7 @@ YAML DSL::
 ----
 - beans:
     - name: caffeineKvr
-      type: org.apache.camel.component.caffeine.cache.CaffeineKeyValueRepository
+      type: org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository
       properties:
         maximumSize: 10000
 ----
@@ -245,7 +245,7 @@ YAML DSL::
 ----
 - beans:
     - name: ehcacheKvr
-      type: org.apache.camel.component.ehcache.EhcacheKeyValueRepository
+      type: org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository
       properties:
         cacheManager: "#bean:ehcacheManager"
         cacheName: products
@@ -310,7 +310,7 @@ YAML DSL::
 ----
 - beans:
     - name: jcacheKvr
-      type: org.apache.camel.component.jcache.JCacheKeyValueRepository
+      type: org.apache.camel.component.jcache.processor.JCacheKeyValueRepository
       properties:
         cacheName: products
         configuration: "#bean:jcacheConfig"
@@ -556,8 +556,9 @@ CREATE TABLE CAMEL_KEYVALUE (
 );
 ----
 
-On a database that does not accept this statement, for example one without a `BLOB` type such as
-PostgreSQL (`BYTEA`), create the table yourself before the repository starts. A custom `createString`
+On a database that does not accept this statement, create the table yourself before the repository
+starts. PostgreSQL has no `BLOB` type (use `BYTEA`), and neither has SQL Server (use `VARBINARY(MAX)`).
+On MySQL and MariaDB a `BLOB` holds at most 64 KB per value, so use `LONGBLOB` for larger values. A custom `createString`
 is used only without `tableName`, as `tableName` derives all statements from the default ones. The
 PostgreSQL example below therefore needs the `product_cache` table created beforehand, with `BYTEA`
 for `ITEM_VALUE`.
@@ -664,7 +665,7 @@ YAML DSL::
 ----
 - beans:
     - name: jpaKvr
-      type: org.apache.camel.component.jpa.JpaKeyValueRepository
+      type: org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository
       properties:
         entityManagerFactory: "#bean:emf"
         joinTransaction: false
@@ -731,7 +732,7 @@ YAML DSL::
 ----
 - beans:
     - name: cassandraKvr
-      type: org.apache.camel.component.cassandra.CassandraKeyValueRepository
+      type: org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository
       properties:
         session: "#bean:cassandraSession"
         table: product_cache
@@ -796,7 +797,7 @@ YAML DSL::
 ----
 - beans:
     - name: kafkaKvr
-      type: org.apache.camel.component.kafka.KafkaKeyValueRepository
+      type: org.apache.camel.processor.keyvalue.kafka.KafkaKeyValueRepository
       properties:
         topic: camel-kvr-products
         bootstrapServers: "kafka1:9092,kafka2:9092"
