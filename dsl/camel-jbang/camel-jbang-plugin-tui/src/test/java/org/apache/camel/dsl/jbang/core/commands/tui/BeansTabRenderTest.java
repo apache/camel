@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -91,7 +92,7 @@ class BeansTabRenderTest {
         tab.allBeans = List.of(tab.allBeans.get(0), bean("orderService", "com.acme.OrderService"));
         rendered = TuiTestHelper.renderToString(tab, 120, 20);
         assertTrue(rendered.contains("orderService"), rendered);
-        assertTrue(!rendered.contains("global-variable-repository"), rendered);
+        assertFalse(rendered.contains("global-variable-repository"), rendered);
     }
 
     private static BeansTab.BeanData bean(String name, String type) {
