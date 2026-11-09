@@ -28,7 +28,7 @@ image::jbang/camel-tui-about.png[About the chaos demo: its purpose, what comes i
 main source file (a YAML `#` comment, a Javadoc or `//` comment in Java, an XML comment), else the descriptions of the
 routes.
 * *In*, *Routes* and *Out* say what starts it, its routes (a route called with `direct` sits under its caller with `↳`,
-one handed off with `seda` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
+one handed off with `seda` or a `wireTap` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
 last 5 minutes. *Up* and *Down* select a line, and *Enter* opens a route drilled down on the Diagram, or an endpoint with
 its details on the Endpoint tab.
 * *Last 5m* has the exchanges and how they ended, with the cause that happened most, and *What happened* a strip per route

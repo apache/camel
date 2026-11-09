@@ -104,16 +104,27 @@ public final class ProjectRoutes {
     private ProjectRoutes() {
     }
 
-    /** An endpoint a route uses, as written, with its identity for matching the other end. */
-    public record Endpoint(String uri, String scheme, String key, boolean dynamic, String label, boolean onError) {
+    /**
+     * An endpoint a route uses, as written, with its identity for matching the other end.
+     *
+     * @param onError sent to while handling a failure
+     * @param tapped  sent a copy of the message by a wireTap: the route goes on without waiting for it
+     */
+    public record Endpoint(String uri, String scheme, String key, boolean dynamic, String label, boolean onError,
+            boolean tapped) {
 
         public Endpoint(String uri, String scheme, String key, boolean dynamic, String label) {
-            this(uri, scheme, key, dynamic, label, false);
+            this(uri, scheme, key, dynamic, label, false, false);
         }
 
         /** The same endpoint, sent to while handling a failure (doCatch, onException, a dead letter channel). */
         Endpoint asOnError() {
-            return onError ? this : new Endpoint(uri, scheme, key, dynamic, label, true);
+            return onError ? this : new Endpoint(uri, scheme, key, dynamic, label, true, tapped);
+        }
+
+        /** The same endpoint, sent a copy of the message by a wireTap. */
+        Endpoint asTapped() {
+            return tapped ? this : new Endpoint(uri, scheme, key, dynamic, label, onError, true);
         }
     }
 
@@ -756,7 +767,7 @@ public final class ProjectRoutes {
                             // enrich with an expression: known only at runtime
                             e = dynamicEndpoint(key);
                         }
-                        add(POLL_KEYS.contains(key) ? consumes : sent, e);
+                        add(POLL_KEYS.contains(key) ? consumes : sent, "wireTap".equals(key) ? tappedOf(e) : e);
                     } else if ("kamelet".equals(key)) {
                         String name = value instanceof ScalarNode s ? s.getValue()
                                 : value instanceof MappingNode km ? str(value(km, "name")) : null;
@@ -880,6 +891,10 @@ public final class ProjectRoutes {
         return e != null ? e.asOnError() : null;
     }
 
+    private static Endpoint tappedOf(Endpoint e) {
+        return e != null ? e.asTapped() : null;
+    }
+
     private static void add(List<Endpoint> list, Endpoint e) {
         if (e != null) {
             list.add(e);
@@ -957,6 +972,7 @@ public final class ProjectRoutes {
                 if (PRODUCER_KEYS.contains(name)) {
                     String uri = uriOrConstant(s);
                     Endpoint ep = uri != null ? endpoint(uri, null, !"to".equals(name), catalog) : dynamicEndpoint(name);
+                    ep = "wireTap".equals(name) ? tappedOf(ep) : ep;
                     add(produces, handlesFailure(s, e) ? onErrorOf(ep) : ep);
                 } else if (POLL_KEYS.contains(name)) {
                     String uri = uriOrConstant(s);

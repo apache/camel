@@ -21,7 +21,7 @@ happened to it, with no AI:
   descriptions of its routes.
 - **In, Routes, Out** — what starts it (timers, HTTP, consumers), its
   routes (a route called with `direct:` sits under its caller with `↳`,
-  one handed off with `seda:` with `⇢`) and what it talks to, from its
+  one handed off with `seda:` or a `wireTap` with `⇢`) and what it talks to, from its
   sources. Each line has the exchanges since it started (for an
   endpoint, the sends to it), and In and Out a sparkline of the last 5
   minutes with the rate now, or `idle`. Out also has the systems the

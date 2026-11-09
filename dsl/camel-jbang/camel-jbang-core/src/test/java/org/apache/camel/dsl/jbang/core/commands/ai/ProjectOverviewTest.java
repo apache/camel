@@ -217,6 +217,66 @@ class ProjectOverviewTest {
     }
 
     @Test
+    void aWireTapHandsOffInEveryDsl() {
+        // a wireTap sends a copy on another thread: the route does not wait for the tapped one, nor get its failures
+        Map<String, String> sources = Map.of(
+                "orders.camel.yaml", """
+                        - route:
+                            id: yaml-orders
+                            from:
+                              uri: direct:yaml
+                              steps:
+                                - wireTap:
+                                    uri: direct:audit
+                        """,
+                "orders.xml", """
+                        <routes xmlns="http://camel.apache.org/schema/xml-io">
+                          <route id="xml-orders">
+                            <from uri="direct:xml"/>
+                            <wireTap uri="direct:audit"/>
+                          </route>
+                        </routes>
+                        """,
+                "Orders.java", """
+                        public class Orders extends RouteBuilder {
+                            public void configure() {
+                                from("direct:java").routeId("java-orders")
+                                    .wireTap("direct:audit");
+                            }
+                        }
+                        """,
+                "both.camel.yaml", """
+                        - route:
+                            id: tapped-and-called
+                            from:
+                              uri: direct:both
+                              steps:
+                                - wireTap:
+                                    uri: direct:audit
+                                - to:
+                                    uri: direct:audit
+                        """,
+                "audit.camel.yaml", """
+                        - route:
+                            id: audit
+                            from:
+                              uri: direct:audit
+                              steps:
+                                - to:
+                                    uri: log:audit
+                        """);
+        Overview o = ProjectOverview.analyze(Path.of("orders"), sources, CATALOG);
+        for (String id : List.of("yaml-orders", "xml-orders", "java-orders")) {
+            assertThat(o.route(id).produces()).as(id).singleElement()
+                    .satisfies(e -> assertThat(e.tapped()).isTrue());
+            assertThat(o.links()).as(id).contains(new Link(id, "audit", "direct:audit", "async"));
+        }
+        // a route that also calls it waits for it
+        assertThat(o.links()).contains(new Link("tapped-and-called", "audit", "direct:audit", "call"))
+                .doesNotContain(new Link("tapped-and-called", "audit", "direct:audit", "async"));
+    }
+
+    @Test
     void linksRoutesOverSharedEndpoints() {
         List<Link> links = overview().links();
         assertThat(links).contains(
