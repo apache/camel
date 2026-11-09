@@ -122,7 +122,7 @@ final class ChaosAdvisor {
             List<String> answer = new ArrayList<>();
             answer.add(rule);
             answer.addAll(with);
-            return answer;
+            return List.copyOf(answer);
         }
     }
 
