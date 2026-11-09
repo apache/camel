@@ -55,7 +55,7 @@ to the `Exchange`:
 |===
 |Name |Type |Description
 
-|`Exchange.TIMER_NAME` |`String` |The value of the `name` option.
+|`Exchange.TIMER_NAME` |`String` |The value of the `timerName` option.
 
 |`Exchange.TIMER_TIME` |`Date` |The value of the `time` option.
 
