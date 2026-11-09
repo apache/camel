@@ -169,6 +169,21 @@ class ListChaosTest extends ProcessCommandTestSupport {
         assertThat(out).contains("replaced").contains("rate=0.1").contains("orders:100 unmet (97 completed)");
         assertThat(out).contains("COMPLETED").contains("REDELIVERIES");
         assertThat(lineOf(out, "orders  ")).containsPattern("97\\s+6\\s+2\\s+1\\s+4");
+        assertThat(out).doesNotContain("stub");
+    }
+
+    @Test
+    void aRouteWhoseConsumerIsAStub() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject route = (JsonObject) ((JsonArray) ((JsonObject) chaos.get("report")).get("routes")).get(0);
+        route.put("stubbedConsumer", "kafka");
+        writeStatus(chaos);
+
+        assertThat(run("--report")).isZero();
+
+        String out = printer.getStdout();
+        assertThat(lineOf(out, "orders (stub of kafka)")).containsPattern("97\\s+6\\s+2\\s+1\\s+4");
+        assertThat(out).contains("a stub does not read a kept message again, as the component it stands in for would");
     }
 
     @Test

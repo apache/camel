@@ -73,6 +73,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- a stub that stands in for another component, as camel run with stubs serves it -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stub</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <!-- the deterministic simulation test that runs chaos rules in virtual time (dst package) -->
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-dst</artifactId>

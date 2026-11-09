@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.function.Function;
+
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -33,7 +35,9 @@ import org.apache.camel.spi.PropertyConfigurerGetter;
  * <li>{@code kafka}: with {@code breakOnFirstError=true}.</li>
  * </ul>
  * The component is known by the scheme of the endpoint, so a component added under another name counts as any other.
- * Any other consumer, or an endpoint without a configurer, does not keep it.
+ * Any other consumer, or an endpoint without a configurer, does not keep it. A stub that stands in for one of these
+ * components ({@code camel run --stub}) keeps it by the options of its URI, as the component would, though the stub
+ * does not read the message again (see {@link ChaosStubs}).
  */
 final class ChaosConsumers {
 
@@ -59,38 +63,45 @@ final class ChaosConsumers {
         if (endpoint == null) {
             return false;
         }
-        PropertyConfigurerGetter options = options(endpoint);
-        if (options == null) {
+        Function<String, Object> option = option(endpoint);
+        if (option == null) {
             return false;
         }
         try {
-            return keepsFailed(endpoint, options);
+            return keepsFailed(endpoint, option);
         } catch (RuntimeException e) {
             // an option that cannot be read: the report says "failed"
             return false;
         }
     }
 
-    private static boolean keepsFailed(Endpoint endpoint, PropertyConfigurerGetter options) {
+    private static boolean keepsFailed(Endpoint endpoint, Function<String, Object> option) {
         return switch (ChaosPatterns.scheme(endpoint.getEndpointUri())) {
-            case "file", "ftp", "sftp", "ftps" -> options.getOptionValue(endpoint, "moveFailed", true) == null;
-            case "jms", "activemq", "activemq6", "amqp" -> isTrue(options.getOptionValue(endpoint, "transacted", true))
-                    || isClientAcknowledge(endpoint, options)
-                            && !isTrue(options.getOptionValue(endpoint, "asyncConsumer", true));
-            case "kafka" -> isTrue(options.getOptionValue(endpoint, "breakOnFirstError", true));
+            case "file", "ftp", "sftp", "ftps" -> option.apply("moveFailed") == null;
+            case "jms", "activemq", "activemq6", "amqp" -> isTrue(option.apply("transacted"))
+                    || isClientAcknowledge(option) && !isTrue(option.apply("asyncConsumer"));
+            case "kafka" -> isTrue(option.apply("breakOnFirstError"));
             default -> false;
         };
     }
 
     // acknowledgementModeName is the endpoint option (acknowledgementMode, the number, is not one)
-    private static boolean isClientAcknowledge(Endpoint endpoint, PropertyConfigurerGetter options) {
-        return "CLIENT_ACKNOWLEDGE".equals(text(options.getOptionValue(endpoint, "acknowledgementModeName", true)));
+    private static boolean isClientAcknowledge(Function<String, Object> option) {
+        return "CLIENT_ACKNOWLEDGE".equals(text(option.apply("acknowledgementModeName")));
     }
 
-    private static PropertyConfigurerGetter options(Endpoint endpoint) {
+    /**
+     * How the options of the endpoint are read: through the configurer of its component, or from the URI of a stub, as
+     * the stub component does not configure them; null when they cannot be read.
+     */
+    private static Function<String, Object> option(Endpoint endpoint) {
+        if (ChaosStubs.stubbedScheme(endpoint) != null) {
+            return ChaosStubs.uriOptions(endpoint)::get;
+        }
         Component component = endpoint.getComponent();
         PropertyConfigurer configurer = component != null ? component.getEndpointPropertyConfigurer() : null;
-        return configurer instanceof PropertyConfigurerGetter getter ? getter : null;
+        return configurer instanceof PropertyConfigurerGetter getter
+                ? name -> getter.getOptionValue(endpoint, name, true) : null;
     }
 
     private static boolean isTrue(Object value) {

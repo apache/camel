@@ -267,8 +267,11 @@ public final class ChaosReport {
         }
         for (RouteEntry r : routes) {
             sb.append("\n    ").append(r.route).append(": completed ").append(r.completed).append(", failed ")
-                    .append(r.failed).append(" (kept by the consumer ").append(r.failedKept).append("), handled ")
-                    .append(r.handled).append(", redeliveries ").append(r.redeliveries);
+                    .append(r.failed).append(" (kept by the consumer ").append(r.failedKept);
+            if (r.stubbedConsumer != null) {
+                sb.append(", a stub of ").append(r.stubbedConsumer).append(" that does not read them again");
+            }
+            sb.append("), handled ").append(r.handled).append(", redeliveries ").append(r.redeliveries);
         }
         if (!tried.isEmpty()) {
             sb.append("\n  tried, per route:");
@@ -456,6 +459,9 @@ public final class ChaosReport {
             jo.put("completed", r.completed);
             jo.put("failed", r.failed);
             jo.put("failedKeptByConsumer", r.failedKept);
+            if (r.stubbedConsumer != null) {
+                jo.put("stubbedConsumer", r.stubbedConsumer);
+            }
             jo.put("handled", r.handled);
             jo.put("redeliveries", r.redeliveries);
             routeArray.add(jo);
@@ -860,6 +866,7 @@ public final class ChaosReport {
         final long failedKept;
         final long handled;
         final long redeliveries;
+        final String stubbedConsumer;
 
         RouteEntry(String route, RouteCounts counts) {
             this.route = route;
@@ -868,6 +875,7 @@ public final class ChaosReport {
             failedKept = counts.failedKept.sum();
             handled = counts.handled.sum();
             redeliveries = counts.redeliveries.sum();
+            stubbedConsumer = counts.stubbedConsumer;
         }
     }
 }

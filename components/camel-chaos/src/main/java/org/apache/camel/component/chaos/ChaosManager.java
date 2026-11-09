@@ -726,6 +726,10 @@ public final class ChaosManager {
     void routeDone(Route route, Exchange exchange) {
         String routeId = route.getRouteId();
         RouteCounts counts = counts(routeId);
+        if (!counts.consumerChecked) {
+            counts.stubbedConsumer = ChaosStubs.stubbedScheme(route.getEndpoint());
+            counts.consumerChecked = true;
+        }
         ChaosExchangeState.Outcome outcome = outcome(route, exchange);
         ChaosExchangeState.RouteState state = ChaosExchangeState.of(exchange).route(routeId);
         ChaosExchangeState.Outcome previous = state.counts == counts ? state.outcome : ChaosExchangeState.Outcome.ENTERED;
@@ -1089,6 +1093,10 @@ public final class ChaosManager {
         final LongAdder failedKept = new LongAdder();
         final LongAdder handled = new LongAdder();
         final LongAdder redeliveries = new LongAdder();
+        // the component the consumer of the route is a stub of (camel run --stub), once a route was done with an
+        // exchange: a stub does not read a kept message again
+        volatile String stubbedConsumer;
+        volatile boolean consumerChecked;
 
         void count(ChaosExchangeState.Outcome outcome) {
             add(outcome, 1);
