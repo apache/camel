@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.huaweicloud.iam;
 
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.huaweicloud.sdk.iam.v3.IamClient;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsResponse;
@@ -47,6 +42,11 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.TokenStreamLocation;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
+import tools.jackson.databind.json.JsonMapper;
 
 public class IAMProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(IAMProducer.class);
@@ -63,7 +63,7 @@ public class IAMProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         // the Jackson annotations of the SDK model give the field names of the IAM API, such as domain_id
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper.builderWithJackson2Defaults().build();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -106,10 +106,9 @@ public class IAMProducer extends DefaultProducer {
     /**
      * Perform list users operation
      *
-     * @param  exchange
-     * @throws JsonProcessingException
+     * @param exchange
      */
-    private void listUsers(Exchange exchange) throws JsonProcessingException {
+    private void listUsers(Exchange exchange) {
         // invoke list users method and map return object to exchange body
         KeystoneListUsersRequest request = new KeystoneListUsersRequest();
         KeystoneListUsersResponse response = iamClient.keystoneListUsers(request);
@@ -119,11 +118,10 @@ public class IAMProducer extends DefaultProducer {
     /**
      * Perform get user operation
      *
-     * @param  exchange
-     * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @param exchange
+     * @param clientConfigurations
      */
-    private void getUser(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void getUser(Exchange exchange, ClientConfigurations clientConfigurations) {
         // check for user id, which is mandatory to get user
         if (ObjectHelper.isEmpty(clientConfigurations.getUserId())) {
             if (LOG.isErrorEnabled()) {
@@ -144,11 +142,10 @@ public class IAMProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
      * @throws InvalidPayloadException if the body cannot be read as text
      */
     private void updateUser(Exchange exchange, ClientConfigurations clientConfigurations)
-            throws JsonProcessingException, InvalidPayloadException {
+            throws InvalidPayloadException {
         // checking for valid exchange body containing user information. Body must be an UpdateUserOption object or its
         // JSON, as text, bytes, a stream or a file
         Object body = exchange.getMessage().getBody();
@@ -159,7 +156,7 @@ public class IAMProducer extends DefaultProducer {
             String strBody = exchange.getMessage().getMandatoryBody(String.class);
             try {
                 userOption = mapper.readValue(strBody, UpdateUserOption.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalArgumentException(
                         "Request body must be a valid JSON representation of an UpdateUserOption" + jsonErrorDetail(e));
             }
@@ -190,10 +187,9 @@ public class IAMProducer extends DefaultProducer {
     /**
      * Perform list groups operation
      *
-     * @param  exchange
-     * @throws JsonProcessingException
+     * @param exchange
      */
-    private void listGroups(Exchange exchange) throws JsonProcessingException {
+    private void listGroups(Exchange exchange) {
         // invoke list groups method and map return object to exchange body
         KeystoneListGroupsRequest request = new KeystoneListGroupsRequest();
         KeystoneListGroupsResponse response = iamClient.keystoneListGroups(request);
@@ -203,11 +199,10 @@ public class IAMProducer extends DefaultProducer {
     /**
      * Perform get group users operation
      *
-     * @param  exchange
-     * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @param exchange
+     * @param clientConfigurations
      */
-    private void getGroupUsers(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void getGroupUsers(Exchange exchange, ClientConfigurations clientConfigurations) {
         // check for group id, which is mandatory for getting group users
         if (ObjectHelper.isEmpty(clientConfigurations.getGroupId())) {
             if (LOG.isErrorEnabled()) {
@@ -228,11 +223,10 @@ public class IAMProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
      * @throws InvalidPayloadException if the body cannot be read as text
      */
     private void updateGroup(Exchange exchange, ClientConfigurations clientConfigurations)
-            throws JsonProcessingException, InvalidPayloadException {
+            throws InvalidPayloadException {
         // checking for valid exchange body containing group information. Body must be a KeystoneUpdateGroupOption object
         // or its JSON, as text, bytes, a stream or a file
         Object body = exchange.getMessage().getBody();
@@ -243,7 +237,7 @@ public class IAMProducer extends DefaultProducer {
             String strBody = exchange.getMessage().getMandatoryBody(String.class);
             try {
                 groupOption = mapper.readValue(strBody, KeystoneUpdateGroupOption.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalArgumentException(
                         "Request body must be a valid JSON representation of a KeystoneUpdateGroupOption"
                                                    + jsonErrorDetail(e));
@@ -277,8 +271,8 @@ public class IAMProducer extends DefaultProducer {
      * for field enabled at line 1, column 30). It names the fields only: the message of Jackson can quote a value of
      * the body, such as a password.
      */
-    private static String jsonErrorDetail(JsonProcessingException e) {
-        String path = e instanceof JsonMappingException jme ? fieldPath(jme) : "";
+    private static String jsonErrorDetail(JacksonException e) {
+        String path = fieldPath(e);
         String detail;
         if (e instanceof UnrecognizedPropertyException) {
             detail = "unknown field " + path;
@@ -287,7 +281,7 @@ public class IAMProducer extends DefaultProducer {
         } else {
             detail = "error";
         }
-        JsonLocation location = e.getLocation();
+        TokenStreamLocation location = e.getLocation();
         if (location != null && location.getLineNr() > 0) {
             detail += " at line " + location.getLineNr() + ", column " + location.getColumnNr();
         } else if (path.isEmpty()) {
@@ -299,14 +293,14 @@ public class IAMProducer extends DefaultProducer {
     /**
      * The field names and the array indexes of the path of a mapping error.
      */
-    private static String fieldPath(JsonMappingException e) {
+    private static String fieldPath(JacksonException e) {
         StringBuilder path = new StringBuilder();
-        for (JsonMappingException.Reference reference : e.getPath()) {
-            if (reference.getFieldName() != null) {
+        for (JacksonException.Reference reference : e.getPath()) {
+            if (reference.getPropertyName() != null) {
                 if (!path.isEmpty()) {
                     path.append('.');
                 }
-                path.append(reference.getFieldName());
+                path.append(reference.getPropertyName());
             } else if (reference.getIndex() >= 0) {
                 path.append('[').append(reference.getIndex()).append(']');
             }

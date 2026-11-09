@@ -23,8 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
@@ -50,9 +48,13 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class OBSProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(OBSProducer.class);
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private OBSEndpoint endpoint;
     private ObsClient obsClient;
     private Gson gson;
@@ -235,8 +237,8 @@ public class OBSProducer extends DefaultProducer {
         } else if (exchangeBody instanceof String) {
             String strBody = (String) exchangeBody;
             try {
-                request = new ObjectMapper().readValue(strBody, CreateBucketRequest.class);
-            } catch (JsonProcessingException e) {
+                request = MAPPER.readValue(strBody, CreateBucketRequest.class);
+            } catch (JacksonException e) {
                 LOG.warn(
                         "String request body must be a valid JSON representation of a CreateBucketRequest. Attempting to create a bucket from endpoint parameters");
             }
@@ -341,8 +343,8 @@ public class OBSProducer extends DefaultProducer {
         } else if (exchangeBody instanceof String) {
             String strBody = (String) exchangeBody;
             try {
-                request = new ObjectMapper().readValue(strBody, ListObjectsRequest.class);
-            } catch (JsonProcessingException e) {
+                request = MAPPER.readValue(strBody, ListObjectsRequest.class);
+            } catch (JacksonException e) {
                 LOG.warn(
                         "String request body must be a valid JSON representation of a ListObjectsRequest. Attempting to list objects from endpoint parameters");
             }

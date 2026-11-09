@@ -3904,9 +3904,9 @@ instead.
 
 The body of `callFunction` is now marshalled to JSON when it is a `Map`, a `List` or another Java object, instead of
 being sent as its `toString()`. Text, bytes, a stream, a file, XML (a DOM `Node` or a `Source`), a `ByteBuffer`, an enum
-or a character are still converted to text, as before. The JSON comes from a plain Jackson `ObjectMapper`, so a POJO
-that needs custom JSON, such as one with `java.time` fields, must be marshalled in the route first. A message without a
-body fails with an `InvalidPayloadException` instead of a `NullPointerException`.
+or a character are still converted to text, as before. The JSON comes from a Jackson mapper with the Jackson 2 defaults (a
+`java.time` value is written as numbers), so a POJO that needs custom JSON must be marshalled in the route first. A message
+without a body fails with an `InvalidPayloadException` instead of a `NullPointerException`.
 
 === camel-vertx-http - a header with several values is sent as several headers
 
@@ -7828,3 +7828,19 @@ the 4.23 Kamelets: run it with `--kamelets-version=4.24.0`.
 
 The kafka producer still sends a Jackson 2 array node as one record per element, and any other Jackson 2 node as one record.
 
+=== Jackson 3 - components with a mapper of their own
+
+`camel-hashicorp-vault`, `camel-google-functions`, `camel-azure-key-vault`, `camel-camunda`, `camel-langchain4j-agent`,
+`camel-huaweicloud-dms`, `camel-huaweicloud-functiongraph`, `camel-huaweicloud-iam`, `camel-huaweicloud-obs` and
+`camel-huaweicloud-smn`, and the `camel infra` and `camel semantic eval` commands of Camel JBang, now use Jackson 3 internally.
+What they read and write does not change: their mappers keep the Jackson 2 defaults. The SDK each component talks to (Spring
+Vault, Google Cloud, Azure, Camunda, LangChain4j, Huawei Cloud) is not involved: no Jackson type crosses its API, so these SDKs
+stay as they are, and most of them still bring `com.fasterxml.jackson.core:jackson-databind` to your application.
+`camel-hashicorp-vault` and `camel-google-functions` no longer bring it: if your code uses it, declare it yourself.
+
+A `java.time` value in a POJO body no longer fails: `callFunction` of `camel-google-functions` sends the POJO as JSON, and
+`camel-huaweicloud-smn` publishes it as JSON instead of as its `toString()`. The value is written as numbers.
+
+Exceptions: `camel-huaweicloud-dms` and `camel-huaweicloud-iam` let a failure to write a response as JSON through as the
+unchecked `tools.jackson.core.JacksonException`, which is not an `IOException`, so `onException(IOException.class)` does not
+match it.

@@ -80,10 +80,14 @@
       <artifactId>camel-ai-observability-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
     <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jackson</artifactId>
+      <artifactId>camel-jackson3</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

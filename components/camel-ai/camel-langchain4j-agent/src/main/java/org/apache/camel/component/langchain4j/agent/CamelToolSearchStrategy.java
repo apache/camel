@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.invocation.InvocationContext;
@@ -43,6 +41,9 @@ import org.apache.camel.component.ai.tool.AiToolSearchIndex;
 import org.apache.camel.component.ai.tool.AiToolSearchStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Ranks the tools LangChain4j has already combined from route and MCP providers.
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
 final class CamelToolSearchStrategy implements ToolSearchStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelToolSearchStrategy.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {
     };
 

@@ -26,9 +26,6 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huaweicloud.sdk.core.auth.BasicCredentials;
 import com.huaweicloud.sdk.core.http.HttpConfig;
 import com.huaweicloud.sdk.smn.v2.SmnClient;
@@ -49,10 +46,14 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class SimpleNotificationProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleNotificationProducer.class);
-    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final ObjectMapper JSON_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private SmnClient smnClient;
 
     public SimpleNotificationProducer(SimpleNotificationEndpoint endpoint) {
@@ -167,7 +168,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
         if (body instanceof Map || body instanceof Collection) {
             try {
                 return JSON_MAPPER.writeValueAsString(body);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalArgumentException(
                         "The " + body.getClass().getName() + " body cannot be published as JSON: convert it to text first", e);
             }
@@ -175,7 +176,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
         if (body != null && !isPayload(body)) {
             JsonNode json = toJson(body);
             // Jackson writes a value, such as a UUID, as a JSON string: it is published as its text
-            if (json != null && json.isContainerNode()) {
+            if (json != null && json.isContainer()) {
                 return json.toString();
             }
         }
@@ -196,7 +197,7 @@ public class SimpleNotificationProducer extends DefaultProducer {
     private static JsonNode toJson(Object body) {
         try {
             return JSON_MAPPER.valueToTree(body);
-        } catch (IllegalArgumentException e) {
+        } catch (JacksonException e) {
             // not a POJO that Jackson can serialize, such as an object without properties
             return null;
         }
