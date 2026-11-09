@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 public class ObjectHelperLoadClassTest {
 
     @Test
-    public void testLoadClass() {
+    void testLoadClass() {
         Class<?> clazz = ObjectHelper.loadClass("int");
         Assertions.assertEquals("int", clazz.getName());
 
@@ -38,6 +38,58 @@ public class ObjectHelperLoadClassTest {
 
         clazz = ObjectHelper.loadClass("org.apache.camel.util.MyPojo[]");
         Assertions.assertTrue(clazz.isArray());
+    }
+
+    /**
+     * CAMEL-26589: ObjectHelper.loadClass must resolve JVM internal binary names for array types such as {@code [B}
+     * (byte[]), {@code [I} (int[]), and {@code [Ljava.lang.String;} (String[]). These names are produced by
+     * {@link Class#getName()} on array types and appear in DataType when a byte[] body is tagged with
+     * {@code new DataType(body.getClass())}.
+     */
+    @Test
+    void testLoadClassArrayBinaryNames() {
+        // Primitive array binary names
+        Class<?> clazz = ObjectHelper.loadClass("[B");
+        Assertions.assertNotNull(clazz, "[B should resolve to byte[]");
+        Assertions.assertEquals(byte[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[S");
+        Assertions.assertEquals(short[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[I");
+        Assertions.assertEquals(int[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[J");
+        Assertions.assertEquals(long[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[F");
+        Assertions.assertEquals(float[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[D");
+        Assertions.assertEquals(double[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[Z");
+        Assertions.assertEquals(boolean[].class, clazz);
+
+        clazz = ObjectHelper.loadClass("[C");
+        Assertions.assertEquals(char[].class, clazz);
+
+        // Object array binary name: [Ljava.lang.String;
+        // readableClassName() converts it to "java.lang.String[]" after normalizeClassName strips ";".
+        clazz = ObjectHelper.loadClass("[Ljava.lang.String;");
+        Assertions.assertNotNull(clazz, "[Ljava.lang.String; should resolve to String[]");
+        Assertions.assertEquals(String[].class, clazz);
+
+        // POJO array binary name: [Lorg.apache.camel.util.MyPojo;
+        clazz = ObjectHelper.loadClass("[Lorg.apache.camel.util.MyPojo;");
+        Assertions.assertNotNull(clazz, "[Lorg.apache.camel.util.MyPojo; should resolve to MyPojo[]");
+        Assertions.assertTrue(clazz.isArray());
+        Assertions.assertEquals(MyPojo.class, clazz.getComponentType());
+
+        // Multi-dimensional array: [[B (byte[][])
+        clazz = ObjectHelper.loadClass("[[B");
+        Assertions.assertNotNull(clazz, "[[B should resolve to byte[][]");
+        Assertions.assertEquals(byte[][].class, clazz);
     }
 
 }
