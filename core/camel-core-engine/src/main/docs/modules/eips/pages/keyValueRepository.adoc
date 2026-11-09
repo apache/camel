@@ -605,6 +605,9 @@ An entry with a TTL expires lazily: the node that reads it compares its own cloc
 value written by the node that stored it, so all nodes need synchronised clocks. A node whose clock runs
 ahead treats the entry as expired, and deletes it, before its TTL has passed.
 
+`replace` and `delete(key, expected)` match only an entry that has not expired, with the same condition
+as `keys()`: on an entry whose TTL has passed they return `false` and leave the row as it is.
+
 === JpaKeyValueRepository
 
 [source,xml,role=dependency]
