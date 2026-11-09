@@ -80,7 +80,8 @@ public final class ChaosExplorePlaybook {
                 route still completing its messages in time.
                    - hypothesis: what should hold, in a few words, such as "a failed refund is retried, not lost"
                    - rule: the suggested rule with a short until= (such as until=30s), and one expectation that \
-                decides the hypothesis, with within= a little longer than until=: expect=<route>:failed<=0 \
+                decides the hypothesis, with within= a little longer than until=. Expect 0 where nothing may go \
+                wrong, not a guess such as failed<=5, which hides the messages that were lost: expect=<route>:failed<=0 \
                 (nothing fails), expect=<route>-><next route>:lost<=0 (nothing lost when a route hands messages to \
                 the next route, as the suggestions of kind lost name them), \
                 expect=<route>:20 (20 completed), expect=<route>:maxTime<=5s (none slower than 5s)
@@ -96,7 +97,8 @@ public final class ChaosExplorePlaybook {
                    - wait: longer than the within= of the expectation
                    - note: what you make of the result, in one sentence
                 4. Read the result: the verdict (FAIL, PASS or INCONCLUSIVE), the expectations, what the routes \
-                did, and the traffic. On FAIL, call %s for the failed exchanges and their exceptions, and say why it \
+                did, the traffic, and the warnings: a rule that matched nothing made the experiment say nothing, so \
+                fix the rule (its pattern, such as endpoint=file://parked) and run it again. On FAIL, call %s for the failed exchanges and their exceptions, and say why it \
                 broke. On INCONCLUSIVE, run it again with a longer wait. On PASS, move on.
                 5. Go on while timeLeft of the result (millis) is more than the next experiment needs: its wait \
                 plus a minute. When it is less, do not begin another experiment: finish.
@@ -108,7 +110,8 @@ public final class ChaosExplorePlaybook {
                 exist; say when it looks like a bug in Camel rather than in the route
                    - What held: one line per PASS
                    - Not tried: the kinds of fault or routes left out, and why (no feed, out of time)
-                """.formatted(where, time, about, start, tools.report(), tools.suggest(), tools.experiment(),
-                tools.errors(), tools.finish());
+                """
+                .formatted(where, time, about, start, tools.report(), tools.suggest(), tools.experiment(),
+                        tools.errors(), tools.finish());
     }
 }

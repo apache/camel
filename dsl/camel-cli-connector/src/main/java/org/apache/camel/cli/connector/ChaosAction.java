@@ -161,6 +161,8 @@ final class ChaosAction {
                 Map<String, Object> begun = (Map<String, Object>) call(type, chaos, "beginExperiment",
                         root.getString("hypothesis"), rule);
                 answer.putAll(begun);
+                // a rule that matches nothing makes the experiment say nothing: as with add, the reason goes along
+                warnings(type, chaos, (List<?>) begun.get("rules"), answer);
             } else if ("experiment-end".equals(command)) {
                 // what came of it, and its rules are removed
                 @SuppressWarnings("unchecked")

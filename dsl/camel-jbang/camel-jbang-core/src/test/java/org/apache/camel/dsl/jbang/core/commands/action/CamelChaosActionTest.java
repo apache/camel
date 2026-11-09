@@ -573,6 +573,13 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                 "  waited 2m0s for the verdict; 8m15s left of the exploration",
                 "  An expectation was not decided when it ended: wait longer than its within= (--wait)");
 
+        JsonObject typo = new JsonObject(
+                Map.of("number", 4, "verdict", "PASS", "elapsed", 1_000L,
+                        "warnings",
+                        new JsonArray(List.of("r5: endpoint=file:/parked matches no endpoint of the context now"))));
+        assertThat(CamelChaosExperimentAction.lines(typo))
+                .contains("  Warning: r5: endpoint=file:/parked matches no endpoint of the context now");
+
         JsonObject notSent = new JsonObject(
                 Map.of("number", 3, "verdict", "PASS", "elapsed", 1_000L,
                         "traffic", new JsonObject(Map.of("endpoint", "refunds", "status", "failed", "error", "No endpoint"))));

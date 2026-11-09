@@ -963,7 +963,8 @@ public final class ToolRegistry {
                                           + "INCONCLUSIVE: the wait was up before one was decided, so wait longer than "
                                           + "its within=), the expectations with their actual values, the faults per "
                                           + "rule, what the routes did meanwhile, the traffic sent, and the time left "
-                                          + "of the exploration (timeLeft, millis). chaos_suggest has rules to try and "
+                                          + "of the exploration (timeLeft, millis), and warnings for a rule that matched "
+                                          + "nothing (fix it and run again). chaos_suggest has rules to try and "
                                           + "the feed of each route.")
                 .param("rule", "string",
                         "The rules in their one-line text form, separated by ;, one of them with expect=, such as"

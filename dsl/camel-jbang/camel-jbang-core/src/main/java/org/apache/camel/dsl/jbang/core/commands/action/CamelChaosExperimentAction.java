@@ -191,6 +191,10 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
         if (!lines.isEmpty()) {
             lines.set(0, "Experiment " + lines.get(0));
         }
+        List<Object> warnings = experiment.getCollection("warnings");
+        if (warnings != null) {
+            warnings.forEach(w -> lines.add("  Warning: " + w));
+        }
         JsonObject traffic = (JsonObject) experiment.get("traffic");
         if (traffic != null) {
             lines.add("  traffic: " + traffic(traffic));

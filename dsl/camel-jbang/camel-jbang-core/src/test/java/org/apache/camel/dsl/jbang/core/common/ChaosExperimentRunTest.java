@@ -44,6 +44,7 @@ class ChaosExperimentRunTest {
         RuntimeException sendFails;
         RuntimeException endFails;
         RuntimeException beginFails;
+        List<String> beginWarnings;
         JsonObject ended = experiment("FAIL", false);
 
         @Override
@@ -56,7 +57,11 @@ class ChaosExperimentRunTest {
                 if (beginFails != null) {
                     throw beginFails;
                 }
-                return experiment("PENDING", true);
+                JsonObject begun = experiment("PENDING", true);
+                if (beginWarnings != null) {
+                    begun.put("warnings", new JsonArray(beginWarnings));
+                }
+                return begun;
             }
             if (endFails != null) {
                 throw endFails;
@@ -219,6 +224,19 @@ class ChaosExperimentRunTest {
                             + " integration: give the id of a route, or the endpoint it starts from:"
                             + " orders (timer://orders?period=1000), refunds (kafka://refunds?brokers=localhost:9092)");
         assertThat(integration.actions).isEmpty();
+    }
+
+    @Test
+    void aRuleThatMatchesNothingComesWithItsWarning() throws Exception {
+        integration.shows("PENDING", true);
+        integration.beginWarnings = List.of("r1: endpoint=file:/parked matches no endpoint of the context now");
+        integration.ended = experiment("PASS", false);
+
+        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 1_000, null, clock);
+
+        // the PASS says nothing: the AI reads why
+        assertThat(answer.<List<Object>> getCollection("warnings"))
+                .containsExactly("r1: endpoint=file:/parked matches no endpoint of the context now");
     }
 
     @Test

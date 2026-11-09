@@ -147,6 +147,8 @@ public final class ChaosExperimentRun {
             root.put("rule", rules);
         });
         int number = begun.getIntegerOrDefault("number", 0);
+        // a rule that matches nothing in the integration now (often a typo)
+        List<Object> warnings = begun.getCollection("warnings");
         JsonObject traffic = null;
         long waited = 0;
         try {
@@ -178,6 +180,9 @@ public final class ChaosExperimentRun {
             answer.put("traffic", traffic);
         }
         answer.put("waited", waited);
+        if (warnings != null && !warnings.isEmpty()) {
+            answer.put("warnings", warnings);
+        }
         JsonObject exploration = exploration(integration.status());
         if (exploration != null && exploration.containsKey("timeLeft")) {
             answer.put("timeLeft", exploration.getLong("timeLeft"));
