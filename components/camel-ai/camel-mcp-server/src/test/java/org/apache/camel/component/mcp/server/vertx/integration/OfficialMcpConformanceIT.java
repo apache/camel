@@ -80,11 +80,10 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
     private static final String MINIMAL_WAV_BASE64
             = "UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 
-    private int port;
+    private final int port = AvailablePortFinder.getNextAvailable();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        port = AvailablePortFinder.getNextAvailable();
         CamelContext camelContext = super.createCamelContext();
 
         MainHttpServer server = new MainHttpServer();
