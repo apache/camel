@@ -461,12 +461,14 @@ public class OpenAIEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isEmpty(configuration.getTags())) {
             return false;
         }
+        if (tag == null) {
+            // AiToolRegistry.getToolsByTag merges the untagged default pool into every tag lookup, so a
+            // default-pool registration/deregistration can change this endpoint's offered tools regardless
+            // of which tags are configured.
+            return true;
+        }
         for (String configured : AiToolParameterHelper.splitTags(configuration.getTags())) {
-            String trimmed = configured.trim();
-            if (trimmed.isEmpty() && tag == null) {
-                return true;
-            }
-            if (tag != null && tag.equals(trimmed)) {
+            if (tag.equals(configured.trim())) {
                 return true;
             }
         }
