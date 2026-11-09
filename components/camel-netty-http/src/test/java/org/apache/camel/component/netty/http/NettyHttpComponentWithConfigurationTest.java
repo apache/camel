@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
 
@@ -62,6 +63,22 @@ public class NettyHttpComponentWithConfigurationTest extends CamelTestSupport {
         assertEquals(e1.getConfiguration().getMaxHeaderSize(), e2.getConfiguration().getMaxHeaderSize());
         assertEquals(e1.getConfiguration().getMaxInitialLineLength(), e2.getConfiguration().getMaxInitialLineLength());
         assertEquals(e1.getConfiguration().getMaxChunkSize(), e2.getConfiguration().getMaxChunkSize());
+    }
+
+    /**
+     * Every option asserted here is annotated with defaultValue = "true", so a fresh endpoint must report true.
+     */
+    @Test
+    public void testNettyComponentDocumentedBooleanDefaults() throws Exception {
+        NettyHttpComponent comp = context.getComponent("netty-http", NettyHttpComponent.class);
+
+        NettyHttpEndpoint e = (NettyHttpEndpoint) comp.createEndpoint("netty-http://http://localhost:4455");
+
+        assertTrue(e.getConfiguration().isMapHeaders());
+        assertTrue(e.getConfiguration().isThrowExceptionOnFailure());
+        assertTrue(e.getConfiguration().isLogWarnOnBadRequest());
+        assertTrue(e.getConfiguration().isSend503whenSuspended());
+        assertTrue(e.getConfiguration().isUseRelativePath());
     }
 
     @Test
