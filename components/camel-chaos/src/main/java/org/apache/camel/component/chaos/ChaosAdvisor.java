@@ -77,7 +77,9 @@ final class ChaosAdvisor {
         DUPLICATE("duplicate"),
         CONSUMER("consumer"),
         LIFECYCLE("lifecycle"),
-        DEAD_LETTER("dead letter channel");
+        DEAD_LETTER("dead letter channel"),
+        // two faults at once (CAMEL-26772): its rules are tried as their own kinds
+        COMBINED("combined");
 
         final String key;
 
@@ -98,12 +100,29 @@ final class ChaosAdvisor {
      * @param rank   higher is tried first
      * @param routes the routes a rule of its kind tries it in: the route, and the other routes of a dead letter channel
      *               they share, which is suggested once
+     * @param with   the other rules to add with the rule, for two faults at once (CAMEL-26772); empty for one fault
      */
     record Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank,
-            List<String> routes) {
+            List<String> routes, List<String> with) {
 
         Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank) {
-            this(route, kind, recipe, title, rule, why, rank, List.of(route));
+            this(route, kind, recipe, title, rule, why, rank, List.of(route), List.of());
+        }
+
+        Suggestion(String route, Kind kind, String recipe, String title, String rule, String why, int rank,
+                   List<String> routes) {
+            this(route, kind, recipe, title, rule, why, rank, routes, List.of());
+        }
+
+        /** The rules to add: the rule, and the rules to add with it. */
+        List<String> rules() {
+            if (with.isEmpty()) {
+                return List.of(rule);
+            }
+            List<String> answer = new ArrayList<>();
+            answer.add(rule);
+            answer.addAll(with);
+            return answer;
         }
     }
 
@@ -230,6 +249,10 @@ final class ChaosAdvisor {
     static Map<String, Map<Kind, List<String>>> suggestedKinds(List<Suggestion> suggestions) {
         Map<String, Map<Kind, List<String>>> answer = new LinkedHashMap<>();
         for (Suggestion s : suggestions) {
+            if (s.kind() == Kind.COMBINED) {
+                // its rules are tried as their own kinds, which the single suggestions offer
+                continue;
+            }
             answer.computeIfAbsent(s.route(), k -> new LinkedHashMap<>()).putIfAbsent(s.kind(), s.routes());
         }
         return answer;
@@ -368,6 +391,9 @@ final class ChaosAdvisor {
 
         // the sends: each endpoint once
         Set<String> seen = new LinkedHashSet<>();
+        // the first call to a remote system (not a local file), for the faults to try two at a time
+        String call = null;
+        boolean httpCall = false;
         for (Processor processor : route.filter("*")) {
             if (!(processor instanceof EndpointAware aware) || aware.getEndpoint() == null) {
                 continue;
@@ -392,6 +418,10 @@ final class ChaosAdvisor {
             }
             if (!ChaosStubs.isRemote(to)) {
                 continue;
+            }
+            if (call == null && !LOCAL_FILES.contains(scheme)) {
+                call = uri;
+                httpCall = ChaosRuleParser.HTTP_SCHEMES.contains(scheme);
             }
             if (LOCAL_FILES.contains(scheme)) {
                 // a local file system: nothing connects, but the write can fail
@@ -434,6 +464,29 @@ final class ChaosAdvisor {
                     who + " what fails to the dead letter channel " + dead
                                                                                                     + ": when that fails too, is the message lost? Add it with a rule that fails a route",
                     78, shared);
+        }
+
+        // two faults at once, after the single ones: most bugs that lose messages need two failures that meet
+        if (call != null) {
+            String fails = httpCall ? "error status=503" : "error exception=java.net.ConnectException";
+            if (dead != null) {
+                answer.add(new Suggestion(
+                        id, Kind.COMBINED, null, "An outage while the dead letter channel fails",
+                        "endpoint=" + call + " " + fails + " until=1m", "route " + id + " sends what fails to the dead"
+                                                                        + " letter channel " + dead + ": when " + call
+                                                                        + " is down for a minute and the dead letter channel"
+                                                                        + " fails too, are messages lost? The report counts"
+                                                                        + " what the dead letter channel did not take as lost",
+                        52, List.of(id), List.of("endpoint=" + dead + " error at=dlq until=1m")));
+            }
+            answer.add(new Suggestion(
+                    id, Kind.COMBINED, null, "A slow service that also fails",
+                    "endpoint=" + call + " delay duration=1s..3s rate=0.5 until=2m",
+                    "a call to " + call + " that is slow and fails now and then: do the redeliveries pile up, and how"
+                                                                                     + " long does an exchange take? An expectation such as expect="
+                                                                                     + id
+                                                                                     + ":maxTime<=30s says how long is too long",
+                    45, List.of(id), List.of("endpoint=" + call + " " + fails + " rate=0.2 until=2m")));
         }
 
         // the input of the route

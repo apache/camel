@@ -171,6 +171,26 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     }
 
     @Test
+    void suggestAddsTwoFaultsAtOnceTogether() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject pair = new JsonObject(
+                Map.of("route", "orders", "kind", "combined", "title", "An outage while the dead letter channel fails",
+                        "rule", "endpoint=http://pay error status=503 until=1m",
+                        "rules", new JsonArray(
+                                List.of("endpoint=http://pay error status=503 until=1m",
+                                        "endpoint=seda:dlq error at=dlq until=1m")),
+                        "why", "route orders sends what fails to the dead letter channel seda:dlq"));
+        JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(pair))));
+
+        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+
+        assertThat(printer.getLines()).contains(
+                "1. route orders: An outage while the dead letter channel fails (combined)",
+                "camel cmd chaos-add --rule='endpoint=http://pay error status=503 until=1m'"
+                                                                                             + " --rule='endpoint=seda:dlq error at=dlq until=1m'");
+    }
+
+    @Test
     void suggestSaysWhenThereIsNothingToTry() throws Exception {
         writeStatusFile(TEST_PID, "orders");
         assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"),

@@ -1158,7 +1158,9 @@ public class RuntimeTools {
                   breaker, a dead letter channel or a hand-off to another route over seda. Each has the route, the \
                   kind of fault, the rule, why to try it, tried=true when a rule of that kind has already faulted \
                   the route, and feed: how to send messages into the route (kind self, http, file or send, a hint \
-                  such as the command, and real=true when that goes to the real system rather than a stub). \
+                  such as the command, and real=true when that goes to the real system rather than a stub). Two \
+                  faults at once (kind combined, after the single ones) have rules: all the rules to add together \
+                  (camel_runtime_chaos_add with them separated by ;). \
                   Nothing is added: check a rule with camel_runtime_chaos_check and add it with \
                   camel_runtime_chaos_add.""")
     public JsonObject camel_runtime_chaos_suggest(

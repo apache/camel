@@ -256,6 +256,25 @@ class ChaosControlTest {
     }
 
     @Test
+    void twoFaultsAtOnceAreTypedInTogether() throws Exception {
+        reply = (JsonObject) Jsoner.deserialize("""
+                {"suggestions": [
+                  {"route": "orders", "kind": "combined", "title": "An outage while the dead letter channel fails",
+                   "rule": "endpoint=http://pay error status=503 until=1m",
+                   "rules": ["endpoint=http://pay error status=503 until=1m", "endpoint=seda:dlq error at=dlq until=1m"],
+                   "why": "route orders sends what fails to the dead letter channel seda:dlq"}]}
+                """);
+        key('w');
+        enter();
+        assertThat(tab.isTextInputActive()).isTrue();
+        // added after Enter and the confirmation, both rules in one add
+        enter();
+        key('y');
+        assertThat(requests.get(requests.size() - 1).getString("rule"))
+                .isEqualTo("endpoint=http://pay error status=503 until=1m; endpoint=seda:dlq error at=dlq until=1m");
+    }
+
+    @Test
     void whatToTryWithNothingToSuggest() throws Exception {
         reply = (JsonObject) Jsoner.deserialize("{\"suggestions\": []}");
         key('w');
