@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.MemoryKeyValueRepository;
+import org.apache.camel.support.NamespacedKeyValueRepository;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,16 +65,19 @@ public class StateStoreComponent extends DefaultComponent {
      */
     KeyValueRepository getOrCreateBackend(String storeName, KeyValueRepository explicitBackend) {
         if (explicitBackend != null) {
-            KeyValueRepository existing = backends.putIfAbsent(storeName, explicitBackend);
+            KeyValueRepository wrapped = NamespacedKeyValueRepository.namespaced(explicitBackend, "statestore:" + storeName);
+            KeyValueRepository existing = backends.putIfAbsent(storeName, wrapped);
             if (existing != null) {
-                if (existing != explicitBackend) {
+                KeyValueRepository existingDelegate
+                        = existing instanceof NamespacedKeyValueRepository n ? n.getDelegate() : existing;
+                if (existingDelegate != explicitBackend) {
                     LOG.warn("Store '{}' already has a backend ({}). Ignoring explicit backend=# reference ({}).",
-                            storeName, existing.getClass().getSimpleName(), explicitBackend.getClass().getSimpleName());
+                            storeName, existingDelegate.getClass().getSimpleName(), explicitBackend.getClass().getSimpleName());
                 }
                 return existing;
             }
-            ServiceHelper.startService(explicitBackend);
-            return explicitBackend;
+            ServiceHelper.startService(wrapped);
+            return wrapped;
         }
         return backends.computeIfAbsent(storeName, k -> {
             if (backendFactory == null && backendFactoryChecked.compareAndSet(false, true)) {
@@ -89,8 +93,9 @@ public class StateStoreComponent extends DefaultComponent {
             if (backend != null) {
                 LOG.debug("Created KeyValueRepository '{}' for store '{}' using backend factory",
                         backend.getClass().getSimpleName(), storeName);
-                ServiceHelper.startService(backend);
-                return backend;
+                KeyValueRepository wrapped = NamespacedKeyValueRepository.namespaced(backend, "statestore:" + storeName);
+                ServiceHelper.startService(wrapped);
+                return wrapped;
             }
             // Auto-discover a KeyValueRepository from the registry
             Set<KeyValueRepository> found = getCamelContext().getRegistry().findByType(KeyValueRepository.class);
@@ -111,8 +116,9 @@ public class StateStoreComponent extends DefaultComponent {
                 }
                 backend = new MemoryKeyValueRepository();
             }
-            ServiceHelper.startService(backend);
-            return backend;
+            KeyValueRepository wrapped = NamespacedKeyValueRepository.namespaced(backend, "statestore:" + storeName);
+            ServiceHelper.startService(wrapped);
+            return wrapped;
         });
     }
 
