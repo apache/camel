@@ -197,7 +197,9 @@ class XmppProducerReconnectTest extends CamelTestSupport {
             await().atMost(10, TimeUnit.SECONDS)
                     .untilAsserted(() -> assertEquals(List.of("before", "after"), server.messagesTo(OPS_ROOM)));
             assertEquals(1, server.occupants(OPS_ROOM));
+            int joinsAfterRejoin = server.roomJoins();
 
+            // the login ends: the authenticated listeners are called now, after the producer entered its room again
             releaseLogin.countDown();
             login.join(10000);
             assertFalse(login.isAlive());
@@ -206,6 +208,8 @@ class XmppProducerReconnectTest extends CamelTestSupport {
             await().atMost(10, TimeUnit.SECONDS)
                     .untilAsserted(() -> assertEquals(List.of("before", "after", "later"), server.messagesTo(OPS_ROOM)));
             assertEquals(1, server.occupants(OPS_ROOM));
+            // the producer is in its room: it must not leave and enter it again, which is slow and can time out
+            assertEquals(joinsAfterRejoin, server.roomJoins());
         } finally {
             endpoint.getComponent().releaseConnection(endpoint, probe);
         }
