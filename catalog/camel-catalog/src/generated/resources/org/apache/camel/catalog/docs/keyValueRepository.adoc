@@ -175,7 +175,7 @@ YAML DSL::
 ----
 - beans:
     - name: caffeineKvr
-      type: org.apache.camel.component.caffeine.cache.CaffeineKeyValueRepository
+      type: org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository
       properties:
         maximumSize: 10000
 ----
@@ -245,7 +245,7 @@ YAML DSL::
 ----
 - beans:
     - name: ehcacheKvr
-      type: org.apache.camel.component.ehcache.EhcacheKeyValueRepository
+      type: org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository
       properties:
         cacheManager: "#bean:ehcacheManager"
         cacheName: products
@@ -310,7 +310,7 @@ YAML DSL::
 ----
 - beans:
     - name: jcacheKvr
-      type: org.apache.camel.component.jcache.JCacheKeyValueRepository
+      type: org.apache.camel.component.jcache.processor.JCacheKeyValueRepository
       properties:
         cacheName: products
         configuration: "#bean:jcacheConfig"
@@ -539,18 +539,29 @@ Required property:
 
 Optional properties:
 
-* `tableName` — the table used for storage (default: `"camel_kvr"`).
+* `tableName` — the table used for storage (default: `CAMEL_KEYVALUE`).
 * `createTableIfNotExists` — auto-create the table at startup if absent (default: `true`).
 
-The auto-created table schema:
+The auto-created table schema is shown below; with `tableName` set, the table has that name and the
+same columns. `ITEM_VALUE` holds the serialized value, and `EXPIRES_AT` the expiry time in epoch
+milliseconds (`0` for an entry without a TTL):
 
 [source,sql]
 ----
-CREATE TABLE camel_kvr (
-    kvr_key   VARCHAR(255) NOT NULL PRIMARY KEY,
-    kvr_value TEXT
+CREATE TABLE CAMEL_KEYVALUE (
+    ITEM_KEY   VARCHAR(512) NOT NULL,
+    ITEM_VALUE BLOB NOT NULL,
+    EXPIRES_AT BIGINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (ITEM_KEY)
 );
 ----
+
+On a database that does not accept this statement, create the table yourself before the repository
+starts. PostgreSQL has no `BLOB` type (use `BYTEA`), and neither has SQL Server (use `VARBINARY(MAX)`).
+On MySQL and MariaDB a `BLOB` holds at most 64 KB per value, so use `LONGBLOB` for larger values. A custom `createString`
+is used only without `tableName`, as `tableName` derives all statements from the default ones. The
+PostgreSQL example below therefore needs the `product_cache` table created beforehand, with `BYTEA`
+for `ITEM_VALUE`.
 
 [tabs]
 ====
@@ -657,7 +668,7 @@ YAML DSL::
 ----
 - beans:
     - name: jpaKvr
-      type: org.apache.camel.component.jpa.JpaKeyValueRepository
+      type: org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository
       properties:
         entityManagerFactory: "#bean:emf"
         joinTransaction: false
@@ -683,7 +694,7 @@ Required property:
 
 Optional properties:
 
-* `table` — Cassandra table name (default: `"camel_kvr"`).
+* `table` — Cassandra table name (default: `"camel_keyvalue"`). The repository does not create the table.
 * `readConsistencyLevel` — `ConsistencyLevel` for reads (default: `LOCAL_ONE`).
 * `writeConsistencyLevel` — `ConsistencyLevel` for writes (default: `LOCAL_ONE`).
 
@@ -724,7 +735,7 @@ YAML DSL::
 ----
 - beans:
     - name: cassandraKvr
-      type: org.apache.camel.component.cassandra.CassandraKeyValueRepository
+      type: org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository
       properties:
         session: "#bean:cassandraSession"
         table: product_cache
@@ -789,7 +800,7 @@ YAML DSL::
 ----
 - beans:
     - name: kafkaKvr
-      type: org.apache.camel.component.kafka.KafkaKeyValueRepository
+      type: org.apache.camel.processor.keyvalue.kafka.KafkaKeyValueRepository
       properties:
         topic: camel-kvr-products
         bootstrapServers: "kafka1:9092,kafka2:9092"
