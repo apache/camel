@@ -213,6 +213,11 @@ context.addRoutes(new RouteBuilder {
 });
 ----
 +
+When this node is the leader and a route fails to start (for example its endpoint cannot connect yet), the policy
+tries again to start it every 5 seconds while the node keeps the leadership, and logs each failed attempt (at WARN with
+the default exception handler). The delay can be set with `setRetryDelay(Duration)` on a `ClusteredRoutePolicy` created with `forNamespace`; the
+policies of `ClusteredRoutePolicyFactory` and `ClusteredRouteController` use the default.
++
 To apply the same policy to all the routes a dedicated  _RoutePolicyFactory_ can be used:
 +
 ._Java-only: using ClusteredRoutePolicyFactory_
