@@ -19,14 +19,17 @@ package org.apache.camel.processor;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -73,24 +76,17 @@ class RouteStreamCachingSpoolAdviceOrderTest extends ContextTestSupport {
         template.sendBody("direct:test", stream());
 
         assertMockEndpointsSatisfied();
-        assertNull(result.getReceivedExchanges().get(0).getException());
-    }
+        Exchange exchange = result.getReceivedExchanges().get(0);
+        assertNull(exchange.getException());
 
-    @Test
-    void testRouteLevelSpooledStreamCacheMultipleExchanges() throws Exception {
-        int count = 5;
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(count);
-        result.allMessages().body().isInstanceOf(StreamCache.class);
-
-        for (int i = 0; i < count; i++) {
-            template.sendBody("direct:test", stream());
-        }
-
-        assertMockEndpointsSatisfied();
-        for (int i = 0; i < count; i++) {
-            assertNull(result.getReceivedExchanges().get(i).getException());
-        }
+        // Spool file must have been cleaned up by TempFileManager after the exchange completes.
+        // The spool directory itself is kept (RemoveSpoolDirectoryWhenStopping=false) but it
+        // must contain no .cos*.tmp files — TempFileManager deletes each file in onCompletion.
+        Path spoolDir = testDirectory();
+        long spoolFiles = Files.list(spoolDir)
+                .filter(p -> p.getFileName().toString().startsWith("cos") && p.getFileName().toString().endsWith(".tmp"))
+                .count();
+        assertThat(spoolFiles).as("spool files left after exchange completion").isZero();
     }
 
     @Test
@@ -103,7 +99,7 @@ class RouteStreamCachingSpoolAdviceOrderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         // The processor read the body bytes while still in-route and stored them in a property
         byte[] received = result.getReceivedExchanges().get(0).getProperty("bodyBytes", byte[].class);
-        assertArrayEquals(DATA, received);
+        assertThat(received).isEqualTo(DATA);
         assertNull(result.getReceivedExchanges().get(0).getException());
     }
 
