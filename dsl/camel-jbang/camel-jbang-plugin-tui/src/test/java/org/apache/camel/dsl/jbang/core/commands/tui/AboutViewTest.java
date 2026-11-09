@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
+import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -281,6 +282,14 @@ class AboutViewTest {
         return ep;
     }
 
+    /** The colours of the borders of In and Routes. */
+    private static List<Color> borders(AboutView about, IntegrationInfo info) {
+        Rect area = new Rect(0, 0, 160, 34);
+        Buffer buffer = Buffer.empty(area);
+        about.render(Frame.forTesting(buffer), area, info);
+        return List.of(TuiTestHelper.borderColor(buffer, " In "), TuiTestHelper.borderColor(buffer, " Routes "));
+    }
+
     @Test
     void aboutAnIntegrationWithWhatHasHappened() throws Exception {
         Files.writeString(dir.resolve("shop.camel.yaml"), """
@@ -356,9 +365,12 @@ class AboutViewTest {
         about.moveCursor(1);
         render(about, info);
         assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", null));
+        // the panel the cursor is in has the focus border
+        assertThat(borders(about, info)).containsExactly(Theme.accent(), Theme.muted().fg().orElseThrow());
         about.moveCursor(2);
         render(about, info);
         assertThat(about.selected()).isEqualTo(new AboutView.Target("stock", null));
+        assertThat(borders(about, info)).containsExactly(Theme.muted().fg().orElseThrow(), Theme.accent());
         assertThat(about.selectionContext().items()).contains("in: timer:orders (period=500) → orders", "route: orders",
                 "route: stock");
         assertThat(about.selectionContext().selectedIndex()).isEqualTo(2);

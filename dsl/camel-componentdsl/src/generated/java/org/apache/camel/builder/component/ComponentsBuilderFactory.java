@@ -5341,6 +5341,20 @@ public interface ComponentsBuilderFactory {
         return VertxHttpComponentBuilderFactory.vertxHttp();
     }
     /**
+     * Vert.x MQTT (camel-vertx-mqtt)
+     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
+     * with the Vert.x MQTT client.
+     * 
+     * Category: messaging,iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-vertx-mqtt
+     * 
+     * @return the dsl builder
+     */
+    static VertxMqttComponentBuilderFactory.VertxMqttComponentBuilder vertxMqtt() {
+        return VertxMqttComponentBuilderFactory.vertxMqtt();
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x

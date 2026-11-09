@@ -424,12 +424,13 @@ class TimelineTab extends AbstractTableTab {
         routeStrip = room.strip();
         lastTableArea = new Rect(top.x(), routeTop, top.width(), Math.max(1, routeHeight));
         Padding padding = room.roomy() ? Padding.uniform(1) : Padding.NONE;
-        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).block(block(title(info), padding)).build(), top);
+        frame.renderWidget(
+                Paragraph.builder().text(Text.from(lines)).block(block(title(info), padding, !drill.isOpen())).build(), top);
 
         if (drill.isOpen()) {
             List<Timeline.Kept> kept = keptAtCursor();
             frame.renderWidget(Paragraph.builder().text(Text.from(drill.lines(kept, detailHeight - 2 - 2 * gap)))
-                    .block(block(drill.title(kept, ctx.timeline.done(info.pid, drill.from(), drill.to())), padding))
+                    .block(block(drill.title(kept, ctx.timeline.done(info.pid, drill.from(), drill.to())), padding, true))
                     .build(),
                     rows.get(2));
             return;
@@ -705,7 +706,7 @@ class TimelineTab extends AbstractTableTab {
         Padding padding = room.roomy() ? Padding.uniform(1) : Padding.NONE;
         if (r == null) {
             frame.renderWidget(Paragraph.builder().text(Text.from(Line.from(Span.raw(""))))
-                    .block(block(" Route ", padding)).build(), area);
+                    .block(block(" Route ", padding, false)).build(), area);
             return;
         }
         List<long[]> values = List.of(cols(r.completed(), false), cols(r.recovered(), false),
@@ -788,7 +789,7 @@ class TimelineTab extends AbstractTableTab {
         addTotal(totals, r.total(r.failed()), "failed", Theme.error());
         lines.add(Line.from(totals));
         String title = " " + r.route() + " ─ per second ";
-        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).block(block(title, padding)).build(), area);
+        frame.renderWidget(Paragraph.builder().text(Text.from(lines)).block(block(title, padding, false)).build(), area);
     }
 
     private static void addTotal(List<Span> spans, long count, String words, Style style) {
@@ -917,8 +918,10 @@ class TimelineTab extends AbstractTableTab {
         return s.length() >= width ? s : " ".repeat(width - s.length()) + s;
     }
 
-    private static Block block(String title, Padding padding) {
-        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).padding(padding).build();
+    /** A panel: the one the keys go to has the focus border (the routes, or the exchanges of a second when open). */
+    private Block block(String title, Padding padding, boolean focused) {
+        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(focused))
+                .title(title).padding(padding).build();
     }
 
     @Override

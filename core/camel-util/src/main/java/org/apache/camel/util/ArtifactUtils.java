@@ -432,6 +432,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("velocity", "camel-velocity"),
             Map.<String, String> entry("vertx", "camel-vertx"),
             Map.<String, String> entry("vertx-http", "camel-vertx-http"),
+            Map.<String, String> entry("vertx-mqtt", "camel-vertx-mqtt"),
             Map.<String, String> entry("vertx-websocket", "camel-vertx-websocket"),
             Map.<String, String> entry("wasm", "camel-wasm"),
             Map.<String, String> entry("weather", "camel-weather"),

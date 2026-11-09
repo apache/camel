@@ -411,7 +411,7 @@ class ErrorsTab extends AbstractTableTab {
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
                         .title(" Errors [" + sorted.size() + "] ").build())
                 .build();
 
@@ -681,7 +681,8 @@ class ErrorsTab extends AbstractTableTab {
 
         int[] scroll = { detailScroll };
         int[] hScroll = { detailHScroll };
-        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState, " Detail ");
+        HistoryTab.renderDetailPanel(frame, area, lines, wordWrap, hScroll, scroll, detailScrollState, " Detail ",
+                ctx.paneBorder(false), null);
         detailScroll = scroll[0];
         detailHScroll = hScroll[0];
     }
@@ -777,7 +778,8 @@ class ErrorsTab extends AbstractTableTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("No error selected", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Info ").build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(false)).title(" Info ").build())
                             .build(),
                     area);
             return;
@@ -847,7 +849,8 @@ class ErrorsTab extends AbstractTableTab {
 
         Paragraph.Builder pb = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Info ").build());
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
+                        .title(" Info ").build());
         if (wordWrap) {
             pb.overflow(Overflow.WRAP_WORD);
         }

@@ -233,7 +233,7 @@ public class CamelCatalogTest {
         // exact scheme first, then words of the title or scheme
         assertEquals(List.of("aws2-s3", "aws2-s3-vectors"), catalog.suggestComponentNames("s3", 0));
         assertEquals(List.of("aws2-sqs"), catalog.suggestComponentNames("sqs", 0));
-        assertEquals(List.of("paho-mqtt5"), catalog.suggestComponentNames("mqtt", 0));
+        assertEquals(List.of("paho-mqtt5", "vertx-mqtt"), catalog.suggestComponentNames("mqtt", 0));
         assertEquals(List.of("spring-rabbitmq"), catalog.suggestComponentNames("rabbitmq", 0));
         assertEquals(List.of("google-pubsub"), catalog.suggestComponentNames("pubsub", 0));
         assertEquals(List.of("azure-servicebus"), catalog.suggestComponentNames("servicebus", 0));

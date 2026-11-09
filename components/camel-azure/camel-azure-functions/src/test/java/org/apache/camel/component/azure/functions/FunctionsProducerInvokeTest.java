@@ -191,6 +191,20 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
     }
 
     @Test
+    void getSendsNoContentTypeOfMessage() throws Exception {
+        // GET sends no body, so the Content-Type header of the message is not sent either
+        Exchange result = template.send(functionsEndpoint("&httpMethod=GET"), e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        });
+
+        assertNull(result.getException());
+        RecordedRequest request = nextRequest();
+        assertEquals("GET", request.method());
+        assertNull(request.contentTypes());
+    }
+
+    @Test
     void defaultContentTypeWithoutHttpHeaders() throws Exception {
         Exchange result = template.send(functionsEndpoint(""), e -> e.getIn().setBody("{\"name\":\"Camel\"}"));
 
@@ -214,6 +228,42 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
         // HTTP header names are case-insensitive: the default must not be added next to content-type
         Exchange result = template.send(functionsEndpoint(""), e -> {
             e.getIn().setBody("Hello");
+            e.getIn().setHeader(FunctionsConstants.HTTP_HEADERS, Map.of("content-type", "text/plain"));
+        });
+
+        assertNull(result.getException());
+        assertEquals(List.of("text/plain"), nextRequest().contentTypes());
+    }
+
+    @Test
+    void contentTypeOfMessageIsUsedWithoutHttpHeaders() throws Exception {
+        Exchange result = template.send(functionsEndpoint(""), e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        });
+
+        assertNull(result.getException());
+        assertEquals(List.of("text/plain"), nextRequest().contentTypes());
+    }
+
+    @Test
+    void contentTypeOfMessageIsUsedWithHttpHeadersWithoutContentType() throws Exception {
+        // Map.of is immutable: the producer must copy the map to add the Content-Type
+        Exchange result = template.send(functionsEndpoint(""), e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            e.getIn().setHeader(FunctionsConstants.HTTP_HEADERS, Map.of("X-Custom", "value"));
+        });
+
+        assertNull(result.getException());
+        assertEquals(List.of("text/plain"), nextRequest().contentTypes());
+    }
+
+    @Test
+    void contentTypeOfHttpHeadersWinsOverContentTypeOfMessage() throws Exception {
+        Exchange result = template.send(functionsEndpoint(""), e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "text/csv");
             e.getIn().setHeader(FunctionsConstants.HTTP_HEADERS, Map.of("content-type", "text/plain"));
         });
 

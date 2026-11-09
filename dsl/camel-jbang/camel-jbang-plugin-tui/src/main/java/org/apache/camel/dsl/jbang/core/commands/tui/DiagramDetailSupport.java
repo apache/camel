@@ -384,7 +384,7 @@ final class DiagramDetailSupport {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -556,7 +556,7 @@ final class DiagramDetailSupport {
 
         Paragraph paragraph = Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
                         .title(" Info ").build())
                 .build();
         frame.renderWidget(paragraph, area);
@@ -675,6 +675,7 @@ final class DiagramDetailSupport {
                     MarkdownView.builder()
                             .source("*Select an EIP node*")
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(false))
                                     .title(" EIP Detail ").build())
                             .styles(Theme.markdownStyles())
                             .syntaxTheme(Theme.syntaxTheme())
@@ -690,6 +691,7 @@ final class DiagramDetailSupport {
                     MarkdownView.builder()
                             .source("*No detail available*")
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(false))
                                     .title(" EIP Detail ").build())
                             .styles(Theme.markdownStyles())
                             .syntaxTheme(Theme.syntaxTheme())
@@ -741,6 +743,7 @@ final class DiagramDetailSupport {
                         .source(md.toString())
                         .scroll(detailScroll)
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(ctx.paneBorder(false))
                                 .title(title).build())
                         .styles(Theme.markdownStyles())
                         .syntaxTheme(Theme.syntaxTheme())
