@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeSet;
 import java.util.function.Function;
 
 import org.apache.camel.component.chaos.ChaosRule.Expectation;
@@ -54,6 +55,13 @@ final class ChaosExperiment {
     // why an experiment is INCONCLUSIVE
     static final String NEVER_FIRED = "its faults never fired, so its expectations say nothing about them";
     static final String NOT_DECIDED = "it ended before an expectation was decided, so the messages may still have come";
+
+    /** Why an experiment whose expectation was met on a route without messages is INCONCLUSIVE. */
+    static String noMessages(Set<String> routes) {
+        return (routes.size() == 1 ? "route " : "routes ") + String.join(", ", routes)
+               + " had no messages while it ran, so " + (routes.size() == 1 ? "its expectation says" : "their expectations say")
+               + " nothing: feed " + (routes.size() == 1 ? "it" : "them");
+    }
 
     /** How an experiment ended. */
     enum End {
@@ -153,8 +161,9 @@ final class ChaosExperiment {
         JsonObject faults = new JsonObject();
         JsonArray expectations = new JsonArray();
         long firedAll = 0;
-        // the routes whose failures an expectation counts
+        // the routes whose failures an expectation counts, and the routes of the expectations that are met
         Set<String> failedExpected = new HashSet<>();
+        Set<String> metRoutes = new TreeSet<>();
         for (String id : rules) {
             ChaosRule r = rule.apply(id);
             if (r == null) {
@@ -182,6 +191,9 @@ final class ChaosExperiment {
                 Outcome outcome = reading.outcome() == Outcome.CANCELLED ? Outcome.PENDING : reading.outcome();
                 unmet |= outcome == Outcome.UNMET;
                 undecided |= outcome == Outcome.PENDING;
+                if (outcome == Outcome.MET) {
+                    metRoutes.add(e.route);
+                }
                 JsonObject x = new JsonObject();
                 x.put("rule", id);
                 x.put("expect", e.spec());
@@ -198,19 +210,9 @@ final class ChaosExperiment {
             jo.put("lostAtDeadLetterChannel", lost);
             jo.put("lostAtDeadLetterChannelPerRule", lostAtDlq);
         }
-        // nothing fired: the expectations were not put to the test (an unmet one is still a FAIL, with its evidence).
-        // This is for the experiment as a whole: when one of its rules fired, the experiment was put to the test,
-        // and the expectations still decide each rule
-        boolean neverFired = firedAll == 0;
-        String verdict = unmet || lost > 0
-                ? FAIL : !undecided && !neverFired ? PASS : ended ? INCONCLUSIVE : PENDING;
-        jo.put("verdict", verdict);
-        if (INCONCLUSIVE.equals(verdict)) {
-            // never fired comes first: when no fault ran, the expectations that did not decide are a consequence of it
-            jo.put("reason", neverFired ? NEVER_FIRED : NOT_DECIDED);
-        }
         JsonArray routes = new JsonArray();
         JsonObject alsoFailed = new JsonObject();
+        Set<String> active = new HashSet<>();
         counts.forEach((route, c) -> {
             long[] now0 = read(c);
             long[] then = before.getOrDefault(route, new long[5]);
@@ -221,6 +223,7 @@ final class ChaosExperiment {
                 any |= delta[i] > 0;
             }
             if (any) {
+                active.add(route);
                 JsonObject r = new JsonObject();
                 r.put("route", route);
                 r.put("completed", delta[0]);
@@ -237,6 +240,21 @@ final class ChaosExperiment {
         jo.put("routes", routes);
         if (!alsoFailed.isEmpty()) {
             jo.put("alsoFailed", alsoFailed);
+        }
+        // nothing fired: the expectations were not put to the test (an unmet one is still a FAIL, with its evidence).
+        // This is for the experiment as a whole: when one of its rules fired, the experiment was put to the test,
+        // and the expectations still decide each rule
+        boolean neverFired = firedAll == 0;
+        // an expectation met while its route had no messages says nothing either, such as refunds:failed<=0 when the
+        // traffic went to another route
+        metRoutes.removeAll(active);
+        boolean idle = !metRoutes.isEmpty();
+        String verdict = unmet || lost > 0
+                ? FAIL : !undecided && !neverFired && !idle ? PASS : ended ? INCONCLUSIVE : PENDING;
+        jo.put("verdict", verdict);
+        if (INCONCLUSIVE.equals(verdict)) {
+            // never fired comes first: when no fault ran, the expectations that did not decide are a consequence of it
+            jo.put("reason", neverFired ? NEVER_FIRED : idle ? noMessages(metRoutes) : NOT_DECIDED);
         }
         if (countsReset) {
             jo.put("countsReset", true);
