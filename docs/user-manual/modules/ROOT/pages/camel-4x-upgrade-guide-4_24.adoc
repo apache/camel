@@ -2919,9 +2919,9 @@ DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND ITEM_VALUE = ? AND (EXPIRES_AT
 
 If you set `updateIfValueString` or `deleteIfValueString` yourself, for example for a table with other column names,
 add the same condition with a parameter for the current time at the end. Otherwise the repository passes one more
-parameter than the statement has placeholders: most JDBC drivers then fail with an SQL error, while some (such as
-MariaDB Connector/J) ignore the extra parameter, so the statement still matches an expired entry. With `tableName` the
-statements are derived from the default statements, as before.
+parameter than the statement has placeholders: most JDBC drivers then fail with an SQL error, while some drivers may
+ignore the extra parameter, so the statement still matches an expired entry. With `tableName` the statements are
+derived from the default statements, as before.
 
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
