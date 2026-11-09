@@ -406,6 +406,9 @@ following rules:
   message; the cause is logged server-side and never sent to the client.
   Argument validation messages (missing or invalid parameters) are returned
   as-is.
+* *Returned content*: the result of a tool, resource or prompt is passed to the
+  client and the model as it is. Data that a route reads from a source outsiders can write may
+  contain prompt injection; the route author decides what goes in.
 * *Bounded execution*: every call, read and prompt request is subject to its
   configured timeout. A timed-out route keeps running server-side until it
   completes; the timeout bounds the MCP request, not the route.

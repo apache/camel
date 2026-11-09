@@ -34,7 +34,7 @@
   },
   "bodyTypes": {
     "consumerOut": { "carriers": [ "null" ], "description": "No body is sent to the route. Each prompt argument is available as a message header with its configured argument name; values are strings." },
-    "consumerReply": { "carriers": [ "any" ], "description": "A String becomes one user message. A List may contain Strings or Maps with role (user or assistant) and content. Content may be a String or an MCP content block." }
+    "consumerReply": { "carriers": [ "text", "list", "bytes", "stream", "file" ], "description": "A String, byte array, stream or file is converted to one user message. A List may contain Strings or Maps with role (user or assistant) and content. Content may be a String or an MCP content block." }
   },
   "properties": {
     "promptName": { "index": 0, "kind": "path", "displayName": "Prompt Name", "group": "consumer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The prompt name advertised to MCP clients." },

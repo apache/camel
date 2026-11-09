@@ -92,3 +92,12 @@ engines notify clients with `notifications/prompts/list_changed` when the prompt
 Missing required arguments are rejected before the route executes. Route exceptions are logged server-side and
 returned to remote MCP clients as a generic prompt execution error. The MCP server applies a per-prompt execution
 timeout; a timed-out route may continue running on its worker thread until it completes.
+
+== Security
+
+The messages returned by a prompt route are sent to the MCP client and placed in the model's
+context as they are. When a route builds a prompt from data that outsiders can write, such as
+ticket comments, emails or documents, that data can contain instructions aimed at the model
+(prompt injection). Camel does not filter or mark such content. Include only data from sources
+you trust, or clearly mark untrusted content in the prompt, for example by placing it in its own
+delimited block and telling the model to treat it as data.
