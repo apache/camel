@@ -57,6 +57,22 @@
             <artifactId>camel-jackson3-protobuf</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- Jackson 2 line: the schema resolvers of DelegatingSchemaResolver for applications without camel-jackson3 -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson-avro</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson-protobuf</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- TESTS  -->
         <dependency>

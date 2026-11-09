@@ -7638,9 +7638,10 @@ two artifacts each: the Jackson 2 line (`camel-jackson`, `camel-jacksonxml`, `ca
 * When both lines are on the classpath, the Jackson 3 data format and transformers are used. Before 4.24 the one
   whose service file was found first on the classpath was used. An `ObjectMapper` in the registry is only used by the
   data format of the same Jackson version.
-* `camel-kamelet` and `camel-kamelet-main` depend on the Jackson 3 line instead of the Jackson 2 one, and the
+* `camel-kamelet-main` depends on the Jackson 3 line instead of the Jackson 2 one. The
   `DelegatingSchemaResolver` of the Kamelet data type utilities delegates to the Jackson 3 `JsonSchemaResolver`,
-  `AvroSchemaResolver` and `ProtobufSchemaResolver`. A Kamelet that declares `camel:jackson` as a dependency still
+  `AvroSchemaResolver` and `ProtobufSchemaResolver`, or to the Jackson 2 ones when the Jackson 3 artifact is not on the
+  classpath. A Kamelet that declares `camel:jackson` as a dependency still
   gets `camel-jackson`, since the dependency names the artifact, and the Jackson 3 data format is used when both are
   present.
 
