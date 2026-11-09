@@ -7661,8 +7661,9 @@ the 4.23 Kamelets as before, except the kafka field actions.
 The `camel-jackson` artifacts are unchanged and stay on Jackson 2. An application that declares them, outside Camel
 JBang, keeps using Jackson 2 as long as it does not also have the Jackson 3 line on the classpath.
 
-To keep Jackson 2 for a data format in Camel JBang, declare `camel:jackson` as a dependency, define the Jackson 2 data
-format as a bean, and refer to it as a custom data format instead of by the `json` name:
+To keep Jackson 2 for a data format in Camel JBang, add the `camel:jackson` dependency (`--dep=camel:jackson`, or
+`camel.jbang.dependencies=camel:jackson` in `application.properties`), define the Jackson 2 data format as a bean, and
+refer to it as a custom data format instead of by the `json` name:
 
 [source,yaml]
 ----
@@ -7674,11 +7675,9 @@ format as a bean, and refer to it as a custom data format instead of by the `jso
       uri: direct:start
       steps:
         - marshal:
-            custom: jackson2
+            custom:
+              ref: jackson2
 ----
-
-The option documentation of the Jackson 3 data formats now names the `tools.jackson` classes
-(`tools.jackson.databind.ObjectMapper`, `tools.jackson.databind.JacksonModule`); it named the Jackson 2 classes before.
 
 === Jackson 3 - camel generate schema
 

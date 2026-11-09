@@ -392,14 +392,10 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 option.setDescription("Lookup and use the existing Jsonb instance with the given id.");
             }
             // The Jackson 2.x and 3.x lines share the model (JsonDataFormat, JacksonXMLDataFormat, AvroDataFormat,
-            // ProtobufDataFormat), whose descriptions name the Jackson 2.x classes; the Jackson 3.x artifacts
-            // (camel-jackson3, camel-jackson3xml, camel-jackson3-avro, camel-jackson3-protobuf) document the
-            // tools.jackson classes instead.
+            // ProtobufDataFormat); the Jackson 3.x artifacts drop the "When using Jackson 3" qualifier
             if (isJacksonFamily(name) && "3".equals(jacksonFamilySuffix(project.getArtifactId()))
                     && option.getDescription() != null) {
                 option.setDescription(option.getDescription()
-                        .replace("com.fasterxml.jackson.databind.ObjectMapper", "tools.jackson.databind.ObjectMapper")
-                        .replace("com.fasterxml.jackson.databind.Module", "tools.jackson.databind.JacksonModule")
                         .replace(" When using Jackson 3, a feature can be qualified", " A feature can be qualified"));
             }
             if ("library".equals(option.getName()) && "json".equals(model.getModelName())) {
