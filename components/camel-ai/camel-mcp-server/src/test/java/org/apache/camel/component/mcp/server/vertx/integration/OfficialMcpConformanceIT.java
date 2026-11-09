@@ -251,6 +251,7 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
         } finally {
             process.descendants().forEach(ProcessHandle::destroyForcibly);
             process.destroyForcibly();
+            Files.deleteIfExists(log);
         }
     }
 
