@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickup.model.Webhook;
@@ -38,13 +36,16 @@ import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit6.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupport {
 
     private static final Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
     private static final String WEBHOOK_ALREADY_EXISTS_JSON = "messages/webhook-already-exists.json";
     private static final String WEBHOOKS = "messages/webhooks.json";
 
@@ -164,7 +165,7 @@ class ClickUpWebhookRegistrationAlreadyExistsTest extends ClickUpTestSupport {
                     String readWebhooksResponseBody;
                     try {
                         readWebhooksResponseBody = MAPPER.writeValueAsString(webhooksReadResult);
-                    } catch (JsonProcessingException e) {
+                    } catch (JacksonException e) {
                         throw new RuntimeException(e);
                     }
 

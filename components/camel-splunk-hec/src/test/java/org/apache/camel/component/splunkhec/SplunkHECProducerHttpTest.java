@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -38,6 +36,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +54,7 @@ public class SplunkHECProducerHttpTest extends CamelTestSupport {
 
     private static final String TOKEN = "11111111-1111-1111-1111-111111111111";
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
     private final List<String> requests = new CopyOnWriteArrayList<>();
     private final List<String> bodies = new CopyOnWriteArrayList<>();
@@ -113,7 +114,7 @@ public class SplunkHECProducerHttpTest extends CamelTestSupport {
     void testStreamBody() throws Exception {
         template.sendBody(uri("&bodyOnly=true"), new ByteArrayInputStream("hello stream".getBytes(StandardCharsets.UTF_8)));
 
-        assertEquals("hello stream", event().asText());
+        assertEquals("hello stream", event().asString());
     }
 
     @Test
@@ -122,15 +123,15 @@ public class SplunkHECProducerHttpTest extends CamelTestSupport {
                 "foo", "bar");
 
         JsonNode event = event();
-        assertEquals("hello stream", event.get("body").asText());
-        assertEquals("bar", event.get("headers").get("foo").asText());
+        assertEquals("hello stream", event.get("body").asString());
+        assertEquals("bar", event.get("headers").get("foo").asString());
     }
 
     @Test
     void testBytesBody() throws Exception {
         template.sendBody(uri("&bodyOnly=true"), "hello bytes".getBytes(StandardCharsets.UTF_8));
 
-        assertEquals("hello bytes", event().asText());
+        assertEquals("hello bytes", event().asString());
     }
 
     @Test
@@ -141,8 +142,8 @@ public class SplunkHECProducerHttpTest extends CamelTestSupport {
         template.sendBody(uri("&bodyOnly=true"), file);
 
         assertEquals(2, bodies.size());
-        assertEquals("hello file", MAPPER.readTree(bodies.get(0)).get("event").asText());
-        assertEquals("hello file", MAPPER.readTree(bodies.get(1)).get("event").asText());
+        assertEquals("hello file", MAPPER.readTree(bodies.get(0)).get("event").asString());
+        assertEquals("hello file", MAPPER.readTree(bodies.get(1)).get("event").asString());
     }
 
     @Test
@@ -162,7 +163,7 @@ public class SplunkHECProducerHttpTest extends CamelTestSupport {
 
         assertNull(exchange.getException());
         assertInstanceOf(GenericFile.class, exchange.getMessage().getBody());
-        assertEquals("hello file consumer", event().asText());
+        assertEquals("hello file consumer", event().asString());
     }
 
     @Test
@@ -176,7 +177,7 @@ public class SplunkHECProducerHttpTest extends CamelTestSupport {
         // the server handles the requests one by one, so once this one is answered the failed one would have arrived
         template.sendBody(uri("&bodyOnly=true"), "hello");
         assertEquals(1, arrived.get());
-        assertEquals("hello", event().asText());
+        assertEquals("hello", event().asString());
     }
 
     private String uri(String options) {

@@ -67,7 +67,7 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
-        case "mapper": getOrCreateConfiguration(target).setMapper(property(camelContext, com.fasterxml.jackson.databind.ObjectMapper.class, value)); return true;
+        case "mapper": getOrCreateConfiguration(target).setMapper(property(camelContext, tools.jackson.databind.ObjectMapper.class, value)); return true;
         case "models": getOrCreateConfiguration(target).setModels(property(camelContext, java.util.Map.class, value)); return true;
         case "oauthclientid":
         case "oauthClientId": getOrCreateConfiguration(target).setOauthClientId(property(camelContext, java.lang.String.class, value)); return true;
@@ -159,7 +159,7 @@ public class ServiceNowComponentConfigurer extends PropertyConfigurerSupport imp
         case "key": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
-        case "mapper": return com.fasterxml.jackson.databind.ObjectMapper.class;
+        case "mapper": return tools.jackson.databind.ObjectMapper.class;
         case "models": return java.util.Map.class;
         case "oauthclientid":
         case "oauthClientId": return java.lang.String.class;

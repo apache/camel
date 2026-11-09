@@ -18,7 +18,6 @@ package org.apache.camel.component.sap.netweaver;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
@@ -28,6 +27,8 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class NetWeaverProducer extends DefaultProducer {
 
@@ -61,7 +62,7 @@ public class NetWeaverProducer extends DefaultProducer {
 
         if (data != null && getEndpoint().isJsonAsMap() && getEndpoint().isJson()) {
             // map json string to json map
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
             Map<?, ?> map = mapper.readValue(data, Map.class);
 
             // if we only have one entry in the map, then put that as root (as it tends to return a single instance "d"

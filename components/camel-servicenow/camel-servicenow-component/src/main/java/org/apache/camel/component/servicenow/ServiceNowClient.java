@@ -27,7 +27,6 @@ import jakarta.ws.rs.core.Response;
 
 import javax.net.ssl.SSLContext;
 
-import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -42,6 +41,9 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 public final class ServiceNowClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowClient.class);
@@ -55,13 +57,22 @@ public final class ServiceNowClient {
                 configuration.getApiUrl(),
                 Arrays.asList(
                         new AuthenticationRequestFilter(configuration),
-                        new JacksonJsonProvider(configuration.getOrCreateMapper())),
+                        new JacksonJsonProvider(jsonMapper(configuration))),
                 true);
 
         configureRequestContext(client);
         configureTls(camelContext, configuration, client);
         configureHttpClientPolicy(configuration, client);
         configureProxyAuthorizationPolicy(configuration, client);
+    }
+
+    private static JsonMapper jsonMapper(ServiceNowConfiguration configuration) {
+        ObjectMapper mapper = configuration.getOrCreateMapper();
+        if (mapper instanceof JsonMapper jsonMapper) {
+            return jsonMapper;
+        }
+        throw new IllegalArgumentException(
+                "The mapper option must be a " + JsonMapper.class.getName() + ", but was: " + mapper.getClass().getName());
     }
 
     public ServiceNowClient types(MediaType type) {

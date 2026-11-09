@@ -7657,3 +7657,29 @@ Without it, `getBody(String.class)` gives the compact JSON and the other convers
 read as its JSON text, but a POJO with Jackson 2 databind annotations such as `@JsonNaming` loses them, so the field names
 it is stored with can change.
 
+=== Jackson 3 - components that use Jackson internally
+
+`camel-bonita`, `camel-clickup`, `camel-lumberjack`, `camel-ocsf`, `camel-pqc`, `camel-sap-netweaver`, `camel-servicenow`,
+`camel-splunk-hec`, `camel-stitch`, `camel-stripe`, `camel-telegram`, `camel-weather`, `camel-whatsapp`, `camel-wordpress`
+and `camel-zookeeper-master` now use Jackson 3 (`tools.jackson`). The JSON they send, store or return does not change: their
+internal mappers keep the Jackson 2 defaults. You only need to act if your code passes Jackson types to these components.
+
+*`camel-servicenow`.* The `mapper` option is now a `tools.jackson.databind.ObjectMapper`, and must be a
+`tools.jackson.databind.json.JsonMapper`, or the endpoint fails with an `IllegalArgumentException`. A custom mapper does not
+get the Jackson 2 defaults, nor the `dateFormat`, `timeFormat` and `dateTimeFormat` options. The payload of the metadata
+extension is a `tools.jackson.databind.JsonNode`. Request and response models that use `@JsonSerialize` or `@JsonDeserialize`
+must import them from `tools.jackson.databind.annotation`; Jackson 3 ignores the ones from
+`com.fasterxml.jackson.databind.annotation`.
+
+*`camel-ocsf`.* `setObjectMapper` and the constructor take a `tools.jackson.databind.ObjectMapper`, and only a mapper of that
+type is found in the registry. An unmarshal body of type `com.fasterxml.jackson.databind.JsonNode` is no longer recognized:
+pass JSON text or `tools.jackson.databind.JsonNode`. With `prettyPrint`, the data format uses a copy of your mapper, and no
+longer changes the mapper itself.
+
+*Model classes.* The `camel-telegram` and `camel-clickup` models write their timestamps with Jackson 3 annotations. A Jackson 2
+mapper ignores those, so to marshal these models use `camel-jackson3`, not `camel-jackson`.
+
+*Exceptions.* `camel-clickup` webhooks, `camel-ocsf`, `camel-pqc`, `camel-sap-netweaver`, `camel-servicenow`,
+`camel-splunk-hec` and `camel-weather` let a JSON failure through as the unchecked `tools.jackson.core.JacksonException`, which
+is not an `IOException`, so `onException(IOException.class)` does not match it.
+

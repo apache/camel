@@ -18,13 +18,13 @@ package org.apache.camel.component.servicenow;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.extension.MetaDataExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -77,12 +77,13 @@ public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
         assertNotNull(result.getPayload(JsonNode.class));
         assertNotNull(result.getPayload(JsonNode.class).get("properties"));
         assertNotNull(result.getPayload(JsonNode.class).get("$schema"));
-        assertEquals("http://json-schema.org/schema#", result.getPayload(JsonNode.class).get("$schema").asText());
+        assertEquals("http://json-schema.org/schema#", result.getPayload(JsonNode.class).get("$schema").asString());
         assertNotNull(result.getPayload(JsonNode.class).get("id"));
         assertNotNull(result.getPayload(JsonNode.class).get("type"));
 
         LOGGER.debug(
-                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
+                JsonMapper.builder().build().writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(result.getPayload()));
     }
 
     @Test
@@ -101,7 +102,8 @@ public class ServiceNowMetaDataExtensionIT extends ServiceNowITSupport {
         assertEquals(JsonNode.class, result.getAttribute(MetaDataExtension.MetaData.JAVA_TYPE));
 
         LOGGER.debug(
-                new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(result.getPayload()));
+                JsonMapper.builder().build().writerWithDefaultPrettyPrinter()
+                        .writeValueAsString(result.getPayload()));
     }
 
     @Test

@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -30,6 +29,8 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.component.telegram.util.TelegramMessageHelper.populateExchange;
 
@@ -41,7 +42,7 @@ public class TelegramWebhookProcessor extends AsyncProcessorSupport {
     public static final String SECRET_TOKEN_HEADER = "X-Telegram-Bot-Api-Secret-Token";
 
     private static final Logger LOG = LoggerFactory.getLogger(TelegramWebhookProcessor.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private AsyncProcessor next;
     private final byte[] secretToken;
