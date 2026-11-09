@@ -80,7 +80,7 @@ Choosing the right backend is typically a matter of:
 | `JpaKeyValueRepository`
 | `camel-jpa`
 | JPA entity-backed; works with any JPA 2 provider (Hibernate, EclipseLink…)
-| ✗ (non-atomic)
+| ✓ (primary key)
 | ✗ (client-side)
 
 | `CassandraKeyValueRepository`
@@ -675,8 +675,11 @@ YAML DSL::
 ----
 ====
 
-NOTE: The JPA backend does not provide atomic `putIfAbsent`. Idempotency under concurrent
-load relies on unique-constraint violations being caught at the database level.
+NOTE: `JpaKeyValueRepository.putIfAbsent` relies on the primary key of the table: when concurrent
+inserts of the same key fail with a constraint violation, the transaction is rolled back and the key
+is read again in a new transaction, which returns the value stored by the other caller. After three
+failed inserts the `PersistenceException` is thrown. When `putIfAbsent` runs in a transaction of the
+caller, the failed insert marks that transaction for rollback, so the caller's transaction fails.
 
 === CassandraKeyValueRepository
 
