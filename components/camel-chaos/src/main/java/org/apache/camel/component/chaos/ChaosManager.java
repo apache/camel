@@ -273,6 +273,8 @@ public final class ChaosManager {
             checkRoute(definition);
         }
         long now = TimeSource.currentTimeMillis();
+        // an exploration whose time is up removes its rules first
+        checkDeadline(now);
         if (rules.size() + definitions.size() > MAX_RULES) {
             retireEnded(now);
         }
@@ -281,7 +283,6 @@ public final class ChaosManager {
                     "There are " + rules.size() + " chaos rules already, and at most " + MAX_RULES
                                             + "; remove some before adding more");
         }
-        checkDeadline(now);
         ChaosExploration running = exploration != null && exploration.isRunning() ? exploration : null;
         if (running != null) {
             for (ChaosRule.Builder definition : definitions) {
@@ -296,7 +297,7 @@ public final class ChaosManager {
             // a rule added before the context started starts its clock when it has started
             rule.clockStarted = camelContext.isStarted();
             if (running != null) {
-                endByDeadline(rule, running);
+                endByDeadline(rule, running, now);
             }
             rules.add(rule);
             added.add(rule);
@@ -328,19 +329,20 @@ public final class ChaosManager {
     public int changeRule(String id, String rule) {
         ChaosRule.Builder definition = parse(rule);
         synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            // an exploration whose time is up removes its rules first, so the rule may be gone
+            checkDeadline(now);
             int index = indexOf(id);
             if (index < 0) {
                 throw new IllegalArgumentException("There is no chaos rule " + id);
             }
             checkRoute(definition);
-            long now = TimeSource.currentTimeMillis();
-            checkDeadline(now);
             ChaosRule changed = new ChaosRule(definition, id, rules.get(index).version + 1, seed, now, maxDuration);
             changed.recentFaults = recentFaults;
             changed.clockStarted = camelContext.isStarted();
             if (exploration != null && exploration.isRunning()) {
                 checkStartsBeforeDeadline(changed, exploration);
-                endByDeadline(changed, exploration);
+                endByDeadline(changed, exploration, now);
             }
             ChaosRule old = rules.set(index, changed);
             old.removed(State.REPLACED, now);
@@ -708,6 +710,8 @@ public final class ChaosManager {
     private void finish(long now, ChaosExploration.Finish by) {
         int removedRules = clearRules();
         exploration.finished(now, by, removedRules);
+        // no rule is left and the exploration is done: the counting stops
+        update();
         LOG.info("Chaos exploration {}: {} rules tried, {} removed",
                 by == ChaosExploration.Finish.DEADLINE ? "finished at its deadline" : "finished",
                 exploration.ruleCount(), removedRules);
@@ -723,11 +727,11 @@ public final class ChaosManager {
     }
 
     // a rule added while an exploration runs ends at its deadline at the latest; its first rule takes the baseline
-    private void endByDeadline(ChaosRule rule, ChaosExploration running) {
+    private void endByDeadline(ChaosRule rule, ChaosExploration running, long now) {
         if (rule.endsAt > running.deadline) {
             rule.endsAt = running.deadline;
         }
-        running.ruleAdded(rule.id, new TreeMap<>(routes), TimeSource.currentTimeMillis());
+        running.ruleAdded(rule.id, new TreeMap<>(routes), now);
     }
 
     // the kinds of fault the suggestions offer per route, read again at most every 10 seconds (the report is read

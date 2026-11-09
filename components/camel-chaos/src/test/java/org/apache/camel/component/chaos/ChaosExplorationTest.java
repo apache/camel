@@ -155,6 +155,35 @@ class ChaosExplorationTest extends ChaosTestSupport {
     }
 
     @Test
+    void aRuleChangedAfterTheDeadlineIsGone() {
+        chaos().startExploration("1m", null);
+        String id = chaos().addRule("endpoint=mock:shipped error");
+        clock.advance(60_000);
+
+        // the change is the first to see the time is up: the exploration removes its rules before the change looks
+        assertThatThrownBy(() -> chaos().changeRule(id, "endpoint=mock:shipped drop"))
+                .isInstanceOf(IllegalArgumentException.class).hasMessage("There is no chaos rule " + id);
+        assertThat(exploration().getString("finishedBy")).isEqualTo("deadline");
+    }
+
+    @Test
+    void theCountingStopsWithTheExploration() {
+        chaos().startExploration("1m", null);
+        assertThat(chaos().isCounting()).isTrue();
+        chaos().addRule("endpoint=mock:shipped error");
+
+        chaos().finishExploration();
+        assertThat(chaos().isCounting()).isFalse();
+
+        // and at the deadline
+        chaos().startExploration("1m", null);
+        chaos().addRule("endpoint=mock:shipped error");
+        clock.advance(60_000);
+        chaos().report();
+        assertThat(chaos().isCounting()).isFalse();
+    }
+
+    @Test
     void aScenarioLoadedWhileItRunsStartsTheCountsAgain() {
         template.sendBody("direct:orders", "before");
         chaos().startExploration("10m", null);
