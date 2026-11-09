@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,7 +41,6 @@ import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.DelegateSyncProcessor;
 import org.apache.camel.util.URISupport;
@@ -190,20 +188,12 @@ public final class Sanitizer {
     }
 
     /**
-     * Reports a violation: counts it, logs it at WARN and charges it to the test session.
+     * Reports a violation: counts it, logs it at WARN and charges it to the test session. The first 1000 are kept for
+     * the report and logged; the others are counted and still charged to the test session, so a test that breaks the
+     * rule fails also when a long-lived context (such as a cached test context) passed the bound before it.
      */
     void record(
             Violation violation, String exchangeId, String routeId, String stepId, String details) {
-        record(violation, exchangeId, routeId, stepId, details, violation.getFix());
-    }
-
-    /**
-     * Reports a violation with its own usual fix. The first 1000 are kept for the report and logged; the others are
-     * counted and still charged to the test session, so a test that breaks the rule fails also when a long-lived
-     * context (such as a cached test context) passed the bound before it.
-     */
-    void record(
-            Violation violation, String exchangeId, String routeId, String stepId, String details, String fix) {
         counts.get(violation).increment();
         boolean keep = kept.incrementAndGet() <= MAX_KEPT;
         if (!keep && overflowLogged.compareAndSet(false, true)) {
@@ -219,7 +209,7 @@ public final class Sanitizer {
             @Override
             public SanitizerViolation get() {
                 if (built == null) {
-                    built = violationOf(violation, exchangeId, routeId, stepId, details, fix);
+                    built = violationOf(violation, exchangeId, routeId, stepId, details);
                 }
                 return built;
             }
@@ -236,7 +226,7 @@ public final class Sanitizer {
     }
 
     private SanitizerViolation violationOf(
-            Violation violation, String exchangeId, String routeId, String stepId, String details, String fix) {
+            Violation violation, String exchangeId, String routeId, String stepId, String details) {
         String processor = processorOf(routeId, stepId);
         StringBuilder sb = new StringBuilder(512);
         sb.append("Exchange sanitizer: ").append(violation.getTitle()).append(" (R1)\n");
@@ -250,7 +240,7 @@ public final class Sanitizer {
         sb.append(details);
         sb.append("  The callback of process(exchange, callback) must be called exactly once, and process must not throw"
                   + " (see AsyncProcessor).\n");
-        sb.append("  Usual fix: ").append(fix).append('.');
+        sb.append("  Usual fix: ").append(violation.getFix()).append('.');
         return new SanitizerViolation(
                 violation, camelContext.getName(), exchangeId, routeId, stepId, processor, sb.toString());
     }
@@ -446,42 +436,12 @@ public final class Sanitizer {
      */
     static final class Trace {
 
-        /**
-         * The methods of Camel that call a plain {@link Processor} and then its callback in {@code finally}, catching
-         * only exceptions: an {@link Error} of the processor goes through after the callback (by name, as the bridge is
-         * a private nested class, binary name with {@code $}, and the bean one is in camel-bean; a rename must be
-         * followed here, which SanitizerUserCodeTest checks).
-         */
-        static final Set<String> SYNC_ADAPTERS = Set.of(
-                DelegateSyncProcessor.class.getName() + ".process",
-                AsyncProcessorConverterHelper.class.getName() + "$ProcessorToAsyncProcessorBridge.process",
-                "org.apache.camel.component.bean.AbstractBeanProcessor.useCustomAdapter");
-
         private final String thread;
         private final StackTraceElement[] frames;
 
         Trace(String thread, StackTraceElement[] frames) {
             this.thread = thread;
             this.frames = frames;
-        }
-
-        /**
-         * Whether the callback was called by an adapter Camel puts around a plain {@link Processor}, and not by the
-         * code of the processor: the first frame that is not a callback (a {@code done} method or a lambda of one) is
-         * one of {@link #SYNC_ADAPTERS}. Unknown (false) without stacks ({@code stackDepth=0}).
-         */
-        boolean calledBySyncAdapter() {
-            if (frames == null) {
-                return false;
-            }
-            for (StackTraceElement f : frames) {
-                String method = f.getMethodName();
-                if ("done".equals(method) || method.startsWith("lambda$")) {
-                    continue;
-                }
-                return SYNC_ADAPTERS.contains(f.getClassName() + "." + method);
-            }
-            return false;
         }
 
         void appendTo(StringBuilder sb, String what) {

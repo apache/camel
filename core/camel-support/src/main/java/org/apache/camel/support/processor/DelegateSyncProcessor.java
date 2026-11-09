@@ -65,8 +65,9 @@ public class DelegateSyncProcessor extends ServiceSupport
         // force calling the sync method
         try {
             processor.process(exchange);
-        } catch (Exception | LinkageError e) {
-            // we catch all exceptions and try to catch relatively manageable low-level errors
+        } catch (Throwable e) {
+            // any Throwable, also an Error such as an AssertionError: the callback is called in finally, so an Error
+            // thrown on after it would not fail the exchange, and the exchange could stay inflight
             exchange.setException(e);
         } finally {
             // we are bridging a sync processor as async so callback with true

@@ -71,12 +71,6 @@ final class SanitizerStepListener implements StepListener {
      */
     static final class StepCall {
 
-        // the usual fix when a plain Processor threw an Error after Camel's adapter called the callback
-        static final String SYNC_ADAPTER_FIX
-                = "fix what threw the Error. The processor is a plain Processor, so the callback is not its own: Camel's"
-                  + " adapter around it (such as DelegateSyncProcessor for process(...)) calls the callback in finally and"
-                  + " then lets the Error through";
-
         private final Sanitizer sanitizer;
         private final String exchangeId;
         private final String routeId;
@@ -149,13 +143,6 @@ final class SanitizerStepListener implements StepListener {
             if (first == null) {
                 trace.appendTo(sb, "process threw " + description);
                 sanitizer.record(Violation.THREW_BEFORE_CALLBACK, exchangeId, routeId, nodeId, sb.toString());
-            } else if (cause instanceof Error && first.calledBySyncAdapter()) {
-                // a plain Processor threw an Error: Camel's adapter called the callback in finally and let the Error
-                // through, so the adapter breaks the rule, not the processor
-                first.appendTo(sb, "the callback was called by Camel's adapter for a plain Processor");
-                trace.appendTo(sb, "then the Error of the processor went through the adapter: " + description);
-                sanitizer.record(Violation.THREW_AFTER_CALLBACK, exchangeId, routeId, nodeId, sb.toString(),
-                        SYNC_ADAPTER_FIX);
             } else {
                 first.appendTo(sb, "the callback was called");
                 trace.appendTo(sb, "then process threw " + description);

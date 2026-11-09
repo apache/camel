@@ -158,7 +158,8 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         }
         try {
             target.process(exchange);
-        } catch (AssertionError | Exception e) {
+        } catch (Throwable e) {
+            // any Throwable, as in DelegateSyncProcessor: the callback is called in finally
             exchange.setException(e);
         } finally {
             callback.done(true);

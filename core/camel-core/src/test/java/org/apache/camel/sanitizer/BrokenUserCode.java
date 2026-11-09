@@ -182,7 +182,7 @@ final class BrokenUserCode {
 
     /**
      * A plain Processor (not an AsyncProcessor) that throws an Error, as an assertion of a test in a processor does.
-     * Camel's adapter around it calls the callback, and lets the Error through.
+     * Camel's adapter around it sets the Error on the exchange and calls the callback, so it breaks no rule.
      */
     static final class ThrowsError implements Processor {
 

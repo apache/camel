@@ -649,6 +649,22 @@ exception was dropped and that callback continued the exchange as a success. A s
 and logged at WARN; before, the exchange was continued a second time. There is no option for the old behaviour; fix the
 processor to set the exception on the exchange and call the callback, as an `AsyncProcessor` must.
 
+=== camel-core - an Error thrown by a Processor fails the exchange
+
+When a plain `Processor` (in `process(...)`, in `bean(...)` for a bean that is a `Processor`, or as a producer that is
+not an `AsyncProcessor`) throws an `Error`, such as an `AssertionError`, the exchange now fails with it, as for an
+exception. Before, only a `LinkageError` thrown in `process(...)` and an `AssertionError` thrown by a bean that is a
+`Processor` did so (as a bean method that throws any `Error` already does). Any other `Error` was thrown on to the
+caller after the route had already been continued, so the next steps ran as if the processor had succeeded, and the
+exchange could stay inflight until the context stopped (which then waited for its shutdown timeout).
+
+The exchange keeps the `Error` wrapped in a `CamelExecutionException`, so the error handler handles it as any other
+failure: `onException(Exception.class)`, `doCatch(Exception.class)` and a dead letter channel now also catch such an
+`Error` (including an `OutOfMemoryError` or a `StackOverflowError`), and a test whose processor fails an assertion
+sees the exchange fail instead of the `AssertionError` being thrown to it. To treat an `Error` differently, match it
+with `onException` or `doCatch` on its class, such as `onException(AssertionError.class)`. There is no option for the
+old behaviour.
+
 === camel-core - variableReceive into a route or group variable stores the header variables in that route or group
 
 With `variableReceive` (`toV`, `enrich`, `pollEnrich`, `fromV` and so on) into a route variable or a group variable,
