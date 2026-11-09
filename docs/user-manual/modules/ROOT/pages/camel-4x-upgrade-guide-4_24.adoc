@@ -397,6 +397,14 @@ With `forceCompletionOnStop` or `completeAllOnStop`, suspending the route no lon
 They are kept and completed when the route or Camel is stopped. To send them out before a suspend, use
 `forceCompletionOfAllGroups` (`AggregateController` or JMX), or stop the route instead.
 
+=== camel-core - Aggregate EIP does not confirm a group that was completed by its first exchange
+
+A group that is completed by the exchange that creates it, for example with `completionSize(1)`, is never added to the
+aggregation repository. With a `RecoverableAggregationRepository`, Camel no longer calls `confirmWithResult` for such a
+group. Before, `JdbcAggregationRepository` logged an ERROR for each one and kept its exchange id as unconfirmed until
+the route was removed. A custom `RecoverableAggregationRepository` should not expect `confirmWithResult` for these
+groups.
+
 === camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
 
 The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
