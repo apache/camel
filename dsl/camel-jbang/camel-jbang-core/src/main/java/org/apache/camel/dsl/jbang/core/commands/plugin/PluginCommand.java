@@ -16,12 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "plugin",
                      description = "Manage plugins that add sub-commands to this CLI")
-public class PluginCommand extends PluginBaseCommand {
+public class PluginCommand extends CamelCommand {
 
     public PluginCommand(CamelJBangMain main) {
         super(main);
