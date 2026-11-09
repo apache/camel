@@ -30,13 +30,17 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.engine.DefaultRouteController;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextRoutesStoppedEvent;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.apache.camel.support.service.ServiceHelper;
@@ -55,6 +59,7 @@ public class ClusteredRouteController extends DefaultRouteController {
     private final List<ClusteredRouteFilter> filters;
     private final PolicyFactory policyFactory;
     private final ClusteredRouteConfiguration defaultConfiguration;
+    private final RoutesStoppedListener routesStoppedListener;
     private CamelClusterService clusterService;
     private CamelClusterService.Selector clusterServiceSelector;
 
@@ -64,6 +69,7 @@ public class ClusteredRouteController extends DefaultRouteController {
         this.filters = new ArrayList<>();
         this.clusterServiceSelector = ClusterServiceSelectors.DEFAULT_SELECTOR;
         this.policyFactory = new PolicyFactory();
+        this.routesStoppedListener = new RoutesStoppedListener();
 
         this.defaultConfiguration = new ClusteredRouteConfiguration();
         this.defaultConfiguration.setInitialDelay(Duration.ofMillis(0));
@@ -141,7 +147,8 @@ public class ClusteredRouteController extends DefaultRouteController {
     }
 
     /**
-     * Set the cluster service to use.
+     * Set the cluster service to use. The route controller starts it if it is not started yet, and stops it when the
+     * CamelContext stops, once the routes have stopped.
      */
     public void setClusterService(CamelClusterService clusterService) {
         ObjectHelper.notNull(clusterService, "CamelClusterService");
@@ -193,11 +200,26 @@ public class ClusteredRouteController extends DefaultRouteController {
             clusterService.start();
         }
 
+        if (!context.getManagementStrategy().getEventNotifiers().contains(routesStoppedListener)) {
+            context.getManagementStrategy().addEventNotifier(routesStoppedListener);
+        }
+
         super.doStart();
     }
 
     @Override
     public void doStop() throws Exception {
+        if (getCamelContext() != null && getCamelContext().isStopping()) {
+            // The CamelContext stops the route controller before the routes. The routes must keep the leadership until
+            // their consumers have stopped and their in-flight exchanges are done, or another node would start them in
+            // the meantime, so the cluster service is stopped once the routes have stopped.
+            return;
+        }
+
+        stopClusterService();
+    }
+
+    private void stopClusterService() {
         if (ServiceHelper.isStarted(clusterService)) {
             // Stop the cluster service.
             clusterService.stop();
@@ -211,6 +233,29 @@ public class ClusteredRouteController extends DefaultRouteController {
         }
 
         super.setCamelContext(camelContext);
+    }
+
+    /**
+     * Stops the cluster service once the routes have stopped, when the CamelContext stops.
+     */
+    private final class RoutesStoppedListener extends SimpleEventNotifierSupport implements NonManagedService {
+        RoutesStoppedListener() {
+            // only the CamelContext events are needed
+            setIgnoreExchangeEvents(true);
+            setIgnoreRouteEvents(true);
+            setIgnoreServiceEvents(true);
+            setIgnoreStepEvents(true);
+        }
+
+        @Override
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof CamelContextRoutesStoppedEvent;
+        }
+
+        @Override
+        public void notify(CamelEvent event) throws Exception {
+            stopClusterService();
+        }
     }
 
     // *******************************
