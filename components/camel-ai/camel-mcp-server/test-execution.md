@@ -47,10 +47,13 @@ Runs `OfficialMcpConformanceIT`, which starts a Camel Main HTTP server with the 
 routes required by each conformance scenario and executes:
 
 ```
-npx @modelcontextprotocol/conformance server \
+npx @modelcontextprotocol/conformance@0.1.16 server \
     --url http://localhost:<port>/mcp \
     --expected-failures src/test/resources/expected-failures.yaml
 ```
+
+To upgrade the pinned version, update the `@modelcontextprotocol/conformance@X.Y.Z` reference
+in `buildConformanceCommand()` and re-run the suite to identify new scenarios that need baseline entries.
 
 **Prerequisites:** Node.js ≥ 18 and npm registry access (the `@modelcontextprotocol/conformance`
 package is downloaded on the first run and cached by npm).

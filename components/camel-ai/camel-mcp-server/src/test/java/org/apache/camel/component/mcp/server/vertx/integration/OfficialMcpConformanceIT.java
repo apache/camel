@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.mcp.server.vertx.integration;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.ServerSocket;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,13 +31,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
 import org.apache.camel.component.platform.http.main.MainHttpServer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
 /**
@@ -83,7 +83,7 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        port = findFreePort();
+        port = AvailablePortFinder.getNextAvailable();
         CamelContext camelContext = super.createCamelContext();
 
         MainHttpServer server = new MainHttpServer();
@@ -148,8 +148,9 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
                         .setBody(constant("Tool execution completed"));
 
                 // ---- tools-call-error -------------------------------------------------------
-                // Scenario expects: isError=true with the specific error text below.
-                // Camel MCP bridge wraps uncaught exceptions as isError=true responses.
+                // Scenario expects: isError=true with non-empty error text.
+                // Camel MCP bridge wraps uncaught exceptions as isError=true responses with a
+                // generic "Tool execution failed" message; the scenario only checks non-empty.
                 from("ai-tool:test_error_handling?tags=" + CONFORMANCE_TAG
                      + "&description=Always returns an error")
                         .routeId("conformance-error")
@@ -206,56 +207,49 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
         pb.environment().put("CI", "true");
         pb.redirectErrorStream(true);
         Process process = pb.start();
-
-        StringBuilder output = new StringBuilder();
-        try (InputStream is = process.getInputStream()) {
-            byte[] buffer = new byte[4096];
-            int read;
-            while ((read = is.read(buffer)) != -1) {
-                String chunk = new String(buffer, 0, read);
-                output.append(chunk);
-                LOG.info("[conformance] {}", chunk.stripTrailing());
+        try {
+            StringBuilder output = new StringBuilder();
+            try (InputStream is = process.getInputStream()) {
+                byte[] buffer = new byte[4096];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    String chunk = new String(buffer, 0, read, StandardCharsets.UTF_8);
+                    output.append(chunk);
+                    LOG.info("[conformance] {}", chunk.stripTrailing());
+                }
             }
-        }
 
-        boolean finished = process.waitFor(5, TimeUnit.MINUTES);
-        if (!finished) {
+            boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+            if (!finished) {
+                process.destroyForcibly();
+                fail("Official MCP conformance suite timed out after 5 minutes");
+            }
+
+            int exitCode = process.exitValue();
+            if (exitCode != 0) {
+                fail("Official MCP conformance suite failed (exit " + exitCode + ").\n"
+                     + "Output:\n" + output + "\n"
+                     + "To register a known failure add the scenario name to " + expectedFailures.getFileName() + ".\n"
+                     + "Re-run manually: npx @modelcontextprotocol/conformance server"
+                     + " --url " + serverUrl
+                     + " --expected-failures " + expectedFailures.toAbsolutePath());
+            }
+        } finally {
             process.destroyForcibly();
-            fail("Official MCP conformance suite timed out after 5 minutes");
         }
-
-        int exitCode = process.exitValue();
-        if (exitCode != 0) {
-            fail("Official MCP conformance suite failed (exit " + exitCode + ").\n"
-                 + "Output:\n" + output + "\n"
-                 + "To register a known failure add the scenario name to " + expectedFailures.getFileName() + ".\n"
-                 + "Re-run manually: npx @modelcontextprotocol/conformance server"
-                 + " --url " + serverUrl
-                 + " --expected-failures " + expectedFailures.toAbsolutePath());
-        }
-
-        assertThat(exitCode)
-                .as("Official MCP conformance suite exit code")
-                .isZero();
     }
 
     // -------------------------------------------------- helpers
-
-    private static int findFreePort() throws IOException {
-        try (ServerSocket socket = new ServerSocket(0)) {
-            return socket.getLocalPort();
-        }
-    }
 
     /**
      * Locates {@code expected-failures.yaml} from the test-resources directory. Maven copies the file to
      * {@code target/test-classes/} during the process-test-resources phase, so the classpath lookup works both under
      * Maven and in an IDE that mirrors that layout.
      */
-    private static Path expectedFailuresPath() {
-        java.net.URL resource = OfficialMcpConformanceIT.class.getResource("/expected-failures.yaml");
+    private static Path expectedFailuresPath() throws Exception {
+        URL resource = OfficialMcpConformanceIT.class.getResource("/expected-failures.yaml");
         if (resource != null) {
-            return Paths.get(resource.getFile());
+            return Paths.get(resource.toURI());
         }
         // Fallback for IDE runs whose resource root is the source directory
         Path fromSource = Paths.get("src/test/resources/expected-failures.yaml");
@@ -270,7 +264,7 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
         List<String> cmd = new ArrayList<>();
         cmd.add("npx");
         cmd.add("--yes");
-        cmd.add("@modelcontextprotocol/conformance");
+        cmd.add("@modelcontextprotocol/conformance@0.1.16");
         cmd.add("server");
         cmd.add("--url");
         cmd.add(serverUrl);
