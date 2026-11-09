@@ -108,6 +108,11 @@ final class ChaosExperiment {
         result = jo;
     }
 
+    /** What came of it as it ended, or null while it runs. */
+    JsonObject result() {
+        return result;
+    }
+
     /** What came of it: as it ended, or as it is now while it runs. */
     JsonObject toJson(Function<String, ChaosRule> rule, Map<String, ChaosManager.RouteCounts> counts, long now) {
         return result != null ? result : read(rule, counts, now, false);

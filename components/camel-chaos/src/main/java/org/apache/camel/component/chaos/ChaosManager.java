@@ -778,7 +778,7 @@ public final class ChaosManager {
                 throw new IllegalStateException("No experiment is open");
             }
             endExperiment(open, now, ChaosExperiment.End.ENDED, note);
-            return open.toJson(this::findRule, routes, now);
+            return open.result();
         }
     }
 
@@ -797,7 +797,7 @@ public final class ChaosManager {
         }
         update();
         LOG.info("Chaos experiment {} ended: {}", experiment.number,
-                experiment.toJson(this::findRule, routes, now).getString("verdict"));
+                experiment.result().getString("verdict"));
         return count;
     }
 
