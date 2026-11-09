@@ -22,6 +22,8 @@ import java.nio.file.Path;
 
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -153,6 +155,32 @@ class InstallDetectorTest {
         var result = InstallDetector.resolveActiveOnPath(binDir + File.pathSeparator + "/nonexistent");
 
         assertThat(result).contains(exe);
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void resolveActiveOnPathFollowsTheSymlinkOfTheWebInstaller(@TempDir Path temp) throws Exception {
+        Path camelSh = Files.createDirectories(temp.resolve("share/camel-cli/versions/4.23.0/bin")).resolve("camel.sh");
+        Files.createFile(camelSh);
+        Path binDir = Files.createDirectories(temp.resolve("bin"));
+        // a relative link, as the web installer writes, and a second link to that one in another PATH entry
+        Files.createSymbolicLink(binDir.resolve("camel"), Path.of("../share/camel-cli/versions/4.23.0/bin/camel.sh"));
+        Path otherBin = Files.createDirectories(temp.resolve("other-bin"));
+        Files.createSymbolicLink(otherBin.resolve("camel"), binDir.resolve("camel"));
+
+        assertThat(InstallDetector.resolveActiveOnPath(binDir.toString())).contains(camelSh);
+        assertThat(InstallDetector.resolveActiveOnPath(otherBin.toString())).contains(camelSh);
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS)
+    void followLinksStopsAtALinkCycle(@TempDir Path temp) throws Exception {
+        Path a = temp.resolve("a");
+        Path b = temp.resolve("b");
+        Files.createSymbolicLink(a, b);
+        Files.createSymbolicLink(b, a);
+
+        assertThat(InstallDetector.followLinks(a)).isIn(a, b);
     }
 
     @Test

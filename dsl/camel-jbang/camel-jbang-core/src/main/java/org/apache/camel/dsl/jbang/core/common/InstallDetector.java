@@ -233,7 +233,8 @@ public final class InstallDetector {
     }
 
     /**
-     * Walks {@code PATH} the way a shell would and returns the first {@code camel} executable found.
+     * Walks {@code PATH} the way a shell would and returns the first {@code camel} executable found, with its symbolic
+     * links followed (the web installer puts a symlink to {@code versions/<version>/bin/camel.sh} on {@code PATH}).
      */
     public static Optional<Path> resolveActiveOnPath() {
         String path = System.getenv("PATH");
@@ -251,9 +252,26 @@ public final class InstallDetector {
             }
             Path candidate = Paths.get(dir, exeName);
             if (Files.exists(candidate)) {
-                return Optional.of(candidate);
+                return Optional.of(followLinks(candidate));
             }
         }
         return Optional.empty();
+    }
+
+    // Follows the symbolic links of the file itself (a chain of them, at most 16), so the active install is the
+    // version directory the link points into. The parent directories are not resolved (unlike toRealPath, which turns
+    // macOS /var into /private/var), as the scanned install locations are not resolved either.
+    static Path followLinks(Path path) {
+        Path current = path;
+        for (int i = 0; i < 16 && Files.isSymbolicLink(current); i++) {
+            try {
+                Path target = Files.readSymbolicLink(current);
+                Path parent = current.toAbsolutePath().getParent();
+                current = (parent != null ? parent.resolve(target) : target).normalize();
+            } catch (IOException | UnsupportedOperationException | SecurityException e) {
+                break;
+            }
+        }
+        return current;
     }
 }
