@@ -551,46 +551,54 @@ Performs commands in the running Camel integrations, such as start/stop route,
 or change logging levels. (use cmd --help to see sub commands)
   -h, --help   Display the help and sub-commands
 Commands:
-  browse             Browse pending messages on endpoints
-  chaos-add          Add chaos rules to a running integration (camel-chaos, for
-                       development only)
-  chaos-change       Change a chaos rule of a running integration (camel-chaos,
-                       for development only)
-  chaos-clear        Remove all chaos rules of running integrations
-                       (camel-chaos, for development only)
-  chaos-load         Load a chaos scenario into a running integration
-                       (camel-chaos, for development only)
-  chaos-remove       Remove a chaos rule of a running integration (camel-chaos,
-                       for development only)
-  chaos-suggest      Suggest chaos rules to try in a running integration, per
-                       route (camel-chaos, for development only)
-  disable-processor  Disable Camel processor
-  enable-processor   Enable Camel processor
-  gc                 Trigger Java Memory Garbage Collector
-  heap-dump          Write a heap dump (.hprof) file for deep memory analysis
-  heap-histogram     Display class-level heap memory usage in a running Camel
-                       integration
-  memory-leak        Diagnose memory leaks in a running Camel integration
-  load               Loads new source files into an existing Camel
-  logger             List or change logging levels
-  receive            Receive and dump messages from remote endpoints
-  reload             Trigger reloading Camel
-  reset-stats        Reset performance statistics
-  resume-route       Resume Camel routes
-  route-diagram      Display Camel route diagram in the terminal
-  route-dump         Dump Camel route in XML, YAML, or Java DSL format
-  route-structure    Dump Camel route structure
-  route-topology     Display inter-route topology connections
-  send               Send messages to endpoints
-  sql                Execute SQL query on a DataSource
-  span               Display OpenTelemetry spans from running Camel integrations
-  start-group        Start Camel route groups
-  start-route        Start Camel routes
-  stop-group         Stop Camel route groups
-  stop-route         Stop Camel routes
-  stub               Browse stub endpoints
-  suspend-route      Suspend Camel routes
-  thread-dump        List threads in a running Camel integration
+  browse                Browse pending messages on endpoints
+  chaos-add             Add chaos rules to a running integration (camel-chaos,
+                          for development only)
+  chaos-change          Change a chaos rule of a running integration
+                          (camel-chaos, for development only)
+  chaos-clear           Remove all chaos rules of running integrations
+                          (camel-chaos, for development only)
+  chaos-experiment      Run one chaos experiment in the exploration of a
+                          running integration: add its rules, send its traffic,
+                          wait for the verdict, and end it
+  chaos-explore-finish  Finish the chaos exploration of a running integration
+                          before its deadline
+  chaos-explore-start   Start a chaos exploration in a running integration: a
+                          time to try chaos rules in, that camel-chaos enforces
+  chaos-load            Load a chaos scenario into a running integration
+                          (camel-chaos, for development only)
+  chaos-remove          Remove a chaos rule of a running integration
+                          (camel-chaos, for development only)
+  chaos-suggest         Suggest chaos rules to try in a running integration,
+                          per route (camel-chaos, for development only)
+  disable-processor     Disable Camel processor
+  enable-processor      Enable Camel processor
+  gc                    Trigger Java Memory Garbage Collector
+  heap-dump             Write a heap dump (.hprof) file for deep memory analysis
+  heap-histogram        Display class-level heap memory usage in a running
+                          Camel integration
+  memory-leak           Diagnose memory leaks in a running Camel integration
+  load                  Loads new source files into an existing Camel
+  logger                List or change logging levels
+  receive               Receive and dump messages from remote endpoints
+  reload                Trigger reloading Camel
+  reset-stats           Reset performance statistics
+  resume-route          Resume Camel routes
+  route-diagram         Display Camel route diagram in the terminal
+  route-dump            Dump Camel route in XML, YAML, or Java DSL format
+  route-structure       Dump Camel route structure
+  route-topology        Display inter-route topology connections
+  send                  Send messages to endpoints
+  sql                   Execute SQL query on a DataSource
+  span                  Display OpenTelemetry spans from running Camel
+                          integrations
+  start-group           Start Camel route groups
+  start-route           Start Camel routes
+  stop-group            Stop Camel route groups
+  stop-route            Stop Camel routes
+  stub                  Browse stub endpoints
+  suspend-route         Suspend Camel routes
+  thread-dump           List threads in a running Camel integration
 
 == camel cmd browse --help
 Usage: camel cmd browse [-h] [--dump] [--fresh-size] [--json] [--mask]
@@ -740,6 +748,129 @@ Examples:
   camel cmd chaos-clear
   camel cmd chaos-clear myApp
   camel cmd chaos-clear myApp --reset
+
+== camel cmd chaos-experiment --help
+Usage: camel cmd chaos-experiment [-h] [--end] [--body=<body>] [--feed=<feed>]
+                                  [--hypothesis=<hypothesis>]
+                                  [--interval=<interval>] [--note=<note>]
+                                  [--repeat=<repeat>] [--timeout=<timeout>]
+                                  [--wait=<wait>] [--header=<headers>]...
+                                  [--rule=<rules>]... [<name>]
+Run one chaos experiment in the exploration of a running integration: add its
+rules, send its traffic, wait for the verdict, and end it
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+      --hypothesis=<hypothesis>
+                            What the experiment tests, in a few words, such as
+                              'orders survive a payment outage'
+      --rule=<rules>        A rule in its one-line text form, as an entry of
+                              camel.chaos.rules; can be given more than once,
+                              and one of them needs an expectation (expect=)
+      --feed=<feed>         The endpoint, or the id of the route, to send the
+                              messages of the experiment to
+      --body=<body>         The body of the messages: text, file:<path>, or
+                              file:<folder> for a message per file
+      --header=<headers>    A header of the messages as key=value; can be given
+                              more than once
+      --repeat=<repeat>     How many messages to send in all (at most 10000)
+                              Default: 0
+      --interval=<interval> The pause between two messages, such as 200ms, or a
+                              range such as 100..500 to draw each pause at
+                              random (at most 60s)
+      --wait=<wait>         The longest wait for the verdict after the messages
+                              were sent (at most 10m)
+                              Default: 2m
+      --note=<note>         What to note with the experiment when it ends
+      --end                 End the open experiment (with --note) instead of
+                              running a new one
+
+An experiment is part of an exploration (camel cmd chaos-explore-start). It
+tests a
+hypothesis with rules, one of them with an expectation (expect=) that decides
+it.
+The rules are added together, the messages of --feed are sent (as camel cmd send
+sends them, with --body, --header, --repeat and --interval), and then it waits
+until
+the expectations are decided, or --wait is up. The experiment is ended then, its
+rules are removed, and what came of it is printed: the verdict, the
+expectations,
+what the routes did, and the traffic. It stays in the journal of the exploration
+(camel get chaos --report).
+
+The verdict is FAIL when an expectation is unmet (exit code 1), PASS when all
+are
+met, and INCONCLUSIVE when it ended before an expectation was decided: wait
+longer
+than the within= of the expectation. --feed can be the id of a route, as the
+feed:
+line of camel cmd chaos-suggest has it.
+
+Examples:
+  camel cmd chaos-experiment --hypothesis='a failed refund is read again' \
+      --rule='route=refunds error rate=every:5 expect=refunds:failed<=0
+within=30s' \
+      --feed=refunds --body=file:test/chaos/refunds-fails/ --repeat=20
+--interval=200ms
+  camel cmd chaos-experiment myApp --hypothesis='orders survive a payment
+outage' \
+      --rule='endpoint=http:payment* error status=503 until=1m expect=orders:
+failed<=0 within=70s' \
+      --wait=90s
+  camel cmd chaos-experiment --end --note='stopped by hand'
+
+== camel cmd chaos-explore-finish --help
+Usage: camel cmd chaos-explore-finish [-h] [--timeout=<timeout>] [<name>]
+Finish the chaos exploration of a running integration before its deadline
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+
+The rules are removed (an open experiment is ended with what came of it so
+far), and
+the journal stays in the report (camel get chaos --report) until the next
+exploration starts or the report is reset.
+
+Examples:
+  camel cmd chaos-explore-finish
+  camel cmd chaos-explore-finish myApp
+
+== camel cmd chaos-explore-start --help
+Usage: camel cmd chaos-explore-start [-h] [--budget=<budget>] [--focus=<focus>]
+                                     [--timeout=<timeout>] [<name>]
+Start a chaos exploration in a running integration: a time to try chaos rules
+in, that camel-chaos enforces
+      [<name>]              Name or pid of the running Camel integration (must
+                              match one); without it, the only one running, or
+                              the only one with chaos switched on
+  -h, --help                Display the help and sub-commands
+      --timeout=<timeout>   How long to wait for the integration to answer, in
+                              millis or as a duration such as 30s
+                              Default: 10000
+      --budget=<budget>     How long the exploration runs, between 10s and 2h
+                              Default: 10m
+      --focus=<focus>       What the exploration is about, such as a route
+
+While the exploration runs, camel-chaos keeps its journal: the baseline (the
+counts
+per route before its first rule), the rules tried, and the experiments
+(camel cmd chaos-experiment). A rule ends at the deadline at the latest, and at
+the
+deadline the rules are removed and the exploration is finished, whatever
+happens.
+One exploration runs at a time. camel get chaos --report shows it.
+
+Examples:
+  camel cmd chaos-explore-start
+  camel cmd chaos-explore-start myApp --budget=30m --focus=orders
 
 == camel cmd chaos-load --help
 Usage: camel cmd chaos-load [-h] [--timeout=<timeout>] <file> [<name>]
