@@ -257,6 +257,28 @@ class SourceTabJumpLinksTest {
         assertThat(tab.computeJumpLinks(billing).get(4).filePath()).isEqualTo(orders.toString());
     }
 
+    @Test
+    void theInfoPanelDescribesTheOpenFileWhenTheViewerHasTheFocus() throws Exception {
+        Files.writeString(dir.resolve("application.properties"), "greeting=hello\n");
+        Path routes = Files.writeString(dir.resolve("orders.camel.yaml"), """
+                - route:
+                    id: orders
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - to:
+                            uri: log:orders
+                """);
+        SourceTab tab = newTab();
+        assertThat(tab.loadDirectory(dir)).isTrue();
+        // the list has its cursor on its first entry, not on the routes
+        assertThat(tab.infoPath()).isNotNull().isNotEqualTo(routes);
+
+        // the routes are opened another way (as g does): the list keeps its cursor, the viewer has the focus
+        tab.openFileForReplay(routes);
+        assertThat(tab.infoPath()).isEqualTo(routes);
+    }
+
     private static SourceTab newTab() {
         return new SourceTab(new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())));
     }

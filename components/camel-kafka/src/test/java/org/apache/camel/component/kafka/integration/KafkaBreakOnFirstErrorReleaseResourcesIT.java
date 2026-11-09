@@ -47,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * heartbeat-threads, while reconnecting.
  *
  */
-@Tags({ @Tag("breakOnFirstError") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64" },
              disabledReason = "This test does not run reliably on some platforms")

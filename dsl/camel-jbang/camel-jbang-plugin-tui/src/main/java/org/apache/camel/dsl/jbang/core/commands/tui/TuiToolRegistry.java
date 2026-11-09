@@ -35,6 +35,8 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.export.ExportRequest;
 import dev.tamboui.style.Color;
 import dev.tamboui.style.Style;
+import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
@@ -1935,6 +1937,13 @@ class TuiToolRegistry {
             result.put("message", "Failed to start: " + name);
             if (outcome.log() != null) {
                 result.put("log", outcome.log());
+                // a port another integration has: which one, and the way out
+                List<Line> hint = PortInUse.hint(outcome.log().lines().toList(), facade.liveIntegrations());
+                if (!hint.isEmpty()) {
+                    result.put("hint", hint.stream()
+                            .map(l -> l.spans().stream().map(Span::content).collect(Collectors.joining()).strip())
+                            .filter(t -> !t.isEmpty()).collect(Collectors.joining(" ")));
+                }
             }
             // a tool error (MCP isError), which still has the log that tells why
             throw new ToolExecutionException(Jsoner.serialize(result));

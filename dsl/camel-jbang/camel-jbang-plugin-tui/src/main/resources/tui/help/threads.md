@@ -66,6 +66,7 @@ watch BLOCKED/WAITED counters change over time without manual action.
 - `Up/Down` — select thread (detail updates automatically)
 - `PgUp/PgDn` — scroll stack trace detail
 - `Tab` — switch focus between the table and the stack trace
+- Mouse — a click or the wheel gives the panel under the mouse the focus; the wheel scrolls it
 - `s` — cycle sort column
 - `S` — reverse sort order
 - `f` — toggle filter (camel / all)

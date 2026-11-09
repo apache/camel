@@ -64,7 +64,7 @@ class HealthTabRenderTest {
         hc.liveness = true;
         info.healthChecks.add(hc);
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         String rendered = renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("context"), "Should render health check name 'context'");
@@ -82,7 +82,7 @@ class HealthTabRenderTest {
         hc.message = "Route stopped";
         info.healthChecks.add(hc);
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         String rendered = renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("timer-route"), "Should render health check name");
@@ -99,7 +99,7 @@ class HealthTabRenderTest {
         hc.readiness = true;
         info.healthChecks.add(hc);
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
 
         Rect area = new Rect(0, 0, 100, 20);
         Buffer buffer = Buffer.empty(area);
@@ -136,7 +136,7 @@ class HealthTabRenderTest {
         hc.liveness = true;
         info.healthChecks.add(hc);
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
 
         Rect area = new Rect(0, 0, 100, 20);
         Buffer buffer = Buffer.empty(area);
@@ -166,7 +166,7 @@ class HealthTabRenderTest {
     @Test
     void renderEmptyHealthChecksShowsPlaceholder() {
         // No health checks added
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         // Use wider terminal to avoid column truncation of the placeholder text
         String rendered = renderToString(tab, 140, 10);
 
@@ -180,7 +180,7 @@ class HealthTabRenderTest {
         addHealthCheck("camel", "route-controller", "UP");
         addHealthCheck("routes", "timer-route", "DOWN");
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         String rendered = renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("context"), "Should render 'context' check");
@@ -192,7 +192,7 @@ class HealthTabRenderTest {
     void renderShowsHeaderColumns() {
         addHealthCheck("camel", "context", "UP");
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         String rendered = renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("GROUP"), "Should show GROUP header");
@@ -206,7 +206,7 @@ class HealthTabRenderTest {
     void renderShowsBorderWithTitle() {
         addHealthCheck("camel", "context", "UP");
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         String rendered = renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("Health"), "Should show 'Health' in the block title");
@@ -216,7 +216,7 @@ class HealthTabRenderTest {
     void renderNoSelectionShowsPrompt() {
         ctx.selectedPid = null;
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         String rendered = renderToString(tab, 100, 10);
 
         assertTrue(rendered.contains("No integration selected") || rendered.contains("Select an integration"),
@@ -233,7 +233,7 @@ class HealthTabRenderTest {
         hc.liveness = true;
         info.healthChecks.add(hc);
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         String rendered = renderToString(tab, 120, 20);
 
         assertTrue(rendered.contains("R/L"), "Should show R/L for readiness+liveness");
@@ -244,7 +244,7 @@ class HealthTabRenderTest {
         addHealthCheck("camel", "context", "UP");
         addHealthCheck("routes", "failing", "DOWN");
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
 
         // Press 'd' to toggle DOWN-only filter
         tab.handleKeyEvent(KeyEvent.ofChar('d', KeyModifiers.NONE));
@@ -260,7 +260,7 @@ class HealthTabRenderTest {
 
     @Test
     void renderFooterHintsContainExpectedKeys() {
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
         List<Span> footerSpans = new ArrayList<>();
         tab.renderFooter(footerSpans);
 
@@ -277,7 +277,7 @@ class HealthTabRenderTest {
     void sortCycleChangesHeaderAppearance() {
         addHealthCheck("camel", "context", "UP");
 
-        HealthTab tab = new HealthTab(ctx);
+        HealthTab tab = tableTab();
 
         // Default sort is "name" — header should have a sort indicator on NAME
         String rendered1 = renderToString(tab, 120, 20);
@@ -291,7 +291,90 @@ class HealthTabRenderTest {
                 "After one sort cycle, indicator should move to STATUS");
     }
 
+    @Test
+    void allGoodIsAPageNotATableOfUp() {
+        info.healthReady = true;
+        info.healthLive = true;
+        long now = System.currentTimeMillis();
+        for (String name : List.of("context", "route-controller", "security-policy", "route:orders", "route:billing",
+                "consumer:orders")) {
+            HealthCheckInfo hc = check("camel", name, "UP");
+            hc.since = now - 19 * 60_000;
+            hc.invocations = 2329;
+        }
+        check("acme", "warehouse", "UP");
+
+        String rendered = renderToString(new HealthTab(ctx), 160, 30);
+
+        assertTrue(rendered.contains("All good"), rendered);
+        assertTrue(rendered.contains("7 checks UP"), rendered);
+        assertTrue(rendered.contains("checked 2329 times · never failed"), rendered);
+        assertTrue(rendered.contains(
+                "Camel checks on its own: the context, the route controller, the security policy, 2 routes and 1 consumer"),
+                rendered);
+        assertTrue(rendered.contains("Your checks: " + TuiIcons.HEALTH_UP + " warehouse"), rendered);
+        assertFalse(rendered.contains("GROUP"), "no table: " + rendered);
+    }
+
+    @Test
+    void aCheckThatIsDownComesFirstWithWhatItMeans() {
+        info.healthReady = false;
+        info.healthLive = true;
+        long now = System.currentTimeMillis();
+        check("camel", "context", "UP");
+        HealthCheckInfo down = check("camel", "consumer:orders", "DOWN");
+        down.message = "Connection refused: kafka:9092";
+        down.since = now - 4 * 60_000;
+        down.failures = 23;
+        down.invocations = 251;
+
+        String rendered = renderToString(new HealthTab(ctx), 160, 30);
+
+        assertTrue(rendered.contains("NOT READY"), rendered);
+        assertTrue(rendered.contains("consumer:orders   DOWN since"), rendered);
+        assertTrue(rendered.contains("Connection refused: kafka:9092"), rendered);
+        assertTrue(rendered.contains("failed 23 times, of 251 checks"), rendered);
+        assertTrue(rendered.contains("Kubernetes would take it out of the service"), rendered);
+        assertTrue(rendered.contains("1 other check UP"), rendered);
+    }
+
+    @Test
+    void theStripShowsAFlapThePageWouldNotShow() {
+        info.healthReady = true;
+        info.healthLive = true;
+        check("camel", "context", "UP");
+        long end = System.currentTimeMillis() / 1000;
+        for (long s = end - 60; s <= end; s++) {
+            // ready went down for 5 seconds 30 seconds ago
+            info.healthReady = s < end - 35 || s > end - 31;
+            ctx.healthHistory.record(info, s);
+        }
+        info.healthReady = true;
+
+        String rendered = renderToString(new HealthTab(ctx), 160, 30);
+
+        assertTrue(rendered.contains("All good"), rendered);
+        assertTrue(rendered.contains("down 5s, the last at"), rendered);
+    }
+
     // ---- Helper methods ----
+
+    /** The tab with the checks one by one in the table (t). */
+    private HealthTab tableTab() {
+        HealthTab tab = new HealthTab(ctx);
+        tab.handleKeyEvent(KeyEvent.ofChar('t', KeyModifiers.NONE));
+        return tab;
+    }
+
+    private HealthCheckInfo check(String group, String name, String state) {
+        HealthCheckInfo hc = new HealthCheckInfo();
+        hc.group = group;
+        hc.name = name;
+        hc.state = state;
+        hc.readiness = true;
+        info.healthChecks.add(hc);
+        return hc;
+    }
 
     private void addHealthCheck(String group, String name, String state) {
         HealthCheckInfo hc = new HealthCheckInfo();

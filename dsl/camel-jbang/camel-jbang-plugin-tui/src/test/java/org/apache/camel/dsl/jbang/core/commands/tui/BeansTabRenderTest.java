@@ -24,6 +24,8 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -72,6 +74,32 @@ class BeansTabRenderTest {
         String rendered = TuiTestHelper.renderToString(tab, 100, 20);
 
         assertTrue(rendered.contains("No beans"), "Should show 'No beans' when no bean data is loaded");
+    }
+
+    @Test
+    void theBeansOfTheIntegrationComeFirst() {
+        BeansTab tab = new BeansTab(ctx);
+        tab.allBeans = List.of(bean("global-variable-repository", "org.apache.camel.impl.engine.GlobalVariableRepository"),
+                bean("DependencyDownloaderStrategy", "org.apache.camel.main.download.DependencyDownloaderStrategy"));
+
+        // none of its own: the table says so, and how to see the ones of Camel
+        String rendered = TuiTestHelper.renderToString(tab, 120, 20);
+        assertTrue(rendered.contains("scope:user"), rendered);
+        assertTrue(rendered.contains("No beans of its own: f shows the 2 of Camel"), rendered);
+        assertEquals("user", tab.getTableDataAsJson().getString("scope"));
+        assertEquals(2, tab.getTableDataAsJson().getInteger("allBeans"));
+
+        tab.allBeans = List.of(tab.allBeans.get(0), bean("orderService", "com.acme.OrderService"));
+        rendered = TuiTestHelper.renderToString(tab, 120, 20);
+        assertTrue(rendered.contains("orderService"), rendered);
+        assertFalse(rendered.contains("global-variable-repository"), rendered);
+    }
+
+    private static BeansTab.BeanData bean(String name, String type) {
+        BeansTab.BeanData b = new BeansTab.BeanData();
+        b.name = name;
+        b.type = type;
+        return b;
     }
 
     @Test

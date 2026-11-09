@@ -26,8 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.AggregationStrategies;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -46,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * The scenarios cover transaction rollback and replay, error handling, offsets, batching and route patterns.
  */
-@Tags({ @Tag("breakOnFirstError") })
 class KafkaExactlyOnceIT extends KafkaExactlyOnceITSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaExactlyOnceIT.class);

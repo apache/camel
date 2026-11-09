@@ -18,7 +18,7 @@ data is aggregated into five views:
 ## Controls
 
 - `F5` — refresh (take new JFR snapshot)
-- `Space` — cycle view
+- `Space` — cycle view, or click the name of a view
 - `s` / `S` — cycle sort column / reverse sort direction
 - `Esc` — back
 

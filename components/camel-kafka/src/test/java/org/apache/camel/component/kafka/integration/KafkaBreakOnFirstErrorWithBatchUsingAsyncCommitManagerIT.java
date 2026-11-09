@@ -35,8 +35,6 @@ import org.apache.kafka.common.Uuid;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -50,7 +48,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * this will test basic breakOnFirstError functionality uses allowManualCommit and set Sync Commit Manager this allows
  * Camel to handle when to commit an offset
  */
-@Tags({ @Tag("breakOnFirstError") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64", "ppc64le" },
              disabledReason = "This test does not run reliably on some platforms")

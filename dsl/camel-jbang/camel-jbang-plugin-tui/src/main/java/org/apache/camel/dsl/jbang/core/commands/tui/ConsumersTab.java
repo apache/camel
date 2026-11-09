@@ -74,14 +74,15 @@ class ConsumersTab extends AbstractTableTab {
             String statusText = healthDown ? TuiIcons.HEALTH_WARN + " " + status : status;
             String type = consumerType(ci);
             String schedule = consumerSchedule(ci);
-            String sinceLast = consumerSinceLast(ci);
+            String last = ago(ci.sinceLastCompleted != null ? ci.sinceLastCompleted : ci.sinceLastStarted);
+            String lastFail = ago(ci.sinceLastFailed);
             String uri = healthDown && hc.message != null
                     ? hc.message
                     : (ci.uri != null ? ci.uri : "");
 
             // the URI gets the rest of the width: the borders, ">> ", 8 gaps and the other columns; a long id or URI
             // ends with an ellipsis where it is cut
-            int uriWidth = Math.max(0, area.width() - 2 - 3 - 8 - (20 + 10 + 16 + 8 + 8 + 22 + 8 + 22));
+            int uriWidth = Math.max(0, area.width() - 2 - 3 - 9 - (20 + 10 + 16 + 8 + 8 + 22 + 8 + 10 + 10));
             rows.add(Row.from(
                     Cell.from(Span.styled(" " + TuiHelper.truncate(ci.id, 19), Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(Span.styled(statusText, statusStyle)),
@@ -90,12 +91,13 @@ class ConsumersTab extends AbstractTableTab {
                     rightCell(String.valueOf(ci.inflight), 8),
                     Cell.from(schedule),
                     rightCell(ci.totalCounter != null ? String.valueOf(ci.totalCounter) : "", 8),
-                    Cell.from(sinceLast),
+                    rightCell(last, 10),
+                    lastFail.isEmpty() ? rightCell("", 10) : rightCell(lastFail, 10, Theme.error()),
                     Cell.from(Span.styled(TuiHelper.truncate(uri, uriWidth), healthDown ? Theme.error() : Style.EMPTY))));
         }
 
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No consumers", 9));
+            rows.add(emptyRow("No consumers", 10));
         }
 
         Table table = Table.builder()
@@ -108,7 +110,8 @@ class ConsumersTab extends AbstractTableTab {
                         rightCell(sortLabel("INFLIGHT", "inflight"), 8, sortStyle("inflight")),
                         Cell.from(Span.styled("SCHEDULE", Style.EMPTY.bold())),
                         rightCell(sortLabel("POLLS", "polls"), 8, sortStyle("polls")),
-                        Cell.from(Span.styled("SINCE-LAST", Style.EMPTY.bold())),
+                        rightCell("LAST", 10, Style.EMPTY.bold()),
+                        rightCell("LAST FAIL", 10, Style.EMPTY.bold()),
                         Cell.from(Span.styled(sortLabel("URI", "uri"), sortStyle("uri")))))
                 .widths(
                         Constraint.length(20),
@@ -118,7 +121,8 @@ class ConsumersTab extends AbstractTableTab {
                         Constraint.length(8),
                         Constraint.length(22),
                         Constraint.length(8),
-                        Constraint.length(22),
+                        Constraint.length(10),
+                        Constraint.length(10),
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
@@ -278,11 +282,9 @@ class ConsumersTab extends AbstractTableTab {
         return ms + "ms";
     }
 
-    private static String consumerSinceLast(ConsumerInfo ci) {
-        String s1 = ci.sinceLastStarted != null ? ci.sinceLastStarted : "-";
-        String s2 = ci.sinceLastCompleted != null ? ci.sinceLastCompleted : "-";
-        String s3 = ci.sinceLastFailed != null ? ci.sinceLastFailed : "-";
-        return s1 + "/" + s2 + "/" + s3;
+    /** How long ago, from the time since the last exchange the integration says (1m5s): blank when there was none. */
+    static String ago(String since) {
+        return since != null && !since.isBlank() && !"-".equals(since) ? since + " ago" : "";
     }
 
     @Override

@@ -38,8 +38,6 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.condition.EnabledOnOs;
@@ -55,7 +53,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * mimics the reproduction of the problem in https://github.com/CodeSmell/CamelKafkaOffset
  */
-@Tags({ @Tag("breakOnFirstError") })
 @DisabledIfSystemProperty(named = "ci.env.name", matches = ".*",
                           disabledReason = "Multiple problems: unreliable and slow (see CAMEL-20680)")
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },

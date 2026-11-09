@@ -376,6 +376,7 @@
                                     <exclude>**/*.lock</exclude>
                                     <exclude>.claude/**</exclude>
                                     <exclude>.omc/**</exclude>
+                                    <exclude>.bob/**</exclude>
                                     <exclude>.mvn/**</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>KEYS</exclude>
@@ -604,6 +605,7 @@
                             <!-- Claude Code / OMC worktrees -->
                             <exclude>.claude/**/*</exclude>
                             <exclude>.omc/**/*</exclude>
+                            <exclude>.bob/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>

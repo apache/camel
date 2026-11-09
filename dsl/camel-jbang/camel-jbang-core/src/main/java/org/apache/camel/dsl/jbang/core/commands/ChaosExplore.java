@@ -154,7 +154,8 @@ public class ChaosExplore extends CamelCommand {
             answer = ask.doCall();
         } catch (Exception e) {
             // the LLM fails with an exit code; anything else must not cost the report of what was explored so far
-            printer().printErr("camel ask failed: " + e.getMessage());
+            // an exception without a message is known by its type
+            printer().printErr("camel ask failed: " + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
             answer = CliExitCode.FAILURE;
         } finally {
             // the AI may have finished it already; else its rules go now
@@ -166,12 +167,18 @@ public class ChaosExplore extends CamelCommand {
         printer().println();
         lines.forEach(printer()::println);
         if (save && exploration != null) {
-            Saved saved = save(Path.of("test", "chaos"), LocalDateTime.now(),
-                    new Run(integration, budget, focus, ask.usedModel, seed(status)), exploration, ask.lastAnswer,
-                    lines);
-            printer().println();
-            printer().println("Report: " + saved.report());
-            saved.scenarios().forEach(s -> printer().println("Scenario: " + s + " (replay: camel run * --chaos=" + s + ")"));
+            try {
+                Saved saved = save(Path.of("test", "chaos"), LocalDateTime.now(),
+                        new Run(integration, budget, focus, ask.usedModel, seed(status)), exploration, ask.lastAnswer,
+                        lines);
+                printer().println();
+                printer().println("Report: " + saved.report());
+                saved.scenarios()
+                        .forEach(s -> printer().println("Scenario: " + s + " (replay: camel run * --chaos=" + s + ")"));
+            } catch (IOException e) {
+                // the journal is printed already: say why it is not saved, rather than a stack trace
+                printer().printErr("Could not save the report in test/chaos: " + e.getMessage());
+            }
         }
         if (failed(exploration)) {
             return CliExitCode.FAILURE;

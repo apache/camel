@@ -624,4 +624,24 @@ class StatusParserTest {
         assertEquals("C:\\new", StatusParser.bodyText("C:\\\\new"), "an escaped backslash stays one backslash");
         assertNull(StatusParser.bodyText(null));
     }
+
+    @Test
+    void healthDetailsSayWhenAndHowOften() {
+        HealthCheckInfo hc = new HealthCheckInfo();
+        hc.state = "UP";
+        JsonObject details = new JsonObject();
+        details.put("success.start.time", "2026-11-09T16:43:05.255900034+01:00[Europe/Copenhagen]");
+        details.put("success.time", "2026-11-09T17:02:42.440624884+01:00[Europe/Copenhagen]");
+        details.put("invocation.count", "2329");
+        details.put("failure.count", "0");
+
+        StatusParser.healthDetails(hc, details);
+
+        assertEquals(1794238985255L, hc.since);
+        assertEquals(1794240162440L, hc.lastUp);
+        assertEquals(2329, hc.invocations);
+        assertEquals(0, hc.failures);
+        assertEquals(0, hc.lastFailure);
+        assertEquals(0, StatusParser.epochMillis("not a time"));
+    }
 }

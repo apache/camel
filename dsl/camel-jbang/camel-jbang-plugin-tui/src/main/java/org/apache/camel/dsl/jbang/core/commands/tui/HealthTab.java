@@ -40,6 +40,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 class HealthTab extends AbstractTableTab {
 
     private boolean showOnlyDown;
+    // the page (all good, or what is wrong) unless t asks for the checks one by one
+    private boolean table;
 
     HealthTab(MonitorContext ctx) {
         super(ctx, "group", "name", "status");
@@ -60,7 +62,11 @@ class HealthTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (ke.isCharIgnoreCase('d')) {
+        if (ke.isCharIgnoreCase('t')) {
+            table = !table;
+            return true;
+        }
+        if (table && ke.isCharIgnoreCase('d')) {
             showOnlyDown = !showOnlyDown;
             return true;
         }
@@ -69,6 +75,11 @@ class HealthTab extends AbstractTableTab {
 
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
+        if (!table) {
+            lastTableArea = null;
+            HealthPage.render(frame, area, info, ctx.healthHistory, System.currentTimeMillis());
+            return;
+        }
         List<HealthCheckInfo> healthChecks = new ArrayList<>(getFilteredHealthChecks(info));
         healthChecks.sort(this::sortHealth);
 
@@ -144,8 +155,20 @@ class HealthTab extends AbstractTableTab {
 
     @Override
     public void renderFooter(List<Span> spans) {
-        super.renderFooter(spans);
-        hint(spans, "d", showOnlyDown ? "show all" : "only DOWN");
+        if (table) {
+            super.renderFooter(spans);
+        } else {
+            // the page has nothing to sort
+            hint(spans, "Esc", "back");
+        }
+        hint(spans, "t", table ? "summary" : "all checks");
+        if (table) {
+            hint(spans, "d", showOnlyDown ? "show all" : "only DOWN");
+        }
+    }
+
+    boolean isTable() {
+        return table;
     }
 
     boolean isShowOnlyDown() {
@@ -202,6 +225,12 @@ class HealthTab extends AbstractTableTab {
         }
         JsonObject result = new JsonObject();
         result.put("tab", "Health");
+        if (info.healthReady != null) {
+            result.put("ready", info.healthReady);
+        }
+        if (info.healthLive != null) {
+            result.put("live", info.healthLive);
+        }
         JsonArray rows = new JsonArray();
         List<HealthCheckInfo> checks = new ArrayList<>(getFilteredHealthChecks(info));
         checks.sort(this::sortHealth);
@@ -214,6 +243,13 @@ class HealthTab extends AbstractTableTab {
             row.put("liveness", hi.liveness);
             if (hi.message != null) {
                 row.put("message", hi.message);
+            }
+            row.put("builtIn", HealthPage.isBuiltIn(hi));
+            if (hi.since > 0) {
+                row.put("since", hi.since);
+            }
+            if (hi.failures > 0) {
+                row.put("failures", hi.failures);
             }
             rows.add(row);
         }

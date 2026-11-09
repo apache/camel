@@ -91,6 +91,31 @@ final class TimelineExchanges {
         selected = Math.max(0, Math.min(Math.max(0, count - 1), selected + delta));
     }
 
+    /**
+     * A click on a line of the list selects the exchange on it; true when it was on one.
+     *
+     * @param line  the line clicked, from the top of the list
+     * @param count the exchanges kept
+     * @param rows  the lines the list has
+     */
+    boolean click(int line, int count, int rows) {
+        if (!open || detail || line < 0 || line >= rows) {
+            return false;
+        }
+        int i = first(count, rows) + line;
+        if (i >= count) {
+            return false;
+        }
+        selected = i;
+        return true;
+    }
+
+    /** The first exchange the list shows: the list scrolls to keep the selected one in view. */
+    private int first(int count, int rows) {
+        int sel = Math.min(selected, count - 1);
+        return Math.max(0, Math.min(sel - rows + 1, count - rows));
+    }
+
     Timeline.Kept selected(List<Timeline.Kept> kept) {
         return kept.isEmpty() ? null : kept.get(Math.min(selected, kept.size() - 1));
     }
@@ -114,8 +139,7 @@ final class TimelineExchanges {
             return detailLines(selected(kept), rows);
         }
         int sel = Math.min(selected, kept.size() - 1);
-        int first = Math.max(0, Math.min(sel - rows + 1, kept.size() - rows));
-        for (int i = first; i < kept.size() && lines.size() < rows; i++) {
+        for (int i = first(kept.size(), rows); i < kept.size() && lines.size() < rows; i++) {
             lines.add(row(kept.get(i), i == sel));
         }
         return lines;

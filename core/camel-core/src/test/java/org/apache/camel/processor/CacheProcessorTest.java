@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.KeyValueRepository;
+import org.apache.camel.support.MemoryKeyValueRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -171,6 +174,43 @@ class CacheProcessorTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         template.sendBodyAndHeader("direct:cached-clause", "req2", "productId", "X");
         MockEndpoint.assertIsSatisfied(context);
+    }
+
+    @Test
+    void testDocumentedInvalidationRecipeDropsCachedEntry() throws Exception {
+        KeyValueRepository repo = new MemoryKeyValueRepository();
+        context.getRegistry().bind("productCache", repo);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:getProduct")
+                        .cache(simple("${header.productId}")).keyValueRepository("productCache")
+                        .process(e -> e.getMessage().setBody("v" + e.getIn().getHeader("version", Integer.class)))
+                        .end();
+
+                from("direct:invalidate")
+                        .process(exchange -> {
+                            String productId = exchange.getIn().getHeader("productId", String.class);
+                            KeyValueRepository cache = exchange.getContext().getRegistry()
+                                    .lookupByNameAndType("productCache", KeyValueRepository.class);
+                            cache.delete(productId);
+                        });
+            }
+        });
+
+        assertThat(template.requestBodyAndHeaders("direct:getProduct", null,
+                Map.of("productId", "42", "version", 1))).isEqualTo("v1");
+        // cached — version 2 ignored
+        assertThat(template.requestBodyAndHeaders("direct:getProduct", null,
+                Map.of("productId", "42", "version", 2))).isEqualTo("v1");
+
+        // invalidate via recipe from docs
+        template.sendBodyAndHeader("direct:invalidate", null, "productId", "42");
+
+        // cache miss — reloads with version 2
+        assertThat(template.requestBodyAndHeaders("direct:getProduct", null,
+                Map.of("productId", "42", "version", 2))).isEqualTo("v2");
     }
 
     @Override
