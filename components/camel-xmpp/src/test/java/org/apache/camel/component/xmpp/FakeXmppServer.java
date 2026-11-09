@@ -59,6 +59,7 @@ final class FakeXmppServer implements AutoCloseable {
     private final AtomicInteger counter = new AtomicInteger();
     private final AtomicInteger binds = new AtomicInteger();
     private final AtomicInteger conflicts = new AtomicInteger();
+    private final AtomicInteger roomJoins = new AtomicInteger();
     private volatile boolean running = true;
 
     FakeXmppServer() throws IOException {
@@ -91,6 +92,13 @@ final class FakeXmppServer implements AutoCloseable {
      */
     int conflicts() {
         return conflicts.get();
+    }
+
+    /**
+     * The number of times a session entered a room since the server started, also when it was in the room already.
+     */
+    int roomJoins() {
+        return roomJoins.get();
     }
 
     /**
@@ -273,6 +281,7 @@ final class FakeXmppServer implements AutoCloseable {
                 }
                 // entering a room: the room answers with the occupant's own presence (status 110)
                 room = to.substring(0, to.indexOf('/'));
+                roomJoins.incrementAndGet();
                 write("<presence from='" + to + "' to='" + jid + "' id='" + attribute(ID, element) + "'>"
                       + "<x xmlns='http://jabber.org/protocol/muc#user'><item affiliation='none' role='participant'/>"
                       + "<status code='110'/></x></presence>");
