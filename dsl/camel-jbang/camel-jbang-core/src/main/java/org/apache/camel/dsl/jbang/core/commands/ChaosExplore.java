@@ -154,7 +154,8 @@ public class ChaosExplore extends CamelCommand {
             answer = ask.doCall();
         } catch (Exception e) {
             // the LLM fails with an exit code; anything else must not cost the report of what was explored so far
-            printer().printErr("camel ask failed: " + e.getMessage());
+            // an exception without a message is known by its type
+            printer().printErr("camel ask failed: " + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()));
             answer = CliExitCode.FAILURE;
         } finally {
             // the AI may have finished it already; else its rules go now
