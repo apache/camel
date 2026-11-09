@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.buffer.Buffer;
@@ -195,6 +196,28 @@ class ErrorsTabRenderTest {
         String rendered = renderToString(tab, 160, 30);
 
         assertTrue(rendered.contains("Errors [2]"), "Title should show error count");
+        assertFalse(rendered.contains("happened"), "No more errors happened than are listed");
+    }
+
+    @Test
+    void theCountIsOnTheNewestEntryOfAKindAndTheTitleSaysHowManyHappened() {
+        // the registry keeps the newest 3 of each kind: 3 of 3 connection failures, and the 8th to 10th rejection
+        for (int i = 1; i <= 3; i++) {
+            addError("ID-00" + i, "supplier", "throwException1", "ConnectException", "supplier unreachable", true);
+            info.errors.get(info.errors.size() - 1).repeatCount = i;
+        }
+        for (int i = 8; i <= 10; i++) {
+            addError("ID-01" + i, "stock-check", "setBody1", "CallNotPermittedException", "OPEN", true);
+            info.errors.get(info.errors.size() - 1).repeatCount = i;
+        }
+        info.errorCount = 13;
+
+        assertEquals(Set.of(info.errors.get(2), info.errors.get(5)), ErrorsTab.newestOfEachKind(info.errors));
+
+        String rendered = renderToString(new ErrorsTab(ctx), 160, 30);
+        assertTrue(rendered.contains("Errors [6] 13 happened, the newest of each kind are kept"), rendered);
+        assertFalse(rendered.contains(" 8 "), "the older entries of a kind leave COUNT blank");
+        assertTrue(rendered.contains("10"));
     }
 
     @Test

@@ -6,7 +6,9 @@ exception, the exchange state at the time of failure, and the full path
 the message took through the route before it failed.
 
 Camel maintains an error registry that keeps the most recent errors
-(up to a configurable limit). Older errors are automatically purged.
+(up to a configurable limit), and only the newest few of each kind of
+error, so a storm of one failure does not push the others out. When
+more errors happened than are kept, the title says how many happened.
 
 ## Error List
 
@@ -15,15 +17,17 @@ Camel maintains an error registry that keeps the most recent errors
 - **ROUTE** — Route where the error happened
 - **NODE** — The specific processor/node in the route where the exception was thrown (e.g., `to1`, `bean2`, `process3`). This tells you exactly which step failed
 - **HANDLED** — Whether the error was caught by Camel's error handling: `true` (handled) or `false` (unhandled)
+- **COUNT** — How often this kind of error (the same exception in the same route) happened, on its newest entry. The older entries of the kind are left blank, so the column adds up to the errors that happened
 - **EXCEPTION** — Exception class name in short form (e.g., `IOException`, `HttpOperationFailedException`)
 - **MESSAGE** — The exception message text explaining what went wrong
 
 ## Example Screen
 
 ```
- ID                  AGO  ROUTE        NODE   HANDLED  EXCEPTION    MESSAGE
- ID-myhost-1234-5    5s   timer-route  to1    false    IOException  Connection refused
- ID-myhost-1234-3    2m   kafka-route  bean2  true     NPE          null reference in processor
+ ID                  AGO  ROUTE        NODE   HANDLED  COUNT  EXCEPTION    MESSAGE
+ ID-myhost-1234-5    5s   timer-route  to1    false    4      IOException  Connection refused
+ ID-myhost-1234-4    9s   timer-route  to1    false           IOException  Connection refused
+ ID-myhost-1234-3    2m   kafka-route  bean2  true     1      NPE          null reference in processor
 ```
 
 ## Understanding HANDLED
