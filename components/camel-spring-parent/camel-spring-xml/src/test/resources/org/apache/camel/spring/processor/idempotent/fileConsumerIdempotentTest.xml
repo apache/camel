@@ -28,7 +28,7 @@
     <!-- this is our file based idempotent store configured to use the .filestore.dat as file -->
     <bean id="fileStore" class="org.apache.camel.support.processor.idempotent.FileIdempotentRepository">
         <!-- the filename for the store -->
-        <property name="fileStore" value="#{systemProperties['testDirectory']}/.filestore.dat"/>
+        <property name="fileStore" value="#{environment.getProperty('testDirectory')}/.filestore.dat"/>
         <!-- the max filesize in bytes for the file. Camel will trunk and flush the cache
              if the file gets bigger -->
         <property name="maxFileStoreSize" value="512000"/>

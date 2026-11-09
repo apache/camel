@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedCamelContextTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled("Does not run well on CI due test uses JMX mbeans")
+@Isolated
 public class SpringManagedCamelContextTest extends ManagedCamelContextTest {
 
     @Override
