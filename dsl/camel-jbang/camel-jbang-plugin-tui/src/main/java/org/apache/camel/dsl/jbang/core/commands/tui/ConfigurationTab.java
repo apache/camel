@@ -82,6 +82,12 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     @Override
+    protected boolean selectsFirstRow() {
+        // the detail panel shows the selected row
+        return true;
+    }
+
+    @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
         if (ke.isKey(KeyCode.TAB)) {
             detailFocused = !detailFocused;
