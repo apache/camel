@@ -65,6 +65,8 @@ class ConfigurationTabRenderTest {
     @Test
     void renderPropertyKeyInCyan() {
         addProperty("camel.main.name", "my-app", "application.properties");
+        // a second row: the first is selected, and the selection highlight hides its colors
+        addProperty("camel.main.shutdownTimeout", "30", "application.properties");
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
 
@@ -75,6 +77,18 @@ class ConfigurationTabRenderTest {
 
         assertTrue(TuiTestHelper.findCellWithColor(buffer, "c", Theme.accent()),
                 "Property key should be rendered in CYAN");
+    }
+
+    @Test
+    void theFirstPropertyIsSelectedSoItsDetailShows() {
+        addProperty("camel.main.name", "my-app", "application.properties");
+        addProperty("camel.main.shutdownTimeout", "30", "application.properties");
+
+        ConfigurationTab tab = new ConfigurationTab(ctx);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
+
+        assertEquals(0, tab.tableState.selected());
+        assertTrue(!rendered.contains("Select a property"), rendered);
     }
 
     @Test
@@ -125,6 +139,8 @@ class ConfigurationTabRenderTest {
     @Test
     void renderSecretValueInDarkGray() {
         addProperty("camel.vault.password", "xxxxxx", "application.properties");
+        // a row before it: the first is selected, and the selection highlight hides its colors
+        addProperty("camel.main.name", "my-app", "application.properties");
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
 

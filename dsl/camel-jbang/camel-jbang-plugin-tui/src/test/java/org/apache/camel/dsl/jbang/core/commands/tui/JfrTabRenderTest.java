@@ -86,6 +86,34 @@ class JfrTabRenderTest {
     }
 
     @Test
+    void withoutARecordingTheTabSaysHowToStartOne() {
+        JsonObject noRecording = new JsonObject();
+        noRecording.put("runtimeEvents", false);
+        noRecording.put("recordings", new JsonArray());
+        TestMonitorContext statusCtx = new TestMonitorContext(dataWith(info), noRecording);
+        statusCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(statusCtx, Runnable::run);
+
+        tab.onTabSelected();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 160, 20))
+                .contains("No JFR recording is active").contains("Java Flight Recorder (JFR)")
+                .contains("jcmd 1234 JFR.start"));
+    }
+
+    @Test
+    void withARecordingThereIsNoHint() {
+        TestMonitorContext statusCtx = new TestMonitorContext(dataWith(info), statusResponse());
+        statusCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(statusCtx, Runnable::run);
+
+        tab.onTabSelected();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 160, 20))
+                .contains("Runtime Events: Enabled").doesNotContain("No JFR recording is active"));
+    }
+
+    @Test
     void renderFooterHints() {
         JfrTab tab = new JfrTab(ctx);
         List<Span> footerSpans = new ArrayList<>();

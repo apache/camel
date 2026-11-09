@@ -654,15 +654,14 @@ class TimelineTab extends AbstractTableTab {
         Arrays.fill(axis, ' ');
         String start = "-" + axisTime(seconds());
         String middle = "-" + axisTime(seconds() / 2);
-        String end = "now";
-        put(axis, 0, start);
-        put(axis, columns / 2 - middle.length() / 2, middle);
-        put(axis, columns - end.length(), pausedAt >= 0 ? "" : end);
-        if (pausedAt >= 0) {
-            long ago = Math.max(0, nowSecond() - pausedAt);
-            String at = ago > 0 ? "-" + ChaosTab.shortTime(ago * 1000) : end;
-            put(axis, columns - at.length(), at);
-        }
+        long pausedAgo = pausedAt >= 0 ? Math.max(0, nowSecond() - pausedAt) : 0;
+        String end = pausedAgo > 0 ? "-" + ChaosTab.shortTime(pausedAgo * 1000) : "now";
+        // a label the cursor is on is left out: the time of the cursor is at the right of the axis
+        int from = cursor >= 0 ? cursor * width : -1;
+        int to = cursor >= 0 ? from + width : -1;
+        label(axis, 0, start, from, to);
+        label(axis, columns / 2 - middle.length() / 2, middle, from, to);
+        label(axis, columns - end.length(), end, from, to);
         if (cursor >= 0) {
             // the cursor under its column, the time of it at the right of the axis
             for (int i = 0; i < width; i++) {
@@ -688,6 +687,12 @@ class TimelineTab extends AbstractTableTab {
     /** A time on the axis: 60s, 30s, 2m, 2m30s. */
     static String axisTime(int seconds) {
         return seconds <= 90 ? seconds + "s" : ChaosTab.shortTime(seconds * 1000L);
+    }
+
+    private static void label(char[] axis, int at, String s, int from, int to) {
+        if (at >= to || at + s.length() <= from) {
+            put(axis, at, s);
+        }
     }
 
     private static void put(char[] axis, int at, String s) {

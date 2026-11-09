@@ -90,7 +90,8 @@ class CircuitBreakerTab extends AbstractTableTab {
             String fallback = cb.fallbackCalls > 0 ? String.valueOf(cb.fallbackCalls) : "";
             String timeout = cb.timedOutCalls > 0 ? String.valueOf(cb.timedOutCalls) : "";
             String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
-            String inflight = String.valueOf(cb.inflight);
+            // blank when zero, as the other counts, so the ones that are not stand out
+            String inflight = cb.inflight > 0 ? String.valueOf(cb.inflight) : "";
             String sinceLast = formatSinceLast(cb.sinceLastStarted, cb.sinceLastSuccess, cb.sinceLastFail);
 
             rows.add(Row.from(
