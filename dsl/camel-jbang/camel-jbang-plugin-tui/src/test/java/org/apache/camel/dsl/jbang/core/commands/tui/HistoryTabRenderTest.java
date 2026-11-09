@@ -27,6 +27,7 @@ import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -151,6 +152,25 @@ class HistoryTabRenderTest {
     }
 
     @Test
+    void fFollowsTheLastExchange() {
+        HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
+        assertTrue(footer(tab).contains("follow [off]"), footer(tab));
+
+        assertTrue(tab.handleKeyEvent(KeyEvent.ofChar('f')));
+        assertTrue(tab.isHistoryFollow());
+        assertTrue(footer(tab).contains("follow [on]"), footer(tab));
+
+        assertTrue(tab.handleKeyEvent(KeyEvent.ofChar('f')));
+        assertTrue(!tab.isHistoryFollow());
+    }
+
+    private static String footer(HistoryTab tab) {
+        List<Span> spans = new ArrayList<>();
+        tab.renderFooter(spans);
+        return spans.stream().map(Span::content).reduce("", String::concat);
+    }
+
+    @Test
     void renderFooterHints() {
         HistoryTab tab = new HistoryTab(ctx, traces, new HashMap<>());
         List<Span> footerSpans = new ArrayList<>();
@@ -207,14 +227,14 @@ class HistoryTabRenderTest {
         // as the history of the circuit breaker example has it: the breaker runs its steps on a copy (131) of the
         // exchange (130), and the copy calls the supplier route over direct
         List<HistoryEntry> entries = List.of(
-                step("130", "stock-check", "from1", "from", "from[timer://stock]", true, false),
+                step("130", "stock-check", "from1", "from", "timer:stock?period=1000", true, false),
                 step("130", "stock-check", "circuitBreaker1", "circuitBreaker", "circuitBreaker", false, false),
                 step("131", "stock-check", "to1", "to", "to[direct:supplier]", false, false),
-                step("131", "supplier", "from2", "from", "from[direct://supplier]", true, false),
+                step("131", "supplier", "from2", "from", "direct:supplier", true, false),
                 step("131", "supplier", "setBody3", "setBody", "setBody[simple{in stock}]", false, false),
-                step("131", "supplier", "from2", "from", "from[direct://supplier]", false, true),
+                step("131", "supplier", "from2", "from", "direct:supplier", false, true),
                 step("130", "stock-check", "log1", "log", "log[Stock check]", false, false),
-                step("130", "stock-check", "from1", "from", "from[timer://stock]", false, true));
+                step("130", "stock-check", "from1", "from", "timer:stock?period=1000", false, true));
 
         List<HistoryEntry> ordered = new HistoryTab(ctx, traces, new HashMap<>()).reorderHistoryDepthFirst(entries);
 
