@@ -1030,7 +1030,7 @@ public final class ToolRegistry {
                             }
                         }, args.get("hypothesis"), rule, traffic, wait, args.get("note")).toJson();
                     } catch (IllegalArgumentException e) {
-                        throw new ToolExecutionException(e.getMessage());
+                        throw new ToolExecutionException(e.getMessage(), e);
                     }
                 }));
 
