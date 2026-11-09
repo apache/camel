@@ -154,7 +154,9 @@ class ChaosExperimentRunTest {
         integration.shows("PENDING", true);
         integration.ended = experiment("INCONCLUSIVE", false);
 
-        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 5_000, null, clock);
+        // an expectation without within= has the time of its rule, which the wait does not know
+        JsonObject answer = ChaosExperimentRun.run(integration, null, "route=refunds error expect=refunds:failed<=0", null,
+                5_000, null, clock);
 
         assertThat(answer.getString("verdict")).isEqualTo("INCONCLUSIVE");
         assertThat(answer.getLong("waited")).isEqualTo(5_000);
@@ -237,6 +239,20 @@ class ChaosExperimentRunTest {
         // the PASS says nothing: the AI reads why
         assertThat(answer.<List<Object>> getCollection("warnings"))
                 .containsExactly("r1: endpoint=file:/parked matches no endpoint of the context now");
+    }
+
+    @Test
+    void theWaitIsAtLeastTheWithinOfTheExpectations() throws Exception {
+        integration.shows("PENDING", true);
+        integration.ended = experiment("PASS", false);
+
+        // RULE has within=30s: a wait of 5s would end it before failed<=0 is decided
+        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 5_000, null, clock);
+
+        assertThat(answer.getLong("waited")).isEqualTo(32_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=1m; route=b drop expect=b:1 within=90s"))
+                .isEqualTo(90_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error")).isZero();
     }
 
     @Test

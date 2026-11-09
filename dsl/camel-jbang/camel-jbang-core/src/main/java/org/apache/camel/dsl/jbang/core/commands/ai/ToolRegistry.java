@@ -983,7 +983,7 @@ public final class ToolRegistry {
                         "The pause between two messages in millis, or a range such as 100..500 (at most 60000)", false)
                 .param("wait", "string",
                         "The longest wait for the verdict after the messages were sent, such as 90s (default 2m, at most"
-                                         + " 10m)",
+                                         + " 10m); it is at least the within= of the expectations",
                         false)
                 .param("note", "string", "What to note with the experiment in the journal", false)
                 .param("name", "string", CHAOS_NAME, false)

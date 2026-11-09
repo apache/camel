@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -140,6 +142,11 @@ public final class ChaosExperimentRun {
                 throw new IllegalArgumentException(why);
             }
         }
+        // an expectation such as failed<=0 is decided when its within= is up: a shorter wait leaves it undecided
+        long within = longestWithin(rules);
+        if (within + POLL * 2 > wait) {
+            wait = Math.min(within + POLL * 2, MAX_WAIT);
+        }
         JsonObject begun = integration.chaos("experiment-begin", root -> {
             if (hypothesis != null && !hypothesis.isBlank()) {
                 root.put("hypothesis", hypothesis);
@@ -189,6 +196,22 @@ public final class ChaosExperimentRun {
         }
         return answer;
     }
+
+    /** The longest within= of the rules, in millis, or 0 (an expectation without it has the time of its rule). */
+    static long longestWithin(String rules) {
+        long answer = 0;
+        Matcher m = WITHIN.matcher(rules);
+        while (m.find()) {
+            try {
+                answer = Math.max(answer, TimeUtils.toMilliSeconds(m.group(1)));
+            } catch (RuntimeException e) {
+                // not a time: camel-chaos refuses the rule with the reason
+            }
+        }
+        return answer;
+    }
+
+    private static final Pattern WITHIN = Pattern.compile("(?:^|\\s)within=(\\S+)");
 
     /** Sends the traffic: the summary of the send, or why it could not be sent. */
     private static JsonObject traffic(Integration integration, Feed feed) {

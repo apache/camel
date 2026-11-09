@@ -96,7 +96,8 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
     String interval;
 
     @CommandLine.Option(names = { "--wait" }, defaultValue = "2m",
-                        description = "The longest wait for the verdict after the messages were sent (at most 10m)")
+                        description = "The longest wait for the verdict after the messages were sent, and at least the"
+                                      + " within= of the expectations (at most 10m)")
     String wait;
 
     @CommandLine.Option(names = { "--note" },

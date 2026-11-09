@@ -1314,7 +1314,7 @@ public class RuntimeTools {
             @ToolArg(description = "The pause between two messages in millis, or a range such as 100..500",
                      required = false) String interval,
             @ToolArg(description = "The longest wait for the verdict after the messages were sent, such as 90s"
-                                   + " (default 2m, at most 10m)",
+                                   + " (default 2m, at most 10m); it is at least the within= of the expectations",
                      required = false) String wait,
             @ToolArg(description = "What to note with the experiment in the journal", required = false) String note) {
         requireArg("rule", rule);

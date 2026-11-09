@@ -786,7 +786,8 @@ rules, send its traffic, wait for the verdict, and end it
                               range such as 100..500 to draw each pause at
                               random (at most 60s)
       --wait=<wait>         The longest wait for the verdict after the messages
-                              were sent (at most 10m)
+                              were sent, and at least the within= of the
+                              expectations (at most 10m)
                               Default: 2m
       --note=<note>         What to note with the experiment when it ends
       --end                 End the open experiment (with --note) instead of
