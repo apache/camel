@@ -24,6 +24,7 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -81,4 +82,27 @@ class StartupTabRenderTest {
                 "Footer should contain hints");
     }
 
+    @Test
+    void theStepsAreInTheOrderTheyStartedOrTheSlowestFirst() {
+        // as the recorder has them: a step after its parent, in the order they ended
+        StartupTab.StartupStep routes = step("Init Routes", 1, 100, 80);
+        StartupTab.StartupStep route = step("stock-check Create Route", 2, 105, 73);
+        StartupTab.StartupStep context = step("Init CamelContext", 0, 90, 256);
+        List<StartupTab.StartupStep> steps = List.of(route, routes, context);
+
+        assertEquals(List.of(context, routes, route), StartupTab.ordered(steps, false));
+        assertEquals(List.of(context, routes, route), StartupTab.ordered(steps, true));
+        // without begin times (an older Camel): as recorded
+        steps.forEach(st -> st.beginTime = 0);
+        assertEquals(steps, StartupTab.ordered(steps, false));
+    }
+
+    private static StartupTab.StartupStep step(String name, int level, long begin, long duration) {
+        StartupTab.StartupStep st = new StartupTab.StartupStep();
+        st.name = name;
+        st.level = level;
+        st.beginTime = begin;
+        st.duration = duration;
+        return st;
+    }
 }
