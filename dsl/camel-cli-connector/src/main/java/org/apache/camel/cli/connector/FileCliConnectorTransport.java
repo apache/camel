@@ -133,7 +133,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
             debugFile = createLockFile(lockFile.getName() + "-debug.json");
             receiveFile = createLockFile(lockFile.getName() + "-receive.json");
             timelineFile = createLockFile(lockFile.getName() + "-timeline.json");
-            scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
+            scheduledFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::task), 0, delay,
+                    TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI connector enabled");
         } else {
             LOG.warn("Cannot create PID file: {}. This integration cannot be managed by Camel CLI connector.", getPid());
@@ -155,7 +156,8 @@ public class FileCliConnectorTransport extends ServiceSupport implements CliConn
         boolean done = scheduledFuture == null || scheduledFuture.isDone();
         if (done) {
             this.delay = delay;
-            scheduledFuture = executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
+            scheduledFuture = executor.scheduleWithFixedDelay(() -> ConnectorTasks.safely(this::task), 0, delay,
+                    TimeUnit.MILLISECONDS);
         }
     }
 
