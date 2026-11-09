@@ -424,7 +424,7 @@ framework, so camel-test does not depend on camel-chaos; the rules come from the
   list of the running integrations (exit code 2), never acting on all of them (CAMEL-26717). The MCP tools pick the
   integration the same way. `chaos-clear` and `camel get chaos` may omit it and then act on all that have chaos
   switched on, as `stop-route` does.
-- A scenario (stage 2, CAMEL-26722) keeps the rules of an experiment in a file of the project, `chaos/<name>.chaos`:
+- A scenario (stage 2, CAMEL-26722) keeps the rules of an experiment in a file of the project, `test/chaos/<name>.chaos`:
   one rule per line, `#` comments and a `seed=` line, with the phases from `from=`/`until=`. `camel cmd chaos-load`
   sends its text through the same `chaos` action (`ChaosManager.loadScenario`: a new report, then all its rules or
   none), and `camel run --chaos=<file>` starts with it (`camel.chaos.scenario`, `insecure:dev` like

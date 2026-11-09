@@ -12,12 +12,12 @@ remove rules on this screen (see Keys below), or with the Camel CLI:
 camel cmd chaos-add myapp --rule='endpoint=http:stock* error status=503 rate=0.25 until=10m'
 camel cmd chaos-remove myapp --id=r1
 camel cmd chaos-clear myapp --reset
-camel cmd chaos-load chaos/outage.chaos myapp
+camel cmd chaos-load test/chaos/outage.chaos myapp
 ```
 
-A scenario (`chaos/outage.chaos`) keeps the rules of an experiment in
+A scenario (`test/chaos/outage.chaos`) keeps the rules of an experiment in
 the project: one rule per line, `#` comments and a `seed=` line.
-`camel run --chaos=chaos/outage.chaos` starts with one, and
+`camel run --chaos=test/chaos/outage.chaos` starts with one, and
 `chaos-load` loads one into a running integration (a new report).
 
 While a rule injects faults, the title bar shows a badge on every
@@ -85,16 +85,16 @@ error handler (HAND) and the redeliveries (REDEL).
 - **c** — Clear: remove all rules (the report keeps what they did)
 - **R** — A new experiment: no rules and a new report, with the same seed
 - **s** — Save the rules as a scenario: a file of the integration's
-  folder, `chaos/<name>.chaos` unless you type another, with the seed and
+  folder, `test/chaos/<name>.chaos` unless you type another, with the seed and
   one rule per line. Load it again with `camel cmd chaos-load`, or start
-  with it: `camel run --chaos=chaos/<name>.chaos`. A file that is there
+  with it: `camel run --chaos=test/chaos/<name>.chaos`. A file that is there
   already is replaced only when you say yes
 - **t** — Make a test of the selected rule with AI, so the finding runs
   again with the same faults: the AI panel opens with a question with
   the rule, the seed and what it did. For a Maven project the AI writes a
   JUnit test with chaos switched on and `ChaosAssertions`; for a folder
   that runs with `camel run` it writes a scenario with an expectation
-  (`chaos/r1-test.chaos`) and gives the `camel run --chaos=...
+  (`test/chaos/r1-test.chaos`) and gives the `camel run --chaos=...
   --max-seconds=...` command whose exit code is the verdict. It adds an
   expectation when the rule has none, and asks before it writes a file
 - **Shift+F8** — Explain with AI: the AI panel opens with a question about

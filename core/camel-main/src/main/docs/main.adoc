@@ -797,7 +797,7 @@ The camel.chaos supports 7 options, which are listed below.
 | `camel.chaos.reportFile` | A file to write the chaos report to as JSON when the CamelContext stops, such as target/chaos-report.json. |  | String
 | `camel.chaos.reportOnShutdown` | Whether to log the chaos report when the CamelContext stops, if any rule was added. | true | boolean
 | `camel.chaos.rules` | Rules to add at startup, in the one-line text form of a rule, separated by semicolons. |  | String
-| `camel.chaos.scenario` | A scenario to load at startup: a file with one rule per line, # comments and an optional seed= line (such as chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used unless the seed option is set. |  | String
+| `camel.chaos.scenario` | A scenario to load at startup: a file with one rule per line, # comments and an optional seed= line (such as test/chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used unless the seed option is set. |  | String
 | `camel.chaos.seed` | The seed of the random draws of the rules. Without it a seed is picked at startup, and shown in the report. |  | Long
 |===
 

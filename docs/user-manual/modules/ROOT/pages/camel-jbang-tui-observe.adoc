@@ -359,7 +359,7 @@ the rule, the seed and what the rule did. For a Maven project the AI writes a JU
 `ChaosAssertions` (see the camel-chaos documentation); for a folder that runs with `camel run`, a scenario with an
 expectation and the `camel run --chaos=<file> --max-seconds=<seconds>` command whose exit code is the verdict. It adds
 an expectation when the rule has none, and asks before it writes the file.
-* *s* saves the rules as a scenario in the folder of the integration: `chaos/<name>.chaos` unless you type another file,
+* *s* saves the rules as a scenario in the folder of the integration: `test/chaos/<name>.chaos` unless you type another file,
 with the seed and one rule per line, so the experiment can run again with `camel cmd chaos-load` or
 `camel run --chaos=<file>`. A file that is there already is replaced only when you say yes.
 * *d* describes the chaos with AI, when the AI panel is there: say the chaos you want in your own words, such as "the
