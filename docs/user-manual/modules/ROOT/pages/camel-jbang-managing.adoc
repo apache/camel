@@ -965,7 +965,8 @@ camel cmd chaos-experiment --hypothesis='a client of payment gets an error, noth
 ----
 
 For a path with a parameter, `--feed` is the path to call, with an optional method: `--feed='PUT /orders/42'`. An HTTP
-server with its own address (netty-http, undertow, jetty) cannot be fed this way yet.
+server with its own address on this machine (netty-http, undertow, jetty) is fed at that address, called as localhost;
+one on another host is not fed.
 
 A feed to a remote system that is not stubbed, such as a Kafka broker, has a warning, as the messages go to that system:
 use a local one (`camel infra run kafka`), or stub it.

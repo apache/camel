@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
@@ -69,6 +70,24 @@ public final class ChaosHttpFeed {
         return from != null && (from.startsWith("platform-http:") || from.startsWith("rest:"));
     }
 
+    // an HTTP server with its own address in the URI: netty-http:http://0.0.0.0:9000/hooks
+    private static final Pattern OWN_ADDRESS = Pattern.compile(
+            "(?:netty-http|undertow|jetty|vertx-http):(?://)?(https?)://([^/:?]+)(:\\d+)?([^?]*)(?:\\?.*)?");
+    private static final Set<String> LOCAL_HOSTS = Set.of("localhost", "127.0.0.1", "0.0.0.0", "::1", "[::1]");
+
+    /**
+     * The URL to call for a route that starts from an HTTP server with its own address on this machine (netty-http,
+     * undertow, jetty), or null: the host it listens on is called as localhost.
+     */
+    static String ownAddress(String from) {
+        Matcher m = from != null ? OWN_ADDRESS.matcher(from) : null;
+        if (m == null || !m.matches() || !LOCAL_HOSTS.contains(m.group(2))) {
+            return null;
+        }
+        String path = m.group(4).isEmpty() ? "/" : m.group(4);
+        return m.group(1) + "://localhost" + (m.group(3) != null ? m.group(3) : "") + path;
+    }
+
     /**
      * Where the requests of the feed go: for a path to call, or for a route that starts from platform-http or rest (by
      * its id or endpoint); null when the feed is for another route.
@@ -83,6 +102,11 @@ public final class ChaosHttpFeed {
         if (m.matches()) {
             method = m.group(1);
             path = m.group(2);
+        } else if (route != null && ownAddress(route.getString("from")) != null) {
+            // its own server on this machine: no port to look up
+            String from = route.getString("from");
+            String m0 = method(from);
+            return new Target(m0 != null ? m0 : "POST", ownAddress(from));
         } else if (route != null && servedByCamel(route.getString("from"))) {
             routeId = route.getString("routeId");
             String from = route.getString("from");

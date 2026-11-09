@@ -355,7 +355,8 @@ public final class ChaosExperimentRun {
         String from = route != null ? route.getString("from") : null;
         ComponentModel model = from != null ? componentModel(from) : null;
         // a file is written to the folder the route polls, and an HTTP route is fed by the integration's own server
-        if (model == null || !model.isRemote() || "file".equals(model.getScheme()) || ChaosHttpFeed.servedByCamel(from)) {
+        if (model == null || !model.isRemote() || "file".equals(model.getScheme()) || ChaosHttpFeed.servedByCamel(from)
+                || ChaosHttpFeed.ownAddress(from) != null) {
             return null;
         }
         String id = route.getString("routeId");
@@ -400,9 +401,13 @@ public final class ChaosExperimentRun {
             return null;
         }
         if (label.contains("http")) {
-            return "Route " + route + " starts from the HTTP endpoint " + from + ", which has its own address and an"
-                   + " experiment cannot feed yet: feed a route that calls it, or leave the feed out when its traffic"
-                   + " comes otherwise";
+            if (ChaosHttpFeed.ownAddress(from) != null) {
+                // an HTTP server of its own on this machine: fed with requests to its address
+                return null;
+            }
+            return "Route " + route + " starts from the HTTP endpoint " + from + ", which an experiment cannot feed:"
+                   + " it has no address to call, or one on another host. Feed a route that calls it, or leave the"
+                   + " feed out when its traffic comes otherwise";
         }
         if (model.isConsumerOnly()) {
             return "Route " + route + " starts from " + from + ", which only consumes, so an experiment cannot send to"
