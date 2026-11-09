@@ -191,6 +191,20 @@ class FunctionsProducerInvokeTest extends CamelTestSupport {
     }
 
     @Test
+    void getSendsNoContentTypeOfMessage() throws Exception {
+        // GET sends no body, so the Content-Type header of the message is not sent either
+        Exchange result = template.send(functionsEndpoint("&httpMethod=GET"), e -> {
+            e.getIn().setBody("Hello");
+            e.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
+        });
+
+        assertNull(result.getException());
+        RecordedRequest request = nextRequest();
+        assertEquals("GET", request.method());
+        assertNull(request.contentTypes());
+    }
+
+    @Test
     void defaultContentTypeWithoutHttpHeaders() throws Exception {
         Exchange result = template.send(functionsEndpoint(""), e -> e.getIn().setBody("{\"name\":\"Camel\"}"));
 
