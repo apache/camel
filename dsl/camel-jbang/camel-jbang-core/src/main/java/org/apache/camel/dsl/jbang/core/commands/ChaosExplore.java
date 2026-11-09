@@ -167,12 +167,18 @@ public class ChaosExplore extends CamelCommand {
         printer().println();
         lines.forEach(printer()::println);
         if (save && exploration != null) {
-            Saved saved = save(Path.of("test", "chaos"), LocalDateTime.now(),
-                    new Run(integration, budget, focus, ask.usedModel, seed(status)), exploration, ask.lastAnswer,
-                    lines);
-            printer().println();
-            printer().println("Report: " + saved.report());
-            saved.scenarios().forEach(s -> printer().println("Scenario: " + s + " (replay: camel run * --chaos=" + s + ")"));
+            try {
+                Saved saved = save(Path.of("test", "chaos"), LocalDateTime.now(),
+                        new Run(integration, budget, focus, ask.usedModel, seed(status)), exploration, ask.lastAnswer,
+                        lines);
+                printer().println();
+                printer().println("Report: " + saved.report());
+                saved.scenarios()
+                        .forEach(s -> printer().println("Scenario: " + s + " (replay: camel run * --chaos=" + s + ")"));
+            } catch (IOException e) {
+                // the journal is printed already: say why it is not saved, rather than a stack trace
+                printer().printErr("Could not save the report in test/chaos: " + e.getMessage());
+            }
         }
         if (failed(exploration)) {
             return CliExitCode.FAILURE;
