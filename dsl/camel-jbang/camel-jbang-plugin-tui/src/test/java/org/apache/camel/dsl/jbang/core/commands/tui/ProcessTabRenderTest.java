@@ -24,6 +24,7 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -102,4 +103,21 @@ class ProcessTabRenderTest {
         assertTrue(footer.contains("Esc"), "Footer should contain Esc hint");
     }
 
+    @Test
+    void theArgumentsAfterTheJarHaveALineEach() {
+        List<String> parts = ProcessTab.splitCommandLine(
+                "/usr/bin/java -Xmx512m -XX:+AutoCreateSharedArchive -jar /opt/camel/lib/camel-launcher.jar run README.md"
+                                                         + " application.properties orders.camel.yaml --logging-color=true"
+                                                         + " --name=orders --port 8080");
+
+        assertEquals(List.of("/usr/bin/java", "-Xmx512m", "-XX:+AutoCreateSharedArchive",
+                "-jar /opt/camel/lib/camel-launcher.jar", "run", "README.md", "application.properties",
+                "orders.camel.yaml", "--logging-color=true", "--name=orders", "--port 8080"), parts);
+    }
+
+    @Test
+    void theMainClassAfterTheClasspathHasALineOfItsOwn() {
+        assertEquals(List.of("java", "-cp a.jar:b.jar", "com.acme.Main", "--verbose"),
+                ProcessTab.splitCommandLine("java -cp a.jar:b.jar com.acme.Main --verbose"));
+    }
 }

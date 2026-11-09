@@ -470,4 +470,15 @@ class TimelineTabRenderTest {
         }
         throw new AssertionError("no line with " + text);
     }
+
+    @Test
+    void aMillisecondOfJitterIsNoFullBar() {
+        // a fast route: 0 and 1 ms seconds are noise at the bottom, not spikes
+        assertThat(TimelineTab.meanScale(1, 0)).isEqualTo(10);
+        assertThat(TimelineTab.spark(new long[] { 0, 1, 0, 1 }, TimelineTab.meanScale(1, 0)))
+                .doesNotContain("█");
+        // a slow second still stands out against a steady time
+        assertThat(TimelineTab.meanScale(400, 50)).isEqualTo(400);
+        assertThat(TimelineTab.meanScale(60, 50)).isEqualTo(100);
+    }
 }
