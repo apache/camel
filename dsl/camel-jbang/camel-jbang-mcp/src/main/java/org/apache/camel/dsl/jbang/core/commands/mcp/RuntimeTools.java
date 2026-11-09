@@ -1156,8 +1156,10 @@ public class RuntimeTools {
                   What to try (as camel cmd chaos-suggest): chaos rules suggested per route of the Camel application \
                   from what the routes do, the most worth trying first, such as an HTTP call without a circuit \
                   breaker, a dead letter channel or a hand-off to another route over seda. Each has the route, the \
-                  kind of fault, the rule, why to try it, and tried=true when a rule of that kind has already \
-                  faulted the route. Nothing is added: check a rule with camel_runtime_chaos_check and add it with \
+                  kind of fault, the rule, why to try it, tried=true when a rule of that kind has already faulted \
+                  the route, and feed: how to send messages into the route (kind self, http, file or send, a hint \
+                  such as the command, and real=true when that goes to the real system rather than a stub). \
+                  Nothing is added: check a rule with camel_runtime_chaos_check and add it with \
                   camel_runtime_chaos_add.""")
     public JsonObject camel_runtime_chaos_suggest(
             @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid) {

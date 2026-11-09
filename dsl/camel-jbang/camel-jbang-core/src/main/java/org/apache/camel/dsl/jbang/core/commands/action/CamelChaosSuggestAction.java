@@ -35,7 +35,8 @@ import picocli.CommandLine;
                              "hand-off to another route over seda (the next route fails, and no message may",
                              "be lost between the two), an input from outside (the route fails at its entry,",
                              "the polls fail, the route stalls). The most worth trying come first, each with",
-                             "why and the command that adds it. Nothing is added.",
+                             "why and the command that adds it, and how to feed the route with messages",
+                             "(curl, a file, or camel cmd send), unless it feeds itself. Nothing is added.",
                              "%nWithout a name or pid, the only integration that runs, or the only one with",
                              "chaos switched on.",
                              "%nExamples:",
@@ -83,6 +84,14 @@ public class CamelChaosSuggestAction extends CamelChaosAction {
             }
             sb.append("\n   ").append(s.getString("why"));
             sb.append("\n   camel cmd chaos-add --rule='").append(s.getString("rule")).append('\'');
+            JsonObject feed = s.getMap("feed");
+            if (feed != null && !"self".equals(feed.getString("kind"))) {
+                // how to send messages into the route, so the rule has something to act on
+                sb.append("\n   feed: ").append(feed.getString("hint"));
+                if (feed.getBooleanOrDefault("real", false)) {
+                    sb.append("\n   (this sends to the real system: run with --stub=remote to feed a stub instead)");
+                }
+            }
         }
         return sb.toString();
     }

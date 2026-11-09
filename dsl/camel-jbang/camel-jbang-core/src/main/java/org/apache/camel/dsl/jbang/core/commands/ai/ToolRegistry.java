@@ -810,8 +810,10 @@ public final class ToolRegistry {
                                        + "the most worth trying first, such as an HTTP call without a circuit breaker, "
                                        + "a dead letter channel or a hand-off to another route over seda. Each has the "
                                        + "route, the kind of fault, the rule, why to try it, and tried=true when a rule "
-                                       + "of that kind has already faulted the route. Nothing is added: check a rule "
-                                       + "with chaos_check and add it with chaos_add.")
+                                       + "of that kind has already faulted the route, and feed: how to send messages "
+                                       + "into the route (kind self, http, file or send, a hint such as the command, and "
+                                       + "real=true when that goes to the real system rather than a stub). Nothing is "
+                                       + "added: check a rule with chaos_check and add it with chaos_add.")
                 .param("name", "string", CHAOS_NAME, false)
                 .readOnly(true).destructive(false)
                 .executor((ctx, args) -> {
