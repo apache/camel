@@ -186,7 +186,7 @@ class ListProducerTest extends ProcessCommandTestSupport {
         p.put("routeId", routeId);
         p.put("uri", uri);
         p.put("state", "Started");
-        p.put("class", "org.apache.camel.component.log.LogProducer");
+        p.put("clazz", "org.apache.camel.component.log.LogProducer");
         p.put("singleton", true);
         p.put("remote", false);
         return p;

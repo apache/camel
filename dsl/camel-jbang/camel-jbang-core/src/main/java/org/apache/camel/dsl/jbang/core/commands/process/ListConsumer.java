@@ -102,7 +102,7 @@ public class ListConsumer extends ProcessWatchCommand {
                     row.id = o.getString("id");
                     row.uri = o.getString("uri");
                     row.state = o.getString("state");
-                    row.className = o.getString("class");
+                    row.className = o.getStringOrDefault("clazz", o.getString("class"));
                     row.hostedService = o.getBooleanOrDefault("hostedService", false);
                     row.scheduled = o.getBoolean("scheduled");
                     row.inflight = o.getInteger("inflight");
