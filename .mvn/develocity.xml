@@ -25,7 +25,7 @@
         <url>https://develocity.apache.org</url>
     </server>
     <buildScan>
-        <backgroundBuildScanUpload>#{isFalse(env['GITHUB_ACTIONS'])}</backgroundBuildScanUpload>
+        <backgroundBuildScanUpload>#{isFalse(env['GITHUB_ACTIONS']) and isFalse(env['JENKINS_URL'])}</backgroundBuildScanUpload>
         <publishing>
             <onlyIf>authenticated</onlyIf>
         </publishing>

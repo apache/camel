@@ -91,7 +91,7 @@ This operation returns a List of Nodes from your cluster
 ----
 from("direct:listByLabels")
     .process(exchange -> {
-        exchange.getIn().setHeader("CamelKubernetesNodeLabels",
+        exchange.getIn().setHeader("CamelKubernetesNodesLabels",
             Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels")

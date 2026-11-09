@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.Map;
 
-class TraceEntry {
+class TraceEntry implements StepOrder.Step {
     String pid;
     String uid;
     String exchangeId;
@@ -52,4 +52,34 @@ class TraceEntry {
     Map<String, String> exchangeVariableTypes;
     String exception;
     int inlineDepth;
+
+    @Override
+    public String exchangeId() {
+        return exchangeId;
+    }
+
+    @Override
+    public boolean isFirst() {
+        return first;
+    }
+
+    @Override
+    public String routeId() {
+        return routeId;
+    }
+
+    @Override
+    public String nodeLabel() {
+        return nodeLabel;
+    }
+
+    @Override
+    public String nodeShortName() {
+        return nodeShortName;
+    }
+
+    @Override
+    public void setInlineDepth(int depth) {
+        inlineDepth = depth;
+    }
 }

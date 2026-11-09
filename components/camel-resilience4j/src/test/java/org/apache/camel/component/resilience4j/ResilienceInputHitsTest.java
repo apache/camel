@@ -27,7 +27,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * The circuit breaker runs a copy of the exchange with its own unit of work: the copy is no second input of the route.
+ * The circuit breaker runs a copy of the exchange with its own unit of work: the copy is no second input of the route,
+ * and no second reply of an InOut consumer.
  */
 public class ResilienceInputHitsTest extends CamelTestSupport {
 
@@ -53,6 +54,16 @@ public class ResilienceInputHitsTest extends CamelTestSupport {
 
         assertEquals(3, hits("check", "seda://check", "in"));
         assertEquals(3, hits("supplier", "direct://supplier", "in"));
+    }
+
+    @Test
+    public void testOneReplyPerRequest() {
+        for (int i = 0; i < 3; i++) {
+            assertEquals("in stock", template.requestBody("seda:check", "CAMEL-MUG"));
+        }
+
+        assertEquals(3, hits("check", "seda://check", "in"));
+        assertEquals(3, hits("check", "seda://check", "out"));
     }
 
     private long hits(String routeId, String uri, String direction) {

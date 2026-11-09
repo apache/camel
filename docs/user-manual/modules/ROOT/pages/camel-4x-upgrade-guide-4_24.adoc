@@ -17,6 +17,18 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
 
+=== KeyValueRepository and State Store - namespace partitioning on shared backends
+
+In Camel 4.23, `state-store` endpoints stored keys directly into the underlying `KeyValueRepository` without namespacing. When a single `KeyValueRepository` was shared between multiple state stores, the Cache EIP, or repository adapters (such as `KeyValueAggregationRepository` or `KeyValueIdempotentRepository`), operations on one store (such as `clear()`) or key collisions could affect entries of another component or pattern.
+
+Starting in 4.24:
+
+* `StateStoreComponent` automatically namespaces keys on shared backend repositories (auto-discovered from the registry or referenced via `backend=#ref`) under `statestore:<storeName>:<key>`. Delimiter characters in store names are escaped to guarantee that store names sharing a prefix remain strictly isolated. Operations such as `clear()`, `keys()`, and `size()` are scoped to the store's namespace.
+* Dedicated backends created by `StateStoreBackendFactory` or the default per-store in-memory fallback are not namespaced.
+* To maintain backward compatibility with un-namespaced entries written by Camel 4.23 on a shared backend without migrating keys, users can opt out of namespacing by configuring `namespaced=false` on the endpoint (`state-store:myStore?namespaced=false`) or on the component (`camel.component.state-store.namespaced=false`).
+* The Cache EIP stores keys directly without a namespace prefix, preserving documented cache invalidation recipes (`cache.delete(key)` and `cache.clear()`). Note that because cache keys are un-prefixed, calling `clear()` on a `KeyValueRepository` shared with the Cache EIP will clear all entries in that repository, including state-store entries. It is recommended to use a dedicated repository for the Cache EIP when co-located with state-store.
+* `KeyValueAggregationRepository` safely verifies entry types before unmarshalling, ignoring unexpected types gracefully instead of failing with a class cast exception.
+
 === camel-ehcache - shared CacheManager and changed defaults
 
 The following user-visible changes take effect in 4.24:
@@ -273,7 +285,7 @@ before calling an endpoint). Before, such a recovery was not counted. `ExchangeH
 `true` when the error handler redelivered the exchange, without looking at the header only. An exchange whose failure
 is continued (`continued(true)`) no longer keeps its redelivery counter, as with a handled failure.
 
-=== camel-management - the input hits of the runtime endpoint registry are the messages a route received
+=== camel-management - the input and reply hits of the runtime endpoint registry count each message once
 
 The runtime endpoint registry (in extended statistics mode, as the `RuntimeEndpointRegistry` MBean, the endpoints dev
 console and the Camel CLI show it) now counts an input hit of a route when an exchange enters the route through its
@@ -281,6 +293,10 @@ consumer, as the route counts its exchanges. Before, it counted every created ex
 and the sub-exchanges of a Split, Multicast or Recipient List were counted as input hits of the route as well, and a
 route that consumes from `direct` (or got a message sent by a `ProducerTemplate` to its `direct` endpoint) had no input
 hits at all.
+
+Likewise, the reply of an InOut consumer is counted as an out hit of its endpoint when the exchange is done in the route,
+once per message. Before, the completed copy of a Circuit Breaker and the sub-exchanges of a Split, Multicast or
+Recipient List were counted as replies as well.
 
 === camel-core - a step after a redelivered step gets all its redeliveries
 

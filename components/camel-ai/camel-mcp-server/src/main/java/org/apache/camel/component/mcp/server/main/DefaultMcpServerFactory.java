@@ -45,6 +45,7 @@ public class DefaultMcpServerFactory implements McpServerFactory {
         mcpConfiguration.setTags(configuration.getMcpTags());
         mcpConfiguration.setToolTimeout(configuration.getMcpToolTimeout());
         mcpConfiguration.setResourceTimeout(configuration.getMcpResourceTimeout());
+        mcpConfiguration.setPromptTimeout(configuration.getMcpPromptTimeout());
         mcpConfiguration.setPath(configuration.getMcpPath());
         mcpConfiguration.setServerName(configuration.getMcpServerName());
         mcpConfiguration.setServerTitle(configuration.getMcpServerTitle());

@@ -33,7 +33,6 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -129,12 +128,18 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     @Override
-    public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        boolean handled = super.handleMouseEvent(me, area);
-        if (handled) {
-            detailScroll = 0;
-        }
-        return handled;
+    protected void focusDetail(boolean focused) {
+        detailFocused = focused;
+    }
+
+    @Override
+    protected void scrollDetail(int lines) {
+        detailScroll = Math.max(0, detailScroll + lines);
+    }
+
+    @Override
+    protected void rowClicked() {
+        detailScroll = 0;
     }
 
     @Override
@@ -232,6 +237,7 @@ class ConfigurationTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<ConfigProperty> props) {
+        lastDetailArea = area;
         Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 

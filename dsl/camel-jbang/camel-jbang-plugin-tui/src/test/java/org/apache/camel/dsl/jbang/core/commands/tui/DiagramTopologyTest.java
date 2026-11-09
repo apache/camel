@@ -100,6 +100,45 @@ class DiagramTopologyTest {
     }
 
     @Test
+    void aRouteCalledThroughARecipientListIsAnEdgeAsTheRuntimeSawIt() {
+        // route a sends to direct:b in its routes, and to direct:c through a recipient list the topology cannot see
+        IntegrationInfo info = new IntegrationInfo();
+        info.routes.add(route("a", "kafka://in"));
+        info.routes.add(route("b", "direct://b"));
+        info.routes.add(route("c", "direct://c"));
+        info.endpoints.add(out("a", "direct://b", 4));
+        info.endpoints.add(out("a", "direct://c?block=true", 3));
+        // a route that sends to its own consumer, and one that never sent
+        info.endpoints.add(out("c", "direct://c", 1));
+        info.endpoints.add(out("b", "direct://a-never", 0));
+
+        JsonObject topology = DiagramTopology.withNumbers(json(TOPOLOGY), info);
+
+        assertThat(TopologyHelper.parseEdges(topology))
+                .extracting(e -> e.fromRouteId, e -> e.toRouteId)
+                .containsExactly(tuple("a", "b"), tuple("a", "c"));
+        // the structure kept for the next time has only the calls of the routes
+        assertThat(TopologyHelper.parseEdges(json(TOPOLOGY))).hasSize(1);
+    }
+
+    private static RouteInfo route(String id, String from) {
+        RouteInfo r = new RouteInfo();
+        r.routeId = id;
+        r.from = from;
+        return r;
+    }
+
+    private static EndpointInfo out(String routeId, String uri, long hits) {
+        EndpointInfo ep = new EndpointInfo();
+        ep.routeId = routeId;
+        ep.uri = uri;
+        ep.direction = "out";
+        ep.component = "direct";
+        ep.hits = hits;
+        return ep;
+    }
+
+    @Test
     void theRoutesHaveTheirTotalsFromTheStatusFile() {
         JsonObject topology = DiagramTopology.withNumbers(json(TOPOLOGY), status());
 
