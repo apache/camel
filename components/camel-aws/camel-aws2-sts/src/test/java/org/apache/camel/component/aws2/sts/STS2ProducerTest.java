@@ -28,6 +28,7 @@ import software.amazon.awssdk.services.sts.model.AssumeRoleResponse;
 import software.amazon.awssdk.services.sts.model.GetFederationTokenResponse;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenResponse;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -100,6 +101,60 @@ public class STS2ProducerTest extends CamelTestSupport {
                 .hasRootCauseMessage("Federated name needs to be specified for getFederationToken operation");
     }
 
+    @Test
+    void assumeRoleDoesNotCopyTheSecretKeyAndSessionTokenIntoHeaders() {
+        Exchange exchange = template.request("direct:assumeRole", e -> {
+            e.getIn().setHeader(STS2Constants.ROLE_ARN, "arn");
+            e.getIn().setHeader(STS2Constants.ROLE_SESSION_NAME, "sessionarn");
+        });
+
+        assertCredentialHeaders(exchange);
+        assertThat(exchange.getMessage().getHeader(STS2Constants.ASSUMED_ROLE_ARN)).isEqualTo("arn");
+        AssumeRoleResponse body = exchange.getMessage().getBody(AssumeRoleResponse.class);
+        assertThat(body.credentials().secretAccessKey()).isEqualTo("yyy");
+        assertThat(body.credentials().sessionToken()).isEqualTo("test");
+    }
+
+    @Test
+    void getSessionTokenDoesNotCopyTheSecretKeyAndSessionTokenIntoHeaders() {
+        Exchange exchange = template.request("direct:getSessionToken", e -> {
+        });
+
+        assertCredentialHeaders(exchange);
+        GetSessionTokenResponse body = exchange.getMessage().getBody(GetSessionTokenResponse.class);
+        assertThat(body.credentials().secretAccessKey()).isEqualTo("yyy");
+        assertThat(body.credentials().sessionToken()).isEqualTo("test");
+    }
+
+    @Test
+    void getFederationTokenDoesNotCopyTheSecretKeyAndSessionTokenIntoHeaders() {
+        Exchange exchange = template.request("direct:getFederationToken",
+                e -> e.getIn().setHeader(STS2Constants.FEDERATED_NAME, "federation-account"));
+
+        assertCredentialHeaders(exchange);
+        GetFederationTokenResponse body = exchange.getMessage().getBody(GetFederationTokenResponse.class);
+        assertThat(body.credentials().secretAccessKey()).isEqualTo("yyy");
+        assertThat(body.credentials().sessionToken()).isEqualTo("test");
+    }
+
+    @Test
+    void theSecretKeyAndSessionTokenCanBeTakenFromTheBody() {
+        Exchange exchange = template.request("direct:assumeRoleCredentialsFromBody", e -> {
+            e.getIn().setHeader(STS2Constants.ROLE_ARN, "arn");
+            e.getIn().setHeader(STS2Constants.ROLE_SESSION_NAME, "sessionarn");
+        });
+
+        assertThat(exchange.getMessage().getBody(String.class)).isEqualTo("yyy test");
+    }
+
+    private static void assertCredentialHeaders(Exchange exchange) {
+        assertThat(exchange.getException()).isNull();
+        assertThat(exchange.getMessage().getHeaders())
+                .containsEntry(STS2Constants.ACCESS_KEY_ID, "xxx")
+                .containsEntry(STS2Constants.EXPIRATION, AmazonSTSClientMock.EXPIRATION)
+                .doesNotContainKeys("CamelAwsStsSecretKey", "CamelAwsStsSessionToken");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -111,6 +166,9 @@ public class STS2ProducerTest extends CamelTestSupport {
                         .to("mock:result");
                 from("direct:getFederationToken").to("aws2-sts://test?stsClient=#amazonStsClient&operation=getFederationToken")
                         .to("mock:result");
+                from("direct:assumeRoleCredentialsFromBody")
+                        .to("aws2-sts://test?stsClient=#amazonStsClient&operation=assumeRole")
+                        .setBody(simple("${body.credentials().secretAccessKey()} ${body.credentials().sessionToken()}"));
             }
         };
     }
