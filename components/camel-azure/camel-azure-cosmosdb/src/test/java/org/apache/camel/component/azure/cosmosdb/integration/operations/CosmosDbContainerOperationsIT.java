@@ -20,13 +20,11 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.function.Consumer;
 
 import com.azure.cosmos.ChangeFeedProcessor;
-import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosAsyncContainer;
-import com.azure.cosmos.CosmosClientBuilder;
+import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.models.CosmosItemResponse;
 import com.azure.cosmos.models.PartitionKey;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbTestUtils;
@@ -34,14 +32,17 @@ import org.apache.camel.component.azure.cosmosdb.client.CosmosAsyncClientWrapper
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbClientOperations;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbContainerOperations;
 import org.apache.camel.component.azure.cosmosdb.operations.CosmosDbOperationsBuilder;
+import org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -50,38 +51,45 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB endpoint, e.g: mvn clean install -Dendpoint="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".*",
-                                 disabledReason = "Make sure you supply CosmosDB accessKey, e.g: mvn clean install -DaccessKey=")
-})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CosmosDbContainerOperationsIT {
     private static final String DATABASE_NAME = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
     private static final String LEASE_DATABASE_NAME = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
+    private static final Logger LOG = LoggerFactory.getLogger(CosmosDbContainerOperationsIT.class);
+
+    @RegisterExtension
+    static AzureCosmosDbService service = CosmosDbTestUtils.createService();
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbContainerOperations containerOperations;
     private String containerId;
 
     @BeforeAll
-    void prepare() throws Exception {
-        final Properties properties = CosmosDbTestUtils.loadAzureAccessFromJvmEnv();
-
-        final CosmosAsyncClient client = new CosmosClientBuilder()
-                .contentResponseOnWriteEnabled(true)
-                .key(properties.getProperty("access_key"))
-                .endpoint(properties.getProperty("endpoint"))
-                .buildAsyncClient();
-
-        clientWrapper = new CosmosAsyncClientWrapper(client);
+    void prepare() {
+        clientWrapper = new CosmosAsyncClientWrapper(CosmosDbTestUtils.createAsyncClient());
     }
 
     @AfterAll
     void cleanup() {
-        clientWrapper.getDatabase(DATABASE_NAME).delete().block();
-        clientWrapper.getDatabase(LEASE_DATABASE_NAME).delete().block();
+        if (clientWrapper == null) {
+            return;
+        }
+        deleteDatabase(DATABASE_NAME);
+        // only testCaptureChangeFeed creates the lease database, and it does not always run
+        deleteDatabase(LEASE_DATABASE_NAME);
+    }
+
+    // best effort, so that a failed cleanup does not hide the failure of a test
+    private void deleteDatabase(String name) {
+        try {
+            clientWrapper.getDatabase(name).delete().block();
+        } catch (CosmosException e) {
+            if (e.getStatusCode() != 404) {
+                LOG.warn("Cannot delete the database {}: {}", name, e.getMessage());
+            }
+        } catch (RuntimeException e) {
+            LOG.warn("Cannot delete the database {}: {}", name, e.getMessage());
+        }
     }
 
     @BeforeEach
@@ -295,6 +303,8 @@ class CosmosDbContainerOperationsIT {
     }
 
     @Test
+    @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote",
+                             disabledReason = "Floci AZ does not emulate the change feed: supply a Cosmos DB account, e.g: mvn verify -Dendpoint=... -DaccessKey=...")
     void testCaptureChangeFeed() {
         // we create our lease container first with our lease database
         final Mono<CosmosAsyncContainer> leaseContainer = CosmosDbOperationsBuilder.withClient(clientWrapper)

@@ -22,8 +22,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.azure.cosmos.CosmosAsyncClient;
-import com.azure.cosmos.CosmosClientBuilder;
+import org.apache.camel.test.infra.azure.cosmosdb.clients.AzureCosmosDbClientUtils;
+import org.apache.camel.test.infra.azure.cosmosdb.common.AzureCosmosDbProperties;
+import org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbService;
+import org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbServiceFactory;
 import org.apache.camel.test.junit6.TestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.function.Executable;
 
@@ -38,26 +42,29 @@ public final class CosmosDbTestUtils {
         return TestSupport.loadExternalProperties(CosmosDbTestUtils.class, "azure_key.properties");
     }
 
-    public static Properties loadAzureAccessFromJvmEnv() throws Exception {
-        final Properties properties = new Properties();
-        if (System.getProperty("endpoint") == null || System.getProperty("accessKey") == null) {
-            throw new Exception(
-                    "Make sure to supply azure CosmosDB endpoint and accessKey, e.g:  mvn verify -Dendpoint=myacc-azure.com -DaccessKey=mykey");
-        }
-        properties.setProperty("endpoint", System.getProperty("endpoint"));
-        properties.setProperty("access_key", System.getProperty("accessKey"));
+    /**
+     * The Cosmos DB account the integration tests run against: a local Floci AZ container, unless the endpoint and
+     * accessKey system properties give an account on Azure, for example
+     * {@code mvn verify -Dendpoint=https://myaccount.documents.azure.com:443/ -DaccessKey=mykey}
+     */
+    public static AzureCosmosDbService createService() {
+        final String endpoint = System.getProperty("endpoint");
+        final String accessKey = System.getProperty("accessKey");
 
-        return properties;
+        if (ObjectHelper.isNotEmpty(endpoint) && ObjectHelper.isNotEmpty(accessKey)) {
+            System.setProperty(AzureCosmosDbProperties.ENDPOINT, endpoint);
+            System.setProperty(AzureCosmosDbProperties.ACCESS_KEY, accessKey);
+            System.setProperty(AzureCosmosDbProperties.INSTANCE_TYPE, "remote");
+        }
+
+        return AzureCosmosDbServiceFactory.createSingletonService();
     }
 
-    public static CosmosAsyncClient createAsyncClient() throws Exception {
-        final Properties properties = loadAzureAccessFromJvmEnv();
-
-        return new CosmosClientBuilder()
-                .key(properties.getProperty("access_key"))
-                .endpoint(properties.getProperty("endpoint"))
-                .contentResponseOnWriteEnabled(true)
-                .buildAsyncClient();
+    /**
+     * A client of the account of {@link #createService()}
+     */
+    public static CosmosAsyncClient createAsyncClient() {
+        return AzureCosmosDbClientUtils.createAsyncClient();
     }
 
     public static void assertIllegalArgumentException(final Executable executable) {
