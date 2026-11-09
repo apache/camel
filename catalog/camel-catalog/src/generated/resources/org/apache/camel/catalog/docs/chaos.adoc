@@ -247,10 +247,10 @@ retry, an error?), or the polls fail for a polling consumer; and the route stall
 |===
 
 The rules leave the query of the endpoint out: its options do not tell which endpoint it is, and may hold a secret.
-`ChaosManager.suggest()` gives the same as JSON (`suggestions`: `route`, `kind`, `recipe`, `title`, `rule`, `why`,
-`tried`, `routes` for a dead letter channel that several routes share, and `feed` with `kind` (`self`, `http`, `file`
-or `send`), `hint` and `real`), and
-the chaos screen of the Camel TUI lists them (key `w`), where Enter types the rule in to change or add.
+`ChaosManager.suggest()` gives the same as JSON: `suggestions`, each with `route`, `kind`, `recipe`, `title`, `rule`,
+`why`, `tried`, `routes` for a dead letter channel that several routes share, and `feed`. A `feed` has its `kind`
+(one of `self`, `http`, `file` and `send`), a `hint` and `real`. The chaos screen of the Camel TUI lists the suggestions
+(key `w`), where Enter types the rule in to change or add.
 
 === What has been tried
 
