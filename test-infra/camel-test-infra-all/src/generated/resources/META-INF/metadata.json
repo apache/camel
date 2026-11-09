@@ -227,7 +227,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-apicurio-registry",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "3.3.3",
+  "serviceVersion" : "3.3.4",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.kafka.services.KafkaInfraService",
