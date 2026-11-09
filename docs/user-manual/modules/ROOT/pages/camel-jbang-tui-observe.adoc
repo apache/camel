@@ -24,10 +24,12 @@ happened to it, with no AI:
 
 image::jbang/camel-tui-about.png[About the chaos demo: its purpose, what comes in, its routes and what goes out, the last 5 minutes after an outage of the stock service, and a line per route of what happened]
 
-* The header has the Camel version, runtime, files, routes and uptime, and the purpose: the comment at the top of the
-main source file (a YAML `#` comment, a Javadoc or `//` comment in Java, an XML comment), else the descriptions of the
-routes.
-* *In*, *Routes* and *Out* say what starts it, its routes (a route called with `direct` sits under its caller with `↳`,
+* The header has the Camel version, runtime, files, routes and uptime, and the purpose: the comment at the top of a
+route file (a YAML `#` comment, a Javadoc or `//` comment in Java, an XML comment), else the first paragraph of the
+README, else the descriptions of the routes, else the overview an AI wrote in `camel-summary.md`. *r* opens the README,
+and *s* the summary of the project.
+* *In*, *Routes* and *Out* say what starts it (a timer or a cron with the period or schedule of its properties, its
+profile applied), its routes (a route called with `direct` sits under its caller with `↳`,
 one handed off with `seda` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
 last 5 minutes. *Up* and *Down* select a line, and *Enter* opens a route drilled down on the Diagram, or an endpoint with
 its details on the Endpoint tab.

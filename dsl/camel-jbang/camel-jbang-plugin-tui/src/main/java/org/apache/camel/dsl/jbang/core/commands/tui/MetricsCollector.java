@@ -453,7 +453,7 @@ class MetricsCollector {
                 long deltaWallNanos = (nowMs - prev[1]) * 1_000_000L;
                 if (deltaWallNanos > 0) {
                     double cpuPct = (double) deltaCpuNanos / deltaWallNanos * 100.0;
-                    cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(Math.max(0, cpuPct));
+                    cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg(0)).update(Math.max(0, cpuPct));
                 }
             }
             prevCpuSample.put(pid, new long[] { cpuNanos, nowMs });

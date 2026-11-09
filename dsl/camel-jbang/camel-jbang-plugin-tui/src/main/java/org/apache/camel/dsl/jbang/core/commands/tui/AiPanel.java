@@ -3017,7 +3017,7 @@ class AiPanel {
 
         @Override
         public String selectedProcessName() {
-            return ctx != null ? ctx.selectedName() : null;
+            return ctx != null ? ctx.selectedFullName() : null;
         }
 
         @Override

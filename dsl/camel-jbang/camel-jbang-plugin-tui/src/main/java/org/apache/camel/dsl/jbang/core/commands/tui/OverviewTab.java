@@ -723,7 +723,7 @@ class OverviewTab extends AbstractTab {
                     throughputDisplay = TuiHelper.throughputPerMinute(throughputDisplay);
                 }
                 String timingCol;
-                if (hasPercentiles && info.p50Time >= 0) {
+                if (hasPercentiles && info.p50Time >= 0 && info.exchangesTotal > 0) {
                     timingCol = formatDurationMs(info.p50Time) + "/" + formatDurationMs(info.p95Time) + "/"
                                 + formatDurationMs(info.p99Time);
                 } else if (info.exchangesTotal > 0) {

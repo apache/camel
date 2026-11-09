@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -49,6 +52,7 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.ai.About;
 import org.apache.camel.dsl.jbang.core.commands.ai.AboutReport;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -91,6 +95,8 @@ final class AboutView {
     private volatile boolean loading;
     private volatile String error;
     private Path dir;
+    // the README of the project, which r opens; null when it has none
+    private Path readme;
     private long loadedAt;
     // the zoom of What happened, as the windows of the Timeline tab (+ and -), and its last second when moved (← →);
     // -1 follows the last second recorded
@@ -147,7 +153,9 @@ final class AboutView {
             try {
                 ProjectOverview.Overview o = ProjectOverview.analyze(d, ArchitectureView.catalog());
                 About.Model m = About.of(d, o);
+                Path r = About.readme(d);
                 onRenderThread.accept(() -> {
+                    readme = r;
                     overview = o;
                     model = m;
                     purpose = m.purpose();
@@ -177,6 +185,14 @@ final class AboutView {
         if (ke.isConfirm()) {
             return open();
         }
+        if (ke.isChar('r') && readme != null) {
+            return openReadme(info);
+        }
+        if (ke.isChar('s') && dir != null) {
+            // the summary of the project, as the Diagram opens it: what an AI wrote, and what its sources say
+            IntegrationSummaryDoc.open(ctx, dir, null);
+            return true;
+        }
         long end = ctx.timeline.endSecond(info.pid);
         if (ke.isChar('+') || ke.isChar('=')) {
             if (zoom > 0 && end >= 0) {
@@ -204,6 +220,22 @@ final class AboutView {
             return true;
         }
         return false;
+    }
+
+    /** Opens the README of the project in the document viewer. */
+    private boolean openReadme(IntegrationInfo info) {
+        if (ctx.openMarkdownCallback == null) {
+            return false;
+        }
+        try {
+            String text = Files.readString(readme, StandardCharsets.UTF_8);
+            String name = readme.getFileName().toString();
+            String markdown = name.toLowerCase(Locale.ROOT).endsWith(".adoc") ? DocHelper.asciidocToMarkdown(text) : text;
+            ctx.openMarkdownCallback.accept((info.name != null ? info.name : info.pid) + " - " + name, markdown);
+        } catch (IOException e) {
+            error = "Cannot read " + readme + ": " + e.getMessage();
+        }
+        return true;
     }
 
     /** The lines the cursor can be on, for an agent (tui_get_state): the route, or the endpoint and its route. */
@@ -240,7 +272,7 @@ final class AboutView {
         JsonArray in = new JsonArray();
         for (About.In e : m.in()) {
             JsonObject jo = new JsonObject();
-            jo.put("label", e.label());
+            jo.put("label", Placeholders.resolve(e.label(), info));
             jo.put("kind", e.kind());
             jo.put("routeId", e.route());
             putTotalAndRate(jo, info, e.route(), totals);
@@ -337,7 +369,8 @@ final class AboutView {
             }
             result.put("selected", sel);
         }
-        result.put("keys", "v all integrations, Up/Down select a line, Enter opens it, +/- zoom, Left/Right move, 4 Timeline");
+        result.put("keys", "v all integrations, Up/Down select a line, Enter opens it, +/- zoom, Left/Right move, 4 Timeline,"
+                           + (readme != null ? " r the README," : "") + " s the summary");
         return result;
     }
 
@@ -512,7 +545,7 @@ final class AboutView {
             int tall = routes == 0 ? 1 : Math.max(1, Math.min(MAX_STRIP_ROWS, 1 + (area.height() - used - 2) / routes));
             strips = routeStrips(info, width - 4, spaced, tall);
         }
-        select(columns, m);
+        select(columns, m, info);
         String name = " " + (info.name != null ? info.name : info.pid) + " ";
         if (roomy) {
             renderRoomy(frame, area, info, name, head, columns, status, strips);
@@ -606,7 +639,7 @@ final class AboutView {
             head.add(Line.from(Span.styled(" " + pFrom, Theme.muted())));
         } else if (o != null) {
             head.add(Line.from(Span.styled(" No description yet: a comment at the top of " + mainFile(o)
-                                           + " says what it does, or ask the AI (Shift+F8 on a route)",
+                                           + " or a README says what it does, or ask the AI (Shift+F8 on a route)",
                     Theme.muted())));
         } else {
             head.add(Line.from(Span.styled(error != null ? " " + error : " Reading the sources…", Theme.muted())));
@@ -615,12 +648,12 @@ final class AboutView {
     }
 
     /** The lines the cursor goes over, down In, then Routes, then Out; the line it is on in the selection colour. */
-    private void select(Columns c, About.Model m) {
+    private void select(Columns c, About.Model m, IntegrationInfo info) {
         List<Target> all = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         List<String> inLabels = new ArrayList<>();
         if (m != null) {
-            m.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(e.label()));
+            m.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(Placeholders.resolve(e.label(), info)));
         }
         String[] names = { "in", "route", "out" };
         List<List<Target>> columns = List.of(c.inTargets(), c.routeTargets(), c.outTargets());
@@ -896,8 +929,10 @@ final class AboutView {
         return sb.toString();
     }
 
+    /** The file of the first route, where its comment goes: not a file that only declares beans. */
     private static String mainFile(ProjectOverview.Overview o) {
-        return o.files().isEmpty() ? "the main file" : o.files().get(0);
+        return o.flows().stream().map(ProjectRoutes.Route::file).filter(f -> f != null).findFirst()
+                .orElse(o.files().isEmpty() ? "the main file" : o.files().get(0));
     }
 
     // ---- In, Routes, Out ----
@@ -953,7 +988,9 @@ final class AboutView {
                 inTargets.add(null);
             }
             Long total = e.route() != null ? totals.get(e.route()) : null;
-            in.add(Line.from(Span.raw(" " + icon(e.kind()) + " "), Span.styled(e.label(), Style.EMPTY.bold()),
+            // with the values of its properties: the period or the schedule it runs with, its profile applied
+            in.add(Line.from(Span.raw(" " + icon(e.kind()) + " "),
+                    Span.styled(Placeholders.resolve(e.label(), info), Style.EMPTY.bold()),
                     Span.styled(total != null ? "  " + total : "", Theme.success())));
             inTargets.add(e.route() != null ? new Target(e.route(), null) : null);
             // the exchanges of the route it starts over the last minutes, and the rate now
@@ -1190,12 +1227,23 @@ final class AboutView {
         return dot >= 0 ? type.substring(dot + 1) : type;
     }
 
-    /** Where to go next. */
-    private static Line next() {
-        return Line.from(Span.styled(" Next     ", Theme.muted()), Span.styled(" 4 ", Theme.hintKey()),
-                Span.raw(" what happened, per second  "), Span.styled(" 5 ", Theme.hintKey()),
-                Span.raw(" diagram  "), Span.styled(" 2 ", Theme.hintKey()), Span.raw(" source  "),
-                Span.styled(" v ", Theme.hintKey()), Span.raw(" all integrations"));
+    /** Where to go next: the README and the summary of the project too. */
+    private Line next() {
+        List<Span> spans = new ArrayList<>(
+                List.of(Span.styled(" Next     ", Theme.muted()), Span.styled(" 4 ", Theme.hintKey()),
+                        Span.raw(" what happened, per second  "), Span.styled(" 5 ", Theme.hintKey()),
+                        Span.raw(" diagram  "), Span.styled(" 2 ", Theme.hintKey()), Span.raw(" source  ")));
+        if (readme != null) {
+            spans.add(Span.styled(" r ", Theme.hintKey()));
+            spans.add(Span.raw(" readme  "));
+        }
+        if (dir != null) {
+            spans.add(Span.styled(" s ", Theme.hintKey()));
+            spans.add(Span.raw(" summary  "));
+        }
+        spans.add(Span.styled(" v ", Theme.hintKey()));
+        spans.add(Span.raw(" all integrations"));
+        return Line.from(spans);
     }
 
     /**

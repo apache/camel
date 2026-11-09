@@ -16,9 +16,12 @@ What an integration you have not seen before does, and what has
 happened to it, with no AI:
 
 - **The header** — the Camel version, runtime, files, routes and uptime,
-  and its purpose: the comment at the top of its main file (a YAML `#`
+  and its purpose: the comment at the top of a route file (a YAML `#`
   comment, a Javadoc or `//` comment in Java, an XML comment), else the
-  descriptions of its routes.
+  first paragraph of its README, else the descriptions of its routes,
+  else the overview an AI wrote in its `camel-summary.md`. A timer or a
+  cron of In shows the period or schedule it runs with, from its
+  properties with its profile applied.
 - **In, Routes, Out** — what starts it (timers, HTTP, consumers), its
   routes (a route called with `direct:` sits under its caller with `↳`,
   one handed off with `seda:` with `⇢`) and what it talks to, from its
@@ -37,7 +40,7 @@ happened to it, with no AI:
   were none in the last minute, with the earlier ones dimmed (Last 5m and
   What happened still show them).
 - **Next** — the keys that lead deeper: **4** the Timeline, **5** the
-  Diagram, **2** the source.
+  Diagram, **2** the source, **r** the README, **s** the summary.
 - **What happened** — a strip per route over the last 5 minutes (as wide
   as the screen allows, and up to two rows high on a tall one), coloured
   as on the Timeline: green completed, yellow recovered by redelivery,
@@ -57,6 +60,9 @@ Keys of About:
   centres on the last trouble, so you see what the other routes did at
   that moment
 - **Left/Right** — Move a zoomed window back and forward
+- **r** — Read the README of the project
+- **s** — The summary of the project: what an AI wrote about it in
+  `camel-summary.md`, and what its sources say
 - **v** — All integrations
 
 `camel get about` shows the same from the command line. An AI reads it

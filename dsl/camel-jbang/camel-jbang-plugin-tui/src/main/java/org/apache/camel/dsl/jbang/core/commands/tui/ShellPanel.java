@@ -524,7 +524,7 @@ class ShellPanel {
 
             // Propagate TUI's selected integration so ask auto-targets it
             if (ctx != null && ctx.selectedPid != null) {
-                EnvironmentHelper.setSelectedProcess(ctx.selectedName());
+                EnvironmentHelper.setSelectedProcess(ctx.selectedFullName());
             }
 
             try (Shell shell = buildShell(terminal, registry)) {

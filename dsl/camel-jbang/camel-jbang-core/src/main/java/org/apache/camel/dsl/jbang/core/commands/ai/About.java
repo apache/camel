@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * About an integration (CAMEL-26700): what it does at a glance and without an AI, from the analysis of its sources
@@ -77,6 +79,11 @@ public final class About {
      */
     public record Model(String purpose, String purposeFrom, List<In> in, List<RouteLine> routes, List<Out> out) {
     }
+
+    // the names of a README, in the order they are taken
+    private static final List<String> README_NAMES = List.of("readme.md", "readme.adoc", "readme.txt", "readme");
+    // shorter than this is no description (a link, a word)
+    private static final int MIN_PARAGRAPH = 20;
 
     private About() {
     }
@@ -143,8 +150,9 @@ public final class About {
 
     /**
      * What the integration does, in the words of its author: the comment at the top of a route file (the files in the
-     * order of the analysis), else the descriptions of the routes that something outside starts. Returns the text and
-     * where it comes from, or null.
+     * order of the analysis), else the first paragraph of its README, else the descriptions of the routes that
+     * something outside starts, else the overview an AI wrote in its camel-summary.md. Returns the text and where it
+     * comes from, or null.
      */
     public static String[] purpose(Path dir, ProjectOverview.Overview o) {
         for (String file : o.files()) {
@@ -155,6 +163,17 @@ public final class About {
                 }
             } catch (IOException e) {
                 // an unreadable file has no comment
+            }
+        }
+        Path readme = readme(dir);
+        if (readme != null) {
+            try {
+                String text = firstParagraph(Files.readString(readme, StandardCharsets.UTF_8));
+                if (text != null) {
+                    return new String[] { text, "from " + readme.getFileName() };
+                }
+            } catch (IOException e) {
+                // an unreadable README says nothing
             }
         }
         List<String> descriptions = new ArrayList<>();
@@ -175,7 +194,73 @@ public final class About {
                     String.join(" ", descriptions.subList(0, Math.min(2, descriptions.size()))),
                     "from the descriptions of the routes" };
         }
+        IntegrationSummary.Summary summary = IntegrationSummary.read(dir);
+        String overview = summary != null ? firstParagraph(summary.overview()) : null;
+        if (overview != null) {
+            return new String[] { overview, "from " + IntegrationSummary.FILE_NAME + " (AI-assisted)" };
+        }
         return null;
+    }
+
+    /** The README of the project: README.md, README.adoc, README.txt or README, whatever their case; or null. */
+    public static Path readme(Path dir) {
+        if (dir == null || !Files.isDirectory(dir)) {
+            return null;
+        }
+        try (Stream<Path> files = Files.list(dir)) {
+            Map<String, Path> byName = new LinkedHashMap<>();
+            files.filter(Files::isRegularFile)
+                    .forEach(f -> byName.putIfAbsent(f.getFileName().toString().toLowerCase(Locale.ROOT), f));
+            for (String name : README_NAMES) {
+                if (byName.containsKey(name)) {
+                    return byName.get(name);
+                }
+            }
+        } catch (IOException e) {
+            // no README to read
+        }
+        return null;
+    }
+
+    /**
+     * The first paragraph of a Markdown or AsciiDoc text, as plain text: after its title, without badges, images,
+     * attributes and comments, and with the markup of code, emphasis and links taken out; null when it has none.
+     */
+    public static String firstParagraph(String text) {
+        if (text == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        boolean comment = false;
+        for (String line : text.lines().toList()) {
+            String l = line.strip();
+            if (comment || l.startsWith("<!--")) {
+                comment = !l.contains("-->");
+                continue;
+            }
+            if (l.isEmpty() || l.startsWith("#") || l.startsWith("=") || l.startsWith("```") || l.startsWith("----")
+                    || l.startsWith("- ") || l.startsWith("* ") || l.startsWith("|") || l.startsWith(">")) {
+                if (!sb.isEmpty()) {
+                    break;
+                }
+                continue;
+            }
+            if (l.startsWith("[!") || l.startsWith("[[") || l.matches("\\[[^]]*]") || l.startsWith("![")
+                    || l.startsWith(":") || l.startsWith("//") || l.startsWith("image:") || l.startsWith("<")) {
+                // badges, images, attributes, anchors and comments of AsciiDoc, HTML
+                continue;
+            }
+            sb.append(l).append(' ');
+        }
+        String p = sb.toString()
+                .replaceAll("\\[([^\\]]*)]\\([^)]*\\)", "$1") // [text](url)
+                .replaceAll("(?:https?|link):[^\\s\\[]*\\[([^\\]]*)]", "$1") // link:url[text] and url[text]
+                .replaceAll("[`*]+|(?<!\\w)_+|_+(?!\\w)", "")
+                .replaceAll("\\s+", " ").strip();
+        if (p.length() < MIN_PARAGRAPH) {
+            return null;
+        }
+        return p.length() > 300 ? p.substring(0, 297) + "…" : p;
     }
 
     /**

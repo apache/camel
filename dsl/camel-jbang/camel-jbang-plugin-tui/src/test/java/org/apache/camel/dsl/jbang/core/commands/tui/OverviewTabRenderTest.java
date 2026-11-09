@@ -86,6 +86,26 @@ class OverviewTabRenderTest {
     }
 
     @Test
+    void noTimesBeforeTheFirstExchange() {
+        // quick-start/rest-api before its first request: the percentiles are there, all 0
+        info.state = 5;
+        info.p50Time = 0;
+        info.p95Time = 0;
+        info.p99Time = 0;
+
+        OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
+        }).showIntegrations();
+        String row = TuiTestHelper.renderToString(tab, 160, 30).lines().filter(l -> l.contains("test-app")).findFirst()
+                .orElseThrow();
+        assertFalse(row.contains("0ms/0ms/0ms"), row);
+
+        info.exchangesTotal = 1;
+        row = TuiTestHelper.renderToString(tab, 160, 30).lines().filter(l -> l.contains("test-app")).findFirst()
+                .orElseThrow();
+        assertTrue(row.contains("0ms/0ms/0ms"), row);
+    }
+
+    @Test
     void theNumbersStandNextToTheNamesOnAWideScreen() {
         info.state = 5;
         info.name = "circuit-breaker";
