@@ -37,6 +37,7 @@ import java.util.stream.Stream;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
@@ -164,8 +165,9 @@ public class CamelSendAction extends ActionBaseCommand {
 
     private MessageTableHelper tableHelper;
 
-    private static final int MAX_MESSAGES = 10000;
-    private static final long MAX_INTERVAL = 60000;
+    // the limits of the integration, so the CLI refuses what the integration would
+    private static final int MAX_MESSAGES = RepeatedSend.MAX_MESSAGES;
+    private static final long MAX_INTERVAL = RepeatedSend.MAX_INTERVAL;
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
 

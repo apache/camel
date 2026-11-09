@@ -43,10 +43,12 @@ import org.apache.camel.util.json.JsonObject;
  * {@code .properties} files: {@code 001.properties} has the headers of {@code 001.json}. The folder is read by the
  * integration, relative to its working directory, as the file of a single body is.
  */
-final class RepeatedSend {
+public final class RepeatedSend {
 
-    static final int MAX_MESSAGES = 10000;
-    static final long MAX_INTERVAL = 60000;
+    /** The most messages one send action sends; camel cmd send checks it before it asks. */
+    public static final int MAX_MESSAGES = 10000;
+    /** The longest pause between two messages, in millis; camel cmd send checks it before it asks. */
+    public static final long MAX_INTERVAL = 60000;
     private static final int MAX_ERRORS = 5;
 
     private RepeatedSend() {

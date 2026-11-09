@@ -31,6 +31,7 @@ import org.apache.camel.console.DevConsole;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +43,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Tests for SendDevConsole with various options (endpoint, body, exchange pattern, etc.).
  */
 public class SendDevConsoleTest extends AbstractDevConsoleTest {
+
+    @TempDir
+    Path dir;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -142,8 +146,7 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
                 from("seda:refunds").delay(200).to("mock:refunds");
             }
         });
-        Path file = Files.createTempFile("refund", ".json");
-        Files.writeString(file, "{\"refund\": 1}");
+        Path file = Files.writeString(dir.resolve("refund.json"), "{\"refund\": 1}");
         MockEndpoint mock = getMockEndpoint("mock:refunds");
         mock.expectedBodiesReceived("{\"refund\": 1}");
 
@@ -151,7 +154,6 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
 
         assertEquals("success", jsonOut.getString("status"), jsonOut.toJson());
         mock.assertIsSatisfied();
-        Files.delete(file);
     }
 
     @Test
