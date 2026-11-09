@@ -263,11 +263,11 @@ that meet. Their rules are added together:
 Each of their rules counts as its own kind in what has been tried, so a pair is never "not tried yet".
 
 The rules leave the query of the endpoint out: its options do not tell which endpoint it is, and may hold a secret.
-`ChaosManager.suggest()` gives the same as JSON (`suggestions`: `route`, `kind`, `recipe`, `title`, `rule`, `why`,
-`tried`, `routes` for a dead letter channel that several routes share, `feed` with `kind` (`self`, `http`, `file`
-or `send`), `hint` and `real`, and `rules` with all the rules to add together for two faults at once), and
-the chaos screen of the Camel TUI lists them (key `w`), where Enter types the rule in to change or add (the rules of
-two faults at once separated by `;`).
+`ChaosManager.suggest()` gives the same as JSON: `suggestions`, each with `route`, `kind`, `recipe`, `title`, `rule`,
+`why`, `tried`, `routes` for a dead letter channel that several routes share, `feed`, and `rules` for two faults at
+once. A `feed` has its `kind` (one of `self`, `http`, `file` and `send`), a `hint` and `real`. `rules` has all the
+rules to add together. The chaos screen of the Camel TUI lists the suggestions (key `w`), where Enter types the rule
+in to change or add (the rules of two faults at once separated by `;`).
 
 === What has been tried
 
