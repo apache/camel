@@ -172,6 +172,22 @@ class CommandInputErrorsTest {
     }
 
     @Test
+    void debugInTheBackgroundSkipsTtyCheck() throws Exception {
+        // --background makes camel debug detach immediately, so it does not need an interactive terminal:
+        // the TTY check that guards the interactive path must be bypassed
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+        assumeFalse(EnvironmentHelper.isInteractiveTerminal(), "needs a non-interactive terminal");
+        // Override runBackgroundProcess so the test does not actually spawn a child JVM
+        Debug debug = new Debug(main) {
+            @Override
+            protected int runBackgroundProcess(ProcessBuilder pb, String kind) {
+                return 0;
+            }
+        };
+        assertThat(call(debug, "--background", file.toString())).isZero();
+    }
+
+    @Test
     void debugBackgroundAndRemoteAttachAreMutuallyExclusive() {
         assertThatThrownBy(() -> call(new Debug(main), "--background", "--remote-attach"))
                 .isInstanceOf(CliException.class)

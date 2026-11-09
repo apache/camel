@@ -72,6 +72,23 @@ camel debug hello.yaml --breakpoint=18
 camel debug hello.yaml --breakpoint=18,34
 ----
 
+=== Running the debugger in background mode
+
+Use `--background` to start the debug-enabled integration as a detached child process and return immediately:
+
+[source,bash]
+----
+camel debug hello.yaml --background
+----
+
+This is useful in CI or non-interactive sessions where no TTY is available.
+Unlike the interactive mode, `camel debug --background` does not require a terminal:
+it launches the Camel integration with the route debugger enabled, writes the startup log to
+`~/.camel/<pid>-run.log`, and exits 0.
+
+NOTE: `--background` is not supported for Spring Boot or Quarkus projects.
+      `--background` and `--remote-attach` are mutually exclusive.
+
 === Spring Boot route debugging
 
 *Available since Camel 4.14*

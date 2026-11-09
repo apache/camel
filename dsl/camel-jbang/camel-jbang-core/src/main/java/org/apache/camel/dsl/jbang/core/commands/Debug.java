@@ -613,7 +613,7 @@ public class Debug extends Run {
         pb.command(cmds);
 
         if (background) {
-            return runBackgroundProcess(pb, "Camel");
+            return runBackgroundProcess(pb, "Camel Debug");
         }
 
         Process p = pb.start();
