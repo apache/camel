@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStructureAction;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
@@ -435,12 +436,13 @@ public final class ToolRegistry {
                     }
                     int repeat = intArg(args, "repeat", 0);
                     try {
-                        return ctx.sendMessage(endpoint, args.get("body"), args.get("headers"), repeat,
-                                args.get("interval")).toJson();
+                        RepeatedSend.interval(args.get("interval"));
                     } catch (IllegalArgumentException e) {
                         // an interval that is not a time or a range
                         throw new ToolExecutionException(e.getMessage());
                     }
+                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers"), repeat,
+                            args.get("interval")).toJson();
                 }));
 
         register(tool("eval_expression",
