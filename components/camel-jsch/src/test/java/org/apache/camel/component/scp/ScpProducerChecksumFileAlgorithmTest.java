@@ -40,10 +40,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  *
  * <p>
  * Note: on this branch (camel-4.22.x), checksum computation is not available. On main, it is
- * {@code GenericFileProducer.prepareChecksum()} (CAMEL-25906) that computes the hash for all remote producers,
- * not {@code ScpOperations} itself. The {@code FILE_CHECKSUM} header must therefore be set by the caller before
- * sending, so that {@code GenericFileProducer.writeChecksumFile()} picks it up and calls {@code storeFileDirectly}
- * with the hash. These tests verify that the fixed {@code storeFileDirectly} path works correctly end-to-end.
+ * {@code GenericFileProducer.prepareChecksum()} (CAMEL-25906) that computes the hash for all remote producers, not
+ * {@code ScpOperations} itself. The {@code FILE_CHECKSUM} header must therefore be set by the caller before sending, so
+ * that {@code GenericFileProducer.writeChecksumFile()} picks it up and calls {@code storeFileDirectly} with the hash.
+ * These tests verify that the fixed {@code storeFileDirectly} path works correctly end-to-end.
  */
 class ScpProducerChecksumFileAlgorithmTest extends ScpServerTestSupport {
 
