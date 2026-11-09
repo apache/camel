@@ -30,6 +30,8 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -104,7 +106,17 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     @Override
     protected int delete(String key) {
         int result = super.delete(key);
-        processorNameMessageIdSet.remove(new ProcessorNameAndMessageId(processorName, key));
+        ProcessorNameAndMessageId id = new ProcessorNameAndMessageId(processorName, key);
+        processorNameMessageIdSet.remove(id);
+        // an insert of the same key earlier in this transaction keeps it alive only after the commit: cancel that
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+                if (synchronization instanceof KeepAliveAfterCommit pending && pending.repository == this
+                        && pending.id.equals(id)) {
+                    pending.cancelled = true;
+                }
+            }
+        }
         return result;
     }
 
@@ -113,7 +125,7 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         if (jdbcTemplate.queryForObject(getQueryString(), Integer.class, processorName, key) == 0) {
             int result = jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
-            processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
+            keepAliveAfterCommit(key);
             return result;
         } else {
             // Row exists — try to claim orphan lock with conditional UPDATE.
@@ -124,9 +136,46 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
             int result = jdbcTemplate.update(orphanLockRecoverQueryString, currentTimestamp, processorName, key, xMillisAgo);
             if (result > 0) {
                 log.debug("Orphan lock seized for key: {}", key);
-                processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
+                keepAliveAfterCommit(key);
             }
             return result;
+        }
+    }
+
+    /**
+     * Keeps the lease of the key alive once the transaction that inserted or seized its row commits. When that
+     * transaction rolls back (for example in a transacted route with removeOnFailure=false), the row is not there, so
+     * the key must not be kept alive: another node may insert it later, and this node would keep its lease alive.
+     */
+    private void keepAliveAfterCommit(String key) {
+        ProcessorNameAndMessageId id = new ProcessorNameAndMessageId(processorName, key);
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new KeepAliveAfterCommit(this, id));
+        } else {
+            processorNameMessageIdSet.add(id);
+        }
+    }
+
+    /**
+     * Adds a key to the keys kept alive after the commit of the transaction that inserted or seized its row, unless the
+     * key was deleted later in that transaction.
+     */
+    private static final class KeepAliveAfterCommit implements TransactionSynchronization {
+        private final JdbcOrphanLockAwareIdempotentRepository repository;
+        private final ProcessorNameAndMessageId id;
+        // set and read by the thread of the transaction
+        private boolean cancelled;
+
+        private KeepAliveAfterCommit(JdbcOrphanLockAwareIdempotentRepository repository, ProcessorNameAndMessageId id) {
+            this.repository = repository;
+            this.id = id;
+        }
+
+        @Override
+        public void afterCommit() {
+            if (!cancelled) {
+                repository.processorNameMessageIdSet.add(id);
+            }
         }
     }
 
@@ -170,6 +219,14 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     protected int delete() {
         int result = super.delete();
         processorNameMessageIdSet.clear();
+        // and the inserts earlier in this transaction are not kept alive after the commit either
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+                if (synchronization instanceof KeepAliveAfterCommit pending && pending.repository == this) {
+                    pending.cancelled = true;
+                }
+            }
+        }
         return result;
     }
 
