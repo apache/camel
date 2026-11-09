@@ -22,8 +22,8 @@ import java.net.http.HttpResponse;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,14 +65,14 @@ public class OpenAIMockEmbeddingTest {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode responseJson = objectMapper.readTree(responseBody);
 
-            assertEquals("list", responseJson.path("object").asText());
-            assertEquals("camel-embedding", responseJson.path("model").asText());
+            assertEquals("list", responseJson.path("object").asString());
+            assertEquals("camel-embedding", responseJson.path("model").asString());
 
             JsonNode dataArray = responseJson.path("data");
             assertEquals(1, dataArray.size());
 
             JsonNode embeddingData = dataArray.get(0);
-            assertEquals("embedding", embeddingData.path("object").asText());
+            assertEquals("embedding", embeddingData.path("object").asString());
             assertEquals(0, embeddingData.path("index").asInt());
 
             JsonNode embedding = embeddingData.path("embedding");
@@ -105,7 +105,7 @@ public class OpenAIMockEmbeddingTest {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode responseJson = objectMapper.readTree(responseBody);
 
-            assertEquals("list", responseJson.path("object").asText());
+            assertEquals("list", responseJson.path("object").asString());
 
             JsonNode embedding = responseJson.path("data").get(0).path("embedding");
             assertEquals(1536, embedding.size());
@@ -137,7 +137,7 @@ public class OpenAIMockEmbeddingTest {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode responseJson = objectMapper.readTree(responseBody);
 
-            assertEquals("list", responseJson.path("object").asText());
+            assertEquals("list", responseJson.path("object").asString());
 
             JsonNode embedding = responseJson.path("data").get(0).path("embedding");
             assertEquals(4, embedding.size());
@@ -202,14 +202,14 @@ public class OpenAIMockEmbeddingTest {
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode responseJson = objectMapper.readTree(responseBody);
 
-            assertEquals("list", responseJson.path("object").asText());
+            assertEquals("list", responseJson.path("object").asString());
 
             JsonNode dataArray = responseJson.path("data");
             assertEquals(2, dataArray.size(), "Should have 2 embeddings in the response");
 
             // First embedding
             JsonNode embedding1 = dataArray.get(0);
-            assertEquals("embedding", embedding1.path("object").asText());
+            assertEquals("embedding", embedding1.path("object").asString());
             assertEquals(0, embedding1.path("index").asInt());
             assertEquals(2, embedding1.path("embedding").size());
             assertEquals(0.1, embedding1.path("embedding").get(0).asDouble(), 0.001);
@@ -217,7 +217,7 @@ public class OpenAIMockEmbeddingTest {
 
             // Second embedding
             JsonNode embedding2 = dataArray.get(1);
-            assertEquals("embedding", embedding2.path("object").asText());
+            assertEquals("embedding", embedding2.path("object").asString());
             assertEquals(1, embedding2.path("index").asInt());
             assertEquals(2, embedding2.path("embedding").size());
             assertEquals(0.3, embedding2.path("embedding").get(0).asDouble(), 0.001);

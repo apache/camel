@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -223,5 +225,27 @@ class PrepareDocSymlinksMojoTest {
         List<Path> sortedAgain = new ArrayList<>(sorted);
         sortedAgain.sort(cmp);
         assertThat(sortedAgain).containsExactlyElementsOf(sorted);
+    }
+
+    // ----- matchesJsonFilter ----------------------------------------------------------------------------------------
+
+    @Test
+    void matchesJsonFilter_matchesRootKeyAndEipLabel(@TempDir Path dir) throws Exception {
+        Path component = Files.writeString(dir.resolve("component.json"), "{\"component\":{}}");
+        Path eip = Files.writeString(dir.resolve("eip.json"), "{\"model\":{\"label\":\"eip,routing\"}}");
+        PrepareDocSymlinksMojo mojo = new PrepareDocSymlinksMojo();
+
+        assertThat(mojo.matchesJsonFilter(component, "component")).isTrue();
+        assertThat(mojo.matchesJsonFilter(component, "language")).isFalse();
+        assertThat(mojo.matchesJsonFilter(eip, "eip")).isTrue();
+    }
+
+    @Test
+    void matchesJsonFilter_skipsUnparseableAndUnreadableFiles(@TempDir Path dir) throws Exception {
+        Path corrupt = Files.writeString(dir.resolve("corrupt.json"), "{not json");
+        PrepareDocSymlinksMojo mojo = new PrepareDocSymlinksMojo();
+
+        assertThat(mojo.matchesJsonFilter(corrupt, "component")).isFalse();
+        assertThat(mojo.matchesJsonFilter(dir.resolve("missing.json"), "component")).isFalse();
     }
 }

@@ -25,10 +25,11 @@ import java.time.Duration;
 import java.util.Locale;
 import java.util.StringJoiner;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public final class GitHubHelper {
 
@@ -148,7 +149,7 @@ public final class GitHubHelper {
         }
     }
 
-    private static void resolveGithubAsRawFiles(
+    static void resolveGithubAsRawFiles(
             String url, String wildcard, StringJoiner routes, StringJoiner kamelets, StringJoiner properties, StringJoiner all)
             throws Exception {
 
@@ -158,29 +159,29 @@ public final class GitHubHelper {
                 HttpResponse.BodyHandlers.ofString());
 
         if (res.statusCode() == 200) {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
             JsonNode root = mapper.readTree(res.body());
             for (JsonNode c : root) {
-                String name = c.get("name").asText();
+                String name = c.get("name").asString("");
                 String ext = FileUtil.onlyExt(name, false);
                 boolean match = wildcard == null || AntPathMatcher.INSTANCE.match(wildcard, name, false);
                 if (match) {
                     if (kamelets != null && "kamelet.yaml".equalsIgnoreCase(ext)) {
-                        String htmlUrl = c.get("html_url").asText();
+                        String htmlUrl = c.get("html_url").asString("");
                         String u = asGithubSingleUrl(htmlUrl);
                         kamelets.add(u);
                     } else if (properties != null && "properties".equalsIgnoreCase(ext)) {
-                        String htmlUrl = c.get("html_url").asText();
+                        String htmlUrl = c.get("html_url").asString("");
                         String u = asGithubSingleUrl(htmlUrl);
                         properties.add(u);
                     } else if (routes != null) {
                         if (isRouteExtension(ext)) {
-                            String htmlUrl = c.get("html_url").asText();
+                            String htmlUrl = c.get("html_url").asString("");
                             String u = asGithubSingleUrl(htmlUrl);
                             routes.add(u);
                         }
                     } else if (all != null) {
-                        String htmlUrl = c.get("html_url").asText();
+                        String htmlUrl = c.get("html_url").asString("");
                         String u = asGithubSingleUrl(htmlUrl);
                         all.add(u);
                     }

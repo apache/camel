@@ -19,14 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.generate;
 import java.io.File;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.victools.jsonschema.generator.Option;
 import com.github.victools.jsonschema.generator.SchemaGenerator;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
-import com.github.victools.jsonschema.module.jackson.JacksonModule;
+import com.github.victools.jsonschema.module.jackson.JacksonSchemaModule;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -37,6 +35,9 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.IOHelper;
 import picocli.CommandLine;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Command to generate JSON Schema for Camel components and Java objects.
@@ -107,7 +108,7 @@ public class CodeSchemaGenerator extends CamelCommand {
             }
 
             // Configure JSON Schema generator
-            JacksonModule jacksonModule = new JacksonModule();
+            JacksonSchemaModule jacksonModule = new JacksonSchemaModule();
             SchemaGeneratorConfig config = createSchemaGeneratorConfig(jacksonModule);
             SchemaGenerator generator = new SchemaGenerator(config);
 
@@ -158,7 +159,7 @@ public class CodeSchemaGenerator extends CamelCommand {
     /**
      * Creates and configures the JSON Schema generator configuration.
      */
-    private SchemaGeneratorConfig createSchemaGeneratorConfig(JacksonModule jacksonModule) {
+    private SchemaGeneratorConfig createSchemaGeneratorConfig(JacksonSchemaModule jacksonModule) {
         return new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2020_12)
                 .with(jacksonModule)
                 .with(Option.FLATTENED_ENUMS_FROM_TOSTRING)
@@ -329,7 +330,7 @@ public class CodeSchemaGenerator extends CamelCommand {
      * @param schema The schema to output
      */
     private void outputSchema(JsonNode schema) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
         if (outputFile == null || outputFile.isEmpty()) {
             printer().println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schema));

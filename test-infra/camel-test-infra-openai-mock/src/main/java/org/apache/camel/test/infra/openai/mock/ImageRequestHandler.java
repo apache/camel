@@ -21,11 +21,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Handles image generation and image edit requests. Image generation is a JSON request whose prompt is used to select
@@ -87,7 +87,7 @@ public class ImageRequestHandler {
         if (promptNode == null) {
             throw new IllegalArgumentException("Missing 'prompt' field in image generation request");
         }
-        return promptNode.asText();
+        return promptNode.asString();
     }
 
     private ImageExpectation findExpectationByPrompt(String prompt) {

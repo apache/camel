@@ -22,11 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Handles incoming embedding requests and matches them to appropriate mock expectations.
@@ -72,7 +72,7 @@ public class EmbeddingRequestHandler {
     private String extractEncodingFormat(JsonNode rootNode) {
         JsonNode encodingNode = rootNode.get("encoding_format");
         if (encodingNode != null) {
-            return encodingNode.asText();
+            return encodingNode.asString();
         }
         return "float"; // default
     }
@@ -89,10 +89,10 @@ public class EmbeddingRequestHandler {
                 throw new IllegalArgumentException("Empty 'input' array in embedding request");
             }
             for (JsonNode node : inputNode) {
-                inputs.add(node.asText());
+                inputs.add(node.asString(""));
             }
         } else {
-            inputs.add(inputNode.asText());
+            inputs.add(inputNode.asString(""));
         }
         return inputs;
     }

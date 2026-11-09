@@ -22,12 +22,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Handles incoming moderation requests and matches them to appropriate mock expectations.
@@ -82,7 +82,7 @@ public class ModerationRequestHandler {
      */
     private String extractModel(JsonNode rootNode) {
         JsonNode modelNode = rootNode.get("model");
-        return modelNode == null ? null : modelNode.asText();
+        return modelNode == null ? null : modelNode.asString();
     }
 
     private List<String> extractInputs(JsonNode rootNode) {
@@ -97,10 +97,10 @@ public class ModerationRequestHandler {
                 throw new IllegalArgumentException("Empty 'input' array in moderation request");
             }
             for (JsonNode node : inputNode) {
-                inputs.add(node.asText());
+                inputs.add(node.asString(""));
             }
         } else {
-            inputs.add(inputNode.asText());
+            inputs.add(inputNode.asString(""));
         }
         return inputs;
     }
@@ -113,11 +113,11 @@ public class ModerationRequestHandler {
         List<String> texts = new ArrayList<>();
         List<String> imageUrls = new ArrayList<>();
         for (JsonNode part : inputNode) {
-            String type = part.path("type").asText();
+            String type = part.path("type").asString();
             if ("text".equals(type)) {
-                texts.add(part.path("text").asText());
+                texts.add(part.path("text").asString());
             } else if ("image_url".equals(type)) {
-                imageUrls.add(part.path("image_url").path("url").asText());
+                imageUrls.add(part.path("image_url").path("url").asString());
             } else {
                 throw new IllegalArgumentException("Unsupported multi-modal moderation input type: " + type);
             }

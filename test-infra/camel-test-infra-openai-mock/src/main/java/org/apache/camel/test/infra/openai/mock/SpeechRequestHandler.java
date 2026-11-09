@@ -22,11 +22,12 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Handles incoming audio speech (text-to-speech) requests and returns pre-configured raw audio bytes. Does not parse
@@ -104,9 +105,9 @@ public class SpeechRequestHandler {
             JsonNode node = objectMapper.readTree(requestBody);
             JsonNode format = node.get("response_format");
             if (format != null && !format.isNull()) {
-                return format.asText();
+                return format.asString();
             }
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOG.debug("Could not parse speech request body for response_format", e);
         }
         return null;

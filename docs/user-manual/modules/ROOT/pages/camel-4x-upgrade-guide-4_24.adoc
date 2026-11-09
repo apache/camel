@@ -7627,3 +7627,9 @@ JBang, keeps using Jackson 2 as long as it does not also have the Jackson 3 line
 The option documentation of the Jackson 3 data formats now names the `tools.jackson` classes
 (`tools.jackson.databind.ObjectMapper`, `tools.jackson.databind.JacksonModule`); it named the Jackson 2 classes before.
 
+=== Jackson 3 - camel generate schema
+
+`camel generate schema` now uses `jsonschema-generator` 5, which is based on Jackson 3. The annotations in
+`com.fasterxml.jackson.annotation` still apply, but `@JsonNaming` from `com.fasterxml.jackson.databind.annotation` is ignored:
+the schema of such a class has the Java field names. Use `@JsonNaming` from `tools.jackson.databind.annotation` to apply it.
+
