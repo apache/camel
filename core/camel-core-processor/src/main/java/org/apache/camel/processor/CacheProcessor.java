@@ -33,7 +33,6 @@ import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.NamespacedKeyValueRepository;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,7 @@ public class CacheProcessor extends BaseProcessorSupport
                           Expression keyExpression, KeyValueRepository keyValueRepository,
                           Duration ttl, boolean cacheNull, Processor processor) {
         this.keyExpression = keyExpression;
-        this.keyValueRepository = NamespacedKeyValueRepository.namespaced(keyValueRepository, "cache");
+        this.keyValueRepository = keyValueRepository;
         this.ttl = ttl;
         this.cacheNull = cacheNull;
         this.processor = AsyncProcessorConverterHelper.convert(processor);

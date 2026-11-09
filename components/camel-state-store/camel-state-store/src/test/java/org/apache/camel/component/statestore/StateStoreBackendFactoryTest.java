@@ -63,6 +63,8 @@ class StateStoreBackendFactoryTest extends CamelTestSupport {
 
         assertThat(created).containsOnlyKeys("orders", "users");
         assertThat(created.get("orders").isStarted()).isTrue();
+        assertThat(created.get("orders").get("1")).isEqualTo("order-1");
+        assertThat(created.get("users").get("1")).isEqualTo("user-1");
         assertThat(registryBackend.keys()).isEmpty();
     }
 

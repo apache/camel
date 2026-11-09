@@ -50,12 +50,21 @@ public class StateStoreComponent extends DefaultComponent {
                             + " registry auto-discovery for endpoints without an explicit backend.")
     private StateStoreBackendFactory backendFactory;
 
+    @Metadata(description = "Whether to use a store-specific namespace prefix to isolate keys on a shared backend repository.",
+              defaultValue = "true")
+    private boolean namespaced = true;
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         StateStoreEndpoint endpoint = new StateStoreEndpoint(uri, this);
         endpoint.setStoreName(remaining);
+        endpoint.setNamespaced(isNamespaced());
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    private static String toNamespace(String storeName) {
+        return "statestore:" + storeName.replace("%", "%25").replace(":", "%3A");
     }
 
     /**
@@ -64,9 +73,15 @@ public class StateStoreComponent extends DefaultComponent {
      * passed.
      */
     KeyValueRepository getOrCreateBackend(String storeName, KeyValueRepository explicitBackend) {
+        return getOrCreateBackend(storeName, explicitBackend, isNamespaced());
+    }
+
+    KeyValueRepository getOrCreateBackend(String storeName, KeyValueRepository explicitBackend, boolean namespaced) {
         if (explicitBackend != null) {
-            KeyValueRepository wrapped = NamespacedKeyValueRepository.namespaced(explicitBackend, "statestore:" + storeName);
-            KeyValueRepository existing = backends.putIfAbsent(storeName, wrapped);
+            KeyValueRepository target = namespaced
+                    ? NamespacedKeyValueRepository.namespaced(explicitBackend, toNamespace(storeName))
+                    : explicitBackend;
+            KeyValueRepository existing = backends.putIfAbsent(storeName, target);
             if (existing != null) {
                 KeyValueRepository existingDelegate
                         = existing instanceof NamespacedKeyValueRepository n ? n.getDelegate() : existing;
@@ -76,8 +91,8 @@ public class StateStoreComponent extends DefaultComponent {
                 }
                 return existing;
             }
-            ServiceHelper.startService(wrapped);
-            return wrapped;
+            ServiceHelper.startService(target);
+            return target;
         }
         return backends.computeIfAbsent(storeName, k -> {
             if (backendFactory == null && backendFactoryChecked.compareAndSet(false, true)) {
@@ -93,9 +108,8 @@ public class StateStoreComponent extends DefaultComponent {
             if (backend != null) {
                 LOG.debug("Created KeyValueRepository '{}' for store '{}' using backend factory",
                         backend.getClass().getSimpleName(), storeName);
-                KeyValueRepository wrapped = NamespacedKeyValueRepository.namespaced(backend, "statestore:" + storeName);
-                ServiceHelper.startService(wrapped);
-                return wrapped;
+                ServiceHelper.startService(backend);
+                return backend;
             }
             // Auto-discover a KeyValueRepository from the registry
             Set<KeyValueRepository> found = getCamelContext().getRegistry().findByType(KeyValueRepository.class);
@@ -103,6 +117,11 @@ public class StateStoreComponent extends DefaultComponent {
                 backend = found.iterator().next();
                 LOG.debug("Auto-discovered KeyValueRepository '{}' for store '{}'",
                         backend.getClass().getSimpleName(), storeName);
+                KeyValueRepository target = namespaced
+                        ? NamespacedKeyValueRepository.namespaced(backend, toNamespace(storeName))
+                        : backend;
+                ServiceHelper.startService(target);
+                return target;
             } else {
                 if (found.size() > 1) {
                     LOG.warn(
@@ -115,11 +134,18 @@ public class StateStoreComponent extends DefaultComponent {
                             storeName);
                 }
                 backend = new MemoryKeyValueRepository();
+                ServiceHelper.startService(backend);
+                return backend;
             }
-            KeyValueRepository wrapped = NamespacedKeyValueRepository.namespaced(backend, "statestore:" + storeName);
-            ServiceHelper.startService(wrapped);
-            return wrapped;
         });
+    }
+
+    public boolean isNamespaced() {
+        return namespaced;
+    }
+
+    public void setNamespaced(boolean namespaced) {
+        this.namespaced = namespaced;
     }
 
     public StateStoreBackendFactory getBackendFactory() {

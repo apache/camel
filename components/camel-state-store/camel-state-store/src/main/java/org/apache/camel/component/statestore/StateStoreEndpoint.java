@@ -76,6 +76,10 @@ public class StateStoreEndpoint extends DefaultEndpoint {
     @UriParam(description = "Time-to-live in milliseconds for entries. 0 means no expiry.", defaultValue = "0")
     private long ttl;
 
+    @UriParam(description = "Whether to use a store-specific namespace prefix to isolate keys on a shared backend repository.",
+              defaultValue = "true")
+    private boolean namespaced = true;
+
     public StateStoreEndpoint(String endpointUri, StateStoreComponent component) {
         super(endpointUri, component);
     }
@@ -94,7 +98,7 @@ public class StateStoreEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
         StateStoreComponent comp = (StateStoreComponent) getComponent();
-        backend = comp.getOrCreateBackend(storeName, backend);
+        backend = comp.getOrCreateBackend(storeName, backend, namespaced);
     }
 
     public String getStoreName() {
@@ -127,5 +131,13 @@ public class StateStoreEndpoint extends DefaultEndpoint {
 
     public void setTtl(long ttl) {
         this.ttl = ttl;
+    }
+
+    public boolean isNamespaced() {
+        return namespaced;
+    }
+
+    public void setNamespaced(boolean namespaced) {
+        this.namespaced = namespaced;
     }
 }

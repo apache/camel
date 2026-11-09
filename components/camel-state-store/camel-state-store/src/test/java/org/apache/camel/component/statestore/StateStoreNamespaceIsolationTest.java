@@ -90,6 +90,39 @@ class StateStoreNamespaceIsolationTest extends CamelTestSupport {
         assertThat(sharedBackend.get("aggregate:grp1")).isNull();
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    void testStoreNamesSharingAPrefixAreIsolated() {
+        template.requestBodyAndHeaders("direct:putDynamic", "archived",
+                Map.of("reproStore", "orders:archive", StateStoreConstants.KEY, "x"));
+        template.requestBodyAndHeaders("direct:putDynamic", "live",
+                Map.of("reproStore", "orders", StateStoreConstants.KEY, "y"));
+
+        Set<String> keys = (Set<String>) template.requestBodyAndHeaders("direct:keysDynamic", null,
+                Map.of("reproStore", "orders"));
+        assertThat(keys).containsExactly("y");
+
+        // Clear on 'orders' must not wipe 'orders:archive'
+        template.requestBodyAndHeaders("direct:clearDynamic", null,
+                Map.of("reproStore", "orders"));
+
+        assertThat((Set<String>) template.requestBodyAndHeaders("direct:keysDynamic", null,
+                Map.of("reproStore", "orders"))).isEmpty();
+        assertThat(template.requestBodyAndHeaders("direct:getDynamic", null,
+                Map.of("reproStore", "orders:archive", StateStoreConstants.KEY, "x")))
+                .isEqualTo("archived");
+    }
+
+    @Test
+    void testOptOutNamespacingForBackwardCompatibility() {
+        // Data written by 4.23 without namespacing can be accessed by opting out of namespacing
+        sharedBackend.put("legacyKey", "legacyValue");
+
+        Object value = template.requestBodyAndHeaders("direct:getUnnamespaced", null,
+                Map.of(StateStoreConstants.KEY, "legacyKey"));
+        assertThat(value).isEqualTo("legacyValue");
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -102,6 +135,13 @@ class StateStoreNamespaceIsolationTest extends CamelTestSupport {
 
                 from("direct:putB").to("state-store:storeB?operation=put");
                 from("direct:getB").to("state-store:storeB?operation=get");
+
+                from("direct:putDynamic").toD("state-store:${header.reproStore}?operation=put");
+                from("direct:getDynamic").toD("state-store:${header.reproStore}?operation=get");
+                from("direct:keysDynamic").toD("state-store:${header.reproStore}?operation=keys");
+                from("direct:clearDynamic").toD("state-store:${header.reproStore}?operation=clear");
+
+                from("direct:getUnnamespaced").to("state-store:legacyStore?namespaced=false&operation=get");
             }
         };
     }
