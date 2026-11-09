@@ -126,7 +126,7 @@ public final class ChaosHttpFeed {
             if (routeId != null && routeId.equals(e.routeId())) {
                 return e;
             }
-            boolean samePath = e.path().equals(path) || e.path().endsWith(path) && !"/".equals(path);
+            boolean samePath = e.path().equals(path) || (e.path().endsWith(path) && !"/".equals(path));
             if (samePath && (method == null || method.equalsIgnoreCase(e.method()) || "ANY".equals(e.method()))) {
                 if (answer == null || e.path().equals(path)) {
                     answer = e;
