@@ -2,7 +2,7 @@
 :doctitle: Sanitizer
 :shortname: sanitizer
 :artifactid: camel-sanitizer
-:description: Check during development and tests that the processors of the routes keep the contract of AsyncProcessor, and report where they break it
+:description: Check during development and tests that the processors of the routes keep the contract of AsyncProcessor and that the commits of the consumers run exactly once, and report where they break it
 :since: 4.24
 :supportlevel: Preview
 :tabs-sync-option:
@@ -10,11 +10,11 @@
 *Since Camel {since}*
 
 The `camel-sanitizer` module is a checker for development and tests. It watches the calls of the steps of the routes
-of a running Camel application and reports, when it happens, that a processor breaks the contract of `AsyncProcessor`:
-a callback called twice, or a processor that throws instead of calling its callback. It also warns about a step whose
-callback has not come. It checks the code of Camel users as much as Camel's own: a custom `AsyncProcessor`, the
-producer of a custom component, a bean. A test that runs a broken path fails with a report that names the step and the
-class.
+of a running Camel application and reports, when it happens, that a processor breaks the contract of `AsyncProcessor`
+(a callback called twice, or a processor that throws instead of calling its callback), or that the commit of a consumer
+runs twice, never, or with the outcome of another exchange. It also warns about a step whose callback has not come. It
+checks the code of Camel users as much as Camel's own: a custom `AsyncProcessor`, the producer or the consumer of a
+custom component, a bean. A test that runs a broken path fails with a report that names the step and the class.
 
 It checks the paths the tests run; it does not find untested ones.
 
@@ -30,9 +30,13 @@ Add the `camel-sanitizer` dependency, in test scope for tests (see <<_in_a_test,
 `camel run --dep camel:sanitizer` for a run in development (profile `dev`, the default of `camel run`, switches it
 on).
 
-== The rule it checks
+== The rules it checks
 
-The sanitizer checks one rule in this version (R1): each time the processor of a step is called (each attempt, also
+The sanitizer checks two rules in this version.
+
+=== R1: the callback of a step is called exactly once
+
+Each time the processor of a step is called (each attempt, also
 each redelivery of the error handler), its callback must be called exactly once, and `process(exchange, callback)` must
 not throw. A step is any node of a route with its node id (`to`, `process`, `split`, ...). It reports:
 
@@ -137,16 +141,89 @@ asynchronous parallel split with many parts in flight is still watched. When cal
 checks are incomplete, and the report counts the calls dropped. The timeout is measured with `System.nanoTime()`, not
 with the time source of camel-test-dst, so a virtual clock does not stretch it.
 
-To know when an exchange is done, the sanitizer adds an event notifier of the exchanges completed and failed, so with
-the sanitizer on the exchange events of the context are fired (and the notifier is listed with the others, also in
-JMX). A pending timeout of `0` turns the warning off, and with it the table, the notifier and the list when the
-context stops.
+To know when an exchange is done, the sanitizer adds an event notifier of the exchanges completed and failed (one
+notifier, shared with R2, which needs it too), so with the sanitizer on the exchange events of the context are fired
+(and the notifier is listed with the others, also in JMX). A pending timeout of `0` turns the warning off, and with it
+the table and the list when the context stops (and the notifier, unless R2 is checked). The warning follows the
+callbacks of R1, so with `camel.sanitizer.checks=commit` only it is off too.
 
 The parts of a split, multicast or recipient list are in the stripe of their exchange. With `parallelProcessing()`, the
 threads that run the parts therefore take the same lock of the table at each step call, return and callback. The lock is
 held briefly, but it costs more when the parts run on several threads, and it orders those threads, which can hide a
 race between parts that is not synchronized otherwise. To hunt races between the parts of a parallel split, set
-`camel.sanitizer.pendingTimeout=0`: the other checks of R1 stay on, and the table and its lock are not used.
+`camel.sanitizer.pendingTimeout=0`: the other checks of R1 stay on, and the table and its lock are not used. R2 takes
+one lock of its records of the context when a part gets its unit of work and when it is done; set
+`camel.sanitizer.checks=callback` as well to leave that out too.
+
+=== R2: each consumer commit runs exactly once, for the unit of work that owns it
+
+A _commit_ is the on completion (`Synchronization`) that a consumer adds to the exchange before it routes it
+(`exchange.getExchangeExtension().addOnCompletion(...)`), to commit or roll back its message when the exchange is done,
+such as the file consumer moving or deleting the file. In the sanitizer, the commits of an exchange are the on
+completions it holds when it gets the unit of work created for it; on completions added later (such as by the tracer,
+or a route `onCompletion`) are not commits. A commit can move: it is handed over to a copy that is routed on its own
+(such as an `InOnly` exchange sent to `seda`), and then runs when the copy is done, with the outcome of the copy. The
+rule, as the Javadoc of `Synchronization` states it: each add of a commit runs `onComplete` or `onFailure` exactly once,
+where it is held at the end, and while it is in a unit of work it moves only by a handover of the exchange that unit of
+work was created for. It reports:
+
+* *commit ran a second time* (`COMMIT_RUN_TWICE`): the commit runs again, such as when the `done` of a unit of work is
+called twice, or when it is run where it was handed over from and again by the copy it was handed over to. It is
+reported at the second run, before it runs, with the thread and stack of the first run and of the second.
+* *commit handed over by an exchange its unit of work was not created for* (`COMMIT_HANDED_OVER_BY_OTHER_EXCHANGE`):
+an exchange that uses the unit of work of another exchange hands its commit over, such as a part of a split that shares
+the unit of work of its parent and is sent to `seda` (CAMEL-26576). The commit would then run with the outcome of the
+copy, not of the exchange of the consumer. It is reported at the handover, with the step that runs on that thread (such
+as the `to` step that sends to `seda`).
+* *commit handed over twice* (`COMMIT_HANDED_OVER_TWICE`): a commit is handed over again from a unit of work it has
+already left, such as by two parts that share it and hand over at the same time (CAMEL-26569), with the stacks of both
+handovers.
+* *commit never ran* (`COMMIT_NEVER_RUN`): the exchange its unit of work was created for is done (its completed or
+failed event), and the commit was neither run, handed over nor taken out of the unit of work; or the `CamelContext`
+stopped while the commit waited in a copy that was never routed (such as a copy in a `seda` queue that has no consumer).
+
+A report of R2 looks like this (a split with `shareUnitOfWork` before CAMEL-26576, where a part sent to `seda` took
+the commit of the file):
+
+[source,text]
+----
+Exchange sanitizer: commit handed over by an exchange its unit of work was not created for (R2)
+  commit org.apache.camel.component.file.GenericFileOnCompletion of exchange 5A1B...-0000000000000001, route files, consumer org.apache.camel.component.file.FileConsumer, endpoint file://inbox?move=done
+  at step lines of route files, processor org.apache.camel.processor.SendProcessor, endpoint seda://lines (org.apache.camel.component.seda.SedaEndpoint)
+  its unit of work was created for exchange 5A1B...-0000000000000001, and exchange 5A1B...-0000000000000004 handed it over to exchange 5A1B...-0000000000000005, so it would run with the outcome of exchange 5A1B...-0000000000000005
+  handed over: thread Camel (camel-1) thread #2 - Split
+      at org.apache.camel.support.AbstractExchange.handoverCompletions(AbstractExchange.java:893)
+      ...
+  Each commit of a consumer (an on completion it adds to the exchange before routing it) must run once, where it is held at the end, and moves only by a handover of the exchange its unit of work was created for (see Synchronization).
+  Usual fix: an exchange that uses the unit of work of another must hand over only the on completions it added itself: ...
+----
+
+The exchange, route, consumer and endpoint are the ones the commit was added for; the step is the one that ran on the
+thread where the violation was found. The commit is named by the class of its on completion (for
+`@ExpectSanitizerViolation` and `SanitizerViolation.getProcessor()`).
+
+R2 follows each add of a commit, by the identity of its on completion, as the on completion listener SPI of camel-core
+reports them (see `OnCompletionListener`): one on completion can be added to many exchanges. On completions that are
+taken out of an exchange as a list to be run by someone else (`handoverCompletions()`, as the `seda` consumer does with
+`multipleConsumers`) are checked for running once only; nothing tells which exchange runs them, so they are matched by
+their on completion alone, and one on completion object shared by many exchanges can then be matched to another
+exchange's record. A commit in a `UnitOfWork` of a user that does not tell what it hands over, or does not report its
+adds, is not reported as never run. A consumer that commits in its own code after the callback (such as JMS with a
+transacted session) is covered by R1 only. The records keep no exchange; the commits that wait in exchanges without a
+unit of work (such as copies in a `seda` queue) and the commits taken out that have not run yet are bounded (10 000):
+past it the oldest commit taken out is no longer followed first, then the oldest waiting in an exchange; one WARN says
+so and the report counts them. A commit taken out that ran is kept (the last 1000) to see a second run.
+
+A commit that never ran because the context stopped while it waited in a copy that was never routed is found when the
+context stops. It is charged like any violation: to the test that runs then (a context stopped at the end of each
+test), or to the test class (a context stopped after its last test); a test that stops a context with such a copy on
+purpose says so with `@ExpectSanitizerViolation(Violation.COMMIT_NEVER_RUN)` and stops it in the test.
+
+To find the commits that never ran, R2 uses the event notifier of the exchanges completed and failed that the still
+pending warning uses too (one notifier for both, added when either is on).
+
+With `camel.sanitizer.checks=commit` only, the step listener is still installed (each step is still wrapped, and the
+report still counts the calls of steps), so a report of R2 can name the step that handed a commit over.
 
 == Switching it on
 
@@ -181,15 +258,15 @@ The options are read from the properties component, and are camel-main options (
 
 |`camel.sanitizer.enabled` |`false` (`true` with profile `dev` or `@CamelSanitizer`) |Install the sanitizer. Ignored
 with profile `prod`.
-|`camel.sanitizer.checks` |`callback` |The checks to run, separated by commas. This version has one: `callback`
-(R1); `none` installs nothing, and an empty value is the default. An unknown check stops the application from
+|`camel.sanitizer.checks` |`callback,commit` |The checks to run, separated by commas: `callback` (R1) and `commit`
+(R2); `none` installs nothing, and an empty value is the default. An unknown check stops the application from
 starting.
 |`camel.sanitizer.stackDepth` |`32` |How many frames of each stack a report keeps; `0` keeps only the name of the
 thread, which costs least.
 |`camel.sanitizer.pendingTimeout` |`60s` |How long an exchange waits, with nothing happening in it, before its
 innermost pending call is reported as still pending (a warning, which never fails a test), such as `60s` or `500`
 (milliseconds). `0` turns the warning off; use it when hunting races between the parts of a parallel split, which
-share one lock of the table.
+share one lock of the table. It needs the `callback` check (R1): with `commit` only there is no warning.
 |`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops, if there was a violation or a still
 pending warning, and the calls still pending then.
 |===

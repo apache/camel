@@ -163,6 +163,8 @@ class SanitizerStillPendingTest extends ContextTestSupport {
         Exchange out = template.send("direct:throws", e -> e.getMessage().setBody("x"));
         assertNotNull(out.getException());
 
+        // told by the notifier that rule R2 (on by default) shares
+        assertNotNull(sanitizer().getCommits());
         assertEquals(0, sanitizer().getPendingCalls().size());
         await().pollDelay(400, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(0, sanitizer().getStillPendingCount()));

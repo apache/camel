@@ -45,8 +45,8 @@ completions of an exchange. More than one listener can be installed, and they ar
 chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
 installed, the routes are built as today and a step costs nothing more.
 
-Steps 1, 2 and 6 of the order of work are built: the step listener SPI, the module with R1, the JUnit extension and
-the CI switch, and R1 "still pending". The rest is design.
+Steps 1, 2, 3 and 6 of the order of work are built: the step listener SPI, the module with R1, the JUnit extension
+and the CI switch, the on completion listener SPI with R2, and R1 "still pending". The rest is design.
 
 == Motivation
 
@@ -242,8 +242,10 @@ moves only by a handover made by the exchange its unit of work was created for. 
 . a commit that is handed over through a unit of work by an exchange that it was not created for, such as a part that
   shares the unit of work of its parent and sends to `seda` (CAMEL-26576). This is reported at the handover, before the
   commit runs with the wrong outcome;
-. two handovers through the same unit of work from two threads that overlap in time, seen with a watch window on the
-  unit of work, as R3 does for exchanges (CAMEL-26569);
+. a commit that is handed over twice: a handover from a unit of work it has already left, as when two threads hand
+  over through the same unit of work at the same time (CAMEL-26569). Since that fix the unit of work takes each on
+  completion out under its lock, so two handovers that overlap in time are not a violation; what R2 checks is their
+  outcome, a commit handed over twice (or run twice, or never), which needs no watch window;
 . a commit that never runs: the exchange its unit of work was created for is done (its completed or failed event), and
   the commit was neither run, handed over nor taken; or the context stops while a commit waits in a copy that was never
   routed (such as a `seda` queue that is dropped).
@@ -252,6 +254,9 @@ The records are per add, not per `Synchronization` instance: one instance can be
 the same object to every exchange), and can be taken and added again. On completions that are taken out as a list
 (`handoverCompletions()` without a target, used by the aggregator, the enrichers and `onCompletion`) and run by
 another exchange are followed for "runs once" only.
+
+A custom `UnitOfWork` that does not tell what it hands over (the default of the new `UnitOfWork` method returns
+`null`), or does not report its adds, is not checked for a commit handed over twice or never run.
 
 R2 covers consumers that commit with an on completion. A consumer that commits in its own code after the callback
 (such as JMS with a transacted session) is covered by R1 only.
@@ -540,7 +545,8 @@ initializes, before the routes are created, the plugin reads the profile and the
 * when it installs, it logs a WARN that the sanitizer is on and costs time per step (in tests, once per JVM at WARN
   and then at DEBUG, so a suite's log is not filled with it);
 * it adds its step listener, its on completion listener, an `EventNotifier` for exchange completed and failed (it
-  ignores the other events; R1 "still pending" uses it to drop an exchange that is done), and the R4 hook;
+  ignores the other events; one notifier for both: R1 "still pending" uses it to drop an exchange that is done, and
+  R2 to find the commits that never ran), and the R4 hook;
 * it keeps its records of step calls in their state (see above), and a bounded map of the pending calls per exchange,
   for R1 "still pending" and R3, keyed by the id of the exchange and holding no exchange (not weak keys: a processor
   that drops the callback usually leaves nothing that refers to the exchange, so a weak entry would go exactly when the
@@ -705,6 +711,7 @@ Each step is its own pull request after this document:
 . The module, the plugin, the options, R1 (without "still pending"), the report in the log, the JUnit extension and
   the CI switch, with the runs on the commits before the fixes, on user-code tests and on main. Done.
 . camel-core: the on completion listener SPI, the new `UnitOfWork` method and the calls, with the JMH run; then R2.
+  Done.
 . R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites.
 . The dev console, `camel get sanitizer` and `camel run --sanitizer`.
 . R1 "still pending". Done.

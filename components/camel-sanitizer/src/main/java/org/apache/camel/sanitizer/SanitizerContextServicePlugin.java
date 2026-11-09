@@ -41,9 +41,9 @@ import org.slf4j.LoggerFactory;
  * from the properties component, and installs the sanitizer only with profile {@code dev}, with
  * {@code camel.sanitizer.enabled=true}, or for a context built on a thread that the JUnit extension marked
  * ({@link SanitizerTestSession}), and never with profile {@code prod} (checked first). Otherwise nothing is installed
- * but the lifecycle strategy that decides it. When it installs, it adds the step listener of rule R1 and logs a WARN
- * that the sanitizer is on. For the still pending warning of R1 it also adds an event notifier of the exchanges that
- * are done, and looks for still pending calls while the context runs.
+ * but the lifecycle strategy that decides it. When it installs, it adds the step listener of rule R1, for rule R2 the
+ * on completion listener, and for rule R2 and the still pending warning of R1 one event notifier of the exchanges that
+ * are done; it looks for still pending calls while the context runs, and logs a WARN that the sanitizer is on.
  *
  * @since 4.24
  */
@@ -56,9 +56,11 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
     static final String PENDING_TIMEOUT = "camel.sanitizer.pendingTimeout";
 
     /**
-     * The checks of this version: {@code callback} is rule R1.
+     * The checks of this version: {@code callback} is rule R1, {@code commit} is rule R2.
      */
     static final String CHECK_CALLBACK = "callback";
+    static final String CHECK_COMMIT = "commit";
+    static final String DEFAULT_CHECKS = CHECK_CALLBACK + "," + CHECK_COMMIT;
 
     private static final Logger LOG = LoggerFactory.getLogger(SanitizerContextServicePlugin.class);
 
@@ -111,6 +113,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             int stackDepth;
             long pendingTimeout;
             boolean callback;
+            boolean commit;
             try {
                 String text = property(pc, ENABLED);
                 enabled = text != null ? parseBoolean(ENABLED, text) : null;
@@ -122,7 +125,9 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                             ENABLED);
                     return;
                 }
-                callback = parseChecks(orElse(property(pc, CHECKS), CHECK_CALLBACK));
+                String checks = orElse(property(pc, CHECKS), DEFAULT_CHECKS);
+                callback = parseChecks(checks, CHECK_CALLBACK);
+                commit = parseChecks(checks, CHECK_COMMIT);
                 stackDepth = parseStackDepth(orElse(property(pc, STACK_DEPTH), "32"));
                 pendingTimeout = parsePendingTimeout(orElse(property(pc, PENDING_TIMEOUT), "60s"));
                 reportOnShutdown = parseBoolean(REPORT_ON_SHUTDOWN, orElse(property(pc, REPORT_ON_SHUTDOWN), "true"));
@@ -134,29 +139,39 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 turnedOff(session);
                 return;
             }
-            if (!callback) {
+            if (!callback && !commit) {
                 LOG.info("camel-sanitizer is switched on with no check in {}, so nothing is installed", CHECKS);
                 turnedOff(session);
                 return;
             }
-            Sanitizer s = new Sanitizer(context, stackDepth, session, pendingTimeout);
+            Sanitizer s = new Sanitizer(context, stackDepth, session, callback, commit, pendingTimeout);
             if (session != null) {
                 session.installed();
             }
             context.getCamelContextExtension().addContextPlugin(Sanitizer.class, s);
+            // the step listener also tells rule R2 which step runs on a thread
             context.getCamelContextExtension().addStepListener(new SanitizerStepListener(s));
-            if (pendingTimeout > 0) {
-                // an exchange that is done no longer waits for a call that is still pending (such as one that threw)
+            if (commit) {
+                SanitizerOnCompletionListener listener = new SanitizerOnCompletionListener(s);
+                context.getCamelContextExtension().addOnCompletionListener(listener);
+            }
+            if (s.needsExchangeDone()) {
+                // one notifier for both: for R2 a commit still in the unit of work of an exchange that is done never
+                // runs; for the still pending warning an exchange that is done no longer waits for a call that is
+                // still pending (such as one that threw)
                 context.getManagementStrategy().addEventNotifier(new ExchangeDoneNotifier(s));
             }
             sanitizer = s;
             String why = enabled != null ? ENABLED + "=true" : session != null ? "@CamelSanitizer" : "profile dev";
-            String message = "The exchange sanitizer is switched on ({}): it checks each call of the steps of the routes"
-                             + " (rule R1), which costs time at each step. Do not use in production.";
+            String rules = callback && commit
+                    ? "each call of the steps of the routes (rule R1) and the commits of the consumers (rule R2)"
+                    : callback ? "each call of the steps of the routes (rule R1)" : "the commits of the consumers (rule R2)";
+            String message = "The exchange sanitizer is switched on ({}): it checks {}, which costs time at each step."
+                             + " Do not use in production.";
             if (session == null || WARNED_IN_TESTS.compareAndSet(false, true)) {
-                LOG.warn(message, why);
+                LOG.warn(message, why, rules);
             } else {
-                LOG.debug(message, why);
+                LOG.debug(message, why, rules);
             }
         }
 
@@ -188,6 +203,8 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         public void onContextStopped(CamelContext context) {
             Sanitizer s = sanitizer;
             if (s != null) {
+                // the commits still in a copy that was never routed never run
+                s.contextStopped();
                 // the calls still pending when the context stops are listed
                 s.stopPendingCheck(reportOnShutdown);
             }
@@ -242,23 +259,23 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         }
 
         /**
-         * Whether the checks include rule R1 ({@code callback}), the only check of this version.
+         * Whether the checks include the given one: {@code callback} (rule R1) or {@code commit} (rule R2).
          */
-        static boolean parseChecks(String text) {
-            boolean callback = false;
+        static boolean parseChecks(String text, String wanted) {
+            boolean found = false;
             for (String part : text.split(",")) {
                 String check = part.trim().toLowerCase(Locale.ROOT);
                 if (check.isEmpty() || "none".equals(check)) {
                     continue;
                 }
-                if (!CHECK_CALLBACK.equals(check)) {
+                if (!CHECK_CALLBACK.equals(check) && !CHECK_COMMIT.equals(check)) {
                     throw new IllegalArgumentException(
                             CHECKS + "=" + text + " has the unknown check " + part.trim() + " (the checks of this version: "
-                                                       + CHECK_CALLBACK + ")");
+                                                       + CHECK_CALLBACK + ", " + CHECK_COMMIT + ")");
                 }
-                callback = true;
+                found |= wanted.equals(check);
             }
-            return callback;
+            return found;
         }
 
         /**
@@ -292,8 +309,9 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
     }
 
     /**
-     * Tells the sanitizer that an exchange is done (its unit of work), so its calls that are still pending, such as one
-     * that threw, are no longer waited for. It asks for no other event.
+     * Tells the sanitizer that an exchange is done (its unit of work): for rule R2 a commit still in it that has not
+     * run never runs, and for the still pending warning of R1 its calls that are still pending, such as one that threw,
+     * are no longer waited for. One notifier serves both; it asks for no other event.
      */
     static final class ExchangeDoneNotifier extends EventNotifierSupport {
 
@@ -320,13 +338,14 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         @Override
         public void notify(CamelEvent event) {
             if (event instanceof CamelEvent.ExchangeEvent e && e.getExchange() != null) {
-                sanitizer.exchangeDone(e.getExchange().getExchangeId());
+                // on the thread that completes the exchange, while it still has its unit of work
+                sanitizer.exchangeDone(e.getExchange());
             }
         }
 
         @Override
         public String toString() {
-            return "ExchangeSanitizer[R1 still pending]";
+            return "ExchangeSanitizer[done]";
         }
     }
 }
