@@ -146,13 +146,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                                + "directory prefix: dir/finalFilename then tempFileName is relative to that subdirectory dir.")
     protected Expression tempFileName;
     @UriParam(label = "producer,advanced", defaultValue = "true", description = "Whether or not to eagerly delete "
-                                                                                + "any existing target file. This option only applies when you use fileExists=Override and the "
+                                                                                + "any existing target file. This option only applies when you use fileExist=Override and the "
                                                                                 + "tempFileName option as well. You can use this to disable (set it to false) deleting the target "
                                                                                 + "file before the temp file is written. For example you may write big files and want the target file "
                                                                                 + "to exists during the temp file is being written. This ensure the target file is only deleted until "
                                                                                 + "the very last moment, just before the temp file is being renamed to the target filename. This option "
                                                                                 + "is also used to control whether to delete any existing files when fileExist=Move is enabled, and an "
-                                                                                + "existing file exists. If this option copyAndDeleteOnRenameFails false, then an exception will be thrown "
+                                                                                + "existing file exists. If this option is false, then an exception will be thrown "
                                                                                 + "if an existing file existed, if its true, then the existing file is deleted before the move operation.")
     protected boolean eagerDeleteTargetFile = true;
     @UriParam(label = "producer,advanced", description = "Will keep the last modified timestamp from the source file "
@@ -1145,13 +1145,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Whether or not to eagerly delete any existing target file. This option only applies when you use
-     * fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting
+     * fileExist=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting
      * the target file before the temp file is written. For example you may write big files and want the target file to
      * exists during the temp file is being written. This ensure the target file is only deleted until the very last
      * moment, just before the temp file is being renamed to the target filename. This option is also used to control
      * whether to delete any existing files when fileExist=Move is enabled, and an existing file exists. If this option
-     * copyAndDeleteOnRenameFails false, then an exception will be thrown if an existing file existed, if its true, then
-     * the existing file is deleted before the move operation.
+     * is false, then an exception will be thrown if an existing file existed, if its true, then the existing file is
+     * deleted before the move operation.
      */
     public void setEagerDeleteTargetFile(boolean eagerDeleteTargetFile) {
         this.eagerDeleteTargetFile = eagerDeleteTargetFile;

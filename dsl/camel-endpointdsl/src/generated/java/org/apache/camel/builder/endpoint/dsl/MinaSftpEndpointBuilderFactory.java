@@ -4581,7 +4581,7 @@ public interface MinaSftpEndpointBuilderFactory {
         }
         /**
          * Whether or not to eagerly delete any existing target file. This
-         * option only applies when you use fileExists=Override and the
+         * option only applies when you use fileExist=Override and the
          * tempFileName option as well. You can use this to disable (set it to
          * false) deleting the target file before the temp file is written. For
          * example you may write big files and want the target file to exists
@@ -4589,10 +4589,9 @@ public interface MinaSftpEndpointBuilderFactory {
          * only deleted until the very last moment, just before the temp file is
          * being renamed to the target filename. This option is also used to
          * control whether to delete any existing files when fileExist=Move is
-         * enabled, and an existing file exists. If this option
-         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
-         * an existing file existed, if its true, then the existing file is
-         * deleted before the move operation.
+         * enabled, and an existing file exists. If this option is false, then
+         * an exception will be thrown if an existing file existed, if its true,
+         * then the existing file is deleted before the move operation.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4608,7 +4607,8 @@ public interface MinaSftpEndpointBuilderFactory {
         }
         /**
          * Whether or not to eagerly delete any existing target file. This
-         * option only applies when you use fileExists=Override and the
+         * Whether or not to eagerly delete any existing target file. This
+         * option only applies when you use fileExist=Override and the
          * tempFileName option as well. You can use this to disable (set it to
          * false) deleting the target file before the temp file is written. For
          * example you may write big files and want the target file to exists
@@ -4616,11 +4616,9 @@ public interface MinaSftpEndpointBuilderFactory {
          * only deleted until the very last moment, just before the temp file is
          * being renamed to the target filename. This option is also used to
          * control whether to delete any existing files when fileExist=Move is
-         * enabled, and an existing file exists. If this option
-         * copyAndDeleteOnRenameFails false, then an exception will be thrown if
-         * an existing file existed, if its true, then the existing file is
-         * deleted before the move operation.
-         * 
+         * enabled, and an existing file exists. If this option is false, then
+         * an exception will be thrown if an existing file existed, if its true,
+         * then the existing file is deleted before the move operation.
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Default: true
