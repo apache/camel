@@ -59,6 +59,7 @@ public class ConsumeSqlQueryIT extends CamelTestSupport {
     static void setUpCouchbase() {
         bucketName = "sqlBucket" + TestUtils.randomWithRange(0, 100);
         cluster = Cluster.connect(service.getConnectionString(), service.getUsername(), service.getPassword());
+        cluster.waitUntilReady(Duration.ofSeconds(30));
 
         // Create bucket without specifying storage backend (uses server default — Magma on 8.0+)
         cluster.buckets().createBucket(
