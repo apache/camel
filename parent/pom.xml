@@ -203,18 +203,18 @@
         <google-api-services-sheets-version>v4-rev20251110-2.0.0</google-api-services-sheets-version>
         <google-api-services-mail-version>v1-rev20251201-2.0.0</google-api-services-mail-version>
         <google-oauth-client-version>1.39.0</google-oauth-client-version>
-        <google-cloud-bigquery-version>2.74.0</google-cloud-bigquery-version>
-        <google-cloud-core-version>2.78.0</google-cloud-core-version>
-        <google-cloud-firestore-version>3.50.0</google-cloud-firestore-version>
+        <google-cloud-bigquery-version>2.75.0</google-cloud-bigquery-version>
+        <google-cloud-core-version>2.79.0</google-cloud-core-version>
+        <google-cloud-firestore-version>3.51.0</google-cloud-firestore-version>
         <google-cloud-functions-version>2.88.0</google-cloud-functions-version>
         <google-cloud-http-client-version>2.2.0</google-cloud-http-client-version>
-        <google-cloud-pubsub-version>1.158.0</google-cloud-pubsub-version>
-        <google-cloud-secretmanager-version>2.100.0</google-cloud-secretmanager-version>
-        <google-cloud-storage-version>2.76.0</google-cloud-storage-version>
-        <google-cloud-aiplatform-version>3.101.0</google-cloud-aiplatform-version>
-        <google-cloud-vision-version>3.98.0</google-cloud-vision-version>
-        <google-cloud-speech-version>4.95.0</google-cloud-speech-version>
-        <google-cloud-texttospeech-version>2.101.0</google-cloud-texttospeech-version>
+        <google-cloud-pubsub-version>1.159.0</google-cloud-pubsub-version>
+        <google-cloud-secretmanager-version>2.101.0</google-cloud-secretmanager-version>
+        <google-cloud-storage-version>2.77.0</google-cloud-storage-version>
+        <google-cloud-aiplatform-version>3.102.0</google-cloud-aiplatform-version>
+        <google-cloud-vision-version>3.99.0</google-cloud-vision-version>
+        <google-cloud-speech-version>4.96.0</google-cloud-speech-version>
+        <google-cloud-texttospeech-version>2.102.0</google-cloud-texttospeech-version>
         <google-genai-version>1.75.0</google-genai-version>
         <graalvm-version>25.4.4.1.1</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
