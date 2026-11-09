@@ -220,8 +220,19 @@ public class XmppComponent extends DefaultComponent {
         }
     }
 
+    /**
+     * The lock of the endpoint's account, under which its connection is connected and logged in, or null when the
+     * account has no connection. For tests.
+     */
+    ReentrantLock connectionLock(XmppEndpoint endpoint) {
+        synchronized (connections) {
+            SharedConnection shared = connections.get(endpoint.getConnectionKey());
+            return shared != null ? shared.lock : null;
+        }
+    }
+
     private static final class SharedConnection {
-        private final Lock lock = new ReentrantLock();
+        private final ReentrantLock lock = new ReentrantLock();
         private final Set<Object> users = Collections.newSetFromMap(new IdentityHashMap<>());
         private volatile XMPPTCPConnection connection;
 
