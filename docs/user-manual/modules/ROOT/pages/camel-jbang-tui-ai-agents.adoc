@@ -49,7 +49,7 @@ The server is bound to `127.0.0.1` only -- it never listens on external interfac
 
 When MCP is active, the TUI footer shows the connection status: the port and the name of the connected client,
 with ● while it calls tools and ○ while it is idle (it stays connected while idle, as an MCP client only sends a
-request when it uses a tool), or ✗ when no client has connected yet or the client closed its session.
+request when it uses a tool), or _no client_ when no client has connected yet or the client closed its session.
 Use *F2* -> _MCP Info_ to see server details and _MCP Log_ to view the tool call history.
 
 == Status document resources

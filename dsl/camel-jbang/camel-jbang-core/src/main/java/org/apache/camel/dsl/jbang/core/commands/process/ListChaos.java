@@ -304,6 +304,50 @@ public class ListChaos extends ProcessWatchCommand {
                             .with(r -> r.getStringOrDefault("exchangeId", "")))));
         }
         printTried(report);
+        printExploration(report);
+    }
+
+    /**
+     * The exploration running now or the last one (CAMEL-26773): its time, the rules tried, and the baseline before its
+     * first rule.
+     */
+    private void printExploration(JsonObject report) {
+        JsonObject exploration = report.getMap("exploration");
+        if (exploration == null) {
+            return;
+        }
+        StringBuilder sb = new StringBuilder("  exploration: ");
+        long budget = exploration.getLongOrDefault("budget", 0);
+        if (exploration.getBooleanOrDefault("running", false)) {
+            sb.append("running, ").append(TimeUtils.printDuration(exploration.getLongOrDefault("timeLeft", 0)))
+                    .append(" left of ").append(TimeUtils.printDuration(budget));
+        } else {
+            sb.append("deadline".equals(exploration.getString("finishedBy")) ? "finished at the deadline" : "finished")
+                    .append(" (").append(TimeUtils.printDuration(budget)).append(')');
+        }
+        String focus = exploration.getString("focus");
+        if (focus != null) {
+            sb.append(", focus: ").append(focus);
+        }
+        printer().println(sb.toString());
+        List<Object> rules = exploration.getCollection("rules");
+        printer().println("    rules tried: "
+                          + (rules == null || rules.isEmpty()
+                                  ? "none yet" : rules.stream().map(String::valueOf).collect(Collectors.joining(", "))));
+        if (!exploration.containsKey("baselineAt")) {
+            printer().println("    baseline: taken when the first rule is added");
+            return;
+        }
+        StringJoiner sj = new StringJoiner(", ");
+        List<Object> baseline = exploration.getCollection("baseline");
+        if (baseline != null) {
+            for (Object o : baseline) {
+                JsonObject route = (JsonObject) o;
+                sj.add(route.getString("route") + " " + route.getLongOrDefault("completed", 0) + " completed, "
+                       + route.getLongOrDefault("failed", 0) + " failed");
+            }
+        }
+        printer().println("    baseline (before the first rule): " + (sj.length() == 0 ? "no exchanges" : sj));
     }
 
     /**

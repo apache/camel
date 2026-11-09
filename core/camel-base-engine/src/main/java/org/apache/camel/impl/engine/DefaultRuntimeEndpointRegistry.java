@@ -218,7 +218,9 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             // counts its exchanges, and the replies of an InOut consumer when the exchange is done there: the copies
             // EIPs make inside a route (circuit breaker, split, multicast, recipient list) have their own unit of work,
             // created and completed events, but are no input and no reply, and an exchange that comes from another
-            // route over direct is one without an ExchangeCreatedEvent
+            // route over direct is one without an ExchangeCreatedEvent.
+            // One shared instance for all routes: ConsumerHits keeps no per-route state, the counts live in the
+            // thread-safe inputUtilization and outputUtilization
             getCamelContext().addRoutePolicyFactory((context, routeId, route) -> consumerHits);
             LOG.debug(
                     "Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})",

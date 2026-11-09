@@ -396,7 +396,8 @@ class RuntimeToolsWiringTest {
     void theHintsMatchWhatTheToolsDo() throws Exception {
         assertThat(hints("camel_runtime_receive", String.class, String.class, Integer.class, Integer.class))
                 .as("receive takes the message from the routes").containsExactly(false, true);
-        assertThat(hints("camel_runtime_send", String.class, String.class, String.class, String.class))
+        assertThat(hints("camel_runtime_send", String.class, String.class, String.class, String.class, Integer.class,
+                String.class))
                 .containsExactly(false, true);
         assertThat(hints("camel_runtime_trace_dump", String.class)).containsExactly(true, false);
 

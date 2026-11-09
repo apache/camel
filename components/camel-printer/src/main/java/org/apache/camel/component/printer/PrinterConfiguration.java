@@ -180,24 +180,12 @@ public class PrinterConfiguration {
     }
 
     private MediaSizeName assignMediaSize(String size) {
-        MediaSizeAssigner mediaSizeAssigner = new MediaSizeAssigner();
-
-        MediaSizeName answer;
-
         if (size == null) {
             // default to NA letter if no size configured
-            answer = MediaSizeName.NA_LETTER;
-        } else if (size.regionMatches(true, 0, "iso", 0, "iso".length())) {
-            answer = mediaSizeAssigner.selectMediaSizeNameISO(size);
-        } else if (size.startsWith("jis")) {
-            answer = mediaSizeAssigner.selectMediaSizeNameJIS(size);
-        } else if (size.startsWith("na")) {
-            answer = mediaSizeAssigner.selectMediaSizeNameNA(size);
-        } else {
-            answer = mediaSizeAssigner.selectMediaSizeNameOther(size);
+            return MediaSizeName.NA_LETTER;
         }
 
-        return answer;
+        return new MediaSizeAssigner().selectMediaSizeName(size);
     }
 
     public Sides assignSides(String sidesString) {

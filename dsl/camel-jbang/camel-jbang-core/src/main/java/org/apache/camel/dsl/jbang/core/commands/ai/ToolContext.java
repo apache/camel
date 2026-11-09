@@ -378,8 +378,12 @@ public class ToolContext {
     }
 
     public JsonObject sendMessage(String endpoint, String body, String headers) {
+        return sendMessage(endpoint, body, headers, 0, null);
+    }
+
+    public JsonObject sendMessage(String endpoint, String body, String headers, int repeat, String interval) {
         requireProcess();
-        return RuntimeHelper.sendMessage(pid, endpoint, body, headers);
+        return RuntimeHelper.sendMessage(pid, endpoint, body, headers, repeat, interval);
     }
 
     public List<RuntimeHelper.ProcessInfo> discoverProcesses() {

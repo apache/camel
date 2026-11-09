@@ -73,7 +73,17 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-azure-cosmosdb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-azure-eventgrid</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-azure-eventhubs</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -441,7 +451,19 @@
                                 <fileSet>
                                     <dependency>
                                         <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-azure-cosmosdb</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
                                         <artifactId>camel-test-infra-azure-eventgrid</artifactId>
+                                    </dependency>
+                                </fileSet>
+                                <fileSet>
+                                    <dependency>
+                                        <groupId>org.apache.camel</groupId>
+                                        <artifactId>camel-test-infra-azure-eventhubs</artifactId>
                                     </dependency>
                                 </fileSet>
                                 <fileSet>

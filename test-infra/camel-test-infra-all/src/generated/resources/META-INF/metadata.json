@@ -252,6 +252,17 @@
   "serviceVersion" : "3.37.0",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsInfraService",
+  "description" : "Local Azure Event Hubs service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "event-hubs" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-eventhubs",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.infinispan.services.InfinispanInfraService",
   "description" : "Infinispan is a distributed in-memory key/value data store",
   "implementation" : "org.apache.camel.test.infra.infinispan.services.InfinispanLocalContainerInfraService",
@@ -888,6 +899,17 @@
   "artifactId" : "camel-test-infra-pinecone",
   "version" : "4.24.0-SNAPSHOT",
   "serviceVersion" : "v1.0.0.rc0",
+  "uiSupported" : false
+}, {
+  "service" : "org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbInfraService",
+  "description" : "Local Azure Cosmos DB service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "cosmos-db" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-cosmosdb",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",

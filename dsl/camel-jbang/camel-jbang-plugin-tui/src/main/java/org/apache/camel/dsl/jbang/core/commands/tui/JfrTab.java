@@ -330,9 +330,20 @@ class JfrTab extends AbstractTab {
             String msg = loading.get()
                     ? "  Loading..."
                     : "  Press F5 to refresh JFR snapshot data";
+            List<Line> lines = new ArrayList<>();
+            lines.add(Line.from(Span.styled(msg, LABEL)));
+            if (statusLoaded && recordings.isEmpty() && !loading.get()) {
+                // a snapshot needs a recording: say how to start one
+                lines.add(Line.from(Span.raw("")));
+                lines.add(Line
+                        .from(Span.styled("  No JFR recording is active. Run the integration with Java Flight Recorder (JFR)"
+                                          + " checked in its run options (F2 → Open Project...),",
+                                LABEL)));
+                lines.add(Line.from(Span.styled("  or start one with: jcmd " + ctx.selectedPid + " JFR.start", LABEL)));
+            }
             frame.renderWidget(
                     Paragraph.builder()
-                            .text(Text.from(Line.from(Span.styled(msg, LABEL))))
+                            .text(Text.from(lines))
                             .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
                                     .borderStyle(ctx.paneBorder(true))
                                     .title(" " + activeView.label + " ").build())

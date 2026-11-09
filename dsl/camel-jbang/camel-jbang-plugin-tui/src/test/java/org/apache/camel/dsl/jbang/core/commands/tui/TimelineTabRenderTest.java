@@ -286,6 +286,24 @@ class TimelineTabRenderTest {
     }
 
     @Test
+    void theCursorHidesTheLabelOfTheAxisItIsOn() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        // paused, the cursor is on the last second, where the axis says now
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        String axis = TuiTestHelper.renderToString(tab, 160, 40).lines().filter(l -> l.contains("-60s")).findFirst()
+                .orElseThrow();
+        // no piece of a label next to the cursor; its time is at the right
+        assertThat(axis).doesNotContainPattern("[^ ▲]▲").contains("▲ now");
+        // the cursor on the start of the axis
+        for (int i = 0; i < 59; i++) {
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT));
+        }
+        axis = TuiTestHelper.renderToString(tab, 160, 40).lines().filter(l -> l.contains("-30s")).findFirst().orElseThrow();
+        assertThat(axis).doesNotContain("-60s").doesNotContainPattern("▲[^ ▲]");
+    }
+
+    @Test
     void enterShowsTheExchangesOfTheSecondAtTheCursorAndOneInDetail() {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         TuiTestHelper.renderToString(tab, 160, 40);

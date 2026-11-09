@@ -2348,9 +2348,10 @@ public class CamelMonitor extends CamelCommand {
                 labelStyle = Theme.success();
                 suffixStyle = active ? Theme.success() : Theme.muted();
             } else {
-                suffix = " " + TuiIcons.CROSS;
+                // the server runs and waits for an agent: not an error
+                suffix = " no client";
                 labelStyle = Theme.muted();
-                suffixStyle = Theme.error();
+                suffixStyle = Theme.muted();
             }
             rightSpans.add(Span.styled(mcpLabel, labelStyle));
             rightSpans.add(Span.styled(suffix, suffixStyle));

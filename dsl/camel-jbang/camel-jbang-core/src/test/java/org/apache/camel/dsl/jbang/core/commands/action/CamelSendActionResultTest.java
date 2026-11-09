@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -123,6 +124,78 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
         assertThat(callWithResponse(command("orders", "--endpoint=foo:bar"), failed)).isEqualTo(CliExitCode.FAILURE);
 
         assertThat(printer.getStderr()).contains("No endpoint could be found for: foo:bar");
+    }
+
+    @Test
+    void repeatSendsASummary() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        Path feed = Files.createDirectories(dir.resolve("refunds-fails"));
+        Files.writeString(feed.resolve("001.json"), "{}");
+        Files.writeString(feed.resolve("001.properties"), "country=ES\n");
+        Files.writeString(feed.resolve("002.json"), "{}");
+        JsonObject summary = new JsonObject();
+        summary.put("timestamp", 1_700_000_000_000L);
+        summary.put("status", "failed");
+        summary.put("elapsed", 1200L);
+        summary.put("endpoint", "kafka://refunds");
+        summary.put("messages", 50L);
+        summary.put("sent", 50L);
+        summary.put("failed", 2L);
+        JsonObject error = new JsonObject();
+        error.put("message", "ChaosException: Chaos error of rule r1");
+        error.put("count", 2L);
+        summary.put("errors", new JsonArray(List.of(error)));
+
+        CamelSendAction command = command("orders", "--endpoint=kafka:refunds", "--body=file:" + feed, "--repeat=50",
+                "--interval=200ms");
+        int exit = callWithResponse(command, summary);
+
+        assertThat(exit).isEqualTo(CliExitCode.FAILURE);
+        JsonObject action = readActionFile(TEST_PID);
+        assertThat(action.getString("body")).isEqualTo("file:" + feed.toAbsolutePath());
+        assertThat(action.getLong("repeat")).isEqualTo(50L);
+        assertThat(action.getLong("interval")).isEqualTo(200L);
+        assertThat(printer.getStdout()).contains("kafka://refunds", "Sent 50 messages (48 ok, 2 failed)")
+                .contains("2 x ChaosException: Chaos error of rule r1");
+        // the wait: the timeout, and the pauses and a second for each of the 50 messages
+        assertThat(command.waitMillis()).isEqualTo(20000 + 10000 + 50 * 1200);
+
+        // a folder without a repeat: one message per file, which the wait counts
+        CamelSendAction folder = command("orders", "--endpoint=kafka:refunds", "--body=file:" + feed);
+        assertThat(folder.waitMillis()).isEqualTo(20000 + 10000 + 2 * 1000);
+    }
+
+    @Test
+    void whatCannotBeRepeated() {
+        assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--repeat=3", "--poll").doCall())
+                .isInstanceOf(CliException.class).hasMessageContaining("A poll does not repeat")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--repeat=3", "--reply-file=x.json")
+                .doCall()).hasMessageContaining("--reply-file saves one reply");
+        assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--repeat=10001").doCall())
+                .hasMessageContaining("--repeat must be between 1 and 10000");
+        assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--repeat=3", "--interval=2m").doCall())
+                .hasMessageContaining("--interval must be at most 60s");
+        assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--repeat=3", "--interval=500..100").doCall())
+                .isInstanceOf(CliException.class).hasMessageContaining("from the shortest to the longest pause");
+    }
+
+    @Test
+    void aRangeDrawsEachPauseAtRandom() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject summary = new JsonObject(
+                Map.of("status", "success", "sent", 10L, "failed", 0L, "elapsed", 3000L,
+                        "endpoint", "direct://start", "errors", new JsonArray()));
+
+        CamelSendAction command = command("orders", "--endpoint=direct:start", "--repeat=10", "--interval=100..500");
+        assertThat(callWithResponse(command, summary)).isEqualTo(CliExitCode.OK);
+
+        JsonObject action = readActionFile(TEST_PID);
+        assertThat(action.getLong("interval")).isEqualTo(100L);
+        assertThat(action.getLong("intervalMax")).isEqualTo(500L);
+        // the wait counts the longest pause
+        assertThat(command.waitMillis()).isEqualTo(20000 + 10000 + 10 * 1500);
+        assertThat(printer.getStdout()).contains("Sent 10 messages (success)");
     }
 
     @Test

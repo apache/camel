@@ -23,10 +23,6 @@ public final class AzureServiceBusProperties {
      * the connection string of Floci AZ
      */
     public static final String CONNECTION_STRING = "azure.servicebus.connection.string";
-    /**
-     * The Artemis image that Floci AZ starts as the Service Bus broker
-     */
-    public static final String BROKER_CONTAINER = "azure.servicebus.broker.container";
 
     private AzureServiceBusProperties() {
 
