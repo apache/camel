@@ -43,6 +43,7 @@ import org.apache.camel.component.chaos.ChaosRule.Hook;
 import org.apache.camel.component.chaos.ChaosRule.State;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.TimeSource;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.slf4j.Logger;
@@ -106,6 +107,8 @@ public final class ChaosManager {
     // lock), so the route of such a rule can be checked
     private final ChaosLifecycle lifecycle;
     private boolean routesCreated;
+    // the exploration running now or the last one (CAMEL-26773), guarded by the lock
+    private ChaosExploration exploration;
 
     ChaosManager(CamelContext camelContext, long seed, String seedFrom, long maxDuration) {
         this.camelContext = camelContext;
@@ -271,6 +274,8 @@ public final class ChaosManager {
             checkRoute(definition);
         }
         long now = TimeSource.currentTimeMillis();
+        // an exploration whose time is up removes its rules first
+        checkDeadline(now);
         if (rules.size() + definitions.size() > MAX_RULES) {
             retireEnded(now);
         }
@@ -279,12 +284,22 @@ public final class ChaosManager {
                     "There are " + rules.size() + " chaos rules already, and at most " + MAX_RULES
                                             + "; remove some before adding more");
         }
+        ChaosExploration running = exploration != null && exploration.isRunning() ? exploration : null;
+        if (running != null) {
+            for (ChaosRule.Builder definition : definitions) {
+                // checked before any is added: all the rules or none
+                checkStartsBeforeDeadline(new ChaosRule(definition, "check", seed, now, maxDuration), running);
+            }
+        }
         List<ChaosRule> added = new ArrayList<>();
         for (ChaosRule.Builder definition : definitions) {
             ChaosRule rule = new ChaosRule(definition, "r" + nextId++, seed, now, maxDuration);
             rule.recentFaults = recentFaults;
             // a rule added before the context started starts its clock when it has started
             rule.clockStarted = camelContext.isStarted();
+            if (running != null) {
+                endByDeadline(rule, running, now);
+            }
             rules.add(rule);
             added.add(rule);
         }
@@ -315,15 +330,21 @@ public final class ChaosManager {
     public int changeRule(String id, String rule) {
         ChaosRule.Builder definition = parse(rule);
         synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            // an exploration whose time is up removes its rules first, so the rule may be gone
+            checkDeadline(now);
             int index = indexOf(id);
             if (index < 0) {
                 throw new IllegalArgumentException("There is no chaos rule " + id);
             }
             checkRoute(definition);
-            long now = TimeSource.currentTimeMillis();
             ChaosRule changed = new ChaosRule(definition, id, rules.get(index).version + 1, seed, now, maxDuration);
             changed.recentFaults = recentFaults;
             changed.clockStarted = camelContext.isStarted();
+            if (exploration != null && exploration.isRunning()) {
+                checkStartsBeforeDeadline(changed, exploration);
+                endByDeadline(changed, exploration, now);
+            }
             ChaosRule old = rules.set(index, changed);
             old.removed(State.REPLACED, now);
             remember(old);
@@ -583,6 +604,12 @@ public final class ChaosManager {
             evictedLostAtDlq = 0;
             routes.clear();
             recentFaults.clear();
+            if (exploration != null && exploration.isRunning()) {
+                // a scenario loaded while it runs: the counts start again from zero, and so does its baseline
+                exploration.reportReset();
+            } else {
+                exploration = null;
+            }
             LOG.info("Chaos report reset");
             return count;
         }
@@ -600,7 +627,11 @@ public final class ChaosManager {
         long lost;
         int pending;
         long lostAtDlq;
+        ChaosExploration explored;
         synchronized (lock) {
+            // the status reads the report every second, which finishes an exploration whose time is up
+            checkDeadline(TimeSource.currentTimeMillis());
+            explored = exploration;
             current = new ArrayList<>(rules);
             removed = new ArrayList<>(history);
             unmet = evictedUnmet;
@@ -613,9 +644,107 @@ public final class ChaosManager {
         List<ChaosRule> all = new ArrayList<>(current);
         all.addAll(removed);
         List<ChaosAdvisor.RouteTried> tried = ChaosAdvisor.tried(all, suggestedKinds(now), now);
-        return new ChaosReport(
+        ChaosReport report = new ChaosReport(
                 seed, seedFrom, now, current, removed, counts, unmet, lost, pending,
                 lostAtDlq, recentFaults.latestFirst(), ChaosTargets.reach(camelContext), tried);
+        if (explored != null) {
+            synchronized (lock) {
+                report.exploration(explored.toJson(now), explored.text(now));
+            }
+        }
+        return report;
+    }
+
+    /**
+     * Starts an exploration (CAMEL-26773): an agent tries chaos rules for the time it was given. While it runs, a rule
+     * ends at the deadline at the latest, and at the deadline the rules are removed and the exploration is finished.
+     * The report has its journal: the baseline (the counts per route now) and the rules added while it runs.
+     *
+     * @param  budget                   how long, such as 10m (10 minutes when empty, at most 2 hours)
+     * @param  focus                    what the agent explores, such as a route (optional)
+     * @return                          the exploration, as in the report
+     * @throws IllegalArgumentException when the budget is not a time, or too short or too long
+     * @throws IllegalStateException    when an exploration is running
+     */
+    public Map<String, Object> startExploration(String budget, String focus) {
+        long millis;
+        try {
+            millis = budget == null || budget.isBlank()
+                    ? ChaosExploration.DEFAULT_BUDGET : TimeUtils.toMilliSeconds(budget.strip());
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("The budget of the exploration is not a time: " + budget);
+        }
+        if (millis < ChaosExploration.MIN_BUDGET || millis > ChaosExploration.MAX_BUDGET) {
+            throw new IllegalArgumentException(
+                    "The budget of the exploration must be between 10s and 2h, was: " + budget);
+        }
+        synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            checkDeadline(now);
+            if (exploration != null && exploration.isRunning()) {
+                throw new IllegalStateException(
+                        "An exploration is running, for another " + ChaosRuleParser.printTime(exploration.deadline - now)
+                                                + ": finish it first");
+            }
+            exploration = new ChaosExploration(now, millis, focus);
+            update();
+            LOG.info("Chaos exploration started: {}{}", ChaosRuleParser.printTime(millis),
+                    exploration.focus != null ? " (focus: " + exploration.focus + ")" : "");
+            return exploration.toJson(now);
+        }
+    }
+
+    /**
+     * Finishes the running exploration before its deadline: its rules are removed, and its journal stays in the report
+     * until the next one starts or the report is reset.
+     *
+     * @return                       the exploration, as in the report
+     * @throws IllegalStateException when no exploration is running
+     */
+    public Map<String, Object> finishExploration() {
+        synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            checkDeadline(now);
+            if (exploration == null || !exploration.isRunning()) {
+                throw new IllegalStateException("No exploration is running");
+            }
+            finish(now, ChaosExploration.Finish.FINISHED);
+            return exploration.toJson(now);
+        }
+    }
+
+    // finishes the running exploration whose time is up; with the lock
+    private void checkDeadline(long now) {
+        if (exploration != null && exploration.isRunning() && now >= exploration.deadline) {
+            finish(now, ChaosExploration.Finish.DEADLINE);
+        }
+    }
+
+    private void finish(long now, ChaosExploration.Finish by) {
+        int removedRules = clearRules();
+        exploration.finished(now, by, removedRules);
+        // no rule is left and the exploration is done: the counting stops
+        update();
+        LOG.info("Chaos exploration {}: {} rules tried, {} removed",
+                by == ChaosExploration.Finish.DEADLINE ? "finished at its deadline" : "finished",
+                exploration.ruleCount(), removedRules);
+    }
+
+    private static void checkStartsBeforeDeadline(ChaosRule rule, ChaosExploration running) {
+        if (rule.startsAt >= running.deadline) {
+            throw new IllegalArgumentException(
+                    "The chaos rule would start after the end of the exploration, in "
+                                               + ChaosRuleParser.printTime(running.deadline - rule.addedAt)
+                                               + ": " + rule.text);
+        }
+    }
+
+    // a rule added while an exploration runs ends at its deadline at the latest; its first rule takes the baseline
+    private void endByDeadline(ChaosRule rule, ChaosExploration running, long now) {
+        if (rule.endsAt > running.deadline) {
+            rule.endsAt = running.deadline;
+        }
+        running.ruleAdded(rule.id, new TreeMap<>(routes), now);
     }
 
     // the kinds of fault the suggestions offer per route, read again at most every 10 seconds (the report is read
@@ -638,6 +767,13 @@ public final class ChaosManager {
     }
 
     // -- for the hooks, the event notifier and the plugin
+
+    /** The rules there are now. */
+    List<ChaosRule> rules() {
+        synchronized (lock) {
+            return List.copyOf(rules);
+        }
+    }
 
     RuleSet ruleSet() {
         return ruleSet;
@@ -1016,7 +1152,8 @@ public final class ChaosManager {
                 lifecycle.schedule(rule);
             }
         }
-        boolean any = !rules.isEmpty();
+        // an exploration counts from its start, for the baseline before its first rule (CAMEL-26773)
+        boolean any = !rules.isEmpty() || exploration != null && exploration.isRunning();
         if (any && !counting) {
             used = true;
             counting = true;

@@ -328,6 +328,37 @@ adds or changes a rule, or loads a scenario. The development MCP tools that `cam
 serves over HTTP have only the list and the report (not the check either: the integration parses the rule, and
 `exception=` loads a class; nor what to try or a scenario).
 
+=== An exploration
+
+An agent that tries chaos rules on the integration by itself, for a time it was given, runs an exploration. camel-chaos
+keeps its journal, so the report, the CLI and the TUI read it, and it survives the agent losing its context. And
+camel-chaos enforces the time, whatever the agent does:
+
+* One exploration runs at a time, with a budget of 10 minutes by default, and at most 2 hours.
+* While it runs, a rule ends at the deadline at the latest, and a rule that would start after it (`from=`) is refused.
+* At the deadline the rules are removed and the exploration is finished. This is checked whenever chaos is used: a
+rule added, or the report read, which the status of the application does every second.
+* Chaos counts the exchanges from the start of the exploration, and its first rule takes the baseline: the counts per
+route of the run without faults before it, so the failures that were there already are not blamed on chaos.
+
+The `chaos` action of the CLI connector starts it (`{"action": "chaos", "command": "explore-start", "budget": "10m",
+"focus": "orders"}`) and finishes it before the deadline (`explore-finish`), as `ChaosManager.startExploration(budget,
+focus)` and `finishExploration()` do in Java. The report has its journal as `exploration`: `running`, `startedAt`,
+`budget`, `deadline`, `timeLeft` while it runs, `focus`, the `rules` added while it ran, the `baseline` (per `route` its
+`completed`, `failed`, `failedKeptByConsumer`, `handled` and `redeliveries`) and `baselineAt`, and once finished
+`finishedAt`, `finishedBy` (`finished` or `deadline`) and the number of rules `removed`. It stays in the report after it
+finished, until the next one starts or the report is reset. A scenario loaded while it runs starts the counts again,
+and the baseline is zero then (`baselineReset`).
+
+[source,text]
+----
+$ camel get chaos --report
+...
+  exploration: running, 6m12s left of 10m0s, focus: orders
+    rules tried: r1, r2
+    baseline (before the first rule): orders 30 completed, 0 failed
+----
+
 == Scenarios
 
 A scenario is the rules of an experiment in a file of the project, so it can be run again, shared and kept with the
