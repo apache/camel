@@ -30,6 +30,8 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
 
     public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";
 
+    private static final String JACKSON3_PACKAGE = "org.apache.camel.component.jackson3";
+
     private FactoryFinder dataformatFactory;
 
     @Override
@@ -60,6 +62,15 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
             type = dataformatFactory.findClass(name).orElse(null);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
+        }
+
+        // The Jackson 2.x (camel-jackson) and Jackson 3.x (camel-jackson3) lines register the same data format
+        // names. When both are on the classpath the service file found first would win, so prefer the Jackson 3.x one.
+        if (type != null && isJacksonDataFormat(name) && !type.getName().startsWith(JACKSON3_PACKAGE)) {
+            Class<?> jackson3 = resolveJackson3DataFormatClass(name, context);
+            if (jackson3 != null) {
+                type = jackson3;
+            }
         }
 
         if (type == null) {

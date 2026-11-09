@@ -25,7 +25,7 @@ dependency=mvn\:org.apache.camel\:camel-core-languages\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-rest-openapi\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-openapi-java\:${camel.version}
 dependency=mvn\:org.apache.camel\:camel-http\:${camel.version}
-dependency=mvn\:org.apache.camel\:camel-jackson\:${camel.version}
+dependency=mvn\:org.apache.camel\:camel-jackson3\:${camel.version}
 
 # project files
 .mvn/wrapper/maven-wrapper.jar
@@ -50,7 +50,7 @@ properties: [java.version, project.build.outputTimestamp]
 dependency org.apache.camel:camel-main
 dependency org.apache.camel:camel-direct
 dependency org.apache.camel:camel-http
-dependency org.apache.camel:camel-jackson
+dependency org.apache.camel:camel-jackson3
 dependency org.apache.camel:camel-openapi-java
 dependency org.apache.camel:camel-platform-http-main
 dependency org.apache.camel:camel-rest-openapi

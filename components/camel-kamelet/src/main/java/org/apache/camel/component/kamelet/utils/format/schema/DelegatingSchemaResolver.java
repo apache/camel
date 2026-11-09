@@ -21,9 +21,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.jackson.avro.transform.AvroSchemaResolver;
-import org.apache.camel.component.jackson.protobuf.transform.ProtobufSchemaResolver;
-import org.apache.camel.component.jackson.transform.JsonSchemaResolver;
+import org.apache.camel.component.jackson3.avro.transform.AvroSchemaResolver;
+import org.apache.camel.component.jackson3.protobuf.transform.ProtobufSchemaResolver;
+import org.apache.camel.component.jackson3.transform.JsonSchemaResolver;
 import org.apache.camel.component.kamelet.utils.format.MimeType;
 import org.apache.camel.util.ObjectHelper;
 
@@ -35,10 +35,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DelegatingSchemaResolver implements Processor, CamelContextAware {
 
-    private static final String AVRO_SCHEMA_RESOLVER = "org.apache.camel.component.jackson.avro.transform.AvroSchemaResolver";
+    private static final String AVRO_SCHEMA_RESOLVER = "org.apache.camel.component.jackson3.avro.transform.AvroSchemaResolver";
     private static final String PROTOBUF_SCHEMA_RESOLVER
-            = "org.apache.camel.component.jackson.protobuf.transform.ProtobufSchemaResolver";
-    private static final String JSON_SCHEMA_RESOLVER = "org.apache.camel.component.jackson.transform.JsonSchemaResolver";
+            = "org.apache.camel.component.jackson3.protobuf.transform.ProtobufSchemaResolver";
+    private static final String JSON_SCHEMA_RESOLVER = "org.apache.camel.component.jackson3.transform.JsonSchemaResolver";
 
     private CamelContext camelContext;
     private String mimeType;

@@ -584,6 +584,11 @@ class KameletChecksTest {
         assertThat(KameletChecks.camelDependency("simple")).contains("part of camel core").contains("leave it out");
         assertThat(KameletChecks.camelDependency("timer")).isNull();
         assertThat(KameletChecks.camelDependency("jackson")).isNull();
+        // the catalog names the Jackson 3 line for the jackson data format, and the Jackson 2 line still exists
+        assertThat(KameletChecks.camelDependency("jackson3")).isNull();
+        assertThat(KameletChecks.camelDependency("jacksonxml")).isNull();
+        assertThat(KameletChecks.camelDependency("jackson3-avro")).isNull();
+        assertThat(KameletChecks.camelDependency("jackson-avro")).isNull();
         assertThat(KameletChecks.camelDependency("jq")).isNull();
         assertThat(KameletChecks.camelDependency("core")).isNull();
         assertThat(KameletChecks.camelDependency("no-such-thing")).contains("is not a Camel artifact");
