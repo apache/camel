@@ -36,6 +36,10 @@ over the last 5 minutes, coloured as on the Timeline, with when the worst happen
 allows, and on a tall screen up to two rows high, with room around the panels. *+* and *-* zoom between 5, 2 and 1
 minutes (zooming in centres on the last trouble, so you see what the other routes did then), and *Left* and *Right*
 move a zoomed window. *4* opens the Timeline for each second.
+* *Watch* has the errors to look at. An integration that wrote no status for 15 seconds, while its process runs, says
+since when instead: its numbers are of then. Its CPU tells why: busy when its heap is full and the garbage collector runs
+all the time, idle when a debugger holds it. A stop may not reach it, and *F10* kills it. The Overview table shows it
+as `No status`.
 
 `camel get about` shows the same from the command line (see xref:camel-jbang-diagnostics.adoc#_about[Diagnostics]).
 

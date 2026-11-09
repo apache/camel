@@ -1726,7 +1726,8 @@ class McpFacade {
         }
         if ("stop-all".equals(action)) {
             bridge.stopAll();
-            return "Stopping all processes";
+            // the user answers the dialog: the processes stop when they confirm it
+            return "Asked the user to stop all processes: they confirm it in the Stop All dialog";
         }
         if (nameOrPid != null && !nameOrPid.isBlank()) {
             String pid = findPidByNameOrPid(nameOrPid.trim());
@@ -1801,7 +1802,8 @@ class McpFacade {
             }
             case "stop" -> {
                 bridge.stopProcess(false);
-                yield "Stopping " + name;
+                String stuck = StatusAge.stopAnswer(ctx.findSelectedIntegration());
+                yield stuck != null ? stuck : "Stopping " + name;
             }
             case "kill" -> {
                 bridge.stopProcess(true);

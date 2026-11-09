@@ -98,6 +98,13 @@ class IntegrationInfo {
     int threadCount;
     int peakThreadCount;
     boolean vanishing;
+    // when it last wrote its status file (epoch millis), 0 when not known; StatusAge tells one that stopped writing it
+    long statusWrittenAt;
+    // while it writes no status: the CPU time of its process, when it was read (a MonotonicClock time), and the CPU
+    // since the read before in percent of one core (-1 not known yet)
+    long cpuMillis = -1;
+    long cpuReadAt;
+    double cpuPercent = -1;
     // when it was found gone, a MonotonicClock time: it fades out from then
     long vanishStart;
     final List<RouteInfo> routes = new ArrayList<>();
