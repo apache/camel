@@ -1454,14 +1454,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         @Override
         public int getOrder() {
-            // StreamCachingAdvice must run after UnitOfWorkProcessorAdvice in before() (so the
-            // stream is cached before tracers/debuggers read it) but before UoW in after() (so
-            // the spool file is still alive when reset() is called, fixing CAMEL-26640).
-            //
-            // UnitOfWorkProcessorAdvice is at Ordered.HIGHEST (Integer.MIN_VALUE). Using
-            // HIGHEST + 1 here places StreamCachingAdvice immediately after it:
-            //   before(): UoW → StreamCaching → tracers/debuggers  (preserves CAMEL-10096 / CAMEL-24392)
-            //   after():  tracers → StreamCaching → UoW            (fixes CAMEL-26640)
+            // HIGHEST + 1: immediately after UnitOfWorkProcessorAdvice (HIGHEST), so the stream
+            // is cached before tracers read it (before()) and reset before TempFileManager deletes
+            // the spool file (after()). See UnitOfWorkProcessorAdvice.getOrder() for the full
+            // ordering rationale.
             return Ordered.HIGHEST + 1;
         }
     }
