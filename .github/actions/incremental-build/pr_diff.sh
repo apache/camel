@@ -45,11 +45,37 @@ fetchApiDiff() {
   echo "$diff_body"
 }
 
+# Fetches origin/<base branch> and deepens a shallow checkout until the merge
+# base with HEAD is reachable: 50, 200, 1000 commits, then the full history.
+# Never fails, the caller checks the merge base.
+fetchBaseBranch() {
+  local baseRef="$1"
+
+  local depth
+  for depth in 50 200 1000; do
+    git fetch --no-tags --deepen="$depth" origin "$baseRef" 2>/dev/null || true
+    git fetch --no-tags --depth="$depth" origin "${baseRef}:refs/remotes/origin/${baseRef}" 2>/dev/null || true
+    if git merge-base HEAD "origin/${baseRef}" >/dev/null 2>&1; then
+      echo "Merge base reachable at depth $depth" >&2
+      return 0
+    fi
+    echo "Merge base not reachable at depth $depth, deepening..." >&2
+  done
+  echo "Merge base still not reachable, fetching full history" >&2
+  git fetch --no-tags --unshallow origin "$baseRef" 2>/dev/null || true
+  git fetch --no-tags origin "${baseRef}:refs/remotes/origin/${baseRef}" 2>/dev/null || true
+}
+
 # The diff of HEAD against its merge base with origin/<base branch>, or nothing
-# when the merge base is not in the local history.
+# when the merge base cannot be fetched. Fetches the base branch when the
+# checkout does not have the merge base (callers that skip the fetch, such as
+# camel-spring-boot, which runs this action from main).
 localDiff() {
   local baseRef="$1"
 
+  if ! git merge-base HEAD "origin/${baseRef}" >/dev/null 2>&1; then
+    fetchBaseBranch "$baseRef"
+  fi
   local merge_base
   if ! merge_base=$(git merge-base HEAD "origin/${baseRef}" 2>/dev/null); then
     echo "WARNING: No merge base between HEAD and origin/${baseRef} in the local history" >&2

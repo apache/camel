@@ -45,7 +45,8 @@ changed_files() {
 
 # A repository whose origin/main moved on after the PR branch left it
 repo=$(mktemp -d)
-trap 'rm -rf "$repo"' EXIT
+clone=$(mktemp -d)
+trap 'rm -rf "$repo" "$clone"' EXIT
 cd "$repo"
 git init -q -b main
 git config user.email test@example.com
@@ -73,6 +74,19 @@ git merge -q --no-edit pr
 assert_eq "$(printf 'components/a/A.java\ncomponents/b/B.java')" "$(localDiff main | changed_files)" \
   "local diff of the merge commit has the PR changes only"
 git checkout -q pr
+
+# A PR that removes a component
+git checkout -q -b removal main
+git rm -q -r components/a
+git commit -q -m "remove a"
+assert_eq "components/a/A.java" "$(localDiff main | changed_files)" "local diff has the removed files"
+git checkout -q pr
+
+# A depth=1 checkout of the PR without the base branch, as camel-spring-boot does
+git clone -q --depth 1 --branch pr "file://${repo}" "$clone"
+assert_eq "" "$(git -C "$clone" rev-parse -q --verify origin/main)" "the shallow clone has no origin/main"
+assert_eq "$(printf 'components/a/A.java\ncomponents/b/B.java')" "$(cd "$clone" && localDiff main 2>/dev/null | changed_files)" \
+  "local diff fetches the base branch and deepens the checkout to the merge base"
 
 export GITHUB_TOKEN=test-token
 
