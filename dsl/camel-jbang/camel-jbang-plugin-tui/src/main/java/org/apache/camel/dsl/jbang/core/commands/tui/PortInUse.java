@@ -76,9 +76,11 @@ final class PortInUse {
             lines.add(Line.from(Span.styled(" ✗ Port " + port + " is in use", Theme.error().bold()),
                     Span.raw(" by another program.")));
         }
+        // the next port, or the one before when it is the last port there is
+        int other = port < 65535 ? port + 1 : port - 1;
         lines.add(Line.from(Span.raw("   Stop " + (owner != null ? "it" : "that program")
                                      + " first, or give this integration another port: camel.server.port="
-                                     + (port + 1) + " in its application.properties.")));
+                                     + other + " in its application.properties.")));
         lines.add(Line.from(Span.raw("")));
         return lines;
     }

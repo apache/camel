@@ -73,6 +73,14 @@ class PortInUseTest {
         assertThat(PortInUse.hint(List.of("all good"), List.of(timer))).isEmpty();
     }
 
+    @Test
+    void theLastPortSuggestsTheOneBefore() {
+        List<String> log = List.of("Failed to start Vert.x HttpServer on 0.0.0.0:65535,"
+                                   + " reason: java.net.BindException: Address already in use");
+
+        assertThat(text(PortInUse.hint(log, List.of()))).contains("camel.server.port=65534 ");
+    }
+
     private static IntegrationInfo integration(String name, String pid, String directory) {
         IntegrationInfo info = new IntegrationInfo();
         info.name = name;
