@@ -405,6 +405,8 @@ public class LocalCliConnector extends ServiceSupport
                 doActionRouteDumpTask(root);
             } else if ("timeline".equals(action)) {
                 doActionTimelineTask(root);
+            } else if ("sanitizer".equals(action)) {
+                doActionSanitizerTask();
             } else if ("route-structure".equals(action)) {
                 doActionRouteStructureTask(root);
             } else if ("route-topology".equals(action)) {
@@ -862,6 +864,15 @@ public class LocalCliConnector extends ServiceSupport
         } else {
             writeOutput(new JsonObject());
         }
+    }
+
+    /**
+     * The report of camel-sanitizer (camel get sanitizer): asked for when needed, not in the status, as it can list up
+     * to 1000 violations with their stacks. An empty answer when camel-sanitizer is not on the classpath.
+     */
+    private void doActionSanitizerTask() throws Exception {
+        JsonObject json = callConsole("sanitizer", Map.of());
+        writeOutput(json != null ? json : new JsonObject());
     }
 
     private void doActionRouteStructureTask(JsonObject root) throws Exception {

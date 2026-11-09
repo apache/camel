@@ -45,6 +45,7 @@ camel get [options]
 | xref:jbang-commands/camel-jbang-get-rest.adoc[rest] | Get REST services of Camel integrations
 | xref:jbang-commands/camel-jbang-get-route.adoc[route] | Get status of Camel routes
 | xref:jbang-commands/camel-jbang-get-route-controller.adoc[route-controller] | List status of route controller
+| xref:jbang-commands/camel-jbang-get-sanitizer.adoc[sanitizer] | Get the violations the exchange sanitizer reported in running integrations (camel-sanitizer)
 | xref:jbang-commands/camel-jbang-get-service.adoc[service] | Get services of Camel integrations
 | xref:jbang-commands/camel-jbang-get-source.adoc[source] | Display Camel route source code
 | xref:jbang-commands/camel-jbang-get-sql-trace.adoc[sql-trace] | Get SQL query trace data

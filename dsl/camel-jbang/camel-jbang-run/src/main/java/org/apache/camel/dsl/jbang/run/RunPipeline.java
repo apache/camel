@@ -907,6 +907,10 @@ public class RunPipeline {
                 main.addOverrideProperty("camel.chaos.reportFile", request.chaosReport);
             }
         }
+        if (request.sanitizer) {
+            // camel-sanitizer switches itself on with profile dev (the default of camel run), never with profile prod
+            request.dependencies.add("camel:sanitizer");
+        }
         if (request.openapiUi) {
             request.dependencies.add("camel:platform-http-main");
             request.dependencies.add("camel:openapi-java");

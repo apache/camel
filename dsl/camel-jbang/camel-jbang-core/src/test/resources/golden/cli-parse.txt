@@ -1514,6 +1514,7 @@
   remoteAttach=false
   resourceDirs=[]
   runtime=jbang
+  sanitizer=false
   serverOptions.console=false
   serverOptions.health=false
   serverOptions.managementPort=-1
@@ -1744,6 +1745,10 @@
 > debug --resource-dirs v --resource-dirs w
   resourceDirs=["v", "w"]
 > debug --runtime jbang
+  (defaults)
+> debug --sanitizer
+  sanitizer=true
+> debug --sanitizer=false
   (defaults)
 > debug --show-body
   (defaults)
@@ -2506,6 +2511,7 @@
   quarkusPlatform.quarkusVersion=null
   resourceDirs=[]
   runtime=jbang
+  sanitizer=false
   serverOptions.console=false
   serverOptions.health=false
   serverOptions.managementPort=-1
@@ -2706,6 +2712,10 @@
 > dev --resource-dirs v --resource-dirs w
   resourceDirs=["v", "w"]
 > dev --runtime jbang
+  (defaults)
+> dev --sanitizer
+  sanitizer=true
+> dev --sanitizer=false
   (defaults)
 > dev --skip-plugins
   skipPlugins=true
@@ -4068,6 +4078,30 @@
   watch=true
 > get route-controller --watch=false
   (defaults)
+> get sanitizer
+  durationOption.duration=0
+  get:watch=false
+  jsonOutput=false
+  name="*"
+  report=false
+  sort="pid"
+  watch=false
+> get sanitizer --duration 7
+  durationOption.duration=7
+> get sanitizer --json
+  jsonOutput=true
+> get sanitizer --json=false
+  (defaults)
+> get sanitizer --report
+  report=true
+> get sanitizer --report=false
+  (defaults)
+> get sanitizer --sort pid
+  (defaults)
+> get sanitizer --watch
+  watch=true
+> get sanitizer --watch=false
+  (defaults)
 > get service
   durationOption.duration=0
   get:watch=false
@@ -4728,6 +4762,7 @@
   quarkusPlatform.quarkusVersion=null
   resourceDirs=[]
   runtime=jbang
+  sanitizer=false
   serverOptions.console=false
   serverOptions.health=false
   serverOptions.managementPort=-1
@@ -4928,6 +4963,10 @@
 > run --resource-dirs v --resource-dirs w
   resourceDirs=["v", "w"]
 > run --runtime jbang
+  (defaults)
+> run --sanitizer
+  sanitizer=true
+> run --sanitizer=false
   (defaults)
 > run --skip-plugins
   skipPlugins=true
@@ -6143,6 +6182,7 @@
   quarkusPlatform.quarkusVersion=null
   resourceDirs=[]
   runtime=jbang
+  sanitizer=false
   serverOptions.console=false
   serverOptions.health=false
   serverOptions.managementPort=-1
@@ -6280,6 +6320,7 @@
   quarkusPlatform.quarkusVersion=null
   resourceDirs=[]
   runtime=jbang
+  sanitizer=false
   serverOptions.console=false
   serverOptions.health=false
   serverOptions.managementPort=-1

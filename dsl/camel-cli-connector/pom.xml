@@ -71,6 +71,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- the sanitizer action and the sanitizer dev console, tested end to end (it is then on in the tests with
+                 profile dev, which only adds a WARN to their log) -->
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-sanitizer</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit6</artifactId>
             <scope>test</scope>

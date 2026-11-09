@@ -152,6 +152,10 @@ final class SpringBootRunner {
             // there is no starter: plain camel-chaos, which camel-spring-boot-bom does not manage
             addDependency(model, "org.apache.camel", "camel-chaos", camelVersion(model));
         }
+        if (request.sanitizer) {
+            // there is no starter either
+            addDependency(model, "org.apache.camel", "camel-sanitizer", camelVersion(model));
+        }
         // write temporary pom with cli-connector injected
         Path tempPom = writeRunPom(projectDir, model);
 

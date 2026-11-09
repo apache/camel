@@ -91,6 +91,11 @@ public class RunRequest extends ExportRequest {
     public String chaosReport;
 
     /**
+     * Whether to add camel-sanitizer (camel run --sanitizer), which only a run gets, not an export.
+     */
+    public boolean sanitizer;
+
+    /**
      * Enables tracing.
      */
     public boolean trace;

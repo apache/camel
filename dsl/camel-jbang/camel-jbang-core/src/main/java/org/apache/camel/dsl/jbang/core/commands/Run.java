@@ -302,6 +302,13 @@ public class Run extends CamelCommand implements CommandLifecycle {
     // the report file of a run with chaos without --chaos-report, read for the verdict and deleted
     private Path chaosReportTemp;
 
+    @Option(name = "sanitizer", hasValue = false,
+            description = "Add camel-sanitizer, which reports where the processors of the routes break the contract of"
+                          + " AsyncProcessor, and with camel.sanitizer.checks=callback,commit also where the commits of the"
+                          + " consumers do not run exactly once (camel get sanitizer); on with profile dev, never with prod."
+                          + " Not with Quarkus yet")
+    boolean sanitizer;
+
     // jfr and jfrProfile options are in DebugOptions @Mixin
 
     @Option(name = "local-kamelet-dir",
@@ -786,6 +793,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
             return runSpringBoot();
         }
         warnChaosOffWithProfileProd();
+        warnSanitizerOffWithProfileProd();
         if (RuntimeType.main == runtime) {
             return runCamelMain();
         }
@@ -899,6 +907,12 @@ public class Run extends CamelCommand implements CommandLifecycle {
         if (background) {
             throw CliException.usage("Run Camel Quarkus with --background is not supported");
         }
+        if (sanitizer) {
+            // not yet: there is no Camel Quarkus extension to add to an existing Quarkus project, and the sanitizer is
+            // not tested with Camel Quarkus (whose releases are not on Camel 4.24 yet)
+            throw CliException.usage(
+                    "Run Camel Quarkus with --sanitizer is not supported yet (use --runtime=jbang, main or spring-boot)");
+        }
         warnChaosOffWithProfileProd();
         return runWithMaven();
     }
@@ -908,6 +922,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
             throw CliException.usage("Run Camel Spring Boot with --background is not supported");
         }
         warnChaosOffWithProfileProd();
+        warnSanitizerOffWithProfileProd();
         return runWithMaven();
     }
 
@@ -1042,6 +1057,15 @@ public class Run extends CamelCommand implements CommandLifecycle {
         }
     }
 
+    /**
+     * --sanitizer adds camel-sanitizer, but with profile prod the sanitizer stays off: said up front.
+     */
+    void warnSanitizerOffWithProfileProd() {
+        if (sanitizer && "prod".equalsIgnoreCase(profile)) {
+            printer().printWarn("camel-sanitizer stays off with profile prod");
+        }
+    }
+
     protected void doAddInitialProperty(KameletMain main) {
         // noop
     }
@@ -1073,6 +1097,7 @@ public class Run extends CamelCommand implements CommandLifecycle {
         request.chaos = chaosEnabled;
         request.chaosScenario = chaosScenario;
         request.chaosReport = chaosReport;
+        request.sanitizer = sanitizer;
         request.trace = debugOptions.trace;
         request.backlogTrace = debugOptions.backlogTrace;
         request.modeline = modeline;

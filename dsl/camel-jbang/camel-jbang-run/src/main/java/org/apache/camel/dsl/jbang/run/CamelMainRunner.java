@@ -207,6 +207,9 @@ final class CamelMainRunner {
         if (request.chaos) {
             addDependency(model, "org.apache.camel", "camel-chaos");
         }
+        if (request.sanitizer) {
+            addDependency(model, "org.apache.camel", "camel-sanitizer");
+        }
         // write temporary pom with cli-connector injected
         Path tempPom = writeRunPom(projectDir, model);
 
