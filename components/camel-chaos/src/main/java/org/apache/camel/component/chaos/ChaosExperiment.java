@@ -164,6 +164,7 @@ final class ChaosExperiment {
         // the routes whose failures an expectation counts, and the routes of the expectations that are met
         Set<String> failedExpected = new HashSet<>();
         Set<String> metRoutes = new TreeSet<>();
+        Set<String> unmetTimes = new HashSet<>();
         for (String id : rules) {
             ChaosRule r = rule.apply(id);
             if (r == null) {
@@ -189,7 +190,12 @@ final class ChaosExperiment {
                 Expectation.Reading reading = e.read(now);
                 // an expectation the experiment did not wait for is undecided, not cancelled
                 Outcome outcome = reading.outcome() == Outcome.CANCELLED ? Outcome.PENDING : reading.outcome();
-                unmet |= outcome == Outcome.UNMET;
+                if (outcome == Outcome.UNMET && e.kind.time()) {
+                    // a time is unmet without an exchange too: decided once the routes are known
+                    unmetTimes.add(e.route);
+                } else {
+                    unmet |= outcome == Outcome.UNMET;
+                }
                 undecided |= outcome == Outcome.PENDING;
                 if (outcome == Outcome.MET) {
                     metRoutes.add(e.route);
@@ -247,6 +253,14 @@ final class ChaosExperiment {
         boolean neverFired = firedAll == 0;
         // an expectation met while its route had no messages says nothing either, such as refunds:failed<=0 when the
         // traffic went to another route
+        for (String route : unmetTimes) {
+            if (active.contains(route)) {
+                unmet = true;
+            } else {
+                // maxTime<=10s with no exchange in its route says nothing about the time either
+                metRoutes.add(route);
+            }
+        }
         metRoutes.removeAll(active);
         boolean idle = !metRoutes.isEmpty();
         String verdict = unmet || lost > 0

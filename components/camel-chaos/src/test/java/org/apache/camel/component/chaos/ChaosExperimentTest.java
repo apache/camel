@@ -199,6 +199,15 @@ class ChaosExperimentTest extends ChaosTestSupport {
                 "route billing had no messages while it ran, so its expectation says nothing: feed it");
         assertThat(first(new JsonObject(ended), "expectations").getString("state")).isEqualTo("met");
         assertThat(((JsonObject) ended.get("faults")).getLong("r1")).isEqualTo(3);
+
+        // a time without an exchange in its route: unmet, but it says nothing about the time either
+        chaos().beginExperiment("billing is fast", "endpoint=mock:shipped error expect=billing:maxTime<=1s within=1m");
+        send(3);
+        clock.advance(61_000);
+        ended = chaos().endExperiment(null);
+        assertThat(ended).containsEntry("verdict", "INCONCLUSIVE").containsEntry("reason",
+                "route billing had no messages while it ran, so its expectation says nothing: feed it");
+        assertThat(first(new JsonObject(ended), "expectations").getString("state")).isEqualTo("unmet");
     }
 
     @Test

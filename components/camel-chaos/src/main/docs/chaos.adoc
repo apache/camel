@@ -399,7 +399,8 @@ report does.
 * `PENDING`: it is still open, and an expectation is not decided yet or no fault has fired yet.
 * `INCONCLUSIVE`: it ended before an expectation was decided, so the messages may still have come; none of its
 faults fired, so its expectations say nothing about them; or an expectation was met on a route that had no messages
-while it ran (`refunds:failed<=0` when the traffic went to another route). The `reason` says which.
+while it ran (`refunds:failed<=0` when the traffic went to another route), or is a time (`maxTime`, `meanTime`) of
+such a route. The `reason` says which.
 
 The routes that failed while it ran, and whose failures no expectation of the experiment counts, are listed as
 `alsoFailed`, with how many failed. An experiment that expects `refunds:maxTime<=30s` passes while 2 refunds failed,
