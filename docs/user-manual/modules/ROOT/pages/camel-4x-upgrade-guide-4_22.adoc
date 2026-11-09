@@ -224,6 +224,19 @@ the DELEGATION strategy.
 No changes are required for existing routes that use PROPAGATION without
 `routeControlledStreamObserver=true`.
 
+=== camel-jsch - the scp producer refuses a file name with a line feed or a NUL character
+
+The `scp` producer now refuses a file name with a line feed or a NUL character, in the file name or in one of its
+directories, with a `GenericFileOperationFailedException`. It does so before it starts scp on the remote host, so
+nothing is written there. Any other character, such as a carriage return or a tab, is sent as before.
+
+scp sends each name on a protocol line that ends with a line feed. Before, a line feed in the file name ended that
+line early: the remote scp wrote a file named after the part of the name before the line feed, with the rest of the
+name at the start of its content, and the exchange did not fail. A line feed in a directory failed the exchange, but
+left a directory named after the part before it. A NUL character failed the exchange on the remote host, or, with an
+OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
+or in the `fileName` option before the message reaches the producer.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
@@ -1952,6 +1965,16 @@ AWS2 producers is tracked by CAMEL-24261.
 If you relied on the previous silent no-op, ensure the body is the correct
 request type when `pojoRequest=true`, or drive the operation through headers
 with `pojoRequest=false`.
+
+=== camel-aws2-sts - the secret access key and the session token are no longer copied into headers
+
+The `assumeRole`, `getSessionToken` and `getFederationToken` operations of `aws2-sts` no longer set the
+`CamelAwsStsSecretKey` and `CamelAwsStsSessionToken` headers. The body is the response of the AWS SDK, such as an
+`AssumeRoleResponse`, and its `credentials()` hold them: use `${body.credentials().secretAccessKey()}` and
+`${body.credentials().sessionToken()}` instead of the headers. The `CamelAwsStsAccessKeyId`, `CamelAwsStsExpiration` and
+`CamelAwsStsAssumedRoleArn` headers are still set.
+
+The `STS2Constants.SECRET_KEY_ID` and `STS2Constants.SESSION_TOKEN` constants are deprecated.
 
 === camel-google-storage - downloads are confined to the configured directory
 

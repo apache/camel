@@ -103,6 +103,8 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     @Override
     public boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(session, "session");
+        // before the channel is opened, so nothing is sent for a name that is refused
+        checkFileName(name);
         ScpConfiguration cfg = endpoint.getConfiguration();
 
         int timeout = cfg.getConnectTimeout();
@@ -126,16 +128,12 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         try {
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand(getScpCommand(cfg, file));
-            channel.connect(timeout);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
-            }
 
             try {
                 if (is == null) {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
                 }
-                write(channel, file, is, cfg);
+                connectAndWrite(channel, file, is, cfg, timeout);
             } catch (InvalidPayloadException e) {
                 throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
             } catch (IOException e) {
@@ -162,6 +160,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     @Override
     public boolean storeFileDirectly(String name, String payload) throws GenericFileOperationFailedException {
+        checkFileName(name);
         ByteArrayInputStream bis = null;
         try {
             bis = new ByteArrayInputStream(payload.getBytes());
@@ -436,6 +435,29 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         return session;
     }
 
+    /**
+     * Connects the channel and writes the file. The remote scp sends a first acknowledgement as soon as it starts,
+     * before it reads the first protocol line, and JSch drops what the channel receives before its input stream is
+     * taken. So the streams are taken before the channel is connected, and that first acknowledgement is read before
+     * the first protocol line is sent. Then each acknowledgement read is the answer to the line or data just sent, and
+     * the last one is sent by the remote scp once it has written the file.
+     */
+    private void connectAndWrite(ChannelExec c, String name, InputStream data, ScpConfiguration cfg, int timeout)
+            throws IOException, JSchException {
+        OutputStream os = c.getOutputStream();
+        InputStream is = c.getInputStream();
+        try {
+            c.connect(timeout);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
+            }
+            readAck(is);
+            writeFile(name, data, os, is, cfg);
+        } finally {
+            IOHelper.close(is, os);
+        }
+    }
+
     private void write(ChannelExec c, String name, InputStream data, ScpConfiguration cfg) throws IOException {
         OutputStream os = c.getOutputStream();
         InputStream is = c.getInputStream();
@@ -501,6 +523,25 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 readAck(is);
             } finally {
                 IOHelper.close(buffer);
+            }
+        }
+    }
+
+    /**
+     * Refuses a file name with a line feed or a NUL character. The scp protocol sends the name of each directory and of
+     * the file on a line that ends with a line feed, so a line feed in the name would end the protocol line early, and
+     * the remote scp would read the rest of the name as the next line. The remote scp refuses a NUL character in a
+     * name, or cuts the name short there. Any other character, such as a carriage return or a tab, is sent as is. The
+     * message gives the character and its index, not the name.
+     */
+    private static void checkFileName(String name) {
+        for (int i = 0; i < name.length(); i++) {
+            char ch = name.charAt(i);
+            if (ch == '\n' || ch == '\0') {
+                throw new GenericFileOperationFailedException(
+                        String.format("Cannot write file: the file name has the character U+%04X at index %d, and a line feed"
+                                      + " or a NUL character cannot be sent in an scp file name",
+                                (int) ch, i));
             }
         }
     }
