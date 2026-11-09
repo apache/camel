@@ -376,6 +376,50 @@ $ camel get chaos --report
     baseline (before the first rule): orders 30 completed, 0 failed
 ----
 
+==== Experiments
+
+The agent tries one thing at a time as an experiment: a hypothesis, such as "an order never fails when payment answers
+503", and the rules that test it. At least one of the rules has an expectation (`expect=`), which decides the
+hypothesis. The rules of an experiment are added together, all or none, and the counts per route are read when it
+begins, so its end says what changed while it ran. One experiment is open at a time, and only while an exploration
+runs.
+
+When it ends, camel-chaos reads what came of it and then removes its rules: per route the difference of the counts, the
+faults of each rule, the state of each expectation, and a verdict:
+
+* `FAIL`: an expectation is unmet.
+* `PASS`: all expectations are met.
+* `PENDING`: it is still open and an expectation is not decided yet.
+* `INCONCLUSIVE`: it ended before an expectation was decided, so the messages may still have come.
+
+The experiment is ended with the exploration when that finishes, or when its time is up, with what came of it so far.
+
+The `chaos` action of the CLI connector begins one (`{"action": "chaos", "command": "experiment-begin", "hypothesis":
+"an order never fails", "rule": "endpoint=http:payment* error status=503 until=1m expect=orders:failed<=0
+within=70s"}`), with several rules separated by `;`, and ends it (`experiment-end`, with an optional `note` of what the
+agent makes of it). In Java, these are `ChaosManager.beginExperiment(hypothesis, rules)` and `endExperiment(note)`.
+
+The journal has them as `experiments`, each with:
+
+* `number`, `hypothesis`, the `rules` (their ids) and `ruleTexts`
+* `open`, `startedAt` and `elapsed`
+* the `verdict` and the `expectations`: per rule its `expect`, `state` (`met`, `unmet` or `pending`), the `actual` value,
+and the `value` in words
+* the `faults` per rule
+* the `routes` that did something while it ran, with the same counts as the baseline
+* once ended, `endedAt`, `endedBy` (`ended`, `finished` or `deadline`) and the `note`
+
+[source,text]
+----
+$ camel get chaos --report
+...
+    experiments:
+      1 FAIL  an order never fails (r1, r2, ended after 1m4s)
+        expect orders:failed<=0: unmet, 9 failed
+        routes: orders 41 completed, 9 failed
+        note: orders has no error handler
+----
+
 == Scenarios
 
 A scenario is the rules of an experiment in a file of the project, so it can be run again, shared and kept with the

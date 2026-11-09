@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -655,7 +656,8 @@ public final class ChaosManager {
                 lostAtDlq, recentFaults.latestFirst(), ChaosTargets.reach(camelContext), tried);
         if (explored != null) {
             synchronized (lock) {
-                report.exploration(explored.toJson(now), explored.text(now));
+                Map<String, RouteCounts> live = new TreeMap<>(routes);
+                report.exploration(explored.toJson(now, this::findRule, live), explored.text(now, this::findRule, live));
             }
         }
         return report;
@@ -715,8 +717,109 @@ public final class ChaosManager {
                 throw new IllegalStateException("No exploration is running");
             }
             finish(now, ChaosExploration.Finish.FINISHED);
-            return exploration.toJson(now);
+            return exploration.toJson(now, this::findRule, new TreeMap<>(routes));
         }
+    }
+
+    /**
+     * Begins an experiment of the running exploration (CAMEL-26774): a hypothesis and the rules that test it, added
+     * together (all or none), with at least one expectation ({@code expect=}) to decide it. The counts per route are
+     * read now, so its end says what changed while it ran. One experiment is open at a time.
+     *
+     * @param  hypothesis               what the experiment tests, in a few words, such as "a failed refund is read
+     *                                  again"
+     * @param  rules                    the rules in their one-line text form, separated by {@code ;}
+     * @return                          the experiment, as in the report
+     * @throws IllegalArgumentException when a rule is not valid, or no rule has an expectation
+     * @throws IllegalStateException    when no exploration is running, or an experiment is open
+     */
+    public Map<String, Object> beginExperiment(String hypothesis, String rules) {
+        List<String> texts = ChaosRuleParser.splitRules(rules);
+        if (texts.isEmpty()) {
+            throw new IllegalArgumentException("The chaos rule is empty");
+        }
+        List<ChaosRule.Builder> definitions = new ArrayList<>();
+        for (String text : texts) {
+            definitions.add(parse(text));
+        }
+        if (definitions.stream().allMatch(d -> d.expectRoute == null)) {
+            throw new IllegalArgumentException(
+                    "An experiment needs an expectation (expect=) on one of its rules to decide its hypothesis, such as"
+                                               + " expect=orders:failed<=0 within=1m");
+        }
+        synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            checkDeadline(now);
+            if (exploration == null || !exploration.isRunning()) {
+                throw new IllegalStateException("No exploration is running: an experiment is part of one");
+            }
+            ChaosExperiment open = exploration.openExperiment();
+            if (open != null) {
+                throw new IllegalStateException("Experiment " + open.number + " is open: end it first");
+            }
+            Map<String, RouteCounts> counts = new TreeMap<>(routes);
+            List<String> ids = add(definitions);
+            ChaosExperiment experiment = exploration.beginExperiment(hypothesis, ids, counts, now);
+            LOG.info("Chaos experiment {} began with rules {}{}", experiment.number, ids,
+                    experiment.hypothesis != null ? ": " + experiment.hypothesis : "");
+            return experiment.toJson(this::findRule, counts, now);
+        }
+    }
+
+    /**
+     * Ends the open experiment: what came of it is read (the difference of the counts per route, the faults of each
+     * rule, the states of the expectations and the verdict), its rules are removed, and it stays in the journal.
+     *
+     * @param  note                  what the agent makes of it (optional)
+     * @return                       the experiment, as in the report
+     * @throws IllegalStateException when no experiment is open
+     */
+    public Map<String, Object> endExperiment(String note) {
+        synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            // an experiment open at the deadline was ended with the exploration
+            checkDeadline(now);
+            ChaosExperiment open = exploration != null ? exploration.openExperiment() : null;
+            if (open == null) {
+                throw new IllegalStateException("No experiment is open");
+            }
+            endExperiment(open, now, ChaosExperiment.End.ENDED, note);
+            return open.result();
+        }
+    }
+
+    // reads what came of the experiment, and then removes its rules; with the lock
+    private int endExperiment(ChaosExperiment experiment, long now, ChaosExperiment.End by, String note) {
+        experiment.end(this::findRule, new TreeMap<>(routes), now, by, note);
+        int count = 0;
+        for (String id : experiment.rules) {
+            int index = indexOf(id);
+            if (index >= 0) {
+                ChaosRule removed = rules.remove(index);
+                removed.removed(State.REMOVED, now);
+                remember(removed);
+                count++;
+            }
+        }
+        update();
+        LOG.info("Chaos experiment {} ended: {}", experiment.number,
+                experiment.result().getString("verdict"));
+        return count;
+    }
+
+    // the rule with the id: the one in place, else the last one removed (a changed rule keeps its id); with the lock
+    private ChaosRule findRule(String id) {
+        int index = indexOf(id);
+        if (index >= 0) {
+            return rules.get(index);
+        }
+        for (Iterator<ChaosRule> it = history.descendingIterator(); it.hasNext();) {
+            ChaosRule rule = it.next();
+            if (rule.id.equals(id)) {
+                return rule;
+            }
+        }
+        return null;
     }
 
     // finishes the running exploration whose time is up; with the lock
@@ -727,7 +830,15 @@ public final class ChaosManager {
     }
 
     private void finish(long now, ChaosExploration.Finish by) {
-        int removedRules = clearRules();
+        ChaosExperiment open = exploration.openExperiment();
+        int removedRules = 0;
+        if (open != null) {
+            // read before the rules are removed
+            removedRules = endExperiment(open, now,
+                    by == ChaosExploration.Finish.DEADLINE ? ChaosExperiment.End.DEADLINE : ChaosExperiment.End.FINISHED,
+                    null);
+        }
+        removedRules += clearRules();
         exploration.finished(now, by, removedRules);
         // no rule is left and the exploration is done: the counting stops
         update();

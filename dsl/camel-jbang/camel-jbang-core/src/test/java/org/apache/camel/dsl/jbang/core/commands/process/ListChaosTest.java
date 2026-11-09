@@ -201,6 +201,26 @@ class ListChaosTest extends ProcessCommandTestSupport {
         orders.put("completed", 30L);
         orders.put("failed", 0L);
         exploration.put("baseline", new JsonArray(List.of(orders)));
+        JsonObject experiment = new JsonObject();
+        experiment.put("number", 1);
+        experiment.put("hypothesis", "an order never fails");
+        experiment.put("open", false);
+        experiment.put("endedBy", "ended");
+        experiment.put("elapsed", 64_000L);
+        experiment.put("rules", new JsonArray(List.of("r1", "r2")));
+        experiment.put("verdict", "FAIL");
+        JsonObject expectation = new JsonObject();
+        expectation.put("expect", "orders:failed<=0");
+        expectation.put("state", "unmet");
+        expectation.put("value", "9 failed");
+        experiment.put("expectations", new JsonArray(List.of(expectation)));
+        JsonObject during = new JsonObject();
+        during.put("route", "orders");
+        during.put("completed", 41L);
+        during.put("failed", 9L);
+        experiment.put("routes", new JsonArray(List.of(during)));
+        experiment.put("note", "orders has no error handler");
+        exploration.put("experiments", new JsonArray(List.of(experiment)));
         ((JsonObject) chaos.get("report")).put("exploration", exploration);
         writeStatus(chaos);
 
@@ -208,7 +228,10 @@ class ListChaosTest extends ProcessCommandTestSupport {
 
         String out = printer.getStdout();
         assertThat(out).contains("exploration: running, 6m12s left of 10m0s, focus: orders",
-                "rules tried: r1, r2", "baseline (before the first rule): orders 30 completed, 0 failed");
+                "rules tried: r1, r2", "baseline (before the first rule): orders 30 completed, 0 failed",
+                "experiments:", "1 FAIL  an order never fails (r1, r2, ended after 1m4s)",
+                "expect orders:failed<=0: unmet, 9 failed", "routes: orders 41 completed, 9 failed",
+                "note: orders has no error handler");
     }
 
     @Test
