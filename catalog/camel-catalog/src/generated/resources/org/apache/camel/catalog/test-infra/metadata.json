@@ -546,7 +546,7 @@
   "groupId" : "org.apache.camel",
   "artifactId" : "camel-test-infra-opa",
   "version" : "4.24.0-SNAPSHOT",
-  "serviceVersion" : "1.22.0-static",
+  "serviceVersion" : "1.22.2-static",
   "uiSupported" : false
 }, {
   "service" : "org.apache.camel.test.infra.opensearch.services.OpenSearchInfraService",
