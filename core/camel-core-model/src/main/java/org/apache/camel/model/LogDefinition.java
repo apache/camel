@@ -65,7 +65,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     private String logger;
     @XmlAttribute
     @Metadata(label = "advanced",
-              description = "The language to use for evaluating the log message, such as simple, groovy, or ognl.")
+              description = "The language to use for evaluating the log message, such as simple or groovy.")
     private String logLanguage;
 
     public LogDefinition() {

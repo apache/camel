@@ -476,7 +476,6 @@ public final class ArtifactUtils {
             Map.<String, String> entry("js", "camel-javascript"),
             Map.<String, String> entry("jsonpath", "camel-jsonpath"),
             Map.<String, String> entry("mvel", "camel-mvel"),
-            Map.<String, String> entry("ognl", "camel-ognl"),
             Map.<String, String> entry("openfeature", "camel-openfeature"),
             Map.<String, String> entry("python", "camel-python"),
             Map.<String, String> entry("python3", "camel-python3"),

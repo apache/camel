@@ -4043,9 +4043,9 @@ public class StaticEndpointBuilders {
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * There are 22 enums and the value can be one of: bean, constant,
+     * There are 21 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, jsonpath, mvel, ognl, python, ref, simple, spel, tokenize,
+     * joor, jq, jsonpath, mvel, python, ref, simple, spel, tokenize,
      * xpath, xquery, xtokenize
      * 
      * @param path command:language
@@ -4072,9 +4072,9 @@ public class StaticEndpointBuilders {
      * Allows you to specify the name of a Language to use for evaluating the
      * message body. If there is any result from the evaluation, then the result
      * is put in the message body.
-     * There are 22 enums and the value can be one of: bean, constant,
+     * There are 21 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, jsonpath, mvel, ognl, python, ref, simple, spel, tokenize,
+     * joor, jq, jsonpath, mvel, python, ref, simple, spel, tokenize,
      * xpath, xquery, xtokenize
      * 
      * @param componentName to use a custom component name for the endpoint
@@ -11438,9 +11438,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 26 enums and the value can be one of: bean, constant,
+     * There are 25 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
+     * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref,
      * simple, spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri
@@ -11467,9 +11467,9 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: languageName (required)
      * Sets the name of the language to use
-     * There are 26 enums and the value can be one of: bean, constant,
+     * There are 25 enums and the value can be one of: bean, constant,
      * datasonnet, exchangeProperty, file, groovy, header, hl7terser, java,
-     * joor, jq, js, jsonpath, mvel, ognl, python, python3, quickjs, ref,
+     * joor, jq, js, jsonpath, mvel, python, python3, quickjs, ref,
      * simple, spel, tokenize, variable, xpath, xquery, xtokenize
      * 
      * Path parameter: resourceUri

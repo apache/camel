@@ -208,7 +208,7 @@ public final class ExpressionEvaluator {
                                     + " name that took in the rest of the text";
 
     /** The languages whose expressions read the fields of a body that is data, a Map or a List, and not of text. */
-    private static final Set<String> READS_DATA = Set.of("simple", "groovy", "mvel", "ognl", "spel", "js", "javascript",
+    private static final Set<String> READS_DATA = Set.of("simple", "groovy", "mvel", "spel", "js", "javascript",
             "python", "java", "joor", "jactl");
 
     /**

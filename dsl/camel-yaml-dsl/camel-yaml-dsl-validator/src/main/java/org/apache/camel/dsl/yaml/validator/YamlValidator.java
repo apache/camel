@@ -1449,7 +1449,7 @@ public class YamlValidator {
             "script", "script: {expression: {groovy: {expression: \"...\"}}}",
             "delay", "delay: {expression: {constant: {expression: \"1000\"}}}");
 
-    private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel", "ognl",
+    private static final Set<String> SCRIPT_LANGUAGES = Set.of("groovy", "js", "python", "python3", "mvel",
             "jq", "jsonpath", "xpath", "xquery", "spel", "jactl", "java", "joor", "quickjs", "datasonnet");
 
     /**
@@ -1499,7 +1499,7 @@ public class YamlValidator {
                     && !jsonPathWithInlineSimple(name, value, outsideQuotes)) {
                 // "${x}" inside quotes is a groovy GString (or a JS template) and is fine; ${...} outside quotes is simple
                 String example;
-                if (name.equals("groovy") || name.equals("mvel") || name.equals("ognl") || name.equals("jactl")) {
+                if (name.equals("groovy") || name.equals("mvel") || name.equals("jactl")) {
                     example = "body.value < 1, headers.foo, exchange.getIn().getBody()";
                 } else if (name.equals("jsonpath") || name.equals("jq")) {
                     example = "$.value for a JSON body";

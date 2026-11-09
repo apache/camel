@@ -14,7 +14,6 @@ JsonPathExpression
 LanguageExpression
 MethodCallExpression
 MvelExpression
-OgnlExpression
 Python3Expression
 PythonExpression
 QuickjsExpression

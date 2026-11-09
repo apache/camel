@@ -93,6 +93,21 @@ A route that relied on a Simple expression in a header tag or attribute should u
 option instead (for example `tags.customer=${header.customerId}`), or compute the value in the route before
 setting the header.
 
+=== camel-ognl removed
+
+The `camel-ognl` component has been removed. It was deprecated since Camel 4.14.
+
+The `ognl()` builder method has been removed from the Java DSL (`ExpressionClause`, `LanguageBuilderFactory`,
+`BeanFactoryDefinition`, and the mock builders). The `<ognl>` element has been removed from the XML DSL and
+the `ognl:` prefix from the YAML DSL.
+
+Users should migrate to other expression languages:
+
+* For OGNL-style property navigation, use the xref:components:languages:simple-ognl.adoc[Simple language]
+  which supports OGNL-style notation (e.g. `${body.address.street}`).
+* For full scripting, use xref:components:languages:groovy-language.adoc[Groovy] or
+  xref:components:languages:mvel-language.adoc[MVEL].
+
 === camel-a2a - consumer context is separate from producer headers
 
 An A2A consumer no longer populates producer control headers with the incoming operation and

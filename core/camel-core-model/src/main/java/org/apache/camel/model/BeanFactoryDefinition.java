@@ -460,20 +460,6 @@ public class BeanFactoryDefinition<P> implements ResourceAware {
     }
 
     /**
-     * Calls a OGNL script for creating the local bean
-     *
-     * If the script use the prefix <tt>resource:</tt> such as <tt>resource:classpath:com/foo/myscript.groovy</tt>,
-     * <tt>resource:file:/var/myscript.groovy</tt>, then its loaded from the external resource.
-     *
-     * @param script the script
-     */
-    public P ognl(String script) {
-        setScriptLanguage("ognl");
-        setScript(script);
-        return parent;
-    }
-
-    /**
      * Sets a constructor for creating the bean. Arguments correspond to specific index of the constructor argument
      * list, starting from zero.
      *
