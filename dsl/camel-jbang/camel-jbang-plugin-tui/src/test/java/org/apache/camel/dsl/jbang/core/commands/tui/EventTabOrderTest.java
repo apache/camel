@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.tui.event.KeyEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +45,29 @@ class EventTabOrderTest {
         assertThat(tab.sortedEvents(info)).extracting(e -> e.type + "@" + e.timestamp).containsExactly(
                 "ExchangeCompleted@2000", "ExchangeCreated@2000",
                 "ExchangeCompleted@1000", "ExchangeSent@1000", "ExchangeSending@1000", "ExchangeCreated@1000");
+    }
+
+    @Test
+    void fShowsOneCategoryAtATime() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.events.add(event("ExchangeCreated", 1000));
+        info.events.add(event("ExchangeCompleted", 1000));
+        EventInfo started = event("RouteStarted", 500);
+        started.category = "route";
+        info.events.add(started);
+        EventTab tab = new EventTab(new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of())));
+        tab.ctx.selectedPid = info.pid = "1";
+
+        // all, then exchange, route, and all again
+        assertThat(tab.category()).isNull();
+        tab.handleKeyEvent(KeyEvent.ofChar('f'));
+        assertThat(tab.category()).isEqualTo("exchange");
+        tab.handleKeyEvent(KeyEvent.ofChar('f'));
+        assertThat(tab.category()).isEqualTo("route");
+        assertThat(tab.sortedEvents(info)).extracting(e -> e.type).containsExactly("RouteStarted");
+        tab.handleKeyEvent(KeyEvent.ofChar('f'));
+        assertThat(tab.category()).isNull();
+        assertThat(tab.sortedEvents(info)).hasSize(3);
     }
 
     private static EventInfo event(String type, long timestamp) {

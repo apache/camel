@@ -913,6 +913,36 @@ why and the `chaos-add` command that adds it.
 been tried per route (the kinds of fault, how it went, and what the suggestions offer that no rule tried yet). Chaos is for
 development only: it stays off with profile `prod`, and the commands cannot switch it on.
 
+=== Chaos explorations
+
+An exploration is a time to try chaos rules in, which camel-chaos enforces: at its deadline the rules are removed,
+whatever happens. In it, `camel cmd chaos-experiment` runs one experiment in one call. It adds the rules (one with an
+expectation that decides the hypothesis), sends the messages of `--feed` as `camel cmd send` does, waits until the
+expectations are decided (at most `--wait`), ends the experiment and prints what came of it:
+
+[source,bash]
+----
+camel cmd chaos-explore-start --budget=10m --focus=refunds
+camel cmd chaos-experiment --hypothesis='a failed refund is read again' \
+    --rule='route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s' \
+    --feed=refunds --body=file:test/chaos/refunds-fails/ --repeat=20 --interval=200ms
+camel cmd chaos-explore-finish
+----
+
+[source,text]
+----
+Experiment 1 FAIL  a failed refund is read again (r1, ended after 6s)
+  expect refunds:failed<=0: unmet, 4 failed
+  routes: refunds 16 completed, 4 failed
+  traffic: 20 messages sent to direct://refunds in 4s
+  waited 1s for the verdict; 9m51s left of the exploration
+----
+
+The verdict is `FAIL` when an expectation is unmet (exit code 1), `PASS` when all are met, and `INCONCLUSIVE` when the
+wait was up before an expectation was decided. `--feed` takes the endpoint, or the id of the route, as the `feed:` line
+of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with its experiments. See
+xref:next@components:others:chaos.adoc#_an_exploration[An exploration] in the camel-chaos documentation.
+
 === Chaos scenarios
 
 A scenario keeps the rules of an experiment in a file of the project, such as `test/chaos/outage.chaos`: one rule per line,

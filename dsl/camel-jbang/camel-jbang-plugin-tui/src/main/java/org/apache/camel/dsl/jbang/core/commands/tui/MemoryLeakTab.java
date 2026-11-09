@@ -428,7 +428,7 @@ class MemoryLeakTab extends AbstractTab {
             String totalStr = e.sampledSize > 0 ? formatBytes(e.sampledSize) : "-";
             rows.add(Row.from(
                     rightCell(String.valueOf(e.num), 6),
-                    Cell.from(Span.styled(e.className != null ? e.className : "", Style.EMPTY.fg(Theme.accent()))),
+                    LeakSite.classCell(e.className, e.stackTrace),
                     rightCell(String.valueOf(e.count), 8),
                     rightCell(totalStr, 12),
                     rightCell(formatDuration(e.objectAge), 12)));

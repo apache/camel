@@ -241,12 +241,9 @@ class MetricsCollector {
     }
 
     void updateEndpointHistory(IntegrationInfo info) {
-        long inTotal = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
-        long outTotal = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
+        // what comes in and goes out: a hand-off between its routes (direct, seda) is neither
+        long inTotal = EndpointFlow.total(info, "in", ep -> true);
+        long outTotal = EndpointFlow.total(info, "out", ep -> true);
         long inRemote = info.endpoints.stream()
                 .filter(ep -> "in".equals(ep.direction) && ep.remote)
                 .mapToLong(ep -> ep.hits).sum();

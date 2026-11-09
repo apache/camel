@@ -285,7 +285,7 @@ before calling an endpoint). Before, such a recovery was not counted. `ExchangeH
 `true` when the error handler redelivered the exchange, without looking at the header only. An exchange whose failure
 is continued (`continued(true)`) no longer keeps its redelivery counter, as with a handled failure.
 
-=== camel-management - the input hits of the runtime endpoint registry are the messages a route received
+=== camel-management - the input and reply hits of the runtime endpoint registry count each message once
 
 The runtime endpoint registry (in extended statistics mode, as the `RuntimeEndpointRegistry` MBean, the endpoints dev
 console and the Camel CLI show it) now counts an input hit of a route when an exchange enters the route through its
@@ -293,6 +293,10 @@ consumer, as the route counts its exchanges. Before, it counted every created ex
 and the sub-exchanges of a Split, Multicast or Recipient List were counted as input hits of the route as well, and a
 route that consumes from `direct` (or got a message sent by a `ProducerTemplate` to its `direct` endpoint) had no input
 hits at all.
+
+Likewise, the reply of an InOut consumer is counted as an out hit of its endpoint when the exchange is done in the route,
+once per message. Before, the completed copy of a Circuit Breaker and the sub-exchanges of a Split, Multicast or
+Recipient List were counted as replies as well.
 
 === camel-core - a step after a redelivered step gets all its redeliveries
 

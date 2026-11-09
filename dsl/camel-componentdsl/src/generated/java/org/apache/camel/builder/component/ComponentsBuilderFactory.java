@@ -87,6 +87,19 @@ public interface ComponentsBuilderFactory {
         return Activemq6ComponentBuilderFactory.activemq6();
     }
     /**
+     * AI Prompt (camel-ai-prompt)
+     * Consumer endpoint that registers a Camel route as an MCP prompt.
+     * 
+     * Category: ai
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-ai-prompt
+     * 
+     * @return the dsl builder
+     */
+    static AiPromptComponentBuilderFactory.AiPromptComponentBuilder aiPrompt() {
+        return AiPromptComponentBuilderFactory.aiPrompt();
+    }
+    /**
      * AI Resource (camel-ai-resource)
      * Framework-agnostic consumer endpoint that registers a Camel route as a
      * read-only AI resource in the shared AiResourceRegistry.
