@@ -211,7 +211,7 @@ public final class ChaosExperimentRun {
         return answer;
     }
 
-    private static final Pattern WITHIN = Pattern.compile("(?:^|\\s)within=(\\S+)");
+    private static final Pattern WITHIN = Pattern.compile("(?:^|[\\s;])within=([^\\s;]+)");
 
     /** Sends the traffic: the summary of the send, or why it could not be sent. */
     private static JsonObject traffic(Integration integration, Feed feed) {

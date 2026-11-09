@@ -252,6 +252,11 @@ class ChaosExperimentRunTest {
         assertThat(answer.getLong("waited")).isEqualTo(32_000);
         assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=1m; route=b drop expect=b:1 within=90s"))
                 .isEqualTo(90_000);
+        // the ; between the rules is not part of the time, also when it follows the time without a space
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=3m; route=b drop expect=b:1 within=90s"))
+                .isEqualTo(180_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=3m;route=b drop within=1m"))
+                .isEqualTo(180_000);
         assertThat(ChaosExperimentRun.longestWithin("route=a error")).isZero();
     }
 

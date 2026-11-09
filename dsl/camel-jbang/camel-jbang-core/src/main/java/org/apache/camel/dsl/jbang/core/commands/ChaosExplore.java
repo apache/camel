@@ -181,7 +181,8 @@ public class ChaosExplore extends CamelCommand {
 
     /** The name of the integration as camel get chaos has it: its CamelContext, else the name of the process. */
     static String displayName(CamelProcess process) {
-        if (process.status() != null && process.status().get("context") instanceof JsonObject context) {
+        JsonObject status = process.status();
+        if (status != null && status.get("context") instanceof JsonObject context) {
             String name = context.getString("name");
             if (name != null && !name.isBlank() && !"CamelJBang".equals(name)) {
                 return name;
