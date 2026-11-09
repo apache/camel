@@ -151,9 +151,26 @@ final class ChaosAction {
                 @SuppressWarnings("unchecked")
                 Map<String, Object> finished = (Map<String, Object>) call(type, chaos, "finishExploration");
                 answer.putAll(finished);
+            } else if ("experiment-begin".equals(command)) {
+                if (isBlank(rule)) {
+                    output.error("The rules of the experiment are required");
+                    return;
+                }
+                // an experiment of the exploration (CAMEL-26774): its rules are added together, with an expectation
+                @SuppressWarnings("unchecked")
+                Map<String, Object> begun = (Map<String, Object>) call(type, chaos, "beginExperiment",
+                        root.getString("hypothesis"), rule);
+                answer.putAll(begun);
+            } else if ("experiment-end".equals(command)) {
+                // what came of it, and its rules are removed
+                @SuppressWarnings("unchecked")
+                Map<String, Object> ended = (Map<String, Object>) call(type, chaos, "endExperiment",
+                        root.getString("note"));
+                answer.putAll(ended);
             } else {
                 output.error("Unknown chaos command: " + command
-                             + " (add, check, change, remove, clear, load, suggest, explore-start or explore-finish)");
+                             + " (add, check, change, remove, clear, load, suggest, explore-start, explore-finish,"
+                             + " experiment-begin or experiment-end)");
                 return;
             }
         } catch (IllegalArgumentException | IllegalStateException e) {

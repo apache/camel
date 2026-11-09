@@ -308,8 +308,8 @@ public class ListChaos extends ProcessWatchCommand {
     }
 
     /**
-     * The exploration running now or the last one (CAMEL-26773): its time, the rules tried, and the baseline before its
-     * first rule.
+     * The exploration running now or the last one (CAMEL-26773): its time, the rules tried, the baseline before its
+     * first rule, and its experiments (CAMEL-26774).
      */
     private void printExploration(JsonObject report) {
         JsonObject exploration = report.getMap("exploration");
@@ -338,16 +338,65 @@ public class ListChaos extends ProcessWatchCommand {
             printer().println("    baseline: taken when the first rule is added");
             return;
         }
+        printer().println("    baseline (before the first rule): " + routeCounts(exploration.getCollection("baseline")));
+        List<Object> experiments = exploration.getCollection("experiments");
+        if (experiments != null && !experiments.isEmpty()) {
+            printer().println("    experiments:");
+            for (Object o : experiments) {
+                printExperiment((JsonObject) o);
+            }
+        }
+    }
+
+    /** An experiment: its verdict and hypothesis, its rules, its expectations, and what the routes did meanwhile. */
+    private void printExperiment(JsonObject experiment) {
+        StringBuilder sb = new StringBuilder("      ").append(experiment.getIntegerOrDefault("number", 0)).append(' ')
+                .append(experiment.getString("verdict"));
+        String hypothesis = experiment.getString("hypothesis");
+        if (hypothesis != null) {
+            sb.append("  ").append(hypothesis);
+        }
+        List<Object> rules = experiment.getCollection("rules");
+        sb.append(" (").append(rules == null ? "" : rules.stream().map(String::valueOf).collect(Collectors.joining(", ")))
+                .append(", ");
+        String elapsed = TimeUtils.printDuration(experiment.getLongOrDefault("elapsed", 0));
+        if (experiment.getBooleanOrDefault("open", false)) {
+            sb.append("running for ").append(elapsed);
+        } else {
+            String by = experiment.getString("endedBy");
+            sb.append("deadline".equals(by)
+                    ? "ended at the deadline" : "finished".equals(by) ? "ended with the exploration" : "ended")
+                    .append(" after ").append(elapsed);
+        }
+        printer().println(sb.append(')').toString());
+        List<Object> expectations = experiment.getCollection("expectations");
+        if (expectations != null) {
+            for (Object o : expectations) {
+                JsonObject x = (JsonObject) o;
+                printer().println("        expect " + x.getString("expect") + ": " + x.getString("state") + ", "
+                                  + x.getString("value"));
+            }
+        }
+        List<Object> routes = experiment.getCollection("routes");
+        if (routes != null && !routes.isEmpty()) {
+            printer().println("        routes: " + routeCounts(routes));
+        }
+        String note = experiment.getString("note");
+        if (note != null) {
+            printer().println("        note: " + note);
+        }
+    }
+
+    private static String routeCounts(List<Object> routes) {
         StringJoiner sj = new StringJoiner(", ");
-        List<Object> baseline = exploration.getCollection("baseline");
-        if (baseline != null) {
-            for (Object o : baseline) {
+        if (routes != null) {
+            for (Object o : routes) {
                 JsonObject route = (JsonObject) o;
                 sj.add(route.getString("route") + " " + route.getLongOrDefault("completed", 0) + " completed, "
                        + route.getLongOrDefault("failed", 0) + " failed");
             }
         }
-        printer().println("    baseline (before the first rule): " + (sj.length() == 0 ? "no exchanges" : sj));
+        return sj.length() == 0 ? "no exchanges" : sj.toString();
     }
 
     /**
