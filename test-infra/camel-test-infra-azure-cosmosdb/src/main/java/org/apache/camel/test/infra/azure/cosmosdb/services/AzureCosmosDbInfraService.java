@@ -20,7 +20,8 @@ package org.apache.camel.test.infra.azure.cosmosdb.services;
 import org.apache.camel.test.infra.common.services.InfrastructureService;
 
 /**
- * A Cosmos DB for NoSQL account
+ * A Cosmos DB for NoSQL account. For the local one, of Floci AZ, a client needs the gateway mode and the emulator
+ * certificate switch of the Cosmos DB SDK: see {@code AzureCosmosDbLocalContainerInfraService}.
  */
 public interface AzureCosmosDbInfraService extends InfrastructureService {
 

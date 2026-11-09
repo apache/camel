@@ -27,17 +27,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@EnabledIfSystemProperties({
-        @EnabledIfSystemProperty(named = "endpoint", matches = ".+",
-                                 disabledReason = "Floci AZ does not emulate the change feed: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey="),
-        @EnabledIfSystemProperty(named = "accessKey", matches = ".+",
-                                 disabledReason = "Floci AZ does not emulate the change feed: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey=")
-})
+@EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote",
+                         disabledReason = "Floci AZ does not emulate the change feed: supply a Cosmos DB account, e.g: mvn verify -Dendpoint=... -DaccessKey=...")
 class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
 
     private static final String DATABASE_NAME = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();

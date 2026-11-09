@@ -17,33 +17,27 @@
 
 package org.apache.camel.test.infra.azure.cosmosdb.clients;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
+import java.util.Objects;
+import java.util.Set;
 
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import org.apache.camel.test.infra.azure.cosmosdb.common.AzureCosmosDbProperties;
 
 public final class AzureCosmosDbClientUtils {
-    private static final String TRUST_STORE = "javax.net.ssl.trustStore";
-    private static final String TRUST_STORE_TYPE = "javax.net.ssl.trustStoreType";
-    private static final String TRUST_STORE_PASSWORD = "javax.net.ssl.trustStorePassword";
-    private static final String TRUST_STORE_PROVIDER = "javax.net.ssl.trustStoreProvider";
+    /**
+     * The switch of the Cosmos DB SDK that skips the validation of the TLS certificate of an emulator
+     */
+    public static final String EMULATOR_CERTIFICATE_VALIDATION_DISABLED
+            = "COSMOS.EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED";
+    /**
+     * The host of the emulator, for the SDK, when it is not a local one
+     */
+    public static final String EMULATOR_HOST = "COSMOS.EMULATOR_HOST";
+
+    // the hosts that the SDK takes as an emulator without COSMOS.EMULATOR_HOST
+    private static final Set<String> LOCAL_HOSTS = Set.of("localhost", "127.0.0.1", "[::1]");
 
     private AzureCosmosDbClientUtils() {
 
@@ -53,99 +47,41 @@ public final class AzureCosmosDbClientUtils {
      * Builds a client of the account the tests run against: the local Floci AZ container, unless the
      * {@link AzureCosmosDbProperties#INSTANCE_TYPE} system property is {@code remote}. Like the clients the
      * azure-cosmosdb component builds by default, it returns the items it writes.
+     * <p>
+     * For Floci AZ, the client works in gateway mode, the only one that Floci AZ emulates (the component builds a
+     * direct-mode client, so a route uses the service through a client like this one, set as its
+     * {@code cosmosAsyncClient}), keeps to the endpoint whatever locations the emulator advertises, and does not
+     * validate the certificate that Floci AZ issues itself for its TLS.
      */
     public static CosmosAsyncClient createAsyncClient() {
+        String endpoint = Objects.requireNonNull(System.getProperty(AzureCosmosDbProperties.ENDPOINT),
+                "The system property " + AzureCosmosDbProperties.ENDPOINT + " gives the endpoint of the account");
+
         CosmosClientBuilder builder = new CosmosClientBuilder()
-                .endpoint(System.getProperty(AzureCosmosDbProperties.ENDPOINT))
+                .endpoint(endpoint)
                 .key(System.getProperty(AzureCosmosDbProperties.ACCESS_KEY))
                 .contentResponseOnWriteEnabled(true);
 
         String instanceType = System.getProperty(AzureCosmosDbProperties.INSTANCE_TYPE);
         if (instanceType == null || instanceType.equals("local-azure-container")) {
-            // Floci AZ emulates the gateway API only, and the client keeps to the endpoint whatever locations the
-            // emulator advertises
+            trustEmulator(endpoint);
             builder.gatewayMode()
                     .endpointDiscoveryEnabled(false);
-
-            return buildTrusting(builder, System.getProperty(AzureCosmosDbProperties.CERTIFICATE_URL));
         }
 
         return builder.buildAsyncClient();
     }
 
     /*
-     * The Cosmos DB SDK has no option for the certificates a client trusts: a client trusts the default trust store of
-     * the JVM, which it loads when it is built. The default trust store holds the certificate of the emulator, next to the
-     * certificates the JVM trusts, only while the client is built: the client trusts the emulator, and the trust of the
-     * JVM is the same once the client is built.
+     * The Cosmos DB SDK does not validate the certificate of an emulator, the host localhost, 127.0.0.1, [::1] or the
+     * one of COSMOS.EMULATOR_HOST, when COSMOS.EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED is true. It reads both
+     * when a client is built, so they apply to the clients built afterwards, and to the emulator host only.
      */
-    private static synchronized CosmosAsyncClient buildTrusting(CosmosClientBuilder builder, String certificateUrl) {
-        Map<String, String> previous = new HashMap<>();
-        for (String name : new String[] { TRUST_STORE, TRUST_STORE_TYPE, TRUST_STORE_PASSWORD, TRUST_STORE_PROVIDER }) {
-            previous.put(name, System.getProperty(name));
-        }
-
-        Path trustStoreFile = null;
-        try {
-            String password = UUID.randomUUID().toString();
-            trustStoreFile = Files.createTempFile("floci-az-cosmos-trust", ".p12");
-            try (OutputStream out = Files.newOutputStream(trustStoreFile)) {
-                trustStore(readCertificate(certificateUrl)).store(out, password.toCharArray());
-            }
-
-            System.setProperty(TRUST_STORE, trustStoreFile.toString());
-            System.setProperty(TRUST_STORE_TYPE, "PKCS12");
-            System.setProperty(TRUST_STORE_PASSWORD, password);
-            System.clearProperty(TRUST_STORE_PROVIDER);
-
-            return builder.buildAsyncClient();
-        } catch (IOException | GeneralSecurityException e) {
-            throw new IllegalStateException("Cannot trust the certificate of Floci AZ at " + certificateUrl, e);
-        } finally {
-            previous.forEach((name, value) -> {
-                if (value == null) {
-                    System.clearProperty(name);
-                } else {
-                    System.setProperty(name, value);
-                }
-            });
-            deleteQuietly(trustStoreFile);
-        }
-    }
-
-    private static X509Certificate readCertificate(String certificateUrl) throws IOException, GeneralSecurityException {
-        try (InputStream in = URI.create(certificateUrl).toURL().openStream()) {
-            return (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(in);
-        }
-    }
-
-    // the certificates the JVM trusts, and the one of the emulator
-    private static KeyStore trustStore(X509Certificate certificate) throws IOException, GeneralSecurityException {
-        KeyStore trustStore = KeyStore.getInstance("PKCS12");
-        trustStore.load(null, null);
-
-        TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        factory.init((KeyStore) null);
-        int index = 0;
-        for (TrustManager trustManager : factory.getTrustManagers()) {
-            if (trustManager instanceof X509TrustManager x509TrustManager) {
-                for (X509Certificate trusted : x509TrustManager.getAcceptedIssuers()) {
-                    trustStore.setCertificateEntry("jvm-" + index++, trusted);
-                }
-            }
-        }
-        trustStore.setCertificateEntry("floci-az", certificate);
-
-        return trustStore;
-    }
-
-    private static void deleteQuietly(Path file) {
-        if (file != null) {
-            try {
-                Files.deleteIfExists(file);
-            } catch (IOException e) {
-                file.toFile().deleteOnExit();
-            }
+    private static void trustEmulator(String endpoint) {
+        System.setProperty(EMULATOR_CERTIFICATE_VALIDATION_DISABLED, "true");
+        String host = URI.create(endpoint).getHost();
+        if (!LOCAL_HOSTS.contains(host)) {
+            System.setProperty(EMULATOR_HOST, host);
         }
     }
 }

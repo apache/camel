@@ -33,7 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -185,12 +184,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     }
 
     @Test
-    @EnabledIfSystemProperties({
-            @EnabledIfSystemProperty(named = "endpoint", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the throughput (offers) of the databases: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey="),
-            @EnabledIfSystemProperty(named = "accessKey", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the throughput (offers) of the databases: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey=")
-    })
+    @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote",
+                             disabledReason = "Floci AZ does not emulate the throughput (offers) of the databases: supply a Cosmos DB account, e.g: mvn verify -Dendpoint=... -DaccessKey=...")
     void testReplaceDatabaseThroughput() throws InterruptedException {
         final String databaseName = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();
 
@@ -214,12 +209,8 @@ public class CosmosDbProducerIT extends BaseCamelCosmosDbTestSupport {
     }
 
     @Test
-    @EnabledIfSystemProperties({
-            @EnabledIfSystemProperty(named = "endpoint", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the queries of the containers: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey="),
-            @EnabledIfSystemProperty(named = "accessKey", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the queries of the containers: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey=")
-    })
+    @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote",
+                             disabledReason = "Floci AZ does not emulate the queries of the containers: supply a Cosmos DB account, e.g: mvn verify -Dendpoint=... -DaccessKey=...")
     void testQueryContainers() throws InterruptedException {
         // create bunch of containers to test
         final String prefixContainerNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();

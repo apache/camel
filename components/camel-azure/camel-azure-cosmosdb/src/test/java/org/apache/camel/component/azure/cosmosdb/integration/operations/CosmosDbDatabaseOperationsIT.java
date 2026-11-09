@@ -30,7 +30,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -115,12 +114,8 @@ class CosmosDbDatabaseOperationsIT {
     }
 
     @Test
-    @EnabledIfSystemProperties({
-            @EnabledIfSystemProperty(named = "endpoint", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the queries of the containers: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey="),
-            @EnabledIfSystemProperty(named = "accessKey", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the queries of the containers: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey=")
-    })
+    @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote",
+                             disabledReason = "Floci AZ does not emulate the queries of the containers: supply a Cosmos DB account, e.g: mvn verify -Dendpoint=... -DaccessKey=...")
     void testQueryAndReadAllContainers() {
         // create bunch of containers
         final String prefixContainerNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();

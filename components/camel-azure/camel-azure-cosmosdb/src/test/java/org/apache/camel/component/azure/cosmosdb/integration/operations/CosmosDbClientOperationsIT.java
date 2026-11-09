@@ -27,7 +27,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -109,12 +108,8 @@ class CosmosDbClientOperationsIT {
     }
 
     @Test
-    @EnabledIfSystemProperties({
-            @EnabledIfSystemProperty(named = "endpoint", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the queries of the databases: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey="),
-            @EnabledIfSystemProperty(named = "accessKey", matches = ".+",
-                                     disabledReason = "Floci AZ does not emulate the queries of the databases: supply a CosmosDB account, e.g: mvn verify -Dendpoint= -DaccessKey=")
-    })
+    @EnabledIfSystemProperty(named = "azure.instance.type", matches = "remote",
+                             disabledReason = "Floci AZ does not emulate the queries of the databases: supply a Cosmos DB account, e.g: mvn verify -Dendpoint=... -DaccessKey=...")
     void testQueryAndReadAllDatabases() {
         // create bunch of databases
         final String prefixDatabaseNames = RandomStringUtils.secure().nextAlphabetic(10).toLowerCase();

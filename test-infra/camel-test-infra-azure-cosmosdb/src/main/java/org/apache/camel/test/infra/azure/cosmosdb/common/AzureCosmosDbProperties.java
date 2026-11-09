@@ -27,10 +27,6 @@ public final class AzureCosmosDbProperties {
      */
     public static final String ACCESS_KEY = "azure.cosmosdb.access.key";
     /**
-     * The address of the certificate the clients of the local service trust: registered by the local service
-     */
-    public static final String CERTIFICATE_URL = "azure.cosmosdb.certificate.url";
-    /**
      * The type of the service the tests run against: the local Floci AZ container by default, {@code remote} for the
      * account given by {@link #ENDPOINT} and {@link #ACCESS_KEY}
      */

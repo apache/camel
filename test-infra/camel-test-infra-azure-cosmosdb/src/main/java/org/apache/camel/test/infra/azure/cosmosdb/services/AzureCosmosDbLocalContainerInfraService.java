@@ -26,10 +26,17 @@ import org.apache.camel.test.infra.azure.cosmosdb.common.AzureCosmosDbProperties
 /**
  * A local Cosmos DB for NoSQL account: Floci AZ emulates the gateway API of the account in process (databases,
  * containers, items and their SQL queries). The Java SDK connects to the gateway over TLS only, so the container serves
- * HTTPS next to HTTP on its port, with a certificate it issues when it starts: the issuer is served on
- * {@link #certificateUrl()}, and {@code AzureCosmosDbClientUtils} builds a client that trusts it. Floci AZ does not
- * emulate the change feed, the throughput of the databases and containers, nor the queries of the databases and
- * containers.
+ * HTTPS next to HTTP on its port, with a certificate it issues when it starts.
+ * <p>
+ * A client of the service works in gateway mode, and skips the validation of the certificate of the emulator with the
+ * {@code COSMOS.EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED} system property, or the
+ * {@code COSMOS_EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED} environment variable, set to {@code true}:
+ * {@code AzureCosmosDbClientUtils} builds such a client. The azure-cosmosdb component builds a direct-mode client,
+ * which Floci AZ does not serve, so a route uses the service through a client of its own, set as its
+ * {@code cosmosAsyncClient}.
+ * <p>
+ * Floci AZ does not emulate the change feed, the throughput of the databases and containers, nor the queries of the
+ * databases and containers.
  */
 @InfraService(service = AzureCosmosDbInfraService.class,
               description = "Local Azure Cosmos DB service with Floci AZ",
@@ -52,7 +59,6 @@ public class AzureCosmosDbLocalContainerInfraService extends FlociAzInfraService
         super.registerProperties();
         System.setProperty(AzureCosmosDbProperties.ENDPOINT, endpoint());
         System.setProperty(AzureCosmosDbProperties.ACCESS_KEY, accessKey());
-        System.setProperty(AzureCosmosDbProperties.CERTIFICATE_URL, certificateUrl());
     }
 
     /**
@@ -83,13 +89,5 @@ public class AzureCosmosDbLocalContainerInfraService extends FlociAzInfraService
                 return EMULATOR_KEY;
             }
         };
-    }
-
-    /**
-     * The address of the certificate that issued the TLS certificate of the emulator, in PEM, for example
-     * {@code http://localhost:32768/_floci/tls-cert}
-     */
-    public String certificateUrl() {
-        return getContainer().serviceAddress() + "/_floci/tls-cert";
     }
 }
