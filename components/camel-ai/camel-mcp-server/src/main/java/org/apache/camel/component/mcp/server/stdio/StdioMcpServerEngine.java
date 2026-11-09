@@ -77,6 +77,11 @@ public class StdioMcpServerEngine extends ServiceSupport implements McpServerEng
     private final List<McpServerFeatures.SyncToolSpecification> pendingTools = new ArrayList<>();
     private final List<McpServerFeatures.SyncPromptSpecification> pendingPrompts = new ArrayList<>();
 
+    // Package-private to allow tests to verify pending prompt lifecycle.
+    int pendingPromptCount() {
+        return pendingPrompts.size();
+    }
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;

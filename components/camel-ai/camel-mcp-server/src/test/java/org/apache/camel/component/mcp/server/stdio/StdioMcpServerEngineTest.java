@@ -79,7 +79,7 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
     @Test
     void toolAddedBeforeStartIsQueuedWithoutNpe() {
         StdioMcpServerEngine engine = new StdioMcpServerEngine();
-        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+        engine.initialize(new McpServerInfo(
                 "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
 
         assertThatCode(() -> engine.toolAdded(sampleTool("queued_tool", "Queued before start")))
@@ -90,29 +90,39 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
     @Test
     void promptAddedBeforeStartIsFlushedWhenServerStarts() throws Exception {
         StdioMcpServerEngine engine = new StdioMcpServerEngine();
-        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+        engine.initialize(new McpServerInfo(
                 "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
         engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
         engine.promptAdded(samplePrompt("queued_prompt", "Queued before start"));
 
-        assertThatCode(engine::start).doesNotThrowAnyException();
-        engine.stop();
+        assertThat(engine.pendingPromptCount()).isEqualTo(1);
+
+        try {
+            assertThatCode(engine::start).doesNotThrowAnyException();
+            assertThat(engine.isStarted()).isTrue();
+            assertThat(engine.pendingPromptCount()).isZero();
+        } finally {
+            engine.stop();
+        }
     }
 
     @Test
     void promptRemovedBeforeStartRemovesItFromPendingQueue() {
         StdioMcpServerEngine engine = new StdioMcpServerEngine();
-        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+        engine.initialize(new McpServerInfo(
                 "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
 
         engine.promptAdded(samplePrompt("ephemeral_prompt", "Removed before start"));
+        assertThat(engine.pendingPromptCount()).isEqualTo(1);
+
         assertThatCode(() -> engine.promptRemoved("ephemeral_prompt")).doesNotThrowAnyException();
+        assertThat(engine.pendingPromptCount()).isZero();
     }
 
     @Test
     void toolRemovedBeforeStartDoesNotThrow() {
         StdioMcpServerEngine engine = new StdioMcpServerEngine();
-        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+        engine.initialize(new McpServerInfo(
                 "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
 
         engine.toolAdded(sampleTool("ephemeral", "Removed before start"));
@@ -122,7 +132,7 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
     @Test
     void toolAddedAfterStdinClosedDoesNotFail() throws Exception {
         StdioMcpServerEngine engine = new StdioMcpServerEngine();
-        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+        engine.initialize(new McpServerInfo(
                 "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
         // an empty stdin is a client that went away: the session closes and notifications can no longer be sent
         engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
