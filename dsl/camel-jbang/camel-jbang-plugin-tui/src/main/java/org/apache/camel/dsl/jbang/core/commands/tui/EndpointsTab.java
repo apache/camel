@@ -365,14 +365,9 @@ class EndpointsTab extends AbstractTableTab {
             if (chartMode == CHART_SINGLE && selectedUri != null) {
                 renderSingleEndpointChart(frame, chunks.get(1), selectedUri, info);
             } else {
-                long inTotal = info.endpoints.stream()
-                        .filter(ep -> "in".equals(ep.direction) && matchesFilter(ep))
-                        .mapToLong(ep -> ep.hits)
-                        .sum();
-                long outTotal = info.endpoints.stream()
-                        .filter(ep -> "out".equals(ep.direction) && matchesFilter(ep))
-                        .mapToLong(ep -> ep.hits)
-                        .sum();
+                // what comes in and goes out: a hand-off between its routes (direct, seda) is neither
+                long inTotal = EndpointFlow.total(info, "in", this::matchesFilter);
+                long outTotal = EndpointFlow.total(info, "out", this::matchesFilter);
 
                 if (hasSizeHistory) {
                     // three-column layout: flow panel (fixed) | throughput chart | payload chart
