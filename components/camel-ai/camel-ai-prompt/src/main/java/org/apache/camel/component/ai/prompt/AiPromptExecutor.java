@@ -17,6 +17,7 @@
 package org.apache.camel.component.ai.prompt;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -89,7 +90,17 @@ public final class AiPromptExecutor {
                 IllegalStateException error = new IllegalStateException("Prompt route produced no result");
                 return new AiPromptResult.ExecutionError(error.getMessage(), error);
             }
-            return new AiPromptResult.Success(body);
+            if (body instanceof List<?>) {
+                return new AiPromptResult.Success(body);
+            }
+            // Convert on the route worker before executePrompt releases the exchange. This lets
+            // stream-cache, byte[] and file-backed route results be consumed while still readable.
+            String text = exchange.getMessage().getBody(String.class);
+            if (text == null) {
+                IllegalStateException error = new IllegalStateException("Prompt route result could not be converted to text");
+                return new AiPromptResult.ExecutionError(error.getMessage(), error);
+            }
+            return new AiPromptResult.Success(text);
         } catch (Exception e) {
             LOG.error("Error executing prompt '{}': {}", promptName, e.getMessage(), e);
             return new AiPromptResult.ExecutionError(e.getMessage(), e);

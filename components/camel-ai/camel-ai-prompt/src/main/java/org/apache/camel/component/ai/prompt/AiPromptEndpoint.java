@@ -48,10 +48,11 @@ import static org.apache.camel.component.ai.prompt.AiPrompt.SCHEME;
                                    description = "No body is sent to the route. Each prompt argument is available as a "
                                                  + "message header with its configured argument name; values are "
                                                  + "strings."),
-           consumerReply = @BodyType(value = Carrier.ANY,
-                                     description = "A String becomes one user message. A List may contain Strings or "
-                                                   + "Maps with role (user or assistant) and content. Content may be a "
-                                                   + "String or an MCP content block."))
+           consumerReply = @BodyType(value = { Carrier.TEXT, Carrier.LIST, Carrier.BYTES, Carrier.STREAM, Carrier.FILE },
+                                     description = "A String, byte array, stream or file is converted to one user "
+                                                   + "message. A List may contain Strings or Maps with role (user or "
+                                                   + "assistant) and content. Content may be a String or an MCP "
+                                                   + "content block."))
 public class AiPromptEndpoint extends DefaultEndpoint {
 
     @Metadata(required = true)

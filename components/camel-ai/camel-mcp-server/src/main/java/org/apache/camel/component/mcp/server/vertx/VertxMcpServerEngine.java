@@ -146,7 +146,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
             platformHttpComponent.addHttpEndpoint(info.path(), "GET,POST,DELETE", APPLICATION_JSON,
                     "application/json,text/event-stream", null);
         }
-        LOG.info("MCP server '{}' serving tools and resources on path {}", info.serverName(), info.path());
+        LOG.info("MCP server '{}' serving tools, resources and prompts on path {}", info.serverName(), info.path());
     }
 
     @Override

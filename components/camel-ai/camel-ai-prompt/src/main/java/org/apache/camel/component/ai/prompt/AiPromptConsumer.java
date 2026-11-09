@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Processor;
@@ -94,6 +95,10 @@ public class AiPromptConsumer extends DefaultConsumer {
         }
     }
 
+    static void validateArguments(Map<String, String> values) {
+        parseArguments(values);
+    }
+
     private static List<AiPromptArgument> parseArguments(Map<String, String> values) {
         if (values == null || values.isEmpty()) {
             return List.of();
@@ -116,6 +121,10 @@ public class AiPromptConsumer extends DefaultConsumer {
             }
             if (name.isBlank()) {
                 throw new IllegalArgumentException("Prompt argument name must not be blank");
+            }
+            String normalizedName = name.toLowerCase(Locale.ROOT);
+            if (normalizedName.startsWith("camel") || normalizedName.startsWith("org.apache.camel.")) {
+                throw new IllegalArgumentException("Prompt argument name '" + name + "' is reserved");
             }
             MutableArgument argument = parsed.computeIfAbsent(name, ignored -> new MutableArgument());
             if ("description".equals(property)) {
@@ -170,7 +179,7 @@ public class AiPromptConsumer extends DefaultConsumer {
     private void register() {
         AiPromptRegistry registry = AiPromptRegistry.getOrCreate(getEndpoint().getCamelContext());
         if (registeredTags != null) {
-            LOG.debug("Registering prompt '{}' with tags {}", promptName, java.util.Arrays.toString(registeredTags));
+            LOG.debug("Registering prompt '{}' with tags {}", promptName, Arrays.toString(registeredTags));
             registry.putAll(registeredTags, registeredSpec);
         } else if (registeredInDefaultPool) {
             LOG.debug("Registering prompt '{}' in default pool (no tags)", promptName);

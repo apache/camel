@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.ai.prompt;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -36,6 +38,16 @@ class AiPromptComponentTest extends CamelTestSupport {
                      + "&argument.name.required=true")
                         .routeId("greeting-route")
                         .setBody(simple("Hello ${header.name}"));
+
+                from("ai-prompt:bytes?tags=tests")
+                        .setBody(constant("byte body".getBytes(StandardCharsets.UTF_8)));
+
+                from("ai-prompt:stream?tags=tests")
+                        .setBody(constant(new ByteArrayInputStream("stream body".getBytes(StandardCharsets.UTF_8))));
+
+                from("ai-prompt:ordered?tags=tests&argument.second.description=Second"
+                     + "&argument.first.description=First")
+                        .setBody(constant("ordered"));
             }
         };
     }
@@ -56,6 +68,31 @@ class AiPromptComponentTest extends CamelTestSupport {
 
         assertThat(result).isInstanceOf(AiPromptResult.Success.class);
         assertThat(((AiPromptResult.Success) result).value()).isEqualTo("Hello Camel");
+    }
+
+    @Test
+    void byteArrayAndStreamBodiesAreConvertedToText() {
+        AiPromptRegistry registry = AiPromptRegistry.getOrCreate(context);
+        AiPromptSpec bytes = registry.getPromptsByTag("tests").stream()
+                .filter(prompt -> "bytes".equals(prompt.getName())).findFirst().orElseThrow();
+        AiPromptSpec stream = registry.getPromptsByTag("tests").stream()
+                .filter(prompt -> "stream".equals(prompt.getName())).findFirst().orElseThrow();
+
+        assertThat(((AiPromptResult.Success) AiPromptExecutor.execute(
+                bytes, Map.of(), bytes.getConsumer().getEndpoint().createExchange())).value()).isEqualTo("byte body");
+        assertThat(((AiPromptResult.Success) AiPromptExecutor.execute(
+                stream, Map.of(), stream.getConsumer().getEndpoint().createExchange())).value()).isEqualTo("stream body");
+    }
+
+    @Test
+    void declaredArgumentsKeepUriOrder() {
+        AiPromptSpec spec = AiPromptRegistry.getOrCreate(context).getPromptsByTag("tests").stream()
+                .filter(prompt -> "ordered".equals(prompt.getName()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(spec.getArguments()).extracting(AiPromptArgument::name)
+                .containsExactly("second", "first");
     }
 
     @Test

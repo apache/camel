@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ai.prompt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -71,7 +72,7 @@ public final class AiPromptRegistry {
      */
     void putAll(String[] tags, AiPromptSpec spec) {
         Set<String> uniqueTags = new LinkedHashSet<>(List.of(tags));
-        List<String> addedTags = new java.util.ArrayList<>();
+        List<String> addedTags = new ArrayList<>();
 
         lock.lock();
         try {

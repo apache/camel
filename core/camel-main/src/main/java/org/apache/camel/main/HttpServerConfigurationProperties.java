@@ -377,8 +377,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * MCP transport for ai-tool, ai-resource and ai-prompt routes: {@code http} (streamable HTTP on the embedded
-     * server, default) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses).
+     * MCP transport selection: {@code http} (streamable HTTP on the embedded server, serving tools, resources and
+     * prompts) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and
+     * prompts only).
      */
     public void setMcpTransport(String mcpTransport) {
         this.mcpTransport = mcpTransport;
@@ -744,8 +745,9 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     }
 
     /**
-     * MCP transport for ai-tool, ai-resource and ai-prompt routes: {@code http} (streamable HTTP on the embedded
-     * server, default) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses).
+     * MCP transport selection: {@code http} (streamable HTTP on the embedded server, serving tools, resources and
+     * prompts) or {@code stdio} (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and
+     * prompts only).
      */
     public HttpServerConfigurationProperties withMcpTransport(String mcpTransport) {
         this.mcpTransport = mcpTransport;

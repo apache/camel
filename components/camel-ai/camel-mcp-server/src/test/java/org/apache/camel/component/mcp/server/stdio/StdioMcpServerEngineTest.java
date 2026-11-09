@@ -18,11 +18,17 @@ package org.apache.camel.component.mcp.server.stdio;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mcp.server.McpPromptArgument;
+import org.apache.camel.component.mcp.server.McpPromptHandler;
+import org.apache.camel.component.mcp.server.McpPromptMessage;
+import org.apache.camel.component.mcp.server.McpPromptResult;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
+import org.apache.camel.component.mcp.server.McpServerPrompt;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallHandler;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
@@ -81,6 +87,28 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
     }
 
     @Test
+    void promptAddedBeforeStartIsFlushedWhenServerStarts() throws Exception {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+        engine.setTransportStreams(new ByteArrayInputStream(new byte[0]), new ByteArrayOutputStream());
+        engine.promptAdded(samplePrompt("queued_prompt", "Queued before start"));
+
+        assertThatCode(engine::start).doesNotThrowAnyException();
+        engine.stop();
+    }
+
+    @Test
+    void promptRemovedBeforeStartRemovesItFromPendingQueue() {
+        StdioMcpServerEngine engine = new StdioMcpServerEngine();
+        engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
+                "test", "1.0", "/mcp", 0, 0, null, null, null, null, null));
+
+        engine.promptAdded(samplePrompt("ephemeral_prompt", "Removed before start"));
+        assertThatCode(() -> engine.promptRemoved("ephemeral_prompt")).doesNotThrowAnyException();
+    }
+
+    @Test
     void toolRemovedBeforeStartDoesNotThrow() {
         StdioMcpServerEngine engine = new StdioMcpServerEngine();
         engine.initialize(new org.apache.camel.component.mcp.server.McpServerInfo(
@@ -107,6 +135,36 @@ class StdioMcpServerEngineTest extends CamelTestSupport {
         } finally {
             engine.stop();
         }
+    }
+
+    private static McpServerPrompt samplePrompt(String name, String description) {
+        return new McpServerPrompt() {
+            @Override
+            public String name() {
+                return name;
+            }
+
+            @Override
+            public String description() {
+                return description;
+            }
+
+            @Override
+            public String title() {
+                return null;
+            }
+
+            @Override
+            public List<McpPromptArgument> arguments() {
+                return List.of();
+            }
+
+            @Override
+            public McpPromptHandler handler() {
+                return arguments -> McpPromptResult.success(description,
+                        List.of(new McpPromptMessage("user", description)));
+            }
+        };
     }
 
     private static McpServerTool sampleTool(String name, String description) {

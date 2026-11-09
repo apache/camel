@@ -69,10 +69,10 @@ serve them. The conformance kit follows the same split: resource assertions
 live in a separate `McpServerResourceConformanceTestSupport` class that an
 engine extends once it supports resources.
 
-An engine refuses a tool or resource it cannot serve, for example a name its
+An engine refuses a tool, resource or prompt it cannot serve, for example a name its
 runtime already serves, by throwing `McpServerRefusedException` from
-`toolAdded` or `resourceAdded`. The bridge logs an ERROR, as for its own name
-clashes, and does not track it: a later route can use the name or uri.
+`toolAdded`, `resourceAdded` or `promptAdded`. The bridge logs an ERROR, as for
+its own name clashes, and does not track the refused item as published.
 
 == Usage
 
@@ -374,9 +374,9 @@ The Vert.x engine implements the MCP streamable HTTP transport:
 * an `Origin` header check on every method (`POST`, `GET` and `DELETE`), see
   <<_origins_and_binding>>.
 
-Tools and resources appearing or disappearing (routes starting and stopping)
-emit `notifications/tools/list_changed` and
-`notifications/resources/list_changed` to connected clients. Per-resource
+Tools, resources and prompts appearing or disappearing (routes starting and stopping)
+emit `notifications/tools/list_changed`, `notifications/resources/list_changed`
+and `notifications/prompts/list_changed` to connected clients. Per-resource
 subscriptions (`resources/subscribe`) are not offered: the server advertises
 `resources` with `listChanged` only.
 

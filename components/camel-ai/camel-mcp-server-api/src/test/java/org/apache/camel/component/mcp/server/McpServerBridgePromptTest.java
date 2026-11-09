@@ -85,7 +85,7 @@ class McpServerBridgePromptTest extends CamelTestSupport {
                 from("ai-prompt:slow?tags=prompt-tests")
                         .process(exchange -> {
                             try {
-                                Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+                                new CountDownLatch(1).await(10, TimeUnit.SECONDS);
                             } catch (InterruptedException e) {
                                 slowRouteInterrupted.countDown();
                                 Thread.currentThread().interrupt();
@@ -134,18 +134,18 @@ class McpServerBridgePromptTest extends CamelTestSupport {
     }
 
     @Test
-    void duplicatePromptNameFallsBackToAnotherSelectedRoute() throws Exception {
-        McpServerPrompt first = engine.prompts().get("shared");
-        assertThat(first).isNotNull();
-        assertThat(first.handler().get(Map.of()).messages())
-                .containsExactly(new McpPromptMessage("user", "First version"));
+    void duplicatePromptNameIsNotSilentlyPromotedAfterWinnerStops() throws Exception {
+        McpServerPrompt published = engine.prompts().get("shared");
+        assertThat(published).isNotNull();
+        Object content = published.handler().get(Map.of()).messages().get(0).content();
+        assertThat(content).isIn("First version", "Second version");
 
-        context.getRouteController().stopRoute("shared-first-route");
+        // The initial winner depends on registry iteration order; stop whichever route won.
+        String winnerRoute = "First version".equals(content) ? "shared-first-route" : "shared-second-route";
+        context.getRouteController().stopRoute(winnerRoute);
 
-        McpServerPrompt replacement = engine.prompts().get("shared");
-        assertThat(replacement).isNotNull();
-        assertThat(replacement.handler().get(Map.of()).messages())
-                .containsExactly(new McpPromptMessage("user", "Second version"));
+        // A name collision is refused, not silently reassigned to another route.
+        assertThat(engine.prompts()).doesNotContainKey("shared");
     }
 
     @Test

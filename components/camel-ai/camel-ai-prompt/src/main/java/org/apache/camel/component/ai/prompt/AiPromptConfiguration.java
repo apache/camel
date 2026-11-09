@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.ai.prompt;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
@@ -91,7 +91,7 @@ public class AiPromptConfiguration implements Cloneable {
         try {
             AiPromptConfiguration copy = (AiPromptConfiguration) super.clone();
             if (arguments != null) {
-                copy.arguments = new HashMap<>(arguments);
+                copy.arguments = new LinkedHashMap<>(arguments);
             }
             return copy;
         } catch (CloneNotSupportedException e) {

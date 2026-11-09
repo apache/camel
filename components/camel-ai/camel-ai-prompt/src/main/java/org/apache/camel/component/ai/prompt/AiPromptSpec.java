@@ -18,6 +18,8 @@ package org.apache.camel.component.ai.prompt;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.support.DefaultConsumer;
 
@@ -64,13 +66,13 @@ public final class AiPromptSpec {
         return consumer;
     }
 
-    public java.util.Set<String> getDeclaredArgumentNames() {
-        return arguments.stream().map(AiPromptArgument::name).collect(java.util.stream.Collectors.toUnmodifiableSet());
+    public Set<String> getDeclaredArgumentNames() {
+        return arguments.stream().map(AiPromptArgument::name).collect(Collectors.toUnmodifiableSet());
     }
 
-    public java.util.Set<String> getRequiredArgumentNames() {
+    public Set<String> getRequiredArgumentNames() {
         return arguments.stream().filter(AiPromptArgument::required).map(AiPromptArgument::name)
-                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     @Override

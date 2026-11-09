@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.mcp.server;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
@@ -62,11 +67,12 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Security notes:
  * <ul>
- * <li>Only tools and resources whose tags match the configured tag patterns are exposed. Tag patterns support exact
- * match, wildcard prefix ({@code foo*}), and {@code *} to match all tags. The untagged default pools are never exposed
- * — external MCP clients are untrusted senders and crossing that trust boundary is an explicit per-route opt-in.</li>
- * <li>MCP has a flat tool namespace: a tool whose name collides with an already published tool is refused with an ERROR
- * log, never silently replaced. Resources are addressed by uri and follow the same rule.</li>
+ * <li>Only tools, resources and prompts whose tags match the configured tag patterns are exposed. Tag patterns support
+ * exact match, wildcard prefix ({@code foo*}), and {@code *} to match all tags. The untagged default pools are never
+ * exposed — external MCP clients are untrusted senders and crossing that trust boundary is an explicit per-route
+ * opt-in.</li>
+ * <li>MCP has flat tool and prompt namespaces: an item whose name collides with an already published item is refused
+ * with an ERROR log, never silently replaced. Resources are addressed by uri and follow the same rule.</li>
  * <li>Raw route exception messages never reach the engine: execution failures map to a generic error message and the
  * cause is logged server-side.</li>
  * </ul>
@@ -448,10 +454,14 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 }
                 return;
             }
-            // Publish to the engine before recording the prompt. If the engine rejects
-            // registration, the bridge must not retain a prompt that is not actually served.
-            engine.promptAdded(createPrompt(spec));
-            publishedPrompts.put(spec.getName(), spec);
+            // Publish to the engine before recording the prompt. If the engine refuses
+            // the name, keep the route running but do not track it as published.
+            try {
+                engine.promptAdded(createPrompt(spec));
+                publishedPrompts.put(spec.getName(), spec);
+            } catch (McpServerRefusedException e) {
+                LOG.error("Refusing to expose MCP prompt '{}': {}", spec.getName(), e.getMessage(), e);
+            }
         } finally {
             lock.unlock();
         }
@@ -468,20 +478,6 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             if (!stillSelected) {
                 publishedPrompts.remove(spec.getName());
                 engine.promptRemoved(spec.getName());
-
-                // Prompt names are unique in the MCP namespace, but the same name may
-                // exist under different tags. Promote another selected route when the
-                // currently published route is removed.
-                AiPromptSpec replacement = promptRegistry.getPrompts().entrySet().stream()
-                        .filter(entry -> matchesTag(entry.getKey()))
-                        .sorted(Map.Entry.comparingByKey())
-                        .flatMap(entry -> entry.getValue().stream())
-                        .filter(candidate -> candidate != spec && candidate.getName().equals(spec.getName()))
-                        .findFirst()
-                        .orElse(null);
-                if (replacement != null) {
-                    publishPrompt(replacement);
-                }
             }
         } finally {
             lock.unlock();
@@ -507,7 +503,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
             }
 
             @Override
-            public java.util.List<McpPromptArgument> arguments() {
+            public List<McpPromptArgument> arguments() {
                 return spec.getArguments().stream()
                         .map(argument -> new McpPromptArgument(
                                 argument.name(), argument.description(), argument.required()))
@@ -527,13 +523,13 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         // 0 = queued/not started, 1 = running, 2 = exchange ownership completed.
         // The worker releases the exchange after route execution. The caller only
         // releases it when cancellation wins before the worker starts.
-        java.util.concurrent.atomic.AtomicInteger executionState = new java.util.concurrent.atomic.AtomicInteger();
+        AtomicInteger executionState = new java.util.concurrent.atomic.AtomicInteger();
 
         Future<AiPromptResult> future;
         try {
             future = executor.submit(() -> {
                 if (!executionState.compareAndSet(0, 1)) {
-                    throw new java.util.concurrent.CancellationException("Prompt execution cancelled before start");
+                    throw new CancellationException("Prompt execution cancelled before start");
                 }
                 try {
                     return AiPromptExecutor.execute(spec, arguments, exchange);
@@ -543,7 +539,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                     }
                 }
             });
-        } catch (java.util.concurrent.RejectedExecutionException e) {
+        } catch (RejectedExecutionException e) {
             if (executionState.compareAndSet(0, 2)) {
                 spec.getConsumer().releaseExchange(exchange, false);
             }
@@ -592,10 +588,10 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
     }
 
     private McpPromptResult toPromptResult(AiPromptSpec spec, Object value) {
-        java.util.List<McpPromptMessage> messages = new java.util.ArrayList<>();
+        List<McpPromptMessage> messages = new ArrayList<>();
         if (value instanceof String text) {
             messages.add(new McpPromptMessage("user", text));
-        } else if (value instanceof java.util.List<?> list) {
+        } else if (value instanceof List<?> list) {
             for (Object item : list) {
                 if (item instanceof String text) {
                     messages.add(new McpPromptMessage("user", text));

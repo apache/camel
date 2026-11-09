@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.ai.prompt;
 
+import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -26,6 +27,8 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.ai.prompt.AiPrompt.SCHEME;
 
@@ -50,6 +53,12 @@ public class AiPromptComponent extends DefaultComponent {
     }
 
     @Override
+    public boolean useRawUri() {
+        // Camel normalizes and sorts query parameters; prompt arguments use declaration order.
+        return true;
+    }
+
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (ObjectHelper.isEmpty(remaining)) {
             throw new IllegalArgumentException("A promptName must be provided: ai-prompt:<promptName>");
@@ -60,17 +69,40 @@ public class AiPromptComponent extends DefaultComponent {
 
         AiPromptConfiguration config = configuration.copy();
 
+        // Decode ordinary URI values while retaining their original declaration order.
+        decodeUriParameterValues(uri, parameters);
+
         // Extract argument.NAME.* URI options before endpoint property binding.
         // These options configure the prompt's declared arguments, not endpoint properties.
         Map<String, Object> promptArguments = PropertiesHelper.extractProperties(parameters, "argument.");
         if (!promptArguments.isEmpty()) {
-            config.setArguments(promptArguments.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> String.valueOf(e.getValue()))));
+            Map<String, String> orderedArguments = new LinkedHashMap<>();
+            promptArguments.forEach((key, value) -> orderedArguments.put(key, String.valueOf(value)));
+            config.setArguments(orderedArguments);
         }
 
         AiPromptEndpoint endpoint = new AiPromptEndpoint(uri, this, remaining, config);
         setProperties(endpoint, parameters);
+        AiPromptConsumer.validateArguments(endpoint.getConfiguration().getArguments());
         return endpoint;
+    }
+
+    /**
+     * Restores normal URI value decoding while retaining the original query parameter order. Values explicitly
+     * overridden through the properties map are left unchanged.
+     */
+    private static void decodeUriParameterValues(
+            String uri, Map<String, Object> parameters)
+            throws URISyntaxException {
+        String query = StringHelper.after(uri, "?");
+        if (ObjectHelper.isEmpty(query)) {
+            return;
+        }
+
+        Map<String, Object> rawValues = URISupport.parseQuery(query, true);
+        Map<String, Object> decodedValues = URISupport.parseQuery(query, false);
+
+        rawValues.forEach((name, rawValue) -> parameters.replace(name, rawValue, decodedValues.get(name)));
     }
 
     public AiPromptConfiguration getConfiguration() {

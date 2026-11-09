@@ -25,7 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * Mock {@link McpServerEngine} recording the tools and resources published by the bridge, for engine-less bridge tests.
+ * Mock {@link McpServerEngine} recording the tools, resources and prompts published by the bridge, for engine-less
+ * bridge tests.
  */
 public class RecordingMcpServerEngine extends ServiceSupport implements McpServerEngine {
 

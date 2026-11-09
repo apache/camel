@@ -100,8 +100,12 @@ public interface McpServerEngine extends Service, CamelContextAware {
 
     /**
      * Publishes a prompt. Called for the initial set and whenever a matching {@code ai-prompt} route starts or resumes.
+     * The bridge tracks the prompt as published only when this method returns normally: an engine that throws must
+     * leave nothing registered, as {@link #promptRemoved(String)} is not called for the prompt.
      *
-     * @since 4.24
+     * @throws McpServerRefusedException to refuse the prompt, e.g. when the runtime already serves a prompt with this
+     *                                   name.
+     * @since                            4.24
      */
     default void promptAdded(McpServerPrompt prompt) {
     }
