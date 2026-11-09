@@ -84,6 +84,9 @@ class TimelineTab extends AbstractTableTab {
     private int routeTop = -1;
     private int routePitch = 1;
     private int routeStrip = 1;
+    // the column of the screen the seconds start at, and the lines of the exchanges of a second, for the clicks
+    private int stripLeft = -1;
+    private Rect drillArea;
     private final TimelineExchanges drill = new TimelineExchanges();
 
     TimelineTab(MonitorContext ctx) {
@@ -296,7 +299,13 @@ class TimelineTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        if (routeTop < 0 || !me.isClick() || lastTableArea == null || !lastTableArea.contains(me.x(), me.y())) {
+        if (!me.isClick()) {
+            return false;
+        }
+        if (drill.isOpen() && drillArea != null && drillArea.contains(me.x(), me.y())) {
+            return drill.click(me.y() - drillArea.y(), keptAtCursor().size(), drillArea.height());
+        }
+        if (routeTop < 0 || lastTableArea == null || !lastTableArea.contains(me.x(), me.y())) {
             return false;
         }
         // a click on a strip of a route selects it, not on the blank line between two routes
@@ -304,6 +313,14 @@ class TimelineTab extends AbstractTableTab {
         int i = dy / routePitch;
         if (dy >= 0 && dy % routePitch < routeStrip && i < getRowCount()) {
             tableState.select(i);
+            // paused, the cursor goes to the second clicked, and the exchanges open show that second
+            int column = me.x() >= stripLeft ? (me.x() - stripLeft) / width : -1;
+            if (pausedAt >= 0 && column >= 0 && column < columnCount() && column != cursor) {
+                cursor = column;
+                if (drill.isOpen()) {
+                    drill.open(cursorFrom(), cursorTo());
+                }
+            }
             return true;
         }
         return false;
@@ -423,13 +440,19 @@ class TimelineTab extends AbstractTableTab {
         routePitch = room.strip() + (room.spaced() ? 1 : 0);
         routeStrip = room.strip();
         lastTableArea = new Rect(top.x(), routeTop, top.width(), Math.max(1, routeHeight));
+        stripLeft = top.x() + 1 + gap + label;
+        drillArea = null;
         Padding padding = room.roomy() ? Padding.uniform(1) : Padding.NONE;
         frame.renderWidget(
                 Paragraph.builder().text(Text.from(lines)).block(block(title(info), padding, !drill.isOpen())).build(), top);
 
         if (drill.isOpen()) {
             List<Timeline.Kept> kept = keptAtCursor();
-            frame.renderWidget(Paragraph.builder().text(Text.from(drill.lines(kept, detailHeight - 2 - 2 * gap)))
+            Rect d = rows.get(2);
+            drillArea = new Rect(
+                    d.x() + 1 + gap, d.y() + 1 + gap, Math.max(0, d.width() - 2 - 2 * gap),
+                    Math.max(0, detailHeight - 2 - 2 * gap));
+            frame.renderWidget(Paragraph.builder().text(Text.from(drill.lines(kept, drillArea.height())))
                     .block(block(drill.title(kept, ctx.timeline.done(info.pid, drill.from(), drill.to())), padding, true))
                     .build(),
                     rows.get(2));

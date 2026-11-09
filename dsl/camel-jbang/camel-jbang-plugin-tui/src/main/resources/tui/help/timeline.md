@@ -92,6 +92,8 @@ were done then, of which these were kept.
   the window moves
 - **Shift+Left/Right** — While paused, go back and forth in the 5
   minutes kept
+- **Click** — Selects the route of a strip; paused, the cursor goes to the
+  second clicked. A click on an exchange of the list selects it
 - **Enter** — The exchanges of the second at the cursor (it pauses
   first), or the selected exchange in detail
 - **Esc** — Close the exchange, then the list, then follow now again
