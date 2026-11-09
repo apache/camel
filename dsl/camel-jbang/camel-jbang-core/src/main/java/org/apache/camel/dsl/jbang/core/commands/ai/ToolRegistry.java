@@ -1007,33 +1007,32 @@ public final class ToolRegistry {
                                     feed, args.get("body"), args.get("headers"), repeat,
                                     args.get("interval"))
                             : null;
-                    if (traffic != null) {
-                        // an experiment without messages says nothing: the AI gets the routes to feed instead
-                        String why = ChaosExperimentRun.checkFeed(ctx.readFullStatus(), feed);
-                        if (why != null) {
-                            throw new ToolExecutionException(why);
-                        }
+                    // the run checks the feed first: an experiment without messages says nothing, so the AI gets the
+                    // routes to feed instead, as a tool error (and the status is read once for it)
+                    try {
+                        return ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
+                            @Override
+                            public JsonObject chaos(String command, Consumer<JsonObject> options) {
+                                String answer = ctx.executeAction("chaos", root -> {
+                                    root.put("command", command);
+                                    options.accept(root);
+                                });
+                                return Jsoner.deserialize(answer, new JsonObject());
+                            }
+
+                            @Override
+                            public JsonObject send(ChaosExperimentRun.Feed f) {
+                                return ctx.sendMessage(f.endpoint(), f.body(), f.headers(), f.repeat(), f.interval());
+                            }
+
+                            @Override
+                            public JsonObject status() {
+                                return ctx.readFullStatus();
+                            }
+                        }, args.get("hypothesis"), rule, traffic, wait, args.get("note")).toJson();
+                    } catch (IllegalArgumentException e) {
+                        throw new ToolExecutionException(e.getMessage());
                     }
-                    return ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
-                        @Override
-                        public JsonObject chaos(String command, Consumer<JsonObject> options) {
-                            String answer = ctx.executeAction("chaos", root -> {
-                                root.put("command", command);
-                                options.accept(root);
-                            });
-                            return Jsoner.deserialize(answer, new JsonObject());
-                        }
-
-                        @Override
-                        public JsonObject send(ChaosExperimentRun.Feed f) {
-                            return ctx.sendMessage(f.endpoint(), f.body(), f.headers(), f.repeat(), f.interval());
-                        }
-
-                        @Override
-                        public JsonObject status() {
-                            return ctx.readFullStatus();
-                        }
-                    }, args.get("hypothesis"), rule, traffic, wait, args.get("note")).toJson();
                 }));
 
         register(tool("chaos_explore_finish",

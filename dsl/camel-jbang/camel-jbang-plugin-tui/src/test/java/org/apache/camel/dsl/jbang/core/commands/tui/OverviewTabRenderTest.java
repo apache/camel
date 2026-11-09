@@ -86,6 +86,21 @@ class OverviewTabRenderTest {
     }
 
     @Test
+    void theNumbersStandNextToTheNamesOnAWideScreen() {
+        info.state = 5;
+        info.name = "circuit-breaker";
+
+        OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
+        }).showIntegrations();
+        String header = TuiTestHelper.renderToString(tab, 200, 30).lines()
+                .filter(l -> l.contains("VERSION")).findFirst().orElseThrow();
+
+        // NAME is as wide as the names need, not the rest of a 200 wide screen
+        int name = header.indexOf("NAME");
+        assertTrue(header.indexOf("VERSION") - name < 30, header);
+    }
+
+    @Test
     void tableDataExportsUptimeAsDurationNotStartTimestamp() {
         info.state = 5;
         info.uptime = System.currentTimeMillis() - 2 * 60 * 1000;

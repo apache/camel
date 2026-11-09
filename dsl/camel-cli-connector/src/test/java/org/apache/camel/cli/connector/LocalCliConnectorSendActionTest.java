@@ -68,7 +68,28 @@ class LocalCliConnectorSendActionTest {
             }
         });
         context.start();
-        connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+        connector = new LocalCliConnector(new DefaultCliConnectorFactory()) {
+            @Override
+            protected CliConnectorTransport createTransport(String name) {
+                // the action is dispatched directly: the file transport would poll the {pid} files and take the
+                // action files of other tests running at the same time
+                return new CliConnectorTransport() {
+                    @Override
+                    public void configure(
+                            CamelContext camelContext, CliActionDispatcher dispatcher,
+                            CliSnapshotProducer snapshots, Runnable shutdown) {
+                    }
+
+                    @Override
+                    public void start() {
+                    }
+
+                    @Override
+                    public void stop() {
+                    }
+                };
+            }
+        };
         connector.setCamelContext(context);
         connector.start();
     }

@@ -18,7 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.Map;
 
-class HistoryEntry {
+class HistoryEntry implements StepOrder.Step {
     String pid;
     String exchangeId;
     String timestamp;
@@ -50,4 +50,34 @@ class HistoryEntry {
     Map<String, Object> exchangeVariables;
     Map<String, String> exchangeVariableTypes;
     int inlineDepth;
+
+    @Override
+    public String exchangeId() {
+        return exchangeId;
+    }
+
+    @Override
+    public boolean isFirst() {
+        return first;
+    }
+
+    @Override
+    public String routeId() {
+        return routeId;
+    }
+
+    @Override
+    public String nodeLabel() {
+        return nodeLabel;
+    }
+
+    @Override
+    public String nodeShortName() {
+        return nodeShortName;
+    }
+
+    @Override
+    public void setInlineDepth(int depth) {
+        inlineDepth = depth;
+    }
 }

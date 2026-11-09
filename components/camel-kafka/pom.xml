@@ -31,6 +31,14 @@
     <name>Camel :: Kafka</name>
     <description>Camel Kafka support</description>
 
+    <properties>
+        <!-- each fork starts its own Kafka container: it can be lowered with -Dcamel.failsafe.forkCount=N on small machines -->
+        <camel.failsafe.forkCount>4</camel.failsafe.forkCount>
+        <!-- the ITs use less than 600 MB per fork: do not reserve the 3G of the parent. Redefined entirely (and not
+             through additional-vmargs) to avoid having two -Xmx on the command line -->
+        <camel.failsafe.fork.vmargs>-XX:+ExitOnOutOfMemoryError -Xmx1G ${camel.failsafe.fork.additional-vmargs}</camel.failsafe.fork.vmargs>
+    </properties>
+
     <dependencies>
 
         <!-- camel -->
@@ -197,6 +205,7 @@
                         <configuration>
                             <skipITs>${skipITs}</skipITs>
                             <skipTests>${skipTests}</skipTests>
+                            <forkCount>${camel.failsafe.forkCount}</forkCount>
                         </configuration>
                         <executions>
                             <execution>
@@ -211,17 +220,6 @@
                                 </goals>
                                 <configuration>
                                     <skipITs>${skipITs}</skipITs>
-                                    <excludedGroups>health,idempotent,breakOnFirstError</excludedGroups>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>serials-test</id>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                                <configuration>
-                                    <reuseForks>false</reuseForks>
-                                    <groups>health,idempotent,breakOnFirstError</groups>
                                     <forkedProcessTimeoutInSeconds>1200</forkedProcessTimeoutInSeconds>
                                 </configuration>
                             </execution>

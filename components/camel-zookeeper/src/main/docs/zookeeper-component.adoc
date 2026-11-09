@@ -312,5 +312,5 @@ ZooKeeper is byte-based.
 [source,java]
 ----
 Object testPayload = ...
-template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
+template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZookeeperCreateMode", "PERSISTENT");
 ----

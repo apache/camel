@@ -43,8 +43,6 @@ import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -59,7 +57,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * settings are rejected at route startup; supported routes are checked against read_committed output and the actual
  * committed source offsets in Kafka.
  */
-@Tags({ @Tag("breakOnFirstError") })
 @EnabledOnOs(value = { OS.LINUX, OS.MAC, OS.FREEBSD, OS.OPENBSD, OS.WINDOWS },
              architectures = { "amd64", "aarch64" },
              disabledReason = "This test does not run reliably on some platforms")

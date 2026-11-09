@@ -42,6 +42,7 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpEnabled", boolean.class);
         map.put("McpInstructions", java.lang.String.class);
         map.put("McpPath", java.lang.String.class);
+        map.put("McpPromptTimeout", long.class);
         map.put("McpResourceTimeout", long.class);
         map.put("McpServerDescription", java.lang.String.class);
         map.put("McpServerIcons", java.lang.String.class);
@@ -102,6 +103,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpInstructions": target.setMcpInstructions(property(camelContext, java.lang.String.class, value)); return true;
         case "mcppath":
         case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpprompttimeout":
+        case "mcpPromptTimeout": target.setMcpPromptTimeout(property(camelContext, long.class, value)); return true;
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": target.setMcpResourceTimeout(property(camelContext, long.class, value)); return true;
         case "mcpserverdescription":
@@ -182,6 +185,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpInstructions": return java.lang.String.class;
         case "mcppath":
         case "mcpPath": return java.lang.String.class;
+        case "mcpprompttimeout":
+        case "mcpPromptTimeout": return long.class;
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": return long.class;
         case "mcpserverdescription":
@@ -258,6 +263,8 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpInstructions": return target.getMcpInstructions();
         case "mcppath":
         case "mcpPath": return target.getMcpPath();
+        case "mcpprompttimeout":
+        case "mcpPromptTimeout": return target.getMcpPromptTimeout();
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": return target.getMcpResourceTimeout();
         case "mcpserverdescription":
