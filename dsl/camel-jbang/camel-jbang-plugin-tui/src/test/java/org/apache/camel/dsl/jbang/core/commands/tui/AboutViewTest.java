@@ -336,6 +336,47 @@ class AboutViewTest {
     }
 
     @Test
+    void theStripsAreInTheOrderOfTheRoutesACalledRouteAfterItsCaller() throws Exception {
+        Files.writeString(dir.resolve("orders.camel.yaml"), """
+                - route:
+                    id: incoming
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - wireTap: direct:audit
+                - route:
+                    id: audit
+                    from:
+                      uri: direct:audit
+                      steps:
+                        - log: audited
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "orders";
+        info.directory = dir.toString();
+        // the integration lists its routes by id: the called one first
+        for (String id : List.of("audit", "incoming")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            r.state = "Started";
+            info.routes.add(r);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", TimelineTabRenderTest.outage(T0 / 1000 + 59, 60, 0).json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<String> strips = render(about, info).lines()
+                    .dropWhile(l -> !l.contains("What happened"))
+                    .filter(l -> l.contains("    incoming ") || l.contains("    audit ")).toList();
+            assertThat(strips).hasSize(2);
+            assertThat(strips.get(0)).contains("incoming");
+            assertThat(strips.get(1)).contains("audit");
+        });
+    }
+
+    @Test
     void aboutAnIntegrationWithWhatHasHappened() throws Exception {
         Files.writeString(dir.resolve("shop.camel.yaml"), """
                 # Every order is checked against the stock and shipped.

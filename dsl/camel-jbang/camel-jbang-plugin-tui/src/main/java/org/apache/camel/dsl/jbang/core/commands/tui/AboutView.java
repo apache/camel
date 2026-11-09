@@ -448,8 +448,27 @@ final class AboutView {
         return last;
     }
 
-    private static List<String> routeOrder(IntegrationInfo info) {
-        return info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+    /**
+     * The routes in the order of the Routes panel, where a route comes after the one that calls it, then those it does
+     * not have; the integration lists its routes by id, which puts a called route before its caller.
+     */
+    private List<String> routeOrder(IntegrationInfo info) {
+        List<String> running = info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+        List<String> order = new ArrayList<>();
+        About.Model m = model;
+        if (m != null) {
+            for (About.RouteLine r : m.routes()) {
+                if (running.contains(r.routeId()) && !order.contains(r.routeId())) {
+                    order.add(r.routeId());
+                }
+            }
+        }
+        for (String id : running) {
+            if (!order.contains(id)) {
+                order.add(id);
+            }
+        }
+        return order;
     }
 
     /**
