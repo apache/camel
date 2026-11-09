@@ -21,12 +21,15 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.stream.FileInputStreamCache;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,25 +55,47 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * </ul>
  *
  * <p>
- * The body is intentionally NOT converted with {@code .convertBodyTo()} so it stays as a {@link StreamCache} through
- * the after() phase. Converting to byte[] would replace the StreamCache body before after() runs, making
+ * The body is intentionally NOT converted with {@code .convertBodyTo()} so it stays as a {@link FileInputStreamCache}
+ * through the after() phase. Converting to byte[] would replace the StreamCache body before after() runs, making
  * {@code MessageHelper.resetStreamCache()} a no-op and masking the bug.
+ *
+ * <p>
+ * Note: {@code template.sendBody()} runs the exchange inside ProducerCache's own unit of work, so the route's
+ * UnitOfWorkProcessorAdvice never actually finishes the exchange and TempFileManager does not delete the spool file
+ * during the route. The critical test ({@link #spoolWhenRouteOwnsTheUnitOfWork()}) bypasses the template and drives the
+ * route processor directly, so the route owns the unit of work and the bug is reproducible.
  */
 class RouteStreamCachingSpoolAdviceOrderTest extends ContextTestSupport {
 
     // 32 KB — well above the 1 KB spool threshold set in createRouteBuilder
     private static final byte[] DATA = createData(32 * 1024);
 
+    /**
+     * The critical regression test: drives the route processor directly (without template.sendBody) so that the route
+     * owns the unit of work. Without the fix, TempFileManager.onCompletion() deletes the spool file during
+     * UnitOfWorkProcessorAdvice.after(), and the subsequent StreamCachingAdvice.after() throws "Cannot reset stream
+     * from file".
+     */
+    @Test
+    void spoolWhenRouteOwnsTheUnitOfWork() throws Exception {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(stream());
+
+        AsyncProcessorConverterHelper.convert(context.getRoute("spool").getProcessor()).process(exchange);
+
+        assertNull(exchange.getException());
+        try (Stream<Path> files = Files.list(testDirectory())) {
+            assertThat(files.filter(p -> p.getFileName().toString().startsWith("cos"))).isEmpty();
+        }
+    }
+
     @Test
     void testRouteLevelSpooledStreamCacheDoesNotFailExchange() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
-        // Body must arrive at mock:result as a StreamCache (not converted), confirming it was
-        // spooled and that StreamCachingAdvice.after() will call reset() on a FileInputStreamCache.
-        // Without the fix that call throws "Cannot reset stream from file" because
-        // UnitOfWorkProcessorAdvice.after() already deleted the spool file, failing the exchange
-        // and preventing it from reaching mock:result at all.
-        result.message(0).body().isInstanceOf(StreamCache.class);
+        // Body must arrive at mock:result as a FileInputStreamCache (not converted), confirming it
+        // was really spooled to disk and that StreamCachingAdvice.after() will call reset() on it.
+        result.message(0).body().isInstanceOf(FileInputStreamCache.class);
 
         // Send a stream that will be spooled to disk (exceeds the spool threshold)
         template.sendBody("direct:test", stream());
@@ -81,12 +106,14 @@ class RouteStreamCachingSpoolAdviceOrderTest extends ContextTestSupport {
 
         // Spool file must have been cleaned up by TempFileManager after the exchange completes.
         // The spool directory itself is kept (RemoveSpoolDirectoryWhenStopping=false) but it
-        // must contain no .cos*.tmp files — TempFileManager deletes each file in onCompletion.
+        // must contain no cos*.tmp files — TempFileManager deletes each file in onCompletion.
         Path spoolDir = testDirectory();
-        long spoolFiles = Files.list(spoolDir)
-                .filter(p -> p.getFileName().toString().startsWith("cos") && p.getFileName().toString().endsWith(".tmp"))
-                .count();
-        assertThat(spoolFiles).as("spool files left after exchange completion").isZero();
+        try (Stream<Path> files = Files.list(spoolDir)) {
+            long spoolFiles = files
+                    .filter(p -> p.getFileName().toString().startsWith("cos") && p.getFileName().toString().endsWith(".tmp"))
+                    .count();
+            assertThat(spoolFiles).as("spool files left after exchange completion").isZero();
+        }
     }
 
     @Test
@@ -129,10 +156,10 @@ class RouteStreamCachingSpoolAdviceOrderTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolThreshold(1024);
                 context.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(false);
 
-                // Route 1: body stays as StreamCache — StreamCachingAdvice.after() will call reset()
-                // on a FileInputStreamCache. Without the fix this throws "Cannot reset stream from
-                // file" and the exchange fails before reaching mock:result.
-                from("direct:test")
+                // Route 1: body stays as FileInputStreamCache — StreamCachingAdvice.after() will
+                // call reset() on it. Without the fix that call throws "Cannot reset stream from
+                // file" because UnitOfWorkProcessorAdvice.after() already deleted the spool file.
+                from("direct:test").routeId("spool")
                         .streamCache(true)
                         .to("mock:result");
 
@@ -145,7 +172,7 @@ class RouteStreamCachingSpoolAdviceOrderTest extends ContextTestSupport {
                             byte[] bytes = exchange.getMessage().getBody(byte[].class);
                             exchange.setProperty("bodyBytes", bytes);
                             // Confirm the body is still a StreamCache after the read
-                            assertInstanceOf(StreamCache.class, exchange.getMessage().getBody());
+                            assertInstanceOf(FileInputStreamCache.class, exchange.getMessage().getBody());
                         })
                         .to("mock:result");
             }
