@@ -73,6 +73,17 @@ To enable these features, the following component properties combinations must b
 |||jwtSubject||Optional
 |=======================================================================
 
+=== gRPC consumer reply
+
+The message body at the end of the consumer route is the reply to the client: the response message of the called
+method, or a `List` of them for a streaming response. A message without a body sends an empty response message.
+
+With `routeControlledStreamObserver=true` the route sends the responses itself, with a producer endpoint with
+`toRouteControlledStreamObserver=true`. The producer sends the event named by the `CamelGrpcEventType` header
+(`onNext`, `onCompleted` or `onError`). The consumer sets this header for the events of client streaming and
+bidirectional streaming calls. The body of an `onNext` event is sent to the client as is. The body of an `onError`
+event must be a `Throwable`, which ends the call.
+
 === gRPC producer resource type mapping
 
 The table below shows the types of objects in the message body, depending on the types (simple or stream) of incoming and outgoing parameters, as well as the invocation style (synchronous or asynchronous). Please note that invocation of the procedures with incoming stream parameter in asynchronous style is not allowed.
@@ -212,7 +223,9 @@ Therefore, you need the same technique as described in the server streaming sect
 
 But there is another thing: requests also come in streaming mode. So you need the following:
 
-1. Set consumer strategy to DELEGATION - that differs from the default PROPAGATION option in the fact that consumer will not produce responses at all. If you set PROPAGATION, then you will receive more responses than you expected;
+1. Choose the consumer strategy. With `routeControlledStreamObserver=true` the consumer sends no responses itself with either strategy:
+the default `PROPAGATION` routes the events of a call one at a time, in order, while `DELEGATION` does not wait for an
+event to be done before it routes the next one;
 2. Forward `onError` and `onCompletion` on consumer;
 3. Set producer strategy to STREAMING.
 
