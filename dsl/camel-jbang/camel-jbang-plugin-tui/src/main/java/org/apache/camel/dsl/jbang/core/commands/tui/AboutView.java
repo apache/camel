@@ -64,6 +64,8 @@ final class AboutView {
     // how often the sources are read again, to see a change
     private static final long RELOAD_MILLIS = 10_000;
     private static final int HAPPENED_SECONDS = 300;
+    // how long after the last error the Watch line calms down
+    private static final long WATCH_CALM_MILLIS = 60_000;
     private static final String BLOCKS = " ▁▂▃▄▅▆▇█";
     // the strips have at least this many columns, whatever the zoom, and as many as the width allows up to the most,
     // a column taking a whole number of seconds
@@ -1049,13 +1051,14 @@ final class AboutView {
         List<Span> watch = new ArrayList<>();
         watch.add(Span.styled(" Watch    ", Theme.muted()));
         if (info.errorCount > 0) {
-            // errors that stopped before the last minutes are history: the line says so, and calms down
+            // errors that stopped a minute ago are history: the line says so, and calms down. A minute, not the 5 of
+            // Last 5m and the strips (which still show them): a fix that reloads should not stay red for long
             long lastError = lastError(info);
-            boolean old = lastError > 0 && System.currentTimeMillis() - lastError > HAPPENED_SECONDS * 1000L;
+            boolean old = lastError > 0 && System.currentTimeMillis() - lastError > WATCH_CALM_MILLIS;
             String count = info.errorCount + (info.errorCount == 1 ? " error" : " errors");
             Style style = old ? Theme.muted() : Theme.error();
             if (old) {
-                watch.add(Span.styled("no errors in the last " + HAPPENED_SECONDS / 60 + "m", Theme.success()));
+                watch.add(Span.styled("no errors in the last minute", Theme.success()));
                 watch.add(Span.styled(" · " + count + " before", style));
             } else {
                 watch.add(Span.styled("✗ " + count, style));

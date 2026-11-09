@@ -174,11 +174,11 @@ class AboutViewTest {
         assertThat(render(new AboutView(ctx), info))
                 .contains("✗ 13 errors: CallNotPermittedException ×10 · ConnectException ×3 · the last 20s ago");
 
-        // an hour ago: none in the last minutes, the ones before for the record
-        last.timestamp = System.currentTimeMillis() - 3_600_000;
+        // 90 seconds ago: none in the last minute, the ones before for the record
+        last.timestamp = System.currentTimeMillis() - 90_000;
         String rendered = render(new AboutView(ctx), info);
-        assertThat(rendered).contains("no errors in the last 5m · 13 errors before: CallNotPermittedException ×10")
-                .contains("the last 1h0m ago").contains("9  show errors").doesNotContain("✗");
+        assertThat(rendered).contains("no errors in the last minute · 13 errors before: CallNotPermittedException ×10")
+                .contains("the last 1m30s ago").contains("9  show errors").doesNotContain("✗");
 
         // the integration says when the newest error happened, without the Errors tab loading them
         info.errors = List.of();
