@@ -77,7 +77,10 @@ public class AskTools {
             Map.entry(ToolGroups.CHAOS_REMOVE_TOOL, "chaos_remove"),
             Map.entry(ToolGroups.CHAOS_CLEAR_TOOL, "chaos_clear"),
             Map.entry(ToolGroups.CHAOS_SUGGEST_TOOL, "chaos_suggest"),
-            Map.entry(ToolGroups.CHAOS_LOAD_TOOL, "chaos_load"));
+            Map.entry(ToolGroups.CHAOS_LOAD_TOOL, "chaos_load"),
+            Map.entry(ToolGroups.CHAOS_EXPLORE_START_TOOL, "chaos_explore_start"),
+            Map.entry(ToolGroups.CHAOS_EXPERIMENT_TOOL, "chaos_experiment"),
+            Map.entry(ToolGroups.CHAOS_EXPLORE_FINISH_TOOL, "chaos_explore_finish"));
 
     private static final String CLI_LIST_COMMANDS = "cli_list_commands";
     private static final String CLI_COMMAND_HELP = "cli_command_help";
@@ -358,6 +361,14 @@ public class AskTools {
                     args.get("name") != null ? args.get("name") : processName(), args.get("id"), args.get("rule"));
             case "chaos_load" -> ToolConfirms.chaosLoad(args.get("name") != null ? args.get("name") : processName(),
                     args.get("scenarioName"), args.get("scenario"));
+            // the consent to the experiments of the exploration, which camel-chaos ends at its deadline
+            case "chaos_explore_start" -> ToolConfirms.chaosExplore(
+                    args.get("name") != null ? args.get("name") : processName(), args.get("budget"), args.get("focus"));
+            // its rules are covered by the exploration; its messages are confirmed as send_message confirms them
+            case "chaos_experiment" -> args.get("feed") == null || args.get("feed").isBlank()
+                    ? null
+                    : ToolConfirms.sendMessage(args.get("feed"), endpointUris(),
+                            ToolConfirms.fileOutsideProject(args.get("body"), runtimeDirectory(), ctx.defaultDirectory()));
             default -> null;
         };
     }

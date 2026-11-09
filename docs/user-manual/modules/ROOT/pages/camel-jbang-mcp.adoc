@@ -1124,14 +1124,34 @@ that changes rules is refused. The list and the report read the chaos console fr
 | Loads a scenario (`scenario`, the text of a `.chaos` file, and optionally its name `scenarioName`), as
   `camel cmd chaos-load` does: the rules there are now are removed and the report starts again, then the rules of the
   scenario are added, all or none. Returns the ids, each rule in plain words, and `warnings`.
+
+| `camel_runtime_chaos_explore_start`
+| `false` | `false`
+| Starts an exploration, as `camel cmd chaos-explore-start` does: a time to try rules in (`budget`, 10 minutes by
+  default and at most 2 hours, and an optional `focus`). While it runs a rule ends at the deadline at the latest, and at
+  the deadline the rules are removed, whatever the client does.
+
+| `camel_runtime_chaos_experiment`
+| `false` | `true`
+| Runs one experiment in the exploration in one call, as `camel cmd chaos-experiment` does: adds the rules (`rule`,
+  one of them with `expect=`), sends the messages of `feed` (with `body`, `headers`, `repeat` and `interval`), waits until
+  the expectations are decided (at most `wait`, 2 minutes by default), and ends it. Returns the `verdict` (`FAIL`,
+  `PASS` or `INCONCLUSIVE`), the expectations, the faults per rule, what the routes did, the `traffic` and `timeLeft`.
+
+| `camel_runtime_chaos_explore_finish`
+| `false` | `false`
+| Finishes the exploration before its deadline, as `camel cmd chaos-explore-finish` does, and returns its journal: the
+  rules tried and the experiments with their verdicts.
 |===
 
-Adding and changing a rule, and loading a scenario, are marked destructive: a rule makes messages fail, wait or get lost, and its
+Adding and changing a rule, loading a scenario, and an experiment are marked destructive: a rule makes messages fail, wait or get lost, and its
 `exception=` can name any exception class. So a client that honours `destructiveHint` asks before it runs them, and
 the `read-write` access level of the security layer (`camel.mcp.security.access-level`) does not offer them, as it does
 not offer `camel_runtime_route_control` or `camel_runtime_sql`; `read-only` offers the list, the report, what to try and the check. Removing
 and clearing only take faults away, and the report keeps the removed rules, so they are not destructive. `camel ask`
-has the same tools (`chaos_add` and the others), and asks the user before it adds or changes a rule or loads a scenario (showing the rules of the scenario). The
+has the same tools (`chaos_add` and the others), and asks the user before it adds or changes a rule or loads a scenario (showing the rules of the scenario). It asks
+once for an exploration (`chaos_explore_start`), and not again for the experiments in it, as camel-chaos removes their
+rules at its deadline; the messages of an experiment are asked as `send_message` asks them. The
 development MCP tools that `camel run --mcp` serves over HTTP have only the list and the report: a rule is never added,
 changed, removed, checked, suggested or loaded over the HTTP server of the application.
 
