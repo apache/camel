@@ -49,9 +49,10 @@ import picocli.CommandLine;
                              "what the routes did, and the traffic. It stays in the journal of the exploration",
                              "(camel get chaos --report).",
                              "%nThe verdict is FAIL when an expectation is unmet (exit code 1), PASS when all are",
-                             "met, and INCONCLUSIVE when it ended before an expectation was decided: wait longer",
-                             "than the within= of the expectation. --feed can be the id of a route, as the feed:",
-                             "line of camel cmd chaos-suggest has it.",
+                             "met, and INCONCLUSIVE when it cannot tell: it ended before an expectation was decided",
+                             "(wait longer than the within= of the expectation), its faults never fired, or the",
+                             "route of a met expectation had no messages. --feed can be the id of a route, as the",
+                             "feed: line of camel cmd chaos-suggest has it.",
                              "%nExamples:",
                              "  camel cmd chaos-experiment --hypothesis='a failed refund is read again' \\",
                              "      --rule='route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s' \\",
@@ -215,7 +216,9 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
         if (!sb.isEmpty()) {
             lines.add("  " + sb);
         }
-        if ("INCONCLUSIVE".equals(experiment.getString("verdict"))) {
+        // the reason of the verdict says why; waiting longer helps only when it ended before a decision (CAMEL-26790)
+        String reason = experiment.getString("reason");
+        if ("INCONCLUSIVE".equals(experiment.getString("verdict")) && (reason == null || reason.startsWith("it ended"))) {
             lines.add("  An expectation was not decided when it ended: wait longer than its within= (--wait)");
         }
         return lines;

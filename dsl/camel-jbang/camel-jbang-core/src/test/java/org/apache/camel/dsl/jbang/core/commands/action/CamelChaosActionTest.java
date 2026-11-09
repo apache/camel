@@ -580,6 +580,15 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         assertThat(CamelChaosExperimentAction.lines(typo))
                 .contains("  Warning: r5: endpoint=file:/parked matches no endpoint of the context now");
 
+        // another reason: waiting longer would not help (CAMEL-26790)
+        JsonObject idle = new JsonObject(
+                Map.of("number", 4, "verdict", "INCONCLUSIVE", "rules", new JsonArray(List.of("r4")),
+                        "reason", "route billing had no messages while it ran, so its expectation says nothing: feed it"));
+        assertThat(CamelChaosExperimentAction.lines(idle))
+                .contains(
+                        "  inconclusive: route billing had no messages while it ran, so its expectation says nothing: feed it")
+                .doesNotContain("  An expectation was not decided when it ended: wait longer than its within= (--wait)");
+
         JsonObject notSent = new JsonObject(
                 Map.of("number", 3, "verdict", "PASS", "elapsed", 1_000L,
                         "traffic", new JsonObject(Map.of("endpoint", "refunds", "status", "failed", "error", "No endpoint"))));

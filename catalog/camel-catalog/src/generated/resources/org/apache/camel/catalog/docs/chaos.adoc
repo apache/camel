@@ -161,6 +161,10 @@ names some of the endpoints, routes or steps there are. It is not an error, as t
 creates its endpoints when it sends, and a route can be added later). The rules of `camel.chaos.rules` are checked when
 the context has started.
 
+A rule that expects failed exchanges in a route whose error handler is a dead letter channel
+(`expect=parked:failed<=0`) has a warning too: the dead letter channel handles what fails there, so nothing fails, and
+the expectation is always met. `handled` counts what the dead letter channel handled (`expect=parked:handled<=0`).
+
 To see what a rule would hit before it is added, `chaos-add --dry-run` checks it as `chaos-add` would, and adds
 nothing. It prints the rule in plain words, then each send, poll, route or step it matches now, with its route (and the
 step that sends), the sends known only when they send that may match (a `toD`), and the warnings:
@@ -391,9 +395,16 @@ faults of each rule, the state of each expectation, and a verdict:
 The dead letter channel then handles the message without delivering it, so no expectation of a route sees it: the
 experiment counts it as lost (`lostAtDeadLetterChannel`, and per rule `lostAtDeadLetterChannelPerRule`), as the
 report does.
-* `PASS`: all expectations are met.
-* `PENDING`: it is still open and an expectation is not decided yet.
-* `INCONCLUSIVE`: it ended before an expectation was decided, so the messages may still have come.
+* `PASS`: all expectations are met, a fault fired, and the routes of the expectations had messages.
+* `PENDING`: it is still open, and an expectation is not decided yet or no fault has fired yet.
+* `INCONCLUSIVE`: it ended before an expectation was decided, so the messages may still have come; none of its
+faults fired, so its expectations say nothing about them; or an expectation was met on a route that had no messages
+while it ran (`refunds:failed<=0` when the traffic went to another route), or is a time (`maxTime`, `meanTime`) of
+such a route. The `reason` says which.
+
+The routes that failed while it ran, and whose failures no expectation of the experiment counts, are listed as
+`alsoFailed`, with how many failed. An experiment that expects `refunds:maxTime<=30s` passes while 2 refunds failed,
+and `alsoFailed` says so.
 
 The experiment is ended with the exploration when that finishes, or when its time is up, with what came of it so far.
 
@@ -406,8 +417,9 @@ The journal has them as `experiments`, each with:
 
 * `number`, `hypothesis`, the `rules` (their ids) and `ruleTexts`
 * `open`, `startedAt` and `elapsed`
-* the `verdict` and the `expectations`: per rule its `expect`, `state` (`met`, `unmet` or `pending`), the `actual` value,
-and the `value` in words
+* the `verdict` (and the `reason` of an `INCONCLUSIVE` one) and the `expectations`: per rule its `expect`, `state`
+(`met`, `unmet` or `pending`), the `actual` value, and the `value` in words
+* `alsoFailed`: the routes that failed outside the expectations, when there are such
 * the `faults` per rule
 * the `routes` that did something while it ran, with the same counts as the baseline
 * once ended, `endedAt`, `endedBy` (`ended`, `finished` or `deadline`) and the `note`
