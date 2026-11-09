@@ -162,6 +162,69 @@ class ChaosExperimentTest extends ChaosTestSupport {
     }
 
     @Test
+    void anExperimentWhoseFaultsNeverFiredDoesNotPass() {
+        chaos().startExploration("10m", null);
+        // the fault is on a step the orders do not reach (CAMEL-26790): its expectation is met, but says nothing
+        chaos().beginExperiment("orders keep going when parking fails",
+                "endpoint=mock:parked error expect=orders:2 within=1m");
+        send(2);
+        assertThat(experiment(1).getString("verdict")).isEqualTo("PENDING");
+
+        Map<String, Object> ended = chaos().endExperiment(null);
+
+        assertThat(ended).containsEntry("verdict", "INCONCLUSIVE").containsEntry("reason",
+                "its faults never fired, so its expectations say nothing about them");
+        assertThat(first(new JsonObject(ended), "expectations").getString("state")).isEqualTo("met");
+        assertThat(chaos().report().toText()).contains("1 INCONCLUSIVE  orders keep going when parking fails",
+                "inconclusive: its faults never fired");
+
+        // ended before its expectation was decided: the other reason
+        chaos().beginExperiment(null, "endpoint=mock:shipped delay duration=10ms expect=orders:5 within=1m");
+        send(1);
+        assertThat(chaos().endExperiment(null)).containsEntry("verdict", "INCONCLUSIVE").containsEntry("reason",
+                "it ended before an expectation was decided, so the messages may still have come");
+    }
+
+    @Test
+    void theRoutesThatFailedOutsideTheExpectationsAreListed() {
+        chaos().startExploration("10m", null);
+        // the expectation counts the completed orders, not the failed ones (CAMEL-26790)
+        chaos().beginExperiment("orders keep coming", "endpoint=mock:shipped error rate=every:2 expect=orders:2 within=1m");
+        send(4);
+
+        Map<String, Object> ended = chaos().endExperiment(null);
+
+        assertThat(ended).containsEntry("verdict", "PASS");
+        assertThat(((JsonObject) ended.get("alsoFailed")).getLong("orders")).isEqualTo(2);
+        assertThat(chaos().report().toText()).contains("also failed, in no expectation: orders 2");
+
+        // an expectation of the failures counts them: not listed again
+        chaos().beginExperiment(null, "endpoint=mock:shipped error rate=every:2 expect=orders:failed<=5 within=1m");
+        send(2);
+        clock.advance(61_000);
+        assertThat(chaos().endExperiment(null)).containsEntry("verdict", "PASS").doesNotContainKey("alsoFailed");
+    }
+
+    @Test
+    void anExpectationOfFailuresInARouteWithADeadLetterChannelIsWarned() {
+        // billing fails to its dead letter channel, which handles the message: failed stays 0 there (CAMEL-26790)
+        JsonObject checked = (JsonObject) list(
+                new JsonObject(chaos().checkRules("endpoint=mock:charged error expect=billing:failed<=0")), "rules")
+                .get(0);
+        assertThat(list(checked, "warnings")).singleElement().asString().contains(
+                "expects failed exchanges in route billing, but its error handler is the dead letter channel"
+                                                                                  + " direct:parked",
+                "expect=billing:handled<=0 counts what the dead letter channel handled");
+
+        // what the dead letter channel handled, or a route without one: no warning
+        for (String rule : List.of("endpoint=mock:charged error expect=billing:handled<=0",
+                "endpoint=mock:shipped error expect=orders:failed<=0")) {
+            JsonObject ok = (JsonObject) list(new JsonObject(chaos().checkRules(rule)), "rules").get(0);
+            assertThat(ok.containsKey("warnings")).as(rule).isFalse();
+        }
+    }
+
+    @Test
     void oneAtATimeWithAnExpectationAndInAnExploration() {
         String rule = "endpoint=mock:shipped error expect=orders:failed<=0 within=1m";
         assertThatThrownBy(() -> chaos().beginExperiment("h", rule)).isInstanceOf(IllegalStateException.class)

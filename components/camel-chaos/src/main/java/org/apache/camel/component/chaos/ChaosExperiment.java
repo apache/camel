@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
@@ -36,8 +38,11 @@ import org.apache.camel.util.json.JsonObject;
  * The verdict is {@code FAIL} when an expectation is unmet, or a rule of it failed or dropped the send of a dead letter
  * channel, which then handled the message without delivering it (lost, as the report counts it, CAMEL-26789), and
  * {@code PASS} when all are met. While it runs and an expectation is not decided it is {@code PENDING}, and an
- * experiment that ended before an expectation was decided is {@code INCONCLUSIVE}: the messages may still have come.
- * The manager guards it with its lock.
+ * experiment that ended before an expectation was decided is {@code INCONCLUSIVE}: the messages may still have come. An
+ * experiment whose faults never fired is not a {@code PASS} either, as its expectations say nothing about the faults
+ * ({@code INCONCLUSIVE} once it ended, CAMEL-26790). The routes that failed while it ran, and that no expectation of it
+ * counts the failures of, are listed ({@code alsoFailed}), so a verdict on another count does not hide them. The
+ * manager guards it with its lock.
  */
 final class ChaosExperiment {
 
@@ -45,6 +50,10 @@ final class ChaosExperiment {
     static final String FAIL = "FAIL";
     static final String PENDING = "PENDING";
     static final String INCONCLUSIVE = "INCONCLUSIVE";
+
+    // why an experiment is INCONCLUSIVE
+    static final String NEVER_FIRED = "its faults never fired, so its expectations say nothing about them";
+    static final String NOT_DECIDED = "it ended before an expectation was decided, so the messages may still have come";
 
     /** How an experiment ended. */
     enum End {
@@ -143,6 +152,9 @@ final class ChaosExperiment {
         JsonArray texts = new JsonArray();
         JsonObject faults = new JsonObject();
         JsonArray expectations = new JsonArray();
+        long firedAll = 0;
+        // the routes whose failures an expectation counts
+        Set<String> failedExpected = new HashSet<>();
         for (String id : rules) {
             ChaosRule r = rule.apply(id);
             if (r == null) {
@@ -154,6 +166,7 @@ final class ChaosExperiment {
                 fired += r.firedAt(hook);
             }
             faults.put(id, fired);
+            firedAll += fired;
             long kept = r.lostAtDlqCount();
             if (kept > 0) {
                 lostAtDlq.put(id, kept);
@@ -161,6 +174,9 @@ final class ChaosExperiment {
             }
             Expectation e = r.expectation;
             if (e != null) {
+                if (e.kind == Expectation.Kind.FAILED) {
+                    failedExpected.add(e.route);
+                }
                 Expectation.Reading reading = e.read(now);
                 // an expectation the experiment did not wait for is undecided, not cancelled
                 Outcome outcome = reading.outcome() == Outcome.CANCELLED ? Outcome.PENDING : reading.outcome();
@@ -182,8 +198,16 @@ final class ChaosExperiment {
             jo.put("lostAtDeadLetterChannel", lost);
             jo.put("lostAtDeadLetterChannelPerRule", lostAtDlq);
         }
-        jo.put("verdict", unmet || lost > 0 ? FAIL : !undecided ? PASS : ended ? INCONCLUSIVE : PENDING);
+        // nothing fired: the expectations were not put to the test (an unmet one is still a FAIL, with its evidence)
+        boolean neverFired = firedAll == 0;
+        String verdict = unmet || lost > 0
+                ? FAIL : !undecided && !neverFired ? PASS : ended ? INCONCLUSIVE : PENDING;
+        jo.put("verdict", verdict);
+        if (INCONCLUSIVE.equals(verdict)) {
+            jo.put("reason", neverFired ? NEVER_FIRED : NOT_DECIDED);
+        }
         JsonArray routes = new JsonArray();
+        JsonObject alsoFailed = new JsonObject();
         counts.forEach((route, c) -> {
             long[] now0 = read(c);
             long[] then = before.getOrDefault(route, new long[5]);
@@ -202,9 +226,15 @@ final class ChaosExperiment {
                 r.put("handled", delta[3]);
                 r.put("redeliveries", delta[4]);
                 routes.add(r);
+                if (delta[1] > 0 && !failedExpected.contains(route)) {
+                    alsoFailed.put(route, delta[1]);
+                }
             }
         });
         jo.put("routes", routes);
+        if (!alsoFailed.isEmpty()) {
+            jo.put("alsoFailed", alsoFailed);
+        }
         if (countsReset) {
             jo.put("countsReset", true);
         }
@@ -239,10 +269,20 @@ final class ChaosExperiment {
             sb.append("\n        expect ").append(x.getString("expect")).append(": ").append(x.getString("state"))
                     .append(", ").append(x.getString("value"));
         }
+        String reason = jo.getString("reason");
+        if (reason != null) {
+            sb.append("\n        inconclusive: ").append(reason);
+        }
         long lost = jo.getLongOrDefault("lostAtDeadLetterChannel", 0);
         if (lost > 0) {
             sb.append("\n        lost at the dead letter channel: ").append(lost)
                     .append(lost == 1 ? " message" : " messages").append(", handled there without being delivered");
+        }
+        JsonObject alsoFailed = (JsonObject) jo.get("alsoFailed");
+        if (alsoFailed != null) {
+            StringJoiner also = new StringJoiner(", ");
+            alsoFailed.forEach((route, n) -> also.add(route + " " + n));
+            sb.append("\n        also failed, in no expectation: ").append(also);
         }
         StringJoiner sj = new StringJoiner(", ");
         for (Object o : jo.getCollection("routes")) {
