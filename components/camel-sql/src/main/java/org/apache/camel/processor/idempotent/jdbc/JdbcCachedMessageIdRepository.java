@@ -24,6 +24,8 @@ import javax.sql.DataSource;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -81,7 +83,7 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         boolean added = super.add(key);
         // only remember the key after the database insert succeeded, otherwise a failed insert
         // would leave the key cached and every redelivery would be rejected as a duplicate
-        cache.merge(key, 1, Integer::sum);
+        cacheAfterCommit(key);
         return added;
     }
 
@@ -99,15 +101,70 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
     @Override
     public boolean remove(String key) {
         cache.remove(key);
-        return super.remove(key);
+        cancelCacheAfterCommit(key);
+        boolean removed = super.remove(key);
+        // and again after the delete: an add of the key on another thread whose transaction committed while this delete
+        // waited for its row lock has cached it meanwhile
+        cache.remove(key);
+        return removed;
     }
 
     @Override
     public void clear() {
         cache.clear();
+        cancelCacheAfterCommit(null);
         hitCount.set(0);
         missCount.set(0);
         super.clear();
+        // and again after the delete, as in remove
+        cache.clear();
+    }
+
+    /**
+     * Caches the key once the transaction that inserted its row commits. In a transaction of the caller that rolls back
+     * (for example a transacted route), the row is gone, and a cached key would make the redelivery of the message a
+     * duplicate. Without a transaction with synchronization the key is cached at once.
+     */
+    private void cacheAfterCommit(String key) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new CacheAfterCommit(this, key));
+        } else {
+            cache.merge(key, 1, Integer::sum);
+        }
+    }
+
+    /**
+     * A remove of the key (or a clear when the key is null) later in the same transaction cancels its caching after the
+     * commit.
+     */
+    private void cancelCacheAfterCommit(String key) {
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
+                if (synchronization instanceof CacheAfterCommit pending && pending.repository == this
+                        && (key == null || pending.key.equals(key))) {
+                    pending.cancelled = true;
+                }
+            }
+        }
+    }
+
+    private static final class CacheAfterCommit implements TransactionSynchronization {
+        private final JdbcCachedMessageIdRepository repository;
+        private final String key;
+        // set and read by the thread of the transaction
+        private boolean cancelled;
+
+        private CacheAfterCommit(JdbcCachedMessageIdRepository repository, String key) {
+            this.repository = repository;
+            this.key = key;
+        }
+
+        @Override
+        public void afterCommit() {
+            if (!cancelled) {
+                repository.cache.merge(key, 1, Integer::sum);
+            }
+        }
     }
 
     public String getQueryAllString() {
