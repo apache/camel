@@ -97,7 +97,8 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
     String interval;
 
     @CommandLine.Option(names = { "--wait" }, defaultValue = "2m",
-                        description = "The longest wait for the verdict after the messages were sent (at most 10m)")
+                        description = "The longest wait for the verdict after the messages were sent, and at least the"
+                                      + " within= of the expectations (at most 10m)")
     String wait;
 
     @CommandLine.Option(names = { "--note" },
@@ -146,6 +147,10 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
                         feed, absolute(body), headers != null ? String.join("\n", headers) : null,
                         repeat, interval)
                 : null;
+        String why = traffic != null ? ChaosExperimentRun.checkFeed(RuntimeHelper.readStatus(process.pid()), feed) : null;
+        if (why != null) {
+            throw CliException.usage(why.replace("The feed", "--feed"));
+        }
         JsonObject result = ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
             @Override
             public JsonObject chaos(String command, Consumer<JsonObject> options) {
@@ -187,6 +192,10 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
         List<String> lines = new ArrayList<>(ListChaos.experimentLines(experiment, ""));
         if (!lines.isEmpty()) {
             lines.set(0, "Experiment " + lines.get(0));
+        }
+        List<Object> warnings = experiment.getCollection("warnings");
+        if (warnings != null) {
+            warnings.forEach(w -> lines.add("  Warning: " + w));
         }
         JsonObject traffic = (JsonObject) experiment.get("traffic");
         if (traffic != null) {

@@ -278,6 +278,14 @@ class LocalCliConnectorChaosActionTest {
         assertThat(ended.result().getString("verdict")).isEqualTo("FAIL");
         assertThat(ended.result().getString("note")).isEqualTo("no error handler");
         assertThat(chaos("experiment-end", null, null).error()).isEqualTo("No experiment is open");
+
+        // a rule that matches nothing (a typo) comes with its warning, as with add
+        action.put("rule", "endpoint=file:/nowhere error expect=start:failed<=0 within=1m");
+        CliActionOutcome typo = CliActionOutcome.dispatch(connector, action).get(10, TimeUnit.SECONDS);
+        assertThat(typo.error()).isNull();
+        assertThat(typo.result().<List<Object>> getCollection("warnings")).singleElement().asString()
+                .startsWith("r2: endpoint=file:/nowhere matches no");
+        assertThat(chaos("experiment-end", null, null).error()).isNull();
         assertThat(chaos("experiment-begin", null, null).error()).isEqualTo("The rules of the experiment are required");
     }
 

@@ -44,6 +44,7 @@ class ChaosExperimentRunTest {
         RuntimeException sendFails;
         RuntimeException endFails;
         RuntimeException beginFails;
+        List<String> beginWarnings;
         JsonObject ended = experiment("FAIL", false);
 
         @Override
@@ -56,7 +57,11 @@ class ChaosExperimentRunTest {
                 if (beginFails != null) {
                     throw beginFails;
                 }
-                return experiment("PENDING", true);
+                JsonObject begun = experiment("PENDING", true);
+                if (beginWarnings != null) {
+                    begun.put("warnings", new JsonArray(beginWarnings));
+                }
+                return begun;
             }
             if (endFails != null) {
                 throw endFails;
@@ -121,6 +126,8 @@ class ChaosExperimentRunTest {
 
     @Test
     void theTrafficThenTheWaitUntilTheVerdict() throws Exception {
+        // read first by the check of the feed
+        integration.shows("PENDING", true);
         integration.shows("PENDING", true);
         integration.shows("PENDING", true);
         integration.shows("FAIL", true);
@@ -147,7 +154,9 @@ class ChaosExperimentRunTest {
         integration.shows("PENDING", true);
         integration.ended = experiment("INCONCLUSIVE", false);
 
-        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 5_000, null, clock);
+        // an expectation without within= has the time of its rule, which the wait does not know
+        JsonObject answer = ChaosExperimentRun.run(integration, null, "route=refunds error expect=refunds:failed<=0", null,
+                5_000, null, clock);
 
         assertThat(answer.getString("verdict")).isEqualTo("INCONCLUSIVE");
         assertThat(answer.getLong("waited")).isEqualTo(5_000);
@@ -192,6 +201,63 @@ class ChaosExperimentRunTest {
                 .hasMessage("Experiment 1 is open: end it first");
         assertThat(integration.actions).hasSize(1);
         assertThat(integration.sent).isNull();
+    }
+
+    @Test
+    void aFeedThatReachesNoRouteIsRefusedBeforeTheExperiment() {
+        JsonObject status = new JsonObject(
+                Map.of("routes", new JsonArray(
+                        List.of(
+                                new JsonObject(Map.of("routeId", "orders", "from", "timer://orders?period=1000")),
+                                new JsonObject(
+                                        Map.of("routeId", "refunds", "from", "kafka://refunds?brokers=localhost:9092"))))));
+        integration.statuses.add(status);
+
+        // the route id, the endpoint it starts from (with or without //), and a pattern reach a route
+        assertThat(ChaosExperimentRun.checkFeed(status, "refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "kafka:refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "kafka://refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "ref*")).isNull();
+        // an endpoint no route starts from: no message would arrive, so the verdict would say nothing
+        assertThatThrownBy(() -> ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("direct:refunds", "R-1", null, 5, null), 60_000, null, clock))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The feed direct:refunds is not where a route starts, so no message would reach the"
+                            + " integration: give the id of a route, or the endpoint it starts from:"
+                            + " orders (timer://orders?period=1000), refunds (kafka://refunds?brokers=localhost:9092)");
+        assertThat(integration.actions).isEmpty();
+    }
+
+    @Test
+    void aRuleThatMatchesNothingComesWithItsWarning() throws Exception {
+        integration.shows("PENDING", true);
+        integration.beginWarnings = List.of("r1: endpoint=file:/parked matches no endpoint of the context now");
+        integration.ended = experiment("PASS", false);
+
+        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 1_000, null, clock);
+
+        // the PASS says nothing: the AI reads why
+        assertThat(answer.<List<Object>> getCollection("warnings"))
+                .containsExactly("r1: endpoint=file:/parked matches no endpoint of the context now");
+    }
+
+    @Test
+    void theWaitIsAtLeastTheWithinOfTheExpectations() throws Exception {
+        integration.shows("PENDING", true);
+        integration.ended = experiment("PASS", false);
+
+        // RULE has within=30s: a wait of 5s would end it before failed<=0 is decided
+        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 5_000, null, clock);
+
+        assertThat(answer.getLong("waited")).isEqualTo(32_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=1m; route=b drop expect=b:1 within=90s"))
+                .isEqualTo(90_000);
+        // the ; between the rules is not part of the time, also when it follows the time without a space
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=3m; route=b drop expect=b:1 within=90s"))
+                .isEqualTo(180_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=3m;route=b drop within=1m"))
+                .isEqualTo(180_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error")).isZero();
     }
 
     @Test

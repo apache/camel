@@ -786,7 +786,8 @@ rules, send its traffic, wait for the verdict, and end it
                               range such as 100..500 to draw each pause at
                               random (at most 60s)
       --wait=<wait>         The longest wait for the verdict after the messages
-                              were sent (at most 10m)
+                              were sent, and at least the within= of the
+                              expectations (at most 10m)
                               Default: 2m
       --note=<note>         What to note with the experiment when it ends
       --end                 End the open experiment (with --note) instead of
@@ -829,9 +830,10 @@ failed<=0 within=70s' \
   camel cmd chaos-experiment --end --note='stopped by hand'
 
 == camel cmd chaos-explore --help
-Usage: camel cmd chaos-explore [-h] [--show-tools] [--verbose] [--yes]
-                               [--api-key=<apiKey>] [--api-type=<apiType>]
-                               [--budget=<budget>] [--focus=<focus>]
+Usage: camel cmd chaos-explore [-h] [--[no-]save] [--show-tools] [--verbose]
+                               [--yes] [--api-key=<apiKey>]
+                               [--api-type=<apiType>] [--budget=<budget>]
+                               [--focus=<focus>]
                                [--max-iterations=<maxIterations>]
                                [--model=<model>] [--timeout=<timeout>]
                                [--tools=<tools>] [--url=<url>] [<name>]
@@ -869,6 +871,10 @@ with faults, for a time budget, and reports what held and what broke
                                calls that camel ask asks for first, without
                                asking
       --show-tools           Show the tool calls and results as they happen
+      --[no-]save            Save the report in test/chaos/reports (as
+                               markdown, and the journal as JSON), and each
+                               experiment that failed as a scenario in
+                               test/chaos, to replay it
       --verbose              Print debug information of the LLM calls
 
 This command starts a chaos exploration with the budget (camel cmd

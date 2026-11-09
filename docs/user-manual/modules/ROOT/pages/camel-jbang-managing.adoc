@@ -954,7 +954,10 @@ camel cmd chaos-explore --budget=10m
 camel cmd chaos-explore myApp --budget=1h --focus=refunds --api-type=anthropic
 ----
 
-Run the integration with `--stub=remote`, so the experiments do not reach real systems. A route fed over HTTP or from
+It saves what it found in the project: the report and the journal in `test/chaos/reports/explore-<time>.md` (and
+`.json`), and each experiment that failed as a scenario, `test/chaos/explore-<time>-<n>.chaos`, which
+`camel run * --chaos=<file>` or `camel cmd chaos-load` replays (`--no-save` leaves them out). Run the integration with
+`--stub=remote`, so the experiments do not reach real systems. A route fed over HTTP or from
 files cannot be fed by an experiment yet. MCP clients have the same playbook as the prompt `camel_chaos_explore`. See
 xref:next@components:others:chaos.adoc#_an_exploration[An exploration] in the camel-chaos documentation.
 

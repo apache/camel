@@ -439,7 +439,8 @@ The Camel CLI runs an experiment in one call: `camel cmd chaos-experiment` begin
 `--body`, `--repeat` and `--interval`, as `camel cmd send`), waits until its expectations are decided (at most
 `--wait`), and ends it. `camel cmd chaos-explore-start` and `chaos-explore-finish` start and finish the exploration.
 `camel cmd chaos-explore` hands a whole exploration to an AI: it runs the experiments by itself for the budget, and
-reports what held and what broke (the MCP prompt `camel_chaos_explore` is the same playbook).
+reports what held and what broke (the MCP prompt `camel_chaos_explore` is the same playbook). It saves the report in
+`test/chaos/reports`, and each experiment that failed as a scenario in `test/chaos`, to replay it.
 
 == Scenarios
 

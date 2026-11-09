@@ -25,6 +25,7 @@ camel cmd chaos-explore [options]
 | `--focus` | What to explore, such as a route id (default: all routes) |  | String
 | `--max-iterations` | Maximum number of tool-calling rounds | 100 | int
 | `--model` | Model to use. Default: the provider's default; with Ollama the installed model best at tool calling |  | String
+| `--save` | Save the report in test/chaos/reports (as markdown, and the journal as JSON), and each experiment that failed as a scenario in test/chaos, to replay it | true | boolean
 | `--show-tools` | Show the tool calls and results as they happen |  | boolean
 | `--timeout` | Timeout in seconds for one answer of the LLM (an experiment can take minutes) | 300 | int
 | `--tools` | The tools the model gets: core (a small set, for a local model), full, or auto | auto | ToolSet

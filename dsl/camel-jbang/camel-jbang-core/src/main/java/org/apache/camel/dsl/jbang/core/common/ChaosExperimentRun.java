@@ -17,7 +17,10 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -132,6 +135,18 @@ public final class ChaosExperimentRun {
     static JsonObject run(
             Integration integration, String hypothesis, String rules, Feed feed, long wait, String note, Clock clock)
             throws InterruptedException {
+        if (feed != null) {
+            // a feed that reaches no route makes an experiment without messages, whose verdict says nothing
+            String why = checkFeed(integration.status(), feed.endpoint());
+            if (why != null) {
+                throw new IllegalArgumentException(why);
+            }
+        }
+        // an expectation such as failed<=0 is decided when its within= is up: a shorter wait leaves it undecided
+        long within = longestWithin(rules);
+        if (within + POLL * 2 > wait) {
+            wait = Math.min(within + POLL * 2, MAX_WAIT);
+        }
         JsonObject begun = integration.chaos("experiment-begin", root -> {
             if (hypothesis != null && !hypothesis.isBlank()) {
                 root.put("hypothesis", hypothesis);
@@ -139,6 +154,8 @@ public final class ChaosExperimentRun {
             root.put("rule", rules);
         });
         int number = begun.getIntegerOrDefault("number", 0);
+        // a rule that matches nothing in the integration now (often a typo)
+        List<Object> warnings = begun.getCollection("warnings");
         JsonObject traffic = null;
         long waited = 0;
         try {
@@ -170,12 +187,31 @@ public final class ChaosExperimentRun {
             answer.put("traffic", traffic);
         }
         answer.put("waited", waited);
+        if (warnings != null && !warnings.isEmpty()) {
+            answer.put("warnings", warnings);
+        }
         JsonObject exploration = exploration(integration.status());
         if (exploration != null && exploration.containsKey("timeLeft")) {
             answer.put("timeLeft", exploration.getLong("timeLeft"));
         }
         return answer;
     }
+
+    /** The longest within= of the rules, in millis, or 0 (an expectation without it has the time of its rule). */
+    static long longestWithin(String rules) {
+        long answer = 0;
+        Matcher m = WITHIN.matcher(rules);
+        while (m.find()) {
+            try {
+                answer = Math.max(answer, TimeUtils.toMilliSeconds(m.group(1)));
+            } catch (RuntimeException e) {
+                // not a time: camel-chaos refuses the rule with the reason
+            }
+        }
+        return answer;
+    }
+
+    private static final Pattern WITHIN = Pattern.compile("(?:^|[\\s;])within=([^\\s;]+)");
 
     /** Sends the traffic: the summary of the send, or why it could not be sent. */
     private static JsonObject traffic(Integration integration, Feed feed) {
@@ -217,6 +253,43 @@ public final class ChaosExperimentRun {
             }
             throw e;
         }
+    }
+
+    /**
+     * Why the feed reaches no route of the integration, or null when it does (or the status does not tell): the feed is
+     * the id of a route, a pattern, or the endpoint a route starts from, as camel cmd send finds its target.
+     */
+    public static String checkFeed(JsonObject status, String feed) {
+        List<Object> routes = status != null ? status.getCollection("routes") : null;
+        if (routes == null || routes.isEmpty() || feed.endsWith("*")) {
+            return null;
+        }
+        String endpoint = normalize(feed);
+        StringJoiner inputs = new StringJoiner(", ");
+        for (Object o : routes) {
+            if (!(o instanceof JsonObject route)) {
+                continue;
+            }
+            String id = route.getString("routeId");
+            String from = route.getString("from");
+            if (feed.equals(id)) {
+                return null;
+            }
+            if (from != null) {
+                String input = normalize(from);
+                if (input.equals(endpoint) || input.startsWith(endpoint + "?")) {
+                    return null;
+                }
+            }
+            inputs.add(id + " (" + from + ")");
+        }
+        return "The feed " + feed + " is not where a route starts, so no message would reach the integration: give the"
+               + " id of a route, or the endpoint it starts from: " + inputs;
+    }
+
+    // kafka://refunds and kafka:refunds are the same endpoint
+    private static String normalize(String uri) {
+        return uri.replace("://", ":");
     }
 
     /** The experiment with the number in the report of the status, or null. */

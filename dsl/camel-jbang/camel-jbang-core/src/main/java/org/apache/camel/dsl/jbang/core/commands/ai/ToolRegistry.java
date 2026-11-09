@@ -963,7 +963,8 @@ public final class ToolRegistry {
                                           + "INCONCLUSIVE: the wait was up before one was decided, so wait longer than "
                                           + "its within=), the expectations with their actual values, the faults per "
                                           + "rule, what the routes did meanwhile, the traffic sent, and the time left "
-                                          + "of the exploration (timeLeft, millis). chaos_suggest has rules to try and "
+                                          + "of the exploration (timeLeft, millis), and warnings for a rule that matched "
+                                          + "nothing (fix it and run again). chaos_suggest has rules to try and "
                                           + "the feed of each route.")
                 .param("rule", "string",
                         "The rules in their one-line text form, separated by ;, one of them with expect=, such as"
@@ -982,7 +983,7 @@ public final class ToolRegistry {
                         "The pause between two messages in millis, or a range such as 100..500 (at most 60000)", false)
                 .param("wait", "string",
                         "The longest wait for the verdict after the messages were sent, such as 90s (default 2m, at most"
-                                         + " 10m)",
+                                         + " 10m); it is at least the within= of the expectations",
                         false)
                 .param("note", "string", "What to note with the experiment in the journal", false)
                 .param("name", "string", CHAOS_NAME, false)
@@ -1005,26 +1006,32 @@ public final class ToolRegistry {
                                     feed, args.get("body"), args.get("headers"), repeat,
                                     args.get("interval"))
                             : null;
-                    return ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
-                        @Override
-                        public JsonObject chaos(String command, Consumer<JsonObject> options) {
-                            String answer = ctx.executeAction("chaos", root -> {
-                                root.put("command", command);
-                                options.accept(root);
-                            });
-                            return Jsoner.deserialize(answer, new JsonObject());
-                        }
+                    // the run checks the feed first: an experiment without messages says nothing, so the AI gets the
+                    // routes to feed instead, as a tool error (and the status is read once for it)
+                    try {
+                        return ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
+                            @Override
+                            public JsonObject chaos(String command, Consumer<JsonObject> options) {
+                                String answer = ctx.executeAction("chaos", root -> {
+                                    root.put("command", command);
+                                    options.accept(root);
+                                });
+                                return Jsoner.deserialize(answer, new JsonObject());
+                            }
 
-                        @Override
-                        public JsonObject send(ChaosExperimentRun.Feed f) {
-                            return ctx.sendMessage(f.endpoint(), f.body(), f.headers(), f.repeat(), f.interval());
-                        }
+                            @Override
+                            public JsonObject send(ChaosExperimentRun.Feed f) {
+                                return ctx.sendMessage(f.endpoint(), f.body(), f.headers(), f.repeat(), f.interval());
+                            }
 
-                        @Override
-                        public JsonObject status() {
-                            return ctx.readFullStatus();
-                        }
-                    }, args.get("hypothesis"), rule, traffic, wait, args.get("note")).toJson();
+                            @Override
+                            public JsonObject status() {
+                                return ctx.readFullStatus();
+                            }
+                        }, args.get("hypothesis"), rule, traffic, wait, args.get("note")).toJson();
+                    } catch (IllegalArgumentException e) {
+                        throw new ToolExecutionException(e.getMessage(), e);
+                    }
                 }));
 
         register(tool("chaos_explore_finish",
