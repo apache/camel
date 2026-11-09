@@ -25,7 +25,7 @@ Samples from the same class and allocation site (stack trace) are
 grouped together automatically.
 
 - **#** — Group number
-- **CLASS** — The class of the sampled long-lived object
+- **CLASS** — The class of the sampled long-lived object, and where it was allocated in the code of the integration (the first frame of its stack that is not of the JDK or of Camel, as `BufferLeakProcessor.process:45`): two leaks of the same class, as `byte[]`, are told apart by it
 - **COUNT** — Number of samples from the same allocation site
 - **SAMPLED** — Sum of sampled allocation sizes during the recording
 - **AGE** — Maximum age across samples in the group
