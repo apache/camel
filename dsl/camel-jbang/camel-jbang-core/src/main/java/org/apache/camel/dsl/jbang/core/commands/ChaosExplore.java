@@ -202,8 +202,9 @@ public class ChaosExplore extends CamelCommand {
         ask.showTools = showTools;
         ask.showStats = true;
         ask.verbose = verbose;
-        // the exploration runs with the budget of the user: the AI does not start another one
-        ask.hiddenTools = Set.of("chaos_explore_start");
+        // the exploration runs with the budget of the user: the AI does not start another one, not even with a camel
+        // command, and the chaos tools are all it needs
+        ask.hiddenTools = Set.of("chaos_explore_start", "cli_exec");
         return ask;
     }
 

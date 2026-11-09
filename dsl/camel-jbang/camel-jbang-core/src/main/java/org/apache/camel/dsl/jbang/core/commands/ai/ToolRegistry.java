@@ -1005,6 +1005,13 @@ public final class ToolRegistry {
                                     feed, args.get("body"), args.get("headers"), repeat,
                                     args.get("interval"))
                             : null;
+                    if (traffic != null) {
+                        // an experiment without messages says nothing: the AI gets the routes to feed instead
+                        String why = ChaosExperimentRun.checkFeed(ctx.readFullStatus(), feed);
+                        if (why != null) {
+                            throw new ToolExecutionException(why);
+                        }
+                    }
                     return ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
                         @Override
                         public JsonObject chaos(String command, Consumer<JsonObject> options) {

@@ -57,8 +57,8 @@ class ChaosExploreTest {
         assertThat(ask.timeout).isEqualTo(300);
         assertThat(ask.maxIterations).isEqualTo(100);
         assertThat(ask.yes).isFalse();
-        // the exploration runs with the budget of the user: the AI does not get the tool to start another one
-        assertThat(ask.hiddenTools).containsExactly("chaos_explore_start");
+        // the exploration runs with the budget of the user: the AI does not get the tools to start another one
+        assertThat(ask.hiddenTools).containsExactlyInAnyOrder("chaos_explore_start", "cli_exec");
     }
 
     @Test

@@ -121,6 +121,8 @@ class ChaosExperimentRunTest {
 
     @Test
     void theTrafficThenTheWaitUntilTheVerdict() throws Exception {
+        // read first by the check of the feed
+        integration.shows("PENDING", true);
         integration.shows("PENDING", true);
         integration.shows("PENDING", true);
         integration.shows("FAIL", true);
@@ -192,6 +194,31 @@ class ChaosExperimentRunTest {
                 .hasMessage("Experiment 1 is open: end it first");
         assertThat(integration.actions).hasSize(1);
         assertThat(integration.sent).isNull();
+    }
+
+    @Test
+    void aFeedThatReachesNoRouteIsRefusedBeforeTheExperiment() {
+        JsonObject status = new JsonObject(
+                Map.of("routes", new JsonArray(
+                        List.of(
+                                new JsonObject(Map.of("routeId", "orders", "from", "timer://orders?period=1000")),
+                                new JsonObject(
+                                        Map.of("routeId", "refunds", "from", "kafka://refunds?brokers=localhost:9092"))))));
+        integration.statuses.add(status);
+
+        // the route id, the endpoint it starts from (with or without //), and a pattern reach a route
+        assertThat(ChaosExperimentRun.checkFeed(status, "refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "kafka:refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "kafka://refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "ref*")).isNull();
+        // an endpoint no route starts from: no message would arrive, so the verdict would say nothing
+        assertThatThrownBy(() -> ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("direct:refunds", "R-1", null, 5, null), 60_000, null, clock))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The feed direct:refunds is not where a route starts, so no message would reach the"
+                            + " integration: give the id of a route, or the endpoint it starts from:"
+                            + " orders (timer://orders?period=1000), refunds (kafka://refunds?brokers=localhost:9092)");
+        assertThat(integration.actions).isEmpty();
     }
 
     @Test

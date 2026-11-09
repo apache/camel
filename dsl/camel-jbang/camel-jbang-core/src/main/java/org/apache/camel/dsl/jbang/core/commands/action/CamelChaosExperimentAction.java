@@ -145,6 +145,10 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
                         feed, absolute(body), headers != null ? String.join("\n", headers) : null,
                         repeat, interval)
                 : null;
+        String why = traffic != null ? ChaosExperimentRun.checkFeed(RuntimeHelper.readStatus(process.pid()), feed) : null;
+        if (why != null) {
+            throw CliException.usage(why.replace("The feed", "--feed"));
+        }
         JsonObject result = ChaosExperimentRun.run(new ChaosExperimentRun.Integration() {
             @Override
             public JsonObject chaos(String command, Consumer<JsonObject> options) {

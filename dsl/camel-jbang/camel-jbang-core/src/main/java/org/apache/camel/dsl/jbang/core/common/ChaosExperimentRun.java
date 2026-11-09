@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.function.Consumer;
 
 import org.apache.camel.util.TimeUtils;
@@ -132,6 +133,13 @@ public final class ChaosExperimentRun {
     static JsonObject run(
             Integration integration, String hypothesis, String rules, Feed feed, long wait, String note, Clock clock)
             throws InterruptedException {
+        if (feed != null) {
+            // a feed that reaches no route makes an experiment without messages, whose verdict says nothing
+            String why = checkFeed(integration.status(), feed.endpoint());
+            if (why != null) {
+                throw new IllegalArgumentException(why);
+            }
+        }
         JsonObject begun = integration.chaos("experiment-begin", root -> {
             if (hypothesis != null && !hypothesis.isBlank()) {
                 root.put("hypothesis", hypothesis);
@@ -217,6 +225,43 @@ public final class ChaosExperimentRun {
             }
             throw e;
         }
+    }
+
+    /**
+     * Why the feed reaches no route of the integration, or null when it does (or the status does not tell): the feed is
+     * the id of a route, a pattern, or the endpoint a route starts from, as camel cmd send finds its target.
+     */
+    public static String checkFeed(JsonObject status, String feed) {
+        List<Object> routes = status != null ? status.getCollection("routes") : null;
+        if (routes == null || routes.isEmpty() || feed.endsWith("*")) {
+            return null;
+        }
+        String endpoint = normalize(feed);
+        StringJoiner inputs = new StringJoiner(", ");
+        for (Object o : routes) {
+            if (!(o instanceof JsonObject route)) {
+                continue;
+            }
+            String id = route.getString("routeId");
+            String from = route.getString("from");
+            if (feed.equals(id)) {
+                return null;
+            }
+            if (from != null) {
+                String input = normalize(from);
+                if (input.equals(endpoint) || input.startsWith(endpoint + "?")) {
+                    return null;
+                }
+            }
+            inputs.add(id + " (" + from + ")");
+        }
+        return "The feed " + feed + " is not where a route starts, so no message would reach the integration: give the"
+               + " id of a route, or the endpoint it starts from: " + inputs;
+    }
+
+    // kafka://refunds and kafka:refunds are the same endpoint
+    private static String normalize(String uri) {
+        return uri.replace("://", ":");
     }
 
     /** The experiment with the number in the report of the status, or null. */

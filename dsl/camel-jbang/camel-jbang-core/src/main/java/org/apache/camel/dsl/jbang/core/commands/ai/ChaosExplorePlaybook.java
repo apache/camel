@@ -91,7 +91,8 @@ public final class ChaosExplorePlaybook {
                 Routes fed over http or from files cannot be fed by an experiment yet: try them only when they \
                 feed themselves
                    - a rule at=dlq fails the dead letter channel, so it fires only when a message goes there: use \
-                the combined suggestions, which add the fault that sends messages there too
+                the combined suggestions, which add the fault that sends messages there too, and expect \
+                <route>:failed<=0, as a message the dead letter channel did not take fails in its route
                    - wait: longer than the within= of the expectation
                    - note: what you make of the result, in one sentence
                 4. Read the result: the verdict (FAIL, PASS or INCONCLUSIVE), the expectations, what the routes \
