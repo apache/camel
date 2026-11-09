@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.grpc.server;
 
+import java.util.List;
 import java.util.Map;
 
 import io.grpc.stub.StreamObserver;
@@ -32,6 +33,7 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
     protected Exchange exchange;
     protected StreamObserver<Object> responseObserver;
     protected Map<String, Object> headers;
+    protected Class<?> responseType;
 
     protected GrpcRequestAbstractStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
                                                 StreamObserver<Object> responseObserver, Map<String, Object> headers) {
@@ -39,5 +41,46 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
         this.consumer = consumer;
         this.responseObserver = responseObserver;
         this.headers = headers;
+    }
+
+    /**
+     * The response message type of the method: a reply of another type is converted to it, or ends the call with an
+     * error.
+     */
+    public Class<?> getResponseType() {
+        return responseType;
+    }
+
+    public void setResponseType(Class<?> responseType) {
+        this.responseType = responseType;
+    }
+
+    /**
+     * Sends the reply of the exchange to the client, converted to the response type of the method.
+     *
+     * @return true if the reply was sent, false if it is not of the response type and the call ended with an error
+     */
+    protected boolean sendResponses(Exchange exchange) {
+        Object responseBody = exchange.getMessage().getBody();
+        if (responseBody instanceof List) {
+            List<?> responseList = (List<?>) responseBody;
+            responseList.forEach(responseObserver::onNext);
+        } else {
+            responseObserver.onNext(responseBody);
+        }
+        return true;
+    }
+
+    /**
+     * Sends the failure of the exchange to the client as an error, like for unary calls.
+     *
+     * @return true if the exchange failed and the error was sent
+     */
+    protected boolean sendFailure(Exchange exchange) {
+        if (exchange.isFailed()) {
+            responseObserver.onError(GrpcMethodHandler.toStatusException(endpoint, exchange.getException()));
+            return true;
+        }
+        return false;
     }
 }

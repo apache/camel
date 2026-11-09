@@ -70,4 +70,7 @@ public interface GrpcConstants {
      */
     String GRPC_BINDABLE_SERVICE_FACTORY_NAME = "grpcBindableServiceFactory";
     String GRPC_RESPONSE_OBSERVER = "grpcResponseObserver";
+    String GRPC_RESPONSE_TYPE = "grpcResponseType";
+    String GRPC_MUTE_EXCEPTION = "grpcMuteException";
+    String GRPC_RESPONSE_OBSERVER_FAILED = "grpcResponseObserverFailed";
 }

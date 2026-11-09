@@ -19,8 +19,10 @@ package org.apache.camel.component.grpc.server;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConstants;
@@ -93,6 +95,31 @@ public class GrpcMethodHandler {
         } else {
             consumer.getAsyncProcessor().process(exchange);
         }
+    }
+
+    /**
+     * Sets the exchange properties that the toRouteControlledStreamObserver producer uses to reply to the client, for a
+     * consumer with routeControlledStreamObserver=true.
+     */
+    static void setRouteControlledProperties(
+            GrpcEndpoint endpoint, Exchange exchange, StreamObserver<Object> responseObserver, Class<?> responseType,
+            AtomicBoolean failed) {
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_TYPE, responseType);
+        exchange.setProperty(GrpcConstants.GRPC_MUTE_EXCEPTION, endpoint.getConfiguration().isMuteException());
+        exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER_FAILED, failed);
+    }
+
+    /**
+     * The error to send to the client when the exchange failed.
+     */
+    public static StatusRuntimeException toStatusException(GrpcEndpoint endpoint, Exception cause) {
+        String description = endpoint.getConfiguration().isMuteException()
+                ? MUTED_DESCRIPTION : cause.getMessage();
+        return Status.INTERNAL
+                .withDescription(description)
+                .withCause(cause)
+                .asRuntimeException();
     }
 
     /**
