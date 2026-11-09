@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import org.apache.camel.ServiceStatus;
@@ -92,6 +93,34 @@ public class ClusterServiceViewTest {
         assertEquals(ServiceStatus.Stopped, view3.getStatus());
         assertEquals(ServiceStatus.Stopped, newView1.getStatus());
         assertEquals(ServiceStatus.Stopped, newView2.getStatus());
+    }
+
+    @Test
+    public void testViewReferencesWhenStartFails() throws Exception {
+        TestClusterService service = new TestClusterService(UUID.randomUUID().toString());
+        service.start();
+
+        // the view cannot be started the first time, for example when the backend is not reachable yet
+        service.failedStarts.set(1);
+        Throwable failure = assertThrows(RuntimeException.class, () -> service.getView("ns1"));
+        while (failure != null && !(failure instanceof IllegalStateException)) {
+            failure = failure.getCause();
+        }
+        assertNotNull(failure, "The failure of the view start must be thrown to the caller");
+
+        // the next user starts the view
+        TestClusterView view = service.getView("ns1").unwrap(TestClusterView.class);
+        assertEquals(ServiceStatus.Started, view.getStatus());
+
+        // and the view is stopped once its only user has released it
+        service.releaseView(view);
+        assertEquals(ServiceStatus.Stopped, view.getStatus());
+
+        // a restart of the service does not start the view nobody uses
+        service.stop();
+        service.start();
+        assertEquals(ServiceStatus.Stopped, view.getStatus());
+        service.stop();
     }
 
     @Test
@@ -212,6 +241,9 @@ public class ClusterServiceViewTest {
 
         @Override
         protected void doStart() {
+            if (((TestClusterService) getClusterService()).failedStarts.getAndUpdate(n -> Math.max(0, n - 1)) > 0) {
+                throw new IllegalStateException("Simulated failure to start view " + getNamespace());
+            }
         }
 
         @Override
@@ -232,6 +264,8 @@ public class ClusterServiceViewTest {
     }
 
     private static class TestClusterService extends AbstractCamelClusterService<TestClusterView> {
+        private final AtomicInteger failedStarts = new AtomicInteger();
+
         public TestClusterService(String id) {
             super(id);
         }
