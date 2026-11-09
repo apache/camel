@@ -25,6 +25,7 @@ camel plugin add [options]
 | `--first-version` | First version of this plugin |  | String
 | `--gav` | Maven group and artifact coordinates. |  | String
 | `--groupId` | Maven groupId | org.apache.camel | String
+| `--plugin-config` | Path to a custom plugin configuration file or directory |  | String
 | `--repo,--repos` | Additional maven repositories to use for downloading the plugin (Use commas to separate multiple repositories) |  | String
 | `--version` | Maven artifact version |  | String
 | `-h,--help` | Display the help and sub-commands |  | boolean

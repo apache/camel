@@ -66,7 +66,9 @@ import picocli.CommandLine;
  */
 public final class PluginHelper {
 
-    public static final String PLUGIN_CONFIG = ".camel-jbang-plugins.json";
+    public static final String PLUGIN_CONFIG_FILE = ".camel-jbang-plugins.json";
+    public static final String PLUGIN_CONFIG_ENV = "CAMEL_CLI_PLUGIN_CONFIG";
+
     public static final String PLUGIN_SERVICE_DIR = "META-INF/services/org/apache/camel/camel-jbang-plugin/";
 
     /**
@@ -84,6 +86,37 @@ public final class PluginHelper {
 
     private PluginHelper() {
         // prevent instantiation of utility class
+    }
+
+    public static Path getCustomPluginConfigPath() {
+        return getCustomPluginConfigPath(null);
+    }
+
+    /**
+     * Resolves the path to the plugin configuration file. Checks, in order:
+     * <ol>
+     * <li>A path set programmatically via method argument</li>
+     * <li>The {@value #PLUGIN_CONFIG_ENV} environment variable</li>
+     * <li>The default {@value #PLUGIN_CONFIG_FILE} in the user home directory</li>
+     * </ol>
+     */
+    public static Path getCustomPluginConfigPath(Path configPath) {
+        Path pluginConfigPath;
+        if (configPath != null) {
+            pluginConfigPath = configPath;
+        } else {
+            String env = System.getenv(PLUGIN_CONFIG_ENV);
+            if (env != null && !env.isBlank()) {
+                pluginConfigPath = Path.of(env);
+            } else {
+                return CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG_FILE);
+            }
+        }
+
+        if (pluginConfigPath.getFileName().toString().endsWith(".json")) {
+            return pluginConfigPath;
+        }
+        return pluginConfigPath.resolve(PLUGIN_CONFIG_FILE);
     }
 
     /**
@@ -657,9 +690,17 @@ public final class PluginHelper {
         return Optional.ofNullable(getPluginConfig()).orElseGet(PluginHelper::createPluginConfig);
     }
 
+    public static JsonObject getOrCreatePluginConfig(Path configPath) {
+        return Optional.ofNullable(getPluginConfig(configPath)).orElseGet(() -> PluginHelper.createPluginConfig(configPath));
+    }
+
     public static JsonObject getPluginConfig() {
+        return getPluginConfig(null);
+    }
+
+    public static JsonObject getPluginConfig(Path configPath) {
         try {
-            Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
+            Path f = getCustomPluginConfigPath(configPath);
             if (Files.exists(f)) {
                 String text = Files.readString(f);
                 return (JsonObject) Jsoner.deserialize(text);
@@ -672,9 +713,17 @@ public final class PluginHelper {
     }
 
     public static JsonObject createPluginConfig() {
-        Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
+        return createPluginConfig(null);
+    }
+
+    public static JsonObject createPluginConfig(Path configPath) {
+        Path f = getCustomPluginConfigPath(configPath);
         JsonObject config = Jsoner.deserialize("{ \"plugins\": {} }", new JsonObject());
         try {
+            Path parent = f.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             Files.writeString(f, config.toJson(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE,
@@ -687,7 +736,11 @@ public final class PluginHelper {
     }
 
     public static void savePluginConfig(JsonObject plugins) {
-        Path f = CommandLineHelper.getHomeDir().resolve(PLUGIN_CONFIG);
+        savePluginConfig(plugins, null);
+    }
+
+    public static void savePluginConfig(JsonObject plugins, Path configPath) {
+        Path f = getCustomPluginConfigPath(configPath);
         try {
             Files.writeString(f, plugins.toJson(),
                     StandardOpenOption.CREATE,
@@ -733,12 +786,12 @@ public final class PluginHelper {
         JsonObject pluginConfig = PluginHelper.getOrCreatePluginConfig();
         JsonObject plugins = pluginConfig.getMap("plugins");
 
-        JsonObject kubePlugin = new JsonObject();
-        kubePlugin.put("name", pluginType.getName());
-        kubePlugin.put("command", pluginType.getCommand());
-        kubePlugin.put("description", pluginType.getDescription());
-        kubePlugin.put("firstVersion", pluginType.getFirstVersion());
-        plugins.put(pluginType.getName(), kubePlugin);
+        JsonObject newPlugin = new JsonObject();
+        newPlugin.put("name", pluginType.getName());
+        newPlugin.put("command", pluginType.getCommand());
+        newPlugin.put("description", pluginType.getDescription());
+        newPlugin.put("firstVersion", pluginType.getFirstVersion());
+        plugins.putIfAbsent(pluginType.getName(), newPlugin);
 
         PluginHelper.savePluginConfig(pluginConfig);
     }

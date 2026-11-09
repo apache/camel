@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -63,7 +64,7 @@ public class PluginHelperTest {
 
     @Test
     public void aPluginCommandIsOfACamelPluginOrOfTheConfiguration() throws Exception {
-        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
         Files.writeString(userConfig, """
                 {
                   "plugins": {
@@ -89,7 +90,7 @@ public class PluginHelperTest {
     @Test
     public void testFallbackToJsonConfig() throws Exception {
         // Create a user plugin config file in home directory
-        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
         String userConfigContent = """
                 {
                   "plugins": {
@@ -118,7 +119,7 @@ public class PluginHelperTest {
 
     @Test
     public void testGetActivePluginsFiltersByTarget() throws Exception {
-        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
         String configContent = """
                 {
                   "plugins": {
@@ -148,7 +149,7 @@ public class PluginHelperTest {
 
     @Test
     public void testGetActivePluginsNoFilterLoadsAll() throws Exception {
-        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
         String configContent = """
                 {
                   "plugins": {
@@ -395,12 +396,126 @@ public class PluginHelperTest {
         assertEquals("", printer.getOutput());
     }
 
+    @Test
+    public void testDefaultPluginConfigPath() {
+        Path expected = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
+        assertEquals(expected, PluginHelper.getCustomPluginConfigPath());
+    }
+
+    @Test
+    public void testCustomPluginConfigPath() {
+        Path custom = tempDir.resolve("custom-plugins.json");
+        assertEquals(custom, PluginHelper.getCustomPluginConfigPath(custom));
+    }
+
+    @Test
+    public void testCustomPluginConfigPathAsDirectory() throws Exception {
+        Path customDir = tempDir.resolve("custom-config-dir");
+        Files.createDirectories(customDir);
+        assertEquals(customDir.resolve(PluginHelper.PLUGIN_CONFIG_FILE), PluginHelper.getCustomPluginConfigPath(customDir));
+    }
+
+    @Test
+    public void testCustomPluginConfigPathReset() {
+        Path custom = tempDir.resolve("custom-plugins.json");
+        assertEquals(custom, PluginHelper.getCustomPluginConfigPath(custom));
+
+        Path expected = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
+        assertEquals(expected, PluginHelper.getCustomPluginConfigPath());
+    }
+
+    @Test
+    public void testCustomPluginConfigPathUsedByGetPluginConfig() throws Exception {
+        Path customConfig = tempDir.resolve("custom-plugins.json");
+        String configContent = """
+                {
+                  "plugins": {
+                    "custom-plugin": {
+                      "name": "custom-plugin",
+                      "command": "custom",
+                      "description": "Custom plugin"
+                    }
+                  }
+                }
+                """;
+        Files.writeString(customConfig, configContent, StandardOpenOption.CREATE);
+
+        JsonObject config = PluginHelper.getPluginConfig(customConfig);
+        assertNotNull(config);
+        JsonObject plugins = config.getMap("plugins");
+        assertNotNull(plugins);
+        assertNotNull(plugins.getMap("custom-plugin"));
+    }
+
+    @Test
+    public void testCustomPluginConfigPathUsedByCreatePluginConfig() {
+        Path customConfig = tempDir.resolve("sub").resolve("custom-plugins.json");
+
+        JsonObject config = PluginHelper.createPluginConfig(customConfig);
+        assertNotNull(config);
+        assertTrue(Files.exists(customConfig));
+    }
+
+    @Test
+    public void testCustomPluginConfigPathUsedBySavePluginConfig() throws Exception {
+        Path customConfig = tempDir.resolve("save-plugins.json");
+
+        PluginHelper.createPluginConfig(customConfig);
+
+        JsonObject config = PluginHelper.getPluginConfig(customConfig);
+        assertNotNull(config);
+        JsonObject plugins = config.getMap("plugins");
+        plugins.put("saved-plugin", new JsonObject());
+
+        PluginHelper.savePluginConfig(config, customConfig);
+
+        String saved = Files.readString(customConfig);
+        assertTrue(saved.contains("saved-plugin"));
+    }
+
+    @Test
+    public void testCustomPathIsolatesFromDefaultConfig() throws Exception {
+        Path defaultConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
+        String defaultContent = """
+                {
+                  "plugins": {
+                    "default-plugin": {
+                      "name": "default-plugin",
+                      "command": "default",
+                      "description": "Default plugin"
+                    }
+                  }
+                }
+                """;
+        Files.writeString(defaultConfig, defaultContent, StandardOpenOption.CREATE);
+
+        Path customConfig = tempDir.resolve("isolated-plugins.json");
+        String customContent = """
+                {
+                  "plugins": {
+                    "isolated-plugin": {
+                      "name": "isolated-plugin",
+                      "command": "isolated",
+                      "description": "Isolated plugin"
+                    }
+                  }
+                }
+                """;
+        Files.writeString(customConfig, customContent, StandardOpenOption.CREATE);
+
+        JsonObject config = PluginHelper.getPluginConfig(customConfig);
+        assertNotNull(config);
+        JsonObject plugins = config.getMap("plugins");
+        assertNotNull(plugins.getMap("isolated-plugin"));
+        assertNull(plugins.getMap("default-plugin"));
+    }
+
     private void writeConfig(JsonObject pluginEntry) throws Exception {
         JsonObject plugins = new JsonObject();
         plugins.put(pluginEntry.getString("name"), pluginEntry);
         JsonObject config = new JsonObject();
         config.put("plugins", plugins);
-        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG);
+        Path userConfig = CommandLineHelper.getHomeDir().resolve(PluginHelper.PLUGIN_CONFIG_FILE);
         Files.writeString(userConfig, config.toJson(), StandardOpenOption.CREATE);
     }
 

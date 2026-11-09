@@ -17,26 +17,46 @@
 
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import java.nio.file.Path;
+
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.util.json.JsonObject;
+import picocli.CommandLine;
 
 /**
- * Base command supports Kubernetes client related options such as namespace or custom kube config option. Automatically
- * applies the options to the Kubernetes client instance that is being used to run commands.
+ * Base command for plugin subcommands. Provides the {@code --plugin-config} option that overrides the default plugin
+ * configuration file location.
  */
 abstract class PluginBaseCommand extends CamelCommand {
+
+    @CommandLine.Option(names = { "--plugin-config" },
+                        description = "Path to a custom plugin configuration file or directory")
+    String pluginConfig;
 
     protected PluginBaseCommand(CamelJBangMain main) {
         super(main);
     }
 
+    private Path pluginConfigPath() {
+        return pluginConfig != null ? Path.of(pluginConfig) : null;
+    }
+
     JsonObject loadConfig() {
+        Path path = pluginConfigPath();
+        if (path != null) {
+            return PluginHelper.getOrCreatePluginConfig(path);
+        }
         return PluginHelper.getOrCreatePluginConfig();
     }
 
     void saveConfig(JsonObject plugins) {
-        PluginHelper.savePluginConfig(plugins);
+        Path path = pluginConfigPath();
+        if (path != null) {
+            PluginHelper.savePluginConfig(plugins, path);
+        } else {
+            PluginHelper.savePluginConfig(plugins);
+        }
     }
 }
