@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.mqtt;
 
+import io.vertx.core.Vertx;
 import io.vertx.mqtt.MqttClientOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -125,7 +126,7 @@ class VertxMqttEndpointTest {
 
     @Test
     void theRegisteredVertxIsUsed() throws Exception {
-        final io.vertx.core.Vertx vertx = io.vertx.core.Vertx.vertx();
+        final Vertx vertx = Vertx.vertx();
         try (CamelContext other = new DefaultCamelContext()) {
             other.getRegistry().bind("vertx", vertx);
             other.start();

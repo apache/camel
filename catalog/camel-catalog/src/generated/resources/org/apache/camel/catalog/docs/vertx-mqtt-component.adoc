@@ -77,7 +77,9 @@ topic of a single message, the producer reads `CamelVertxMqttOverrideQos`, `Came
 
 The consumer and the producer of an endpoint share one connection. It is opened when the first of them starts and
 closed when the last of them stops. Two endpoints are two connections, and since a broker allows one connection per
-client identifier, two endpoints must not share a `clientId`.
+client identifier, two endpoints must not share a `clientId`. Without a `clientId` a connection gets a random one,
+which it keeps for every reconnect. A session the broker keeps (`cleanStart=false`) is only found again after a
+restart of the route with a `clientId` set.
 
 With `automaticReconnect` (the default) a lost connection is opened again, after `reconnectDelay` and then with a
 delay that doubles on every attempt, up to `maxReconnectDelay`, plus up to a fifth of it at random, so that the
@@ -143,7 +145,10 @@ set. With MQTT 5 `receiveMaximum` also limits the messages of quality of service
 are acknowledged.
 
 The consumer and the producer of an endpoint share the connection, so while the consumer holds the client back, the
-acknowledgements for the producer wait as well. Use two endpoints when both carry load.
+acknowledgements for the producer wait as well, and a close for a redelivery fails the messages of quality of service
+1 and 2 the producer is waiting for. When the consumer of an endpoint with `cleanStart=false` stops while its producer
+still uses the connection, the subscription stays at the broker, and messages that arrive meanwhile are acknowledged
+and dropped. Use two endpoints when both carry load.
 
 When the consumer stops, and during a graceful shutdown, it first stops reading, then waits for the exchanges of the
 messages it already received, and only then unsubscribes and disconnects: a message acknowledged on arrival would

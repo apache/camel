@@ -155,6 +155,22 @@ class VertxMqttConnectionTest {
     }
 
     /**
+     * Without a clientId the identifier is random, but the same for every reconnect of a connection: a client per
+     * attempt would otherwise come back with another one and leave the session the broker keeps behind.
+     */
+    @Test
+    void aReconnectKeepsTheGeneratedClientIdentifier() throws Exception {
+        final VertxMqttConnection connection = endpoint(FAST_RECONNECT).acquireConnection();
+        await().atMost(WAIT).until(connection::isConnected);
+        broker.dropConnections();
+        await().atMost(WAIT).until(() -> broker.connects() == 2 && connection.isConnected());
+
+        final List<String> clientIds = broker.clientIds();
+        assertFalse(clientIds.get(0).isEmpty());
+        assertEquals(clientIds.get(0), clientIds.get(1));
+    }
+
+    /**
      * Vert.x keeps the in-flight slots of a client across a lost connection: a client reused for the next connection
      * would refuse every message of quality of service 1 and 2 once maxInflightQueue messages were lost, and with
      * ackTimeout=0 for good.

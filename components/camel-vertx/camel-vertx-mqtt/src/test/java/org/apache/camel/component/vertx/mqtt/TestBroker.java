@@ -79,6 +79,7 @@ final class TestBroker implements AutoCloseable {
     private volatile boolean sessionPresent;
     private final Queue<MqttEndpoint> heldConnects = new ConcurrentLinkedQueue<>();
     private final AtomicInteger subscribes = new AtomicInteger();
+    private final List<String> clientIds = new CopyOnWriteArrayList<>();
     // The packet identifiers of the publications of quality of service 1 and 2, per connection in the order they arrived
     private final Map<MqttEndpoint, List<Integer>> packetIdsByConnection = new ConcurrentHashMap<>();
 
@@ -161,6 +162,7 @@ final class TestBroker implements AutoCloseable {
 
     private void accept(MqttEndpoint endpoint) {
         connects.incrementAndGet();
+        clientIds.add(endpoint.clientIdentifier());
         lastConnect = endpoint;
         final MqttConnectReturnCode refusal = reject;
         if (refusal != null) {
@@ -345,6 +347,13 @@ final class TestBroker implements AutoCloseable {
      */
     void sessionPresent(boolean present) {
         this.sessionPresent = present;
+    }
+
+    /**
+     * @return the client identifier of every CONNECT, in order
+     */
+    List<String> clientIds() {
+        return List.copyOf(clientIds);
     }
 
     /**

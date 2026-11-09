@@ -89,8 +89,10 @@ public class VertxMqttConsumer extends DefaultConsumer implements ShutdownAware 
             redeliveryFrom = null;
         }
         // A pool of its own for every consumer: a shared worker executor of the same name shares its threads
+        // A route may take long: no blocked thread warnings of Vert.x for the worker
         worker = getEndpoint().getComponent().getVertx().createSharedWorkerExecutor(
-                "VertxMqttConsumer[%s]@%x".formatted(getEndpoint().getTopic(), System.identityHashCode(this)), 1);
+                "VertxMqttConsumer[%s]@%x".formatted(getEndpoint().getTopic(), System.identityHashCode(this)), 1,
+                Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         connection = getEndpoint().acquireConnection();
         connection.addFailureListener(failureListener);
         connection.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos(), this::received);
