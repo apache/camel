@@ -2895,6 +2895,14 @@ for another reason, such as a destroyed topic, the consumer reports it to its ex
 default); restart the route to receive messages again. A listener cancelled because the Hazelcast instance or the
 CamelContext is shutting down is only logged at DEBUG.
 
+=== camel-hazelcast - HazelcastRoutePolicy gives up the leadership when its route is removed
+
+A `HazelcastRoutePolicy` kept the Hazelcast lock until the CamelContext stopped, also after its route was removed (with
+`removeRoute`, or by a route reload), so no other node could become the leader and the route ran nowhere in the
+cluster. The policy now releases the lock when the last route that uses it is removed, so another node takes over, and
+it competes for the lock again when a route that uses it is added again (with the same or a new policy instance). So a
+route reloaded on the leader can now move to another node.
+
 === camel-sql, camel-mybatis, camel-jooq - an exchange marked rollback only last is not consumed either
 
 The SQL, MyBatis and jOOQ consumers already left a message unconsumed when the route marked the exchange rollback
