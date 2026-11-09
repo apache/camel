@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mcp.server.vertx.integration;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -67,6 +66,12 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
      * non-conformance routes registered elsewhere in test infrastructure are never accidentally exposed.
      */
     private static final String CONFORMANCE_TAG = "official-conformance";
+
+    /**
+     * The pinned npm package reference for the official conformance suite. Used in both the command and the re-run hint
+     * so bumping the version only requires changing this constant.
+     */
+    private static final String CONFORMANCE_PACKAGE = "@modelcontextprotocol/conformance@0.1.16";
 
     /**
      * Minimal 1×1 red-pixel PNG encoded as Base64, used by the tools-call-image and tools-call-mixed-content scenarios.
@@ -220,26 +225,18 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
 
         List<String> command = buildConformanceCommand(serverUrl, expectedFailures);
 
+        Path log = Files.createTempFile("mcp-conformance", ".log");
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.environment().put("CI", "true");
         pb.redirectErrorStream(true);
+        pb.redirectOutput(log.toFile());
         Process process = pb.start();
         try {
-            StringBuilder output = new StringBuilder();
-            try (InputStream is = process.getInputStream()) {
-                byte[] buffer = new byte[4096];
-                int read;
-                while ((read = is.read(buffer)) != -1) {
-                    String chunk = new String(buffer, 0, read, StandardCharsets.UTF_8);
-                    output.append(chunk);
-                    LOG.info("[conformance] {}", chunk.stripTrailing());
-                }
-            }
-
             boolean finished = process.waitFor(5, TimeUnit.MINUTES);
+            String output = Files.readString(log, StandardCharsets.UTF_8);
+            LOG.info("[conformance]\n{}", output);
             if (!finished) {
-                process.destroyForcibly();
-                fail("Official MCP conformance suite timed out after 5 minutes");
+                fail("Official MCP conformance suite timed out after 5 minutes.\nOutput:\n" + output);
             }
 
             int exitCode = process.exitValue();
@@ -247,11 +244,12 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
                 fail("Official MCP conformance suite failed (exit " + exitCode + ").\n"
                      + "Output:\n" + output + "\n"
                      + "To register a known failure add the scenario name to " + expectedFailures.getFileName() + ".\n"
-                     + "Re-run manually: npx @modelcontextprotocol/conformance server"
+                     + "Re-run manually: npx " + CONFORMANCE_PACKAGE + " server"
                      + " --url " + serverUrl
                      + " --expected-failures " + expectedFailures.toAbsolutePath());
             }
         } finally {
+            process.descendants().forEach(ProcessHandle::destroyForcibly);
             process.destroyForcibly();
         }
     }
@@ -277,18 +275,20 @@ class OfficialMcpConformanceIT extends CamelTestSupport {
         return Paths.get("expected-failures.yaml");
     }
 
-    private static List<String> buildConformanceCommand(String serverUrl, Path expectedFailures) {
+    private static List<String> buildConformanceCommand(String serverUrl, Path expectedFailures) throws Exception {
+        if (!Files.exists(expectedFailures)) {
+            fail("expected-failures.yaml not found at " + expectedFailures.toAbsolutePath()
+                 + " — cannot run the conformance suite without a baseline");
+        }
         List<String> cmd = new ArrayList<>();
         cmd.add("npx");
         cmd.add("--yes");
-        cmd.add("@modelcontextprotocol/conformance@0.1.16");
+        cmd.add(CONFORMANCE_PACKAGE);
         cmd.add("server");
         cmd.add("--url");
         cmd.add(serverUrl);
-        if (Files.exists(expectedFailures)) {
-            cmd.add("--expected-failures");
-            cmd.add(expectedFailures.toAbsolutePath().toString());
-        }
+        cmd.add("--expected-failures");
+        cmd.add(expectedFailures.toAbsolutePath().toString());
         return cmd;
     }
 }
