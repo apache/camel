@@ -452,7 +452,26 @@ public final class ChaosManager {
         if (target != null) {
             answer.add(target);
         }
+        String dead = deadLetterOfFailedExpectation(rule);
+        if (dead != null) {
+            String route = rule.expectation.route;
+            answer.add("expects failed exchanges in route " + route + ", but its error handler is the dead letter channel "
+                       + dead + ", which handles what fails there, so nothing fails: expect=" + route
+                       + ":handled<=0 counts what the dead letter channel handled");
+        }
         return answer;
+    }
+
+    /**
+     * The dead letter channel of the route of an expectation of failed exchanges ({@code expect=parked:failed<=0}), as
+     * such an expectation is always met there (CAMEL-26790), or null.
+     */
+    private String deadLetterOfFailedExpectation(ChaosRule rule) {
+        if (rule.expectation == null || rule.expectation.kind != ChaosRule.Expectation.Kind.FAILED) {
+            return null;
+        }
+        Route route = camelContext.getRoute(rule.expectation.route);
+        return route != null ? ChaosAdvisor.deadLetterUri(route) : null;
     }
 
     /**
