@@ -65,3 +65,11 @@ jobs:
         run: |
           cd .github/actions/incremental-build
           uv run --with defusedxml python3 -m unittest discover --verbose
+
+      - name: Test the incremental build shell scripts
+        shell: bash
+        run: |
+          cd .github/actions/incremental-build
+          for test in *_test.sh; do
+            bash "$test"
+          done

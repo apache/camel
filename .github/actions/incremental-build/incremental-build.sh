@@ -39,6 +39,8 @@ trap '' PIPE
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=reactor_timing.sh
 source "${SCRIPT_DIR}/reactor_timing.sh"
+# shellcheck source=pr_diff.sh
+source "${SCRIPT_DIR}/pr_diff.sh"
 
 echo "Using MVND_OPTS=$MVND_OPTS"
 echo "Using MAVEN_EXTRA_ARGS=${MAVEN_EXTRA_ARGS:-}"
@@ -116,29 +118,6 @@ hasLabel() {
     -H "Authorization: Bearer ${GITHUB_TOKEN}" \
     -H "X-GitHub-Api-Version: 2022-11-28" \
     "https://api.github.com/repos/${repository}/issues/${issueNumber}/labels" | jq -r '.[].name' | { grep -c "$label" || true; }
-}
-
-# Fetch the PR diff from the GitHub API.  Returns the full unified diff.
-fetchDiff() {
-  local prId="$1"
-  local repository="$2"
-
-  local diff_output
-  diff_output=$(curl -s -w "\n%{http_code}" \
-    -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-    -H "Accept: application/vnd.github.v3.diff" \
-    "https://api.github.com/repos/${repository}/pulls/${prId}")
-
-  local http_code
-  http_code=$(echo "$diff_output" | tail -n 1)
-  local diff_body
-  diff_body=$(echo "$diff_output" | sed '$d')
-
-  if [[ "$http_code" -lt 200 || "$http_code" -ge 300 || -z "$diff_body" ]]; then
-    echo "WARNING: Failed to fetch PR diff (HTTP $http_code). Falling back to full build." >&2
-    return
-  fi
-  echo "$diff_body"
 }
 
 # ── POM dependency analysis (previously detect-dependencies) ───────────
@@ -744,19 +723,23 @@ main() {
     fi
   fi
 
-  # Fetch the diff (PR diff via API, or git diff for push builds)
+  # Fetch the diff (PR diff via API or the local checkout, or git diff for push builds)
   local diff_body
   if [ -n "$prId" ]; then
     echo "Fetching PR #${prId} diff..."
-    diff_body=$(fetchDiff "$prId" "$repository")
+    diff_body=$(fetchDiff "$prId" "$repository" "${GITHUB_BASE_REF:-main}")
+    if [ -z "$diff_body" ]; then
+      # Without the diff no module is selected: fail rather than pass without testing anything
+      echo "ERROR: Could not get the diff of PR #${prId}, so the modules to test are unknown"
+      exit 1
+    fi
   else
     echo "No PR ID, using git diff HEAD~1..."
     diff_body=$(git diff HEAD~1 2>/dev/null || true)
-  fi
-
-  if [ -z "$diff_body" ]; then
-    echo "Could not fetch diff, skipping tests"
-    exit 0
+    if [ -z "$diff_body" ]; then
+      echo "Could not get the diff of HEAD~1, skipping tests"
+      exit 0
+    fi
   fi
 
   # ── Step 1: File-path analysis ──
