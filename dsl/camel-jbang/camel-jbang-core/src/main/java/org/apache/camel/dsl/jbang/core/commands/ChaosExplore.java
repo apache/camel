@@ -253,8 +253,7 @@ public class ChaosExplore extends CamelCommand {
         List<Object> experiments = exploration.getCollection("experiments");
         if (experiments != null) {
             for (Object o : experiments) {
-                JsonObject e = (JsonObject) o;
-                if (!"FAIL".equals(e.getString("verdict"))) {
+                if (!(o instanceof JsonObject e) || !"FAIL".equals(e.getString("verdict"))) {
                     continue;
                 }
                 Path scenario = dir.resolve("explore-" + stamp + "-" + e.getIntegerOrDefault("number", 0) + ".chaos");
@@ -321,7 +320,9 @@ public class ChaosExplore extends CamelCommand {
         List<Object> expectations = experiment.getCollection("expectations");
         if (expectations != null) {
             for (Object o : expectations) {
-                JsonObject x = (JsonObject) o;
+                if (!(o instanceof JsonObject x)) {
+                    continue;
+                }
                 sb.append("# expect ").append(x.getString("expect")).append(": ").append(x.getString("state"))
                         .append(", ").append(x.getString("value")).append('\n');
             }
@@ -361,7 +362,9 @@ public class ChaosExplore extends CamelCommand {
                   + (count == 1 ? " experiment" : " experiments") + ", " + failed + " failed");
         if (experiments != null) {
             for (Object o : experiments) {
-                lines.addAll(ListChaos.experimentLines((JsonObject) o, "  "));
+                if (o instanceof JsonObject e) {
+                    lines.addAll(ListChaos.experimentLines(e, "  "));
+                }
             }
         }
         return lines;
