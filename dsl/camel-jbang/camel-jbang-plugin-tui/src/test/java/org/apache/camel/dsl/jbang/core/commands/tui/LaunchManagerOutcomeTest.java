@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,6 +41,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * and camel_control waits for how it went.
  */
 @DisabledOnOs(OS.WINDOWS)
+// it moves the home directory of the CLI, where other tests would look for theirs
+@Isolated
 class LaunchManagerOutcomeTest {
 
     @TempDir

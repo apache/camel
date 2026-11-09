@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
+import dev.tamboui.layout.Padding;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
@@ -63,10 +64,19 @@ final class AboutView {
     private static final long RELOAD_MILLIS = 10_000;
     private static final int HAPPENED_SECONDS = 300;
     private static final String BLOCKS = " ▁▂▃▄▅▆▇█";
-    // the strips have this many columns, whatever the zoom
+    // the strips have at least this many columns, whatever the zoom, and as many as the width allows up to the most,
+    // a column taking a whole number of seconds
     private static final int STRIP_COLUMNS = 60;
-    // the sparklines of In and Out
+    private static final int MAX_STRIP_COLUMNS = 150;
+    // what the line of a route has after its strip: its exchanges, an open circuit breaker, the worst that happened
+    private static final int STRIP_NOTES = 50;
+    // the sparklines of In and Out, wider in a wider column
     private static final int SPARK_WIDTH = 14;
+    private static final int MAX_SPARK_WIDTH = 30;
+    // the strips of What happened are this many rows high at most, on a tall screen
+    private static final int MAX_STRIP_ROWS = 2;
+    // with this many rows to spare, the sections get room around them
+    private static final int ROOMY_ROWS = 12;
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.systemDefault());
 
     private final MonitorContext ctx;
@@ -82,6 +92,8 @@ final class AboutView {
     // -1 follows the last second recorded
     private int zoom = TimelineTab.WINDOWS.length - 1;
     private long stripsEnd = -1;
+    // the columns of the strips as last drawn, for the title of What happened
+    private int stripColumns = STRIP_COLUMNS;
     // the line of In, Routes or Out the cursor is on (↑ ↓), in the order of the columns; -1 when none is
     private int cursor = -1;
     private volatile List<Target> targets = List.of();
@@ -393,20 +405,132 @@ final class AboutView {
         return info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
     }
 
+    /**
+     * In, Routes and Out: their lines, and what each line is about (null for a line about nothing, as a sparkline).
+     */
+    private record Columns(
+            List<Line> in, List<Line> routes, List<Line> out, List<Target> inTargets, List<Target> routeTargets,
+            List<Target> outTargets) {
+
+        int rows() {
+            return Math.max(1, Math.max(in.size(), Math.max(routes.size(), out.size())));
+        }
+    }
+
     void render(Frame frame, Rect area, IntegrationInfo info) {
         // the sources are read in the background, and what they say is set on the render thread
         load(info, ctx.runner != null ? ctx.runner::runOnRenderThread : Runnable::run);
         ProjectOverview.Overview o = overview;
         About.Model m = model;
+        int width = area.width();
+        List<Line> head = head(info, o, width);
+        int spark = sparkWidth(width);
+        Columns columns = columns(o, m, info, spark, false);
+        List<Line> status = status(info, width);
+        List<Line> strips = routeStrips(info, width - 2, false, 1);
+        int compact = head.size() + 2 + columns.rows() + 2 + status.size() + 1 + (strips.isEmpty() ? 0 : strips.size() + 2);
+        // a tall screen: room around the sections, a blank line between the entries of In and Out, and between the
+        // routes of What happened when there is room for that too
+        boolean roomy = area.height() - compact >= ROOMY_ROWS;
+        if (roomy) {
+            head.add(1, Line.from(Span.raw("")));
+            columns = columns(o, m, info, spark, true);
+            // the routes, and the axis under them
+            int routes = Math.max(0, strips.size() - 1);
+            boolean spaced = area.height() - compact - ROOMY_ROWS >= routes - 1;
+            int used = head.size() + 2 + 1 + columns.rows() + 4 + 1 + status.size() + 1
+                       + (routes == 0 ? 0 : routes + 1 + (spaced ? routes - 1 : 0) + 4) + 2;
+            // the rows left over make the strips taller, keeping a little room under the keys
+            int tall = routes == 0 ? 1 : Math.max(1, Math.min(MAX_STRIP_ROWS, 1 + (area.height() - used - 2) / routes));
+            strips = routeStrips(info, width - 4, spaced, tall);
+        }
+        select(columns, m);
+        String name = " " + (info.name != null ? info.name : info.pid) + " ";
+        if (roomy) {
+            renderRoomy(frame, area, info, name, head, columns, status, strips);
+        } else {
+            status.add(next());
+            renderCompact(frame, area, info, name, head, columns, status, strips);
+        }
+    }
+
+    private void renderCompact(
+            Frame frame, Rect area, IntegrationInfo info, String name, List<Line> head, Columns columns,
+            List<Line> status, List<Line> strips) {
+        int headHeight = head.size() + 2;
+        int available = Math.max(3, area.height() - headHeight - status.size());
+        int columnHeight = Math.min(columns.rows() + 2, available);
+        int statusHeight = status.size();
+        int happenedHeight = strips.isEmpty()
+                ? 0 : Math.max(0, Math.min(strips.size() + 2, area.height() - headHeight - columnHeight - statusHeight));
+        List<Rect> rows = Layout.vertical()
+                .constraints(Constraint.length(headHeight), Constraint.length(columnHeight), Constraint.length(statusHeight),
+                        Constraint.length(happenedHeight), Constraint.fill())
+                .split(area);
+        frame.renderWidget(Paragraph.builder().text(Text.from(head)).block(block(name, Padding.NONE)).build(), rows.get(0));
+        renderColumns(frame, rows.get(1), columns, Padding.NONE, 0);
+        frame.renderWidget(Paragraph.builder().text(Text.from(status)).build(), rows.get(2));
+        if (happenedHeight > 2) {
+            frame.renderWidget(Paragraph.builder().text(Text.from(strips))
+                    .block(block(happenedTitle(info), Padding.NONE)).build(), rows.get(3));
+        }
+    }
+
+    /**
+     * A tall screen: a blank line between the sections and inside the panels, the panels apart, the status lines in
+     * line with what the panels have, and the keys under What happened.
+     */
+    private void renderRoomy(
+            Frame frame, Rect area, IntegrationInfo info, String name, List<Line> head, Columns columns,
+            List<Line> status, List<Line> strips) {
+        int happenedHeight = strips.isEmpty() ? 0 : strips.size() + 4;
+        List<Rect> rows = Layout.vertical()
+                .constraints(Constraint.length(head.size() + 2), Constraint.length(1), Constraint.length(columns.rows() + 4),
+                        Constraint.length(1), Constraint.length(status.size()), Constraint.length(1),
+                        Constraint.length(happenedHeight), Constraint.length(1), Constraint.length(1), Constraint.fill())
+                .split(area);
+        frame.renderWidget(Paragraph.builder().text(Text.from(head)).block(block(name, Padding.horizontal(1))).build(),
+                rows.get(0));
+        renderColumns(frame, rows.get(2), columns, Padding.uniform(1), 1);
+        frame.renderWidget(Paragraph.builder().text(Text.from(status)).build(), indent(rows.get(4)));
+        if (happenedHeight > 2) {
+            frame.renderWidget(Paragraph.builder().text(Text.from(strips))
+                    .block(block(happenedTitle(info), Padding.uniform(1))).build(), rows.get(6));
+        }
+        frame.renderWidget(Paragraph.builder().text(Text.from(next())).build(), indent(rows.get(8)));
+    }
+
+    /** The area without the two columns the panels have before their text: their border and their padding. */
+    private static Rect indent(Rect r) {
+        return new Rect(r.x() + 2, r.y(), Math.max(0, r.width() - 2), r.height());
+    }
+
+    private static void renderColumns(Frame frame, Rect area, Columns columns, Padding padding, int spacing) {
+        // by hand: the layout leaves the last column short of the edge when spaced
+        int w0 = area.width() * 28 / 100;
+        int w1 = area.width() * 42 / 100;
+        int w2 = Math.max(0, area.width() - w0 - w1 - 2 * spacing);
+        List<Rect> cols = List.of(new Rect(area.x(), area.y(), w0, area.height()),
+                new Rect(area.x() + w0 + spacing, area.y(), w1, area.height()),
+                new Rect(area.x() + w0 + w1 + 2 * spacing, area.y(), w2, area.height()));
+        frame.renderWidget(Paragraph.builder().text(Text.from(columns.in())).block(block(" In ", padding)).build(),
+                cols.get(0));
+        frame.renderWidget(Paragraph.builder().text(Text.from(columns.routes())).block(block(" Routes ", padding)).build(),
+                cols.get(1));
+        frame.renderWidget(Paragraph.builder().text(Text.from(columns.out())).block(block(" Out ", padding)).build(),
+                cols.get(2));
+    }
+
+    /** What the integration is, and its purpose: the comment at the top of its main file. */
+    private List<Line> head(IntegrationInfo info, ProjectOverview.Overview o, int width) {
         String p = purpose;
         String pFrom = purposeFrom;
-        int width = area.width();
         List<Line> head = new ArrayList<>();
         head.add(Line.from(Span.raw(" "), Span.raw(meta(info, o)),
                 Span.styled(info.vanishing ? "  ○ stopped" : "  ● running",
                         info.vanishing ? Theme.muted() : Theme.success())));
         if (p != null) {
-            for (String l : wrap(p, Math.max(20, width - 6), 2)) {
+            for (String l : wrap(p, Math.max(20, width - 8), 2)) {
                 head.add(Line.from(Span.styled(" " + l, Style.EMPTY.bold())));
             }
             head.add(Line.from(Span.styled(" " + pFrom, Theme.muted())));
@@ -417,32 +541,26 @@ final class AboutView {
         } else {
             head.add(Line.from(Span.styled(error != null ? " " + error : " Reading the sources…", Theme.muted())));
         }
+        return head;
+    }
 
-        List<Line> in = new ArrayList<>();
-        List<Line> routes = new ArrayList<>();
-        List<Line> out = new ArrayList<>();
-        List<Target> inTargets = new ArrayList<>();
-        List<Target> routeTargets = new ArrayList<>();
-        List<Target> outTargets = new ArrayList<>();
-        if (o != null && m != null) {
-            columns(m, info, in, routes, out, inTargets, routeTargets, outTargets);
-        }
-        // the cursor goes down In, then Routes, then Out
+    /** The lines the cursor goes over, down In, then Routes, then Out; the line it is on in the selection colour. */
+    private void select(Columns c, About.Model m) {
         List<Target> all = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         List<String> inLabels = new ArrayList<>();
-        if (o != null && m != null) {
+        if (m != null) {
             m.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(e.label()));
         }
         String[] names = { "in", "route", "out" };
-        List<List<Target>> columns = List.of(inTargets, routeTargets, outTargets);
-        for (int c = 0; c < columns.size(); c++) {
+        List<List<Target>> columns = List.of(c.inTargets(), c.routeTargets(), c.outTargets());
+        for (int i = 0; i < columns.size(); i++) {
             int n = 0;
-            for (Target t : columns.get(c)) {
+            for (Target t : columns.get(i)) {
                 if (t != null) {
                     all.add(t);
                     // what an agent sees of the line: its column, and what it is about
-                    labels.add(names[c] + ": " + (c == 0 && n < inLabels.size() ? inLabels.get(n) + " → " + t.routeId()
+                    labels.add(names[i] + ": " + (i == 0 && n < inLabels.size() ? inLabels.get(n) + " → " + t.routeId()
                             : t.endpoint() != null ? t.endpoint() + " from " + t.routeId() : t.routeId()));
                     n++;
                 }
@@ -453,34 +571,7 @@ final class AboutView {
         if (cursor >= all.size()) {
             cursor = all.size() - 1;
         }
-        highlight(in, inTargets, routes, routeTargets, out, outTargets);
-        int columnRows = Math.max(1, Math.max(in.size(), Math.max(routes.size(), out.size())));
-        List<Line> strips = strips(info, width);
-        int headHeight = head.size() + 2;
-        int available = Math.max(3, area.height() - headHeight - strips.size());
-        int columnHeight = Math.min(columnRows + 2, available);
-
-        List<Line> routeStrips = routeStrips(info, width);
-        int stripsHeight = strips.size();
-        int happenedHeight = routeStrips.isEmpty()
-                ? 0 : Math.max(0, Math.min(routeStrips.size() + 2, area.height() - headHeight - columnHeight - stripsHeight));
-        List<Rect> rows = Layout.vertical()
-                .constraints(Constraint.length(headHeight), Constraint.length(columnHeight), Constraint.length(stripsHeight),
-                        Constraint.length(happenedHeight), Constraint.fill())
-                .split(area);
-        if (happenedHeight > 2) {
-            frame.renderWidget(Paragraph.builder().text(Text.from(routeStrips))
-                    .block(block(happenedTitle(info))).build(), rows.get(3));
-        }
-        frame.renderWidget(Paragraph.builder().text(Text.from(head))
-                .block(block(" " + (info.name != null ? info.name : info.pid) + " ")).build(), rows.get(0));
-        List<Rect> cols = Layout.horizontal()
-                .constraints(Constraint.percentage(28), Constraint.percentage(42), Constraint.percentage(30))
-                .split(rows.get(1));
-        frame.renderWidget(Paragraph.builder().text(Text.from(in)).block(block(" In ")).build(), cols.get(0));
-        frame.renderWidget(Paragraph.builder().text(Text.from(routes)).block(block(" Routes ")).build(), cols.get(1));
-        frame.renderWidget(Paragraph.builder().text(Text.from(out)).block(block(" Out ")).build(), cols.get(2));
-        frame.renderWidget(Paragraph.builder().text(Text.from(strips)).build(), rows.get(2));
+        highlight(c.in(), c.inTargets(), c.routes(), c.routeTargets(), c.out(), c.outTargets());
     }
 
     /**
@@ -497,11 +588,15 @@ final class AboutView {
         if (seconds < Timeline.SECONDS) {
             keys += ", ← → move";
         }
-        return " What happened ─ " + when + ", a column is " + seconds / STRIP_COLUMNS + "s ─ " + keys
+        return " What happened ─ " + when + ", a column is " + seconds / stripColumns + "s ─ " + keys
                + ", 4 for each second ";
     }
 
-    private List<Line> routeStrips(IntegrationInfo info, int width) {
+    /**
+     * A strip per route, {@code tall} rows high (the blocks stacked, so a strip of 2 rows has 16 levels), with a blank
+     * line between the routes when spaced, and the time axis under them.
+     */
+    private List<Line> routeStrips(IntegrationInfo info, int width, boolean spaced, int tall) {
         List<Line> lines = new ArrayList<>();
         long last = ctx.timeline.endSecond(info.pid);
         if (last < 0) {
@@ -512,12 +607,18 @@ final class AboutView {
         List<String> order = routeOrder(info);
         // the names, then one space: every line starts its columns at the same place
         int label = Math.min(18, Math.max(8, order.stream().mapToInt(String::length).max().orElse(8))) + 4;
-        int per = seconds / STRIP_COLUMNS;
-        int columns = STRIP_COLUMNS;
+        int columns = stripColumns(seconds, width - label - STRIP_NOTES);
+        stripColumns = columns;
+        int per = seconds / columns;
+        // the columns that end before the integration started are blank, as the sparklines have them, where a dot is
+        // a time it ran and did nothing (uptime is the time it started)
+        long startOffset = info.uptime > 0 ? info.uptime / 1000 - (end - seconds + 1) : 0;
+        int before = (int) Math.max(0, Math.min(columns, startOffset / per));
         for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, order, end, seconds)) {
-            List<Span> spans = new ArrayList<>();
+            if (spaced && !lines.isEmpty()) {
+                lines.add(Line.from(Span.raw("")));
+            }
             String name = r.route().length() > label - 3 ? r.route().substring(0, label - 4) + "…" : r.route();
-            spans.add(Span.raw("   " + name + " ".repeat(Math.max(1, label - 3 - name.length()))));
             long max = 1;
             // completed, recovered, handled, failed, down, redelivery attempts: the height is the exchanges done, the
             // attempts only colour the column (an exchange retried many times is still one exchange)
@@ -535,51 +636,18 @@ final class AboutView {
             for (long[] c : col) {
                 max = Math.max(max, c[0] + c[1] + c[2] + c[3]);
             }
-            for (long[] c : col) {
-                long t = c[0] + c[1] + c[2] + c[3];
-                if (c[4] > 0) {
-                    spans.add(Span.styled("░", Theme.error()));
-                } else if (c[6] > 0) {
-                    // a circuit breaker of the route was open (half open dim), as on the Timeline
-                    spans.add(Span.styled("▒", c[6] >= 2 ? Theme.notice() : Theme.muted()));
-                } else if (t == 0 && c[5] == 0) {
-                    spans.add(Span.styled("·", Theme.muted()));
-                } else {
-                    int level = (int) Math.max(1, Math.min(8, Math.ceil(t * 8.0 / max)));
-                    Style style = c[3] > 0 ? Theme.error()
-                            : c[2] > 0 ? Style.EMPTY.fg(Theme.ACCENT)
-                            : c[1] > 0 || c[5] > 0 ? Theme.warning() : Theme.success();
-                    spans.add(Span.styled(String.valueOf(BLOCKS.charAt(level)), style));
+            List<List<Span>> rows = stripCells(col, max, tall, before);
+            // the name and the notes on the bottom row, where the blocks stand
+            for (int row = 0; row < tall; row++) {
+                List<Span> spans = new ArrayList<>();
+                spans.add(Span.raw(row == tall - 1
+                        ? "   " + name + " ".repeat(Math.max(1, label - 3 - name.length())) : " ".repeat(label)));
+                spans.addAll(rows.get(row));
+                if (row == tall - 1) {
+                    spans.addAll(stripNotes(info, r, last, end, seconds, width - label - columns - 40));
                 }
+                lines.add(Line.from(spans));
             }
-            long done = r.total(r.completed()) + r.total(r.recovered()) + r.total(r.handled()) + r.total(r.failed());
-            spans.add(Span.styled("  " + done, Theme.success()));
-            if (r.openSeconds() > 0) {
-                spans.add(Span.styled("  ⚡ open " + r.openSeconds() + "s " + ago(last - lastAt(r.open(), end, seconds)),
-                        Theme.notice()));
-            }
-            // the worst that happened, when it last did, and for a recovery the failure it recovered from (a failed or
-            // handled one has its cause on the Last 5m line and on the Timeline)
-            long[] worst = r.total(r.failed()) > 0 ? r.failed() : r.total(r.handled()) > 0 ? r.handled()
-                    : r.total(r.recovered()) > 0 ? r.recovered() : null;
-            if (worst != null) {
-                String what = worst == r.failed() ? " failed" : worst == r.handled() ? " handled" : " recovered";
-                Style style = worst == r.failed() ? Theme.error()
-                        : worst == r.handled() ? Style.EMPTY.fg(Theme.ACCENT) : Theme.warning();
-                long at = lastAt(worst, end, seconds);
-                spans.add(Span.styled("  " + r.total(worst) + what, style));
-                spans.add(Span.styled(" " + ago(last - at), Theme.muted()));
-                String cause = worst == r.recovered() ? recoveredFrom(info, r.route(), end - seconds + 1, end) : null;
-                if (cause != null) {
-                    int room = width - label - columns - 40;
-                    if (room > 10) {
-                        spans.add(Span.styled(" · ", Theme.muted()));
-                        spans.add(Span.styled(cause.length() > room ? cause.substring(0, room - 1) + "…" : cause,
-                                Theme.warning()));
-                    }
-                }
-            }
-            lines.add(Line.from(spans));
         }
         // the time axis: the first second of the window and the last
         String from = TIME.format(Instant.ofEpochSecond(end - seconds + 1));
@@ -588,6 +656,89 @@ final class AboutView {
                                         + " ".repeat(Math.max(1, columns - from.length() - to.length())) + to,
                 Theme.muted())));
         return lines;
+    }
+
+    /**
+     * The cells of a strip, row by row from the top: a column coloured by the worst that happened in it, an outage and
+     * an open circuit breaker the full height, nothing a dot at the bottom, and the first columns blank (from before
+     * the integration started).
+     */
+    private static List<List<Span>> stripCells(long[][] col, long max, int tall, int before) {
+        List<List<Span>> rows = new ArrayList<>();
+        for (int row = 0; row < tall; row++) {
+            rows.add(new ArrayList<>());
+        }
+        for (int k = 0; k < col.length; k++) {
+            long[] c = col[k];
+            long t = c[0] + c[1] + c[2] + c[3];
+            for (int row = 0; row < tall; row++) {
+                boolean bottom = row == tall - 1;
+                Span cell;
+                if (c[4] > 0) {
+                    cell = Span.styled("░", Theme.error());
+                } else if (c[6] > 0) {
+                    // a circuit breaker of the route was open (half open dim), as on the Timeline
+                    cell = Span.styled("▒", c[6] >= 2 ? Theme.notice() : Theme.muted());
+                } else if (t == 0 && c[5] == 0) {
+                    cell = bottom && k >= before ? Span.styled("·", Theme.muted()) : Span.raw(" ");
+                } else {
+                    int level = (int) Math.max(1, Math.min(8L * tall, Math.ceil(t * 8.0 * tall / max)));
+                    int here = Math.max(0, Math.min(8, level - (tall - 1 - row) * 8));
+                    Style style = c[3] > 0 ? Theme.error()
+                            : c[2] > 0 ? Style.EMPTY.fg(Theme.ACCENT)
+                            : c[1] > 0 || c[5] > 0 ? Theme.warning() : Theme.success();
+                    cell = Span.styled(String.valueOf(BLOCKS.charAt(here)), style);
+                }
+                rows.get(row).add(cell);
+            }
+        }
+        return rows;
+    }
+
+    /**
+     * What comes after the strip of a route: its exchanges, the seconds its circuit breaker was open, and the worst
+     * that happened, when it last did, and for a recovery the failure it recovered from (a failed or handled one has
+     * its cause on the Last 5m line and on the Timeline).
+     */
+    private List<Span> stripNotes(IntegrationInfo info, Timeline.RouteSeries r, long last, long end, int seconds, int room) {
+        List<Span> spans = new ArrayList<>();
+        long done = r.total(r.completed()) + r.total(r.recovered()) + r.total(r.handled()) + r.total(r.failed());
+        spans.add(Span.styled("  " + done, Theme.success()));
+        if (r.openSeconds() > 0) {
+            spans.add(Span.styled("  ⚡ open " + r.openSeconds() + "s " + ago(last - lastAt(r.open(), end, seconds)),
+                    Theme.notice()));
+        }
+        long[] worst = r.total(r.failed()) > 0 ? r.failed() : r.total(r.handled()) > 0 ? r.handled()
+                : r.total(r.recovered()) > 0 ? r.recovered() : null;
+        if (worst != null) {
+            String what = worst == r.failed() ? " failed" : worst == r.handled() ? " handled" : " recovered";
+            Style style = worst == r.failed() ? Theme.error()
+                    : worst == r.handled() ? Style.EMPTY.fg(Theme.ACCENT) : Theme.warning();
+            long at = lastAt(worst, end, seconds);
+            spans.add(Span.styled("  " + r.total(worst) + what, style));
+            spans.add(Span.styled(" " + ago(last - at), Theme.muted()));
+            String cause = worst == r.recovered() ? recoveredFrom(info, r.route(), end - seconds + 1, end) : null;
+            if (cause != null && room > 10) {
+                spans.add(Span.styled(" · ", Theme.muted()));
+                spans.add(Span.styled(cause.length() > room ? cause.substring(0, room - 1) + "…" : cause,
+                        Theme.warning()));
+            }
+        }
+        return spans;
+    }
+
+    /**
+     * The columns of the strips: the most that fit the room, up to {@value #MAX_STRIP_COLUMNS}, with a whole number of
+     * seconds in each; at least {@value #STRIP_COLUMNS}.
+     */
+    static int stripColumns(int seconds, int room) {
+        int best = Math.min(STRIP_COLUMNS, seconds);
+        for (int c = best + 1; c <= Math.min(MAX_STRIP_COLUMNS, Math.min(seconds, room)); c++) {
+            if (seconds % c == 0) {
+                best = c;
+            }
+        }
+        return best;
     }
 
     /** The last second of the window with a value, or the end. */
@@ -676,9 +827,23 @@ final class AboutView {
         }
     }
 
-    private void columns(
-            About.Model m, IntegrationInfo info, List<Line> in, List<Line> routes, List<Line> out,
-            List<Target> inTargets, List<Target> routeTargets, List<Target> outTargets) {
+    private Columns columns(ProjectOverview.Overview o, About.Model m, IntegrationInfo info, int spark, boolean spaced) {
+        Columns c = new Columns(
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>());
+        if (o != null && m != null) {
+            columns(m, info, spark, spaced, c);
+        }
+        return c;
+    }
+
+    private void columns(About.Model m, IntegrationInfo info, int spark, boolean spaced, Columns c) {
+        List<Line> in = c.in();
+        List<Line> routes = c.routes();
+        List<Line> out = c.out();
+        List<Target> inTargets = c.inTargets();
+        List<Target> routeTargets = c.routeTargets();
+        List<Target> outTargets = c.outTargets();
         Map<String, Long> totals = new LinkedHashMap<>();
         for (RouteInfo r : info.routes) {
             if (r.routeId != null) {
@@ -686,6 +851,10 @@ final class AboutView {
             }
         }
         for (About.In e : m.in()) {
+            if (spaced && !in.isEmpty()) {
+                in.add(Line.from(Span.raw("")));
+                inTargets.add(null);
+            }
             Long total = e.route() != null ? totals.get(e.route()) : null;
             in.add(Line.from(Span.raw(" " + icon(e.kind()) + " "), Span.styled(e.label(), Style.EMPTY.bold()),
                     Span.styled(total != null ? "  " + total : "", Theme.success())));
@@ -693,7 +862,7 @@ final class AboutView {
             // the exchanges of the route it starts over the last minutes, and the rate now
             long[] perSecond = e.route() != null ? routePerSecond(info, e.route()) : null;
             if (perSecond != null) {
-                in.add(sparkLine("   ", perSecond));
+                in.add(sparkLine("   ", perSecond, spark));
                 inTargets.add(null);
             }
         }
@@ -719,6 +888,10 @@ final class AboutView {
         }
 
         for (About.Out s : m.out()) {
+            if (spaced && !out.isEmpty()) {
+                out.add(Line.from(Span.raw("")));
+                outTargets.add(null);
+            }
             Long hits = outHits(info, s.uri(), s.route());
             out.add(Line.from(Span.raw(" " + icon(s.category()) + " "), Span.styled(shortUri(s.uri()), Style.EMPTY.bold()),
                     Span.styled(hits != null ? "  " + hits : "", Theme.success())));
@@ -729,7 +902,8 @@ final class AboutView {
             // minutes, where a history of the sends would start with the TUI
             long[] perSecond = s.route() != null ? routePerSecond(info, s.route()) : null;
             if (perSecond != null) {
-                from.addAll(sparkLine("  ", perSecond).spans());
+                from.addAll(sparkLine("  ", perSecond, Math.max(8, Math.min(spark, spark + 10 - s.route().length())))
+                        .spans());
             }
             out.add(Line.from(from));
             outTargets.add(null);
@@ -761,12 +935,18 @@ final class AboutView {
     }
 
     /** The values as a sparkline and the rate now, or only idle when there was nothing. */
-    private static Line sparkLine(String indent, long[] values) {
+    private static Line sparkLine(String indent, long[] values, int width) {
         if (Arrays.stream(values).allMatch(v -> v <= 0)) {
             return Line.from(Span.raw(indent), Span.styled("idle", Theme.muted()));
         }
-        return Line.from(Span.raw(indent), Span.styled(spark(values, SPARK_WIDTH), Theme.info()),
+        return Line.from(Span.raw(indent), Span.styled(spark(values, width), Theme.info()),
                 Span.styled("  " + rate(values), Theme.muted()));
+    }
+
+    /** The sparklines of In fill its column, between {@value #SPARK_WIDTH} and {@value #MAX_SPARK_WIDTH} wide. */
+    private static int sparkWidth(int width) {
+        // the column less its border and padding, the indent and the rate
+        return Math.max(SPARK_WIDTH, Math.min(MAX_SPARK_WIDTH, width * 28 / 100 - 4 - 3 - 8));
     }
 
     /** The rate now: the mean of the last 10 seconds, or idle. */
@@ -830,14 +1010,33 @@ final class AboutView {
 
     // ---- what has happened, and what to watch ----
 
-    private List<Line> strips(IntegrationInfo info, int width) {
+    /** The last minutes, and what to watch. */
+    private List<Line> status(IntegrationInfo info, int width) {
         List<Line> lines = new ArrayList<>();
         lines.add(happened(info, width));
         List<Span> watch = new ArrayList<>();
         watch.add(Span.styled(" Watch    ", Theme.muted()));
         if (info.errorCount > 0) {
             watch.add(Span.styled("✗ " + info.errorCount + (info.errorCount == 1 ? " error" : " errors"), Theme.error()));
-            watch.add(Span.styled(" (9 Errors)", Theme.muted()));
+            // the kinds that happened most, when there are more than one
+            List<IntegrationInfo.ErrorKind> kinds = info.errorKinds;
+            if (kinds.size() > 1) {
+                for (int i = 0; i < Math.min(3, kinds.size()); i++) {
+                    IntegrationInfo.ErrorKind k = kinds.get(i);
+                    watch.add(Span.styled(i == 0 ? ": " : " · ", Theme.muted()));
+                    watch.add(Span.styled(simpleName(k.exceptionType()) + " ×" + k.count(), Theme.error()));
+                }
+                if (kinds.size() > 3) {
+                    watch.add(Span.styled(" …", Theme.muted()));
+                }
+            } else if (kinds.size() == 1) {
+                watch.add(Span.styled(": ", Theme.muted()));
+                watch.add(Span.styled(simpleName(kinds.get(0).exceptionType()), Theme.error()));
+            }
+            // the key to the Errors tab, as the Next line has its keys (a bare 9 read as a second count of errors)
+            watch.add(Span.raw("   "));
+            watch.add(Span.styled(" 9 ", Theme.hintKey()));
+            watch.add(Span.raw(" show errors"));
         } else {
             watch.add(Span.styled("no errors", Theme.success()));
         }
@@ -852,11 +1051,23 @@ final class AboutView {
             watch.add(Span.raw(" · " + inflight + " in flight"));
         }
         lines.add(Line.from(watch));
-        lines.add(Line.from(Span.styled(" Next     ", Theme.muted()), Span.styled(" 4 ", Theme.hintKey()),
+        return lines;
+    }
+
+    private static String simpleName(String type) {
+        if (type == null) {
+            return "error";
+        }
+        int dot = type.lastIndexOf('.');
+        return dot >= 0 ? type.substring(dot + 1) : type;
+    }
+
+    /** Where to go next. */
+    private static Line next() {
+        return Line.from(Span.styled(" Next     ", Theme.muted()), Span.styled(" 4 ", Theme.hintKey()),
                 Span.raw(" what happened, per second  "), Span.styled(" 5 ", Theme.hintKey()),
                 Span.raw(" diagram  "), Span.styled(" 2 ", Theme.hintKey()), Span.raw(" source  "),
-                Span.styled(" v ", Theme.hintKey()), Span.raw(" all integrations")));
-        return lines;
+                Span.styled(" v ", Theme.hintKey()), Span.raw(" all integrations"));
     }
 
     /**
@@ -1009,7 +1220,7 @@ final class AboutView {
         return lines;
     }
 
-    private static Block block(String title) {
-        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
+    private static Block block(String title, Padding padding) {
+        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).padding(padding).build();
     }
 }

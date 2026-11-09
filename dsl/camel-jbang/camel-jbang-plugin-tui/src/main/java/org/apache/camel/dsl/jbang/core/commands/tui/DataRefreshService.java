@@ -481,6 +481,15 @@ class DataRefreshService {
         return null;
     }
 
+    /**
+     * Whether the integration is the one launched: an example is launched by its catalog name
+     * (fail-well/circuit-breaker) and names itself without the category (circuit-breaker).
+     */
+    static boolean isLaunched(String launched, String name) {
+        return name != null
+                && (name.equalsIgnoreCase(launched) || name.equalsIgnoreCase(TuiHelper.stripCategory(launched)));
+    }
+
     private void mergePhantoms(List<IntegrationInfo> infos) {
         mergePhantoms(infos, ctx.phantomIntegrations, ctx);
     }
@@ -500,7 +509,7 @@ class DataRefreshService {
         String autoSelect = refreshCtx.getPendingAutoSelect();
         if (autoSelect != null) {
             for (IntegrationInfo info : infos) {
-                if (!info.vanishing && autoSelect.equalsIgnoreCase(info.name)) {
+                if (!info.vanishing && isLaunched(autoSelect, info.name)) {
                     ctx.selectedPid = info.pid;
                     ctx.lastSelectedName = null;
                     refreshCtx.clearPendingAutoSelect();

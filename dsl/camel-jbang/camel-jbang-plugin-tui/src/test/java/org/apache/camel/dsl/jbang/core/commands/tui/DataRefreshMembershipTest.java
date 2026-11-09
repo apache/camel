@@ -109,6 +109,14 @@ class DataRefreshMembershipTest {
         assertThat(calls.get()).isEqualTo(1);
     }
 
+    @Test
+    void anExampleIsSelectedByTheNameItGivesItself() {
+        assertThat(DataRefreshService.isLaunched("fail-well/circuit-breaker", "circuit-breaker")).isTrue();
+        assertThat(DataRefreshService.isLaunched("orders", "Orders")).isTrue();
+        assertThat(DataRefreshService.isLaunched("fail-well/circuit-breaker", "retry")).isFalse();
+        assertThat(DataRefreshService.isLaunched("orders", null)).isFalse();
+    }
+
     private static DataRefreshService newService() {
         return new DataRefreshService(
                 "test",

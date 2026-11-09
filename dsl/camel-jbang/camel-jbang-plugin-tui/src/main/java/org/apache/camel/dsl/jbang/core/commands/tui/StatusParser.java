@@ -112,10 +112,22 @@ final class StatusParser {
         // Parse Kafka consumers
         parseKafkaSection(root, info);
 
-        // Parse error count from error registry
+        // the errors that happened, from the error registry: its size is the entries it kept, a few of each kind,
+        // so the total when the integration says it (Camel 4.24)
         JsonObject errorsObj = (JsonObject) root.get("errors");
         if (errorsObj != null) {
-            info.errorCount = errorsObj.getIntegerOrDefault("size", 0);
+            info.errorCount = errorsObj.get("total") instanceof Number total
+                    ? (int) Math.min(Integer.MAX_VALUE, total.longValue()) : errorsObj.getIntegerOrDefault("size", 0);
+            List<IntegrationInfo.ErrorKind> kinds = new ArrayList<>();
+            if (errorsObj.get("kinds") instanceof List<?> list) {
+                for (Object o : list) {
+                    if (o instanceof JsonObject k) {
+                        kinds.add(new IntegrationInfo.ErrorKind(
+                                k.getString("routeId"), k.getString("exceptionType"), k.getLongOrDefault("count", 1)));
+                    }
+                }
+            }
+            info.errorKinds = List.copyOf(kinds);
         }
 
         parseInflight(info, root);

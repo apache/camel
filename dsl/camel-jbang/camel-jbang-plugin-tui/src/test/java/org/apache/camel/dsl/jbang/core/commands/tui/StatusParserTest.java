@@ -241,6 +241,40 @@ class StatusParserTest {
     }
 
     @Test
+    void theErrorsThatHappenedNotTheEntriesKept() {
+        JsonObject root = new JsonObject();
+        JsonObject context = new JsonObject();
+        context.put("name", "errorTest");
+        root.put("context", context);
+        // the registry kept 6 entries, 3 of each kind, of the 13 errors that happened
+        JsonObject errorsObj = new JsonObject();
+        errorsObj.put("size", 6);
+        errorsObj.put("total", 13L);
+        JsonArray kinds = new JsonArray();
+        kinds.add(kind("stock-check", "io.github.resilience4j.circuitbreaker.CallNotPermittedException", 10));
+        kinds.add(kind("supplier", "java.net.ConnectException", 3));
+        errorsObj.put("kinds", kinds);
+        root.put("errors", errorsObj);
+
+        IntegrationInfo info = StatusParser.parseIntegration(ProcessHandle.current(), root);
+
+        assertNotNull(info);
+        assertEquals(13, info.errorCount);
+        assertEquals(List.of(
+                new IntegrationInfo.ErrorKind(
+                        "stock-check", "io.github.resilience4j.circuitbreaker.CallNotPermittedException", 10),
+                new IntegrationInfo.ErrorKind("supplier", "java.net.ConnectException", 3)), info.errorKinds);
+    }
+
+    private static JsonObject kind(String routeId, String type, long count) {
+        JsonObject k = new JsonObject();
+        k.put("routeId", routeId);
+        k.put("exceptionType", type);
+        k.put("count", count);
+        return k;
+    }
+
+    @Test
     void parseIntegrationWithInflight() {
         JsonObject root = new JsonObject();
         JsonObject context = new JsonObject();

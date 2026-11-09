@@ -50,7 +50,11 @@ class AboutViewTest {
     Path dir;
 
     private static String render(AboutView about, IntegrationInfo info) {
-        Rect area = new Rect(0, 0, 160, 34);
+        return render(about, info, 160, 34);
+    }
+
+    private static String render(AboutView about, IntegrationInfo info, int width, int height) {
+        Rect area = new Rect(0, 0, width, height);
         Buffer buffer = Buffer.empty(area);
         about.render(Frame.forTesting(buffer), area, info);
         return TuiTestHelper.bufferToString(buffer);
@@ -107,7 +111,8 @@ class AboutViewTest {
         // the outage was 4.5 minutes ago, for 15 seconds
         ctx.timeline.merge("1234", TimelineTabRenderTest.outage(end, 300, 0).json(), true);
         AboutView about = new AboutView(ctx);
-        assertThat(render(about, info)).contains("What happened ─ last 5m, a column is 5s ─ + zoom in, 4 for each");
+        // 160 wide has room for 75 columns of 4 seconds
+        assertThat(render(about, info)).contains("What happened ─ last 5m, a column is 4s ─ + zoom in, 4 for each");
 
         assertThat(about.handleKeyEvent(KeyEvent.ofChar('+'), info)).isTrue();
         // 2 minutes from the first second recorded, with the outage in it
@@ -122,6 +127,95 @@ class AboutViewTest {
         assertThat(about.handleKeyEvent(KeyEvent.ofChar('-'), info)).isTrue();
         assertThat(render(about, info)).contains("What happened ─ last 5m").contains("now");
         assertThat(about.handleKeyEvent(KeyEvent.ofChar('x'), info)).isFalse();
+    }
+
+    @Test
+    void theStripsAreAsWideAsTheRoomAllows() {
+        // a whole number of seconds in a column, at least 60 columns and at most 150
+        assertThat(AboutView.stripColumns(300, 40)).isEqualTo(60);
+        assertThat(AboutView.stripColumns(300, 94)).isEqualTo(75);
+        assertThat(AboutView.stripColumns(300, 129)).isEqualTo(100);
+        assertThat(AboutView.stripColumns(300, 500)).isEqualTo(150);
+        assertThat(AboutView.stripColumns(120, 129)).isEqualTo(120);
+        assertThat(AboutView.stripColumns(60, 500)).isEqualTo(60);
+    }
+
+    @Test
+    void aTallScreenGivesTheSectionsRoom() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        for (String id : List.of("orders", "stock")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            info.routes.add(r);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        TimelineJson t = new TimelineJson(T0 / 1000 + 299, 300);
+        for (int i = 0; i < 300; i++) {
+            t.route("orders", "completed", i, 2);
+            t.route("stock", "completed", i, 1);
+        }
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        // a tall screen: the panels apart, a blank line between the routes, and the strips 2 rows high
+        String tall = render(about, info, 198, 48);
+        assertThat(tall).contains("╮ ╭");
+        // the panels end where the others do, at the right edge
+        assertThat(tall.lines().filter(l -> l.contains("╮ ╭")).findFirst().orElseThrow().stripTrailing()).hasSize(198);
+        // (the strips are in the What happened panel; the Last 5m line has its own sparkline)
+        List<String> strip = tall.lines().filter(l -> l.startsWith("│") && l.contains("██████████")).toList();
+        assertThat(strip).hasSize(4);
+        assertThat(strip.get(1)).contains("orders");
+        assertThat(strip.get(0)).doesNotContain("orders");
+        assertThat(tall.lines().filter(l -> l.contains("Next")).findFirst().orElseThrow()).startsWith("   Next");
+
+        // a short one: as compact as before
+        String compact = render(about, info, 198, 16);
+        assertThat(compact).contains("╮╭");
+        assertThat(compact.lines().filter(l -> l.startsWith("│") && l.contains("██████████")).count()).isEqualTo(2);
+    }
+
+    @Test
+    void watchSaysTheErrorsThatHappenedAndTheirKinds() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.errorCount = 13;
+        info.errorKinds = List.of(
+                new IntegrationInfo.ErrorKind(
+                        "stock-check", "io.github.resilience4j.circuitbreaker.CallNotPermittedException", 10),
+                new IntegrationInfo.ErrorKind("supplier", "java.net.ConnectException", 3));
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        assertThat(render(new AboutView(ctx), info))
+                .contains("✗ 13 errors: CallNotPermittedException ×10 · ConnectException ×3    9  show errors");
+
+        info.errorCount = 3;
+        info.errorKinds = List.of(new IntegrationInfo.ErrorKind("supplier", "java.net.ConnectException", 3));
+        assertThat(render(new AboutView(ctx), info)).contains("✗ 3 errors: ConnectException    9  show errors");
+    }
+
+    @Test
+    void theTimeBeforeTheIntegrationStartedIsBlank() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        RouteInfo r = new RouteInfo();
+        r.routeId = "orders";
+        info.routes.add(r);
+        long end = T0 / 1000 + 299;
+        // started 100 seconds ago, idle for its first 10
+        info.uptime = (end - 99) * 1000;
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        TimelineJson t = new TimelineJson(end, 300);
+        for (int i = 210; i < 300; i++) {
+            t.route("orders", "completed", i, 1);
+        }
+        ctx.timeline.merge("1234", t.json(), true);
+        String line = render(new AboutView(ctx), info, 198, 16).lines().filter(l -> l.contains("orders ")).findFirst()
+                .orElseThrow();
+        // 100 columns of 3 seconds: 66 blank before it started, then dots for the seconds it did nothing
+        String strip = line.substring(line.indexOf("orders") + "orders".length()).stripLeading();
+        assertThat(strip).startsWith("···").doesNotContain("· ·");
+        assertThat(line.indexOf('·') - line.indexOf("orders")).isGreaterThan(60);
     }
 
     @Test

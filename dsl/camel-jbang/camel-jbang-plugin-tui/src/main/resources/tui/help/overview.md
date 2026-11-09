@@ -28,10 +28,12 @@ happened to it, with no AI:
 - **Last 5m** — the exchanges and how they ended, the cause that
   happened most and when (a chaos rule marked 🎲), and the exchanges
   since it started.
-- **Watch** — errors, routes not started, exchanges in flight.
+- **Watch** — the errors that happened and the kinds that happened most,
+  routes not started, exchanges in flight.
 - **Next** — the keys that lead deeper: **4** the Timeline, **5** the
   Diagram, **2** the source.
-- **What happened** — a line per route over the last 5 minutes, coloured
+- **What happened** — a strip per route over the last 5 minutes (as wide
+  as the screen allows, and up to two rows high on a tall one), coloured
   as on the Timeline: green completed, yellow recovered by redelivery,
   orange handled by the error handler, red failed, a red `░` a second a
   chaos rule had the route down, a `▒` a second a circuit breaker of the
