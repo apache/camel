@@ -198,6 +198,14 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             this.stoppedRoutes.add(route);
         }
 
+        if (camelContext.isStarted() && initialDelay != null && initialDelay.toMillis() > 0) {
+            // A policy attached to a CamelContext that has already started gets neither the started event nor the
+            // fully started callback, so its initial delay starts now (it applies only once). This is done here and
+            // not when the CamelContext is set, as the initial delay may be set after that. Only the timer is
+            // scheduled here: the policy lock is not taken, as the caller may hold the CamelContext route lock.
+            listener.onCamelContextStarted();
+        }
+
         startManagedRoutes();
     }
 
