@@ -248,6 +248,9 @@ public final class ChaosExperimentRun {
         } finally {
             if (sender != null) {
                 sender.stop();
+                // the interrupt cancels a request in flight (HttpClient.send), and the sender sends no more after
+                // stop: a request that does not end in time lingers at most until its timeout, also in a long-running
+                // JVM such as the MCP server
                 sending.interrupt();
                 sending.join(5000);
                 traffic = sender.toJson();
