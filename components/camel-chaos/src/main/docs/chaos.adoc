@@ -387,7 +387,10 @@ runs.
 When it ends, camel-chaos reads what came of it and then removes its rules: per route the difference of the counts, the
 faults of each rule, the state of each expectation, and a verdict:
 
-* `FAIL`: an expectation is unmet.
+* `FAIL`: an expectation is unmet, or a rule of the experiment failed or dropped the send of a dead letter channel.
+The dead letter channel then handles the message without delivering it, so no expectation of a route sees it: the
+experiment counts it as lost (`lostAtDeadLetterChannel`, and per rule `lostAtDeadLetterChannelPerRule`), as the
+report does.
 * `PASS`: all expectations are met.
 * `PENDING`: it is still open and an expectation is not decided yet.
 * `INCONCLUSIVE`: it ended before an expectation was decided, so the messages may still have come.
