@@ -41,7 +41,7 @@ public final class SObjectCompositeResult implements Serializable {
     public SObjectCompositeResult(@JsonProperty("body") final Object body,
                                   @JsonProperty("httpHeaders") final Map<String, String> httpHeaders,
                                   @JsonProperty("httpStatusCode") final int httpStatusCode,
-                                  @JsonProperty("referenceID") final String referenceId) {
+                                  @JsonProperty("referenceId") final String referenceId) {
         this.body = body;
         this.httpHeaders = httpHeaders;
         this.httpStatusCode = httpStatusCode;

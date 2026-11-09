@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.ser.std.StdSerializer;
 
 final class OffsetDateTimeSerializer extends StdSerializer<OffsetDateTime> {
 
-    static final JsonSerializer<OffsetDateTime> INSTANCE = new OffsetDateTimeSerializer();
+    static final ValueSerializer<OffsetDateTime> INSTANCE = new OffsetDateTimeSerializer();
 
     private static final long serialVersionUID = 1L;
 
@@ -36,12 +35,11 @@ final class OffsetDateTimeSerializer extends StdSerializer<OffsetDateTime> {
     }
 
     @Override
-    public void serialize(final OffsetDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
-            throws IOException {
+    public void serialize(final OffsetDateTime value, final JsonGenerator gen, final SerializationContext serializers) {
 
         final ZonedDateTime zonedDateTime = value.toZonedDateTime();
 
-        serializers.defaultSerializeValue(zonedDateTime, gen);
+        serializers.writeValue(gen, zonedDateTime);
     }
 
 }

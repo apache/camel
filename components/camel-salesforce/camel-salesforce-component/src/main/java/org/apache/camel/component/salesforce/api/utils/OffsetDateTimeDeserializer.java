@@ -16,24 +16,22 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
-final class OffsetDateTimeDeserializer extends JsonDeserializer<OffsetDateTime> {
+final class OffsetDateTimeDeserializer extends ValueDeserializer<OffsetDateTime> {
 
-    static final JsonDeserializer<OffsetDateTime> INSTANCE = new OffsetDateTimeDeserializer();
+    static final ValueDeserializer<OffsetDateTime> INSTANCE = new OffsetDateTimeDeserializer();
 
     private OffsetDateTimeDeserializer() {
     }
 
     @Override
-    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-            throws IOException {
+    public OffsetDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toOffsetDateTime();

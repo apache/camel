@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,12 +24,14 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -87,7 +88,7 @@ public final class LoginConfigHelper {
         try {
             LOG.info("Loading credentials from SF CLI: {}", credentialsPath);
 
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = JsonMapper.builder().build();
             JsonNode root = mapper.readTree(credentialsPath.toFile());
 
             setIfPresent(root, "clientId", "salesforce.client.id");
@@ -97,15 +98,15 @@ public final class LoginConfigHelper {
             setIfPresent(root, "password", "salesforce.password");
             setIfPresent(root, "instanceUrl", "salesforce.login.url");
 
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOG.debug("Failed to read SF CLI credentials file: {}", e.getMessage());
         }
     }
 
     private void setIfPresent(JsonNode root, String jsonKey, String configKey) {
         JsonNode node = root.get(jsonKey);
-        if (node != null && !node.isNull() && isNotEmpty(node.asText())) {
-            configuration.put(configKey, node.asText());
+        if (node != null && !node.isNull() && isNotEmpty(node.asString())) {
+            configuration.put(configKey, node.asString());
         }
     }
 

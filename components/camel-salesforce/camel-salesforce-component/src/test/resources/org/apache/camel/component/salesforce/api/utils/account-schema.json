@@ -1,0 +1,376 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:org:apache:camel:component:salesforce:dto",
+  "$schema" : "http://json-schema.org/draft-04/schema#",
+  "oneOf" : [ {
+    "id" : "urn:jsonschema:org:apache:camel:component:salesforce:dto:Account",
+    "title" : "Account",
+    "properties" : {
+      "Id" : {
+        "type" : "string",
+        "required" : true,
+        "description" : "idLookup",
+        "title" : "Account ID"
+      },
+      "IsDeleted" : {
+        "type" : "boolean",
+        "required" : true,
+        "title" : "Deleted"
+      },
+      "MasterRecordId" : {
+        "type" : "string",
+        "title" : "Master Record ID"
+      },
+      "Name" : {
+        "type" : "string",
+        "required" : true,
+        "title" : "Account Name"
+      },
+      "Type" : {
+        "type" : "string",
+        "title" : "Account Type"
+      },
+      "ParentId" : {
+        "type" : "string",
+        "title" : "Parent Account ID"
+      },
+      "BillingStreet" : {
+        "type" : "string",
+        "title" : "Billing Street"
+      },
+      "BillingCity" : {
+        "type" : "string",
+        "title" : "Billing City"
+      },
+      "BillingState" : {
+        "type" : "string",
+        "title" : "Billing State/Province"
+      },
+      "BillingPostalCode" : {
+        "type" : "string",
+        "title" : "Billing Zip/Postal Code"
+      },
+      "BillingCountry" : {
+        "type" : "string",
+        "title" : "Billing Country"
+      },
+      "BillingLatitude" : {
+        "type" : "number",
+        "title" : "Billing Latitude"
+      },
+      "BillingLongitude" : {
+        "type" : "number",
+        "title" : "Billing Longitude"
+      },
+      "BillingGeocodeAccuracy" : {
+        "type" : "string",
+        "title" : "Billing Geocode Accuracy"
+      },
+      "BillingAddress" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:org:apache:camel:component:salesforce:api:dto:Address",
+        "title" : "Shipping Address",
+        "properties" : {
+          "latitude" : {
+            "type" : "number"
+          },
+          "longitude" : {
+            "type" : "number"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "countryCode" : {
+            "type" : "string"
+          },
+          "postalCode" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "stateCode" : {
+            "type" : "string"
+          },
+          "street" : {
+            "type" : "string"
+          },
+          "geocodeAccuracy" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ShippingStreet" : {
+        "type" : "string",
+        "title" : "Shipping Street"
+      },
+      "ShippingCity" : {
+        "type" : "string",
+        "title" : "Shipping City"
+      },
+      "ShippingState" : {
+        "type" : "string",
+        "title" : "Shipping State/Province"
+      },
+      "ShippingPostalCode" : {
+        "type" : "string",
+        "title" : "Shipping Zip/Postal Code"
+      },
+      "ShippingCountry" : {
+        "type" : "string",
+        "title" : "Shipping Country"
+      },
+      "ShippingLatitude" : {
+        "type" : "number",
+        "title" : "Shipping Latitude"
+      },
+      "ShippingLongitude" : {
+        "type" : "number",
+        "title" : "Shipping Longitude"
+      },
+      "ShippingGeocodeAccuracy" : {
+        "type" : "string",
+        "title" : "Shipping Geocode Accuracy"
+      },
+      "ShippingAddress" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:org:apache:camel:component:salesforce:api:dto:Address",
+        "title" : "Shipping Address",
+        "properties" : {
+          "latitude" : {
+            "type" : "number"
+          },
+          "longitude" : {
+            "type" : "number"
+          },
+          "city" : {
+            "type" : "string"
+          },
+          "country" : {
+            "type" : "string"
+          },
+          "countryCode" : {
+            "type" : "string"
+          },
+          "postalCode" : {
+            "type" : "string"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "stateCode" : {
+            "type" : "string"
+          },
+          "street" : {
+            "type" : "string"
+          },
+          "geocodeAccuracy" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Phone" : {
+        "type" : "string",
+        "title" : "Account Phone"
+      },
+      "Fax" : {
+        "type" : "string",
+        "title" : "Account Fax"
+      },
+      "AccountNumber" : {
+        "type" : "string",
+        "title" : "Account Number"
+      },
+      "Website" : {
+        "type" : "string",
+        "title" : "Website"
+      },
+      "PhotoUrl" : {
+        "type" : "string",
+        "title" : "Photo URL"
+      },
+      "Sic" : {
+        "type" : "string",
+        "title" : "SIC Code"
+      },
+      "Industry" : {
+        "type" : "string",
+        "title" : "Industry"
+      },
+      "AnnualRevenue" : {
+        "type" : "number",
+        "title" : "Annual Revenue"
+      },
+      "NumberOfEmployees" : {
+        "type" : "integer",
+        "title" : "Employees"
+      },
+      "Ownership" : {
+        "type" : "string",
+        "title" : "Ownership"
+      },
+      "TickerSymbol" : {
+        "type" : "string",
+        "title" : "Ticker Symbol"
+      },
+      "Description" : {
+        "type" : "string",
+        "title" : "Account Description"
+      },
+      "Rating" : {
+        "type" : "string",
+        "title" : "Account Rating"
+      },
+      "Site" : {
+        "type" : "string",
+        "title" : "Account Site"
+      },
+      "OwnerId" : {
+        "type" : "string",
+        "required" : true,
+        "title" : "Owner ID"
+      },
+      "CreatedDate" : {
+        "type" : "string",
+        "required" : true,
+        "title" : "Created Date",
+        "format" : "date-time"
+      },
+      "CreatedById" : {
+        "type" : "string",
+        "required" : true,
+        "title" : "Created By ID"
+      },
+      "LastModifiedDate" : {
+        "type" : "string",
+        "required" : true,
+        "title" : "Last Modified Date",
+        "format" : "date-time"
+      },
+      "LastModifiedById" : {
+        "type" : "string",
+        "required" : true,
+        "title" : "Last Modified By ID"
+      },
+      "SystemModstamp" : {
+        "type" : "string",
+        "required" : true,
+        "title" : "System Modstamp",
+        "format" : "date-time"
+      },
+      "LastActivityDate" : {
+        "type" : "string",
+        "title" : "Last Activity",
+        "format" : "date"
+      },
+      "LastViewedDate" : {
+        "type" : "string",
+        "title" : "Last Viewed Date",
+        "format" : "date-time"
+      },
+      "LastReferencedDate" : {
+        "type" : "string",
+        "title" : "Last Referenced Date",
+        "format" : "date-time"
+      },
+      "Jigsaw" : {
+        "type" : "string",
+        "title" : "Data.com Key"
+      },
+      "JigsawCompanyId" : {
+        "type" : "string",
+        "title" : "Jigsaw Company ID"
+      },
+      "CleanStatus" : {
+        "type" : "string",
+        "title" : "Clean Status"
+      },
+      "AccountSource" : {
+        "type" : "string",
+        "title" : "Account Source"
+      },
+      "DunsNumber" : {
+        "type" : "string",
+        "title" : "D-U-N-S Number"
+      },
+      "Tradestyle" : {
+        "type" : "string",
+        "title" : "Tradestyle"
+      },
+      "NaicsCode" : {
+        "type" : "string",
+        "title" : "NAICS Code"
+      },
+      "NaicsDesc" : {
+        "type" : "string",
+        "title" : "NAICS Description"
+      },
+      "YearStarted" : {
+        "type" : "string",
+        "title" : "Year Started"
+      },
+      "SicDesc" : {
+        "type" : "string",
+        "title" : "SIC Description"
+      },
+      "DandbCompanyId" : {
+        "type" : "string",
+        "title" : "D&B Company ID"
+      },
+      "OperatingHoursId" : {
+        "type" : "string",
+        "title" : "Operating Hour ID"
+      },
+      "Shipping_Location__Latitude__s" : {
+        "type" : "number",
+        "title" : "Shipping_Location (Latitude)"
+      },
+      "Shipping_Location__Longitude__s" : {
+        "type" : "number",
+        "title" : "Shipping_Location (Longitude)"
+      },
+      "Shipping_Location__c" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:org:apache:camel:component:salesforce:api:dto:GeoLocation",
+        "title" : "Shipping_Location",
+        "properties" : {
+          "latitude" : {
+            "type" : "number"
+          },
+          "longitude" : {
+            "type" : "number"
+          }
+        }
+      },
+      "External_Id__c" : {
+        "type" : "string",
+        "description" : "unique,idLookup",
+        "title" : "External Id"
+      }
+    }
+  }, {
+    "id" : "urn:jsonschema:org:apache:camel:component:salesforce:dto:QueryRecordsAccount",
+    "properties" : {
+      "done" : {
+        "type" : "boolean"
+      },
+      "totalSize" : {
+        "type" : "integer"
+      },
+      "nextRecordsUrl" : {
+        "type" : "string"
+      },
+      "records" : {
+        "type" : "array",
+        "required" : true,
+        "items" : {
+          "type" : "object",
+          "$ref" : "urn:jsonschema:org:apache:camel:component:salesforce:dto:Account"
+        }
+      }
+    }
+  } ]
+}

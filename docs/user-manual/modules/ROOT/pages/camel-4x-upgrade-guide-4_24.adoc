@@ -7743,3 +7743,29 @@ structured CloudEvent that `camel-knative` cannot parse, now fail with the unche
 an `IOException`. `onException(IOException.class)` does not match it. Loading a `KnativeEnvironment` still fails with an
 `IOException`.
 
+=== camel-salesforce - Jackson 3
+
+`camel-salesforce`, `camel-salesforce-codegen` and `camel-salesforce-maven-plugin` use Jackson 3 (`tools.jackson`). What the
+component sends to and reads from Salesforce does not change, and neither does the output of the `schema` goal.
+
+DTOs generated with an earlier version of `camel-salesforce-maven-plugin` must be generated again. They import
+`JsonTypeResolver`, `JsonSerialize` and `JsonDeserialize` from `com.fasterxml.jackson.databind.annotation`, and Jackson 3
+ignores those annotations, so nested types and multi-select picklists are no longer handled. Generated source that still has
+these imports fails to compile, because the classes they name are now Jackson 3 classes. A JAR of DTOs compiled against an
+earlier version gives no such error. In hand-written DTOs, import these annotations from
+`tools.jackson.databind.annotation`. The annotations in `com.fasterxml.jackson.annotation` do not change.
+
+The following Java API changes:
+
+* The `objectMapper` option and `SalesforceEndpointConfig.setObjectMapper` take a `tools.jackson.databind.ObjectMapper`. A
+  custom mapper is used as it is, and Jackson 3 has other defaults than Jackson 2, so start from
+  `JsonUtils.createObjectMapper().rebuild()` to keep the format that Salesforce expects.
+* `JsonUtils` returns and takes `tools.jackson.databind.ObjectMapper`, and its schema methods use
+  `tools.jackson.module.jsonSchema.jakarta.JsonSchema`. They no longer declare `JsonProcessingException`.
+* `TimeModule`, `TypeReferences` and the serializers and deserializers in `org.apache.camel.component.salesforce.api` are
+  Jackson 3 types.
+* `JsonUtils.withNullSerialization` no longer fails on a DTO with a date value set.
+
+A response that cannot be parsed is still reported as a `SalesforceException`. Jackson errors in your own code are the unchecked
+`tools.jackson.core.JacksonException`, which is no longer an `IOException`.
+

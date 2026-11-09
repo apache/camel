@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -24,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.NoSuchSObjectException;
@@ -47,6 +44,9 @@ import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Default implementation of {@link org.apache.camel.component.salesforce.internal.client.AnalyticsApiClient}.
@@ -267,7 +267,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
                 return new SalesforceException(errors, statusCode);
             }
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             // log and ignore
             String msg = "Unexpected Error parsing JSON error response body + [" + responseContent + "] : " + e.getMessage();
             log.warn(msg, e);
