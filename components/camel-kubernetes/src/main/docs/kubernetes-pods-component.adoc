@@ -91,7 +91,7 @@ This operation returns a list of pods from your cluster
 ----
 from("direct:listByLabels")
     .process(exchange -> {
-        exchange.getIn().setHeader("CamelKubernetesPodLabels",
+        exchange.getIn().setHeader("CamelKubernetesPodsLabels",
             Map.of("key1", "value1", "key2", "value2"));
     })
     .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPodsByLabels")
