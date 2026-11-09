@@ -2,6 +2,7 @@
 package org.apache.camel.support;
 
 import javax.annotation.processing.Generated;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -22,7 +23,7 @@ public class NamespacedKeyValueRepositoryConfigurer extends org.apache.camel.sup
     @Override
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.support.NamespacedKeyValueRepository target = (org.apache.camel.support.NamespacedKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "namespace": target.setNamespace(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
@@ -30,7 +31,7 @@ public class NamespacedKeyValueRepositoryConfigurer extends org.apache.camel.sup
 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "namespace": return java.lang.String.class;
         default: return null;
         }
@@ -39,7 +40,7 @@ public class NamespacedKeyValueRepositoryConfigurer extends org.apache.camel.sup
     @Override
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.support.NamespacedKeyValueRepository target = (org.apache.camel.support.NamespacedKeyValueRepository) obj;
-        switch (ignoreCase ? name.toLowerCase() : name) {
+        switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "namespace": return target.getNamespace();
         default: return null;
         }

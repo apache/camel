@@ -656,6 +656,8 @@ public final class ArtifactUtils {
                     "org.apache.camel.support.MemoryKeyValueRepository|org.apache.camel.spi.KeyValueRepository|camel-support"),
             Map.<String, String> entry("MongoDbIdempotentRepository",
                     "org.apache.camel.component.mongodb.processor.idempotent.MongoDbIdempotentRepository|org.apache.camel.spi.IdempotentRepository|camel-mongodb"),
+            Map.<String, String> entry("NamespacedKeyValueRepository",
+                    "org.apache.camel.support.NamespacedKeyValueRepository|org.apache.camel.spi.KeyValueRepository|camel-support"),
             Map.<String, String> entry("OpaSecurityPolicy",
                     "org.apache.camel.component.opa.security.OpaSecurityPolicy|org.apache.camel.spi.AuthorizationPolicy|camel-opa"),
             Map.<String, String> entry("OpenFgaSecurityPolicy",
