@@ -389,10 +389,20 @@ public class ListChaos extends ProcessWatchCommand {
                           + x.getString("value"));
             }
         }
+        String reason = experiment.getString("reason");
+        if (reason != null) {
+            lines.add(more + "inconclusive: " + reason);
+        }
         long lost = experiment.getLongOrDefault("lostAtDeadLetterChannel", 0);
         if (lost > 0) {
             lines.add(more + "lost at the dead letter channel: " + lost + (lost == 1 ? " message" : " messages")
                       + ", handled there without being delivered");
+        }
+        JsonObject alsoFailed = (JsonObject) experiment.get("alsoFailed");
+        if (alsoFailed != null && !alsoFailed.isEmpty()) {
+            StringJoiner also = new StringJoiner(", ");
+            alsoFailed.forEach((route, n) -> also.add(route + " " + n));
+            lines.add(more + "also failed, in no expectation: " + also);
         }
         List<Object> routes = experiment.getCollection("routes");
         if (routes != null && !routes.isEmpty()) {

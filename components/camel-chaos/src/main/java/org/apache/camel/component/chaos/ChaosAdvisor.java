@@ -519,7 +519,7 @@ final class ChaosAdvisor {
     }
 
     /** The dead letter channel of the route, without its options, or null when its error handler has none. */
-    private static String deadLetterUri(Route route) {
+    static String deadLetterUri(Route route) {
         if (route.getErrorHandlerFactory() instanceof DeadLetterChannelDefinition dlc && dlc.getDeadLetterUri() != null) {
             String uri = dlc.getDeadLetterUri();
             return uri.indexOf('?') > 0 ? uri.substring(0, uri.indexOf('?')) : uri;
