@@ -59,9 +59,9 @@ include::partial$component-endpoint-headers.adoc[]
 
 Below, you can find some examples of how to pass the parameters.
 
-For file, for webapp resources located in the Web Application directory --> `cometd://localhost:8080?resourceBase=file./webapp`.
+For file, for webapp resources located in the Web Application directory --> `cometd://localhost:8080?baseResource=file:./webapp`.
 
-For classpath, when, for example, the web resources are packaged inside the webapp folder --> `cometd://localhost:8080?resourceBase=classpath:webapp`
+For classpath, when, for example, the web resources are packaged inside the webapp folder --> `cometd://localhost:8080?baseResource=classpath:webapp`
 
 The following routes publish a message to the `/channel/orders` channel every five seconds, and receive the messages
 of that channel:
