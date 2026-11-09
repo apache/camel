@@ -28,10 +28,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
+import org.apache.camel.Route;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
@@ -45,6 +45,7 @@ import org.apache.camel.support.EndpointSizeStatistics;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     private EndpointUtilizationStatistics outputUtilization;
     private EndpointSizeStatistics inputSizeStats;
     private EndpointSizeStatistics outputSizeStats;
+    private final RoutePolicySupport inputHits = new InputHits();
 
     @Override
     public boolean isEnabled() {
@@ -212,6 +214,13 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             outputSizeStats = new EndpointSizeStatistics(limit);
         }
         if (extended) {
+            // the input hits of a route are counted when an exchange enters it through its consumer, as the route
+            // counts its exchanges: the copies EIPs make inside a route (circuit breaker, split, multicast, recipient
+            // list) have their own unit of work and ExchangeCreatedEvent but are no input, and an exchange that comes
+            // from another route over direct is one without an ExchangeCreatedEvent.
+            // One shared instance for all routes: InputHits keeps no per-route state, the counts live in the
+            // thread-safe inputUtilization
+            getCamelContext().addRoutePolicyFactory((context, routeId, route) -> inputHits);
             LOG.debug(
                     "Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: {})",
                     limit);
@@ -281,31 +290,6 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
                             if (messageSizeEnabled) {
                                 inputSizeStats.remove(consumerKey);
                             }
-                        }
-                    }
-                }
-            }
-        } else if (extended && event instanceof ExchangeCreatedEvent ece) {
-            // we only capture details in extended mode
-            Exchange exchange = ece.getExchange();
-            Endpoint endpoint = exchange.getFromEndpoint();
-            if (endpoint != null) {
-                String routeId = exchange.getFromRouteId();
-                String uri = endpoint.getEndpointUri();
-                String key = asUtilizationKey(routeId, uri);
-                if (key != null) {
-                    inputUtilization.onHit(key);
-                    if (messageSizeEnabled) {
-                        Message message = exchange.getIn();
-                        MessageSizeStrategy strategy = getCamelContext().getMessageSizeStrategy();
-                        long bodySize = strategy.computeBodySize(message);
-                        long headersSize = strategy.computeHeadersSize(message);
-                        inputSizeStats.onHit(key, bodySize, headersSize);
-                        exchange.setProperty(ExchangePropertyKey.MESSAGE_BODY_SIZE, bodySize);
-                        exchange.setProperty(ExchangePropertyKey.MESSAGE_HEADERS_SIZE, headersSize);
-                        // reset stream cache so the body is re-readable during routing
-                        if (message.getBody() instanceof StreamCache sc) {
-                            sc.reset();
                         }
                     }
                 }
@@ -411,8 +395,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
 
     @Override
     public boolean isEnabled(CamelEvent event) {
-        return enabled && event instanceof ExchangeCreatedEvent
-                || event instanceof ExchangeSendingEvent
+        return event instanceof ExchangeSendingEvent
                 || event instanceof ExchangeSentEvent
                 || event instanceof ExchangeCompletedEvent
                 || event instanceof ExchangeFailedEvent
@@ -428,6 +411,48 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             }
         }
         return null;
+    }
+
+    /**
+     * Counts an input hit of the route the exchange enters, under the URI of the route's consumer (which differs from
+     * the endpoint of the route when a component delegates to another consumer, as rest-openapi does to platform-http).
+     */
+    private void onRouteInput(Route route, Exchange exchange) {
+        Endpoint endpoint = route.getConsumer() != null ? route.getConsumer().getEndpoint() : route.getEndpoint();
+        String key = endpoint != null ? asUtilizationKey(route.getRouteId(), endpoint.getEndpointUri()) : null;
+        if (key == null || inputUtilization == null) {
+            return;
+        }
+        inputUtilization.onHit(key);
+        if (messageSizeEnabled) {
+            Message message = exchange.getIn();
+            MessageSizeStrategy strategy = getCamelContext().getMessageSizeStrategy();
+            long bodySize = strategy.computeBodySize(message);
+            long headersSize = strategy.computeHeadersSize(message);
+            inputSizeStats.onHit(key, bodySize, headersSize);
+            exchange.setProperty(ExchangePropertyKey.MESSAGE_BODY_SIZE, bodySize);
+            exchange.setProperty(ExchangePropertyKey.MESSAGE_HEADERS_SIZE, headersSize);
+            // reset stream cache so the body is re-readable during routing
+            if (message.getBody() instanceof StreamCache sc) {
+                sc.reset();
+            }
+        }
+    }
+
+    /** The route policy of every route in extended mode: an exchange that begins in a route is an input hit. */
+    private final class InputHits extends RoutePolicySupport {
+
+        @Override
+        public void onExchangeBegin(Route route, Exchange exchange) {
+            if (extended && enabled) {
+                onRouteInput(route, exchange);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "RuntimeEndpointRegistryInputHits";
+        }
     }
 
     private static String asUtilizationKey(String routeId, String uri) {
