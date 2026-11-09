@@ -33,10 +33,10 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.support.DefaultDataFormat;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TransformerContractTest extends ContextTestSupport {
 
@@ -46,46 +46,48 @@ public class TransformerContractTest extends ContextTestSupport {
     }
 
     /**
-     * CAMEL-26589: When a route declares a DataType contract (inputType/outputType) and the message body is a byte[],
-     * the DataType enforcement must not fail. byte[].class.getName() returns "[B" which is a JVM internal binary name
-     * that ClassLoader.loadClass() cannot resolve — only Class.forName() can. This test verifies that the bug is fixed.
+     * CAMEL-26589: When a byte[] body flows through a route with a Java type contract, ContractAdvice calls
+     * TypeConverterTransformer which calls classResolver.resolveMandatoryClass("[B"). Before the fix,
+     * ObjectHelper.loadClass("[B") throws ClassNotFoundException because ClassLoader.loadClass cannot resolve JVM
+     * internal binary names.
+     * <p>
+     * This test uses inputType(String.class) with a byte[] body: the body is tagged java:[B by setBody(), and
+     * ContractAdvice must resolve "[B" to convert it to String. That path hit the bug on main.
      */
     @Test
-    void testByteArrayBodyWithOutputType() throws Exception {
+    void testByteArrayBodyConvertedToStringInputType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bytearray").outputType(byte[].class).to("mock:bytearray");
+                from("direct:bytesIn").inputType(String.class).to("mock:bytesIn");
             }
         });
         context.start();
 
-        MockEndpoint mock = context.getEndpoint("mock:bytearray", MockEndpoint.class);
-        mock.setExpectedCount(1);
-        byte[] body = "hello".getBytes();
-        template.sendBody("direct:bytearray", body);
+        MockEndpoint mock = context.getEndpoint("mock:bytesIn", MockEndpoint.class);
+        mock.expectedBodiesReceived("hello");
+        template.sendBody("direct:bytesIn", "hello".getBytes());
         MockEndpoint.assertIsSatisfied(context);
-        Exchange ex = mock.getExchanges().get(0);
-        Assertions.assertArrayEquals(body, ex.getIn().getBody(byte[].class));
     }
 
+    /**
+     * CAMEL-26589: A route with outputType declared as a non-Java scheme and a byte[] body also hits the bug.
+     * ContractAdvice calls convertIfRequired(message, from=java:[B) which triggers
+     * classResolver.resolveMandatoryClass("[B").
+     */
     @Test
-    void testByteArrayBodyWithInputType() throws Exception {
+    void testByteArrayBodyWithNonJavaOutputType() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bytearrayIn").inputType(byte[].class).to("mock:bytearrayIn");
+                transformer().scheme("application-octet-stream").withDataFormat(new BytesDataFormatDefinition());
+                from("direct:bytes").outputType("application-octet-stream").to("mock:bytes");
             }
         });
         context.start();
 
-        MockEndpoint mock = context.getEndpoint("mock:bytearrayIn", MockEndpoint.class);
-        mock.setExpectedCount(1);
-        byte[] body = "world".getBytes();
-        template.sendBody("direct:bytearrayIn", body);
-        MockEndpoint.assertIsSatisfied(context);
-        Exchange ex = mock.getExchanges().get(0);
-        Assertions.assertArrayEquals(body, ex.getIn().getBody(byte[].class));
+        Exchange out = template.send("direct:bytes", e -> e.getMessage().setBody("hello".getBytes()));
+        assertNull(out.getException());
     }
 
     @Test
@@ -168,6 +170,23 @@ public class TransformerContractTest extends ContextTestSupport {
         @Converter
         public A toA(String in) {
             return new A();
+        }
+    }
+
+    public static class BytesDataFormatDefinition extends DataFormatDefinition {
+        public BytesDataFormatDefinition() {
+            super(new DefaultDataFormat() {
+                @Override
+                public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+                    byte[] bytes = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, graph);
+                    stream.write(bytes);
+                }
+
+                @Override
+                public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+                    return stream.readAllBytes();
+                }
+            });
         }
     }
 

@@ -439,6 +439,9 @@ public final class ObjectHelper {
         if (ObjectHelper.isEmpty(name)) {
             return null;
         }
+        // Convert JVM internal binary names (e.g. [B, [[I, [Ljava.lang.String;) to human-readable form
+        // (byte[], int[][], java.lang.String[]) so the existing loadSimpleType + dimension-stripping logic handles them.
+        name = StringHelper.readableClassName(name);
 
         int dimensions = 0;
 
@@ -500,25 +503,6 @@ public final class ObjectHelper {
             return Object[].class;
         } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
             return String[].class;
-            // JVM internal binary names for primitive arrays (e.g. [B for byte[], [I for int[])
-            // These are produced by Class.getName() on array types and appear in DataType when
-            // a byte[] body is tagged with new DataType(body.getClass())
-        } else if ("[B".equals(name)) {
-            return byte[].class;
-        } else if ("[S".equals(name)) {
-            return short[].class;
-        } else if ("[I".equals(name)) {
-            return int[].class;
-        } else if ("[J".equals(name)) {
-            return long[].class;
-        } else if ("[F".equals(name)) {
-            return float[].class;
-        } else if ("[D".equals(name)) {
-            return double[].class;
-        } else if ("[Z".equals(name)) {
-            return boolean[].class;
-        } else if ("[C".equals(name)) {
-            return char[].class;
             // and these are common as well
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return String.class;
@@ -577,18 +561,6 @@ public final class ObjectHelper {
         } catch (ClassNotFoundException e) {
             if (logger().isTraceEnabled()) {
                 logger().trace("Cannot load class: {} using classloader: {}", name, loader, e);
-            }
-        }
-
-        // ClassLoader.loadClass() cannot resolve JVM internal array binary names such as
-        // [Ljava.lang.String; or multi-dimensional arrays like [[B — only Class.forName() can.
-        if (name.startsWith("[")) {
-            try {
-                return Class.forName(name, false, loader);
-            } catch (ClassNotFoundException e) {
-                if (logger().isTraceEnabled()) {
-                    logger().trace("Cannot load array class: {} using Class.forName with classloader: {}", name, loader, e);
-                }
             }
         }
 

@@ -75,8 +75,16 @@ public class ObjectHelperLoadClassTest {
         Assertions.assertEquals(char[].class, clazz);
 
         // Object array binary name: [Ljava.lang.String;
-        // Note: loadClass() normalises the name, stripping ';', so the full binary form is not supported here.
-        // Object arrays are handled via the existing "java.lang.String[]" / "String[]" aliases in loadSimpleType().
+        // readableClassName() converts it to "java.lang.String[]" after normalizeClassName strips ";".
+        clazz = ObjectHelper.loadClass("[Ljava.lang.String;");
+        Assertions.assertNotNull(clazz, "[Ljava.lang.String; should resolve to String[]");
+        Assertions.assertEquals(String[].class, clazz);
+
+        // POJO array binary name: [Lorg.apache.camel.util.MyPojo;
+        clazz = ObjectHelper.loadClass("[Lorg.apache.camel.util.MyPojo;");
+        Assertions.assertNotNull(clazz, "[Lorg.apache.camel.util.MyPojo; should resolve to MyPojo[]");
+        Assertions.assertTrue(clazz.isArray());
+        Assertions.assertEquals(MyPojo.class, clazz.getComponentType());
 
         // Multi-dimensional array: [[B (byte[][])
         clazz = ObjectHelper.loadClass("[[B");
