@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
@@ -123,6 +124,31 @@ public interface UnitOfWork {
      * @param filter optional filter to only handover if filter returns <tt>true</tt>
      */
     void handoverSynchronization(Exchange target, @Nullable Predicate<Synchronization> filter);
+
+    /**
+     * Handover the registered synchronizations to the target {@link org.apache.camel.Exchange}, as
+     * {@link #handoverSynchronization(Exchange, Predicate)} does, and tells which ones were handed over (a
+     * {@link SynchronizationVetoable} can refuse to be handed over). Camel calls it instead of
+     * {@link #handoverSynchronization(Exchange, Predicate)} when an {@link OnCompletionListener} is installed.
+     * <p/>
+     * The default hands over with {@link #handoverSynchronization(Exchange)} or
+     * {@link #handoverSynchronization(Exchange, Predicate)}, as Camel does without a listener, and returns
+     * {@code null}, as it does not know what was handed over; so a custom {@link UnitOfWork} hands over as before.
+     *
+     * @param  target the target exchange
+     * @param  filter optional filter to only handover if filter returns <tt>true</tt>
+     * @return        the synchronizations that were handed over (empty if none), or {@code null} if not known
+     * @since         4.24
+     */
+    default @Nullable List<Synchronization> handoverSynchronizationWithResult(
+            Exchange target, @Nullable Predicate<Synchronization> filter) {
+        if (filter == null) {
+            handoverSynchronization(target);
+        } else {
+            handoverSynchronization(target, filter);
+        }
+        return null;
+    }
 
     /**
      * Invoked when this unit of work has been completed, whether it has failed or completed

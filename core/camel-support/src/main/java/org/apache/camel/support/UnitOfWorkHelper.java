@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationRouteAware;
 import org.apache.camel.spi.UnitOfWork;
@@ -76,6 +77,7 @@ public final class UnitOfWorkHelper {
             return;
         }
 
+        final List<OnCompletionListener> listeners = OnCompletionListenerHelper.getListeners(exchange.getContext());
         if (synchronizations.size() > 1) {
             // work on a copy of the list (unless it is private) to avoid any modification which may cause
             // ConcurrentModificationException
@@ -85,15 +87,19 @@ public final class UnitOfWorkHelper {
 
             // invoke synchronization callbacks
             for (Synchronization synchronization : ordered) {
-                doneSynchronization(synchronization, exchange, failed);
+                doneSynchronization(synchronization, exchange, failed, listeners);
             }
         } else {
             // there are only 1 synchronization to done
-            doneSynchronization(synchronizations.get(0), exchange, exchange.isFailed());
+            doneSynchronization(synchronizations.get(0), exchange, exchange.isFailed(), listeners);
         }
     }
 
-    private static void doneSynchronization(Synchronization synchronization, Exchange exchange, boolean failed) {
+    private static void doneSynchronization(
+            Synchronization synchronization, Exchange exchange, boolean failed, List<OnCompletionListener> listeners) {
+        if (!listeners.isEmpty()) {
+            OnCompletionListenerHelper.onCompletionRun(listeners, exchange, synchronization, failed);
+        }
         try {
             if (failed) {
                 LOG.trace("Invoking synchronization.onFailure: {} with {}", synchronization, exchange);

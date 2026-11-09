@@ -387,9 +387,13 @@ public interface OnCompletionListener {
     // an on completion is added to a unit of work
     default void onCompletionAdded(UnitOfWork unitOfWork, Synchronization onCompletion) { }
 
-    // on completions are handed over from one exchange (and its unit of work, if any) to another exchange
+    // an on completion is removed from a unit of work, so it does not run
+    default void onCompletionRemoved(UnitOfWork unitOfWork, Synchronization onCompletion) { }
+
+    // on completions are handed over from one exchange (and its unit of work, if any) to another exchange; moved is
+    // null when a custom unit of work does not tell what moved
     default void onCompletionHandover(
-            Exchange from, @Nullable UnitOfWork fromUnitOfWork, Exchange to, List<Synchronization> moved) { }
+            Exchange from, @Nullable UnitOfWork fromUnitOfWork, Exchange to, @Nullable List<Synchronization> moved) { }
 
     // on completions are taken out of an exchange as a list, to be run by someone else
     default void onCompletionTaken(Exchange from, List<Synchronization> taken) { }
@@ -418,9 +422,9 @@ They are installed through `ExtendedCamelContext`, as the `StepHook` is, with de
 of the order of work); the on completion listener comes with R2 (step 3).
 
 The API changes in short: the two interfaces; the six methods on `ExtendedCamelContext`; and, for R2, a new default
-method on `UnitOfWork` that hands over and returns what moved (`handoverSynchronization(Exchange from, Exchange
-target, Predicate<Synchronization> filter)`), as today only `DefaultUnitOfWork` knows which on completions a
-`SynchronizationVetoable` kept, and only the exchange knows that it is the one handing over.
+method on `UnitOfWork` that hands over and returns what moved (`handoverSynchronizationWithResult(Exchange target,
+Predicate<Synchronization> filter)`), as today only `DefaultUnitOfWork` knows which on completions a
+`SynchronizationVetoable` kept.
 
 Rules for listeners, in the Javadoc:
 
@@ -488,12 +492,14 @@ wrapped callback; that is a development cost, measured before the first pull req
 
 *On completions.* The on completion listener is called where Camel changes or runs on completions today:
 
-* `onUnitOfWork` in `setUnitOfWork` of the exchange (in `AbstractExchange` and `ExtendedExchangeExtension`), with the
-  on completions it moves into the unit of work;
+* `onUnitOfWork` in `setUnitOfWork` of the exchange (in `AbstractExchange`; `ExtendedExchangeExtension` is no longer
+  used since CAMEL-23686), with the on completions it moves into the unit of work;
 * `onCompletionAdded` in `DefaultUnitOfWork.addSynchronization`. An add that is part of a move or of a handover is
   reported there too. The listener tells them apart: `onUnitOfWork` is fired before the move, and `onCompletionHandover`
   right after the handover, on the same thread, so the adds in between belong to them. Adds to an exchange's own list
   (before it has a unit of work) are not reported; they show up in the move;
+* `onCompletionRemoved` in `DefaultUnitOfWork.removeSynchronization`, when it removed one, as a removed commit does not
+  run (see `Synchronization`);
 * `onCompletionHandover` in `handoverCompletions(target)` of the exchange, which knows the exchange that hands over and,
   through the new `UnitOfWork` method, what moved;
 * `onCompletionTaken` in `handoverCompletions()` without a target;
