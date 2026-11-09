@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Parser for Amazon Nova model streaming responses
@@ -30,35 +31,35 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class NovaStreamParser implements StreamResponseParser {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
-    public String extractText(String chunk) throws JsonProcessingException {
+    public String extractText(String chunk) throws JacksonException {
         JsonNode text = path(chunk, "contentBlockDelta", "delta", "text");
-        return text != null ? text.asText() : "";
+        return text != null ? text.asString() : "";
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JsonProcessingException {
+    public String extractCompletionReason(String chunk) throws JacksonException {
         JsonNode stopReason = path(chunk, "messageStop", "stopReason");
-        return stopReason != null ? stopReason.asText() : null;
+        return stopReason != null ? stopReason.asString() : null;
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JsonProcessingException {
+    public Integer extractTokenCount(String chunk) throws JacksonException {
         JsonNode outputTokens = path(chunk, "metadata", "usage", "outputTokens");
         return outputTokens != null ? outputTokens.asInt() : null;
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JsonProcessingException {
+    public boolean isFinalChunk(String chunk) throws JacksonException {
         return path(chunk, "messageStop") != null;
     }
 
     /**
      * The node at the given path of the chunk, or null when the chunk has no such node.
      */
-    private static JsonNode path(String chunk, String... names) throws JsonProcessingException {
+    private static JsonNode path(String chunk, String... names) throws JacksonException {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }

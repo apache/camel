@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Parser for AI21 Labs Jamba model streaming responses
@@ -30,33 +31,33 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class Ai21StreamParser implements StreamResponseParser {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
-    public String extractText(String chunk) throws JsonProcessingException {
+    public String extractText(String chunk) throws JacksonException {
         JsonNode choice = firstChoice(chunk);
         if (choice != null) {
             JsonNode delta = choice.get("delta");
             if (ObjectHelper.isNotEmpty(delta)) {
                 JsonNode content = delta.get("content");
-                return ObjectHelper.isNotEmpty(content) && !content.isNull() ? content.asText() : "";
+                return ObjectHelper.isNotEmpty(content) && !content.isNull() ? content.asString() : "";
             }
         }
         return "";
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JsonProcessingException {
+    public String extractCompletionReason(String chunk) throws JacksonException {
         JsonNode choice = firstChoice(chunk);
         if (choice != null) {
             JsonNode finishReason = choice.get("finish_reason");
-            return ObjectHelper.isNotEmpty(finishReason) && !finishReason.isNull() ? finishReason.asText() : null;
+            return ObjectHelper.isNotEmpty(finishReason) && !finishReason.isNull() ? finishReason.asString() : null;
         }
         return null;
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JsonProcessingException {
+    public Integer extractTokenCount(String chunk) throws JacksonException {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
@@ -69,11 +70,11 @@ public class Ai21StreamParser implements StreamResponseParser {
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JsonProcessingException {
+    public boolean isFinalChunk(String chunk) throws JacksonException {
         return ObjectHelper.isNotEmpty(extractCompletionReason(chunk));
     }
 
-    private static JsonNode firstChoice(String chunk) throws JsonProcessingException {
+    private static JsonNode firstChoice(String chunk) throws JacksonException {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }

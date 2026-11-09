@@ -26,7 +26,6 @@ import java.util.stream.StreamSupport;
 
 import javax.net.ssl.SSLContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.ReadPreference;
@@ -57,6 +56,8 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.component.mongodb.MongoDbOperation.command;
 import static org.apache.camel.component.mongodb.MongoDbOperation.findAll;
@@ -466,7 +467,8 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
             List<Bson> indexList = new ArrayList<>();
 
             if (ObjectHelper.isNotEmpty(collectionIndex)) {
-                HashMap<String, String> indexMap = new ObjectMapper().readValue(collectionIndex, HashMap.class);
+                HashMap<String, String> indexMap
+                        = JsonMapper.builderWithJackson2Defaults().build().readValue(collectionIndex, HashMap.class);
 
                 for (Map.Entry<String, String> set : indexMap.entrySet()) {
                     Document index = new Document();
@@ -482,7 +484,7 @@ public class MongoDbEndpoint extends DefaultEndpoint implements EndpointServiceL
                 }
             }
             return indexList;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new CamelMongoDbException("createIndex failed", e);
         }
     }

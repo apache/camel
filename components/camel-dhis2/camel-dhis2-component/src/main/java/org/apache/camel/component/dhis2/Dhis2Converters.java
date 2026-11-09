@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.dhis2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dhis2.api.Dhis2Resource;
 import org.apache.camel.spi.TypeConverterRegistry;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Converter(generateLoader = true)
 public final class Dhis2Converters {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private Dhis2Converters() {
 

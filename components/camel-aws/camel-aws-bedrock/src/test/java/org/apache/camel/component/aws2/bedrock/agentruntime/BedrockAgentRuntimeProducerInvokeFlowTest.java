@@ -24,8 +24,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -44,6 +42,8 @@ import software.amazon.awssdk.services.bedrockagentruntime.BedrockAgentRuntimeAs
 import software.amazon.awssdk.services.bedrockagentruntime.model.FlowInput;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowRequest;
 import software.amazon.awssdk.services.bedrockagentruntime.model.InvokeFlowResponseHandler;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -175,7 +175,7 @@ public class BedrockAgentRuntimeProducerInvokeFlowTest {
 
     @Test
     public void invokeFlowSendsJsonNodeBodyAsJson() {
-        ObjectNode body = new ObjectMapper().createObjectNode().put("question", "what is camel?");
+        ObjectNode body = JsonMapper.builder().build().createObjectNode().put("question", "what is camel?");
         Exchange result = template.send("direct:flow-config-default", exchange -> exchange.getMessage().setBody(body));
 
         assertNull(result.getException(), "Exchange should not fail");

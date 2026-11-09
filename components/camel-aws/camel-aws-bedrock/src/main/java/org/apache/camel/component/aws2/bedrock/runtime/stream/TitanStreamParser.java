@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Parser for Amazon Titan model streaming responses
@@ -31,30 +31,30 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class TitanStreamParser implements StreamResponseParser {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
-    public String extractText(String chunk) throws JsonProcessingException {
+    public String extractText(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return "";
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode outputText = node.get("outputText");
-        return ObjectHelper.isNotEmpty(outputText) && !outputText.isNull() ? outputText.asText() : "";
+        return ObjectHelper.isNotEmpty(outputText) && !outputText.isNull() ? outputText.asString() : "";
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JsonProcessingException {
+    public String extractCompletionReason(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode completionReason = node.get("completionReason");
-        return ObjectHelper.isNotEmpty(completionReason) && !completionReason.isNull() ? completionReason.asText() : null;
+        return ObjectHelper.isNotEmpty(completionReason) && !completionReason.isNull() ? completionReason.asString() : null;
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JsonProcessingException {
+    public Integer extractTokenCount(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
@@ -64,7 +64,7 @@ public class TitanStreamParser implements StreamResponseParser {
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JsonProcessingException {
+    public boolean isFinalChunk(String chunk) {
         String completionReason = extractCompletionReason(chunk);
         return ObjectHelper.isNotEmpty(completionReason);
     }

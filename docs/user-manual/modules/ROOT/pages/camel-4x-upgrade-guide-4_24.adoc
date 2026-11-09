@@ -7633,3 +7633,23 @@ The option documentation of the Jackson 3 data formats now names the `tools.jack
 `com.fasterxml.jackson.annotation` still apply, but `@JsonNaming` from `com.fasterxml.jackson.databind.annotation` is ignored:
 the schema of such a class has the Java field names. Use `@JsonNaming` from `tools.jackson.databind.annotation` to apply it.
 
+=== Jackson 3 - components that no longer use camel-jackson
+
+`camel-aws-bedrock`, `camel-dhis2`, `camel-google-vertexai`, `camel-mongodb` and `camel-neo4j` now use Jackson 3
+(`tools.jackson.core:jackson-databind`) directly, and `camel-mongodb-gridfs` no longer uses Jackson. None of them brings
+`camel-jackson` or `camel-jackson3` to your application any more. If a route uses the `jackson` data format
+(`marshal().json()`), or relies on its type converters, and got it through one of these components, declare `camel-jackson`
+or `camel-jackson3` yourself.
+
+The data these components send does not change: their internal mappers keep the Jackson 2 defaults.
+
+*camel-aws-bedrock.* A text result (the Anthropic Claude v2, Cohere and Llama models) is now a `String` body; it was a Jackson
+`TextNode` that `camel-jackson` converted to the text. The other results stay nodes, now of Jackson 3: the AI21 completions,
+the images, and the whole response of the Claude 3, Nova and Mistral models. The type converters of `camel-jackson` do not
+apply to them, so converting such a body to a pretty-printed `String`, `byte[]`, `InputStream` or `Map` needs `camel-jackson3`.
+Without it, `getBody(String.class)` gives the compact JSON and the other conversions give `null`.
+
+*camel-mongodb.* The conversion of a body to a `Document` or `DBObject` uses Jackson 3. A Jackson `JsonNode` of either line is
+read as its JSON text, but a POJO with Jackson 2 databind annotations such as `@JsonNaming` loses them, so the field names
+it is stored with can change.
+
