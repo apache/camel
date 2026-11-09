@@ -357,8 +357,8 @@ class RoutesTab extends AbstractDiagramTab {
             frame.renderWidget(
                     Paragraph.builder()
                             .text(Text.from(Line.from(Span.styled("No routes", Style.EMPTY.dim()))))
-                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Processors ")
-                                    .build())
+                            .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                    .borderStyle(ctx.paneBorder(false)).title(" Processors ").build())
                             .build(),
                     chunks.get(1));
         }
@@ -536,7 +536,7 @@ class RoutesTab extends AbstractDiagramTab {
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Routes ").build())
+                        .borderStyle(ctx.paneBorder(true)).title(" Routes ").build())
                 .build();
     }
 
@@ -682,7 +682,7 @@ class RoutesTab extends AbstractDiagramTab {
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Routes ").build())
+                        .borderStyle(ctx.paneBorder(true)).title(" Routes ").build())
                 .build();
     }
 
@@ -990,7 +990,7 @@ class RoutesTab extends AbstractDiagramTab {
                     .header(Row.from(header))
                     .widths(widths.toArray(Constraint[]::new))
                     .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                            .title(" Processors [" + route.routeId + "] ")
+                            .borderStyle(ctx.paneBorder(false)).title(" Processors [" + route.routeId + "] ")
                             .build())
                     .build();
         } else {
@@ -1125,7 +1125,7 @@ class RoutesTab extends AbstractDiagramTab {
                 .header(Row.from(header))
                 .widths(widths.toArray(Constraint[]::new))
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Processors [" + route.routeId + "] ")
+                        .borderStyle(ctx.paneBorder(false)).title(" Processors [" + route.routeId + "] ")
                         .build())
                 .build();
     }

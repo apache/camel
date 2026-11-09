@@ -157,7 +157,8 @@ class CircuitBreakerTab extends AbstractTableTab {
                         Constraint.fill())
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Circuit Breaker ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
+                        .title(" Circuit Breaker ").build())
                 .build();
 
         lastTableArea = chunks.get(0);
@@ -271,7 +272,8 @@ class CircuitBreakerTab extends AbstractTableTab {
 
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(lines))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
+                        .title(title).build())
                 .build(), area);
     }
 
@@ -303,7 +305,8 @@ class CircuitBreakerTab extends AbstractTableTab {
                 Span.styled("░".repeat(empty), Style.EMPTY.dim()));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(barLine))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(" Failure Rate ").build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
+                        .title(" Failure Rate ").build())
                 .build(), vSplit.get(0));
 
         LinkedList<Long> successHist = cbSuccessHistory.get(key);
@@ -342,7 +345,7 @@ class CircuitBreakerTab extends AbstractTableTab {
                 .showYAxis(true)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
                         .title(Title.from(chartTitle)).build())
                 .build(), vSplit.get(1));
 
@@ -369,7 +372,8 @@ class CircuitBreakerTab extends AbstractTableTab {
                 Span.styled("fail:", dim), Span.raw(" " + lastFail));
         frame.renderWidget(Paragraph.builder()
                 .text(Text.from(Line.from(Span.raw("")), metricsLine1, metricsLine2))
-                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).build())
+                .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))
+                        .build())
                 .build(), vSplit.get(2));
     }
 
