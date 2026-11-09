@@ -89,13 +89,13 @@ final class ChaosAiPrompt {
                     .append("\", Duration.ofSeconds(10)) and assertVerdict(context, ChaosReport.PASS, Duration.ofSeconds(10)).");
         } else {
             sb.append("The integration runs with camel run, without a Maven project, so the test is a scenario with an")
-                    .append(" expectation, and a run whose exit code is the verdict. Write the scenario chaos/")
+                    .append(" expectation, and a run whose exit code is the verdict. Write the scenario test/chaos/")
                     .append(rule.id).append("-test.chaos: a comment line that says in words what it tests (not the rule")
                     .append(" again), seed=").append(seed).append(", and the rule as the line ").append(replay)
                     .append(" (draw=").append(rule.id).append(" makes it fail the same messages as rule ").append(rule.id)
                     .append(" did). ").append(expectation)
                     .append(" Then give the command that runs it, with --max-seconds longer than the within= of the")
-                    .append(" expectation: camel run * --chaos=chaos/").append(rule.id)
+                    .append(" expectation: camel run * --chaos=test/chaos/").append(rule.id)
                     .append("-test.chaos --max-seconds=<seconds> --chaos-report=target/chaos-report.json. It ends with exit")
                     .append(" code 1 when the verdict is FAIL, so it can run in a pipeline.");
         }

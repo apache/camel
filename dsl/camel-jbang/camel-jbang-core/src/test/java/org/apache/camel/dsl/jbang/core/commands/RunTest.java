@@ -293,11 +293,11 @@ class RunTest extends CamelCommandBaseTestSupport {
         assertThat(command.files).containsExactly("route.yaml");
 
         for (String[] args : new String[][] {
-                { "--chaos=chaos/outage.chaos", "route.yaml" }, { "--chaos", "chaos/outage.chaos", "route.yaml" } }) {
+                { "--chaos=test/chaos/outage.chaos", "route.yaml" }, { "--chaos", "test/chaos/outage.chaos", "route.yaml" } }) {
             command = new Run(new CamelJBangMain());
             CommandLineTestHelper.parse(command, args);
             assertThat(command.chaos).isTrue();
-            assertThat(command.chaosScenario).isEqualTo("chaos/outage.chaos");
+            assertThat(command.chaosScenario).isEqualTo("test/chaos/outage.chaos");
             assertThat(command.files).containsExactly("route.yaml");
         }
 

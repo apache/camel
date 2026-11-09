@@ -745,7 +745,7 @@ Examples:
 Usage: camel cmd chaos-load [-h] [--timeout=<timeout>] <file> [<name>]
 Load a chaos scenario into a running integration (camel-chaos, for development
 only)
-      <file>                The scenario file, such as chaos/outage.chaos
+      <file>                The scenario file, such as test/chaos/outage.chaos
       [<name>]              Name or pid of the running Camel integration (must
                               match one); without it, the only one running, or
                               the only one with chaos switched on
@@ -754,22 +754,22 @@ only)
                               millis or as a duration such as 30s
                               Default: 10000
 
-A scenario is a file of the project, such as chaos/outage.chaos, with one rule
-per line, # comments and an optional seed= line, which makes it fail the same
-messages each time. The phases of an experiment come from from= and until= of
-its rules. Loading it removes the rules there are and starts a new report, then
-adds the rules of the scenario, all or none: a line that is not valid is refused
-with its line number, and the rules there are stay.
+A scenario is a file of the project, such as test/chaos/outage.chaos, with one
+rule per line, # comments and an optional seed= line, which makes it fail the
+same messages each time. The phases of an experiment come from from= and until=
+of its rules. Loading it removes the rules there are and starts a new report,
+then adds the rules of the scenario, all or none: a line that is not valid is
+refused with its line number, and the rules there are stay.
 
-To start with a scenario: camel run --chaos=chaos/outage.chaos
+To start with a scenario: camel run --chaos=test/chaos/outage.chaos
 
 Without a name or pid, the scenario goes to the only integration that runs, or
 the only one with chaos switched on; when that is not clear, the command fails
 with the list of the running integrations (exit code 2).
 
 Examples:
-  camel cmd chaos-load chaos/outage.chaos
-  camel cmd chaos-load chaos/outage.chaos myApp
+  camel cmd chaos-load test/chaos/outage.chaos
+  camel cmd chaos-load test/chaos/outage.chaos myApp
 
 == camel cmd chaos-remove --help
 Usage: camel cmd chaos-remove [-h] --id=<id> [--timeout=<timeout>] [<name>]
@@ -1889,10 +1889,11 @@ Debug local Camel integration
       --chaos[=<file>]       Add camel-chaos, to turn on faults while running
                                (camel cmd chaos-add); on with profile dev,
                                never with prod. With a scenario file (such as
-                               --chaos=chaos/outage.chaos) its rules are added
-                               at startup. A run with chaos ends with exit code
-                               1 when the chaos verdict is FAIL. With Quarkus
-                               it needs Camel Quarkus on Camel 4.24 or newer
+                               --chaos=test/chaos/outage.chaos) its rules are
+                               added at startup. A run with chaos ends with
+                               exit code 1 when the chaos verdict is FAIL. With
+                               Quarkus it needs Camel Quarkus on Camel 4.24 or
+                               newer
       --chaos-report=<file>  Write the chaos report as JSON to this file when
                                the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
@@ -2878,10 +2879,11 @@ Run in dev mode with live reload
       --chaos[=<file>]       Add camel-chaos, to turn on faults while running
                                (camel cmd chaos-add); on with profile dev,
                                never with prod. With a scenario file (such as
-                               --chaos=chaos/outage.chaos) its rules are added
-                               at startup. A run with chaos ends with exit code
-                               1 when the chaos verdict is FAIL. With Quarkus
-                               it needs Camel Quarkus on Camel 4.24 or newer
+                               --chaos=test/chaos/outage.chaos) its rules are
+                               added at startup. A run with chaos ends with
+                               exit code 1 when the chaos verdict is FAIL. With
+                               Quarkus it needs Camel Quarkus on Camel 4.24 or
+                               newer
       --chaos-report=<file>  Write the chaos report as JSON to this file when
                                the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
@@ -5030,10 +5032,11 @@ Run as local Camel integration
       --chaos[=<file>]       Add camel-chaos, to turn on faults while running
                                (camel cmd chaos-add); on with profile dev,
                                never with prod. With a scenario file (such as
-                               --chaos=chaos/outage.chaos) its rules are added
-                               at startup. A run with chaos ends with exit code
-                               1 when the chaos verdict is FAIL. With Quarkus
-                               it needs Camel Quarkus on Camel 4.24 or newer
+                               --chaos=test/chaos/outage.chaos) its rules are
+                               added at startup. A run with chaos ends with
+                               exit code 1 when the chaos verdict is FAIL. With
+                               Quarkus it needs Camel Quarkus on Camel 4.24 or
+                               newer
       --chaos-report=<file>  Write the chaos report as JSON to this file when
                                the run ends (with --chaos)
       --local-kamelet-dir=<localKameletDir>
