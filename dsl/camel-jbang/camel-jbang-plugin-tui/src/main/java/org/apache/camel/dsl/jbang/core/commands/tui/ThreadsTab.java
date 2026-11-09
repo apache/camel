@@ -31,7 +31,6 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -119,12 +118,18 @@ class ThreadsTab extends AbstractTableTab {
     }
 
     @Override
-    public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        boolean handled = super.handleMouseEvent(me, area);
-        if (handled) {
-            traceScroll = 0;
-        }
-        return handled;
+    protected void focusDetail(boolean focused) {
+        detailFocused = focused;
+    }
+
+    @Override
+    protected void scrollDetail(int lines) {
+        traceScroll = Math.max(0, traceScroll + lines);
+    }
+
+    @Override
+    protected void rowClicked() {
+        traceScroll = 0;
     }
 
     @Override
@@ -230,6 +235,7 @@ class ThreadsTab extends AbstractTableTab {
     }
 
     private void renderTrace(Frame frame, Rect area, List<ThreadData> visible) {
+        lastDetailArea = area;
         Style detailBorderStyle = detailFocused ? Style.EMPTY.fg(Theme.accent()) : Theme.muted();
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 

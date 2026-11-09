@@ -27,6 +27,8 @@ import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -147,6 +149,49 @@ class ErrorsTabRenderTest {
         String rendered = renderToString(tab, 160, 30);
         assertEquals(0, tab.tableState.selected());
         assertTrue(rendered.contains(ErrorsTab.shortExchangeId("ID-001")), rendered);
+    }
+
+    @Test
+    void theWheelScrollsThePanelUnderTheMouse() {
+        for (int i = 1; i <= 3; i++) {
+            addError("ID-00" + i, "route1", "to1", "java.io.IOException", "fail " + i, false);
+        }
+        StringBuilder trace = new StringBuilder("java.io.IOException: fail 1");
+        for (int i = 0; i < 60; i++) {
+            trace.append("\n\tat org.example.Frame").append(i).append(".call(Frame.java:").append(i).append(')');
+        }
+        info.errors.get(0).stackTrace = trace.toString();
+        ErrorsTab tab = new ErrorsTab(ctx);
+        Rect area = new Rect(0, 0, 160, 40);
+        String before = renderToString(tab, 160, 40);
+        int detail = row(before, " Detail ");
+        assertTrue(detail > 0, before);
+
+        // over the detail: its lines scroll, the error stays selected
+        tab.handleMouseEvent(MouseEvent.scrollDown(40, detail + 5), area);
+        tab.handleMouseEvent(MouseEvent.scrollDown(40, detail + 5), area);
+        String scrolled = renderToString(tab, 160, 40);
+        assertEquals(0, tab.tableState.selected());
+        assertFalse(scrolled.contains("Exchange: ID-001"), scrolled);
+
+        // over the table: the next error
+        tab.handleMouseEvent(MouseEvent.scrollDown(40, 6), area);
+        assertEquals(1, tab.tableState.selected());
+
+        // a click on a row selects it, and its detail starts at the top
+        String rows = renderToString(tab, 160, 40);
+        tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 40, row(rows, ErrorsTab.shortExchangeId("ID-003"))), area);
+        assertEquals(2, tab.tableState.selected());
+    }
+
+    private static int row(String rendered, String text) {
+        String[] lines = rendered.split("\n");
+        for (int y = 0; y < lines.length; y++) {
+            if (lines[y].contains(text)) {
+                return y;
+            }
+        }
+        return -1;
     }
 
     @Test

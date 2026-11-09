@@ -43,7 +43,7 @@ happened to it, with no AI:
 
 Keys of About:
 
-- **Up/Down** — Select a line of In, Routes or Out
+- **Up/Down** — Select a line of In, Routes or Out, or click it
 - **Enter** — Open the selected line: a route drilled down on the
   Diagram, an endpoint a route sends to with its details on the Endpoint
   tab

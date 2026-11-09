@@ -27,6 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -100,6 +101,9 @@ final class AboutView {
     private int focus = -1;
     private volatile List<Target> targets = List.of();
     private volatile List<String> targetLabels = List.of();
+    // what In, Routes and Out show and where their lines are on the screen, for a click
+    private Columns shown;
+    private final Rect[] columnAreas = new Rect[3];
 
     /**
      * What a line of In, Routes or Out is about, for Enter: a route (opened on the Diagram) or an endpoint a route
@@ -357,6 +361,42 @@ final class AboutView {
         }
     }
 
+    /**
+     * A click on In, Routes or Out puts the cursor on the entry clicked: its name, or the line under it (its exchanges,
+     * or the route that sends to it). False when the click was on none.
+     */
+    boolean click(int x, int y) {
+        Columns c = shown;
+        if (c == null) {
+            return false;
+        }
+        List<List<Line>> lines = List.of(c.in(), c.routes(), c.out());
+        List<List<Target>> columns = List.of(c.inTargets(), c.routeTargets(), c.outTargets());
+        int before = 0;
+        for (int i = 0; i < columns.size(); i++) {
+            List<Target> col = columns.get(i);
+            Rect r = columnAreas[i];
+            if (r != null && r.contains(x, y)) {
+                int at = y - r.y();
+                if (at > 0 && at < col.size() && col.get(at) == null && col.get(at - 1) != null
+                        && !lines.get(i).get(at).rawContent().isBlank()) {
+                    at--;
+                }
+                if (at >= col.size() || col.get(at) == null) {
+                    return false;
+                }
+                cursor = before + count(col.subList(0, at));
+                return true;
+            }
+            before += count(col);
+        }
+        return false;
+    }
+
+    private static int count(List<Target> targets) {
+        return (int) targets.stream().filter(Objects::nonNull).count();
+    }
+
     /** The line the cursor is on, or null. */
     Target selected() {
         List<Target> t = targets;
@@ -516,14 +556,13 @@ final class AboutView {
         List<Rect> cols = List.of(new Rect(area.x(), area.y(), w0, area.height()),
                 new Rect(area.x() + w0 + spacing, area.y(), w1, area.height()),
                 new Rect(area.x() + w0 + w1 + 2 * spacing, area.y(), w2, area.height()));
-        frame.renderWidget(Paragraph.builder().text(Text.from(columns.in())).block(block(" In ", padding, focus == 0)).build(),
-                cols.get(0));
-        frame.renderWidget(
-                Paragraph.builder().text(Text.from(columns.routes())).block(block(" Routes ", padding, focus == 1)).build(),
-                cols.get(1));
-        frame.renderWidget(
-                Paragraph.builder().text(Text.from(columns.out())).block(block(" Out ", padding, focus == 2)).build(),
-                cols.get(2));
+        List<List<Line>> texts = List.of(columns.in(), columns.routes(), columns.out());
+        String[] titles = { " In ", " Routes ", " Out " };
+        for (int i = 0; i < titles.length; i++) {
+            Block b = block(titles[i], padding, focus == i);
+            columnAreas[i] = b.inner(cols.get(i));
+            frame.renderWidget(Paragraph.builder().text(Text.from(texts.get(i))).block(b).build(), cols.get(i));
+        }
     }
 
     /** What the integration is, and its purpose: the comment at the top of its main file. */
@@ -573,12 +612,13 @@ final class AboutView {
         }
         targets = all;
         targetLabels = labels;
+        shown = c;
         if (cursor >= all.size()) {
             cursor = all.size() - 1;
         }
         focus = -1;
         for (int i = 0, before = 0; i < columns.size() && cursor >= 0; i++) {
-            int n = (int) columns.get(i).stream().filter(t -> t != null).count();
+            int n = count(columns.get(i));
             if (cursor < before + n) {
                 focus = i;
                 break;

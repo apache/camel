@@ -379,5 +379,29 @@ class AboutViewTest {
         assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
         assertThat(about.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER), info)).isTrue();
         assertThat(opened).containsExactly(new AboutView.Target("orders", "http:localhost:8765/ship"));
+
+        // a click puts the cursor on an entry: a route, an endpoint by the line under it, an entry of In
+        List<String> screen = render(about, info).lines().toList();
+        assertThat(click(about, screen, "↳ stock")).isTrue();
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("stock", null));
+        assertThat(click(about, screen, "timer:orders")).isTrue();
+        assertThat(about.selectionContext().selectedIndex()).isZero();
+        assertThat(click(about, screen, "from orders")).isTrue();
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
+        // the head and What happened are no entries
+        assertThat(click(about, screen, "Every order is checked")).isFalse();
+        assertThat(click(about, screen, "What happened")).isFalse();
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
+    }
+
+    /** Clicks on the first line that has the text, on its second character. */
+    private static boolean click(AboutView about, List<String> screen, String text) {
+        for (int y = 0; y < screen.size(); y++) {
+            int x = screen.get(y).indexOf(text);
+            if (x >= 0) {
+                return about.click(x + 1, y);
+            }
+        }
+        throw new AssertionError(text + " is not on the screen");
     }
 }

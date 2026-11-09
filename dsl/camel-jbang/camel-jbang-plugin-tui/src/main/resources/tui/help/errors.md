@@ -124,3 +124,4 @@ Press `Esc` to navigate back one route in drill-down mode.
 - `S` — reverse sort order
 - `PgUp/PgDn` — scroll the detail panel
 - `Home/End` — jump to the top/end of the detail panel
+- Mouse — a click selects an error; the wheel scrolls the errors over the table and the detail over the detail panel

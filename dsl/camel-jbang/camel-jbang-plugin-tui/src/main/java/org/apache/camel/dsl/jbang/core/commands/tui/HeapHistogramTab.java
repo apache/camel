@@ -168,6 +168,7 @@ class HeapHistogramTab extends AbstractTableTab {
                         .title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 

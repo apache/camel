@@ -386,6 +386,50 @@ class TimelineTabRenderTest {
     }
 
     @Test
+    void pausedAClickOnASecondPutsTheCursorThere() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        Rect area = new Rect(0, 0, 160, 40);
+        List<String> lines = TuiTestHelper.renderToString(tab, 160, 40).lines().toList();
+        int shipping = indexOf(lines, "   shipping");
+        // the seconds start where the time axis does
+        int left = lines.get(indexOf(lines, "-60s")).indexOf("-60s");
+
+        // following now, a click selects the route and leaves the timeline following
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, left + 30, shipping), area)).isTrue();
+        assertThat(tab.isPaused()).isFalse();
+
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, left + 30, shipping), area)).isTrue();
+        assertThat(tab.cursorFrom()).isEqualTo(T0 / 1000 + 30);
+        assertThat(tab.getTableDataAsJson().getInteger("selectedIndex")).isEqualTo(1);
+        // the label of the route is no second
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, left - 3, shipping), area)).isTrue();
+        assertThat(tab.cursorFrom()).isEqualTo(T0 / 1000 + 30);
+    }
+
+    @Test
+    void aClickOnAnExchangeOfTheSecondsSelectsIt() {
+        // narrow: a column is two seconds, and has two exchanges
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        Rect area = new Rect(0, 0, 100, 40);
+        TuiTestHelper.renderToString(tab, 100, 40);
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        while (tab.cursorFrom() > T0 / 1000 + 30) {
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT));
+        }
+        assertThat(tab.cursorTo()).isEqualTo(T0 / 1000 + 31);
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        List<String> lines = TuiTestHelper.renderToString(tab, 100, 40).lines().toList();
+
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 20, indexOf(lines, "H31")), area)).isTrue();
+        // below the last exchange is none
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 20, indexOf(lines, "H31") + 1), area))
+                .isFalse();
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        assertThat(TuiTestHelper.renderToString(tab, 100, 40)).contains("H31").doesNotContain("H30");
+    }
+
+    @Test
     void thePanelTheKeysGoToHasTheFocusBorder() {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         Buffer screen = TuiTestHelper.renderToBuffer(tab, 160, 40);

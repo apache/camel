@@ -93,6 +93,9 @@ class JfrTab extends AbstractTab {
     private final TableState processorTableState = new TableState();
     private final ScrollbarState processorScrollState = new ScrollbarState();
     private Rect lastTableArea;
+    // where the names of the views are on the screen, for a click: the row, and the columns of each name
+    private int viewsRow = -1;
+    private final int[] viewColumns = new int[View.values().length];
     private int topPanelHeight = -1;
 
     // sort state per view
@@ -228,6 +231,16 @@ class JfrTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (me.isClick() && me.y() == viewsRow) {
+            // a click on the name of a view shows it, as Space does
+            View[] views = View.values();
+            for (int i = 0; i < views.length; i++) {
+                if (me.x() >= viewColumns[i] && me.x() < viewColumns[i] + views[i].label.length()) {
+                    switchView(views[i]);
+                    return true;
+                }
+            }
+        }
         return handleTableClick(me, lastTableArea, activeTableState(), getRowCount());
     }
 
@@ -258,6 +271,7 @@ class JfrTab extends AbstractTab {
     public void render(Frame frame, Rect area) {
         IntegrationInfo info = ctx.findSelectedIntegration();
         if (info == null) {
+            viewsRow = -1;
             renderNoSelection(frame, area);
             return;
         }
@@ -304,10 +318,16 @@ class JfrTab extends AbstractTab {
         lines.add(Line.from(line1));
 
         List<Span> line2 = new ArrayList<>();
+        // the second line inside the border
+        viewsRow = area.y() + 2;
+        int x = area.x() + 1;
         for (View v : View.values()) {
             if (v.ordinal() > 0) {
                 line2.add(Span.styled(" | ", LABEL));
+                x += 3;
             }
+            viewColumns[v.ordinal()] = x;
+            x += v.label.length();
             boolean active = v == activeView;
             line2.add(Span.styled(v.label, active ? VALUE : LABEL));
         }

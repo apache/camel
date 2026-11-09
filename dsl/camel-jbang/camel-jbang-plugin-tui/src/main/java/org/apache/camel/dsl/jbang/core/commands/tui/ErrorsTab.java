@@ -33,7 +33,6 @@ import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.MouseEvent;
-import dev.tamboui.tui.event.MouseEventKind;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -61,8 +60,6 @@ class ErrorsTab extends AbstractTableTab {
     private boolean showVariables;
     private boolean showHeaders = true;
     private boolean showBody = true;
-
-    private static final int MOUSE_SCROLL_LINES = 3;
 
     private static final int INFO_NARROW = 0;
     private static final int INFO_WIDE = 1;
@@ -265,39 +262,28 @@ class ErrorsTab extends AbstractTableTab {
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
         if (!diagram.isShowDiagram()) {
-            if (handleTableClick(me, lastTableArea, tableState, filteredSize())) {
-                detailScroll = 0;
-                return true;
-            }
+            // the wheel scrolls the errors over the table, the detail over the detail
+            return super.handleMouseEvent(me, area);
         }
-        if (diagram.isShowDiagram()) {
-            if (diagram.handleMouseScroll(me)) {
-                return true;
-            }
-            if (me.isClick()) {
-                if (diagram.isHistoryMode() && diagram.isHistoryTopologyMode()) {
-                    int clicked = diagram.handleNodeClick(me);
-                    if (clicked >= 0) {
-                        return true;
-                    }
-                } else {
-                    int clicked = diagram.handleEipNodeClick(me);
-                    if (clicked >= 0) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        if (me.kind() == MouseEventKind.SCROLL_UP) {
-            detailScroll = Math.max(0, detailScroll - MOUSE_SCROLL_LINES);
+        if (diagram.handleMouseScroll(me)) {
             return true;
         }
-        if (me.kind() == MouseEventKind.SCROLL_DOWN) {
-            detailScroll += MOUSE_SCROLL_LINES;
-            return true;
+        if (me.isClick()) {
+            int clicked = diagram.isHistoryMode() && diagram.isHistoryTopologyMode()
+                    ? diagram.handleNodeClick(me) : diagram.handleEipNodeClick(me);
+            return clicked >= 0;
         }
         return false;
+    }
+
+    @Override
+    protected void scrollDetail(int lines) {
+        detailScroll = Math.max(0, detailScroll + lines);
+    }
+
+    @Override
+    protected void rowClicked() {
+        detailScroll = 0;
     }
 
     @Override
@@ -416,6 +402,7 @@ class ErrorsTab extends AbstractTableTab {
                 .build();
 
         lastTableArea = chunks.get(0);
+        lastDetailArea = showDetail ? chunks.get(1) : null;
         frame.renderStatefulWidget(table, chunks.get(0), tableState);
         renderScrollbar(frame, table, filteredSize());
 
