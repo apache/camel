@@ -21,7 +21,7 @@ camel cmd chaos-experiment [options]
 | Option | Description | Default | Type
 | `--body` | The body of the messages: text, file:<path>, or file:<folder> for a message per file |  | String
 | `--end` | End the open experiment (with --note) instead of running a new one |  | boolean
-| `--feed` | The endpoint, or the id of the route, to send the messages of the experiment to |  | String
+| `--feed` | The endpoint, or the id of the route, to send the messages of the experiment to; a route that serves HTTP gets HTTP requests, or give the path to call, such as 'PUT /orders/42' |  | String
 | `--header` | A header of the messages as key=value; can be given more than once |  | List
 | `--hypothesis` | What the experiment tests, in a few words, such as 'orders survive a payment outage' |  | String
 | `--interval` | The pause between two messages, such as 200ms, or a range such as 100..500 to draw each pause at random (at most 60s) |  | String

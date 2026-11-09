@@ -88,9 +88,11 @@ public final class ChaosExplorePlaybook {
                    - feed: a route that does not feed itself gets no messages unless you give feed. When the feed \
                 of the suggestion is kind send, always give its endpoint, with body (a message as the route \
                 expects it, such as JSON), repeat (such as 20) and interval (such as 100..300); leave feed out \
-                only when the route feeds itself (kind self). \
-                Routes fed over http or from files cannot be fed by an experiment yet: try them only when they \
-                feed themselves. An experiment refuses a feed that cannot reach its route, with the reason and \
+                only when the route feeds itself (kind self). A route of kind http (platform-http or rest) is fed \
+                with HTTP requests to the server of the integration: give the id of the route as feed, or the path \
+                to call when its path has a parameter (such as POST /orders/42); the traffic counts the status codes \
+                the clients got. Routes fed from files cannot be fed by an experiment yet. An experiment refuses a \
+                feed that cannot reach its route, with the reason and \
                 what to do instead, and warns when the feed goes to a real system that is not stubbed
                    - a rule at=dlq fails the dead letter channel, so it fires only when a message goes there: use \
                 the combined suggestions, which add the fault that sends messages there too. A message the \

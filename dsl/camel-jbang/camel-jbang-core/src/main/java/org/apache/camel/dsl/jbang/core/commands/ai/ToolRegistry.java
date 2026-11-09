@@ -973,7 +973,8 @@ public final class ToolRegistry {
                 .param("hypothesis", "string", "What the experiment tests, in a few words", false)
                 .param("feed", "string",
                         "The endpoint, or the id of the route, to send the messages to (as the feed of chaos_suggest);"
-                                         + " leave it out when the route feeds itself (a timer)",
+                                         + " a route that serves HTTP gets HTTP requests, or give the path to call"
+                                         + " (POST /orders/42); leave it out when the route feeds itself (a timer)",
                         false)
                 .param("body", "string", "The body of the messages (file:<path>, or file:<folder> for a message per file)",
                         false)

@@ -775,7 +775,9 @@ rules, send its traffic, wait for the verdict, and end it
                               camel.chaos.rules; can be given more than once,
                               and one of them needs an expectation (expect=)
       --feed=<feed>         The endpoint, or the id of the route, to send the
-                              messages of the experiment to
+                              messages of the experiment to; a route that
+                              serves HTTP gets HTTP requests, or give the path
+                              to call, such as 'PUT /orders/42'
       --body=<body>         The body of the messages: text, file:<path>, or
                               file:<folder> for a message per file
       --header=<headers>    A header of the messages as key=value; can be given

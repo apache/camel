@@ -584,6 +584,17 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
                 Map.of("number", 3, "verdict", "PASS", "elapsed", 1_000L,
                         "traffic", new JsonObject(Map.of("endpoint", "refunds", "status", "failed", "error", "No endpoint"))));
         assertThat(CamelChaosExperimentAction.lines(notSent)).contains("  traffic: not sent to refunds: No endpoint");
+
+        // an HTTP feed: the status codes the clients got (CAMEL-26793)
+        JsonObject http = new JsonObject(
+                Map.of("number", 3, "verdict", "PASS", "rules", new JsonArray(List.of("r3")),
+                        "traffic", new JsonObject(
+                                Map.of("endpoint", "POST http://localhost:8080/payment", "sent", 20L,
+                                        "failed", 0L, "elapsed", 4_200L, "planned", 30L,
+                                        "statusCodes", new JsonObject(Map.of("200", 17L, "503", 3L))))));
+        assertThat(CamelChaosExperimentAction.lines(http)).contains("  traffic: 20 messages sent to POST"
+                                                                    + " http://localhost:8080/payment in 4s, answered 200 x17, 503 x3 (of 30: the"
+                                                                    + " experiment ended first)");
     }
 
     /** The status of the integration orders, with the chaos dev console as the CLI connector puts it there. */
