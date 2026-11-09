@@ -28,8 +28,11 @@ happened to it, with no AI:
 - **Last 5m** — the exchanges and how they ended, the cause that
   happened most and when (a chaos rule marked 🎲), and the exchanges
   since it started.
-- **Watch** — the errors that happened and the kinds that happened most,
-  routes not started, exchanges in flight.
+- **Watch** — the errors that happened, the kinds that happened most and
+  when the last one did, routes not started, exchanges in flight. Errors
+  that stopped more than a minute ago are history: the line says there
+  were none in the last minute, with the earlier ones dimmed (Last 5m and
+  What happened still show them).
 - **Next** — the keys that lead deeper: **4** the Timeline, **5** the
   Diagram, **2** the source.
 - **What happened** — a strip per route over the last 5 minutes (as wide

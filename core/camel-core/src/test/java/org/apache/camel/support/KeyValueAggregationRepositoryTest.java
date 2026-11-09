@@ -251,6 +251,22 @@ class KeyValueAggregationRepositoryTest {
         assertThat(invoices.scan(camelContext)).containsExactly(invoice.getExchangeId());
     }
 
+    @Test
+    void testUnexpectedPayloadHandledGracefully() {
+        kvRepository.put("aggregate:corruptKey", "plainStringPayload");
+        kvRepository.put("completed:corruptExchangeId", "plainStringPayload");
+
+        Exchange retrieved = aggregationRepository.get(camelContext, "corruptKey");
+        assertThat(retrieved).isNull();
+
+        Exchange newEx = createExchange("recovered");
+        Exchange oldEx = aggregationRepository.add(camelContext, "corruptKey", newEx);
+        assertThat(oldEx).isNull();
+
+        Exchange recovered = aggregationRepository.recover(camelContext, "corruptExchangeId");
+        assertThat(recovered).isNull();
+    }
+
     private Exchange createExchange(String body) {
         Exchange exchange = new DefaultExchange(camelContext);
         exchange.getIn().setBody(body);
