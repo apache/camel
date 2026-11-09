@@ -138,6 +138,9 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
      * <p/>
      * This method is invoked instead of confirm() if the repository is recoverable. This allows possible recovery of
      * non-confirmed completed exchanges.
+     * <p/>
+     * It is not invoked for a group that was completed by its first exchange (for example with a completion size of 1),
+     * as such a group was never added to the repository, so there is nothing to confirm.
      *
      * @param  camelContext the current CamelContext
      * @param  exchangeId   exchange id to confirm
