@@ -347,8 +347,8 @@ class OnCompletionListenerTest extends ContextTestSupport {
                 new Class<?>[] { UnitOfWork.class }, handler);
 
         // a custom unit of work that does not implement the new method hands over as before, and tells nothing
-        assertNull(custom.handoverSynchronization(createExchangeWithBody("A"), target, null));
-        assertNull(custom.handoverSynchronization(createExchangeWithBody("A"), target, s -> true));
+        assertNull(custom.handoverSynchronizationWithResult(target, null));
+        assertNull(custom.handoverSynchronizationWithResult(target, s -> true));
         assertEquals(List.of("handoverSynchronization 1", "handoverSynchronization 2"), calls);
     }
 

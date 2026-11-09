@@ -113,7 +113,7 @@ public interface OnCompletionListener {
      * @param to             the exchange they were handed over to
      * @param moved          the on completions that moved (not empty), or {@code null} when the unit of work does not
      *                       tell (a custom {@link UnitOfWork} that does not implement
-     *                       {@link UnitOfWork#handoverSynchronization(Exchange, Exchange, java.util.function.Predicate)})
+     *                       {@link UnitOfWork#handoverSynchronizationWithResult(Exchange, java.util.function.Predicate)})
      */
     default void onCompletionHandover(
             Exchange from, @Nullable UnitOfWork fromUnitOfWork, Exchange to, @Nullable List<Synchronization> moved) {

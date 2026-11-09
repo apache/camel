@@ -253,8 +253,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
      * instead of the others when an {@link OnCompletionListener} is installed.
      */
     @Override
-    public List<Synchronization> handoverSynchronization(
-            Exchange from, Exchange target, Predicate<Synchronization> filter) {
+    public List<Synchronization> handoverSynchronizationWithResult(Exchange target, Predicate<Synchronization> filter) {
         final List<Synchronization> moved = new ArrayList<>(2);
         doHandoverSynchronization(target, filter, moved);
         return moved;

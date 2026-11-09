@@ -886,7 +886,7 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
             final UnitOfWork from = unitOfWork;
             if (sharedUnitOfWork == null || from != sharedUnitOfWork.unitOfWork) {
                 if (listen) {
-                    handedOver(listeners, from, target, from.handoverSynchronization(this, target, null));
+                    handedOver(listeners, from, target, from.handoverSynchronizationWithResult(target, null));
                 } else {
                     from.handoverSynchronization(target);
                 }
@@ -897,7 +897,7 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
                 sharedUnitOfWork.completions = null;
                 final Predicate<Synchronization> filter = s -> containsInstance(own, s);
                 if (listen) {
-                    handedOver(listeners, from, target, from.handoverSynchronization(this, target, filter));
+                    handedOver(listeners, from, target, from.handoverSynchronizationWithResult(target, filter));
                 } else {
                     from.handoverSynchronization(target, filter);
                 }

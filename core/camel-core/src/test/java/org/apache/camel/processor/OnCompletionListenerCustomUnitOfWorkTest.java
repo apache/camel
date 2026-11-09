@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * With a custom {@link UnitOfWork} that does not implement
- * {@link UnitOfWork#handoverSynchronization(Exchange, Exchange, Predicate)}, the on completions are handed over as
+ * {@link UnitOfWork#handoverSynchronizationWithResult(Exchange, Predicate)}, the on completions are handed over as
  * without a listener, and the listener is told that it is not known what moved.
  */
 class OnCompletionListenerCustomUnitOfWorkTest extends ContextTestSupport {
@@ -95,7 +95,7 @@ class OnCompletionListenerCustomUnitOfWorkTest extends ContextTestSupport {
         static UnitOfWork create(Exchange exchange) {
             DefaultUnitOfWork delegate = new DefaultUnitOfWork(exchange);
             InvocationHandler handler = (proxy, method, args) -> {
-                if (method.isDefault() && "handoverSynchronization".equals(method.getName())) {
+                if (method.isDefault() && "handoverSynchronizationWithResult".equals(method.getName())) {
                     return InvocationHandler.invokeDefault(proxy, method, args);
                 }
                 try {

@@ -422,9 +422,9 @@ They are installed through `ExtendedCamelContext`, as the `StepHook` is, with de
 of the order of work); the on completion listener comes with R2 (step 3).
 
 The API changes in short: the two interfaces; the six methods on `ExtendedCamelContext`; and, for R2, a new default
-method on `UnitOfWork` that hands over and returns what moved (`handoverSynchronization(Exchange from, Exchange
-target, Predicate<Synchronization> filter)`), as today only `DefaultUnitOfWork` knows which on completions a
-`SynchronizationVetoable` kept, and only the exchange knows that it is the one handing over.
+method on `UnitOfWork` that hands over and returns what moved (`handoverSynchronizationWithResult(Exchange target,
+Predicate<Synchronization> filter)`), as today only `DefaultUnitOfWork` knows which on completions a
+`SynchronizationVetoable` kept.
 
 Rules for listeners, in the Javadoc:
 
