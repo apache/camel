@@ -7641,6 +7641,10 @@ the schema of such a class has the Java field names. Use `@JsonNaming` from `too
 (`marshal().json()`), or relies on its type converters, and got it through one of these components, declare `camel-jackson`
 or `camel-jackson3` yourself.
 
+`camel-aws2-ddb` and `camel-google-sheets` no longer use Jackson for their JSON data type transformers
+(`aws2-ddb:application-json` and `google-sheets:application-x-struct`), so they need neither `camel-jackson` nor
+`camel-jackson3`. A body that is a Jackson `JsonNode` of either line is read as its JSON text.
+
 The data these components send does not change: their internal mappers keep the Jackson 2 defaults.
 
 *camel-aws-bedrock.* A text result (the Anthropic Claude v2, Cohere and Llama models) is now a `String` body; it was a Jackson
