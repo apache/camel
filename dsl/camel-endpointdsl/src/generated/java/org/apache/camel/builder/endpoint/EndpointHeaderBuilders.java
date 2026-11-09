@@ -4205,6 +4205,20 @@ public class EndpointHeaderBuilders {
         return VertxHttpEndpointBuilderFactory.VertxHttpHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Vert.x MQTT (camel-vertx-mqtt)
+     * Send and receive messages to and from an MQTT broker, MQTT 3.1.1 and 5,
+     * with the Vert.x MQTT client.
+     * 
+     * Category: messaging,iot
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-vertx-mqtt
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static VertxMqttEndpointBuilderFactory.VertxMqttHeaderNameBuilder vertxMqtt() {
+        return VertxMqttEndpointBuilderFactory.VertxMqttHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Vert.x WebSocket (camel-vertx-websocket)
      * Expose WebSocket endpoints and connect to remote WebSocket servers using
      * Vert.x

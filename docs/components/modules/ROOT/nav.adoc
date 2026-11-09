@@ -404,6 +404,7 @@
 ** xref:validator-component.adoc[Validator]
 ** xref:velocity-component.adoc[Velocity]
 ** xref:vertx-component.adoc[Vert.x]
+*** xref:vertx-mqtt-component.adoc[Vert.x MQTT]
 ** xref:vertx-http-component.adoc[Vert.x HTTP Client]
 ** xref:vertx-websocket-component.adoc[Vert.x WebSocket]
 ** xref:wasm-component.adoc[Wasm]
