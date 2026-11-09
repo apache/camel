@@ -890,6 +890,17 @@
   "serviceVersion" : "v1.0.0.rc0",
   "uiSupported" : false
 }, {
+  "service" : "org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbInfraService",
+  "description" : "Local Azure Cosmos DB service with Floci AZ",
+  "implementation" : "org.apache.camel.test.infra.azure.cosmosdb.services.AzureCosmosDbLocalContainerInfraService",
+  "alias" : [ "azure" ],
+  "aliasImplementation" : [ "cosmos-db" ],
+  "groupId" : "org.apache.camel",
+  "artifactId" : "camel-test-infra-azure-cosmosdb",
+  "version" : "4.24.0-SNAPSHOT",
+  "serviceVersion" : "0.16.0",
+  "uiSupported" : false
+}, {
   "service" : "org.apache.camel.test.infra.ftp.services.FtpInfraService",
   "description" : "Embedded FTP Server",
   "implementation" : "org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedInfraService",
