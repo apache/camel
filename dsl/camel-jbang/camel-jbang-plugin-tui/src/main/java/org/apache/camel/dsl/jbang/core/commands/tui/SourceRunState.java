@@ -95,6 +95,9 @@ final class SourceRunState {
         }
         // an integration that has not reloaded loaded its routes when it started; after a reload, when each started
         boolean reloaded = info.reloaded > 0 || info.reloadError != null || info.uptime <= 0;
+        // the routes were loaded before the context started, but after the JVM did: an example run from the TUI
+        // writes its files from the integration itself, after its JVM started
+        long loaded = info.contextStarted > 0 ? info.contextStarted : info.uptime;
         int routes = 0;
         int started = 0;
         int stale = 0;
@@ -112,7 +115,7 @@ final class SourceRunState {
             if (reloaded && uptime < 0) {
                 // a stopped route after a reload: when it was loaded is not known, so it may be of another version
                 unknown++;
-            } else if ((reloaded ? Math.max(info.uptime, now - uptime) : info.uptime) < fileModified) {
+            } else if ((reloaded ? Math.max(loaded, now - uptime) : loaded) < fileModified) {
                 stale++;
             }
         }

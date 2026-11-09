@@ -67,6 +67,19 @@ class SourceRunStateTest {
     }
 
     @Test
+    void writtenByTheIntegrationBeforeItsContextStarted() {
+        // an example run from the TUI writes its files from the integration itself: after the JVM started, before
+        // the routes were loaded and the context started
+        info.contextStarted = NOW - 58_000;
+        route("orders", "orders.camel.yaml:3", "57s");
+
+        assertThat(SourceRunState.of(info, FILE, NOW - 59_000, NOW).kind()).isEqualTo(SourceRunState.Kind.RUNNING);
+        // saved after the context started: not what runs
+        assertThat(SourceRunState.of(info, FILE, NOW - 10_000, NOW).kind())
+                .isEqualTo(SourceRunState.Kind.NOT_RUNNING);
+    }
+
+    @Test
     void savedAfterTheIntegrationStartedWithoutDevMode() {
         route("orders", "orders.camel.yaml:3", "59s");
 

@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import dev.tamboui.layout.Constraint;
@@ -77,8 +78,7 @@ class EventTab extends AbstractTableTab {
 
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
-        List<EventInfo> sorted = new ArrayList<>(info.events);
-        sorted.sort(this::sortEvent);
+        List<EventInfo> sorted = sortedEvents(info);
 
         List<Row> rows = new ArrayList<>();
         for (EventInfo ei : sorted) {
@@ -115,6 +115,20 @@ class EventTab extends AbstractTableTab {
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
         renderScrollbar(frame, table, sorted.size());
+    }
+
+    /**
+     * The events in the sort order. They come oldest first, and the sort keeps the order of equal ones: unless the sort
+     * is reversed, the list is turned around first, so events of the same millisecond (the created, sent and completed
+     * events of a quick exchange) read newest first like the others.
+     */
+    List<EventInfo> sortedEvents(IntegrationInfo info) {
+        List<EventInfo> sorted = new ArrayList<>(info.events);
+        if (!sortReversed) {
+            Collections.reverse(sorted);
+        }
+        sorted.sort(this::sortEvent);
+        return sorted;
     }
 
     private int sortEvent(EventInfo a, EventInfo b) {
@@ -157,8 +171,7 @@ class EventTab extends AbstractTableTab {
         if (info == null || info.events.isEmpty()) {
             return null;
         }
-        List<EventInfo> sorted = new ArrayList<>(info.events);
-        sorted.sort(this::sortEvent);
+        List<EventInfo> sorted = sortedEvents(info);
         List<String> items = sorted.stream().map(e -> e.type != null ? e.type : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Events");
@@ -183,8 +196,7 @@ class EventTab extends AbstractTableTab {
         JsonObject result = new JsonObject();
         result.put("tab", "Events");
         JsonArray rows = new JsonArray();
-        List<EventInfo> sorted = new ArrayList<>(info.events);
-        sorted.sort(this::sortEvent);
+        List<EventInfo> sorted = sortedEvents(info);
         for (EventInfo ei : sorted) {
             JsonObject row = new JsonObject();
             row.put("type", ei.type);

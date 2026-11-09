@@ -18,8 +18,12 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -349,6 +353,7 @@ class ErrorsTab extends AbstractTableTab {
         }
 
         List<ErrorInfo> sorted = applyFilter(info.errors);
+        Set<ErrorInfo> newest = newestOfEachKind(sorted);
 
         List<Row> rows = new ArrayList<>();
         for (ErrorInfo ei : sorted) {
@@ -366,9 +371,7 @@ class ErrorsTab extends AbstractTableTab {
                     Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
                     Cell.from(Span.styled(handledStr, handledStyle)),
-                    Cell.from(ei.repeatCount > 1
-                            ? Span.styled(Long.toString(ei.repeatCount), Theme.error().bold())
-                            : Span.raw(Long.toString(Math.max(1, ei.repeatCount)))),
+                    countCell(ei, newest),
                     ChaosMarks.markedCell(ChaosMarks.ruleOf(ctx, info, ei.exchangeId, ei.properties), shortException),
                     Cell.from(ei.exceptionMessage != null ? ei.exceptionMessage : "")));
         }
@@ -412,7 +415,7 @@ class ErrorsTab extends AbstractTableTab {
                 .highlightStyle(Theme.selectionBg())
                 .highlightSpacing(Table.HighlightSpacing.ALWAYS)
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(true))
-                        .title(" Errors [" + sorted.size() + "] ").build())
+                        .title(title(sorted.size(), info.errorCount)).build())
                 .build();
 
         lastTableArea = chunks.get(0);
@@ -569,6 +572,43 @@ class ErrorsTab extends AbstractTableTab {
         }
         ctx.askAiCallback.fixFailure(file, line + 1, RuntimeFailures.failureOf(error),
                 RuntimeFailures.lineText(file, line));
+    }
+
+    /**
+     * The title: how many errors are listed, and how many happened when that is more. The registry keeps the newest few
+     * of each kind of error (CAMEL-24911).
+     */
+    static String title(int listed, int happened) {
+        if (happened > listed) {
+            return " Errors [" + listed + "] " + happened + " happened, the newest of each kind are kept ";
+        }
+        return " Errors [" + listed + "] ";
+    }
+
+    /**
+     * How often a kind of error happened, on its newest entry: an older entry counts the times up to then, so it is
+     * left blank and the column adds up to the errors that happened.
+     */
+    private static Cell countCell(ErrorInfo ei, Set<ErrorInfo> newest) {
+        if (!newest.contains(ei)) {
+            return Cell.from("");
+        }
+        return ei.repeatCount > 1
+                ? Cell.from(Span.styled(Long.toString(ei.repeatCount), Theme.error().bold()))
+                : Cell.from(Long.toString(Math.max(1, ei.repeatCount)));
+    }
+
+    /** The newest entry of each kind of error (a route and an exception type): the one with the highest count. */
+    static Set<ErrorInfo> newestOfEachKind(List<ErrorInfo> errors) {
+        Map<String, ErrorInfo> newest = new HashMap<>();
+        for (ErrorInfo ei : errors) {
+            newest.merge(ei.routeId + "|" + ei.exceptionType, ei,
+                    (a, b) -> b.repeatCount > a.repeatCount
+                            || b.repeatCount == a.repeatCount && b.timestamp > a.timestamp ? b : a);
+        }
+        Set<ErrorInfo> set = Collections.newSetFromMap(new IdentityHashMap<>());
+        set.addAll(newest.values());
+        return set;
     }
 
     /** How often this kind of error happened, and how long it has been going on (CAMEL-24911). */

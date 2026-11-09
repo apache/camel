@@ -51,6 +51,8 @@ class IntegrationInfo {
     String ready;
     int state;
     long uptime;
+    // when the CamelContext started (epoch millis), after it loaded its routes; 0 when the integration does not say
+    long contextStarted;
     String ago;
     String throughput;
     long exchangesTotal;
