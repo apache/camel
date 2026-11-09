@@ -417,7 +417,8 @@ public interface VertxMqttComponentBuilderFactory {
         
         /**
          * The largest message in bytes the client receives, the protocol
-         * maximum by default.
+         * maximum by default. Every message is read into memory as a whole, so
+         * lower it for a broker whose publishers are not trusted.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -584,7 +585,8 @@ public interface VertxMqttComponentBuilderFactory {
          * broker: key managers for a client certificate, trust managers,
          * protocols and cipher suites. Without it the trust store of the JVM is
          * used. The host name of the broker is always verified against its
-         * certificate.
+         * certificate: there is intentionally no option to switch the check
+         * off.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.

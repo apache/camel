@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VertxMqttReconnectorTest {
 
@@ -79,5 +80,20 @@ class VertxMqttReconnectorTest {
             reconnector.schedule();
         });
         await().during(200, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(() -> attempts.size() == 1);
+    }
+
+    /**
+     * A reconnect for a redelivery has to reach an MQTT 5 session before it expires, whatever the delay has grown to.
+     */
+    @Test
+    void aCapLimitsTheDelayButNotItsGrowth() {
+        final VertxMqttReconnector reconnector = new VertxMqttReconnector(vertx, BROKER, 1000, 60_000, () -> {
+        });
+        for (int i = 0; i < 6; i++) {
+            reconnector.delay(0);
+        }
+        assertEquals(60_000, reconnector.nextDelay());
+        assertTrue(reconnector.delay(30_000) <= 30_000);
+        assertTrue(reconnector.delay(0) >= 60_000);
     }
 }

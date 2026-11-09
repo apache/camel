@@ -86,7 +86,8 @@ public class VertxMqttConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "0")
     private int receiveMaximum;
     /**
-     * The largest message in bytes the client receives, the protocol maximum by default.
+     * The largest message in bytes the client receives, the protocol maximum by default. Every message is read into
+     * memory as a whole, so lower it for a broker whose publishers are not trusted.
      */
     @UriParam(label = "advanced", defaultValue = "268435455")
     private int maxMessageSize = VertxMqttConstants.MAX_MESSAGE_SIZE;
@@ -164,7 +165,7 @@ public class VertxMqttConfiguration implements Cloneable {
     /**
      * The TLS configuration of a connection to an ssl:// or mqtts:// broker: key managers for a client certificate,
      * trust managers, protocols and cipher suites. Without it the trust store of the JVM is used. The host name of the
-     * broker is always verified against its certificate.
+     * broker is always verified against its certificate: there is intentionally no option to switch the check off.
      */
     @UriParam(label = "security")
     @Metadata(javaType = "org.apache.camel.support.jsse.SSLContextParameters")

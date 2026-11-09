@@ -97,6 +97,8 @@ After a reconnect the exchanges that waited for the connection are sent at once.
 `maxInflightQueue` fail right away, as they would while connected.
 
 With `cleanStart=false` the broker keeps the session of the client, with MQTT 5 for `sessionExpiryInterval` seconds.
+Keep `maxReconnectDelay` well below `sessionExpiryInterval`: a reconnect after a lost connection that comes later
+finds no session, and the messages the broker held for it are gone.
 A consumer that stops then keeps its subscription at the broker, which holds the messages of quality of service 1 and
 2 until the consumer connects again with the same `clientId`. After a reconnect to a session the broker kept, the
 consumer does not subscribe again: the session still holds the subscription, and subscribing again would deliver the
@@ -126,8 +128,9 @@ acknowledges it once its exchange completed successfully. A message whose exchan
   and the broker delivers the message again from the session. The route sees it again, with `CamelVertxMqttDuplicate`
   set by most brokers. Delivery is at least once, a route must tolerate duplicates. A message whose exchange fails
   every time comes back after every reconnect: the error handler of the route, a dead letter channel for example, has
-  to complete it. While the failures repeat, the reconnect delay keeps growing up to `maxReconnectDelay`, and every
-  such close is logged as a warning.
+  to complete it. While the failures repeat and no other exchange succeeds in between, the reconnect delay keeps
+  growing up to `maxReconnectDelay`, but with MQTT 5 never beyond half of `sessionExpiryInterval`, so that the
+  reconnect reaches the session before the broker lets it expire. Every such close is logged as a warning.
 * Otherwise the consumer acknowledges it all the same, and it is not delivered again. Left unacknowledged it would hold
   one of the in-flight slots of the broker until the next connect, and after `receiveMaximum` such failures the broker
   would send nothing more. At quality of service 2 the Vert.x client sends the PUBREC as soon as the message arrives,

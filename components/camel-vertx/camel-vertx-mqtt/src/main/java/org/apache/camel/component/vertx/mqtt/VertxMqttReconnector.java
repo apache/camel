@@ -68,11 +68,20 @@ final class VertxMqttReconnector {
      * Schedules the next attempt, unless one is scheduled already or the reconnector was cancelled.
      */
     void schedule() {
+        schedule(0);
+    }
+
+    /**
+     * Schedules the next attempt, unless one is scheduled already or the reconnector was cancelled.
+     *
+     * @param cap the longest delay of this attempt in milliseconds, 0 for none: a reconnect that has to reach a session
+     *            before the broker lets it expire must not wait for the growing delay
+     */
+    void schedule(final long cap) {
         if (cancelled || timer != -1) {
             return;
         }
-        final long delay = nextDelay + ThreadLocalRandom.current().nextLong(nextDelay / 5 + 1);
-        nextDelay = Math.min(nextDelay * 2, Math.max(nextDelay, maxDelay));
+        final long delay = delay(cap);
         LOG.debug("Reconnecting to the MQTT broker {} in {} ms", broker, delay);
         timer = vertx.setTimer(delay, id -> {
             timer = -1;
@@ -80,6 +89,16 @@ final class VertxMqttReconnector {
                 connect.run();
             }
         });
+    }
+
+    /**
+     * @param  cap the longest delay in milliseconds, 0 for none
+     * @return     the delay of the next attempt, with its random part, and the delay of the one after it doubled
+     */
+    long delay(final long cap) {
+        final long delay = nextDelay + ThreadLocalRandom.current().nextLong(nextDelay / 5 + 1);
+        nextDelay = Math.min(nextDelay * 2, Math.max(nextDelay, maxDelay));
+        return cap > 0 ? Math.max(1, Math.min(delay, cap)) : delay;
     }
 
     /**
