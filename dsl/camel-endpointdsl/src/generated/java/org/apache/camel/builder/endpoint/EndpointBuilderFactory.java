@@ -408,6 +408,7 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.VelocityEndpointBuilderFactory.VelocityBuilders,
             org.apache.camel.builder.endpoint.dsl.VertxEndpointBuilderFactory.VertxBuilders,
             org.apache.camel.builder.endpoint.dsl.VertxHttpEndpointBuilderFactory.VertxHttpBuilders,
+            org.apache.camel.builder.endpoint.dsl.VertxMqttEndpointBuilderFactory.VertxMqttBuilders,
             org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.VertxWebsocketBuilders,
             org.apache.camel.builder.endpoint.dsl.WasmEndpointBuilderFactory.WasmBuilders,
             org.apache.camel.builder.endpoint.dsl.WatsonDiscoveryEndpointBuilderFactory.WatsonDiscoveryBuilders,

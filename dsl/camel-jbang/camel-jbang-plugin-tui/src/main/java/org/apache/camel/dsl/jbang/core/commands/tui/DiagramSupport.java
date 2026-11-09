@@ -29,12 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
+import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
@@ -76,6 +78,9 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 
 class DiagramSupport {
+
+    // the border of the diagram panel: a screen where the keys move in the diagram gives it the focus border
+    Function<Boolean, Style> paneBorder = focused -> Style.EMPTY;
 
     /** The width of a topology box in columns, as the layout engine draws it by default. */
     static final int DEFAULT_BOX_COLUMNS = new TopologyLayoutEngine().getNodeWidth() / 15;
@@ -1104,7 +1109,7 @@ class DiagramSupport {
 
     void renderNativeDiagram(Frame frame, Rect area, Line title, boolean metrics) {
         Block.Builder builder = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(paneBorder.apply(true))
                 .title(Title.from(withAiMark(title)));
         if (groupLegend != null) {
             builder.titleBottom(Title.from(groupLegend));
@@ -1541,10 +1546,8 @@ class DiagramSupport {
     void renderNativeRouteDiagram(
             Frame frame, Rect area, Line title, boolean metrics,
             String currentRouteId, RouteDiagramLayoutEngine.LayoutRoute routeLayout) {
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(title))
-                .build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(paneBorder.apply(true)).title(Title.from(title)).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
@@ -1958,10 +1961,8 @@ class DiagramSupport {
             return;
         }
 
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(withAiMark(title)))
-                .build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(Title.from(withAiMark(title))).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);
@@ -2041,10 +2042,8 @@ class DiagramSupport {
             return;
         }
 
-        Block block = Block.builder()
-                .borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                .title(Title.from(title))
-                .build();
+        Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .title(Title.from(title)).build();
         frame.renderWidget(block, area);
 
         Rect inner = block.inner(area);

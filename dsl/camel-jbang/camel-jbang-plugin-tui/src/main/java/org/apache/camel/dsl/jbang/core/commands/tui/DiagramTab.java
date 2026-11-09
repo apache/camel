@@ -688,6 +688,7 @@ class DiagramTab extends AbstractDiagramTab {
                                 "Loading diagram...",
                                 Style.EMPTY.dim()))))
                         .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                                .borderStyle(ctx.paneBorder(true))
                                 .title(" Diagram ").build())
                         .build(),
                 area);

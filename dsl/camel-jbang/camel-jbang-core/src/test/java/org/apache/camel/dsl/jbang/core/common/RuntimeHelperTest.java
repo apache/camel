@@ -142,4 +142,21 @@ class RuntimeHelperTest {
             assertEquals(0, files.count());
         }
     }
+
+    @Test
+    void sendTimeoutCountsTheMessages() throws IOException {
+        // one message: the time of an action
+        assertEquals(10_000, RuntimeHelper.sendTimeout("hello", 0, 0));
+        assertEquals(10_000, RuntimeHelper.sendTimeout("hello", 1, 500));
+        // a repeat: the pauses between the messages, and a second for each
+        assertEquals(10_000 + 50 * 1200, RuntimeHelper.sendTimeout("hello", 50, 200));
+        // the files of a folder that is here, leaving out the headers of a message
+        Path feed = Files.createDirectories(home.resolve("feed"));
+        Files.writeString(feed.resolve("001.json"), "{}");
+        Files.writeString(feed.resolve("001.properties"), "country=ES");
+        Files.writeString(feed.resolve("002.json"), "{}");
+        assertEquals(10_000 + 2 * 1000, RuntimeHelper.sendTimeout("file:" + feed, 0, 0));
+        // a folder of the integration that is not here: 100 messages assumed
+        assertEquals(10_000 + 100 * 1000, RuntimeHelper.sendTimeout("file:" + feed.resolve("elsewhere"), 0, 0));
+    }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -223,7 +225,22 @@ public final class RuntimeHelper {
      * @throws IllegalArgumentException when a header is not a key=value pair
      */
     public static JsonObject sendMessage(long pid, String endpoint, String body, String headers) {
+        return sendMessage(pid, endpoint, body, headers, 0, null);
+    }
+
+    /**
+     * Sends a message, or with a repeat or a body of {@code file:<folder>} several messages, with a pause between them;
+     * the answer is then a summary (sent, failed and the errors) rather than the reply.
+     *
+     * @param repeat   how many messages to send in all, going round the files of a folder; 0 to send once (each file of
+     *                 a folder once)
+     * @param interval the pause between two messages: millis, a duration such as 200ms, or a range such as 100..500 to
+     *                 draw each pause at random
+     */
+    public static JsonObject sendMessage(
+            long pid, String endpoint, String body, String headers, int repeat, String interval) {
         JsonArray headerList = headers != null ? parseHeaders(headers) : null;
+        long[] pause = RepeatedSend.interval(interval);
         String result = executeAction(pid, "send", root -> {
             root.put("endpoint", endpoint);
             if (body != null) {
@@ -232,7 +249,16 @@ public final class RuntimeHelper {
             if (headerList != null) {
                 root.put("headers", headerList);
             }
-        });
+            if (repeat > 0) {
+                root.put("repeat", repeat);
+            }
+            if (pause[1] > 0) {
+                root.put("interval", pause[0]);
+                if (pause[1] > pause[0]) {
+                    root.put("intervalMax", pause[1]);
+                }
+            }
+        }, sendTimeout(body, repeat, pause[1]));
         try {
             return (JsonObject) Jsoner.deserialize(result);
         } catch (Exception e) {
@@ -240,6 +266,21 @@ public final class RuntimeHelper {
             wrapper.put("result", result);
             return wrapper;
         }
+    }
+
+    /**
+     * How long to wait for the answer of a send: for more messages also the pauses between them and a second for each.
+     * The files of a folder are counted when the folder is here (the integration reads it, relative to its working
+     * directory), else 100 are assumed.
+     */
+    static long sendTimeout(String body, int repeat, long interval) {
+        long count = repeat;
+        if (count <= 1 && body != null && body.startsWith("file:")) {
+            File folder = new File(body.substring(5));
+            String[] files = folder.list((d, n) -> !n.startsWith(".") && !n.endsWith(".properties"));
+            count = files != null ? files.length : folder.isFile() ? 1 : 100;
+        }
+        return count <= 1 ? ACTION_TIMEOUT_MS : ACTION_TIMEOUT_MS + count * (interval + 1000);
     }
 
     /**

@@ -211,8 +211,10 @@ The `invokeFunction` operation sends the message body to the function: text, a n
 marshalled: marshal it to JSON first, for example with `marshal().json()`, as a body that does not convert to bytes
 fails the exchange. `GET` and `DELETE` send no body.
 
-A request with a body has the `Content-Type: application/json` header, unless the `CamelAzureFunctionsHttpHeaders`
-header, a `Map<String, String>` of HTTP headers to send, sets a `Content-Type`.
+A request with a body has the `Content-Type` that the `CamelAzureFunctionsHttpHeaders` header, a `Map<String, String>`
+of HTTP headers to send, sets. When that map sets none, the `Content-Type` header of the message is used, and when the
+message has none either, `Content-Type: application/json`. Text is always sent as UTF-8: the charset parameter of a
+`Content-Type` from the message, for example `text/plain; charset=ISO-8859-1`, is not used for the encoding.
 
 The response body of the function becomes the message body, as text, with the HTTP status in the
 `CamelAzureFunctionsStatusCode` header and the HTTP headers of the response in the `CamelAzureFunctionsResponseHeaders`

@@ -60,9 +60,10 @@ public final class UpdateChecker {
         }
         // An exact pin refuses `camel self-update` outright (see SelfUpdateCommand); telling the user to run it
         // here would be advice they can't actually follow. An X.Y or LTS pin can move within its selector, so
-        // check the matching alias instead of latest.properties.
+        // check the matching alias instead of latest.properties. A pin to nightly builds gets no notice: a new
+        // nightly build lands every day, and camel self-update installs the newest one when asked.
         Pin pin = InstallDetector.pinnedVersion().map(Pin::parse).orElse(null);
-        if (pin != null && !pin.tracksAlias()) {
+        if (!notifiesFor(pin)) {
             return;
         }
         String target = targetOf(pin);
@@ -109,6 +110,11 @@ public final class UpdateChecker {
             return false;
         }
         return !"false".equalsIgnoreCase(checkEnvVar);
+    }
+
+    // No pin, or an X.Y or LTS pin: the pins that camel self-update moves on its own, without a --version.
+    static boolean notifiesFor(Pin pin) {
+        return pin == null || pin.tracksAlias();
     }
 
     static String targetOf(Pin pin) {

@@ -96,6 +96,8 @@ final class AboutView {
     private int stripColumns = STRIP_COLUMNS;
     // the line of In, Routes or Out the cursor is on (↑ ↓), in the order of the columns; -1 when none is
     private int cursor = -1;
+    // the column the cursor is in: 0 In, 1 Routes, 2 Out, or -1 when it is on nothing; its panel has the focus border
+    private int focus = -1;
     private volatile List<Target> targets = List.of();
     private volatile List<String> targetLabels = List.of();
 
@@ -467,12 +469,13 @@ final class AboutView {
                 .constraints(Constraint.length(headHeight), Constraint.length(columnHeight), Constraint.length(statusHeight),
                         Constraint.length(happenedHeight), Constraint.fill())
                 .split(area);
-        frame.renderWidget(Paragraph.builder().text(Text.from(head)).block(block(name, Padding.NONE)).build(), rows.get(0));
-        renderColumns(frame, rows.get(1), columns, Padding.NONE, 0);
+        frame.renderWidget(Paragraph.builder().text(Text.from(head)).block(block(name, Padding.NONE, false)).build(),
+                rows.get(0));
+        renderColumns(frame, rows.get(1), columns, Padding.NONE, 0, focus);
         frame.renderWidget(Paragraph.builder().text(Text.from(status)).build(), rows.get(2));
         if (happenedHeight > 2) {
             frame.renderWidget(Paragraph.builder().text(Text.from(strips))
-                    .block(block(happenedTitle(info), Padding.NONE)).build(), rows.get(3));
+                    .block(block(happenedTitle(info), Padding.NONE, false)).build(), rows.get(3));
         }
     }
 
@@ -489,13 +492,13 @@ final class AboutView {
                         Constraint.length(1), Constraint.length(status.size()), Constraint.length(1),
                         Constraint.length(happenedHeight), Constraint.length(1), Constraint.length(1), Constraint.fill())
                 .split(area);
-        frame.renderWidget(Paragraph.builder().text(Text.from(head)).block(block(name, Padding.horizontal(1))).build(),
+        frame.renderWidget(Paragraph.builder().text(Text.from(head)).block(block(name, Padding.horizontal(1), false)).build(),
                 rows.get(0));
-        renderColumns(frame, rows.get(2), columns, Padding.uniform(1), 1);
+        renderColumns(frame, rows.get(2), columns, Padding.uniform(1), 1, focus);
         frame.renderWidget(Paragraph.builder().text(Text.from(status)).build(), indent(rows.get(4)));
         if (happenedHeight > 2) {
             frame.renderWidget(Paragraph.builder().text(Text.from(strips))
-                    .block(block(happenedTitle(info), Padding.uniform(1))).build(), rows.get(6));
+                    .block(block(happenedTitle(info), Padding.uniform(1), false)).build(), rows.get(6));
         }
         frame.renderWidget(Paragraph.builder().text(Text.from(next())).build(), indent(rows.get(8)));
     }
@@ -505,7 +508,7 @@ final class AboutView {
         return new Rect(r.x() + 2, r.y(), Math.max(0, r.width() - 2), r.height());
     }
 
-    private static void renderColumns(Frame frame, Rect area, Columns columns, Padding padding, int spacing) {
+    private void renderColumns(Frame frame, Rect area, Columns columns, Padding padding, int spacing, int focus) {
         // by hand: the layout leaves the last column short of the edge when spaced
         int w0 = area.width() * 28 / 100;
         int w1 = area.width() * 42 / 100;
@@ -513,11 +516,13 @@ final class AboutView {
         List<Rect> cols = List.of(new Rect(area.x(), area.y(), w0, area.height()),
                 new Rect(area.x() + w0 + spacing, area.y(), w1, area.height()),
                 new Rect(area.x() + w0 + w1 + 2 * spacing, area.y(), w2, area.height()));
-        frame.renderWidget(Paragraph.builder().text(Text.from(columns.in())).block(block(" In ", padding)).build(),
+        frame.renderWidget(Paragraph.builder().text(Text.from(columns.in())).block(block(" In ", padding, focus == 0)).build(),
                 cols.get(0));
-        frame.renderWidget(Paragraph.builder().text(Text.from(columns.routes())).block(block(" Routes ", padding)).build(),
+        frame.renderWidget(
+                Paragraph.builder().text(Text.from(columns.routes())).block(block(" Routes ", padding, focus == 1)).build(),
                 cols.get(1));
-        frame.renderWidget(Paragraph.builder().text(Text.from(columns.out())).block(block(" Out ", padding)).build(),
+        frame.renderWidget(
+                Paragraph.builder().text(Text.from(columns.out())).block(block(" Out ", padding, focus == 2)).build(),
                 cols.get(2));
     }
 
@@ -570,6 +575,15 @@ final class AboutView {
         targetLabels = labels;
         if (cursor >= all.size()) {
             cursor = all.size() - 1;
+        }
+        focus = -1;
+        for (int i = 0, before = 0; i < columns.size() && cursor >= 0; i++) {
+            int n = (int) columns.get(i).stream().filter(t -> t != null).count();
+            if (cursor < before + n) {
+                focus = i;
+                break;
+            }
+            before += n;
         }
         highlight(c.in(), c.inTargets(), c.routes(), c.routeTargets(), c.out(), c.outTargets());
     }
@@ -1220,7 +1234,9 @@ final class AboutView {
         return lines;
     }
 
-    private static Block block(String title, Padding padding) {
-        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).padding(padding).build();
+    /** A panel: the one the cursor is in has the focus border, as the panels of the other screens. */
+    private Block block(String title, Padding padding, boolean focused) {
+        return Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(focused))
+                .title(title).padding(padding).build();
     }
 }

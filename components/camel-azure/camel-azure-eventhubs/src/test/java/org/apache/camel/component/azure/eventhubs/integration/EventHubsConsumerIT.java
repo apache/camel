@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 
 import com.azure.messaging.eventhubs.EventData;
 import com.azure.messaging.eventhubs.EventHubProducerAsyncClient;
+import com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore;
 import com.azure.messaging.eventhubs.models.EventPosition;
 import com.azure.messaging.eventhubs.models.SendOptions;
 import com.azure.storage.blob.BlobContainerAsyncClient;
@@ -37,21 +37,24 @@ import org.apache.camel.component.azure.eventhubs.EventHubsConstants;
 import org.apache.camel.component.azure.eventhubs.TestUtils;
 import org.apache.camel.component.azure.eventhubs.client.EventHubsClientFactory;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.azure.eventhubs.clients.AzureEventHubsClientUtils;
+import org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsService;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@EnabledIfSystemProperty(named = "connectionString", matches = ".*",
-                         disabledReason = "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string -DblobAccountName=blob -DblobAccessKey=key")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class EventHubsConsumerIT extends CamelTestSupport {
+
+    @RegisterExtension
+    static AzureEventHubsService service = TestUtils.createService();
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
@@ -61,18 +64,13 @@ class EventHubsConsumerIT extends CamelTestSupport {
     private EventHubsConfiguration configuration;
 
     @BeforeAll
-    public void prepare() throws Exception {
+    public void prepare() {
         containerName = RandomStringUtils.secure().nextAlphabetic(5).toLowerCase();
 
-        final Properties properties = TestUtils.loadAzureAccessFromJvmEnv();
-
         configuration = new EventHubsConfiguration();
-        configuration.setBlobAccessKey(properties.getProperty(TestUtils.BLOB_ACCESS_KEY));
-        configuration.setBlobAccountName(properties.getProperty(TestUtils.BLOB_ACCOUNT_NAME));
-        configuration.setBlobContainerName(containerName);
-        configuration.setConnectionString(properties.getProperty(TestUtils.CONNECTION_STRING));
+        configuration.setConnectionString(service.connectionString());
 
-        containerAsyncClient = EventHubsClientFactory.createBlobContainerClient(configuration);
+        containerAsyncClient = AzureEventHubsClientUtils.createBlobContainerClient(service, containerName);
 
         // create test container
         containerAsyncClient.create().block();
@@ -129,9 +127,8 @@ class EventHubsConsumerIT extends CamelTestSupport {
             @Override
             public void configure() {
                 from("azure-eventhubs:?"
-                     + "connectionString=RAW({{connectionString}})"
-                     + "&blobContainerName=" + containerName + "&eventPosition=#eventPosition"
-                     + "&blobAccountName={{blobAccountName}}&blobAccessKey=RAW({{blobAccessKey}})")
+                     + "connectionString=RAW(" + service.connectionString() + ")"
+                     + "&eventPosition=#eventPosition" + checkpointOptions())
                         .to(result);
 
             }
@@ -146,7 +143,23 @@ class EventHubsConsumerIT extends CamelTestSupport {
 
         CamelContext context = super.createCamelContext();
         context.getRegistry().bind("eventPosition", positionMap);
+        if (!TestUtils.isRemote()) {
+            context.getRegistry().bind("checkpointStore", new BlobCheckpointStore(containerAsyncClient));
+        }
 
         return context;
+    }
+
+    /*
+     * Against Azure the consumer builds its checkpoint store from the Blob options, as an application does. A local
+     * service has its Blob storage at an endpoint of its own, which the component builds no client for, so the consumer
+     * gets a checkpoint store on that endpoint.
+     */
+    private String checkpointOptions() {
+        if (TestUtils.isRemote()) {
+            return "&blobContainerName=" + containerName + "&blobAccountName=" + service.blobAccountName()
+                   + "&blobAccessKey=RAW(" + service.blobAccessKey() + ")";
+        }
+        return "&checkpointStore=#checkpointStore";
     }
 }

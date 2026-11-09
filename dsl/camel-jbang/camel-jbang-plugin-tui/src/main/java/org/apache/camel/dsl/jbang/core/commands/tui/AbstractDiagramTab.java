@@ -74,6 +74,7 @@ abstract class AbstractDiagramTab extends AbstractTab {
     protected AbstractDiagramTab(MonitorContext ctx) {
         super(ctx);
         diagram.zoom = ctx.routeZoom;
+        diagram.paneBorder = ctx::paneBorder;
     }
 
     boolean isShowDiagram() {

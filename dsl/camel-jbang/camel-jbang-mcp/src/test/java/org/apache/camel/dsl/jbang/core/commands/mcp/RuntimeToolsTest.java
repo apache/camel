@@ -134,7 +134,7 @@ class RuntimeToolsTest {
     @Test
     void sendRequiresEndpoint() {
         RuntimeTools tools = createTools();
-        assertThatThrownBy(() -> tools.camel_runtime_send(null, null, "body", null))
+        assertThatThrownBy(() -> tools.camel_runtime_send(null, null, "body", null, null, null))
                 .isInstanceOf(ToolCallException.class)
                 .hasMessageContaining("endpoint is required");
     }
