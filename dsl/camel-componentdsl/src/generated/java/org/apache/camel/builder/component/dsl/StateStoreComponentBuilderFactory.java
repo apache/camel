@@ -78,6 +78,24 @@ public interface StateStoreComponentBuilderFactory {
     
         
         /**
+         * Whether to use a store-specific namespace prefix to isolate keys on a
+         * shared backend repository.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param namespaced the value to set
+         * @return the dsl builder
+         */
+        default StateStoreComponentBuilder namespaced(boolean namespaced) {
+            doSetProperty("namespaced", namespaced);
+            return this;
+        }
+    
+        
+        /**
          * Whether autowiring is enabled. This is used for automatic autowiring
          * options (the option must be marked as autowired) by looking up in the
          * registry to find if there is a single instance of matching type,
@@ -131,6 +149,7 @@ public interface StateStoreComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "lazyStartProducer": ((StateStoreComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "namespaced": ((StateStoreComponent) component).setNamespaced((boolean) value); return true;
             case "autowiredEnabled": ((StateStoreComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "backendFactory": ((StateStoreComponent) component).setBackendFactory((org.apache.camel.component.statestore.StateStoreBackendFactory) value); return true;
             default: return false;
