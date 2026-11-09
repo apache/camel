@@ -152,6 +152,10 @@ public class ChaosExplore extends CamelCommand {
         Ask ask = ask(process, integration);
         try {
             answer = ask.doCall();
+        } catch (Exception e) {
+            // the LLM fails with an exit code; anything else must not cost the report of what was explored so far
+            printer().printErr("camel ask failed: " + e.getMessage());
+            answer = CliExitCode.FAILURE;
         } finally {
             // the AI may have finished it already; else its rules go now
             ActionClient.execute(process, "chaos", root -> root.put("command", "explore-finish"), 10000);
