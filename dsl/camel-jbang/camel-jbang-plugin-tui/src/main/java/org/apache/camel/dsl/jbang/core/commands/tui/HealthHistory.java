@@ -46,9 +46,11 @@ final class HealthHistory {
 
     /** Records the state of the integration at the second (epoch seconds) it was read. */
     void record(IntegrationInfo info, long second) {
-        if (info.pid == null || info.healthReady == null && info.healthLive == null) {
+        if (info.pid == null || (info.healthReady == null && info.healthLive == null)) {
             return;
         }
+        // Camel reports readiness and liveness together; if only one of them were known, the other would be
+        // recorded as down, as a second holds one value for both
         byte value = (byte) ((Boolean.TRUE.equals(info.healthReady) ? READY : 0)
                              | (Boolean.TRUE.equals(info.healthLive) ? LIVE : 0));
         Ring ring = rings.computeIfAbsent(info.pid, k -> new Ring());
