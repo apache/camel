@@ -260,6 +260,8 @@ class ProducersTab extends AbstractTableTab {
                     row.put("p95Time", b.p95Time);
                     row.put("p99Time", b.p99Time);
                 } else {
+                    row.put("minTime", b.minTime);
+                    row.put("maxTime", b.maxTime);
                     row.put("meanTime", b.meanTime);
                 }
             }
