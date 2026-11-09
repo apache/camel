@@ -129,6 +129,7 @@ public class LocalCliConnector extends ServiceSupport
     private volatile ExecutorService terminateExecutor;
     private ExecutorService semanticExecutor;
     private ExecutorService auditExecutor;
+    private ExecutorService sendExecutor;
     private final AtomicLong semanticConsoleLookup = new AtomicLong(System.nanoTime() - SEMANTIC_CONSOLE_RETRY_NANOS);
     private ProducerTemplate producer;
     private ConsumerTemplate consumer;
@@ -244,6 +245,9 @@ public class LocalCliConnector extends ServiceSupport
 
     @Override
     public CompletableFuture<Boolean> dispatchAsync(JsonObject root, CliActionOutput output) {
+        if ("send".equals(root.getString("action")) && RepeatedSend.isRepeated(root)) {
+            return repeatedSend(root, output);
+        }
         boolean auditQuery = "semantic-audit".equals(root.getString("action"));
         if (!auditQuery && !"semantic-evaluate".equals(root.getString("action"))) {
             return CliActionDispatcher.super.dispatchAsync(root, output);
@@ -290,6 +294,63 @@ public class LocalCliConnector extends ServiceSupport
             result.completeExceptionally(e);
         }
         return result;
+    }
+
+    /**
+     * The send action with a repeat or a folder of messages, on a thread of its own: it may take a while, and the
+     * status and the other actions go on meanwhile. The transport cancels it when the client gives up the request.
+     */
+    private CompletableFuture<Boolean> repeatedSend(JsonObject root, CliActionOutput output) {
+        CompletableFuture<Boolean> result = new CompletableFuture<>();
+        FutureTask<Void> task = new FutureTask<>(() -> {
+            try {
+                // capture this request's output; never use the dispatcher's mutable actionOutput from a worker
+                output.write(repeatedSendResult(root));
+                result.complete(true);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                result.cancel(true);
+            } catch (Exception e) {
+                result.completeExceptionally(e);
+            }
+            return null;
+        });
+        result.whenComplete((value, failure) -> {
+            if (failure != null) {
+                task.cancel(true);
+            }
+        });
+        try {
+            synchronized (this) {
+                if (isStoppingOrStopped()) {
+                    throw new IllegalStateException("CLI connector is stopping or stopped");
+                }
+                if (sendExecutor == null) {
+                    sendExecutor = new ThreadPoolBuilder(camelContext).poolSize(2).maxPoolSize(2).maxQueueSize(0)
+                            .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build("cli-send", "CliRepeatedSend");
+                }
+                sendExecutor.execute(task);
+            }
+        } catch (RejectedExecutionException busy) {
+            result.completeExceptionally(new IllegalStateException("Busy: two repeated sends are already running"));
+        } catch (Exception e) {
+            result.completeExceptionally(e);
+        }
+        return result;
+    }
+
+    private JsonObject repeatedSendResult(JsonObject root) throws Exception {
+        DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class)
+                .resolveById("send");
+        if (dc == null) {
+            return new JsonObject();
+        }
+        if (root.getBooleanOrDefault("poll", false)) {
+            throw new IllegalArgumentException("A poll does not repeat: send with repeat, or poll once");
+        }
+        waitUntilStarted();
+        return RepeatedSend.send(dc, sendOptions(root), sendHeaders(root), root.getString("body"),
+                root.getLongOrDefault("repeat", 0), root.getLongOrDefault("interval", 0));
     }
 
     private ExecutorService newSemanticExecutor(String source, String name) throws Exception {
@@ -667,49 +728,56 @@ public class LocalCliConnector extends ServiceSupport
                 .resolveById("send");
         if (dc != null) {
 
-            // wait for camel to be ready
-            StopWatch watch = new StopWatch();
-            while (!camelContext.isStarted() && watch.taken() < 5000) {
-                Thread.sleep(100);
+            if (RepeatedSend.isRepeated(root)) {
+                // a transport that dispatches on its own thread, rather than with dispatchAsync
+                writeOutput(repeatedSendResult(root));
+                return;
             }
+            waitUntilStarted();
 
-            JsonObject json;
-            String endpoint = root.getString("endpoint");
+            final Map<String, Object> args = sendOptions(root);
             String body = root.getString("body");
-            String exchangePattern = root.getString("exchangePattern");
-            String poll = root.getString("poll");
-            String pollTimeout = root.getString("pollTimeout");
-            final Map<String, Object> args = new LinkedHashMap<>();
-            if (endpoint != null) {
-                args.put("endpoint", endpoint);
-            }
             if (body != null) {
                 args.put("body", body);
             }
-            String bodyEncoding = root.getString("bodyEncoding");
-            if (bodyEncoding != null) {
-                args.put("bodyEncoding", bodyEncoding);
-            }
-            if (exchangePattern != null) {
-                args.put("exchangePattern", exchangePattern);
-            }
-            if (poll != null) {
-                args.put("poll", poll);
-            }
-            if (pollTimeout != null) {
-                args.put("pollTimeout", pollTimeout);
-            }
-            Collection<JsonObject> headers = root.getCollection("headers");
-            if (headers != null) {
-                for (JsonObject jo : headers) {
-                    args.put(jo.getString("key"), jo.getString("value"));
-                }
-            }
-            json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
+            args.putAll(sendHeaders(root));
+            JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, args);
             writeOutput(json);
         } else {
             writeOutput(new JsonObject());
         }
+    }
+
+    private void waitUntilStarted() throws InterruptedException {
+        // wait for camel to be ready
+        StopWatch watch = new StopWatch();
+        while (!camelContext.isStarted() && watch.taken() < 5000) {
+            Thread.sleep(100);
+        }
+    }
+
+    /** The options of the send console from the send action, without the body and the headers. */
+    private static Map<String, Object> sendOptions(JsonObject root) {
+        final Map<String, Object> args = new LinkedHashMap<>();
+        for (String key : List.of("endpoint", "bodyEncoding", "exchangePattern", "poll", "pollTimeout")) {
+            String value = root.getString(key);
+            if (value != null) {
+                args.put(key, value);
+            }
+        }
+        return args;
+    }
+
+    /** The headers of the send action, as the send console takes them. */
+    private static Map<String, Object> sendHeaders(JsonObject root) {
+        final Map<String, Object> args = new LinkedHashMap<>();
+        Collection<JsonObject> headers = root.getCollection("headers");
+        if (headers != null) {
+            for (JsonObject jo : headers) {
+                args.put(jo.getString("key"), jo.getString("value"));
+            }
+        }
+        return args;
     }
 
     private void doActionStubTask(JsonObject root) throws Exception {
@@ -2014,6 +2082,10 @@ public class LocalCliConnector extends ServiceSupport
             if (semanticExecutor != null) {
                 camelContext.getExecutorServiceManager().shutdownNow(semanticExecutor);
                 semanticExecutor = null;
+            }
+            if (sendExecutor != null) {
+                camelContext.getExecutorServiceManager().shutdownNow(sendExecutor);
+                sendExecutor = null;
             }
         }
         ServiceHelper.stopService(producer, consumer);

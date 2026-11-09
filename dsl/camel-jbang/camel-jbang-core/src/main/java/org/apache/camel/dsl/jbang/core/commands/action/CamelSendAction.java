@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -60,9 +61,15 @@ import picocli.CommandLine;
                      description = "Send messages to endpoints", sortOptions = false,
                      showDefaultValues = true,
                      footer = {
+                             "%nWith --repeat the message is sent that many times, with --interval between two,",
+                             "and a summary is printed instead of each reply. A body of file:<folder> sends the",
+                             "files of the folder in name order, one message per file; 001.properties has the",
+                             "headers of 001.json. With --repeat it goes round the files again.",
                              "%nExamples:",
                              "  camel cmd send --endpoint=kafka:myTopic --body='Hello World'",
-                             "  camel cmd send hello --endpoint=direct:foo --body='Hello'" })
+                             "  camel cmd send hello --endpoint=direct:foo --body='Hello'",
+                             "  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=200ms",
+                             "  camel cmd send --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/" })
 public class CamelSendAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "To use an existing running Camel integration for sending the message (name or pid)",
@@ -102,6 +109,16 @@ public class CamelSendAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--header" },
                         description = "Message header (key=value)")
     List<String> headers;
+
+    @CommandLine.Option(names = { "--repeat" },
+                        description = "Send the message this many times (going round the files of a folder body), and"
+                                      + " print a summary instead of each reply (at most 10000)")
+    int repeat;
+
+    @CommandLine.Option(names = { "--interval" }, converter = TimeoutConverter.class,
+                        description = "The pause between two messages with --repeat or a folder body, in millis or as a"
+                                      + " duration such as 200ms or 1s")
+    long interval;
 
     @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
                         description = "Timeout waiting for message to be sent (and reply message if InOut messaging),"
@@ -147,6 +164,9 @@ public class CamelSendAction extends ActionBaseCommand {
 
     private MessageTableHelper tableHelper;
 
+    private static final int MAX_MESSAGES = 10000;
+    private static final long MAX_INTERVAL = 60000;
+
     private final CamelCatalog catalog = new DefaultCamelCatalog();
 
     public CamelSendAction(CamelJBangMain main) {
@@ -165,6 +185,18 @@ public class CamelSendAction extends ActionBaseCommand {
         // timeout cannot be too low
         if (timeout < 5000) {
             timeout = 5000;
+        }
+        if (repeat < 0 || repeat > MAX_MESSAGES) {
+            throw CliException.usage("--repeat must be between 1 and " + MAX_MESSAGES + ", was: " + repeat);
+        }
+        if (interval < 0 || interval > MAX_INTERVAL) {
+            throw CliException.usage("--interval must be at most 60s, was: " + interval + " millis");
+        }
+        if (isRepeated() && poll) {
+            throw CliException.usage("A poll does not repeat: use --repeat or a folder body to send, or --poll alone");
+        }
+        if (isRepeated() && replyFile != null) {
+            throw CliException.usage("--reply-file saves one reply: it cannot be used with --repeat or a folder body");
         }
 
         if (infra != null) {
@@ -186,15 +218,21 @@ public class CamelSendAction extends ActionBaseCommand {
         String mep = (reply || replyFile != null) ? "InOut" : "InOnly";
         root.put("exchangePattern", mep);
         if (body != null) {
-            // favour using absolute path to file as the send command can be called from another
+            // favour using absolute path to file (or folder of messages) as the send command can be called from another
             // folder than where camel is running
             if (body.startsWith("file:")) {
                 File f = new File(body.substring(5));
-                if (f.exists() && f.isFile()) {
+                if (f.exists()) {
                     body = "file:" + f.getAbsolutePath();
                 }
             }
             root.put("body", body);
+        }
+        if (repeat > 0) {
+            root.put("repeat", repeat);
+        }
+        if (interval > 0) {
+            root.put("interval", interval);
         }
         if (headers != null) {
             JsonArray arr = new JsonArray();
@@ -213,7 +251,39 @@ public class CamelSendAction extends ActionBaseCommand {
         this.pid = process.pid();
 
         // wait longer than the timeout of sending
-        return showStatus(ActionClient.execute(process, "send", this::sendOptions, timeout + 10000));
+        return showStatus(ActionClient.execute(process, "send", this::sendOptions, waitMillis()));
+    }
+
+    /** Whether more than one message is sent: a repeat, or the files of a folder. */
+    private boolean isRepeated() {
+        return repeat > 1 || folder() != null;
+    }
+
+    /** The folder of messages the body names (file:<folder>), when it is here. */
+    private File folder() {
+        if (body == null || !body.startsWith("file:")) {
+            return null;
+        }
+        File f = new File(body.substring(5));
+        return f.isDirectory() ? f : null;
+    }
+
+    /**
+     * How long to wait for the answer: longer than the timeout of sending, and for more messages the pauses between
+     * them and a second for each.
+     */
+    long waitMillis() {
+        long wait = timeout + 10000;
+        if (isRepeated()) {
+            long count = repeat;
+            File folder = folder();
+            if (count <= 1 && folder != null) {
+                String[] files = folder.list((d, n) -> !n.startsWith(".") && !n.endsWith(".properties"));
+                count = files != null ? files.length : 1;
+            }
+            wait += count * (interval + 1000);
+        }
+        return wait;
     }
 
     /**
@@ -229,6 +299,9 @@ public class CamelSendAction extends ActionBaseCommand {
             throw new CliException(result.exitCode(), "Send timeout: " + result.error());
         }
         printStatusLine(jo);
+        if (jo.containsKey("sent")) {
+            return showSummary(jo);
+        }
         String exchangeId = jo.getString("exchangeId");
         JsonObject message = jo.getMap("message");
         JsonObject cause = jo.getMap("exception");
@@ -284,6 +357,17 @@ public class CamelSendAction extends ActionBaseCommand {
         return CliExitCode.OK;
     }
 
+    /** The summary of a repeat or a folder of messages: the errors, as the status line has the counts. */
+    private int showSummary(JsonObject jo) {
+        Collection<JsonObject> errors = jo.getCollection("errors");
+        if (errors != null) {
+            for (JsonObject error : errors) {
+                printer().println("  " + error.getLong("count") + " x " + error.getString("message"));
+            }
+        }
+        return "success".equals(jo.getString("status")) ? CliExitCode.OK : CliExitCode.FAILURE;
+    }
+
     private Integer doCallLocal() throws Exception {
         AtomicReference<KameletMain> ref = new AtomicReference<>();
         Run run = new Run(this.getMain()) {
@@ -310,7 +394,7 @@ public class CamelSendAction extends ActionBaseCommand {
             @Override
             public void run() {
                 try {
-                    status.set(showStatus(ActionClient.execute(pid, request, timeout + 10000)));
+                    status.set(showStatus(ActionClient.execute(pid, request, waitMillis())));
                 } catch (CliException e) {
                     failure.set(e);
                 } catch (Exception e) {
@@ -329,8 +413,8 @@ public class CamelSendAction extends ActionBaseCommand {
         t.start();
 
         Integer exit = run.call();
-        if (!latch.await(timeout + 10000, TimeUnit.MILLISECONDS)) {
-            throw CliException.timeout("Send timeout: no answer within " + (timeout + 10000) + " millis");
+        if (!latch.await(waitMillis(), TimeUnit.MILLISECONDS)) {
+            throw CliException.timeout("Send timeout: no answer within " + waitMillis() + " millis");
         }
         if (exit != null && exit != 0) {
             return exit;
@@ -393,7 +477,15 @@ public class CamelSendAction extends ActionBaseCommand {
         boolean reply = r.containsKey("message");
         String status;
         Ansi.Color c = Ansi.Color.GREEN;
-        if (failed) {
+        if (r.containsKey("sent")) {
+            long sent = r.getLongOrDefault("sent", 0);
+            long count = r.getLongOrDefault("failed", 0);
+            status = "Sent " + sent + (sent == 1 ? " message" : " messages")
+                     + (count > 0 ? " (" + (sent - count) + " ok, " + count + " failed)" : " (success)");
+            if (count > 0) {
+                c = Ansi.Color.RED;
+            }
+        } else if (failed) {
             status = "Failed (exception)";
             c = Ansi.Color.RED;
         } else if (replyFile != null) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -223,6 +224,19 @@ public final class RuntimeHelper {
      * @throws IllegalArgumentException when a header is not a key=value pair
      */
     public static JsonObject sendMessage(long pid, String endpoint, String body, String headers) {
+        return sendMessage(pid, endpoint, body, headers, 0, 0);
+    }
+
+    /**
+     * Sends a message, or with a repeat or a body of {@code file:<folder>} several messages, with a pause between them;
+     * the answer is then a summary (sent, failed and the errors) rather than the reply.
+     *
+     * @param repeat   how many messages to send in all, going round the files of a folder; 0 to send once (each file of
+     *                 a folder once)
+     * @param interval the pause between two messages, in millis
+     */
+    public static JsonObject sendMessage(
+            long pid, String endpoint, String body, String headers, int repeat, long interval) {
         JsonArray headerList = headers != null ? parseHeaders(headers) : null;
         String result = executeAction(pid, "send", root -> {
             root.put("endpoint", endpoint);
@@ -232,7 +246,13 @@ public final class RuntimeHelper {
             if (headerList != null) {
                 root.put("headers", headerList);
             }
-        });
+            if (repeat > 0) {
+                root.put("repeat", repeat);
+            }
+            if (interval > 0) {
+                root.put("interval", interval);
+            }
+        }, sendTimeout(body, repeat, interval));
         try {
             return (JsonObject) Jsoner.deserialize(result);
         } catch (Exception e) {
@@ -240,6 +260,21 @@ public final class RuntimeHelper {
             wrapper.put("result", result);
             return wrapper;
         }
+    }
+
+    /**
+     * How long to wait for the answer of a send: for more messages also the pauses between them and a second for each.
+     * The files of a folder are counted when the folder is here (the integration reads it, relative to its working
+     * directory), else 100 are assumed.
+     */
+    static long sendTimeout(String body, int repeat, long interval) {
+        long count = repeat;
+        if (count <= 1 && body != null && body.startsWith("file:")) {
+            File folder = new File(body.substring(5));
+            String[] files = folder.list((d, n) -> !n.startsWith(".") && !n.endsWith(".properties"));
+            count = files != null ? files.length : folder.isFile() ? 1 : 100;
+        }
+        return count <= 1 ? ACTION_TIMEOUT_MS : ACTION_TIMEOUT_MS + count * (interval + 1000);
     }
 
     /**

@@ -114,6 +114,19 @@ public final class ToolRegistry {
         BY_NAME.put(descriptor.name(), descriptor);
     }
 
+    /** A whole number argument, or the default when it is not given. */
+    private static int intArg(Map<String, String> args, String name, int defaultValue) {
+        String value = args.get(name);
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            throw new ToolExecutionException(name + " must be a whole number, was: " + value);
+        }
+    }
+
     // ---- Process discovery and selection ----
 
     private static void registerProcessTools() {
@@ -396,12 +409,19 @@ public final class ToolRegistry {
                 }));
 
         register(tool("send_message",
-                "Send a test message to a Camel endpoint in the running application.")
+                "Send a test message to a Camel endpoint in the running application. With repeat, or a body of"
+                                      + " file:<folder> (one message per file, in name order; 001.properties has the"
+                                      + " headers of 001.json), it sends several messages with interval millis between"
+                                      + " them, and answers with a summary: sent, failed and the errors.")
                 .param("endpoint", "string",
                         "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)", true)
-                .param("body", "string", "Message body to send", false)
+                .param("body", "string", "Message body to send (file:<path> for a file, file:<folder> for its files)",
+                        false)
                 .param("headers", "string",
                         "Message headers as key=value pairs separated by newlines", false)
+                .param("repeat", "string",
+                        "How many messages to send in all (at most 10000), going round the files of a folder", false)
+                .param("interval", "string", "The pause between two messages in millis (at most 60000)", false)
                 // the message runs through the routes and whatever they call, so it can change data
                 .readOnly(false).destructive(true)
                 .core(true)
@@ -410,7 +430,9 @@ public final class ToolRegistry {
                     if (endpoint == null || endpoint.isBlank()) {
                         throw new ToolExecutionException("endpoint is required");
                     }
-                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers")).toJson();
+                    int repeat = intArg(args, "repeat", 0);
+                    long interval = intArg(args, "interval", 0);
+                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers"), repeat, interval).toJson();
                 }));
 
         register(tool("eval_expression",

@@ -1355,9 +1355,9 @@ Usage: camel cmd send [-h] [--fresh] [--poll] [--pretty] [--reply]
                       [=<loggingColor>]] [--show-body[=<showBody>]]
                       [--show-exception[=<showException>]] [--show-headers
                       [=<showHeaders>]] [--body=<body>] [--infra=<infra>]
-                      [--properties=<propertiesFiles>]
-                      [--reply-file=<replyFile>] [--repo=<repos>]
-                      [--timeout=<timeout>] [--uri=<endpoint>]
+                      [--interval=<interval>] [--properties=<propertiesFiles>]
+                      [--repeat=<repeat>] [--reply-file=<replyFile>]
+                      [--repo=<repos>] [--timeout=<timeout>] [--uri=<endpoint>]
                       [--header=<headers>]... [--prop=<property>]... [<name>]
 Send messages to endpoints
       [<name>]              To use an existing running Camel integration for
@@ -1386,6 +1386,14 @@ Send messages to endpoints
       --body=<body>         Message body to send (prefix with file: to refer to
                               loading message body from file)
       --header=<headers>    Message header (key=value)
+      --repeat=<repeat>     Send the message this many times (going round the
+                              files of a folder body), and print a summary
+                              instead of each reply (at most 10000)
+                              Default: 0
+      --interval=<interval> The pause between two messages with --repeat or a
+                              folder body, in millis or as a duration such as
+                              200ms or 1s
+                              Default: 0
       --timeout=<timeout>   Timeout waiting for message to be sent (and reply
                               message if InOut messaging), in millis or as a
                               duration such as 30s
@@ -1416,9 +1424,18 @@ Send messages to endpoints
                               repositories)
       --fresh               Make sure we use fresh (i.e. non-cached) resources
 
+With --repeat the message is sent that many times, with --interval between two,
+and a summary is printed instead of each reply. A body of file:<folder> sends
+the
+files of the folder in name order, one message per file; 001.properties has the
+headers of 001.json. With --repeat it goes round the files again.
+
 Examples:
   camel cmd send --endpoint=kafka:myTopic --body='Hello World'
   camel cmd send hello --endpoint=direct:foo --body='Hello'
+  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50
+--interval=200ms
+  camel cmd send --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/
 
 == camel cmd span --help
 Usage: camel cmd span [-h] [--flat] [--json] [--logging-color[=<loggingColor>]]

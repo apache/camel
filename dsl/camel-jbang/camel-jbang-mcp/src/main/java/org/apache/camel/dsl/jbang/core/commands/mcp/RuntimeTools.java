@@ -533,13 +533,22 @@ public class RuntimeTools {
 
     @ToolGuardrails(input = McpArgumentGuardrail.class, output = McpArgumentGuardrail.class)
     @Tool(annotations = @Tool.Annotations(readOnlyHint = false, destructiveHint = true, openWorldHint = false),
-          description = "Send a test message to a Camel endpoint in the running application.")
+          description = """
+                  Send a test message to a Camel endpoint in the running application. With repeat, or a body of \
+                  file:<folder> (one message per file, in name order; 001.properties has the headers of 001.json), it \
+                  sends several messages with interval millis between them, and answers with a summary: sent, failed \
+                  and the errors. A broker consumer stubbed with camel run --stub=remote is fed this way.""")
     public JsonObject camel_runtime_send(
             @ToolArg(description = NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "Endpoint URI to send to (e.g., direct:myRoute, seda:queue)") String endpoint,
-            @ToolArg(description = "Message body to send", required = false) String body,
+            @ToolArg(description = "Message body to send (file:<path> for a file, file:<folder> for its files)",
+                     required = false) String body,
             @ToolArg(description = "Message headers as key=value pairs separated by newlines",
-                     required = false) String headers) {
+                     required = false) String headers,
+            @ToolArg(description = "How many messages to send in all (at most 10000), going round the files of a folder",
+                     required = false) Integer repeat,
+            @ToolArg(description = "The pause between two messages in millis (at most 60000)",
+                     required = false) Integer interval) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
@@ -550,6 +559,12 @@ public class RuntimeTools {
         }
         if (headers != null) {
             args.put("headers", headers);
+        }
+        if (repeat != null) {
+            args.put("repeat", String.valueOf(repeat));
+        }
+        if (interval != null) {
+            args.put("interval", String.valueOf(interval));
         }
         return delegateToRegistry("send_message", nameOrPid, args);
     }

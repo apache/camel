@@ -17,6 +17,8 @@
 package org.apache.camel.impl.console;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,6 +131,27 @@ public class SendDevConsoleTest extends AbstractDevConsoleTest {
 
         JsonObject jsonOut = callJson(console, options);
         assertEquals("error", jsonOut.getString("status"));
+    }
+
+    @Test
+    public void testSendConsoleFileBodyToAQueue() throws Exception {
+        // seda hands the message to another thread, which reads the body after the send returns
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:refunds").delay(200).to("mock:refunds");
+            }
+        });
+        Path file = Files.createTempFile("refund", ".json");
+        Files.writeString(file, "{\"refund\": 1}");
+        MockEndpoint mock = getMockEndpoint("mock:refunds");
+        mock.expectedBodiesReceived("{\"refund\": 1}");
+
+        JsonObject jsonOut = callJson(startedSendConsole(), createOptions("seda:refunds", "file:" + file));
+
+        assertEquals("success", jsonOut.getString("status"), jsonOut.toJson());
+        mock.assertIsSatisfied();
+        Files.delete(file);
     }
 
     @Test
