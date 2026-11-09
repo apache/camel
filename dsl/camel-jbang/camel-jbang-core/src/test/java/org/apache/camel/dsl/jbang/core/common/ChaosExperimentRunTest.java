@@ -263,6 +263,7 @@ class ChaosExperimentRunTest {
                                 new JsonObject(Map.of("routeId", "api", "from", "rest:post:/refunds")),
                                 new JsonObject(Map.of("routeId", "leader", "from", "master:lock:direct:start")),
                                 new JsonObject(Map.of("routeId", "hooks", "from", "netty-http:http://0.0.0.0:9000/hooks")),
+                                new JsonObject(Map.of("routeId", "remote", "from", "undertow:http://shop.example.com:9000/x")),
                                 new JsonObject(Map.of("routeId", "inbox", "from", "file://inbox?delete=true")),
                                 new JsonObject(Map.of("routeId", "billing", "from", "seda://billing"))))));
         integration.statuses.add(status);
@@ -276,9 +277,11 @@ class ChaosExperimentRunTest {
         assertThat(ChaosExperimentRun.checkFeed(status, "platform-http:/payment")).isNull();
         assertThat(ChaosExperimentRun.checkFeed(status, "api")).isNull();
         assertThat(ChaosExperimentRun.checkFeed(status, "POST /refunds")).isNull();
-        assertThat(ChaosExperimentRun.checkFeed(status, "hooks"))
-                .startsWith("Route hooks starts from the HTTP endpoint netty-http:http://0.0.0.0:9000/hooks, which has"
-                            + " its own address");
+        // an HTTP server of its own on this machine is fed at its address; one on another host is not
+        assertThat(ChaosExperimentRun.checkFeed(status, "hooks")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "remote"))
+                .startsWith("Route remote starts from the HTTP endpoint undertow:http://shop.example.com:9000/x, which an"
+                            + " experiment cannot feed");
         // a component that only consumes
         assertThat(ChaosExperimentRun.checkFeed(status, "leader")).contains("which only consumes");
         // a file is written to the folder the route polls, and seda is in memory
@@ -352,6 +355,14 @@ class ChaosExperimentRunTest {
         assertThatThrownBy(() -> ChaosHttpFeed.target(status, (JsonObject) routes.get(1), "orders"))
                 .hasMessage("Route orders serves /api/orders/{id}, with a parameter: give the feed as the path to call,"
                             + " such as POST /api/orders/1");
+        // an HTTP server of its own: its address, called as localhost, with its method
+        assertThat(ChaosHttpFeed.target(status,
+                new JsonObject(
+                        Map.of("routeId", "hooks",
+                                "from", "netty-http://http://0.0.0.0:9000/hooks?httpMethodRestrict=PUT")),
+                "hooks")).hasToString("PUT http://localhost:9000/hooks");
+        assertThat(ChaosHttpFeed.ownAddress("jetty:http://localhost:8181")).isEqualTo("http://localhost:8181/");
+        assertThat(ChaosHttpFeed.ownAddress("undertow:https://10.0.0.5:8443/api")).isNull();
         // another route: not for HTTP
         assertThat(ChaosHttpFeed.target(status, new JsonObject(Map.of("routeId", "x", "from", "seda://x")), "x")).isNull();
         // a server whose port the status does not have

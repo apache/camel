@@ -965,7 +965,8 @@ camel cmd chaos-experiment --hypothesis='a client of payment gets an error, noth
 ----
 
 For a path with a parameter, `--feed` is the path to call, with an optional method: `--feed='PUT /orders/42'`. An HTTP
-server with its own address (netty-http, undertow, jetty) cannot be fed this way yet.
+server with its own address on this machine (netty-http, undertow, jetty) is fed at that address, called as localhost;
+one on another host is not fed.
 
 A route that starts from `file:<folder>` is fed with files: each message is written as a file into the folder the route
 polls, named so the route takes it (`chaos-<time>-<n>.json`, with the extension of its `include` or `antInclude` filter,

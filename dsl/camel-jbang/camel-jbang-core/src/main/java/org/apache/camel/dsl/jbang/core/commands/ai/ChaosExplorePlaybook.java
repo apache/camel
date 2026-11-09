@@ -88,7 +88,7 @@ public final class ChaosExplorePlaybook {
                    - feed: a route that does not feed itself gets no messages unless you give feed. When the feed \
                 of the suggestion is kind send, always give its endpoint, with body (a message as the route \
                 expects it, such as JSON), repeat (such as 20) and interval (such as 100..300); leave feed out \
-                only when the route feeds itself (kind self). A route of kind http (platform-http or rest) is fed \
+                only when the route feeds itself (kind self). A route of kind http (platform-http, rest, or an HTTP server of its own) is fed \
                 with HTTP requests to the server of the integration: give the id of the route as feed, or the path \
                 to call when its path has a parameter (such as POST /orders/42); the traffic counts the status codes \
                 the clients got. A route of kind file is fed with its id too: each message is written as a file the \
