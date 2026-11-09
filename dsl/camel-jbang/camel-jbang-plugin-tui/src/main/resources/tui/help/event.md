@@ -24,3 +24,6 @@ Only the most recent events are shown.
 - `Up/Down` — select event
 - `s` — cycle sort column
 - `S` — reverse sort order
+- `f` — only the events of one category: all, then each category the
+  events have (`exchange`, `general`, `route` ...), then all again. The
+  exchange events of a busy route drown the route and context ones.
