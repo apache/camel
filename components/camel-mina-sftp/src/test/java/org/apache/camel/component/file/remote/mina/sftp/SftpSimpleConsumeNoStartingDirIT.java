@@ -30,20 +30,23 @@ public class SftpSimpleConsumeNoStartingDirIT extends SftpServerTestSupport {
 
     @Test
     public void testSftpSimpleConsume() throws Exception {
-        // create files using regular file
         File file = new File("a.txt");
-        FileOutputStream fos = new FileOutputStream(file, false);
-        fos.write("ABC".getBytes());
-        fos.close();
+        try {
+            // create files using regular file
+            try (FileOutputStream fos = new FileOutputStream(file, false)) {
+                fos.write("ABC".getBytes());
+            }
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedMessageCount(1);
 
-        context.getRouteController().startRoute("foo");
+            context.getRouteController().startRoute("foo");
 
-        MockEndpoint.assertIsSatisfied(context);
-
-        FileUtil.deleteFile(file);
+            MockEndpoint.assertIsSatisfied(context);
+        } finally {
+            FileUtil.deleteFile(file);
+            FileUtil.deleteFile(new File(".camel/a.txt"));
+        }
     }
 
     @Override
@@ -52,7 +55,7 @@ public class SftpSimpleConsumeNoStartingDirIT extends SftpServerTestSupport {
             @Override
             public void configure() {
                 from("mina-sftp://localhost:{{ftp.server.port}}/"
-                     + "?fileName=a.txt&username=admin&password=admin&delay=10000&disconnect=true&knownHostsFile="
+                     + "?fileName=a.txt&username=admin&password=admin&disconnect=true&knownHostsFile="
                      + service.getKnownHostsFile()).routeId("foo")
                         .autoStartup(false).to("log:result", "mock:result");
             }
