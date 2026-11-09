@@ -41,7 +41,8 @@ final class ConnectorTasks {
         try {
             task.run();
         } catch (Exception e) {
-            LOG.debug("Error in Camel CLI connector task due to: {}. This exception is ignored.", e.getMessage(), e);
+            // e and not e.getMessage(): the class name says what it was when the message is null (a NullPointerException)
+            LOG.debug("Error in Camel CLI connector task due to: {}. This exception is ignored.", e, e);
         } catch (Throwable e) {
             try {
                 if (WARNED.compareAndSet(false, true)) {
