@@ -35,11 +35,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.OnCompletionListenerHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,17 +202,28 @@ public class DefaultUnitOfWork implements UnitOfWork {
         } finally {
             lock.unlock();
         }
+        final List<OnCompletionListener> listeners = OnCompletionListenerHelper.getListeners(context);
+        if (!listeners.isEmpty()) {
+            OnCompletionListenerHelper.onCompletionAdded(listeners, this, synchronization);
+        }
     }
 
     @Override
     public void removeSynchronization(Synchronization synchronization) {
+        boolean removed = false;
         lock.lock();
         try {
             if (synchronizations != null) {
-                synchronizations.remove(synchronization);
+                removed = synchronizations.remove(synchronization);
             }
         } finally {
             lock.unlock();
+        }
+        if (removed) {
+            final List<OnCompletionListener> listeners = OnCompletionListenerHelper.getListeners(context);
+            if (!listeners.isEmpty()) {
+                OnCompletionListenerHelper.onCompletionRemoved(listeners, this, synchronization);
+            }
         }
     }
 
@@ -231,6 +244,23 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     @Override
     public void handoverSynchronization(Exchange target, Predicate<Synchronization> filter) {
+        doHandoverSynchronization(target, filter, null);
+    }
+
+    /**
+     * Hands over as {@link #handoverSynchronization(Exchange, Predicate)} does, and returns what was handed over. A
+     * subclass that changes how the synchronizations are handed over should override this method too, as Camel calls it
+     * instead of the others when an {@link OnCompletionListener} is installed.
+     */
+    @Override
+    public List<Synchronization> handoverSynchronizationWithResult(Exchange target, Predicate<Synchronization> filter) {
+        final List<Synchronization> moved = new ArrayList<>(2);
+        doHandoverSynchronization(target, filter, moved);
+        return moved;
+    }
+
+    private void doHandoverSynchronization(
+            Exchange target, Predicate<Synchronization> filter, List<Synchronization> moved) {
         // the parts of a parallel Split, Multicast or Recipient List with shareUnitOfWork use this unit of work at the
         // same time, so work on a copy, and take each synchronization out under the lock before handing it over, so it
         // is handed over only once (and the target is not called while holding the lock)
@@ -252,6 +282,9 @@ public class DefaultUnitOfWork implements UnitOfWork {
                 if (takeSynchronization(synchronization)) {
                     log.trace("Handover synchronization {} to: {}", synchronization, target);
                     target.getExchangeExtension().addOnCompletion(synchronization);
+                    if (moved != null) {
+                        moved.add(synchronization);
+                    }
                     // Allow the synchronization to do housekeeping before transfer
                     if (veto != null) {
                         veto.beforeHandover(target);

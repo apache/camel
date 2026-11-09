@@ -67,7 +67,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     @Metadata(description = "Sets the prefix that will be used when creating the ZIP filename.")
     private String filePrefix;
-    @Metadata(description = "Sets the suffix that will be used when creating the ZIP filename.", defaultValue = "zip")
+    @Metadata(description = "Sets the suffix that will be used when creating the ZIP filename.", defaultValue = ".zip")
     private String fileSuffix = ".zip";
     @Metadata(label = "advanced",
               description = "Whether to add empty files to the ZIP.", defaultValue = "false")

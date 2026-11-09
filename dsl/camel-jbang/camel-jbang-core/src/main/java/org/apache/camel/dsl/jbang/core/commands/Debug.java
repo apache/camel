@@ -42,6 +42,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CamelCommandHelper;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -169,8 +170,13 @@ public class Debug extends Run {
 
     @Override
     public Integer doCall() throws Exception {
-        // the debugger reads its commands from the terminal
-        requireInteractiveTerminal("camel debug");
+        // the debugger reads its commands from the terminal; skip the check in background mode
+        if (!background) {
+            requireInteractiveTerminal("camel debug");
+        }
+        if (background && remoteAttach) {
+            throw CliException.usage("--background and --remote-attach are mutually exclusive");
+        }
         if (!remoteAttach) {
             checkFilesExist();
             skipCitrusTests();
@@ -185,6 +191,11 @@ public class Debug extends Run {
         }
         if (exit != null && exit != 0) {
             return exit;
+        }
+
+        // in background mode, the integration runs as a detached child process; return immediately
+        if (background) {
+            return 0;
         }
 
         // to shut down debug process if ctrl + c
@@ -331,14 +342,36 @@ public class Debug extends Run {
     }
 
     @Override
+    protected int runSpringBoot() throws Exception {
+        if (background) {
+            throw CliException.usage("Debug Camel Spring Boot with --background is not supported");
+        }
+        return super.runSpringBoot();
+    }
+
+    @Override
+    protected int runQuarkus() throws Exception {
+        if (background) {
+            throw CliException.usage("Debug Camel Quarkus with --background is not supported");
+        }
+        return super.runQuarkus();
+    }
+
+    @Override
     protected int runDebug(KameletMain main) throws Exception {
         File pom = new File("pom.xml");
         if (pom.isFile() && pom.exists()) {
             try (InputStream is = new FileInputStream(pom)) {
                 String text = IOHelper.loadText(is);
                 if (text.contains("camel-spring-boot-bom")) {
+                    if (background) {
+                        throw CliException.usage("Debug Camel Spring Boot with --background is not supported");
+                    }
                     return doRunDebugSpringBoot(main);
                 } else if (text.contains("org.apache.camel.quarkus")) {
+                    if (background) {
+                        throw CliException.usage("Debug Camel Quarkus with --background is not supported");
+                    }
                     return doRunDebugQuarkus(main);
                 }
             }
@@ -578,6 +611,10 @@ public class Debug extends Run {
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.command(cmds);
+
+        if (background) {
+            return runBackgroundProcess(pb, "Camel Debug");
+        }
 
         Process p = pb.start();
         this.spawnOutput = p.getInputStream();

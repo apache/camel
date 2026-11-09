@@ -97,8 +97,8 @@ public class ChaosConfigurationProperties implements BootstrapCloseable {
 
     /**
      * A scenario to load at startup: a file with one rule per line, # comments and an optional seed= line (such as
-     * chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used unless
-     * the seed option is set.
+     * test/chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used
+     * unless the seed option is set.
      */
     public void setScenario(String scenario) {
         this.scenario = scenario;
@@ -165,8 +165,8 @@ public class ChaosConfigurationProperties implements BootstrapCloseable {
 
     /**
      * A scenario to load at startup: a file with one rule per line, # comments and an optional seed= line (such as
-     * chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used unless
-     * the seed option is set.
+     * test/chaos/outage.chaos), or classpath:name. Its rules are added before the rules option, and its seed is used
+     * unless the seed option is set.
      */
     public ChaosConfigurationProperties withScenario(String scenario) {
         this.scenario = scenario;

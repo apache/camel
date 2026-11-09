@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -38,6 +40,7 @@ import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.Route;
 import org.apache.camel.SafeCopyProperty;
+import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.VariableRepository;
@@ -867,22 +870,46 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
 
     @Override
     public void handoverCompletions(Exchange target) {
+        final List<OnCompletionListener> listeners = OnCompletionListenerHelper.getListeners(context);
+        final boolean listen = !listeners.isEmpty();
         if (onCompletions != null) {
+            final List<Synchronization> moved = listen ? new ArrayList<>(onCompletions) : null;
             for (Synchronization onCompletion : onCompletions) {
                 target.getExchangeExtension().addOnCompletion(onCompletion);
             }
             onCompletions.clear();
             onCompletions = null;
+            if (listen && !moved.isEmpty()) {
+                OnCompletionListenerHelper.onCompletionHandover(listeners, this, null, target, moved);
+            }
         } else if (unitOfWork != null) {
-            if (sharedUnitOfWork == null || unitOfWork != sharedUnitOfWork.unitOfWork) {
-                unitOfWork.handoverSynchronization(target);
+            final UnitOfWork from = unitOfWork;
+            if (sharedUnitOfWork == null || from != sharedUnitOfWork.unitOfWork) {
+                if (listen) {
+                    handedOver(listeners, from, target, from.handoverSynchronizationWithResult(target, null));
+                } else {
+                    from.handoverSynchronization(target);
+                }
             } else if (sharedUnitOfWork.completions != null) {
                 // the unit of work is shared with the parent exchange (shareUnitOfWork), so hand over only the on
                 // completions this exchange added, and not those of the parent exchange (such as its consumer's commit)
                 final List<Synchronization> own = sharedUnitOfWork.completions;
                 sharedUnitOfWork.completions = null;
-                unitOfWork.handoverSynchronization(target, s -> containsInstance(own, s));
+                final Predicate<Synchronization> filter = s -> containsInstance(own, s);
+                if (listen) {
+                    handedOver(listeners, from, target, from.handoverSynchronizationWithResult(target, filter));
+                } else {
+                    from.handoverSynchronization(target, filter);
+                }
             }
+        }
+    }
+
+    private void handedOver(
+            List<OnCompletionListener> listeners, UnitOfWork from, Exchange target, List<Synchronization> moved) {
+        // moved is null when the unit of work does not tell what moved
+        if (moved == null || !moved.isEmpty()) {
+            OnCompletionListenerHelper.onCompletionHandover(listeners, this, from, target, moved);
         }
     }
 
@@ -902,6 +929,10 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
             answer = new ArrayList<>(onCompletions);
             onCompletions.clear();
             onCompletions = null;
+            final List<OnCompletionListener> listeners = OnCompletionListenerHelper.getListeners(context);
+            if (!listeners.isEmpty() && !answer.isEmpty()) {
+                OnCompletionListenerHelper.onCompletionTaken(listeners, this, answer);
+            }
         }
         return answer;
     }
@@ -912,6 +943,14 @@ abstract class AbstractExchange implements Exchange, ExchangeExtension {
         if (sharedUnitOfWork != null && unitOfWork != sharedUnitOfWork.unitOfWork) {
             // no longer uses the shared unit of work (such as a copy routed on its own)
             sharedUnitOfWork = null;
+        }
+        if (unitOfWork != null) {
+            final List<OnCompletionListener> listeners = OnCompletionListenerHelper.getListeners(context);
+            if (!listeners.isEmpty()) {
+                // before the on completions move, so the adds of the move come after it
+                OnCompletionListenerHelper.onUnitOfWork(listeners, this, unitOfWork,
+                        onCompletions != null ? new ArrayList<>(onCompletions) : Collections.emptyList());
+            }
         }
         if (unitOfWork != null && onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {

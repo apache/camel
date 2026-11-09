@@ -439,6 +439,9 @@ public final class ObjectHelper {
         if (ObjectHelper.isEmpty(name)) {
             return null;
         }
+        // Convert JVM internal binary names (e.g. [B, [[I, [Ljava.lang.String;) to human-readable form
+        // (byte[], int[][], java.lang.String[]) so the existing loadSimpleType + dimension-stripping logic handles them.
+        name = StringHelper.readableClassName(name);
 
         int dimensions = 0;
 

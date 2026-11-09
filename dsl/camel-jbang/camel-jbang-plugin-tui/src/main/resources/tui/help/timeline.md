@@ -40,6 +40,8 @@ When nothing went wrong, the band is one line: `Errors/s none`.
 
 A line per route, one character per second. The height is the number of
 exchanges done that second, relative to the busiest second of the route.
+On a tall screen the lines are two rows high with a blank line between
+them, the charts are taller, and there is room around the panels.
 The colour is the worst that happened to them that second:
 
 - green: completed

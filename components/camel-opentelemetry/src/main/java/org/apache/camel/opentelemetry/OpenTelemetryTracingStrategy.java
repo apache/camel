@@ -21,6 +21,7 @@ import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import org.apache.camel.CamelContext;
+import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -91,8 +92,7 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
                     .setAttribute("component", getComponentName(processorDefinition))
                     .startSpan();
 
-            boolean activateExchange = !(target instanceof GetCorrelationContextProcessor
-                    || target instanceof SetCorrelationContextProcessor);
+            boolean activateExchange = !isCorrelationContextProcessor(target);
 
             if (activateExchange) {
                 ActiveSpanManager.activate(exchange, new OpenTelemetrySpanAdapter(processorSpan));
@@ -133,8 +133,7 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
                 return;
             }
 
-            boolean activateExchange = !(target instanceof GetCorrelationContextProcessor
-                    || target instanceof SetCorrelationContextProcessor);
+            boolean activateExchange = !isCorrelationContextProcessor(target);
 
             if (activateExchange) {
                 ActiveSpanManager.activate(exchange, new OpenTelemetrySpanAdapter(span));
@@ -152,6 +151,22 @@ public class OpenTelemetryTracingStrategy implements InterceptStrategy {
                 }
             }
         }
+    }
+
+    // the target may be wrapped by intercept strategies that were applied before this one, so look through them
+    private static boolean isCorrelationContextProcessor(Processor target) {
+        Processor p = target;
+        while (p != null) {
+            if (p instanceof GetCorrelationContextProcessor || p instanceof SetCorrelationContextProcessor) {
+                return true;
+            }
+            if (p instanceof DelegateProcessor dp) {
+                p = dp.getProcessor();
+            } else {
+                break;
+            }
+        }
+        return false;
     }
 
     private static String getComponentName(NamedNode processorDefinition) {

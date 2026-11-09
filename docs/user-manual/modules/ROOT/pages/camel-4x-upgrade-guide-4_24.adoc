@@ -397,6 +397,14 @@ With `forceCompletionOnStop` or `completeAllOnStop`, suspending the route no lon
 They are kept and completed when the route or Camel is stopped. To send them out before a suspend, use
 `forceCompletionOfAllGroups` (`AggregateController` or JMX), or stop the route instead.
 
+=== camel-core - Aggregate EIP does not confirm a group that was completed by its first exchange
+
+A group that is completed by the exchange that creates it, for example with `completionSize(1)`, is never added to the
+aggregation repository. With a `RecoverableAggregationRepository`, Camel no longer calls `confirmWithResult` for such a
+group. Before, `JdbcAggregationRepository` logged an ERROR for each one and kept its exchange id as unconfirmed until
+the route was removed. A custom `RecoverableAggregationRepository` should not expect `confirmWithResult` for these
+groups.
+
 === camel-core - ThrottlingExceptionRoutePolicy counts the failures within the failure window
 
 The circuit of `ThrottlingExceptionRoutePolicy` now opens when `failureThreshold` failures occurred within the last
@@ -2495,7 +2503,7 @@ Without an interactive terminal, such as in a script, a CI job (the `CI` environ
   `--open-url` (the old name still works).
 * `camel debug`, `camel nano`, `camel shell`, `camel edit`, `camel tui` (except with `--record`), `camel ask` without a
   question, `camel run --prompt` and `camel get history --it` exit with `2` and `requires an interactive terminal` on
-  stderr. `camel debug` used to wait at 100% CPU.
+  stderr. `camel debug` used to wait at 100% CPU. `camel debug --background` does not require an interactive terminal.
 
 `--follow` and `--open-url` without a value turn the option on. As boolean options that are on by default, they turned
 it off (use `--follow=false` to turn it off). In a terminal, the end of the input (Ctrl+D) stops a command that watches
@@ -2899,6 +2907,29 @@ the value stored by the other caller (before, the key was read again in the fail
 `null` although nothing was stored). `putIfAbsent` now throws the `DuplicateKeyException` when the INSERT fails three
 times, or at once when it runs in a transaction of the caller, as that transaction cannot be used to read the key
 again.
+
+=== camel-sql - JdbcKeyValueRepository: replace and delete(key, expected) do not match an expired entry
+
+`JdbcKeyValueRepository.replace(key, expected, newValue, ttl)` and `delete(key, expected)` now match only an entry that
+has not expired. Before, they matched an entry whose TTL had passed and returned `true`, although `get` returns `null`
+for it, and `replace` gave that entry a new TTL. Now they return `false` and leave the row as it is.
+
+For this, the default `updateIfValueString` and `deleteIfValueString` statements end with
+`AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)`, the condition of `selectKeysString`, and the current time is passed as their
+last parameter:
+
+[source,sql]
+----
+UPDATE CAMEL_KEYVALUE SET ITEM_VALUE = ?, EXPIRES_AT = ?
+    WHERE ITEM_KEY = ? AND ITEM_VALUE = ? AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)
+DELETE FROM CAMEL_KEYVALUE WHERE ITEM_KEY = ? AND ITEM_VALUE = ? AND (EXPIRES_AT = 0 OR EXPIRES_AT > ?)
+----
+
+If you set `updateIfValueString` or `deleteIfValueString` yourself, for example for a table with other column names,
+add the same condition with a parameter for the current time at the end. Otherwise the repository passes one more
+parameter than the statement has placeholders: most JDBC drivers then fail with an SQL error, while some drivers may
+ignore the extra parameter, so the statement still matches an expired entry. With `tableName` the statements are
+derived from the default statements, as before.
 
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
@@ -7466,3 +7497,10 @@ Platform BOM, as for the Camel Quarkus extensions that the BOM manages. Before, 
 of the run, which can be another one than the platform of the export, for example when the export reuses the data of
 an earlier `camel run`. An `io.quarkus` dependency that is given with its version (`--dep` or
 `camel.jbang.dependencies`) keeps that version. Nothing else changes for the Quarkus runtime.
+
+=== camel-netty-http - logWarnOnBadRequest warns by default
+
+The `logWarnOnBadRequest` option of a `netty-http` consumer is documented as enabled by default, but its field was
+left at `false`, so a request that Netty could not decode got its HTTP 400 returned without a log line. The option now
+defaults to `true`, as documented, so such a request logs `Netty request decoder failure due: <reason> returning HTTP
+Status 400 to client` at `WARN` level. Set `logWarnOnBadRequest=false` on the consumer to keep the previous silence.

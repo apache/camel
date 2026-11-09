@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 
 /**
  * The rules of the chaos screen saved as a scenario (CAMEL-26722): a file of the project, such as
- * {@code chaos/orders.chaos}, with one rule per line and the seed, which {@code camel cmd chaos-load} and
+ * {@code test/chaos/orders.chaos}, with one rule per line and the seed, which {@code camel cmd chaos-load} and
  * {@code camel run --chaos=<file>} read.
  */
 final class ChaosScenarioFile {
@@ -34,10 +34,10 @@ final class ChaosScenarioFile {
     private ChaosScenarioFile() {
     }
 
-    /** The file offered for an integration: {@code chaos/<name>.chaos}. */
+    /** The file offered for an integration: {@code test/chaos/<name>.chaos}. */
     static String defaultPath(IntegrationInfo info) {
         String name = info.name != null ? info.name.replaceAll("[^A-Za-z0-9._-]", "-") : "";
-        return "chaos/" + (name.isBlank() ? "scenario" : name) + EXTENSION;
+        return "test/chaos/" + (name.isBlank() ? "scenario" : name) + EXTENSION;
     }
 
     /**

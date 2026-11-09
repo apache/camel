@@ -48,10 +48,15 @@ import org.apache.camel.xml.io.util.XmlStreamInfo;
 public final class RunFiles {
 
     /**
-     * The extension of a chaos scenario (camel run --chaos=chaos/outage.chaos), which is not a file to run or to
+     * The extension of a chaos scenario (camel run --chaos=test/chaos/outage.chaos), which is not a file to run or to
      * export.
      */
     public static final String CHAOS_SCENARIO = ".chaos";
+
+    /**
+     * The folder of the chaos scenarios in the test folder of a project (test/chaos), which holds no routes.
+     */
+    public static final String CHAOS_FOLDER = "chaos";
 
     private static final String[] ACCEPTED_XML_ROOT_ELEMENT_NAMES = new String[] {
             "route", "routes",
@@ -274,8 +279,8 @@ public final class RunFiles {
     /**
      * The Citrus tests of a folder that holds nothing else camel run would load, such as the test folder of a project.
      * Empty when the folder holds no Citrus test, or a route or another source, a Camel application.properties, or a
-     * subfolder (which can hold routes). Hidden files, data files and the other properties files, such as
-     * citrus-application.properties, do not count.
+     * subfolder (which can hold routes). Hidden files, data files, the other properties files, such as
+     * citrus-application.properties, and the chaos folder with the chaos scenarios (test/chaos) do not count.
      *
      * @param dir the folder to run (camel run test/, or --source-dir)
      */
@@ -293,6 +298,9 @@ public final class RunFiles {
                 continue;
             }
             if (Files.isDirectory(entry)) {
+                if (CHAOS_FOLDER.equals(name)) {
+                    continue;
+                }
                 return List.of();
             }
             if (isCitrusTest(entry)) {

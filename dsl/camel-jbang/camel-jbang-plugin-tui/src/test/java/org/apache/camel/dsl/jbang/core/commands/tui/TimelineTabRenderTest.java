@@ -22,10 +22,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.layout.Rect;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -318,5 +321,75 @@ class TimelineTabRenderTest {
         StringBuilder sb = new StringBuilder();
         spans.forEach(s -> sb.append(s.content()));
         return sb.toString();
+    }
+
+    @Test
+    void aTallScreenHasRoomAroundThePanelsAndTallerStrips() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        List<String> lines = TuiTestHelper.renderToString(tab, 198, 48).lines().toList();
+
+        // a line between the panels
+        int bottom = indexOf(lines, "╰");
+        assertThat(lines.get(bottom + 1)).isBlank();
+        assertThat(lines.get(bottom + 2)).contains("orders ─ per second");
+        // a strip is 2 rows: the blocks of a busy second stand on the row with the name
+        int orders = indexOf(lines, ">> orders");
+        assertThat(lines.get(orders - 1)).contains("████");
+        // and a blank line between the routes
+        int shipping = indexOf(lines, "   shipping");
+        assertThat(shipping).isEqualTo(orders + 3);
+        assertThat(lines.get(orders + 1).replace("│", "")).isBlank();
+        // the charts grow: the scale of the errors per second is 6 rows from top to bottom
+        int top = indexOf(lines, "2 ┤");
+        assertThat(lines.get(top + 5)).contains("0 ┤");
+    }
+
+    @Test
+    void aSmallScreenStaysCompact() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        List<String> lines = TuiTestHelper.renderToString(tab, 160, 30).lines().toList();
+
+        int bottom = indexOf(lines, "╰");
+        assertThat(lines.get(bottom + 1)).contains("orders ─ per second");
+        int orders = indexOf(lines, ">> orders");
+        assertThat(lines.get(orders + 1)).contains("   shipping");
+    }
+
+    @Test
+    void theRoomGoesToTheSpaceAroundThenTheRoutesThenTheCharts() {
+        assertThat(TimelineTab.room(30, 3, true)).isEqualTo(TimelineTab.Room.COMPACT);
+        assertThat(TimelineTab.room(48, 3, true)).isEqualTo(new TimelineTab.Room(true, 6, 6, 2, true));
+        // the routes need the rows: one row each, no blank line between them
+        TimelineTab.Room many = TimelineTab.room(48, 10, true);
+        assertThat(many.roomy()).isTrue();
+        assertThat(many.strip()).isEqualTo(1);
+        assertThat(many.spaced()).isFalse();
+        // no error: the detail has the rows the errors would have
+        assertThat(TimelineTab.room(48, 3, false).causeRows()).isEqualTo(4);
+    }
+
+    @Test
+    void aClickOnTheStripOfARouteSelectsIt() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        Rect area = new Rect(0, 0, 198, 48);
+        List<String> lines = TuiTestHelper.renderToString(tab, 198, 48).lines().toList();
+        int shipping = indexOf(lines, "   shipping");
+
+        // the blank line between orders and shipping is no route
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 40, shipping - 2), area)).isFalse();
+        // the upper row of the strip of shipping is shipping
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 40, shipping - 1), area)).isTrue();
+        assertThat(tab.getTableDataAsJson().getInteger("selectedIndex")).isEqualTo(1);
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 40, shipping + 3), area)).isTrue();
+        assertThat(tab.getTableDataAsJson().getInteger("selectedIndex")).isEqualTo(2);
+    }
+
+    private static int indexOf(List<String> lines, String text) {
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).contains(text)) {
+                return i;
+            }
+        }
+        throw new AssertionError("no line with " + text);
     }
 }

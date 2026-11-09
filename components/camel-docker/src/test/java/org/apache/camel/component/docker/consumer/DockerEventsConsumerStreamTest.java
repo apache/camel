@@ -22,6 +22,7 @@ import java.net.ConnectException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.github.dockerjava.api.DockerClient;
@@ -37,6 +38,12 @@ import org.apache.camel.component.docker.DockerConfiguration;
 import org.apache.camel.component.docker.util.DockerTestUtils;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
@@ -55,6 +62,8 @@ class DockerEventsConsumerStreamTest extends CamelTestSupport {
     private final DockerClient dockerClient = mock(DockerClient.class);
     private final List<ResultCallback<Event>> eventCallbacks = new CopyOnWriteArrayList<>();
     private final List<ResultCallback<Statistics>> statsCallbacks = new CopyOnWriteArrayList<>();
+    private final AtomicInteger eventExecs = new AtomicInteger();
+    private final AtomicBoolean failEventExec = new AtomicBoolean();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -75,6 +84,12 @@ class DockerEventsConsumerStreamTest extends CamelTestSupport {
             EventsCmd cmd = mock(EventsCmd.class);
             when(cmd.withSince(anyString())).thenReturn(cmd);
             when(cmd.exec(any())).thenAnswer(e -> {
+                eventExecs.incrementAndGet();
+                if (failEventExec.getAndSet(false)) {
+                    // what the default Netty transport does when the daemon cannot be reached: the connect fails
+                    // synchronously, and the callback is not called
+                    throw new ConnectException("Connection refused");
+                }
                 ResultCallback<Event> callback = e.getArgument(0);
                 eventCallbacks.add(callback);
                 return callback;
@@ -146,6 +161,59 @@ class DockerEventsConsumerStreamTest extends CamelTestSupport {
         });
         eventCallbacks.get(2).onNext(new Event("start", "c2", "image", 2L));
         mock.assertIsSatisfied();
+    }
+
+    @Test
+    void failingExecWhenSubscribingAgainIsTriedAgain() throws Exception {
+        addRoute("docker://events?host=localhost&port=2375");
+        eventCallbacks.get(0).onStart(() -> {
+        });
+
+        // the daemon goes away: the stream fails, and the first attempt to subscribe again cannot connect
+        failEventExec.set(true);
+        eventCallbacks.get(0).onError(new IOException("Connection reset by peer"));
+
+        // the consumer keeps subscribing: the next attempt opens a new stream
+        await().atMost(15, TimeUnit.SECONDS).until(() -> eventCallbacks.size() == 2);
+        assertEquals(3, eventExecs.get(), "the start, the attempt that failed and the one that succeeded");
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(new Event("start", "c2", "image", 2L));
+        eventCallbacks.get(1).onStart(() -> {
+        });
+        eventCallbacks.get(1).onNext(new Event("start", "c2", "image", 2L));
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    void streamThatFailsBeforeItIsOpenLogsTheStackTraceAtDebug() throws Exception {
+        addRoute("docker://events?host=localhost&port=2375");
+        List<LogEvent> events = new CopyOnWriteArrayList<>();
+        AbstractAppender appender = new AbstractAppender("subscribeFailures", null, null, true, Property.EMPTY_ARRAY) {
+            @Override
+            public void append(LogEvent event) {
+                events.add(event.toImmutable());
+            }
+        };
+        appender.start();
+        Logger logger = (Logger) LogManager.getLogger(DockerEventsConsumer.class);
+        Level level = logger.getLevel();
+        logger.addAppender(appender);
+        logger.setLevel(Level.DEBUG);
+        ConnectException refused = new ConnectException("Connection refused");
+        try {
+            // the stream fails before it is open (the daemon cannot be reached)
+            eventCallbacks.get(0).onError(refused);
+        } finally {
+            logger.setLevel(level);
+            logger.removeAppender(appender);
+            appender.stop();
+        }
+
+        // one WARN line without the stack trace, and the stack trace at DEBUG
+        assertEquals(1, events.stream().filter(e -> e.getLevel() == Level.WARN && e.getThrown() == null).count());
+        assertEquals(0, events.stream().filter(e -> e.getLevel() == Level.WARN && e.getThrown() != null).count());
+        assertEquals(1, events.stream().filter(e -> e.getLevel() == Level.DEBUG && e.getThrown() == refused).count());
     }
 
     @Test

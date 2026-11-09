@@ -915,7 +915,7 @@ development only: it stays off with profile `prod`, and the commands cannot swit
 
 === Chaos scenarios
 
-A scenario keeps the rules of an experiment in a file of the project, such as `chaos/outage.chaos`: one rule per line,
+A scenario keeps the rules of an experiment in a file of the project, such as `test/chaos/outage.chaos`: one rule per line,
 `#` comments, and an optional `seed=` line so it fails the same messages each time. The phases come from `from=` and
 `until=` of its rules.
 
@@ -932,8 +932,8 @@ Start with it, or load it into an integration that runs (which removes the rules
 
 [source,bash]
 ----
-camel run * --chaos=chaos/outage.chaos
-camel cmd chaos-load chaos/outage.chaos
+camel run * --chaos=test/chaos/outage.chaos
+camel cmd chaos-load test/chaos/outage.chaos
 ----
 
 `camel run *` and `camel export` leave `.chaos` files out. A run with chaos ends with exit code 1 when the verdict is
@@ -941,7 +941,7 @@ FAIL, so a scenario can gate a pipeline; `--chaos-report` writes the report as J
 
 [source,bash]
 ----
-camel run * --chaos=chaos/outage.chaos --max-seconds=240 --chaos-report=target/chaos-report.json
+camel run * --chaos=test/chaos/outage.chaos --max-seconds=240 --chaos-report=target/chaos-report.json
 ----
 
 Without an expectation (`expect=`) there is no verdict, and the run ends with exit code 0 and a line that says so. See

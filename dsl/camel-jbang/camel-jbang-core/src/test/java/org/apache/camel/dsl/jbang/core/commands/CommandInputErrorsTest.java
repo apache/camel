@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
 import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
@@ -151,6 +152,51 @@ class CommandInputErrorsTest {
         assertThatThrownBy(() -> call(new Debug(main), "--remote-attach", "--name=no-such-integration"))
                 .isInstanceOf(CliException.class)
                 .hasMessage("camel debug requires an interactive terminal")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @Test
+    void debugSpringBootInTheBackground() throws Exception {
+        // Spring Boot registers stopOnExit hooks that kill the child when this JVM exits; --background exits
+        // immediately and would stop the integration before it starts
+        Path pom = Files.writeString(dir.resolve("pom.xml"),
+                "<project><dependencyManagement><dependencies>"
+                                                             + "<dependency><groupId>org.apache.camel.springboot</groupId>"
+                                                             + "<artifactId>camel-spring-boot-bom</artifactId><version>4.9.0</version>"
+                                                             + "<type>pom</type><scope>import</scope></dependency>"
+                                                             + "</dependencies></dependencyManagement></project>");
+
+        assertThatThrownBy(() -> call(new Debug(main), "--background", pom.toString()))
+                .isInstanceOf(CliException.class)
+                .hasMessage("Debug Camel Spring Boot with --background is not supported")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+    }
+
+    @Test
+    void debugInTheBackgroundSkipsTtyCheck() throws Exception {
+        // --background makes camel debug run without an interactive terminal:
+        // the TTY check that guards the interactive path must be bypassed
+        Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
+        assumeFalse(EnvironmentHelper.isInteractiveTerminal(), "needs a non-interactive terminal");
+        // Override runBackgroundProcess so the test does not actually spawn a child JVM,
+        // and record the kind string to verify the background branch was taken
+        AtomicReference<String> capturedKind = new AtomicReference<>();
+        Debug debug = new Debug(main) {
+            @Override
+            protected int runBackgroundProcess(ProcessBuilder pb, String kind) {
+                capturedKind.set(kind);
+                return 0;
+            }
+        };
+        assertThat(call(debug, "--background", file.toString())).isZero();
+        assertThat(capturedKind.get()).isEqualTo("Camel Debug");
+    }
+
+    @Test
+    void debugBackgroundAndRemoteAttachAreMutuallyExclusive() {
+        assertThatThrownBy(() -> call(new Debug(main), "--background", "--remote-attach"))
+                .isInstanceOf(CliException.class)
+                .hasMessage("--background and --remote-attach are mutually exclusive")
                 .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
     }
 

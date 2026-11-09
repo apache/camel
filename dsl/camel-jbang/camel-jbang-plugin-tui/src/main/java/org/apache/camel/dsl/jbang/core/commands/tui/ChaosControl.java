@@ -612,7 +612,7 @@ final class ChaosControl {
                             "the order route fails 5% of the time, or when the country is Spain");
                 } else if (command == Command.SAVE) {
                     DialogHelper.renderInputDialog(frame, area, "Save the chaos rules of " + name + " as a scenario",
-                            input, "chaos/outage.chaos (in the folder of the integration)");
+                            input, "test/chaos/outage.chaos (in the folder of the integration)");
                 } else {
                     DialogHelper.renderInputDialog(frame, area,
                             command == Command.CHANGE ? "Change chaos rule " + id : "Add a chaos rule to " + name, input,

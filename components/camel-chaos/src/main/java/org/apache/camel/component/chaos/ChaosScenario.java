@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A chaos scenario: the rules of an experiment in a file of the project, such as {@code chaos/outage.chaos}, so it can
- * be run again and shared. It has one rule per line, in the one-line form of {@code camel.chaos.rules}; a line that
+ * A chaos scenario: the rules of an experiment in a file of the project, such as {@code test/chaos/outage.chaos}, so it
+ * can be run again and shared. It has one rule per line, in the one-line form of {@code camel.chaos.rules}; a line that
  * starts with {@code #} is a comment, and a line {@code seed=<number>} fixes the random draws of its rules, so the
  * scenario fails the same messages each time. The phases of an experiment come from {@code from=} and {@code until=} of
  * its rules.

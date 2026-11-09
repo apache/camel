@@ -29,7 +29,7 @@ in dev mode, so with `--runtime=spring-boot` and `--runtime=quarkus` the run swi
 have it. A project of your own (`camel run pom.xml`) also gets chaos added for the run: plain `camel-chaos` for Spring
 Boot (there is no starter), and the `camel-quarkus-chaos` extension for Quarkus, which needs a Camel Quarkus release on
 Camel 4.24 (https://github.com/apache/camel-quarkus/issues/9459). Then add rules while it runs with `camel cmd chaos-add` (see <<_control_while_it_runs,Control while it runs>>), or
-start with the rules of a scenario file with `--chaos=chaos/outage.chaos` (see <<_scenarios,Scenarios>>).
+start with the rules of a scenario file with `--chaos=test/chaos/outage.chaos` (see <<_scenarios,Scenarios>>).
 * A plain `Main` or a test: add the `camel-chaos` dependency and set `camel.chaos.enabled=true`, for example in a
 `CamelTestSupport` test with
 `camelContextConfiguration.withUseOverridePropertiesWithPropertiesComponent(props)`, where `props` has
@@ -80,7 +80,7 @@ include the startup.
 |`camel.chaos.maxDuration` |`10m` |The longest time a rule runs: a rule without an `until` duration ends after it, and
 a longer `until` duration, `delay`, or `duration` of `stall` and `lifecycle`, is rejected when the rule is added.
 |`camel.chaos.scenario` | |A scenario to load at startup: a file with one rule per line (see
-<<_scenarios,Scenarios>>), such as `chaos/outage.chaos`, or `classpath:` and a name. Its rules are added before those of
+<<_scenarios,Scenarios>>), such as `test/chaos/outage.chaos`, or `classpath:` and a name. Its rules are added before those of
 `camel.chaos.rules`, and its `seed=` is used unless `camel.chaos.seed` is set. A scenario that cannot be read, or has a
 line that is not valid, stops the application from starting.
 |`camel.chaos.reportOnShutdown` |`true` |Log the report when the context stops, if any rule was added.
@@ -111,7 +111,7 @@ List<String> warnings = chaos.checkRule(id);
 chaos.removeRule(id);
 List<String> ids = chaos.addRules("endpoint=seda:dlq error at=dlq; endpoint=https:inventory* error status=503");
 String text = chaos.report().toText();
-List<String> loaded = chaos.loadScenario("outage.chaos", Files.readString(Path.of("chaos/outage.chaos")));
+List<String> loaded = chaos.loadScenario("outage.chaos", Files.readString(Path.of("test/chaos/outage.chaos")));
 ----
 
 `addRules` adds rules separated by `;`, as in `camel.chaos.rules`, all of them or none when one is not valid, so they
@@ -129,7 +129,7 @@ camel cmd chaos-change --id=r1 --rule='endpoint=kafka:orders* delay duration=5s 
 camel cmd chaos-remove myapp --id=r1
 camel cmd chaos-clear
 camel cmd chaos-clear myapp --reset
-camel cmd chaos-load chaos/outage.chaos
+camel cmd chaos-load test/chaos/outage.chaos
 camel cmd chaos-suggest
 camel get chaos
 camel get chaos myapp --report
@@ -331,12 +331,14 @@ serves over HTTP have only the list and the report (not the check either: the in
 == Scenarios
 
 A scenario is the rules of an experiment in a file of the project, so it can be run again, shared and kept with the
-code, instead of rules typed once at the command line. By convention it is in a `chaos` folder, with the extension
-`.chaos`:
+code, instead of rules typed once at the command line. By convention it is in the folder `test/chaos` of the project,
+with the extension `.chaos`. The Camel CLI leaves the `test` folder alone: `camel run` does not load it, a run in dev
+mode does not reload when a file there changes, and `camel export` copies only the Citrus tests from it. A scenario is
+a test too, next to the Citrus tests of the project:
 
 [source]
 ----
-# chaos/outage.chaos: the stock service is down for a minute, then slow for a minute
+# test/chaos/outage.chaos: the stock service is down for a minute, then slow for a minute
 seed=42
 
 endpoint=http:stock* error status=503 until=1m
@@ -361,7 +363,7 @@ To start an application with a scenario:
 
 [source,bash]
 ----
-camel run * --chaos=chaos/outage.chaos
+camel run * --chaos=test/chaos/outage.chaos
 ----
 
 `--chaos=<file>` adds camel-chaos as `--chaos` does, and sets `camel.chaos.scenario` to the file (it must end with
@@ -372,7 +374,7 @@ To load a scenario into an application that runs:
 
 [source,bash]
 ----
-$ camel cmd chaos-load chaos/outage.chaos
+$ camel cmd chaos-load test/chaos/outage.chaos
 Loaded chaos scenario outage.chaos: 3 rules (the rules there were are removed, and the report starts again)
   r4: fail every send to http:stock* with HTTP status 503, for 1 minute
   r5: delay every send and poll of http:stock* by 2 seconds, starting after 1 minute, for 1 minute
@@ -1013,7 +1015,7 @@ A run with chaos ends with the verdict of the report as its exit code, so a scen
 
 [source,bash]
 ----
-camel run * --chaos=chaos/outage.chaos --max-seconds=240 --chaos-report=target/chaos-report.json
+camel run * --chaos=test/chaos/outage.chaos --max-seconds=240 --chaos-report=target/chaos-report.json
 ----
 
 * The verdict FAIL ends the run with exit code 1, and the reasons are printed (an unmet expectation, messages lost at

@@ -38,6 +38,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.NormalizedEndpointUri;
+import org.apache.camel.spi.OnCompletionListener;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
@@ -599,6 +600,41 @@ public interface ExtendedCamelContext {
      * @since  4.24
      */
     default List<StepListener> getStepListeners() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Adds an {@link OnCompletionListener} that observes where the on completions of the exchanges are: when they move
+     * into a unit of work, are added to or removed from one, are handed over or taken out, and when they run. Many
+     * listeners can be installed; adding a listener that is already installed (equal to one installed) is ignored. The
+     * listeners are read at each event, so a listener added while the routes run is called from the next event on. The
+     * CamelContext does not start or stop the listeners, and they stay installed when the CamelContext is stopped and
+     * started again.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void addOnCompletionListener(OnCompletionListener listener) {
+        throw new UnsupportedOperationException("This CamelContext does not support an OnCompletionListener");
+    }
+
+    /**
+     * Removes an {@link OnCompletionListener} (one equal to it). It is no longer called from the next event on.
+     *
+     * @param listener the listener
+     * @since          4.24
+     */
+    default void removeOnCompletionListener(OnCompletionListener listener) {
+        // no listener can be installed, so there is nothing to remove
+    }
+
+    /**
+     * Gets the {@link OnCompletionListener}s, in the order they were added.
+     *
+     * @return an unmodifiable view of the listeners (empty if none is installed), which reflects later adds and removes
+     * @since  4.24
+     */
+    default List<OnCompletionListener> getOnCompletionListeners() {
         return Collections.emptyList();
     }
 

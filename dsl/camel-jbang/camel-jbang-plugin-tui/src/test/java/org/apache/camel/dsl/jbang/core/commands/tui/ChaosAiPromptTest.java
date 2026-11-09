@@ -290,12 +290,12 @@ class ChaosAiPromptTest {
 
         String question = ChaosAiPrompt.ofTest(info, rule);
         assertThat(question).contains("runs with camel run, without a Maven project")
-                .contains("Write the scenario chaos/r1-test.chaos").contains("seed=42")
+                .contains("Write the scenario test/chaos/r1-test.chaos").contains("seed=42")
                 .contains("says in words what it tests (not the rule again)")
                 .contains("the rule as the line endpoint=http://localhost:8765/stock* error status=503 rate=0.2"
                           + " expect=orders:handled<=0 draw=r1")
                 .contains("The rule has no expectation (expect=): add one")
-                .contains("camel run * --chaos=chaos/r1-test.chaos --max-seconds=<seconds>")
+                .contains("camel run * --chaos=test/chaos/r1-test.chaos --max-seconds=<seconds>")
                 .doesNotContain("JUnit");
     }
 

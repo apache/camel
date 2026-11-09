@@ -49,7 +49,7 @@ class RunFilesTest {
     void aChaosScenarioIsNotRunNorExported() {
         // camel run * and camel export: camel run --chaos=file and camel cmd chaos-load read it
         assertThat(RunFiles.skipFile("outage.chaos", List.of(), "")).isTrue();
-        assertThat(RunFiles.skipFile("chaos/outage.chaos", List.of(), "")).isTrue();
+        assertThat(RunFiles.skipFile("test/chaos/outage.chaos", List.of(), "")).isTrue();
         assertThat(RunFiles.skipFile("orders.camel.yaml", List.of(), "")).isFalse();
     }
 
@@ -110,6 +110,10 @@ class RunFilesTest {
         Files.writeString(test.resolve("sample-order.json"), "{\"orderId\": \"ORD-1\"}\n");
         Files.writeString(test.resolve("compose.yaml"), "services:\n  broker:\n    image: apache/artemis\n");
         Files.writeString(test.resolve(".gitignore"), "target\n");
+        // and the chaos scenarios, with the messages a scenario sends
+        Path chaos = Files.createDirectories(test.resolve("chaos"));
+        Files.writeString(chaos.resolve("outage.chaos"), "seed=42\nendpoint=http:stock* error status=503\n");
+        Files.writeString(Files.createDirectories(chaos.resolve("outage")).resolve("001.yaml"), "orderId: ORD-1\n");
         assertThat(RunFiles.citrusTestsOnly(test)).containsExactly(orders, refunds);
 
         // a folder that holds what camel run loads: a route, the Camel configuration, or a subfolder
