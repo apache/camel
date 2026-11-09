@@ -55,6 +55,11 @@ public final class McpServerConstants {
     public static final long DEFAULT_RESOURCE_TIMEOUT = 20_000;
 
     /**
+     * Default per-request prompt execution timeout in milliseconds.
+     */
+    public static final long DEFAULT_PROMPT_TIMEOUT = 20_000;
+
+    /**
      * Default MCP session keep-alive ping interval in milliseconds for the Vert.x streamable transport. {@code 0}
      * disables keep-alive pings.
      */
