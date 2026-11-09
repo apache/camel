@@ -1907,7 +1907,7 @@ class HistoryTab extends AbstractTab {
         }
     }
 
-    private List<HistoryEntry> reorderHistoryDepthFirst(List<HistoryEntry> entries) {
+    List<HistoryEntry> reorderHistoryDepthFirst(List<HistoryEntry> entries) {
         if (entries.isEmpty()) {
             return entries;
         }
@@ -1999,10 +1999,10 @@ class HistoryTab extends AbstractTab {
     }
 
     private static boolean isMulticastNode(String nodeShortName) {
-        if (nodeShortName != null) {
+        if (nodeShortName != null) { // the EIPs that run their steps on exchanges of their own (a breaker: a copy)
             return switch (nodeShortName) {
                 case "multicast", "recipientList", "split", "routingSlip", "enrich", "pollEnrich",
-                        "wireTap", "dynamicRouter" ->
+                        "wireTap", "dynamicRouter", "circuitBreaker" ->
                     true;
                 default -> false;
             };

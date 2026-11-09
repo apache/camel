@@ -30,6 +30,7 @@ import dev.tamboui.text.Span;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -199,6 +200,41 @@ class HistoryTabRenderTest {
         String title = HistoryTab.buildHistoryTitle(List.of(from, called, done)).content().spans().stream()
                 .map(Span::content).reduce("", String::concat);
         assertTrue(title.contains("elapsed:17ms"), title);
+    }
+
+    @Test
+    void theStepsOfACircuitBreakerAreUnderIt() {
+        // as the history of the circuit breaker example has it: the breaker runs its steps on a copy (131) of the
+        // exchange (130), and the copy calls the supplier route over direct
+        List<HistoryEntry> entries = List.of(
+                step("130", "stock-check", "from1", "from", "from[timer://stock]", true, false),
+                step("130", "stock-check", "circuitBreaker1", "circuitBreaker", "circuitBreaker", false, false),
+                step("131", "stock-check", "to1", "to", "to[direct:supplier]", false, false),
+                step("131", "supplier", "from2", "from", "from[direct://supplier]", true, false),
+                step("131", "supplier", "setBody3", "setBody", "setBody[simple{in stock}]", false, false),
+                step("131", "supplier", "from2", "from", "from[direct://supplier]", false, true),
+                step("130", "stock-check", "log1", "log", "log[Stock check]", false, false),
+                step("130", "stock-check", "from1", "from", "from[timer://stock]", false, true));
+
+        List<HistoryEntry> ordered = new HistoryTab(ctx, traces, new HashMap<>()).reorderHistoryDepthFirst(entries);
+
+        assertEquals(List.of("from1", "circuitBreaker1", "to1", "from2", "setBody3", "from2", "log1", "from1"),
+                ordered.stream().map(e -> e.nodeId).toList());
+        assertEquals(List.of(0, 0, 1, 1, 1, 1, 0, 0), ordered.stream().map(e -> e.inlineDepth).toList());
+    }
+
+    private static HistoryEntry step(
+            String exchangeId, String routeId, String nodeId, String shortName, String label, boolean first,
+            boolean last) {
+        HistoryEntry e = new HistoryEntry();
+        e.exchangeId = exchangeId;
+        e.routeId = routeId;
+        e.nodeId = nodeId;
+        e.nodeShortName = shortName;
+        e.nodeLabel = label;
+        e.first = first;
+        e.last = last;
+        return e;
     }
 
     private static HistoryEntry historyEntry(String routeId, long elapsed, boolean last) {
