@@ -969,8 +969,8 @@ server with its own address on this machine (netty-http, undertow, jetty) is fed
 one on another host is not fed.
 
 A route that starts from `file:<folder>` is fed with files: each message is written as a file into the folder the route
-polls, named so the route takes it (`chaos-<time>-<n>.json`, with the extension of its `include` or `antInclude` filter,
-else of the body). A `CamelFileName` in `--header` names the files instead.
+polls, named so the route takes it: `chaos-<time>.json`, numbered as `chaos-<time>-<n>.json` when the messages are
+repeated, with the extension of its `include` or `antInclude` filter, else of the body. A `CamelFileName` in `--header` names the files instead.
 
 A feed to a remote system that is not stubbed, such as a Kafka broker, has a warning, as the messages go to that system:
 use a local one (`camel infra run kafka`), or stub it.
