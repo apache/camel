@@ -389,6 +389,11 @@ public class ListChaos extends ProcessWatchCommand {
                           + x.getString("value"));
             }
         }
+        long lost = experiment.getLongOrDefault("lostAtDeadLetterChannel", 0);
+        if (lost > 0) {
+            lines.add(more + "lost at the dead letter channel: " + lost + (lost == 1 ? " message" : " messages")
+                      + ", handled there without being delivered");
+        }
         List<Object> routes = experiment.getCollection("routes");
         if (routes != null && !routes.isEmpty()) {
             lines.add(more + "routes: " + routeCounts(routes));

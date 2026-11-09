@@ -47,6 +47,7 @@ class ErrorCountsTest {
                 }
             });
             context.start();
+            long before = System.currentTimeMillis();
             for (int i = 0; i < 10; i++) {
                 send(context, "direct:supplier");
             }
@@ -71,6 +72,8 @@ class ErrorCountsTest {
             assertThat(first.getString("exceptionType")).isEqualTo("java.net.ConnectException");
             assertThat(first.getLong("count")).isEqualTo(10);
             assertThat(((JsonObject) kinds.get(1)).getLong("count")).isEqualTo(2);
+            // when the newest error happened: the last of the 2 sent to the stock route
+            assertThat(summary.getLong("lastTimestamp")).isBetween(before, System.currentTimeMillis());
         }
     }
 
@@ -80,6 +83,7 @@ class ErrorCountsTest {
         ErrorCounts.summarize(Map.of("size", 0), summary);
         assertThat(summary.getLong("total")).isZero();
         assertThat((List<?>) summary.get("kinds")).isEmpty();
+        assertThat(summary.containsKey("lastTimestamp")).isFalse();
     }
 
     private static void send(CamelContext context, String uri) {

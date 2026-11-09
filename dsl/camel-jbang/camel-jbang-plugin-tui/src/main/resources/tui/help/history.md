@@ -66,10 +66,21 @@ Steps with no changes leave the column blank, so mutations stand
 out visually.
 
 **Depth-first ordering** — When an exchange spans multiple routes
-via async EIPs (multicast, splitter, recipientList), child exchange
-steps are inlined under the parent step that triggered them, indented
-with 2 spaces per depth level. This keeps the logical flow readable
-instead of interleaving concurrent branches.
+via EIPs that run their steps on exchanges of their own (multicast,
+splitter, recipientList, enrich, a circuit breaker, which runs its
+steps on a copy), child exchange steps are inlined under the parent
+step that triggered them, indented with 2 spaces per depth level, and
+so is a route called over direct under the step that calls it. This
+keeps the logical flow readable instead of interleaving concurrent
+branches.
+
+**Size** — the table of the steps is as tall as its steps, up to half
+the screen, and the detail of the selected step has the rest. Dragging
+the border between them sets the height yourself.
+
+**Follow** — the history is read when the tab opens and when `F5` asks
+for it, so the steps stay put while you read them. `f` follows the last
+completed exchange instead: the history is read again on every refresh.
 
 ## Direction Arrows
 
@@ -157,4 +168,5 @@ Press `Esc` to navigate back one route in drill-down mode.
 - `S` — reverse sort order
 - `Left/Right` — horizontal scroll (diagram or detail)
 - `PgUp/PgDn` — page scroll
+- `f` — follow the last completed exchange (on) or keep the one shown (off)
 - `F5` — refresh data

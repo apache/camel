@@ -19,12 +19,13 @@ package org.apache.camel.component.mcp.server;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Thrown by an {@link McpServerEngine} from {@link McpServerEngine#toolAdded(McpServerTool)} or
- * {@link McpServerEngine#resourceAdded(McpServerResource)} to refuse a tool or resource it cannot serve, for example
- * because the runtime's MCP server already serves one with the same name or uri.
+ * Thrown by an {@link McpServerEngine} from {@link McpServerEngine#toolAdded(McpServerTool)},
+ * {@link McpServerEngine#resourceAdded(McpServerResource)} or {@link McpServerEngine#promptAdded(McpServerPrompt)} to
+ * refuse an item it cannot serve, for example because the runtime's MCP server already serves one with the same name or
+ * uri.
  * <p>
  * The bridge handles it like its own name clash: it logs an ERROR with the message as the reason (and the cause, if
- * any), the route keeps running, and the tool or resource is not tracked as published.
+ * any), the route keeps running, and the item is not tracked as published.
  *
  * @since 4.24
  */

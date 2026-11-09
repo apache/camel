@@ -52,6 +52,11 @@ class ChaosExperimentTest extends ChaosTestSupport {
             @Override
             public void configure() {
                 from("direct:orders").routeId("orders").to("mock:shipped");
+                // a dead letter channel that parks what could not be charged
+                from("direct:billing").routeId("billing")
+                        .errorHandler(deadLetterChannel("direct:parked"))
+                        .to("mock:charged");
+                from("direct:parked").routeId("parked").to("mock:parked");
             }
         };
     }
@@ -133,6 +138,27 @@ class ChaosExperimentTest extends ChaosTestSupport {
         assertThat(first(experiment(2), "expectations").getString("state")).isEqualTo("pending");
         assertThat(list((JsonObject) chaos().report().toJson().get("exploration"), "rules"))
                 .containsExactly("r1", "r2");
+    }
+
+    @Test
+    void messagesLostAtTheDeadLetterChannelFailTheExperiment() {
+        chaos().startExploration("10m", null);
+        // the service is down and the dead letter channel fails too: the dead letter channel handles each message it
+        // could not deliver, so billing does not fail, and only the count of the rule sees the loss (CAMEL-26789)
+        chaos().beginExperiment("nothing is lost when billing and parking fail",
+                "endpoint=mock:charged error expect=billing:failed<=0 within=1m; endpoint=direct:parked error at=dlq");
+        for (int i = 0; i < 3; i++) {
+            template.send("direct:billing", e -> e.getMessage().setBody("bill"));
+        }
+
+        Map<String, Object> ended = chaos().endExperiment(null);
+
+        assertThat(ended).containsEntry("verdict", "FAIL").containsEntry("lostAtDeadLetterChannel", 3L);
+        assertThat(((JsonObject) ended.get("lostAtDeadLetterChannelPerRule")).getLong("r2")).isEqualTo(3);
+        // the expectation alone sees nothing wrong: nothing failed in billing
+        assertThat(first(new JsonObject(ended), "expectations").getLong("actual")).isZero();
+        assertThat(chaos().report().toText()).contains("1 FAIL  nothing is lost when billing and parking fail",
+                "lost at the dead letter channel: 3 messages, handled there without being delivered");
     }
 
     @Test

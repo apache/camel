@@ -24,12 +24,18 @@ happened to it, with no AI:
   one handed off with `seda:` with `⇢`) and what it talks to, from its
   sources. Each line has the exchanges since it started (for an
   endpoint, the sends to it), and In and Out a sparkline of the last 5
-  minutes with the rate now, or `idle`.
+  minutes with the rate now, or `idle`. Out also has the systems the
+  integration sent to that its sources do not name, as a `toD` or a
+  recipient list computes the endpoint: the URIs one route built for one
+  service are one line (`http://localhost:8080/stock/…`).
 - **Last 5m** — the exchanges and how they ended, the cause that
   happened most and when (a chaos rule marked 🎲), and the exchanges
   since it started.
-- **Watch** — the errors that happened and the kinds that happened most,
-  routes not started, exchanges in flight.
+- **Watch** — the errors that happened, the kinds that happened most and
+  when the last one did, routes not started, exchanges in flight. Errors
+  that stopped more than a minute ago are history: the line says there
+  were none in the last minute, with the earlier ones dimmed (Last 5m and
+  What happened still show them).
 - **Next** — the keys that lead deeper: **4** the Timeline, **5** the
   Diagram, **2** the source.
 - **What happened** — a strip per route over the last 5 minutes (as wide
@@ -43,7 +49,7 @@ happened to it, with no AI:
 
 Keys of About:
 
-- **Up/Down** — Select a line of In, Routes or Out
+- **Up/Down** — Select a line of In, Routes or Out, or click it
 - **Enter** — Open the selected line: a route drilled down on the
   Diagram, an endpoint a route sends to with its details on the Endpoint
   tab

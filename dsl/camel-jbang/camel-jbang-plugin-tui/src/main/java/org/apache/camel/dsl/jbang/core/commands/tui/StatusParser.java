@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.net.URI;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -68,6 +70,7 @@ final class StatusParser {
         info.pid = Long.toString(ph.pid());
         info.uptime = extractSince(ph);
         info.ago = TimeUtils.printSince(info.uptime);
+        info.contextStarted = context.getLongOrDefault("startTimestamp", 0L);
         info.state = context.getIntegerOrDefault("phase", 0);
         info.camelVersion = context.getString("version");
         info.profile = context.getString("profile");
@@ -128,6 +131,7 @@ final class StatusParser {
                 }
             }
             info.errorKinds = List.copyOf(kinds);
+            info.lastErrorTimestamp = errorsObj.getLongOrDefault("lastTimestamp", 0L);
         }
 
         parseInflight(info, root);
@@ -379,6 +383,8 @@ final class StatusParser {
         if (healthChecks != null) {
             Boolean rdy = (Boolean) healthChecks.get("ready");
             info.ready = Boolean.TRUE.equals(rdy) ? "1/1" : "0/1";
+            info.healthReady = rdy;
+            info.healthLive = healthChecks.get("live") instanceof Boolean live ? live : null;
             JsonArray checks = (JsonArray) healthChecks.get("checks");
             if (checks != null) {
                 for (Object c : checks) {
@@ -390,15 +396,37 @@ final class StatusParser {
                     hc.readiness = cj.getBooleanOrDefault("readiness", false);
                     hc.liveness = cj.getBooleanOrDefault("liveness", false);
                     hc.message = cj.getString("message");
-                    if (hc.message == null) {
-                        JsonObject details = (JsonObject) cj.get("details");
-                        if (details != null && details.containsKey("failure.error.message")) {
-                            hc.message = details.getString("failure.error.message");
-                        }
+                    JsonObject details = (JsonObject) cj.get("details");
+                    if (hc.message == null && details != null && details.containsKey("failure.error.message")) {
+                        hc.message = details.getString("failure.error.message");
+                    }
+                    if (details != null) {
+                        healthDetails(hc, details);
                     }
                     addHealthCheck(info.healthChecks, hc);
                 }
             }
+        }
+    }
+
+    /** When the check went to its state, when it was last UP, and how often it ran and failed, from its details. */
+    static void healthDetails(HealthCheckInfo hc, JsonObject details) {
+        hc.since = epochMillis(details.getString("UP".equals(hc.state) ? "success.start.time" : "failure.start.time"));
+        hc.lastUp = epochMillis(details.getString("success.time"));
+        hc.lastFailure = epochMillis(details.getString("failure.time"));
+        hc.invocations = TuiHelper.objToLong(details.get("invocation.count"));
+        hc.failures = TuiHelper.objToLong(details.get("failure.count"));
+    }
+
+    /** A time as the health check details have it (2026-11-09T17:02:42.44+01:00[Europe/Copenhagen]); 0 when not. */
+    static long epochMillis(String time) {
+        if (time == null || time.isBlank()) {
+            return 0;
+        }
+        try {
+            return ZonedDateTime.parse(time).toInstant().toEpochMilli();
+        } catch (DateTimeParseException e) {
+            return 0;
         }
     }
 
@@ -411,9 +439,14 @@ final class StatusParser {
             if (Objects.equals(known.group, hc.group) && Objects.equals(known.name, hc.name)) {
                 known.readiness |= hc.readiness;
                 known.liveness |= hc.liveness;
+                known.invocations = Math.max(known.invocations, hc.invocations);
+                known.failures = Math.max(known.failures, hc.failures);
+                known.lastFailure = Math.max(known.lastFailure, hc.lastFailure);
                 if (!"DOWN".equals(known.state) && hc.state != null && !"UP".equals(hc.state)) {
                     known.state = hc.state;
                     known.message = hc.message != null ? hc.message : known.message;
+                    known.since = hc.since;
+                    known.lastUp = hc.lastUp;
                 }
                 return;
             }

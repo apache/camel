@@ -82,6 +82,8 @@ class CircuitBreakerTabRenderTest {
     @Test
     void renderRouteIdInCyan() {
         addCircuitBreaker("my-route", "cb1", "resilience4j", "closed");
+        // the first row is selected, and its highlight takes the colors: the row looked at is the second
+        addCircuitBreaker("a-first", "cb0", "resilience4j", "forced_closed");
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
 
@@ -97,6 +99,8 @@ class CircuitBreakerTabRenderTest {
     @Test
     void renderClosedStateInGreen() {
         addCircuitBreaker("route1", "cb1", "resilience4j", "closed");
+        // the first row is selected, and its highlight takes the colors: the row looked at is the second
+        addCircuitBreaker("a-first", "cb0", "resilience4j", "forced_closed");
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
 
@@ -112,6 +116,8 @@ class CircuitBreakerTabRenderTest {
     @Test
     void renderOpenStateInRed() {
         addCircuitBreaker("route1", "cb1", "resilience4j", "open");
+        // the first row is selected, and its highlight takes the colors: the row looked at is the second
+        addCircuitBreaker("a-first", "cb0", "resilience4j", "forced_closed");
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
 
@@ -127,6 +133,8 @@ class CircuitBreakerTabRenderTest {
     @Test
     void renderHalfOpenStateInYellow() {
         addCircuitBreaker("route1", "cb1", "resilience4j", "half_open");
+        // the first row is selected, and its highlight takes the colors: the row looked at is the second
+        addCircuitBreaker("a-first", "cb0", "resilience4j", "forced_closed");
 
         CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
 
@@ -159,6 +167,19 @@ class CircuitBreakerTabRenderTest {
 
         assertTrue(rendered.contains("No circuit breakers"),
                 "Should show placeholder when no circuit breakers exist");
+    }
+
+    @Test
+    void aBreakerThatShowsUpOnceTheTabIsOpenIsSelected() {
+        CircuitBreakerTab tab = new CircuitBreakerTab(ctx, new MetricsCollector());
+        tab.onTabSelected();
+        TuiTestHelper.renderToString(tab, 160, 40);
+
+        // the route was still starting: the breaker shows up a refresh later
+        addCircuitBreaker("route1", "cb1", "resilience4j", "closed");
+        String rendered = TuiTestHelper.renderToString(tab, 160, 40);
+
+        assertTrue(rendered.contains("cb1 (resilience4j)"), "the detail of the breaker shows: " + rendered);
     }
 
     @Test

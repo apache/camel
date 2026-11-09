@@ -85,7 +85,7 @@ class StateStoreStreamBodyTest extends CamelTestSupport {
         // again, with the stream cache reset
         put("direct:putRedelivery", new ByteArrayInputStream(BINARY), "redelivered");
 
-        Object value = redeliveryBackend.get("redelivered");
+        Object value = redeliveryBackend.get("statestore:redeliveryStore:redelivered");
         assertThat(value).isInstanceOf(byte[].class);
         assertThat((byte[]) value).containsExactly(BINARY);
     }

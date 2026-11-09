@@ -17,7 +17,9 @@
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Rect;
@@ -40,6 +42,9 @@ import org.apache.camel.util.json.JsonObject;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.*;
 
 class EventTab extends AbstractTableTab {
+
+    // f: only the events of one category (exchange events drown the route and context ones); null for all
+    private String category;
 
     EventTab(MonitorContext ctx) {
         super(ctx, "timestamp", "category", "type", "message");
@@ -72,13 +77,12 @@ class EventTab extends AbstractTableTab {
     @Override
     protected int getRowCount() {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        return info != null ? info.events.size() : 0;
+        return info != null ? sortedEvents(info).size() : 0;
     }
 
     @Override
     protected void renderContent(Frame frame, Rect area, IntegrationInfo info) {
-        List<EventInfo> sorted = new ArrayList<>(info.events);
-        sorted.sort(this::sortEvent);
+        List<EventInfo> sorted = sortedEvents(info);
 
         List<Row> rows = new ArrayList<>();
         for (EventInfo ei : sorted) {
@@ -109,12 +113,61 @@ class EventTab extends AbstractTableTab {
                         Constraint.length(30),
                         Constraint.fill())
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL)
-                        .title(" Events ").build())
+                        .title(category != null ? " Events [" + category + "] " : " Events ").build())
                 .build();
 
         lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
         renderScrollbar(frame, table, sorted.size());
+    }
+
+    /**
+     * The events in the sort order. They come oldest first, and the sort keeps the order of equal ones: unless the sort
+     * is reversed, the list is turned around first, so events of the same millisecond (the created, sent and completed
+     * events of a quick exchange) read newest first like the others.
+     */
+    List<EventInfo> sortedEvents(IntegrationInfo info) {
+        List<EventInfo> sorted = new ArrayList<>(info.events);
+        if (category != null) {
+            sorted.removeIf(e -> !category.equals(e.category));
+        }
+        if (!sortReversed) {
+            Collections.reverse(sorted);
+        }
+        sorted.sort(this::sortEvent);
+        return sorted;
+    }
+
+    @Override
+    protected boolean handleTabKeyEvent(KeyEvent ke) {
+        if (ke.isCharIgnoreCase('f')) {
+            IntegrationInfo info = ctx.findSelectedIntegration();
+            category = nextCategory(category, info != null ? info.events : List.of());
+            tableState.select(0);
+            return true;
+        }
+        return false;
+    }
+
+    /** The category after the one shown: all, then each category the events have, in order, then all again. */
+    static String nextCategory(String current, List<EventInfo> events) {
+        List<String> categories = events.stream().map(e -> e.category).filter(Objects::nonNull).distinct().sorted()
+                .toList();
+        if (current == null) {
+            return categories.isEmpty() ? null : categories.get(0);
+        }
+        int i = categories.indexOf(current);
+        return i >= 0 && i + 1 < categories.size() ? categories.get(i + 1) : null;
+    }
+
+    @Override
+    public void renderFooter(List<Span> spans) {
+        super.renderFooter(spans);
+        hint(spans, "f", "category [" + (category != null ? category : "all") + "]");
+    }
+
+    String category() {
+        return category;
     }
 
     private int sortEvent(EventInfo a, EventInfo b) {
@@ -157,8 +210,7 @@ class EventTab extends AbstractTableTab {
         if (info == null || info.events.isEmpty()) {
             return null;
         }
-        List<EventInfo> sorted = new ArrayList<>(info.events);
-        sorted.sort(this::sortEvent);
+        List<EventInfo> sorted = sortedEvents(info);
         List<String> items = sorted.stream().map(e -> e.type != null ? e.type : "").toList();
         Integer sel = tableState.selected();
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Events");
@@ -183,8 +235,7 @@ class EventTab extends AbstractTableTab {
         JsonObject result = new JsonObject();
         result.put("tab", "Events");
         JsonArray rows = new JsonArray();
-        List<EventInfo> sorted = new ArrayList<>(info.events);
-        sorted.sort(this::sortEvent);
+        List<EventInfo> sorted = sortedEvents(info);
         for (EventInfo ei : sorted) {
             JsonObject row = new JsonObject();
             row.put("type", ei.type);
