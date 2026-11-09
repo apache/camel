@@ -214,6 +214,16 @@ nodes, and XInclude is not processed. Before, the Flowable 7 deserializer parsed
 An event that relies on an external DTD or an external entity no longer gets their content. A channel that sets
 `deserializerDelegateExpression` keeps its own deserializer, which can parse such events.
 
+=== camel-grpc - routeControlledStreamObserver now supported for the PROPAGATION strategy
+
+The `routeControlledStreamObserver` option now works with the PROPAGATION consumer strategy
+(CAMEL-26550). When enabled, the consumer dispatches each streaming event to the route and the
+route is responsible for sending replies via `toRouteControlledStreamObserver`, exactly as with
+the DELEGATION strategy.
+
+No changes are required for existing routes that use PROPAGATION without
+`routeControlledStreamObserver=true`.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again

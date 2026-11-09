@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.grpc.server;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConsumer;
+import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.component.grpc.GrpcEndpoint;
 
 /**
@@ -36,8 +38,8 @@ import org.apache.camel.component.grpc.GrpcEndpoint;
 public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStreamObserver {
 
     private final boolean routeControlled;
-    // set once the call ended with an error, by a failed exchange or by the route: nothing more can be sent to the
-    // client. Shared by the exchanges of all the events of the call when the route controls the replies
+    // set once the call ended with an error due to an interrupt when the route controls the replies:
+    // nothing more can be sent to the client
     private final AtomicBoolean failed = new AtomicBoolean();
 
     public GrpcRequestPropagationStreamObserver(GrpcEndpoint endpoint, GrpcConsumer consumer,
@@ -48,7 +50,7 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
 
     @Override
     public void onNext(Object request) {
-        if (failed.get()) {
+        if (routeControlled && failed.get()) {
             return;
         }
         CountDownLatch latch = new CountDownLatch(1);
@@ -56,7 +58,9 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(request);
         exchange.getIn().setHeaders(headers);
-        setRouteControlledProperties(exchange);
+        if (routeControlled) {
+            exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        }
 
         consumer.process(exchange, doneSync -> latch.countDown());
 
@@ -67,8 +71,12 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
                 // the route sends the replies itself
                 return;
             }
-            if (sendFailure(exchange) || !sendResponses(exchange)) {
-                failed.set(true);
+            Object responseBody = exchange.getMessage().getBody();
+            if (responseBody instanceof List) {
+                List<?> responseList = (List<?>) responseBody;
+                responseList.forEach(responseObserver::onNext);
+            } else {
+                responseObserver.onNext(responseBody);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -82,7 +90,9 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
     public void onError(Throwable throwable) {
         exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
-        setRouteControlledProperties(exchange);
+        if (routeControlled) {
+            exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        }
         consumer.onError(exchange, throwable);
         if (!routeControlled && !failed.get()) {
             responseObserver.onError(throwable);
@@ -93,16 +103,12 @@ public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStr
     public void onCompleted() {
         exchange = endpoint.createExchange();
         exchange.getIn().setHeaders(headers);
-        setRouteControlledProperties(exchange);
+        if (routeControlled) {
+            exchange.setProperty(GrpcConstants.GRPC_RESPONSE_OBSERVER, responseObserver);
+        }
         consumer.onCompleted(exchange);
         if (!routeControlled && !failed.get()) {
             responseObserver.onCompleted();
-        }
-    }
-
-    private void setRouteControlledProperties(Exchange exchange) {
-        if (routeControlled) {
-            GrpcMethodHandler.setRouteControlledProperties(endpoint, exchange, responseObserver, responseType, failed);
         }
     }
 }
