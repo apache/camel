@@ -223,6 +223,32 @@ class LocalCliConnectorChaosActionTest {
     }
 
     @Test
+    void anExplorationStartsAndFinishes() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+        JsonObject action = new JsonObject();
+        action.put("action", "chaos");
+        action.put("command", "explore-start");
+        action.put("budget", "5m");
+        action.put("focus", "start");
+
+        CliActionOutcome started = CliActionOutcome.dispatch(connector, action).get(10, TimeUnit.SECONDS);
+        assertThat(started.error()).isNull();
+        assertThat(started.result().getBoolean("running")).isTrue();
+        assertThat(started.result().getLong("budget")).isEqualTo(300_000L);
+        assertThat(started.result().getString("focus")).isEqualTo("start");
+        // one at a time: the reason goes to the tool
+        assertThat(CliActionOutcome.dispatch(connector, action).get(10, TimeUnit.SECONDS).error())
+                .startsWith("An exploration is running");
+
+        assertThat(chaos("add", null, "endpoint=mock:target error").error()).isNull();
+        CliActionOutcome finished = chaos("explore-finish", null, null);
+        assertThat(finished.error()).isNull();
+        assertThat(finished.result().getString("finishedBy")).isEqualTo("finished");
+        assertThat(finished.result().getLong("removed")).isEqualTo(1L);
+        assertThat(chaos("explore-finish", null, null).error()).isEqualTo("No exploration is running");
+    }
+
+    @Test
     void rulesAreAddedTogetherWithWarningsForTheOnesThatMatchNothing() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
 

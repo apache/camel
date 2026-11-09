@@ -187,6 +187,31 @@ class ListChaosTest extends ProcessCommandTestSupport {
     }
 
     @Test
+    void theExplorationInTheReport() throws Exception {
+        JsonObject chaos = chaosOn();
+        JsonObject exploration = new JsonObject();
+        exploration.put("running", true);
+        exploration.put("budget", 600_000L);
+        exploration.put("timeLeft", 372_000L);
+        exploration.put("focus", "orders");
+        exploration.put("rules", new JsonArray(List.of("r1", "r2")));
+        exploration.put("baselineAt", 1_700_000_030_000L);
+        JsonObject orders = new JsonObject();
+        orders.put("route", "orders");
+        orders.put("completed", 30L);
+        orders.put("failed", 0L);
+        exploration.put("baseline", new JsonArray(List.of(orders)));
+        ((JsonObject) chaos.get("report")).put("exploration", exploration);
+        writeStatus(chaos);
+
+        assertThat(run("--report")).isZero();
+
+        String out = printer.getStdout();
+        assertThat(out).contains("exploration: running, 6m12s left of 10m0s, focus: orders",
+                "rules tried: r1, r2", "baseline (before the first rule): orders 30 completed, 0 failed");
+    }
+
+    @Test
     void whatHasBeenTriedInTheReport() throws Exception {
         JsonObject chaos = chaosOn();
         JsonObject kind = new JsonObject();
