@@ -19,6 +19,9 @@ package org.apache.camel.component.azure.eventhubs;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.camel.test.infra.azure.eventhubs.common.AzureEventHubsProperties;
+import org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsService;
+import org.apache.camel.test.infra.azure.eventhubs.services.AzureEventHubsServiceFactory;
 import org.apache.camel.test.junit6.TestSupport;
 
 public final class TestUtils {
@@ -34,20 +37,32 @@ public final class TestUtils {
         return TestSupport.loadExternalProperties(TestUtils.class, "azure_key.properties");
     }
 
-    public static Properties loadAzureAccessFromJvmEnv() throws Exception {
-        final Properties properties = new Properties();
-        if (System.getProperty(CONNECTION_STRING) == null
-                || System.getProperty(BLOB_ACCOUNT_NAME) == null
-                || System.getProperty(BLOB_ACCESS_KEY) == null) {
-            throw new Exception(
-                    "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string"
-                                + " -DblobAccountName=blob -DblobAccessKey=key");
+    /**
+     * The service of the integration tests: an event hub on a local Floci AZ container, unless the connectionString,
+     * blobAccountName and blobAccessKey system properties are set: then the event hub of that connection string, with
+     * the checkpoints in that storage account.
+     */
+    public static AzureEventHubsService createService() {
+        String connectionString = System.getProperty(CONNECTION_STRING);
+        if (connectionString != null) {
+            if (System.getProperty(BLOB_ACCOUNT_NAME) == null || System.getProperty(BLOB_ACCESS_KEY) == null) {
+                throw new IllegalArgumentException(
+                        "Make sure to supply azure eventHubs connectionString, e.g:  mvn verify -DconnectionString=string"
+                                                   + " -DblobAccountName=blob -DblobAccessKey=key");
+            }
+            System.setProperty(AzureEventHubsProperties.CONNECTION_STRING, connectionString);
+            System.setProperty(AzureEventHubsProperties.BLOB_ACCOUNT_NAME, System.getProperty(BLOB_ACCOUNT_NAME));
+            System.setProperty(AzureEventHubsProperties.BLOB_ACCESS_KEY, System.getProperty(BLOB_ACCESS_KEY));
+            System.setProperty("azure.instance.type", "remote");
         }
-        properties.setProperty(CONNECTION_STRING, System.getProperty(CONNECTION_STRING));
-        properties.setProperty(BLOB_ACCOUNT_NAME, System.getProperty(BLOB_ACCOUNT_NAME));
-        properties.setProperty(BLOB_ACCESS_KEY, System.getProperty(BLOB_ACCESS_KEY));
 
-        return properties;
+        return AzureEventHubsServiceFactory.createSingletonService();
     }
 
+    /**
+     * Whether the integration tests run against Azure rather than a local Floci AZ container
+     */
+    public static boolean isRemote() {
+        return "remote".equals(System.getProperty("azure.instance.type"));
+    }
 }
