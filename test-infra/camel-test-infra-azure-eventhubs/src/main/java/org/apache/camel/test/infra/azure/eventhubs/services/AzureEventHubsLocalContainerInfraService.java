@@ -102,7 +102,11 @@ public class AzureEventHubsLocalContainerInfraService extends FlociAzInfraServic
             amqpPort = startNamespace();
         } catch (RuntimeException e) {
             // also removes the broker, should Floci AZ have started it
-            shutdown();
+            try {
+                shutdown();
+            } catch (RuntimeException suppressed) {
+                e.addSuppressed(suppressed);
+            }
             throw e;
         }
 

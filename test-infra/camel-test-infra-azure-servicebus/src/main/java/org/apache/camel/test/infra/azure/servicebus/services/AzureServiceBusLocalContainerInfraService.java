@@ -96,9 +96,19 @@ public class AzureServiceBusLocalContainerInfraService extends FlociAzInfraServi
     public void initialize() {
         FlociAzContainer container = getContainer();
 
-        container.withBrokerImage(ARTEMIS_IMAGE_VARIABLE);
-        container.start();
-        amqpPort = readAmqpPort();
+        try {
+            container.withBrokerImage(ARTEMIS_IMAGE_VARIABLE);
+            container.start();
+            amqpPort = readAmqpPort();
+        } catch (RuntimeException e) {
+            // also removes the broker, should Floci AZ have started it
+            try {
+                shutdown();
+            } catch (RuntimeException suppressed) {
+                e.addSuppressed(suppressed);
+            }
+            throw e;
+        }
 
         LOG.info("Floci AZ running at address {}, with the Service Bus broker at {}:{}", container.serviceAddress(), host(),
                 amqpPort);
