@@ -259,23 +259,32 @@ class MemoryTab extends AbstractTab {
             return;
         }
 
-        // Use committed as the scale ceiling
+        // the top of the chart: the committed heap, or the most used in the history when that was more (the heap
+        // shrinks); the axis says which height it is
         long observedMax = hist.stream().mapToLong(Long::longValue).max().orElse(1);
         long ceiling = info.heapMemCommitted > 0 ? info.heapMemCommitted : observedMax;
         if (observedMax > ceiling) {
             ceiling = observedMax;
         }
 
-        String title = String.format(" Heap Usage (%s / %s committed) ", formatBytes(info.heapMemUsed), formatBytes(ceiling));
+        String title = String.format(" Heap Usage (%s used, %s committed) ", formatBytes(info.heapMemUsed),
+                formatBytes(info.heapMemCommitted > 0 ? info.heapMemCommitted : ceiling));
 
         // Render the block border first
         Block block = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).title(title).build();
         frame.renderWidget(block, area);
-        Rect inner = block.inner(area);
+        Rect box = block.inner(area);
 
-        if (inner.isEmpty() || ceiling <= 0) {
+        if (box.isEmpty() || ceiling <= 0) {
             return;
         }
+        // the y axis at the left: the top, the half and 0
+        String top = formatBytes(ceiling);
+        int axisW = top.length() + 1;
+        if (box.width() <= axisW + 10) {
+            axisW = 0;
+        }
+        Rect inner = new Rect(box.x() + axisW, box.y(), box.width() - axisW, box.height());
 
         int chartW = inner.width();
         int chartH = inner.height() - 1;
@@ -323,6 +332,16 @@ class MemoryTab extends AbstractTab {
                     buf.setString(x, y, BAR_EIGHTHS[rowEighths], style);
                 }
             }
+        }
+
+        if (axisW > 0) {
+            Style axis = Style.EMPTY.dim();
+            buf.setString(box.x(), inner.y(), top, axis);
+            if (chartH >= 5) {
+                String half = formatBytes(ceiling / 2);
+                buf.setString(box.x() + axisW - 1 - half.length(), inner.y() + chartH / 2, half, axis);
+            }
+            buf.setString(box.x() + axisW - 2, inner.y() + chartH - 1, "0", axis);
         }
 
         // Render time axis on the bottom row of the inner area (inside the block border)

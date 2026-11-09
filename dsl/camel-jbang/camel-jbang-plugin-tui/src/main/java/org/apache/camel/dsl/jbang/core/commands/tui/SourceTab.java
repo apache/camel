@@ -1096,15 +1096,30 @@ class SourceTab extends AbstractTab {
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    /**
+     * The file the Info panel describes, the one the focus is on: the open file when the viewer has the focus, else the
+     * one under the cursor of the list (the open file can be another one, opened with g or from another tab).
+     */
+    Path infoPath() {
+        String viewed = sourceViewer.isVisible() && focusOnViewer ? sourceViewer.getCurrentFilePath() : null;
+        if (viewed != null) {
+            return Path.of(viewed);
+        }
+        Integer sel = listState.selected();
+        return sel != null && sel < entries.size() ? Path.of(entries.get(sel).path()) : null;
+    }
+
     private void renderInfoPanel(Frame frame, Rect area) {
         List<Line> lines = new ArrayList<>();
+        Path path = infoPath();
         Integer sel = listState.selected();
-        if (sel != null && sel < entries.size()) {
-            FilesBrowser.FileEntry entry = entries.get(sel);
-            Path path = Path.of(entry.path());
+        boolean directory = path != null && sel != null && sel < entries.size()
+                && entries.get(sel).directory() && path.toString().equals(entries.get(sel).path());
+        if (path != null) {
+            String name = path.getFileName() != null ? path.getFileName().toString() : "";
             try {
                 BasicFileAttributes attrs = Files.readAttributes(path, BasicFileAttributes.class);
-                if (!entry.directory()) {
+                if (!directory) {
                     lines.add(Line.from(
                             Span.styled(" Size: ", Style.EMPTY.dim()),
                             Span.raw(FilesBrowser.formatFileSize(attrs.size()))));
@@ -1114,11 +1129,11 @@ class SourceTab extends AbstractTab {
                 lines.add(Line.from(
                         Span.styled(" Modified: ", Style.EMPTY.dim()),
                         Span.raw(modified)));
-                if (!entry.directory()) {
+                if (!directory) {
                     String ext = "";
-                    int dot = entry.name().lastIndexOf('.');
+                    int dot = name.lastIndexOf('.');
                     if (dot > 0) {
-                        ext = entry.name().substring(dot + 1);
+                        ext = name.substring(dot + 1);
                     }
                     if (!ext.isEmpty()) {
                         lines.add(Line.from(
