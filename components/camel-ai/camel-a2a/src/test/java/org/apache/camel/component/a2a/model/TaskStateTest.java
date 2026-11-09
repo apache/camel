@@ -16,30 +16,30 @@
  */
 package org.apache.camel.component.a2a.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TaskStateTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
 
     @Test
-    void serializesToProtoName() throws JsonProcessingException {
+    void serializesToProtoName() {
         String json = mapper.writeValueAsString(TaskState.SUBMITTED);
         assertThat(json).isEqualTo("\"TASK_STATE_SUBMITTED\"");
     }
 
     @Test
-    void deserializesFromProtoName() throws JsonProcessingException {
+    void deserializesFromProtoName() {
         TaskState state = mapper.readValue("\"TASK_STATE_COMPLETED\"", TaskState.class);
         assertThat(state).isEqualTo(TaskState.COMPLETED);
     }
 
     @Test
-    void unspecifiedHandledGracefully() throws JsonProcessingException {
+    void unspecifiedHandledGracefully() {
         TaskState state = mapper.readValue("\"TASK_STATE_UNSPECIFIED\"", TaskState.class);
         assertThat(state).isEqualTo(TaskState.UNSPECIFIED);
     }

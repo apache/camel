@@ -7769,3 +7769,23 @@ The following Java API changes:
 A response that cannot be parsed is still reported as a `SalesforceException`. Jackson errors in your own code are the unchecked
 `tools.jackson.core.JacksonException`, which is no longer an `IOException`.
 
+=== Jackson 3 - camel-a2a
+
+`camel-a2a` now uses Jackson 3 internally. The JSON it sends does not change: its mapper keeps the Jackson 2 defaults. What
+it accepts follows the limits of Jackson 3: nesting up to 500 levels (it was 1000) and strings up to 100 million characters
+(it was 20 million).
+
+It no longer brings `com.fasterxml.jackson.core:jackson-databind` or `jackson-datatype-jsr310` to your application. If your
+code uses them, declare them yourself.
+
+Changes to API types:
+
+* `A2AJsonMapper.instance()` returns a `tools.jackson.databind.ObjectMapper`. It is immutable, so this is a shared instance
+  and not a copy. Use `rebuild()` to derive a customized mapper.
+* `PartDeserializer` is a Jackson 3 `ValueDeserializer`, and `Part` and `AgentCard` declare their deserialization with Jackson 3
+  annotations. A Jackson 2 `ObjectMapper`, such as the one in the `camel-jackson` data format, can no longer read these types
+  or the types that contain them, such as `Message` and `Task`. Use `A2AJsonMapper.instance()` or the `camel-jackson3` data format.
+* Objects you put in a `DataPart` or in metadata are written with Jackson 3. It ignores `com.fasterxml.jackson.databind.annotation`
+  annotations such as `@JsonSerialize`, and it writes a Jackson 2 `JsonNode` as a bean, with properties such as `nodeType`,
+  instead of as its JSON. Use a Jackson 3 `JsonNode` or a `Map` instead.
+

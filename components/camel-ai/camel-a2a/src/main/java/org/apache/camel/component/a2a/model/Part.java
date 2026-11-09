@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.a2a.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Marker interface for A2A message parts.
