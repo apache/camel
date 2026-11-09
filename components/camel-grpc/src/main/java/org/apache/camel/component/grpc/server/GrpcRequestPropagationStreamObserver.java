@@ -37,7 +37,7 @@ import org.apache.camel.component.grpc.GrpcEndpoint;
 public class GrpcRequestPropagationStreamObserver extends GrpcRequestAbstractStreamObserver {
 
     private final boolean routeControlled;
-    // set once the call ended with an error due to an interrupt when the route controls the replies:
+    // set once the call ended with an error due to an interrupt (both routeControlled and non-routeControlled):
     // nothing more can be sent to the client
     private final AtomicBoolean failed = new AtomicBoolean();
 
