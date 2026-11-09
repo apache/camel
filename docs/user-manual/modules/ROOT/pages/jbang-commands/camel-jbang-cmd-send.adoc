@@ -25,7 +25,7 @@ camel cmd send [options]
 | `--fresh` | Make sure we use fresh (i.e. non-cached) resources | false | boolean
 | `--header` | Message header (key=value) |  | List
 | `--infra` | Send to infrastructure service (e.g., nats, kafka) |  | String
-| `--interval` | The pause between two messages with --repeat or a folder body, in millis or as a duration such as 200ms or 1s |  | long
+| `--interval` | The pause between two messages with --repeat or a folder body, in millis or as a duration such as 200ms or 1s, or a range such as 100..500 or 100ms..2s to draw each pause at random (at most 60s) |  | String
 | `--logging-color` | Use colored logging | true | boolean
 | `--poll` | Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue. |  | boolean
 | `--pretty` | Pretty print response message body (InOut) when using JSon or XML format |  | boolean

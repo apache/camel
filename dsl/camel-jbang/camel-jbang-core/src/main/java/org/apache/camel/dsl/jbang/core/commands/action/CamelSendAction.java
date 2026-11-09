@@ -62,14 +62,16 @@ import picocli.CommandLine;
                      description = "Send messages to endpoints", sortOptions = false,
                      showDefaultValues = true,
                      footer = {
-                             "%nWith --repeat the message is sent that many times, with --interval between two,",
-                             "and a summary is printed instead of each reply. A body of file:<folder> sends the",
+                             "%nWith --repeat the message is sent that many times, with --interval between two",
+                             "(a range such as 100..500 draws each pause at random), and a summary is printed",
+                             "instead of each reply. A body of file:<folder> sends the",
                              "files of the folder in name order, one message per file; 001.properties has the",
                              "headers of 001.json. With --repeat it goes round the files again.",
                              "%nExamples:",
                              "  camel cmd send --endpoint=kafka:myTopic --body='Hello World'",
                              "  camel cmd send hello --endpoint=direct:foo --body='Hello'",
                              "  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=200ms",
+                             "  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=100..500",
                              "  camel cmd send --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/" })
 public class CamelSendAction extends ActionBaseCommand {
 
@@ -116,10 +118,15 @@ public class CamelSendAction extends ActionBaseCommand {
                                       + " print a summary instead of each reply (at most 10000)")
     int repeat;
 
-    @CommandLine.Option(names = { "--interval" }, converter = TimeoutConverter.class,
+    @CommandLine.Option(names = { "--interval" },
                         description = "The pause between two messages with --repeat or a folder body, in millis or as a"
-                                      + " duration such as 200ms or 1s")
-    long interval;
+                                      + " duration such as 200ms or 1s, or a range such as 100..500 or 100ms..2s to draw"
+                                      + " each pause at random (at most 60s)")
+    String interval;
+
+    // the shortest and the longest pause of --interval, in millis
+    private long intervalMin;
+    private long intervalMax;
 
     @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
                         description = "Timeout waiting for message to be sent (and reply message if InOut messaging),"
@@ -165,9 +172,8 @@ public class CamelSendAction extends ActionBaseCommand {
 
     private MessageTableHelper tableHelper;
 
-    // the limits of the integration, so the CLI refuses what the integration would
+    // the limit of the integration, so the CLI refuses what the integration would
     private static final int MAX_MESSAGES = RepeatedSend.MAX_MESSAGES;
-    private static final long MAX_INTERVAL = RepeatedSend.MAX_INTERVAL;
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
 
@@ -191,8 +197,12 @@ public class CamelSendAction extends ActionBaseCommand {
         if (repeat < 0 || repeat > MAX_MESSAGES) {
             throw CliException.usage("--repeat must be between 1 and " + MAX_MESSAGES + ", was: " + repeat);
         }
-        if (interval < 0 || interval > MAX_INTERVAL) {
-            throw CliException.usage("--interval must be at most 60s, was: " + interval + " millis");
+        try {
+            long[] pause = RepeatedSend.interval(interval);
+            intervalMin = pause[0];
+            intervalMax = pause[1];
+        } catch (IllegalArgumentException e) {
+            throw CliException.usage(e.getMessage().replace("The interval", "--interval"));
         }
         if (isRepeated() && poll) {
             throw CliException.usage("A poll does not repeat: use --repeat or a folder body to send, or --poll alone");
@@ -233,8 +243,11 @@ public class CamelSendAction extends ActionBaseCommand {
         if (repeat > 0) {
             root.put("repeat", repeat);
         }
-        if (interval > 0) {
-            root.put("interval", interval);
+        if (intervalMax > 0) {
+            root.put("interval", intervalMin);
+            if (intervalMax > intervalMin) {
+                root.put("intervalMax", intervalMax);
+            }
         }
         if (headers != null) {
             JsonArray arr = new JsonArray();
@@ -283,7 +296,7 @@ public class CamelSendAction extends ActionBaseCommand {
                 String[] files = folder.list((d, n) -> !n.startsWith(".") && !n.endsWith(".properties"));
                 count = files != null ? files.length : 1;
             }
-            wait += count * (interval + 1000);
+            wait += count * (intervalMax + 1000);
         }
         return wait;
     }

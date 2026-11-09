@@ -350,7 +350,8 @@ public class LocalCliConnector extends ServiceSupport
         }
         waitUntilStarted();
         return RepeatedSend.send(dc, sendOptions(root), sendHeaders(root), root.getString("body"),
-                root.getLongOrDefault("repeat", 0), root.getLongOrDefault("interval", 0));
+                root.getLongOrDefault("repeat", 0), root.getLongOrDefault("interval", 0),
+                root.getLongOrDefault("intervalMax", 0));
     }
 
     private ExecutorService newSemanticExecutor(String source, String name) throws Exception {

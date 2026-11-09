@@ -113,6 +113,33 @@ class LocalCliConnectorSendActionTest {
     }
 
     @Test
+    void aPauseDrawnFromARange() throws Exception {
+        JsonObject request = request("R-1");
+        request.put("repeat", 5);
+        request.put("interval", 20);
+        request.put("intervalMax", 60);
+
+        JsonObject answer = send(request);
+
+        assertThat(answer.getLong("sent")).isEqualTo(5);
+        // four pauses of 20 to 60 millis
+        assertThat(answer.getLong("elapsed")).isGreaterThanOrEqualTo(80);
+    }
+
+    @Test
+    void anIntervalIsATimeOrARange() {
+        assertThat(RepeatedSend.interval("200")).containsExactly(200, 200);
+        assertThat(RepeatedSend.interval("200ms")).containsExactly(200, 200);
+        assertThat(RepeatedSend.interval("100..500")).containsExactly(100, 500);
+        assertThat(RepeatedSend.interval("100ms..2s")).containsExactly(100, 2000);
+        assertThat(RepeatedSend.interval(null)).containsExactly(0, 0);
+        assertThatThrownBy(() -> RepeatedSend.interval("500..100")).hasMessageContaining("from the shortest to the longest");
+        assertThatThrownBy(() -> RepeatedSend.interval("1s..2m")).hasMessageContaining("at most 60s");
+        assertThatThrownBy(() -> RepeatedSend.interval("soon")).hasMessageContaining("not a time or a range");
+        assertThatThrownBy(() -> RepeatedSend.interval("1..2..3")).hasMessageContaining("not a time or a range");
+    }
+
+    @Test
     void theFilesOfAFolderInNameOrderWithTheirHeaders() throws Exception {
         Path feed = Files.createDirectories(dir.resolve("refunds-fails"));
         Files.writeString(feed.resolve("002.json"), "R-2");

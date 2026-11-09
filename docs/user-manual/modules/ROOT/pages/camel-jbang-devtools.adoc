@@ -62,7 +62,9 @@ TIP: Run `camel cmd send --help` for all options. Full example on https://github
 *Available since Camel 4.24*
 
 `--repeat` sends the message that many times, with `--interval` between two (in millis, or a duration such as
-`200ms`), and prints a summary instead of each reply. It exits with `1` when a message failed:
+`200ms`), and prints a summary instead of each reply. It exits with `1` when a message failed. A range such as
+`--interval=100..500` (or `100ms..2s`, as the `duration=` of a chaos rule) draws each pause at random, so the messages
+do not come at a steady pace:
 
 [source,bash]
 ----

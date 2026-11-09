@@ -27,9 +27,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
@@ -56,6 +58,38 @@ public final class RepeatedSend {
 
     /** A message to send: its body, and its own headers (from the properties file next to it). */
     record Message(String body, Map<String, Object> headers) {
+    }
+
+    /**
+     * The pause between two messages, as text: a time such as {@code 200}, {@code 200ms} or {@code 1s}, or a range such
+     * as {@code 100..500} or {@code 100ms..2s} (as the {@code duration=} of a chaos rule), from which each pause is
+     * drawn at random, so the messages do not come at a steady pace.
+     *
+     * @return                          the shortest and the longest pause in millis (the same for a time)
+     * @throws IllegalArgumentException when it is not a time or a range, or longer than {@link #MAX_INTERVAL}
+     */
+    public static long[] interval(String text) {
+        if (text == null || text.isBlank()) {
+            return new long[] { 0, 0 };
+        }
+        String[] parts = text.strip().split("\\.\\.", -1);
+        if (parts.length > 2) {
+            throw new IllegalArgumentException("The interval is not a time or a range such as 100..500: " + text);
+        }
+        long[] answer = new long[2];
+        try {
+            answer[0] = TimeUtils.toMilliSeconds(parts[0].strip());
+            answer[1] = parts.length == 2 ? TimeUtils.toMilliSeconds(parts[1].strip()) : answer[0];
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("The interval is not a time or a range such as 100..500: " + text);
+        }
+        if (answer[0] < 0 || answer[1] < answer[0]) {
+            throw new IllegalArgumentException("The interval must go from the shortest to the longest pause: " + text);
+        }
+        if (answer[1] > MAX_INTERVAL) {
+            throw new IllegalArgumentException("The interval must be at most 60s, was: " + text);
+        }
+        return answer;
     }
 
     /** Whether the send action repeats, or sends a folder of messages, rather than one message. */
@@ -120,17 +154,20 @@ public final class RepeatedSend {
      * @param  body                 the body: a message, a file, or a folder of messages
      * @param  repeat               how many messages to send in all, going round the messages again; 0 or less to send
      *                              each message once
-     * @param  interval             the pause between two messages, in millis
+     * @param  interval             the pause between two messages, in millis, or the shortest pause of a range
+     * @param  intervalMax          the longest pause of a range, from which each pause is drawn at random; the interval
+     *                              or less for the same pause each time
      * @throws InterruptedException when the client gave up the request
      */
     static JsonObject send(
             DevConsole console, Map<String, Object> options, Map<String, Object> headers, String body, long repeat,
-            long interval)
+            long interval, long intervalMax)
             throws IOException, InterruptedException {
         if (repeat > MAX_MESSAGES) {
             throw new IllegalArgumentException("At most " + MAX_MESSAGES + " messages can be sent at a time, not " + repeat);
         }
-        if (interval < 0 || interval > MAX_INTERVAL) {
+        long longest = Math.max(interval, intervalMax);
+        if (interval < 0 || longest > MAX_INTERVAL) {
             throw new IllegalArgumentException("The interval must be between 0 and " + MAX_INTERVAL + " millis");
         }
         List<Message> messages = messages(body);
@@ -141,8 +178,8 @@ public final class RepeatedSend {
         long failed = 0;
         Map<String, Long> errors = new LinkedHashMap<>();
         for (long i = 0; i < count; i++) {
-            if (i > 0 && interval > 0) {
-                Thread.sleep(interval);
+            if (i > 0 && longest > 0) {
+                Thread.sleep(longest > interval ? ThreadLocalRandom.current().nextLong(interval, longest + 1) : interval);
             }
             if (Thread.currentThread().isInterrupted()) {
                 throw new InterruptedException("The client gave up the request");

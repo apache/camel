@@ -421,7 +421,10 @@ public final class ToolRegistry {
                         "Message headers as key=value pairs separated by newlines", false)
                 .param("repeat", "string",
                         "How many messages to send in all (at most 10000), going round the files of a folder", false)
-                .param("interval", "string", "The pause between two messages in millis (at most 60000)", false)
+                .param("interval", "string",
+                        "The pause between two messages in millis, or a range such as 100..500 to draw each pause at"
+                                             + " random (at most 60000)",
+                        false)
                 // the message runs through the routes and whatever they call, so it can change data
                 .readOnly(false).destructive(true)
                 .core(true)
@@ -431,8 +434,13 @@ public final class ToolRegistry {
                         throw new ToolExecutionException("endpoint is required");
                     }
                     int repeat = intArg(args, "repeat", 0);
-                    long interval = intArg(args, "interval", 0);
-                    return ctx.sendMessage(endpoint, args.get("body"), args.get("headers"), repeat, interval).toJson();
+                    try {
+                        return ctx.sendMessage(endpoint, args.get("body"), args.get("headers"), repeat,
+                                args.get("interval")).toJson();
+                    } catch (IllegalArgumentException e) {
+                        // an interval that is not a time or a range
+                        throw new ToolExecutionException(e.getMessage());
+                    }
                 }));
 
         register(tool("eval_expression",

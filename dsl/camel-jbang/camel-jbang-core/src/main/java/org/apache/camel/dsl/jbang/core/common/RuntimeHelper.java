@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -224,7 +225,7 @@ public final class RuntimeHelper {
      * @throws IllegalArgumentException when a header is not a key=value pair
      */
     public static JsonObject sendMessage(long pid, String endpoint, String body, String headers) {
-        return sendMessage(pid, endpoint, body, headers, 0, 0);
+        return sendMessage(pid, endpoint, body, headers, 0, null);
     }
 
     /**
@@ -233,11 +234,13 @@ public final class RuntimeHelper {
      *
      * @param repeat   how many messages to send in all, going round the files of a folder; 0 to send once (each file of
      *                 a folder once)
-     * @param interval the pause between two messages, in millis
+     * @param interval the pause between two messages: millis, a duration such as 200ms, or a range such as 100..500 to
+     *                 draw each pause at random
      */
     public static JsonObject sendMessage(
-            long pid, String endpoint, String body, String headers, int repeat, long interval) {
+            long pid, String endpoint, String body, String headers, int repeat, String interval) {
         JsonArray headerList = headers != null ? parseHeaders(headers) : null;
+        long[] pause = RepeatedSend.interval(interval);
         String result = executeAction(pid, "send", root -> {
             root.put("endpoint", endpoint);
             if (body != null) {
@@ -249,10 +252,13 @@ public final class RuntimeHelper {
             if (repeat > 0) {
                 root.put("repeat", repeat);
             }
-            if (interval > 0) {
-                root.put("interval", interval);
+            if (pause[1] > 0) {
+                root.put("interval", pause[0]);
+                if (pause[1] > pause[0]) {
+                    root.put("intervalMax", pause[1]);
+                }
             }
-        }, sendTimeout(body, repeat, interval));
+        }, sendTimeout(body, repeat, pause[1]));
         try {
             return (JsonObject) Jsoner.deserialize(result);
         } catch (Exception e) {

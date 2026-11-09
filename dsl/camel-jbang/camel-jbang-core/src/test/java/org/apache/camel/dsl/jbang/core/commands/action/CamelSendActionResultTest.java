@@ -176,6 +176,26 @@ class CamelSendActionResultTest extends ActionCommandTestSupport {
                 .hasMessageContaining("--repeat must be between 1 and 10000");
         assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--repeat=3", "--interval=2m").doCall())
                 .hasMessageContaining("--interval must be at most 60s");
+        assertThatThrownBy(() -> command("orders", "--endpoint=direct:start", "--repeat=3", "--interval=500..100").doCall())
+                .isInstanceOf(CliException.class).hasMessageContaining("from the shortest to the longest pause");
+    }
+
+    @Test
+    void aRangeDrawsEachPauseAtRandom() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject summary = new JsonObject(
+                Map.of("status", "success", "sent", 10L, "failed", 0L, "elapsed", 3000L,
+                        "endpoint", "direct://start", "errors", new JsonArray()));
+
+        CamelSendAction command = command("orders", "--endpoint=direct:start", "--repeat=10", "--interval=100..500");
+        assertThat(callWithResponse(command, summary)).isEqualTo(CliExitCode.OK);
+
+        JsonObject action = readActionFile(TEST_PID);
+        assertThat(action.getLong("interval")).isEqualTo(100L);
+        assertThat(action.getLong("intervalMax")).isEqualTo(500L);
+        // the wait counts the longest pause
+        assertThat(command.waitMillis()).isEqualTo(20000 + 10000 + 10 * 1500);
+        assertThat(printer.getStdout()).contains("Sent 10 messages (success)");
     }
 
     @Test

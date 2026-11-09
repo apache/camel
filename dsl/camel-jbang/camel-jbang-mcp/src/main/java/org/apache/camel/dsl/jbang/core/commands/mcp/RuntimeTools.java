@@ -547,8 +547,9 @@ public class RuntimeTools {
                      required = false) String headers,
             @ToolArg(description = "How many messages to send in all (at most 10000), going round the files of a folder",
                      required = false) Integer repeat,
-            @ToolArg(description = "The pause between two messages in millis (at most 60000)",
-                     required = false) Integer interval) {
+            @ToolArg(description = "The pause between two messages in millis, or a range such as 100..500 to draw"
+                                   + " each pause at random (at most 60000)",
+                     required = false) String interval) {
         if (endpoint == null || endpoint.isBlank()) {
             throw new ToolCallException("endpoint is required", null);
         }
@@ -564,7 +565,7 @@ public class RuntimeTools {
             args.put("repeat", String.valueOf(repeat));
         }
         if (interval != null) {
-            args.put("interval", String.valueOf(interval));
+            args.put("interval", interval);
         }
         return delegateToRegistry("send_message", nameOrPid, args);
     }
