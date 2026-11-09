@@ -53,8 +53,8 @@ camel-chaos, the faults of each chaos rule are a layer of their own, marked 🎲
 apart. When no exchange failed, the WARN and ERROR lines of the log are the cause instead (`log ERROR`, `log WARN`),
 read from the log file of the integration: something that went wrong outside an exchange, such as a consumer that
 cannot connect. When nothing went wrong the band is one line.
-* *Routes* has a line per route. The height is the exchanges done that second, and the colour the worst that happened to
-them: completed, recovered by redelivery, handled by the error handler (such as the dead letter channel), or failed. A
+* *Routes* has a line per route (on a tall screen two rows high, with room around the panels and taller charts). The
+height is the exchanges done that second, and the colour the worst that happened to them: completed, recovered by redelivery, handled by the error handler (such as the dead letter channel), or failed. A
 second a chaos rule had the route down is shaded, and a mark says what happened to the route then: `▶` started, `■`
 stopped, `↻` reloaded, `✕` removed. A `▒` is a second a circuit breaker of the route was open (the Circuit Breaker EIP
 with camel-resilience4j or camel-microprofile-fault-tolerance, or the throttling exception route policy), and the route
