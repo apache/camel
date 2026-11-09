@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.dsl.jbang.core.commands.action.EvalExpressionCommand;
 import org.apache.camel.dsl.jbang.core.commands.action.TransformMessageAction;
@@ -173,18 +174,22 @@ class CommandInputErrorsTest {
 
     @Test
     void debugInTheBackgroundSkipsTtyCheck() throws Exception {
-        // --background makes camel debug detach immediately, so it does not need an interactive terminal:
+        // --background makes camel debug run without an interactive terminal:
         // the TTY check that guards the interactive path must be bypassed
         Path file = Files.writeString(dir.resolve("orders.yaml"), "- from:\n    uri: timer:x\n");
         assumeFalse(EnvironmentHelper.isInteractiveTerminal(), "needs a non-interactive terminal");
-        // Override runBackgroundProcess so the test does not actually spawn a child JVM
+        // Override runBackgroundProcess so the test does not actually spawn a child JVM,
+        // and record the kind string to verify the background branch was taken
+        AtomicReference<String> capturedKind = new AtomicReference<>();
         Debug debug = new Debug(main) {
             @Override
             protected int runBackgroundProcess(ProcessBuilder pb, String kind) {
+                capturedKind.set(kind);
                 return 0;
             }
         };
         assertThat(call(debug, "--background", file.toString())).isZero();
+        assertThat(capturedKind.get()).isEqualTo("Camel Debug");
     }
 
     @Test
