@@ -98,6 +98,8 @@ final class AboutView {
     private long stripsEnd = -1;
     // the columns of the strips as last drawn, for the title of What happened
     private int stripColumns = STRIP_COLUMNS;
+    // the width of the text of the Out column, as the last render had it
+    private int outWidth = 40;
     // the line of In, Routes or Out the cursor is on (↑ ↓), in the order of the columns; -1 when none is
     private int cursor = -1;
     // the column the cursor is in: 0 In, 1 Routes, 2 Out, or -1 when it is on nothing; its panel has the focus border
@@ -446,8 +448,27 @@ final class AboutView {
         return last;
     }
 
-    private static List<String> routeOrder(IntegrationInfo info) {
-        return info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+    /**
+     * The routes in the order of the Routes panel, where a route comes after the one that calls it, then those it does
+     * not have; the integration lists its routes by id, which puts a called route before its caller.
+     */
+    private List<String> routeOrder(IntegrationInfo info) {
+        List<String> running = info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+        List<String> order = new ArrayList<>();
+        About.Model m = model;
+        if (m != null) {
+            for (About.RouteLine r : m.routes()) {
+                if (running.contains(r.routeId()) && !order.contains(r.routeId())) {
+                    order.add(r.routeId());
+                }
+            }
+        }
+        for (String id : running) {
+            if (!order.contains(id)) {
+                order.add(id);
+            }
+        }
+        return order;
     }
 
     /**
@@ -468,6 +489,8 @@ final class AboutView {
         ProjectOverview.Overview o = overview;
         About.Model m = model;
         int width = area.width();
+        // the text of the Out column: its 30 % of the width, less the border, padding and the space before it
+        outWidth = Math.max(0, width * 30 / 100 - 6);
         List<Line> head = head(info, o, width);
         int spark = sparkWidth(width);
         Columns columns = columns(o, m, info, spark, false);
@@ -961,7 +984,10 @@ final class AboutView {
             routeTargets.add(new Target(r.routeId(), null));
         }
 
-        for (About.Out s : m.out()) {
+        // and the ones the integration sent to that its routes do not name (a toD, a recipient list)
+        List<About.Out> outs = new ArrayList<>(m.out());
+        outs.addAll(ObservedOuts.of(info, m.out()));
+        for (About.Out s : outs) {
             if (spaced && !out.isEmpty()) {
                 out.add(Line.from(Span.raw("")));
                 outTargets.add(null);
@@ -976,7 +1002,9 @@ final class AboutView {
             // minutes, where a history of the sends would start with the TUI
             long[] perSecond = s.route() != null ? routePerSecond(info, s.route()) : null;
             if (perSecond != null) {
-                from.addAll(sparkLine("  ", perSecond, Math.max(8, Math.min(spark, spark + 10 - s.route().length())))
+                // the sparkline in what "    from <route>  " and the rate leave of the column
+                int room = outWidth - 9 - s.route().length() - 2 - 8;
+                from.addAll(sparkLine("  ", perSecond, Math.max(4, Math.min(spark, room)))
                         .spans());
             }
             out.add(Line.from(from));
@@ -1043,7 +1071,7 @@ final class AboutView {
         Long answer = null;
         for (EndpointInfo ep : info.endpoints) {
             if ("out".equals(ep.direction) && (route == null || route.equals(ep.routeId))
-                    && base.equals(baseUri(ep.uri))) {
+                    && ObservedOuts.matches(base, baseUri(ep.uri))) {
                 answer = (answer != null ? answer : 0) + ep.hits;
             }
         }

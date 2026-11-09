@@ -37,6 +37,7 @@ public final class ArtifactUtils {
             Map.<String, String> entry("a2a", "camel-a2a"),
             Map.<String, String> entry("activemq", "camel-activemq"),
             Map.<String, String> entry("activemq6", "camel-activemq6"),
+            Map.<String, String> entry("ai-prompt", "camel-ai-prompt"),
             Map.<String, String> entry("ai-resource", "camel-ai-resource"),
             Map.<String, String> entry("ai-tool", "camel-ai-tool"),
             Map.<String, String> entry("alibaba-eventbridge", "camel-alibaba-eventbridge"),

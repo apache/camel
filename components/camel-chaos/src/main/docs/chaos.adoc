@@ -433,6 +433,10 @@ $ camel get chaos --report
         note: orders has no error handler
 ----
 
+The Camel CLI runs an experiment in one call: `camel cmd chaos-experiment` begins it, sends its traffic (`--feed` with
+`--body`, `--repeat` and `--interval`, as `camel cmd send`), waits until its expectations are decided (at most
+`--wait`), and ends it. `camel cmd chaos-explore-start` and `chaos-explore-finish` start and finish the exploration.
+
 == Scenarios
 
 A scenario is the rules of an experiment in a file of the project, so it can be run again, shared and kept with the
