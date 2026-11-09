@@ -566,15 +566,15 @@
     },
     {
       "source": "keyValueRepository.adoc",
-      "yaml": "- beans:\n    - name: caffeineKvr\n      type: org.apache.camel.component.caffeine.cache.CaffeineKeyValueRepository\n      properties:\n        maximumSize: 10000\n"
+      "yaml": "- beans:\n    - name: caffeineKvr\n      type: org.apache.camel.component.caffeine.processor.CaffeineKeyValueRepository\n      properties:\n        maximumSize: 10000\n"
     },
     {
       "source": "keyValueRepository.adoc",
-      "yaml": "- beans:\n    - name: ehcacheKvr\n      type: org.apache.camel.component.ehcache.EhcacheKeyValueRepository\n      properties:\n        cacheManager: \"#bean:ehcacheManager\"\n        cacheName: products\n"
+      "yaml": "- beans:\n    - name: ehcacheKvr\n      type: org.apache.camel.component.ehcache.processor.EhcacheKeyValueRepository\n      properties:\n        cacheManager: \"#bean:ehcacheManager\"\n        cacheName: products\n"
     },
     {
       "source": "keyValueRepository.adoc",
-      "yaml": "- beans:\n    - name: jcacheKvr\n      type: org.apache.camel.component.jcache.JCacheKeyValueRepository\n      properties:\n        cacheName: products\n        configuration: \"#bean:jcacheConfig\"\n"
+      "yaml": "- beans:\n    - name: jcacheKvr\n      type: org.apache.camel.component.jcache.processor.JCacheKeyValueRepository\n      properties:\n        cacheName: products\n        configuration: \"#bean:jcacheConfig\"\n"
     },
     {
       "source": "keyValueRepository.adoc",
@@ -594,15 +594,15 @@
     },
     {
       "source": "keyValueRepository.adoc",
-      "yaml": "- beans:\n    - name: jpaKvr\n      type: org.apache.camel.component.jpa.JpaKeyValueRepository\n      properties:\n        entityManagerFactory: \"#bean:emf\"\n        joinTransaction: false\n"
+      "yaml": "- beans:\n    - name: jpaKvr\n      type: org.apache.camel.processor.keyvalue.jpa.JpaKeyValueRepository\n      properties:\n        entityManagerFactory: \"#bean:emf\"\n        joinTransaction: false\n"
     },
     {
       "source": "keyValueRepository.adoc",
-      "yaml": "- beans:\n    - name: cassandraKvr\n      type: org.apache.camel.component.cassandra.CassandraKeyValueRepository\n      properties:\n        session: \"#bean:cassandraSession\"\n        table: product_cache\n        readConsistencyLevel: LOCAL_QUORUM\n        writeConsistencyLevel: LOCAL_QUORUM\n"
+      "yaml": "- beans:\n    - name: cassandraKvr\n      type: org.apache.camel.processor.keyvalue.cassandra.CassandraKeyValueRepository\n      properties:\n        session: \"#bean:cassandraSession\"\n        table: product_cache\n        readConsistencyLevel: LOCAL_QUORUM\n        writeConsistencyLevel: LOCAL_QUORUM\n"
     },
     {
       "source": "keyValueRepository.adoc",
-      "yaml": "- beans:\n    - name: kafkaKvr\n      type: org.apache.camel.component.kafka.KafkaKeyValueRepository\n      properties:\n        topic: camel-kvr-products\n        bootstrapServers: \"kafka1:9092,kafka2:9092\"\n        maxCacheSize: 50000\n        groupId: camel-kvr-consumer\n"
+      "yaml": "- beans:\n    - name: kafkaKvr\n      type: org.apache.camel.processor.keyvalue.kafka.KafkaKeyValueRepository\n      properties:\n        topic: camel-kvr-products\n        bootstrapServers: \"kafka1:9092,kafka2:9092\"\n        maxCacheSize: 50000\n        groupId: camel-kvr-consumer\n"
     },
     {
       "source": "keyValueRepository.adoc",

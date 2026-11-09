@@ -169,6 +169,14 @@ public class FunctionsProducer extends DefaultProducer {
             body = getRequestBody(exchange);
         }
 
+        // the Content-Type header of the message, when the headers map does not set one
+        String contentType = exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (body != null && contentType != null && !hasContentType(headers)) {
+            // copy the map, as it can be the map of the CamelAzureFunctionsHttpHeaders header
+            headers = headers != null ? new HashMap<>(headers) : new HashMap<>();
+            headers.put(Exchange.CONTENT_TYPE, contentType);
+        }
+
         LOG.debug("Invoking function: {} with method: {}", url, httpMethod);
 
         FunctionInvocationResponse response = invocationClient.invoke(url, httpMethod, body, headers);
@@ -182,6 +190,11 @@ public class FunctionsProducer extends DefaultProducer {
                     url, statusCode, null, null, toSingleValues(response.getHeaders()), response.getBody());
         }
         message.setBody(response.getBody());
+    }
+
+    private static boolean hasContentType(Map<String, String> headers) {
+        // HTTP header names are case-insensitive
+        return headers != null && headers.keySet().stream().anyMatch(Exchange.CONTENT_TYPE::equalsIgnoreCase);
     }
 
     /**
