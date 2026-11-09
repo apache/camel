@@ -350,7 +350,18 @@ public class ListChaos extends ProcessWatchCommand {
 
     /** An experiment: its verdict and hypothesis, its rules, its expectations, and what the routes did meanwhile. */
     private void printExperiment(JsonObject experiment) {
-        StringBuilder sb = new StringBuilder("      ").append(experiment.getIntegerOrDefault("number", 0)).append(' ')
+        experimentLines(experiment, "      ").forEach(printer()::println);
+    }
+
+    /**
+     * The lines of an experiment, as camel get chaos --report and camel cmd chaos-experiment print it: its verdict and
+     * hypothesis, its rules and how long it ran, its expectations, what the routes did meanwhile, and its note.
+     *
+     * @param indent the indent of the first line; the others are indented two more
+     */
+    public static List<String> experimentLines(JsonObject experiment, String indent) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder sb = new StringBuilder(indent).append(experiment.getIntegerOrDefault("number", 0)).append(' ')
                 .append(experiment.getString("verdict"));
         String hypothesis = experiment.getString("hypothesis");
         if (hypothesis != null) {
@@ -368,23 +379,25 @@ public class ListChaos extends ProcessWatchCommand {
                     ? "ended at the deadline" : "finished".equals(by) ? "ended with the exploration" : "ended")
                     .append(" after ").append(elapsed);
         }
-        printer().println(sb.append(')').toString());
+        lines.add(sb.append(')').toString());
+        String more = indent + "  ";
         List<Object> expectations = experiment.getCollection("expectations");
         if (expectations != null) {
             for (Object o : expectations) {
                 JsonObject x = (JsonObject) o;
-                printer().println("        expect " + x.getString("expect") + ": " + x.getString("state") + ", "
-                                  + x.getString("value"));
+                lines.add(more + "expect " + x.getString("expect") + ": " + x.getString("state") + ", "
+                          + x.getString("value"));
             }
         }
         List<Object> routes = experiment.getCollection("routes");
         if (routes != null && !routes.isEmpty()) {
-            printer().println("        routes: " + routeCounts(routes));
+            lines.add(more + "routes: " + routeCounts(routes));
         }
         String note = experiment.getString("note");
         if (note != null) {
-            printer().println("        note: " + note);
+            lines.add(more + "note: " + note);
         }
+        return lines;
     }
 
     private static String routeCounts(List<Object> routes) {

@@ -22,6 +22,9 @@ camel cmd [options]
 | xref:jbang-commands/camel-jbang-cmd-chaos-add.adoc[chaos-add] | Add chaos rules to a running integration (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-chaos-change.adoc[chaos-change] | Change a chaos rule of a running integration (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-chaos-clear.adoc[chaos-clear] | Remove all chaos rules of running integrations (camel-chaos, for development only)
+| xref:jbang-commands/camel-jbang-cmd-chaos-experiment.adoc[chaos-experiment] | Run one chaos experiment in the exploration of a running integration: add its rules, send its traffic, wait for the verdict, and end it
+| xref:jbang-commands/camel-jbang-cmd-chaos-explore-finish.adoc[chaos-explore-finish] | Finish the chaos exploration of a running integration before its deadline
+| xref:jbang-commands/camel-jbang-cmd-chaos-explore-start.adoc[chaos-explore-start] | Start a chaos exploration in a running integration: a time to try chaos rules in, that camel-chaos enforces
 | xref:jbang-commands/camel-jbang-cmd-chaos-load.adoc[chaos-load] | Load a chaos scenario into a running integration (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-chaos-remove.adoc[chaos-remove] | Remove a chaos rule of a running integration (camel-chaos, for development only)
 | xref:jbang-commands/camel-jbang-cmd-chaos-suggest.adoc[chaos-suggest] | Suggest chaos rules to try in a running integration, per route (camel-chaos, for development only)
