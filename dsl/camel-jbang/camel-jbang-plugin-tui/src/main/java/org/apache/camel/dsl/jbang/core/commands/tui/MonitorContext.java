@@ -102,6 +102,8 @@ class MonitorContext {
     final ChaosMarks chaosMarks = new ChaosMarks();
     // what happened second by second, for the Timeline screen (CAMEL-26691)
     final Timeline timeline = new Timeline();
+    // whether the integrations were ready and live, second by second, for the strip of the Health tab
+    final HealthHistory healthHistory = new HealthHistory();
     BiConsumer<String, String> openMarkdownCallback;
     /** Opens markdown in the doc viewer scrolled to a heading: title, markdown, heading (may be null). */
     MarkdownOpener openMarkdownAtCallback;

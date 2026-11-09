@@ -110,6 +110,9 @@ class IntegrationInfo {
     int routeControllerExhaustedRoutes;
     final List<RouteControllerInfo> routeControllerRoutes = new ArrayList<>();
     final List<HealthCheckInfo> healthChecks = new ArrayList<>();
+    // whether the integration is ready (may take traffic) and live (runs), as its health checks say; null when not known
+    Boolean healthReady;
+    Boolean healthLive;
     final List<EndpointInfo> endpoints = new ArrayList<>();
     final List<ServiceInfo> services = new ArrayList<>();
     final List<CircuitBreakerInfo> circuitBreakers = new ArrayList<>();
