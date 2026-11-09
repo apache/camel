@@ -2503,7 +2503,7 @@ Without an interactive terminal, such as in a script, a CI job (the `CI` environ
   `--open-url` (the old name still works).
 * `camel debug`, `camel nano`, `camel shell`, `camel edit`, `camel tui` (except with `--record`), `camel ask` without a
   question, `camel run --prompt` and `camel get history --it` exit with `2` and `requires an interactive terminal` on
-  stderr. `camel debug` used to wait at 100% CPU.
+  stderr. `camel debug` used to wait at 100% CPU. `camel debug --background` does not require an interactive terminal.
 
 `--follow` and `--open-url` without a value turn the option on. As boolean options that are on by default, they turned
 it off (use `--follow=false` to turn it off). In a terminal, the end of the input (Ctrl+D) stops a command that watches
