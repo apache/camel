@@ -104,8 +104,11 @@ class ChaosAdvisorTest extends ChaosTestSupport {
     @Test
     void everySuggestedRuleIsValid() {
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(context)) {
-            String id = chaos().addRule(s.rule());
-            chaos().removeRule(id);
+            // two faults at once too: each of their rules
+            for (String rule : s.rules()) {
+                String id = chaos().addRule(rule);
+                chaos().removeRule(id);
+            }
         }
     }
 

@@ -511,8 +511,10 @@ public final class ChaosManager {
         Map<String, ChaosAdvisor.Feed> feeds = new HashMap<>();
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
             JsonObject jo = new JsonObject();
-            // a dead letter channel that routes share is tried by a rule of its kind in any of them
-            if (s.routes().stream().anyMatch(r -> tried.contains(r + " " + s.kind().key))) {
+            // a dead letter channel that routes share is tried by a rule of its kind in any of them; two faults at once
+            // are tried as their own kinds
+            if (s.kind() != ChaosAdvisor.Kind.COMBINED
+                    && s.routes().stream().anyMatch(r -> tried.contains(r + " " + s.kind().key))) {
                 jo.put("tried", true);
             }
             jo.put("route", s.route());
@@ -525,6 +527,10 @@ public final class ChaosManager {
             }
             jo.put("title", s.title());
             jo.put("rule", s.rule());
+            if (!s.with().isEmpty()) {
+                // two faults at once: all the rules to add together
+                jo.put("rules", new JsonArray(s.rules()));
+            }
             jo.put("why", s.why());
             Route route = camelContext.getRoute(s.route());
             ChaosAdvisor.Feed feed = route != null ? feeds.computeIfAbsent(s.route(), k -> ChaosAdvisor.feed(route)) : null;

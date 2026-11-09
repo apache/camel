@@ -244,13 +244,30 @@ and not for the route that consumes it.
 message is lost between the two routes (see <<_expectations_on_time_and_loss,Expectations on time and loss>>)
 |An input from outside (not `direct` or `seda`) |The route fails at its entry (what does the sender see: a rollback, a
 retry, an error?), or the polls fail for a polling consumer; and the route stalls for a while
+|A remote call and a dead letter channel |Two faults at once: the call is down for a minute while the dead letter
+channel fails too. Are messages lost? The report counts what the dead letter channel did not take as lost
+|A remote call |Two faults at once: the call is slow and fails now and then. Do the redeliveries pile up, and how long
+does an exchange take?
 |===
+
+Two faults at once (kind `combined`) come after the single faults, as most bugs that lose messages need two failures
+that meet. Their rules are added together:
+
+[source]
+----
+5. route orders: An outage while the dead letter channel fails (combined)
+   route orders sends what fails to the dead letter channel direct:parked: when http://payment/charge is down for a minute and the dead letter channel fails too, are messages lost? The report counts what the dead letter channel did not take as lost
+   camel cmd chaos-add --rule='endpoint=http://payment/charge error status=503 until=1m' --rule='endpoint=direct:parked error at=dlq until=1m'
+----
+
+Each of their rules counts as its own kind in what has been tried, so a pair is never "not tried yet".
 
 The rules leave the query of the endpoint out: its options do not tell which endpoint it is, and may hold a secret.
 `ChaosManager.suggest()` gives the same as JSON: `suggestions`, each with `route`, `kind`, `recipe`, `title`, `rule`,
-`why`, `tried`, `routes` for a dead letter channel that several routes share, and `feed`. A `feed` has its `kind`
-(one of `self`, `http`, `file` and `send`), a `hint` and `real`. The chaos screen of the Camel TUI lists the suggestions
-(key `w`), where Enter types the rule in to change or add.
+`why`, `tried`, `routes` for a dead letter channel that several routes share, `feed`, and `rules` for two faults at
+once. A `feed` has its `kind` (one of `self`, `http`, `file` and `send`), a `hint` and `real`. `rules` has all the
+rules to add together. The chaos screen of the Camel TUI lists the suggestions (key `w`), where Enter types the rule
+in to change or add (the rules of two faults at once separated by `;`).
 
 === What has been tried
 
