@@ -193,7 +193,8 @@ class ConfigurationTabRenderTest {
         ConfigurationTab tab = new ConfigurationTab(ctx);
         Rect area = new Rect(0, 0, 120, 30);
         String rendered = TuiTestHelper.renderToString(tab, 120, 30);
-        int detail = rendered.lines().toList().indexOf(rendered.lines().filter(l -> l.contains("Property Detail"))
+        // the detail panel is the second box: the first row is selected, so it has its key as the title
+        int detail = rendered.lines().toList().indexOf(rendered.lines().filter(l -> l.startsWith("╭ camel.main.name"))
                 .findFirst().orElseThrow());
         int timeout = rendered.lines().toList().indexOf(rendered.lines().filter(l -> l.contains("shutdownTimeout"))
                 .findFirst().orElseThrow());
