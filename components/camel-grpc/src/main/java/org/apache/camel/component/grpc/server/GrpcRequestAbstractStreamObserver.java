@@ -58,7 +58,7 @@ public abstract class GrpcRequestAbstractStreamObserver implements StreamObserve
     /**
      * Sends the reply of the exchange to the client, converted to the response type of the method.
      *
-     * @return true if the reply was sent, false if it is not of the response type and the call ended with an error
+     * @return always true (type conversion is not performed in this backport)
      */
     protected boolean sendResponses(Exchange exchange) {
         Object responseBody = exchange.getMessage().getBody();
