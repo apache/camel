@@ -62,6 +62,20 @@ The counts of the report per route: completed (DONE), failed (FAIL),
 failed and kept by the consumer to read again (KEPT), handled by the
 error handler (HAND) and the redeliveries (REDEL).
 
+## Explore
+
+Let there be chaos: an AI tries faults on the integration by itself for a
+budget of time, one experiment at a time, and reports what held and what
+broke (`camel cmd chaos-explore <name> --budget=10m`, or an agent with the
+Camel MCP tools). **l** shows the exploration instead of the rules: its
+budget as a strip of time with the experiments on it in the colour of
+their verdict (PASS, FAIL, inconclusive or still running), the experiments with
+their hypothesis and the evidence in a few words, and the selected one in
+detail: its rules, its expectations, what the routes did, the messages lost
+at a dead letter channel, the routes that failed outside its expectations,
+and why it could not decide (such as faults that never fired). **l** or
+Esc shows the rules again.
+
 ## Keys
 
 - **a** — Add a rule: pick what should go wrong from the known rules of
@@ -81,6 +95,7 @@ error handler (HAND) and the redeliveries (REDEL).
   tried in its route already is marked tried, and the detail says what
   was tried in the route and what is not tried yet
 - **e** — Change the selected rule: the line starts with the rule as it is
+- **l** — Explore: the exploration and its experiments, or the rules again
 - **x** — Remove the selected rule
 - **c** — Clear: remove all rules (the report keeps what they did)
 - **R** — A new experiment: no rules and a new report, with the same seed

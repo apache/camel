@@ -380,6 +380,16 @@ matches nothing in the integration (often a typo) with a warning; press *e* ther
 
 image::jbang/camel-tui-chaos-add.png[Adding a chaos rule on the Chaos tab: the rule is shown before it is added]
 
+Let there be chaos: an AI can try faults on the integration by itself, for a budget of time, one experiment at a time,
+with `camel cmd chaos-explore` or an agent with the Camel MCP tools (see
+xref:camel-jbang-managing.adoc#_chaos_explorations[Chaos explorations]). Press *l* on the Chaos tab to watch it: the
+budget as a strip of time with the experiments on it in the colour of their verdict, the experiments with their
+hypothesis and the evidence in a few words, and the selected one in detail: its rules, its expectations, what the
+routes did, the messages lost at a dead letter channel, and why it could not decide when it could not (such as faults
+that never fired, or a route that had no messages). *l* or Esc shows the rules again.
+
+image::jbang/camel-tui-chaos-explore.png[The exploration of the chaos example on the Chaos tab: six experiments in five minutes on a strip of time, and the failed one in detail: 2 orders lost at the dead letter channel]
+
 === CVE Audit
 
 The CVE Audit tab (under More > Project) scans all Maven dependencies on your integration's classpath
