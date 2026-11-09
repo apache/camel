@@ -144,7 +144,7 @@ public class StateStoreComponent extends DefaultComponent {
             }
         });
         boolean existingNamespaced = result instanceof NamespacedKeyValueRepository;
-        if (existingNamespaced != namespaced && !(result instanceof MemoryKeyValueRepository && backendFactory == null)) {
+        if (existingNamespaced != namespaced && backendFactory == null && !(result instanceof MemoryKeyValueRepository)) {
             LOG.warn("Store '{}' was already initialized with namespaced={}. Ignoring namespaced={} for this endpoint.",
                     storeName, existingNamespaced, namespaced);
         }
