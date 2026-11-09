@@ -523,7 +523,7 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         // 0 = queued/not started, 1 = running, 2 = exchange ownership completed.
         // The worker releases the exchange after route execution. The caller only
         // releases it when cancellation wins before the worker starts.
-        AtomicInteger executionState = new java.util.concurrent.atomic.AtomicInteger();
+        AtomicInteger executionState = new AtomicInteger();
 
         Future<AiPromptResult> future;
         try {

@@ -28,6 +28,7 @@ import org.apache.camel.component.mcp.server.McpPromptMessage;
 import org.apache.camel.component.mcp.server.McpPromptResult;
 import org.apache.camel.component.mcp.server.McpServerBridge;
 import org.apache.camel.component.mcp.server.McpServerConfiguration;
+import org.apache.camel.component.mcp.server.McpServerInfo;
 import org.apache.camel.component.mcp.server.McpServerPrompt;
 import org.apache.camel.component.mcp.server.McpServerTool;
 import org.apache.camel.component.mcp.server.McpToolCallHandler;
