@@ -367,12 +367,13 @@ public class CBORDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * Set of features to enable on the Jackson <tt>tools.jackson.databind.ObjectMapper</tt>.
          * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * The features should be a name that matches a enum from <tt>tools.jackson.databind.SerializationFeature</tt>,
+         * <tt>tools.jackson.databind.DeserializationFeature</tt>, <tt>tools.jackson.databind.MapperFeature</tt>,
+         * <tt>tools.jackson.databind.cfg.DateTimeFeature</tt>, <tt>tools.jackson.databind.cfg.EnumFeature</tt>,
+         * <tt>tools.jackson.databind.cfg.JsonNodeFeature</tt>, <tt>tools.jackson.core.StreamReadFeature</tt>, or
+         * <tt>tools.jackson.core.StreamWriteFeature</tt>
          * <p/>
          * Multiple features can be separated by comma
          */
@@ -382,12 +383,13 @@ public class CBORDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
+         * Set of features to disable on the Jackson <tt>tools.jackson.databind.ObjectMapper</tt>.
          * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
+         * The features should be a name that matches a enum from <tt>tools.jackson.databind.SerializationFeature</tt>,
+         * <tt>tools.jackson.databind.DeserializationFeature</tt>, <tt>tools.jackson.databind.MapperFeature</tt>,
+         * <tt>tools.jackson.databind.cfg.DateTimeFeature</tt>, <tt>tools.jackson.databind.cfg.EnumFeature</tt>,
+         * <tt>tools.jackson.databind.cfg.JsonNodeFeature</tt>, <tt>tools.jackson.core.StreamReadFeature</tt>, or
+         * <tt>tools.jackson.core.StreamWriteFeature</tt>
          * <p/>
          * Multiple features can be separated by comma
          */

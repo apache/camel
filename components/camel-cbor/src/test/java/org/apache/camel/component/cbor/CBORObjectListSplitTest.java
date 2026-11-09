@@ -19,19 +19,18 @@ package org.apache.camel.component.cbor;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.cbor.CBORMapper;
 
 import static org.apache.camel.test.junit6.TestSupport.body;
 
 public class CBORObjectListSplitTest extends CamelTestSupport {
     @Test
-    void testCBOR() throws InterruptedException, JsonProcessingException {
+    void testCBOR() throws InterruptedException {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedMessagesMatches(body().isInstanceOf(DummyObject.class));
 
@@ -44,8 +43,7 @@ public class CBORObjectListSplitTest extends CamelTestSupport {
         list.add(d1);
         list.add(d2);
 
-        CBORFactory factory = new CBORFactory();
-        ObjectMapper objectMapper = new ObjectMapper(factory);
+        ObjectMapper objectMapper = new CBORMapper();
         byte[] payload = objectMapper.writeValueAsBytes(list);
         template.sendBody("direct:start", payload);
 

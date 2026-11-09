@@ -7683,3 +7683,42 @@ mapper ignores those, so to marshal these models use `camel-jackson3`, not `came
 `camel-splunk-hec` and `camel-weather` let a JSON failure through as the unchecked `tools.jackson.core.JacksonException`, which
 is not an `IOException`, so `onException(IOException.class)` does not match it.
 
+=== Jackson 3 - camel-cbor, camel-jsonata and camel-xj
+
+`camel-cbor`, `camel-jsonata` and `camel-xj` now use Jackson 3 (`tools.jackson`) instead of Jackson 2. Jackson 3 exceptions
+are unchecked and are not an `IOException`, so `onException(IOException.class)` does not match them.
+
+*camel-cbor.* A custom `ObjectMapper` must be a `tools.jackson.databind.ObjectMapper`, such as
+`tools.jackson.dataformat.cbor.CBORMapper`: a Jackson 2 mapper in the registry is no longer found. `prettyPrint`,
+`enableFeatures` and `disableFeatures` now apply to a copy of a mapper from the registry, not to that mapper.
+
+The data format uses the defaults of Jackson 3, listed in the section "Jackson 3 - components that no longer use camel-jackson": properties in
+alphabetical order, dates as text, enums with `toString()`, and content after the first value fails the read. `enableFeatures`
+and `disableFeatures` set them back, and now also accept the names of `DateTimeFeature`, `EnumFeature`, `JsonNodeFeature`,
+`StreamReadFeature` and `StreamWriteFeature`. In Java, `enableFeature(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)` no
+longer compiles, because that feature is now in `DateTimeFeature`: use `setEnableFeatures("WRITE_DATES_AS_TIMESTAMPS")`.
+
+The mapper that the data format creates keeps the CBOR encoding of Jackson 2, so data sent or stored by earlier versions
+decodes to the same values. A custom `new CBORMapper()` uses the encoding of Jackson 3: it follows RFC 8949 for a negative
+`BigInteger`, so a value written by Jackson 2 is read as a different number, and it reads CBOR simple values as `CBORSimpleValue`
+rather than as numbers. To keep the encoding of Jackson 2 on a custom mapper, disable
+`CBORWriteFeature.ENCODE_USING_STANDARD_NEGATIVE_BIGINT_ENCODING`,
+`CBORReadFeature.DECODE_USING_STANDARD_NEGATIVE_BIGINT_ENCODING`, `CBORReadFeature.READ_UNDEFINED_AS_EMBEDDED_OBJECT` and
+`CBORReadFeature.READ_SIMPLE_VALUE_AS_EMBEDDED_OBJECT` on its `CBORFactory`.
+
+A `com.fasterxml.jackson.databind.JsonNode` body is no longer treated as a tree: use `tools.jackson.databind.JsonNode`.
+
+*camel-jsonata.* With the default `outputType`, the result is now a `tools.jackson.databind.JsonNode` instead of a
+`com.fasterxml.jackson.databind.JsonNode`, so code that reads the body as the Jackson 2 type must change. Invalid JSON now
+fails with `tools.jackson.core.exc.StreamReadException`. The result of an expression does not change. A body that is a Jackson 2
+`JsonNode` is read as its JSON text, but a Jackson 2 node inside a `Map` or `List` body is read as a bean: a component on
+Jackson 3 treats a `com.fasterxml.jackson.databind.JsonNode` as an ordinary bean, so pass JSON text or produce the node with
+`camel-jackson3`. A `java.time` value in a POJO body no longer fails: it is written as numbers.
+
+WARNING: A Jackson 2 mapper writes a Jackson 3 `JsonNode` as a bean, without any error. If a route marshals the result with
+`camel-jackson` (`marshal().json()`), the JSON it produces is wrong. Use `outputType=JsonString`, or use `camel-jackson3`.
+
+*camel-xj.* The output does not change. The cause of a failed transformation is now a Jackson 3 exception, such as
+`tools.jackson.core.exc.StreamReadException`. The public classes `XmlJsonStreamWriter`, `JsonXmlStreamReader`,
+`JsonSourceHandlerFactoryImpl` and the result handlers now take the Jackson 3 `JsonFactory`, `JsonGenerator` and `JsonParser`.
+

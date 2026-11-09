@@ -33,9 +33,10 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
 
 /**
  * XML Json bridge. Explicitly using XMLStreamReader and not XMLEventReader because saxon wants that.
@@ -109,7 +110,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
                                 return XMLStreamConstants.CHARACTERS;
                             case XMLStreamConstants.CHARACTERS:
                                 removeStackElement(previousElement.jsonToken);
-                                removeStackElement(JsonToken.FIELD_NAME);
+                                removeStackElement(JsonToken.PROPERTY_NAME);
 
                                 ObjectHelper.notNull(tokenStack.peek(), "tokenStack.peek()");
                                 tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
@@ -135,7 +136,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             StackElement stackElement = new StackElement(currentToken, toXmlString(jsonParser.currentName()));
             tokenStack.push(stackElement);
 
-            if (currentToken == JsonToken.FIELD_NAME) {
+            if (currentToken == JsonToken.PROPERTY_NAME) {
                 currentToken = jsonParser.nextToken();
 
                 stackElement = new StackElement(currentToken, toXmlString(jsonParser.currentName()));
@@ -157,14 +158,14 @@ public class JsonXmlStreamReader implements XMLStreamReader {
                 case END_OBJECT:
                     removeStackElement(JsonToken.END_OBJECT);
                     removeStackElement(JsonToken.START_OBJECT);
-                    removeStackElement(JsonToken.FIELD_NAME);
+                    removeStackElement(JsonToken.PROPERTY_NAME);
                     eof = tokenStack.isEmpty();
 
                     return XMLStreamConstants.END_ELEMENT;
                 case END_ARRAY:
                     removeStackElement(JsonToken.END_ARRAY);
                     removeStackElement(JsonToken.START_ARRAY);
-                    removeStackElement(JsonToken.FIELD_NAME);
+                    removeStackElement(JsonToken.PROPERTY_NAME);
                     eof = tokenStack.isEmpty();
 
                     return XMLStreamConstants.END_ELEMENT;
@@ -172,7 +173,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
                     throw new IllegalStateException("JsonToken: " + currentToken);
             }
 
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new XMLStreamException(e);
         }
     }
@@ -180,13 +181,13 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     private void removeStackElement(JsonToken jsonToken) {
         final StackElement stackElement = tokenStack.peek();
         if (stackElement == null || stackElement.jsonToken != jsonToken) {
-            if (stackElement != null && jsonToken == JsonToken.FIELD_NAME
+            if (stackElement != null && jsonToken == JsonToken.PROPERTY_NAME
                     && stackElement.jsonToken == JsonToken.START_ARRAY) {
                 // anonymous array
                 return;
             }
 
-            if (stackElement == null && jsonToken == JsonToken.FIELD_NAME) {
+            if (stackElement == null && jsonToken == JsonToken.PROPERTY_NAME) {
                 // root object / array
                 return;
             }
@@ -228,7 +229,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
     public void close() throws XMLStreamException {
         try {
             jsonParser.close();
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new XMLStreamException(e);
         }
     }
@@ -418,8 +419,8 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         try {
             setXmlText(stackElement, jsonParser);
             return stackElement.value;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (JacksonException e) {
+            throw new UncheckedIOException(new IOException(e));
         }
     }
 
@@ -445,15 +446,15 @@ public class JsonXmlStreamReader implements XMLStreamReader {
             ObjectHelper.notNull(stackElement, "stackElement");
             setXmlText(stackElement, jsonParser);
             return stackElement.value.length;
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (JacksonException e) {
+            throw new UncheckedIOException(new IOException(e));
         }
     }
 
-    private void setXmlText(StackElement stackElement, JsonParser jsonParser) throws IOException {
+    private void setXmlText(StackElement stackElement, JsonParser jsonParser) {
         if (stackElement.value == null) {
             stackElement.value
-                    = toXmlString(jsonParser.getTextCharacters(), jsonParser.getTextOffset(), jsonParser.getTextLength());
+                    = toXmlString(jsonParser.getStringCharacters(), jsonParser.getStringOffset(), jsonParser.getStringLength());
         }
     }
 

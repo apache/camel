@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,6 +30,7 @@ import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.core.exc.StreamReadException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -116,7 +116,7 @@ class JsonataJacksonInputTest extends CamelTestSupport {
     void testInvalidJson() {
         CamelExecutionException e = assertThrows(CamelExecutionException.class,
                 () -> template.requestBody("direct:fullName", "{\"name\": "));
-        assertInstanceOf(JsonParseException.class, e.getCause());
+        assertInstanceOf(StreamReadException.class, e.getCause());
     }
 
     @Override

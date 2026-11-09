@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.cbor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.dataformat.cbor.CBORMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,8 +38,7 @@ public class CBORMarshalAllowJMSTypeTest extends CamelTestSupport {
         author.setName("David");
         author.setSurname("Foster Wallace");
 
-        CBORFactory factory = new CBORFactory();
-        ObjectMapper objectMapper = new ObjectMapper(factory);
+        ObjectMapper objectMapper = new CBORMapper();
         byte[] payload = objectMapper.writeValueAsBytes(author);
         template.sendBodyAndHeader("direct:backPojo", payload, "JMSType", Author.class.getName());
 

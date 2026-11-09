@@ -20,8 +20,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,6 +28,9 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.apache.camel.test.junit6.TestSupport;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 class JsonataArrayInputTest extends CamelTestSupport {
 
@@ -53,7 +54,7 @@ class JsonataArrayInputTest extends CamelTestSupport {
     void testJsonArrayInputAsJacksonNode() throws Exception {
         InputStream inputJson = ResourceHelper.resolveMandatoryResourceAsInputStream(
                 context, "org/apache/camel/component/jsonata/arrayinput/input.json");
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new JsonMapper();
         JsonNode body = mapper.readTree(inputJson);
         inputJson.close();
 

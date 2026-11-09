@@ -26,7 +26,6 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 import com.dashjoin.jsonata.Jsonata;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Category;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -41,6 +40,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static com.dashjoin.jsonata.Jsonata.jsonata;
 
@@ -61,15 +62,18 @@ import static com.dashjoin.jsonata.Jsonata.jsonata;
                                                 + " JSON as text, bytes, a stream or a file, which is parsed. Text that does"
                                                 + " not start with { or [ is read as one JSON string. With"
                                                 + " inputType=JsonString the body is always parsed as JSON"),
-           producerOut = @BodyType(value = Carrier.POJO, javaType = "com.fasterxml.jackson.databind.JsonNode",
+           producerOut = @BodyType(value = Carrier.POJO, javaType = "tools.jackson.databind.JsonNode",
                                    format = "json",
                                    byOption = @BodyType.When(option = "outputType", value = "JsonString",
                                                              carriers = Carrier.TEXT, javaType = "java.lang.String"),
-                                   description = "The result as a Jackson JsonNode, or as JSON text with"
+                                   description = "The result as a Jackson 3 JsonNode, or as JSON text with"
                                                  + " outputType=JsonString"))
 public class JsonataEndpoint extends ResourceEndpoint {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private static final String JACKSON2_NODE_PACKAGE = "com.fasterxml.jackson.databind.node.";
+
+    // keeps the Jackson 2 defaults, so the input of the expression and its output do not change
+    private final ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 
     @UriParam(defaultValue = "Jackson")
     private JsonataInputOutputType outputType;
@@ -236,6 +240,10 @@ public class JsonataEndpoint extends ResourceEndpoint {
             }
             // let Jackson detect the encoding
             return mapper.readValue(exchange.getIn().getMandatoryBody(InputStream.class), Object.class);
+        }
+        if (body != null && body.getClass().getName().startsWith(JACKSON2_NODE_PACKAGE)) {
+            // Jackson 3 would convert the node as a bean; its text is its JSON
+            return mapper.readValue(body.toString(), Object.class);
         }
         return mapper.convertValue(body, Object.class);
     }

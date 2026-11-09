@@ -24,12 +24,14 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 import javax.xml.transform.stax.StAXSource;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Expression;
 import org.apache.camel.component.xslt.SourceHandlerFactory;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.ObjectReadContext;
+import tools.jackson.core.exc.JacksonIOException;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * Handler for json sources
@@ -71,21 +73,26 @@ public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
 
         JsonParser jsonParser = null;
         if (body instanceof File) {
-            jsonParser = jsonFactory.createParser((File) body);
+            try {
+                jsonParser = jsonFactory.createParser(ObjectReadContext.empty(), (File) body);
+            } catch (JacksonIOException e) {
+                // a file that cannot be read stays an IOException
+                throw e.getCause();
+            }
         } else if (body instanceof InputStream) {
-            jsonParser = jsonFactory.createParser((InputStream) body);
+            jsonParser = jsonFactory.createParser(ObjectReadContext.empty(), (InputStream) body);
         } else if (body instanceof Reader) {
-            jsonParser = jsonFactory.createParser((Reader) body);
+            jsonParser = jsonFactory.createParser(ObjectReadContext.empty(), (Reader) body);
         } else if (body instanceof byte[]) {
-            jsonParser = jsonFactory.createParser((byte[]) body);
+            jsonParser = jsonFactory.createParser(ObjectReadContext.empty(), (byte[]) body);
         } else if (body instanceof String) {
-            jsonParser = jsonFactory.createParser((String) body);
+            jsonParser = jsonFactory.createParser(ObjectReadContext.empty(), (String) body);
         }
 
         if (jsonParser == null) {
             final String bodyAsString = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, body);
             if (bodyAsString != null) {
-                jsonParser = jsonFactory.createParser(bodyAsString);
+                jsonParser = jsonFactory.createParser(ObjectReadContext.empty(), bodyAsString);
             }
         }
 
@@ -93,7 +100,7 @@ public class JsonSourceHandlerFactoryImpl implements SourceHandlerFactory {
             if (isFailOnNullBody()) {
                 throw new ExpectedBodyTypeException(exchange, Source.class);
             } else {
-                jsonParser = jsonFactory.createParser("{}");
+                jsonParser = jsonFactory.createParser(ObjectReadContext.empty(), "{}");
             }
         }
 
