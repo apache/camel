@@ -16,12 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 
@@ -135,9 +139,11 @@ public final class ChaosExperimentRun {
     static JsonObject run(
             Integration integration, String hypothesis, String rules, Feed feed, long wait, String note, Clock clock)
             throws InterruptedException {
+        // the status is read once for the checks of the feed
+        JsonObject status = feed != null ? integration.status() : null;
         if (feed != null) {
             // a feed that reaches no route makes an experiment without messages, whose verdict says nothing
-            String why = checkFeed(integration.status(), feed.endpoint());
+            String why = checkFeed(status, feed.endpoint());
             if (why != null) {
                 throw new IllegalArgumentException(why);
             }
@@ -154,8 +160,18 @@ public final class ChaosExperimentRun {
             root.put("rule", rules);
         });
         int number = begun.getIntegerOrDefault("number", 0);
-        // a rule that matches nothing in the integration now (often a typo)
-        List<Object> warnings = begun.getCollection("warnings");
+        // a rule that matches nothing in the integration now (often a typo), and a feed to a real system
+        List<Object> warnings = new ArrayList<>();
+        List<Object> ruleWarnings = begun.getCollection("warnings");
+        if (ruleWarnings != null) {
+            warnings.addAll(ruleWarnings);
+        }
+        if (feed != null) {
+            String real = feedWarning(status, feed.endpoint());
+            if (real != null) {
+                warnings.add(real);
+            }
+        }
         JsonObject traffic = null;
         long waited = 0;
         try {
@@ -187,7 +203,7 @@ public final class ChaosExperimentRun {
             answer.put("traffic", traffic);
         }
         answer.put("waited", waited);
-        if (warnings != null && !warnings.isEmpty()) {
+        if (!warnings.isEmpty()) {
             answer.put("warnings", warnings);
         }
         JsonObject exploration = exploration(integration.status());
@@ -256,35 +272,115 @@ public final class ChaosExperimentRun {
     }
 
     /**
-     * Why the feed reaches no route of the integration, or null when it does (or the status does not tell): the feed is
-     * the id of a route, a pattern, or the endpoint a route starts from, as camel cmd send finds its target.
+     * Why the feed cannot reach a route of the integration, or null when it does (or the status does not tell): the
+     * feed is the id of a route, a pattern, or the endpoint a route starts from, as camel cmd send finds its target. It
+     * is sent to that endpoint with a producer, which reaches the route for direct, seda, a stub or a broker, but not
+     * for a route that makes its own messages (a timer), serves HTTP, or starts from a component that only consumes
+     * (CAMEL-26792).
      */
     public static String checkFeed(JsonObject status, String feed) {
         List<Object> routes = status != null ? status.getCollection("routes") : null;
         if (routes == null || routes.isEmpty() || feed.endsWith("*")) {
             return null;
         }
-        String endpoint = normalize(feed);
+        JsonObject route = route(routes, feed);
+        if (route != null) {
+            return cannotFeed(route.getString("routeId"), route.getString("from"));
+        }
         StringJoiner inputs = new StringJoiner(", ");
         for (Object o : routes) {
-            if (!(o instanceof JsonObject route)) {
-                continue;
+            if (o instanceof JsonObject r) {
+                inputs.add(r.getString("routeId") + " (" + r.getString("from") + ")");
             }
-            String id = route.getString("routeId");
-            String from = route.getString("from");
-            if (feed.equals(id)) {
-                return null;
-            }
-            if (from != null) {
-                String input = normalize(from);
-                if (input.equals(endpoint) || input.startsWith(endpoint + "?")) {
-                    return null;
-                }
-            }
-            inputs.add(id + " (" + from + ")");
         }
         return "The feed " + feed + " is not where a route starts, so no message would reach the integration: give the"
                + " id of a route, or the endpoint it starts from: " + inputs;
+    }
+
+    /**
+     * A warning when the feed goes to a real remote system, as the route it reaches starts from one that is not stubbed
+     * (a Kafka broker, a JMS queue), or null. Such a feed is fine for a local broker (camel infra run).
+     */
+    public static String feedWarning(JsonObject status, String feed) {
+        List<Object> routes = status != null ? status.getCollection("routes") : null;
+        JsonObject route = routes != null && !feed.endsWith("*") ? route(routes, feed) : null;
+        String from = route != null ? route.getString("from") : null;
+        ComponentModel model = from != null ? componentModel(from) : null;
+        // a file is written to the folder the route polls: not a remote system
+        if (model == null || !model.isRemote() || "file".equals(model.getScheme())) {
+            return null;
+        }
+        String id = route.getString("routeId");
+        Boolean stubbed = stubbed(status, id);
+        if (stubbed == null || stubbed) {
+            return null;
+        }
+        String scheme = model.getScheme();
+        return "The feed goes to " + from + ", where route " + id + " starts, and it is not stubbed: the messages go to"
+               + " the real " + scheme + ". Use a local one (camel infra run " + scheme + "), or run the integration"
+               + " with --stub=" + scheme + " so no real system gets them";
+    }
+
+    /** The route the feed reaches: by its id, or by the endpoint it starts from; null when none. */
+    private static JsonObject route(List<Object> routes, String feed) {
+        String endpoint = normalize(feed);
+        for (Object o : routes) {
+            if (o instanceof JsonObject route) {
+                String from = route.getString("from");
+                if (feed.equals(route.getString("routeId"))
+                        || from != null && (normalize(from).equals(endpoint) || normalize(from).startsWith(endpoint + "?"))) {
+                    return route;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** Why a message sent to the endpoint a route starts from does not reach it, or null when it does. */
+    static String cannotFeed(String route, String from) {
+        ComponentModel model = from != null ? componentModel(from) : null;
+        if (model == null) {
+            return null;
+        }
+        String label = model.getLabel() != null ? model.getLabel() : "";
+        if (model.isConsumerOnly() && label.contains("scheduling")) {
+            return "Route " + route + " starts from " + from + ", which makes its own messages: leave the feed out, as"
+                   + " the traffic of the route comes by itself";
+        }
+        if ("rest".equals(model.getScheme()) || label.contains("http")) {
+            return "Route " + route + " starts from the HTTP endpoint " + from + ", which an experiment cannot feed"
+                   + " yet: feed a route that calls it, or leave the feed out when its traffic comes otherwise";
+        }
+        if (model.isConsumerOnly()) {
+            return "Route " + route + " starts from " + from + ", which only consumes, so an experiment cannot send to"
+                   + " it: feed another route, or leave the feed out when its traffic comes otherwise";
+        }
+        return null;
+    }
+
+    /** Whether the chaos report of the status has the route as stubbed; null when the report does not have it. */
+    private static Boolean stubbed(JsonObject status, String route) {
+        if (!(status.get("chaos") instanceof JsonObject chaos) || !(chaos.get("report") instanceof JsonObject report)) {
+            return null;
+        }
+        List<Object> routes = report.getCollection("routes");
+        if (routes != null) {
+            for (Object o : routes) {
+                if (o instanceof JsonObject r && route.equals(r.getString("route"))) {
+                    return r.containsKey("stubbedConsumer");
+                }
+            }
+        }
+        return null;
+    }
+
+    private static ComponentModel componentModel(String uri) {
+        int colon = uri.indexOf(':');
+        return colon > 0 ? Catalog.INSTANCE.componentModel(uri.substring(0, colon)) : null;
+    }
+
+    private static final class Catalog {
+        static final CamelCatalog INSTANCE = new DefaultCamelCatalog(true);
     }
 
     // kafka://refunds and kafka:refunds are the same endpoint

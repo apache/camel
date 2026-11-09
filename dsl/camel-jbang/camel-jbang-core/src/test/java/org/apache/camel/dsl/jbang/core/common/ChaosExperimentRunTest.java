@@ -229,6 +229,73 @@ class ChaosExperimentRunTest {
     }
 
     @Test
+    void aRouteThatCannotBeFedSaysWhy() {
+        JsonObject status = new JsonObject(
+                Map.of("routes", new JsonArray(
+                        List.of(
+                                new JsonObject(Map.of("routeId", "orders", "from", "timer://orders?period=1000")),
+                                new JsonObject(Map.of("routeId", "payment", "from", "platform-http:///payment")),
+                                new JsonObject(Map.of("routeId", "api", "from", "rest:post:/refunds")),
+                                new JsonObject(Map.of("routeId", "leader", "from", "master:lock:direct:start")),
+                                new JsonObject(Map.of("routeId", "inbox", "from", "file://inbox?delete=true")),
+                                new JsonObject(Map.of("routeId", "billing", "from", "seda://billing"))))));
+        integration.statuses.add(status);
+
+        // a route that makes its own messages (CAMEL-26792)
+        assertThat(ChaosExperimentRun.checkFeed(status, "orders")).isEqualTo(
+                "Route orders starts from timer://orders?period=1000, which makes its own messages: leave the feed out,"
+                                                                             + " as the traffic of the route comes by itself");
+        // a route that serves HTTP, by its id or its endpoint
+        assertThat(ChaosExperimentRun.checkFeed(status, "payment"))
+                .startsWith("Route payment starts from the HTTP endpoint platform-http:///payment, which an experiment"
+                            + " cannot feed yet");
+        assertThat(ChaosExperimentRun.checkFeed(status, "platform-http:/payment")).startsWith("Route payment");
+        assertThat(ChaosExperimentRun.checkFeed(status, "api")).startsWith("Route api starts from the HTTP endpoint");
+        // a component that only consumes
+        assertThat(ChaosExperimentRun.checkFeed(status, "leader")).contains("which only consumes");
+        // a file is written to the folder the route polls, and seda is in memory
+        assertThat(ChaosExperimentRun.checkFeed(status, "inbox")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "billing")).isNull();
+
+        // refused before the experiment begins
+        assertThatThrownBy(() -> ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("orders", "O-1", null, 5, null), 60_000, null, clock))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("which makes its own messages");
+        assertThat(integration.actions).isEmpty();
+    }
+
+    @Test
+    void aFeedToARealSystemIsWarned() {
+        JsonObject report = new JsonObject(
+                Map.of("routes", new JsonArray(
+                        List.of(
+                                new JsonObject(Map.of("route", "refunds")),
+                                new JsonObject(Map.of("route", "returns", "stubbedConsumer", "kafka")),
+                                new JsonObject(Map.of("route", "inbox"))))));
+        JsonObject status = new JsonObject(
+                Map.of(
+                        "routes", new JsonArray(
+                                List.of(
+                                        new JsonObject(
+                                                Map.of("routeId", "refunds", "from", "kafka://refunds?brokers=localhost:9092")),
+                                        new JsonObject(Map.of("routeId", "returns", "from", "kafka://returns")),
+                                        new JsonObject(Map.of("routeId", "inbox", "from", "file://inbox")))),
+                        "chaos", new JsonObject(Map.of("report", report))));
+
+        // not stubbed: the messages go to the broker (CAMEL-26792)
+        assertThat(ChaosExperimentRun.feedWarning(status, "refunds")).isEqualTo(
+                "The feed goes to kafka://refunds?brokers=localhost:9092, where route refunds starts, and it is not"
+                                                                                + " stubbed: the messages go to the real kafka. Use a local one (camel infra"
+                                                                                + " run kafka), or run the integration with --stub=kafka so no real system"
+                                                                                + " gets them");
+        // stubbed, a file, or a report that does not tell: no warning
+        assertThat(ChaosExperimentRun.feedWarning(status, "returns")).isNull();
+        assertThat(ChaosExperimentRun.feedWarning(status, "inbox")).isNull();
+        assertThat(ChaosExperimentRun.feedWarning(new JsonObject(Map.of("routes", status.get("routes"))), "refunds"))
+                .isNull();
+    }
+
+    @Test
     void aRuleThatMatchesNothingComesWithItsWarning() throws Exception {
         integration.shows("PENDING", true);
         integration.beginWarnings = List.of("r1: endpoint=file:/parked matches no endpoint of the context now");
