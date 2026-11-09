@@ -36,6 +36,7 @@ import dev.tamboui.layout.Padding;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -67,9 +68,9 @@ final class AboutView {
     // the strips have at least this many columns, whatever the zoom, and as many as the width allows up to the most,
     // a column taking a whole number of seconds
     private static final int STRIP_COLUMNS = 60;
-    private static final int MAX_STRIP_COLUMNS = 150;
-    // what the line of a route has after its strip: its exchanges, an open circuit breaker, the worst that happened
-    private static final int STRIP_NOTES = 50;
+    private static final int MAX_STRIP_COLUMNS = 300;
+    // the cause of a recovery after the strip of a route, cut to this width when the strips need the room
+    private static final int CAUSE_WIDTH = 30;
     // the sparklines of In and Out, wider in a wider column
     private static final int SPARK_WIDTH = 14;
     private static final int MAX_SPARK_WIDTH = 30;
@@ -621,14 +622,23 @@ final class AboutView {
         List<String> order = routeOrder(info);
         // the names, then one space: every line starts its columns at the same place
         int label = Math.min(18, Math.max(8, order.stream().mapToInt(String::length).max().orElse(8))) + 4;
-        int columns = stripColumns(seconds, width - label - STRIP_NOTES);
+        List<Timeline.RouteSeries> series = ctx.timeline.routes(info.pid, order, end, seconds);
+        // what the line of a route has after its strip (its exchanges, an open circuit breaker, the worst that
+        // happened, with the cause of a recovery up to CAUSE_WIDTH) takes the room it needs, and the strips the rest
+        int notes = 0;
+        for (Timeline.RouteSeries r : series) {
+            notes = Math.max(notes, width(stripNotes(info, r, last, end, seconds, CAUSE_WIDTH)));
+        }
+        int columns = stripColumns(seconds, width - label - notes - 1);
+        // the cause gets what the strips leave too
+        int causeRoom = CAUSE_WIDTH + Math.max(0, width - label - notes - 1 - columns);
         stripColumns = columns;
         int per = seconds / columns;
         // the columns that end before the integration started are blank, as the sparklines have them, where a dot is
         // a time it ran and did nothing (uptime is the time it started)
         long startOffset = info.uptime > 0 ? info.uptime / 1000 - (end - seconds + 1) : 0;
         int before = (int) Math.max(0, Math.min(columns, startOffset / per));
-        for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, order, end, seconds)) {
+        for (Timeline.RouteSeries r : series) {
             if (spaced && !lines.isEmpty()) {
                 lines.add(Line.from(Span.raw("")));
             }
@@ -658,7 +668,7 @@ final class AboutView {
                         ? "   " + name + " ".repeat(Math.max(1, label - 3 - name.length())) : " ".repeat(label)));
                 spans.addAll(rows.get(row));
                 if (row == tall - 1) {
-                    spans.addAll(stripNotes(info, r, last, end, seconds, width - label - columns - 40));
+                    spans.addAll(stripNotes(info, r, last, end, seconds, causeRoom));
                 }
                 lines.add(Line.from(spans));
             }
@@ -739,6 +749,14 @@ final class AboutView {
             }
         }
         return spans;
+    }
+
+    private static int width(List<Span> spans) {
+        int w = 0;
+        for (Span span : spans) {
+            w += CharWidth.of(span.content());
+        }
+        return w;
     }
 
     /**
@@ -1031,21 +1049,34 @@ final class AboutView {
         List<Span> watch = new ArrayList<>();
         watch.add(Span.styled(" Watch    ", Theme.muted()));
         if (info.errorCount > 0) {
-            watch.add(Span.styled("✗ " + info.errorCount + (info.errorCount == 1 ? " error" : " errors"), Theme.error()));
+            // errors that stopped before the last minutes are history: the line says so, and calms down
+            long lastError = lastError(info);
+            boolean old = lastError > 0 && System.currentTimeMillis() - lastError > HAPPENED_SECONDS * 1000L;
+            String count = info.errorCount + (info.errorCount == 1 ? " error" : " errors");
+            Style style = old ? Theme.muted() : Theme.error();
+            if (old) {
+                watch.add(Span.styled("no errors in the last " + HAPPENED_SECONDS / 60 + "m", Theme.success()));
+                watch.add(Span.styled(" · " + count + " before", style));
+            } else {
+                watch.add(Span.styled("✗ " + count, style));
+            }
             // the kinds that happened most, when there are more than one
             List<IntegrationInfo.ErrorKind> kinds = info.errorKinds;
             if (kinds.size() > 1) {
                 for (int i = 0; i < Math.min(3, kinds.size()); i++) {
                     IntegrationInfo.ErrorKind k = kinds.get(i);
                     watch.add(Span.styled(i == 0 ? ": " : " · ", Theme.muted()));
-                    watch.add(Span.styled(simpleName(k.exceptionType()) + " ×" + k.count(), Theme.error()));
+                    watch.add(Span.styled(simpleName(k.exceptionType()) + " ×" + k.count(), style));
                 }
                 if (kinds.size() > 3) {
                     watch.add(Span.styled(" …", Theme.muted()));
                 }
             } else if (kinds.size() == 1) {
                 watch.add(Span.styled(": ", Theme.muted()));
-                watch.add(Span.styled(simpleName(kinds.get(0).exceptionType()), Theme.error()));
+                watch.add(Span.styled(simpleName(kinds.get(0).exceptionType()), style));
+            }
+            if (lastError > 0) {
+                watch.add(Span.styled(" · the last " + TimeUtils.printSince(lastError) + " ago", Theme.muted()));
             }
             // the key to the Errors tab, as the Next line has its keys (a bare 9 read as a second count of errors)
             watch.add(Span.raw("   "));
@@ -1066,6 +1097,18 @@ final class AboutView {
         }
         lines.add(Line.from(watch));
         return lines;
+    }
+
+    /**
+     * When the newest error happened (epoch millis), 0 when not known: as the integration says it (Camel 4.24), else
+     * from the errors the Errors tab loaded.
+     */
+    private static long lastError(IntegrationInfo info) {
+        long last = info.lastErrorTimestamp;
+        for (ErrorInfo e : info.errors) {
+            last = Math.max(last, e.timestamp);
+        }
+        return last;
     }
 
     private static String simpleName(String type) {

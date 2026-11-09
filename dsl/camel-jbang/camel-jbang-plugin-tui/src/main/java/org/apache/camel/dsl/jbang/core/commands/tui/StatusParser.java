@@ -128,6 +128,7 @@ final class StatusParser {
                 }
             }
             info.errorKinds = List.copyOf(kinds);
+            info.lastErrorTimestamp = errorsObj.getLongOrDefault("lastTimestamp", 0L);
         }
 
         parseInflight(info, root);

@@ -39,11 +39,13 @@ final class ErrorCounts {
     }
 
     /**
-     * Adds to the summary the errors that happened ({@code total}) and the kinds that happened most ({@code kinds}:
-     * routeId, exceptionType, count), from the entries of the errors dev console.
+     * Adds to the summary the errors that happened ({@code total}), the kinds that happened most ({@code kinds}:
+     * routeId, exceptionType, count), and when the newest happened ({@code lastTimestamp}, epoch millis, when there is
+     * one), from the entries of the errors dev console.
      */
     static void summarize(Map<String, Object> console, JsonObject summary) {
         Map<String, Kind> kinds = new LinkedHashMap<>();
+        long last = 0;
         if (console.get("errors") instanceof List<?> entries) {
             for (Object o : entries) {
                 if (o instanceof Map<?, ?> e) {
@@ -53,6 +55,9 @@ final class ErrorCounts {
                     String key = routeId + "|" + string(e.get("nodeId")) + "|" + type;
                     Kind k = kinds.computeIfAbsent(key, x -> new Kind(routeId, type));
                     k.count = Math.max(k.count, count);
+                    if (e.get("timestamp") instanceof Number ts) {
+                        last = Math.max(last, ts.longValue());
+                    }
                 }
             }
         }
@@ -72,6 +77,9 @@ final class ErrorCounts {
         }
         summary.put("total", total);
         summary.put("kinds", top);
+        if (last > 0) {
+            summary.put("lastTimestamp", last);
+        }
     }
 
     private static String string(Object o) {
