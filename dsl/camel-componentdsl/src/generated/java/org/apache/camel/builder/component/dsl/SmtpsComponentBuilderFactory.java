@@ -834,10 +834,11 @@ public interface SmtpsComponentBuilderFactory {
     
         
         /**
-         * Option to let Camel ignore unsupported charset in the local JVM when
-         * sending mails. If the charset is unsupported, then charset=XXX (where
-         * XXX represents the unsupported charset) is removed from the
-         * content-type, and it relies on the platform default instead.
+         * Whether to ignore the scheme of the endpoint URI when configuring the
+         * mail protocol. By default the scheme (imap, imaps, pop3, pop3s, smtp
+         * or smtps) sets the protocol used to talk to the mail server. Enable
+         * this to keep a protocol that was already configured on the mail
+         * configuration, for example one shared via the component.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
