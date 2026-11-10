@@ -417,7 +417,7 @@ public class Web3jConfiguration implements Cloneable {
     }
 
     /**
-     * The transaction index position withing a block.
+     * The transaction index position within a block.
      */
     public void setPosition(BigInteger position) {
         this.position = position;
