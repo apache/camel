@@ -21,12 +21,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.cluster.ClusteredRouteController;
+import org.apache.camel.impl.event.DefaultEventFactory;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.junit.jupiter.api.Test;
@@ -98,20 +102,114 @@ public class ClusteredRouteControllerStopTest {
             }
         });
 
+        AtomicReference<Boolean> startedWhenContextStopped = probeClusterServiceWhenContextStopped(context, cs);
+
         try {
             for (int i = 0; i < 2; i++) {
                 context.start();
                 assertTrue(cs.isStarted());
-                // the route controller registers its listener once, also when the CamelContext is started again
-                assertEquals(1, context.getManagementStrategy().getEventNotifiers().stream()
-                        .filter(n -> n.getClass().getEnclosingClass() == ClusteredRouteController.class)
-                        .count());
+                // the route controller registers its listeners once, also when the CamelContext is started again
+                assertEquals(1, countControllerListeners(context));
+                startedWhenContextStopped.set(null);
                 context.stop();
                 assertFalse(cs.isStarted());
+                // stopped once the routes have stopped, not by the fallback when the CamelContext has stopped
+                assertEquals(Boolean.FALSE, startedWhenContextStopped.get());
+                // and unregistered when the CamelContext has stopped
+                assertEquals(0, countControllerListeners(context));
             }
         } finally {
             context.stop();
         }
+    }
+
+    @Test
+    public void testControllerClusterServiceStoppedWithoutRoutesStoppedEvent() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        // a custom EventFactory that does not create the CamelContextRoutesStoppedEvent
+        context.getManagementStrategy().setEventFactory(new DefaultEventFactory() {
+            @Override
+            public CamelEvent createCamelContextRoutesStoppedEvent(CamelContext context) {
+                return null;
+            }
+        });
+        ClusteredRouteController controller = new ClusteredRouteController();
+        // a cluster service that is not a service of the CamelContext, so only the route controller stops it
+        controller.setClusterService(cs);
+        controller.setNamespace("my-ns");
+        context.setRouteController(controller);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("seda:foo").routeId("foo").to("mock:foo");
+            }
+        });
+
+        try {
+            context.start();
+            assertTrue(cs.isStarted());
+            context.stop();
+            // the cluster service is stopped when the CamelContext has stopped
+            assertFalse(cs.isStarted());
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testControllerShutdownOnItsOwnUnregistersListeners() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        ClusteredRouteController controller = new ClusteredRouteController();
+        controller.setClusterService(cs);
+        controller.setNamespace("my-ns");
+        context.setRouteController(controller);
+
+        try {
+            context.start();
+            assertEquals(1, countControllerListeners(context));
+
+            // the route controller is shut down while the CamelContext keeps running
+            controller.shutdown();
+            assertFalse(cs.isStarted());
+            assertEquals(0, countControllerListeners(context));
+
+            // the cluster service is used elsewhere: stopping the CamelContext must not stop it through this controller
+            cs.start();
+            context.stop();
+            assertTrue(cs.isStarted());
+        } finally {
+            cs.stop();
+            context.stop();
+        }
+    }
+
+    /**
+     * Records whether the cluster service is still started when the CamelContext has stopped, before the fallback of
+     * the route controller (whose lifecycle strategy is added after this one, when the route controller starts).
+     */
+    private static AtomicReference<Boolean> probeClusterServiceWhenContextStopped(
+            CamelContext context, TestClusterService cs) {
+        AtomicReference<Boolean> started = new AtomicReference<>();
+        context.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onContextStopped(CamelContext context) {
+                started.set(cs.isStarted());
+            }
+        });
+        return started;
+    }
+
+    private static long countControllerListeners(CamelContext context) {
+        long notifiers = context.getManagementStrategy().getEventNotifiers().stream()
+                .filter(n -> n.getClass().getEnclosingClass() == ClusteredRouteController.class)
+                .count();
+        long strategies = context.getLifecycleStrategies().stream()
+                .filter(s -> s.getClass().getEnclosingClass() == ClusteredRouteController.class)
+                .count();
+        assertEquals(notifiers, strategies);
+        return notifiers;
     }
 
     private void doTestStopWithInflightExchange(
@@ -123,6 +221,7 @@ public class ClusteredRouteControllerStopTest {
         controller.setNamespace("my-ns");
         context.setRouteController(controller);
         context.getShutdownStrategy().setTimeout(30);
+        AtomicReference<Boolean> startedWhenContextStopped = probeClusterServiceWhenContextStopped(context, cs);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
@@ -167,6 +266,7 @@ public class ClusteredRouteControllerStopTest {
         // the cluster service is stopped once the routes have stopped
         assertFalse(cs.isStarted());
         assertFalse(cs.getView().isRunAllowed());
+        assertEquals(Boolean.FALSE, startedWhenContextStopped.get());
     }
 
     // *********************************

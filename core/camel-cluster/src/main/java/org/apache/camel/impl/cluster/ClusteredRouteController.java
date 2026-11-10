@@ -38,8 +38,10 @@ import org.apache.camel.impl.engine.DefaultRouteController;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextRoutesStoppedEvent;
+import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
@@ -60,6 +62,7 @@ public class ClusteredRouteController extends DefaultRouteController {
     private final PolicyFactory policyFactory;
     private final ClusteredRouteConfiguration defaultConfiguration;
     private final RoutesStoppedListener routesStoppedListener;
+    private final LifecycleStrategy contextStoppedStrategy;
     private CamelClusterService clusterService;
     private CamelClusterService.Selector clusterServiceSelector;
 
@@ -70,6 +73,7 @@ public class ClusteredRouteController extends DefaultRouteController {
         this.clusterServiceSelector = ClusterServiceSelectors.DEFAULT_SELECTOR;
         this.policyFactory = new PolicyFactory();
         this.routesStoppedListener = new RoutesStoppedListener();
+        this.contextStoppedStrategy = new ContextStoppedStrategy();
 
         this.defaultConfiguration = new ClusteredRouteConfiguration();
         this.defaultConfiguration.setInitialDelay(Duration.ofMillis(0));
@@ -203,6 +207,8 @@ public class ClusteredRouteController extends DefaultRouteController {
         if (!context.getManagementStrategy().getEventNotifiers().contains(routesStoppedListener)) {
             context.getManagementStrategy().addEventNotifier(routesStoppedListener);
         }
+        // a fallback for an EventFactory that does not create the CamelContextRoutesStoppedEvent
+        context.addLifecycleStrategy(contextStoppedStrategy);
 
         super.doStart();
     }
@@ -213,10 +219,25 @@ public class ClusteredRouteController extends DefaultRouteController {
             // The CamelContext stops the route controller before the routes. The routes must keep the leadership until
             // their consumers have stopped and their in-flight exchanges are done, or another node would start them in
             // the meantime, so the cluster service is stopped once the routes have stopped.
+            LOGGER.debug("CamelContext is stopping: the cluster service is stopped once the routes have stopped");
             return;
         }
 
         stopClusterService();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        final CamelContext context = getCamelContext();
+        if (context != null && !context.isStopping()) {
+            // The route controller is shut down while the CamelContext runs, so it must no longer stop the cluster
+            // service when the CamelContext stops. While the CamelContext stops, the listeners stay registered until it
+            // has stopped, as they stop the cluster service once the routes have stopped.
+            context.getManagementStrategy().removeEventNotifier(routesStoppedListener);
+            context.getLifecycleStrategies().remove(contextStoppedStrategy);
+        }
+
+        super.doShutdown();
     }
 
     private void stopClusterService() {
@@ -240,11 +261,9 @@ public class ClusteredRouteController extends DefaultRouteController {
      */
     private final class RoutesStoppedListener extends SimpleEventNotifierSupport implements NonManagedService {
         RoutesStoppedListener() {
-            // only the CamelContext events are needed
-            setIgnoreExchangeEvents(true);
+            // only the CamelContext events are needed (the exchange and step events are ignored by default)
             setIgnoreRouteEvents(true);
             setIgnoreServiceEvents(true);
-            setIgnoreStepEvents(true);
         }
 
         @Override
@@ -255,6 +274,26 @@ public class ClusteredRouteController extends DefaultRouteController {
         @Override
         public void notify(CamelEvent event) throws Exception {
             stopClusterService();
+        }
+    }
+
+    /**
+     * Stops the cluster service when the CamelContext has stopped, if it is still started. The cluster service is
+     * normally stopped earlier, once the routes have stopped, but a custom EventFactory may not create the
+     * CamelContextRoutesStoppedEvent. Then unregisters the listeners of the route controller, which registers them
+     * again when it is started again, so a route controller replaced while the CamelContext was stopped leaves none
+     * behind.
+     */
+    private final class ContextStoppedStrategy extends LifecycleStrategySupport {
+        @Override
+        public void onContextStopped(CamelContext context) {
+            try {
+                stopClusterService();
+            } catch (Exception e) {
+                LOGGER.warn("Error stopping the cluster service {}. This exception is ignored.", clusterService, e);
+            }
+            context.getManagementStrategy().removeEventNotifier(routesStoppedListener);
+            context.getLifecycleStrategies().remove(this);
         }
     }
 
