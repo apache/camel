@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.component.http.handler.OAuth2TokenRequestHandler;
-import org.apache.camel.util.IOHelper;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
@@ -109,7 +108,7 @@ public class HttpOAuth2RedirectTokenLeakTest extends BaseHttpTest {
 
     @Override
     public void cleanupResources() throws Exception {
-        IOHelper.close(localServer, differentHostRedirectTarget, differentPortRedirectTarget);
+        closeImmediately(localServer, differentHostRedirectTarget, differentPortRedirectTarget).close();
     }
 
     @ParameterizedTest

@@ -28,6 +28,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NoHttpResponseException;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.io.CloseMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +48,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     @Test
     public void tokenIsCached() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
             String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
                                 + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint +
@@ -56,7 +58,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
             template.request(requestUrl,
                     exchange1 -> {
                     });
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
             Exchange exchange
                     = template.request(requestUrl,
                             exchange1 -> {
@@ -75,7 +77,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
      */
     @Test
     public void aDifferentScopeDoesNotReuseACachedToken() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
             String base = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
                           + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
@@ -84,7 +87,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
             // caches a token for the narrow scope
             template.request(base + "read", exchange -> {
             });
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
 
             // same target and credentials, different scope: the narrow-scope token must not be handed out
             Exchange exchange = template.request(base + "read+write", exchange1 -> {
@@ -95,7 +98,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     @Test
     public void theSameScopeStillReusesTheCachedToken() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
             String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
                                 + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint
@@ -103,7 +107,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
             template.request(requestUrl, exchange -> {
             });
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
 
             Exchange exchange = template.request(requestUrl, exchange1 -> {
             });
@@ -169,7 +173,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
     }
 
     private void assertDifferentQuery(String keyOption, boolean reused) throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
             String options = "&httpMethod=POST&oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret
                              + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption;
@@ -177,7 +182,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
             assertExchange(template.request(base + "1" + options, exchange -> {
             }));
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
 
             Exchange exchange = template.request(base + "2" + options, exchange1 -> {
             });
@@ -186,7 +191,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
     }
 
     private void assertDifferentPath(String keyOption, boolean reused) throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
             String options = "?httpMethod=POST&oauth2ClientId=" + clientId + "&oauth2ClientSecret=" + clientSecret
                              + "&oauth2TokenEndpoint=" + tokenEndpoint + "&oauth2CacheTokens=true" + keyOption;
@@ -194,7 +200,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
             assertExchange(template.request(base + "/post" + options, exchange -> {
             }));
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
 
             Exchange exchange = template.request(base + "/other" + options, exchange1 -> {
             });
@@ -203,7 +209,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
     }
 
     private void assertDifferentHttpPathHeader(String keyOption, boolean reused) throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
 
             context.addRoutes(new RouteBuilder() {
@@ -217,7 +224,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
             });
 
             assertExchange(template.send("direct:path", e -> e.getIn().setHeader(Exchange.HTTP_PATH, "/post")));
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
             Exchange exchange = template.send("direct:path", e -> e.getIn().setHeader(Exchange.HTTP_PATH, "/other"));
 
             assertTokenReused(exchange, reused);
@@ -237,7 +244,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     @Test
     public void tokenIsNotCachedWhenCacheTokensIsFalse() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
             String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
                                 + clientId + "&oauth2ClientSecret=" + clientSecret + "&oauth2TokenEndpoint=" + tokenEndpoint +
@@ -246,7 +254,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
             template.request(requestUrl,
                     exchange1 -> {
                     });
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
             Exchange exchange
                     = template.request(requestUrl,
                             exchange1 -> {
@@ -257,7 +265,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     @Test
     public void toDTokenIsCached() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
 
             context.addRoutes(new RouteBuilder() {
@@ -275,7 +284,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
             template.send("direct:start", e -> {
             });
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
             Exchange exchange = template.send("direct:start", e -> {
             });
 
@@ -285,7 +294,8 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
     @Test
     public void toDTokenIsNotCachedWhenCacheTokensIsFalse() throws Exception {
-        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server()) {
+        try (var localServer = createLocalServer(); var localOAuth2Server = createLocalOAuth2Server();
+             var shutdown = closeImmediately(localServer, localOAuth2Server)) {
             String tokenEndpoint = "http://localhost:" + localOAuth2Server.getLocalPort() + "/token";
 
             context.addRoutes(new RouteBuilder() {
@@ -303,7 +313,7 @@ public class HttpOAuth2TokenCachingTest extends BaseHttpTest {
 
             template.send("direct:start", e -> {
             });
-            localOAuth2Server.close();
+            localOAuth2Server.close(CloseMode.IMMEDIATE);
             Exchange exchange = template.send("direct:start", e -> {
             });
 
