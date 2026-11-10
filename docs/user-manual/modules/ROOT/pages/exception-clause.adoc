@@ -168,6 +168,11 @@ its *`configure`* method. And then extend this class, and make sure to
 class *`super.configure()`*. We are just using the Java inheritance
 technique.
 
+When a route calls another route, such as with `direct`, a failure in the called route is dealt with by the error
+handler of the called route, also when it is the default error handler, and the exception clauses of the calling
+route do not run for it. See xref:error-handler.adoc#_error_handling_across_routes[Error handling across routes]
+for what the calling route sees, and how to deal with the failure there instead.
+
 == How Does Camel Select Which Clause Should Handle a Given Thrown Exception?
 
 Camel uses *`DefaultExceptionPolicyStrategy`* to determine a strategy
