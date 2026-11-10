@@ -30,7 +30,6 @@ import jakarta.mail.search.DateTerm;
 public class NowSearchTerm extends ComparisonTerm {
 
     private static final long serialVersionUID = 1L;
-    private final int comparison;
     private final boolean sentDate;
     private final long offset;
 
@@ -108,16 +107,15 @@ public class NowSearchTerm extends ComparisonTerm {
 
         NowSearchTerm that = (NowSearchTerm) o;
 
-        if (sentDate != that.sentDate) {
-            return false;
-        }
-
-        return true;
+        return sentDate == that.sentDate && offset == that.offset;
     }
 
     @Override
     public int hashCode() {
-        return comparison;
+        int result = super.hashCode();
+        result = 31 * result + (sentDate ? 1 : 0);
+        result = 31 * result + Long.hashCode(offset);
+        return result;
     }
 
 }
