@@ -515,6 +515,9 @@ public class MainVaultTest {
         main.configure().vault().cyberark()
                 .withAuthToken("token")
                 .withUrl("http://conjur.com")
+                .withApiKey("key")
+                .withVerifySSL(false)
+                .withCertificatePath("/tmp/ca.pem")
                 .end();
 
         main.start();
@@ -527,6 +530,9 @@ public class MainVaultTest {
 
         Assertions.assertEquals("token", cfg.getAuthToken());
         Assertions.assertEquals("http://conjur.com", cfg.getUrl());
+        Assertions.assertEquals("key", cfg.getApiKey());
+        Assertions.assertFalse(cfg.isVerifySsl());
+        Assertions.assertEquals("/tmp/ca.pem", cfg.getCertificatePath());
         main.stop();
     }
 }
