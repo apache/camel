@@ -3,8 +3,8 @@
 :shortname: azure-iothub
 :artifactid: camel-azure-iothub
 :description: Send device telemetry and device-twin updates to Azure IoT Hub.
-:since: 4.16
-:supportlevel: Stable
+:since: 4.24
+:supportlevel: Preview
 :tabs-sync-option:
 :component-header: Only producer is supported
 //Manually maintained attributes
@@ -55,12 +55,6 @@ include::partial$component-endpoint-options.adoc[]
 include::partial$component-endpoint-headers.adoc[]
 // component options: END
 
-// endpoint options: START
-
-// endpoint options: END
-
-include::partial$component-endpoint-headers.adoc[]
-
 == Usage
 
 The producer sends the message body to Azure IoT Hub. The delivery mode selects
@@ -69,7 +63,8 @@ how the body is interpreted:
 * `TELEMETRY` - the body (a `byte[]` or `String`) is sent as a device-to-cloud message.
 * `TWIN` - the body (a `java.util.Map`) is applied as device-twin reported properties
   using a delta update (only changed properties are sent).
-* `BOTH` - performs both of the above.
+* `BOTH` - sends the message body as telemetry and applies twin reported properties from the
+  `CamelAzureIoTHubTwinProperties` header.
 
 Any payload decoding (for example Protobuf or CloudEvent to `Map`) must be done by a
 preceding processor in the route; this component is payload-agnostic.
@@ -82,6 +77,13 @@ It is credential- and payload-agnostic: it expects a ready-to-use per-device
 connection string (supplied on the endpoint or via the
 `CamelAzureIoTHubConnectionString` header) and a payload already in the shape it
 expects.
+
+[WARNING]
+====
+Passing the IoT Hub connection string in a message header is sensitive because it may
+travel through tracing, logging, or downstream endpoints. Use it only when needed and
+avoid persisting it in a message body or route metadata.
+====
 
 The following *control plane* and application-specific concerns are intentionally
 *out of scope* and must be handled by the application or dedicated tooling before a
@@ -123,5 +125,11 @@ from("direct:dynamic")
     .setHeader("CamelAzureIoTHubConnectionString", simple("${header.deviceConnectionString}"))
     .to("azure-iothub:placeholder?deliveryMode=TWIN");
 ------------------------------------------------------------
+
+[IMPORTANT]
+====
+The connection string is secret and should not be logged or propagated downstream unless
+it is strictly required. Prefer configuring it on the endpoint when possible.
+====
 
 include::spring-boot:partial$starter.adoc[]

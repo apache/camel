@@ -17,6 +17,7 @@
 package org.apache.camel.component.azure.iothub.operations;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.Message;
@@ -29,12 +30,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class TelemetryDeliveryStrategyTest {
 
-    private final TelemetryDeliveryStrategy strategy = new TelemetryDeliveryStrategy("application/x-protobuf", 5000);
+    private final TelemetryDeliveryStrategy strategy
+            = new TelemetryDeliveryStrategy("application/x-protobuf", Duration.ofMillis(5000));
 
     @Test
     void testSupports() {
@@ -51,7 +54,7 @@ class TelemetryDeliveryStrategyTest {
         strategy.execute(client, "dev1", new DeliveryContext(body, null));
 
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
-        verify(client).sendEvent(captor.capture(), org.mockito.ArgumentMatchers.eq(5000));
+        verify(client).sendEvent(captor.capture(), eq(5000));
         Message sent = captor.getValue();
         assertArrayEquals(body, sent.getBytes());
         assertEquals("application/x-protobuf", sent.getContentType());
@@ -64,7 +67,7 @@ class TelemetryDeliveryStrategyTest {
         strategy.execute(client, "dev1", new DeliveryContext("hello", null));
 
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
-        verify(client).sendEvent(captor.capture(), org.mockito.ArgumentMatchers.eq(5000));
+        verify(client).sendEvent(captor.capture(), eq(5000));
         assertArrayEquals("hello".getBytes(StandardCharsets.UTF_8), captor.getValue().getBytes());
     }
 

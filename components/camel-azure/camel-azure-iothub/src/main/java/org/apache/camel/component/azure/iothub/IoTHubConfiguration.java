@@ -48,8 +48,13 @@ public class IoTHubConfiguration implements Cloneable {
               description = "Content type applied to telemetry messages.")
     private String contentType = "application/json";
 
+    @UriParam(label = "producer", defaultValue = "10s",
+              description = "Timeout for a device-to-cloud telemetry send. Twin updates do not accept a separate timeout in the Azure SDK.")
+    private Duration sendTimeout = Duration.ofSeconds(10);
+
+    @Deprecated
     @UriParam(label = "producer", defaultValue = "10000",
-              description = "Timeout in milliseconds for a device-to-cloud telemetry send.")
+              description = "Deprecated alias for sendTimeout: timeout in milliseconds for a device-to-cloud telemetry send.")
     private int sendTimeoutMillis = 10000;
 
     @UriParam(label = "advanced", defaultValue = "5m",
@@ -100,12 +105,24 @@ public class IoTHubConfiguration implements Cloneable {
         this.contentType = contentType;
     }
 
+    public Duration getSendTimeout() {
+        return sendTimeout;
+    }
+
+    public void setSendTimeout(Duration sendTimeout) {
+        this.sendTimeout = sendTimeout;
+        this.sendTimeoutMillis = (int) sendTimeout.toMillis();
+    }
+
+    @Deprecated
     public int getSendTimeoutMillis() {
         return sendTimeoutMillis;
     }
 
+    @Deprecated
     public void setSendTimeoutMillis(int sendTimeoutMillis) {
         this.sendTimeoutMillis = sendTimeoutMillis;
+        this.sendTimeout = Duration.ofMillis(sendTimeoutMillis);
     }
 
     public Duration getDeviceClientIdleTimeout() {

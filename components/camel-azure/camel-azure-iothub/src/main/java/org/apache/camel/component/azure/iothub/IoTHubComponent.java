@@ -17,8 +17,10 @@
 package org.apache.camel.component.azure.iothub;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.azure.iothub.client.DeviceClientPool;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
@@ -32,6 +34,7 @@ public class IoTHubComponent extends DefaultComponent {
 
     @Metadata
     private IoTHubConfiguration configuration = new IoTHubConfiguration();
+    private volatile DeviceClientPool clientPool;
 
     public IoTHubComponent() {
     }
@@ -52,6 +55,35 @@ public class IoTHubComponent extends DefaultComponent {
 
     public IoTHubConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public DeviceClientPool getOrCreateClientPool() {
+        DeviceClientPool pool = clientPool;
+        if (pool == null) {
+            synchronized (this) {
+                pool = clientPool;
+                if (pool == null) {
+                    ScheduledExecutorService executor = getCamelContext().getExecutorServiceManager()
+                            .newSingleThreadScheduledExecutor(this, "AzureIoTHubEvictor");
+                    pool = new DeviceClientPool(
+                            configuration.getDeviceClientIdleTimeout(),
+                            configuration.getDeviceClientEvictionInterval(), executor);
+                    pool.start();
+                    clientPool = pool;
+                }
+            }
+        }
+        return pool;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        DeviceClientPool pool = clientPool;
+        if (pool != null) {
+            pool.shutdown();
+            clientPool = null;
+        }
+        super.doStop();
     }
 
     /**

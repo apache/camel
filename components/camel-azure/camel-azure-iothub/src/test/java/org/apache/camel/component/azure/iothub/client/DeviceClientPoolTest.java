@@ -17,11 +17,13 @@
 package org.apache.camel.component.azure.iothub.client;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -47,8 +49,8 @@ class DeviceClientPoolTest {
             return client;
         });
 
-        DeviceClient first = pool.getOrCreate("dev1", CS, IotHubClientProtocol.MQTT);
-        DeviceClient second = pool.getOrCreate("dev1", CS, IotHubClientProtocol.MQTT);
+        DeviceClient first = pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+        DeviceClient second = pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
 
         assertSame(client, first);
         assertSame(first, second);
@@ -58,13 +60,21 @@ class DeviceClientPoolTest {
     }
 
     @Test
+    void testRejectsMismatchedDeviceId() {
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> mock(DeviceClient.class));
+
+        assertThrows(IllegalArgumentException.class, () -> pool.getOrCreate("dev1", CS, IotHubClientProtocol.MQTT));
+    }
+
+    @Test
     void testRemoveClosesClient() throws Exception {
         DeviceClient client = mock(DeviceClient.class);
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
         pool.setDeviceClientFactory((cs, protocol) -> client);
 
-        pool.getOrCreate("dev1", CS, IotHubClientProtocol.MQTT);
-        pool.remove("dev1");
+        pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+        pool.remove("d");
 
         assertEquals(0, pool.getActiveClientCount());
         verify(client, times(1)).close();
@@ -76,12 +86,12 @@ class DeviceClientPoolTest {
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
         pool.setDeviceClientFactory((cs, protocol) -> client);
 
-        pool.getOrCreate("dev1", CS, IotHubClientProtocol.MQTT);
+        pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
         pool.shutdown();
 
         assertEquals(0, pool.getActiveClientCount());
         verify(client, times(1)).close();
-        assertThrows(IllegalStateException.class, () -> pool.getOrCreate("dev2", CS, IotHubClientProtocol.MQTT));
+        assertThrows(IllegalStateException.class, () -> pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT));
     }
 
     @Test
@@ -94,16 +104,11 @@ class DeviceClientPoolTest {
         pool.setNowMillisSupplier(clock::get);
         pool.start();
         try {
-            pool.getOrCreate("dev1", CS, IotHubClientProtocol.MQTT);
+            pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
             assertEquals(1, pool.getActiveClientCount());
 
-            // advance well beyond the idle timeout so the scheduled evictor removes it
             clock.set(10_000);
-
-            long deadline = System.currentTimeMillis() + 2000;
-            while (pool.getActiveClientCount() != 0 && System.currentTimeMillis() < deadline) {
-                Thread.sleep(10);
-            }
+            Awaitility.await().atMost(2, TimeUnit.SECONDS).until(() -> pool.getActiveClientCount() == 0);
             assertEquals(0, pool.getActiveClientCount(), "idle client should have been evicted");
             verify(client, Mockito.atLeastOnce()).close();
         } finally {
@@ -118,7 +123,7 @@ class DeviceClientPoolTest {
             throw new IllegalArgumentException("bad connection string");
         });
 
-        assertThrows(RuntimeException.class, () -> pool.getOrCreate("dev1", CS, IotHubClientProtocol.MQTT));
+        assertThrows(RuntimeException.class, () -> pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT));
         assertEquals(0, pool.getActiveClientCount());
     }
 }

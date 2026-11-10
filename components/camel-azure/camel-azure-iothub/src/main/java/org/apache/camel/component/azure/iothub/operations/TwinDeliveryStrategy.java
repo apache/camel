@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.iothub.operations;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,9 +52,6 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
         }
 
         Map<String, Object> propertyMap = clean(twinProperties);
-
-        client.subscribeToDesiredProperties((twinUpdate, ctx) -> {
-        }, null);
         Twin twin = client.getTwin();
         TwinCollection reportedProperties = twin.getReportedProperties();
 
@@ -63,19 +61,33 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
             return;
         }
 
-        reportedProperties.putAll(delta);
-        client.updateReportedProperties(reportedProperties);
+        TwinCollection update = new TwinCollection(delta);
+        client.updateReportedProperties(update);
         LOG.debug("Device twin updated for device: {}", deviceId);
     }
 
     private Map<String, Object> computeDelta(Map<String, Object> newMap, Map<String, Object> existingMap) {
         Map<String, Object> delta = new HashMap<>();
         for (Map.Entry<String, Object> e : newMap.entrySet()) {
-            if (!Objects.equals(e.getValue(), existingMap.get(e.getKey()))) {
+            if (!sameValue(e.getValue(), existingMap.get(e.getKey()))) {
                 delta.put(e.getKey(), e.getValue());
             }
         }
         return delta;
+    }
+
+    private boolean sameValue(Object left, Object right) {
+        if (left == null || right == null) {
+            return Objects.equals(left, right);
+        }
+        if (left instanceof Number && right instanceof Number) {
+            return numericEquals((Number) left, (Number) right);
+        }
+        return Objects.equals(left, right);
+    }
+
+    private boolean numericEquals(Number left, Number right) {
+        return new BigDecimal(left.toString()).compareTo(new BigDecimal(right.toString())) == 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -83,13 +95,12 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
         Map<String, Object> cleaned = new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             Object value = entry.getValue();
-            if (value == null) {
-                continue;
-            }
             if (value instanceof Map) {
                 Map<String, Object> nested = clean((Map<String, Object>) value);
                 if (!nested.isEmpty()) {
                     cleaned.put(entry.getKey(), nested);
+                } else {
+                    cleaned.put(entry.getKey(), null);
                 }
             } else if (value instanceof List<?> list) {
                 List<Object> cleanedList = new ArrayList<>();
@@ -98,14 +109,14 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
                         Map<String, Object> nested = clean((Map<String, Object>) item);
                         if (!nested.isEmpty()) {
                             cleanedList.add(nested);
+                        } else {
+                            cleanedList.add(null);
                         }
-                    } else if (item != null) {
+                    } else {
                         cleanedList.add(item);
                     }
                 }
-                if (!cleanedList.isEmpty()) {
-                    cleaned.put(entry.getKey(), cleanedList);
-                }
+                cleaned.put(entry.getKey(), cleanedList);
             } else {
                 cleaned.put(entry.getKey(), value);
             }

@@ -17,6 +17,7 @@
 package org.apache.camel.component.azure.iothub.operations;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.UUID;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
@@ -34,11 +35,11 @@ public class TelemetryDeliveryStrategy implements DeliveryStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(TelemetryDeliveryStrategy.class);
 
     private final String contentType;
-    private final int sendTimeoutMillis;
+    private final Duration sendTimeout;
 
-    public TelemetryDeliveryStrategy(String contentType, int sendTimeoutMillis) {
+    public TelemetryDeliveryStrategy(String contentType, Duration sendTimeout) {
         this.contentType = contentType;
-        this.sendTimeoutMillis = sendTimeoutMillis;
+        this.sendTimeout = sendTimeout;
     }
 
     @Override
@@ -50,8 +51,9 @@ public class TelemetryDeliveryStrategy implements DeliveryStrategy {
         msg.setContentEncoding(StandardCharsets.UTF_8.name());
         msg.setMessageId(UUID.randomUUID().toString());
 
-        LOG.debug("Dispatching telemetry for device: {}", deviceId);
-        client.sendEvent(msg, sendTimeoutMillis);
+        int timeoutMillis = Math.toIntExact(sendTimeout.toMillis());
+        LOG.debug("Dispatching telemetry for device: {} with timeout {}ms", deviceId, timeoutMillis);
+        client.sendEvent(msg, timeoutMillis);
         LOG.debug("Telemetry sent for device: {}", deviceId);
     }
 

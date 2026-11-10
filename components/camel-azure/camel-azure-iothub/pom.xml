@@ -32,12 +32,6 @@
     <name>Camel :: Azure :: IoT Hub</name>
     <description>Camel Azure IoT Hub Component</description>
 
-    <properties>
-        <!-- Azure IoT device SDK is published under com.microsoft.azure.sdk.iot
-             and is NOT part of azure-sdk-bom, so its version is pinned here. -->
-        <azure-iot-device-client-version>2.5.0</azure-iot-device-client-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -65,4 +59,3 @@
         </dependency>
     </dependencies>
 </project>
-

@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Send device telemetry and device-twin updates to Azure IoT Hub.
  */
-@UriEndpoint(firstVersion = "4.16.0", scheme = "azure-iothub", title = "Azure IoT Hub",
+@UriEndpoint(firstVersion = "4.24.0", scheme = "azure-iothub", title = "Azure IoT Hub",
              syntax = "azure-iothub:deviceId", producerOnly = true,
              category = { Category.CLOUD, Category.IOT, Category.MESSAGING },
              headersClass = IoTHubConstants.class)

@@ -20,16 +20,18 @@ import java.util.List;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
-import com.microsoft.azure.sdk.iot.device.exceptions.IotHubClientException;
 import org.apache.camel.component.azure.iothub.IoTHubDeliveryMode;
 import org.apache.camel.component.azure.iothub.client.DeviceClientPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Dispatches a message body to Azure IoT Hub, reusing pooled {@link DeviceClient} instances and recovering from
- * connection-level failures with a single retry (first with the same client if the error is retryable, otherwise with a
- * freshly created client).
+ * Dispatches a message body to Azure IoT Hub using a single delivery attempt per exchange.
+ *
+ * <p>
+ * Camel redelivery and the Azure SDK retry policy handle transient failures; this component does not add a second retry
+ * layer that can duplicate telemetry or twin updates.
+ * </p>
  */
 public class IoTHubSendOperations {
 
@@ -44,7 +46,7 @@ public class IoTHubSendOperations {
     }
 
     /**
-     * @return {@code true} if delivered, {@code false} if skipped (e.g. shutdown or empty payload)
+     * @throws Exception if the send is invalid or cannot be delivered
      */
     public boolean send(
             String deviceId, String connectionString, IotHubClientProtocol protocol,
@@ -52,38 +54,24 @@ public class IoTHubSendOperations {
             throws Exception {
 
         if (context == null || context.isEmpty()) {
-            LOG.warn("Skipping empty payload for device: {}", deviceId);
-            return false;
+            throw new IllegalArgumentException("No telemetry payload or twin properties provided for device: " + deviceId);
         }
         if (Thread.currentThread().isInterrupted()) {
-            return false;
+            throw new InterruptedException("Thread interrupted before dispatch for device: " + deviceId);
         }
 
         DeviceClient client = pool.getOrCreate(deviceId, connectionString, protocol);
         try {
             executeStrategies(client, deviceId, context, mode);
-            return true;
-        } catch (Exception firstFailure) {
-            if (isShutdownInterruption(firstFailure)) {
-                return false;
+        } catch (Exception e) {
+            if (isShutdownInterruption(e)) {
+                InterruptedException interrupted = new InterruptedException("Dispatch interrupted for device: " + deviceId);
+                interrupted.initCause(e);
+                throw interrupted;
             }
-
-            if (isRetryable(firstFailure)) {
-                LOG.warn("Transient dispatch failure for device [{}]; retrying once with existing client", deviceId);
-                executeStrategies(client, deviceId, context, mode);
-                return true;
-            }
-
-            if (!shouldRecreateClient(firstFailure)) {
-                throw firstFailure;
-            }
-
-            LOG.warn("Connection failure for device [{}]; retrying with a new client", deviceId, firstFailure);
-            pool.remove(deviceId);
-            DeviceClient retryClient = pool.getOrCreate(deviceId, connectionString, protocol);
-            executeStrategies(retryClient, deviceId, context, mode);
-            return true;
+            throw e;
         }
+        return true;
     }
 
     private void executeStrategies(DeviceClient client, String deviceId, DeliveryContext context, IoTHubDeliveryMode mode)
@@ -93,35 +81,6 @@ public class IoTHubSendOperations {
                 strategy.execute(client, deviceId, context);
             }
         }
-    }
-
-    private boolean isRetryable(Throwable t) {
-        IotHubClientException hub = findCause(t, IotHubClientException.class);
-        return hub != null && hub.isRetryable();
-    }
-
-    private boolean shouldRecreateClient(Throwable t) {
-        return findCause(t, IllegalStateException.class) != null || containsTypeName(t, "TransportException");
-    }
-
-    private boolean containsTypeName(Throwable t, String simpleName) {
-        while (t != null) {
-            if (t.getClass().getSimpleName().equals(simpleName)) {
-                return true;
-            }
-            t = t.getCause();
-        }
-        return false;
-    }
-
-    private <T extends Throwable> T findCause(Throwable t, Class<T> type) {
-        while (t != null) {
-            if (type.isInstance(t)) {
-                return type.cast(t);
-            }
-            t = t.getCause();
-        }
-        return null;
     }
 
     private boolean isShutdownInterruption(Throwable t) {

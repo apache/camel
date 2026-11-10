@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.iothub.operations;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
@@ -28,7 +29,6 @@ import org.apache.camel.component.azure.iothub.client.DeviceClientPool;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -55,7 +55,8 @@ class IoTHubSendOperationsTest {
         CountingStrategy strategy = new CountingStrategy(0);
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, null), List.of(strategy));
 
-        assertFalse(ops.send("dev1", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, null));
         assertEquals(0, strategy.executed());
     }
 
@@ -65,8 +66,9 @@ class IoTHubSendOperationsTest {
         CountingStrategy strategy = new CountingStrategy(0);
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, null), List.of(strategy));
 
-        assertFalse(ops.send("dev1", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY,
-                new DeliveryContext(null, null)));
+        assertThrows(IllegalArgumentException.class,
+                () -> ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY,
+                        new DeliveryContext(null, null)));
         assertEquals(0, strategy.executed());
     }
 
@@ -76,7 +78,7 @@ class IoTHubSendOperationsTest {
         CountingStrategy strategy = new CountingStrategy(0);
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, null), List.of(strategy));
 
-        assertTrue(ops.send("dev1", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
+        assertTrue(ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
         assertEquals(1, strategy.executed());
     }
 
@@ -88,39 +90,39 @@ class IoTHubSendOperationsTest {
         IoTHubSendOperations ops
                 = new IoTHubSendOperations(poolReturning(client, null), List.of(telemetry, twin));
 
-        assertTrue(ops.send("dev1", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.BOTH,
-                new DeliveryContext("payload", java.util.Map.of("firmware", "1.0"))));
+        assertTrue(ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.BOTH,
+                new DeliveryContext("payload", Map.of("firmware", "1.0"))));
         assertEquals(1, telemetry.executed());
         assertEquals(1, twin.executed());
     }
 
     @Test
-    void testRetryableFailureRetriesOnceWithSameClient() throws Exception {
+    void testRetryableFailureRetriesOnceWithSameClient() {
         DeviceClient client = mock(DeviceClient.class);
         IotHubClientException retryable = mock(IotHubClientException.class);
         when(retryable.isRetryable()).thenReturn(true);
 
-        // fail first with a retryable cause, then succeed
         CountingStrategy strategy = new CountingStrategy(1, new RuntimeException(retryable));
         AtomicInteger created = new AtomicInteger();
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, created), List.of(strategy));
 
-        assertTrue(ops.send("dev1", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
-        assertEquals(2, strategy.attempts(), "should have attempted twice");
-        assertEquals(1, created.get(), "retryable path must reuse the same client (no recreate)");
+        assertThrows(RuntimeException.class,
+                () -> ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
+        assertEquals(1, strategy.attempts(), "single delivery attempt retains Azure SDK/Camel retry semantics");
+        assertEquals(1, created.get(), "no client recreation for a single delivery attempt");
     }
 
     @Test
-    void testConnectionFailureRecreatesClient() throws Exception {
+    void testConnectionFailureDoesNotRetryOrRecreateClient() {
         DeviceClient client = mock(DeviceClient.class);
-        // IllegalStateException triggers client recreation
         CountingStrategy strategy = new CountingStrategy(1, new IllegalStateException("broken connection"));
         AtomicInteger created = new AtomicInteger();
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, created), List.of(strategy));
 
-        assertTrue(ops.send("dev1", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
-        assertEquals(2, strategy.attempts());
-        assertEquals(2, created.get(), "connection failure must recreate the client");
+        assertThrows(IllegalStateException.class,
+                () -> ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
+        assertEquals(1, strategy.attempts());
+        assertEquals(1, created.get(), "single send attempt must not recreate the client");
     }
 
     @Test
@@ -130,7 +132,7 @@ class IoTHubSendOperationsTest {
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, null), List.of(strategy));
 
         assertThrows(IllegalArgumentException.class,
-                () -> ops.send("dev1", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
+                () -> ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
     }
 
     private static DeliveryContext telemetry(Object body) {

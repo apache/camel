@@ -44,11 +44,11 @@ public class IoTHubProducer extends DefaultProducer {
         super.doStart();
         final IoTHubConfiguration config = getConfiguration();
 
-        pool = new DeviceClientPool(config.getDeviceClientIdleTimeout(), config.getDeviceClientEvictionInterval());
-        pool.start();
+        IoTHubComponent component = (IoTHubComponent) getEndpoint().getComponent();
+        pool = component.getOrCreateClientPool();
 
         List<DeliveryStrategy> strategies = List.of(
-                new TelemetryDeliveryStrategy(config.getContentType(), config.getSendTimeoutMillis()),
+                new TelemetryDeliveryStrategy(config.getContentType(), config.getSendTimeout()),
                 new TwinDeliveryStrategy());
 
         operations = new IoTHubSendOperations(pool, strategies);
@@ -113,10 +113,7 @@ public class IoTHubProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (pool != null) {
-            pool.shutdown();
-            pool = null;
-        }
+        // component owns the shared pool lifecycle
         super.doStop();
     }
 

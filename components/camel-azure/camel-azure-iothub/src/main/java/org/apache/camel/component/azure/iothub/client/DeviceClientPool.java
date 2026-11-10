@@ -32,7 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread-safe pool of Azure IoT Hub {@link DeviceClient} instances, keyed by device id.
+ * Thread-safe pool of Azure IoT Hub {@link DeviceClient} instances, keyed by the device identity in the connection
+ * string instead of only the raw device id.
  *
  * <p>
  * Clients are created lazily, reused across messages, and evicted after an idle timeout. The Azure device SDK does not
@@ -72,8 +73,13 @@ public class DeviceClientPool {
     private ScheduledExecutorService evictionExecutor;
 
     public DeviceClientPool(Duration idleTimeout, Duration evictionInterval) {
+        this(idleTimeout, evictionInterval, null);
+    }
+
+    public DeviceClientPool(Duration idleTimeout, Duration evictionInterval, ScheduledExecutorService evictionExecutor) {
         this.idleTimeout = isPositive(idleTimeout) ? idleTimeout : Duration.ofMinutes(5);
         this.evictionInterval = isPositive(evictionInterval) ? evictionInterval : Duration.ofSeconds(30);
+        this.evictionExecutor = evictionExecutor;
     }
 
     private static boolean isPositive(Duration d) {
@@ -81,11 +87,13 @@ public class DeviceClientPool {
     }
 
     public void start() {
-        evictionExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "camel-azure-iothub-device-client-evictor");
-            t.setDaemon(true);
-            return t;
-        });
+        if (evictionExecutor == null) {
+            evictionExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "camel-azure-iothub-device-client-evictor");
+                t.setDaemon(true);
+                return t;
+            });
+        }
         evictionExecutor.scheduleAtFixedRate(this::evictIdleClients,
                 evictionInterval.toMillis(), evictionInterval.toMillis(), TimeUnit.MILLISECONDS);
         LOG.info("DeviceClient eviction enabled. idleTimeout={}s, interval={}s",
@@ -96,29 +104,128 @@ public class DeviceClientPool {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
+
+        String poolKey = resolvePoolKey(deviceId, connectionString);
         final long now = nowMillisSupplier.getAsLong();
 
-        PooledClient pooled = pool.compute(deviceId, (id, current) -> {
-            if (current != null) {
-                current.touch(now);
-                return current;
-            }
-            DeviceClient client = createClient(id, connectionString, protocol);
-            return client == null ? null : new PooledClient(client, now);
-        });
-
-        if (pooled == null) {
-            throw new IllegalStateException("Client creation interrupted due to shutdown: " + deviceId);
+        PooledClient existing = pool.get(poolKey);
+        if (existing != null) {
+            existing.touch(now);
+            return existing.client;
         }
-        pooled.touch(now);
+
+        DeviceClient client = createClient(deviceId, connectionString, protocol);
+        PooledClient pooled = new PooledClient(client, now);
+        PooledClient previous = pool.putIfAbsent(poolKey, pooled);
+        if (previous != null) {
+            pooled.client.close();
+            previous.touch(now);
+            return previous.client;
+        }
         return pooled.client;
+    }
+
+    public void remove(String deviceId, String connectionString) {
+        String poolKey = resolvePoolKey(deviceId, connectionString);
+        PooledClient pooled = pool.remove(poolKey);
+        if (pooled != null) {
+            closeQuietly(deviceId, pooled.client, "explicit removal");
+        }
+    }
+
+    public void remove(String deviceId) {
+        if (deviceId == null || deviceId.isBlank()) {
+            return;
+        }
+
+        PooledClient pooled = pool.remove(deviceId);
+        if (pooled != null) {
+            closeQuietly(deviceId, pooled.client, "explicit removal");
+            return;
+        }
+
+        for (Iterator<Map.Entry<String, PooledClient>> it = pool.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, PooledClient> entry = it.next();
+            String key = entry.getKey();
+            if (matchesDeviceId(key, deviceId)) {
+                if (pool.remove(key, entry.getValue())) {
+                    closeQuietly(deviceId, entry.getValue().client, "explicit removal");
+                    return;
+                }
+            }
+        }
+    }
+
+    private static boolean matchesDeviceId(String poolKey, String deviceId) {
+        if (poolKey == null) {
+            return false;
+        }
+        if (poolKey.equals(deviceId)) {
+            return true;
+        }
+        String[] parts = poolKey.split(":");
+        return parts.length >= 2 && parts[1].equals(deviceId);
+    }
+
+    private static String resolvePoolKey(String deviceId, String connectionString) {
+        if (deviceId == null || deviceId.isBlank()) {
+            return connectionString;
+        }
+        String[] items = connectionString == null ? new String[0] : connectionString.split(";");
+        String hostName = null;
+        String csDeviceId = null;
+        String moduleId = null;
+        for (String item : items) {
+            if (item == null || item.isBlank()) {
+                continue;
+            }
+            int eq = item.indexOf('=');
+            if (eq <= 0) {
+                continue;
+            }
+            String key = item.substring(0, eq).trim();
+            String value = item.substring(eq + 1).trim();
+            switch (key) {
+                case "HostName" -> hostName = value;
+                case "DeviceId" -> csDeviceId = value;
+                case "ModuleId" -> moduleId = value;
+                default -> {
+                    // ignore other connection-string fields
+                }
+            }
+        }
+        if (csDeviceId != null && !csDeviceId.equals(deviceId)) {
+            throw new IllegalArgumentException(
+                    "Device id '" + deviceId + "' does not match the connection string's DeviceId '" + csDeviceId + "'");
+        }
+        StringBuilder identity = new StringBuilder();
+        if (hostName != null && !hostName.isBlank()) {
+            identity.append(hostName);
+        }
+        if (csDeviceId != null && !csDeviceId.isBlank()) {
+            if (!identity.isEmpty()) {
+                identity.append(':');
+            }
+            identity.append(csDeviceId);
+        }
+        if (moduleId != null && !moduleId.isBlank()) {
+            if (!identity.isEmpty()) {
+                identity.append(':');
+            }
+            identity.append(moduleId);
+        }
+        return identity.length() > 0 ? identity.toString() : deviceId;
     }
 
     private DeviceClient createClient(String deviceId, String connectionString, IotHubClientProtocol protocol) {
         try {
             DeviceClient client = deviceClientFactory.create(connectionString, protocol);
             client.open(true);
-            LOG.info("Created new DeviceClient for device: {}", deviceId);
+            // Avoid duplicate desired-property subscriptions: subscribe only if not already subscribed.
+            // The Azure DeviceClient does not expose a way to check, so we rely on only subscribing once per client creation.
+            client.subscribeToDesiredProperties((twinUpdate, ctx) -> {
+            }, null);
+            LOG.debug("Created new DeviceClient for device: {}", deviceId);
             return client;
         } catch (Exception e) {
             if (isShutdownInterruption(e)) {
@@ -127,13 +234,6 @@ public class DeviceClientPool {
                 return null;
             }
             throw new RuntimeException("DeviceClient creation failed for device: " + deviceId, e);
-        }
-    }
-
-    public void remove(String deviceId) {
-        PooledClient pooled = pool.remove(deviceId);
-        if (pooled != null) {
-            closeQuietly(deviceId, pooled.client, "explicit removal");
         }
     }
 

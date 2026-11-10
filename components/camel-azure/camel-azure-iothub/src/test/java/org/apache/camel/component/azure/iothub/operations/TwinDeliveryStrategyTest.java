@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -81,7 +82,7 @@ class TwinDeliveryStrategyTest {
 
         strategy.execute(client, "dev1", new DeliveryContext(null, body));
 
-        verify(client, never()).updateReportedProperties(org.mockito.ArgumentMatchers.any());
+        verify(client, never()).updateReportedProperties(any());
     }
 
     @Test
@@ -111,4 +112,22 @@ class TwinDeliveryStrategyTest {
         assertThrows(IllegalArgumentException.class,
                 () -> strategy.execute(client, "dev1", new DeliveryContext("telemetry-only", null)));
     }
+
+    @Test
+    void testNumberTypesAreNormalized() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        Twin twin = mock(Twin.class);
+        TwinCollection reported = new TwinCollection();
+        reported.put("battery", 95L);
+        when(client.getTwin()).thenReturn(twin);
+        when(twin.getReportedProperties()).thenReturn(reported);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("battery", 95);
+
+        strategy.execute(client, "dev1", new DeliveryContext(null, body));
+
+        verify(client, never()).updateReportedProperties(any());
+    }
+
 }

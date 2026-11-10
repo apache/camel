@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.azure.iothub;
 
+import java.time.Duration;
+
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
@@ -38,13 +40,14 @@ class IoTHubComponentTest extends CamelTestSupport {
         assertEquals(IotHubClientProtocol.MQTT, endpoint.getConfiguration().getProtocol());
         assertEquals(IoTHubDeliveryMode.TELEMETRY, endpoint.getConfiguration().getDeliveryMode());
         assertEquals("application/json", endpoint.getConfiguration().getContentType());
+        assertEquals(Duration.ofSeconds(10), endpoint.getConfiguration().getSendTimeout());
         assertEquals(10000, endpoint.getConfiguration().getSendTimeoutMillis());
     }
 
     @Test
     void testCreateEndpointWithConfig() {
         final String uri = "azure-iothub:dev01?connectionString=cs&protocol=AMQPS&deliveryMode=TWIN"
-                           + "&contentType=application/x-protobuf&sendTimeoutMillis=5000"
+                           + "&contentType=application/x-protobuf&sendTimeout=5s"
                            + "&deviceClientIdleTimeout=2m&deviceClientEvictionInterval=10s";
 
         final IoTHubEndpoint endpoint = context.getEndpoint(uri, IoTHubEndpoint.class);
@@ -54,6 +57,7 @@ class IoTHubComponentTest extends CamelTestSupport {
         assertEquals(IotHubClientProtocol.AMQPS, endpoint.getConfiguration().getProtocol());
         assertEquals(IoTHubDeliveryMode.TWIN, endpoint.getConfiguration().getDeliveryMode());
         assertEquals("application/x-protobuf", endpoint.getConfiguration().getContentType());
+        assertEquals(Duration.ofSeconds(5), endpoint.getConfiguration().getSendTimeout());
         assertEquals(5000, endpoint.getConfiguration().getSendTimeoutMillis());
         assertEquals(120, endpoint.getConfiguration().getDeviceClientIdleTimeout().getSeconds());
         assertEquals(10, endpoint.getConfiguration().getDeviceClientEvictionInterval().getSeconds());
