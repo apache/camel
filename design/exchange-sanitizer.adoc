@@ -5,7 +5,7 @@ authors:
 reviewers: ["@davsclaus"]
 approvers: []
 creation-date: 2026-11-05
-last-updated: 2026-11-08
+last-updated: 2026-11-09
 status: implementable
 see-also:
   - "CAMEL-26630"
@@ -45,8 +45,8 @@ completions of an exchange. More than one listener can be installed, and they ar
 chaos uses and from the advices of the debugger, the tracer and JMX, so all of them can run together. With no listener
 installed, the routes are built as today and a step costs nothing more.
 
-Steps 1 and 2 of the order of work are built: the step listener SPI, and the module with R1 (without "still
-pending"), the JUnit extension and the CI switch. The rest is design.
+Steps 1, 2 and 6 of the order of work are built: the step listener SPI, the module with R1, the JUnit extension and
+the CI switch, and R1 "still pending". The rest is design.
 
 == Motivation
 
@@ -187,8 +187,11 @@ and `process` must not throw. R1 reports:
 . *Still pending.* A call whose callback has not come after `camel.sanitizer.pendingTimeout`. This is not a violation,
   as a slow endpoint looks the same; it is a warning that adds to the `inflight` console what it cannot know: which
   step's callback the exchange waits for, and whether that step threw. Only the innermost pending call of an exchange
-  is reported, timed from the last call or callback of that exchange, so a long split or a `to("direct:...")` that
-  waits for its children is not. When the context stops, the calls still pending are listed.
+  is reported, timed from the last call or callback of that exchange (also a return or a throw, and the steps of the
+  copies that a split, multicast, recipient list, enrich, kamelet, circuit breaker or `to("kamelet:...")` step of it
+  waits for), so a long split or a `to("direct:...")` that waits for its children is not. A call that threw stays
+  pending until its callback comes or the exchange is done. When the context stops, the calls still pending are
+  listed.
 
 The check is at the processor of a step. A processor that is not a step, such as the producer of a recipient of a
 recipient list (CAMEL-26601), is seen through its step: the recipient list that does not complete.
@@ -536,14 +539,20 @@ initializes, before the routes are created, the plugin reads the profile and the
   an application in prod); with no profile it stays off unless enabled, as for chaos;
 * when it installs, it logs a WARN that the sanitizer is on and costs time per step (in tests, once per JVM at WARN
   and then at DEBUG, so a suite's log is not filled with it);
-* it adds its step listener, its on completion listener, an `EventNotifier` for exchange created, completed and
-  failed (it ignores the other events), and the R4 hook;
+* it adds its step listener, its on completion listener, an `EventNotifier` for exchange completed and failed (it
+  ignores the other events; R1 "still pending" uses it to drop an exchange that is done), and the R4 hook;
 * it keeps its records of step calls in their state (see above), and a bounded map of the pending calls per exchange,
-  with weak keys, for R1 "still pending" and R3; its R2 records hold the on completion and ids, not the exchanges.
-  The bound (10 000 pending calls) is a safety net, not a sampling limit: when it is reached, the oldest pending call
-  is dropped, the sanitizer counts it, logs one WARN ("checks incomplete: N pending calls dropped") and shows the count
-  in the dev console and the JUnit report, so a call it stopped watching is never lost silently. A test that reaches
-  the bound is told so, rather than passing.
+  for R1 "still pending" and R3, keyed by the id of the exchange and holding no exchange (not weak keys: a processor
+  that drops the callback usually leaves nothing that refers to the exchange, so a weak entry would go exactly when the
+  warning is needed); its R2 records hold the on completion and ids, not the exchanges.
+  The map is split in stripes with a lock each, keyed by the outermost exchange (a part, and a copy made while its
+  exchange is in the map, go to the stripe of that exchange), so routing threads that work on unrelated exchanges do
+  not wait for one lock. The bound (10 000 pending calls) is a safety net, not a sampling limit. Each stripe has an
+  even share of it, and the share is soft: a stripe past its share sums the sizes of the stripes without their locks,
+  and only while they hold more than 10 000 in all is its oldest pending call dropped; the sanitizer counts it, logs
+  one WARN ("checks incomplete: N pending calls dropped") and shows the count in its report (and in the dev console),
+  so a call it stopped watching is never lost silently. For R1 "still pending", which only warns, that is all; when R3
+  uses the map, a test that reaches the bound is told so, rather than passing.
 
 It changes nothing else: no route policies, no interceptors, no changed components.
 
@@ -698,7 +707,7 @@ Each step is its own pull request after this document:
 . camel-core: the on completion listener SPI, the new `UnitOfWork` method and the calls, with the JMH run; then R2.
 . R3: the `AsyncProcessor` contract, then the sampled overlaps, with the runs on the async component suites.
 . The dev console, `camel get sanitizer` and `camel run --sanitizer`.
-. R1 "still pending".
+. R1 "still pending". Done.
 . R4 and its hook on the `ExecutorServiceManager`, if the earlier steps show it is still wanted.
 
 == Alternatives considered

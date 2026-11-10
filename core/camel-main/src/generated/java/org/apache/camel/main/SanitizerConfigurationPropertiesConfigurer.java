@@ -25,6 +25,7 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("Checks", java.lang.String.class);
         map.put("Enabled", java.lang.Boolean.class);
+        map.put("PendingTimeout", java.lang.String.class);
         map.put("ReportOnShutdown", boolean.class);
         map.put("StackDepth", int.class);
         ALL_OPTIONS = map;
@@ -36,6 +37,8 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "checks": target.setChecks(property(camelContext, java.lang.String.class, value)); return true;
         case "enabled": target.setEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "pendingtimeout":
+        case "pendingTimeout": target.setPendingTimeout(property(camelContext, java.lang.String.class, value)); return true;
         case "reportonshutdown":
         case "reportOnShutdown": target.setReportOnShutdown(property(camelContext, boolean.class, value)); return true;
         case "stackdepth":
@@ -54,6 +57,8 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "checks": return java.lang.String.class;
         case "enabled": return java.lang.Boolean.class;
+        case "pendingtimeout":
+        case "pendingTimeout": return java.lang.String.class;
         case "reportonshutdown":
         case "reportOnShutdown": return boolean.class;
         case "stackdepth":
@@ -68,6 +73,8 @@ public class SanitizerConfigurationPropertiesConfigurer extends org.apache.camel
         switch (ignoreCase ? name.toLowerCase(Locale.ROOT) : name) {
         case "checks": return target.getChecks();
         case "enabled": return target.getEnabled();
+        case "pendingtimeout":
+        case "pendingTimeout": return target.getPendingTimeout();
         case "reportonshutdown":
         case "reportOnShutdown": return target.isReportOnShutdown();
         case "stackdepth":

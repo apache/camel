@@ -11,9 +11,10 @@
 
 The `camel-sanitizer` module is a checker for development and tests. It watches the calls of the steps of the routes
 of a running Camel application and reports, when it happens, that a processor breaks the contract of `AsyncProcessor`:
-a callback called twice, or a processor that throws instead of calling its callback. It checks the code of Camel users
-as much as Camel's own: a custom `AsyncProcessor`, the producer of a custom component, a bean. A test that runs a
-broken path fails with a report that names the step and the class.
+a callback called twice, or a processor that throws instead of calling its callback. It also warns about a step whose
+callback has not come. It checks the code of Camel users as much as Camel's own: a custom `AsyncProcessor`, the
+producer of a custom component, a bean. A test that runs a broken path fails with a report that names the step and the
+class.
 
 It checks the paths the tests run; it does not find untested ones.
 
@@ -84,6 +85,69 @@ is seen through its step. An `InterceptStrategy` can hide part of the call: `int
 its own return or throw is not seen, and a strategy that returns a plain `Processor` makes a second callback of an
 asynchronous processor go to the await manager, not to the sanitizer.
 
+=== Still pending
+
+A call whose callback has not come is not a violation, as a slow endpoint looks the same, but it is what a hung
+exchange shows. When nothing happened in an exchange for `camel.sanitizer.pendingTimeout` (default `60s`: no call of a
+step, no return, throw or callback, also in its parts), the sanitizer logs a WARN with its innermost pending call: the
+step whose callback the exchange waits for, whether `process` returned, threw or has not returned yet (then with the
+stack of the thread that is still in it), and the enclosing calls that wait for it. The parts of an exchange are the
+correlated copies that a split, multicast, recipient list, enrich, kamelet, circuit breaker or a `to("kamelet:...")`
+step of it waits for: a copy that carries the id of the exchange as its correlation id while such a step is the
+innermost pending call of the exchange. Other copies, such as the one a `seda` producer queues, are exchanges of their
+own (unless the producing exchange is already in such a step when the copy starts). So a long split, or a
+`to("direct:...")` whose route is still busy, is not reported, and a step inside them that does not call back is. An
+exchange is not reported while it waits for its parts and they still have pending calls. Each call is reported once;
+if its callback comes later, an INFO line says after how long. A call that threw stays pending until its callback
+comes or the exchange is done (Camel catches the throw and fails the exchange; on older Camel versions the exchange
+hung there). The parts of a split with `shareUnitOfWork()` have no done event of their own: what they threw goes when
+their exchange is done. A call of a part that has not called back stays when its exchange is done, and is reported:
+the part may hang after the step that waited for it gave up, such as a split with a `timeout`. A recipient of a
+recipient list is not a step: a producer of a recipient that does not call back shows as the recipient list step still
+pending. Steps that wait on purpose for longer than the timeout are reported too: a delay or a throttle, a redelivery
+delay, a `pollEnrich` that waits, a processor that waits for something, or one that sends with a `ProducerTemplate` and
+waits for the reply. So are steps that wait for an exchange copy of their own, as the consumer side works on that copy,
+not on a part: a request-reply `to` over `seda` or `vm` whose consumer is slow but still making progress, and an
+`aggregate` step whose completion runs the aggregated exchange synchronously in the caller. A chaos `delay` on a step
+(a `step=` rule of camel-chaos), or at the entry of a route (a `route=` rule), runs before the step is called, so a
+delay longer than `pendingTimeout` shows up at the enclosing step that waits (such as a split, or the `to` of the
+calling route), and not at all at the top level of a route. A `delay` of an `endpoint=` or `component=` rule at a send
+(`at=send`) runs inside the send, so it shows at that `to` step. At a poll (`at=poll`) there is no exchange yet, so it
+is not seen; at the send of a dead letter channel (`at=dlq`) the error handler runs it after the failed step called
+back, so it shows like a `step=` delay.
+
+[source,text]
+----
+Exchange sanitizer: callback still pending (R1, a warning)
+  exchange 5A1B...-0000000000000001, route route1, step lookup, processor com.acme.PriceLookup
+  called 60412 ms ago in CamelContext camel-1, and nothing happened in the exchange (its steps, and the steps of its parts) for 60012 ms
+  process returned false, and the callback has not been called
+  enclosing calls still pending: route route2 step to3
+  The callback of process(exchange, callback) must be called exactly once (see AsyncProcessor). This is a warning, not a violation: a slow endpoint looks the same (camel.sanitizer.pendingTimeout=60000 ms).
+----
+
+The warnings never fail a test, and are not charged to it. When the context stops, the calls still pending then are
+listed at WARN (with `reportOnShutdown`), and the report on shutdown counts the warnings. The pending calls are kept in
+a table that holds ids and names, not the exchanges, with a bound of 10000 calls. The table is split in stripes, each
+with its own lock (twice the number of processors, rounded up to a power of two, at most 32), so routing threads that
+work on unrelated exchanges do not wait for each other; an exchange, its parts and the copies made from it while it is
+in the table are in one stripe. Each stripe has a share of the bound (10000 divided by the number of stripes), and the
+share is soft: a stripe past it drops its oldest calls only while all the stripes together hold more than 10000, so an
+asynchronous parallel split with many parts in flight is still watched. When calls are dropped, one WARN says that the
+checks are incomplete, and the report counts the calls dropped. The timeout is measured with `System.nanoTime()`, not
+with the time source of camel-test-dst, so a virtual clock does not stretch it.
+
+To know when an exchange is done, the sanitizer adds an event notifier of the exchanges completed and failed, so with
+the sanitizer on the exchange events of the context are fired (and the notifier is listed with the others, also in
+JMX). A pending timeout of `0` turns the warning off, and with it the table, the notifier and the list when the
+context stops.
+
+The parts of a split, multicast or recipient list are in the stripe of their exchange. With `parallelProcessing()`, the
+threads that run the parts therefore take the same lock of the table at each step call, return and callback. The lock is
+held briefly, but it costs more when the parts run on several threads, and it orders those threads, which can hide a
+race between parts that is not synchronized otherwise. To hunt races between the parts of a parallel split, set
+`camel.sanitizer.pendingTimeout=0`: the other checks of R1 stay on, and the table and its lock are not used.
+
 == Switching it on
 
 With the `camel-sanitizer` JAR on the classpath, the sanitizer is switched on with profile `dev`, with
@@ -122,7 +186,12 @@ with profile `prod`.
 starting.
 |`camel.sanitizer.stackDepth` |`32` |How many frames of each stack a report keeps; `0` keeps only the name of the
 thread, which costs least.
-|`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops, if there was a violation.
+|`camel.sanitizer.pendingTimeout` |`60s` |How long an exchange waits, with nothing happening in it, before its
+innermost pending call is reported as still pending (a warning, which never fails a test), such as `60s` or `500`
+(milliseconds). `0` turns the warning off; use it when hunting races between the parts of a parallel split, which
+share one lock of the table.
+|`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops, if there was a violation or a still
+pending warning, and the calls still pending then.
 |===
 
 == In a test
