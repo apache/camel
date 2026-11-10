@@ -415,18 +415,18 @@ public class DoclingProducer extends DefaultProducer {
 
         // Set individual status fields as headers for easy access
         exchange.getIn().setHeader(DoclingHeaders.TASK_ID, status.getTaskId());
-        exchange.getIn().setHeader("CamelDoclingTaskStatus", status.getStatus().toString());
+        exchange.getIn().setHeader(DoclingHeaders.TASK_STATUS, status.getStatus().toString());
 
         if (status.getProgress() != null) {
-            exchange.getIn().setHeader("CamelDoclingTaskProgress", status.getProgress());
+            exchange.getIn().setHeader(DoclingHeaders.TASK_PROGRESS, status.getProgress());
         }
 
         if (status.isCompleted() && status.getResult() != null) {
-            exchange.getIn().setHeader("CamelDoclingResult", status.getResult());
+            exchange.getIn().setHeader(DoclingHeaders.TASK_RESULT, status.getResult());
         }
 
         if (status.isFailed() && status.getErrorMessage() != null) {
-            exchange.getIn().setHeader("CamelDoclingErrorMessage", status.getErrorMessage());
+            exchange.getIn().setHeader(DoclingHeaders.TASK_ERROR_MESSAGE, status.getErrorMessage());
         }
     }
 
