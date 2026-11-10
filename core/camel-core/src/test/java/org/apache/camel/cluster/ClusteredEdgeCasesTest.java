@@ -69,6 +69,74 @@ public class ClusteredEdgeCasesTest {
     }
 
     @Test
+    public void testInitialDelayForRouteAddedAfterStart() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        ClusteredRouteController controller = new ClusteredRouteController();
+        controller.setNamespace("my-ns");
+        controller.setInitialDelay(Duration.ofMillis(300));
+        context.setRouteController(controller);
+        context.start();
+        try {
+            long added = System.nanoTime();
+            // the controller creates the policy of the route, and sets the initial delay after the CamelContext
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("seda:foo").routeId("foo").to("mock:foo");
+                }
+            });
+            assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo"));
+
+            cs.getView().setLeader(true);
+
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
+            // and the initial delay still applies to the route added after start
+            long elapsed = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - added);
+            assertTrue(elapsed >= 300, "The route started after " + elapsed + " ms, before the initial delay of 300 ms");
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testInitialDelayForRouteAddedAfterStartOnLeader() throws Exception {
+        TestClusterService cs = new TestClusterService("cs");
+        CamelContext context = new DefaultCamelContext();
+        context.addService(cs);
+        context.start();
+        // creates and starts the view of the namespace, so this node is already the leader when the route is added
+        CamelClusterView view = cs.getView("my-ns");
+        try {
+            cs.getView().setLeader(true);
+
+            ClusteredRoutePolicy policy = ClusteredRoutePolicy.forNamespace("my-ns");
+            policy.setInitialDelay(Duration.ofMillis(200));
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("seda:foo").routeId("foo").routePolicy(policy).to("mock:foo");
+                }
+            });
+            // the route controller starts the route as usual
+            assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
+
+            // the node loses the leadership, and takes it again later
+            cs.getView().setLeader(false);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo")));
+            cs.getView().setLeader(true);
+            await().atMost(10, TimeUnit.SECONDS).untilAsserted(
+                    () -> assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo")));
+        } finally {
+            cs.releaseView(view);
+            context.stop();
+        }
+    }
+
+    @Test
     public void testRemovedRouteIdReusedByOtherRoute() throws Exception {
         TestClusterService cs = new TestClusterService("cs");
         CamelContext context = new DefaultCamelContext();
