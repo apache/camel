@@ -74,6 +74,9 @@ final class ChaosExchangeState implements SafeCopyProperty {
         // they counted its time
         long enteredAt = -1;
         boolean expectedTime;
+        // the key of the message as it entered the route this time, per expectation of duplicates (CAMEL-26791), else
+        // null
+        Map<ChaosRule.Expectation, String> passKeys;
     }
 
     private final Map<String, RouteState> routes = new HashMap<>(4);

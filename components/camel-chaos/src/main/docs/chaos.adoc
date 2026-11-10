@@ -999,6 +999,8 @@ two routes checks that.
 |`orders:maxTime<=5s` |No exchange of route `orders` took longer than 5 s. One that does makes it unmet at once.
 |`orders->shipping:lost<=0` (or `lost=0`) |Every message that completed in route `orders` also completed in route
 `shipping`: the count of `shipping` is at most 0 behind the count of `orders` when the time is up.
+|`payment:duplicates<=0` (or `duplicates=0`) |Route `payment` did no message twice: none completed in it a second time
+without an idempotent consumer recognising it as a duplicate. One more than the count makes it unmet at once.
 |===
 
 * The time of an exchange in a route is measured by chaos, from when the exchange enters the route until the route is
@@ -1029,6 +1031,32 @@ An unmet one gives its reason in the report, such as `route orders: mean 2s340ms
 most 0 expected (rule r2): 1 lost`. In JSON these expectations have their `spec` as the rule writes it, the `count` and
 the `value` in milliseconds for a time, the `toRoute` of a loss, and the `samples` (the exchanges of the time, or the
 ones completed in the first route).
+
+==== Duplicates
+
+A rule with the `duplicate` fault sends a message twice, as a sender or a broker that delivers it again. Whether that
+did harm is a question for the route that receives it: did it do the work twice, such as a payment taken twice? An
+expectation of duplicates answers it (CAMEL-26791):
+
+[source,text]
+----
+endpoint=http://localhost:8080/payment duplicate rate=0.1 until=1m expect=payment:duplicates<=0 within=90s
+----
+
+* Chaos notes the key of each message as it enters the route: its body as text, or the value of `key=` in the simple
+language when the body does not tell the messages apart (`key=${header.orderId}`, also for a request without a body).
+A message whose key it cannot read (no body, an empty one, or a stream when stream caching is off) is not counted.
+* A message that completes in the route with a key that completed there before is a duplicate processed, unless an
+idempotent consumer of the route recognised it: it sets the exchange property `CamelDuplicateMessage`, with or without
+`skipDuplicate`. A route that recognises duplicates in another way can set that property too.
+* Each pass through the route counts: the second send of a duplicate to a `direct` route is the same exchange again,
+and so is a redelivery that calls the route again after it completed, which did the work twice as well.
+* The route must be a route of the integration, such as the `platform-http` route of an HTTP call to the integration's
+own server, a `direct` or `seda` route, or the route of a stubbed input. What another system does with a duplicate is
+not seen. The suggestions of `chaos-suggest` add this expectation to a duplicate fault when a route of the integration
+receives the send.
+* The op is `<=` or `=`. The value is the duplicates processed, and its `samples` the messages that completed with a
+key, such as `2 duplicates processed (41 completed in payment)`.
 
 The route statistics of Camel have no percentiles, so there is no `p99` yet.
 
