@@ -73,6 +73,8 @@ public class CxfClientCallback extends ClientCallback {
             if (!boi.getOperationInfo().isOneWay()) {
                 try {
                     endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                } catch (Exception e) {
+                    camelExchange.setException(e);
                 } finally {
                     // always signal the Camel callback, even if populateExchangeFromCxfResponse throws,
                     // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
@@ -123,6 +125,8 @@ public class CxfClientCallback extends ClientCallback {
             if (!boi.getOperationInfo().isOneWay()) {
                 try {
                     endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                } catch (Exception e) {
+                    camelExchange.setException(e);
                 } finally {
                     // always signal the Camel callback, even if populateExchangeFromCxfResponse throws,
                     // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
