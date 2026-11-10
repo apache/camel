@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -62,15 +61,17 @@ public class CxfClientCallback extends ClientCallback {
                 // always signal the Camel callback, even if cookie store or binding population throws,
                 // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
                 try {
-                    // add cookies to the cookie store
+                    // add cookies to the cookie store; catch Throwable so an unexpected runtime failure
+                    // does not prevent populateExchangeFromCxfResponse from running or done() from firing
                     if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
                         try {
                             Map<String, List<String>> cxfHeaders
                                     = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
                             endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange),
                                     cxfHeaders);
-                        } catch (IOException e) {
+                        } catch (Throwable e) {
                             LOG.error("Cannot store cookies", e);
+                            camelExchange.setException(e);
                         }
                     }
                     // bind the CXF response to Camel exchange
@@ -116,15 +117,23 @@ public class CxfClientCallback extends ClientCallback {
                 // always signal the Camel callback, even if cookie store or binding population throws,
                 // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
                 try {
-                    // add cookies to the cookie store
+                    // add cookies to the cookie store; catch Throwable so an unexpected runtime failure
+                    // does not prevent populateExchangeFromCxfResponse from running or done() from firing;
+                    // use suppressed to preserve the root transport/fault exception already on the exchange
                     if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
                         try {
                             Map<String, List<String>> cxfHeaders
                                     = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
                             endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange),
                                     cxfHeaders);
-                        } catch (IOException e) {
+                        } catch (Throwable e) {
                             LOG.error("Cannot store cookies", e);
+                            Throwable root = camelExchange.getException();
+                            if (root != null) {
+                                root.addSuppressed(e);
+                            } else {
+                                camelExchange.setException(e);
+                            }
                         }
                     }
                     // copy the context information

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
+import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.CxfBinding;
+import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.OperationInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -206,5 +210,70 @@ class CxfClientCallbackTest {
 
         assertThat(doneCount.get()).as("done(false) must be called even when binding throws an Error").isEqualTo(1);
         assertThat(transportEx.getSuppressed()).containsExactly(bindingError);
+    }
+
+    // --- cookie handler tests ---
+
+    @Test
+    void handleResponse_cookieStoreThrows_callsDoneAndSetsException() throws Exception {
+        // CookieHandler.storeCookies declares IOException but could throw RuntimeException too;
+        // any Throwable from the cookie store must be recorded and must not prevent done() from firing.
+        RuntimeException cookieError = new RuntimeException("cookie store failure");
+        CookieHandler cookieHandler = mock(CookieHandler.class);
+        doThrow(cookieError).when(cookieHandler).storeCookies(any(), any(URI.class), any());
+
+        Message inMessage = mock(Message.class);
+        when(inMessage.get(any())).thenReturn(Collections.emptyMap());
+        when(cxfExchange.getInMessage()).thenReturn(inMessage);
+        when(endpoint.getCookieHandler()).thenReturn(cookieHandler);
+        when(endpoint.getRequestUri(any())).thenReturn(URI.create("http://wrong-server/"));
+
+        AtomicInteger doneCount = new AtomicInteger();
+        AsyncCallback callback = sync -> doneCount.incrementAndGet();
+
+        Throwable[] captured = new Throwable[1];
+        camelExchange = mock(Exchange.class);
+        org.mockito.Mockito.doAnswer(inv -> {
+            captured[0] = (Throwable) inv.getArgument(0);
+            return null;
+        }).when(camelExchange).setException(any(Throwable.class));
+
+        when(endpoint.getCxfBinding()).thenReturn(cxfBinding);
+
+        Map<String, Object> ctx = new HashMap<>();
+        CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
+        cb.handleResponse(ctx, new Object[0]);
+
+        assertThat(doneCount.get()).as("done(false) must be called even when cookie store throws").isEqualTo(1);
+        assertThat(captured[0]).isSameAs(cookieError);
+    }
+
+    @Test
+    void handleException_cookieStoreThrows_suppressesOnRootCauseAndCallsDone() throws Exception {
+        // Cookie store failure in the exception path: must be suppressed on the root transport exception.
+        RuntimeException transportEx = new RuntimeException("connection refused");
+        RuntimeException cookieError = new RuntimeException("cookie store failure");
+        CookieHandler cookieHandler = mock(CookieHandler.class);
+        doThrow(cookieError).when(cookieHandler).storeCookies(any(), any(URI.class), any());
+
+        Message inMessage = mock(Message.class);
+        when(inMessage.get(any())).thenReturn(Collections.emptyMap());
+        when(cxfExchange.getInMessage()).thenReturn(inMessage);
+        when(endpoint.getCookieHandler()).thenReturn(cookieHandler);
+        when(endpoint.getRequestUri(any())).thenReturn(URI.create("http://wrong-server/"));
+
+        AtomicInteger doneCount = new AtomicInteger();
+        AsyncCallback callback = sync -> doneCount.incrementAndGet();
+
+        when(camelExchange.getException()).thenReturn(transportEx);
+        when(endpoint.getCxfBinding()).thenReturn(cxfBinding);
+
+        Map<String, Object> ctx = new HashMap<>();
+        CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
+        cb.handleException(ctx, transportEx);
+
+        assertThat(doneCount.get()).as("done(false) must be called even when cookie store throws").isEqualTo(1);
+        // cookie error must be suppressed on root transport exception, not replace it
+        assertThat(transportEx.getSuppressed()).containsExactly(cookieError);
     }
 }
