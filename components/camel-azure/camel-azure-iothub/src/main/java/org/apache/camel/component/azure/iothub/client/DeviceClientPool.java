@@ -27,8 +27,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.LongSupplier;
 
+import com.microsoft.azure.sdk.iot.device.ConnectionStatusChangeContext;
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
+import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,11 +191,26 @@ public class DeviceClientPool {
         String poolKey = resolvePoolKey(deviceId, connectionString);
         final long now = nowMillisSupplier.getAsLong();
 
-        PooledClient existing = pool.get(poolKey);
+        java.util.concurrent.atomic.AtomicReference<PooledClient> evicted = new java.util.concurrent.atomic.AtomicReference<>();
+        PooledClient existing = pool.computeIfPresent(poolKey, (key, pooled) -> {
+            if (pooled.inUse.get() > 0) {
+                pooled.touch(now);
+                pooled.acquire();
+                return pooled;
+            }
+            if ((now - pooled.lastUsed) > idleTimeout.toMillis()) {
+                evicted.set(pooled);
+                return null;
+            }
+            pooled.touch(now);
+            pooled.acquire();
+            return pooled;
+        });
         if (existing != null) {
-            existing.touch(now);
-            existing.acquire();
             return new Lease(this, poolKey, existing);
+        }
+        if (evicted.get() != null) {
+            closeQuietly(poolKey, evicted.get().client, "idle eviction");
         }
 
         Object lock = creationLocks.computeIfAbsent(poolKey, k -> new Object());
@@ -323,19 +340,64 @@ public class DeviceClientPool {
         try {
             DeviceClient client = deviceClientFactory.create(connectionString, protocol);
             client.open(true);
-            // Avoid duplicate desired-property subscriptions: subscribe only if not already subscribed.
-            // The Azure DeviceClient does not expose a way to check, so we rely on only subscribing once per client creation.
-            client.subscribeToDesiredProperties((twinUpdate, ctx) -> {
-            }, null);
+            try {
+                // Avoid duplicate desired-property subscriptions: subscribe only if not already subscribed.
+                // The Azure DeviceClient does not expose a way to check, so we rely on only subscribing once per client creation.
+                client.subscribeToDesiredProperties((twinUpdate, ctx) -> {
+                }, null);
+                client.setConnectionStatusChangeCallback(context -> {
+                    if (context == null) {
+                        return;
+                    }
+                    if (context.getNewStatus()
+                        == com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus.DISCONNECTED) {
+                        evictDisconnectedClient(deviceId, connectionString, client, context);
+                    }
+                }, null);
+            } catch (Exception e) {
+                closeQuietly(deviceId, client, "subscription setup");
+                throw e;
+            }
             LOG.debug("Created new DeviceClient for device: {}", deviceId);
             return client;
         } catch (Exception e) {
             if (isShutdownInterruption(e)) {
                 Thread.currentThread().interrupt();
                 LOG.warn("DeviceClient creation interrupted due to shutdown for device: {}", deviceId);
-                return null;
+                throw new IllegalStateException("DeviceClient creation interrupted for device: " + deviceId, e);
             }
             throw new RuntimeException("DeviceClient creation failed for device: " + deviceId, e);
+        }
+    }
+
+    private void evictDisconnectedClient(
+            String deviceId, String connectionString, DeviceClient client,
+            ConnectionStatusChangeContext context) {
+        if (context == null) {
+            return;
+        }
+        if (context.getNewStatus() != IotHubConnectionStatus.DISCONNECTED) {
+            return;
+        }
+
+        String poolKey = resolvePoolKey(deviceId, connectionString);
+        PooledClient pooled = pool.get(poolKey);
+        if (pooled != null && pooled.client == client && pool.remove(poolKey, pooled)) {
+            LOG.warn("Evicted DeviceClient for device {} after disconnect. previousStatus={}, reason={}, cause={}",
+                    deviceId, context.getPreviousStatus(), context.getNewStatusReason(), context.getCause());
+            closeQuietly(deviceId, client, "connection status changed to DISCONNECTED");
+            return;
+        }
+
+        for (Iterator<Map.Entry<String, PooledClient>> it = pool.entrySet().iterator(); it.hasNext();) {
+            Map.Entry<String, PooledClient> entry = it.next();
+            PooledClient candidate = entry.getValue();
+            if (candidate != null && candidate.client == client && pool.remove(entry.getKey(), candidate)) {
+                LOG.warn("Evicted DeviceClient for device {} after disconnect. previousStatus={}, reason={}, cause={}",
+                        deviceId, context.getPreviousStatus(), context.getNewStatusReason(), context.getCause());
+                closeQuietly(deviceId, client, "connection status changed to DISCONNECTED");
+                return;
+            }
         }
     }
 
