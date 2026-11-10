@@ -126,6 +126,26 @@ class ChaosReplayTest extends ChaosTestSupport {
     }
 
     @Test
+    void theFilesOverTheLimitAreLeftAndSaidSo() throws Exception {
+        // stopped, so the files put back stay in its folder to be counted
+        context.getRouteController().stopRoute("orders");
+        File done = new File(BASE, "orders/done");
+        done.mkdirs();
+        int taken = ChaosManager.MAX_REPLAY + 2;
+        for (int i = 0; i < taken; i++) {
+            Files.writeString(new File(done, String.format("%05d.json", i)).toPath(), "{}");
+        }
+
+        Map<String, Object> replayed = chaos().replayFiles("orders");
+        assertThat(replayed).containsEntry("files", ChaosManager.MAX_REPLAY).containsEntry("left", 2);
+        // the first by name, the same each time
+        File[] back = new File(BASE, "orders").listFiles(File::isFile);
+        assertThat(back).hasSize(ChaosManager.MAX_REPLAY);
+        assertThat(new File(BASE, "orders/00000.json")).exists();
+        assertThat(new File(BASE, "orders/01001.json")).doesNotExist();
+    }
+
+    @Test
     void aRouteThatLeavesItsFilesIsNotReplayed() throws Exception {
         getMockEndpoint("mock:kept").expectedBodiesReceived("C");
         MockEndpoint.assertIsSatisfied(context);

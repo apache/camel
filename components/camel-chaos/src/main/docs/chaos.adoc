@@ -302,7 +302,8 @@ the server of the integration. Such a suggestion can run as an experiment withou
 from `file:<folder>` and moved the files it took (to `.camel`, or the folder of its `move` option) has `replay`, that
 folder, and `files`, how many there are: `ChaosManager.replayFiles(route)` (the chaos command `replay`) puts them back
 into its folder under their own names, so the route takes the same files again. The route moves them over the files
-there, so a replay is the same each time, as an experiment that is run again needs. A route with `noop=true` never takes
+there, so a replay is the same each time, as an experiment that is run again needs. A replay puts back at most 1000 files, the
+first by name; the answer has `left`, how many it did not put back, and a WARN is logged. A route with `noop=true` never takes
 a file of the same name again, and one with `delete=true` keeps none: they have no `replay`. A route that such a file
 route sends to has them too, with `replayRoute`, the file route to replay for it. `rules` has all the
 rules to add together. The chaos screen of the Camel TUI lists the suggestions (key `w`), where Enter types the rule
