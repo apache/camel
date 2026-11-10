@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -206,6 +207,67 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
         assertEquals(4, attempts.get());
         assertNull(out.getException());
         assertEquals("Inventory not available", out.getMessage().getBody());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "routeBuilder", "routeConfiguration" })
+    void onExceptionForAllRoutesRunsOnceInTheCalledRoute(String where) throws Exception {
+        if ("routeConfiguration".equals(where)) {
+            context.addRoutes(new RouteConfigurationBuilder() {
+                @Override
+                public void configuration() {
+                    routeConfiguration().onException(IOException.class).maximumRedeliveries(2).redeliveryDelay(0)
+                            .to("mock:onException");
+                }
+            });
+        }
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                if ("routeBuilder".equals(where)) {
+                    onException(IOException.class).maximumRedeliveries(2).redeliveryDelay(0).to("mock:onException");
+                }
+                from("direct:start").to("direct:sub").to("mock:afterCall");
+                from("direct:sub").process(failing());
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:onException").expectedMessageCount(1);
+        getMockEndpoint("mock:afterCall").expectedMessageCount(0);
+
+        Exchange out = send();
+
+        assertMockEndpointsSatisfied();
+        // the redeliveries of the called route only
+        assertEquals(3, attempts.get());
+        assertInstanceOf(IOException.class, out.getException());
+    }
+
+    @Test
+    void onExceptionOfTheCallingRouteBuilderWithTheCalledRouteInAnotherRouteBuilder() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                onException(IOException.class).handled(true).to("mock:callerOnException");
+                from("direct:start").to("direct:sub").to("mock:afterCall");
+            }
+        });
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:sub").process(failing());
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:callerOnException").expectedMessageCount(0);
+        getMockEndpoint("mock:afterCall").expectedMessageCount(0);
+
+        Exchange out = send();
+
+        assertMockEndpointsSatisfied();
+        assertInstanceOf(IOException.class, out.getException());
     }
 
     public class Inventory {

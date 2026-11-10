@@ -234,6 +234,11 @@ handlers of the calling routes do not deal with it again: they do not redeliver,
 not run for it. This also applies when the called route has only the default error handler, without any
 `onException`.
 
+An `onException` defined for all the routes of a `RouteBuilder`, or in a
+xref:route-configuration.adoc[route configuration], is part of the error handler of each route it applies to. When it
+applies to the called route, it runs there, once, and not again in the calling route. When the called route is in
+another `RouteBuilder`, the `onException` of the calling route's `RouteBuilder` does not run for its failure.
+
 What the calling route sees depends on what the error handler of the called route did with the failure:
 
 * not handled (the default error handler, or an `onException` that does not handle it): the calling route fails with
