@@ -31,7 +31,7 @@
 
     <route>
       <from uri="direct:expressionMethod"/>
-      <throttle>
+      <throttle mode="ConcurrentRequests">
         <!-- use a java bean method call to determine the max number of concurrent messages to set on the throttle -->
         <method ref="myBean" method="getConcurrentMessages"/>
       </throttle>
