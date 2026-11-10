@@ -36,6 +36,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.URISupport;
@@ -528,6 +529,20 @@ final class ChaosAdvisor {
                         85));
                 continue;
             }
+            if (breaker && "direct".equals(scheme) && consumers.containsKey(uri) && !id.equals(consumers.get(uri))) {
+                // a call to another route of the integration in a route with a circuit breaker (CAMEL-26817): that
+                // route stands for the service the breaker guards
+                String next = consumers.get(uri);
+                add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", uri),
+                        "route " + id + " calls route " + next + " in a circuit breaker: when " + next
+                                                                                         + " is down for a while, does the breaker open, and does the fallback answer?",
+                        70);
+                add(answer, recipes, "connection-refused", id, Kind.ERRORS, Map.of("endpoint", uri, "rate", "0.5"),
+                        "route " + id + " calls route " + next + " in a circuit breaker: when half of the calls fail,"
+                                                                                                                    + " does the breaker open at its failure rate, and close again?",
+                        62);
+                continue;
+            }
             if (!ChaosStubs.isRemote(to)) {
                 continue;
             }
@@ -576,6 +591,28 @@ final class ChaosAdvisor {
                             d.rank(), d.routes(), d.with()));
                 }
             }
+        }
+
+        // the HTTP calls known only when they send (toD), by the address before the first expression (CAMEL-26817)
+        for (String pattern : dynamicHttpCalls(route)) {
+            if (!seen.add(pattern)) {
+                continue;
+            }
+            if (breaker) {
+                add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", pattern),
+                        "the HTTP calls to " + pattern + " in a route with a circuit breaker: when the service is down"
+                                                                                             + " for a while, does the breaker open, and does the fallback answer?",
+                        70);
+            } else {
+                add(answer, recipes, "http-error", id, Kind.ERRORS, Map.of("endpoint", pattern),
+                        "the HTTP calls to " + pattern + " without a circuit breaker: what does the route do when the"
+                                                                                                 + " service answers 503?",
+                        88);
+            }
+            add(answer, recipes, "http-error", id, Kind.ERRORS, Map.of("endpoint", pattern, "status", "404"),
+                    "the HTTP calls to " + pattern + " ask for a resource per message: what does the route do when it"
+                                                                                                              + " is not there (404)?",
+                    72);
         }
 
         // the dead letter channel of the route: once for the routes that share it, with the first of them
@@ -629,6 +666,56 @@ final class ChaosAdvisor {
             add(answer, recipes, "stall", id, Kind.LIFECYCLE, Map.of("route", id),
                     "route " + id + " stops taking messages for a while: does the sender wait, retry or lose them?", 30);
         }
+    }
+
+    /**
+     * The HTTP calls of the route that are known only when they send (toD), each as a pattern of its address up to the
+     * first expression, such as {@code http://localhost:8080/stock/*} for
+     * {@code http://localhost:8080/stock/${variable.sku}}. A call whose address starts with an expression says nothing
+     * of where it goes, and is left out.
+     */
+    static List<String> dynamicHttpCalls(Route route) {
+        if (!(route.getRoute() instanceof RouteDefinition definition)) {
+            return List.of();
+        }
+        List<String> uris = new ArrayList<>();
+        for (ToDynamicDefinition to : ProcessorDefinitionHelper.filterTypeInOutputs(definition.getOutputs(),
+                ToDynamicDefinition.class)) {
+            if (to.getUri() != null) {
+                uris.add(to.getUri());
+            }
+        }
+        List<String> answer = new ArrayList<>();
+        for (String uri : uris) {
+            try {
+                uri = route.getCamelContext().resolvePropertyPlaceholders(uri);
+            } catch (Exception e) {
+                // a placeholder that does not resolve now: the address up to it
+            }
+            int query = uri.indexOf('?');
+            String address = query > 0 ? uri.substring(0, query) : uri;
+            int cut = address.length();
+            for (String start : List.of("${", "$simple{", "{{")) {
+                int at = address.indexOf(start);
+                if (at >= 0) {
+                    cut = Math.min(cut, at);
+                }
+            }
+            String scheme = ChaosPatterns.scheme(address);
+            if (cut == address.length() || scheme == null || !ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
+                continue;
+            }
+            String prefix = address.substring(0, cut);
+            // the host must be known: a call to ${header.host} could go anywhere
+            if (ChaosPatterns.withoutSlashes(prefix).length() <= scheme.length() + 1) {
+                continue;
+            }
+            String pattern = prefix + "*";
+            if (!answer.contains(pattern)) {
+                answer.add(pattern);
+            }
+        }
+        return answer;
     }
 
     /**
