@@ -58,8 +58,6 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         this.targetAddress = GenericAddress.parse(this.endpoint.getServerAddress());
 
         // either tcp or udp
@@ -84,6 +82,9 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
         if (LOG.isInfoEnabled()) {
             LOG.info("Started OID poller on {} using {} protocol", endpoint.getServerAddress(), endpoint.getProtocol());
         }
+
+        // start the scheduler last, so the first poll cannot run before snmp, the target and the transport are ready
+        super.doStart();
     }
 
     @Override
