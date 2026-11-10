@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.iothub.operations;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
@@ -69,6 +70,18 @@ class TelemetryDeliveryStrategyTest {
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(client).sendEvent(captor.capture(), eq(5000));
         assertArrayEquals("hello".getBytes(StandardCharsets.UTF_8), captor.getValue().getBytes());
+    }
+
+    @Test
+    void testSendInputStreamBody() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        byte[] body = "hello".getBytes(StandardCharsets.UTF_8);
+
+        strategy.execute(client, "dev1", new DeliveryContext(new ByteArrayInputStream(body), null));
+
+        ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
+        verify(client).sendEvent(captor.capture(), eq(5000));
+        assertArrayEquals(body, captor.getValue().getBytes());
     }
 
     @Test

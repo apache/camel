@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.iothub.operations;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.UUID;
@@ -64,8 +65,15 @@ public class TelemetryDeliveryStrategy implements DeliveryStrategy {
         if (body instanceof String s) {
             return s.getBytes(StandardCharsets.UTF_8);
         }
+        if (body instanceof InputStream is) {
+            try {
+                return is.readAllBytes();
+            } catch (Exception e) {
+                throw new IllegalArgumentException("Failed to read InputStream payload", e);
+            }
+        }
         throw new IllegalArgumentException(
-                "Telemetry delivery expects a byte[] or String body but was: "
+                "Telemetry delivery expects a byte[], String, or InputStream body but was: "
                                            + (body == null ? "null" : body.getClass().getName()));
     }
 
