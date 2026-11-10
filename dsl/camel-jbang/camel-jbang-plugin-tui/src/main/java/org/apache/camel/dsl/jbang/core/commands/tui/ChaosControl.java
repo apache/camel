@@ -358,7 +358,17 @@ final class ChaosControl {
      * suggests to pick from, or says why it cannot start.
      */
     void openExplore(IntegrationInfo info) {
-        if (info == null || info.chaos == null || !info.chaos.enabled) {
+        if (info == null) {
+            return;
+        }
+        if (info.chaos == null || !info.chaos.enabled) {
+            // the key says why it does nothing: chaos is off, or the status of the integration has not said yet
+            name = info.name;
+            rule = null;
+            command = Command.ADD;
+            result("Let there be chaos", true, info.chaos == null
+                    ? "camel-chaos is not in " + info.name + " (yet): run it with camel run --chaos"
+                    : info.chaos.reason != null ? info.chaos.reason : "Chaos is off in " + info.name);
             return;
         }
         pid = info.pid;

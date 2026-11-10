@@ -395,9 +395,10 @@ that never fired, or a route that had no messages). *l* or Esc shows the rules a
 
 Press *L* to start an exploration by hand, on the integration you look at: pick the rules to try from what the
 integration suggests, the most worth trying first, each with what should hold despite its faults, and a budget of 2 to
-30 minutes. The single faults not tried yet are picked, of the routes that get messages by themselves (a timer, or a
-route they are called from); a route whose messages come from outside is marked, as its rule says nothing without
-messages. *Space* picks a rule, *Left* and *Right* change the budget, and *Enter* starts. The picked rules are tried one
+30 minutes. Picked are a few faults not tried yet, each kind once before it is tried again in another route, and then
+two faults at once, such as an outage while the dead letter channel fails; only of the routes that get messages by
+themselves (a timer, or a route they are called from). A route whose messages come from outside is marked, as its rule
+says nothing without messages. *Space* picks a rule, *Left* and *Right* change the budget, and *Enter* starts. The picked rules are tried one
 at a time, each for its share of the budget, and each ends with PASS, FAIL or INCONCLUSIVE, while the line above the
 experiments says which rule is tried. *x* stops it, which removes the rules at once. Every rule is removed when the
 budget ends, also when the TUI is closed. For a longer exploration, where an AI picks what to try next, use

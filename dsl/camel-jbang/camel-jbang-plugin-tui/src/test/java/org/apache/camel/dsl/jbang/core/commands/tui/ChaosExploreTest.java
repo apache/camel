@@ -34,6 +34,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 import static org.awaitility.Awaitility.await;
 
 /**
@@ -208,6 +209,34 @@ class ChaosExploreTest {
         assertThat(integration.commands).endsWith("experiment-end", "explore-finish");
         assertThat(explorer.progress("1234")).startsWith("Stopped after 0 rules tried");
         assertThat(footer()).contains("L", "let there be chaos");
+    }
+
+    @Test
+    void aKindOfFaultOnceBeforeItIsTriedAgainInAnotherRoute() throws Exception {
+        JsonObject reply = (JsonObject) Jsoner.deserialize("""
+                {"suggestions": [
+                  {"route": "small", "kind": "lost", "title": "The route after a hand-off fails",
+                   "rule": "route=a error expect=small->a:lost<=0", "feed": {"kind": "self", "fed": true}},
+                  {"route": "medium", "kind": "lost", "title": "The route after a hand-off fails",
+                   "rule": "route=b error expect=medium->b:lost<=0", "feed": {"kind": "self", "fed": true}},
+                  {"route": "large", "kind": "lost", "title": "The route after a hand-off fails",
+                   "rule": "route=c error expect=large->c:lost<=0", "feed": {"kind": "self", "fed": true}},
+                  {"route": "small", "kind": "errors", "title": "Returns an error (HTTP status)",
+                   "rule": "endpoint=http://x error status=503 expect=small:failed<=0", "feed": {"kind": "self", "fed": true}}
+                ]}
+                """);
+        ChaosExploreDialog dialog = new ChaosExploreDialog("shop", reply);
+        // the HTTP error before a second hand-off, then the hand-offs again while there is room
+        assertThat(dialog.picked()).extracting(ChaosExploreDialog.Item::route, ChaosExploreDialog.Item::kind)
+                .containsExactly(tuple("small", "lost"), tuple("medium", "lost"), tuple("small", "errors"));
+    }
+
+    @Test
+    void lSaysWhyWhenChaosIsOff() {
+        info.chaos = null;
+        key('L');
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40))
+                .contains("camel-chaos is not in shop (yet): run it with camel run --chaos");
     }
 
     @Test

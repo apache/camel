@@ -248,6 +248,8 @@ class ChaosTab extends AbstractTableTab {
                     .text(Text.from(Line.from(Span.raw("")), Line.from(Span.styled("  " + why, Theme.muted()))))
                     .block(block(" Chaos "))
                     .build(), area);
+            // such as why L does nothing here
+            control.render(frame, area);
             return;
         }
         if (explore) {

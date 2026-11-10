@@ -78,9 +78,11 @@ Esc shows the rules again.
 
 **L** starts an exploration here, by hand: pick the rules to try from the
 suggestions of the integration (the same as **w**), the most worth trying
-first, each with what should hold despite its faults. The single faults
-not tried yet are picked, of routes that get messages by themselves (a
-timer, or a route they are called from); a route whose messages come from
+first, each with what should hold despite its faults. Picked are a few
+faults not tried yet, each kind once before it is tried again in another
+route, and then two faults at once (an outage while the dead letter
+channel fails); only of routes that get messages by themselves (a timer,
+or a route they are called from). A route whose messages come from
 outside is marked *needs messages*: send it some while its rule runs, or
 its verdict says nothing. Space picks a rule, Left and Right change the
 budget (2m to 30m), and Enter starts. The picked rules are tried one at a

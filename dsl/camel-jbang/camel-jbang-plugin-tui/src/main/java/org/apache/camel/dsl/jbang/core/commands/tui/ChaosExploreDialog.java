@@ -18,7 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -113,16 +115,39 @@ final class ChaosExploreDialog {
         // the faults not tried yet whose routes get messages by themselves, the most worth trying first: a few single
         // ones, then two at once, as most bugs that lose messages need two failures that meet; a route without messages
         // says nothing, and a dead letter channel fails only when another fault sends it a message (the pair does)
+        items.forEach(item -> picked.add(false));
+        // a kind of fault once, before one is tried again in another route: the budget asks more questions so
+        pick(true);
+        pick(false);
+    }
+
+    private void pick(boolean distinctKinds) {
+        Set<String> kinds = new HashSet<>();
         int singles = 0;
         int combined = 0;
-        for (Item item : items) {
-            boolean worth = !item.tried() && item.fed() && item.expect() != null && !item.deadLetter();
-            boolean pick = worth && (item.combined() ? combined < PICKED_COMBINED : singles < PICKED_SINGLE);
-            picked.add(pick);
-            if (pick && item.combined()) {
-                combined++;
-            } else if (pick) {
-                singles++;
+        for (int i = 0; i < items.size(); i++) {
+            Item item = items.get(i);
+            if (picked.get(i)) {
+                kinds.add(item.kind());
+                if (item.combined()) {
+                    combined++;
+                } else {
+                    singles++;
+                }
+            }
+        }
+        for (int i = 0; i < items.size(); i++) {
+            Item item = items.get(i);
+            boolean worth = !picked.get(i) && !item.tried() && item.fed() && item.expect() != null && !item.deadLetter()
+                    && (!distinctKinds || !kinds.contains(item.kind()));
+            if (worth && (item.combined() ? combined < PICKED_COMBINED : singles < PICKED_SINGLE)) {
+                picked.set(i, true);
+                kinds.add(item.kind());
+                if (item.combined()) {
+                    combined++;
+                } else {
+                    singles++;
+                }
             }
         }
     }
@@ -159,7 +184,10 @@ final class ChaosExploreDialog {
     /** Why the exploration cannot start, or null when it can. */
     String cannotStart() {
         if (picked().isEmpty()) {
-            return "Pick a rule to try (Space)";
+            return !items.isEmpty() && items.stream().noneMatch(Item::fed)
+                    ? "The routes here get their messages from outside: pick a rule (Space), and send its route messages"
+                      + " while it runs, or its verdict says nothing"
+                    : "Pick a rule to try (Space)";
         }
         if (share() < MIN_SHARE) {
             return "Too many rules for " + budget() + ": pick fewer, or a longer budget";
@@ -189,7 +217,7 @@ final class ChaosExploreDialog {
 
     void render(Frame frame, Rect area) {
         int width = Math.min(area.width() - 4, 150);
-        int height = Math.min(area.height() - 2, Math.max(16, items.size() + 10));
+        int height = Math.min(area.height() - 2, items.isEmpty() ? 5 : Math.max(16, items.size() + 10));
         Rect popup = DialogHelper.centered(area, width, height);
         frame.renderWidget(Clear.INSTANCE, popup);
         Block outer = Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(Theme.warning())
