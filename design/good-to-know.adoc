@@ -263,7 +263,11 @@ its readers (`CamelCatalog.goodToKnowJson()`), as it gives the chaos model.
 }
 ----
 
-The conditions are a closed vocabulary that the engine knows, over one route at a time:
+The conditions are a closed vocabulary that the engine knows, over one route at a time. Two conditions follow a send
+into the route it reaches: `deadLetter.canFail` and `receiver` (see <<Explaining a failure>>). The engine already reads
+all the routes, so this is a lookup of the route that consumes the endpoint (over `direct`, a hand-off, or HTTP to the
+integration's own server), not a search; from there it follows the sends over `direct` only, and stops at a route it
+has seen, so a cycle ends.
 
 [cols="1,3"]
 |===
@@ -273,9 +277,11 @@ The conditions are a closed vocabulary that the engine knows, over one route at 
 options of the endpoint
 |`errorHandler` |The error handler that applies to the route (its own, a route configuration, the one of its file or of
 the context): `default`, `deadLetterChannel`, `noErrorHandler`; for a dead letter channel, `deadLetter.canFail` (it goes
-to an endpoint or a route that sends to anything but a log or an in-memory queue)
+to an endpoint, or to a route that sends to anything but a log or an in-memory queue: a condition that follows the dead
+letter endpoint into the route that consumes it)
 |`sends` |A send of the route: `remote` (catalog), a producer `fact` resolved with its options, `handOffBefore` (a
-hand-off or a wireTap comes before it), `option` (set, not set, equals)
+hand-off or a wireTap comes before it), `option` (set, not set, equals), `receiver` (a condition on the route the send
+reaches, see <<Explaining a failure>>)
 |`has`, `hasNot` |EIPs in the route: `idempotentConsumer`, `circuitBreaker`, `transacted`, `filter`, `aggregate`,
 `wireTap`...
 |`step` |An EIP of the route with a `fact` of its own, resolved with its options (an `aggregate` whose state is in
@@ -283,9 +289,33 @@ memory), or with a shape (`choice` without `otherwise`, an `onException` with `h
 |`option` |An option of the input: set, not set, equals
 |===
 
-A rule matches when all its conditions do. Its `text` has placeholders from a fixed set (`${route}`, `${input}`,
-`${input.scheme}`, `${input.keptBy}` (the option that changes the fact, from its `byOption`), `${send}`, `${send.option}`, `${deadLetter}`...). `tryChaos` is the id of a
-recipe of the chaos model, so a reader with chaos can offer "try it", and a reader without chaos shows the hint only.
+A rule matches when all its conditions do. Its `text` has placeholders from a fixed set, the same in `impact`, the
+`text` of `choices`, `outcome` and `seeAlso`; the engine fills them from what matched:
+
+[cols="1,3"]
+|===
+|Placeholder |Expands to
+
+|`${route}` |The id of the route
+|`${input}` |The from endpoint of the route, without its query (the options may hold a secret)
+|`${input.scheme}` |The scheme of the from endpoint (`kafka`)
+|`${input.keptBy}` |The option that gives the fact of the input its other value, from its `byOption`, as
+`name=value` (`breakOnFirstError=true`); a `When` with `value = "*"` gives the name only (`moveFailed`)
+|`${input.keptByOption}` |The name of that option alone (`breakOnFirstError`), for a `seeAlso` anchor
+|`${input.doc}` |The catalog id of the component of the input (`component:kafka`), for `seeAlso`
+|`${send}` |The endpoint of the send that matched, without its query
+|`${send.scheme}` |The scheme of that send (`seda`)
+|`${send.option}` |The option that decided the fact of the send, as `name=value`: the `byOption` that matched
+(`throwExceptionOnFailure=false`), or the option of the `option` sub-condition of `sends`; empty when the fact is its
+default
+|`${send.doc}` |The catalog id of the component of the send, for `seeAlso`
+|`${deadLetter}` |The endpoint of the dead letter channel, without its query
+|`${receiver}` |The id of the route the send reaches (the `receiver` condition)
+|===
+
+A placeholder of a condition the rule does not have (`${send}` in a rule without `sends`) is an error of the rule,
+which the validation finds. `tryChaos` is the id of a recipe of the chaos model, so a reader with chaos can offer "try
+it", and a reader without chaos shows the hint only.
 
 `seeAlso` lists where to read more, each an id the readers resolve:
 
@@ -301,7 +331,7 @@ the page
 website
 |`https://...` |Any other page
 |`${input.doc}`, `${send.doc}` |The page of the component of the input or of the send of the hint, filled in as the text
-is (`${input.keptByOption}` is the option of its `byOption`)
+is (`${input.doc}#${input.keptByOption}` is the option of its `byOption`)
 |===
 
 The TUI shows a catalog page or option in place (as its catalog doc does today), the MCP tools give the id to
@@ -414,16 +444,18 @@ For this the rules get three optional fields, and the vocabulary one condition:
 |Field |Meaning
 
 |`receiver` (in `sends`) |A condition on the route the send reaches (over `direct`, a hand-off, or HTTP to the
-integration's own server), with the same vocabulary as the route of the rule. The conditions stay on one route at a
-time otherwise; a hand-off is where most messages are lost, and it is between two routes. `${receiver}` is its id.
+integration's own server), with the same vocabulary as the route of the rule. With `deadLetter.canFail` it is the only
+condition that looks past one route (see the conditions above): a hand-off is where most messages are lost, and it is
+between two routes. `${receiver}` is its id.
 |`outcome` |What is seen when the hint happens: `failed` in a route (an error), `lost` between two routes, `duplicates`
 in a route, `slow` (the time of a route), `lostAtDeadLetter`. It is the way back from a failure to its rule, as
 `tryChaos` is the way from a rule to its recipe. An error in a running integration matches `failed`; a chaos experiment
 also matches the outcome of its unmet expectation.
 |`impact` |What it means in production, in one sentence, for the explanation. The `text` stays "this happens".
-|`choices` |The choices the user decides between, each a text and `seeAlso` ids. They are the choices of
-<<For an AI, and the user decides>>, written down: an AI asks with them, and writes the YAML of the one the user
-picks, which the tool validates before it shows it.
+|`choices` |The choices the user decides between: a list of at least two objects, each with `text` (required, one
+line, with the placeholders of the rule) and `seeAlso` (optional, ids as above), and no other field. They are the
+choices of <<For an AI, and the user decides>>, written down: an AI asks with them, and writes the YAML of the one the
+user picks, which the tool validates (as `camel validate` does a route) before it shows it.
 |===
 
 The `errorHandler` condition gets the redelivery of the error handler (`maximumRedeliveries`, and the total delay of
@@ -432,14 +464,36 @@ the redeliveries), so a rule can say that three redeliveries one second apart do
 Whether an error is transient (a refused connection, a timeout, 503, 429) or permanent (404, 400, a validation error)
 decides whether a redelivery helps, for a real error as for a chaos fault. It is a fact of the error, not of a component
 option: the catalog gets it per exception type a component raises and per HTTP status, the chaos recipes refer to it,
-and the explanation of an error looks it up by the exception of the failed exchange.
+and the explanation of an error looks it up by the exception of the failed exchange. It comes from two places:
+
+- What is the same for every component is a table of the rule file, `errors`: the HTTP statuses, and the exceptions of
+  the JDK and of Camel that many components raise (`ConnectException`, `SocketTimeoutException`,
+  `UnknownHostException`, `ExchangeTimedOutException`), each `transient` or `permanent`.
+- The exceptions of a component are facts of that component: `@Facts` gets an `errors` side, a list of
+  `@Fact.Error(type = ..., is = "transient")`, which the plugin writes into the `facts` section of its JSON as it
+  writes the other sides, and checks the same way.
+
+[source,json]
+----
+"errors": {
+  "httpStatus": { "429": "transient", "503": "transient", "400": "permanent", "404": "permanent" },
+  "exception": { "java.net.ConnectException": "transient", "java.net.UnknownHostException": "permanent" }
+}
+----
+
+The lookup walks the exception of the failed exchange and its causes, and for each its class and superclasses: the
+component's facts first, then the table, and the most specific class wins. An exception in neither is not classified,
+and the explanation says so instead of guessing, as for a fact that is not declared.
 
 The explanation finds its rule from what was seen:
 
 1. The outcome: a failed exchange (its route, its exception), an unmet expectation of a chaos experiment (lost between
    `inbox` and `ship`), or the failures of a route.
-2. The rules whose `outcome` has it, evaluated on the routes of the outcome. The rule that matches is the why. For a
-   chaos experiment, its `tryChaos` is usually the recipe of the rule that ran, which confirms it.
+2. The rules whose `outcome` has it, evaluated on the routes of the outcome. Each rule that matches is a why, and more
+   than one can (a hand-off and a dead letter channel that fails can both lose a message between two routes). All are
+   given, in order: for a chaos experiment the rule whose `tryChaos` is the recipe that ran comes first, as it is the
+   cause that was tried; then by the order of the groups and the `rank` of the rule, as on the About screen. With more
+   than one, the explanation says that it is one of these, and an AI weighs them with what was seen.
 3. Its text, impact and choices, with what was seen (the counts, the exception, the message history of the failed
    exchange) and the facts the rule used.
 
@@ -454,10 +508,12 @@ failures seen, by chaos or in earnest, grow the rules, as the first explorations
 === Validation
 
 A test of `camel-catalog` reads the file and fails the build when a rule has a condition or a placeholder the engine
-does not know, a fact name that is not in `FactName`, a fact value that its name does not allow, a group that is not listed, a
-`tryChaos` that is not a recipe of the chaos model, an `outcome` that the tools cannot see, or a `seeAlso`
-id that does not resolve (in the rules, in their `choices`, or in the `seeAlso` of a fact). A test of the engine runs each rule on a small route that it should
-match and one it should not.
+does not know, a placeholder of a condition the rule does not have, a fact name that is not in `FactName`, a fact value
+that its name does not allow, a group that is not listed, a `tryChaos` that is not a recipe of the chaos model, an
+`outcome` that the tools cannot see, a `choices` entry that is not of the shape above (fewer than two, no `text`, a
+field it does not know), an `errors` entry that is not `transient` or `permanent`, or a `seeAlso` id that does not
+resolve (in the rules, in their `choices`, or in the `seeAlso` of a fact). A test of the engine runs each rule on a
+small route that it should match and one it should not.
 
 === Gathering the facts
 
@@ -489,7 +545,8 @@ a component without a fact gives no hint.
 4. The survey of the other families.
 5. The findings of `ProjectOverview` and the data of `SecurityData` as rules and facts.
 6. Explaining a failure: `receiver`, `outcome`, `impact` and `choices` in the rules, the redelivery in the
-   `errorHandler` condition, transient or permanent per exception and HTTP status in the catalog, and the "why" line
+   `errorHandler` condition, transient or permanent per exception and HTTP status (the `errors` table of the rule file
+   and the `errors` side of `@Facts`), and the "why" line
    and Shift+F8 on the Errors tab and the Explore view of the TUI (the latter after PR #29577, the start dialog of let
    there be chaos), and in `camel_error_diagnose`.
 
@@ -515,6 +572,10 @@ a component without a fact gives no hint.
 - The catalog gets a new file and a method to read it. The JSON of a component, EIP, data format or language gets an
   optional `facts` section, which readers that do not know it ignore. `@Facts` is new in `spi-annotations`, as
   `@BodyTypes` was.
+- No API changes to read the facts at runtime: `CatalogCamelContext.getComponentParameterJsonSchema` (and
+  `getEipParameterJsonSchema`, `getDataFormatParameterJsonSchema`, `getLanguageParameterJsonSchema`) return the JSON file
+  of the JAR as it is, so they return the `facts` section with the rest, and camel-chaos parses it as it parses the
+  options today (`ChaosStubs`).
 - camel-chaos keeps its behaviour when it reads the facts instead of its tables: the facts start as a copy of the tables.
 
 == Risks
@@ -523,6 +584,11 @@ a component without a fact gives no hint.
   fact is no hint.
 - A fact can depend on more than options (the version of a broker, its configuration). The text says what Camel does,
   and the fact is written for Camel's side only.
+- The catalog a tool reads and the JARs the integration runs with can be of different versions, and a fact can differ
+  between them (a fact added, a default option changed). The hints are then about a version that does not run. The
+  tools read the catalog of the Camel version of the project where they can, as they do for the options, and the
+  explanation of a failure uses the facts the running integration reads from its JARs, so its "why" is about what ran.
+  When the two differ, the explanation says which version it used.
 - The vocabulary may grow into a language. New conditions are added only for a hint that needs them, with a test.
 - Too many hints are noise. The About screen shows a few per integration, the most important first (by group order and
   a `rank` of the rule, if needed).
