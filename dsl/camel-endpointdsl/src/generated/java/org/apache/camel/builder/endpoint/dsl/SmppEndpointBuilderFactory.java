@@ -2852,9 +2852,9 @@ public interface SmppEndpointBuilderFactory {
         public static final SmppHeaderNameBuilder INSTANCE = new SmppHeaderNameBuilder();
 
         /**
-         * For SubmitSm, SubmitMulti and ReplaceSm* The data coding according to
-         * the SMPP 3.4 specification, section 5.2.19. Use the URI option
-         * alphabet settings above.
+         * For SubmitSm, SubmitMulti and ReplaceSm* The alphabet according to
+         * the SMPP 3.4 specification, section 5.2.19, which is bits 0-3 of the
+         * data coding. Use the URI option alphabet settings above.
          * 
          * The option is a: {@code Byte} type.
          * 
@@ -2908,7 +2908,7 @@ public interface SmppEndpointBuilderFactory {
         /**
          * For SubmitSm, SubmitMulti and ReplaceSm* The data coding according to
          * the SMPP 3.4 specification, section 5.2.19. Use the URI option
-         * alphabet settings above.
+         * dataCoding settings above.
          * 
          * The option is a: {@code Byte} type.
          * 

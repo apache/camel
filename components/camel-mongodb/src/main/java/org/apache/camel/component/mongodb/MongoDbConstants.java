@@ -28,7 +28,7 @@ public final class MongoDbConstants {
               javaType = "Integer")
     public static final String RESULT_TOTAL_SIZE = "CamelMongoDbResultTotalSize";
     @Metadata(label = "producer findAll",
-              description = "Number of objects matching the query. This does not take limit/skip into consideration.",
+              description = "Number of objects returned by the operation, after limit/skip have been applied.",
               javaType = "Integer")
     public static final String RESULT_PAGE_SIZE = "CamelMongoDbResultPageSize";
     @Metadata(label = "producer", description = "The query to execute against MongoDB.", javaType = "org.bson.conversions.Bson")
