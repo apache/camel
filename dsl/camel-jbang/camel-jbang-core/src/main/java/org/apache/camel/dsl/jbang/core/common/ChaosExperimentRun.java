@@ -215,8 +215,11 @@ public final class ChaosExperimentRun {
         if (ruleWarnings != null) {
             warnings.addAll(ruleWarnings);
         }
+        // a broker that camel infra runs on this machine is a local one, not a real system (CAMEL-26804)
+        List<InfraServices.Service> infra = feed != null ? InfraServices.running() : List.of();
+        InfraServices.Service local = feed != null ? localInfra(status, feed.endpoint(), infra) : null;
         if (feed != null) {
-            String real = feedWarning(status, feed.endpoint());
+            String real = feedWarning(status, feed.endpoint(), infra);
             if (real != null) {
                 warnings.add(real);
             }
@@ -264,6 +267,9 @@ public final class ChaosExperimentRun {
         }
         JsonObject answer = new JsonObject(begun);
         if (traffic != null) {
+            if (local != null) {
+                traffic.put("localInfra", local.name());
+            }
             answer.put("traffic", traffic);
         }
         answer.put("waited", waited);
@@ -426,7 +432,7 @@ public final class ChaosExperimentRun {
      * A warning when the feed goes to a real remote system, as the route it reaches starts from one that is not stubbed
      * (a Kafka broker, a JMS queue), or null. Such a feed is fine for a local broker (camel infra run).
      */
-    public static String feedWarning(JsonObject status, String feed) {
+    public static String feedWarning(JsonObject status, String feed, List<InfraServices.Service> infra) {
         List<Object> routes = status != null ? status.getCollection("routes") : null;
         JsonObject route = routes != null && !feed.endsWith("*") ? route(routes, feed) : null;
         String from = route != null ? route.getString("from") : null;
@@ -438,13 +444,40 @@ public final class ChaosExperimentRun {
         }
         String id = route.getString("routeId");
         Boolean stubbed = stubbed(status, id);
-        if (stubbed == null || stubbed) {
+        if (stubbed == null || stubbed || localInfra(status, feed, infra) != null) {
             return null;
         }
         String scheme = model.getScheme();
         return "The feed goes to " + from + ", where route " + id + " starts, and it is not stubbed: the messages go to"
                + " the real " + scheme + ". Use a local one (camel infra run " + scheme + "), or run the integration"
                + " with --stub=" + scheme + " so no real system gets them";
+    }
+
+    /**
+     * The service camel infra runs on this machine that the input of the route the feed reaches is on (CAMEL-26804):
+     * the addresses of its input (the services of the status, such as the brokers of Kafka, and the URI it starts from)
+     * are all local, on ports of that service. Null when the route is not known, or its input is elsewhere.
+     */
+    static InfraServices.Service localInfra(JsonObject status, String feed, List<InfraServices.Service> infra) {
+        List<Object> routes = status != null ? status.getCollection("routes") : null;
+        JsonObject route = routes != null && !infra.isEmpty() && !feed.endsWith("*") ? route(routes, feed) : null;
+        if (route == null) {
+            return null;
+        }
+        String id = route.getString("routeId");
+        List<String> addresses = new ArrayList<>();
+        if (route.getString("from") != null) {
+            addresses.add(route.getString("from"));
+        }
+        if (status.get("services") instanceof JsonObject services && services.getCollection("services") != null) {
+            for (Object o : services.getCollection("services")) {
+                if (o instanceof JsonObject service && id.equals(service.getString("routeId"))
+                        && service.getString("serviceUrl") != null) {
+                    addresses.add(service.getString("serviceUrl"));
+                }
+            }
+        }
+        return InfraServices.serving(addresses, infra);
     }
 
     /** The route the feed reaches: by its id, or by the endpoint it starts from; null when none. */
