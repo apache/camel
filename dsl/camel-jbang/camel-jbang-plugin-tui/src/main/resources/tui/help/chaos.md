@@ -76,6 +76,20 @@ at a dead letter channel, the routes that failed outside its expectations,
 and why it could not decide (such as faults that never fired). **l** or
 Esc shows the rules again.
 
+**L** starts an exploration here, by hand: pick the rules to try from the
+suggestions of the integration (the same as **w**), the most worth trying
+first, each with what should hold despite its faults. The single faults
+not tried yet are picked, of routes that get messages by themselves (a
+timer, or a route they are called from); a route whose messages come from
+outside is marked *needs messages*: send it some while its rule runs, or
+its verdict says nothing. Space picks a rule, Left and Right change the
+budget (2m to 30m), and Enter starts. The picked rules are tried one at a
+time, each for its share of the budget, and each ends with PASS, FAIL or
+INCONCLUSIVE; the line above the experiments says which rule is tried and
+how long it has left. **x** stops it: the rules are removed at once. Every
+rule is removed when the budget ends, also when the TUI is closed, and the
+routes are not changed. One exploration runs at a time.
+
 ## Keys
 
 - **a** — Add a rule: pick what should go wrong from the known rules of
@@ -96,6 +110,10 @@ Esc shows the rules again.
   was tried in the route and what is not tried yet
 - **e** — Change the selected rule: the line starts with the rule as it is
 - **l** — Explore: the exploration and its experiments, or the rules again
+- **L** — Let there be chaos: pick the rules to try and the budget, and
+  they are tried one at a time (see Explore above). In the dialog: Space
+  picks, Left and Right change the budget, Enter starts
+- **x** — On the exploration: stop the exploration started with **L**
 - **x** — Remove the selected rule
 - **c** — Clear: remove all rules (the report keeps what they did)
 - **R** — A new experiment: no rules and a new report, with the same seed

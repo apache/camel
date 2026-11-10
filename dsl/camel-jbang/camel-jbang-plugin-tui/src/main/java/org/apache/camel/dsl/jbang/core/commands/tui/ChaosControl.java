@@ -62,6 +62,8 @@ final class ChaosControl {
         RECIPES,
         // what to try, the rules the integration suggests (null while it is asked)
         SUGGEST,
+        // the start of an exploration: the rules to try and the budget (null while the integration is asked)
+        EXPLORE,
         INPUT,
         CONFIRM,
         RESULT
@@ -90,6 +92,10 @@ final class ChaosControl {
     private boolean recipesLoaded;
     private ChaosRecipeForm form;
     private volatile ChaosSuggestList suggestions;
+    private volatile ChaosExploreDialog exploreDialog;
+    // the exploration started here (L), and whether one was just started, for the screen to show it
+    private final ChaosExploreRun explorer;
+    private boolean exploreStarted;
     // set by the background task that sends the action, read when the screen is drawn
     private volatile Step step = Step.NONE;
     private Command command;
@@ -116,9 +122,30 @@ final class ChaosControl {
     }
 
     ChaosControl(MonitorContext ctx, Function<JsonObject, JsonObject> sender, Supplier<ChaosRecipes> recipeSource) {
+        this(ctx, sender, recipeSource, new ChaosExploreRun(ctx));
+    }
+
+    ChaosControl(MonitorContext ctx, Function<JsonObject, JsonObject> sender, Supplier<ChaosRecipes> recipeSource,
+                 ChaosExploreRun explorer) {
         this.ctx = ctx;
         this.sender = sender;
         this.recipeSource = recipeSource;
+        this.explorer = explorer;
+    }
+
+    ChaosExploreRun explorer() {
+        return explorer;
+    }
+
+    ChaosExploreDialog exploreDialog() {
+        return exploreDialog;
+    }
+
+    /** Whether an exploration was started since the last call, so the screen shows it. */
+    boolean takeExploreStarted() {
+        boolean started = exploreStarted;
+        exploreStarted = false;
+        return started;
     }
 
     ChaosRecipeForm form() {
@@ -131,7 +158,7 @@ final class ChaosControl {
 
     boolean isTextInputActive() {
         // the list of known rules takes the keys too, so a digit or a letter does not leave the screen
-        return step == Step.INPUT || step == Step.RECIPES || step == Step.SUGGEST;
+        return step == Step.INPUT || step == Step.RECIPES || step == Step.SUGGEST || step == Step.EXPLORE;
     }
 
     boolean isConfirming() {
@@ -156,6 +183,9 @@ final class ChaosControl {
             }
             case SUGGEST -> {
                 return handleSuggestKey(ke);
+            }
+            case EXPLORE -> {
+                return handleExploreKey(ke);
             }
             case INPUT -> {
                 return handleInputKey(ke);
@@ -323,6 +353,78 @@ final class ChaosControl {
         return true;
     }
 
+    /**
+     * Let there be chaos (CAMEL-26760): opens the start of an exploration of the integration, with the rules it
+     * suggests to pick from, or says why it cannot start.
+     */
+    void openExplore(IntegrationInfo info) {
+        if (info == null || info.chaos == null || !info.chaos.enabled) {
+            return;
+        }
+        pid = info.pid;
+        name = info.name;
+        id = null;
+        rule = null;
+        command = Command.ADD;
+        if (explorer.isRunning(info.pid)
+                || info.chaos.exploration != null && info.chaos.exploration.running()) {
+            // one exploration at a time, whoever started it
+            resultLines.clear();
+            result("Let there be chaos", false, "An exploration runs in " + name + " already: l shows it");
+            return;
+        }
+        exploreDialog = null;
+        step = Step.EXPLORE;
+        JsonObject request = new JsonObject();
+        request.put("action", "chaos");
+        request.put("command", "suggest");
+        String target = pid;
+        String of = name;
+        Runnable task = () -> {
+            JsonObject reply = sender != null ? sender.apply(request) : ctx.executeAction(target, request, 5000);
+            if (step != Step.EXPLORE) {
+                // closed while it was asked
+                return;
+            }
+            if (reply == null || reply.getString("error") != null) {
+                step = Step.NONE;
+                resultLines.clear();
+                result("Let there be chaos", true, reply == null
+                        ? "The integration " + of + " did not answer"
+                        : reply.getString("error"));
+                return;
+            }
+            exploreDialog = new ChaosExploreDialog(of, reply);
+        };
+        if (sender != null) {
+            task.run();
+        } else {
+            ctx.backgroundExecutor.execute(task);
+        }
+    }
+
+    private boolean handleExploreKey(KeyEvent ke) {
+        ChaosExploreDialog dialog = exploreDialog;
+        if (dialog == null) {
+            if (ke.isCancel()) {
+                close();
+            }
+            return true;
+        }
+        switch (dialog.handleKey(ke)) {
+            case CLOSED -> close();
+            case START -> {
+                explorer.start(pid, dialog.picked(), dialog.budget(), dialog.budgetMillis());
+                exploreStarted = true;
+                close();
+            }
+            default -> {
+                // the dialog used the key
+            }
+        }
+        return true;
+    }
+
     /** Opens a rule typed as one line, to change before Enter: a rule that makes a real error again (CAMEL-26723). */
     void openRule(IntegrationInfo info, String text) {
         if (!ChaosHere.available(info)) {
@@ -462,7 +564,7 @@ final class ChaosControl {
             // the form goes back to the list, the list closes
             return handleRecipeKey(KeyEvent.ofKey(KeyCode.ESCAPE));
         }
-        if (step == Step.SUGGEST) {
+        if (step == Step.SUGGEST || step == Step.EXPLORE) {
             close();
             return true;
         }
@@ -475,6 +577,7 @@ final class ChaosControl {
         input = null;
         form = null;
         suggestions = null;
+        exploreDialog = null;
         describing = null;
     }
 
@@ -603,7 +706,16 @@ final class ChaosControl {
                     list.render(frame, area);
                 } else {
                     DialogHelper.renderConfirm(frame, area, "What to Try", "Asking " + name + " what to try...", null,
-                            "Esc", "cancel", null, null);
+                            null, null, null, null);
+                }
+            }
+            case EXPLORE -> {
+                ChaosExploreDialog dialog = exploreDialog;
+                if (dialog != null) {
+                    dialog.render(frame, area);
+                } else {
+                    DialogHelper.renderConfirm(frame, area, "Let there be chaos", "Asking " + name + " what to try...",
+                            null, null, null, null, null);
                 }
             }
             case INPUT -> {
@@ -704,6 +816,14 @@ final class ChaosControl {
                     TuiHelper.hint(spans, "Esc", "cancel");
                 }
             }
+            case EXPLORE -> {
+                ChaosExploreDialog dialog = exploreDialog;
+                if (dialog != null) {
+                    dialog.renderFooter(spans);
+                } else {
+                    TuiHelper.hint(spans, "Esc", "cancel");
+                }
+            }
             case INPUT -> {
                 TuiHelper.hint(spans, "Enter",
                         command == Command.DESCRIBE ? "ask the AI" : command == Command.SAVE ? "save" : "confirm");
@@ -725,6 +845,7 @@ final class ChaosControl {
                     TuiHelper.hint(spans, "s", "save as scenario");
                 }
                 TuiHelper.hint(spans, "R", "new experiment");
+                TuiHelper.hint(spans, "L", "let there be chaos");
                 if (ctx.askAiCallback != null) {
                     TuiHelper.hint(spans, "d", "describe with AI");
                     if (hasRules) {

@@ -57,16 +57,25 @@ final class ChaosExploreView {
     /**
      * Renders the exploration.
      *
-     * @return the area of the table of experiments, for the clicks
+     * @param  progress what the exploration started on this screen is doing (L), or null
+     * @return          the area of the table of experiments, for the clicks
      */
-    static Rect render(Frame frame, Rect area, ChaosInfo.Exploration ex, TableState state, String name) {
+    static Rect render(
+            Frame frame, Rect area, ChaosInfo.Exploration ex, TableState state, String name, String progress) {
+        if (progress != null) {
+            List<Rect> rows = Layout.vertical().constraints(Constraint.length(1), Constraint.fill()).split(area);
+            frame.renderWidget(Paragraph.builder()
+                    .text(Text.from(Line.from(Span.styled(" 🎲 " + progress, Theme.warning())))).build(), rows.get(0));
+            area = rows.get(1);
+        }
         if (ex == null) {
             frame.renderWidget(Paragraph.builder()
                     .text(Text.from(Line.from(Span.raw("")),
-                            Line.from(Span.styled("  No exploration yet. Let there be chaos: an AI tries faults on the"
-                                                  + " integration by itself for a budget of time, and reports",
+                            Line.from(Span.styled("  No exploration yet. Let there be chaos: press L to pick the rules to"
+                                                  + " try, and they are tried one at a time for a budget of time.",
                                     Theme.muted())),
-                            Line.from(Span.styled("  what held and what broke:  camel cmd chaos-explore "
+                            Line.from(Span.styled("  Or let an AI try faults by itself, and report what held and what"
+                                                  + " broke:  camel cmd chaos-explore "
                                                   + (name != null ? name : "<name>") + " --budget=10m",
                                     Theme.muted()))))
                     .block(block(" Explore "))
