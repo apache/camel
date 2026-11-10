@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,7 +27,9 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * REST binding rejects unknown properties with Jackson 3 too, whose default is to accept them.
@@ -42,7 +45,9 @@ public class RestJettyPostJsonPojoUnknownPropertyTest extends BaseJettyTest {
         Exception ex = assertThrows(CamelExecutionException.class,
                 () -> template.sendBody("http://localhost:" + getPort() + "/users/new", body));
 
-        assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, ex.getCause());
+        assertEquals(400, cause.getStatusCode());
+        assertTrue(cause.getResponseBody().contains("donotexists"), cause.getResponseBody());
         MockEndpoint.assertIsSatisfied(context);
     }
 
@@ -62,6 +67,12 @@ public class RestJettyPostJsonPojoUnknownPropertyTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                // answer the binding failure with its message
+                onException(Exception.class)
+                        .handled(true)
+                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(400))
+                        .setBody().simple("${exception.message}");
+
                 configureDataFormat(
                         restConfiguration().component("jetty").host("localhost").port(getPort())
                                 .bindingMode(RestBindingMode.json));

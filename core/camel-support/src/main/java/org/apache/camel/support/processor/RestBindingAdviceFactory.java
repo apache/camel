@@ -37,6 +37,7 @@ import org.apache.camel.support.ResolverHelper;
  */
 public class RestBindingAdviceFactory {
 
+    // matched by name: camel-support cannot depend on camel-jackson3, and JSON has no binding factory SPI
     private static final String JACKSON3_PACKAGE = "org.apache.camel.component.jackson3.";
     private static final String FAIL_ON_UNKNOWN_PROPERTIES = "FAIL_ON_UNKNOWN_PROPERTIES";
 
