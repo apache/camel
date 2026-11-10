@@ -253,9 +253,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <code>null</code> or an empty string
+     * Tests whether the value is <b>not</b> <code>null</code> and <b>not</b> a blank string
      *
-     * @param  value the value, if its a String it will be tested for text length as well
+     * @param  value the value to test
      * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(String value) {
