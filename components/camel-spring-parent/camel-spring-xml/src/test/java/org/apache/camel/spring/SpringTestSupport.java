@@ -28,7 +28,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.scan.AssignableToPackageScanFilter;
 import org.apache.camel.support.scan.DefaultPackageScanClassResolver;
@@ -160,10 +159,8 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
-        // make SEDA run faster
-        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
-        return context;
+        // SEDA runs faster in these tests, see FastPollSedaComponent
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     public ObjectName getContextObjectName() throws MalformedObjectNameException {

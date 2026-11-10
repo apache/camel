@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Service;
-import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -73,9 +72,6 @@ public final class SpringTestHelper {
         }
         context.getCamelContextExtension().getRegistry().bind(PROPERTY_TEST_DIR, test.testDirectory());
         context.getPropertiesComponent().addInitialProperty(PROPERTY_TEST_DIR, test.testDirectory().toString());
-        // make SEDA run faster: it must be set before the context is started, as the consumers use it to poll their queue
-        // and the shutdown has to wait up to this time for them
-        context.getComponent("seda", SedaComponent.class).setDefaultPollTimeout(10);
         if (!isNoStart) {
             context.start();
         }
