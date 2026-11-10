@@ -7889,11 +7889,11 @@ to your application, unless a library it uses still needs it; at most `jackson-a
 Jackson 2, for example an `ObjectMapper` it got through `camel-salesforce`, declare `jackson-databind` yourself.
 
 *Components that stay on Jackson 2.* `camel-jackson`, `camel-jacksonxml`, `camel-jackson-avro`, `camel-jackson-protobuf`,
-`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jq`, `camel-jslt`, `camel-json-validator`, `camel-mcp-server`,
-`camel-metrics`, `camel-opa`, `camel-openai`, `camel-openapi-java`, `camel-opensearch`, `camel-quickjs`, `camel-rest-openapi`
-and `camel-tahu` still use Jackson 2. Where they take or return Jackson nodes, these are `com.fasterxml.jackson.databind.JsonNode`,
-not the `tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jq`
-expression after `unmarshal().json()` in Camel JBang, pass the body between them as JSON text.
+`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jq`, `camel-jslt`, `camel-metrics`, `camel-opa`, `camel-openai`,
+`camel-openapi-java`, `camel-opensearch`, `camel-quickjs`, `camel-rest-openapi` and `camel-tahu` still use Jackson 2. Where
+they take or return Jackson nodes, these are `com.fasterxml.jackson.databind.JsonNode`, not the
+`tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jq` expression
+after `unmarshal().json()` in Camel JBang, pass the body between them as JSON text.
 
 *Jackson 2 nodes.* A component on Jackson 3 accepts JSON text, bytes, streams, Maps, Lists and `tools.jackson.databind.JsonNode`
 bodies. A `com.fasterxml.jackson.databind.JsonNode` is an ordinary bean to its mapper: pass it as JSON text, or produce it
@@ -8179,6 +8179,47 @@ A `java.time` value in a POJO body no longer fails: `callFunction` of `camel-goo
 Exceptions: `camel-huaweicloud-dms` and `camel-huaweicloud-iam` let a failure to write a response as JSON through as the
 unchecked `tools.jackson.core.JacksonException`, which is not an `IOException`, so `onException(IOException.class)` does not
 match it.
+
+=== Jackson 3 - camel-json-validator
+
+`camel-json-validator` now uses json-schema-validator 3 (`com.networknt`), which is built on Jackson 3
+(`tools.jackson`), and no longer brings Jackson 2 to your application.
+
+*Object mapper.* The `objectMapper` option of the endpoint is now a `tools.jackson.databind.ObjectMapper`, and the
+`objectMapper` and `useDefaultObjectMapper` options of the component only find a mapper of that type in the registry. A
+mapper that the `objectMapper` option of the component names, and that is not found or is a Jackson 2 mapper, now fails
+the creation of the endpoint with a `NoSuchBeanException`; it was ignored before. A Jackson 2 mapper that
+`useDefaultObjectMapper` found in the registry, such as one a runtime registers, is no longer used, without a warning:
+bind a Jackson 3 mapper with the same settings to keep them. With `useDefaultObjectMapper`, a single
+Jackson 3 mapper in the registry is now used to read the JSON. With the Jackson auto-configuration of Spring Boot
+(`spring-boot-starter-json`, which the web starters include), that is its `JsonMapper`, which uses the Jackson 3 defaults:
+content after the JSON value now fails the validation. To accept it again, set `spring.jackson.use-jackson2-defaults=true`,
+or `disabledDeserializationFeatures=FAIL_ON_TRAILING_TOKENS` on the endpoint.
+
+*Reading the JSON.* Without a mapper of your own, the body is read with the Jackson 2 defaults, as before: content after the
+first JSON value is ignored unless you enable `FAIL_ON_TRAILING_TOKENS` with the `enabledDeserializationFeatures` option.
+The limits are those of Jackson 3 (see *Limits* in <<_jackson_3,Jackson 3>>): JSON nested more than 500 levels deep now
+fails. A mapper of your own is read with its own settings. Unlike the components in *Jackson 2 nodes*, `camel-json-validator`
+still reads only JSON text, bytes and streams: a `Map` or `List` body fails, as before; marshal it to JSON first. The `enabledDeserializationFeatures` and `disabledDeserializationFeatures`
+options take the names of `tools.jackson.databind.DeserializationFeature`, and configure a copy of your mapper rather than
+the mapper itself. A name that Jackson 3 moved to another type of feature, such as `READ_ENUMS_USING_TO_STRING` (now an
+`EnumFeature`) or `ADJUST_DATES_TO_CONTEXT_TIME_ZONE` (now a `DateTimeFeature`), fails the creation of the endpoint.
+A body that is not JSON reaches the error handler with a `tools.jackson.core` exception as the cause; see *Exceptions* in
+<<_jackson_3,Jackson 3>>.
+
+*Validation.* json-schema-validator 3.0 also changed the outcome of some checks. Where the `format` keyword is asserted,
+`date-time` requires a `T` and an explicit offset, and `time` requires the seconds. See the
+https://github.com/networknt/json-schema-validator/blob/master/CHANGELOG.md[changelog of json-schema-validator] for the
+full list.
+
+*Custom error handlers and schema loaders.* The `JsonValidatorErrorHandler` and `JsonUriSchemaLoader` interfaces keep the
+same `com.networknt` types, but an `Error` gives the instance node as a `tools.jackson.databind.JsonNode`. The `mapper`
+field that a subclass of `DefaultJsonUriSchemaLoader` inherits is now a `tools.jackson.databind.ObjectMapper`: a subclass
+that uses or replaces it must move to Jackson 3.
+
+*YAML DSL validator.* `camel validate yaml` and the YAML DSL validator Maven plugin read the YAML with Jackson 3, which
+follows YAML 1.2: `yes`, `no`, `on` and `off` are no longer booleans, and `1_000` and `0b101` are no longer numbers. An
+option such as `streaming: yes` is now reported; the route fails to start with it, so write `true` or `false`.
 
 === camel-docling - the apiKeyHeader option is deprecated
 

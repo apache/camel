@@ -19,11 +19,12 @@ package org.apache.camel.dsl.yaml.validator;
 import java.text.MessageFormat;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import com.networknt.schema.path.NodePath;
 import com.networknt.schema.path.PathType;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -124,7 +125,7 @@ public class SchemaHintsTest {
         assertThat(validator.optionType("claimCheck", "filter")).isEqualTo("string");
         assertThat(validator.optionType("log", "doCatch")).isNull();
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new JsonMapper();
         assertThat(SchemaHints.misplacedOptions(
                 mapper.readTree("{\"doTry\": {\"steps\": []}, \"doCatch\": [], \"doFinally\": {\"steps\": []}}"),
                 validator)).containsExactly("doCatch", "doFinally");
