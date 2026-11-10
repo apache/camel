@@ -24,9 +24,9 @@ import org.apache.camel.spi.Metadata;
  */
 public interface SmppConstants {
 
-    @Metadata(label = "producer", description = "*For SubmitSm, SubmitMulti and ReplaceSm*  The data\n" +
-                                                "coding according to the SMPP 3.4 specification, section 5.2.19. Use the\n" +
-                                                "URI option `alphabet` settings above.",
+    @Metadata(label = "producer", description = "*For SubmitSm, SubmitMulti and ReplaceSm*  The alphabet according\n" +
+                                                "to the SMPP 3.4 specification, section 5.2.19, which is bits 0-3 of\n" +
+                                                "the data coding. Use the URI option `alphabet` settings above.",
               javaType = "Byte")
     String ALPHABET = "CamelSmppAlphabet";
     @Metadata(description = "The command to send: SubmitSm (the default when the header is missing), ReplaceSm, QuerySm,\n" +
@@ -42,7 +42,7 @@ public interface SmppConstants {
     String COMMAND_STATUS = "CamelSmppCommandStatus";
     @Metadata(label = "producer", description = "*For SubmitSm, SubmitMulti and ReplaceSm*  The data\n" +
                                                 "coding according to the SMPP 3.4 specification, section 5.2.19. Use the\n" +
-                                                "URI option `alphabet` settings above.",
+                                                "URI option `dataCoding` settings above.",
               javaType = "Byte")
     String DATA_CODING = "CamelSmppDataCoding";
     @Metadata(label = "producer", description = "The splitter", javaType = "org.apache.camel.component.smpp.SmppSplitter")
