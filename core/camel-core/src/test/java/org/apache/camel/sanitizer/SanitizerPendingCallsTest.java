@@ -267,22 +267,99 @@ class SanitizerPendingCallsTest {
     }
 
     @Test
-    void eachStripeKeepsItsShareOfTheBound() {
+    void aStripePastItsShareKeepsItsCallsWhileTheTableIsWithinTheBound() {
+        // an async parallel split with many parts in flight: the exchange and its parts are in one stripe
+        PendingCalls striped = new PendingCalls(
+                TIMEOUT, clock::get, (route, step) -> step.startsWith("split"),
+                PendingCalls.MAX_STRIPES);
+        Sanitizer s = new Sanitizer(context, 0, session, striped);
+        SanitizerStepListener l = new SanitizerStepListener(s);
+        Exchange exchange = new DefaultExchange(context);
+        l.onStepCall(exchange, "r", "split1");
+        int parts = 4 * striped.getShare();
+        for (int i = 0; i < parts; i++) {
+            l.onStepCall(part(exchange), "r", "toPart");
+        }
+        // far past the share of its stripe, nothing is dropped while the table holds less than the bound
+        assertEquals(parts + 1, striped.size());
+        assertEquals(0, striped.getDropped());
+        // and each part is still watched, not the split that waits for them
+        clock.addAndGet(TIMEOUT);
+        List<PendingCalls.Pending> stalled = striped.stalled();
+        assertEquals(parts, stalled.size());
+        assertTrue(stalled.stream().allMatch(p -> "toPart".equals(p.stepId)));
+        // past the bound, the oldest calls of the stripe are dropped and counted, as before
+        for (int i = parts + 1; i < PendingCalls.MAX_PENDING + 3; i++) {
+            l.onStepCall(part(exchange), "r", "toPart");
+        }
+        assertEquals(PendingCalls.MAX_PENDING, striped.size());
+        assertEquals(3, striped.getDropped());
+        assertTrue(s.report().contains("checks incomplete: 3 pending calls dropped"), s.report());
+    }
+
+    @Test
+    void theStripesTogetherKeepTheBound() {
         PendingCalls four = new PendingCalls(TIMEOUT, clock::get, (route, step) -> false, 4);
         SanitizerStepListener l = new SanitizerStepListener(new Sanitizer(context, 0, session, four));
-        // the calls of one exchange are in one stripe
+        // one exchange holds most of the bound, in one stripe
         Exchange exchange = new DefaultExchange(context);
-        for (int i = 0; i < PendingCalls.MAX_PENDING / 4 + 2; i++) {
+        int nested = PendingCalls.MAX_PENDING - 100;
+        for (int i = 0; i < nested; i++) {
             l.onStepCall(exchange, "r", "nested" + i);
         }
-        assertEquals(PendingCalls.MAX_PENDING / 4, four.size());
-        assertEquals(2, four.getDropped());
-        // in all the stripes, never more than the bound
-        for (int i = 0; i < PendingCalls.MAX_PENDING; i++) {
+        assertEquals(nested, four.size());
+        assertEquals(0, four.getDropped());
+        // other exchanges, in all the stripes: a stripe within its share keeps its calls, and a stripe past its share
+        // drops its oldest while the table holds more than the bound
+        int others = PendingCalls.MAX_PENDING;
+        for (int i = 0; i < others; i++) {
             l.onStepCall(new DefaultExchange(context), "r", "lost");
         }
-        assertTrue(four.size() <= PendingCalls.MAX_PENDING, "size " + four.size());
-        assertEquals(PendingCalls.MAX_PENDING + PendingCalls.MAX_PENDING / 4 + 2, four.size() + four.getDropped());
+        long dropped = four.getDropped();
+        assertTrue(dropped > 0, "dropped " + dropped);
+        assertEquals(nested + others, four.size() + dropped);
+        // calls are dropped only down to the bound, and the table holds at most the bound plus the shares of the other
+        // stripes
+        assertTrue(four.size() >= PendingCalls.MAX_PENDING, "size " + four.size());
+        assertTrue(four.size() <= PendingCalls.MAX_PENDING + 3 * four.getShare(), "size " + four.size());
+    }
+
+    @Test
+    void stripesPastTheirShareOnManyThreadsKeepTheBound() throws Exception {
+        // 8 threads add calls to 4 stripes at once, past the bound: every call is kept or counted as dropped, the first
+        // drop is reported once, and the table holds at most the bound plus the shares of the other stripes, give or
+        // take the calls made at the same moment
+        PendingCalls four = new PendingCalls(TIMEOUT, clock::get, (route, step) -> false, 4);
+        Sanitizer s = new Sanitizer(context, 0, session, four);
+        int threads = 8;
+        int calls = PendingCalls.MAX_PENDING / 2;
+        CyclicBarrier start = new CyclicBarrier(threads);
+        AtomicLong firstDrops = new AtomicLong();
+        List<Thread> workers = new ArrayList<>();
+        List<Throwable> errors = new CopyOnWriteArrayList<>();
+        for (int t = 0; t < threads; t++) {
+            workers.add(new Thread(() -> {
+                await(start);
+                // one exchange per thread holds most of its calls (one stripe), the others are exchanges of their own
+                Exchange mine = new DefaultExchange(context);
+                for (int i = 0; i < calls; i++) {
+                    Exchange exchange = i % 2 == 0 ? mine : new DefaultExchange(context);
+                    if (four.called(exchange, new SanitizerStepListener.StepCall(s, exchange.getExchangeId(), "r", "s"))) {
+                        firstDrops.incrementAndGet();
+                    }
+                }
+            }));
+        }
+        workers.forEach(w -> w.setUncaughtExceptionHandler((t, e) -> errors.add(e)));
+        workers.forEach(Thread::start);
+        for (Thread w : workers) {
+            w.join(TimeUnit.SECONDS.toMillis(60));
+        }
+        assertTrue(errors.isEmpty(), errors.toString());
+        assertEquals((long) threads * calls, four.size() + four.getDropped());
+        assertTrue(four.getDropped() > 0, "dropped " + four.getDropped());
+        assertEquals(1, firstDrops.get());
+        assertTrue(four.size() <= PendingCalls.MAX_PENDING + 3 * four.getShare() + threads, "size " + four.size());
     }
 
     @Test

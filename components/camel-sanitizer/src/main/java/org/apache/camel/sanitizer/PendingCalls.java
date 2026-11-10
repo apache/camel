@@ -67,10 +67,15 @@ import org.apache.camel.ExchangePropertyKey;
  * did before. Only the checker ({@link #stalled()}), the counts and the methods used when the context stops or a route
  * is removed look at all the stripes, one at a time.
  * <p/>
- * Each stripe keeps at most {@link #MAX_PENDING} divided by the number of stripes calls, so the table keeps at most
- * {@link #MAX_PENDING}: past it the oldest call of the stripe is dropped and counted. The ids of the parts (the
- * {@code partOf} map, and the {@code partIds} of their exchange) are not counted in that bound: the id of a part goes
- * when the part is done, or when its exchange leaves the table. The locks are held briefly and never while calling out.
+ * The bound, {@link #MAX_PENDING} calls, is a safety net, not a sampling limit. Each stripe has a share of it
+ * ({@link #MAX_PENDING} divided by the number of stripes), and the share is soft: a stripe that holds more than its
+ * share sums the sizes of all the stripes without their locks, and drops its oldest calls (counted) only while they
+ * hold more than {@link #MAX_PENDING} in all. So one exchange and its parts, which are in one stripe, can hold nearly
+ * all of the bound, and a stripe within its share never looks at the others. The table then holds at most
+ * {@link #MAX_PENDING} plus the shares of the other stripes (less than twice the bound), give or take the calls made at
+ * the same moment in other stripes, as the sum is read without the locks. The ids of the parts (the {@code partOf} map,
+ * and the {@code partIds} of their exchange) are not counted in that bound: the id of a part goes when the part is
+ * done, or when its exchange leaves the table. The locks are held briefly and never while calling out.
  */
 final class PendingCalls {
 
@@ -124,10 +129,6 @@ final class PendingCalls {
 
     long getTimeoutNanos() {
         return timeoutNanos;
-    }
-
-    int getStripes() {
-        return stripes.length;
     }
 
     /**
@@ -316,6 +317,25 @@ final class PendingCalls {
     }
 
     /**
+     * The pending calls in all the stripes, read without their locks (each size is volatile): a stripe past its share
+     * of the bound asks this.
+     */
+    private int total() {
+        int total = 0;
+        for (Stripe stripe : stripes) {
+            total += stripe.size;
+        }
+        return total;
+    }
+
+    /**
+     * The share of the bound of each stripe.
+     */
+    int getShare() {
+        return stripes[0].share;
+    }
+
+    /**
      * How many exchange ids the table knows the stripe of (those with an entry, and the parts of those).
      */
     int getKnownIds() {
@@ -340,17 +360,19 @@ final class PendingCalls {
      */
     final class Stripe {
 
-        private final int bound;
+        // its share of the bound: within it, the stripe does not look at the others
+        private final int share;
         // the exchanges with pending calls (or with parts that have), by the id of the exchange, the oldest first
         private final Map<String, ExchangeCalls> exchanges = new LinkedHashMap<>();
         // the exchange each part belongs to, by the id of the part, while that exchange is in the table: a part keeps
         // it when its correlation id is changed later (such as by the results of a seda request copied onto it)
         private final Map<String, ExchangeCalls> partOf = new HashMap<>();
-        private int size;
+        // written only under the lock of the stripe; read without it by total()
+        private volatile int size;
         private long dropped;
 
-        Stripe(int bound) {
-            this.bound = bound;
+        Stripe(int share) {
+            this.share = share;
         }
 
         /**
@@ -387,7 +409,16 @@ final class PendingCalls {
             calls.calls.add(call);
             size++;
             calls.touch(now);
-            return size > bound && dropOldest();
+            if (size <= share) {
+                return false;
+            }
+            // past its share, the stripe drops its oldest calls while the table holds more than the bound (the sum is
+            // read once, without the locks of the other stripes)
+            boolean droppedNow = false;
+            for (int excess = total() - MAX_PENDING; excess > 0 && size > share && dropOldest(); excess--) {
+                droppedNow = true;
+            }
+            return droppedNow;
         }
 
         private void done(String exchangeId) {

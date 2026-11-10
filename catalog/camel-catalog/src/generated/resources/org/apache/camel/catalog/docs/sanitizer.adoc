@@ -128,18 +128,25 @@ Exchange sanitizer: callback still pending (R1, a warning)
 
 The warnings never fail a test, and are not charged to it. When the context stops, the calls still pending then are
 listed at WARN (with `reportOnShutdown`), and the report on shutdown counts the warnings. The pending calls are kept in
-a table that holds ids and names, not the exchanges, for at most 10000 calls. The table is split in stripes, each with
-its own lock (twice the number of processors, rounded up to a power of two, at most 32), so routing threads that work on
-unrelated exchanges do not wait for each other; an exchange, its parts and the copies made from it while it is in the
-table are in one stripe, which keeps at most 10000 divided by the number of stripes calls. Past that, the oldest call of
-the stripe is dropped, one WARN says that the checks are incomplete, and the report counts the calls dropped. The
-timeout is measured with `System.nanoTime()`, not with the time source of camel-test-dst, so a virtual clock does not
-stretch it.
+a table that holds ids and names, not the exchanges, with a bound of 10000 calls. The table is split in stripes, each
+with its own lock (twice the number of processors, rounded up to a power of two, at most 32), so routing threads that
+work on unrelated exchanges do not wait for each other; an exchange, its parts and the copies made from it while it is
+in the table are in one stripe. Each stripe has a share of the bound (10000 divided by the number of stripes), and the
+share is soft: a stripe past it drops its oldest calls only while all the stripes together hold more than 10000, so an
+asynchronous parallel split with many parts in flight is still watched. When calls are dropped, one WARN says that the
+checks are incomplete, and the report counts the calls dropped. The timeout is measured with `System.nanoTime()`, not
+with the time source of camel-test-dst, so a virtual clock does not stretch it.
 
 To know when an exchange is done, the sanitizer adds an event notifier of the exchanges completed and failed, so with
 the sanitizer on the exchange events of the context are fired (and the notifier is listed with the others, also in
 JMX). A pending timeout of `0` turns the warning off, and with it the table, the notifier and the list when the
 context stops.
+
+The parts of a split, multicast or recipient list are in the stripe of their exchange. With `parallelProcessing()`, the
+threads that run the parts therefore take the same lock of the table at each step call, return and callback. The lock is
+held briefly, but it costs more when the parts run on several threads, and it orders those threads, which can hide a
+race between parts that is not synchronized otherwise. To hunt races between the parts of a parallel split, set
+`camel.sanitizer.pendingTimeout=0`: the other checks of R1 stay on, and the table and its lock are not used.
 
 == Switching it on
 
@@ -181,7 +188,8 @@ starting.
 thread, which costs least.
 |`camel.sanitizer.pendingTimeout` |`60s` |How long an exchange waits, with nothing happening in it, before its
 innermost pending call is reported as still pending (a warning, which never fails a test), such as `60s` or `500`
-(milliseconds). `0` turns the warning off.
+(milliseconds). `0` turns the warning off; use it when hunting races between the parts of a parallel split, which
+share one lock of the table.
 |`camel.sanitizer.reportOnShutdown` |`true` |Log the report when the context stops, if there was a violation or a still
 pending warning, and the calls still pending then.
 |===

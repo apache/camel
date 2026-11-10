@@ -486,11 +486,10 @@ public final class Sanitizer {
 
     void pendingCalled(Exchange exchange, SanitizerStepListener.StepCall call) {
         if (pending != null && pending.called(exchange, call)) {
-            LOG.warn("Exchange sanitizer: more than {} calls of steps are pending in a stripe of the table of CamelContext"
-                     + " {} (at most {} in its {} stripes); checks incomplete: the oldest pending calls are dropped and no"
-                     + " longer watched for a callback that does not come (the report on shutdown counts them)",
-                    PendingCalls.MAX_PENDING / pending.getStripes(), camelContext.getName(), PendingCalls.MAX_PENDING,
-                    pending.getStripes());
+            LOG.warn("Exchange sanitizer: more than {} calls of steps are pending in CamelContext {}; checks incomplete:"
+                     + " the oldest pending calls are dropped and no longer watched for a callback that does not come (the"
+                     + " report on shutdown counts them)",
+                    PendingCalls.MAX_PENDING, camelContext.getName());
         }
     }
 

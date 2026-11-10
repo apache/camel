@@ -95,7 +95,9 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
     /**
      * How long an exchange waits, with nothing happening in it, before the call of a step whose callback has not come
      * is reported as still pending (a warning of rule R1, which never fails a test), such as 60s or 500 (milliseconds).
-     * Only the innermost pending call of an exchange is reported. 0 turns the warning off.
+     * Only the innermost pending call of an exchange is reported. 0 turns the warning off. The parts of a split,
+     * multicast or recipient list with parallel processing share one lock of the table of pending calls, which orders
+     * their threads: use 0 when hunting races between such parts.
      */
     public void setPendingTimeout(String pendingTimeout) {
         this.pendingTimeout = pendingTimeout;
@@ -142,7 +144,9 @@ public class SanitizerConfigurationProperties implements BootstrapCloseable {
     /**
      * How long an exchange waits, with nothing happening in it, before the call of a step whose callback has not come
      * is reported as still pending (a warning of rule R1, which never fails a test), such as 60s or 500 (milliseconds).
-     * Only the innermost pending call of an exchange is reported. 0 turns the warning off.
+     * Only the innermost pending call of an exchange is reported. 0 turns the warning off. The parts of a split,
+     * multicast or recipient list with parallel processing share one lock of the table of pending calls, which orders
+     * their threads: use 0 when hunting races between such parts.
      */
     public SanitizerConfigurationProperties withPendingTimeout(String pendingTimeout) {
         this.pendingTimeout = pendingTimeout;
