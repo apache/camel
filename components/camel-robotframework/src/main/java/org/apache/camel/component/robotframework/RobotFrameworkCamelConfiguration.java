@@ -313,7 +313,7 @@ public class RobotFrameworkCamelConfiguration implements Cloneable {
     }
 
     /**
-     * Sets free metadata for the top level tests suites. comma seperated list of string resulting as List<String>
+     * Sets free metadata for the top level tests suites. comma separated list of string resulting as List<String>
      */
     public void setMetadata(String metadata) {
         this.metadata = metadata;
