@@ -115,6 +115,14 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
         assertEquals(ConversionStatus.Status.COMPLETED, status.getStatus());
         assertNotNull(status.getResult(), "Result should contain the converted content");
 
+        // the status fields are also exposed as headers, under the names DoclingHeaders declares
+        assertEquals("test-task-1", exchange.getIn().getHeader(DoclingHeaders.TASK_ID));
+        assertEquals("COMPLETED", exchange.getIn().getHeader(DoclingHeaders.TASK_STATUS));
+        assertEquals(status.getResult(), exchange.getIn().getHeader(DoclingHeaders.TASK_RESULT));
+        assertNull(exchange.getIn().getHeader(DoclingHeaders.TASK_ERROR_MESSAGE));
+        // progress is only set when the status reports one, and a locally tracked task does not
+        assertNull(exchange.getIn().getHeader(DoclingHeaders.TASK_PROGRESS));
+
         // Future should be removed from map after completion
         assertFalse(pendingTasks.containsKey("test-task-1"),
                 "Completed task should be removed from pending map");
@@ -141,6 +149,10 @@ class DoclingAsyncConversionTest extends CamelTestSupport {
         assertInstanceOf(ConversionStatus.class, body);
         ConversionStatus status = (ConversionStatus) body;
         assertEquals(ConversionStatus.Status.IN_PROGRESS, status.getStatus());
+        assertEquals("IN_PROGRESS", exchange.getIn().getHeader(DoclingHeaders.TASK_STATUS));
+        assertNull(exchange.getIn().getHeader(DoclingHeaders.TASK_RESULT));
+        assertNull(exchange.getIn().getHeader(DoclingHeaders.TASK_ERROR_MESSAGE));
+        assertNull(exchange.getIn().getHeader(DoclingHeaders.TASK_PROGRESS));
 
         // Future should remain in map since it's not done yet
         assertTrue(pendingTasks.containsKey("test-task-2"),
