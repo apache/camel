@@ -283,10 +283,10 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns the first non null object <code>null</code>.
+     * Returns the first non-null object.
      *
      * @param  values the values
-     * @return        an Optional
+     * @return        an Optional with the first non-null object, or an empty Optional if all the values are null
      */
     public static Optional<Object> firstNotNull(Object... values) {
         for (Object value : values) {

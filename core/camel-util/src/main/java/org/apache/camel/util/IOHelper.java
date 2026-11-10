@@ -522,7 +522,7 @@ public final class IOHelper {
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p>
-     * <b>Notice:</b> This implementation appends a <code>\n</code> as line terminator at the of the text.
+     * <b>Notice:</b> This implementation appends a <code>\n</code> as line terminator at the end of the text.
      * <p>
      * Warning, don't use for crazy big streams :)
      */

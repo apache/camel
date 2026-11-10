@@ -651,15 +651,21 @@ public final class FileUtil {
     }
 
     /**
-     * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
+     * Determines whether the given path part is a Windows drive (e.g. {@code C:})
      *
-     * @param  uri the URI
-     * @return     <code>true</code> if the URI starts with a scheme
+     * @param  part the path part
+     * @return      <code>true</code> if the part is a single letter followed by a colon
      */
     private static boolean isWindowsDrive(String part) {
         return part.length() == 2 && part.charAt(1) == ':' && Character.isLetter(part.charAt(0));
     }
 
+    /**
+     * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
+     *
+     * @param  uri the URI
+     * @return     <code>true</code> if the URI starts with a scheme
+     */
     private static boolean hasScheme(String uri) {
         if (uri == null) {
             return false;
