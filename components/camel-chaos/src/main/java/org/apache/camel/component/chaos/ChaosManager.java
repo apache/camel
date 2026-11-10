@@ -531,7 +531,8 @@ public final class ChaosManager {
      *
      * @return {@code suggestions}: a list of {@code route}, {@code kind}, {@code recipe}, {@code title}, {@code rule},
      *         {@code why}, {@code tried} when a rule of its kind faulted the route already, and {@code routes} when it
-     *         is for several routes (a dead letter channel they share)
+     *         is for several routes (a dead letter channel they share), and the {@code feed} of the route, with
+     *         {@code fed} when it gets messages without one
      */
     public Map<String, Object> suggest() {
         JsonArray list = new JsonArray();
@@ -546,6 +547,8 @@ public final class ChaosManager {
             route.tried().forEach(k -> tried.add(route.route() + " " + k.kind().key));
         }
         Map<String, ChaosAdvisor.Feed> feeds = new HashMap<>();
+        // the routes that get messages without a feed, so an experiment can run without one (null when not known)
+        Set<String> fed = ChaosAdvisor.fedRoutes(camelContext);
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
             JsonObject jo = new JsonObject();
             // a dead letter channel that routes share is tried by a rule of its kind in any of them; two faults at once
@@ -577,6 +580,9 @@ public final class ChaosManager {
                 f.put("hint", feed.hint());
                 if (feed.real()) {
                     f.put("real", true);
+                }
+                if ("self".equals(feed.kind()) || fed != null && fed.contains(s.route())) {
+                    f.put("fed", true);
                 }
                 jo.put("feed", f);
             }

@@ -695,6 +695,28 @@ final class ChaosAdvisor {
         return reached;
     }
 
+    /** The routes that make their own messages: a timer, a scheduler. */
+    private static List<String> selfFeeding(CamelContext camelContext) {
+        List<String> self = new ArrayList<>();
+        for (Route route : camelContext.getRoutes()) {
+            if (route.getEndpoint() != null
+                    && SELF_FEEDING.contains(ChaosPatterns.scheme(route.getEndpoint().getEndpointUri()))) {
+                self.add(route.getRouteId());
+            }
+        }
+        return self;
+    }
+
+    /**
+     * The routes that get messages without a feed (CAMEL-26817): the routes that make their own (a timer, a scheduler),
+     * and the routes they send to, also over HTTP to the integration's own server. Null when that is not known, as a
+     * route on the way has a send known only when it sends.
+     */
+    static Set<String> fedRoutes(CamelContext camelContext) {
+        Map<String, Boolean> reached = reach(camelContext, selfFeeding(camelContext), true);
+        return reached != null ? reached.keySet() : null;
+    }
+
     /**
      * Why an experiment says nothing because its feed does not reach the routes of its expectations (CAMEL-26803), or
      * null when it reaches one, or that is not known. A route of an expectation gets messages when the route the feed
@@ -705,15 +727,8 @@ final class ChaosAdvisor {
         if (feedRoute == null || camelContext.getRoute(feedRoute) == null || expected.isEmpty()) {
             return null;
         }
-        List<String> self = new ArrayList<>();
-        for (Route route : camelContext.getRoutes()) {
-            if (route.getEndpoint() != null
-                    && SELF_FEEDING.contains(ChaosPatterns.scheme(route.getEndpoint().getEndpointUri()))) {
-                self.add(route.getRouteId());
-            }
-        }
         Map<String, Boolean> fed = reach(camelContext, List.of(feedRoute), true);
-        Map<String, Boolean> others = reach(camelContext, self, true);
+        Map<String, Boolean> others = reach(camelContext, selfFeeding(camelContext), true);
         if (fed == null || others == null) {
             return null;
         }

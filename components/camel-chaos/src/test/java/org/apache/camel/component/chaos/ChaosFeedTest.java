@@ -50,7 +50,7 @@ class ChaosFeedTest extends ChaosTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=100000").routeId("ticker").to("mock:tick");
+                from("timer:tick?period=100000").routeId("ticker").to("mock:tick").to("direct:orders");
                 from("direct:orders").routeId("orders").to("mock:orders");
                 from("file:target/chaos-inbox?initialDelay=100000").routeId("inbox").to("mock:inbox");
                 from("remotemq:refunds?breakOnFirstError=true").routeId("refunds").to("mock:refunds");
@@ -90,6 +90,18 @@ class ChaosFeedTest extends ChaosTestSupport {
         JsonObject payments = list.stream().map(JsonObject.class::cast)
                 .filter(s -> "payments".equals(s.getString("route"))).findFirst().orElseThrow();
         assertThat(payments.getMap("feed").get("real")).isEqualTo(true);
+    }
+
+    @Test
+    void theRoutesThatGetMessagesWithoutAFeed() {
+        // the timer makes its own, and sends them to orders
+        assertThat(ChaosAdvisor.fedRoutes(context)).containsExactlyInAnyOrder("ticker", "orders");
+
+        JsonArray list = (JsonArray) chaos().suggest().get("suggestions");
+        JsonObject refunds = list.stream().map(JsonObject.class::cast)
+                .filter(s -> "refunds".equals(s.getString("route"))).findFirst().orElseThrow();
+        // refunds gets its messages from outside only
+        assertThat(refunds.getMap("feed").containsKey("fed")).isFalse();
     }
 
     @Test
