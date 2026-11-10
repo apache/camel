@@ -97,7 +97,10 @@ class ChaosReplayTest extends ChaosTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // moved over the files there: the same two, so a replay is the same each time
-        await().atMost(10, TimeUnit.SECONDS).until(() -> new File(BASE, "inbox").listFiles(File::isFile).length == 0);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> {
+            File[] left = new File(BASE, "inbox").listFiles(File::isFile);
+            return left != null && left.length == 0;
+        });
         assertThat(ChaosAdvisor.takenFiles(done)).extracting(File::getName).containsExactly("a.txt", "b.txt");
     }
 

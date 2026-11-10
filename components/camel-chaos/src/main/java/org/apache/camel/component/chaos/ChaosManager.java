@@ -18,6 +18,7 @@ package org.apache.camel.component.chaos;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -661,9 +662,20 @@ public final class ChaosManager {
             Path hidden = folder.toPath().resolve(".chaos-" + file.getName());
             try {
                 Files.copy(file.toPath(), hidden, StandardCopyOption.REPLACE_EXISTING);
-                Files.move(hidden, target, StandardCopyOption.ATOMIC_MOVE);
+                try {
+                    Files.move(hidden, target, StandardCopyOption.ATOMIC_MOVE);
+                } catch (AtomicMoveNotSupportedException e) {
+                    // the hidden file is in the same folder, but a file system may still not move atomically
+                    Files.move(hidden, target, StandardCopyOption.REPLACE_EXISTING);
+                }
                 files++;
             } catch (IOException e) {
+                // no hidden copy is left behind in the folder the route consumes from
+                try {
+                    Files.deleteIfExists(hidden);
+                } catch (IOException e2) {
+                    e.addSuppressed(e2);
+                }
                 throw new IllegalStateException("Cannot put back " + file + ": " + e.getMessage(), e);
             }
         }
