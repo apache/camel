@@ -665,6 +665,10 @@ sees the exchange fail instead of the `AssertionError` being thrown to it. To tr
 with `onException` or `doCatch` on its class, such as `onException(AssertionError.class)`. There is no option for the
 old behaviour.
 
+A test that sends with `template.send(...)` and asserts only inside a processor must now check the exception of the
+returned exchange (`exchange.getException()`), as `send` does not throw it; or send with `sendBody(...)` or
+`requestBody(...)`, which throw a `CamelExecutionException` that holds the `Error`.
+
 === camel-core - variableReceive into a route or group variable stores the header variables in that route or group
 
 With `variableReceive` (`toV`, `enrich`, `pollEnrich`, `fromV` and so on) into a route variable or a group variable,
