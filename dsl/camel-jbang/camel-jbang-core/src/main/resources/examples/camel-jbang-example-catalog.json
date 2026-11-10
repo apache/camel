@@ -938,7 +938,8 @@
                 "removeHeaders"
             ],
             "languages": [
-                "simple"
+                "simple",
+                "jsonpath"
             ]
         },
         "tags": [
