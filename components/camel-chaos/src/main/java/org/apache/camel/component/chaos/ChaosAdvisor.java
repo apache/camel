@@ -299,31 +299,62 @@ final class ChaosAdvisor {
 
     /**
      * The route of the integration that receives a send: the route that consumes the endpoint (direct, seda), or for an
-     * HTTP call to this machine the platform-http route of its path; null when it is another system.
+     * HTTP call to this machine (http, netty-http, undertow, vertx-http) the HTTP server route of its path, on its port
+     * when the server route names one (platform-http serves on the port of the integration); null when it is another
+     * system.
      */
     static String receiver(String uri, Map<String, String> consumers) {
         String route = consumers.get(uri);
         if (route != null) {
             return route;
         }
-        String scheme = ChaosPatterns.scheme(uri);
-        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+        String[] call = httpAddress(uri);
+        if (call == null || !LOCAL_HOSTS.contains(call[0])) {
             return null;
         }
-        String rest = uri.substring(uri.indexOf("//") + 2);
-        int slash = rest.indexOf('/');
-        String host = (slash >= 0 ? rest.substring(0, slash) : rest).split(":")[0];
-        if (!"localhost".equals(host) && !"127.0.0.1".equals(host) && !"0.0.0.0".equals(host)) {
-            return null;
-        }
-        String path = slash >= 0 ? rest.substring(slash) : "/";
         for (Map.Entry<String, String> e : consumers.entrySet()) {
-            if (e.getKey().startsWith("platform-http:") && path.equals(httpPath(e.getKey()))) {
-                return e.getValue();
+            String consumer = e.getKey();
+            if (consumer.startsWith("platform-http:")) {
+                if (call[2].equals(httpPath(consumer))) {
+                    return e.getValue();
+                }
+            } else {
+                String[] served = httpAddress(consumer);
+                if (served != null && call[2].equals(served[2]) && (served[1].isEmpty() || served[1].equals(call[1]))) {
+                    return e.getValue();
+                }
             }
         }
         return null;
     }
+
+    private static final Set<String> LOCAL_HOSTS = Set.of("localhost", "127.0.0.1", "0.0.0.0");
+
+    /**
+     * The host, port (empty when not given) and path of an HTTP endpoint (http:, or a component that takes an HTTP URL
+     * such as netty-http:http://host:port/path), or null when it is not one.
+     */
+    private static String[] httpAddress(String uri) {
+        String scheme = ChaosPatterns.scheme(uri);
+        if (scheme == null || !ChaosRuleParser.HTTP_SCHEMES.contains(scheme) && !HTTP_SERVER_SCHEMES.contains(scheme)) {
+            return null;
+        }
+        int at = Math.max(uri.lastIndexOf("http://"), uri.lastIndexOf("https://"));
+        String rest = at >= 0 ? uri.substring(uri.indexOf("//", at) + 2) : uri.substring(uri.indexOf(':') + 1);
+        while (rest.startsWith("/")) {
+            rest = rest.substring(1);
+        }
+        int slash = rest.indexOf('/');
+        String hostPort = slash >= 0 ? rest.substring(0, slash) : rest;
+        String path = slash >= 0 ? rest.substring(slash) : "/";
+        int colon = hostPort.lastIndexOf(':');
+        String host = colon >= 0 ? hostPort.substring(0, colon) : hostPort;
+        String port = colon >= 0 ? hostPort.substring(colon + 1) : "";
+        return new String[] { host.toLowerCase(Locale.ROOT), port, path };
+    }
+
+    // the HTTP servers that take an HTTP URL to listen on
+    private static final Set<String> HTTP_SERVER_SCHEMES = Set.of("netty-http", "undertow", "jetty", "vertx-http");
 
     /** The method of a platform-http or rest input: the one it restricts to, else POST. */
     static String httpMethod(String uri) {
@@ -574,16 +605,46 @@ final class ChaosAdvisor {
                 || camelContext.getRoute(expectation.toRoute) == null) {
             return null;
         }
+        Map<String, Boolean> reached = reach(camelContext, List.of(expectation.route), false);
+        if (reached == null) {
+            return null;
+        }
+        Boolean handedOff = reached.get(expectation.toRoute);
+        if (handedOff == null) {
+            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
+                   + ", but " + expectation.route + " does not hand messages to " + expectation.toRoute
+                   + " (over seda, a broker or a wireTap), so lost counts nothing of what fails in " + expectation.route
+                   + ": expect=" + expectation.route + ":failed<=0 counts it";
+        }
+        if (!handedOff) {
+            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
+                   + ", but " + expectation.route + " calls " + expectation.toRoute
+                   + " over direct and waits for it, so a failure there fails " + expectation.route
+                   + " and nothing is lost between them: expect=" + expectation.route + ":failed<=0 counts it";
+        }
+        return null;
+    }
+
+    /**
+     * The routes the given routes reach by the static sends of their steps (a send to an endpoint a route consumes, and
+     * with {@code http} an HTTP call to a platform-http route of the integration), with whether a hand-off (a send that
+     * is not direct or HTTP: seda, a broker...) was on the way (one that was wins). The given routes are in it, without
+     * a hand-off. Null when a route on the way has a send that is known only when it sends (toD, wireTap,
+     * recipientList...), as then where it goes is not known.
+     */
+    static Map<String, Boolean> reach(CamelContext camelContext, List<String> from, boolean http) {
         Map<String, String> consumers = new HashMap<>();
         for (Route route : camelContext.getRoutes()) {
             if (route.getEndpoint() != null) {
                 consumers.put(uri(route.getEndpoint()), route.getRouteId());
             }
         }
-        // the routes the first one reaches, and whether a hand-off was on the way there (one that was wins)
         Map<String, Boolean> reached = new HashMap<>();
-        reached.put(expectation.route, false);
-        Deque<String> todo = new ArrayDeque<>(List.of(expectation.route));
+        Deque<String> todo = new ArrayDeque<>();
+        for (String id : from) {
+            reached.put(id, false);
+            todo.add(id);
+        }
         while (!todo.isEmpty()) {
             String id = todo.poll();
             Route route = camelContext.getRoute(id);
@@ -602,11 +663,12 @@ final class ChaosAdvisor {
                     continue;
                 }
                 String uri = uri(aware.getEndpoint());
-                String next = consumers.get(uri);
+                String next = http ? receiver(uri, consumers) : consumers.get(uri);
                 if (next == null) {
                     continue;
                 }
-                boolean handedOff = reached.get(id) || !"direct".equals(ChaosPatterns.scheme(uri));
+                String scheme = ChaosPatterns.scheme(uri);
+                boolean handedOff = reached.get(id) || scheme != null && !"direct".equals(scheme) && !scheme.startsWith("http");
                 Boolean before = reached.get(next);
                 if (before == null || (!before && handedOff)) {
                     reached.put(next, handedOff);
@@ -614,20 +676,44 @@ final class ChaosAdvisor {
                 }
             }
         }
-        Boolean handedOff = reached.get(expectation.toRoute);
-        if (handedOff == null) {
-            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
-                   + ", but " + expectation.route + " does not hand messages to " + expectation.toRoute
-                   + " (over seda, a broker or a wireTap), so lost counts nothing of what fails in " + expectation.route
-                   + ": expect=" + expectation.route + ":failed<=0 counts it";
+        return reached;
+    }
+
+    /**
+     * Why an experiment says nothing because its feed does not reach the routes of its expectations (CAMEL-26803), or
+     * null when it reaches one, or that is not known. A route of an expectation gets messages when the route the feed
+     * reaches sends to it, or a route that makes its own messages (a timer, a scheduler) does; a route reached through
+     * a send known only when it sends is not known, so then it says nothing.
+     */
+    static String feedMisses(CamelContext camelContext, String feedRoute, List<String> expected) {
+        if (feedRoute == null || camelContext.getRoute(feedRoute) == null || expected.isEmpty()) {
+            return null;
         }
-        if (!handedOff) {
-            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
-                   + ", but " + expectation.route + " calls " + expectation.toRoute
-                   + " over direct and waits for it, so a failure there fails " + expectation.route
-                   + " and nothing is lost between them: expect=" + expectation.route + ":failed<=0 counts it";
+        List<String> self = new ArrayList<>();
+        for (Route route : camelContext.getRoutes()) {
+            if (route.getEndpoint() != null
+                    && SELF_FEEDING.contains(ChaosPatterns.scheme(route.getEndpoint().getEndpointUri()))) {
+                self.add(route.getRouteId());
+            }
         }
-        return null;
+        Map<String, Boolean> fed = reach(camelContext, List.of(feedRoute), true);
+        Map<String, Boolean> others = reach(camelContext, self, true);
+        if (fed == null || others == null) {
+            return null;
+        }
+        for (String route : expected) {
+            if (fed.containsKey(route) || others.containsKey(route) || camelContext.getRoute(route) == null) {
+                return null;
+            }
+        }
+        List<String> reached = fed.keySet().stream().sorted().toList();
+        String missed = String.join(", ", expected.stream().distinct().sorted().toList());
+        return "The feed goes to route " + feedRoute + (reached.size() > 1
+                ? ", which sends to " + String.join(", ", reached.stream().filter(r -> !r.equals(feedRoute)).toList())
+                : "")
+               + ", but not to " + (expected.stream().distinct().count() == 1 ? "route " : "routes ") + missed
+               + " of the expectations, so the experiment would say nothing: feed " + expected.get(0)
+               + " instead (its id as the feed)";
     }
 
     /** The dead letter channel of the route, without its options, or null when its error handler has none. */

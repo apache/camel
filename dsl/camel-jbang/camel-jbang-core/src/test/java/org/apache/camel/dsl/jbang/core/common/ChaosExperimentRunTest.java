@@ -411,6 +411,23 @@ class ChaosExperimentRunTest {
     }
 
     @Test
+    void theRouteTheFeedReachesGoesWithTheExperiment() throws Exception {
+        JsonObject status = statusWith(experiment("PENDING", true));
+        status.put("routes", new JsonArray(
+                List.of(new JsonObject(Map.of("routeId", "refunds", "from", "direct://refunds")))));
+        integration.statuses.add(status);
+        integration.shows("FAIL", true);
+
+        // by the endpoint it starts from: camel-chaos refuses the experiment when it leads to no route of its
+        // expectations (CAMEL-26803)
+        ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("direct:refunds", "{}", null, 1, null), 60_000, null, clock);
+
+        assertThat(integration.actions.get(0).getString("command")).isEqualTo("experiment-begin");
+        assertThat(integration.actions.get(0).getString("feedRoute")).isEqualTo("refunds");
+    }
+
+    @Test
     void aFeedToARealSystemIsWarned() {
         JsonObject report = new JsonObject(
                 Map.of("routes", new JsonArray(

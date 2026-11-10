@@ -945,7 +945,17 @@ of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with
 The messages of `--feed` are sent to the endpoint the route starts from, so they reach a route that starts from
 `direct`, `seda`, a stub (`camel run --stub=kafka`) or a broker. An experiment refuses a feed that cannot reach its
 route, with the reason: a route that starts from a timer, scheduler, cron or quartz makes its own messages (leave
-`--feed` out), and a route that starts from a component that only consumes cannot be fed this way.
+`--feed` out), and a route that starts from a component that only consumes cannot be fed this way. It also refuses a
+feed whose route does not lead to a route of its expectations, as the experiment would say nothing: the route the feed
+reaches, and the routes it sends to (over `direct`, `seda`, a broker, or HTTP to the integration's own server), must
+include one, unless a route that makes its own messages, such as a timer, sends to it. For example `--feed=parked` for
+`expect=refunds:failed<=0`:
+
+[source,text]
+----
+ERROR: The feed goes to route parked, but not to route refunds of the expectations, so the experiment would say
+nothing: feed refunds instead (its id as the feed)
+----
 
 A route that serves HTTP over the server of Camel (`platform-http`, or the REST DSL) is fed with HTTP requests to that
 server, on localhost and its port, with the path and method of the route, `--body` as the request body and `--header`
