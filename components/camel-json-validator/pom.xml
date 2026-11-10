@@ -45,6 +45,10 @@
             <artifactId>json-schema-validator</artifactId>
             <version>${networknt-json-schema-validator-version}</version>
         </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
 
         <!-- for testing -->
         <dependency>

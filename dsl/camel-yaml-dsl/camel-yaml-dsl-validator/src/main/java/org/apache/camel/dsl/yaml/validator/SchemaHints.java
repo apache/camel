@@ -29,10 +29,10 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.Error;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * The hints the validator adds to the schema library's errors so they say what to write: one table per stage of the
@@ -141,7 +141,7 @@ final class SchemaHints {
         if (instance == null || !instance.isObject() || instance.size() != 1) {
             return null;
         }
-        String key = instance.fieldNames().next();
+        String key = instance.propertyNames().iterator().next();
         return instance.get(key).isNull() ? "{" + key + "}" : null;
     }
 
@@ -175,7 +175,7 @@ final class SchemaHints {
         JsonNode instance = m.error().getInstanceNode();
         JsonNode json = instance != null ? instance.get("json") : null;
         JsonNode value = json == null || json.isValueNode() ? json : json.get("expression");
-        String text = value != null && value.isValueNode() && !value.isNull() ? value.asText() : "{\"status\": \"ok\"}";
+        String text = value != null && value.isValueNode() && !value.isNull() ? value.asString() : "{\"status\": \"ok\"}";
         String language = text.contains("${") ? "simple" : "constant";
         return "json is a data format, not a language (marshal: json writes a Map or a List as JSON). Set a JSON text"
                + " with " + language + (language.equals("simple") ? ", as it has ${...}" : "")
@@ -214,12 +214,12 @@ final class SchemaHints {
         JsonNode file = instance != null ? instance.get("file") : null;
         String path = null;
         if (file != null && file.isValueNode() && !file.isNull()) {
-            path = file.asText();
+            path = file.asString("");
         } else if (file != null && file.isObject()) {
             for (String key : FILE_KEYS) {
                 JsonNode value = file.get(key);
-                if (value != null && value.isValueNode() && !value.isNull() && !value.asText().isBlank()) {
-                    path = value.asText();
+                if (value != null && value.isValueNode() && !value.isNull() && !value.asString().isBlank()) {
+                    path = value.asString("");
                     break;
                 }
             }
@@ -234,7 +234,7 @@ final class SchemaHints {
                       + " constant language with resource:file: (the value is the text of the file).";
         if (location.startsWith("file:") && location.contains("${")) {
             JsonNode node = expression ? m.parentNode() : instance;
-            String name = node != null && node.path("name").isTextual() ? node.path("name").asText() : null;
+            String name = node != null && node.path("name").isString() ? node.path("name").asString() : null;
             String poll = "pollEnrich: {expression: {simple: {expression: \"" + pollUri(location) + "\"}}, timeout: 5000";
             String read;
             if ("setBody".equals(eip) || "transform".equals(eip)) {
@@ -302,7 +302,7 @@ final class SchemaHints {
     private static String valueOf(Match m, String property, String fallback) {
         JsonNode instance = m.error().getInstanceNode();
         JsonNode value = instance != null ? instance.get(property) : null;
-        return value != null && value.isValueNode() && !value.isNull() ? value.asText() : fallback;
+        return value != null && value.isValueNode() && !value.isNull() ? value.asString() : fallback;
     }
 
     /**
@@ -315,7 +315,7 @@ final class SchemaHints {
             return null;
         }
         for (String language : m.validator().languageKeys()) {
-            if (instance.path(language).isTextual() && m.validator().languageOptions(language).contains(m.unknown())) {
+            if (instance.path(language).isString() && m.validator().languageOptions(language).contains(m.unknown())) {
                 return language;
             }
         }
@@ -370,11 +370,11 @@ final class SchemaHints {
      */
     static String errorHandlerText(JsonNode handler, YamlValidator validator) {
         if (handler == null || !handler.isObject() || handler.isEmpty()) {
-            return handler != null && handler.isTextual() && ROUTE_ERROR_HANDLER_KINDS.contains(handler.asText())
-                    ? "{" + handler.asText() + ": {}}" : "{noErrorHandler: {}}";
+            return handler != null && handler.isString() && ROUTE_ERROR_HANDLER_KINDS.contains(handler.asString())
+                    ? "{" + handler.asString("") + ": {}}" : "{noErrorHandler: {}}";
         }
         List<String> kinds = new ArrayList<>();
-        handler.fieldNames().forEachRemaining(k -> {
+        handler.propertyNames().forEach(k -> {
             if (ROUTE_ERROR_HANDLER_KINDS.contains(k)) {
                 kinds.add(k);
             }
@@ -386,7 +386,7 @@ final class SchemaHints {
             JsonNode value = handler.get(kind);
             ObjectNode options = value != null && value.isObject()
                     ? ((ObjectNode) value).deepCopy() : JsonNodeFactory.instance.objectNode();
-            if (value != null && value.isTextual() && "deadLetterChannel".equals(kind)) {
+            if (value != null && value.isString() && "deadLetterChannel".equals(kind)) {
                 // the kind with its uri as the value
                 options.set("deadLetterUri", value);
             }
@@ -396,7 +396,7 @@ final class SchemaHints {
                 }
             });
             List<String> keys = new ArrayList<>();
-            options.fieldNames().forEachRemaining(keys::add);
+            options.propertyNames().forEach(keys::add);
             if (!validator.errorHandlerOptions(kind).containsAll(keys)) {
                 return "{" + kind + ": {...}}";
             }
@@ -404,7 +404,7 @@ final class SchemaHints {
             wrapped.set(kind, options);
             handler = wrapped;
         }
-        String kind = handler.fieldNames().next();
+        String kind = handler.propertyNames().iterator().next();
         if (handler.size() == 1 && ROUTE_ERROR_HANDLER_KINDS.contains(kind) && !"refErrorHandler".equals(kind)
                 && !handler.get(kind).isObject()) {
             // noErrorHandler: true is not its form: the kind takes a map, {} with no options
@@ -427,7 +427,7 @@ final class SchemaHints {
         }
         if (node.isObject()) {
             List<String> entries = new ArrayList<>();
-            for (var it = node.fieldNames(); it.hasNext();) {
+            for (var it = node.propertyNames().iterator(); it.hasNext();) {
                 String key = it.next();
                 entries.add(key + ": " + flow(node.get(key)));
             }
@@ -438,8 +438,8 @@ final class SchemaHints {
             node.forEach(item -> items.add(flow(item)));
             return "[" + String.join(", ", items) + "]";
         }
-        String text = node.asText();
-        return node.isTextual() && !PLAIN_SCALAR.matcher(text).matches() ? YamlValidator.yamlQuoted(text) : text;
+        String text = node.asString("");
+        return node.isString() && !PLAIN_SCALAR.matcher(text).matches() ? YamlValidator.yamlQuoted(text) : text;
     }
 
     /**
@@ -508,7 +508,7 @@ final class SchemaHints {
             return generic;
         }
         List<String> keys = new ArrayList<>();
-        node.fieldNames().forEachRemaining(keys::add);
+        node.propertyNames().forEach(keys::add);
         Set<String> steps = m.validator().stepNames();
         String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
         if (eip == null) {
@@ -518,7 +518,7 @@ final class SchemaHints {
         // the key the option lines up with once it is under the EIP: "the column of - split:" read as the column of
         // the dash, and two spaces more than that is where the model had put it already (it wrote the same five times)
         JsonNode value = node.get(eip);
-        String sibling = value != null && value.isObject() && value.size() > 0 ? value.fieldNames().next() : null;
+        String sibling = value != null && value.isObject() && value.size() > 0 ? value.propertyNames().iterator().next() : null;
         List<String> parts = new ArrayList<>();
         for (String k : keys) {
             if (k.equals(eip)) {
@@ -555,7 +555,7 @@ final class SchemaHints {
         if (!options.contains(k)) {
             return false;
         }
-        if (!validator.stepNames().contains(k) || value == null || !value.isContainerNode()) {
+        if (!validator.stepNames().contains(k) || value == null || !value.isContainer()) {
             return true;
         }
         String type = validator.optionType(eip, k);
@@ -572,7 +572,7 @@ final class SchemaHints {
         }
         Set<String> steps = validator.stepNames();
         List<String> keys = new ArrayList<>();
-        node.fieldNames().forEachRemaining(keys::add);
+        node.propertyNames().forEach(keys::add);
         String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
         if (eip == null) {
             return Set.of();
@@ -630,7 +630,7 @@ final class SchemaHints {
     private static boolean hasShapeOfOption(JsonNode node, String k, YamlValidator validator) {
         Set<String> steps = validator.stepNames();
         List<String> keys = new ArrayList<>();
-        node.fieldNames().forEachRemaining(keys::add);
+        node.propertyNames().forEach(keys::add);
         String eip = keys.stream().filter(steps::contains).findFirst().orElse(null);
         String type = eip != null ? validator.optionType(eip, k) : null;
         JsonNode value = node.get(k);
@@ -663,7 +663,7 @@ final class SchemaHints {
                                         || String.valueOf(m.error().getEvaluationPath()).contains(EXPRESSION_SUB_ELEMENT));
                     },
                     m -> {
-                        String value = m.error().getInstanceNode().asText();
+                        String value = m.error().getInstanceNode().asString("");
                         return String.format(
                                 "a plain value (%s) found, an expression expected: write %s: {constant: {expression: \"%s\"}} for a fixed value, or %s: {simple: {expression: \"...\"}} for a dynamic one",
                                 value, m.name(), value, m.name());
@@ -676,7 +676,7 @@ final class SchemaHints {
                         JsonNode instance = m.error().getInstanceNode();
                         return instance != null && instance.isValueNode() && m.message().contains("object expected");
                     },
-                    m -> expressionKeyHint(m.error().getInstanceNode().asText()),
+                    m -> expressionKeyHint(m.error().getInstanceNode().asString("")),
                     "type", "expression"));
 
     /** The languages a model writes in front of the text, as in expression: constant 404. */
@@ -756,7 +756,7 @@ final class SchemaHints {
             append("enum", ".*/library", ANY,
                     m -> {
                         JsonNode instance = m.error().getInstanceNode();
-                        String written = instance != null && instance.isValueNode() ? instance.asText() : "";
+                        String written = instance != null && instance.isValueNode() ? instance.asString() : "";
                         String list = between(m.message(), "[", "]");
                         String match = null;
                         for (String entry : (list == null ? "" : list).split(",")) {
@@ -779,9 +779,9 @@ final class SchemaHints {
             // - stop as a step: a step is a key with its options as a map, {} when it has none to set
             replace("type", ".*/steps/\\d+",
                     m -> m.message().contains("string found, object expected") && m.error().getInstanceNode() != null
-                            && m.error().getInstanceNode().isTextual(),
+                            && m.error().getInstanceNode().isString(),
                     m -> {
-                        String text = m.error().getInstanceNode().asText().trim();
+                        String text = m.error().getInstanceNode().asString("").trim();
                         if (!m.validator().stepNames().contains(text)) {
                             return "a step is a key followed by its options, such as - log: {message: \"...\"} or"
                                    + " - stop: {}; " + text + " is not a step";
@@ -821,7 +821,7 @@ final class SchemaHints {
                 return "otherwise";
             }
             if (item.has("steps")) {
-                for (String key : (Iterable<String>) item::fieldNames) {
+                for (String key : item.propertyNames()) {
                     if ("expression".equals(key) || m.validator().languageKeys().contains(key)) {
                         return key;
                     }
@@ -999,7 +999,7 @@ final class SchemaHints {
                     m -> {
                         JsonNode instance = m.error().getInstanceNode();
                         JsonNode value = instance != null ? instance.get(m.unknown()) : null;
-                        String uri = value != null && value.isValueNode() ? value.asText() : "file:...";
+                        String uri = value != null && value.isValueNode() ? value.asString() : "file:...";
                         return "the endpoint of " + m.name() + " is an expression: write " + m.name()
                                + ": {expression: {constant: {expression: \"" + uri + "\"}}}";
                     }),
@@ -1058,7 +1058,7 @@ final class SchemaHints {
                     m -> m.validator().languageKeys().contains(m.name()) && !m.name().equals("language")
                             && m.error().getInstanceNode() != null
                             && !m.error().getInstanceNode().has("expression")
-                            && m.error().getInstanceNode().path(m.unknown()).isTextual(),
+                            && m.error().getInstanceNode().path(m.unknown()).isString(),
                     m -> languageTextHint(m.name(), m.unknown(), valueOf(m, m.unknown(), "..."))),
             // - simple: "${body}" as a step: a language is not a step (and no "did you mean 'sample'?")
             unknownProperty(".*/steps/\\d+",

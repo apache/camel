@@ -29,11 +29,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -64,8 +64,8 @@ class UserManualDocExamplesTest {
         validator.init();
         roots = new HashSet<>();
         try (InputStream is = YamlValidator.class.getResourceAsStream("/schema/camelYamlDsl.json")) {
-            JsonNode schema = new ObjectMapper().readTree(is);
-            schema.path("items").path("properties").fieldNames().forEachRemaining(roots::add);
+            JsonNode schema = new JsonMapper().readTree(is);
+            schema.path("items").path("properties").propertyNames().forEach(roots::add);
         }
     }
 

@@ -285,7 +285,7 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <!-- the YAML DSL validator (source validation for the AI authoring tools) and the MCP SDK schema validation
-             in the tests need networknt 2.0.1 (Dialects); wiremock transitively pulls 1.5.x -->
+             in the tests need networknt 3 (Jackson 3); wiremock transitively pulls 1.5.x -->
         <dependency>
             <groupId>com.networknt</groupId>
             <artifactId>json-schema-validator</artifactId>

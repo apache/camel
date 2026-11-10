@@ -30,13 +30,13 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.networknt.schema.Error;
 import com.networknt.schema.path.NodePath;
 import com.networknt.schema.path.PathType;
 import org.apache.camel.util.MimeTypeHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.endpointOf;
 import static org.apache.camel.dsl.yaml.validator.RouteGraph.from;
@@ -355,7 +355,7 @@ final class TextBodyFlow {
             } else {
                 at = at.append("from").append("steps");
             }
-            String id = entry.has("route") && entry.get("route").has("id") ? entry.get("route").get("id").asText() : null;
+            String id = entry.has("route") && entry.get("route").has("id") ? entry.get("route").get("id").asString("") : null;
             String uri = endpointOf(from);
             String consumer = scheme(uri);
             boolean post = NO_HTTP_HEADERS.contains(consumer) && !setsHttpHeaders(steps);
@@ -387,10 +387,11 @@ final class TextBodyFlow {
             boolean rest = uri != null && restReplies.contains(normalize(uri));
             CatalogBodyTypes.Answer reply = uri != null && !rest ? bodyTypes.consumerReply(uri, from) : null;
             if ((rest || reply != null && reply.onlyPayload()) && end instanceof Parsed parsed && steps != null
-                    && steps.isArray() && !steps.isEmpty() && steps.get(steps.size() - 1).fieldNames().hasNext()) {
+                    && steps.isArray() && !steps.isEmpty()
+                    && steps.get(steps.size() - 1).propertyNames().iterator().hasNext()) {
                 int last = steps.size() - 1;
                 String caller = rest ? "REST call" : bodyTypes.http(uri) ? "HTTP request" : consumer + " request";
-                errors.add(error(at.append(last).append(steps.get(last).fieldNames().next()), id,
+                errors.add(error(at.append(last).append(steps.get(last).propertyNames().iterator().next()), id,
                         new Need(
                                 "the body at the end of the route is the reply to the " + caller, "as the last step",
                                 rest),
@@ -470,7 +471,7 @@ final class TextBodyFlow {
         String format = null;
         for (String key : new String[] { "include", "antInclude", "fileName" }) {
             String value = parameters != null && parameters.isObject() && parameters.has(key)
-                    ? parameters.get(key).asText() : queryValue(uri, key);
+                    ? parameters.get(key).asString("") : queryValue(uri, key);
             if (format == null && value != null) {
                 // .*\.csv and *.csv end with the extension, as a file name does
                 format = formatOf(value.replace("\\", ""));
@@ -519,12 +520,12 @@ final class TextBodyFlow {
         }
         for (int j = 0; j < steps.size(); j++) {
             JsonNode step = steps.get(j);
-            if (!step.isObject() || !step.fieldNames().hasNext()) {
+            if (!step.isObject() || !step.propertyNames().iterator().hasNext()) {
                 body = null;
                 w.variables().clear();
                 continue;
             }
-            String name = step.fieldNames().next();
+            String name = step.propertyNames().iterator().next();
             JsonNode value = step.get(name);
             NodePath here = at.append(j).append(name);
             if (w.errors() != null) {
@@ -620,7 +621,7 @@ final class TextBodyFlow {
         if (!node.isObject()) {
             return;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String key = it.next();
             JsonNode child = node.get(key);
             if ("steps".equals(key)) {
@@ -689,8 +690,8 @@ final class TextBodyFlow {
                 return marshalled(value, body);
             }
             case "convertBodyTo" -> {
-                String type = value != null && value.isObject() && value.has("type") ? value.get("type").asText()
-                        : value != null && value.isTextual() ? value.asText() : "";
+                String type = value != null && value.isObject() && value.has("type") ? value.get("type").asString("")
+                        : value != null && value.isString() ? value.asString() : "";
                 return "String".equals(type) || "java.lang.String".equals(type) || "byte[]".equals(type)
                         ? new Text("convertBodyTo " + type + " makes it text", body != null ? body.format() : null)
                         : null;
@@ -820,10 +821,10 @@ final class TextBodyFlow {
      */
     private static Text setBodyText(JsonNode value) {
         JsonNode node = value != null && value.has("expression") ? value.get("expression") : value;
-        if (node == null || !node.isObject() || !node.fieldNames().hasNext()) {
+        if (node == null || !node.isObject() || !node.propertyNames().iterator().hasNext()) {
             return null;
         }
-        String language = node.fieldNames().next();
+        String language = node.propertyNames().iterator().next();
         String expression = expressionText(node.get(language));
         if (expression == null) {
             return null;
@@ -889,7 +890,7 @@ final class TextBodyFlow {
         if (value == null || !value.isObject()) {
             return null;
         }
-        for (var it = value.fieldNames(); it.hasNext();) {
+        for (var it = value.propertyNames().iterator(); it.hasNext();) {
             String key = it.next();
             if (!DATA_FORMAT_OPTIONS.contains(key)) {
                 return key;
@@ -969,7 +970,7 @@ final class TextBodyFlow {
 
     /** Whether the steps of a block may set a variable: a step that does, or a call of a route. */
     private static boolean mayChangeVariables(JsonNode value) {
-        if (value == null || !value.isContainerNode()) {
+        if (value == null || !value.isContainer()) {
             return false;
         }
         String text = value.toString();
@@ -1020,7 +1021,7 @@ final class TextBodyFlow {
         if (value == null || !value.isObject()) {
             return false;
         }
-        for (var it = value.fieldNames(); it.hasNext();) {
+        for (var it = value.propertyNames().iterator(); it.hasNext();) {
             if (it.next().startsWith("aggregationStrategy")) {
                 return true;
             }
@@ -1032,7 +1033,7 @@ final class TextBodyFlow {
     private static Body setVariableBody(JsonNode value, Body body) {
         JsonNode node = value.has("expression") ? value.get("expression") : value;
         String language = null;
-        for (var it = node.fieldNames(); it.hasNext() && language == null;) {
+        for (var it = node.propertyNames().iterator(); it.hasNext() && language == null;) {
             String key = it.next();
             if (!"name".equals(key) && !"id".equals(key) && !"description".equals(key) && !"disabled".equals(key)
                     && !"note".equals(key)) {
@@ -1063,7 +1064,7 @@ final class TextBodyFlow {
 
     /** The name of a variable as the route sets it, or null for none, or a name only known when the route runs. */
     private static String fixedName(JsonNode node) {
-        String name = node != null && node.isValueNode() ? node.asText() : null;
+        String name = node != null && node.isValueNode() ? node.asString() : null;
         return name == null || name.isBlank() || name.contains("${") || name.contains("{{") ? null : name;
     }
 
@@ -1079,8 +1080,8 @@ final class TextBodyFlow {
             return endpointOf(value);
         }
         JsonNode node = value != null && value.isObject() && value.has("expression") ? value.get("expression") : value;
-        if (node == null || node.isTextual()) {
-            return node != null ? node.asText() : null;
+        if (node == null || node.isString()) {
+            return node != null ? node.asString("") : null;
         }
         for (String language : new String[] { "constant", "simple" }) {
             String uri = node.isObject() ? expressionText(node.get(language)) : null;
@@ -1113,19 +1114,19 @@ final class TextBodyFlow {
         if ("log".equals(name)) {
             JsonNode message = value.isObject() ? value.get("message") : value;
             if (message != null && message.isValueNode()) {
-                answer.add(new Template("the log message", message.asText()));
+                answer.add(new Template("the log message", message.asString("")));
             }
         } else if (TEMPLATE_URIS.contains(name)) {
             JsonNode uri = value.isObject() ? value.get("uri") : value;
             if (uri != null && uri.isValueNode()) {
-                answer.add(new Template("the uri of " + name, uri.asText()));
+                answer.add(new Template("the uri of " + name, uri.asString("")));
             }
             JsonNode parameters = value.isObject() ? value.get("parameters") : null;
             if (parameters != null && parameters.isObject()) {
-                for (var it = parameters.fieldNames(); it.hasNext();) {
+                for (var it = parameters.propertyNames().iterator(); it.hasNext();) {
                     String option = it.next();
                     if (parameters.get(option).isValueNode()) {
-                        answer.add(new Template("the " + option + " of " + name, parameters.get(option).asText()));
+                        answer.add(new Template("the " + option + " of " + name, parameters.get(option).asString("")));
                     }
                 }
             }
@@ -1146,14 +1147,14 @@ final class TextBodyFlow {
 
     /** The simple expressions of a node, not of its nested steps. */
     private static void simpleExpressions(JsonNode node, List<String> answer) {
-        if (node == null || !node.isContainerNode()) {
+        if (node == null || !node.isContainer()) {
             return;
         }
         if (node.isArray()) {
             node.forEach(child -> simpleExpressions(child, answer));
             return;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String key = it.next();
             if ("simple".equals(key)) {
                 String text = expressionText(node.get(key));
@@ -1258,7 +1259,8 @@ final class TextBodyFlow {
      */
     private static Parsed splitElement(JsonNode value, Parsed parsed, CatalogBodyTypes bodyTypes) {
         JsonNode node = value != null && value.has("expression") ? value.get("expression") : value;
-        String language = node != null && node.isObject() && node.fieldNames().hasNext() ? node.fieldNames().next() : null;
+        String language = node != null && node.isObject() && node.propertyNames().iterator().hasNext()
+                ? node.propertyNames().iterator().next() : null;
         String expression = language != null ? expressionText(node.get(language)) : null;
         JsonNode steps = value != null ? value.get("steps") : null;
         boolean ofTheBody = expression != null
@@ -1268,10 +1270,10 @@ final class TextBodyFlow {
             return null;
         }
         for (JsonNode step : steps) {
-            if (!step.isObject() || !step.fieldNames().hasNext()) {
+            if (!step.isObject() || !step.propertyNames().iterator().hasNext()) {
                 return null;
             }
-            String name = step.fieldNames().next();
+            String name = step.propertyNames().iterator().next();
             if (readIn(step.get(name), TEXT_PROPERTIES) != null || readsAFieldWithJsonPath(step.get(name))) {
                 return new Parsed(
                         parsed.origin() + ", and split " + expression.trim() + " gives its elements as data",
@@ -1300,7 +1302,7 @@ final class TextBodyFlow {
         if (!node.isObject()) {
             return false;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String key = it.next();
             if ("steps".equals(key)) {
                 continue;
@@ -1358,7 +1360,7 @@ final class TextBodyFlow {
 
     private static String kameletName(JsonNode value) {
         JsonNode name = value != null && value.isObject() ? value.get("name") : value;
-        return name != null && name.isTextual() ? kameletName("kamelet:" + name.asText()) : null;
+        return name != null && name.isString() ? kameletName("kamelet:" + name.asString()) : null;
     }
 
     /** The body a Kamelet gives, as the transformer of its out data type says; null when it is not known. */
@@ -1384,7 +1386,7 @@ final class TextBodyFlow {
     }
 
     private static String toTypeOf(JsonNode value) {
-        return value != null && value.isObject() && value.has("toType") ? value.get("toType").asText() : "";
+        return value != null && value.isObject() && value.has("toType") ? value.get("toType").asString("") : "";
     }
 
     /**
@@ -1494,8 +1496,8 @@ final class TextBodyFlow {
             path = path.substring(0, q);
         }
         String spec = parameters != null && parameters.has("specificationUri")
-                ? parameters.get("specificationUri").asText() : null;
-        String id = parameters != null && parameters.has("operationId") ? parameters.get("operationId").asText() : null;
+                ? parameters.get("specificationUri").asString("") : null;
+        String id = parameters != null && parameters.has("operationId") ? parameters.get("operationId").asString("") : null;
         int hash = path.indexOf('#');
         if (hash >= 0) {
             spec = spec != null ? spec : path.substring(0, hash);
@@ -1527,7 +1529,7 @@ final class TextBodyFlow {
     /** Whether a node of the REST DSL sets a binding mode that writes data. */
     private static boolean binds(JsonNode node) {
         JsonNode mode = node != null && node.isObject() ? node.get("bindingMode") : null;
-        return mode != null && BINDS.contains(mode.asText().toLowerCase(Locale.ROOT));
+        return mode != null && BINDS.contains(mode.asString("").toLowerCase(Locale.ROOT));
     }
 
     /**
@@ -1542,12 +1544,12 @@ final class TextBodyFlow {
             if (rest == null || !rest.isObject() || binds(rest)) {
                 continue;
             }
-            for (var it = rest.fieldNames(); it.hasNext();) {
+            for (var it = rest.propertyNames().iterator(); it.hasNext();) {
                 String key = it.next();
                 JsonNode value = rest.get(key);
                 if ("openApi".equals(key) && value.isObject() && value.has("specification") && !binds(value)) {
                     Map<String, String> operations
-                            = facts.operations().get(ProjectFacts.specName(value.get("specification").asText()));
+                            = facts.operations().get(ProjectFacts.specName(value.get("specification").asString("")));
                     if (operations != null) {
                         operations.keySet().forEach(id -> answer.add("direct:" + id));
                     }
@@ -1576,13 +1578,13 @@ final class TextBodyFlow {
         if (parameters == null || !parameters.isObject()) {
             return true;
         }
-        for (var it = parameters.fieldNames(); it.hasNext();) {
+        for (var it = parameters.propertyNames().iterator(); it.hasNext();) {
             if (!HTTP_OPTIONS.contains(it.next())) {
                 return false;
             }
         }
         JsonNode method = parameters.get("httpMethod");
-        return method == null || SENDS_A_BODY.contains(method.asText().toUpperCase(Locale.ROOT));
+        return method == null || SENDS_A_BODY.contains(method.asString("").toUpperCase(Locale.ROOT));
     }
 
     /** The text of an expression, short form or with expression: inside. */
@@ -1591,10 +1593,10 @@ final class TextBodyFlow {
             return null;
         }
         if (node.isValueNode()) {
-            return node.asText();
+            return node.asString("");
         }
         JsonNode expression = node.get("expression");
-        return expression != null && expression.isValueNode() ? expression.asText() : null;
+        return expression != null && expression.isValueNode() ? expression.asString() : null;
     }
 
     /**
@@ -1618,7 +1620,7 @@ final class TextBodyFlow {
         if (!node.isObject()) {
             return null;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String key = it.next();
             if ("steps".equals(key)) {
                 continue;
@@ -1690,7 +1692,7 @@ final class TextBodyFlow {
         if (!node.isObject()) {
             return null;
         }
-        for (var it = node.fieldNames(); it.hasNext();) {
+        for (var it = node.propertyNames().iterator(); it.hasNext();) {
             String key = it.next();
             if ("steps".equals(key)) {
                 continue;
@@ -1898,7 +1900,7 @@ final class TextBodyFlow {
         String path = uri.indexOf(':') > 0 ? normalize(uri).substring(uri.indexOf(':') + 1) : null;
         if ((path == null || path.isBlank()) && from != null && from.isObject() && from.get("parameters") != null
                 && from.get("parameters").get("directoryName") != null) {
-            path = from.get("parameters").get("directoryName").asText();
+            path = from.get("parameters").get("directoryName").asString("");
         }
         return path != null && !path.isBlank() ? ProjectFacts.directoryKey(path) : null;
     }

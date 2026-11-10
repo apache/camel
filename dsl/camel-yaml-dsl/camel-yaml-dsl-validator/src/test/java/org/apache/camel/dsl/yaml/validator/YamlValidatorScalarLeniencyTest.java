@@ -18,11 +18,11 @@ package org.apache.camel.dsl.yaml.validator;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.networknt.schema.Error;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -89,6 +89,28 @@ public class YamlValidatorScalarLeniencyTest {
     @Test
     public void testUnparsableStringAtBooleanStillRejected() {
         assertRejected("split", "parallelProcessing: \"yes please\"", "boolean expected");
+    }
+
+    @Test
+    public void testYaml11BooleanWordRejected() {
+        // YAML 1.2: yes is text, and the route fails to start
+        assertRejected("split", "streaming: yes", "boolean expected");
+    }
+
+    @Test
+    public void testLeadingZeroWithEightOrNineAccepted() throws Exception {
+        // not an octal number: the runtime reads 08540 as text
+        String yaml = """
+                - route:
+                    from:
+                      uri: direct:orders
+                      steps:
+                        - setHeader:
+                            name: zip
+                            constant: 08540
+                        - to: log:orders
+                """;
+        assertThat(classic.validate(yaml)).isEmpty();
     }
 
     @Test
@@ -162,11 +184,11 @@ public class YamlValidatorScalarLeniencyTest {
     public void testPublishedSchemasMakeRestParameterTypeOptional() throws Exception {
         for (String resource : List.of("/schema/camelYamlDsl.json", "/schema/camelYamlDsl-canonical.json")) {
             try (var stream = YamlValidator.class.getResourceAsStream(resource)) {
-                var parameter = new ObjectMapper().readTree(stream)
+                var parameter = new JsonMapper().readTree(stream)
                         .at("/items/definitions/org.apache.camel.model.rest.ParamDefinition");
                 assertThat(parameter.path("required")).as(resource)
-                        .extracting(JsonNode::asText).containsExactly("name");
-                assertThat(parameter.at("/properties/type/default").asText()).isEqualTo("path");
+                        .extracting(JsonNode::asString).containsExactly("name");
+                assertThat(parameter.at("/properties/type/default").asString()).isEqualTo("path");
             }
         }
     }
