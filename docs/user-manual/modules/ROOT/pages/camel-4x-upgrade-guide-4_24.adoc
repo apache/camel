@@ -7307,6 +7307,16 @@ a route. `ErrorHandlerRedeliveryCustomizer` has a new default method `useStepHoo
 need no change. A custom error handler that wants a failure from the hook handled like a failure of the step's
 processor (with `onException` and redelivery) can override it.
 
+=== camel-cluster - ClusteredRouteController stops the cluster service once the routes have stopped
+
+When the CamelContext stops, the `ClusteredRouteController` no longer stops the cluster service when the route
+controller is stopped (which the CamelContext does before it stops the routes), but once the routes have stopped. A node
+being stopped can keep (or still take) the leadership of its namespaces until its routes have finished their in-flight
+exchanges, so another node no longer starts the clustered routes at the same time. A graceful stop can therefore hand
+over the leadership later than before, by up to the shutdown timeout of the CamelContext (45 seconds by default). To
+hand over sooner, lower the shutdown timeout (`camel.main.shutdownTimeout`, or
+`CamelContext.getShutdownStrategy().setTimeout`).
+
 === camel-quartz - a route that keeps its trigger fires again when it is added again or after a restart
 
 With `deleteJob=false` (as with `pauseJob=true`), a route pauses its trigger when it stops, and only the same endpoint
