@@ -569,7 +569,7 @@ final class ChaosAdvisor {
                 }
                 boolean handedOff = reached.get(id) || !"direct".equals(ChaosPatterns.scheme(uri));
                 Boolean before = reached.get(next);
-                if (before == null || !before && handedOff) {
+                if (before == null || (!before && handedOff)) {
                     reached.put(next, handedOff);
                     todo.add(next);
                 }
