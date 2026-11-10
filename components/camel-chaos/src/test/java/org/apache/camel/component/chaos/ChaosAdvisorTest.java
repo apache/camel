@@ -74,17 +74,22 @@ class ChaosAdvisorTest extends ChaosTestSupport {
         Map<String, String> rules = rules(suggestions);
 
         assertThat(rules)
-                .containsEntry("orders http-error errors", "endpoint=http://stock/check error status=503 rate=0.25 until=10m")
+                .containsEntry("orders http-error errors",
+                        "endpoint=http://stock/check error status=503 rate=0.25 until=10m expect=orders:failed<=0")
                 .containsEntry("orders timeout slow",
-                        "endpoint=http://stock/check error after=5s exception=java.net.SocketTimeoutException rate=0.1 until=10m")
+                        "endpoint=http://stock/check error after=5s exception=java.net.SocketTimeoutException rate=0.1 until=10m"
+                                                      + " expect=orders:failed<=0")
                 // a hand-off over seda: the next route fails, and nothing may be lost between the two
                 .containsEntry("orders route-error lost",
                         "route=shipping error rate=0.2 until=2m expect=orders->shipping:lost<=0 within=3m")
-                .containsEntry("shipping dlq-unreachable dead letter channel", "endpoint=seda:dlq error at=dlq")
+                .containsEntry("shipping dlq-unreachable dead letter channel",
+                        "endpoint=seda:dlq error at=dlq expect=shipping:failed<=0")
                 // a circuit breaker: the service is down for a while
-                .containsEntry("pay outage errors", "endpoint=http://pay/charge error rate=burst:10s/1m until=10m")
-                .containsEntry("inbox poll-error consumer", "endpoint=testpoll://inbox error at=poll rate=0.5 until=10m")
-                .containsEntry("inbox stall lifecycle", "route=inbox stall duration=20s");
+                .containsEntry("pay outage errors",
+                        "endpoint=http://pay/charge error rate=burst:10s/1m until=10m expect=pay:failed<=0")
+                .containsEntry("inbox poll-error consumer",
+                        "endpoint=testpoll://inbox error at=poll rate=0.5 until=10m expect=inbox:failed<=0")
+                .containsEntry("inbox stall lifecycle", "route=inbox stall duration=20s expect=inbox:failed<=0");
         // no HTTP error without a breaker for the call inside the breaker, and the query is left out
         assertThat(rules).doesNotContainKey("pay http-error errors");
         assertThat(rules.values()).noneMatch(r -> r.contains("throwExceptionOnFailure"));
@@ -93,7 +98,8 @@ class ChaosAdvisorTest extends ChaosTestSupport {
         // a local file has no connection to refuse, but the write can fail
         assertThat(rules)
                 .containsEntry("archive write-error errors",
-                        "endpoint=file://target/chaos-archive error exception=java.io.IOException rate=0.25 until=10m")
+                        "endpoint=file://target/chaos-archive error exception=java.io.IOException rate=0.25 until=10m"
+                                                             + " expect=archive:failed<=0")
                 .doesNotContainKeys("archive connection-refused errors", "archive slow slow");
 
         // the most worth trying first
@@ -110,6 +116,17 @@ class ChaosAdvisorTest extends ChaosTestSupport {
                 chaos().removeRule(id);
             }
         }
+    }
+
+    @Test
+    void everySuggestionSaysWhatShouldHold() {
+        for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(context)) {
+            // one expectation, so the suggestion can be run as an experiment
+            assertThat(s.rules().stream().filter(r -> r.contains(" expect=")).count()).as(s.title()).isEqualTo(1);
+        }
+        // a suggestion with an expectation of its own keeps it
+        assertThat(rules(ChaosAdvisor.suggest(context)).get("orders route-error lost"))
+                .endsWith("expect=orders->shipping:lost<=0 within=3m");
     }
 
     @Test

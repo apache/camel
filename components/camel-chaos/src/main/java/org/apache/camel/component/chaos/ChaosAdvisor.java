@@ -436,8 +436,24 @@ final class ChaosAdvisor {
                 LOG.debug("No chaos suggestions for route {}: {}", route.getRouteId(), e.getMessage(), e);
             }
         }
+        answer.replaceAll(ChaosAdvisor::withExpectation);
         answer.sort(Comparator.comparingInt(Suggestion::rank).reversed());
         return answer.size() > MAX ? List.copyOf(answer.subList(0, MAX)) : answer;
+    }
+
+    /**
+     * The suggestion with what should hold despite its faults, when none of its rules says (CAMEL-26817): every
+     * exchange the faults hit in its route is recovered by redelivery or handled by the error handler, and none fails
+     * ({@code expect=orders:failed<=0}). An experiment needs an expectation, and a rule added without one passes
+     * whatever happens. For two faults at once the first rule has it.
+     */
+    static Suggestion withExpectation(Suggestion s) {
+        if (s.rules().stream().anyMatch(r -> r.contains(" expect="))) {
+            return s;
+        }
+        return new Suggestion(
+                s.route(), s.kind(), s.recipe(), s.title(), s.rule() + " expect=" + s.route() + ":failed<=0", s.why(),
+                s.rank(), s.routes(), s.with());
     }
 
     private static void suggest(

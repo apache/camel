@@ -60,8 +60,9 @@ class ChaosPairsTest extends ChaosTestSupport {
         ChaosAdvisor.Suggestion s = pair("An outage while the dead letter channel fails");
         assertThat(s.route()).isEqualTo("orders");
         assertThat(s.kind()).isEqualTo(ChaosAdvisor.Kind.COMBINED);
+        // what should hold is on the first rule
         assertThat(s.rules()).containsExactly(
-                "endpoint=http://payment/charge error status=503 until=1m",
+                "endpoint=http://payment/charge error status=503 until=1m expect=orders:failed<=0",
                 "endpoint=seda:parked error at=dlq until=1m");
         assertThat(s.why()).contains("dead letter channel seda:parked", "are messages lost?");
     }
@@ -70,7 +71,7 @@ class ChaosPairsTest extends ChaosTestSupport {
     void aSlowServiceThatAlsoFails() {
         ChaosAdvisor.Suggestion s = pair("A slow service that also fails");
         assertThat(s.rules()).containsExactly(
-                "endpoint=http://payment/charge delay duration=1s..3s rate=0.5 until=2m",
+                "endpoint=http://payment/charge delay duration=1s..3s rate=0.5 until=2m expect=orders:failed<=0",
                 "endpoint=http://payment/charge error status=503 rate=0.2 until=2m");
         assertThat(s.why()).contains("expect=orders:maxTime<=30s");
     }
@@ -96,10 +97,11 @@ class ChaosPairsTest extends ChaosTestSupport {
                 .filter(s -> "An outage while the dead letter channel fails".equals(s.getString("title")))
                 .findFirst().orElseThrow();
         assertThat(pair.getString("kind")).isEqualTo("combined");
-        assertThat(pair.getString("rule")).isEqualTo("endpoint=http://payment/charge error status=503 until=1m");
+        assertThat(pair.getString("rule"))
+                .isEqualTo("endpoint=http://payment/charge error status=503 until=1m expect=orders:failed<=0");
         List<Object> rules = pair.getCollection("rules");
         assertThat(rules).containsExactly(
-                "endpoint=http://payment/charge error status=503 until=1m",
+                "endpoint=http://payment/charge error status=503 until=1m expect=orders:failed<=0",
                 "endpoint=seda:parked error at=dlq until=1m");
         assertThat(pair.containsKey("tried")).isFalse();
         // a single suggestion has no rules list
