@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.lang.management.ManagementFactory;
 import java.util.Set;
 
+import javax.management.InstanceNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -39,7 +40,12 @@ public final class TestSupportJmxCleanup {
         MBeanServer mbsc = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(getDomainName(domain) + ":*"), null);
         for (ObjectName on : s) {
-            mbsc.unregisterMBean(on);
+            try {
+                mbsc.unregisterMBean(on);
+            } catch (InstanceNotFoundException e) {
+                // already unregistered, for example by another test running in parallel
+                LOG.debug("MBean {} was already unregistered", on, e);
+            }
         }
     }
 

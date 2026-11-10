@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Disabled
+@Isolated
 public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
     @Override
