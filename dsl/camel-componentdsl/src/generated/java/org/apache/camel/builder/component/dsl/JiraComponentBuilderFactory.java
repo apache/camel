@@ -295,7 +295,7 @@ public interface JiraComponentBuilderFactory {
     
         /**
          * (OAuth only) The verification code from Jira generated in the first
-         * step of the authorization proccess.
+         * step of the authorization process.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
