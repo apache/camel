@@ -194,7 +194,7 @@ public class MemoryKeyValueRepository extends ServiceSupport implements KeyValue
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             return Long.MAX_VALUE;
         }
-        return System.currentTimeMillis() + ttl.toMillis();
+        return KeyValueRepositoryHelper.expiresAt(ttl);
     }
 
     private void evictExpired() {

@@ -17,6 +17,7 @@
 package org.apache.camel.support;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -302,4 +303,29 @@ class MemoryKeyValueRepositoryTest {
                 .untilAsserted(() -> assertThat(repository.get("key1")).isNull());
     }
 
+    @Test
+    void testTtlTooLargeToAddToTheCurrentTimeDoesNotExpire() {
+        // the current time plus this TTL is beyond Long.MAX_VALUE
+        Duration huge = Duration.ofMillis(Long.MAX_VALUE);
+        assertThat(repository.put("key1", "value1", huge)).isNull();
+        assertThat(repository.putIfAbsent("key2", "value2", huge)).isNull();
+        repository.put("key3", "value3", huge);
+        assertThat(repository.replace("key3", "value3", "value3b", huge)).isTrue();
+
+        assertThat(repository.get("key1")).isEqualTo("value1");
+        assertThat(repository.contains("key1")).isTrue();
+        assertThat(repository.putIfAbsent("key2", "other", null)).isEqualTo("value2");
+        assertThat(repository.get("key3")).isEqualTo("value3b");
+        assertThat(repository.keys()).containsExactlyInAnyOrder("key1", "key2", "key3");
+        assertThat(repository.size()).isEqualTo(3);
+    }
+
+    @Test
+    void testTtlLongerThanLongMaxValueMillisDoesNotExpire() {
+        // Duration.toMillis() overflows for this TTL
+        repository.put("key1", "value1", ChronoUnit.FOREVER.getDuration());
+
+        assertThat(repository.get("key1")).isEqualTo("value1");
+        assertThat(repository.keys()).containsExactly("key1");
+    }
 }

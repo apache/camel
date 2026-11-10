@@ -35,6 +35,7 @@ import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.KeyValueRepository;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.KeyValueRepositoryHelper;
 import org.apache.camel.support.KeyValueTtlValue;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -245,7 +246,7 @@ public class JCacheKeyValueRepository extends ServiceSupport implements CamelCon
     }
 
     private static KeyValueTtlValue newEntry(Object value, Duration ttl) {
-        long expiresAt = hasPositiveTtl(ttl) ? System.currentTimeMillis() + ttl.toMillis() : Long.MAX_VALUE;
+        long expiresAt = hasPositiveTtl(ttl) ? KeyValueRepositoryHelper.expiresAt(ttl) : Long.MAX_VALUE;
         return new KeyValueTtlValue(value, expiresAt);
     }
 
