@@ -157,6 +157,25 @@ class AboutViewTest {
     }
 
     @Test
+    void anIntegrationWithoutAStatusOfLateSaysSoInsteadOfRunning() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.errorCount = 2;
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        info.statusWrittenAt = System.currentTimeMillis();
+        assertThat(render(new AboutView(ctx), info)).contains("● running").contains("✗ 2 errors");
+
+        // a timer-log held with kill -STOP: its last status 30 seconds ago, and no CPU since
+        info.statusWrittenAt = System.currentTimeMillis() - 30_000;
+        info.cpuPercent = 0;
+        String rendered = render(new AboutView(ctx), info);
+        assertThat(rendered).contains("✗ no status").doesNotContain("● running")
+                .contains("(30s ago): idle at 0% CPU, as when a debugger holds it")
+                // what is to watch now; its errors are of then
+                .doesNotContain("2 errors");
+    }
+
+    @Test
     void watchCalmsDownWhenTheErrorsStopped() {
         IntegrationInfo info = new IntegrationInfo();
         info.pid = "1234";
