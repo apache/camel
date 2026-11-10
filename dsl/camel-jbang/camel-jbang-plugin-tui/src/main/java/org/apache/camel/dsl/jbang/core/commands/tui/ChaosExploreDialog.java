@@ -62,12 +62,29 @@ final class ChaosExploreDialog {
     /**
      * A suggestion to try.
      *
-     * @param rule   its rules, separated by ; for two faults at once
-     * @param expect what should hold, such as orders:failed<=0
-     * @param fed    whether its route gets messages without a feed (a timer, or a route it is called from)
+     * @param rule        its rules, separated by ; for two faults at once
+     * @param expect      what should hold, such as orders:failed<=0
+     * @param fed         whether its route gets messages without a feed (a timer, or a route it is called from)
+     * @param replay      how many files the file route took, which are put back so it takes them again (0 for none)
+     * @param replayRoute the file route whose files are put back: the route, or a file route that sends to it
      */
     record Item(String route, String kind, String title, String rule, String why, String expect, boolean tried,
-            boolean fed) {
+            boolean fed, int replay, String replayRoute) {
+
+        Item(String route, String kind, String title, String rule, String why, String expect, boolean tried,
+             boolean fed) {
+            this(route, kind, title, rule, why, expect, tried, fed, 0, null);
+        }
+
+        /** Whether its route gets messages while the rule runs: by itself, or from the files it took, put back. */
+        boolean hasMessages() {
+            return fed || replay > 0;
+        }
+
+        /** Whether the files the route took are put back when the rule starts. */
+        boolean replays() {
+            return !fed && replay > 0;
+        }
 
         boolean combined() {
             return "combined".equals(kind);
@@ -108,7 +125,9 @@ final class ChaosExploreDialog {
                     items.add(new Item(
                             jo.getString("route"), jo.getString("kind"), jo.getString("title"), rule, jo.getString("why"),
                             m.find() ? m.group(1) : null, jo.getBooleanOrDefault("tried", false),
-                            feed != null && feed.getBooleanOrDefault("fed", false)));
+                            feed != null && feed.getBooleanOrDefault("fed", false),
+                            feed != null && feed.getString("replay") != null ? feed.getIntegerOrDefault("files", 0) : 0,
+                            feed != null ? feed.getStringOrDefault("replayRoute", jo.getString("route")) : null));
                 }
             }
         }
@@ -138,7 +157,7 @@ final class ChaosExploreDialog {
         }
         for (int i = 0; i < items.size(); i++) {
             Item item = items.get(i);
-            boolean worth = !picked.get(i) && !item.tried() && item.fed() && item.expect() != null && !item.deadLetter()
+            boolean worth = !picked.get(i) && !item.tried() && item.hasMessages() && item.expect() != null && !item.deadLetter()
                     && (!distinctKinds || !kinds.contains(item.kind()));
             if (worth && (item.combined() ? combined < PICKED_COMBINED : singles < PICKED_SINGLE)) {
                 picked.set(i, true);
@@ -184,7 +203,7 @@ final class ChaosExploreDialog {
     /** Why the exploration cannot start, or null when it can. */
     String cannotStart() {
         if (picked().isEmpty()) {
-            return !items.isEmpty() && items.stream().noneMatch(Item::fed)
+            return !items.isEmpty() && items.stream().noneMatch(Item::hasMessages)
                     ? "The routes here get their messages from outside: pick a rule (Space), and send its route messages"
                       + " while it runs, or its verdict says nothing"
                     : "Pick a rule to try (Space)";
@@ -282,7 +301,10 @@ final class ChaosExploreDialog {
             if (item.tried()) {
                 spans.add(Span.styled("  tried", Theme.success()));
             }
-            if (!item.fed()) {
+            if (item.replays()) {
+                spans.add(Span.styled("  replays " + item.replay() + (item.replay() == 1 ? " file" : " files"),
+                        Theme.muted()));
+            } else if (!item.fed()) {
                 spans.add(Span.styled("  needs messages", Theme.warning()));
             }
             lines.add(Line.from(spans));
@@ -311,7 +333,14 @@ final class ChaosExploreDialog {
             lines.add(Line.from(Span.styled(" A rule of this kind was tried in route " + item.route() + " already",
                     Theme.success())));
         }
-        if (!item.fed()) {
+        if (item.replays()) {
+            lines.add(Line.empty());
+            String who = item.route().equals(item.replayRoute()) ? "it" : "route " + item.replayRoute();
+            lines.add(Line.from(Span.styled(" While the rule runs, the " + item.replay()
+                                            + (item.replay() == 1 ? " file " : " files ") + who + " took are put back into"
+                                            + " its folder as it takes them, the same files each time",
+                    Theme.muted())));
+        } else if (!item.fed()) {
             lines.add(Line.empty());
             lines.add(Line.from(Span.styled(" Route " + item.route() + " gets its messages from outside: send it some"
                                             + " while the rule runs, or the verdict says nothing (INCONCLUSIVE)",

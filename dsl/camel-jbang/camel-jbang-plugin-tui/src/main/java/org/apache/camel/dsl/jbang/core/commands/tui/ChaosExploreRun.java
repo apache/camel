@@ -141,8 +141,11 @@ final class ChaosExploreRun {
                 ChaosExploreDialog.Item pick = picks.get(i);
                 String verdict;
                 try {
+                    // a file route that does not get messages by itself takes the files it took again
                     JsonObject ended = ChaosExperimentRun.run(integration, pick.route() + ": " + pick.title(),
-                            forShare(pick.rule(), share), null, share + GRACE, null);
+                            forShare(pick.rule(), share),
+                            pick.replays() ? ChaosExperimentRun.Feed.replay(pick.replayRoute()) : null,
+                            share + GRACE, null);
                     verdict = ended.getString("verdict");
                     if (ended.getLongOrDefault("timeLeft", 1) <= 0) {
                         // the deadline of the exploration: camel-chaos has ended it
@@ -275,7 +278,8 @@ final class ChaosExploreRun {
 
             @Override
             public JsonObject send(ChaosExperimentRun.Feed feed) {
-                // the exploration of the TUI sends no messages: it tries the rules of routes that get them by themselves
+                // the exploration of the TUI sends no messages: its routes get them by themselves, or take the files they
+                // took again (a replay, which is a chaos command)
                 throw new UnsupportedOperationException("No feed");
             }
 

@@ -82,7 +82,10 @@ first, each with what should hold despite its faults. Picked are a few
 faults not tried yet, each kind once before it is tried again in another
 route, and then two faults at once (an outage while the dead letter
 channel fails); only of routes that get messages by themselves (a timer,
-or a route they are called from). A route whose messages come from
+or a route they are called from), or that take files and took some
+already: those are marked *replays 3 files*, and while the rule runs the
+files the route moved to `.camel` are put back into its folder as it
+takes them, the same files each time. A route whose messages come from
 outside is marked *needs messages*: send it some while its rule runs, or
 its verdict says nothing. Space picks a rule, Left and Right change the
 budget (2m to 30m), and Enter starts. The picked rules are tried one at a

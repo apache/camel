@@ -23,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import dev.tamboui.buffer.Buffer;
+import dev.tamboui.layout.Rect;
+import dev.tamboui.terminal.Frame;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
@@ -195,6 +198,38 @@ class ChaosExploreTest {
     }
 
     @Test
+    void aFileRouteTakesTheFilesItTookAgain() throws Exception {
+        ChaosExploreDialog dialog = new ChaosExploreDialog(
+                "shop", (JsonObject) Jsoner.deserialize(
+                        """
+                                {"suggestions": [
+                                  {"route": "inbox", "kind": "errors", "title": "Fails to write",
+                                   "rule": "endpoint=file://archive error exception=java.io.IOException rate=0.25 until=10m expect=inbox:failed<=0",
+                                   "why": "a write", "feed": {"kind": "send", "replay": "/work/inbox/.camel", "files": 3, "replayRoute": "files"}},
+                                  {"route": "uploads", "kind": "consumer", "title": "The route fails",
+                                   "rule": "route=uploads error rate=0.05 until=10m expect=uploads:failed<=0",
+                                   "why": "an input from outside", "feed": {"kind": "file"}}
+                                ]}
+                                """));
+        // the files it took are put back, so it has messages; a route that took none needs them from outside
+        assertThat(dialog.picked()).extracting(ChaosExploreDialog.Item::route).containsExactly("inbox");
+        assertThat(dialog.items().get(0).replay()).isEqualTo(3);
+        Rect area = new Rect(0, 0, 160, 30);
+        Buffer buffer = Buffer.empty(area);
+        dialog.render(Frame.forTesting(buffer), area);
+        assertThat(TuiTestHelper.bufferToString(buffer))
+                .contains("[x] Fails to write  inbox  replays 3 files", "[ ] The route fails  uploads  needs messages");
+
+        explorer.start("1234", dialog.picked(), "2m", 120_000);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> !explorer.isRunning("1234"));
+        // after the rule is added, so its faults meet the files
+        assertThat(integration.commands).containsExactly(
+                "explore-start", "experiment-begin", "replay", "experiment-end", "explore-finish");
+        // the file route that sends to it
+        assertThat(integration.replayed).containsExactly("files");
+    }
+
+    @Test
     void stopEndsTheExploration() {
         integration.decided = false;
         key('L');
@@ -255,6 +290,7 @@ class ChaosExploreTest {
         final List<String> commands = new CopyOnWriteArrayList<>();
         final List<String> rules = new CopyOnWriteArrayList<>();
         final List<String> hypotheses = new CopyOnWriteArrayList<>();
+        final List<String> replayed = new CopyOnWriteArrayList<>();
         volatile String budget;
         volatile boolean decided = true;
         private volatile int number;
@@ -273,6 +309,7 @@ class ChaosExploreTest {
                     hypotheses.add(request.getString("hypothesis"));
                     answer.put("number", number);
                 }
+                case "replay" -> replayed.add(request.getString("route"));
                 case "experiment-end" -> {
                     answer.put("number", number);
                     answer.put("verdict", "FAIL");
