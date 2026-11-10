@@ -34,9 +34,10 @@ Twice          Route refunds reads Kafka, which can deliver a message again, and
 
 This proposal puts the hints in metadata, not in Java code, in two layers:
 
-1. *Facts per component*: what its consumer does with a message whose exchange failed, whether a send waits for the
-   system to take it, and so on. The component declares them, and they are in its JSON, in the component JAR and in
-   the catalog.
+1. *Facts*: what the consumer of a component does with a message whose exchange failed, whether a send waits for the
+   system to take it, whether an EIP keeps its state in memory, and so on. A component, EIP, data format or language
+   declares them with a new annotation, `@Facts`, as it declares its body types with `@BodyTypes`, and the build writes
+   them into its JSON, in its JAR and in the catalog.
 2. *The hint rules*: one curated file in `camel-catalog`, each rule a condition over the route model and the facts,
    and a text. One small engine in `camel-jbang-core` evaluates them.
 
@@ -69,8 +70,9 @@ Hints as data are one list that can be read, reviewed, tested and extended, also
 == Goals
 
 - One set of hint rules, in the catalog, that every tool reads.
-- The facts of a component declared once, by its author, next to its options; read from the catalog by the tools and
-  from the component JAR at runtime.
+- The facts of a component, EIP, data format or language declared once, by its author, next to its options, with an
+  annotation; read from the catalog by the tools and from the JAR at runtime.
+- Hints that need no fact at all, from the structure of the route (a `choice` without `otherwise`), in the same rules.
 - No hint text and no hint condition in Java code. The engine is generic.
 - A hint is decided from the route files and the catalog: it works when the integration does not run.
 - A hint can name the chaos recipe that tries it, without a dependency on camel-chaos.
@@ -97,63 +99,82 @@ such as the chaos model (`chaos-model.json`, generated from camel-chaos by the p
 
 == Proposal
 
-=== Layer 1: facts per component
+=== Layer 1: facts, declared with an annotation
 
-A component declares what its consumer and its producer do in the situations the hints ask about. The plugin writes the
-facts into the component JSON, under `consumerFacts` and `producerFacts`, as it does for the options. A fact names the
-options that change it, so a rule can resolve it for the options of an endpoint in a route.
+A fact says what a component, an EIP, a data format or a language does in a situation a hint asks about. It is
+declared with a new annotation of `spi-annotations`, `@Facts`, on the same class and in the same way as `@BodyTypes`
+(CAMEL-24844): the endpoint class (the class with `@UriEndpoint`), the model class of an EIP, the data format class or
+the language class. `camel-package-maven-plugin` writes the facts into the JSON of that class, as a `facts` section
+next to `bodyTypes`, so they are in the JAR and in the catalog.
+
+`@Facts` has a side per place, as `@BodyTypes` has: `consumer` and `producer` for an endpoint, `step` for an EIP, a
+data format or a language. Each side is a list of `@Fact`: a name, its value with the default options, and the values
+for other options, in the same `byOption` shape as `@BodyType.When`:
+
+[source,java]
+----
+@Facts(consumer = {
+        @Fact(name = FactName.ON_FAILURE, value = "skipped",
+              byOption = @Fact.When(option = "breakOnFirstError", value = "true", is = "kept")),
+        @Fact(name = FactName.KEPT_RETRIES, value = "unbounded"),
+        @Fact(name = FactName.DELIVERS_AGAIN, value = "yes") },
+       producer = {
+        @Fact(name = FactName.CONFIRMED, value = "yes",
+              byOption = @Fact.When(option = "requestRequiredAcks", value = "0", is = "no")) })
+public class KafkaEndpoint extends DefaultEndpoint ...
+
+@Facts(step = @Fact(name = FactName.IN_MEMORY, value = "yes",
+                    byOption = @Fact.When(option = "aggregationRepository", value = "*", is = "no")))
+public class AggregateDefinition ...
+----
 
 [source,json]
 ----
-"component": {
-  "name": "kafka", "remote": true,
-  "consumerFacts": {
-    "onFailure": "skipped",
-    "keptWhen": "breakOnFirstError=true",
-    "keptRetries": "unbounded",
-    "deliversAgain": true
+"facts": {
+  "consumer": {
+    "onFailure": { "value": "skipped", "byOption": [ { "option": "breakOnFirstError", "value": "true", "is": "kept" } ] },
+    "keptRetries": { "value": "unbounded" },
+    "deliversAgain": { "value": "yes" }
   },
-  "producerFacts": {
-    "confirmedWhen": "requestRequiredAcks=all"
+  "producer": {
+    "confirmed": { "value": "yes", "byOption": [ { "option": "requestRequiredAcks", "value": "0", "is": "no" } ] }
   }
 }
 ----
 
-The vocabulary of the facts (each optional; a missing fact is unknown):
+The names are an enum (`FactName`), so a typo does not compile; the values are text, and the plugin checks each against
+the values its name allows, as it checks the carriers of a body type. A `When` with `value = "*"` is any value: the fact
+when the option is set at all (`moveFailed`, `aggregationRepository`). A `When` can add `alsoOption`s that must hold as
+well, for a fact that needs two options (JMS keeps a failed message with `acknowledgementModeName=CLIENT_ACKNOWLEDGE`
+and `asyncConsumer=false`). A fact that is not declared is not known, and gives no hint: no guess, as for a body type
+that is not given. A new fact is a new name in the enum and in the rules, not a new annotation.
 
-[cols="1,3"]
+The first names, by side:
+
+[cols="1,1,3"]
 |===
-|Fact |Meaning
+|Name |Side |Values and meaning
 
-|`consumerFacts.onFailure` |What the input does with a message whose exchange failed, by default: `skipped` (logged,
-gone; the input goes on), `kept` (read again), `rolledBack` (given back to the system, which delivers it again under its
-own policy), `returned` (the caller gets the failure, as an HTTP server)
-|`consumerFacts.keptWhen`, `skippedWhen`, `movedWhen` |The options that change it, such as `breakOnFirstError=true`,
-`moveFailed` (set), `transacted=true`
-|`consumerFacts.keptRetries` |`unbounded` (a poison message is read again for ever) or `bounded` (the system stops, such
-as a broker with a maximum redelivery count)
-|`consumerFacts.deliversAgain` |The system can deliver a message again (at least once: a rebalance, a restart, a lost
-acknowledgement)
-|`consumerFacts.feedsItself` |The input makes its own messages (timer, scheduler)
-|`consumerFacts.inMemory` |Messages waiting in the input are lost on a restart (seda)
-|`producerFacts.handOff` |The send goes on without waiting for the receiver (seda, vm, disruptor; a wireTap is a step,
-not a fact)
-|`producerFacts.failureRaisedWhen` |The options under which a failed call is an exception the error handler sees, such
-as `throwExceptionOnFailure=true` for HTTP: with `false`, an error status is a normal reply
-|`producerFacts.idempotentWhen` |The options under which sending again does no harm, such as `httpMethod=GET`,
-`httpMethod=PUT`; without it, a redelivery repeats the side effect
-|`producerFacts.confirmedWhen` |The options under which the send waits for the system to take the message
-|`producerFacts.timeoutOption` |The option that bounds the time of a call, and whether its default bounds it
-|`producerFacts.overwritesWhen` |The options under which a send replaces what is there, such as `fileExist=Override`
+|`onFailure` |consumer |What the input does with a message whose exchange failed: `skipped` (logged, gone; the input
+goes on), `kept` (read again), `rolledBack` (given back to the system, which delivers it again under its own policy),
+`returned` (the caller gets the failure, as an HTTP server), `moved` (put aside, such as `moveFailed`)
+|`keptRetries` |consumer |`unbounded` (a poison message is read again for ever) or `bounded` (the system stops, such as
+a broker with a maximum redelivery count)
+|`deliversAgain` |consumer |`yes` when the system can deliver a message again (at least once: a rebalance, a restart, a
+lost acknowledgement)
+|`feedsItself` |consumer |`yes` for an input that makes its own messages (timer, scheduler)
+|`inMemory` |consumer, producer, step |`yes` when what waits there is lost on a restart (a seda queue, the groups of an
+aggregate without a repository, the keys of an idempotent consumer with a memory repository)
+|`handOff` |producer, step |`yes` when the send goes on without waiting for the receiver (seda, vm, disruptor; a wireTap)
+|`failureRaised` |producer |`yes` when a failed call is an exception the error handler sees; `no` with
+`throwExceptionOnFailure=false` of HTTP, where an error status is a normal reply
+|`idempotent` |producer |`yes` when sending again does no harm (`httpMethod=GET`, `PUT`, `DELETE`), `no` when a
+redelivery repeats the side effect (`POST`, an insert)
+|`confirmed` |producer |`yes` when the send waits for the system to take the message
+|`timeoutBounded` |producer |`yes` when the default options bound the time of a call
+|`overwrites` |producer |`yes` when a send replaces what is there (`fileExist=Override`)
+|`answersForFailure` |step |`yes` when the step answers in place of a failed call (a `circuitBreaker` with a fallback)
 |===
-
-The values above for Kafka, HTTP and file are examples of the shape; each value is taken from the component's code and
-verified in the survey (see "Gathering the facts").
-
-How the author declares them is an open question (see the end): a new annotation of `spi-annotations` on the endpoint
-class, read by the plugin as `@UriEndpoint` is, is the natural place. Until then, the facts can start in the curated
-file of layer 2, keyed by component, and move to the components as they are declared there; the engine merges the two,
-the component winning.
 
 At runtime camel-chaos reads the facts of the component of an endpoint from its JAR
 (`CatalogCamelContext.getComponentParameterJsonSchema`), and drops its tables (`ChaosConsumers`, and the sets in
@@ -180,7 +201,7 @@ its readers (`CamelCatalog.goodToKnowJson()`), as it gives the chaos model.
         "input": { "fact": "onFailure", "is": "skipped" },
         "errorHandler": { "not": "deadLetterChannel" }
       },
-      "text": "A message that fails in route ${route} is logged and skipped: the ${input.scheme} input does not read it again (${input.keptWhen} does)",
+      "text": "A message that fails in route ${route} is logged and skipped: the ${input.scheme} input does not read it again (${input.keptBy} does)",
       "tryChaos": "route-error"
     },
     {
@@ -196,8 +217,8 @@ its readers (`CamelCatalog.goodToKnowJson()`), as it gives the chaos model.
       "id": "delivered-again-not-idempotent",
       "group": "twice",
       "when": {
-        "input": { "fact": "deliversAgain", "is": true },
-        "sends": { "remote": true, "producerFact": "idempotentWhen", "is": false },
+        "input": { "fact": "deliversAgain", "is": "yes" },
+        "sends": { "remote": true, "fact": "idempotent", "is": "no" },
         "hasNot": [ "idempotentConsumer" ]
       },
       "text": "Route ${route} reads ${input.scheme}, which can deliver a message again, and calls ${send} with no idempotent consumer before it",
@@ -207,7 +228,7 @@ its readers (`CamelCatalog.goodToKnowJson()`), as it gives the chaos model.
       "id": "error-status-is-a-reply",
       "group": "when-it-fails",
       "when": {
-        "sends": { "producerFact": "failureRaisedWhen", "is": false }
+        "sends": { "fact": "failureRaised", "is": "no" }
       },
       "text": "Route ${route} calls ${send} with ${send.option}: an error status is a normal reply, and the error handler does not see it"
     },
@@ -215,7 +236,7 @@ its readers (`CamelCatalog.goodToKnowJson()`), as it gives the chaos model.
       "id": "slow-service-slows-the-input",
       "group": "slow",
       "when": {
-        "input": { "fact": "feedsItself", "is": true },
+        "input": { "fact": "feedsItself", "is": "yes" },
         "sends": { "remote": true, "handOffBefore": false },
         "hasNot": [ "circuitBreaker" ]
       },
@@ -237,16 +258,26 @@ options of the endpoint
 |`errorHandler` |The error handler that applies to the route (its own, a route configuration, the one of its file or of
 the context): `default`, `deadLetterChannel`, `noErrorHandler`; for a dead letter channel, `deadLetter.canFail` (it goes
 to an endpoint or a route that sends to anything but a log or an in-memory queue)
-|`sends` |A send of the route: `remote` (catalog), a `producerFact` resolved with its options, `handOffBefore` (a
+|`sends` |A send of the route: `remote` (catalog), a producer `fact` resolved with its options, `handOffBefore` (a
 hand-off or a wireTap comes before it), `option` (set, not set, equals)
-|`has`, `hasNot` |EIPs in the route: `idempotentConsumer`, `circuitBreaker`, `transacted`, `filter`, `choice` without
-`otherwise`, `aggregate`, `wireTap`...
+|`has`, `hasNot` |EIPs in the route: `idempotentConsumer`, `circuitBreaker`, `transacted`, `filter`, `aggregate`,
+`wireTap`...
+|`step` |An EIP of the route with a `fact` of its own, resolved with its options (an `aggregate` whose state is in
+memory), or with a shape (`choice` without `otherwise`, an `onException` with `handled` and no log)
 |`option` |An option of the input: set, not set, equals
 |===
 
 A rule matches when all its conditions do. Its `text` has placeholders from a fixed set (`${route}`, `${input}`,
-`${input.scheme}`, `${input.keptWhen}`, `${send}`, `${send.option}`, `${deadLetter}`...). `tryChaos` is the id of a
+`${input.scheme}`, `${input.keptBy}` (the option that changes the fact, from its `byOption`), `${send}`, `${send.option}`, `${deadLetter}`...). `tryChaos` is the id of a
 recipe of the chaos model, so a reader with chaos can offer "try it", and a reader without chaos shows the hint only.
+
+Not every hint needs a fact. Many come from the structure of the route alone, and are rules of the same file:
+
+- What is dropped: a `choice` without `otherwise`, a `filter`, the duplicates an `idempotentConsumer` skips.
+- When it fails: an `onException` that is `handled` with no log or dead letter, so a failure leaves no trace.
+- What a restart forgets: an `aggregate` or an `idempotentConsumer` whose state is in memory (a fact of the EIP).
+- When a service is slow: a `circuitBreaker` with a fallback answers for the service, so its failures are not seen by
+  the caller (a fact of the EIP).
 
 The groups are those of CAMEL-26716 (when it fails, what is dropped, what does not wait, what a restart forgets, twice or
 out of order, what is exposed or insecure), with "when a service is slow" added from the chaos runs.
@@ -268,22 +299,22 @@ conditions and the placeholders, not the rules. Who reads it:
 === Validation
 
 A test of `camel-catalog` reads the file and fails the build when a rule has a condition or a placeholder the engine
-does not know, a fact that no component declares and that is not in the curated facts, a group that is not listed, or a
+does not know, a fact name that is not in `FactName`, a fact value that its name does not allow, a group that is not listed, or a
 `tryChaos` that is not a recipe of the chaos model. A test of the engine runs each rule on a small route that it should
 match and one it should not.
 
 === Gathering the facts
 
-215 of the 416 components (not deprecated) have a consumer, and 377 a producer. The facts are gathered by family, the
-families the hints need first:
+215 of the 416 components (not deprecated) have a consumer, and 377 a producer; the EIPs, data formats and languages
+come after. The facts are gathered by family, the families the hints need first:
 
-1. Messaging (26: Kafka, JMS, AMQP, SQS, Pub/Sub, RabbitMQ, MQTT, NATS...): `onFailure`, `keptWhen`, `deliversAgain`,
-   `confirmedWhen`.
-2. Files (13: file, ftp, sftp, smb, the cloud file stores): `onFailure`, `movedWhen`, `keptRetries`,
-   `overwritesWhen`.
-3. HTTP (7 servers, and the HTTP clients): `returned`, `failureRaisedWhen`, `idempotentWhen`, `timeoutOption`.
+1. Messaging (26: Kafka, JMS, AMQP, SQS, Pub/Sub, RabbitMQ, MQTT, NATS...): `onFailure`, `keptRetries`,
+   `deliversAgain`, `confirmed`.
+2. Files (13: file, ftp, sftp, smb, the cloud file stores): `onFailure`, `keptRetries`, `overwrites`.
+3. HTTP (7 servers, and the HTTP clients): `onFailure` (`returned`), `failureRaised`, `idempotent`, `timeoutBounded`.
 4. Scheduling and polling (timer, scheduler, cron, quartz; sql, jpa, mongodb consumers): `feedsItself`, `onFailure`.
-5. The rest, as the hints need them.
+5. The EIPs with state or a hand-off (aggregate, idempotentConsumer, resequencer, throttle, wireTap, circuitBreaker).
+6. The rest, as the hints need them.
 
 Many consumers share a base class (`ScheduledPollConsumer`, `GenericFileConsumer`), so a fact is often decided once for
 a family. Each fact is read from the consumer or producer code and verified: with camel-chaos against a test-infra
@@ -294,11 +325,11 @@ a component without a fact gives no hint.
 === Order of work
 
 1. This design.
-2. The rule file in the catalog with the hints of CAMEL-26716 and the chaos runs, the curated facts for the components
-   they name (kafka, jms, file, seda, timer, http, platform-http), the engine, and the Good to know section of the About
-   screen and `camel get about`.
-3. The annotation, the plugin, and the facts in the component JSON for the first families; camel-chaos reads them and
-   drops its tables.
+2. `@Facts`, `@Fact` and `FactName` in `spi-annotations`, the plugin writing them into the JSON, and the facts of the
+   components and EIPs the first hints name (kafka, jms, file, seda, timer, http, platform-http, aggregate,
+   idempotentConsumer, circuitBreaker).
+3. The rule file in the catalog with the hints of CAMEL-26716 and the chaos runs, the engine, and the Good to know
+   section of the About screen and `camel get about`; camel-chaos reads the facts and drops its tables.
 4. The survey of the other families.
 5. The findings of `ProjectOverview` and the data of `SecurityData` as rules and facts.
 
@@ -306,8 +337,13 @@ a component without a fact gives no hint.
 
 - *Hints in Java, one class per hint.* What the tools do today: fixed per release, each tool its own copy, and no other
   tool (a visual designer) can read them.
-- *The facts in the rule file only, keyed by component.* One place and no API change, but the component author does not
-  see them next to the options, and camel-chaos cannot read the catalog at runtime. Kept as the first step.
+- *The facts in the rule file only, keyed by component.* One place and no annotation, but the component author does
+  not see them next to the options, a subclass or a renamed option drifts from them, and camel-chaos cannot read the
+  catalog at runtime.
+- *Attributes on `@UriEndpoint`.* Only for endpoints, while EIPs, data formats and languages have facts too, and the
+  annotation would grow with each fact.
+- *One attribute per fact on the annotation* (`onFailure = OnFailure.SKIPPED`). Typed, but every new fact changes the
+  annotation; a name from an enum and a checked value keep it to one place, as the carriers of `@BodyType`.
 - *A general expression language for the conditions* (Simple, JSONPath over the route model). More expressive, but a
   rule could then ask anything, which is hard to validate, and hard for an AI to write correctly. The closed vocabulary
   grows with the hints that need it.
@@ -316,8 +352,9 @@ a component without a fact gives no hint.
 == Compatibility
 
 - Nothing changes at runtime for routes. The facts are new metadata; a component without them is as before.
-- The catalog gets a new file and a method to read it. The component JSON gets two optional sections, which readers
-  that do not know them ignore.
+- The catalog gets a new file and a method to read it. The JSON of a component, EIP, data format or language gets an
+  optional `facts` section, which readers that do not know it ignore. `@Facts` is new in `spi-annotations`, as
+  `@BodyTypes` was.
 - camel-chaos keeps its behaviour when it reads the facts instead of its tables: the facts start as a copy of the tables.
 
 == Risks
@@ -332,9 +369,8 @@ a component without a fact gives no hint.
 
 == Open questions
 
-- How a component declares its facts: a new annotation of `spi-annotations` on the endpoint class (such as
-  `@ConsumerFacts(onFailure = SKIPPED, keptWhen = "breakOnFirstError=true")`), attributes of `@UriEndpoint`, or a JSON
-  fragment next to the component's docs that the plugin merges.
+- The names of the annotation and its parts (`@Facts`, `@Fact`, `FactName`), and whether a value is text checked by
+  the plugin or an enum per fact.
 - Whether a hint may also use what a running integration reports (counts, errors), or stays static.
 - The order and the number of hints on the About screen.
 
