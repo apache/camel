@@ -546,7 +546,7 @@ strings to `int[]` or `byte[]`, now gives no conversion (`null`, or `NoTypeConve
 mandatory conversion), and other type converters can try. Before, it failed with a `TypeConversionException` due to
 `IllegalArgumentException: argument type mismatch` or an `ArrayStoreException`.
 
-=== camel-core - a route called from a doCatch handles its failure after the doTry called a route that failed
+=== camel-core - after the doTry called a route that failed, a doCatch clears the failure marks of the exchange
 
 When the `doTry` block calls a route (such as with `direct`) that fails without handling the failure (no `onException`
 handles it, and no dead letter channel), the error handler of a route called from the `doCatch` block now runs as it
@@ -573,6 +573,30 @@ The exchange no longer keeps the marks of the caught failure, which also changes
 
 To keep the exchange failing after one attempt as before, give the route called from the `doCatch` no error handler
 (`noErrorHandler()`); this applies to every caller of that route.
+
+After the `doCatch` block, the exchange is no longer marked as failure handled either (CAMEL-26447), as when the
+`doTry` failed in the same route. So the error handlers that come later handle a new failure as usual (they redeliver,
+run their `onException` and dead letter channel, and log an exhausted failure): an `onException` of the calling route
+for a failure after the `doTry`, the error handler of a route called later (with a plain `to`, or from the
+`doFinally`), and the dead letter channel of a calling route when the `doCatch` block throws. Before, they treated the
+exchange as done, and the new failure went back to the caller unhandled. When such an error handler now handles the
+new failure, the exchange completes, so its consumer commits or acknowledges the message, as for any handled failure.
+
+The readers of the mark at the end of the exchange now see a message that was processed, as for a `doTry` that failed
+in the same route:
+
+* the Idempotent Consumer confirms the message id instead of removing it, so the message is not processed again;
+* a resumable consumer records the offset of the message;
+* the `failuresHandled` counters (JMX, and the Micrometer and OpenTelemetry route policies) no longer count it;
+* with `exactlyOnce` on a Kafka consumer, the output transaction is committed together with the offsets (as the Kafka
+  component documents for sends in a `doCatch` block) instead of being aborted, unless the caught failure was a Kafka
+  send failure.
+
+There is no option for the old end-of-exchange outcome. For the Idempotent Consumer, rethrowing the exception in the
+`doCatch` block with `removeOnFailure` (the default) removes the message id. As a last resort, a processor at the end
+of the `doCatch` block can mark the exchange as failure handled with
+`exchange.getExchangeExtension().setFailureHandled(true)` (an internal API, so a Java processor or bean); this applies
+when the `doCatch` block completes.
 
 === camel-core - Simple: more predicates inside ${ } are read as predicates
 
