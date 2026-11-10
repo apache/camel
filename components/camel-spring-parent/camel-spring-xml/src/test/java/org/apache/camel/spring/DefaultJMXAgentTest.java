@@ -20,6 +20,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test that verifies JMX is enabled by default.
  */
+@Isolated
 public class DefaultJMXAgentTest extends SpringTestSupport {
 
     @Override

@@ -629,8 +629,9 @@ final class AboutView {
         String p = purpose;
         String pFrom = purposeFrom;
         List<Line> head = new ArrayList<>();
-        head.add(Line.from(Span.raw(" "), Span.raw(meta(info, o)),
-                Span.styled(info.vanishing ? "  ○ stopped" : "  ● running",
+        head.add(Line.from(Span.raw(" "), Span.raw(meta(info, o)), StatusAge.stale(info)
+                ? Span.styled("  ✗ no status", Theme.error())
+                : Span.styled(info.vanishing ? "  ○ stopped" : "  ● running",
                         info.vanishing ? Theme.muted() : Theme.success())));
         if (p != null) {
             for (String l : wrap(p, Math.max(20, width - 8), 2)) {
@@ -996,7 +997,7 @@ final class AboutView {
             // the exchanges of the route it starts over the last minutes, and the rate now
             long[] perSecond = e.route() != null ? routePerSecond(info, e.route()) : null;
             if (perSecond != null) {
-                in.add(sparkLine("   ", perSecond, spark));
+                in.add(sparkLine("   ", perSecond, spark, StatusAge.stale(info)));
                 inTargets.add(null);
             }
         }
@@ -1041,7 +1042,7 @@ final class AboutView {
             if (perSecond != null) {
                 // the sparkline in what "    from <route>  " and the rate leave of the column
                 int room = outWidth - 9 - s.route().length() - 2 - 8;
-                from.addAll(sparkLine("  ", perSecond, Math.max(4, Math.min(spark, room)))
+                from.addAll(sparkLine("  ", perSecond, Math.max(4, Math.min(spark, room)), StatusAge.stale(info))
                         .spans());
             }
             out.add(Line.from(from));
@@ -1073,13 +1074,16 @@ final class AboutView {
         return null;
     }
 
-    /** The values as a sparkline and the rate now, or only idle when there was nothing. */
-    private static Line sparkLine(String indent, long[] values, int width) {
+    /**
+     * The values as a sparkline and the rate now, or only idle when there was nothing; the rate is not known when the
+     * integration wrote no status of late.
+     */
+    private static Line sparkLine(String indent, long[] values, int width, boolean noStatus) {
         if (Arrays.stream(values).allMatch(v -> v <= 0)) {
-            return Line.from(Span.raw(indent), Span.styled("idle", Theme.muted()));
+            return Line.from(Span.raw(indent), Span.styled(noStatus ? "-" : "idle", Theme.muted()));
         }
         return Line.from(Span.raw(indent), Span.styled(spark(values, width), Theme.info()),
-                Span.styled("  " + rate(values), Theme.muted()));
+                Span.styled("  " + (noStatus ? "-" : rate(values)), Theme.muted()));
     }
 
     /** The sparklines of In fill its column, between {@value #SPARK_WIDTH} and {@value #MAX_SPARK_WIDTH} wide. */
@@ -1155,7 +1159,11 @@ final class AboutView {
         lines.add(happened(info, width));
         List<Span> watch = new ArrayList<>();
         watch.add(Span.styled(" Watch    ", Theme.muted()));
-        if (info.errorCount > 0) {
+        List<Span> noStatus = StatusAge.watch(info);
+        if (!noStatus.isEmpty()) {
+            // its numbers are of when it stopped writing its status
+            watch.addAll(noStatus);
+        } else if (info.errorCount > 0) {
             // errors that stopped a minute ago are history: the line says so, and calms down. A minute, not the 5 of
             // Last 5m and the strips (which still show them): a fix that reloads should not stay red for long
             long lastError = lastError(info);

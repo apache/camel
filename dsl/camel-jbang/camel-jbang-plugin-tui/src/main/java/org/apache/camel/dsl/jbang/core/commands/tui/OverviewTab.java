@@ -526,7 +526,7 @@ class OverviewTab extends AbstractTab {
                 }
                 Line nameLine = Line.from(nameSpans);
                 Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
-                String throughputDisplay = info.throughput;
+                String throughputDisplay = StatusAge.stale(info) ? "-" : info.throughput;
                 if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
                     LinkedList<Long> tpHist = throughputHistory.get(info.pid);
                     if (tpHist != null && !tpHist.isEmpty()) {
@@ -678,13 +678,12 @@ class OverviewTab extends AbstractTab {
                 } else if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
                     stateText = "Stopped";
                 }
-                if (info.reloadError != null && !"Stopping".equals(stateText)) {
-                    // its last reload failed, as camel ps shows it; the info panel says why
-                    stateText = "Error";
-                }
+                // its last reload failed, as camel ps shows it (the info panel says why); or it wrote no status of late
+                stateText = StatusAge.state(info,
+                        info.reloadError != null && !"Stopping".equals(stateText) ? "Error" : stateText);
                 Style statusStyle = switch (stateText) {
                     case "Started", "Running" -> Theme.success();
-                    case "Stopped", "Error" -> Theme.error();
+                    case "Stopped", "Error", StatusAge.NO_STATUS -> Theme.error();
                     default -> Theme.warning();
                 };
 
@@ -709,7 +708,7 @@ class OverviewTab extends AbstractTab {
                     nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
                 }
                 Line nameLine = TuiHelper.fitLine(nameSpans, nameColumn);
-                String throughputDisplay = info.throughput;
+                String throughputDisplay = StatusAge.stale(info) ? "-" : info.throughput;
                 if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
                     LinkedList<Long> tpHist = throughputHistory.get(info.pid);
                     if (tpHist != null && !tpHist.isEmpty()) {
@@ -1633,6 +1632,7 @@ class OverviewTab extends AbstractTab {
             if (info.reloadError != null) {
                 row.put("reloadError", info.reloadError);
             }
+            StatusAge.describe(info, row);
             row.put("ready", info.ready);
             // info.uptime holds the process start time (epoch millis), which the screen shows as an elapsed
             // duration; export the same duration plus the raw values with unambiguous names so an AI reading
@@ -1645,7 +1645,8 @@ class OverviewTab extends AbstractTab {
             row.put("exchangesTotal", info.exchangesTotal);
             row.put("failed", info.failed);
             row.put("inflight", info.inflight);
-            row.put("throughput", info.throughput);
+            // its rate now is not known without a status of late
+            row.put("throughput", StatusAge.stale(info) ? null : info.throughput);
             row.put("routeStarted", info.routeStarted);
             row.put("routeTotal", info.routeTotal);
             row.put("meanTime", info.meanTime);

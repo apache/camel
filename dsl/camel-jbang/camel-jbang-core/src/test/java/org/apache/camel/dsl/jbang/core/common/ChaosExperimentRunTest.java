@@ -18,9 +18,12 @@ package org.apache.camel.dsl.jbang.core.common;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import org.apache.camel.util.json.JsonArray;
@@ -44,7 +47,12 @@ class ChaosExperimentRunTest {
         RuntimeException sendFails;
         RuntimeException endFails;
         RuntimeException beginFails;
+        List<String> beginWarnings;
         JsonObject ended = experiment("FAIL", false);
+        // the HTTP requests of a feed, and the reads of the status that wait until they are all sent
+        final List<String> requests = Collections.synchronizedList(new ArrayList<>());
+        CountDownLatch httpDone;
+        int statusReads;
 
         @Override
         public JsonObject chaos(String command, Consumer<JsonObject> options) {
@@ -56,7 +64,11 @@ class ChaosExperimentRunTest {
                 if (beginFails != null) {
                     throw beginFails;
                 }
-                return experiment("PENDING", true);
+                JsonObject begun = experiment("PENDING", true);
+                if (beginWarnings != null) {
+                    begun.put("warnings", new JsonArray(beginWarnings));
+                }
+                return begun;
             }
             if (endFails != null) {
                 throw endFails;
@@ -75,7 +87,25 @@ class ChaosExperimentRunTest {
 
         @Override
         public JsonObject status() {
+            // the first read is the check of the feed, before the requests
+            if (httpDone != null && statusReads++ > 0) {
+                try {
+                    httpDone.await(10, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
             return statuses.size() > 1 ? statuses.poll() : statuses.peek();
+        }
+
+        @Override
+        public int http(String method, String url, Map<String, String> headers, String body) {
+            requests.add(method + " " + url + " " + headers + " " + body);
+            int code = requests.size() % 4 == 0 ? 503 : 200;
+            if (httpDone != null) {
+                httpDone.countDown();
+            }
+            return code;
         }
 
         void shows(String verdict, boolean open) {
@@ -121,6 +151,8 @@ class ChaosExperimentRunTest {
 
     @Test
     void theTrafficThenTheWaitUntilTheVerdict() throws Exception {
+        // read first by the check of the feed
+        integration.shows("PENDING", true);
         integration.shows("PENDING", true);
         integration.shows("PENDING", true);
         integration.shows("FAIL", true);
@@ -147,7 +179,9 @@ class ChaosExperimentRunTest {
         integration.shows("PENDING", true);
         integration.ended = experiment("INCONCLUSIVE", false);
 
-        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 5_000, null, clock);
+        // an expectation without within= has the time of its rule, which the wait does not know
+        JsonObject answer = ChaosExperimentRun.run(integration, null, "route=refunds error expect=refunds:failed<=0", null,
+                5_000, null, clock);
 
         assertThat(answer.getString("verdict")).isEqualTo("INCONCLUSIVE");
         assertThat(answer.getLong("waited")).isEqualTo(5_000);
@@ -192,6 +226,250 @@ class ChaosExperimentRunTest {
                 .hasMessage("Experiment 1 is open: end it first");
         assertThat(integration.actions).hasSize(1);
         assertThat(integration.sent).isNull();
+    }
+
+    @Test
+    void aFeedThatReachesNoRouteIsRefusedBeforeTheExperiment() {
+        JsonObject status = new JsonObject(
+                Map.of("routes", new JsonArray(
+                        List.of(
+                                new JsonObject(Map.of("routeId", "orders", "from", "timer://orders?period=1000")),
+                                new JsonObject(
+                                        Map.of("routeId", "refunds", "from", "kafka://refunds?brokers=localhost:9092"))))));
+        integration.statuses.add(status);
+
+        // the route id, the endpoint it starts from (with or without //), and a pattern reach a route
+        assertThat(ChaosExperimentRun.checkFeed(status, "refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "kafka:refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "kafka://refunds")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "ref*")).isNull();
+        // an endpoint no route starts from: no message would arrive, so the verdict would say nothing
+        assertThatThrownBy(() -> ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("direct:refunds", "R-1", null, 5, null), 60_000, null, clock))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("The feed direct:refunds is not where a route starts, so no message would reach the"
+                            + " integration: give the id of a route, or the endpoint it starts from:"
+                            + " orders (timer://orders?period=1000), refunds (kafka://refunds?brokers=localhost:9092)");
+        assertThat(integration.actions).isEmpty();
+    }
+
+    @Test
+    void aRouteThatCannotBeFedSaysWhy() {
+        JsonObject status = new JsonObject(
+                Map.of("routes", new JsonArray(
+                        List.of(
+                                new JsonObject(Map.of("routeId", "orders", "from", "timer://orders?period=1000")),
+                                new JsonObject(Map.of("routeId", "payment", "from", "platform-http:///payment")),
+                                new JsonObject(Map.of("routeId", "api", "from", "rest:post:/refunds")),
+                                new JsonObject(Map.of("routeId", "leader", "from", "master:lock:direct:start")),
+                                new JsonObject(Map.of("routeId", "hooks", "from", "netty-http:http://0.0.0.0:9000/hooks")),
+                                new JsonObject(Map.of("routeId", "remote", "from", "undertow:http://shop.example.com:9000/x")),
+                                new JsonObject(Map.of("routeId", "inbox", "from", "file://inbox?delete=true")),
+                                new JsonObject(Map.of("routeId", "billing", "from", "seda://billing"))))));
+        integration.statuses.add(status);
+
+        // a route that makes its own messages (CAMEL-26792)
+        assertThat(ChaosExperimentRun.checkFeed(status, "orders")).isEqualTo(
+                "Route orders starts from timer://orders?period=1000, which makes its own messages: leave the feed out,"
+                                                                             + " as the traffic of the route comes by itself");
+        // a route served by the HTTP server of Camel is fed with requests to it (CAMEL-26793), another HTTP server not
+        assertThat(ChaosExperimentRun.checkFeed(status, "payment")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "platform-http:/payment")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "api")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "POST /refunds")).isNull();
+        // an HTTP server of its own on this machine is fed at its address; one on another host is not
+        assertThat(ChaosExperimentRun.checkFeed(status, "hooks")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "remote"))
+                .startsWith("Route remote starts from the HTTP endpoint undertow:http://shop.example.com:9000/x, which an"
+                            + " experiment cannot feed");
+        // a component that only consumes
+        assertThat(ChaosExperimentRun.checkFeed(status, "leader")).contains("which only consumes");
+        // a file is written to the folder the route polls, and seda is in memory
+        assertThat(ChaosExperimentRun.checkFeed(status, "inbox")).isNull();
+        assertThat(ChaosExperimentRun.checkFeed(status, "billing")).isNull();
+
+        // refused before the experiment begins
+        assertThatThrownBy(() -> ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("orders", "O-1", null, 5, null), 60_000, null, clock))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("which makes its own messages");
+        assertThat(integration.actions).isEmpty();
+    }
+
+    private static JsonObject served(JsonObject status) {
+        JsonObject served = new JsonObject(status);
+        served.put("routes", new JsonArray(
+                List.of(
+                        new JsonObject(
+                                Map.of("routeId", "payment", "from", "platform-http:///payment?httpMethodRestrict=POST")),
+                        new JsonObject(Map.of("routeId", "orders", "from", "rest:get:/orders/{id}")))));
+        served.put("platform-http", new JsonObject(
+                Map.of(
+                        "server", "http://0.0.0.0:8080",
+                        "endpoints", new JsonArray(
+                                List.of(
+                                        new JsonObject(
+                                                Map.of("url", "http://0.0.0.0:8080/api/payment", "path", "/api/payment",
+                                                        "verbs", "POST")))))));
+        served.put("rests", new JsonObject(
+                Map.of("rests", new JsonArray(
+                        List.of(
+                                new JsonObject(
+                                        Map.of("url", "http://0.0.0.0:8080/api/orders/{id}", "method", "get", "routeId",
+                                                "orders")))))));
+        return served;
+    }
+
+    @Test
+    void anHttpRouteIsFedWithRequestsToTheServerOfTheIntegration() throws Exception {
+        // read by the check of the feed: the routes and the HTTP server
+        integration.statuses.add(served(statusWith(experiment("PENDING", true))));
+        integration.shows("PENDING", true);
+        integration.shows("FAIL", true);
+        integration.httpDone = new CountDownLatch(4);
+
+        JsonObject answer = ChaosExperimentRun.run(integration, "a client gets a 503, not a 500", RULE,
+                new ChaosExperimentRun.Feed("payment", "{\"amount\": 5}", "X-Shop=demo", 4, null), 60_000, null, clock);
+
+        // the path as served (with its context path), the method of the route, the headers and a JSON content type
+        assertThat(integration.requests).hasSize(4).allMatch(r -> r.equals(
+                "POST http://localhost:8080/api/payment {X-Shop=demo, Content-Type=application/json} {\"amount\": 5}"));
+        assertThat(integration.sent).isNull();
+        JsonObject traffic = (JsonObject) answer.get("traffic");
+        assertThat(traffic.getString("endpoint")).isEqualTo("POST http://localhost:8080/api/payment");
+        assertThat(traffic.getLong("sent")).isEqualTo(4);
+        assertThat(((JsonObject) traffic.get("statusCodes")).getLong("200")).isEqualTo(3);
+        assertThat(((JsonObject) traffic.get("statusCodes")).getLong("503")).isEqualTo(1);
+        assertThat(answer.getString("verdict")).isEqualTo("FAIL");
+    }
+
+    @Test
+    void whereTheRequestsOfAnHttpFeedGo() {
+        JsonObject status = served(new JsonObject());
+        List<Object> routes = status.getCollection("routes");
+
+        // a path to call, with or without a method (CAMEL-26793)
+        assertThat(ChaosHttpFeed.target(status, null, "PUT /api/orders/42"))
+                .hasToString("PUT http://localhost:8080/api/orders/42");
+        assertThat(ChaosHttpFeed.target(status, null, "/api/payment")).hasToString("POST http://localhost:8080/api/payment");
+        // a route with a parameter in its path: the feed gives the path to call
+        assertThatThrownBy(() -> ChaosHttpFeed.target(status, (JsonObject) routes.get(1), "orders"))
+                .hasMessage("Route orders serves /api/orders/{id}, with a parameter: give the feed as the path to call,"
+                            + " such as POST /api/orders/1");
+        // an HTTP server of its own: its address, called as localhost, with its method
+        assertThat(ChaosHttpFeed.target(status,
+                new JsonObject(
+                        Map.of("routeId", "hooks",
+                                "from", "netty-http://http://0.0.0.0:9000/hooks?httpMethodRestrict=PUT")),
+                "hooks")).hasToString("PUT http://localhost:9000/hooks");
+        assertThat(ChaosHttpFeed.ownAddress("jetty:http://localhost:8181")).isEqualTo("http://localhost:8181/");
+        assertThat(ChaosHttpFeed.ownAddress("undertow:https://10.0.0.5:8443/api")).isNull();
+        // another route: not for HTTP
+        assertThat(ChaosHttpFeed.target(status, new JsonObject(Map.of("routeId", "x", "from", "seda://x")), "x")).isNull();
+        // a server whose port the status does not have
+        assertThatThrownBy(() -> ChaosHttpFeed.target(new JsonObject(Map.of("routes", status.get("routes"))),
+                (JsonObject) routes.get(0), "payment"))
+                .hasMessageContaining("the port of the HTTP server of the integration is not known");
+    }
+
+    @Test
+    void theFilesOfAFileFeedPassTheFilterOfTheRoute() {
+        ChaosExperimentRun.Feed json = new ChaosExperimentRun.Feed("invoices", "{\"n\": 1}", null, 5, null);
+        // the extension of the include or antInclude filter (CAMEL-26795)
+        assertThat(ChaosExperimentRun.fileName("file://invoices?delete=true&include=.*%5C.json", json, 42))
+                .isEqualTo("chaos-42.json");
+        assertThat(ChaosExperimentRun.fileName("file://in?include=%28%3Fi%29.*%5C.%28csv%7Ctxt%29", json, 42))
+                .isEqualTo("chaos-42.csv");
+        assertThat(ChaosExperimentRun.fileName("file://in?antInclude=*.xml", json, 42)).isEqualTo("chaos-42.xml");
+        assertThat(ChaosExperimentRun.fileName("file://invoices?include=.*%5C.json",
+                new ChaosExperimentRun.Feed("invoices", "plain text", null, 0, null), 42)).isEqualTo("chaos-42.json");
+        // no filter: by the body, or the file it names
+        assertThat(ChaosExperimentRun.fileName("file://in", json, 42)).isEqualTo("chaos-42.json");
+        assertThat(ChaosExperimentRun.fileName("file://in",
+                new ChaosExperimentRun.Feed("in", "<order/>", null, 0, null), 42)).isEqualTo("chaos-42.xml");
+        assertThat(ChaosExperimentRun.fileName("file://in",
+                new ChaosExperimentRun.Feed("in", "file:/feed/order.csv", null, 0, null), 42)).isEqualTo("chaos-42.csv");
+        // the feed names its files, or the route reads one file
+        assertThat(ChaosExperimentRun.fileName("file://in",
+                new ChaosExperimentRun.Feed("in", "x", "CamelFileName=mine.txt", 0, null), 42)).isNull();
+        assertThat(ChaosExperimentRun.fileName("file://in?fileName=orders.csv", json, 42)).isNull();
+    }
+
+    @Test
+    void aFileRouteIsFedWithNamedFiles() throws Exception {
+        JsonObject status = statusWith(experiment("PENDING", true));
+        status.put("routes", new JsonArray(
+                List.of(
+                        new JsonObject(Map.of("routeId", "invoices", "from", "file://invoices?include=.*%5C.json")))));
+        integration.statuses.add(status);
+        integration.shows("FAIL", true);
+
+        ChaosExperimentRun.run(integration, null, RULE,
+                new ChaosExperimentRun.Feed("invoices", "{}", "country=DK", 5, null), 60_000, null, clock);
+
+        assertThat(integration.sent.headers()).isEqualTo("country=DK\nCamelFileName=chaos-1000000.json");
+    }
+
+    @Test
+    void aFeedToARealSystemIsWarned() {
+        JsonObject report = new JsonObject(
+                Map.of("routes", new JsonArray(
+                        List.of(
+                                new JsonObject(Map.of("route", "refunds")),
+                                new JsonObject(Map.of("route", "returns", "stubbedConsumer", "kafka")),
+                                new JsonObject(Map.of("route", "inbox"))))));
+        JsonObject status = new JsonObject(
+                Map.of(
+                        "routes", new JsonArray(
+                                List.of(
+                                        new JsonObject(
+                                                Map.of("routeId", "refunds", "from", "kafka://refunds?brokers=localhost:9092")),
+                                        new JsonObject(Map.of("routeId", "returns", "from", "kafka://returns")),
+                                        new JsonObject(Map.of("routeId", "inbox", "from", "file://inbox")))),
+                        "chaos", new JsonObject(Map.of("report", report))));
+
+        // not stubbed: the messages go to the broker (CAMEL-26792)
+        assertThat(ChaosExperimentRun.feedWarning(status, "refunds")).isEqualTo(
+                "The feed goes to kafka://refunds?brokers=localhost:9092, where route refunds starts, and it is not"
+                                                                                + " stubbed: the messages go to the real kafka. Use a local one (camel infra"
+                                                                                + " run kafka), or run the integration with --stub=kafka so no real system"
+                                                                                + " gets them");
+        // stubbed, a file, or a report that does not tell: no warning
+        assertThat(ChaosExperimentRun.feedWarning(status, "returns")).isNull();
+        assertThat(ChaosExperimentRun.feedWarning(status, "inbox")).isNull();
+        assertThat(ChaosExperimentRun.feedWarning(new JsonObject(Map.of("routes", status.get("routes"))), "refunds"))
+                .isNull();
+    }
+
+    @Test
+    void aRuleThatMatchesNothingComesWithItsWarning() throws Exception {
+        integration.shows("PENDING", true);
+        integration.beginWarnings = List.of("r1: endpoint=file:/parked matches no endpoint of the context now");
+        integration.ended = experiment("PASS", false);
+
+        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 1_000, null, clock);
+
+        // the PASS says nothing: the AI reads why
+        assertThat(answer.<List<Object>> getCollection("warnings"))
+                .containsExactly("r1: endpoint=file:/parked matches no endpoint of the context now");
+    }
+
+    @Test
+    void theWaitIsAtLeastTheWithinOfTheExpectations() throws Exception {
+        integration.shows("PENDING", true);
+        integration.ended = experiment("PASS", false);
+
+        // RULE has within=30s: a wait of 5s would end it before failed<=0 is decided
+        JsonObject answer = ChaosExperimentRun.run(integration, null, RULE, null, 5_000, null, clock);
+
+        assertThat(answer.getLong("waited")).isEqualTo(32_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=1m; route=b drop expect=b:1 within=90s"))
+                .isEqualTo(90_000);
+        // the ; between the rules is not part of the time, also when it follows the time without a space
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=3m; route=b drop expect=b:1 within=90s"))
+                .isEqualTo(180_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error expect=a:1 within=3m;route=b drop within=1m"))
+                .isEqualTo(180_000);
+        assertThat(ChaosExperimentRun.longestWithin("route=a error")).isZero();
     }
 
     @Test

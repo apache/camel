@@ -940,7 +940,58 @@ Experiment 1 FAIL  a failed refund is read again (r1, ended after 6s)
 
 The verdict is `FAIL` when an expectation is unmet (exit code 1), `PASS` when all are met, and `INCONCLUSIVE` when the
 wait was up before an expectation was decided. `--feed` takes the endpoint, or the id of the route, as the `feed:` line
-of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with its experiments. See
+of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with its experiments.
+
+The messages of `--feed` are sent to the endpoint the route starts from, so they reach a route that starts from
+`direct`, `seda`, a stub (`camel run --stub=kafka`) or a broker. An experiment refuses a feed that cannot reach its
+route, with the reason: a route that starts from a timer, scheduler, cron or quartz makes its own messages (leave
+`--feed` out), and a route that starts from a component that only consumes cannot be fed this way.
+
+A route that serves HTTP over the server of Camel (`platform-http`, or the REST DSL) is fed with HTTP requests to that
+server, on localhost and its port, with the path and method of the route, `--body` as the request body and `--header`
+as HTTP headers. They are sent while the experiment waits for its verdict, and its traffic counts the status codes the
+clients got, so a hypothesis such as "a client gets a 503, not a 500" has its evidence:
+
+[source,bash]
+----
+camel cmd chaos-experiment --hypothesis='a client of payment gets an error, nothing is lost' \
+    --rule='route=payment error rate=every:4 until=30s expect=payment:failed<=0 within=20s' \
+    --feed=payment --body='{"orderId": "O-1", "amount": 10}' --repeat=12 --interval=100..300
+----
+
+[source,text]
+----
+  traffic: 5 messages sent to POST http://localhost:8080/payment in 1s, answered 200 x4, 500 x1 (of 12: the experiment ended first)
+----
+
+For a path with a parameter, `--feed` is the path to call, with an optional method: `--feed='PUT /orders/42'`. An HTTP
+server with its own address on this machine (netty-http, undertow, jetty) is fed at that address, called as localhost;
+one on another host is not fed.
+
+A route that starts from `file:<folder>` is fed with files: each message is written as a file into the folder the route
+polls, named so the route takes it: `chaos-<time>.json`, numbered as `chaos-<time>-<n>.json` when the messages are
+repeated, with the extension of its `include` or `antInclude` filter, else of the body. A `CamelFileName` in `--header` names the files instead.
+
+A feed to a remote system that is not stubbed, such as a Kafka broker, has a warning, as the messages go to that system:
+use a local one (`camel infra run kafka`), or stub it.
+
+`camel cmd chaos-explore` lets the AI of `camel ask` do it all: let there be chaos. It starts the exploration with the
+budget, and the AI reads the suggestions, runs one experiment per call, reads each verdict, and goes on while there is
+time. It asks nothing on the way, as starting the command is the consent, and it never changes the routes. When it is
+done the exploration is finished, and its report and the journal of the experiments are printed (exit code 1 when an
+experiment failed):
+
+[source,bash]
+----
+camel cmd chaos-explore --budget=10m
+camel cmd chaos-explore myApp --budget=1h --focus=refunds --api-type=anthropic
+----
+
+It saves what it found in the project: the report and the journal in `test/chaos/reports/explore-<time>.md` (and
+`.json`), and each experiment that failed as a scenario, `test/chaos/explore-<time>-<n>.chaos`, which
+`camel run * --chaos=<file>` or `camel cmd chaos-load` replays (`--no-save` leaves them out). Run the integration with
+`--stub=remote`, so the experiments do not reach real systems. A route fed over HTTP or from
+files cannot be fed by an experiment yet. MCP clients have the same playbook as the prompt `camel_chaos_explore`. See
 xref:next@components:others:chaos.adoc#_an_exploration[An exploration] in the camel-chaos documentation.
 
 === Chaos scenarios

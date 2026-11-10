@@ -30,7 +30,7 @@ README, else the descriptions of the routes, else the overview an AI wrote in `c
 and *s* the summary of the project.
 * *In*, *Routes* and *Out* say what starts it (a timer or a cron with the period or schedule of its properties, its
 profile applied), its routes (a route called with `direct` sits under its caller with `↳`,
-one handed off with `seda` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
+one handed off with `seda` or a `wireTap` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
 last 5 minutes. *Up* and *Down* select a line, and *Enter* opens a route drilled down on the Diagram, or an endpoint with
 its details on the Endpoint tab.
 * *Last 5m* has the exchanges and how they ended, with the cause that happened most, and *What happened* a strip per route
@@ -38,6 +38,10 @@ over the last 5 minutes, coloured as on the Timeline, with when the worst happen
 allows, and on a tall screen up to two rows high, with room around the panels. *+* and *-* zoom between 5, 2 and 1
 minutes (zooming in centres on the last trouble, so you see what the other routes did then), and *Left* and *Right*
 move a zoomed window. *4* opens the Timeline for each second.
+* *Watch* has the errors to look at. An integration that wrote no status for 15 seconds, while its process runs, says
+since when instead: its numbers are of then. Its CPU tells why: busy when its heap is full and the garbage collector runs
+all the time, idle when a debugger holds it. A stop may not reach it, and *F10* kills it. The Overview table shows it
+as `No status`.
 
 `camel get about` shows the same from the command line (see xref:camel-jbang-diagnostics.adoc#_about[Diagnostics]).
 

@@ -21,6 +21,7 @@ import java.lang.management.ManagementFactory;
 import javax.management.ObjectName;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  *
  */
+@Isolated
 public class DisableJmxAgentTest extends DefaultJMXAgentTest {
 
     @Override
