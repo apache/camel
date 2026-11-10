@@ -114,4 +114,16 @@ class TimelineLogTest {
         log.read("4711", file, timeline);
         assertThat(series("log WARN")[4]).isEqualTo(1);
     }
+
+    @Test
+    void theWarnOfChaosSwitchedOnIsNotCounted() throws Exception {
+        Path file = dir.resolve("4711.log");
+        Files.writeString(file, line(4, "WARN", "Chaos is switched on (profile dev): rules can fail, delay, drop,"
+                                                + " duplicate and corrupt the messages of this application. Do not use in"
+                                                + " production. Seed: 42, rules from camel.chaos.rules: 0")
+                                + line(5, "WARN", "slow"));
+        log.read("4711", file, timeline);
+        assertThat(series("log WARN")[4]).isZero();
+        assertThat(series("log WARN")[5]).isEqualTo(1);
+    }
 }

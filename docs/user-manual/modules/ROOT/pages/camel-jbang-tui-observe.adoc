@@ -58,7 +58,8 @@ image::jbang/camel-tui-timeline.png[The Timeline tab in an outage of the supplie
 camel-chaos, the faults of each chaos rule are a layer of their own, marked 🎲, so an injected fault and a real one stay
 apart. When no exchange failed, the WARN and ERROR lines of the log are the cause instead (`log ERROR`, `log WARN`),
 read from the log file of the integration: something that went wrong outside an exchange, such as a consumer that
-cannot connect. When nothing went wrong the band is one line.
+cannot connect. The WARN camel-chaos logs when it is switched on is not counted. When nothing went wrong the band is
+one line.
 * *Routes* has a line per route (on a tall screen two rows high, with room around the panels and taller charts). The
 height is the exchanges done that second, and the colour the worst that happened to them: completed, recovered by redelivery, handled by the error handler (such as the dead letter channel), or failed. A
 second a chaos rule had the route down is shaded, and a mark says what happened to the route then: `▶` started, `■`

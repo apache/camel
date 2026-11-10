@@ -38,7 +38,8 @@ import org.slf4j.LoggerFactory;
  * The WARN and ERROR lines of the log of each integration per second, for the Timeline (CAMEL-26691): a cause when
  * something went wrong without an exception in an exchange. Read from the log file the TUI already shows, as it grows:
  * the last part of it at first, then what is added at each refresh. A line without a time of its own (a stack trace) is
- * part of the line before and not counted.
+ * part of the line before and not counted, nor is the WARN camel-chaos logs at startup to say it is switched on: chaos
+ * was asked for, it is not something that went wrong.
  */
 final class TimelineLog {
 
@@ -50,6 +51,8 @@ final class TimelineLog {
     private static final int MAX_READ = 1024 * 1024;
     private static final Pattern LINE = Pattern.compile(
             "^(\\d{4}-\\d{2}-\\d{2})[ T](\\d{2}:\\d{2}:\\d{2})\\S*\\s+(WARN|ERROR)\\b");
+    // the WARN of camel-chaos when it is switched on (ChaosContextServicePlugin)
+    private static final String CHAOS_SWITCHED_ON = "Chaos is switched on (";
     private static final Pattern ANSI = Pattern.compile("\u001B\\[[;\\d]*m");
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -111,7 +114,7 @@ final class TimelineLog {
         }
         String plain = line.indexOf('\u001B') >= 0 ? ANSI.matcher(line).replaceAll("") : line;
         Matcher m = LINE.matcher(plain);
-        if (m.find()) {
+        if (m.find() && !plain.contains(CHAOS_SWITCHED_ON)) {
             try {
                 long second = LocalDateTime.parse(m.group(1) + " " + m.group(2), TIME).atZone(zone).toEpochSecond();
                 timeline.logLine(pid, second, "ERROR".equals(m.group(3)));
