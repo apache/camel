@@ -707,7 +707,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
             return "CamelJGroupsRaftLastApplied";
         }
         /**
-         * The Address ot Raft Leader or not.
+         * The Address of Raft Leader or not.
          * 
          * The option is a: {@code org.jgroups.Address} type.
          * 

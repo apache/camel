@@ -31,7 +31,7 @@ public final class JGroupsRaftConstants {
     @Metadata(label = "consumer", description = "The index of the last log entry that was appended to the log.",
               javaType = "int")
     public static final String HEADER_JGROUPSRAFT_LAST_APPLIED = "CamelJGroupsRaftLastApplied";
-    @Metadata(label = "consumer", description = "The Address ot Raft Leader or not.", javaType = "org.jgroups.Address")
+    @Metadata(label = "consumer", description = "The Address of Raft Leader or not.", javaType = "org.jgroups.Address")
     public static final String HEADER_JGROUPSRAFT_LEADER_ADDRESS = "CamelJGroupsRaftLeaderAddress";
     @Metadata(label = "consumer", description = "The Raft id of the node.", javaType = "String")
     public static final String HEADER_JGROUPSRAFT_RAFT_ID = "CamelJGroupsRaftRaftId";
