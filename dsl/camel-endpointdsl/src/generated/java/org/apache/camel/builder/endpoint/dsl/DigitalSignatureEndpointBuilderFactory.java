@@ -80,7 +80,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the reference name for a PrivateKey that can be found in the
+         * Sets the reference name for a Certificate that can be found in the
          * registry.
          * 
          * The option is a: <code>java.lang.String</code> type.

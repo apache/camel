@@ -90,7 +90,7 @@ public interface CryptoComponentBuilderFactory {
         }
     
         /**
-         * Sets the reference name for a PrivateKey that can be found in the
+         * Sets the reference name for a Certificate that can be found in the
          * registry.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.

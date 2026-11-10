@@ -284,7 +284,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the reference name for a PrivateKey that can be found in the registry.
+     * Sets the reference name for a Certificate that can be found in the registry.
      */
     public void setCertificateName(String certificateName) {
         if (context != null && certificateName != null) {
