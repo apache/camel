@@ -76,7 +76,10 @@ public class IoTHubProducer extends DefaultProducer {
 
         Object body = exchange.getIn().getBody();
         DeliveryContext context = buildContext(exchange, mode, body);
-        operations.send(deviceId, connectionString, protocol, mode, context);
+        boolean sent = operations.send(deviceId, connectionString, protocol, mode, context);
+        if (!sent) {
+            throw new IllegalStateException("IoTHub send operation reported no success for device: " + deviceId);
+        }
     }
 
     /**
