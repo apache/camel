@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -93,7 +94,7 @@ class CxfClientCallbackTest {
         // Capture the exception set on the exchange
         RuntimeException[] captured = new RuntimeException[1];
         camelExchange = mock(Exchange.class);
-        org.mockito.Mockito.doAnswer(inv -> {
+        doAnswer(inv -> {
             captured[0] = (RuntimeException) inv.getArgument(0);
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
@@ -116,7 +117,7 @@ class CxfClientCallbackTest {
 
         Throwable[] captured = new Throwable[1];
         camelExchange = mock(Exchange.class);
-        org.mockito.Mockito.doAnswer(inv -> {
+        doAnswer(inv -> {
             captured[0] = (Throwable) inv.getArgument(0);
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
@@ -178,7 +179,7 @@ class CxfClientCallbackTest {
         // No prior exception on the exchange
         when(camelExchange.getException()).thenReturn(null);
         Throwable[] captured = new Throwable[1];
-        org.mockito.Mockito.doAnswer(inv -> {
+        doAnswer(inv -> {
             captured[0] = (Throwable) inv.getArgument(0);
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
@@ -233,7 +234,7 @@ class CxfClientCallbackTest {
 
         Throwable[] captured = new Throwable[1];
         camelExchange = mock(Exchange.class);
-        org.mockito.Mockito.doAnswer(inv -> {
+        doAnswer(inv -> {
             captured[0] = (Throwable) inv.getArgument(0);
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
@@ -275,5 +276,44 @@ class CxfClientCallbackTest {
         assertThat(doneCount.get()).as("done(false) must be called even when cookie store throws").isEqualTo(1);
         // cookie error must be suppressed on root transport exception, not replace it
         assertThat(transportEx.getSuppressed()).containsExactly(cookieError);
+    }
+
+    @Test
+    void handleResponse_cookieAndBindingThrow_bindingErrorSuppressedOnCookieError() throws Exception {
+        // Both cookie store and binding throw in the success path; the binding error must be suppressed
+        // on the cookie error (not silently lost), and done(false) must still fire.
+        RuntimeException cookieError = new RuntimeException("cookie store failure");
+        RuntimeException bindingError = new RuntimeException("binding failure");
+        CookieHandler cookieHandler = mock(CookieHandler.class);
+        doThrow(cookieError).when(cookieHandler).storeCookies(any(), any(URI.class), any());
+        doThrow(bindingError).when(cxfBinding).populateExchangeFromCxfResponse(any(), any(), any());
+
+        Message inMessage = mock(Message.class);
+        when(inMessage.get(any())).thenReturn(Collections.emptyMap());
+        when(cxfExchange.getInMessage()).thenReturn(inMessage);
+        when(endpoint.getCookieHandler()).thenReturn(cookieHandler);
+        when(endpoint.getRequestUri(any())).thenReturn(URI.create("http://wrong-server/"));
+
+        AtomicInteger doneCount = new AtomicInteger();
+        AsyncCallback callback = sync -> doneCount.incrementAndGet();
+
+        Throwable[] captured = new Throwable[1];
+        camelExchange = mock(Exchange.class);
+        doAnswer(inv -> {
+            captured[0] = (Throwable) inv.getArgument(0);
+            return null;
+        }).when(camelExchange).setException(any(Throwable.class));
+        when(camelExchange.getException()).thenAnswer(inv -> captured[0]);
+
+        when(endpoint.getCxfBinding()).thenReturn(cxfBinding);
+
+        Map<String, Object> ctx = new HashMap<>();
+        CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
+        cb.handleResponse(ctx, new Object[0]);
+
+        assertThat(doneCount.get()).as("done(false) must be called even when both cookie store and binding throw").isEqualTo(1);
+        // cookie error is the primary exception; binding error must be suppressed on it, not silently lost
+        assertThat(captured[0]).isSameAs(cookieError);
+        assertThat(cookieError.getSuppressed()).containsExactly(bindingError);
     }
 }

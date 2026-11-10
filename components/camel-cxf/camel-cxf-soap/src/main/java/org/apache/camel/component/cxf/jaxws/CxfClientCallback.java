@@ -78,7 +78,13 @@ public class CxfClientCallback extends ClientCallback {
                     try {
                         endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
                     } catch (Throwable t) {
-                        camelExchange.setException(t);
+                        // preserve any exception set by the cookie store; record binding error as suppressed
+                        Exception cur = camelExchange.getException();
+                        if (cur != null && cur != t) {
+                            cur.addSuppressed(t);
+                        } else if (cur == null) {
+                            camelExchange.setException(t);
+                        }
                     }
                 } finally {
                     camelAsyncCallback.done(false);
@@ -140,11 +146,12 @@ public class CxfClientCallback extends ClientCallback {
                     try {
                         endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
                     } catch (Throwable t) {
-                        // preserve the root transport/fault exception; record the binding error as suppressed
+                        // preserve the root transport/fault exception; record the binding error as suppressed;
+                        // guard against self-suppression (cur == t) which throws IllegalArgumentException
                         Exception cur = camelExchange.getException();
-                        if (cur != null) {
+                        if (cur != null && cur != t) {
                             cur.addSuppressed(t);
-                        } else {
+                        } else if (cur == null) {
                             camelExchange.setException(t);
                         }
                     }
