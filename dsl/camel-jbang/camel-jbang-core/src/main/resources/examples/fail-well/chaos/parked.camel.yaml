@@ -1,0 +1,18 @@
+# The orders the shop could not charge or ship are written as files for someone to look at.
+# The route has an error handler of its own, so a failure in parking an order is logged
+# instead of being sent back here.
+- route:
+    id: parked
+    errorHandler:
+      deadLetterChannel:
+        deadLetterUri: "log:parking-failed?level=ERROR"
+    from:
+      uri: direct:parked
+      steps:
+        - log:
+            message: "Order ${variable.orderId} parked for manual review: ${exception.message}"
+        - to:
+            uri: file
+            parameters:
+              directoryName: parked
+              fileName: "${variable.orderId}.json"

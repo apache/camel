@@ -914,6 +914,57 @@
         "order": 1
     },
     {
+        "name": "fail-well/chaos",
+        "title": "Chaos",
+        "description": "The shop charges an order every second at a payment service over HTTP and hands it to shipping; chaos rules added while it runs make the payment service answer 503, go down for 10 seconds and fail shipping, the retries recover most orders and the dead letter channel parks the rest, and a scenario file replays a bad half minute with a seed and ends with the verdict PASS as its exit code; a refunds route from Kafka (stubbed) has a gap on purpose, for an AI to find with camel cmd chaos-explore.",
+        "level": "fail-well",
+        "teaches": {
+            "components": [
+                "timer",
+                "kafka",
+                "http",
+                "platform-http",
+                "seda",
+                "direct",
+                "file",
+                "log"
+            ],
+            "eips": [
+                "errorHandler",
+                "deadLetterChannel",
+                "redeliveryPolicy",
+                "setVariable",
+                "setBody",
+                "removeHeaders"
+            ],
+            "languages": [
+                "simple"
+            ]
+        },
+        "tags": [
+            "shop",
+            "chaos",
+            "resilience",
+            "ai",
+            "error-handling",
+            "dead-letter",
+            "tui"
+        ],
+        "bundled": true,
+        "requiresDocker": false,
+        "hasCitrusTests": true,
+        "files": [
+            "README.md",
+            "application.properties",
+            "chaos.camel.yaml",
+            "parked.camel.yaml",
+            "refunds.camel.yaml",
+            "test/chaos/payment-outage.chaos"
+        ],
+        "needs": "Camel 4.24 or newer",
+        "order": 3
+    },
+    {
         "name": "fail-well/circuit-breaker",
         "title": "Circuit breaker",
         "description": "A stock check calls the supplier every second; the supplier goes down for nine calls, the breaker opens after two failures in its window of four, answers from the fallback without calling the supplier while open, tries it again after five seconds and closes once a call succeeds; each line logs the breaker state and whether the supplier failed or was not called.",

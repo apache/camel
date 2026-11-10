@@ -1,0 +1,63 @@
+# The web shop takes an order every second, charges it at the payment service over HTTP and hands it to
+# shipping. Nothing here fails on its own: the faults come from the chaos rules you add while it runs.
+- errorHandler:
+    deadLetterChannel:
+      deadLetterUri: direct:parked
+      redeliveryPolicy:
+        maximumRedeliveries: 2
+        redeliveryDelay: 500
+        retryAttemptedLogLevel: WARN
+
+- route:
+    id: orders
+    from:
+      uri: timer
+      parameters:
+        timerName: orders
+        period: "{{order.period}}"
+        includeMetadata: true
+      steps:
+        - setVariable:
+            name: orderId
+            expression:
+              simple:
+                expression: "ORD-${header.CamelTimerCounter}"
+        - removeHeaders:
+            pattern: "Camel*"
+        - setBody:
+            expression:
+              simple:
+                expression: |-
+                  {"orderId": "${variable.orderId}", "customer": "C-${random(100,999)}", "country": "DK",
+                   "lines": [{"sku": "CAMEL-TSHIRT", "qty": ${random(1,3)}, "price": 19.95}], "status": "paid"}
+        - to:
+            uri: "http://localhost:{{camel.server.port}}/payment"
+        - log:
+            message: "Order ${variable.orderId} charged: ${body}"
+        - to:
+            uri: seda:shipping
+
+- route:
+    id: shipping
+    from:
+      uri: seda:shipping
+      steps:
+        - log:
+            message: "Order ${variable.orderId} shipped"
+
+# The payment service the shop calls. In a real shop it runs elsewhere; here it is a route of
+# the same application, so the example needs nothing else to run.
+- route:
+    id: payment
+    errorHandler:
+      noErrorHandler: {}
+    from:
+      uri: platform-http
+      parameters:
+        path: /payment
+        httpMethodRestrict: POST
+      steps:
+        - setBody:
+            expression:
+              simple:
+                expression: "{\"payment\": \"PAY-${random(10000,99999)}\"}"
