@@ -1,0 +1,348 @@
+---
+title: Good to know
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-11-10
+last-updated: 2026-11-10
+status: proposed
+see-also:
+  - "CAMEL-26716"
+  - "CAMEL-26700"
+  - "CAMEL-26760"
+  - "CAMEL-26727"
+  - "CAMEL-26789"
+  - "CAMEL-26791"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+Good to know is a short list of hints about an integration, each answering a question a newcomer to it has: what
+happens to a message when it fails, what is dropped, what does not wait, what a restart forgets, what can happen twice,
+what is exposed. A hint says what happens, not what to change (a hint, not a fix):
+
+----
+When it fails  A refund that fails in route refunds is logged and skipped: the kafka input does not read it again
+               (breakOnFirstError=true does).
+When it fails  When the dead letter channel direct:parked fails as well, the order is logged as a WARN and gone.
+Twice          Route refunds reads Kafka, which can deliver a message again, and calls payment with no idempotent
+               consumer before it.
+----
+
+This proposal puts the hints in metadata, not in Java code, in two layers:
+
+1. *Facts per component*: what its consumer does with a message whose exchange failed, whether a send waits for the
+   system to take it, and so on. The component declares them, and they are in its JSON, in the component JAR and in
+   the catalog.
+2. *The hint rules*: one curated file in `camel-catalog`, each rule a condition over the route model and the facts,
+   and a text. One small engine in `camel-jbang-core` evaluates them.
+
+The About screen of the TUI, `camel get about`, the project overview, the MCP tools and other tools (a visual
+designer) read the same rules from the catalog, so they say the same. camel-chaos reads the facts from the component
+JSON at runtime, and a hint names the chaos recipe that tries it.
+
+== Motivation
+
+The questions are the same in every tool, and today each tool answers some of them in its own Java code:
+
+- `ProjectOverview` (camel-jbang-core) has findings in Java: a send to a route that does not exist, a cycle, a route
+  with no description, a pass-through route.
+- `SecurityData` (camel-jbang-mcp) holds the security-sensitive components, their considerations and risk levels in
+  Java, for the security scan and harden tools.
+- camel-chaos has tables in Java: `ChaosConsumers` (which inputs keep a failed message: file without `moveFailed`,
+  JMS with `transacted=true`, Kafka with `breakOnFirstError=true`), and in `ChaosAdvisor` the inputs that deliver at
+  least once, the hand-offs (`seda`, `vm`, `disruptor`) and the inputs that feed themselves (`timer`, `scheduler`,
+  `cron`, `quartz`).
+- The catalog has the option metadata that some of it needs: `secret`, `security = "insecure:*"`, `remote`.
+
+The chaos explorations of CAMEL-26760 showed which of these matter: in the runs on the chaos example, every loss the
+AI found was a fact that could have been a hint before the first fault (the orders lost when the dead letter channel
+fails as well, the refunds skipped by the Kafka input, the duplicate payments that went through). And the About screen
+(CAMEL-26700) runs with or without camel-chaos on the classpath, so the facts cannot live in camel-chaos.
+
+Hints in Java code are fixed per release, hidden from other tools, and copied between tools that need the same fact.
+Hints as data are one list that can be read, reviewed, tested and extended, also by an AI, without a code change.
+
+== Goals
+
+- One set of hint rules, in the catalog, that every tool reads.
+- The facts of a component declared once, by its author, next to its options; read from the catalog by the tools and
+  from the component JAR at runtime.
+- No hint text and no hint condition in Java code. The engine is generic.
+- A hint is decided from the route files and the catalog: it works when the integration does not run.
+- A hint can name the chaos recipe that tries it, without a dependency on camel-chaos.
+- A component without a fact gives no hint about it: no guess.
+
+== Non-goals
+
+- Fixing the route. A hint says what happens; the hints of the source editor and the AI do the fixing.
+- Hints from a running integration (counts, errors). They may come later; the first set is static.
+- A general rule language. The conditions are a small, closed vocabulary.
+- Replacing the validation of the routes (`camel validate`, the checks of the source editor).
+
+== Current design
+
+The About screen (CAMEL-26700) reads the route files with `About` and `ProjectOverview` (camel-jbang-core): what
+comes in, the routes, what goes out, and the findings of `ProjectOverview` as `Finding(level, kind, message, route)`.
+`camel get about` prints the same through `AboutReport`. The ticket CAMEL-26716 asks for a Good to know section at the
+end, from one curated rule set shared with the overview, the security tools of the MCP server and the Doctor.
+
+The catalog has a JSON per component (`components/<name>.json`) generated by `camel-package-maven-plugin` from the
+annotations of the component (`@UriEndpoint`, `@UriParam`, `@Metadata`), and the same JSON is in the component JAR
+(`META-INF/org/apache/camel/component/<name>/<name>.json`). The catalog also ships models that are not per component,
+such as the chaos model (`chaos-model.json`, generated from camel-chaos by the plugin goal `generate-chaos-model`).
+
+== Proposal
+
+=== Layer 1: facts per component
+
+A component declares what its consumer and its producer do in the situations the hints ask about. The plugin writes the
+facts into the component JSON, under `consumerFacts` and `producerFacts`, as it does for the options. A fact names the
+options that change it, so a rule can resolve it for the options of an endpoint in a route.
+
+[source,json]
+----
+"component": {
+  "name": "kafka", "remote": true,
+  "consumerFacts": {
+    "onFailure": "skipped",
+    "keptWhen": "breakOnFirstError=true",
+    "keptRetries": "unbounded",
+    "deliversAgain": true
+  },
+  "producerFacts": {
+    "confirmedWhen": "requestRequiredAcks=all"
+  }
+}
+----
+
+The vocabulary of the facts (each optional; a missing fact is unknown):
+
+[cols="1,3"]
+|===
+|Fact |Meaning
+
+|`consumerFacts.onFailure` |What the input does with a message whose exchange failed, by default: `skipped` (logged,
+gone; the input goes on), `kept` (read again), `rolledBack` (given back to the system, which delivers it again under its
+own policy), `returned` (the caller gets the failure, as an HTTP server)
+|`consumerFacts.keptWhen`, `skippedWhen`, `movedWhen` |The options that change it, such as `breakOnFirstError=true`,
+`moveFailed` (set), `transacted=true`
+|`consumerFacts.keptRetries` |`unbounded` (a poison message is read again for ever) or `bounded` (the system stops, such
+as a broker with a maximum redelivery count)
+|`consumerFacts.deliversAgain` |The system can deliver a message again (at least once: a rebalance, a restart, a lost
+acknowledgement)
+|`consumerFacts.feedsItself` |The input makes its own messages (timer, scheduler)
+|`consumerFacts.inMemory` |Messages waiting in the input are lost on a restart (seda)
+|`producerFacts.handOff` |The send goes on without waiting for the receiver (seda, vm, disruptor; a wireTap is a step,
+not a fact)
+|`producerFacts.failureRaisedWhen` |The options under which a failed call is an exception the error handler sees, such
+as `throwExceptionOnFailure=true` for HTTP: with `false`, an error status is a normal reply
+|`producerFacts.idempotentWhen` |The options under which sending again does no harm, such as `httpMethod=GET`,
+`httpMethod=PUT`; without it, a redelivery repeats the side effect
+|`producerFacts.confirmedWhen` |The options under which the send waits for the system to take the message
+|`producerFacts.timeoutOption` |The option that bounds the time of a call, and whether its default bounds it
+|`producerFacts.overwritesWhen` |The options under which a send replaces what is there, such as `fileExist=Override`
+|===
+
+The values above for Kafka, HTTP and file are examples of the shape; each value is taken from the component's code and
+verified in the survey (see "Gathering the facts").
+
+How the author declares them is an open question (see the end): a new annotation of `spi-annotations` on the endpoint
+class, read by the plugin as `@UriEndpoint` is, is the natural place. Until then, the facts can start in the curated
+file of layer 2, keyed by component, and move to the components as they are declared there; the engine merges the two,
+the component winning.
+
+At runtime camel-chaos reads the facts of the component of an endpoint from its JAR
+(`CatalogCamelContext.getComponentParameterJsonSchema`), and drops its tables (`ChaosConsumers`, and the sets in
+`ChaosAdvisor`). The chaos report then says "kept by the consumer" from the same fact as the hint.
+
+=== Layer 2: the hint rules
+
+One file in `camel-catalog`, `hints/good-to-know.json`, written by hand and reviewed as code. The catalog gives it to
+its readers (`CamelCatalog.goodToKnowJson()`), as it gives the chaos model.
+
+[source,json]
+----
+{
+  "groups": [
+    { "id": "when-it-fails", "title": "When it fails" },
+    { "id": "twice", "title": "Twice or out of order" },
+    { "id": "slow", "title": "When a service is slow" }
+  ],
+  "rules": [
+    {
+      "id": "failed-message-skipped",
+      "group": "when-it-fails",
+      "when": {
+        "input": { "fact": "onFailure", "is": "skipped" },
+        "errorHandler": { "not": "deadLetterChannel" }
+      },
+      "text": "A message that fails in route ${route} is logged and skipped: the ${input.scheme} input does not read it again (${input.keptWhen} does)",
+      "tryChaos": "route-error"
+    },
+    {
+      "id": "dead-letter-can-fail",
+      "group": "when-it-fails",
+      "when": {
+        "errorHandler": { "is": "deadLetterChannel", "deadLetter": { "canFail": true } }
+      },
+      "text": "When the dead letter channel ${deadLetter} fails as well, the message is logged as a WARN and gone (deadLetterHandleNewException is true by default)",
+      "tryChaos": "dlq-unreachable"
+    },
+    {
+      "id": "delivered-again-not-idempotent",
+      "group": "twice",
+      "when": {
+        "input": { "fact": "deliversAgain", "is": true },
+        "sends": { "remote": true, "producerFact": "idempotentWhen", "is": false },
+        "hasNot": [ "idempotentConsumer" ]
+      },
+      "text": "Route ${route} reads ${input.scheme}, which can deliver a message again, and calls ${send} with no idempotent consumer before it",
+      "tryChaos": "duplicate"
+    },
+    {
+      "id": "error-status-is-a-reply",
+      "group": "when-it-fails",
+      "when": {
+        "sends": { "producerFact": "failureRaisedWhen", "is": false }
+      },
+      "text": "Route ${route} calls ${send} with ${send.option}: an error status is a normal reply, and the error handler does not see it"
+    },
+    {
+      "id": "slow-service-slows-the-input",
+      "group": "slow",
+      "when": {
+        "input": { "fact": "feedsItself", "is": true },
+        "sends": { "remote": true, "handOffBefore": false },
+        "hasNot": [ "circuitBreaker" ]
+      },
+      "text": "Route ${route} waits for ${send}: when it is slow, the ${input.scheme} makes fewer messages",
+      "tryChaos": "slow"
+    }
+  ]
+}
+----
+
+The conditions are a closed vocabulary that the engine knows, over one route at a time:
+
+[cols="1,3"]
+|===
+|Condition |Matches
+
+|`input` |The from endpoint of the route: its `scheme`, its catalog `label`, or a `fact` of layer 1 resolved with the
+options of the endpoint
+|`errorHandler` |The error handler that applies to the route (its own, a route configuration, the one of its file or of
+the context): `default`, `deadLetterChannel`, `noErrorHandler`; for a dead letter channel, `deadLetter.canFail` (it goes
+to an endpoint or a route that sends to anything but a log or an in-memory queue)
+|`sends` |A send of the route: `remote` (catalog), a `producerFact` resolved with its options, `handOffBefore` (a
+hand-off or a wireTap comes before it), `option` (set, not set, equals)
+|`has`, `hasNot` |EIPs in the route: `idempotentConsumer`, `circuitBreaker`, `transacted`, `filter`, `choice` without
+`otherwise`, `aggregate`, `wireTap`...
+|`option` |An option of the input: set, not set, equals
+|===
+
+A rule matches when all its conditions do. Its `text` has placeholders from a fixed set (`${route}`, `${input}`,
+`${input.scheme}`, `${input.keptWhen}`, `${send}`, `${send.option}`, `${deadLetter}`...). `tryChaos` is the id of a
+recipe of the chaos model, so a reader with chaos can offer "try it", and a reader without chaos shows the hint only.
+
+The groups are those of CAMEL-26716 (when it fails, what is dropped, what does not wait, what a restart forgets, twice or
+out of order, what is exposed or insecure), with "when a service is slow" added from the chaos runs.
+
+=== The engine
+
+One class in `camel-jbang-core` evaluates the rules over the route model it already reads (`About`, `ProjectRoutes`:
+the route files and the catalog), and gives per route the hints that match, with the text filled in. It knows the
+conditions and the placeholders, not the rules. Who reads it:
+
+- The About screen of the TUI: a Good to know section at its end.
+- `camel get about` (`AboutReport`): `goodToKnow` in the JSON and the text, so an AI over MCP gets the same.
+- `ProjectOverview`: its findings become rules of the file, where they fit the vocabulary (a send to a route that does
+  not exist, a cycle); those that do not stay in Java until the vocabulary has them.
+- The security scan and harden tools of the MCP server: the per-component data of `SecurityData` becomes facts and
+  rules (an option marked `security = "insecure:*"` set to its insecure value, a secret written as plain text).
+- camel-chaos and `chaos-explore`: a hint with `tryChaos` is a hypothesis to test, and its recipe the rule to try.
+
+=== Validation
+
+A test of `camel-catalog` reads the file and fails the build when a rule has a condition or a placeholder the engine
+does not know, a fact that no component declares and that is not in the curated facts, a group that is not listed, or a
+`tryChaos` that is not a recipe of the chaos model. A test of the engine runs each rule on a small route that it should
+match and one it should not.
+
+=== Gathering the facts
+
+215 of the 416 components (not deprecated) have a consumer, and 377 a producer. The facts are gathered by family, the
+families the hints need first:
+
+1. Messaging (26: Kafka, JMS, AMQP, SQS, Pub/Sub, RabbitMQ, MQTT, NATS...): `onFailure`, `keptWhen`, `deliversAgain`,
+   `confirmedWhen`.
+2. Files (13: file, ftp, sftp, smb, the cloud file stores): `onFailure`, `movedWhen`, `keptRetries`,
+   `overwritesWhen`.
+3. HTTP (7 servers, and the HTTP clients): `returned`, `failureRaisedWhen`, `idempotentWhen`, `timeoutOption`.
+4. Scheduling and polling (timer, scheduler, cron, quartz; sql, jpa, mongodb consumers): `feedsItself`, `onFailure`.
+5. The rest, as the hints need them.
+
+Many consumers share a base class (`ScheduledPollConsumer`, `GenericFileConsumer`), so a fact is often decided once for
+a family. Each fact is read from the consumer or producer code and verified: with camel-chaos against a test-infra
+service (an experiment that fails the route and reads "kept by the consumer" in the report), or with a
+deterministic simulation world of `camel-test-dst` where one exists (SQS). A fact that is not verified is not written;
+a component without a fact gives no hint.
+
+=== Order of work
+
+1. This design.
+2. The rule file in the catalog with the hints of CAMEL-26716 and the chaos runs, the curated facts for the components
+   they name (kafka, jms, file, seda, timer, http, platform-http), the engine, and the Good to know section of the About
+   screen and `camel get about`.
+3. The annotation, the plugin, and the facts in the component JSON for the first families; camel-chaos reads them and
+   drops its tables.
+4. The survey of the other families.
+5. The findings of `ProjectOverview` and the data of `SecurityData` as rules and facts.
+
+== Alternatives considered
+
+- *Hints in Java, one class per hint.* What the tools do today: fixed per release, each tool its own copy, and no other
+  tool (a visual designer) can read them.
+- *The facts in the rule file only, keyed by component.* One place and no API change, but the component author does not
+  see them next to the options, and camel-chaos cannot read the catalog at runtime. Kept as the first step.
+- *A general expression language for the conditions* (Simple, JSONPath over the route model). More expressive, but a
+  rule could then ask anything, which is hard to validate, and hard for an AI to write correctly. The closed vocabulary
+  grows with the hints that need it.
+- *The hints in camel-chaos*, next to the facts it has. The About screen and `camel get about` run without camel-chaos.
+
+== Compatibility
+
+- Nothing changes at runtime for routes. The facts are new metadata; a component without them is as before.
+- The catalog gets a new file and a method to read it. The component JSON gets two optional sections, which readers
+  that do not know them ignore.
+- camel-chaos keeps its behaviour when it reads the facts instead of its tables: the facts start as a copy of the tables.
+
+== Risks
+
+- A wrong fact gives a wrong hint, which a newcomer trusts. Facts are verified before they are written, and a missing
+  fact is no hint.
+- A fact can depend on more than options (the version of a broker, its configuration). The text says what Camel does,
+  and the fact is written for Camel's side only.
+- The vocabulary may grow into a language. New conditions are added only for a hint that needs them, with a test.
+- Too many hints are noise. The About screen shows a few per integration, the most important first (by group order and
+  a `rank` of the rule, if needed).
+
+== Open questions
+
+- How a component declares its facts: a new annotation of `spi-annotations` on the endpoint class (such as
+  `@ConsumerFacts(onFailure = SKIPPED, keptWhen = "breakOnFirstError=true")`), attributes of `@UriEndpoint`, or a JSON
+  fragment next to the component's docs that the plugin merges.
+- Whether a hint may also use what a running integration reports (counts, errors), or stays static.
+- The order and the number of hints on the About screen.
+
+== Related tickets
+
+- CAMEL-26716: Good to know, the shared hint rules (this proposal).
+- CAMEL-26700: the About screen and `camel get about`.
+- CAMEL-26760: let there be chaos, whose explorations found the hints of the first set.
+- CAMEL-26727: the chaos suggestions, whose facts move to the components.
+- CAMEL-26789: messages lost at the dead letter channel, counted by camel-chaos.
+- CAMEL-26791: an expectation for duplicates, the chaos side of the "twice" hints.
