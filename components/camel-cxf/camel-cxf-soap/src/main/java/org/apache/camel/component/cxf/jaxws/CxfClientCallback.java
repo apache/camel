@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -37,6 +38,9 @@ public class CxfClientCallback extends ClientCallback {
     private final org.apache.cxf.message.Exchange cxfExchange;
     private final BindingOperationInfo boi;
     private final CxfEndpoint endpoint;
+    // Guard against done(false) being called more than once: CXF may call handleException
+    // after handleResponse throws (e.g. ClientImpl.onMessage catches and re-dispatches).
+    private final AtomicBoolean doneFired = new AtomicBoolean();
 
     public CxfClientCallback(AsyncCallback callback,
                              Exchange camelExchange,
@@ -87,7 +91,7 @@ public class CxfClientCallback extends ClientCallback {
                         }
                     }
                 } finally {
-                    camelAsyncCallback.done(false);
+                    signalDone();
                 }
             }
             if (LOG.isDebugEnabled()) {
@@ -104,15 +108,15 @@ public class CxfClientCallback extends ClientCallback {
             ConduitSelector conduitSelector = cxfExchange.get(ConduitSelector.class);
             if (conduitSelector != null) {
                 conduitSelector.complete(cxfExchange);
+                Throwable resolved = null;
                 if (cxfExchange.getOutMessage() != null) {
-                    ex = cxfExchange.getOutMessage().getContent(Exception.class);
+                    resolved = cxfExchange.getOutMessage().getContent(Exception.class);
                 }
-                if (ex == null && cxfExchange.getInMessage() != null) {
-                    ex = cxfExchange.getInMessage().getContent(Exception.class);
+                if (resolved == null && cxfExchange.getInMessage() != null) {
+                    resolved = cxfExchange.getInMessage().getContent(Exception.class);
                 }
-                if (ex != null) {
-                    camelExchange.setException(ex);
-                }
+                // fall back to the original exception if neither message carries one
+                camelExchange.setException(resolved != null ? resolved : ex);
             } else {
                 camelExchange.setException(ex);
             }
@@ -135,9 +139,9 @@ public class CxfClientCallback extends ClientCallback {
                         } catch (Throwable e) {
                             LOG.error("Cannot store cookies", e);
                             Throwable root = camelExchange.getException();
-                            if (root != null) {
+                            if (root != null && root != e) {
                                 root.addSuppressed(e);
-                            } else {
+                            } else if (root == null) {
                                 camelExchange.setException(e);
                             }
                         }
@@ -156,12 +160,25 @@ public class CxfClientCallback extends ClientCallback {
                         }
                     }
                 } finally {
-                    camelAsyncCallback.done(false);
+                    signalDone();
                 }
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} calling handleException", Thread.currentThread().getName());
             }
+        }
+    }
+
+    /**
+     * Signals the Camel async callback exactly once. Guards against CXF calling both {@code handleResponse} and
+     * {@code handleException} on the same callback instance (e.g. when {@code handleResponse} throws and
+     * {@code ClientImpl.onMessage} re-dispatches).
+     */
+    private void signalDone() {
+        if (doneFired.compareAndSet(false, true)) {
+            camelAsyncCallback.done(false);
+        } else {
+            LOG.warn("done(false) already fired for this callback — duplicate call suppressed");
         }
     }
 

@@ -21,22 +21,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.CxfBinding;
 import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.cxf.endpoint.ConduitSelector;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.OperationInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -80,7 +84,7 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleResponse(ctx, new Object[0]);
 
-        assertThat(doneCount.get()).as("done(false) must be called exactly once").isEqualTo(1);
+        assertEquals(1, doneCount.get(), "done(false) must be called exactly once");
     }
 
     @Test
@@ -92,10 +96,10 @@ class CxfClientCallbackTest {
         AsyncCallback callback = sync -> doneCount.incrementAndGet();
 
         // Capture the exception set on the exchange
-        RuntimeException[] captured = new RuntimeException[1];
+        AtomicReference<Throwable> captured = new AtomicReference<>();
         camelExchange = mock(Exchange.class);
         doAnswer(inv -> {
-            captured[0] = (RuntimeException) inv.getArgument(0);
+            captured.set((Throwable) inv.getArgument(0));
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
 
@@ -103,8 +107,8 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleResponse(ctx, new Object[0]);
 
-        assertThat(doneCount.get()).as("done(false) must be called even when binding throws").isEqualTo(1);
-        assertThat(captured[0]).isSameAs(bindingError);
+        assertEquals(1, doneCount.get(), "done(false) must be called even when binding throws");
+        assertSame(bindingError, captured.get());
     }
 
     @Test
@@ -115,10 +119,10 @@ class CxfClientCallbackTest {
         AtomicInteger doneCount = new AtomicInteger();
         AsyncCallback callback = sync -> doneCount.incrementAndGet();
 
-        Throwable[] captured = new Throwable[1];
+        AtomicReference<Throwable> captured = new AtomicReference<>();
         camelExchange = mock(Exchange.class);
         doAnswer(inv -> {
-            captured[0] = (Throwable) inv.getArgument(0);
+            captured.set((Throwable) inv.getArgument(0));
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
 
@@ -126,8 +130,8 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleResponse(ctx, new Object[0]);
 
-        assertThat(doneCount.get()).as("done(false) must be called even when binding throws an Error").isEqualTo(1);
-        assertThat(captured[0]).isSameAs(bindingError);
+        assertEquals(1, doneCount.get(), "done(false) must be called even when binding throws an Error");
+        assertSame(bindingError, captured.get());
     }
 
     // --- handleException tests ---
@@ -138,13 +142,61 @@ class CxfClientCallbackTest {
         AsyncCallback callback = sync -> doneCount.incrementAndGet();
 
         RuntimeException transportEx = new RuntimeException("connection refused");
-        camelExchange = mock(Exchange.class);
 
         Map<String, Object> ctx = new HashMap<>();
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleException(ctx, transportEx);
 
-        assertThat(doneCount.get()).as("done(false) must be called exactly once").isEqualTo(1);
+        assertEquals(1, doneCount.get(), "done(false) must be called exactly once");
+        verify(camelExchange).setException(transportEx);
+    }
+
+    @Test
+    void handleException_withConduitSelector_usesResolvedExceptionFromOutMessage() {
+        // When a ConduitSelector is set and outMessage carries a richer exception, that takes priority
+        RuntimeException transportEx = new RuntimeException("connection refused");
+        RuntimeException resolvedEx = new RuntimeException("resolved from outMessage");
+
+        ConduitSelector conduitSelector = mock(ConduitSelector.class);
+        Message outMessage = mock(Message.class);
+        when(cxfExchange.get(ConduitSelector.class)).thenReturn(conduitSelector);
+        when(cxfExchange.getOutMessage()).thenReturn(outMessage);
+        when(outMessage.getContent(Exception.class)).thenReturn(resolvedEx);
+
+        AtomicInteger doneCount = new AtomicInteger();
+        AsyncCallback callback = sync -> doneCount.incrementAndGet();
+
+        Map<String, Object> ctx = new HashMap<>();
+        CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
+        cb.handleException(ctx, transportEx);
+
+        assertEquals(1, doneCount.get(), "done(false) must be called exactly once");
+        verify(camelExchange).setException(resolvedEx);
+    }
+
+    @Test
+    void handleException_withConduitSelector_fallsBackToOriginalExWhenMessageContentIsNull() {
+        // When ConduitSelector is set but neither message carries a resolved exception,
+        // the original transport exception must be preserved (not silently dropped)
+        RuntimeException transportEx = new RuntimeException("connection refused");
+
+        ConduitSelector conduitSelector = mock(ConduitSelector.class);
+        Message outMessage = mock(Message.class);
+        when(cxfExchange.get(ConduitSelector.class)).thenReturn(conduitSelector);
+        when(cxfExchange.getOutMessage()).thenReturn(outMessage);
+        when(outMessage.getContent(Exception.class)).thenReturn(null);
+        when(cxfExchange.getInMessage()).thenReturn(null);
+
+        AtomicInteger doneCount = new AtomicInteger();
+        AsyncCallback callback = sync -> doneCount.incrementAndGet();
+
+        Map<String, Object> ctx = new HashMap<>();
+        CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
+        cb.handleException(ctx, transportEx);
+
+        assertEquals(1, doneCount.get(), "done(false) must be called exactly once");
+        // must fall back to the original transport exception, not null
+        verify(camelExchange).setException(transportEx);
     }
 
     @Test
@@ -163,9 +215,10 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleException(ctx, transportEx);
 
-        assertThat(doneCount.get()).as("done(false) must be called even when binding throws").isEqualTo(1);
+        assertEquals(1, doneCount.get(), "done(false) must be called even when binding throws");
         // binding error should be suppressed on the root cause, not replace it
-        assertThat(transportEx.getSuppressed()).containsExactly(bindingEx);
+        assertEquals(1, transportEx.getSuppressed().length);
+        assertSame(bindingEx, transportEx.getSuppressed()[0]);
     }
 
     @Test
@@ -178,9 +231,9 @@ class CxfClientCallbackTest {
 
         // No prior exception on the exchange
         when(camelExchange.getException()).thenReturn(null);
-        Throwable[] captured = new Throwable[1];
+        AtomicReference<Throwable> captured = new AtomicReference<>();
         doAnswer(inv -> {
-            captured[0] = (Throwable) inv.getArgument(0);
+            captured.set((Throwable) inv.getArgument(0));
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
 
@@ -189,9 +242,9 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleException(ctx, transportEx);
 
-        assertThat(doneCount.get()).isEqualTo(1);
+        assertEquals(1, doneCount.get());
         // when there's no root cause, the binding exception should be set
-        assertThat(captured[0]).isSameAs(bindingEx);
+        assertSame(bindingEx, captured.get());
     }
 
     @Test
@@ -209,8 +262,28 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleException(ctx, transportEx);
 
-        assertThat(doneCount.get()).as("done(false) must be called even when binding throws an Error").isEqualTo(1);
-        assertThat(transportEx.getSuppressed()).containsExactly(bindingError);
+        assertEquals(1, doneCount.get(), "done(false) must be called even when binding throws an Error");
+        assertEquals(1, transportEx.getSuppressed().length);
+        assertSame(bindingError, transportEx.getSuppressed()[0]);
+    }
+
+    @Test
+    void doneFiredOnlyOnce_whenHandleExceptionCalledAfterHandleResponse() {
+        // Simulate the scenario where CXF calls handleException after handleResponse
+        // (e.g. because ClientImpl.onMessage catches a thrown exception and re-dispatches).
+        // The AtomicBoolean guard must prevent done(false) from firing twice.
+        AtomicInteger doneCount = new AtomicInteger();
+        AsyncCallback callback = sync -> doneCount.incrementAndGet();
+
+        RuntimeException transportEx = new RuntimeException("connection refused");
+        Map<String, Object> ctx = new HashMap<>();
+
+        CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
+        cb.handleResponse(ctx, new Object[0]);
+        cb.handleException(ctx, transportEx);
+
+        assertEquals(1, doneCount.get(),
+                "done(false) must fire exactly once even if both handleResponse and handleException are called");
     }
 
     // --- cookie handler tests ---
@@ -232,10 +305,10 @@ class CxfClientCallbackTest {
         AtomicInteger doneCount = new AtomicInteger();
         AsyncCallback callback = sync -> doneCount.incrementAndGet();
 
-        Throwable[] captured = new Throwable[1];
+        AtomicReference<Throwable> captured = new AtomicReference<>();
         camelExchange = mock(Exchange.class);
         doAnswer(inv -> {
-            captured[0] = (Throwable) inv.getArgument(0);
+            captured.set((Throwable) inv.getArgument(0));
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
 
@@ -245,8 +318,8 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleResponse(ctx, new Object[0]);
 
-        assertThat(doneCount.get()).as("done(false) must be called even when cookie store throws").isEqualTo(1);
-        assertThat(captured[0]).isSameAs(cookieError);
+        assertEquals(1, doneCount.get(), "done(false) must be called even when cookie store throws");
+        assertSame(cookieError, captured.get());
     }
 
     @Test
@@ -273,9 +346,10 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleException(ctx, transportEx);
 
-        assertThat(doneCount.get()).as("done(false) must be called even when cookie store throws").isEqualTo(1);
+        assertEquals(1, doneCount.get(), "done(false) must be called even when cookie store throws");
         // cookie error must be suppressed on root transport exception, not replace it
-        assertThat(transportEx.getSuppressed()).containsExactly(cookieError);
+        assertEquals(1, transportEx.getSuppressed().length);
+        assertSame(cookieError, transportEx.getSuppressed()[0]);
     }
 
     @Test
@@ -297,13 +371,13 @@ class CxfClientCallbackTest {
         AtomicInteger doneCount = new AtomicInteger();
         AsyncCallback callback = sync -> doneCount.incrementAndGet();
 
-        Throwable[] captured = new Throwable[1];
+        AtomicReference<Throwable> captured = new AtomicReference<>();
         camelExchange = mock(Exchange.class);
         doAnswer(inv -> {
-            captured[0] = (Throwable) inv.getArgument(0);
+            captured.set((Throwable) inv.getArgument(0));
             return null;
         }).when(camelExchange).setException(any(Throwable.class));
-        when(camelExchange.getException()).thenAnswer(inv -> captured[0]);
+        when(camelExchange.getException()).thenAnswer(inv -> captured.get());
 
         when(endpoint.getCxfBinding()).thenReturn(cxfBinding);
 
@@ -311,9 +385,10 @@ class CxfClientCallbackTest {
         CxfClientCallback cb = new CxfClientCallback(callback, camelExchange, cxfExchange, boi, endpoint);
         cb.handleResponse(ctx, new Object[0]);
 
-        assertThat(doneCount.get()).as("done(false) must be called even when both cookie store and binding throw").isEqualTo(1);
+        assertEquals(1, doneCount.get(), "done(false) must be called even when both cookie store and binding throw");
         // cookie error is the primary exception; binding error must be suppressed on it, not silently lost
-        assertThat(captured[0]).isSameAs(cookieError);
-        assertThat(cookieError.getSuppressed()).containsExactly(bindingError);
+        assertSame(cookieError, captured.get());
+        assertEquals(1, cookieError.getSuppressed().length);
+        assertSame(bindingError, cookieError.getSuppressed()[0]);
     }
 }
