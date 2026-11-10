@@ -942,6 +942,13 @@ The verdict is `FAIL` when an expectation is unmet (exit code 1), `PASS` when al
 wait was up before an expectation was decided. `--feed` takes the endpoint, or the id of the route, as the `feed:` line
 of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with its experiments.
 
+The messages of `--feed` are sent to the endpoint the route starts from, so they reach a route that starts from
+`direct`, `seda`, a stub (`camel run --stub=kafka`) or a broker. An experiment refuses a feed that cannot reach its
+route, with the reason: a route that starts from a timer, scheduler, cron or quartz makes its own messages (leave
+`--feed` out), and a route that serves HTTP, or starts from a component that only consumes, cannot be fed this way. A
+feed to a remote system that is not stubbed, such as a Kafka broker, has a warning, as the messages go to that system:
+use a local one (`camel infra run kafka`), or stub it.
+
 `camel cmd chaos-explore` lets the AI of `camel ask` do it all: let there be chaos. It starts the exploration with the
 budget, and the AI reads the suggestions, runs one experiment per call, reads each verdict, and goes on while there is
 time. It asks nothing on the way, as starting the command is the consent, and it never changes the routes. When it is

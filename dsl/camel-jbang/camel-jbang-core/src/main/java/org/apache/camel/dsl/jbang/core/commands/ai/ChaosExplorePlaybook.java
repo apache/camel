@@ -90,7 +90,8 @@ public final class ChaosExplorePlaybook {
                 expects it, such as JSON), repeat (such as 20) and interval (such as 100..300); leave feed out \
                 only when the route feeds itself (kind self). \
                 Routes fed over http or from files cannot be fed by an experiment yet: try them only when they \
-                feed themselves
+                feed themselves. An experiment refuses a feed that cannot reach its route, with the reason and \
+                what to do instead, and warns when the feed goes to a real system that is not stubbed
                    - a rule at=dlq fails the dead letter channel, so it fires only when a message goes there: use \
                 the combined suggestions, which add the fault that sends messages there too. A message the \
                 dead letter channel did not deliver is handled there, so it does not fail in its route: the \
