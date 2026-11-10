@@ -34,9 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * The statements of the section "Error handling across routes" of error-handler.adoc: a failure in a called route is
- * dealt with by the error handler of the called route, and the error handlers of the calling route do not deal with it
- * again. Each case runs with direct, and with seda where the caller waits for the reply (InOut).
+ * The statements of the section "Error handling across routes" of error-handler.adoc that no other test covers: the
+ * onException of the calling route does not run for a failure the called route's error handler dealt with. Covered
+ * elsewhere: the redeliveries of the called route (DoTryCalledRouteErrorHandlerTest), a dead letter channel in the
+ * called route (MultiErrorHandlerInRouteTest, SedaInOutWithErrorDeadLetterChannelTest), a continued failure
+ * (OnExceptionContinueSubRouteTest) and the redelivery of a whole called route without error handler
+ * (RedeliverToSubRouteTest).
  */
 @Timeout(20)
 class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
@@ -73,33 +76,6 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
 
     @ParameterizedTest
     @ValueSource(strings = { "direct:sub", "seda:sub" })
-    void calledRouteDoesNotHandleTheFailure(String sub) throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                caller(this, sub);
-                from(sub)
-                        .onException(IOException.class).maximumRedeliveries(2).redeliveryDelay(0)
-                        .to("mock:subOnException").end()
-                        .process(failing());
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:subOnException").expectedMessageCount(1);
-        getMockEndpoint("mock:callerOnException").expectedMessageCount(0);
-        getMockEndpoint("mock:afterCall").expectedMessageCount(0);
-
-        Exchange out = send();
-
-        assertMockEndpointsSatisfied();
-        // the redeliveries of the called route only: the caller does not redeliver
-        assertEquals(3, attempts.get());
-        assertInstanceOf(IOException.class, out.getException());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "direct:sub", "seda:sub" })
     void calledRouteWithOnlyTheDefaultErrorHandler(String sub) throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -116,18 +92,18 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
         Exchange out = send();
 
         assertMockEndpointsSatisfied();
+        // the caller does not redeliver
         assertEquals(1, attempts.get());
         assertInstanceOf(IOException.class, out.getException());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "direct:sub", "seda:sub" })
-    void calledRouteHandlesTheFailure(String sub) throws Exception {
+    @Test
+    void calledRouteHandlesTheFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                caller(this, sub);
-                from(sub)
+                caller(this, "direct:sub");
+                from("direct:sub")
                         .onException(IOException.class).handled(true).setBody(constant("Handled by the sub route")).end()
                         .process(failing());
             }
@@ -145,62 +121,13 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
         assertEquals("Handled by the sub route", out.getMessage().getBody());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "direct:sub", "seda:sub" })
-    void calledRouteWithDeadLetterChannel(String sub) throws Exception {
+    @Test
+    void exceptionThrownFromTheOnExceptionOfTheCalledRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                caller(this, sub);
-                from(sub).errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0))
-                        .process(failing());
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:dead").expectedMessageCount(1);
-        getMockEndpoint("mock:callerOnException").expectedMessageCount(0);
-        getMockEndpoint("mock:afterCall").expectedMessageCount(0);
-
-        Exchange out = send();
-
-        assertMockEndpointsSatisfied();
-        assertEquals(3, attempts.get());
-        assertNull(out.getException());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "direct:sub", "seda:sub" })
-    void calledRouteContinuesTheFailure(String sub) throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                caller(this, sub);
-                from(sub)
-                        .onException(IOException.class).continued(true).end()
-                        .process(failing());
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:callerOnException").expectedMessageCount(0);
-        getMockEndpoint("mock:afterCall").expectedMessageCount(1);
-
-        Exchange out = send();
-
-        assertMockEndpointsSatisfied();
-        assertEquals(1, attempts.get());
-        assertNull(out.getException());
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "direct:sub", "seda:sub" })
-    void exceptionThrownFromTheOnExceptionOfTheCalledRoute(String sub) throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                caller(this, sub);
-                from(sub)
+                caller(this, "direct:sub");
+                from("direct:sub")
                         .onException(IOException.class)
                         .throwException(new IllegalStateException("Thrown from onException")).end()
                         .process(failing());
@@ -218,14 +145,17 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
         assertInstanceOf(IllegalStateException.class, out.getException());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "direct:sub", "seda:sub" })
-    void noErrorHandlerOnTheCalledRoute(String sub) throws Exception {
+    /**
+     * The control of the cases above: with no error handler in the called route, the same onException of the caller
+     * does run.
+     */
+    @Test
+    void noErrorHandlerOnTheCalledRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                caller(this, sub);
-                from(sub).errorHandler(noErrorHandler())
+                caller(this, "direct:sub");
+                from("direct:sub").errorHandler(noErrorHandler())
                         .onException(IOException.class).maximumRedeliveries(5).redeliveryDelay(0)
                         .to("mock:subOnException").end()
                         .process(failing());
@@ -240,14 +170,13 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
         Exchange out = send();
 
         assertMockEndpointsSatisfied();
-        // the onException of the called route does not run, and the redeliveries of the caller call the whole sub route again
+        // the onException of the called route does not run, the redeliveries of the caller call the sub route again
         assertEquals(3, attempts.get());
         assertNull(out.getException());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "direct:inventory", "seda:inventory" })
-    void doCatchInTheCallingRoute(String sub) throws Exception {
+    @Test
+    void doCatchInTheCallingRoute() throws Exception {
         context.getRegistry().bind("inventory", new Inventory());
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -255,13 +184,13 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
                 // the example of the documentation, with no redelivery delay
                 from("direct:order")
                         .doTry()
-                            .to(sub)
+                            .to("direct:inventory")
                         .doCatch(IOException.class)
                             .setBody(constant("Inventory not available"))
                         .end()
                         .to("mock:afterTry");
 
-                from(sub)
+                from("direct:inventory")
                         .errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0))
                         .bean("inventory", "reserve");
             }
@@ -277,26 +206,6 @@ class ErrorHandlingAcrossRoutesTest extends ContextTestSupport {
         assertEquals(4, attempts.get());
         assertNull(out.getException());
         assertEquals("Inventory not available", out.getMessage().getBody());
-    }
-
-    @Test
-    void sedaInOnlyDoesNotWaitForTheCalledRoute() throws Exception {
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() {
-                caller(this, "seda:sub");
-                from("seda:sub").process(failing()).to("mock:sub");
-            }
-        });
-        context.start();
-
-        getMockEndpoint("mock:afterCall").expectedMessageCount(1);
-        getMockEndpoint("mock:callerOnException").expectedMessageCount(0);
-
-        Exchange out = template.send("direct:start", ExchangePattern.InOnly, e -> e.getMessage().setBody("Hello"));
-
-        assertMockEndpointsSatisfied();
-        assertNull(out.getException());
     }
 
     public class Inventory {
