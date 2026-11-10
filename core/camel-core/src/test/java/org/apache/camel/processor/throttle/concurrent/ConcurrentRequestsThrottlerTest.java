@@ -246,7 +246,8 @@ public class ConcurrentRequestsThrottlerTest extends ContextTestSupport {
 
                 from("direct:fifo").throttle(1).concurrentRequestsMode().delay(100).to("mock:result");
 
-                from("direct:release").errorHandler(deadLetterChannel("mock:error")).throttle(1).delay(100)
+                from("direct:release").errorHandler(deadLetterChannel("mock:error")).throttle(1).concurrentRequestsMode()
+                        .delay(100)
                         .process(exchange -> {
                             throw new RuntimeException();
                         }).to("mock:result");
