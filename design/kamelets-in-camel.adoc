@@ -365,23 +365,32 @@ of one version. This is a separate decision, after the move.
 
 === Documentation
 
-Option preferred here: the Kamelet pages become a module of the `components` Antora component, for example
-`docs/components/modules/kamelets/`, with pages at `/components/next/kamelets/<name>.html`. They are then versioned
-with the component docs (`camel-4.22.x` gives `4.22.x`), listed next to the components, and found by the site search,
-which skips `/camel-kamelets/` today.
+Option preferred here: the Kamelets get their own section of the docs, as data formats and languages have, and are
+not mixed in with the components. The Kamelet pages become a module of the `components` Antora component,
+`docs/components/modules/kamelets/`, with pages at `/components/next/kamelets/<name>.html`. The module has its own
+`nav.adoc` (from a `docs/kamelets-nav.adoc.template`, as `dataformats` and `languages` have), listed in
+`docs/components/antora.yml`, so the site shows a separate *Kamelets* section, and its own index page with the
+catalog cards, as today. The Kamelets are then versioned with the component docs (`camel-4.22.x` gives `4.22.x`) and
+found by the site search, which skips `/camel-kamelets/` today.
 
 Steps:
 
 * The hand-written pages move to `kamelets/src/main/docs/` and are linked into the docs module, as component pages
   are linked from `docs/components/modules/ROOT/pages/`.
-* First step: keep the website generation of the per-Kamelet pages (`indexPages.yml` and `kamelets.js`), pointed at
-  the new module. Later: generate the per-Kamelet `.adoc` pages in the Camel build with `camel-package-maven-plugin`
-  and commit them, as component pages are. They can then be checked in a PR and read on GitHub.
+* The per-Kamelet `.adoc` pages, their icons (`images/kamelets/<name>.svg`, decoded from the icon annotation) and the
+  module `nav.adoc` are generated in the Camel build by a `camel-package-maven-plugin` goal and committed, as
+  component pages are. They can then be checked in a PR and read on GitHub. The pages keep the jsonpath tables over
+  the Kamelet YAML (the properties and the dependencies), as component pages do over their JSON. This replaces the
+  website generation (`indexPages.yml` and `kamelets.js`) from the start: the docs xref check
+  (`XRefCheckMojo`) also reads the nav files, so a nav that lists pages only the website creates would fail it.
+* `camel cmd catalog doc` builds a `/camel-kamelets/<version>/<name>.html` link
+  (`dsl/camel-jbang/camel-jbang-core/.../catalog/CatalogDoc.java`); it links to the new pages for the versions that
+  have them.
 * The playbook keeps `apache/camel-kamelets` branches `4.22.x` and `4.18.x` for the old `camel-kamelets` component
   until those lines end. Main moves to the Camel source.
 * Links: `camel-website` has 158 occurrences of `camel-kamelets` in 107 files under `content/` (mostly release pages
-  and blog posts). Old URLs need page aliases or redirects. *(Whether Antora `page-aliases` can map pages across
-  components for this case is unverified.)*
+  and blog posts). Old URLs need redirects, in `camel-website: static/.htaccess` (the site uses the `httpd` redirect facility).
+  *(Whether Antora `page-aliases` can map pages across components for this case is unverified.)*
 
 A simpler alternative keeps a separate Antora component `camel-kamelets` sourced from `apache/camel`. URLs stay the
 same, but the Kamelets keep a separate identity on the site and stay out of the search unless the website changes its
@@ -458,7 +467,7 @@ that name a catalog version change once.
 Kaoto, Karavan, Camel LSP:: Same coordinates. They can take the catalog version equal to the Camel version of each
 catalog they build. Kaoto uses one catalog version for all its Camel catalogs today, so this removes a mismatch.
 
-Website:: Playbook source change, `indexPages.yml` target change, no more `content/releases/kamelets/` pages for new
+Website:: Playbook source change, redirects from `/camel-kamelets/`, no more `content/releases/kamelets/` pages for new
 versions (Kamelet changes go into the Camel release notes), the docsearch exclusion no longer applies to the new
 pages.
 
@@ -499,7 +508,7 @@ Each step is one PR to `apache/camel` unless noted.
 . *Wire the build*: `kamelets/pom.xml` on the Camel parent, Java 21, versions from `parent/pom.xml`, remove the
   duplicate YAML copy and the symlinks, add `kamelets` to the root `pom.xml`, `org.apache.camel.kamelets:*` to
   `bom/pom.xml`. Formatting and RAT rules of Camel apply.
-. *Move the generators* into `camel-package-maven-plugin` (validate, nav or pages, SBOM, third-party versions);
+. *Move the generators* into `camel-package-maven-plugin` (validate, nav and pages, SBOM, third-party versions);
   drop the groovy, antrun and Lombok parts; decide the crds module.
 . *Fast tests*: the validation against the build's Camel catalog and the new load test. Fix what they find (expected:
   the Jackson 3 Kamelets if CAMEL-22857 is merged by then).
@@ -508,7 +517,7 @@ Each step is one PR to `apache/camel` unless noted.
   guide entry ("the Kamelet catalog is now released with Camel and has the Camel version").
 . *CI*: the component-to-Kamelet mapping in the incremental build; the Citrus tests in a profile and a Jenkins job;
   the image checks.
-. *Docs*: move the pages into the docs tree; PR to `camel-website` for the playbook, `indexPages.yml` and redirects.
+. *Docs*: move the pages into the docs tree; PR to `camel-website` for the playbook and the redirects.
 . *Old repository* (PRs to `apache/camel-kamelets`): on `main`, a README that points to `apache/camel` and no more
   code changes; GitHub issues moved to JIRA and turned off; Dependabot and the regen, changelog and SBOM workflows
   off on `main`. The `4.18.x` and `4.22.x` branches keep their CI.
