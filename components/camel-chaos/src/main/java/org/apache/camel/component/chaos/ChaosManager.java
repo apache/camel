@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -769,6 +770,17 @@ public final class ChaosManager {
      * @throws IllegalStateException    when no exploration is running, or an experiment is open
      */
     public Map<String, Object> beginExperiment(String hypothesis, String rules) {
+        return beginExperiment(hypothesis, rules, null);
+    }
+
+    /**
+     * Begins an experiment whose messages are fed to a route: as {@link #beginExperiment(String, String)}, and refused
+     * when the route the feed reaches does not lead to a route of its expectations, as the experiment would then say
+     * nothing (CAMEL-26803).
+     *
+     * @param feedRoute the id of the route the feed of the experiment reaches, or null when it has no feed
+     */
+    public Map<String, Object> beginExperiment(String hypothesis, String rules, String feedRoute) {
         List<String> texts = ChaosRuleParser.splitRules(rules);
         if (texts.isEmpty()) {
             throw new IllegalArgumentException("The chaos rule is empty");
@@ -781,6 +793,11 @@ public final class ChaosManager {
             throw new IllegalArgumentException(
                     "An experiment needs an expectation (expect=) on one of its rules to decide its hypothesis, such as"
                                                + " expect=orders:failed<=0 within=1m");
+        }
+        String misses = ChaosAdvisor.feedMisses(camelContext, feedRoute,
+                definitions.stream().map(d -> d.expectRoute).filter(Objects::nonNull).toList());
+        if (misses != null) {
+            throw new IllegalArgumentException(misses);
         }
         synchronized (lock) {
             long now = TimeSource.currentTimeMillis();

@@ -157,9 +157,12 @@ final class ChaosAction {
                     return;
                 }
                 // an experiment of the exploration (CAMEL-26774): its rules are added together, with an expectation
+                // the route the feed reaches, so an experiment that would say nothing is refused (CAMEL-26803)
+                String feedRoute = root.getString("feedRoute");
                 @SuppressWarnings("unchecked")
-                Map<String, Object> begun = (Map<String, Object>) call(type, chaos, "beginExperiment",
-                        root.getString("hypothesis"), rule);
+                Map<String, Object> begun = (Map<String, Object>) (feedRoute != null
+                        ? call(type, chaos, "beginExperiment", root.getString("hypothesis"), rule, feedRoute)
+                        : call(type, chaos, "beginExperiment", root.getString("hypothesis"), rule));
                 answer.putAll(begun);
                 // a rule that matches nothing makes the experiment say nothing: as with add, the reason goes along
                 warnings(type, chaos, (List<?>) begun.get("rules"), answer);

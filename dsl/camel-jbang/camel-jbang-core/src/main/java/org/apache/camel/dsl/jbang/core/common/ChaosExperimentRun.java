@@ -202,11 +202,19 @@ public final class ChaosExperimentRun {
         if (within + POLL * 2 > wait) {
             wait = Math.min(within + POLL * 2, MAX_WAIT);
         }
+        // the route the feed reaches: the experiment is refused when it does not lead to a route of its expectations
+        // (CAMEL-26803)
+        List<Object> statusRoutes = feed != null && status != null ? status.getCollection("routes") : null;
+        JsonObject fedRoute
+                = statusRoutes != null && !feed.endpoint().endsWith("*") ? route(statusRoutes, feed.endpoint()) : null;
         JsonObject begun = integration.chaos("experiment-begin", root -> {
             if (hypothesis != null && !hypothesis.isBlank()) {
                 root.put("hypothesis", hypothesis);
             }
             root.put("rule", rules);
+            if (fedRoute != null) {
+                root.put("feedRoute", fedRoute.getString("routeId"));
+            }
         });
         int number = begun.getIntegerOrDefault("number", 0);
         // a rule that matches nothing in the integration now (often a typo), and a feed to a real system

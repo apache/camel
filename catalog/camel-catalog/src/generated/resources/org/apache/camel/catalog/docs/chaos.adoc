@@ -422,6 +422,13 @@ The `chaos` action of the CLI connector begins one (`{"action": "chaos", "comman
 within=70s"}`), with several rules separated by `;`, and ends it (`experiment-end`, with an optional `note` of what the
 agent makes of it). In Java, these are `ChaosManager.beginExperiment(hypothesis, rules)` and `endExperiment(note)`.
 
+An experiment whose messages are fed to a route gives that route too (`"feedRoute": "refunds"`, or
+`beginExperiment(hypothesis, rules, feedRoute)`, as `camel cmd chaos-experiment --feed` does). It is refused when the
+routes the feed reaches do not include a route of its expectations, and no route that makes its own messages (a timer,
+a scheduler) reaches one either: the experiment would say nothing (CAMEL-26803). The routes reached are those the static
+sends lead to, over `direct`, `seda`, a broker, or an HTTP call to an HTTP server route of the integration; a route with a
+send known only when it sends (`toD`, `wireTap`, `recipientList`) is not checked.
+
 The journal has them as `experiments`, each with:
 
 * `number`, `hypothesis`, the `rules` (their ids) and `ruleTexts`
