@@ -7588,7 +7588,7 @@ which differ from Jackson 2. Most visibly:
 |===
 | Feature | Jackson 2 | Jackson 3 | Effect of the Jackson 3 default
 
-| `FAIL_ON_UNKNOWN_PROPERTIES` | on | off | Unknown properties are ignored. See the warning below.
+| `FAIL_ON_UNKNOWN_PROPERTIES` | on | off | Unknown properties are ignored, except by REST binding (see below).
 | `SORT_PROPERTIES_ALPHABETICALLY` | off | on | Properties are written in alphabetical order.
 | `WRITE_DATES_AS_TIMESTAMPS` | on | off | Dates are written as ISO-8601 text, not as numbers.
 | `WRITE_DURATIONS_AS_TIMESTAMPS` | on | off | Durations are written as ISO-8601 text.
@@ -7605,12 +7605,16 @@ Set a feature back with the `enableFeatures` and `disableFeatures` options of th
 [source,java]
 ----
 restConfiguration().bindingMode(RestBindingMode.json)
-    .dataFormatProperty("json.in.enableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
+    .dataFormatProperty("json.out.enableFeatures", "WRITE_DATES_AS_TIMESTAMPS");
 ----
 
-WARNING: With `FAIL_ON_UNKNOWN_PROPERTIES` off, a route using REST binding no longer rejects a JSON body that does not
-match its type. The body is accepted, the request gets no `400` response, and the route receives a POJO with empty fields.
-Enable the feature as shown above if your routes rely on that validation.
+NOTE: The REST DSL binding of a service enables `FAIL_ON_UNKNOWN_PROPERTIES` on its Jackson 3 data formats (`json`, and
+`jacksonXml` from `camel-jackson3xml`), so a request body with properties that its type does not have is still rejected,
+as with Jackson 2. To accept such bodies, set `json.in.disableFeatures` (or `xml.in.disableFeatures`) to
+`FAIL_ON_UNKNOWN_PROPERTIES`. A feature you enable with `enableFeatures` is added to it. A data format with a mapper of
+your own keeps the settings of that mapper: the `objectMapper` option or a mapper found with `autoDiscoverObjectMapper`
+for JSON, the `xmlMapper` option for XML. The REST producer, which reads the responses of the services it calls, uses
+the Jackson 3 default.
 
 *Limits.* Jackson 3 reads and writes with other limits: nesting up to 500 levels (it was 1000), for reading and writing, and
 strings up to 100 million characters (it was 20 million). They apply to every component on Jackson 3, including those whose

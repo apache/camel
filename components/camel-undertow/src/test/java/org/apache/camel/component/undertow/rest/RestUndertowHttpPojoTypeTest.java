@@ -255,9 +255,7 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort())
-                        .bindingMode(RestBindingMode.json)
-                        // Jackson 3 ignores unknown properties by default
-                        .dataFormatProperty("json.in.enableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
+                        .bindingMode(RestBindingMode.json);
 
                 // use the rest DSL to define the rest services
                 rest()
