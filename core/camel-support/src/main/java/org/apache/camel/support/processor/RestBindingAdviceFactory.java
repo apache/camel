@@ -37,6 +37,9 @@ import org.apache.camel.support.ResolverHelper;
  */
 public class RestBindingAdviceFactory {
 
+    private static final String JACKSON3_PACKAGE = "org.apache.camel.component.jackson3.";
+    private static final String FAIL_ON_UNKNOWN_PROPERTIES = "FAIL_ON_UNKNOWN_PROPERTIES";
+
     /**
      * Builds the {@link RestBindingAdvice} from the given configuration
      *
@@ -169,6 +172,7 @@ public class RestBindingAdviceFactory {
                     useList);
         }
         setAdditionalConfiguration(camelContext, config, json, "json.in.");
+        failOnUnknownProperties(camelContext, json);
 
         if (outJson != null) {
             Class<?> outClazz = null;
@@ -250,6 +254,31 @@ public class RestBindingAdviceFactory {
 
             PropertyBindingSupport.build().bind(camelContext, dataFormat, copy);
         }
+    }
+
+    /**
+     * Jackson 3 accepts unknown properties by default, where Jackson 2 rejects them. REST binding keeps rejecting them
+     * in request bodies, as they come from external callers, unless the feature or a mapper of your own is configured.
+     */
+    private static void failOnUnknownProperties(CamelContext camelContext, DataFormat dataFormat) throws Exception {
+        if (!dataFormat.getClass().getName().startsWith(JACKSON3_PACKAGE)) {
+            return;
+        }
+        BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(camelContext);
+        if (beanIntrospection.getOrElseProperty(dataFormat, "objectMapper", null, false) != null) {
+            return;
+        }
+        Object enable = beanIntrospection.getOrElseProperty(dataFormat, "enableFeatures", null, false);
+        Object disable = beanIntrospection.getOrElseProperty(dataFormat, "disableFeatures", null, false);
+        if (namesFailOnUnknownProperties(enable) || namesFailOnUnknownProperties(disable)) {
+            return;
+        }
+        String features = enable != null ? enable + "," + FAIL_ON_UNKNOWN_PROPERTIES : FAIL_ON_UNKNOWN_PROPERTIES;
+        beanIntrospection.setProperty(camelContext, dataFormat, "enableFeatures", features);
+    }
+
+    private static boolean namesFailOnUnknownProperties(Object features) {
+        return features != null && features.toString().contains(FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     private static boolean isKeyKnownPrefix(String key) {
