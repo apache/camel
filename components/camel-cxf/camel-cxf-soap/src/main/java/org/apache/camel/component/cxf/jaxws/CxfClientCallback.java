@@ -115,7 +115,7 @@ public class CxfClientCallback extends ClientCallback {
                 conduitSelector.complete(cxfExchange);
                 // For FailoverTargetSelector, conduitSelector.complete() runs the retry itself.
                 // If failover succeeds, neither message will carry an exception — do not set one,
-                // as the exchange should remain clean for the re-dispatch to succeed.
+                // as the exchange should remain clean (failover already succeeded).
                 // Only propagate an exception when a message explicitly carries one.
                 Throwable resolved = null;
                 if (cxfExchange.getOutMessage() != null) {

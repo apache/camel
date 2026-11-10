@@ -179,7 +179,7 @@ class CxfClientCallbackTest {
     void handleException_withConduitSelector_noExceptionOnMessages_doesNotSetException() {
         // When ConduitSelector is set and neither message carries an exception, the failover
         // succeeded — do NOT fall back to the original transport exception, leave the exchange
-        // clean so the re-dispatched request can proceed.
+        // clean (failover already succeeded).
         RuntimeException transportEx = new RuntimeException("connection refused");
 
         ConduitSelector conduitSelector = mock(ConduitSelector.class);
