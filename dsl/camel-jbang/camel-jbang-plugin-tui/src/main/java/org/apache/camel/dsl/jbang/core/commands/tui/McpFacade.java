@@ -1766,7 +1766,7 @@ class McpFacade {
         if (ctx.selectedPid == null) {
             return "Error: no integration selected; give its name or pid";
         }
-        String name = ctx.selectedName();
+        String name = ctx.selectedFullName();
         return switch (action) {
             case "reset-stats", "clear-stats" -> {
                 if (ctx.isInfraSelected()) {

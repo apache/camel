@@ -116,8 +116,12 @@ final class RouteDiagramZoom {
         return zoom;
     }
 
-    /** Keeps the density or fit, and the mini panels, for the next start; file work, so not on the UI thread. */
-    void persist() {
+    /**
+     * Keeps the density or fit, and the mini panels, for the next start; file work, so not on the UI thread. One at a
+     * time: two keys pressed quickly save on two threads, and the one that runs last writes what is now, not what was
+     * when its key was pressed.
+     */
+    synchronized void persist() {
         try {
             TuiUserConfig.write(PROP_ROUTE_ZOOM, setting());
             TuiUserConfig.write(PROP_DIAGRAM_PANELS, panels ? null : "false");

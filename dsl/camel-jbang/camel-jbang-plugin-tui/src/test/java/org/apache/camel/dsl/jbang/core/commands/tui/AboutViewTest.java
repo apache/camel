@@ -396,6 +396,105 @@ class AboutViewTest {
     }
 
     @Test
+    void theQuickStartRoutesExampleSaysWhatItDoesAndWhenItRuns() throws Exception {
+        // quick-start/routes: the bean file comes first, and no file has a comment
+        Files.writeString(dir.resolve("beans.yaml"), "- beans:\n    - name: greeter\n      type: camel.example.Greeter\n");
+        Files.writeString(dir.resolve("routes.camel.yaml"), """
+                - route:
+                    id: greeting
+                    from:
+                      uri: timer
+                      parameters:
+                        timerName: greet
+                        period: "{{greeter.period}}"
+                      steps:
+                        - log: hello
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "routes";
+        info.directory = dir.toString();
+        // the period the integration runs with, from its application.properties
+        ConfigurationTab.ConfigProperty period = new ConfigurationTab.ConfigProperty();
+        period.key = "greeter.period";
+        period.value = "2000";
+        info.configProperties.add(period);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+
+        AboutView first = new AboutView(ctx);
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(first, info, 200, 34))
+                // the file to put the comment in is the one with the route
+                .contains("No description yet: a comment at the top of routes.camel.yaml or a README says what it does")
+                .contains("timer:greet (period=2000)")
+                .contains("s  summary").doesNotContain("r  readme"));
+
+        Files.writeString(dir.resolve("README.md"), """
+                # Routes
+
+                The first step from YAML into your own code: a timer route calls a Java bean.
+                """);
+        AboutView about = new AboutView(ctx);
+        List<String> opened = new ArrayList<>();
+        ctx.openMarkdownCallback = (title, markdown) -> opened.add(title + ": " + markdown.lines().findFirst().orElse(""));
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("The first step from YAML into your own code: a timer route calls a Java bean.")
+                .contains("from README.md").contains("r  readme"));
+        assertThat(about.handleKeyEvent(KeyEvent.ofChar('r'), info)).isTrue();
+        assertThat(opened).containsExactly("routes - README.md: # Routes");
+        assertThat(about.tableJson(info).getString("keys")).contains("r the README, s the summary");
+    }
+
+    @Test
+    void lastFiveMinutesCountsAnExchangeOnceNotOncePerRouteItPasses() throws Exception {
+        // fail-well/circuit-breaker: stock-check calls supplier with direct, once a second
+        Files.writeString(dir.resolve("circuit-breaker.camel.yaml"), """
+                - route:
+                    id: stock-check
+                    from:
+                      uri: timer:stock
+                      steps:
+                        - to: direct:supplier
+                        - to: seda:report
+                - route:
+                    id: supplier
+                    from:
+                      uri: direct:supplier
+                      steps:
+                        - log: called
+                - route:
+                    id: report
+                    from:
+                      uri: seda:report
+                      steps:
+                        - log: reported
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "circuit-breaker";
+        info.directory = dir.toString();
+        for (String id : List.of("stock-check", "supplier", "report")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            r.state = "Started";
+            info.routes.add(r);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        for (int i = 50; i < 60; i++) {
+            t.route("stock-check", "completed", i, 1).route("supplier", "completed", i, 1);
+            // the report, handed off, fails once: its sender does not see that
+            t.route("report", i == 55 ? "failed" : "completed", i, 1);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("↳ supplier")
+                // 10 checks, not 30 for the three routes they went through
+                .contains("10 exchanges · 1 failed").doesNotContain("30 exchanges").doesNotContain("20 exchanges"));
+    }
+
+    @Test
     void aboutAnIntegrationWithWhatHasHappened() throws Exception {
         Files.writeString(dir.resolve("shop.camel.yaml"), """
                 # Every order is checked against the stock and shipped.

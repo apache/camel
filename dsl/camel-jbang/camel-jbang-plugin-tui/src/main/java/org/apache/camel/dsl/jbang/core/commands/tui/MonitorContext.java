@@ -179,6 +179,20 @@ class MonitorContext {
         return confirmActions && !tapeDriven.getAsBoolean();
     }
 
+    /**
+     * The name of the selected integration or infra service as a name to act on: a camel command, an answer to a tool.
+     * {@link #selectedName()} is shortened for a title.
+     */
+    String selectedFullName() {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info != null) {
+            return info.name;
+        }
+        InfraInfo infra = findSelectedInfra();
+        return infra != null ? infra.alias : "?";
+    }
+
+    /** The name of the selected integration or infra service for a title, at most 20 characters. */
     String selectedName() {
         IntegrationInfo info = findSelectedIntegration();
         if (info != null) {

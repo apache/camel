@@ -16,7 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -26,6 +28,11 @@ import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.LayoutRoute;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.NodeInfo;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine.RouteInfo;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -34,11 +41,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * The route diagram keys the Diagram and Routes tabs share: they behave the same in both tabs. The Routes tab used to
  * keep the detail panel open when going back to the topology.
+ * <p>
+ * Isolated because it changes the home directory of the settings.
  */
+@Isolated
 class AbstractDiagramTabTest {
 
-    private final MonitorContext ctx = new MonitorContext(
-            new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));
+    private MonitorContext ctx;
+    private String originalHome;
+
+    @BeforeEach
+    void setUp(@TempDir Path home) {
+        // the keys save the zoom and the mini panels in the user's settings: not in the settings of who runs the test
+        originalHome = CommandLineHelper.getHomeDir().toString();
+        CommandLineHelper.useHomeDir(home.toString());
+        ctx = new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of()));
+    }
+
+    @AfterEach
+    void tearDown() throws InterruptedException {
+        // they save in the background: done before the home is back
+        ctx.backgroundExecutor.shutdown();
+        ctx.backgroundExecutor.awaitTermination(10, TimeUnit.SECONDS);
+        CommandLineHelper.useHomeDir(originalHome);
+    }
 
     static Stream<Function<MonitorContext, AbstractDiagramTab>> tabs() {
         return Stream.of(DiagramTab::new, RoutesTab::new);

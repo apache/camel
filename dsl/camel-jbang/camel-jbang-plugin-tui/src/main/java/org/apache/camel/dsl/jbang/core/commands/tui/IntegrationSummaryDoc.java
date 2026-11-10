@@ -48,11 +48,20 @@ final class IntegrationSummaryDoc {
 
     /** The summary of a project for the viewer, or null when there is no project or it has no routes. */
     static Doc load(Path dir) {
+        return load(dir, null);
+    }
+
+    /**
+     * The summary of a project for the viewer, named as the integration that runs it: an example runs from a directory
+     * of its own (camel-example-7061...), which is no name.
+     */
+    static Doc load(Path dir, String integration) {
         if (dir == null) {
             return null;
         }
         ProjectOverview.Overview overview = ProjectOverview.analyze(dir, ProjectOverviewAssist.catalog());
-        String name = dir.getFileName() != null ? dir.getFileName().toString() : dir.toString();
+        String dirName = dir.getFileName() != null ? dir.getFileName().toString() : dir.toString();
+        String name = integration != null ? integration : dirName;
         Path file = dir.resolve(IntegrationSummary.FILE_NAME);
         if (Files.isRegularFile(file)) {
             try {
@@ -76,7 +85,8 @@ final class IntegrationSummaryDoc {
                         "> Derived from the route sources. Not saved yet: /overview in the AI panel explains the"
                                                                                            + " project and saves it as "
                                                                                            + IntegrationSummary.FILE_NAME
-                                                                                           + ".");
+                                                                                           + ".")
+                .replace("Integration summary: " + dirName, "Integration summary: " + name);
         return new Doc("Integration summary · " + name + " (not saved)", forViewing(facts));
     }
 
@@ -169,7 +179,11 @@ final class IntegrationSummaryDoc {
         if (ctx == null || ctx.openMarkdownAtCallback == null) {
             return "The document viewer is not available";
         }
-        Doc doc = load(dir);
+        // the name of the integration that runs from the directory
+        IntegrationInfo running = ctx.findSelectedIntegration();
+        String name = running != null && running.directory != null && dir != null
+                && Path.of(running.directory).equals(dir) ? running.name : null;
+        Doc doc = load(dir, name);
         if (doc == null) {
             return dir == null
                     ? "No source directory for the selected integration"
