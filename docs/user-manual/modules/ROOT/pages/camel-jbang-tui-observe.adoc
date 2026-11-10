@@ -167,9 +167,10 @@ Press *F5* to clear captured traces.
 == Troubleshooting Errors
 
 The Errors tab collects failures with full stack traces and exchange context.
-When errors occur, a red badge appears on the tab with the number of errors that happened. The tab keeps only the
-newest few of each kind of error (the same route, step and exception), and its *COUNT* column says how many times that
-kind happened.
+When errors occur, a red badge appears on the tab with the number of errors that happened. The tab has a row per kind
+of error (the same route, step and exception), and its *COUNT* column says how many times that kind happened. Camel
+keeps the newest few exchanges of each kind: the detail shows the newest, and *[* and *]* step to the older ones, to
+compare their bodies and headers.
 
 For deeper troubleshooting, press *d* on an error to see its Diagram view: the path the failed
 exchange took through the routes, replayed from its message history (the same replay as in the

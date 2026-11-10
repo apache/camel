@@ -18,12 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -71,6 +69,8 @@ class ErrorsTab extends AbstractTableTab {
 
     private final DiagramSupport diagram = new DiagramSupport();
     private int infoPanelSize = INFO_NARROW;
+    // which of the kept exchanges of the selected kind of error the detail shows: 0 is the newest
+    private int keptIndex;
 
     ErrorsTab(MonitorContext ctx) {
         super(ctx, "id", "age", "route", "node", "exception");
@@ -107,7 +107,7 @@ class ErrorsTab extends AbstractTableTab {
 
     @Override
     protected boolean handleTabKeyEvent(KeyEvent ke) {
-        if (handleErrorActionKey(ke)) {
+        if (handleErrorActionKey(ke) || handleKeptKey(ke)) {
             return true;
         }
         if (diagram.isShowDiagram() && diagram.isHistoryMode() && diagram.hasHistoryData()) {
@@ -288,17 +288,20 @@ class ErrorsTab extends AbstractTableTab {
     @Override
     protected void rowClicked() {
         detailScroll = 0;
+        keptIndex = 0;
     }
 
     @Override
     public void navigateUp() {
         detailScroll = 0;
+        keptIndex = 0;
         tableState.selectPrevious();
     }
 
     @Override
     public void navigateDown() {
         detailScroll = 0;
+        keptIndex = 0;
         tableState.selectNext(filteredSize());
     }
 
@@ -339,7 +342,6 @@ class ErrorsTab extends AbstractTableTab {
         }
 
         List<ErrorInfo> sorted = applyFilter(info.errors);
-        Set<ErrorInfo> newest = newestOfEachKind(sorted);
 
         List<Row> rows = new ArrayList<>();
         for (ErrorInfo ei : sorted) {
@@ -357,7 +359,7 @@ class ErrorsTab extends AbstractTableTab {
                     Cell.from(Span.styled(ei.routeId != null ? ei.routeId : "", Style.EMPTY.fg(Theme.accent()))),
                     Cell.from(ei.nodeId != null ? ei.nodeId : ""),
                     Cell.from(Span.styled(handledStr, handledStyle)),
-                    countCell(ei, newest),
+                    countCell(kindCount(keptOfKind(info.errors, ei))),
                     ChaosMarks.markedCell(ChaosMarks.ruleOf(ctx, info, ei.exchangeId, ei.properties), shortException),
                     Cell.from(ei.exceptionMessage != null ? ei.exceptionMessage : "")));
         }
@@ -366,11 +368,7 @@ class ErrorsTab extends AbstractTableTab {
             rows.add(emptyRow("No errors captured", 8, 7));
         }
 
-        ErrorInfo selectedError = null;
-        Integer sel = tableState.selected();
-        if (sel != null && sel >= 0 && sel < sorted.size()) {
-            selectedError = sorted.get(sel);
-        }
+        ErrorInfo selectedError = shownError(info);
         boolean showDetail = selectedError != null;
         List<Rect> chunks = showDetail
                 ? Layout.vertical()
@@ -473,10 +471,26 @@ class ErrorsTab extends AbstractTableTab {
         }
         hint(spans, "Home/End", "top/end");
         hint(spans, "s", "sort");
+        if (keptOfSelectedKind().size() > 1) {
+            hint(spans, "[ ]", "older/newer");
+        }
         if (chaosRuleOfSelectedError() != null) {
             hint(spans, "!", "chaos rule of it");
         }
         hintShowBhpv(spans, showBody, showHeaders, showProperties, showVariables);
+    }
+
+    /** [ and ]: the older or newer exchange of the selected kind of error, of the few the registry keeps. */
+    private boolean handleKeptKey(KeyEvent ke) {
+        if (!(ke.isChar('[') || ke.isChar(']')) || diagram.isShowDiagram()) {
+            return false;
+        }
+        int kept = keptOfSelectedKind().size();
+        if (kept > 1) {
+            keptIndex = Math.clamp(keptIndex + (ke.isChar('[') ? 1 : -1), 0, kept - 1);
+            detailScroll = 0;
+        }
+        return true;
     }
 
     /** The keys that act on the selected error: fix with AI (Shift+F8), and a chaos rule of it (!). */
@@ -520,15 +534,34 @@ class ErrorsTab extends AbstractTableTab {
         }
     }
 
-    /** The error selected in the table, or null. */
+    /** The error the detail shows (the kept exchange of the kind of error selected in the table), or null. */
     private ErrorInfo selectedError() {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
+        return info != null ? shownError(info) : null;
+    }
+
+    /** The row selected in the table: the newest entry of its kind of error, or null. */
+    private ErrorInfo selectedRow(IntegrationInfo info) {
+        List<ErrorInfo> rows = applyFilter(info.errors);
+        Integer sel = tableState.selected();
+        return sel != null && sel >= 0 && sel < rows.size() ? rows.get(sel) : null;
+    }
+
+    /** The kept exchange of the selected kind of error that the detail shows ([ and ] step through them), or null. */
+    private ErrorInfo shownError(IntegrationInfo info) {
+        ErrorInfo row = selectedRow(info);
+        if (row == null) {
             return null;
         }
-        List<ErrorInfo> sorted = applyFilter(info.errors);
-        Integer sel = tableState.selected();
-        return sel != null && sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
+        List<ErrorInfo> kept = keptOfKind(info.errors, row);
+        return kept.get(Math.min(keptIndex, kept.size() - 1));
+    }
+
+    /** The kept exchanges of the selected kind of error, newest first; empty when none is selected. */
+    private List<ErrorInfo> keptOfSelectedKind() {
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        ErrorInfo row = info != null ? selectedRow(info) : null;
+        return row != null ? keptOfKind(info.errors, row) : List.of();
     }
 
     /**
@@ -562,53 +595,94 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     /**
-     * The title: how many errors are listed, and how many happened when that is more. The registry keeps the newest few
-     * of each kind of error (CAMEL-24911).
+     * The title: how many kinds of error are listed, and how many errors happened when that is more. The registry keeps
+     * the newest few exchanges of each kind of error (CAMEL-24911), and the table has a row per kind.
      */
     static String title(int listed, int happened) {
         if (happened > listed) {
-            return " Errors [" + listed + "] " + happened + " happened, the newest of each kind are kept ";
+            return " Errors [" + listed + "] " + happened + " happened, a row per kind ";
         }
         return " Errors [" + listed + "] ";
     }
 
-    /**
-     * How often a kind of error happened, on its newest entry: an older entry counts the times up to then, so it is
-     * left blank and the column adds up to the errors that happened.
-     */
-    private static Cell countCell(ErrorInfo ei, Set<ErrorInfo> newest) {
-        if (!newest.contains(ei)) {
-            return Cell.from("");
-        }
-        return ei.repeatCount > 1
-                ? Cell.from(Span.styled(Long.toString(ei.repeatCount), Theme.error().bold()))
-                : Cell.from(Long.toString(Math.max(1, ei.repeatCount)));
+    /** How often a kind of error happened. */
+    private static Cell countCell(long count) {
+        return count > 1
+                ? Cell.from(Span.styled(Long.toString(count), Theme.error().bold()))
+                : Cell.from("1");
     }
 
-    /** The newest entry of each kind of error (a route and an exception type): the one with the highest count. */
-    static Set<ErrorInfo> newestOfEachKind(List<ErrorInfo> errors) {
-        Map<String, ErrorInfo> newest = new HashMap<>();
+    /**
+     * How often a kind of error happened: its counter (CAMEL-24911), or at least the exchanges kept of it, as an
+     * integration before Camel 4.21 does not count.
+     */
+    private static long kindCount(List<ErrorInfo> kept) {
+        long count = 1;
+        for (ErrorInfo ei : kept) {
+            count = Math.max(count, ei.repeatCount);
+        }
+        return Math.max(count, kept.size());
+    }
+
+    /** The kind of an error, as the registry counts it: the same exception at the same node of the same route. */
+    private static String kindOf(ErrorInfo ei) {
+        return ei.routeId + "|" + ei.nodeId + "|" + ei.exceptionType;
+    }
+
+    /** The newest entry of each kind of error, in the order of the list: the one with the highest count. */
+    static List<ErrorInfo> newestOfEachKind(List<ErrorInfo> errors) {
+        Map<String, ErrorInfo> newest = new LinkedHashMap<>();
         for (ErrorInfo ei : errors) {
-            newest.merge(ei.routeId + "|" + ei.exceptionType, ei,
+            newest.merge(kindOf(ei), ei,
                     (a, b) -> b.repeatCount > a.repeatCount
                             || b.repeatCount == a.repeatCount && b.timestamp > a.timestamp ? b : a);
         }
-        Set<ErrorInfo> set = Collections.newSetFromMap(new IdentityHashMap<>());
-        set.addAll(newest.values());
-        return set;
+        // a kind keeps the place of its newest entry in the sorted list
+        List<ErrorInfo> rows = new ArrayList<>();
+        for (ErrorInfo ei : errors) {
+            if (newest.get(kindOf(ei)) == ei) {
+                rows.add(ei);
+            }
+        }
+        return rows;
     }
 
-    /** How often this kind of error happened, and how long it has been going on (CAMEL-24911). */
-    private static void addRepeatLine(List<Line> lines, ErrorInfo ei) {
-        if (ei.repeatCount <= 1) {
-            return;
+    /** The kept exchanges of the kind of error of this row, newest first. */
+    static List<ErrorInfo> keptOfKind(List<ErrorInfo> errors, ErrorInfo row) {
+        String kind = kindOf(row);
+        List<ErrorInfo> kept = new ArrayList<>();
+        for (ErrorInfo ei : errors) {
+            if (kind.equals(kindOf(ei))) {
+                kept.add(ei);
+            }
         }
-        String since = ei.repeatFirstTimestamp > 0
-                ? " (since " + org.apache.camel.util.TimeUtils.printSince(ei.repeatFirstTimestamp) + " ago)" : "";
-        lines.add(Line.from(
-                Span.styled(" Repeated: ", Theme.muted()),
-                Span.styled(ei.repeatCount + " times", Theme.error().bold()),
-                Span.styled(since, Style.EMPTY.dim())));
+        kept.sort(Comparator.comparingLong((ErrorInfo ei) -> ei.repeatCount)
+                .thenComparingLong(ei -> ei.timestamp).reversed());
+        return kept;
+    }
+
+    /**
+     * How often this kind of error happened and how long it has been going on (CAMEL-24911), and which of its kept
+     * exchanges the detail shows, with the keys to the others when they work there.
+     */
+    private static void addRepeatLines(List<Line> lines, List<ErrorInfo> kept, int shown, boolean keys) {
+        long count = kindCount(kept);
+        if (count > 1) {
+            long first = kept.get(0).repeatFirstTimestamp;
+            String since = first > 0 ? " (since " + org.apache.camel.util.TimeUtils.printSince(first) + " ago)" : "";
+            lines.add(Line.from(
+                    Span.styled(" Repeated: ", Theme.muted()),
+                    Span.styled(count + " times", Theme.error().bold()),
+                    Span.styled(since, Style.EMPTY.dim())));
+        }
+        if (kept.size() > 1) {
+            int nr = kept.size() - shown;
+            String which = shown == 0 ? " (the newest)" : nr == 1 ? " (the oldest)" : "";
+            lines.add(Line.from(
+                    Span.styled(" Kept:     ", Theme.muted()),
+                    Span.raw("exchange " + nr + " of " + kept.size() + which),
+                    Span.styled(keys ? "   [ ] older/newer" : "", Style.EMPTY.dim())));
+        }
     }
 
     private void renderDetail(Frame frame, Rect area, ErrorInfo ei, IntegrationInfo info) {
@@ -617,7 +691,8 @@ class ErrorsTab extends AbstractTableTab {
         HistoryTab.addExchangeInfoLines(lines,
                 ei.exchangeId, ei.routeId, ei.nodeId, null, ei.location,
                 ei.elapsed, ei.threadName, !ei.handled);
-        addRepeatLine(lines, ei);
+        List<ErrorInfo> kept = keptOfKind(info.errors, ei);
+        addRepeatLines(lines, kept, Math.max(0, kept.indexOf(ei)), true);
         ChaosMarks.addDetailLine(lines, ctx, info, ei.exchangeId, ei.properties);
 
         // exception with stack trace
@@ -750,6 +825,7 @@ class ErrorsTab extends AbstractTableTab {
         return new SelectionContext("table", items, sel != null ? sel : -1, items.size(), "Errors");
     }
 
+    /** The rows of the table: a row per kind of error (its newest entry), sorted, and filtered by handled. */
     private List<ErrorInfo> applyFilter(List<ErrorInfo> errors) {
         List<ErrorInfo> list = new ArrayList<>(errors);
         list.sort(this::sortError);
@@ -757,19 +833,12 @@ class ErrorsTab extends AbstractTableTab {
             boolean filterVal = "true".equals(handledFilter);
             list.removeIf(e -> e.handled != filterVal);
         }
-        return list;
+        return newestOfEachKind(list);
     }
 
     private int filteredSize() {
         IntegrationInfo info = ctx.findSelectedIntegration();
-        if (info == null) {
-            return 0;
-        }
-        if ("all".equals(handledFilter)) {
-            return info.errors.size();
-        }
-        boolean filterVal = "true".equals(handledFilter);
-        return (int) info.errors.stream().filter(e -> e.handled == filterVal).count();
+        return info != null ? applyFilter(info.errors).size() : 0;
     }
 
     private Line buildErrorBreadcrumbTitle() {
@@ -793,12 +862,7 @@ class ErrorsTab extends AbstractTableTab {
     }
 
     private void renderDiagramInfoPanel(Frame frame, Rect area, IntegrationInfo info) {
-        List<ErrorInfo> sorted = applyFilter(info.errors);
-        Integer sel = tableState.selected();
-        ErrorInfo ei = null;
-        if (sel != null && sel >= 0 && sel < sorted.size()) {
-            ei = sorted.get(sel);
-        }
+        ErrorInfo ei = shownError(info);
 
         List<Line> lines = new ArrayList<>();
         if (ei == null) {
@@ -835,7 +899,8 @@ class ErrorsTab extends AbstractTableTab {
         lines.add(Line.from(
                 Span.styled(" Handled:  ", Theme.muted()),
                 Span.styled(ei.handled ? "true" : "false", handledStyle)));
-        addRepeatLine(lines, ei);
+        List<ErrorInfo> kept = keptOfKind(info.errors, ei);
+        addRepeatLines(lines, kept, Math.max(0, kept.indexOf(ei)), false);
 
         if (ei.exceptionType != null) {
             lines.add(Line.from(Span.raw("")));
@@ -911,9 +976,7 @@ class ErrorsTab extends AbstractTableTab {
         if (info == null || info.errors.isEmpty()) {
             return false;
         }
-        List<ErrorInfo> sorted = applyFilter(info.errors);
-        Integer sel = tableState.selected();
-        ErrorInfo selected = sel != null && sel >= 0 && sel < sorted.size() ? sorted.get(sel) : null;
+        ErrorInfo selected = shownError(info);
         return selected != null && selected.messageHistory != null && selected.messageHistory.length > 0;
     }
 
@@ -931,12 +994,7 @@ class ErrorsTab extends AbstractTableTab {
             return;
         }
 
-        List<ErrorInfo> sorted = applyFilter(info.errors);
-        Integer sel = tableState.selected();
-        ErrorInfo selectedError = null;
-        if (sel != null && sel >= 0 && sel < sorted.size()) {
-            selectedError = sorted.get(sel);
-        }
+        ErrorInfo selectedError = shownError(info);
         if (selectedError == null || selectedError.messageHistory == null || selectedError.messageHistory.length == 0) {
             diagram.endLoad();
             return;
