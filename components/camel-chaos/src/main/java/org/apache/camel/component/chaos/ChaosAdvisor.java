@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -516,6 +519,76 @@ final class ChaosAdvisor {
         String uri = ChaosPatterns.endpointUri(endpoint);
         int query = uri.indexOf('?');
         return query > 0 ? uri.substring(0, query) : uri;
+    }
+
+    /**
+     * Why an expectation of the messages lost between two routes ({@code orders->shipping:lost<=0}) says nothing, or
+     * null when it does (CAMEL-26797). Lost counts what the first route completed and the next did not, which tells
+     * only when the first hands the message off to the next (over seda, a broker or a wireTap) and goes on: a route
+     * that calls the next over direct waits for it and fails with it, and a route that does not send to it at all (such
+     * as an HTTP call to a platform-http route) loses nothing that lost counts, while its own failures are not counted.
+     * The routes reached through a send that is known only when it sends (toD, wireTap, recipientList...) are not
+     * known, so then it says nothing.
+     */
+    static String lostWithoutHandOff(CamelContext camelContext, ChaosRule.Expectation expectation) {
+        if (expectation == null || expectation.toRoute == null || camelContext.getRoute(expectation.route) == null
+                || camelContext.getRoute(expectation.toRoute) == null) {
+            return null;
+        }
+        Map<String, String> consumers = new HashMap<>();
+        for (Route route : camelContext.getRoutes()) {
+            if (route.getEndpoint() != null) {
+                consumers.put(uri(route.getEndpoint()), route.getRouteId());
+            }
+        }
+        // the routes the first one reaches, and whether a hand-off was on the way there (one that was wins)
+        Map<String, Boolean> reached = new HashMap<>();
+        reached.put(expectation.route, false);
+        Deque<String> todo = new ArrayDeque<>(List.of(expectation.route));
+        while (!todo.isEmpty()) {
+            String id = todo.poll();
+            Route route = camelContext.getRoute(id);
+            if (route == null) {
+                continue;
+            }
+            if (route.getRoute() instanceof RouteDefinition definition) {
+                List<String> dynamic = new ArrayList<>();
+                ChaosTargets.dynamicSends(definition.getOutputs(), dynamic);
+                if (!dynamic.isEmpty()) {
+                    return null;
+                }
+            }
+            for (Processor processor : route.filter("*")) {
+                if (!(processor instanceof EndpointAware aware) || aware.getEndpoint() == null) {
+                    continue;
+                }
+                String uri = uri(aware.getEndpoint());
+                String next = consumers.get(uri);
+                if (next == null) {
+                    continue;
+                }
+                boolean handedOff = reached.get(id) || !"direct".equals(ChaosPatterns.scheme(uri));
+                Boolean before = reached.get(next);
+                if (before == null || !before && handedOff) {
+                    reached.put(next, handedOff);
+                    todo.add(next);
+                }
+            }
+        }
+        Boolean handedOff = reached.get(expectation.toRoute);
+        if (handedOff == null) {
+            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
+                   + ", but " + expectation.route + " does not hand messages to " + expectation.toRoute
+                   + " (over seda, a broker or a wireTap), so lost counts nothing of what fails in " + expectation.route
+                   + ": expect=" + expectation.route + ":failed<=0 counts it";
+        }
+        if (!handedOff) {
+            return "expects messages lost between routes " + expectation.route + " and " + expectation.toRoute
+                   + ", but " + expectation.route + " calls " + expectation.toRoute
+                   + " over direct and waits for it, so a failure there fails " + expectation.route
+                   + " and nothing is lost between them: expect=" + expectation.route + ":failed<=0 counts it";
+        }
+        return null;
     }
 
     /** The dead letter channel of the route, without its options, or null when its error handler has none. */

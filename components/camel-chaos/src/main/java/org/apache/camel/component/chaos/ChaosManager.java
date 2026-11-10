@@ -452,6 +452,10 @@ public final class ChaosManager {
         if (target != null) {
             answer.add(target);
         }
+        String handOff = ChaosAdvisor.lostWithoutHandOff(camelContext, rule.expectation);
+        if (handOff != null) {
+            answer.add(handOff);
+        }
         String dead = deadLetterOfFailedExpectation(rule);
         if (dead != null) {
             String route = rule.expectation.route;

@@ -57,6 +57,13 @@ class ChaosExperimentTest extends ChaosTestSupport {
                         .errorHandler(deadLetterChannel("direct:parked"))
                         .to("mock:charged");
                 from("direct:parked").routeId("parked").to("mock:parked");
+                // refunds calls the payment service (as over HTTP), checkout calls the payment route and waits, and
+                // the shop hands the orders to shipping over seda (CAMEL-26797)
+                from("direct:refunds").routeId("refunds").to("mock:pay");
+                from("direct:payment").routeId("payment").to("mock:paid");
+                from("direct:checkout").routeId("checkout").to("direct:payment");
+                from("direct:shop").routeId("shop").to("seda:shipping");
+                from("seda:shipping").routeId("shipping").to("mock:sent");
             }
         };
     }
@@ -247,6 +254,52 @@ class ChaosExperimentTest extends ChaosTestSupport {
             JsonObject ok = (JsonObject) list(new JsonObject(chaos().checkRules(rule)), "rules").get(0);
             assertThat(ok.containsKey("warnings")).as(rule).isFalse();
         }
+    }
+
+    @Test
+    void anExpectationWhoseRouteFailedUncountedDoesNotPass() {
+        chaos().startExploration("10m", null);
+        // lost counts what refunds completed and payment did not: the refunds that failed are not in it (CAMEL-26797)
+        chaos().beginExperiment("refunds handle a failed payment",
+                "endpoint=mock:pay error rate=every:2 expect=refunds->payment:lost<=0 within=1m");
+        for (int i = 0; i < 4; i++) {
+            template.send("direct:refunds", e -> e.getMessage().setBody("refund"));
+            // the payment route has other callers (the orders): it completes more than refunds, so 0 lost
+            template.send("direct:payment", e -> e.getMessage().setBody("order"));
+        }
+        clock.advance(61_000);
+
+        Map<String, Object> ended = chaos().endExperiment(null);
+
+        assertThat(ended).containsEntry("verdict", "INCONCLUSIVE").containsEntry("reason",
+                "route refunds failed 2 exchanges that its expectations do not count, so they say nothing about the"
+                                                                                           + " failures: expect=refunds:failed<=0 counts them");
+        assertThat(first(new JsonObject(ended), "expectations").getString("state")).isEqualTo("met");
+        assertThat(((JsonObject) ended.get("alsoFailed")).getLong("refunds")).isEqualTo(2);
+
+        // an expectation that counts them decides it
+        chaos().beginExperiment(null, "endpoint=mock:pay error rate=every:2 expect=refunds:failed<=0 within=1m");
+        template.send("direct:refunds", e -> e.getMessage().setBody("refund"));
+        template.send("direct:refunds", e -> e.getMessage().setBody("refund"));
+        assertThat(chaos().endExperiment(null)).containsEntry("verdict", "FAIL");
+    }
+
+    @Test
+    void aLostExpectationBetweenRoutesThatDoNotHandOffIsWarned() {
+        assertThat(warnings("endpoint=mock:pay error expect=refunds->payment:lost<=0")).singleElement().asString()
+                .contains("expects messages lost between routes refunds and payment, but refunds does not hand messages"
+                          + " to payment (over seda, a broker or a wireTap)",
+                        "expect=refunds:failed<=0 counts it");
+        assertThat(warnings("endpoint=mock:paid error expect=checkout->payment:lost<=0")).singleElement().asString()
+                .contains("checkout calls payment over direct and waits for it",
+                        "expect=checkout:failed<=0 counts it");
+        // a hand-off over seda: no warning
+        assertThat(warnings("route=shipping error expect=shop->shipping:lost<=0")).isEmpty();
+    }
+
+    private List<Object> warnings(String rule) {
+        JsonObject checked = (JsonObject) list(new JsonObject(chaos().checkRules(rule)), "rules").get(0);
+        return checked.containsKey("warnings") ? list(checked, "warnings") : List.of();
     }
 
     @Test
