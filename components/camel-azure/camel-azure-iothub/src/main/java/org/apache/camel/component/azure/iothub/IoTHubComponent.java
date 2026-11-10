@@ -107,6 +107,11 @@ public class IoTHubComponent extends DefaultComponent {
         this.deviceClientIdleTimeout = deviceClientIdleTimeout;
     }
 
+    /**
+     * Idle time after which a pooled device client is evicted and closed.
+     *
+     * @return the idle timeout for pooled device clients
+     */
     public Duration getDeviceClientIdleTimeout() {
         return deviceClientIdleTimeout;
     }
@@ -118,6 +123,11 @@ public class IoTHubComponent extends DefaultComponent {
         this.deviceClientEvictionInterval = deviceClientEvictionInterval;
     }
 
+    /**
+     * How often the pool is scanned for idle device clients to evict.
+     *
+     * @return the eviction scan interval for the pool
+     */
     public Duration getDeviceClientEvictionInterval() {
         return deviceClientEvictionInterval;
     }

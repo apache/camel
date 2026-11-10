@@ -145,7 +145,8 @@ public class DeviceClientPool {
                 idleTimeout.getSeconds(), evictionInterval.getSeconds());
     }
 
-    public DeviceClient getOrCreate(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+    // package-private for test hooks only
+    DeviceClient getOrCreate(String deviceId, String connectionString, IotHubClientProtocol protocol) {
         if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
             throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
         }
@@ -244,7 +245,7 @@ public class DeviceClientPool {
         return acquire(deviceId, connectionString, protocol);
     }
 
-    public void remove(String deviceId, String connectionString) {
+    void remove(String deviceId, String connectionString) {
         String poolKey = resolvePoolKey(deviceId, connectionString);
         PooledClient pooled = pool.remove(poolKey);
         if (pooled != null) {
@@ -252,7 +253,7 @@ public class DeviceClientPool {
         }
     }
 
-    public void remove(String deviceId) {
+    void remove(String deviceId) {
         if (deviceId == null || deviceId.isBlank()) {
             return;
         }
