@@ -151,8 +151,9 @@ class ChaosExploreTest {
         assertThat(ChaosExploreRun.forShare(
                 "route=shipping error rate=0.2 until=2m expect=orders->shipping:lost<=0 within=3m", 150_000))
                 .isEqualTo("route=shipping error rate=0.2 until=150s expect=orders->shipping:lost<=0 within=150s");
-        assertThat(ChaosExploreRun.forShare("route=payment stall duration=20s expect=payment:failed<=0", 60_000))
-                .isEqualTo("route=payment stall duration=20s expect=payment:failed<=0 until=60s");
+        // a stall acts once, for its duration: no until, and its expectation is decided when the share is up
+        assertThat(ChaosExploreRun.forShare("route=payment stall duration=20s expect=orders:failed<=0", 60_000))
+                .isEqualTo("route=payment stall duration=20s expect=orders:failed<=0 within=60s");
         // two faults at once: both end with the share
         assertThat(ChaosExploreRun.forShare("endpoint=a error until=1m; endpoint=b error at=dlq until=1m", 30_000))
                 .isEqualTo("endpoint=a error until=30s; endpoint=b error at=dlq until=30s");
@@ -188,8 +189,8 @@ class ChaosExploreTest {
         assertThat(integration.hypotheses).containsExactly(
                 "orders: Returns an error (HTTP status)", "orders: The route after a hand-off fails",
                 "orders: An outage while the dead letter channel fails");
-        assertThat(explorer.progress("1234")).isEqualTo("Done: 3 rules tried, 3 FAIL");
-        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("Done: 3 rules tried, 3 FAIL");
+        assertThat(explorer.progress("1234")).matches("Done after \\d+ms of 10m: 3 rules tried, 3 FAIL");
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("of 10m: 3 rules tried, 3 FAIL");
     }
 
     @Test

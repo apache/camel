@@ -43,6 +43,8 @@ final class ChaosExploreRun {
     private static final Logger LOG = LoggerFactory.getLogger(ChaosExploreRun.class);
     private static final Pattern UNTIL = Pattern.compile("\\buntil=\\S+");
     private static final Pattern WITHIN = Pattern.compile("\\bwithin=\\S+");
+    // the faults that act on the route once, for their duration, and take no until=
+    private static final Pattern ONCE = Pattern.compile("\\s(stall|lifecycle)\\b");
     // the order of the verdicts in the summary
     private static final List<String> VERDICTS = List.of("PASS", "FAIL", "INCONCLUSIVE", "REFUSED");
     // left over at the deadline, for the last experiment to end before camel-chaos ends it
@@ -63,6 +65,10 @@ final class ChaosExploreRun {
     private volatile boolean running;
     private volatile boolean stopped;
     private volatile String outcome;
+    // why the first rule the integration refused was refused
+    private volatile String refusal;
+    private volatile long started;
+    private volatile String budget;
     private final Map<String, Integer> verdicts = new TreeMap<>(
             (a, b) -> Integer.compare(order(a), order(b)) != 0 ? Integer.compare(order(a), order(b)) : a.compareTo(b));
 
@@ -87,10 +93,14 @@ final class ChaosExploreRun {
         this.pid = pid;
         this.picks = List.copyOf(picks);
         this.share = budgetMillis / Math.max(1, picks.size());
-        this.deadline = MonotonicClock.millis() + budgetMillis;
+        this.started = MonotonicClock.millis();
+        this.ruleStarted = started;
+        this.deadline = started + budgetMillis;
+        this.budget = budget;
         this.current = 0;
         this.stopped = false;
         this.outcome = null;
+        this.refusal = null;
         synchronized (verdicts) {
             verdicts.clear();
         }
@@ -146,6 +156,9 @@ final class ChaosExploreRun {
                     // the integration refused it, such as a rule that is not valid there: the next one
                     LOG.debug("Chaos experiment {} refused: {}", pick.rule(), e.getMessage());
                     verdict = "REFUSED";
+                    if (refusal == null) {
+                        refusal = "rule " + (i + 1) + " refused: " + e.getMessage();
+                    }
                 }
                 count(verdict);
             }
@@ -160,8 +173,12 @@ final class ChaosExploreRun {
                 LOG.debug("Chaos exploration finished already: {}", e.getMessage());
             }
             int tried = tried();
-            outcome = (stopped ? "Stopped after " : "Done: ") + tried + (tried == 1 ? " rule" : " rules") + " tried"
-                      + (tried == 0 ? "" : ", " + verdictCounts());
+            String counts = tried + (tried == 1 ? " rule" : " rules") + " tried" + (tried == 0 ? "" : ", " + verdictCounts());
+            outcome = (stopped
+                    ? "Stopped after " + counts
+                    : "Done after " + ChaosTab.shortTime(MonotonicClock.millis() - started) + " of " + budget + ": "
+                      + counts)
+                      + (refusal != null ? " (" + refusal + ")" : "");
             running = false;
         }
     }
@@ -220,11 +237,18 @@ final class ChaosExploreRun {
 
     /**
      * The rules for their share of the budget: each ends when its share is up ({@code until=}), and an expectation that
-     * waits longer for its messages ({@code within=}) waits that long at most.
+     * waits longer for its messages ({@code within=}) waits that long at most. A fault that acts once for its duration
+     * (stall, lifecycle) takes no until: its expectation is decided when the share is up instead.
      */
     static String forShare(String rules, long share) {
         String seconds = Math.max(1, share / 1000) + "s";
         return Arrays.stream(rules.split(";")).map(String::strip).filter(r -> !r.isEmpty()).map(r -> {
+            if (ONCE.matcher(r).find()) {
+                if (WITHIN.matcher(r).find()) {
+                    return WITHIN.matcher(r).replaceAll("within=" + seconds);
+                }
+                return r.contains(" expect=") ? r + " within=" + seconds : r;
+            }
             String rule = UNTIL.matcher(r).find() ? UNTIL.matcher(r).replaceAll("until=" + seconds) : r + " until=" + seconds;
             return WITHIN.matcher(rule).replaceAll("within=" + seconds);
         }).collect(Collectors.joining("; "));
