@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.component.a2a.model.AuthenticationInfo;
 import org.apache.camel.component.a2a.model.StreamResponse;
@@ -53,6 +52,7 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Dispatches push notification events to registered webhook URLs. When task state changes, the task store calls

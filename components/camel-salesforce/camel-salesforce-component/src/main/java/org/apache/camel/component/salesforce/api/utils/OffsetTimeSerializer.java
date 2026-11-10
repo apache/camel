@@ -18,16 +18,16 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.OffsetTime;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
+import tools.jackson.databind.ValueSerializer;
 
-final class OffsetTimeSerializer extends com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer {
+final class OffsetTimeSerializer extends tools.jackson.databind.ext.javatime.ser.OffsetTimeSerializer {
 
-    static final JsonSerializer<OffsetTime> INSTANCE = new OffsetTimeSerializer();
+    static final ValueSerializer<OffsetTime> INSTANCE = new OffsetTimeSerializer();
 
     private static final long serialVersionUID = 1L;
 
     private OffsetTimeSerializer() {
-        super(com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer.INSTANCE, null, DateTimeHandling.ISO_OFFSET_TIME);
+        super(tools.jackson.databind.ext.javatime.ser.OffsetTimeSerializer.INSTANCE, DateTimeHandling.ISO_OFFSET_TIME, null);
     }
 
 }

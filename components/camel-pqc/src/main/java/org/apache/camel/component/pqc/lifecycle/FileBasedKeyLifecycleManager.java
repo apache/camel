@@ -50,10 +50,11 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * File-based implementation of KeyLifecycleManager. Stores private keys in PKCS#8 format, public keys in X.509 format,
@@ -90,8 +91,9 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
     public FileBasedKeyLifecycleManager(String keyDirectoryPath) throws IOException {
         this.keyDirectory = Paths.get(keyDirectoryPath).toAbsolutePath().normalize();
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        this.objectMapper = JsonMapper.builderWithJackson2Defaults()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
         Files.createDirectories(keyDirectory);
         restrictToOwner(keyDirectory);
         LOG.info("Initialized FileBasedKeyLifecycleManager with directory: {}", keyDirectory);

@@ -28,8 +28,6 @@ import javax.xml.transform.Source;
 
 import org.w3c.dom.Node;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.Lists;
 import com.google.cloud.functions.v1.CallFunctionRequest;
 import com.google.cloud.functions.v1.CallFunctionResponse;
@@ -56,12 +54,15 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * The GoogleCloudFunctions producer.
  */
 public class GoogleCloudFunctionsProducer extends DefaultProducer {
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private GoogleCloudFunctionsEndpoint endpoint;
 
@@ -174,7 +175,7 @@ public class GoogleCloudFunctionsProducer extends DefaultProducer {
         }
         try {
             return MAPPER.writeValueAsString(body);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new InvalidPayloadException(exchange, String.class, in, e);
         }
     }

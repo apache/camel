@@ -21,11 +21,12 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.transform.Result;
 import javax.xml.transform.stax.StAXResult;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
 import org.apache.camel.Message;
 import org.apache.camel.component.xslt.ResultHandler;
+import tools.jackson.core.JsonEncoding;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.core.ObjectWriteContext;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * Result handler impl. to write a json document into a {@link ByteArrayOutputStream}
@@ -42,7 +43,8 @@ public class JsonStreamResultHandler implements ResultHandler {
      */
     public JsonStreamResultHandler(JsonFactory jsonFactory) throws Exception {
         this.byteArrayOutputStream = new ByteArrayOutputStream();
-        final JsonGenerator jsonGenerator = jsonFactory.createGenerator(this.byteArrayOutputStream, JsonEncoding.UTF8);
+        final JsonGenerator jsonGenerator
+                = jsonFactory.createGenerator(ObjectWriteContext.empty(), this.byteArrayOutputStream, JsonEncoding.UTF8);
         this.result = new StAXResult(new XmlJsonStreamWriter(jsonGenerator));
     }
 

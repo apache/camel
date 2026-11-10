@@ -37,10 +37,6 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.extension.MetaDataExtension;
@@ -52,6 +48,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * An implementation of the MetaData extension {@link MetaDataExtension} that retrieve information about ServiceNow
@@ -193,7 +193,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     .path("sys_db_object")
                     .query("sysparm_exclude_reference_link", "true")
                     .query("sysparm_fields", "name%2Csys_name")
-                    .queryF("sysparm_query", "super_class=%s", sysId.textValue())
+                    .queryF("sysparm_query", "super_class=%s", sysId.stringValue(null))
                     .trasform(HttpMethod.GET, this::findResultNode);
 
             if (response.isPresent()) {
@@ -204,7 +204,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     final JsonNode label = n.findValue("sys_name");
 
                     if (name != null && label != null) {
-                        root.put(name.textValue(), label.textValue());
+                        root.put(name.stringValue(null), label.stringValue(null));
                     }
                 });
 
@@ -255,8 +255,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     final JsonNode label = n.findValue("sys_name");
 
                     if (superClass != null) {
-                        final String impId = sysId != null ? sysId.textValue() : null;
-                        final String superId = superClass.textValue();
+                        final String impId = sysId != null ? sysId.stringValue(null) : null;
+                        final String superId = superClass.stringValue(null);
 
                         if (impId != null && superId != null && ObjectHelper.equal(impId, superId)) {
                             LOGGER.debug("skip table: name={}, label={} because it refers to an import set", name, label);
@@ -265,8 +265,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                     }
 
                     if (name != null && label != null) {
-                        String key = name.textValue();
-                        String val = label.textValue();
+                        String key = name.stringValue(null);
+                        String val = label.stringValue(null);
 
                         if (ObjectHelper.isEmpty(val)) {
                             val = key;
@@ -316,8 +316,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             findResultNode(response).ifPresent(node -> processResult(node, n -> {
                 if (n.hasNonNull("name") && n.hasNonNull("value")) {
                     properties.putIfAbsent(
-                            n.findValue("name").asText(),
-                            n.findValue("value").asText());
+                            n.findValue("name").asString(),
+                            n.findValue("value").asString());
                 }
             }));
 
@@ -364,7 +364,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
     private void processDictionaryNode(MetaContext context, ObjectNode root, JsonNode node) {
         if (node.hasNonNull("element")) {
-            final String id = node.get("element").asText();
+            final String id = node.get("element").asString();
 
             if (ObjectHelper.isNotEmpty(id)) {
                 String includeKey = "object." + context.getObjectName() + ".fields";
@@ -467,7 +467,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                         required.add(id);
                     }
 
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new RuntimeCamelException(e);
                 } finally {
                     context.getStack().pop();
@@ -505,8 +505,8 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                 final JsonNode classNode = node.findValue("super_class");
 
                 if (nameNode != null && classNode != null) {
-                    query = String.format("sys_id=%s", classNode.textValue());
-                    hierarchy.add(0, nameNode.textValue());
+                    query = String.format("sys_id=%s", classNode.stringValue(null));
+                    hierarchy.add(0, nameNode.stringValue(null));
                 } else {
                     break;
                 }
@@ -520,7 +520,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
 
     private void processResult(JsonNode node, Consumer<JsonNode> consumer) {
         if (node.isArray()) {
-            Iterator<JsonNode> it = node.elements();
+            Iterator<JsonNode> it = node.values().iterator();
             while (it.hasNext()) {
                 consumer.accept(it.next());
             }

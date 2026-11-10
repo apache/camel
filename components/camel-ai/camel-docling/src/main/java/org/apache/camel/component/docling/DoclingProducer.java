@@ -81,8 +81,6 @@ import ai.docling.serve.api.task.request.TaskStatusPollRequest;
 import ai.docling.serve.api.task.response.TaskStatus;
 import ai.docling.serve.api.task.response.TaskStatusPollResponse;
 import ai.docling.serve.client.DoclingServeClientBuilderFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.StreamCache;
@@ -94,6 +92,9 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Producer for Docling document processing operations.
@@ -173,7 +174,7 @@ public class DoclingProducer extends DefaultProducer {
     public DoclingProducer(DoclingEndpoint endpoint) {
         super(endpoint);
         this.configuration = endpoint.getConfiguration();
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JsonMapper.builderWithJackson2Defaults().build();
         DoclingComponent component = (DoclingComponent) endpoint.getComponent();
         this.pendingAsyncTasks = component.getPendingAsyncTasks();
         this.taskIdCounter = component.getTaskIdCounter();

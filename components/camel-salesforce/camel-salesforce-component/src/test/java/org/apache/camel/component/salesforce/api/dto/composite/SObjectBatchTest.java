@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.salesforce.api.dto.composite;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch.Method;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,7 +70,7 @@ public class SObjectBatchTest {
     }
 
     @Test
-    public void shouldSerializeToJson() throws JsonProcessingException {
+    public void shouldSerializeToJson() {
         final String json = "{" + "\"batchRequests\":[" + "{" + "\"method\":\"POST\"," + "\"url\":\"v37.0/sobjects/Account/\","
                             + "\"richInput\":{" + "\"attributes\":{"
                             + "\"referenceId\":null," + "\"type\":\"Account\"," + "\"url\":null" + "},"

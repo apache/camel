@@ -34,6 +34,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class KeyMetadataCodecTest {
 
     @Test
+    void jsonWithUnknownPropertiesIsRead() throws Exception {
+        KeyMetadata metadata = KeyMetadataCodec.fromJson(
+                "{\"keyId\":\"key-1\",\"algorithm\":\"DILITHIUM\",\"createdAt\":\"2026-01-01T00:00:00Z\","
+                                                         + "\"usageCount\":0,\"status\":\"ACTIVE\",\"unknown\":1}");
+
+        assertEquals("key-1", metadata.getKeyId());
+    }
+
+    @Test
+    void jsonKeepsItsFieldOrder() throws Exception {
+        String json = KeyMetadataCodec.toJson(new KeyMetadata("key-1", "DILITHIUM", Instant.parse("2026-01-01T00:00:00Z")));
+
+        assertTrue(json.startsWith("{\"keyId\":\"key-1\",\"algorithm\":\"DILITHIUM\",\"createdAt\":"), json);
+    }
+
+    @Test
     void jsonRoundTripPreservesAllFields() throws Exception {
         KeyMetadata original = new KeyMetadata("key-1", "DILITHIUM", Instant.parse("2026-01-01T00:00:00Z"));
         original.setLastUsedAt(Instant.parse("2026-02-01T10:15:30Z"));

@@ -87,18 +87,18 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
     private String useList;
     @XmlAttribute
     @Metadata(label = "advanced",
-              description = "To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple classes can be separated by comma.")
+              description = "To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.")
     private String moduleClassNames;
     @XmlAttribute
     @Metadata(label = "advanced",
               description = "To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.")
     private String moduleRefs;
     @XmlAttribute
-    @Metadata(description = "Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+    @Metadata(description = "Set of features to enable on the Jackson ObjectMapper."
                             + " Multiple features can be separated by comma.")
     private String enableFeatures;
     @XmlAttribute
-    @Metadata(description = "Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper."
+    @Metadata(description = "Set of features to disable on the Jackson ObjectMapper."
                             + " Multiple features can be separated by comma.")
     private String disableFeatures;
     @XmlAttribute
@@ -700,8 +700,8 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class
-         * names. Multiple classes can be separated by comma.
+         * To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated
+         * by comma.
          */
         public Builder moduleClassNames(String moduleClassNames) {
             this.moduleClassNames = moduleClassNames;

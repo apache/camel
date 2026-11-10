@@ -32,8 +32,6 @@ import java.util.jar.JarFile;
 
 import javax.inject.Inject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.maven.packaging.generics.PackagePluginUtils;
 import org.apache.camel.spi.annotations.InfraService;
 import org.apache.camel.tooling.util.FileUtil;
@@ -50,6 +48,10 @@ import org.codehaus.plexus.build.BuildContext;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.DotName;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Gather all classes annotated with @InfraService and create a JSON file containing all the metadata.
@@ -145,8 +147,9 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults()
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .build();
             String modelsAsJson = mapper.writeValueAsString(models);
 
             if (generatedResourcesOutputDir == null) {
@@ -156,7 +159,7 @@ public class CamelTestInfraGenerateMetadataMojo extends AbstractGeneratorMojo {
             FileUtil.updateFile(generatedResourcesOutputDir.toPath()
                     .resolve("META-INF")
                     .resolve("metadata.json"), modelsAsJson);
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new RuntimeException(e);
         }
     }

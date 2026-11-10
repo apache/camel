@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.chatscript;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * The ChatScript producer.
  */
 public class ChatScriptProducer extends DefaultProducer {
     private ChatScriptEndpoint endpoint;
-    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 
     public ChatScriptProducer(ChatScriptEndpoint endpoint) {
         super(endpoint);

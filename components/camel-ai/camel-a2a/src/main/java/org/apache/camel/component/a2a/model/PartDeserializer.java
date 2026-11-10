@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.a2a.model;
 
-import java.io.IOException;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.RuntimeCamelException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ValueDeserializer;
 
 /**
  * Deserializes A2A message parts using explicit {@code kind} values when present and legacy field-based detection for
@@ -32,25 +30,24 @@ import org.apache.camel.RuntimeCamelException;
  *
  * @since 4.21
  */
-public final class PartDeserializer extends JsonDeserializer<Part<?>> {
+public final class PartDeserializer extends ValueDeserializer<Part<?>> {
 
     @Override
-    public Part<?> deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-        ObjectCodec codec = parser.getCodec();
-        JsonNode node = parser.getCodec().readTree(parser);
+    public Part<?> deserialize(JsonParser parser, DeserializationContext context) {
+        JsonNode node = context.readTree(parser);
         String kind = resolveKind(node);
         if (kind == null) {
             throw new RuntimeCamelException("Cannot determine A2A part kind");
         }
         return switch (kind) {
-            case "text" -> new TextPart(textValue(node, "text"), mapValue(codec, node.get("metadata")));
-            case "data" -> new DataPart(objectValue(codec, node.get("data")), mapValue(codec, node.get("metadata")));
+            case "text" -> new TextPart(textValue(node, "text"), mapValue(context, node.get("metadata")));
+            case "data" -> new DataPart(objectValue(context, node.get("data")), mapValue(context, node.get("metadata")));
             case "file" -> new FilePart(
                     textValue(node, "raw"),
                     textValue(node, "url"),
                     textValue(node, "mediaType"),
                     textValue(node, "filename"),
-                    mapValue(codec, node.get("metadata")));
+                    mapValue(context, node.get("metadata")));
             default -> throw new RuntimeCamelException("Cannot determine A2A part kind");
         };
     }
@@ -58,10 +55,10 @@ public final class PartDeserializer extends JsonDeserializer<Part<?>> {
     private static String resolveKind(JsonNode node) {
         JsonNode kind = node.get("kind");
         validateOneOfContent(node);
-        if (kind != null && kind.isTextual()) {
-            return switch (kind.asText()) {
-                case "text", "data", "file" -> kind.asText();
-                default -> throw new RuntimeCamelException("Unsupported A2A part kind: " + kind.asText());
+        if (kind != null && kind.isString()) {
+            return switch (kind.asString()) {
+                case "text", "data", "file" -> kind.asString();
+                default -> throw new RuntimeCamelException("Unsupported A2A part kind: " + kind.asString());
             };
         }
         if (node.has("text")) {
@@ -94,15 +91,19 @@ public final class PartDeserializer extends JsonDeserializer<Part<?>> {
 
     private static String textValue(JsonNode node, String fieldName) {
         JsonNode value = node.get(fieldName);
-        return value != null && !value.isNull() ? value.asText() : null;
+        if (value == null || value.isNull()) {
+            return null;
+        }
+        // a container in a text field reads as empty text, asString() would reject it
+        return value.isContainer() ? "" : value.asString();
     }
 
-    private static Object objectValue(ObjectCodec codec, JsonNode node) throws IOException {
-        return node != null && !node.isNull() ? codec.treeToValue(node, Object.class) : null;
+    private static Object objectValue(DeserializationContext context, JsonNode node) {
+        return node != null && !node.isNull() ? context.readTreeAsValue(node, Object.class) : null;
     }
 
     @SuppressWarnings("unchecked")
-    private static Map<String, Object> mapValue(ObjectCodec codec, JsonNode node) throws IOException {
-        return node != null && !node.isNull() ? codec.treeToValue(node, Map.class) : null;
+    private static Map<String, Object> mapValue(DeserializationContext context, JsonNode node) {
+        return node != null && !node.isNull() ? context.readTreeAsValue(node, Map.class) : null;
     }
 }

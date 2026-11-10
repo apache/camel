@@ -183,7 +183,7 @@ class CatalogDocTest extends CamelCommandBaseTestSupport {
         CatalogDoc command = createCommand("jackson", false);
         Assertions.assertEquals(0, command.doCall());
         Assertions.assertTrue(printer.getOutput().startsWith("Dataformat Name: jackson"), printer.getOutput());
-        Assertions.assertTrue(printer.getOutput().contains("<artifactId>camel-jackson</artifactId>"),
+        Assertions.assertTrue(printer.getOutput().contains("<artifactId>camel-jackson3</artifactId>"),
                 printer.getOutput());
 
         printer = new StringPrinter();

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.secretsmanager;
 
+import org.apache.camel.RuntimeCamelException;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -23,6 +24,7 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueReques
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -56,5 +58,28 @@ public class SecretsManagerPropertiesFunctionTest {
 
         SecretsManagerPropertiesFunction function = new SecretsManagerPropertiesFunction(client);
         assertEquals("value", function.apply("test"));
+    }
+
+    private SecretsManagerPropertiesFunction functionReturning(String secret) {
+        when(client.getSecretValue(any(GetSecretValueRequest.class))).thenReturn(GetSecretValueResponse.builder()
+                .secretString(secret).build());
+        return new SecretsManagerPropertiesFunction(client);
+    }
+
+    @Test
+    public void contentAfterTheFirstJsonValueIsIgnored() {
+        assertEquals("camel", functionReturning("{\"username\":\"camel\"} trailing").apply("test#username"));
+    }
+
+    @Test
+    public void aFieldOfASecretThatIsNotJsonFailsEvenWithADefault() {
+        SecretsManagerPropertiesFunction function = functionReturning("not-json");
+        assertThrows(RuntimeCamelException.class, () -> function.apply("test#username"));
+        assertThrows(RuntimeCamelException.class, () -> function.apply("test#username:fallback"));
+    }
+
+    @Test
+    public void aFieldThatIsNotAStringGivesTheDefault() {
+        assertEquals("fallback", functionReturning("{\"port\":5432}").apply("test#port:fallback"));
     }
 }

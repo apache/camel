@@ -43,8 +43,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -52,6 +50,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Replacement for the npm/Yarn/Gulp pipeline that previously ran in {@code docs/} to prepare the Antora source tree.
@@ -116,7 +118,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
     private static final Pattern GROUP = Pattern.compile(":group: (.*)");
     private static final Pattern EXAMPLES_INCLUDE = Pattern.compile("include::\\{examplesdir\\}/([^\\[]+)");
 
-    private static final ObjectMapper JSON = new ObjectMapper();
+    private static final ObjectMapper JSON = JsonMapper.builderWithJackson2Defaults().build();
 
     /** Whether we already logged the Windows symlink-fallback warning. */
     private boolean copyFallbackWarned;
@@ -363,7 +365,7 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
         }
     }
 
-    private boolean matchesJsonFilter(Path file, String rootKey) {
+    boolean matchesJsonFilter(Path file, String rootKey) {
         try {
             JsonNode tree = JSON.readTree(file.toFile());
             if ("eip".equals(rootKey)) {
@@ -372,10 +374,10 @@ public class PrepareDocSymlinksMojo extends AbstractMojo {
                     return false;
                 }
                 JsonNode label = model.path("label");
-                return label.isTextual() && label.asText().contains("eip");
+                return label.isString() && label.asString().contains("eip");
             }
             return tree.has(rootKey);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             // gulp simply skipped unparseable / unreadable files; do the same, but log at warn
             // so a corrupt component JSON is at least diagnosable from output.
             getLog().warn("⚠️ Skipping JSON file (unreadable or unparseable): " + file + " (" + e.getMessage() + ")");

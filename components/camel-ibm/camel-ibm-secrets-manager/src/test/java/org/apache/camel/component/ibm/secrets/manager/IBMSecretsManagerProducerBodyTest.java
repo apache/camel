@@ -35,10 +35,6 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ibm.cloud.sdk.core.security.NoAuthAuthenticator;
 import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.SecretsManager;
 import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.model.Secret;
@@ -56,6 +52,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -69,7 +70,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
     private static final String SECRETS_PATH = "/api/v2/secrets";
 
@@ -119,7 +120,7 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
             }
         } else if ("POST".equals(method) && path.equals(SECRETS_PATH)) {
             // create a secret
-            String type = MAPPER.readTree(request).path("secret_type").asText();
+            String type = MAPPER.readTree(request).path("secret_type").asString();
             response = secret("new-secret-id", type, "{}");
             status = 201;
         } else if ("POST".equals(method) && path.startsWith(SECRETS_PATH + "/") && path.endsWith("/versions")) {
@@ -250,7 +251,7 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
 
         assertEquals("new-secret-id", result.getMessage().getBody());
         JsonNode request = request("POST " + SECRETS_PATH);
-        assertEquals("kv", request.get("secret_type").asText());
+        assertEquals("kv", request.get("secret_type").asString());
         assertEquals(MAPPER.readTree("{\"username\": \"admin\", \"password\": \"s3cr3t\", \"port\": 5432}"),
                 request.get("data"));
     }
@@ -352,16 +353,16 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
     @Test
     void createArbitrarySecretReadsTextBytesAndNumbersAsText() throws Exception {
         createArbitrarySecret("s3cr3t");
-        assertEquals("s3cr3t", request("POST " + SECRETS_PATH).get("payload").asText());
+        assertEquals("s3cr3t", request("POST " + SECRETS_PATH).get("payload").asString());
 
         createArbitrarySecret("s3cr3t-bytes".getBytes(StandardCharsets.UTF_8));
-        assertEquals("s3cr3t-bytes", request("POST " + SECRETS_PATH).get("payload").asText());
+        assertEquals("s3cr3t-bytes", request("POST " + SECRETS_PATH).get("payload").asString());
 
         createArbitrarySecret(new ByteArrayInputStream("s3cr3t".getBytes(StandardCharsets.UTF_8)));
-        assertEquals("s3cr3t", request("POST " + SECRETS_PATH).get("payload").asText());
+        assertEquals("s3cr3t", request("POST " + SECRETS_PATH).get("payload").asString());
 
         createArbitrarySecret(1234);
-        assertEquals("1234", request("POST " + SECRETS_PATH).get("payload").asText());
+        assertEquals("1234", request("POST " + SECRETS_PATH).get("payload").asString());
     }
 
     @Test
@@ -372,17 +373,17 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
         assertTrue(xml.contains("<user>admin</user>"), xml);
 
         createArbitrarySecret(document);
-        assertEquals(xml, request("POST " + SECRETS_PATH).get("payload").asText(), "the XML, not a JSON string");
+        assertEquals(xml, request("POST " + SECRETS_PATH).get("payload").asString(), "the XML, not a JSON string");
 
         createArbitrarySecret(new DOMSource(document));
-        assertEquals(xml, request("POST " + SECRETS_PATH).get("payload").asText(), "the XML, not a JSON string");
+        assertEquals(xml, request("POST " + SECRETS_PATH).get("payload").asString(), "the XML, not a JSON string");
     }
 
     @Test
     void createArbitrarySecretReadsAByteBufferAsText() throws Exception {
         createArbitrarySecret(ByteBuffer.wrap("s3cr3t".getBytes(StandardCharsets.UTF_8)));
 
-        assertEquals("s3cr3t", request("POST " + SECRETS_PATH).get("payload").asText(), "the text, not Base64");
+        assertEquals("s3cr3t", request("POST " + SECRETS_PATH).get("payload").asString(), "the text, not Base64");
     }
 
     @Test
@@ -391,7 +392,7 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
 
         createArbitrarySecret(uuid);
 
-        assertEquals(uuid.toString(), request("POST " + SECRETS_PATH).get("payload").asText(), "the text, not quoted");
+        assertEquals(uuid.toString(), request("POST " + SECRETS_PATH).get("payload").asString(), "the text, not quoted");
     }
 
     @Test
@@ -461,10 +462,10 @@ class IBMSecretsManagerProducerBodyTest extends CamelTestSupport {
      * The payload of the secret or version the request creates, read as JSON.
      */
     private static JsonNode payloadOf(String key) throws IOException {
-        String payload = request(key).get("payload").asText();
+        String payload = request(key).get("payload").asString();
         try {
             return MAPPER.readTree(payload);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new AssertionError("the payload is not JSON: " + payload, e);
         }
     }

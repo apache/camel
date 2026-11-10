@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.a2a.protocol;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.a2a.operation.A2AOperations;
 import org.apache.camel.component.a2a.util.A2AJsonMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * RESTful HTTP implementation of the A2A protocol. Maps A2A operations to HTTP methods and paths using the A2A v1.0

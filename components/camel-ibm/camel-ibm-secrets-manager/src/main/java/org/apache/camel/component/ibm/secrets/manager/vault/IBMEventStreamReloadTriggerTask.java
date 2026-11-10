@@ -25,10 +25,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -50,6 +46,10 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
 
 /**
  * Period task which checks if IBM secrets has been updated and can trigger Camel to be reloaded.
@@ -173,7 +173,7 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
     public void run() {
 
         lastCheckTime = Instant.now();
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
 
         while (isRunAllowed()) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeout));
@@ -194,20 +194,20 @@ public class IBMEventStreamReloadTriggerTask extends ServiceSupport implements C
 
     }
 
-    private void onRecord(ObjectMapper mapper, ConsumerRecord<String, String> record) throws JsonProcessingException {
+    private void onRecord(ObjectMapper mapper, ConsumerRecord<String, String> record) {
         boolean triggerReloading = false;
         JsonNode recordJson = mapper.readTree(record.value());
         JsonNode payload = recordJson.get("data");
         if (payload != null) {
-            String secretType = payload.get("event_type").asText();
+            String secretType = payload.get("event_type").asString("");
             if (secretType != null) {
                 if (secretType.equalsIgnoreCase(IBM_SECRETS_MANAGER_SECRET_ROTATED_EVENT)) {
                     ArrayNode secretsRotated = (ArrayNode) payload.get("secrets");
                     for (JsonNode secret : secretsRotated) {
                         if (secret != null) {
-                            String name = secret.get("secret_name").asText();
+                            String name = secret.get("secret_name").asString("");
                             if (matchSecret(name)) {
-                                updates.put(name, Instant.parse(secret.get("event_time").asText()));
+                                updates.put(name, Instant.parse(secret.get("event_time").asString("")));
                                 if (isReloadEnabled()) {
                                     LOG.info("Update for IBM secret: {} detected, triggering CamelContext reload", name);
                                     triggerReloading = true;

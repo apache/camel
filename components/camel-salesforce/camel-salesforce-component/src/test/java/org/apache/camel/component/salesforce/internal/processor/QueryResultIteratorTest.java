@@ -26,7 +26,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.dto.generated.Account;
@@ -34,6 +33,8 @@ import org.apache.camel.component.salesforce.dto.generated.QueryRecordsAccount;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.junit.jupiter.api.Test;
 import org.mockito.stubbing.Answer;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.mock;
 
 class QueryResultIteratorTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder().build();
     private final RestClient restClient = mock(RestClient.class);
     private final Map<String, List<String>> headers = Collections.emptyMap();
 

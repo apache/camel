@@ -267,7 +267,7 @@ turn that on, on the Jackson data format as shown:
 ._Java-only: Java programmatic data format configuration_
 [source,java]
 ----
-JacksonDataFormat format = new JacksonDataFormat();
+JacksonXMLDataFormat format = new JacksonXMLDataFormat();
 format.setAllowJmsType(true);
 ----
 
@@ -375,17 +375,23 @@ from the following enum classes:
 * `tools.jackson.databind.SerializationFeature`
 * `tools.jackson.databind.DeserializationFeature`
 * `tools.jackson.databind.MapperFeature`
-* `tools.jackson.dataformat.xml.deser.FromXmlParser.Feature`
+* `tools.jackson.databind.cfg.DateTimeFeature`
+* `tools.jackson.databind.cfg.EnumFeature`
+* `tools.jackson.databind.cfg.JsonNodeFeature`
+* `tools.jackson.core.StreamReadFeature`
+* `tools.jackson.core.StreamWriteFeature`
+* `tools.jackson.dataformat.xml.XmlReadFeature`
+* `tools.jackson.dataformat.xml.XmlWriteFeature`
 
 To enable a feature, use the enableFeatures options instead.
 
-From Java code, you can use the type safe methods from camel-jackson
+From Java code, you can use the type safe methods from camel-jackson3xml
 module:
 
 ._Java-only: Java programmatic data format configuration_
 [source,java]
 ----
-JacksonDataFormat df = new JacksonDataFormat(MyPojo.class);
+JacksonXMLDataFormat df = new JacksonXMLDataFormat(MyPojo.class);
 df.disableFeature(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 df.disableFeature(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);
 ----

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.infra.openai.mock;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 /**
  * Context object that parses and provides easy access to request information.
@@ -37,7 +37,7 @@ public class RequestContext {
 
         // Check if the last message has a tool role
         JsonNode lastMessage = messagesNode.get(messagesNode.size() - 1);
-        String role = lastMessage.path("role").asText();
+        String role = lastMessage.path("role").asString();
         return "tool".equals(role);
     }
 
@@ -49,7 +49,7 @@ public class RequestContext {
         for (int i = messagesNode.size(); i > 0; i--) {
             JsonNode messageNode = messagesNode.get(i - 1);
 
-            String role = messageNode.path("role").asText();
+            String role = messageNode.path("role").asString();
             if ("user".equals(role)) {
                 return extractContentText(messageNode.path("content"));
             }
@@ -63,19 +63,19 @@ public class RequestContext {
      * "Hello" - Array of content parts: [{"type": "text", "text": "Hello"}]
      */
     private String extractContentText(JsonNode contentNode) {
-        if (contentNode.isTextual()) {
-            return contentNode.asText();
+        if (contentNode.isString()) {
+            return contentNode.asString();
         }
 
         if (contentNode.isArray()) {
             StringBuilder textBuilder = new StringBuilder();
             for (JsonNode part : contentNode) {
-                String type = part.path("type").asText();
+                String type = part.path("type").asString();
                 if ("text".equals(type) || "input_text".equals(type)) {
                     if (textBuilder.length() > 0) {
                         textBuilder.append(" ");
                     }
-                    textBuilder.append(part.path("text").asText());
+                    textBuilder.append(part.path("text").asString());
                 }
             }
             return textBuilder.length() > 0 ? textBuilder.toString() : null;
@@ -89,8 +89,8 @@ public class RequestContext {
         if (input == null || input.isNull()) {
             return getLastUserMessage();
         }
-        if (input.isTextual()) {
-            return input.asText();
+        if (input.isString()) {
+            return input.asString();
         }
         if (input.isArray()) {
             for (int i = input.size() - 1; i >= 0; i--) {
@@ -102,7 +102,7 @@ public class RequestContext {
                     }
                 }
                 if (item.has("text")) {
-                    return item.get("text").asText();
+                    return item.get("text").asString("");
                 }
             }
         }

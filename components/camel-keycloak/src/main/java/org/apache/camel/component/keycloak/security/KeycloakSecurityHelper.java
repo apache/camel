@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 public final class KeycloakSecurityHelper {
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakSecurityHelper.class);
+    // Jackson 2: the Keycloak token classes carry Jackson 2 serializers, such as a single audience written as a string
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private KeycloakSecurityHelper() {

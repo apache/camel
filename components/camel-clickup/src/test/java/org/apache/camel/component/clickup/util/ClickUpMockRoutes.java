@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -28,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.awaitility.Awaitility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.json.JsonMapper;
 
 public class ClickUpMockRoutes extends RouteBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(ClickUpMockRoutes.class);
@@ -106,7 +106,8 @@ public class ClickUpMockRoutes extends RouteBuilder {
                         @SuppressWarnings("unchecked")
                         final T body
                                 = returnType != String.class
-                                        ? (T) new ObjectMapper().readValue(rawBody, returnType) : (T) rawBody;
+                                        ? (T) JsonMapper.builder().build().readValue(rawBody, returnType)
+                                        : (T) rawBody;
                         recordedMessages.add(body);
 
                         final byte[] bytes = responseBodyProvider.provide().getBytes(StandardCharsets.UTF_8);

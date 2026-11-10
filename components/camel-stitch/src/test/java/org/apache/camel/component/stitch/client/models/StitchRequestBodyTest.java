@@ -21,9 +21,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class StitchRequestBodyTest {
 
     @Test
-    public void testNormalRequestBodyToJson() throws JsonProcessingException {
+    public void testNormalRequestBodyToJson() {
         final StitchMessage message1 = StitchMessage.builder()
                 .withData("id", 2)
                 .withData("name", "Jake")
@@ -79,7 +78,7 @@ class StitchRequestBodyTest {
                   + "{\"id\":2,\"name\":\"Jake\",\"age\":6,\"has_magic\":true,\"modified_at\":\"2020-01-13T21:25:03+0000\"}},{\"action\":\"upsert\",\"sequence\":1565838645,\"data\":{\"id\":3,"
                   + "\"name\":\"Bubblegum\",\"age\":17,\"has_magic\":true,\"modified_at\":\"2020-01-14T13:34:25+0000\"}}],\"key_names\":[\"id\"]}";
 
-        assertEquals(expectedJson, new ObjectMapper().writeValueAsString(body.toMap()));
+        assertEquals(expectedJson, JsonMapper.builder().build().writeValueAsString(body.toMap()));
     }
 
     @Test

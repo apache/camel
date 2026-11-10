@@ -16,11 +16,22 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatch;
+import org.apache.camel.component.salesforce.api.dto.composite.SObjectBatchResponse;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 public class DefaultCompositeApiClientTest {
 
@@ -48,5 +59,15 @@ public class DefaultCompositeApiClientTest {
         final SObjectBatch batch = new SObjectBatch(V34_0);
 
         DefaultCompositeApiClient.checkCompositeBatchVersion(V34_0, batch.getVersion());
+    }
+
+    @Test
+    public void shouldNotFailOnUnreadableResponse() throws SalesforceException {
+        final DefaultCompositeApiClient client = new DefaultCompositeApiClient(
+                new SalesforceEndpointConfig(), V35_0, mock(SalesforceSession.class), mock(SalesforceHttpClient.class),
+                new SalesforceLoginConfig());
+
+        assertEquals(Optional.empty(), client.tryToReadResponse(SObjectBatchResponse.class,
+                new ByteArrayInputStream("not json".getBytes(StandardCharsets.UTF_8))));
     }
 }

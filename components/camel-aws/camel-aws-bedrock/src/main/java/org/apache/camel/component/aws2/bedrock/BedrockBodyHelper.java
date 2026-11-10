@@ -18,18 +18,19 @@ package org.apache.camel.component.aws2.bedrock;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Helper for the message body of the Bedrock producers.
  */
 public final class BedrockBodyHelper {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private BedrockBodyHelper() {
     }
@@ -43,7 +44,7 @@ public final class BedrockBodyHelper {
         if (body instanceof Map || body instanceof JsonNode) {
             try {
                 return MAPPER.writeValueAsString(body);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new InvalidPayloadException(exchange, String.class, exchange.getMessage(), e);
             }
         }

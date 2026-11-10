@@ -18,26 +18,31 @@ package org.apache.camel.component.telegram.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.net.ssl.SSLSession;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.telegram.TelegramException;
+import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -72,13 +77,58 @@ class TelegramServiceRestBotAPIAdapterErrorTest extends TelegramTestSupport {
     @Test
     void asyncErrorDoesNotShowTheRequestUri() {
         TelegramAsyncHandler handler = new TelegramAsyncHandler(
-                "http://localhost:" + port.getPort() + "/botmock-token/sendMessage", MessageResult.class, new ObjectMapper(),
-                new DefaultExchange(context()));
+                "http://localhost:" + port.getPort() + "/botmock-token/sendMessage", MessageResult.class,
+                JsonMapper.builder().build(), new DefaultExchange(context()));
 
         RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
                 () -> handler.handleCompressedResponse(response(400, "{\"ok\":false}")));
 
         assertEquals("POST sendMessage responded: 400{\"ok\":false}", e.getMessage());
+    }
+
+    @Test
+    void asyncResponseThatCannotBeParsedFailsWithRuntimeCamelException() {
+        TelegramAsyncHandler handler = new TelegramAsyncHandler(
+                "http://localhost:" + port.getPort() + "/botmock-token/sendMessage", MessageResult.class,
+                JsonMapper.builder().build(), new DefaultExchange(context()));
+
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                () -> handler.handleCompressedResponse(response(200, "not json")));
+
+        assertTrue(e.getMessage().startsWith("Could not parse the response from POST sendMessage"), e.getMessage());
+    }
+
+    @Test
+    void syncResponseThatCannotBeParsedFailsWithRuntimeCamelException() throws Exception {
+        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        server.createContext("/", exchange -> {
+            byte[] body = "not json".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            exchange.getResponseBody().write(body);
+            exchange.close();
+        });
+        server.start();
+        try {
+            TelegramServiceRestBotAPIAdapter adapter = new TelegramServiceRestBotAPIAdapter(
+                    HttpClient.newHttpClient(), "http://localhost:" + server.getAddress().getPort(), "mock-token", 1024);
+
+            RuntimeCamelException e = assertThrows(RuntimeCamelException.class,
+                    () -> adapter.setWebhook("http://my-domain.com/my-test"));
+
+            assertTrue(e.getMessage().startsWith("Could not parse the response from GET setWebhook"), e.getMessage());
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void timestampsUseTheSerializersOfTheModel() {
+        ObjectMapper mapper = JsonMapper.builder().build();
+
+        IncomingMessage message = mapper.readValue("{\"date\":1700000000}", IncomingMessage.class);
+
+        assertEquals(Instant.ofEpochSecond(1700000000L), message.getDate());
+        assertTrue(mapper.writeValueAsString(message).contains("\"date\":1700000000"));
     }
 
     private static HttpResponse<InputStream> response(int statusCode, String body) {

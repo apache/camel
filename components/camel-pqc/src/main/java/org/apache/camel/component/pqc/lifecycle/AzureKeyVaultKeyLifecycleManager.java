@@ -35,9 +35,10 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.azure.security.keyvault.secrets.models.SecretProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Azure Key Vault-based implementation of KeyLifecycleManager. Stores PQC keys in Azure Key Vault as secrets, since Key
@@ -75,7 +76,7 @@ public class AzureKeyVaultKeyLifecycleManager implements KeyLifecycleManager {
     private final String keyPrefix;
     private final ConcurrentHashMap<String, KeyPair> keyCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, KeyMetadata> metadataCache = new ConcurrentHashMap<>();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     /**
      * Create an AzureKeyVaultKeyLifecycleManager with an existing SecretClient

@@ -20,12 +20,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.a2a.A2AConstants;
 import org.apache.camel.component.a2a.model.StreamResponse;
 import org.apache.camel.component.a2a.model.TaskState;
 import org.apache.camel.component.a2a.operation.A2AOperations;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class JsonRpcProtocolTest {
 
     private final JsonRpcProtocol protocol = new JsonRpcProtocol();
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
 
     @Test
     void wrapRequestAddsJsonRpcEnvelope() throws Exception {

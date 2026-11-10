@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
@@ -43,6 +40,10 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Producer for Google Firestore operations.
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
 public class GoogleFirestoreProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleFirestoreProducer.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private final GoogleFirestoreEndpoint endpoint;
 
@@ -344,7 +345,7 @@ public class GoogleFirestoreProducer extends DefaultProducer {
      * @throws InvalidPayloadException if the body cannot be converted to a Map
      */
     @SuppressWarnings("unchecked")
-    private Map<String, Object> getDocumentData(Exchange exchange) throws InvalidPayloadException {
+    Map<String, Object> getDocumentData(Exchange exchange) throws InvalidPayloadException {
         Object body = exchange.getIn().getBody();
 
         if (body == null) {
@@ -363,7 +364,7 @@ public class GoogleFirestoreProducer extends DefaultProducer {
                 try {
                     return OBJECT_MAPPER.readValue(trimmed, new TypeReference<HashMap<String, Object>>() {
                     });
-                } catch (JsonProcessingException e) {
+                } catch (JacksonException e) {
                     throw new InvalidPayloadException(exchange, Map.class, exchange.getIn(), e);
                 }
             }

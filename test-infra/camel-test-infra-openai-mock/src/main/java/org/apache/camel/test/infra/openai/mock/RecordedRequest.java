@@ -16,11 +16,10 @@
  */
 package org.apache.camel.test.infra.openai.mock;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A request received by the mock server, recorded so that a test can assert on what was sent after the call returns, on
@@ -32,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public record RecordedRequest(String method, String path, String body) {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     /**
      * Parses the request body as JSON.
@@ -40,8 +39,8 @@ public record RecordedRequest(String method, String path, String body) {
     public JsonNode bodyAsJson() {
         try {
             return OBJECT_MAPPER.readTree(body);
-        } catch (IOException e) {
-            throw new UncheckedIOException("The request body is not JSON: " + body, e);
+        } catch (JacksonException e) {
+            throw new IllegalArgumentException("The request body is not JSON: " + body, e);
         }
     }
 }

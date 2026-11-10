@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -63,6 +60,10 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Period task which checks if AWS secrets has been updated and can trigger Camel to be reloaded.
@@ -94,7 +95,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private static final String CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE = "CAMEL_AWS_VAULT_URI_ENDPOINT_OVERRIDE";
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
 
     private static final String SECRETSMANAGER_UPDATE_EVENT = "PutSecretValue";
@@ -409,20 +410,21 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                             JsonNode event = MAPPER.readTree(message.body());
                             JsonNode innerDetail = event.get("detail");
                             if (ObjectHelper.isNotEmpty(innerDetail)
-                                    && innerDetail.get("eventSource").asText().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)
-                                    && (innerDetail.get("eventName").asText().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
-                                            || innerDetail.get("eventName").asText()
+                                    && innerDetail.get("eventSource").asString("")
+                                            .equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)
+                                    && (innerDetail.get("eventName").asString("").equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)
+                                            || innerDetail.get("eventName").asString("")
                                                     .equalsIgnoreCase(SECRETSMANAGER_UPDATE_SECRET_EVENT))) {
-                                String name = innerDetail.get("requestParameters").get("secretId").asText();
+                                String name = innerDetail.get("requestParameters").get("secretId").asString("");
                                 if (matchSecret(name)) {
-                                    updates.put(name, Instant.parse(innerDetail.get("eventTime").asText()));
+                                    updates.put(name, Instant.parse(innerDetail.get("eventTime").asString("")));
                                     if (isReloadEnabled()) {
                                         LOG.info("Update for AWS secret: {} detected, triggering CamelContext reload", name);
                                         triggerReloading = true;
                                     }
                                 }
                             }
-                        } catch (JsonProcessingException e) {
+                        } catch (JacksonException e) {
                             LOG.warn("Unable to parse SQS message body, discarding message: {}", e.getMessage());
                         }
                         // Always delete the examined message so the queue is drained rather than redelivering it

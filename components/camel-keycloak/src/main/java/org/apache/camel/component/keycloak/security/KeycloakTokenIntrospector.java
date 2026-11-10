@@ -21,7 +21,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.keycloak.security.cache.TokenCache;
 import org.apache.camel.component.keycloak.security.cache.TokenCacheFactory;
 import org.apache.camel.component.keycloak.security.cache.TokenCacheType;
@@ -37,6 +36,8 @@ import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Token introspection client for Keycloak OAuth 2.0 Token Introspection (RFC 7662). This class handles communication
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class KeycloakTokenIntrospector {
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakTokenIntrospector.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private final String serverUrl;
     private final String realm;

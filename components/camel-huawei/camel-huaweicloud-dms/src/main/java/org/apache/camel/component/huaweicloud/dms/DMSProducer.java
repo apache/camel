@@ -19,11 +19,6 @@ package org.apache.camel.component.huaweicloud.dms;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonLocation;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.huaweicloud.dms.constants.DMSConstants;
@@ -44,6 +39,11 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.TokenStreamLocation;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.UnrecognizedPropertyException;
+import tools.jackson.databind.json.JsonMapper;
 
 public class DMSProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(DMSProducer.class);
@@ -59,7 +59,7 @@ public class DMSProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper.builderWithJackson2Defaults().build();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -101,11 +101,10 @@ public class DMSProducer extends DefaultProducer {
      *
      * @param  exchange
      * @param  clientConfigurations
-     * @throws JsonProcessingException
      * @throws InvalidPayloadException if the body cannot be read as text
      */
     private void createInstance(Exchange exchange, ClientConfigurations clientConfigurations)
-            throws JsonProcessingException, InvalidPayloadException {
+            throws InvalidPayloadException {
         CreateInstanceRequestBody body = null;
 
         // checking if user inputted exchange body containing instance information. Body must be a CreateInstanceRequestBody
@@ -227,11 +226,10 @@ public class DMSProducer extends DefaultProducer {
     /**
      * Perform list instances operation
      *
-     * @param  exchange
-     * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @param exchange
+     * @param clientConfigurations
      */
-    private void listInstances(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void listInstances(Exchange exchange, ClientConfigurations clientConfigurations) {
         ListInstancesRequest request = new ListInstancesRequest()
                 .withEngine(clientConfigurations.getEngine());
         ListInstancesResponse response = dmsClient.listInstances(request);
@@ -241,11 +239,10 @@ public class DMSProducer extends DefaultProducer {
     /**
      * Perform query instance operation
      *
-     * @param  exchange
-     * @param  clientConfigurations
-     * @throws JsonProcessingException
+     * @param exchange
+     * @param clientConfigurations
      */
-    private void queryInstance(Exchange exchange, ClientConfigurations clientConfigurations) throws JsonProcessingException {
+    private void queryInstance(Exchange exchange, ClientConfigurations clientConfigurations) {
         // check for instance id, which is mandatory to query an instance
         if (ObjectHelper.isEmpty(clientConfigurations.getInstanceId())) {
             throw new IllegalArgumentException("Instance id is mandatory to query an instance");
@@ -305,9 +302,9 @@ public class DMSProducer extends DefaultProducer {
         if (exchangeBody instanceof Map) {
             try {
                 return mapper.convertValue(exchangeBody, type);
-            } catch (IllegalArgumentException e) {
-                // its message is the one of Jackson, which can quote a value: its cause tells where the Map is wrong
-                throw new IllegalArgumentException(invalidBody + jsonErrorDetail(e.getCause()) + hint);
+            } catch (JacksonException e) {
+                // its message is the one of Jackson, which can quote a value
+                throw new IllegalArgumentException(invalidBody + jsonErrorDetail(e) + hint);
             }
         }
         String strBody = exchange.getMessage().getMandatoryBody(String.class);
@@ -316,7 +313,7 @@ public class DMSProducer extends DefaultProducer {
         }
         try {
             return mapper.readValue(strBody, type);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException(invalidBody + jsonErrorDetail(e) + hint);
         }
     }
@@ -326,11 +323,8 @@ public class DMSProducer extends DefaultProducer {
      * value for field storage_space at line 1, column 29). It names the fields only: the message of Jackson can quote a
      * value of the body, such as a password.
      */
-    private static String jsonErrorDetail(Throwable e) {
-        if (!(e instanceof JsonProcessingException jpe)) {
-            return "";
-        }
-        String path = e instanceof JsonMappingException jme ? fieldPath(jme) : "";
+    private static String jsonErrorDetail(JacksonException e) {
+        String path = fieldPath(e);
         String detail;
         if (e instanceof UnrecognizedPropertyException) {
             detail = "unknown field " + path;
@@ -340,7 +334,7 @@ public class DMSProducer extends DefaultProducer {
             detail = "error";
         }
         // a Map has no location
-        JsonLocation location = jpe.getLocation();
+        TokenStreamLocation location = e.getLocation();
         if (location != null && location.getLineNr() > 0) {
             detail += " at line " + location.getLineNr() + ", column " + location.getColumnNr();
         } else if (path.isEmpty()) {
@@ -352,14 +346,14 @@ public class DMSProducer extends DefaultProducer {
     /**
      * The field names and the array indexes of the path of a mapping error, such as available_zones[1].
      */
-    private static String fieldPath(JsonMappingException e) {
+    private static String fieldPath(JacksonException e) {
         StringBuilder path = new StringBuilder();
-        for (JsonMappingException.Reference reference : e.getPath()) {
-            if (reference.getFieldName() != null) {
+        for (JacksonException.Reference reference : e.getPath()) {
+            if (reference.getPropertyName() != null) {
                 if (!path.isEmpty()) {
                     path.append('.');
                 }
-                path.append(reference.getFieldName());
+                path.append(reference.getPropertyName());
             } else if (reference.getIndex() >= 0) {
                 path.append('[').append(reference.getIndex()).append(']');
             }

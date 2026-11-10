@@ -16,9 +16,9 @@
  */
 package org.apache.camel.maven.dsl.yaml.support;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.palantir.javapoet.AnnotationSpec;
 import org.apache.camel.tooling.util.Strings;
+import tools.jackson.databind.JsonNode;
 
 import static org.apache.camel.maven.dsl.yaml.GenerateYamlSupportMojo.CN_YAML_PROPERTY;
 
@@ -60,11 +60,11 @@ public final class YamlProperties {
             if (node.isMissingNode()) {
                 return this;
             }
-            if (!node.isTextual()) {
+            if (!node.isString()) {
                 return this;
             }
 
-            return withDisplayName(node.asText());
+            return withDisplayName(node.asString());
         }
 
         public AnnotationBuilder withDescription(String description) {
@@ -79,11 +79,11 @@ public final class YamlProperties {
             if (node.isMissingNode()) {
                 return this;
             }
-            if (!node.isTextual()) {
+            if (!node.isString()) {
                 return this;
             }
 
-            return withDescription(node.asText());
+            return withDescription(node.asString());
         }
 
         public AnnotationBuilder withType(String type) {
@@ -123,11 +123,11 @@ public final class YamlProperties {
             if (node.isMissingNode()) {
                 return this;
             }
-            if (!node.isTextual() && !node.isNumber() && !node.isBoolean()) {
+            if (!node.isString() && !node.isNumber() && !node.isBoolean()) {
                 return this;
             }
 
-            return withDefaultValue(node.asText());
+            return withDefaultValue(node.asString());
         }
 
         public AnnotationBuilder withIsSecret(boolean secret) {
@@ -142,7 +142,7 @@ public final class YamlProperties {
             if (node.isMissingNode()) {
                 return this;
             }
-            if (!node.isTextual() && !node.isBoolean()) {
+            if (!node.isString() && !node.isBoolean()) {
                 return this;
             }
 

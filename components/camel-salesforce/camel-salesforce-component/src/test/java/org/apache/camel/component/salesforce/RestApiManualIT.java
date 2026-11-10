@@ -30,7 +30,6 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -76,6 +75,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_NAME;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.EVENT_SCHEMA_ID;
@@ -524,7 +525,7 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
     public void testUploadBlob() throws Exception {
         final InputStream inputStream = this.getClass().getResourceAsStream("/camel-test-doc.pdf");
         final byte[] bytes = inputStream.readAllBytes();
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder().build();
         String enc = mapper.convertValue(bytes, String.class);
         ContentVersion cv = new ContentVersion();
         cv.setVersionData(enc);
@@ -599,7 +600,7 @@ public class RestApiManualIT extends AbstractSalesforceTestBase {
                         SalesforceEndpointConfig.EVENT_SCHEMA_FORMAT, "compact"));
         assertNotNull(schemaResult);
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder().build();
         @SuppressWarnings("unchecked")
         final Map<String, Object> map = (Map<String, Object>) mapper.readValue((InputStream) schemaResult, Map.class);
         final String schemaId = (String) map.get("uuid");

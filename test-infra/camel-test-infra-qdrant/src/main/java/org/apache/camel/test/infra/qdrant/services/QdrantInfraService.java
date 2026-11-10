@@ -21,8 +21,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.test.infra.common.services.InfrastructureService;
+import tools.jackson.databind.json.JsonMapper;
 
 public interface QdrantInfraService extends InfrastructureService {
     String getHttpHost();
@@ -59,7 +59,7 @@ public interface QdrantInfraService extends InfrastructureService {
         final String reqPath = !path.startsWith("/") ? "/" + path : path;
         final String reqUrl = String.format("http://%s:%d%s", getHttpHost(), getHttpPort(), reqPath);
 
-        String requestBody = new ObjectMapper()
+        String requestBody = JsonMapper.builderWithJackson2Defaults().build()
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(body);
 

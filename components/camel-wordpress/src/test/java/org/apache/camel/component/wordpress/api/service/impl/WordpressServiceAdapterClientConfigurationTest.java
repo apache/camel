@@ -19,7 +19,6 @@ package org.apache.camel.component.wordpress.api.service.impl;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.wordpress.api.WordpressConstants;
 import org.apache.camel.component.wordpress.api.auth.WordpressBasicAuthentication;
 import org.apache.camel.component.wordpress.api.model.User;
@@ -32,6 +31,7 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.message.Message;
 import org.junit.jupiter.api.Test;
+import tools.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;

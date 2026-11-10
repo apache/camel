@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,6 +29,7 @@ import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -255,7 +255,9 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
 
                 // configure to use undertow on localhost with the given port
                 restConfiguration().component("undertow").host("localhost").port(getPort())
-                        .bindingMode(RestBindingMode.json);
+                        .bindingMode(RestBindingMode.json)
+                        // Jackson 3 ignores unknown properties by default
+                        .dataFormatProperty("json.in.enableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
 
                 // use the rest DSL to define the rest services
                 rest()

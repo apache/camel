@@ -20,10 +20,10 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,8 +49,8 @@ public class OpenAIMockErrorsTest {
         assertEquals(429, response.statusCode());
         assertEquals("7", response.headers().firstValue("Retry-After").orElse(null));
         JsonNode error = new ObjectMapper().readTree(response.body()).path("error");
-        assertEquals("rate_limit_exceeded", error.path("type").asText());
-        assertEquals("Rate limit reached", error.path("message").asText());
+        assertEquals("rate_limit_exceeded", error.path("type").asString());
+        assertEquals("Rate limit reached", error.path("message").asString());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class OpenAIMockErrorsTest {
         HttpResponse<String> response = post("/v1/responses", "{\"model\": \"gpt-5\", \"input\": \"server trouble\"}");
 
         assertEquals(500, response.statusCode());
-        assertEquals("server_error", new ObjectMapper().readTree(response.body()).path("error").path("type").asText());
+        assertEquals("server_error", new ObjectMapper().readTree(response.body()).path("error").path("type").asString());
     }
 
     @Test

@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Handles OpenAI Responses API ({@code /v1/responses}) mock requests.
@@ -56,7 +56,7 @@ public class ResponsesRequestHandler {
         // tool results are paired with their call, so that a follow-up in a stored conversation, which only carries
         // the function_call_output items, is matched as well
         MockExpectation expectation = endsWithFunctionCallOutput(input)
-                ? expectationsByCallId.get(input.get(input.size() - 1).path("call_id").asText())
+                ? expectationsByCallId.get(input.get(input.size() - 1).path("call_id").asString())
                 : null;
         if (expectation == null) {
             if (userInput == null) {
@@ -128,7 +128,7 @@ public class ResponsesRequestHandler {
      */
     private String store(String responseJson, JsonNode request) throws Exception {
         ObjectNode response = (ObjectNode) objectMapper.readTree(responseJson);
-        storedResponses.put(response.path("id").asText(), response);
+        storedResponses.put(response.path("id").asString(), response);
         if (!request.path("background").asBoolean(false)) {
             return responseJson;
         }
@@ -154,7 +154,7 @@ public class ResponsesRequestHandler {
             return createFunctionCallResponse(expectation, promptTokens, completionTokens);
         }
 
-        String lastOutput = input.get(input.size() - 1).path("output").asText();
+        String lastOutput = input.get(input.size() - 1).path("output").asString("");
         String text;
         if (expectation.getExpectedResponse() != null) {
             text = expectation.getExpectedResponse();
@@ -174,14 +174,14 @@ public class ResponsesRequestHandler {
         String response = responseBuilder.createResponsesFunctionCallResponse(
                 expectation.getCurrentToolStep().getToolCalls(), promptTokens, completionTokens);
         for (JsonNode item : objectMapper.readTree(response).path("output")) {
-            expectationsByCallId.put(item.path("call_id").asText(), expectation);
+            expectationsByCallId.put(item.path("call_id").asString(), expectation);
         }
         return response;
     }
 
     private static boolean endsWithFunctionCallOutput(JsonNode input) {
         return input.isArray() && !input.isEmpty()
-                && "function_call_output".equals(input.get(input.size() - 1).path("type").asText());
+                && "function_call_output".equals(input.get(input.size() - 1).path("type").asString());
     }
 
     private MockExpectation findExpectationByInput(String input) {

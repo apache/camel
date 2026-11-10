@@ -22,8 +22,8 @@ import java.net.http.HttpResponse;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -59,17 +59,17 @@ public class OpenAIMockReplyWithAfterToolTest {
             JsonNode choice1 = responseJson1.path("choices").get(0);
             JsonNode message1 = choice1.path("message");
 
-            assertEquals("assistant", message1.path("role").asText());
-            assertEquals("tool_calls", choice1.path("finish_reason").asText());
+            assertEquals("assistant", message1.path("role").asString());
+            assertEquals("tool_calls", choice1.path("finish_reason").asString());
 
             JsonNode toolCalls = message1.path("tool_calls");
             assertEquals(1, toolCalls.size());
 
             JsonNode toolCall = toolCalls.get(0);
-            String toolCallId = toolCall.path("id").asText();
-            assertEquals("function", toolCall.path("type").asText());
-            assertEquals("FindsTheLatitudeAndLongitudeOfAGivenCity", toolCall.path("function").path("name").asText());
-            assertEquals("{\"name\":\"London\"}", toolCall.path("function").path("arguments").asText());
+            String toolCallId = toolCall.path("id").asString();
+            assertEquals("function", toolCall.path("type").asString());
+            assertEquals("FindsTheLatitudeAndLongitudeOfAGivenCity", toolCall.path("function").path("name").asString());
+            assertEquals("{\"name\":\"London\"}", toolCall.path("function").path("arguments").asString());
 
             // Second request with tool result - should return custom reply
             String secondRequestBody = String.format(
@@ -88,9 +88,9 @@ public class OpenAIMockReplyWithAfterToolTest {
             JsonNode choice2 = responseJson2.path("choices").get(0);
             JsonNode message2 = choice2.path("message");
 
-            assertEquals("assistant", message2.path("role").asText());
-            assertEquals("stop", choice2.path("finish_reason").asText());
-            assertEquals("the latitude of london is 1", message2.path("content").asText());
+            assertEquals("assistant", message2.path("role").asString());
+            assertEquals("stop", choice2.path("finish_reason").asString());
+            assertEquals("the latitude of london is 1", message2.path("content").asString());
         }
     }
 }

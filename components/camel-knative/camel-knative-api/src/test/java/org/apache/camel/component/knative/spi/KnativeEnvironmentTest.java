@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.knative.spi;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,8 +29,20 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.util.CollectionHelper.mapOf;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class KnativeEnvironmentTest {
+
+    private static final String ENVIRONMENT = """
+            {"resources":[{"type":"endpoint","name":"svc","url":"http://svc","path":"/p","endpointKind":"source",\
+            "objectKind":"Service","objectApiVersion":"serving.knative.dev/v1","filters":{"h":"v"},\
+            "ceOverrides":{"ce-type":"t"},"metadata":{"m":"n"}}]}""";
+
+    private static final String SERIALIZED_ENVIRONMENT = """
+            {"resources":[{"name":"svc","url":"http://svc","type":"endpoint","endpointKind":"source","reply":true,\
+            "contentType":null,"cloudEventType":null,"path":"/p","objectApiVersion":"serving.knative.dev/v1",\
+            "objectKind":"Service","objectName":null,"metadata":{"m":"n"},"ceOverrides":{"ce-type":"t"},\
+            "filters":{"h":"v"}}]}""";
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -49,6 +62,23 @@ public class KnativeEnvironmentTest {
             assertThat(resource.getPath()).isEqualTo("/");
             assertThat(resource.getMetadata()).isNotEmpty();
         });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "not json",
+            "{\"resources\":[{\"unknown\":\"property\"}]}"
+    })
+    public void testKnativeEnvironmentThatCannotBeReadIsAnIOException(String content) {
+        assertThatThrownBy(() -> KnativeEnvironment.mandatoryLoadFromSerializedString(content))
+                .isInstanceOf(IOException.class);
+    }
+
+    @Test
+    public void testKnativeEnvironmentSerializationIsUnchanged() throws Exception {
+        KnativeEnvironment env = KnativeEnvironment.mandatoryLoadFromSerializedString(ENVIRONMENT);
+
+        assertThat(Knative.MAPPER.writeValueAsString(env)).isEqualTo(SERIALIZED_ENVIRONMENT);
     }
 
     @Test

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.chatscript.ChatScriptMessage;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 public class ChatScriptComponentIT extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ChatScriptComponentIT.class);
@@ -55,10 +55,10 @@ public class ChatScriptComponentIT extends CamelTestSupport {
                 String rq2 = "";
                 String rq3 = "";
                 try {
-                    rq = new ObjectMapper().writeValueAsString(rqMsg);
-                    rq2 = new ObjectMapper().writeValueAsString(rq2Msg);
-                    rq3 = new ObjectMapper().writeValueAsString(rq3Msg);
-                } catch (JsonProcessingException e) {
+                    rq = new JsonMapper().writeValueAsString(rqMsg);
+                    rq2 = new JsonMapper().writeValueAsString(rq2Msg);
+                    rq3 = new JsonMapper().writeValueAsString(rq3Msg);
+                } catch (JacksonException e) {
                     LOG.warn("Failed processing JSON: {}", e.getMessage(), e);
                 }
                 from("timer://foo?repeatCount=1")

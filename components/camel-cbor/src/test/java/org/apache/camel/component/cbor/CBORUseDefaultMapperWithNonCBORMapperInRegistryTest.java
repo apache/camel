@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.cbor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,7 +45,7 @@ public class CBORUseDefaultMapperWithNonCBORMapperInRegistryTest extends CamelTe
             public void configure() {
 
                 // Bind a non CBOR mapper in the registry, it should be ignored as it can't unmarshal a CBOR payload
-                context.getRegistry().bind("non-cbor-object-mapper", new ObjectMapper());
+                context.getRegistry().bind("non-cbor-object-mapper", new JsonMapper());
 
                 CBORDataFormat useDefaultObjectMapperDataFormat = new CBORDataFormat();
                 useDefaultObjectMapperDataFormat.setUnmarshalType(Author.class);

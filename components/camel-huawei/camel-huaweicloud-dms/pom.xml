@@ -51,6 +51,10 @@
     </dependency>
 
     <dependency>
+      <groupId>tools.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.huaweicloud.sdk</groupId>
       <artifactId>huaweicloud-sdk-core</artifactId>
       <version>${huaweicloud-sdk-version}</version>

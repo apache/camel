@@ -17,18 +17,12 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -48,6 +42,11 @@ import org.eclipse.jetty.client.InputStreamRequestContent;
 import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.type.CollectionType;
 
 public class DefaultCompositeApiClient extends AbstractClientBase implements CompositeApiClient {
 
@@ -165,11 +164,11 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         return request;
     }
 
-    <T> T fromJson(final Class<T> expectedType, final InputStream responseStream) throws IOException {
+    <T> T fromJson(final Class<T> expectedType, final InputStream responseStream) {
         return jsonReaderFor(expectedType).readValue(responseStream);
     }
 
-    <T> List<T> fromJsonList(final Class<T> expectedType, final InputStream responseStream) throws IOException {
+    <T> List<T> fromJsonList(final Class<T> expectedType, final InputStream responseStream) {
         final CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(List.class, expectedType);
         return mapper.readValue(responseStream, collectionType);
     }
@@ -198,7 +197,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         byte[] jsonBytes;
         try {
             jsonBytes = jsonWriterFor(obj).writeValueAsBytes(obj);
-        } catch (final JsonProcessingException e) {
+        } catch (final JacksonException e) {
             throw new SalesforceException("Unable to serialize given SObjectTree to JSON", e);
         }
 
@@ -211,7 +210,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
         }
         try {
             return Optional.of(fromJson(expectedType, responseStream));
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             log.warn("Unable to read response from the Composite API", e);
             return Optional.empty();
         } finally {

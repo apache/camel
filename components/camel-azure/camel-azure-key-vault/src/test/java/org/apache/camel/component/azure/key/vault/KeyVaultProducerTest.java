@@ -44,7 +44,6 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.DeletedSecret;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.apache.camel.BindToRegistry;
@@ -55,6 +54,8 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -68,7 +69,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class KeyVaultProducerTest extends CamelTestSupport {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
     private static final long DELETED_ON = 1700000000L;
     private static final long PURGE_ON = 1707776000L;
     // as Key Vault sends them: the SDK needs the recovery level of a deleted secret
@@ -278,7 +279,7 @@ class KeyVaultProducerTest extends CamelTestSupport {
             String name = path.substring(path.lastIndexOf('/') + 1);
             String response;
             if ("PUT".equals(method) && path.startsWith("/secrets/")) {
-                String value = MAPPER.readTree(exchange.getRequestBody()).get("value").asText();
+                String value = MAPPER.readTree(exchange.getRequestBody()).get("value").asString();
                 storedValues.add(value);
                 Map<String, Object> bundle = new LinkedHashMap<>();
                 bundle.put("value", value);

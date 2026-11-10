@@ -22,10 +22,10 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.a2a.model.StreamResponse;
 import org.apache.camel.component.a2a.util.A2AJsonMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Utility for encoding and decoding Server-Sent Events (SSE) frames in A2A protocol.

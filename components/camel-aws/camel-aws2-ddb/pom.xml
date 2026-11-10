@@ -83,9 +83,14 @@
         <!-- provided -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jackson</artifactId>
-            <scope>provided</scope>
-            <optional>true</optional>
+            <artifactId>camel-jackson3</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- a body can still be a Jackson 2 node -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- for testing -->

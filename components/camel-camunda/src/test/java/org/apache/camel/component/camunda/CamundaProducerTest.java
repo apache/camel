@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
@@ -41,6 +40,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -169,7 +169,7 @@ class CamundaProducerTest {
         job.setType("myJobType");
         job.setBpmnProcessId("order");
         job.setVariables(Map.of("v1", "a"));
-        String json = new ObjectMapper().writeValueAsString(job);
+        String json = JsonMapper.builder().build().writeValueAsString(job);
 
         producer(OperationName.COMPLETE_JOB).process(exchange(json));
 

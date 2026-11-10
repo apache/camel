@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,10 +27,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SendChatActionMessageTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
     @Test
-    void testActionSerializesToJson() throws JsonProcessingException {
+    void testActionSerializesToJson() {
         SendChatActionMessage message = new SendChatActionMessage(SendChatActionMessage.Action.TYPING);
         message.setChatId("123456");
         message.setMessageThreadId(42);

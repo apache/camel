@@ -3920,9 +3920,9 @@ instead.
 
 The body of `callFunction` is now marshalled to JSON when it is a `Map`, a `List` or another Java object, instead of
 being sent as its `toString()`. Text, bytes, a stream, a file, XML (a DOM `Node` or a `Source`), a `ByteBuffer`, an enum
-or a character are still converted to text, as before. The JSON comes from a plain Jackson `ObjectMapper`, so a POJO
-that needs custom JSON, such as one with `java.time` fields, must be marshalled in the route first. A message without a
-body fails with an `InvalidPayloadException` instead of a `NullPointerException`.
+or a character are still converted to text, as before. The JSON comes from a Jackson mapper with the Jackson 2 defaults (a
+`java.time` value is written as numbers), so a POJO that needs custom JSON must be marshalled in the route first. A message
+without a body fails with an `InvalidPayloadException` instead of a `NullPointerException`.
 
 === camel-vertx-http - a header with several values is sent as several headers
 
@@ -7550,3 +7550,365 @@ request was always sent as `application/json` in that case.
 A route whose message still carries a `Content-Type` header from an earlier step, for example from an HTTP
 consumer, now sends that Content-Type. Remove the header, or set the Content-Type in
 `CamelAzureFunctionsHttpHeaders`, to keep the old behavior.
+
+=== Jackson 3
+
+Camel 4.24 moves its own code to Jackson 3 (`tools.jackson`, version 3.2). The `camel-jackson`, `camel-jacksonxml`,
+`camel-jackson-avro` and `camel-jackson-protobuf` data formats stay on Jackson 2; `camel-jackson3`, `camel-jackson3xml`,
+`camel-jackson3-avro` and `camel-jackson3-protobuf` are the Jackson 3 line. The Jackson 3 sections below name the components
+that moved and what changes for each; this section has what applies to all of them.
+
+*One data format name, two artifacts.* Both `camel-jackson` and `camel-jackson3` register the `jackson` data format
+(`marshal().json()`, `library: Jackson`). When both are on the classpath, the Jackson 3 one is used; before 4.24 the one first
+on the classpath was used. Declare only one of them. An `ObjectMapper` in the registry is only found by the data format of the
+same Jackson version.
+
+*The Jackson 3 defaults apply.* The `camel-jackson3` data formats (JSON, XML, Avro and Protobuf) use the defaults of Jackson 3,
+which differ from Jackson 2. Most visibly:
+
+[cols="2,1,1,3"]
+|===
+| Feature | Jackson 2 | Jackson 3 | Effect of the Jackson 3 default
+
+| `FAIL_ON_UNKNOWN_PROPERTIES` | on | off | Unknown properties are ignored. See the warning below.
+| `SORT_PROPERTIES_ALPHABETICALLY` | off | on | Properties are written in alphabetical order.
+| `WRITE_DATES_AS_TIMESTAMPS` | on | off | Dates are written as ISO-8601 text, not as numbers.
+| `WRITE_DURATIONS_AS_TIMESTAMPS` | on | off | Durations are written as ISO-8601 text.
+| `FAIL_ON_TRAILING_TOKENS` | off | on | Content after the first JSON value fails the read.
+| `FAIL_ON_NULL_FOR_PRIMITIVES` | off | on | A `null` for a primitive field fails the read.
+| `FAIL_ON_EMPTY_BEANS` | on | off | A bean without properties is written as `{}`.
+| `USE_GETTERS_AS_SETTERS` | on | off | Collection and Map getters are not used as setters.
+| `READ_ENUMS_USING_TO_STRING`, `WRITE_ENUMS_USING_TO_STRING` | off | on | Enums use `toString()`, not `name()`.
+|===
+
+Set a feature back with the `enableFeatures` and `disableFeatures` options of the data format, or with a custom
+`ObjectMapper`:
+
+[source,java]
+----
+restConfiguration().bindingMode(RestBindingMode.json)
+    .dataFormatProperty("json.in.enableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
+----
+
+WARNING: With `FAIL_ON_UNKNOWN_PROPERTIES` off, a route using REST binding no longer rejects a JSON body that does not
+match its type. The body is accepted, the request gets no `400` response, and the route receives a POJO with empty fields.
+Enable the feature as shown above if your routes rely on that validation.
+
+*Limits.* Jackson 3 reads and writes with other limits: nesting up to 500 levels (it was 1000), for reading and writing, and
+strings up to 100 million characters (it was 20 million). They apply to every component on Jackson 3, including those whose
+internal mappers keep the Jackson 2 defaults. To change them for a data format, set its `objectMapper` option to a mapper
+with your own `StreamReadConstraints` (and `StreamWriteConstraints` for the nesting depth when writing):
+
+[source,java]
+----
+JsonMapper mapper = JsonMapper.builder(JsonFactory.builder()
+        .streamReadConstraints(StreamReadConstraints.builder()
+                .maxNestingDepth(1000)
+                .maxStringLength(20_000_000)
+                .build())
+        .build())
+        .build();
+----
+
+*Exceptions.* Jackson 3 exceptions extend the unchecked `tools.jackson.core.JacksonException`, and are no longer an
+`IOException`. `onException(IOException.class)` does not match them, and `JsonParseException` becomes
+`tools.jackson.core.exc.StreamReadException`.
+
+*Internal mappers.* A component that uses Jackson internally, to talk to an external API, parse a secret or write a file,
+keeps the Jackson 2 defaults on its mapper, so what it sends and stores does not change unless its section says so.
+
+*Jackson 2 dependency.* A component that moved to Jackson 3 no longer brings `com.fasterxml.jackson.core:jackson-databind`
+to your application, unless a library it uses still needs it; at most `jackson-annotations` is left. If your code uses
+Jackson 2, for example an `ObjectMapper` it got through `camel-salesforce`, declare `jackson-databind` yourself.
+
+*Components that stay on Jackson 2.* `camel-jackson`, `camel-jacksonxml`, `camel-jackson-avro`, `camel-jackson-protobuf`,
+`camel-azure-cosmosdb`, `camel-elasticsearch`, `camel-jq`, `camel-jslt`, `camel-json-validator`, `camel-mcp-server`,
+`camel-metrics`, `camel-opa`, `camel-openai`, `camel-openapi-java`, `camel-opensearch`, `camel-quickjs`, `camel-rest-openapi`
+and `camel-tahu` still use Jackson 2. Where they take or return Jackson nodes, these are `com.fasterxml.jackson.databind.JsonNode`,
+not the `tools.jackson.databind.JsonNode` that `camel-jackson3` produces. In a route that mixes the two, such as a `jq`
+expression after `unmarshal().json()` in Camel JBang, pass the body between them as JSON text.
+
+*Jackson 2 nodes.* A component on Jackson 3 accepts JSON text, bytes, streams, Maps, Lists and `tools.jackson.databind.JsonNode`
+bodies. A `com.fasterxml.jackson.databind.JsonNode` is an ordinary bean to its mapper: pass it as JSON text, or produce it
+with `camel-jackson3`. Where a component reads the whole body, a body that is a Jackson 2 node is read as its JSON text.
+
+=== Jackson 3 - camel-jackson3 is the Jackson line of the catalog, Camel JBang and the Kamelets
+
+The `jackson`, `jacksonXml`, `avroJackson` and `protobufJackson` data formats, and the `application-json`,
+`application-x-java-object`, `application-x-struct`, `avro-*` and `protobuf-*` data type transformers, are registered by
+two artifacts each: the Jackson 2 line (`camel-jackson`, `camel-jacksonxml`, `camel-jackson-avro`,
+`camel-jackson-protobuf`) and the Jackson 3 line (`camel-jackson3`, `camel-jackson3xml`, `camel-jackson3-avro`,
+`camel-jackson3-protobuf`). Camel 4.24 makes the Jackson 3 line the one these names stand for:
+
+* The Camel catalog names the Jackson 3 artifacts for these data formats and transformers. Everything that turns a
+  data format name into an artifact follows it: `camel run` and `camel export` in Camel JBang, the dependency download
+  of `camel-kamelet-main`, the `camel-jbang` catalog commands, and the hint of an error about a missing data format
+  (`add camel-jackson3 to the classpath`). A Camel JBang application that uses `marshal().json()` or a `json` data
+  format in YAML or XML now runs on `camel-jackson3`, and the Jackson 3 defaults apply to it; `camel export` to Spring
+  Boot writes `camel-jackson3-starter`. `camel export` to Quarkus writes the `camel-quarkus-jackson` extension (and
+  `camel-quarkus-jacksonxml`, `camel-quarkus-jackson-avro`, `camel-quarkus-jackson-protobuf`), which is on Jackson 2
+  until Camel Quarkus moves it to `camel-jackson3`: until then an exported Quarkus application runs the `json` data
+  format with the Jackson 2 defaults, and Java code that imports `tools.jackson` needs that dependency added. Declaring `camel-jackson` as a dependency does not change that: the artifact
+  the catalog names is downloaded as well, and the Jackson 3 one is used (see the next point). Use the
+  `enableFeatures` and `disableFeatures` options of the data format to restore a Jackson 2 default.
+* When both lines are on the classpath, the Jackson 3 data format and transformers are used. Before 4.24 the one
+  whose service file was found first on the classpath was used. An `ObjectMapper` in the registry is only used by the
+  data format of the same Jackson version.
+* `camel-kamelet-main` depends on the Jackson 3 line instead of the Jackson 2 one. The `DelegatingSchemaResolver` of the
+  Kamelet data type utilities (used by `resolve-pojo-schema-action`) delegates to the Jackson 3 `JsonSchemaResolver`,
+  `AvroSchemaResolver` and `ProtobufSchemaResolver`, or to the Jackson 2 ones when the Jackson 3 artifact is not on the
+  classpath.
+* A Kamelet that declares `camel:jackson`, `camel:jackson-avro` or `camel:jackson-protobuf` still gets that Jackson 2
+  artifact, since the dependency names the artifact, but in Camel JBang its data formats and transformers run on
+  Jackson 3. Jackson 2 class names in a Kamelet therefore no longer work there: an `unmarshalType` of
+  `com.fasterxml.jackson.databind.JsonNode` fails on each message, and a Jackson 2 module in `moduleClassNames` or a
+  Jackson 2 `SchemaResolver` bean fails when the route starts.
+
+*Kamelets.* Camel 4.24 in Camel JBang needs Kamelets 4.24 for the Kamelets that name Jackson 2 classes:
+`json-deserialize-action`, `avro-serialize-action`, `avro-deserialize-action`, `protobuf-serialize-action`,
+`protobuf-deserialize-action`, `resolve-pojo-schema-action` (for Avro and Protobuf), `azure-storage-blob-changefeed-source`,
+`jira-source` and `jira-oauth-source`, `aws-s3-event-based-source`, `ceph-event-based-source` and
+`azure-storage-blob-event-based-source` (with `getObject` or `getBlob` enabled), and the eight kafka field actions (see
+"Jackson 3 - camel-kafka"). The 4.24.0 launcher ships the 4.23 Kamelets: run it with `--kamelets-version=4.24.0`. Kamelets
+that only use the `json` data format by name keep working, with the Jackson 3 defaults: for example, `json-serialize-action`
+writes properties in alphabetical order and dates as text. Outside Camel JBang, an application on the Jackson 2 line runs
+the 4.23 Kamelets as before, except the kafka field actions.
+
+The `camel-jackson` artifacts are unchanged and stay on Jackson 2. An application that declares them, outside Camel
+JBang, keeps using Jackson 2 as long as it does not also have the Jackson 3 line on the classpath.
+
+To keep Jackson 2 for a data format in Camel JBang, add the `camel:jackson` dependency (`--dep=camel:jackson`, or
+`camel.jbang.dependencies=camel:jackson` in `application.properties`), define the Jackson 2 data format as a bean, and
+refer to it as a custom data format instead of by the `json` name:
+
+[source,yaml]
+----
+- beans:
+    - name: jackson2
+      type: org.apache.camel.component.jackson.JacksonDataFormat
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - marshal:
+            custom:
+              ref: jackson2
+----
+
+=== Jackson 3 - camel generate schema
+
+`camel generate schema` now uses `jsonschema-generator` 5, which is based on Jackson 3. The annotations in
+`com.fasterxml.jackson.annotation` still apply, but `@JsonNaming` from `com.fasterxml.jackson.databind.annotation` is ignored:
+the schema of such a class has the Java field names. Use `@JsonNaming` from `tools.jackson.databind.annotation` to apply it.
+
+=== Jackson 3 - components that no longer use camel-jackson
+
+`camel-aws-bedrock`, `camel-dhis2`, `camel-google-vertexai`, `camel-mongodb` and `camel-neo4j` now use Jackson 3
+(`tools.jackson.core:jackson-databind`) directly, and `camel-mongodb-gridfs` no longer uses Jackson. None of them brings
+`camel-jackson` or `camel-jackson3` to your application any more. If a route uses the `jackson` data format
+(`marshal().json()`), or relies on its type converters, and got it through one of these components, declare `camel-jackson`
+or `camel-jackson3` yourself.
+
+`camel-aws2-ddb` and `camel-google-sheets` no longer use Jackson for their JSON data type transformers
+(`aws2-ddb:application-json` and `google-sheets:application-x-struct`), so they need neither `camel-jackson` nor
+`camel-jackson3`. A body that is a Jackson `JsonNode` of either line is read as its JSON text.
+
+The data these components send does not change: their internal mappers keep the Jackson 2 defaults.
+
+*camel-aws-bedrock.* A text result (the Anthropic Claude v2, Cohere and Llama models) is now a `String` body; it was a Jackson
+`TextNode` that `camel-jackson` converted to the text. The other results stay nodes, now of Jackson 3: the AI21 completions,
+the images, and the whole response of the Claude 3, Nova and Mistral models. The type converters of `camel-jackson` do not
+apply to them, so converting such a body to a pretty-printed `String`, `byte[]`, `InputStream` or `Map` needs `camel-jackson3`.
+Without it, `getBody(String.class)` gives the compact JSON and the other conversions give `null`.
+
+*camel-mongodb.* The conversion of a body to a `Document` or `DBObject` uses Jackson 3. A Jackson `JsonNode` of either line is
+read as its JSON text, but a POJO with Jackson 2 databind annotations such as `@JsonNaming` loses them, so the field names
+it is stored with can change.
+
+=== Jackson 3 - components that use Jackson internally
+
+`camel-bonita`, `camel-clickup`, `camel-lumberjack`, `camel-ocsf`, `camel-pqc`, `camel-sap-netweaver`, `camel-servicenow`,
+`camel-splunk-hec`, `camel-stitch`, `camel-stripe`, `camel-telegram`, `camel-weather`, `camel-whatsapp`, `camel-wordpress`
+and `camel-zookeeper-master` now use Jackson 3 (`tools.jackson`). The JSON they send, store or return does not change: their
+internal mappers keep the Jackson 2 defaults. You only need to act if your code passes Jackson types to these components.
+
+*`camel-servicenow`.* The `mapper` option is now a `tools.jackson.databind.ObjectMapper`, and must be a
+`tools.jackson.databind.json.JsonMapper`, or the endpoint fails with an `IllegalArgumentException`. A custom mapper does not
+get the Jackson 2 defaults, nor the `dateFormat`, `timeFormat` and `dateTimeFormat` options. The payload of the metadata
+extension is a `tools.jackson.databind.JsonNode`. Request and response models that use `@JsonSerialize` or `@JsonDeserialize`
+must import them from `tools.jackson.databind.annotation`; Jackson 3 ignores the ones from
+`com.fasterxml.jackson.databind.annotation`.
+
+*`camel-ocsf`.* `setObjectMapper` and the constructor take a `tools.jackson.databind.ObjectMapper`, and only a mapper of that
+type is found in the registry. An unmarshal body of type `com.fasterxml.jackson.databind.JsonNode` is no longer recognized:
+pass JSON text or `tools.jackson.databind.JsonNode`. With `prettyPrint`, the data format uses a copy of your mapper, and no
+longer changes the mapper itself.
+
+*Model classes.* The `camel-telegram` and `camel-clickup` models write their timestamps with Jackson 3 annotations. A Jackson 2
+mapper ignores those, so to marshal these models use `camel-jackson3`, not `camel-jackson`.
+
+*Exceptions.* `camel-clickup` webhooks, `camel-ocsf`, `camel-pqc`, `camel-sap-netweaver`, `camel-servicenow`,
+`camel-splunk-hec` and `camel-weather` let a JSON failure through as the unchecked `tools.jackson.core.JacksonException`, which
+is not an `IOException`, so `onException(IOException.class)` does not match it.
+
+=== Jackson 3 - camel-cbor, camel-jsonata and camel-xj
+
+`camel-cbor`, `camel-jsonata` and `camel-xj` now use Jackson 3 (`tools.jackson`) instead of Jackson 2. Jackson 3 exceptions
+are unchecked and are not an `IOException`, so `onException(IOException.class)` does not match them.
+
+*camel-cbor.* A custom `ObjectMapper` must be a `tools.jackson.databind.ObjectMapper`, such as
+`tools.jackson.dataformat.cbor.CBORMapper`: a Jackson 2 mapper in the registry is no longer found. `prettyPrint`,
+`enableFeatures` and `disableFeatures` now apply to a copy of a mapper from the registry, not to that mapper.
+
+The data format uses the defaults of Jackson 3, listed in the section "Jackson 3": properties in
+alphabetical order, dates as text, enums with `toString()`, and content after the first value fails the read. `enableFeatures`
+and `disableFeatures` set them back, and now also accept the names of `DateTimeFeature`, `EnumFeature`, `JsonNodeFeature`,
+`StreamReadFeature` and `StreamWriteFeature`. In Java, `enableFeature(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)` no
+longer compiles, because that feature is now in `DateTimeFeature`: use `setEnableFeatures("WRITE_DATES_AS_TIMESTAMPS")`.
+
+The mapper that the data format creates keeps the CBOR encoding of Jackson 2, so data sent or stored by earlier versions
+decodes to the same values. A custom `new CBORMapper()` uses the encoding of Jackson 3: it follows RFC 8949 for a negative
+`BigInteger`, so a value written by Jackson 2 is read as a different number, and it reads CBOR simple values as `CBORSimpleValue`
+rather than as numbers. To keep the encoding of Jackson 2 on a custom mapper, disable
+`CBORWriteFeature.ENCODE_USING_STANDARD_NEGATIVE_BIGINT_ENCODING`,
+`CBORReadFeature.DECODE_USING_STANDARD_NEGATIVE_BIGINT_ENCODING`, `CBORReadFeature.READ_UNDEFINED_AS_EMBEDDED_OBJECT` and
+`CBORReadFeature.READ_SIMPLE_VALUE_AS_EMBEDDED_OBJECT` on its `CBORFactory`.
+
+A `com.fasterxml.jackson.databind.JsonNode` body is no longer treated as a tree: use `tools.jackson.databind.JsonNode`.
+
+*camel-jsonata.* With the default `outputType`, the result is now a `tools.jackson.databind.JsonNode` instead of a
+`com.fasterxml.jackson.databind.JsonNode`, so code that reads the body as the Jackson 2 type must change. Invalid JSON now
+fails with `tools.jackson.core.exc.StreamReadException`. The result of an expression does not change. A body that is a Jackson 2
+`JsonNode` is read as its JSON text, but a Jackson 2 node inside a `Map` or `List` body is read as a bean: a component on
+Jackson 3 treats a `com.fasterxml.jackson.databind.JsonNode` as an ordinary bean, so pass JSON text or produce the node with
+`camel-jackson3`. A `java.time` value in a POJO body no longer fails: it is written as numbers.
+
+WARNING: A Jackson 2 mapper writes a Jackson 3 `JsonNode` as a bean, without any error. If a route marshals the result with
+`camel-jackson` (`marshal().json()`), the JSON it produces is wrong. Use `outputType=JsonString`, or use `camel-jackson3`.
+
+*camel-xj.* The output does not change. The cause of a failed transformation is now a Jackson 3 exception, such as
+`tools.jackson.core.exc.StreamReadException`. The public classes `XmlJsonStreamWriter`, `JsonXmlStreamReader`,
+`JsonSourceHandlerFactoryImpl` and the result handlers now take the Jackson 3 `JsonFactory`, `JsonGenerator` and `JsonParser`.
+
+=== Jackson 3 - vault, cloud and AI components
+
+`camel-aws-secrets-manager`, `camel-google-secret-manager`, `camel-google-firestore`, `camel-ibm-secrets-manager`,
+`camel-cyberark-vault`, `camel-knative`, `camel-elasticsearch-rest-client`, `camel-keycloak`, `camel-telemetry-dev`,
+`camel-micrometer`, `camel-docling`, `camel-huggingface` and `camel-chatscript` now use Jackson 3 internally. What they read
+and write does not change: their mappers keep the Jackson 2 defaults, including that content after the first JSON value of a
+secret is ignored.
+
+They no longer bring `com.fasterxml.jackson.core:jackson-databind` to your application (`camel-keycloak` still does, through
+the Keycloak client). If your code uses it, declare it yourself.
+
+Changes to API types:
+
+* `Knative.MAPPER` in `camel-knative-api` is a `tools.jackson.databind.ObjectMapper`.
+* `MicrometerModule` in `camel-micrometer` is a Jackson 3 module (`tools.jackson.databind.JacksonModule`).
+
+Exceptions: a response that `camel-elasticsearch-rest-client` or a model output that `camel-huggingface` cannot parse, and a
+structured CloudEvent that `camel-knative` cannot parse, now fail with the unchecked `tools.jackson.core.JacksonException`, not
+an `IOException`. `onException(IOException.class)` does not match it. Loading a `KnativeEnvironment` still fails with an
+`IOException`.
+
+=== Jackson 3 - camel-salesforce
+
+`camel-salesforce`, `camel-salesforce-codegen` and `camel-salesforce-maven-plugin` use Jackson 3 (`tools.jackson`). What the
+component sends to and reads from Salesforce does not change, and neither does the output of the `schema` goal.
+
+DTOs generated with an earlier version of `camel-salesforce-maven-plugin` must be generated again. They import
+`JsonTypeResolver`, `JsonSerialize` and `JsonDeserialize` from `com.fasterxml.jackson.databind.annotation`, and Jackson 3
+ignores those annotations, so nested types and multi-select picklists are no longer handled. Generated source that still has
+these imports fails to compile, because the classes they name are now Jackson 3 classes. A JAR of DTOs compiled against an
+earlier version gives no such error. In hand-written DTOs, import these annotations from
+`tools.jackson.databind.annotation`. The annotations in `com.fasterxml.jackson.annotation` do not change.
+
+The following Java API changes:
+
+* The `objectMapper` option and `SalesforceEndpointConfig.setObjectMapper` take a `tools.jackson.databind.ObjectMapper`. A
+  custom mapper is used as it is, and Jackson 3 has other defaults than Jackson 2, so start from
+  `JsonUtils.createObjectMapper().rebuild()` to keep the format that Salesforce expects.
+* `JsonUtils` returns and takes `tools.jackson.databind.ObjectMapper`, and its schema methods use
+  `tools.jackson.module.jsonSchema.jakarta.JsonSchema`. They no longer declare `JsonProcessingException`.
+* `TimeModule`, `TypeReferences` and the serializers and deserializers in `org.apache.camel.component.salesforce.api` are
+  Jackson 3 types.
+* `JsonUtils.withNullSerialization` no longer fails on a DTO with a date value set.
+
+A response that cannot be parsed is still reported as a `SalesforceException`. Jackson errors in your own code are the unchecked
+`tools.jackson.core.JacksonException`, which is no longer an `IOException`.
+
+=== Jackson 3 - camel-a2a
+
+`camel-a2a` now uses Jackson 3 internally. The JSON it sends does not change: its mapper keeps the Jackson 2 defaults. What
+it accepts follows the limits of Jackson 3: nesting up to 500 levels (it was 1000) and strings up to 100 million characters
+(it was 20 million).
+
+It no longer brings `com.fasterxml.jackson.core:jackson-databind` or `jackson-datatype-jsr310` to your application. If your
+code uses them, declare them yourself.
+
+Changes to API types:
+
+* `A2AJsonMapper.instance()` returns a `tools.jackson.databind.ObjectMapper`. It is immutable, so this is a shared instance
+  and not a copy. Use `rebuild()` to derive a customized mapper.
+* `PartDeserializer` is a Jackson 3 `ValueDeserializer`, and `Part` and `AgentCard` declare their deserialization with Jackson 3
+  annotations. A Jackson 2 `ObjectMapper`, such as the one in the `camel-jackson` data format, can no longer read these types
+  or the types that contain them, such as `Message` and `Task`. Use `A2AJsonMapper.instance()` or the `camel-jackson3` data format.
+* Objects you put in a `DataPart` or in metadata are written with Jackson 3. It ignores `com.fasterxml.jackson.databind.annotation`
+  annotations such as `@JsonSerialize`, and it writes a Jackson 2 `JsonNode` as a bean, with properties such as `nodeType`,
+  instead of as its JSON. Use a Jackson 3 `JsonNode` or a `Map` instead.
+
+=== Jackson 3 - camel-jsonpath
+
+`camel-jsonpath` now uses Jackson 3 (`tools.jackson`) instead of Jackson 2, and no longer brings in Jackson 2. Code that got
+Jackson 2 through `camel-jsonpath` must declare it. The results of an expression do not change: POJO bodies are still read
+and written with the defaults of Jackson 2, so dates are numbers, properties stay in declared order and content after the
+first JSON value is ignored. Invalid JSON still fails with `com.jayway.jsonpath.InvalidJsonException`, but its cause is now a
+Jackson 3 exception, such as `tools.jackson.core.exc.StreamReadException`.
+
+A custom `ObjectMapper` in the registry must be a `tools.jackson.databind.ObjectMapper`: a Jackson 2 mapper is no longer
+found, without any error, and the default is used instead.
+
+A `JsonNode` body of either line works, and `writeAsString` writes a result that is a Jackson 2 node as its JSON. A Jackson 2
+node inside a `Map`, `List` or POJO result is written as a bean: a component on Jackson 3 treats a
+`com.fasterxml.jackson.databind.JsonNode` as an ordinary bean, so pass JSON text or produce the node with `camel-jackson3`. The
+text of a node (`"t"`) is now read as the JSON string it is, where a Jackson 2 text node failed as invalid JSON.
+
+A `java.time` value in a POJO body no longer fails: it is written as numbers. JAXB annotations on a POJO are used when
+`tools.jackson.module:jackson-module-jakarta-xmlbind-annotations` is on the classpath; `jackson-module-jaxb-annotations` of
+Jackson 2 is no longer used.
+
+The limits on what is parsed are those of Jackson 3: nesting up to 500 levels (it was 1000) and strings up to 100 million
+characters (it was 20 million). To change them, register a mapper with your own `StreamReadConstraints`.
+
+=== Jackson 3 - camel-kafka
+
+`camel-kafka` now uses Jackson 3 (`tools.jackson`) instead of Jackson 2, and no longer brings Jackson 2 to your application.
+The transforms in `org.apache.camel.component.kafka.transform` (`DropField`, `ExtractField`, `HoistField`, `InsertField`,
+`MaskField`, `MessageTimestampRouter`, `ReplaceField` and `ValueToKey`) keep their names and work on a
+`tools.jackson.databind.JsonNode`, JSON text or bytes, and need `camel-jackson3` on the classpath for their type converters. A
+`com.fasterxml.jackson.databind.JsonNode` body is an ordinary bean to them, and `HoistField` writes it as one without an error:
+produce the node with `camel-jackson3`, or pass JSON text.
+
+The Kamelets that use these transforms (`drop-field-action`, `extract-field-action`, `hoist-field-action`,
+`insert-field-action`, `mask-field-action`, `message-timestamp-router-action`, `replace-field-action` and
+`value-to-key-action`) do so from their 4.24 release, so Camel 4.24 needs Kamelets 4.24 for them, also outside Camel JBang.
+See "Kamelets" in the section "Jackson 3 - camel-jackson3 is the Jackson line of the catalog, Camel JBang and the Kamelets".
+
+The kafka producer still sends a Jackson 2 array node as one record per element, and any other Jackson 2 node as one record.
+
+=== Jackson 3 - components with a mapper of their own
+
+`camel-hashicorp-vault`, `camel-google-functions`, `camel-azure-key-vault`, `camel-camunda`, `camel-langchain4j-agent`,
+`camel-huaweicloud-dms`, `camel-huaweicloud-functiongraph`, `camel-huaweicloud-iam`, `camel-huaweicloud-obs` and
+`camel-huaweicloud-smn`, and the `camel infra` and `camel semantic eval` commands of Camel JBang, now use Jackson 3 internally.
+What they read and write does not change: their mappers keep the Jackson 2 defaults. The SDK each component talks to (Spring
+Vault, Google Cloud, Azure, Camunda, LangChain4j, Huawei Cloud) is not involved: no Jackson type crosses its API, so these SDKs
+stay as they are, and most of them still bring `com.fasterxml.jackson.core:jackson-databind` to your application.
+`camel-hashicorp-vault` and `camel-google-functions` no longer bring it: if your code uses it, declare it yourself.
+
+A `java.time` value in a POJO body no longer fails: `callFunction` of `camel-google-functions` sends the POJO as JSON, and
+`camel-huaweicloud-smn` publishes it as JSON instead of as its `toString()`. The value is written as numbers.
+
+Exceptions: `camel-huaweicloud-dms` and `camel-huaweicloud-iam` let a failure to write a response as JSON through as the
+unchecked `tools.jackson.core.JacksonException`, which is not an `IOException`, so `onException(IOException.class)` does not
+match it.

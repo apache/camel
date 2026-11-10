@@ -24,11 +24,12 @@ import java.util.stream.StreamSupport;
 import ai.djl.modality.Classifications;
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huggingface.HuggingFaceConstants;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Predictor for the ZERO_SHOT_CLASSIFICATION task, performing label classification on text without prior training.
@@ -87,7 +88,7 @@ import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
  */
 public class ZeroShotClassificationPredictor extends AbstractTaskPredictor {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     public ZeroShotClassificationPredictor(HuggingFaceEndpoint endpoint) {
         super(endpoint);
@@ -132,7 +133,7 @@ public class ZeroShotClassificationPredictor extends AbstractTaskPredictor {
         } else {
             JsonNode root = objectMapper.readTree(result);
             List<String> labels = StreamSupport.stream(root.get("labels").spliterator(), false)
-                    .map(JsonNode::asText)
+                    .map(label -> label.asString(""))
                     .collect(Collectors.toList());
             List<Double> scores = StreamSupport.stream(root.get("scores").spliterator(), false)
                     .map(JsonNode::asDouble)

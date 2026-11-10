@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -40,7 +41,7 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
     }
 
     @Test
-    public void testJSon() {
+    public void testJSon() throws Exception {
         Exchange out = template.request("http://localhost:" + getPort() + "/users/lives", new Processor() {
             @Override
             public void process(Exchange exchange) {
@@ -48,7 +49,7 @@ public class RestJettyCustomContentTypeTest extends BaseJettyTest {
         });
 
         assertEquals("application/json", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out.getMessage().getBody(String.class));
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out.getMessage().getBody(String.class), true);
     }
 
     @Override
