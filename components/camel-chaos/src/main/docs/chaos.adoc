@@ -165,6 +165,13 @@ A rule that expects failed exchanges in a route whose error handler is a dead le
 (`expect=parked:failed<=0`) has a warning too: the dead letter channel handles what fails there, so nothing fails, and
 the expectation is always met. `handled` counts what the dead letter channel handled (`expect=parked:handled<=0`).
 
+So does a rule that expects no message lost between two routes (`expect=refunds->payment:lost<=0`) when the first
+route does not hand messages off to the second (over `seda`, a broker or a `wireTap`): when it calls the second over
+`direct` and waits, a failure there fails the first route and nothing is lost between them; when it does not send to it
+at all (an HTTP call to a `platform-http` route), the failures of the first route are not in the loss. `failed` counts
+them (`expect=refunds:failed<=0`). A route with a send that is known only when it sends (a `toD`, `wireTap` or
+`recipientList`) is not checked.
+
 To see what a rule would hit before it is added, `chaos-add --dry-run` checks it as `chaos-add` would, and adds
 nothing. It prints the rule in plain words, then each send, poll, route or step it matches now, with its route (and the
 step that sends), the sends known only when they send that may match (a `toD`), and the warnings:
@@ -400,7 +407,9 @@ report does.
 * `INCONCLUSIVE`: it ended before an expectation was decided, so the messages may still have come; none of its
 faults fired, so its expectations say nothing about them; or an expectation was met on a route that had no messages
 while it ran (`refunds:failed<=0` when the traffic went to another route), or is a time (`maxTime`, `meanTime`) of
-such a route. The `reason` says which.
+such a route; or a route of an expectation failed exchanges that no expectation of it counts
+(`refunds->payment:lost<=0` while refunds failed: the loss counts what completed). The `reason` says which, and names
+the expectation that counts them.
 
 The routes that failed while it ran, and whose failures no expectation of the experiment counts, are listed as
 `alsoFailed`, with how many failed. An experiment that expects `refunds:maxTime<=30s` passes while 2 refunds failed,
@@ -1011,6 +1020,8 @@ delay rule slows the route as it should).
 difference is the messages lost (never below 0, as the second route may also get messages from elsewhere). Messages still
 on their way when the time is up count as lost too: let `within=` run past the `until=` of the faults, so the last ones
 can arrive. The messages it counts as lost are added to the lost of the report. The op is `<=` or `=`.
+* A failed exchange of the first route is not counted either: it did not complete, so the loss does not see it. An
+experiment with such failures in the route of its expectation is `INCONCLUSIVE`, not `PASS`.
 * An exchange of the first route that its error handler handled, such as an order the dead letter channel parked, is not
 counted in the first route: it is not meant to reach the second one, so it is not lost. In the second route a handled
 exchange counts as completed, as it arrived.
