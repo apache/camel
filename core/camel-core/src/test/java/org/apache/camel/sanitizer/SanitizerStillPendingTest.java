@@ -75,6 +75,8 @@ class SanitizerStillPendingTest extends ContextTestSupport {
                 from("direct:throws").routeId("throwsRoute").process(new BrokenUserCode.ThrowsInProcess()).id("throws");
                 from("direct:splitThrows").routeId("splitThrowsRoute").split(body().tokenize(","))
                         .process(new BrokenUserCode.ThrowsInProcess()).id("partThrows").end();
+                from("direct:sharedPartThrows").routeId("sharedPartThrowsRoute").split(body().tokenize(","))
+                        .shareUnitOfWork().process(new BrokenUserCode.ThrowsInProcess()).id("sharedPartThrows").end();
                 from("direct:partLost").routeId("partLostRoute").split(body().tokenize(","))
                         .process(new BrokenUserCode.NeverCallsBack()).id("partLost").end();
                 from("direct:splitSeda").routeId("splitSedaRoute").split(body().tokenize(",")).to("seda:audit").id("toAudit")
@@ -170,6 +172,19 @@ class SanitizerStillPendingTest extends ContextTestSupport {
     @ExpectSanitizerViolation(value = Violation.THREW_BEFORE_CALLBACK, step = "partThrows")
     void aPartWhoseStepThrewIsNoLongerPendingOnceThePartIsDone() {
         Exchange out = template.send("direct:splitThrows", e -> e.getMessage().setBody("a"));
+        assertNotNull(out.getException());
+
+        assertEquals(0, sanitizer().getPendingCalls().size());
+        await().pollDelay(400, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(0, sanitizer().getStillPendingCount()));
+    }
+
+    @Test
+    @ExpectSanitizerViolation(value = Violation.THREW_BEFORE_CALLBACK, step = "sharedPartThrows")
+    void aPartThatSharesTheUnitOfWorkIsNoLongerPendingOnceItsExchangeIsDone() {
+        // the parts of a split with shareUnitOfWork() have no done event of their own: the done event of the exchange
+        // drops them
+        Exchange out = template.send("direct:sharedPartThrows", e -> e.getMessage().setBody("a"));
         assertNotNull(out.getException());
 
         assertEquals(0, sanitizer().getPendingCalls().size());

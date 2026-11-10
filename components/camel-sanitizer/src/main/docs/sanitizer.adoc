@@ -97,18 +97,24 @@ step of it waits for: a copy that carries the id of the exchange as its correlat
 innermost pending call of the exchange. Other copies, such as the one a `seda` producer queues, are exchanges of their
 own (unless the producing exchange is already in such a step when the copy starts). So a long split, or a
 `to("direct:...")` whose route is still busy, is not reported, and a step inside them that does not call back is. An
-exchange whose parts still have pending calls is not reported. Each call is reported once; if its callback comes later,
-an INFO line says after how long. A call that threw stays pending until its callback comes or the exchange is done
-(Camel catches the throw and fails the exchange; on older Camel versions the exchange hung there). A recipient of a
+exchange is not reported while it waits for its parts and they still have pending calls. Each call is reported once;
+if its callback comes later, an INFO line says after how long. A call that threw stays pending until its callback
+comes or the exchange is done (Camel catches the throw and fails the exchange; on older Camel versions the exchange
+hung there). The parts of a split with `shareUnitOfWork()` have no done event of their own: what they threw goes when
+their exchange is done. A call of a part that has not called back stays when its exchange is done, and is reported:
+the part may hang after the step that waited for it gave up, such as a split with a `timeout`. A recipient of a
 recipient list is not a step: a producer of a recipient that does not call back shows as the recipient list step still
 pending. Steps that wait on purpose for longer than the timeout are reported too: a delay or a throttle, a redelivery
 delay, a `pollEnrich` that waits, a processor that waits for something, or one that sends with a `ProducerTemplate` and
 waits for the reply. So are steps that wait for an exchange copy of their own, as the consumer side works on that copy,
 not on a part: a request-reply `to` over `seda` or `vm` whose consumer is slow but still making progress, and an
 `aggregate` step whose completion runs the aggregated exchange synchronously in the caller. A chaos `delay` on a step
-(a `step=` rule of camel-chaos) runs before the step is called, so a delay longer than `pendingTimeout` shows up at the
-enclosing step that waits (such as a split, or the `to` of the calling route), and not at all at the top level of a
-route; a `delay` on an endpoint (an `endpoint=` rule) runs inside the send, so it shows at that `to` step.
+(a `step=` rule of camel-chaos), or at the entry of a route (a `route=` rule), runs before the step is called, so a
+delay longer than `pendingTimeout` shows up at the enclosing step that waits (such as a split, or the `to` of the
+calling route), and not at all at the top level of a route. A `delay` of an `endpoint=` or `component=` rule at a send
+(`at=send`) runs inside the send, so it shows at that `to` step. At a poll (`at=poll`) there is no exchange yet, so it
+is not seen; at the send of a dead letter channel (`at=dlq`) the error handler runs it after the failed step called
+back, so it shows like a `step=` delay.
 
 [source,text]
 ----
@@ -122,9 +128,13 @@ Exchange sanitizer: callback still pending (R1, a warning)
 
 The warnings never fail a test, and are not charged to it. When the context stops, the calls still pending then are
 listed at WARN (with `reportOnShutdown`), and the report on shutdown counts the warnings. The pending calls are kept in
-a table that holds ids and names, not the exchanges, for at most 10000 calls: past that, the oldest is dropped, one WARN
-says that the checks are incomplete, and the report counts the calls dropped. The timeout is measured with
-`System.nanoTime()`, not with the time source of camel-test-dst, so a virtual clock does not stretch it.
+a table that holds ids and names, not the exchanges, for at most 10000 calls. The table is split in stripes, each with
+its own lock (twice the number of processors, rounded up to a power of two, at most 32), so routing threads that work on
+unrelated exchanges do not wait for each other; an exchange, its parts and the copies made from it while it is in the
+table are in one stripe, which keeps at most 10000 divided by the number of stripes calls. Past that, the oldest call of
+the stripe is dropped, one WARN says that the checks are incomplete, and the report counts the calls dropped. The
+timeout is measured with `System.nanoTime()`, not with the time source of camel-test-dst, so a virtual clock does not
+stretch it.
 
 To know when an exchange is done, the sanitizer adds an event notifier of the exchanges completed and failed, so with
 the sanitizer on the exchange events of the context are fired (and the notifier is listed with the others, also in

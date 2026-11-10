@@ -99,7 +99,9 @@ final class SanitizerStepListener implements StepListener {
         private String thrown;
         private Sanitizer.Trace throwTrace;
 
-        // guarded by the table of the pending calls (PendingCalls), while the call is in it (owner is not null)
+        // the stripe of the table of the pending calls (PendingCalls) the call went into: its lock guards the fields below
+        volatile PendingCalls.Stripe stripe;
+        // guarded by the lock of that stripe, while the call is in it (owner is not null)
         PendingCalls.ExchangeCalls owner;
         long calledAt;
         Thread inProcess;

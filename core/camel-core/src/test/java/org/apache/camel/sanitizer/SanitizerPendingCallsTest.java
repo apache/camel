@@ -150,10 +150,90 @@ class SanitizerPendingCallsTest {
         Exchange exchange = new DefaultExchange(context);
         listener.onStepCall(exchange, "r", "split1");
         Exchange part = part(exchange);
-        listener.onStepCall(part, "r", "toPart");
+        Object call = listener.onStepCall(part, "r", "toPart");
+        listener.onStepThrow(call, new IllegalStateException("Forced"));
         assertEquals(2, pending.size());
         sanitizer.exchangeDone(exchange.getExchangeId());
         assertEquals(0, pending.size());
+        clock.addAndGet(TIMEOUT);
+        assertTrue(pending.stalled().isEmpty());
+    }
+
+    @Test
+    void aPartThatOutlivesItsExchangeIsStillReported() {
+        // a split with a timeout gave up on a part whose step does not call back, and the exchange is done: what the
+        // part threw goes with the exchange, the call that has not called back stays and is reported
+        Exchange exchange = new DefaultExchange(context);
+        listener.onStepCall(exchange, "r", "split1");
+        Exchange threw = part(exchange);
+        listener.onStepThrow(listener.onStepCall(threw, "r", "toPart"), new IllegalStateException("Forced"));
+        Exchange hangs = part(exchange);
+        Object lost = listener.onStepCall(hangs, "r", "toPart");
+        pending.done(exchange.getExchangeId());
+        assertEquals(1, pending.size());
+        clock.addAndGet(TIMEOUT);
+        List<PendingCalls.Pending> stalled = pending.stalled();
+        assertEquals(1, stalled.size());
+        assertEquals(hangs.getExchangeId(), stalled.get(0).exchangeId);
+        // the part's own done event drops it, as for any exchange
+        pending.done(hangs.getExchangeId());
+        assertEquals(0, pending.size());
+        assertEquals(0, pending.getKnownIds());
+        assertEquals(-1, pending.callback((SanitizerStepListener.StepCall) lost));
+    }
+
+    @Test
+    void whatThePartsOfAPartThrewGoesWhenTheExchangeIsDone() {
+        // nested splits with shareUnitOfWork(): only the exchange gets a done event
+        Exchange exchange = new DefaultExchange(context);
+        Object split1 = listener.onStepCall(exchange, "r", "split1");
+        Exchange part = part(exchange);
+        Object split2 = listener.onStepCall(part, "r", "split2");
+        Exchange partOfPart = part(part);
+        listener.onStepThrow(listener.onStepCall(partOfPart, "r", "toPart"), new IllegalStateException("Forced"));
+        listener.onStepCallback(split2, false);
+        listener.onStepCallback(split1, false);
+        assertEquals(1, pending.size());
+        pending.done(exchange.getExchangeId());
+        assertEquals(0, pending.size());
+        assertEquals(0, pending.getKnownIds());
+        clock.addAndGet(TIMEOUT);
+        assertTrue(pending.stalled().isEmpty());
+    }
+
+    @Test
+    void anExchangeThatGoesOnAfterItsPartsIsReportedDespiteAPartLeftBehind() {
+        // a part of a split with shareUnitOfWork() threw and the exception was handled: the exchange goes on, and its
+        // next step does not call back; that step is reported, not hidden by the part left behind
+        Exchange exchange = new DefaultExchange(context);
+        Object split = listener.onStepCall(exchange, "r", "split1");
+        Exchange part = part(exchange);
+        listener.onStepThrow(listener.onStepCall(part, "r", "toPart"), new IllegalStateException("Forced"));
+        listener.onStepCallback(split, false);
+        listener.onStepCall(exchange, "r", "lost");
+        clock.addAndGet(TIMEOUT);
+        List<PendingCalls.Pending> stalled = pending.stalled();
+        assertEquals(2, stalled.size());
+        assertTrue(stalled.stream().anyMatch(p -> "lost".equals(p.stepId)), stalled.toString());
+        pending.done(exchange.getExchangeId());
+        assertEquals(0, pending.size());
+    }
+
+    @Test
+    void aPartWithoutADoneEventOfItsOwnGoesWhenItsExchangeIsDone() {
+        // the parts of a split with shareUnitOfWork() have no done event of their own: a part whose process threw stays
+        // pending after the split called back, and goes when the exchange is done
+        Exchange exchange = new DefaultExchange(context);
+        Object split = listener.onStepCall(exchange, "r", "split1");
+        Exchange part = part(exchange);
+        Object call = listener.onStepCall(part, "r", "toPart");
+        listener.onStepThrow(call, new IllegalStateException("Forced"));
+        // Camel fails the part, and the split goes on and calls back
+        listener.onStepCallback(split, false);
+        assertEquals(1, pending.size());
+        pending.done(exchange.getExchangeId());
+        assertEquals(0, pending.size());
+        assertEquals(0, pending.getKnownIds());
         clock.addAndGet(TIMEOUT);
         assertTrue(pending.stalled().isEmpty());
     }
@@ -174,12 +254,79 @@ class SanitizerPendingCallsTest {
 
     @Test
     void theOldestCallIsDroppedAtTheBoundAndCounted() {
+        PendingCalls one = new PendingCalls(TIMEOUT, clock::get, (route, step) -> false, 1);
+        Sanitizer s = new Sanitizer(context, 0, session, one);
+        SanitizerStepListener l = new SanitizerStepListener(s);
         for (int i = 0; i < PendingCalls.MAX_PENDING + 3; i++) {
-            listener.onStepCall(new DefaultExchange(context), "r", "lost");
+            l.onStepCall(new DefaultExchange(context), "r", "lost");
         }
-        assertEquals(PendingCalls.MAX_PENDING, pending.size());
-        assertEquals(3, pending.getDropped());
-        assertTrue(sanitizer.report().contains("checks incomplete: 3 pending calls dropped"), sanitizer.report());
+        assertEquals(PendingCalls.MAX_PENDING, one.size());
+        assertEquals(3, one.getDropped());
+        assertEquals(PendingCalls.MAX_PENDING, one.getKnownIds());
+        assertTrue(s.report().contains("checks incomplete: 3 pending calls dropped"), s.report());
+    }
+
+    @Test
+    void eachStripeKeepsItsShareOfTheBound() {
+        PendingCalls four = new PendingCalls(TIMEOUT, clock::get, (route, step) -> false, 4);
+        SanitizerStepListener l = new SanitizerStepListener(new Sanitizer(context, 0, session, four));
+        // the calls of one exchange are in one stripe
+        Exchange exchange = new DefaultExchange(context);
+        for (int i = 0; i < PendingCalls.MAX_PENDING / 4 + 2; i++) {
+            l.onStepCall(exchange, "r", "nested" + i);
+        }
+        assertEquals(PendingCalls.MAX_PENDING / 4, four.size());
+        assertEquals(2, four.getDropped());
+        // in all the stripes, never more than the bound
+        for (int i = 0; i < PendingCalls.MAX_PENDING; i++) {
+            l.onStepCall(new DefaultExchange(context), "r", "lost");
+        }
+        assertTrue(four.size() <= PendingCalls.MAX_PENDING, "size " + four.size());
+        assertEquals(PendingCalls.MAX_PENDING + PendingCalls.MAX_PENDING / 4 + 2, four.size() + four.getDropped());
+    }
+
+    @Test
+    void anExchangeAndItsPartsAndTheirPartsShareAStripe() {
+        // with many stripes, a part of a part (its correlation id is the id of the part) is still linked to its
+        // exchange: it is in the stripe of the exchange its correlation id names
+        PendingCalls striped = new PendingCalls(
+                TIMEOUT, clock::get, (route, step) -> step.startsWith("split"),
+                PendingCalls.MAX_STRIPES);
+        SanitizerStepListener l = new SanitizerStepListener(new Sanitizer(context, 0, session, striped));
+        for (int i = 0; i < 50; i++) {
+            Exchange exchange = new DefaultExchange(context);
+            Object split1 = l.onStepCall(exchange, "r", "split1");
+            Exchange part = part(exchange);
+            Object split2 = l.onStepCall(part, "r", "split2");
+            Exchange partOfPart = part(part);
+            Object lost = l.onStepCall(partOfPart, "r", "lost");
+            clock.addAndGet(TIMEOUT);
+            // only the innermost call of the innermost part, not the splits that wait for it
+            List<PendingCalls.Pending> stalled = striped.stalled();
+            assertEquals(1, stalled.size());
+            assertEquals("lost", stalled.get(0).stepId);
+            assertEquals(partOfPart.getExchangeId(), stalled.get(0).exchangeId);
+            // the callbacks come, the innermost first: nothing is left, also no id of a part
+            l.onStepCallback(lost, false);
+            l.onStepCallback(split2, false);
+            l.onStepCallback(split1, false);
+            assertEquals(0, striped.size());
+            assertEquals(0, striped.getKnownIds());
+        }
+    }
+
+    @Test
+    void aPartWithoutADoneEventOfItsOwnLeavesWithItsLastCallback() {
+        // the exchange waited only for its part: it leaves the table with the part's last callback
+        Exchange exchange = new DefaultExchange(context);
+        Object split = listener.onStepCall(exchange, "r", "split1");
+        Exchange part = part(exchange);
+        Object call = listener.onStepCall(part, "r", "toPart");
+        listener.onStepCallback(split, false);
+        assertEquals(1, pending.size());
+        listener.onStepCallback(call, false);
+        assertEquals(0, pending.size());
+        assertEquals(0, pending.getKnownIds());
     }
 
     @Test
@@ -289,6 +436,7 @@ class SanitizerPendingCallsTest {
         }
         assertTrue(errors.isEmpty(), errors.toString());
         assertEquals(0, pending.size());
+        assertEquals(0, pending.getKnownIds());
         clock.addAndGet(TIMEOUT);
         assertTrue(pending.stalled().isEmpty());
         assertEquals(0, pending.takeAll().size());

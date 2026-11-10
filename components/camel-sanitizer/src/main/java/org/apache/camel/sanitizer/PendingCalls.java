@@ -27,6 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 import java.util.function.LongSupplier;
 
@@ -45,45 +48,86 @@ import org.apache.camel.ExchangePropertyKey;
  * its entry would go exactly when the warning is needed.
  * <p/>
  * An exchange is reported when nothing happened in it for the timeout (no call of a step, return, throw or callback,
- * also in its parts) and no part of it has a pending call: then only its innermost pending call, the one started last,
- * is reported, once. So a split, or a {@code to("direct:...")}, that waits for steps that are still busy is not
- * reported. A call that threw stays pending until its callback comes, or until the exchange is done: Camel catches the
- * throw and fails the exchange, but before those fixes the exchange hung there. An exchange that is done (its unit of
- * work, as the events of the exchange tell) is dropped with its parts.
+ * also in its parts) and it does not wait for a part with a pending call: then only its innermost pending call, the one
+ * started last, is reported, once. So a split, or a {@code to("direct:...")}, that waits for steps that are still busy
+ * is not reported. A call that threw stays pending until its callback comes, or until the exchange is done: Camel
+ * catches the throw and fails the exchange, but before those fixes the exchange hung there. An exchange that is done
+ * (its unit of work, as the events of the exchange tell) is dropped, with the calls of its parts that threw. An
+ * exchange stays in the table while one of its parts has a pending call, also when its own calls have called back: the
+ * parts of a split with {@code shareUnitOfWork()} have no done event of their own, so the done event of the exchange
+ * drops what they threw. A call of a part that did not throw stays, as a call of an exchange of its own: the part may
+ * hang after the step that waited for it gave up (a timeout). An exchange whose parts have a pending call is not
+ * reported while it waits for them (its innermost call is the step that runs them).
  * <p/>
- * At most {@link #MAX_PENDING} calls are kept: past it the oldest is dropped and counted. The ids of the parts (the
+ * The table is split in stripes, each with its own lock, so that routing threads that work on unrelated exchanges do
+ * not wait for each other. An exchange stays in the stripe it is in; a new one goes to the stripe of the exchange it
+ * was copied from (its correlation id) when that exchange is in the table, else to the stripe its id hashes to. So an
+ * exchange, its parts, their parts and the other copies made while it is in the table are in one stripe (that of the
+ * outermost exchange), and each method for one exchange or call changes one stripe under its lock, as the single lock
+ * did before. Only the checker ({@link #stalled()}), the counts and the methods used when the context stops or a route
+ * is removed look at all the stripes, one at a time.
+ * <p/>
+ * Each stripe keeps at most {@link #MAX_PENDING} divided by the number of stripes calls, so the table keeps at most
+ * {@link #MAX_PENDING}: past it the oldest call of the stripe is dropped and counted. The ids of the parts (the
  * {@code partOf} map, and the {@code partIds} of their exchange) are not counted in that bound: the id of a part goes
- * when the part is done, or when its exchange has no pending call left. All methods take the lock of this table, which
- * is held briefly and never while calling out ({@link #stalled()} scans every exchange of the table under it, once per
- * period of the check).
+ * when the part is done, or when its exchange leaves the table. The locks are held briefly and never while calling out.
  */
 final class PendingCalls {
 
     /**
-     * The most pending calls kept; a safety net, not a sampling limit.
+     * The most pending calls kept, in all the stripes; a safety net, not a sampling limit.
      */
     static final int MAX_PENDING = 10_000;
+
+    /**
+     * The most stripes.
+     */
+    static final int MAX_STRIPES = 32;
 
     private final long timeoutNanos;
     private final LongSupplier clock;
     // whether a step (route id, step id) runs its work on correlated copies of the exchange and waits for them
     private final BiPredicate<String, String> partStep;
-    // guarded by this: the exchanges with pending calls, by the id of the exchange, the oldest first
-    private final Map<String, ExchangeCalls> exchanges = new LinkedHashMap<>();
-    // the exchange each part belongs to, by the id of the part, while that exchange has pending calls: a part keeps it
-    // when its correlation id is changed later (such as by the results of a seda request copied onto it)
-    private final Map<String, ExchangeCalls> partOf = new HashMap<>();
-    private int size;
-    private long dropped;
+    private final Stripe[] stripes;
+    // the stripe of each exchange that has an entry in a stripe, or is a part there (its partOf); an entry is added and
+    // removed only under the lock of its stripe, and read without a lock to find that stripe
+    private final ConcurrentMap<String, Stripe> stripeOf = new ConcurrentHashMap<>();
+    private final AtomicBoolean droppedOnce = new AtomicBoolean();
 
     PendingCalls(long timeoutNanos, LongSupplier clock, BiPredicate<String, String> partStep) {
+        this(timeoutNanos, clock, partStep, defaultStripes());
+    }
+
+    /**
+     * @param stripes the number of stripes, a power of two
+     */
+    PendingCalls(long timeoutNanos, LongSupplier clock, BiPredicate<String, String> partStep, int stripes) {
+        if (stripes < 1 || Integer.bitCount(stripes) != 1) {
+            throw new IllegalArgumentException("The number of stripes must be a power of two: " + stripes);
+        }
         this.timeoutNanos = timeoutNanos;
         this.clock = clock;
         this.partStep = partStep;
+        this.stripes = new Stripe[stripes];
+        for (int i = 0; i < stripes; i++) {
+            this.stripes[i] = new Stripe(MAX_PENDING / stripes);
+        }
+    }
+
+    /**
+     * Twice the number of processors, rounded up to a power of two, at most {@link #MAX_STRIPES}.
+     */
+    static int defaultStripes() {
+        int twice = 2 * Runtime.getRuntime().availableProcessors();
+        return Math.min(MAX_STRIPES, Integer.highestOneBit(twice - 1) << 1);
     }
 
     long getTimeoutNanos() {
         return timeoutNanos;
+    }
+
+    int getStripes() {
+        return stripes.length;
     }
 
     /**
@@ -95,7 +139,224 @@ final class PendingCalls {
         String id = exchange.getExchangeId();
         // a correlated copy carries the id of the exchange it was copied from
         Object parentId = exchange.getProperty(ExchangePropertyKey.CORRELATION_ID);
-        synchronized (this) {
+        while (true) {
+            Stripe stripe = stripeOf.get(id);
+            if (stripe == null && parentId instanceof String p) {
+                stripe = stripeOf.get(p);
+            }
+            if (stripe == null) {
+                int h = id.hashCode();
+                stripe = stripes[(h ^ (h >>> 16)) & (stripes.length - 1)];
+            }
+            synchronized (stripe) {
+                // the exchange may have come into another stripe meanwhile: then it goes there
+                Stripe other = stripeOf.putIfAbsent(id, stripe);
+                if (other == null || other == stripe) {
+                    call.stripe = stripe;
+                    return stripe.called(id, parentId, call) && droppedOnce.compareAndSet(false, true);
+                }
+            }
+        }
+    }
+
+    /**
+     * {@code process} of the call returned.
+     */
+    void returned(SanitizerStepListener.StepCall call, boolean doneSync) {
+        Stripe stripe = call.stripe;
+        if (stripe != null) {
+            synchronized (stripe) {
+                if (call.owner != null) {
+                    call.inProcess = null;
+                    call.returned = doneSync ? Boolean.TRUE : Boolean.FALSE;
+                    call.owner.touch(clock.getAsLong());
+                }
+            }
+        }
+    }
+
+    /**
+     * {@code process} of the call threw: the call stays pending until its callback comes or the exchange is done.
+     */
+    void threw(SanitizerStepListener.StepCall call, String description) {
+        Stripe stripe = call.stripe;
+        if (stripe != null) {
+            synchronized (stripe) {
+                if (call.owner != null) {
+                    call.inProcess = null;
+                    call.threw = description;
+                    call.owner.touch(clock.getAsLong());
+                }
+            }
+        }
+    }
+
+    /**
+     * The first callback of the call came.
+     *
+     * @return how long after the call it came, in nanoseconds, when the call had been reported as still pending; else
+     *         -1
+     */
+    long callback(SanitizerStepListener.StepCall call) {
+        Stripe stripe = call.stripe;
+        if (stripe == null) {
+            return -1;
+        }
+        synchronized (stripe) {
+            ExchangeCalls calls = call.owner;
+            if (calls == null) {
+                return -1;
+            }
+            long now = clock.getAsLong();
+            calls.touch(now);
+            stripe.remove(calls, call);
+            return call.reported ? now - call.calledAt : -1;
+        }
+    }
+
+    /**
+     * The exchange is done (its unit of work): what is still pending in it, and what its parts threw, is no longer
+     * waited for.
+     */
+    void done(String exchangeId) {
+        for (Stripe stripe = stripeOf.get(exchangeId); stripe != null; stripe = stripeOf.get(exchangeId)) {
+            synchronized (stripe) {
+                if (stripeOf.get(exchangeId) == stripe) {
+                    stripe.done(exchangeId);
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * The innermost pending call of each exchange in which nothing happened for the timeout and that does not wait for
+     * parts with a pending call, not reported before; each is marked reported. The stripes are scanned one at a time.
+     * An exchange waits for its parts while its innermost call is a step that runs parts; a part left behind by an
+     * earlier such step (one that threw in a split with {@code shareUnitOfWork()}, kept until the exchange is done)
+     * then also keeps the exchange from being reported.
+     */
+    List<Pending> stalled() {
+        List<Pending> answer = new ArrayList<>();
+        for (Stripe stripe : stripes) {
+            synchronized (stripe) {
+                stripe.stalled(clock.getAsLong(), answer);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * All the pending calls, the innermost first in each exchange, and clears the table (when the context stops).
+     */
+    List<Pending> takeAll() {
+        List<Pending> answer = new ArrayList<>();
+        for (Stripe stripe : stripes) {
+            synchronized (stripe) {
+                stripe.takeAll(clock.getAsLong(), answer);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * The pending calls of these routes.
+     */
+    List<SanitizerStepListener.StepCall> callsOf(Collection<String> routeIds) {
+        List<SanitizerStepListener.StepCall> answer = new ArrayList<>();
+        for (Stripe stripe : stripes) {
+            synchronized (stripe) {
+                for (ExchangeCalls calls : stripe.exchanges.values()) {
+                    for (SanitizerStepListener.StepCall call : calls.calls) {
+                        if (routeIds.contains(call.getRouteId())) {
+                            answer.add(call);
+                        }
+                    }
+                }
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Names the processor of a pending call, when its route is removed and can no longer be looked up.
+     */
+    void named(SanitizerStepListener.StepCall call, String processor) {
+        Stripe stripe = call.stripe;
+        if (stripe != null) {
+            synchronized (stripe) {
+                if (call.owner != null && processor != null) {
+                    call.processor = processor;
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether the call is still in {@code process} on this thread.
+     */
+    boolean isInProcess(SanitizerStepListener.StepCall call, Thread thread) {
+        Stripe stripe = call.stripe;
+        if (stripe == null) {
+            return false;
+        }
+        synchronized (stripe) {
+            return call.owner != null && call.inProcess == thread;
+        }
+    }
+
+    int size() {
+        int size = 0;
+        for (Stripe stripe : stripes) {
+            synchronized (stripe) {
+                size += stripe.size;
+            }
+        }
+        return size;
+    }
+
+    /**
+     * How many exchange ids the table knows the stripe of (those with an entry, and the parts of those).
+     */
+    int getKnownIds() {
+        return stripeOf.size();
+    }
+
+    /**
+     * How many pending calls were dropped because of the bound.
+     */
+    long getDropped() {
+        long n = 0;
+        for (Stripe stripe : stripes) {
+            synchronized (stripe) {
+                n += stripe.dropped;
+            }
+        }
+        return n;
+    }
+
+    /**
+     * One stripe of the table: the exchanges of the stripe with their pending calls. Guarded by the lock of the stripe.
+     */
+    final class Stripe {
+
+        private final int bound;
+        // the exchanges with pending calls (or with parts that have), by the id of the exchange, the oldest first
+        private final Map<String, ExchangeCalls> exchanges = new LinkedHashMap<>();
+        // the exchange each part belongs to, by the id of the part, while that exchange is in the table: a part keeps
+        // it when its correlation id is changed later (such as by the results of a seda request copied onto it)
+        private final Map<String, ExchangeCalls> partOf = new HashMap<>();
+        private int size;
+        private long dropped;
+
+        Stripe(int bound) {
+            this.bound = bound;
+        }
+
+        /**
+         * @return whether a pending call was dropped because of the bound
+         */
+        private boolean called(String id, Object parentId, SanitizerStepListener.StepCall call) {
             long now = clock.getAsLong();
             ExchangeCalls calls = exchanges.get(id);
             if (calls == null) {
@@ -106,7 +367,7 @@ final class PendingCalls {
                     // (split, multicast, recipient list, enrich, kamelet, circuit breaker); not the copy that a seda
                     // producer queues, which is an exchange of its own
                     SanitizerStepListener.StepCall waiting
-                            = parent != null ? parent.calls.get(parent.calls.size() - 1) : null;
+                            = parent != null && !parent.calls.isEmpty() ? parent.calls.get(parent.calls.size() - 1) : null;
                     if (waiting == null || !partStep.test(waiting.getRouteId(), waiting.getNodeId())) {
                         parent = null;
                     } else {
@@ -126,208 +387,156 @@ final class PendingCalls {
             calls.calls.add(call);
             size++;
             calls.touch(now);
-            if (size > MAX_PENDING) {
-                return dropOldest();
+            return size > bound && dropOldest();
+        }
+
+        private void done(String exchangeId) {
+            ExchangeCalls owner = partOf.remove(exchangeId);
+            if (owner != null) {
+                owner.partIds.remove(exchangeId);
             }
-            return false;
-        }
-    }
-
-    /**
-     * {@code process} of the call returned.
-     */
-    synchronized void returned(SanitizerStepListener.StepCall call, boolean doneSync) {
-        if (call.owner != null) {
-            call.inProcess = null;
-            call.returned = doneSync ? Boolean.TRUE : Boolean.FALSE;
-            call.owner.touch(clock.getAsLong());
-        }
-    }
-
-    /**
-     * {@code process} of the call threw: the call stays pending until its callback comes or the exchange is done.
-     */
-    synchronized void threw(SanitizerStepListener.StepCall call, String description) {
-        if (call.owner != null) {
-            call.inProcess = null;
-            call.threw = description;
-            call.owner.touch(clock.getAsLong());
-        }
-    }
-
-    /**
-     * The first callback of the call came.
-     *
-     * @return how long after the call it came, in nanoseconds, when the call had been reported as still pending; else
-     *         -1
-     */
-    synchronized long callback(SanitizerStepListener.StepCall call) {
-        ExchangeCalls calls = call.owner;
-        if (calls == null) {
-            return -1;
-        }
-        long now = clock.getAsLong();
-        calls.touch(now);
-        remove(calls, call);
-        return call.reported ? now - call.calledAt : -1;
-    }
-
-    /**
-     * The exchange is done (its unit of work): what is still pending in it and in its parts is no longer waited for.
-     */
-    synchronized void done(String exchangeId) {
-        ExchangeCalls owner = partOf.remove(exchangeId);
-        if (owner != null) {
-            owner.partIds.remove(exchangeId);
-        }
-        ExchangeCalls calls = exchanges.get(exchangeId);
-        if (calls != null) {
-            drop(calls);
-        }
-    }
-
-    /**
-     * The innermost pending call of each exchange in which nothing happened for the timeout and whose parts have no
-     * pending call, not reported before; each is marked reported.
-     */
-    synchronized List<Pending> stalled() {
-        long now = clock.getAsLong();
-        List<Pending> answer = null;
-        for (ExchangeCalls calls : exchanges.values()) {
-            if (now - calls.lastActivity < timeoutNanos || calls.parts != null && !calls.parts.isEmpty()) {
-                continue;
-            }
-            SanitizerStepListener.StepCall innermost = calls.calls.get(calls.calls.size() - 1);
-            if (!innermost.reported) {
-                innermost.reported = true;
-                if (answer == null) {
-                    answer = new ArrayList<>();
+            ExchangeCalls calls = exchanges.get(exchangeId);
+            if (calls != null) {
+                for (SanitizerStepListener.StepCall call : calls.calls) {
+                    call.owner = null;
+                    call.inProcess = null;
                 }
-                answer.add(new Pending(innermost, calls, now));
+                size -= calls.calls.size();
+                calls.calls.clear();
+                unlink(calls);
+                if (calls.parts != null) {
+                    for (ExchangeCalls part : new ArrayList<>(calls.parts)) {
+                        dropThrown(part);
+                        // what the part still waits for is its own now
+                        part.parent = null;
+                    }
+                }
             }
+            release(exchangeId);
         }
-        return answer != null ? answer : List.of();
-    }
 
-    /**
-     * All the pending calls, the innermost first in each exchange, and clears the table (when the context stops).
-     */
-    synchronized List<Pending> takeAll() {
-        long now = clock.getAsLong();
-        List<Pending> answer = new ArrayList<>(size);
-        for (ExchangeCalls calls : exchanges.values()) {
-            for (int i = calls.calls.size() - 1; i >= 0; i--) {
-                answer.add(new Pending(calls.calls.get(i), calls, now));
-            }
-        }
-        for (ExchangeCalls calls : exchanges.values()) {
-            for (SanitizerStepListener.StepCall call : calls.calls) {
-                call.owner = null;
-            }
-        }
-        exchanges.clear();
-        partOf.clear();
-        size = 0;
-        return answer;
-    }
-
-    /**
-     * The pending calls of these routes.
-     */
-    synchronized List<SanitizerStepListener.StepCall> callsOf(Collection<String> routeIds) {
-        List<SanitizerStepListener.StepCall> answer = new ArrayList<>();
-        for (ExchangeCalls calls : exchanges.values()) {
-            for (SanitizerStepListener.StepCall call : calls.calls) {
-                if (routeIds.contains(call.getRouteId())) {
-                    answer.add(call);
+        private void stalled(long now, List<Pending> answer) {
+            for (ExchangeCalls calls : exchanges.values()) {
+                // an exchange without calls of its own is kept for its parts, which are reported instead
+                if (now - calls.lastActivity < timeoutNanos || calls.calls.isEmpty()) {
+                    continue;
+                }
+                SanitizerStepListener.StepCall innermost = calls.calls.get(calls.calls.size() - 1);
+                // while the exchange waits for its parts (its innermost call is the step that runs them), they are
+                // reported, not the exchange; once that step called back, a part left behind does not hide it
+                if (calls.parts != null && !calls.parts.isEmpty()
+                        && partStep.test(innermost.getRouteId(), innermost.getNodeId())) {
+                    continue;
+                }
+                if (!innermost.reported) {
+                    innermost.reported = true;
+                    answer.add(new Pending(innermost, calls, now));
                 }
             }
         }
-        return answer;
-    }
 
-    /**
-     * Names the processor of a pending call, when its route is removed and can no longer be looked up.
-     */
-    synchronized void named(SanitizerStepListener.StepCall call, String processor) {
-        if (call.owner != null && processor != null) {
-            call.processor = processor;
+        private void takeAll(long now, List<Pending> answer) {
+            for (ExchangeCalls calls : exchanges.values()) {
+                for (int i = calls.calls.size() - 1; i >= 0; i--) {
+                    answer.add(new Pending(calls.calls.get(i), calls, now));
+                }
+                for (SanitizerStepListener.StepCall call : calls.calls) {
+                    call.owner = null;
+                }
+            }
+            exchanges.keySet().forEach(this::forget);
+            partOf.keySet().forEach(this::forget);
+            exchanges.clear();
+            partOf.clear();
+            size = 0;
         }
-    }
 
-    /**
-     * Whether the call is still in {@code process} on this thread.
-     */
-    synchronized boolean isInProcess(SanitizerStepListener.StepCall call, Thread thread) {
-        return call.owner != null && call.inProcess == thread;
-    }
-
-    synchronized int size() {
-        return size;
-    }
-
-    /**
-     * How many pending calls were dropped because of the bound.
-     */
-    synchronized long getDropped() {
-        return dropped;
-    }
-
-    private void remove(ExchangeCalls calls, SanitizerStepListener.StepCall call) {
-        call.owner = null;
-        call.inProcess = null;
-        calls.calls.remove(call);
-        size--;
-        if (calls.calls.isEmpty()) {
-            unlink(calls);
-        }
-    }
-
-    /**
-     * Drops the exchange and its parts with all their pending calls.
-     */
-    private void drop(ExchangeCalls calls) {
-        for (SanitizerStepListener.StepCall call : calls.calls) {
+        private void remove(ExchangeCalls calls, SanitizerStepListener.StepCall call) {
             call.owner = null;
             call.inProcess = null;
+            calls.calls.remove(call);
+            size--;
+            unlinkIfEmpty(calls);
         }
-        size -= calls.calls.size();
-        calls.calls.clear();
-        unlink(calls);
-        if (calls.parts != null) {
-            for (ExchangeCalls part : new ArrayList<>(calls.parts)) {
-                drop(part);
+
+        /**
+         * A part of an exchange that is done: its calls that threw go, and those of its parts. Camel handled those
+         * throws, and the parts of a split with {@code shareUnitOfWork()} have no done event of their own. A call that
+         * did not throw stays, with its part as an exchange of its own: a part can hang after the step that waited for
+         * it gave up (a timeout), and that is still reported.
+         */
+        private void dropThrown(ExchangeCalls part) {
+            if (part.parts != null) {
+                for (ExchangeCalls inner : new ArrayList<>(part.parts)) {
+                    dropThrown(inner);
+                }
+            }
+            for (Iterator<SanitizerStepListener.StepCall> it = part.calls.iterator(); it.hasNext();) {
+                SanitizerStepListener.StepCall call = it.next();
+                if (call.threw != null) {
+                    call.owner = null;
+                    call.inProcess = null;
+                    it.remove();
+                    size--;
+                }
+            }
+            unlinkIfEmpty(part);
+        }
+
+        /**
+         * The exchange leaves the table when it has no pending call left, in it and in its parts.
+         */
+        private void unlinkIfEmpty(ExchangeCalls calls) {
+            if (calls.calls.isEmpty() && (calls.parts == null || calls.parts.isEmpty())) {
+                unlink(calls);
             }
         }
-    }
 
-    private void unlink(ExchangeCalls calls) {
-        if (exchanges.get(calls.id) == calls) {
-            exchanges.remove(calls.id);
-        }
-        if (calls.partIds != null) {
-            for (String part : calls.partIds) {
-                partOf.remove(part, calls);
+        private void unlink(ExchangeCalls calls) {
+            if (exchanges.remove(calls.id, calls)) {
+                release(calls.id);
+            }
+            if (calls.partIds != null) {
+                for (String part : calls.partIds) {
+                    if (partOf.remove(part, calls)) {
+                        release(part);
+                    }
+                }
+            }
+            ExchangeCalls parent = calls.parent;
+            if (parent != null && parent.parts != null && parent.parts.remove(calls)
+                    && exchanges.get(parent.id) == parent) {
+                // the exchange it is a part of may have waited only for this part
+                unlinkIfEmpty(parent);
             }
         }
-        if (calls.parent != null && calls.parent.parts != null) {
-            calls.parent.parts.remove(calls);
-        }
-    }
 
-    /**
-     * Drops the oldest pending call: the first call of the exchange that has waited longest.
-     *
-     * @return whether it is the first one dropped
-     */
-    private boolean dropOldest() {
-        Iterator<ExchangeCalls> it = exchanges.values().iterator();
-        if (!it.hasNext()) {
+        /**
+         * The id is no longer in this stripe, when it has no entry and is no part here.
+         */
+        private void release(String id) {
+            if (!exchanges.containsKey(id) && !partOf.containsKey(id)) {
+                forget(id);
+            }
+        }
+
+        private void forget(String id) {
+            stripeOf.remove(id, this);
+        }
+
+        /**
+         * Drops the oldest pending call: the first call of the exchange that has waited longest.
+         */
+        private boolean dropOldest() {
+            for (ExchangeCalls oldest : exchanges.values()) {
+                if (!oldest.calls.isEmpty()) {
+                    remove(oldest, oldest.calls.get(0));
+                    dropped++;
+                    return true;
+                }
+            }
             return false;
         }
-        ExchangeCalls oldest = it.next();
-        remove(oldest, oldest.calls.get(0));
-        return ++dropped == 1;
     }
 
     /**
@@ -336,7 +545,8 @@ final class PendingCalls {
     static final class ExchangeCalls {
 
         final String id;
-        final ExchangeCalls parent;
+        // the exchange it is a part of, until that one is done
+        ExchangeCalls parent;
         // in the order of the calls: the last is the innermost
         final List<SanitizerStepListener.StepCall> calls = new ArrayList<>(4);
         // the parts with pending calls, and the ids of all its parts (created when the first part is)
