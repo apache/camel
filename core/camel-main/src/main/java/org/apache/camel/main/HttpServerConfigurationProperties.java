@@ -91,6 +91,12 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
     private long mcpSessionIdleTtl = 300000;
     @Metadata
     private String mcpAllowedOrigins;
+    @Metadata(label = "security")
+    private String mcpOauthProfile;
+    @Metadata(label = "security")
+    private String mcpRequiredScopes;
+    @Metadata(label = "security")
+    private String mcpResourceUri;
     @Metadata
     private String mcpServerName;
     @Metadata
@@ -554,6 +560,40 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
         this.mcpAllowedOrigins = mcpAllowedOrigins;
     }
 
+    public String getMcpOauthProfile() {
+        return mcpOauthProfile;
+    }
+
+    /**
+     * Name of the camel-oauth profile used to authenticate OAuth bearer tokens on the MCP HTTP endpoint.
+     */
+    public void setMcpOauthProfile(String mcpOauthProfile) {
+        this.mcpOauthProfile = mcpOauthProfile;
+    }
+
+    public String getMcpRequiredScopes() {
+        return mcpRequiredScopes;
+    }
+
+    /**
+     * Comma-separated OAuth scopes required to access the MCP HTTP endpoint.
+     */
+    public void setMcpRequiredScopes(String mcpRequiredScopes) {
+        this.mcpRequiredScopes = mcpRequiredScopes;
+    }
+
+    public String getMcpResourceUri() {
+        return mcpResourceUri;
+    }
+
+    /**
+     * Canonical public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Required when an
+     * OAuth profile is configured. It is never inferred from HTTP request headers.
+     */
+    public void setMcpResourceUri(String mcpResourceUri) {
+        this.mcpResourceUri = mcpResourceUri;
+    }
+
     /**
      * Whether embedded HTTP server is enabled. By default, the server is not enabled.
      */
@@ -869,6 +909,22 @@ public class HttpServerConfigurationProperties implements BootstrapCloseable {
      */
     public HttpServerConfigurationProperties withMcpAllowedOrigins(String mcpAllowedOrigins) {
         this.mcpAllowedOrigins = mcpAllowedOrigins;
+        return this;
+    }
+
+    /**
+     * Name of the camel-oauth profile used to authenticate OAuth bearer tokens on the MCP HTTP endpoint.
+     */
+    public HttpServerConfigurationProperties withMcpOauthProfile(String mcpOauthProfile) {
+        this.mcpOauthProfile = mcpOauthProfile;
+        return this;
+    }
+
+    /**
+     * Comma-separated OAuth scopes required to access the MCP HTTP endpoint.
+     */
+    public HttpServerConfigurationProperties withMcpRequiredScopes(String mcpRequiredScopes) {
+        this.mcpRequiredScopes = mcpRequiredScopes;
         return this;
     }
 

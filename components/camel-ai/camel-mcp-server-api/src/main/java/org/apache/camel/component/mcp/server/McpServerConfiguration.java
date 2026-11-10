@@ -44,6 +44,9 @@ public class McpServerConfiguration {
     private long sessionKeepAliveInterval = McpServerConstants.DEFAULT_SESSION_KEEP_ALIVE_INTERVAL;
     private long sessionIdleTtl = McpServerConstants.DEFAULT_SESSION_IDLE_TTL;
     private String allowedOrigins;
+    private String oauthProfile;
+    private String requiredScopes;
+    private String resourceUri;
 
     /**
      * Comma-separated list of ai-tool tag patterns to expose as MCP tools. Matching is case-insensitive and supports
@@ -217,5 +220,40 @@ public class McpServerConfiguration {
 
     public void setAllowedOrigins(String allowedOrigins) {
         this.allowedOrigins = allowedOrigins;
+    }
+
+    /**
+     * Name of the camel-oauth profile used to authenticate OAuth bearer tokens. Engine-owned: used by the Camel Main
+     * HTTP MCP engine; ignored by stdio and native Spring Boot / Quarkus engines.
+     */
+    public String getOauthProfile() {
+        return oauthProfile;
+    }
+
+    public void setOauthProfile(String oauthProfile) {
+        this.oauthProfile = oauthProfile;
+    }
+
+    /**
+     * Comma-separated OAuth scopes required to access the MCP HTTP endpoint. Engine-owned: used by the Camel Main HTTP
+     * MCP engine; ignored by stdio and native Spring Boot / Quarkus engines.
+     */
+    public String getRequiredScopes() {
+        return requiredScopes;
+    }
+
+    public void setRequiredScopes(String requiredScopes) {
+        this.requiredScopes = requiredScopes;
+    }
+
+    /**
+     * Canonical public HTTPS resource identifier used for RFC 9728 metadata by the Camel Main HTTP engine.
+     */
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
     }
 }

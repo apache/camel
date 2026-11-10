@@ -155,7 +155,9 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
                 configuration.getServerTitle(), configuration.getServerDescription(),
                 configuration.getServerWebsiteUrl(), configuration.getInstructions(),
                 configuration.getServerIcons(),
-                McpServerOrigins.parseAllowedOrigins(configuration.getAllowedOrigins())));
+                McpServerOrigins.parseAllowedOrigins(configuration.getAllowedOrigins()),
+                configuration.getOauthProfile(), configuration.getRequiredScopes(),
+                configuration.getResourceUri()));
 
         if (!engine.consumesServingConfiguration()) {
             if (!McpServerConstants.DEFAULT_PATH.equals(configuration.getPath())) {
@@ -734,6 +736,18 @@ public class McpServerBridge extends ServiceSupport implements CamelContextAware
         Collection<String> roles = context.principalRoles();
         if (roles != null && !roles.isEmpty()) {
             exchange.setProperty(McpToolCallContext.SECURITY_PRINCIPAL_ROLES_PROPERTY, roles);
+        }
+        String oauthSubject = context.oauthSubject();
+        if (oauthSubject != null && !oauthSubject.isBlank()) {
+            exchange.setProperty(McpToolCallContext.OAUTH_SUBJECT_PROPERTY, oauthSubject);
+        }
+        Collection<String> oauthScopes = context.oauthScopes();
+        if (oauthScopes != null && !oauthScopes.isEmpty()) {
+            exchange.setProperty(McpToolCallContext.OAUTH_SCOPES_PROPERTY, oauthScopes);
+        }
+        Map<String, Object> oauthClaims = context.oauthClaims();
+        if (oauthClaims != null && !oauthClaims.isEmpty()) {
+            exchange.setProperty(McpToolCallContext.OAUTH_CLAIMS_PROPERTY, oauthClaims);
         }
     }
 

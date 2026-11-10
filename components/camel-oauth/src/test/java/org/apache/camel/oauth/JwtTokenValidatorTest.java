@@ -125,6 +125,46 @@ class JwtTokenValidatorTest {
     }
 
     @Test
+    void validJwtWithScpClaim() throws Exception {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("scp", List.of("mcp:read", "mcp:write"))
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null);
+
+        assertTrue(result.isValid());
+        assertTrue(result.hasScope("mcp:read"));
+        assertTrue(result.hasScope("mcp:write"));
+    }
+
+    @Test
+    void mergesScopeAndScpClaimsWithoutDuplicateScopes() throws Exception {
+        JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                .subject("user1")
+                .issuer(ISSUER)
+                .audience(AUDIENCE)
+                .expirationTime(futureDate(300))
+                .issueTime(new Date())
+                .claim("scope", "mcp:read common")
+                .claim("scp", List.of("mcp:write", "common"))
+                .build();
+        String token = signClaims(claims);
+
+        OAuthTokenValidationResult result = JwtTokenValidator.validate(
+                token, TEST_ENDPOINT, 600, ISSUER, Set.of(AUDIENCE), 0, true, 5000, 10000, null);
+
+        assertTrue(result.isValid());
+        assertEquals(List.of("mcp:read", "common", "mcp:write"), result.getScopes());
+    }
+
+    @Test
     void expiredJwt() throws Exception {
         String token = createToken(ISSUER, AUDIENCE, pastDate(60), null);
 

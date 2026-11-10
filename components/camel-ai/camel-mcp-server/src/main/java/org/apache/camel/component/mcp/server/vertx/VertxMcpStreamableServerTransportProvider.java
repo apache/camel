@@ -19,8 +19,10 @@ package org.apache.camel.component.mcp.server.vertx;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,8 +48,11 @@ import io.vertx.ext.web.Route;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.SecurityPolicyHandler;
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.mcp.server.McpServerOrigins;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -96,8 +101,13 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     private final long sessionKeepAliveIntervalMs;
     private final long sessionIdleTtlMs;
     private final ServerHttpHeaderValidator originValidator;
-    // Vert.x lets a handler of this type run before the body handler
+    private final CamelContext camelContext;
+    private final OAuthHttpSecuritySupport oauthSecurity;
+    private final List<String> requiredScopes;
+    private final McpOAuthProtectedResourceMetadata protectedResourceMetadata;
+    // Both security handlers run before the request body handler.
     private final SecurityPolicyHandler originHandler = this::checkOrigin;
+    private final SecurityPolicyHandler oauthHandler = this::checkOAuth;
     private final ConcurrentHashMap<String, ManagedSession> sessions = new ConcurrentHashMap<>();
     private final List<Route> routes = new ArrayList<>();
 
@@ -128,10 +138,70 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     public VertxMcpStreamableServerTransportProvider(
                                                      McpJsonMapper jsonMapper, String path, long sessionKeepAliveIntervalMs,
                                                      long sessionIdleTtlMs, List<String> allowedOrigins) {
+        this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, allowedOrigins, null, null, null);
+    }
+
+    /**
+     * Creates the streamable HTTP transport with optional OAuth authentication and required scopes.
+     */
+    public VertxMcpStreamableServerTransportProvider(
+                                                     McpJsonMapper jsonMapper,
+                                                     String path,
+                                                     long sessionKeepAliveIntervalMs,
+                                                     long sessionIdleTtlMs,
+                                                     List<String> allowedOrigins,
+                                                     CamelContext camelContext,
+                                                     OAuthHttpSecuritySupport oauthSecurity,
+                                                     String requiredScopes) {
+        this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, allowedOrigins,
+             camelContext, oauthSecurity, requiredScopes, null, null);
+    }
+
+    /** Creates the transport with RFC 9728 metadata for an OAuth-protected MCP resource. */
+    public VertxMcpStreamableServerTransportProvider(
+                                                     McpJsonMapper jsonMapper,
+                                                     String path,
+                                                     long sessionKeepAliveIntervalMs,
+                                                     long sessionIdleTtlMs,
+                                                     List<String> allowedOrigins,
+                                                     CamelContext camelContext,
+                                                     OAuthHttpSecuritySupport oauthSecurity,
+                                                     String requiredScopes,
+                                                     String resourceUri,
+                                                     String authorizationServerIssuer) {
+        this(jsonMapper, path, sessionKeepAliveIntervalMs, sessionIdleTtlMs, allowedOrigins,
+             camelContext, oauthSecurity, requiredScopes, resourceUri, authorizationServerIssuer, false);
+    }
+
+    /**
+     * Creates the transport with an explicit opt-in for an HTTP authorization-server issuer. The opt-in comes from the
+     * OAuth profile's allow-insecure-http setting; the MCP resource URI is always HTTPS.
+     */
+    public VertxMcpStreamableServerTransportProvider(
+                                                     McpJsonMapper jsonMapper,
+                                                     String path,
+                                                     long sessionKeepAliveIntervalMs,
+                                                     long sessionIdleTtlMs,
+                                                     List<String> allowedOrigins,
+                                                     CamelContext camelContext,
+                                                     OAuthHttpSecuritySupport oauthSecurity,
+                                                     String requiredScopes,
+                                                     String resourceUri,
+                                                     String authorizationServerIssuer,
+                                                     boolean allowInsecureAuthorizationServer) {
         this.jsonMapper = jsonMapper;
         this.path = path;
         this.sessionKeepAliveIntervalMs = sessionKeepAliveIntervalMs;
         this.sessionIdleTtlMs = sessionIdleTtlMs;
+        this.camelContext = camelContext;
+        this.oauthSecurity = oauthSecurity;
+        List<String> configuredScopes = parseRequiredScopes(requiredScopes);
+        this.protectedResourceMetadata = oauthSecurity != null
+                ? McpOAuthProtectedResourceMetadata.create(
+                        resourceUri, path, authorizationServerIssuer, configuredScopes,
+                        allowInsecureAuthorizationServer)
+                : null;
+        this.requiredScopes = configuredScopes;
         this.originValidator = DefaultServerTransportSecurityValidator.builder()
                 .allowedOrigins(allowedOrigins != null
                         ? allowedOrigins.stream().map(McpServerOrigins::normalizeAllowedOrigin).toList()
@@ -181,18 +251,32 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
      */
     public void registerRoutes(VertxPlatformHttpRouter router) {
         vertx = router.vertx();
+        if (protectedResourceMetadata != null) {
+            Route metadata = router.route(protectedResourceMetadata.metadataPath()).method(HttpMethod.GET);
+            metadata.handler(this::handleProtectedResourceMetadata);
+            routes.add(metadata);
+        }
         Route post = router.route(path).method(HttpMethod.POST);
         // the origin check comes first, so a request that is not allowed is not even read
         post.handler(originHandler);
+        if (oauthSecurity != null) {
+            post.handler(oauthHandler);
+        }
         post.handler(BodyHandler.create(false));
         post.handler(ctx -> dispatch(vertx, ctx, this::handlePost));
         routes.add(post);
         Route get = router.route(path).method(HttpMethod.GET);
         get.handler(originHandler);
+        if (oauthSecurity != null) {
+            get.handler(oauthHandler);
+        }
         get.handler(ctx -> dispatch(vertx, ctx, this::handleGet));
         routes.add(get);
         Route delete = router.route(path).method(HttpMethod.DELETE);
         delete.handler(originHandler);
+        if (oauthSecurity != null) {
+            delete.handler(oauthHandler);
+        }
         delete.handler(ctx -> dispatch(vertx, ctx, this::handleDelete));
         routes.add(delete);
         startSessionMaintenance();
@@ -225,6 +309,117 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
             return;
         }
         ctx.next();
+    }
+
+    /**
+     * Validates a Bearer token before the MCP body handler or MCP dispatch runs. Validation executes on a worker thread
+     * because JWKS and introspection may require outbound HTTP calls.
+     */
+    private void checkOAuth(RoutingContext ctx) {
+        List<String> authorizations = List.copyOf(ctx.request().headers().getAll("Authorization"));
+        ctx.request().pause();
+
+        vertx.executeBlocking(
+                () -> oauthSecurity.validate(camelContext, authorizations),
+                false)
+                .onComplete(ar -> vertx.runOnContext(ignored -> {
+                    if (ar.failed()) {
+                        LOG.warn("Unable to execute MCP OAuth validation", ar.cause());
+                        ctx.response().setStatusCode(503).end("Service Unavailable");
+                        return;
+                    }
+
+                    OAuthHttpSecuritySupport.Validation validation = ar.result();
+                    if (!validation.isAuthenticated()) {
+                        ctx.response()
+                                .setStatusCode(validation.getRejectionStatusCode())
+                                .putHeader("Content-Type", "text/plain");
+                        String challenge = validation.getWwwAuthenticate();
+                        if (validation.getRejectionStatusCode() == 401 && protectedResourceMetadata != null
+                                && challenge != null) {
+                            challenge = protectedResourceMetadata.addToWwwAuthenticate(challenge);
+                        }
+                        if (challenge != null) {
+                            ctx.response().putHeader("WWW-Authenticate", challenge);
+                        }
+                        ctx.response().end(validation.getResponseBody());
+                        return;
+                    }
+
+                    OAuthTokenValidationResult result = validation.getValidationResult();
+                    List<String> missingScopes = requiredScopes.stream()
+                            .filter(scope -> !result.hasScope(scope))
+                            .toList();
+
+                    if (!missingScopes.isEmpty()) {
+                        String challenge = "Bearer error=\"insufficient_scope\", scope=\""
+                                           + String.join(" ", requiredScopes) + "\"";
+                        ctx.response()
+                                .setStatusCode(403)
+                                .putHeader("Content-Type", "text/plain")
+                                .putHeader("WWW-Authenticate", challenge)
+                                .end("Forbidden");
+                        return;
+                    }
+
+                    ctx.put(VertxMcpServerEngine.TRANSPORT_OAUTH_RESULT_KEY, result);
+
+                    // ctx.next() installs the next handler (BodyHandler for POST); resume only
+                    // after that handler has had a chance to register its body listeners.
+                    ctx.next();
+                    ctx.request().resume();
+                }));
+    }
+
+    /**
+     * Serves the public RFC 9728 metadata document. This route is intentionally not protected by the MCP bearer
+     * authentication handler; clients need the document before they can obtain an access token.
+     */
+    private void handleProtectedResourceMetadata(RoutingContext ctx) {
+        try {
+            String body = jsonMapper.writeValueAsString(protectedResourceMetadata.asMap());
+            ctx.response()
+                    .setStatusCode(200)
+                    .putHeader("Content-Type", APPLICATION_JSON)
+                    .end(body);
+        } catch (Exception e) {
+            LOG.warn("Unable to serialize MCP protected-resource metadata", e);
+            ctx.response().setStatusCode(500).end();
+        }
+    }
+
+    /**
+     * Parses the comma-separated OAuth scope configuration and validates each scope-token before it is ever written
+     * into a WWW-Authenticate response header.
+     */
+    private static List<String> parseRequiredScopes(String configured) {
+        if (configured == null || configured.isBlank()) {
+            return List.of();
+        }
+
+        Set<String> scopes = new LinkedHashSet<>();
+        for (String item : configured.split(",")) {
+            String scope = item.trim();
+            if (scope.isEmpty()) {
+                continue;
+            }
+            if (!isValidScopeToken(scope)) {
+                throw new IllegalArgumentException("Invalid character in MCP required OAuth scope configuration");
+            }
+            scopes.add(scope);
+        }
+        return List.copyOf(scopes);
+    }
+
+    private static boolean isValidScopeToken(String scope) {
+        for (int i = 0; i < scope.length(); i++) {
+            char ch = scope.charAt(i);
+            boolean valid = ch == 0x21 || (ch >= 0x23 && ch <= 0x5B) || (ch >= 0x5D && ch <= 0x7E);
+            if (!valid) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @FunctionalInterface
@@ -322,17 +517,24 @@ public class VertxMcpStreamableServerTransportProvider implements McpStreamableS
     }
 
     /**
-     * Builds the MCP transport context carrying the authenticated caller principal (when the HTTP request was
-     * authenticated), so a tool route invoked by this request can authorize on it. The principal is the Vert.x
-     * {@link User} that the platform-http authentication handler set on the routing context; absent it, the context is
-     * empty.
+     * Builds the MCP transport context with both the platform-http principal (when present) and the OAuth validation
+     * result produced by the MCP OAuth handler.
      */
     private static McpTransportContext toTransportContext(RoutingContext ctx) {
+        Map<String, Object> values = new LinkedHashMap<>();
+
         User user = ctx.user();
-        if (user == null) {
-            return McpTransportContext.EMPTY;
+        if (user != null) {
+            values.put(VertxMcpServerEngine.TRANSPORT_PRINCIPAL_KEY, user);
         }
-        return McpTransportContext.create(Map.of(VertxMcpServerEngine.TRANSPORT_PRINCIPAL_KEY, user));
+
+        OAuthTokenValidationResult oauthResult
+                = ctx.get(VertxMcpServerEngine.TRANSPORT_OAUTH_RESULT_KEY);
+        if (oauthResult != null) {
+            values.put(VertxMcpServerEngine.TRANSPORT_OAUTH_RESULT_KEY, oauthResult);
+        }
+
+        return values.isEmpty() ? McpTransportContext.EMPTY : McpTransportContext.create(values);
     }
 
     private void handleInitialize(RoutingContext ctx, Context connection, McpSchema.JSONRPCRequest request)

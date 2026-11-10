@@ -37,6 +37,8 @@
         <title>MCP Server</title>
         <supportLevel>Preview</supportLevel>
         <failsafe.rerunFailingTestsCount>3</failsafe.rerunFailingTestsCount>
+        <!-- The bundled Keycloak test image is not available for s390x. -->
+        <skipITs.s390x>true</skipITs.s390x>
     </properties>
 
     <dependencies>
@@ -52,6 +54,10 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-platform-http-vertx</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http-base</artifactId>
         </dependency>
         <dependency>
             <groupId>io.modelcontextprotocol.sdk</groupId>
@@ -115,6 +121,26 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-oauth</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-keycloak</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>${keycloak-client-version}</version>
             <scope>test</scope>
         </dependency>
 

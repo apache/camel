@@ -41,9 +41,12 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         map.put("McpAllowedOrigins", java.lang.String.class);
         map.put("McpEnabled", boolean.class);
         map.put("McpInstructions", java.lang.String.class);
+        map.put("McpOauthProfile", java.lang.String.class);
         map.put("McpPath", java.lang.String.class);
         map.put("McpPromptTimeout", long.class);
+        map.put("McpRequiredScopes", java.lang.String.class);
         map.put("McpResourceTimeout", long.class);
+        map.put("McpResourceUri", java.lang.String.class);
         map.put("McpServerDescription", java.lang.String.class);
         map.put("McpServerIcons", java.lang.String.class);
         map.put("McpServerName", java.lang.String.class);
@@ -101,12 +104,18 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpEnabled": target.setMcpEnabled(property(camelContext, boolean.class, value)); return true;
         case "mcpinstructions":
         case "mcpInstructions": target.setMcpInstructions(property(camelContext, java.lang.String.class, value)); return true;
+        case "mcpoauthprofile":
+        case "mcpOauthProfile": target.setMcpOauthProfile(property(camelContext, java.lang.String.class, value)); return true;
         case "mcppath":
         case "mcpPath": target.setMcpPath(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpprompttimeout":
         case "mcpPromptTimeout": target.setMcpPromptTimeout(property(camelContext, long.class, value)); return true;
+        case "mcprequiredscopes":
+        case "mcpRequiredScopes": target.setMcpRequiredScopes(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": target.setMcpResourceTimeout(property(camelContext, long.class, value)); return true;
+        case "mcpresourceuri":
+        case "mcpResourceUri": target.setMcpResourceUri(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpserverdescription":
         case "mcpServerDescription": target.setMcpServerDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "mcpservericons":
@@ -183,12 +192,18 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpEnabled": return boolean.class;
         case "mcpinstructions":
         case "mcpInstructions": return java.lang.String.class;
+        case "mcpoauthprofile":
+        case "mcpOauthProfile": return java.lang.String.class;
         case "mcppath":
         case "mcpPath": return java.lang.String.class;
         case "mcpprompttimeout":
         case "mcpPromptTimeout": return long.class;
+        case "mcprequiredscopes":
+        case "mcpRequiredScopes": return java.lang.String.class;
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": return long.class;
+        case "mcpresourceuri":
+        case "mcpResourceUri": return java.lang.String.class;
         case "mcpserverdescription":
         case "mcpServerDescription": return java.lang.String.class;
         case "mcpservericons":
@@ -261,12 +276,18 @@ public class HttpServerConfigurationPropertiesConfigurer extends org.apache.came
         case "mcpEnabled": return target.isMcpEnabled();
         case "mcpinstructions":
         case "mcpInstructions": return target.getMcpInstructions();
+        case "mcpoauthprofile":
+        case "mcpOauthProfile": return target.getMcpOauthProfile();
         case "mcppath":
         case "mcpPath": return target.getMcpPath();
         case "mcpprompttimeout":
         case "mcpPromptTimeout": return target.getMcpPromptTimeout();
+        case "mcprequiredscopes":
+        case "mcpRequiredScopes": return target.getMcpRequiredScopes();
         case "mcpresourcetimeout":
         case "mcpResourceTimeout": return target.getMcpResourceTimeout();
+        case "mcpresourceuri":
+        case "mcpResourceUri": return target.getMcpResourceUri();
         case "mcpserverdescription":
         case "mcpServerDescription": return target.getMcpServerDescription();
         case "mcpservericons":

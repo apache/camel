@@ -17,7 +17,10 @@
 package org.apache.camel.component.mcp.server;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Transport-supplied context for a single MCP tool call, carrying the caller's authenticated security principal when
@@ -41,7 +44,13 @@ import java.util.List;
  *                          copy and never contains {@code null}
  * @since                   4.23
  */
-public record McpToolCallContext(Object securityPrincipal, String principalName, Collection<String> principalRoles) {
+public record McpToolCallContext(
+        Object securityPrincipal,
+        String principalName,
+        Collection<String> principalRoles,
+        String oauthSubject,
+        Collection<String> oauthScopes,
+        Map<String, Object> oauthClaims) {
 
     /**
      * An empty context: no transport-supplied caller principal.
@@ -76,6 +85,15 @@ public record McpToolCallContext(Object securityPrincipal, String principalName,
      */
     public static final String SECURITY_PRINCIPAL_ROLES_PROPERTY = "CamelMcpSecurityPrincipalRoles";
 
+    /** Exchange property containing the validated OAuth subject. */
+    public static final String OAUTH_SUBJECT_PROPERTY = "CamelMcpOAuthSubject";
+
+    /** Exchange property containing the validated OAuth scopes. */
+    public static final String OAUTH_SCOPES_PROPERTY = "CamelMcpOAuthScopes";
+
+    /** Exchange property containing the validated OAuth claims. */
+    public static final String OAUTH_CLAIMS_PROPERTY = "CamelMcpOAuthClaims";
+
     /**
      * Canonical constructor; defensively copies the roles into an immutable collection so the stamped exchange property
      * cannot be mutated through the caller's reference.
@@ -84,6 +102,20 @@ public record McpToolCallContext(Object securityPrincipal, String principalName,
         if (principalRoles != null) {
             principalRoles = List.copyOf(principalRoles);
         }
+        if (oauthScopes != null) {
+            oauthScopes = List.copyOf(oauthScopes);
+        }
+        if (oauthClaims != null) {
+            oauthClaims = Collections.unmodifiableMap(new LinkedHashMap<>(oauthClaims));
+        }
+    }
+
+    /**
+     * Compatibility constructor for transports that provide a principal, name and roles only.
+     */
+    public McpToolCallContext(
+                              Object securityPrincipal, String principalName, Collection<String> principalRoles) {
+        this(securityPrincipal, principalName, principalRoles, null, null, null);
     }
 
     /**

@@ -18,7 +18,6 @@ package org.apache.camel.oauth;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -186,21 +185,41 @@ final class JwtTokenValidator {
         String issuer = claims.getIssuer();
         long expiresAt = claims.getExpirationTime() != null ? claims.getExpirationTime().getTime() / 1000L : 0;
 
-        List<String> scopes = Collections.emptyList();
-        Object scopeClaim = claims.getClaim("scope");
-        if (scopeClaim instanceof String s) {
-            scopes = Arrays.asList(s.split(" "));
-        } else if (scopeClaim instanceof List<?> list) {
-            scopes = new ArrayList<>();
-            for (Object item : list) {
-                scopes.add(String.valueOf(item));
-            }
-        }
+        List<String> scopes = readScopes(claims.getClaim("scope"), claims.getClaim("scp"));
 
         Map<String, Object> allClaims = claims.getClaims();
 
         LOG.debug("JWT validated successfully: sub={}, iss={}, exp={}", subject, issuer, expiresAt);
         return OAuthTokenValidationResult.valid(subject, issuer, audience, scopes, allClaims, expiresAt);
+    }
+
+    /**
+     * Reads OAuth scopes from the standard scope claim and the scp claim used by some identity providers. Both claims
+     * may be space-delimited strings or collections of scope strings.
+     */
+    private static List<String> readScopes(Object scopeClaim, Object scpClaim) {
+        List<String> scopes = new ArrayList<>();
+        addScopes(scopes, scopeClaim);
+        addScopes(scopes, scpClaim);
+        return scopes.isEmpty() ? Collections.emptyList() : List.copyOf(scopes);
+    }
+
+    private static void addScopes(List<String> scopes, Object claim) {
+        if (claim instanceof String value) {
+            if (!value.isBlank()) {
+                for (String scope : value.trim().split("\\s+")) {
+                    if (!scope.isBlank() && !scopes.contains(scope)) {
+                        scopes.add(scope);
+                    }
+                }
+            }
+        } else if (claim instanceof List<?> values) {
+            for (Object value : values) {
+                if (value instanceof String scope && !scope.isBlank() && !scopes.contains(scope)) {
+                    scopes.add(scope);
+                }
+            }
+        }
     }
 
     private static JWSVerifier createVerifier(JWK jwk) throws Exception {

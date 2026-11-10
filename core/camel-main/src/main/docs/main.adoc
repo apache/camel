@@ -197,7 +197,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 37 options, which are listed below.
+The camel.server supports 40 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -220,9 +220,12 @@ The camel.server supports 37 options, which are listed below.
 | `camel.server.mcpAllowedOrigins` | Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. Each entry is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. Scheme and host are compared ignoring case, and a default port (80 for http, 443 for https) may be left out. A wildcard for all origins is not supported: an entry that is not of the form scheme://host or scheme://host:port fails the startup. A request without an Origin header is always served; a request with an Origin header that is not allowed is rejected with HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any port). |  | String
 | `camel.server.mcpEnabled` | Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts. Requires camel-mcp-server on the classpath. Use setMcpTransport(String) to choose streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled. | false | boolean
 | `camel.server.mcpInstructions` | Top-level MCP instructions returned to clients on initialize. |  | String
+| `camel.server.mcpOauthProfile` | Name of the camel-oauth profile used to authenticate OAuth bearer tokens on the MCP HTTP endpoint. |  | String
 | `camel.server.mcpPath` | HTTP path where the MCP endpoint is served. | /mcp | String
 | `camel.server.mcpPromptTimeout` | Per-request MCP prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the MCP client; the underlying route may continue running until it completes. | 20000 | long
+| `camel.server.mcpRequiredScopes` | Comma-separated OAuth scopes required to access the MCP HTTP endpoint. |  | String
 | `camel.server.mcpResourceTimeout` | Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
+| `camel.server.mcpResourceUri` | Canonical public HTTPS resource identifier for the MCP endpoint, used by RFC 9728 metadata. Required when an OAuth profile is configured. It is never inferred from HTTP request headers. |  | String
 | `camel.server.mcpServerDescription` | MCP server description advertised to clients in serverInfo.description . |  | String
 | `camel.server.mcpServerIcons` | JSON array of MCP server icons advertised to clients in serverInfo.icons . Each entry must include a src URL and may include mimeType , sizes and theme . |  | String
 | `camel.server.mcpServerName` | MCP server name advertised to clients. Defaults to the CamelContext name. |  | String

@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.mcp.server.vertx;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +46,10 @@ import org.apache.camel.component.mcp.server.McpToolCallContext;
 import org.apache.camel.component.mcp.server.McpToolCallResult;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
 import org.apache.camel.component.platform.http.vertx.VertxPlatformHttpRouter;
+import org.apache.camel.http.base.OAuthHttpSecuritySupport;
+import org.apache.camel.spi.OAuthTokenValidationConfig;
+import org.apache.camel.spi.OAuthTokenValidationConfigResolver;
+import org.apache.camel.spi.OAuthTokenValidationResult;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
@@ -79,6 +85,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
      * the MCP transport context, so the tool-call handler reads it back via {@code exchange.transportContext()}.
      */
     static final String TRANSPORT_PRINCIPAL_KEY = "CamelMcpTransportPrincipal";
+    static final String TRANSPORT_OAUTH_RESULT_KEY = "CamelMcpOAuthTokenValidationResult";
 
     private CamelContext camelContext;
     private McpServerInfo info;
@@ -124,9 +131,18 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     protected void doStart() throws Exception {
         VertxPlatformHttpRouter router = lookupRouter();
         jsonMapper = McpJsonDefaults.getMapper();
+        OAuthHttpSecuritySupport oauthSecurity
+                = OAuthHttpSecuritySupport.create(camelContext, info.oauthProfile());
+        OAuthTokenValidationConfig oauthConfig = info.oauthProfile() != null && !info.oauthProfile().isBlank()
+                ? OAuthTokenValidationConfigResolver.resolveProfileConfig(camelContext, info.oauthProfile())
+                : null;
+        String authorizationServerIssuer = oauthConfig != null ? oauthConfig.getExpectedIssuer() : null;
+        boolean allowInsecureAuthorizationServer = oauthConfig != null && oauthConfig.isAllowInsecureHttp();
         transport = new VertxMcpStreamableServerTransportProvider(
                 jsonMapper, info.path(),
-                info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs(), info.allowedOrigins());
+                info.sessionKeepAliveIntervalMs(), info.sessionIdleTtlMs(), info.allowedOrigins(),
+                camelContext, oauthSecurity, info.requiredScopes(), info.resourceUri(),
+                authorizationServerIssuer, allowInsecureAuthorizationServer);
         McpServer.SyncSpecification<?> specification = McpServer.sync(transport)
                 .serverInfo(buildServerInfo(info))
                 // resources(subscribe, listChanged): per-resource subscriptions are not offered, but clients are
@@ -175,7 +191,11 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                     Map<String, Object> arguments = request.arguments() != null ? request.arguments() : Map.of();
                     Object principal = exchange.transportContext() != null
                             ? exchange.transportContext().get(TRANSPORT_PRINCIPAL_KEY) : null;
-                    McpToolCallContext context = toToolCallContext(principal);
+                    Object oauthValue = exchange.transportContext() != null
+                            ? exchange.transportContext().get(TRANSPORT_OAUTH_RESULT_KEY) : null;
+                    OAuthTokenValidationResult oauthResult = oauthValue instanceof OAuthTokenValidationResult value
+                            ? value : null;
+                    McpToolCallContext context = toToolCallContext(principal, oauthResult);
                     McpToolCallResult result = tool.handler().call(arguments, context);
                     McpSchema.CallToolResult.Builder builder = McpSchema.CallToolResult.builder()
                             .addTextContent(result.text())
@@ -196,14 +216,70 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
      * depending on Vert.x. A non-{@code User} principal is still carried as the raw object, and {@code null} yields the
      * empty context.
      */
-    private static McpToolCallContext toToolCallContext(Object principal) {
+    private static McpToolCallContext toToolCallContext(
+            Object principal, OAuthTokenValidationResult oauthResult) {
+        String oauthSubject = oauthResult != null ? oauthResult.getSubject() : null;
+        List<String> oauthScopes = oauthResult != null ? oauthResult.getScopes() : null;
+        Map<String, Object> oauthClaims = oauthResult != null ? oauthResult.getClaims() : null;
+
         if (principal instanceof User user) {
-            return new McpToolCallContext(user, VertxMcpPrincipal.name(user), VertxMcpPrincipal.roles(user));
+            String userName = VertxMcpPrincipal.name(user);
+            List<String> roles = VertxMcpPrincipal.roles(user);
+            if ((roles == null || roles.isEmpty()) && oauthResult != null) {
+                roles = oauthRoles(oauthResult);
+            }
+            return new McpToolCallContext(
+                    user,
+                    userName != null ? userName : oauthSubject,
+                    roles,
+                    oauthSubject,
+                    oauthScopes,
+                    oauthClaims);
         }
-        if (principal != null) {
-            return new McpToolCallContext(principal);
+
+        if (principal != null || oauthResult != null) {
+            return new McpToolCallContext(
+                    principal != null ? principal : oauthResult,
+                    oauthSubject,
+                    oauthResult != null ? oauthRoles(oauthResult) : null,
+                    oauthSubject,
+                    oauthScopes,
+                    oauthClaims);
         }
+
         return McpToolCallContext.EMPTY;
+    }
+
+    /**
+     * Extracts role names from common OAuth claim shapes without assuming claim types. The scopes remain separate from
+     * roles in McpToolCallContext.
+     */
+    private static List<String> oauthRoles(OAuthTokenValidationResult result) {
+        Map<String, Object> claims = result.getClaims();
+        Object roleValue = claims.get("roles");
+
+        if (!(roleValue instanceof Collection<?>)) {
+            Object realmAccess = claims.get("realm_access");
+            if (realmAccess instanceof Map<?, ?> realmMap) {
+                roleValue = realmMap.get("roles");
+            }
+        }
+
+        if (!(roleValue instanceof Collection<?>)) {
+            roleValue = claims.get("groups");
+        }
+
+        if (!(roleValue instanceof Collection<?> values)) {
+            return null;
+        }
+
+        List<String> roles = new ArrayList<>();
+        for (Object value : values) {
+            if (value instanceof String role && !role.isBlank()) {
+                roles.add(role);
+            }
+        }
+        return roles.isEmpty() ? null : List.copyOf(roles);
     }
 
     @Override

@@ -18,7 +18,6 @@ package org.apache.camel.oauth;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -388,11 +387,33 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
     }
 
     private static List<String> readScope(JsonObject json) {
-        String scope = readOptionalString(json, "scope");
-        if (scope == null || scope.isBlank()) {
-            return Collections.emptyList();
+        List<String> scopes = new ArrayList<>();
+        addScopeValues(scopes, json.get("scope"));
+        addScopeValues(scopes, json.get("scp"));
+        return scopes.isEmpty() ? Collections.emptyList() : List.copyOf(scopes);
+    }
+
+    private static void addScopeValues(List<String> scopes, JsonElement claim) {
+        if (isString(claim)) {
+            addScopeString(scopes, claim.getAsString());
+        } else if (claim != null && claim.isJsonArray()) {
+            for (JsonElement item : claim.getAsJsonArray()) {
+                if (isString(item)) {
+                    addScopeString(scopes, item.getAsString());
+                }
+            }
         }
-        return Arrays.stream(scope.trim().split("\\s+")).toList();
+    }
+
+    private static void addScopeString(List<String> scopes, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        for (String scope : value.trim().split("\\s+")) {
+            if (!scope.isBlank() && !scopes.contains(scope)) {
+                scopes.add(scope);
+            }
+        }
     }
 
     private static List<String> readStringOrStringArray(JsonObject json, String claimName) {
