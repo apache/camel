@@ -50,7 +50,9 @@ An exception that a processor throws on through an outer step is reported once, 
 A plain `Processor` does not break the rule when it throws: the adapter Camel puts around it (`DelegateSyncProcessor`
 for `process(...)`, the bridge of `AsyncProcessorConverterHelper`, and the bean component for a bean that is a
 `Processor`) sets what it throws on the exchange, also an `Error` such as an `AssertionError` of a test, and then calls
-the callback. The exchange fails, and nothing is reported.
+the callback. The exchange fails, and nothing is reported. A `VirtualMachineError` (such as an `OutOfMemoryError` or
+a `StackOverflowError`) is the exception: the adapter does not catch it, so it is thrown on after the callback, as in
+earlier versions, and is reported as thrown after the callback (`THREW_AFTER_CALLBACK`).
 
 A report looks like this:
 

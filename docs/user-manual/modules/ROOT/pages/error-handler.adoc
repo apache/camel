@@ -182,6 +182,39 @@ Dead Letter Channel
 See xref:exception-clause.adoc[Exception Clause] documentation for
 additional documentation of the features above.
 
+== An Error thrown by a processor
+
+A plain `Processor` (in `process(...)`, in `bean(...)` for a bean that is a `Processor`, or a producer that is not an
+`AsyncProcessor`) may throw an `Error` instead of an exception:
+
+[cols="2,4",options="header"]
+|===
+|Thrown by the processor |What happens
+
+|An `Error` that is not a `VirtualMachineError`, such as `AssertionError`, `LinkageError`
+(`NoClassDefFoundError`, `ExceptionInInitializerError`) or a custom `Error`
+|The exchange fails with it (wrapped in a `CamelExecutionException`), and the error handler handles it as any other
+failure: redelivery, `onException`, `doCatch` and a dead letter channel get it. `onException(Exception.class)` and
+`doCatch(Exception.class)` also match it; to treat it differently, match it on its class, such as
+`onException(AssertionError.class)`
+
+|A `VirtualMachineError`, such as `OutOfMemoryError`, `StackOverflowError` or `InternalError`
+|Camel's error handling does not get it (the JVM may no longer be in a consistent state, so the application should not
+handle it). It is not set on the exchange, but thrown on after the processor's
+callback was called. Depending on the error handler, the `Error` reaches the caller (and the exchange may stay
+inflight), or it is only logged and the route continues as if the processor had succeeded
+|===
+
+An application with strict reliability needs should not rely on Camel to react to a `VirtualMachineError`. For an
+`OutOfMemoryError` that the JVM raises, it can let the JVM stop with `-XX:+ExitOnOutOfMemoryError` or
+`-XX:+CrashOnOutOfMemoryError` (these options do not cover a `StackOverflowError`, or an `OutOfMemoryError` that code
+throws itself).
+
+`template.send(...)`, `template.request(...)` and `template.asyncSend(...)` return the failed exchange (or its future)
+without throwing the exception; `sendBody(...)` and `requestBody(...)` throw a `CamelExecutionException` that holds the
+`Error`, unless the failure was handled (such as by a dead letter channel, `onException(...).handled(true)` or
+`doCatch`).
+
 == Scopes
 
 The error handler is scoped as either:

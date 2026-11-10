@@ -38,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Rule R1 on processors and strategies of a user that break the contract of AsyncProcessor: each test fails with a
  * report that names the step and the class, and says so with {@link ExpectSanitizerViolation}. The tests without it
- * check what Camel handles so that no rule is broken, such as an Error of a plain Processor.
+ * check what Camel handles so that no rule is broken, such as an Error (not a VirtualMachineError) of a plain
+ * Processor.
  */
 @CamelSanitizer
 class SanitizerUserCodeTest extends ContextTestSupport {

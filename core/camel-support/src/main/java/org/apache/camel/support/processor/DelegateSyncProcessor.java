@@ -65,9 +65,13 @@ public class DelegateSyncProcessor extends ServiceSupport
         // force calling the sync method
         try {
             processor.process(exchange);
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on after the callback): the application must not handle a JVM-level failure such
+            // as an OutOfMemoryError with Camel's error handling
+            throw e;
         } catch (Throwable e) {
-            // any Throwable, also an Error such as an AssertionError: the callback is called in finally, so an Error
-            // thrown on after it would not fail the exchange, and the exchange could stay inflight
+            // any other Throwable, also an Error such as an AssertionError: the callback is called in finally, so an
+            // Error thrown on after it would not fail the exchange, and the exchange could stay inflight
             exchange.setException(e);
         } finally {
             // we are bridging a sync processor as async so callback with true

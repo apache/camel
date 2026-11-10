@@ -652,22 +652,45 @@ processor to set the exception on the exchange and call the callback, as an `Asy
 === camel-core - an Error thrown by a Processor fails the exchange
 
 When a plain `Processor` (in `process(...)`, in `bean(...)` for a bean that is a `Processor`, or as a producer that is
-not an `AsyncProcessor`) throws an `Error`, such as an `AssertionError`, the exchange now fails with it, as for an
-exception. Before, only a `LinkageError` thrown in `process(...)` and an `AssertionError` thrown by a bean that is a
-`Processor` did so (as a bean method that throws any `Error` already does). Any other `Error` was thrown on to the
-caller after the route had already been continued, so the next steps ran as if the processor had succeeded, and the
-exchange could stay inflight until the context stopped (which then waited for its shutdown timeout).
+not an `AsyncProcessor`) throws an `Error` that is not a `VirtualMachineError`, such as an `AssertionError`, the
+exchange now fails with it, as for an exception. Before, only a `LinkageError` thrown in `process(...)` and an
+`AssertionError` thrown by a bean that is a `Processor` did so (as a bean method that throws any `Error` already does).
+Any other `Error` was thrown on after the processor's callback had been called: depending on the error handler, it was
+only logged and the next steps ran as if the processor had succeeded, or it reached the caller and the exchange stayed
+inflight until the context stopped (which then waited for its shutdown timeout).
 
-The exchange keeps the `Error` wrapped in a `CamelExecutionException`, so the error handler handles it as any other
-failure: `onException(Exception.class)`, `doCatch(Exception.class)` and a dead letter channel now also catch such an
-`Error` (including an `OutOfMemoryError` or a `StackOverflowError`), and a test whose processor fails an assertion
-sees the exchange fail instead of the `AssertionError` being thrown to it. To treat an `Error` differently, match it
-with `onException` or `doCatch` on its class, such as `onException(AssertionError.class)`. There is no option for the
-old behaviour.
+[cols="2,4",options="header"]
+|===
+|Thrown by the processor |What happens
 
-A test that sends with `template.send(...)` and asserts only inside a processor must now check the exception of the
-returned exchange (`exchange.getException()`), as `send` does not throw it; or send with `sendBody(...)` or
-`requestBody(...)`, which throw a `CamelExecutionException` that holds the `Error`.
+|An `Error` that is not a `VirtualMachineError`, such as `AssertionError`, `LinkageError`
+(`NoClassDefFoundError`, `ExceptionInInitializerError`) or a custom `Error`
+|The exchange fails with it (wrapped in a `CamelExecutionException`), and the error handler handles it as any other
+failure: redelivery, `onException`, `doCatch` and a dead letter channel get it. `onException(Exception.class)` and
+`doCatch(Exception.class)` also match it; to treat it differently, match it on its class, such as
+`onException(AssertionError.class)`
+
+|A `VirtualMachineError`, such as `OutOfMemoryError`, `StackOverflowError` or `InternalError`
+|Not changed by this entry: Camel's error handling does not get it (the JVM may no longer be in a consistent
+state, so the application should not handle it). It is not set on the exchange, but thrown on after the processor's
+callback was called. Depending on the error handler, the `Error` reaches the caller (and the exchange may stay
+inflight), or it is only logged and the route continues as if the processor had succeeded
+|===
+
+An application with strict reliability needs should not rely on Camel to react to a `VirtualMachineError`. For an
+`OutOfMemoryError` that the JVM raises, it can let the JVM stop with `-XX:+ExitOnOutOfMemoryError` or
+`-XX:+CrashOnOutOfMemoryError` (these options do not cover a `StackOverflowError`, or an `OutOfMemoryError` that code
+throws itself).
+
+`template.send(...)`, `template.request(...)` and `template.asyncSend(...)` return the exchange (or its future) with the
+exception and do not throw it. `sendBody(...)` and `requestBody(...)` throw a `CamelExecutionException` that holds the
+`Error`, unless the failure was handled (such as by a dead letter channel, `onException(...).handled(true)` or
+`doCatch`). A test that sends with `template.send(...)` and asserts only inside a processor
+must now check the exception of the returned exchange (`exchange.getException()`), or send with `sendBody(...)` or
+`requestBody(...)`.
+
+There is no option for the old behaviour. See also
+xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor].
 
 === camel-core - variableReceive into a route or group variable stores the header variables in that route or group
 
