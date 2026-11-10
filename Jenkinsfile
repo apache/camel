@@ -19,7 +19,7 @@ CAMEL-24290: name of the unthrottled job (Jenkinsfile.occupier) holding the idle
 as a workaround for https://github.com/jenkinsci/jenkins/pull/27365. It must stay a separate job without the 'camel'
 throttle, otherwise it would be blocked by the same bug.
 */
-def ALT_ARCH_OCCUPIER_JOB = env.ALT_ARCH_OCCUPIER_JOB ?: "camel-alt-arch-occupier"
+def ALT_ARCH_OCCUPIER_JOB = env.ALT_ARCH_OCCUPIER_JOB ?: "../camel-alt-arch-occupier"
 def MAVEN_PARAMS = "-T1C -B -e -fae -V -Dnoassembly -Dsurefire.rerunFailingTestsCount=2 -Dfailsafe.rerunFailingTestsCount=1"
 def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
 def MAVEN_TEST_PARAMS_UBUNTU = env.MAVEN_TEST_PARAMS ?: "-Dci.env.name=apache.org"
@@ -84,7 +84,7 @@ pipeline {
                 script {
                     def platforms = params.PLATFORM_FILTER == 'all' ? 'ppc64le,s390x' : params.PLATFORM_FILTER
                     // Never fail nor delay the build because of this workaround
-                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
                         build job: ALT_ARCH_OCCUPIER_JOB,
                               parameters: [string(name: 'PLATFORMS', value: platforms)],
                               wait: false

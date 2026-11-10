@@ -37,6 +37,7 @@ pipeline {
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
         )
         timeout(time: 30, unit: 'MINUTES')
+        skipDefaultCheckout(true)
     }
 
     parameters {
@@ -47,10 +48,18 @@ pipeline {
         stage('Inspect nodes') {
             // Short lived, on a platform which is not subject to the workaround
             agent {
-                label 'ubuntu-avx'
+                label 'ubuntu'
             }
             steps {
                 script {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: scm.branches,
+                        extensions: [
+                            [$class: 'CloneOption', depth: 1, noTags: true, shallow: true]
+                        ],
+                        userRemoteConfigs: scm.userRemoteConfigs
+                    ])
                     def platforms = params.PLATFORMS.split(',').collect { it.trim() }.findAll { it }
                     def altArchNodes = load 'etc/scripts/jenkins-alt-arch-nodes.groovy'
                     occupierBranches = altArchNodes.provisionAltArchNodes(platforms)
