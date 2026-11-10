@@ -79,6 +79,13 @@ Camel components have.
 For advanced control a custom implementation of `org.apache.camel.component.kafka.PollExceptionStrategy` can be configured
 on the component level, which allows controlling which of the strategies to use for each exception.
 
+A single `PollExceptionStrategy` is shared by all consumer threads of an endpoint. If the strategy must be bound to its
+consumer thread, for example to drive a reconnect or to wrap one of the built-in strategies, configure a
+`org.apache.camel.component.kafka.PollExceptionStrategyFactory` with the `pollExceptionStrategyFactory` option instead.
+The factory is invoked each time a consumer thread creates its Kafka consumer, so each thread gets its own strategy. Use
+it when the endpoint runs more than one consumer thread (`consumersCount` > 1), or to decorate a built-in strategy by
+extending `org.apache.camel.component.kafka.consumer.errorhandler.DefaultPollExceptionStrategyFactory`.
+
 === Consumer error handling (advanced)
 
 By default, Camel will poll using the *ERROR_HANDLER* to process exceptions.

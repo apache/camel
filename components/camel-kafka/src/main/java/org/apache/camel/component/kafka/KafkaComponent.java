@@ -39,6 +39,8 @@ public class KafkaComponent extends AbstractKafkaComponent {
     private KafkaManualCommitFactory kafkaManualCommitFactory;
     @Metadata(autowired = true, label = "advanced")
     private KafkaClientFactory kafkaClientFactory;
+    @Metadata(autowired = true, label = "consumer,advanced")
+    private PollExceptionStrategyFactory pollExceptionStrategyFactory;
     @Deprecated
     @Metadata(label = "consumer,advanced")
     private int subscribeConsumerBackoffMaxAttempts;
@@ -120,6 +122,22 @@ public class KafkaComponent extends AbstractKafkaComponent {
      */
     public void setKafkaClientFactory(KafkaClientFactory kafkaClientFactory) {
         this.kafkaClientFactory = kafkaClientFactory;
+    }
+
+    public PollExceptionStrategyFactory getPollExceptionStrategyFactory() {
+        return pollExceptionStrategyFactory;
+    }
+
+    /**
+     * Factory to create a {@link PollExceptionStrategy} per Kafka consumer fetch thread. Unlike the
+     * pollExceptionStrategy option, which shares a single strategy across all consumer threads, the factory is invoked
+     * each time a fetch thread creates its Kafka consumer (on start and on every reconnect), so each thread gets its
+     * own strategy bound to its current consumer. This is required by strategies that drive the consumer (such as the
+     * built-in reconnect, stop, and bridge strategies), and it also works correctly when an endpoint uses multiple
+     * consumer threads. The factory may be called concurrently and must be thread-safe.
+     */
+    public void setPollExceptionStrategyFactory(PollExceptionStrategyFactory pollExceptionStrategyFactory) {
+        this.pollExceptionStrategyFactory = pollExceptionStrategyFactory;
     }
 
     /**

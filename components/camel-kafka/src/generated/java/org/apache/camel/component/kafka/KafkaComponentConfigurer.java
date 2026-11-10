@@ -174,6 +174,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionerIgnoreKeys": getOrCreateConfiguration(target).setPartitionerIgnoreKeys(property(camelContext, boolean.class, value)); return true;
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": target.setPollExceptionStrategy(property(camelContext, org.apache.camel.component.kafka.PollExceptionStrategy.class, value)); return true;
+        case "pollexceptionstrategyfactory":
+        case "pollExceptionStrategyFactory": target.setPollExceptionStrategyFactory(property(camelContext, org.apache.camel.component.kafka.PollExceptionStrategyFactory.class, value)); return true;
         case "pollonerror":
         case "pollOnError": getOrCreateConfiguration(target).setPollOnError(property(camelContext, org.apache.camel.component.kafka.PollOnError.class, value)); return true;
         case "polltimeoutms":
@@ -289,7 +291,7 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"kafkaClientFactory", "kafkaManualCommitFactory", "pollExceptionStrategy"};
+        return new String[]{"kafkaClientFactory", "kafkaManualCommitFactory", "pollExceptionStrategy", "pollExceptionStrategyFactory"};
     }
 
     @Override
@@ -438,6 +440,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionerIgnoreKeys": return boolean.class;
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": return org.apache.camel.component.kafka.PollExceptionStrategy.class;
+        case "pollexceptionstrategyfactory":
+        case "pollExceptionStrategyFactory": return org.apache.camel.component.kafka.PollExceptionStrategyFactory.class;
         case "pollonerror":
         case "pollOnError": return org.apache.camel.component.kafka.PollOnError.class;
         case "polltimeoutms":
@@ -698,6 +702,8 @@ public class KafkaComponentConfigurer extends PropertyConfigurerSupport implemen
         case "partitionerIgnoreKeys": return getOrCreateConfiguration(target).isPartitionerIgnoreKeys();
         case "pollexceptionstrategy":
         case "pollExceptionStrategy": return target.getPollExceptionStrategy();
+        case "pollexceptionstrategyfactory":
+        case "pollExceptionStrategyFactory": return target.getPollExceptionStrategyFactory();
         case "pollonerror":
         case "pollOnError": return getOrCreateConfiguration(target).getPollOnError();
         case "polltimeoutms":
