@@ -756,6 +756,15 @@ exception and do not throw it. `sendBody(...)` and `requestBody(...)` throw a `C
 must now check the exception of the returned exchange (`exchange.getException()`), or send with `sendBody(...)` or
 `requestBody(...)`.
 
+The same now applies to an `Error` that is not a `VirtualMachineError` thrown by the expression of a `recipientList`,
+by the expression of a `split` with `synchronous=true` (or while a `multicast` or `recipientList` with
+`synchronous=true` prepares its parts), by a data type transformer (`transform` to a data type), and by the producer of
+a component built on the API component framework when it is not thrown by an API method called by reflection (for
+example when the producer creates its client, or calls a client method directly); an `Error` of an API method called
+by reflection already failed the exchange. Before, depending on the error handler, the route continued as if the step
+had succeeded, or the `Error` reached the caller (for the producer of an API component, the `Error` was lost on its
+thread).
+
 There is no option for the old behaviour. See also
 xref:error-handler.adoc#_an_error_thrown_by_a_processor[An Error thrown by a processor].
 

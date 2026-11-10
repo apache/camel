@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -36,6 +37,7 @@ import org.apache.camel.support.component.ApiMethodHelperTest.TestMethod;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -87,6 +89,21 @@ public class AbstractApiProducerTest extends ContextTestSupport {
         Object out = template.requestBody(endpoint, new TestName("World"));
         assertTrue(out instanceof String[], "Should be an array: " + out);
         assertEquals(2, ((String[]) out).length);
+    }
+
+    @Test
+    public void testErrorOutsideTheReflectiveCallFailsTheExchange() throws Exception {
+        TestApiEndpoint endpoint = (TestApiEndpoint) createEndpoint("greetMe", "name");
+        AssertionError error = new AssertionError("Simulated error of the API");
+        endpoint.failWith = error;
+
+        // thrown by doInvokeMethod itself, outside the reflective call of the API method (which wraps an Error of the
+        // method), as a producer that calls its client directly can do. It runs on a thread of the endpoint: the Error
+        // must fail the exchange, not be lost in that thread
+        Exchange out = template.send(endpoint, e -> e.getMessage().setBody("World"));
+
+        assertTrue(out.getException() instanceof CamelExecutionException, "Expected a failed exchange: " + out.getException());
+        assertSame(error, out.getException().getCause());
     }
 
     record TestName(String name) {
@@ -180,6 +197,8 @@ public class AbstractApiProducerTest extends ContextTestSupport {
     static class TestApiEndpoint extends AbstractApiEndpoint<TestApiName, TestConfiguration> {
 
         private final ApiMethodPropertiesHelper<TestConfiguration> propertiesHelper;
+        // when set, the API method throws it
+        volatile Error failWith;
 
         TestApiEndpoint(String uri, Component component, String methodName) {
             super(uri, component, TestApiName.TEST, methodName, METHOD_HELPER, new TestEndpointConfiguration());
@@ -211,6 +230,14 @@ public class AbstractApiProducerTest extends ContextTestSupport {
         @Override
         public Producer createProducer() {
             return new AbstractApiProducer<>(this, propertiesHelper) {
+                @Override
+                protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) {
+                    Error error = failWith;
+                    if (error != null) {
+                        throw error;
+                    }
+                    return super.doInvokeMethod(method, properties);
+                }
             };
         }
 

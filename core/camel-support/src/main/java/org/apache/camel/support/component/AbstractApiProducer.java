@@ -96,6 +96,14 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
                 } catch (Exception t) {
                     exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
+                } catch (VirtualMachineError e) {
+                    // left as before (thrown on after the callback), as in DelegateSyncProcessor
+                    throw e;
+                } catch (Throwable e) {
+                    // also an Error outside the reflective call of the API method (which wraps an Error of the method),
+                    // such as when the client is created: the callback is called in finally, and an Error thrown on
+                    // after it would not fail the exchange, and would be lost in the Future of the executor
+                    exchange.setException(e);
                 } finally {
                     callback.done(false);
                 }

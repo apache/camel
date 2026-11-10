@@ -351,7 +351,12 @@ public class MulticastProcessor extends BaseProcessorSupport
                         return doProcess(exchange, callback);
                     }
                 }, exchange);
-            } catch (Exception e) {
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on after the callback), as in DelegateSyncProcessor
+                throw e;
+            } catch (Throwable e) {
+                // also an Error (such as one of an expression): the callback is called in finally, so an Error thrown
+                // on after it would not fail the exchange
                 exchange.setException(e);
             } finally {
                 callback.done(true);
@@ -372,7 +377,11 @@ public class MulticastProcessor extends BaseProcessorSupport
                         .stream().filter(Objects::nonNull).toList();
                 size = ((Collection<ProcessorExchangePair>) pairs).size();
             }
-        } catch (Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on), as in DelegateSyncProcessor
+            throw e;
+        } catch (Throwable e) {
+            // also an Error, such as one of the split expression
             exchange.setException(e);
             // unexpected exception was thrown, maybe from iterator etc. so do not regard as exhausted
             // and do the done work
