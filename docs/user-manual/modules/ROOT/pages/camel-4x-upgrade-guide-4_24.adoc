@@ -8275,6 +8275,22 @@ that uses or replaces it must move to Jackson 3.
 follows YAML 1.2: `yes`, `no`, `on` and `off` are no longer booleans, and `1_000` and `0b101` are no longer numbers. An
 option such as `streaming: yes` is now reported; the route fails to start with it, so write `true` or `false`.
 
+=== Jackson 3 - the MCP JSON module of camel-mcp-server and camel-openai
+
+`camel-mcp-server` and the MCP client of `camel-openai` now use the Jackson 3 JSON module of the MCP Java SDK,
+`io.modelcontextprotocol.sdk:mcp-json-jackson3`, instead of `mcp-json-jackson2`. `McpJsonDefaults.getMapper()` returns a
+mapper of that module. `camel-mcp-server` no longer brings `com.fasterxml.jackson.core:jackson-databind` to your application;
+`camel-openai` still does, for the OpenAI client.
+
+The module moved with `camel-json-validator`: `mcp-json-jackson2` needs json-schema-validator 2, and `mcp-json-jackson3` and
+`camel-json-validator` need json-schema-validator 3, which an application can only have one of. If your application declares
+`mcp-json-jackson2` itself, replace it with `mcp-json-jackson3`: with json-schema-validator 3, `mcp-json-jackson2` fails with a
+`NoSuchMethodError` as soon as it checks the schema of a tool.
+
+The mapper of `mcp-json-jackson3` uses the Jackson 3 defaults (see the table in <<_jackson_3,Jackson 3>>). This mainly
+changes the JSON of the SDK's own message records and of POJOs inside a `Map`, such as the order of their properties and
+how enums and dates are written.
+
 === camel-docling - the apiKeyHeader option is deprecated
 
 The `apiKeyHeader` option never had any effect: the name of the header that carries the API key is fixed in the

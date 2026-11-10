@@ -92,4 +92,11 @@ class McpServerIconsParserTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("src");
     }
+
+    @Test
+    void testRejectsObjectAsSrc() {
+        assertThatThrownBy(() -> McpServerIconsParser.parse("[{\"src\":{\"url\":\"https://example.com/icon.png\"}}]"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Each MCP server icon must include a non-blank src");
+    }
 }
