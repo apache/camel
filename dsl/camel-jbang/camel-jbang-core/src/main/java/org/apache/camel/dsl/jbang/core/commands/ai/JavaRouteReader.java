@@ -54,6 +54,7 @@ import org.apache.camel.model.SwitchCaseDefinition;
 import org.apache.camel.model.SwitchDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.TryDefinition;
+import org.apache.camel.model.WireTapDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.model.errorhandler.NoErrorHandlerDefinition;
 import org.apache.camel.model.language.ConstantExpression;
@@ -236,8 +237,9 @@ final class JavaRouteReader {
             return;
         }
         boolean error = onError || p instanceof CatchDefinition || p instanceof OnExceptionDefinition;
-        if (p instanceof ToDynamicDefinition d) {
-            // toD and wireTap
+        if (p instanceof WireTapDefinition<?> w) {
+            add(produces, mark(ProjectRoutes.endpoint(w.getUri(), null, true, catalog).asTapped(), error));
+        } else if (p instanceof ToDynamicDefinition d) {
             add(produces, mark(ProjectRoutes.endpoint(d.getUri(), null, true, catalog), error));
         } else if (p instanceof SendDefinition<?> s) {
             add(produces, mark(ProjectRoutes.endpoint(s.getUri(), null, false, catalog), error));

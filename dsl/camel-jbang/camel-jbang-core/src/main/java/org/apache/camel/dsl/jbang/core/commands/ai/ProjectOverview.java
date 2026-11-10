@@ -296,11 +296,19 @@ public final class ProjectOverview {
                         continue;
                     }
                     String id = r.key() + "->" + target.key() + "@" + e.key();
+                    String kind = linkKind(e.scheme(), catalog);
+                    if (e.tapped() && "call".equals(kind)) {
+                        // a wireTap sends a copy on another thread: the route does not wait, nor get its failures
+                        kind = "async";
+                    }
                     Link known = links.get(id);
                     if (known == null) {
-                        links.put(id, new Link(r.key(), target.key(), e.uri(), linkKind(e.scheme(), catalog), e.onError()));
-                    } else if (known.onError() && !e.onError()) {
-                        links.put(id, new Link(known.from(), known.to(), known.endpoint(), known.kind(), false));
+                        links.put(id, new Link(r.key(), target.key(), e.uri(), kind, e.onError()));
+                    } else if (known.onError() && !e.onError() || "call".equals(kind) && !"call".equals(known.kind())) {
+                        // sent to outside failure handling too, or called as well as tapped
+                        links.put(id, new Link(
+                                known.from(), known.to(), known.endpoint(),
+                                "call".equals(kind) ? kind : known.kind(), known.onError() && e.onError()));
                     }
                 }
             }
