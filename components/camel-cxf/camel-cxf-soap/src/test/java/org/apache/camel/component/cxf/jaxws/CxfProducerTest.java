@@ -208,12 +208,13 @@ public class CxfProducerTest {
         assertInstanceOf(IOException.class, reply.getException().getCause());
     }
 
-    // CAMEL-26696: async producer must always complete the exchange when the connection fails,
-    // even if CxfClientCallback.handleException is called with populateExchangeFromCxfResponse throwing.
+    // CAMEL-26696: async producer must always complete the exchange when the connection fails.
+    // The @Timeout(30s) on the class guards against the exchange hanging in
+    // DefaultAsyncProcessorAwaitManager if camelAsyncCallback.done() is never called.
+    // For the callback exception-handling semantics (binding throws, Error thrown, etc.)
+    // see CxfClientCallbackTest which tests CxfClientCallback directly via Mockito.
     @Test
     void testInvokingAWrongServerAsync() throws Exception {
-        // The @Timeout(30s) on the class guards against the exchange hanging in
-        // DefaultAsyncProcessorAwaitManager if camelAsyncCallback.done() is never called.
         Exchange reply = sendSimpleMessage(getWrongEndpointUriAsync());
         assertNotNull(reply.getException(), "Async wrong-server call must complete with an exception");
         assertInstanceOf(IOException.class, reply.getException().getCause());

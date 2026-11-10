@@ -56,28 +56,30 @@ public class CxfClientCallback extends ClientCallback {
         try {
             super.handleResponse(ctx, res);
         } finally {
-            // add cookies to the cookie store
-            if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
-                try {
-                    Map<String, List<String>> cxfHeaders
-                            = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
-                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
-                } catch (IOException e) {
-                    LOG.error("Cannot store cookies", e);
-                }
-            }
-            // bind the CXF response to Camel exchange and
-            // call camel callback
             // for one way messages callback is already called in
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
+                // always signal the Camel callback, even if cookie store or binding population throws,
+                // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
                 try {
-                    endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
-                } catch (Exception e) {
-                    camelExchange.setException(e);
+                    // add cookies to the cookie store
+                    if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
+                        try {
+                            Map<String, List<String>> cxfHeaders
+                                    = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
+                            endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange),
+                                    cxfHeaders);
+                        } catch (IOException e) {
+                            LOG.error("Cannot store cookies", e);
+                        }
+                    }
+                    // bind the CXF response to Camel exchange
+                    try {
+                        endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                    } catch (Throwable t) {
+                        camelExchange.setException(t);
+                    }
                 } finally {
-                    // always signal the Camel callback, even if populateExchangeFromCxfResponse throws,
-                    // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
                     camelAsyncCallback.done(false);
                 }
             }
@@ -108,28 +110,36 @@ public class CxfClientCallback extends ClientCallback {
                 camelExchange.setException(ex);
             }
         } finally {
-            // add cookies to the cookie store
-            if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
-                try {
-                    Map<String, List<String>> cxfHeaders
-                            = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
-                    endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
-                } catch (IOException e) {
-                    LOG.error("Cannot store cookies", e);
-                }
-            }
-            // copy the context information and
-            // call camel callback
             // for one way messages callback is already called in
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
+                // always signal the Camel callback, even if cookie store or binding population throws,
+                // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
                 try {
-                    endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
-                } catch (Exception e) {
-                    camelExchange.setException(e);
+                    // add cookies to the cookie store
+                    if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
+                        try {
+                            Map<String, List<String>> cxfHeaders
+                                    = CastUtils.cast((Map<?, ?>) cxfExchange.getInMessage().get(CxfConstants.PROTOCOL_HEADERS));
+                            endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange),
+                                    cxfHeaders);
+                        } catch (IOException e) {
+                            LOG.error("Cannot store cookies", e);
+                        }
+                    }
+                    // copy the context information
+                    try {
+                        endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                    } catch (Throwable t) {
+                        // preserve the root transport/fault exception; record the binding error as suppressed
+                        Exception cur = camelExchange.getException();
+                        if (cur != null) {
+                            cur.addSuppressed(t);
+                        } else {
+                            camelExchange.setException(t);
+                        }
+                    }
                 } finally {
-                    // always signal the Camel callback, even if populateExchangeFromCxfResponse throws,
-                    // to prevent the calling thread from hanging in DefaultAsyncProcessorAwaitManager
                     camelAsyncCallback.done(false);
                 }
             }
