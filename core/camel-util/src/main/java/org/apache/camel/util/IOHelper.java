@@ -335,7 +335,7 @@ public final class IOHelper {
      * @param channel the file channel
      * @param name    the name of the resource
      * @param log     the log to use when reporting warnings, will use this class's own {@link Logger} if
-     *                <tt>log == null</tt>
+     *                <code>log == null</code>
      */
     public static void force(FileChannel channel, String name, Logger log) {
         try {
@@ -361,7 +361,7 @@ public final class IOHelper {
      * @param os   the file output stream
      * @param name the name of the resource
      * @param log  the log to use when reporting warnings, will use this class's own {@link Logger} if
-     *             <tt>log == null</tt>
+     *             <code>log == null</code>
      */
     public static void force(FileOutputStream os, String name, Logger log) {
         try {
@@ -389,7 +389,7 @@ public final class IOHelper {
      * @param os     an underlying FileOutputStream that will to be forced to disk according to the force parameter
      * @param name   the name of the resource
      * @param log    the log to use when reporting warnings, will use this class's own {@link Logger} if
-     *               <tt>log == null</tt>
+     *               <code>log == null</code>
      * @param force  forces the FileOutputStream to disk
      */
     public static void close(Writer writer, FileOutputStream os, String name, Logger log, boolean force) {
@@ -419,7 +419,7 @@ public final class IOHelper {
      * @param closeable the object to close
      * @param name      the name of the resource
      * @param log       the log to use when reporting closure warnings, will use this class's own {@link Logger} if
-     *                  <tt>log == null</tt>
+     *                  <code>log == null</code>
      */
     public static void close(Closeable closeable, String name, Logger log) {
         if (closeable != null) {
@@ -457,7 +457,7 @@ public final class IOHelper {
      * @param channel the file channel
      * @param name    the name of the resource
      * @param log     the log to use when reporting warnings, will use this class's own {@link Logger} if
-     *                <tt>log == null</tt>
+     *                <code>log == null</code>
      * @param force   forces the file channel to disk
      */
     public static void close(FileChannel channel, String name, Logger log, boolean force) {
@@ -521,9 +521,9 @@ public final class IOHelper {
 
     /**
      * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
-     * <p/>
+     * <p>
+     * <b>Notice:</b> This implementation appends a <code>\n</code> as line terminator at the of the text.
+     * <p>
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
@@ -532,7 +532,7 @@ public final class IOHelper {
 
     /**
      * Loads the entire stream into memory as a String and returns it.
-     * <p/>
+     * <p>
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in, boolean newLine) throws IOException {
@@ -562,7 +562,7 @@ public final class IOHelper {
 
     /**
      * Loads the entire stream into memory as a String and returns the given line number.
-     * <p/>
+     * <p>
      * Warning, don't use for crazy big streams :)
      */
     public static String loadTextLine(InputStream in, int lineNumber) throws IOException {
@@ -628,7 +628,7 @@ public final class IOHelper {
      * Get the charset name from the content type string
      *
      * @param  contentType the content type
-     * @return             the charset name, or <tt>UTF-8</tt> if no found (or the charset parameter is empty)
+     * @return             the charset name, or <code>UTF-8</code> if no found (or the charset parameter is empty)
      */
     public static String getCharsetNameFromContentType(String contentType) {
         // try optimized for direct match without using splitting
@@ -789,7 +789,7 @@ public final class IOHelper {
         /**
          * Encodes the next chunk of characters if all the encoded bytes have been read.
          *
-         * @return <tt>false</tt> if the end of the reader has been reached
+         * @return <code>false</code> if the end of the reader has been reached
          */
         private boolean fill() throws IOException {
             while (!bytes.hasRemaining()) {

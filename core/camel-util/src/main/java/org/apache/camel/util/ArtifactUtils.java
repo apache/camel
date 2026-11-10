@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * Which Camel artifact (Maven artifactId) ships a component, data format, language or built-in bean.
- * <p/>
+ * <p>
  * The runtime cannot tell this on its own: the metadata that knows is in the jar that is missing. So the tables are
  * generated from the catalog at build time (like {@link SensitiveUtils}) and used by the error messages that say what
  * to add to the classpath when a name cannot be resolved, or which known name was likely meant.

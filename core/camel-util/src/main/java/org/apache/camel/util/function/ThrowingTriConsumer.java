@@ -32,7 +32,6 @@ public interface ThrowingTriConsumer<I1, I2, I3, T extends Throwable> {
      * @param  i1 the first argument
      * @param  i2 the second argument
      * @param  i3 the third argument
-     * @return    the function result
      * @throws T  the exception that may be thrown
      */
     void accept(I1 i1, I2 i2, I3 i3) throws T;

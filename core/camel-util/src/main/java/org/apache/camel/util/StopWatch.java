@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A very simple stop watch.
- * <p/>
+ * <p>
  * This implementation is not thread safe and can only time one task at any given time.
  */
 public final class StopWatch {
@@ -62,7 +62,7 @@ public final class StopWatch {
     /**
      * Returns the time taken in millis.
      *
-     * @return time in millis, or <tt>0</tt> if not started yet.
+     * @return time in millis, or <code>0</code> if not started yet.
      */
     public long taken() {
         if (start > 0) {
@@ -75,7 +75,7 @@ public final class StopWatch {
     /**
      * Returns the time taken in millis and restarts the timer.
      *
-     * @return time in millis, or <tt>0</tt> if not started yet.
+     * @return time in millis, or <code>0</code> if not started yet.
      */
     public long takenAndRestart() {
         long answer = taken();

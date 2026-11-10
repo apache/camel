@@ -33,11 +33,11 @@ import java.util.Set;
 
 /**
  * A map that uses case insensitive keys, but preserves the original key cases.
- * <p/>
+ * <p>
  * The map uses a custom hash table with case-insensitive hashing and comparison, providing O(1) for {@code get},
  * {@code put}, {@code containsKey} and {@code remove} operations without allocating temporary strings. Entries are
  * stored in insertion order.
- * <p/>
+ * <p>
  * This map is <b>not</b> designed to be thread safe as concurrent access to it is not supposed to be performed by the
  * Camel routing engine.
  */
@@ -60,7 +60,7 @@ public class CaseInsensitiveMap extends AbstractMap<String, Object> implements S
      * one of these strings, the canonical reference from this set is stored instead of the caller's string, reducing
      * memory when many map instances carry the same headers (e.g. deserialized exchanges). A key that only differs in
      * case is stored as given, as the map preserves the original key cases.
-     * <p/>
+     * <p>
      * This method is intended to be called once during framework startup.
      */
     public static void registerKnownKeys(Collection<String> keys) {

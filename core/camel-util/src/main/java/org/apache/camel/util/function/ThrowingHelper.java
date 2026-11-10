@@ -98,8 +98,8 @@ public final class ThrowingHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map and transform
-     * it using the given function.
+     * Tests whether the value is <b>not</b> <code>null</code>, an empty string, an empty collection or a map and
+     * transform it using the given function.
      *
      * @param value    the value, if its a String it will be tested for text length as well
      * @param function the function to be executed against value if not empty
@@ -114,8 +114,8 @@ public final class ThrowingHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map and transform
-     * it using the given function.
+     * Tests whether the value is <b>not</b> <code>null</code>, an empty string, an empty collection or a map and
+     * transform it using the given function.
      *
      * @param value    the value, if its a String it will be tested for text length as well
      * @param consumer the function to be executed against value if not empty

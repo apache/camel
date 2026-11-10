@@ -20,7 +20,7 @@ import java.util.Properties;
 
 /**
  * This class is an ordered {@link Properties} where the key/values are stored in the order they are added or loaded.
- * <p/>
+ * <p>
  * Note: This implementation is only intended as implementation detail for the Camel properties component, and has only
  * been designed to provide the needed functionality. The complex logic for loading properties has been kept from the
  * JDK {@link Properties} class.

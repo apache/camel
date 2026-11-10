@@ -35,10 +35,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A sized {@link ScheduledExecutorService} which will reject executing tasks if the task queue is full.
- * <p/>
+ * <p>
  * The {@link ScheduledThreadPoolExecutor} which is the default implementation of the {@link ScheduledExecutorService}
  * has unbounded task queue, which mean you can keep scheduling tasks which may cause the system to run out of memory.
- * <p/>
+ * <p>
  * This class is a wrapped for {@link ScheduledThreadPoolExecutor} to reject executing tasks if an upper limit of the
  * task queue has been reached.
  */
@@ -289,7 +289,7 @@ public class SizedScheduledExecutorService implements ScheduledExecutorService {
     /**
      * Can the task be scheduled or executed?
      *
-     * @return <tt>true</tt> to accept, <tt>false</tt> to not accept
+     * @return <code>true</code> to accept, <code>false</code> to not accept
      */
     protected boolean canScheduleOrExecute() {
         if (queueSize <= 0) {
