@@ -57,10 +57,22 @@ class IoTHubComponentTest extends CamelTestSupport {
     }
 
     @Test
+    void testComponentPoolSettingsAreApplied() throws Exception {
+        IoTHubComponent component = new IoTHubComponent();
+        component.setCamelContext(context);
+        component.setDeviceClientIdleTimeout(Duration.ofMinutes(2));
+        component.setDeviceClientEvictionInterval(Duration.ofSeconds(10));
+
+        DeviceClientPool pool = component.getOrCreateClientPool();
+
+        assertEquals(Duration.ofMinutes(2), getPoolField(pool, "idleTimeout"));
+        assertEquals(Duration.ofSeconds(10), getPoolField(pool, "evictionInterval"));
+    }
+
+    @Test
     void testCreateEndpointWithConfig() {
         final String uri = "azure-iothub:dev01?connectionString=cs&protocol=AMQPS&deliveryMode=TWIN"
-                           + "&contentType=application/x-protobuf&sendTimeout=5s"
-                           + "&deviceClientIdleTimeout=2m&deviceClientEvictionInterval=10s";
+                           + "&contentType=application/x-protobuf&sendTimeout=5s";
 
         final IoTHubEndpoint endpoint = context.getEndpoint(uri, IoTHubEndpoint.class);
 
@@ -70,8 +82,6 @@ class IoTHubComponentTest extends CamelTestSupport {
         assertEquals(IoTHubDeliveryMode.TWIN, endpoint.getConfiguration().getDeliveryMode());
         assertEquals("application/x-protobuf", endpoint.getConfiguration().getContentType());
         assertEquals(Duration.ofSeconds(5), endpoint.getConfiguration().getSendTimeout());
-        assertEquals(120, endpoint.getConfiguration().getDeviceClientIdleTimeout().getSeconds());
-        assertEquals(10, endpoint.getConfiguration().getDeviceClientEvictionInterval().getSeconds());
     }
 
     @Test
@@ -165,6 +175,12 @@ class IoTHubComponentTest extends CamelTestSupport {
         Field field = target.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(target, value);
+    }
+
+    private static Object getPoolField(DeviceClientPool pool, String fieldName) throws Exception {
+        Field field = DeviceClientPool.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return field.get(pool);
     }
 
     private Producer assertDoesNotThrowProducer(IoTHubEndpoint endpoint) {

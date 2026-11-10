@@ -231,68 +231,6 @@ public interface IoTHubEndpointBuilderFactory {
             doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
-        /**
-         * How often the pool is scanned for idle device clients to evict.
-         * 
-         * The option is a: <code>java.time.Duration</code> type.
-         * 
-         * Default: 30s
-         * Group: advanced
-         * 
-         * @param deviceClientEvictionInterval the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIoTHubEndpointBuilder deviceClientEvictionInterval(java.time.Duration deviceClientEvictionInterval) {
-            doSetProperty("deviceClientEvictionInterval", deviceClientEvictionInterval);
-            return this;
-        }
-        /**
-         * How often the pool is scanned for idle device clients to evict.
-         * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
-         * 
-         * Default: 30s
-         * Group: advanced
-         * 
-         * @param deviceClientEvictionInterval the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIoTHubEndpointBuilder deviceClientEvictionInterval(String deviceClientEvictionInterval) {
-            doSetProperty("deviceClientEvictionInterval", deviceClientEvictionInterval);
-            return this;
-        }
-        /**
-         * Idle time after which a pooled device client is evicted and closed.
-         * 
-         * The option is a: <code>java.time.Duration</code> type.
-         * 
-         * Default: 5m
-         * Group: advanced
-         * 
-         * @param deviceClientIdleTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIoTHubEndpointBuilder deviceClientIdleTimeout(java.time.Duration deviceClientIdleTimeout) {
-            doSetProperty("deviceClientIdleTimeout", deviceClientIdleTimeout);
-            return this;
-        }
-        /**
-         * Idle time after which a pooled device client is evicted and closed.
-         * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
-         * 
-         * Default: 5m
-         * Group: advanced
-         * 
-         * @param deviceClientIdleTimeout the value to set
-         * @return the dsl builder
-         */
-        default AdvancedIoTHubEndpointBuilder deviceClientIdleTimeout(String deviceClientIdleTimeout) {
-            doSetProperty("deviceClientIdleTimeout", deviceClientIdleTimeout);
-            return this;
-        }
     }
 
     public interface IoTHubBuilders {

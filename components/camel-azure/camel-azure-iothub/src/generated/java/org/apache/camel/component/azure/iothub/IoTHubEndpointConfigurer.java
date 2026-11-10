@@ -30,10 +30,6 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "contentType": target.getConfiguration().setContentType(property(camelContext, java.lang.String.class, value)); return true;
         case "deliverymode":
         case "deliveryMode": target.getConfiguration().setDeliveryMode(property(camelContext, org.apache.camel.component.azure.iothub.IoTHubDeliveryMode.class, value)); return true;
-        case "deviceclientevictioninterval":
-        case "deviceClientEvictionInterval": target.getConfiguration().setDeviceClientEvictionInterval(property(camelContext, java.time.Duration.class, value)); return true;
-        case "deviceclientidletimeout":
-        case "deviceClientIdleTimeout": target.getConfiguration().setDeviceClientIdleTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "protocol": target.getConfiguration().setProtocol(property(camelContext, com.microsoft.azure.sdk.iot.device.IotHubClientProtocol.class, value)); return true;
@@ -52,10 +48,6 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "contentType": return java.lang.String.class;
         case "deliverymode":
         case "deliveryMode": return org.apache.camel.component.azure.iothub.IoTHubDeliveryMode.class;
-        case "deviceclientevictioninterval":
-        case "deviceClientEvictionInterval": return java.time.Duration.class;
-        case "deviceclientidletimeout":
-        case "deviceClientIdleTimeout": return java.time.Duration.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "protocol": return com.microsoft.azure.sdk.iot.device.IotHubClientProtocol.class;
@@ -75,10 +67,6 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "contentType": return target.getConfiguration().getContentType();
         case "deliverymode":
         case "deliveryMode": return target.getConfiguration().getDeliveryMode();
-        case "deviceclientevictioninterval":
-        case "deviceClientEvictionInterval": return target.getConfiguration().getDeviceClientEvictionInterval();
-        case "deviceclientidletimeout":
-        case "deviceClientIdleTimeout": return target.getConfiguration().getDeviceClientIdleTimeout();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "protocol": return target.getConfiguration().getProtocol();

@@ -41,9 +41,9 @@ public class IoTHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deliverymode":
         case "deliveryMode": getOrCreateConfiguration(target).setDeliveryMode(property(camelContext, org.apache.camel.component.azure.iothub.IoTHubDeliveryMode.class, value)); return true;
         case "deviceclientevictioninterval":
-        case "deviceClientEvictionInterval": getOrCreateConfiguration(target).setDeviceClientEvictionInterval(property(camelContext, java.time.Duration.class, value)); return true;
+        case "deviceClientEvictionInterval": target.setDeviceClientEvictionInterval(property(camelContext, java.time.Duration.class, value)); return true;
         case "deviceclientidletimeout":
-        case "deviceClientIdleTimeout": getOrCreateConfiguration(target).setDeviceClientIdleTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "deviceClientIdleTimeout": target.setDeviceClientIdleTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "protocol": getOrCreateConfiguration(target).setProtocol(property(camelContext, com.microsoft.azure.sdk.iot.device.IotHubClientProtocol.class, value)); return true;
@@ -92,9 +92,9 @@ public class IoTHubComponentConfigurer extends PropertyConfigurerSupport impleme
         case "deliverymode":
         case "deliveryMode": return getOrCreateConfiguration(target).getDeliveryMode();
         case "deviceclientevictioninterval":
-        case "deviceClientEvictionInterval": return getOrCreateConfiguration(target).getDeviceClientEvictionInterval();
+        case "deviceClientEvictionInterval": return target.getDeviceClientEvictionInterval();
         case "deviceclientidletimeout":
-        case "deviceClientIdleTimeout": return getOrCreateConfiguration(target).getDeviceClientIdleTimeout();
+        case "deviceClientIdleTimeout": return target.getDeviceClientIdleTimeout();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "protocol": return getOrCreateConfiguration(target).getProtocol();

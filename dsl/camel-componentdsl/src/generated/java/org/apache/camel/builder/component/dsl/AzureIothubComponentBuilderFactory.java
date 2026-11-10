@@ -261,8 +261,8 @@ public interface AzureIothubComponentBuilderFactory {
             case "protocol": getOrCreateConfiguration((IoTHubComponent) component).setProtocol((com.microsoft.azure.sdk.iot.device.IotHubClientProtocol) value); return true;
             case "sendTimeout": getOrCreateConfiguration((IoTHubComponent) component).setSendTimeout((java.time.Duration) value); return true;
             case "autowiredEnabled": ((IoTHubComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "deviceClientEvictionInterval": getOrCreateConfiguration((IoTHubComponent) component).setDeviceClientEvictionInterval((java.time.Duration) value); return true;
-            case "deviceClientIdleTimeout": getOrCreateConfiguration((IoTHubComponent) component).setDeviceClientIdleTimeout((java.time.Duration) value); return true;
+            case "deviceClientEvictionInterval": ((IoTHubComponent) component).setDeviceClientEvictionInterval((java.time.Duration) value); return true;
+            case "deviceClientIdleTimeout": ((IoTHubComponent) component).setDeviceClientIdleTimeout((java.time.Duration) value); return true;
             case "connectionString": getOrCreateConfiguration((IoTHubComponent) component).setConnectionString((java.lang.String) value); return true;
             default: return false;
             }

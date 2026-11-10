@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.iothub;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -34,6 +35,12 @@ public class IoTHubComponent extends DefaultComponent {
 
     @Metadata
     private IoTHubConfiguration configuration = new IoTHubConfiguration();
+    @Metadata(label = "advanced", defaultValue = "5m",
+              description = "Idle time after which a pooled device client is evicted and closed.")
+    private Duration deviceClientIdleTimeout = Duration.ofMinutes(5);
+    @Metadata(label = "advanced", defaultValue = "30s",
+              description = "How often the pool is scanned for idle device clients to evict.")
+    private Duration deviceClientEvictionInterval = Duration.ofSeconds(30);
     private volatile DeviceClientPool clientPool;
 
     public IoTHubComponent() {
@@ -66,8 +73,8 @@ public class IoTHubComponent extends DefaultComponent {
                     ScheduledExecutorService executor = getCamelContext().getExecutorServiceManager()
                             .newSingleThreadScheduledExecutor(this, "AzureIoTHubEvictor");
                     pool = new DeviceClientPool(
-                            configuration.getDeviceClientIdleTimeout(),
-                            configuration.getDeviceClientEvictionInterval(), executor);
+                            deviceClientIdleTimeout,
+                            deviceClientEvictionInterval, executor);
                     pool.start();
                     clientPool = pool;
                 }
@@ -91,5 +98,27 @@ public class IoTHubComponent extends DefaultComponent {
      */
     public void setConfiguration(IoTHubConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+     * Idle time after which a pooled device client is evicted and closed.
+     */
+    public void setDeviceClientIdleTimeout(Duration deviceClientIdleTimeout) {
+        this.deviceClientIdleTimeout = deviceClientIdleTimeout;
+    }
+
+    public Duration getDeviceClientIdleTimeout() {
+        return deviceClientIdleTimeout;
+    }
+
+    /**
+     * How often the pool is scanned for idle device clients to evict.
+     */
+    public void setDeviceClientEvictionInterval(Duration deviceClientEvictionInterval) {
+        this.deviceClientEvictionInterval = deviceClientEvictionInterval;
+    }
+
+    public Duration getDeviceClientEvictionInterval() {
+        return deviceClientEvictionInterval;
     }
 }

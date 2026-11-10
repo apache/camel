@@ -52,14 +52,6 @@ public class IoTHubConfiguration implements Cloneable {
               description = "Timeout for telemetry sends and twin reported-property updates.")
     private Duration sendTimeout = Duration.ofSeconds(10);
 
-    @UriParam(label = "advanced", defaultValue = "5m",
-              description = "Idle time after which a pooled device client is evicted and closed.")
-    private Duration deviceClientIdleTimeout = Duration.ofMinutes(5);
-
-    @UriParam(label = "advanced", defaultValue = "30s",
-              description = "How often the pool is scanned for idle device clients to evict.")
-    private Duration deviceClientEvictionInterval = Duration.ofSeconds(30);
-
     public String getDeviceId() {
         return deviceId;
     }
@@ -106,22 +98,6 @@ public class IoTHubConfiguration implements Cloneable {
 
     public void setSendTimeout(Duration sendTimeout) {
         this.sendTimeout = sendTimeout;
-    }
-
-    public Duration getDeviceClientIdleTimeout() {
-        return deviceClientIdleTimeout;
-    }
-
-    public void setDeviceClientIdleTimeout(Duration deviceClientIdleTimeout) {
-        this.deviceClientIdleTimeout = deviceClientIdleTimeout;
-    }
-
-    public Duration getDeviceClientEvictionInterval() {
-        return deviceClientEvictionInterval;
-    }
-
-    public void setDeviceClientEvictionInterval(Duration deviceClientEvictionInterval) {
-        this.deviceClientEvictionInterval = deviceClientEvictionInterval;
     }
 
     public IoTHubConfiguration copy() {

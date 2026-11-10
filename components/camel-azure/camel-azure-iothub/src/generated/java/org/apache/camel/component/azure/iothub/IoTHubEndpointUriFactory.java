@@ -24,12 +24,10 @@ public class IoTHubEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(9);
+        Set<String> props = new HashSet<>(7);
         props.add("connectionString");
         props.add("contentType");
         props.add("deliveryMode");
-        props.add("deviceClientEvictionInterval");
-        props.add("deviceClientIdleTimeout");
         props.add("deviceId");
         props.add("lazyStartProducer");
         props.add("protocol");
