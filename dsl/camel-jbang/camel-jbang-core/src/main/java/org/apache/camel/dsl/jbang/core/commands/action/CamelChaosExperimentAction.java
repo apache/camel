@@ -19,6 +19,8 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 
 import org.apache.camel.cli.connector.RepeatedSend;
@@ -76,7 +78,9 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
     List<String> rules;
 
     @CommandLine.Option(names = { "--feed" },
-                        description = "The endpoint, or the id of the route, to send the messages of the experiment to")
+                        description = "The endpoint, or the id of the route, to send the messages of the experiment to;"
+                                      + " a route that serves HTTP gets HTTP requests, or give the path to call, such as"
+                                      + " 'PUT /orders/42'")
     String feed;
 
     @CommandLine.Option(names = { "--body" },
@@ -229,9 +233,21 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
         if (traffic.containsKey("sent")) {
             long sent = traffic.getLongOrDefault("sent", 0);
             long failed = traffic.getLongOrDefault("failed", 0);
-            return sent + (sent == 1 ? " message" : " messages") + " sent to " + endpoint
-                   + (failed > 0 ? " (" + failed + " failed)" : "") + " in "
-                   + time(traffic.getLongOrDefault("elapsed", 0));
+            StringBuilder sb = new StringBuilder();
+            sb.append(sent).append(sent == 1 ? " message" : " messages").append(" sent to ").append(endpoint)
+                    .append(failed > 0 ? " (" + failed + " failed)" : "").append(" in ")
+                    .append(time(traffic.getLongOrDefault("elapsed", 0)));
+            // the status codes the clients of an HTTP feed got (CAMEL-26793)
+            JsonObject codes = (JsonObject) traffic.get("statusCodes");
+            if (codes != null && !codes.isEmpty()) {
+                StringJoiner sj = new StringJoiner(", ");
+                new TreeMap<>(codes).forEach((code, n) -> sj.add(code + " x" + n));
+                sb.append(", answered ").append(sj);
+            }
+            if (traffic.containsKey("planned")) {
+                sb.append(" (of ").append(traffic.getLong("planned")).append(": the experiment ended first)");
+            }
+            return sb.toString();
         }
         // a single message: the answer of the send
         return "1 message sent to " + endpoint + ("success".equals(traffic.getString("status")) ? "" : " (failed)");

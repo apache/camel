@@ -1304,7 +1304,8 @@ public class RuntimeTools {
                                    + " such as 'route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s'") String rule,
             @ToolArg(description = "What the experiment tests, in a few words", required = false) String hypothesis,
             @ToolArg(description = "The endpoint, or the id of the route, to send the messages to (as the feed of"
-                                   + " camel_runtime_chaos_suggest); leave it out when the route feeds itself",
+                                   + " camel_runtime_chaos_suggest); a route that serves HTTP gets HTTP requests, or"
+                                   + " give the path to call (POST /orders/42); leave it out when the route feeds itself",
                      required = false) String feed,
             @ToolArg(description = "The body of the messages (file:<path>, or file:<folder> for a message per file)",
                      required = false) String body,

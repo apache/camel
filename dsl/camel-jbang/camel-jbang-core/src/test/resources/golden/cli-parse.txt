@@ -590,6 +590,57 @@
   timeoutOption.timeout=7
 > cmd chaos-experiment --wait v
   wait="v"
+> cmd chaos-explore
+  apiKey=null
+  apiType=null
+  budget="10m"
+  cmd:helpRequested=false
+  focus=null
+  helpRequested=false
+  maxIterations=100
+  model=null
+  name=null
+  save=true
+  showTools=false
+  timeout=300
+  tools=auto
+  url=null
+  verbose=false
+  yes=false
+> cmd chaos-explore --api-key v
+  apiKey="v"
+> cmd chaos-explore --api-type ollama
+  apiType=ollama
+> cmd chaos-explore --budget v
+  budget="v"
+> cmd chaos-explore --focus v
+  focus="v"
+> cmd chaos-explore --max-iterations 7
+  maxIterations=7
+> cmd chaos-explore --model v
+  model="v"
+> cmd chaos-explore --save
+  (defaults)
+> cmd chaos-explore --save=false
+  save=false
+> cmd chaos-explore --show-tools
+  showTools=true
+> cmd chaos-explore --show-tools=false
+  (defaults)
+> cmd chaos-explore --timeout 7
+  timeout=7
+> cmd chaos-explore --tools auto
+  (defaults)
+> cmd chaos-explore --url v
+  url="v"
+> cmd chaos-explore --verbose
+  verbose=true
+> cmd chaos-explore --verbose=false
+  (defaults)
+> cmd chaos-explore --yes
+  yes=true
+> cmd chaos-explore --yes=false
+  (defaults)
 > cmd chaos-explore-finish
   cmd:helpRequested=false
   helpRequested=false

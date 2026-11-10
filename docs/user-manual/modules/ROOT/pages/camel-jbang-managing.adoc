@@ -945,8 +945,30 @@ of `chaos-suggest` has it. `camel get chaos --report` shows the exploration with
 The messages of `--feed` are sent to the endpoint the route starts from, so they reach a route that starts from
 `direct`, `seda`, a stub (`camel run --stub=kafka`) or a broker. An experiment refuses a feed that cannot reach its
 route, with the reason: a route that starts from a timer, scheduler, cron or quartz makes its own messages (leave
-`--feed` out), and a route that serves HTTP, or starts from a component that only consumes, cannot be fed this way. A
-feed to a remote system that is not stubbed, such as a Kafka broker, has a warning, as the messages go to that system:
+`--feed` out), and a route that starts from a component that only consumes cannot be fed this way.
+
+A route that serves HTTP over the server of Camel (`platform-http`, or the REST DSL) is fed with HTTP requests to that
+server, on localhost and its port, with the path and method of the route, `--body` as the request body and `--header`
+as HTTP headers. They are sent while the experiment waits for its verdict, and its traffic counts the status codes the
+clients got, so a hypothesis such as "a client gets a 503, not a 500" has its evidence:
+
+[source,bash]
+----
+camel cmd chaos-experiment --hypothesis='a client of payment gets an error, nothing is lost' \
+    --rule='route=payment error rate=every:4 until=30s expect=payment:failed<=0 within=20s' \
+    --feed=payment --body='{"orderId": "O-1", "amount": 10}' --repeat=12 --interval=100..300
+----
+
+[source,text]
+----
+  traffic: 5 messages sent to POST http://localhost:8080/payment in 1s, answered 200 x4, 500 x1 (of 12: the experiment ended first)
+----
+
+For a path with a parameter, `--feed` is the path to call, with an optional method: `--feed='PUT /orders/42'`. An HTTP
+server with its own address on this machine (netty-http, undertow, jetty) is fed at that address, called as localhost;
+one on another host is not fed.
+
+A feed to a remote system that is not stubbed, such as a Kafka broker, has a warning, as the messages go to that system:
 use a local one (`camel infra run kafka`), or stub it.
 
 `camel cmd chaos-explore` lets the AI of `camel ask` do it all: let there be chaos. It starts the exploration with the

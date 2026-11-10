@@ -16,8 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
@@ -67,6 +75,27 @@ public final class ChaosExperimentRun {
 
         /** The status of the integration, as it wrote it last, or null. */
         JsonObject status();
+
+        /**
+         * Sends one HTTP request of a feed to the integration's own server (CAMEL-26793), and returns the status code
+         * of its answer.
+         */
+        default int http(String method, String url, Map<String, String> headers, String body)
+                throws IOException, InterruptedException {
+            HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(30));
+            headers.forEach(builder::header);
+            builder.method(method, body == null || body.isEmpty()
+                    ? HttpRequest.BodyPublishers.noBody()
+                    : HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8));
+            return HttpFeedClient.INSTANCE.send(builder.build(), HttpResponse.BodyHandlers.discarding()).statusCode();
+        }
+    }
+
+    private static final class HttpFeedClient {
+        static final HttpClient INSTANCE = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NEVER)
+                .connectTimeout(Duration.ofSeconds(10))
+                .build();
     }
 
     /**
@@ -142,12 +171,16 @@ public final class ChaosExperimentRun {
         // the status is read once, before the experiment, for the feed; the exploration at the end reads it again,
         // for the state after the experiment
         JsonObject status = feed != null ? integration.status() : null;
+        ChaosHttpFeed.Target http = null;
         if (feed != null) {
             // a feed that reaches no route makes an experiment without messages, whose verdict says nothing
             String why = checkFeed(status, feed.endpoint());
             if (why != null) {
                 throw new IllegalArgumentException(why);
             }
+            // a route that serves HTTP is fed with requests to the server of the integration
+            List<Object> routes = status != null ? status.getCollection("routes") : null;
+            http = ChaosHttpFeed.target(status, routes != null ? route(routes, feed.endpoint()) : null, feed.endpoint());
         }
         // an expectation such as failed<=0 is decided when its within= is up: a shorter wait leaves it undecided
         long within = longestWithin(rules);
@@ -175,8 +208,14 @@ public final class ChaosExperimentRun {
         }
         JsonObject traffic = null;
         long waited = 0;
+        ChaosHttpFeed.Sender sender = null;
+        Thread sending = null;
         try {
-            if (feed != null) {
+            if (http != null) {
+                // sent while the experiment waits for its verdict, and stopped when it ends
+                sender = new ChaosHttpFeed.Sender(integration, http, feed, clock);
+                sending = Thread.ofVirtual().name("chaos-http-feed").start(sender);
+            } else if (feed != null) {
                 traffic = traffic(integration, feed);
             }
             long start = clock.now();
@@ -193,6 +232,15 @@ public final class ChaosExperimentRun {
             }
             waited = clock.now() - start;
         } finally {
+            if (sender != null) {
+                sender.stop();
+                // the interrupt cancels a request in flight (HttpClient.send), and the sender sends no more after
+                // stop: a request that does not end in time lingers at most until its timeout, also in a long-running
+                // JVM such as the MCP server
+                sending.interrupt();
+                sending.join(5000);
+                traffic = sender.toJson();
+            }
             // ended whatever happened, so its rules do not stay
             JsonObject result = end(integration, number, note, clock);
             if (result != null) {
@@ -281,7 +329,7 @@ public final class ChaosExperimentRun {
      */
     public static String checkFeed(JsonObject status, String feed) {
         List<Object> routes = status != null ? status.getCollection("routes") : null;
-        if (routes == null || routes.isEmpty() || feed.endsWith("*")) {
+        if (routes == null || routes.isEmpty() || feed.endsWith("*") || ChaosHttpFeed.isPath(feed)) {
             return null;
         }
         JsonObject route = route(routes, feed);
@@ -307,8 +355,9 @@ public final class ChaosExperimentRun {
         JsonObject route = routes != null && !feed.endsWith("*") ? route(routes, feed) : null;
         String from = route != null ? route.getString("from") : null;
         ComponentModel model = from != null ? componentModel(from) : null;
-        // a file is written to the folder the route polls: not a remote system
-        if (model == null || !model.isRemote() || "file".equals(model.getScheme())) {
+        // a file is written to the folder the route polls, and an HTTP route is fed by the integration's own server
+        if (model == null || !model.isRemote() || "file".equals(model.getScheme()) || ChaosHttpFeed.servedByCamel(from)
+                || ChaosHttpFeed.ownAddress(from) != null) {
             return null;
         }
         String id = route.getString("routeId");
@@ -348,9 +397,18 @@ public final class ChaosExperimentRun {
             return "Route " + route + " starts from " + from + ", which makes its own messages: leave the feed out, as"
                    + " the traffic of the route comes by itself";
         }
-        if ("rest".equals(model.getScheme()) || label.contains("http")) {
-            return "Route " + route + " starts from the HTTP endpoint " + from + ", which an experiment cannot feed"
-                   + " yet: feed a route that calls it, or leave the feed out when its traffic comes otherwise";
+        if (ChaosHttpFeed.servedByCamel(from)) {
+            // fed with HTTP requests to the server of the integration (CAMEL-26793)
+            return null;
+        }
+        if (label.contains("http")) {
+            if (ChaosHttpFeed.ownAddress(from) != null) {
+                // an HTTP server of its own on this machine: fed with requests to its address
+                return null;
+            }
+            return "Route " + route + " starts from the HTTP endpoint " + from + ", which an experiment cannot feed:"
+                   + " it has no address to call, or one on another host. Feed a route that calls it, or leave the"
+                   + " feed out when its traffic comes otherwise";
         }
         if (model.isConsumerOnly()) {
             return "Route " + route + " starts from " + from + ", which only consumes, so an experiment cannot send to"
