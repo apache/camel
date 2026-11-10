@@ -95,7 +95,8 @@ public final class ChaosExplorePlaybook {
                 to call when its path has a parameter (such as POST /orders/42); the traffic counts the status codes \
                 the clients got. A route of kind file is fed with its id too: each message is written as a file the \
                 route takes. An experiment refuses a feed that cannot reach its route, with the reason and \
-                what to do instead, and warns when the feed goes to a real system that is not stubbed
+                what to do instead, and warns when the feed goes to a real system that is not stubbed (a local \
+                broker from camel infra is not one)
                    - a rule at=dlq fails the dead letter channel, so it fires only when a message goes there: use \
                 the combined suggestions, which add the fault that sends messages there too. A message the \
                 dead letter channel did not deliver is handled there, so it does not fail in its route: the \

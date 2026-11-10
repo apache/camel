@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -428,16 +429,42 @@ class ChaosExperimentRunTest {
                         "chaos", new JsonObject(Map.of("report", report))));
 
         // not stubbed: the messages go to the broker (CAMEL-26792)
-        assertThat(ChaosExperimentRun.feedWarning(status, "refunds")).isEqualTo(
+        assertThat(ChaosExperimentRun.feedWarning(status, "refunds", List.of())).isEqualTo(
                 "The feed goes to kafka://refunds?brokers=localhost:9092, where route refunds starts, and it is not"
-                                                                                + " stubbed: the messages go to the real kafka. Use a local one (camel infra"
-                                                                                + " run kafka), or run the integration with --stub=kafka so no real system"
-                                                                                + " gets them");
+                                                                                           + " stubbed: the messages go to the real kafka. Use a local one (camel infra"
+                                                                                           + " run kafka), or run the integration with --stub=kafka so no real system"
+                                                                                           + " gets them");
         // stubbed, a file, or a report that does not tell: no warning
-        assertThat(ChaosExperimentRun.feedWarning(status, "returns")).isNull();
-        assertThat(ChaosExperimentRun.feedWarning(status, "inbox")).isNull();
-        assertThat(ChaosExperimentRun.feedWarning(new JsonObject(Map.of("routes", status.get("routes"))), "refunds"))
+        assertThat(ChaosExperimentRun.feedWarning(status, "returns", List.of())).isNull();
+        assertThat(ChaosExperimentRun.feedWarning(status, "inbox", List.of())).isNull();
+        assertThat(ChaosExperimentRun.feedWarning(new JsonObject(Map.of("routes", status.get("routes"))), "refunds", List.of()))
                 .isNull();
+    }
+
+    @Test
+    void aFeedToABrokerOfCamelInfraIsNotWarned() {
+        JsonObject report
+                = new JsonObject(Map.of("routes", new JsonArray(List.of(new JsonObject(Map.of("route", "refunds"))))));
+        // the brokers of Kafka come from the services of the status, as they are often configured on the component
+        JsonObject services = new JsonObject(
+                Map.of("services", new JsonArray(
+                        List.of(new JsonObject(
+                                Map.of("component", "kafka", "direction", "in", "routeId", "refunds", "serviceUrl",
+                                        "localhost:32775"))))));
+        JsonObject status = new JsonObject(
+                Map.of(
+                        "routes",
+                        new JsonArray(List.of(new JsonObject(Map.of("routeId", "refunds", "from", "kafka://refunds")))),
+                        "services", services, "chaos", new JsonObject(Map.of("report", report))));
+        List<InfraServices.Service> infra = List.of(new InfraServices.Service("kafka", 42, Set.of(32775)));
+
+        // camel infra runs Kafka there: a local broker, not a real system (CAMEL-26804)
+        assertThat(ChaosExperimentRun.feedWarning(status, "refunds", infra)).isNull();
+        assertThat(ChaosExperimentRun.localInfra(status, "refunds", infra).name()).isEqualTo("kafka");
+        // camel infra runs Kafka on another port, or nothing: the broker may be a real one
+        List<InfraServices.Service> other = List.of(new InfraServices.Service("kafka", 42, Set.of(9092)));
+        assertThat(ChaosExperimentRun.feedWarning(status, "refunds", other)).startsWith("The feed goes to kafka://refunds");
+        assertThat(ChaosExperimentRun.feedWarning(status, "refunds", List.of())).startsWith("The feed goes to kafka://refunds");
     }
 
     @Test

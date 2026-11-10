@@ -235,6 +235,8 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
             long failed = traffic.getLongOrDefault("failed", 0);
             StringBuilder sb = new StringBuilder();
             sb.append(sent).append(sent == 1 ? " message" : " messages").append(" sent to ").append(endpoint)
+                    .append(traffic.containsKey("localInfra")
+                            ? " (the local " + traffic.getString("localInfra") + " from camel infra)" : "")
                     .append(failed > 0 ? " (" + failed + " failed)" : "").append(" in ")
                     .append(time(traffic.getLongOrDefault("elapsed", 0)));
             // the status codes the clients of an HTTP feed got (CAMEL-26793)
@@ -250,7 +252,10 @@ public class CamelChaosExperimentAction extends CamelChaosAction {
             return sb.toString();
         }
         // a single message: the answer of the send
-        return "1 message sent to " + endpoint + ("success".equals(traffic.getString("status")) ? "" : " (failed)");
+        return "1 message sent to " + endpoint
+               + (traffic.containsKey("localInfra")
+                       ? " (the local " + traffic.getString("localInfra") + " from camel infra)" : "")
+               + ("success".equals(traffic.getString("status")) ? "" : " (failed)");
     }
 
     // a time under a second in millis, as a send of a few messages takes
