@@ -21,7 +21,7 @@ camel cmd chaos-experiment [options]
 | Option | Description | Default | Type
 | `--body` | The body of the messages: text, file:<path>, or file:<folder> for a message per file |  | String
 | `--end` | End the open experiment (with --note) instead of running a new one |  | boolean
-| `--feed` | The endpoint, or the id of the route, to send the messages of the experiment to |  | String
+| `--feed` | The endpoint, or the id of the route, to send the messages of the experiment to; a route that serves HTTP gets HTTP requests, or give the path to call, such as 'PUT /orders/42' |  | String
 | `--header` | A header of the messages as key=value; can be given more than once |  | List
 | `--hypothesis` | What the experiment tests, in a few words, such as 'orders survive a payment outage' |  | String
 | `--interval` | The pause between two messages, such as 200ms, or a range such as 100..500 to draw each pause at random (at most 60s) |  | String
@@ -29,7 +29,7 @@ camel cmd chaos-experiment [options]
 | `--repeat` | How many messages to send in all (at most 10000) |  | int
 | `--rule` | A rule in its one-line text form, as an entry of camel.chaos.rules; can be given more than once, and one of them needs an expectation (expect=) |  | List
 | `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
-| `--wait` | The longest wait for the verdict after the messages were sent (at most 10m) | 2m | String
+| `--wait` | The longest wait for the verdict after the messages were sent, and at least the within= of the expectations (at most 10m) | 2m | String
 | `-h,--help` | Display the help and sub-commands |  | boolean
 |===
 

@@ -323,9 +323,12 @@ class DataRefreshService {
                     continue;
                 }
                 IntegrationInfo info = StatusParser.parseIntegration(ph, root);
+                if (info != null) {
+                    info.statusWrittenAt = writtenAt(pid);
+                }
                 if (info != null && ctx != null) {
                     ctx.chaosMarks.record(info);
-                    ctx.timeline.record(info, writtenAt(pid));
+                    ctx.timeline.record(info, info.statusWrittenAt);
                     mergeTimelineFile(pid);
                     timelineLog.read(info.pid, logFile(info), ctx.timeline);
                 }
@@ -334,16 +337,10 @@ class DataRefreshService {
                     if (prev != null) {
                         info.errors = prev.errors;
                     }
+                    StatusAge.observeCpu(info, prev, ph, now);
                     rates.fill(info, now);
                     infos.add(info);
-                    metrics.updateThroughputHistory(info);
-                    metrics.updateEndpointHistory(info);
-                    metrics.updateServiceHistory(info);
-                    metrics.updateCbHistory(info);
-                    metrics.updateHeapHistory(info);
-                    if (ctx != null) {
-                        ctx.healthHistory.record(info, System.currentTimeMillis() / 1000);
-                    }
+                    recordHistories(info);
                     metrics.updateLoadMetrics(ph, info);
                     detectReload(info);
                 }
@@ -909,6 +906,24 @@ class DataRefreshService {
         String msg = reloadNotification;
         reloadNotification = null;
         return msg;
+    }
+
+    /**
+     * The charts and strips of the integration go on by a second: from a status of late only, as one of then would draw
+     * its last rate on and on.
+     */
+    void recordHistories(IntegrationInfo info) {
+        if (StatusAge.stale(info)) {
+            return;
+        }
+        metrics.updateThroughputHistory(info);
+        metrics.updateEndpointHistory(info);
+        metrics.updateServiceHistory(info);
+        metrics.updateCbHistory(info);
+        metrics.updateHeapHistory(info);
+        if (ctx != null) {
+            ctx.healthHistory.record(info, System.currentTimeMillis() / 1000);
+        }
     }
 
     private List<Long> findPids(String name) {

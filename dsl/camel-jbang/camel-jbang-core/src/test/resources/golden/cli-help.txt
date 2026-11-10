@@ -561,6 +561,9 @@ Commands:
   chaos-experiment      Run one chaos experiment in the exploration of a
                           running integration: add its rules, send its traffic,
                           wait for the verdict, and end it
+  chaos-explore         Let there be chaos: an AI explores by itself how a
+                          running integration copes with faults, for a time
+                          budget, and reports what held and what broke
   chaos-explore-finish  Finish the chaos exploration of a running integration
                           before its deadline
   chaos-explore-start   Start a chaos exploration in a running integration: a
@@ -772,7 +775,9 @@ rules, send its traffic, wait for the verdict, and end it
                               camel.chaos.rules; can be given more than once,
                               and one of them needs an expectation (expect=)
       --feed=<feed>         The endpoint, or the id of the route, to send the
-                              messages of the experiment to
+                              messages of the experiment to; a route that
+                              serves HTTP gets HTTP requests, or give the path
+                              to call, such as 'PUT /orders/42'
       --body=<body>         The body of the messages: text, file:<path>, or
                               file:<folder> for a message per file
       --header=<headers>    A header of the messages as key=value; can be given
@@ -783,7 +788,8 @@ rules, send its traffic, wait for the verdict, and end it
                               range such as 100..500 to draw each pause at
                               random (at most 60s)
       --wait=<wait>         The longest wait for the verdict after the messages
-                              were sent (at most 10m)
+                              were sent, and at least the within= of the
+                              expectations (at most 10m)
                               Default: 2m
       --note=<note>         What to note with the experiment when it ends
       --end                 End the open experiment (with --note) instead of
@@ -804,11 +810,13 @@ what the routes did, and the traffic. It stays in the journal of the exploration
 
 The verdict is FAIL when an expectation is unmet (exit code 1), PASS when all
 are
-met, and INCONCLUSIVE when it ended before an expectation was decided: wait
-longer
-than the within= of the expectation. --feed can be the id of a route, as the
-feed:
-line of camel cmd chaos-suggest has it.
+met, and INCONCLUSIVE when it cannot tell: it ended before an expectation was
+decided
+(wait longer than the within= of the expectation), its faults never fired, or
+the
+route of a met expectation had no messages. --feed can be the id of a route, as
+the
+feed: line of camel cmd chaos-suggest has it.
 
 Examples:
   camel cmd chaos-experiment --hypothesis='a failed refund is read again' \
@@ -822,6 +830,77 @@ outage' \
 failed<=0 within=70s' \
       --wait=90s
   camel cmd chaos-experiment --end --note='stopped by hand'
+
+== camel cmd chaos-explore --help
+Usage: camel cmd chaos-explore [-h] [--[no-]save] [--show-tools] [--verbose]
+                               [--yes] [--api-key=<apiKey>]
+                               [--api-type=<apiType>] [--budget=<budget>]
+                               [--focus=<focus>]
+                               [--max-iterations=<maxIterations>]
+                               [--model=<model>] [--timeout=<timeout>]
+                               [--tools=<tools>] [--url=<url>] [<name>]
+Let there be chaos: an AI explores by itself how a running integration copes
+with faults, for a time budget, and reports what held and what broke
+      [<name>]               Name or pid of the running Camel integration (must
+                               match one); without it, the only one running, or
+                               the only one with chaos switched on
+  -h, --help                 Display the help and sub-commands
+      --budget=<budget>      How long the AI explores, between 10s and 2h
+                               Default: 10m
+      --focus=<focus>        What to explore, such as a route id (default: all
+                               routes)
+      --url=<url>            LLM API endpoint URL, as for camel ask.
+                               Auto-detected if not specified
+      --api-type=<apiType>   API type: 'ollama', 'openai', 'anthropic', or
+                               'watsonx'
+      --api-key=<apiKey>     API key. Also reads ANTHROPIC_API_KEY,
+                               OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY
+                               env vars
+      --model=<model>        Model to use. Default: the provider's default;
+                               with Ollama the installed model best at tool
+                               calling
+      --timeout=<timeout>    Timeout in seconds for one answer of the LLM (an
+                               experiment can take minutes)
+                               Default: 300
+      --max-iterations=<maxIterations>
+                             Maximum number of tool-calling rounds
+                               Default: 100
+      --tools=<tools>        The tools the model gets: core (a small set, for a
+                               local model), full, or auto
+                               Default: auto
+      --yes                  Let the AI send messages to endpoints the
+                               integration does not have, and run the other
+                               calls that camel ask asks for first, without
+                               asking
+      --show-tools           Show the tool calls and results as they happen
+      --[no-]save            Save the report in test/chaos/reports (as
+                               markdown, and the journal as JSON), and each
+                               experiment that failed as a scenario in
+                               test/chaos, to replay it
+      --verbose              Print debug information of the LLM calls
+
+This command starts a chaos exploration with the budget (camel cmd
+chaos-explore-start), and hands
+it to the AI of camel ask with a playbook: read the suggestions, run one
+experiment per call
+(camel cmd chaos-experiment), read the verdicts, and go on while there is time.
+The AI asks
+nothing on the way: starting this command is the consent to the exploration,
+and camel-chaos
+removes every rule at the deadline. The AI never changes the routes. When it is
+done, the
+exploration is finished, and its report and the journal of the experiments are
+printed. The exit
+code is 1 when an experiment failed.
+
+The integration needs camel-chaos switched on (camel run --chaos), and remote
+endpoints are best
+stubbed (camel run --stub=remote), so the experiments do not reach real systems.
+
+Examples:
+  camel cmd chaos-explore
+  camel cmd chaos-explore myApp --budget=30m --focus=refunds
+  camel cmd chaos-explore --api-type=anthropic --budget=1h
 
 == camel cmd chaos-explore-finish --help
 Usage: camel cmd chaos-explore-finish [-h] [--timeout=<timeout>] [<name>]

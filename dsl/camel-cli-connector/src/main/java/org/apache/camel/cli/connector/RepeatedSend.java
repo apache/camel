@@ -51,6 +51,9 @@ public final class RepeatedSend {
     public static final int MAX_MESSAGES = 10000;
     /** The longest pause between two messages, in millis; camel cmd send checks it before it asks. */
     public static final long MAX_INTERVAL = 60000;
+
+    // the name of the file a file endpoint writes a message to
+    private static final String FILE_NAME = "CamelFileName";
     private static final int MAX_ERRORS = 5;
 
     private RepeatedSend() {
@@ -90,6 +93,19 @@ public final class RepeatedSend {
             throw new IllegalArgumentException("The interval must be at most 60s, was: " + text);
         }
         return answer;
+    }
+
+    /**
+     * A file name with the number of the message before its extension: order.json is order-3.json for the third
+     * message, and order is order-3.
+     */
+    static String numbered(String name, long number) {
+        int slash = Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\'));
+        int dot = name.lastIndexOf('.');
+        if (dot <= slash + 1) {
+            return name + "-" + number;
+        }
+        return name.substring(0, dot) + "-" + number + name.substring(dot);
     }
 
     /** Whether the send action repeats, or sends a folder of messages, rather than one message. */
@@ -190,6 +206,10 @@ public final class RepeatedSend {
             args.putAll(message.headers());
             if (message.body() != null) {
                 args.put("body", message.body());
+            }
+            // a file endpoint gets one file per message, rather than the same file again (CAMEL-26795)
+            if (count > 1 && args.get(FILE_NAME) instanceof String name && !name.isBlank()) {
+                args.put(FILE_NAME, numbered(name, i + 1));
             }
             JsonObject response = (JsonObject) console.call(DevConsole.MediaType.JSON, args);
             if (endpoint == null) {

@@ -265,6 +265,22 @@ class PromptDefinitionsTest {
         assertThat(mentioned).as("tools named by the prompts").isSubsetOf(tools);
     }
 
+    // ---- camel_chaos_explore ----
+
+    @Test
+    void chaosExploreIsThePlaybookWithTheMcpTools() {
+        String text = extractText(prompts.chaosExplore("1h", "refunds", "shop"));
+
+        assertThat(text).contains("Let there be chaos: explore how the integration shop copes with faults, by"
+                                  + " yourself, for 1h",
+                "Focus on refunds",
+                "Start the exploration with camel_runtime_chaos_explore_start (budget 1h)",
+                "camel_runtime_chaos_suggest", "camel_runtime_chaos_experiment", "camel_runtime_chaos_explore_finish",
+                "Do not ask the user anything");
+        assertThat(extractText(prompts.chaosExplore(null, null, null)))
+                .contains("the running integration copes with faults, by yourself, for 10m", "Explore all routes");
+    }
+
     // ---- helper ----
 
     private String extractText(List<PromptMessage> messages) {

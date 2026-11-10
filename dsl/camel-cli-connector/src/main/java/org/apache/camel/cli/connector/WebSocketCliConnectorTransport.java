@@ -653,11 +653,7 @@ public class WebSocketCliConnectorTransport extends ServiceSupport implements Cl
     // ---- helpers ----
 
     private static void safely(Runnable task) {
-        try {
-            task.run();
-        } catch (Exception e) {
-            LOG.debug("Error in Camel CLI connector task due to: {}. This exception is ignored.", e.getMessage(), e);
-        }
+        ConnectorTasks.safely(task);
     }
 
     private void execute(Runnable task) {

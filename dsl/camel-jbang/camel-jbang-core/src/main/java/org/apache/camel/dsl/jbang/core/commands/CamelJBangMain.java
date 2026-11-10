@@ -263,6 +263,7 @@ public class CamelJBangMain implements Callable<Integer> {
                     .addSubcommand("chaos-change", new CommandLine(new CamelChaosChangeAction(this)))
                     .addSubcommand("chaos-clear", new CommandLine(new CamelChaosClearAction(this)))
                     .addSubcommand("chaos-experiment", new CommandLine(new CamelChaosExperimentAction(this)))
+                    .addSubcommand("chaos-explore", new CommandLine(new ChaosExplore(this)))
                     .addSubcommand("chaos-explore-finish", new CommandLine(new CamelChaosExploreFinishAction(this)))
                     .addSubcommand("chaos-explore-start", new CommandLine(new CamelChaosExploreStartAction(this)))
                     .addSubcommand("chaos-load", new CommandLine(new CamelChaosLoadAction(this)))

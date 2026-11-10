@@ -220,7 +220,21 @@ class ListChaosTest extends ProcessCommandTestSupport {
         during.put("failed", 9L);
         experiment.put("routes", new JsonArray(List.of(during)));
         experiment.put("note", "orders has no error handler");
-        exploration.put("experiments", new JsonArray(List.of(experiment)));
+        experiment.put("lostAtDeadLetterChannel", 58L);
+        JsonObject alsoFailed = new JsonObject();
+        alsoFailed.put("refunds", 2L);
+        experiment.put("alsoFailed", alsoFailed);
+        // its fault never fired
+        JsonObject second = new JsonObject();
+        second.put("number", 2);
+        second.put("open", false);
+        second.put("endedBy", "ended");
+        second.put("elapsed", 41_000L);
+        second.put("rules", new JsonArray(List.of("r3")));
+        second.put("verdict", "INCONCLUSIVE");
+        second.put("reason", "its faults never fired, so its expectations say nothing about them");
+        second.put("expectations", new JsonArray());
+        exploration.put("experiments", new JsonArray(List.of(experiment, second)));
         ((JsonObject) chaos.get("report")).put("exploration", exploration);
         writeStatus(chaos);
 
@@ -230,8 +244,12 @@ class ListChaosTest extends ProcessCommandTestSupport {
         assertThat(out).contains("exploration: running, 6m12s left of 10m0s, focus: orders",
                 "rules tried: r1, r2", "baseline (before the first rule): orders 30 completed, 0 failed",
                 "experiments:", "1 FAIL  an order never fails (r1, r2, ended after 1m4s)",
-                "expect orders:failed<=0: unmet, 9 failed", "routes: orders 41 completed, 9 failed",
-                "note: orders has no error handler");
+                "expect orders:failed<=0: unmet, 9 failed",
+                "lost at the dead letter channel: 58 messages, handled there without being delivered",
+                "also failed, in no expectation: refunds 2",
+                "routes: orders 41 completed, 9 failed",
+                "note: orders has no error handler", "2 INCONCLUSIVE",
+                "inconclusive: its faults never fired, so its expectations say nothing about them");
     }
 
     @Test

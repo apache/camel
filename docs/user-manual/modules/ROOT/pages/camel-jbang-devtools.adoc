@@ -73,6 +73,10 @@ $ camel cmd send shop --endpoint=kafka:refunds --body=file:refund.json --repeat=
   2 x IllegalStateException: Refund amount is missing
 ----
 
+When the messages are repeated (or come from a folder), a `CamelFileName` header is numbered per message, so a file
+endpoint writes one file per message rather than the same file again: `--header=CamelFileName=order.json` writes
+`order-1.json`, `order-2.json` and so on.
+
 A body of `file:<folder>` sends the files of the folder in name order, one message per file. A `.properties` file
 with the same name has the headers of a message: `001.properties` for `001.json`. With `--repeat` it goes round the
 files again, and the headers of `--header` go with every message:

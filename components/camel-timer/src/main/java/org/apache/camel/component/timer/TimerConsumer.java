@@ -244,8 +244,10 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
      * Whether the timer task is allow to run or not
      */
     protected boolean isTaskRunAllowed() {
-        // only run if we are started
-        return isStarted();
+        // only run if we are started (or starting, as the task can be
+        // configured and fired before the consumer has completed starting
+        // when its route is started at runtime)
+        return isRunAllowed() && !isSuspended();
     }
 
     protected void configureTask(TimerTask task, Timer timer) {

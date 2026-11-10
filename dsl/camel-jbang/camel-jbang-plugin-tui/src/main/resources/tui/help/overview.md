@@ -24,7 +24,7 @@ happened to it, with no AI:
   properties with its profile applied.
 - **In, Routes, Out** — what starts it (timers, HTTP, consumers), its
   routes (a route called with `direct:` sits under its caller with `↳`,
-  one handed off with `seda:` with `⇢`) and what it talks to, from its
+  one handed off with `seda:` or a `wireTap` with `⇢`) and what it talks to, from its
   sources. Each line has the exchanges since it started (for an
   endpoint, the sends to it), and In and Out a sparkline of the last 5
   minutes with the rate now, or `idle`. Out also has the systems the
@@ -41,7 +41,11 @@ happened to it, with no AI:
   when the last one did, routes not started, exchanges in flight. Errors
   that stopped more than a minute ago are history: the line says there
   were none in the last minute, with the earlier ones dimmed (Last 5m and
-  What happened still show them).
+  What happened still show them). An integration that wrote no status
+  for 15 seconds says since when instead, and what its CPU says: busy
+  when its heap is full and the garbage collector runs all the time,
+  idle when a debugger holds it. Its numbers are of then, and a stop
+  may not reach it; `F10` kills it.
 - **Next** — the keys that lead deeper: **4** the Timeline, **5** the
   Diagram, **2** the source, **r** the README, **s** the summary.
 - **What happened** — a strip per route over the last 5 minutes (as wide
@@ -79,7 +83,7 @@ Each row represents one running Camel integration:
 - **PID** — Process ID of the JVM running this integration
 - **NAME** — Name of the integration (from the route file or application configuration). Example: `camel-demo`, `my-app`
 - **VERSION** — Camel version the integration is running on (e.g., `4.21.0`)
-- **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`
+- **STATUS** — Current lifecycle state: `Running` (processing messages), `Started` (ready), or `Stopped`; `No status` when it wrote no status for 15 seconds while its process runs (its MSG/S is then `-`)
 - **AGE** — How long the integration has been running (e.g., `2m30s`, `1h15m`)
 - **MSG/S** or **MSG/M** — Messages processed per second or per minute (current throughput). The rate unit can be configured in settings. This is the overall rate across all routes
 - **TOTAL** — Total number of exchanges (messages) processed since the integration started

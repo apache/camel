@@ -1295,15 +1295,17 @@ public class RuntimeTools {
                   the experiment, which removes its rules. Returns the verdict (FAIL: an expectation is unmet; PASS: \
                   all are met; INCONCLUSIVE: the wait was up before one was decided, so wait longer than its \
                   within=), the expectations with their actual values, the faults per rule, what the routes did \
-                  meanwhile, the traffic sent, and the time left of the exploration (timeLeft, millis). \
-                  camel_runtime_chaos_suggest has rules to try and the feed of each route.""")
+                  meanwhile, the traffic sent, the time left of the exploration (timeLeft, millis), and warnings \
+                  for a rule that matched nothing (fix it and run again). camel_runtime_chaos_suggest has rules to \
+                  try and the feed of each route.""")
     public JsonObject camel_runtime_chaos_experiment(
             @ToolArg(description = CHAOS_NAME_OR_PID_DESC, required = false) String nameOrPid,
             @ToolArg(description = "The rules in their one-line text form, separated by ;, one of them with expect=,"
                                    + " such as 'route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s'") String rule,
             @ToolArg(description = "What the experiment tests, in a few words", required = false) String hypothesis,
             @ToolArg(description = "The endpoint, or the id of the route, to send the messages to (as the feed of"
-                                   + " camel_runtime_chaos_suggest); leave it out when the route feeds itself",
+                                   + " camel_runtime_chaos_suggest); a route that serves HTTP gets HTTP requests, or"
+                                   + " give the path to call (POST /orders/42); leave it out when the route feeds itself",
                      required = false) String feed,
             @ToolArg(description = "The body of the messages (file:<path>, or file:<folder> for a message per file)",
                      required = false) String body,
@@ -1313,7 +1315,7 @@ public class RuntimeTools {
             @ToolArg(description = "The pause between two messages in millis, or a range such as 100..500",
                      required = false) String interval,
             @ToolArg(description = "The longest wait for the verdict after the messages were sent, such as 90s"
-                                   + " (default 2m, at most 10m)",
+                                   + " (default 2m, at most 10m); it is at least the within= of the expectations",
                      required = false) String wait,
             @ToolArg(description = "What to note with the experiment in the journal", required = false) String note) {
         requireArg("rule", rule);
