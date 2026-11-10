@@ -106,7 +106,7 @@ public interface CryptoComponentBuilderFactory {
         }
     
         /**
-         * Sets the KeyStore that can contain keys and Certficates for use in
+         * Sets the KeyStore that can contain keys and Certificates for use in
          * signing and verifying exchanges. A KeyStore is typically used with an
          * alias, either one supplied in the Route definition or dynamically via
          * the message header CamelSignatureKeyStoreAlias. If no alias is
@@ -355,7 +355,7 @@ public interface CryptoComponentBuilderFactory {
         }
     
         /**
-         * Sets the KeyStore that can contain keys and Certficates for use in
+         * Sets the KeyStore that can contain keys and Certificates for use in
          * signing and verifying exchanges based on the given
          * KeyStoreParameters. A KeyStore is typically used with an alias,
          * either one supplied in the Route definition or dynamically via the

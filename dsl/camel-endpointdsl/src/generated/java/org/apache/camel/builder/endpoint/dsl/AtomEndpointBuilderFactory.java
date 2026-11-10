@@ -907,7 +907,7 @@ public interface AtomEndpointBuilderFactory {
          * org.apache.camel.component.FeedIdempotentStrategy to use when
          * checking idempotency. Camel provides two implementations out of the
          * box: default and repository. The updated strategy is used as default
-         * if idempotent = true. The default strategy checks the Atom entrys
+         * if idempotent = true. The default strategy checks the Atom entries
          * updated or published date is newer than the previously read entry.
          * You can provide your own implementation of the
          * org.apache.camel.component.FeedIdempotentStrategy and refer to it
@@ -932,7 +932,7 @@ public interface AtomEndpointBuilderFactory {
          * org.apache.camel.component.FeedIdempotentStrategy to use when
          * checking idempotency. Camel provides two implementations out of the
          * box: default and repository. The updated strategy is used as default
-         * if idempotent = true. The default strategy checks the Atom entrys
+         * if idempotent = true. The default strategy checks the Atom entries
          * updated or published date is newer than the previously read entry.
          * You can provide your own implementation of the
          * org.apache.camel.component.FeedIdempotentStrategy and refer to it
