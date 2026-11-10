@@ -3251,6 +3251,22 @@ The `aws2-ddbstream` consumer now reads a closed shard to its end before it read
 shard rotation the consumer started again from `streamIteratorType`: with `FROM_START` it routed records of the stream
 again, and with `FROM_LATEST` it skipped records already written to the new shards.
 
+=== camel-bean - a VirtualMachineError thrown by a bean method is no longer given to the error handler
+
+A bean method that throws a `VirtualMachineError` (such as `OutOfMemoryError`, `StackOverflowError` or
+`InternalError`) is now handled as a bean that is a `Processor`: Camel's error handling does not get it (the JVM may no
+longer be in a consistent state, so the application should not handle it). It is not set on the exchange, but thrown on
+after the callback of the bean was called. Depending on the error handler, the `Error` reaches the caller (and the
+exchange may stay inflight), or it is only logged and the route continues as if the bean method had succeeded.
+
+Before, the bean component set any `Error` of a bean method on the exchange, so `onException`, `doCatch`, redelivery
+and a dead letter channel also handled an `OutOfMemoryError` or a `StackOverflowError`. Any other `Error` of a bean
+method, such as an `AssertionError`, still fails the exchange and goes to the error handler, as before.
+
+An application with strict reliability needs should not rely on Camel to react to a `VirtualMachineError`. For an
+`OutOfMemoryError` that the JVM raises, it can let the JVM stop with `-XX:+ExitOnOutOfMemoryError` or
+`-XX:+CrashOnOutOfMemoryError`.
+
 === camel-beanio - BeanIOSplitter decodes files and streams with the charset of the exchange or its encoding
 
 `BeanIOSplitter` read a file body with the default charset of the JVM, and a stream or byte array body with the
