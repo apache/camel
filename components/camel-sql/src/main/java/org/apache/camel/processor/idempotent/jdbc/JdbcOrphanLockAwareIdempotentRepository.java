@@ -23,13 +23,17 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.util.ObjectHelper;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,11 +48,20 @@ import org.springframework.transaction.support.TransactionTemplate;
  * A lock is granted to an instance if either the entry for the lock attributes do not exists in the
  * CAMEL_MESSAGEPROCESSED table or if in case the instance holding the lock has crashed. This is determined if the
  * timestamp on the createdAt column is more than the lockMaxAge.
+ *
+ * A key that is confirmed (the message was processed) is no longer a lock: its createdAt is set to null, which the
+ * orphan check never treats as old, and it is no longer kept alive. So it stays a duplicate after the instance that
+ * added it stops, as in {@link JdbcMessageIdRepository}. The createdAt column must store null; when it does not (a NOT
+ * NULL column, or a MySQL or MariaDB TIMESTAMP column with explicit_defaults_for_timestamp=OFF), a confirmed key stays
+ * a lock, as before. When the repository joins a transaction of the caller (same DataSource), a failed confirm marks
+ * that transaction as rollback only.
  */
 public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdRepository {
 
     protected static final String DEFAULT_UPDATE_TIMESTAMP_QUERY
             = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt =? WHERE processorName =? AND messageId = ?";
+    protected static final String DEFAULT_CONFIRM_QUERY
+            = "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt = NULL WHERE processorName = ? AND messageId = ?";
 
     // a concurrent set, so no lock is held while SQL runs: add and remove hold a connection of the pool while they
     // run, and the keep-alive needs one too, so a lock held across SQL could deadlock with a small pool
@@ -67,6 +80,10 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     private long lockKeepAliveIntervalMillis;
 
     private String updateTimestampQuery = DEFAULT_UPDATE_TIMESTAMP_QUERY;
+
+    private String confirmQuery = DEFAULT_CONFIRM_QUERY;
+
+    private final AtomicBoolean confirmWarned = new AtomicBoolean();
 
     public JdbcOrphanLockAwareIdempotentRepository(CamelContext camelContext) {
         super();
@@ -97,7 +114,8 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
          * which had acquired the lock has died
          */
         // NOTE: the querystring is passed by the user, so, we are safe as he decide what query wants to perform.
-        String orphanLockRecoverQueryString = getQueryString() + " AND createdAt >= ?";
+        // a confirmed key (createdAt is null) is never an orphan lock
+        String orphanLockRecoverQueryString = getQueryString() + " AND (createdAt >= ? OR createdAt IS NULL)";
         Timestamp xMillisAgo = new Timestamp(System.currentTimeMillis() - lockMaxAgeMillis);
         return jdbcTemplate.queryForObject(orphanLockRecoverQueryString, Integer.class, processorName, key, // NOSONAR
                 xMillisAgo);
@@ -106,9 +124,87 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
     @Override
     protected int delete(String key) {
         int result = super.delete(key);
+        stopKeepAlive(key);
+        return result;
+    }
+
+    /**
+     * Confirms the key: the message was processed, so the key is no longer a lock that is kept alive and that another
+     * instance can take over when this one stops. Its createdAt is set to null, which the orphan check never treats as
+     * old, so the key stays a duplicate for good.
+     * <p/>
+     * When the key cannot be confirmed (a createdAt column that does not store null, or a failure of the database), it
+     * stays a lock that is kept alive while this instance runs, as before, and false is returned; also when there is no
+     * such key. With no confirm query (null or empty) a key is not confirmed either, and true is returned.
+     *
+     * @return {@code true} if the key was confirmed, {@code false} otherwise
+     */
+    @Override
+    public boolean confirm(final String key) {
+        String query = getConfirmQuery();
+        if (ObjectHelper.isEmpty(query)) {
+            // confirmed keys are kept as locks
+            return true;
+        }
+        try {
+            // in a transaction of its own (or the one of the caller), as add and remove
+            Boolean rc = transactionTemplate.execute(status -> {
+                if (jdbcTemplate.update(query, processorName, key) == 0) {
+                    return false;
+                }
+                // a column that does not store null keeps a timestamp instead (such as a MySQL TIMESTAMP column with
+                // explicit_defaults_for_timestamp=OFF, which stores the current time): the key must stay a lock then
+                Integer confirmed = jdbcTemplate.queryForObject(getQueryString() + " AND createdAt IS NULL", Integer.class,
+                        processorName, key);
+                if (confirmed == null || confirmed == 0) {
+                    warnNotConfirmed("the createdAt column does not store null", null);
+                    return false;
+                }
+                // the key leaves the keep-alive once the row is confirmed: after the commit in a transaction, so a
+                // confirm that rolls back keeps the lock alive while this instance runs
+                ProcessorNameAndMessageId id = new ProcessorNameAndMessageId(processorName, key);
+                cancelKeepAliveAfterCommit(id);
+                if (TransactionSynchronizationManager.isSynchronizationActive()) {
+                    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                        @Override
+                        public void afterCommit() {
+                            processorNameMessageIdSet.remove(id);
+                        }
+                    });
+                } else {
+                    processorNameMessageIdSet.remove(id);
+                }
+                return true;
+            });
+            return Boolean.TRUE.equals(rc);
+        } catch (DataAccessException | TransactionException e) {
+            warnNotConfirmed(e.getMessage(), e);
+            return false;
+        }
+    }
+
+    // once at WARN, then at DEBUG: the cause is the same for every key
+    private void warnNotConfirmed(String reason, Exception cause) {
+        if (confirmWarned.compareAndSet(false, true)) {
+            log.warn("Cannot confirm a key of processor {} in the idempotent repository ({}): confirmed keys stay locks that"
+                     + " another instance takes over when this one stops. Make the createdAt column nullable, or set"
+                     + " confirmQuery to null or empty to keep confirmed keys as locks. Further failures are logged at DEBUG.",
+                    processorName, reason, cause);
+        } else {
+            log.debug("Cannot confirm a key in the idempotent repository ({})", reason, cause);
+        }
+    }
+
+    // the key is no longer kept alive, also when an insert of it earlier in the current transaction would keep it alive
+    // after the commit
+    private void stopKeepAlive(String key) {
         ProcessorNameAndMessageId id = new ProcessorNameAndMessageId(processorName, key);
         processorNameMessageIdSet.remove(id);
-        // an insert of the same key earlier in this transaction keeps it alive only after the commit: cancel that
+        cancelKeepAliveAfterCommit(id);
+    }
+
+    // an insert of the key earlier in the current transaction keeps it alive only after the commit: cancel that
+    private void cancelKeepAliveAfterCommit(ProcessorNameAndMessageId id) {
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             for (TransactionSynchronization synchronization : TransactionSynchronizationManager.getSynchronizations()) {
                 if (synchronization instanceof KeepAliveAfterCommit pending && pending.repository == this
@@ -117,7 +213,6 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
                 }
             }
         }
-        return result;
     }
 
     @Override
@@ -190,6 +285,9 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         if (getTableName() != null) {
             // update query string from default table name to the new table name
             updateTimestampQuery = DEFAULT_UPDATE_TIMESTAMP_QUERY.replace(DEFAULT_TABLENAME, getTableName());
+            if (DEFAULT_CONFIRM_QUERY.equals(confirmQuery)) {
+                confirmQuery = DEFAULT_CONFIRM_QUERY.replace(DEFAULT_TABLENAME, getTableName());
+            }
         }
     }
 
@@ -240,7 +338,8 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
                         .map(processorNameMessageId -> new Object[] {
                                 currentTimestamp, processorNameMessageId.processorName, processorNameMessageId.messageId })
                         .collect(Collectors.toList());
-                return jdbcTemplate.batchUpdate(getUpdateTimestampQuery(), args);
+                // not a key that was confirmed meanwhile (its createdAt is null)
+                return jdbcTemplate.batchUpdate(getUpdateTimestampQuery() + " AND createdAt IS NOT NULL", args);
             });
         } catch (Exception e) {
             log.error("failed updating createdAt in keepAlive due to ", e);
@@ -257,6 +356,18 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
 
     public void setUpdateTimestampQuery(String updateTimestampQuery) {
         this.updateTimestampQuery = updateTimestampQuery;
+    }
+
+    public String getConfirmQuery() {
+        return confirmQuery;
+    }
+
+    /**
+     * The query that confirms a key: it sets its createdAt to null. Set it to null or empty to keep confirmed keys as
+     * locks that another instance takes over when this one stops (the behaviour before Camel 4.24).
+     */
+    public void setConfirmQuery(String confirmQuery) {
+        this.confirmQuery = confirmQuery;
     }
 
     public long getLockMaxAgeMillis() {

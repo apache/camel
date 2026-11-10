@@ -754,13 +754,18 @@ One of the limitations of `org.apache.camel.processor.idempotent.jdbc.JdbcMessag
 
 * lock already exists and the `createdAt` < `System.currentTimeMillis() - lockMaxAgeMillis`. In this case, it is assumed that there is no active instance which has the lock and the lock is provided to the requesting instance. The reason behind is that if the original instance which had the lock, if it was still running, it would have updated the Timestamp on createdAt using its keepAlive mechanism
 
-This repository has two additional configuration parameters
+* lock already exists and its `createdAt` is null: the key was confirmed, so it is a duplicate, as in `JdbcMessageIdRepository`.
+
+A key that is confirmed (the message was processed, for example by the Idempotent Consumer, or by the file consumer with `idempotent=true` and the default `idempotentEager=true`) is no longer a lock: its `createdAt` is set to null and it is no longer kept alive, so another instance does not take it over when the instance that added it stops. The `createdAt` column must store null for this; when it does not (a `NOT NULL` column, or a MySQL or MariaDB `TIMESTAMP` column with `explicit_defaults_for_timestamp=OFF`), confirmed keys stay locks and a WARN is logged; when the repository joins the transaction of a transacted route (same `DataSource`), the failed confirm also marks that transaction as rollback only.
+
+This repository has these additional configuration parameters
 
 [cols="1,1"]
 |===
 |Parameter | Description
 |`lockMaxAgeMillis` | This refers to the duration after which the lock is considered orphaned, i.e., if the `currentTimestamp - createdAt >= lockMaxAgeMillis` then lock is orphaned.
 |`lockKeepAliveIntervalMillis` | The frequency at which keep-alive updates are done to createdAt Timestamp column.
+|`confirmQuery` | The query that confirms a key by setting its `createdAt` to null. It follows `tableName`; set it when the table is set through custom queries instead. Set it to null or empty to keep confirmed keys as locks.
 |===
 
 ==== Caching Jdbc IdempotentRepository

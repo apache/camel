@@ -3031,6 +3031,21 @@ parameter than the statement has placeholders: most JDBC drivers then fail with 
 ignore the extra parameter, so the statement still matches an expired entry. With `tableName` the statements are
 derived from the default statements, as before.
 
+=== camel-sql - JdbcOrphanLockAwareIdempotentRepository keeps confirmed keys
+
+`JdbcOrphanLockAwareIdempotentRepository` now confirms a key by setting its `createdAt` to null and no longer keeping
+it alive, so a confirmed key stays a duplicate after its instance stops, as in `JdbcMessageIdRepository`. Before,
+another instance took it over `lockMaxAgeMillis` later and processed the message again. Keys that are only added
+(the file consumer with `idempotentEager=false`) and keys written before the upgrade are still taken over. With
+`readLockRemoveOnRollback=false`, a failed file is confirmed too and is no longer retried by another instance.
+
+The `createdAt` column must allow null: with a `NOT NULL` column, or a MySQL/MariaDB `TIMESTAMP` with
+`explicit_defaults_for_timestamp=OFF`, keys stay locks as before and a WARN is logged (in a transacted route on the
+same `DataSource`, the failed confirm also marks its transaction as rollback only). Confirmed keys have no age,
+so housekeeping by `createdAt` does not delete them. With a custom table set by custom queries instead of
+`tableName`, set `confirmQuery` too; set it to null or empty to keep the old behaviour. All instances sharing the
+table must run this version: older ones see a confirmed key as absent (before 4.14.6 and 4.18.2 they take it over).
+
 === camel-jta - an exchange marked rollback only last rolls back its transaction
 
 In a `transacted()` route that uses a JTA transaction manager, `markRollbackOnlyLast()` now rolls back the
