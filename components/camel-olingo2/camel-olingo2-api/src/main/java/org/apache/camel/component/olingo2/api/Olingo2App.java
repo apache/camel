@@ -111,7 +111,7 @@ public interface Olingo2App {
      * Reads an OData resource and invokes callback with appropriate result.
      *
      * @param edm                 Service Edm, read from calling
-     *                            <code>read(null, "$metdata", null, responseHandler)</code>
+     *                            <code>read(null, "$metadata", null, responseHandler)</code>
      * @param resourcePath        OData Resource path
      * @param queryParams         OData query params from
      *                            http://www.odata.org/documentation/odata-version-2-0/uri-conventions#SystemQueryOptions
@@ -126,7 +126,7 @@ public interface Olingo2App {
      * Reads an OData resource and invokes callback with the unparsed input stream.
      *
      * @param edm                 Service Edm, read from calling
-     *                            <code>read(null, "$metdata", null, responseHandler)</code>
+     *                            <code>read(null, "$metadata", null, responseHandler)</code>
      * @param resourcePath        OData Resource path
      * @param queryParams         OData query params from
      *                            http://www.odata.org/documentation/odata-version-2-0/uri-conventions#SystemQueryOptions

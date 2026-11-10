@@ -288,7 +288,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true the whole Exchange will be transfered. If header or
+         * If set to true the whole Exchange will be transferred. If header or
          * body contains not serializable objects, they will be skipped. Set it
          * on both the producer and the consumer: the producer puts the whole
          * Exchange on the queue, and the consumer restores its headers and
@@ -307,7 +307,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true the whole Exchange will be transfered. If header or
+         * If set to true the whole Exchange will be transferred. If header or
          * body contains not serializable objects, they will be skipped. Set it
          * on both the producer and the consumer: the producer puts the whole
          * Exchange on the queue, and the consumer restores its headers and
@@ -709,7 +709,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true the whole Exchange will be transfered. If header or
+         * If set to true the whole Exchange will be transferred. If header or
          * body contains not serializable objects, they will be skipped. Set it
          * on both the producer and the consumer: the producer puts the whole
          * Exchange on the queue, and the consumer restores its headers and
@@ -728,7 +728,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true the whole Exchange will be transfered. If header or
+         * If set to true the whole Exchange will be transferred. If header or
          * body contains not serializable objects, they will be skipped. Set it
          * on both the producer and the consumer: the producer puts the whole
          * Exchange on the queue, and the consumer restores its headers and
@@ -1059,7 +1059,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true the whole Exchange will be transfered. If header or
+         * If set to true the whole Exchange will be transferred. If header or
          * body contains not serializable objects, they will be skipped. Set it
          * on both the producer and the consumer: the producer puts the whole
          * Exchange on the queue, and the consumer restores its headers and
@@ -1078,7 +1078,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
             return this;
         }
         /**
-         * If set to true the whole Exchange will be transfered. If header or
+         * If set to true the whole Exchange will be transferred. If header or
          * body contains not serializable objects, they will be skipped. Set it
          * on both the producer and the consumer: the producer puts the whole
          * Exchange on the queue, and the consumer restores its headers and

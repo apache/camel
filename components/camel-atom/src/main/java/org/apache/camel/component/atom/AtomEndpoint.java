@@ -53,7 +53,7 @@ public class AtomEndpoint extends FeedEndpoint implements EndpointServiceLocatio
     @UriParam(label = "consumer,filter,advanced", defaultValue = "default", enums = "default,repository",
               description = "A pluggable strategy org.apache.camel.component.FeedIdempotentStrategy "
                             + "to use when checking idempotency. Camel provides two implementations out of the box: default and repository. The updated strategy is used as default if idempotent = true. "
-                            + "The default strategy checks the Atom entrys updated or published date is newer than the previously read entry. "
+                            + "The default strategy checks the Atom entry's updated or published date is newer than the previously read entry. "
                             + "You can provide your own implementation of the org.apache.camel.component.FeedIdempotentStrategy and refer to it using the # notation.")
     protected AtomIdempotentStrategy idempotentStrategy = new ItemUpdatedIdempotentStrategy();
 

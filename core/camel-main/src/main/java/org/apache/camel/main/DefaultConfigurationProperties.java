@@ -1051,8 +1051,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Whether to enable using data type on Camel messages.
      *
-     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output
-     * types. Otherwise data type is default off.
+     * Data type are automatic turned on if one or more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
      */
     public void setUseDataType(boolean useDataType) {
         this.useDataType = useDataType;
@@ -2471,8 +2471,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Whether to enable using data type on Camel messages.
      *
-     * Data type are automatic turned on if one ore more routes has been explicit configured with input and output
-     * types. Otherwise data type is default off.
+     * Data type are automatic turned on if one or more routes has been explicit configured with input and output types.
+     * Otherwise data type is default off.
      */
     public T withUseDataType(boolean useDataType) {
         this.useDataType = useDataType;

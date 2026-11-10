@@ -149,7 +149,7 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * For the delete instruction, interprete body as query/queries instead
+         * For the delete instruction, interpret body as query/queries instead
          * of id/ids.
          * 
          * The option is a: <code>boolean</code> type.
@@ -165,7 +165,7 @@ public interface SolrEndpointBuilderFactory {
             return this;
         }
         /**
-         * For the delete instruction, interprete body as query/queries instead
+         * For the delete instruction, interpret body as query/queries instead
          * of id/ids.
          * 
          * The option will be converted to a <code>boolean</code> type.

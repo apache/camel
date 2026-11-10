@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * <li>Execute {@link UnitOfWork}</li>
  * <li>Keeping track which route currently is being routed</li>
  * <li>Execute {@link RoutePolicy}</li>
- * <li>Gather JMX performance statics</li>
+ * <li>Gather JMX performance statistics</li>
  * <li>Tracing</li>
  * <li>Debugging</li>
  * <li>Message History</li>

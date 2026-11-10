@@ -81,7 +81,7 @@ public interface Olingo4App {
      * Reads an OData resource and invokes callback with appropriate result.
      *
      * @param edm                 Service Edm, read from calling
-     *                            <code>read(null, "$metdata", null, responseHandler)</code>
+     *                            <code>read(null, "$metadata", null, responseHandler)</code>
      * @param resourcePath        OData Resource path
      * @param queryParams         OData query params
      *                            http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc453752288
@@ -96,7 +96,7 @@ public interface Olingo4App {
      * Reads an OData resource and invokes callback with the unparsed input stream.
      *
      * @param edm                 Service Edm, read from calling
-     *                            <code>read(null, "$metdata", null, responseHandler)</code>
+     *                            <code>read(null, "$metadata", null, responseHandler)</code>
      * @param resourcePath        OData Resource path
      * @param queryParams         OData query params
      *                            http://docs.oasis-open.org/odata/odata/v4.0/odata-v4.0-part1-protocol.html#_Toc453752288
