@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.hazelcast.policy;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -43,8 +46,13 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     private final boolean managedInstance;
     private final AtomicBoolean leader;
     private final Set<Route> suspendedRoutes;
+    private final Set<Route> routes;
+    private final Set<Route> suspendedWhileStopped;
+    // the leadership threads told to end that may still wait for or release the lock (guarded by lock)
+    private final List<Future<Void>> releasedFutures;
 
-    private Route route;
+    // a route of the policy, for JMX
+    private volatile Route route;
     private CamelContext camelContext;
     private ExecutorService executorService;
     private HazelcastInstance instance;
@@ -55,6 +63,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     private TimeUnit tryLockTimeoutUnit;
     private IMap<String, String> locks;
     private volatile Future<Void> future;
+    // counted down to make the leadership thread release the lock and end (guarded by lock)
+    private CountDownLatch leadershipRelease;
     private boolean shouldStopConsumer;
 
     public HazelcastRoutePolicy() {
@@ -69,6 +79,9 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         this.instance = instance;
         this.managedInstance = managedInstance;
         this.suspendedRoutes = new HashSet<>();
+        this.routes = new HashSet<>();
+        this.suspendedWhileStopped = new HashSet<>();
+        this.releasedFutures = new ArrayList<>();
         this.leader = new AtomicBoolean();
         this.lockMapName = null;
         this.lockKey = null;
@@ -93,7 +106,34 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     @Override
     public void onInit(Route route) {
         super.onInit(route);
-        this.route = route;
+
+        lock.lock();
+        try {
+            addRoute(route);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void onRemove(Route route) {
+        lock.lock();
+        try {
+            suspendedRoutes.remove(route);
+            suspendedWhileStopped.remove(route);
+            if (routes.remove(route)) {
+                if (this.route == route) {
+                    this.route = routes.isEmpty() ? null : routes.iterator().next();
+                }
+                if (routes.isEmpty()) {
+                    // no route uses this policy any more: give up the leadership, so another node runs the route. The
+                    // thread is only interrupted when the CamelContext stops (as the stop of the policy does)
+                    stopLeadership(camelContext != null && camelContext.isStopping());
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -108,6 +148,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         lock.lock();
         try {
             suspendedRoutes.remove(route);
+            suspendedWhileStopped.remove(route);
         } finally {
             lock.unlock();
         }
@@ -117,7 +158,31 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     public void onSuspend(Route route) {
         lock.lock();
         try {
-            suspendedRoutes.remove(route);
+            if (suspendedRoutes.remove(route)) {
+                suspendedWhileStopped.add(route);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void onResume(Route route) {
+        lock.lock();
+        try {
+            boolean stoppedByPolicy = suspendedWhileStopped.remove(route);
+            if (!leader.get() && shouldStopConsumer) {
+                // resuming the route resumed its consumer, which a follower keeps stopped (as when the route starts)
+                stopConsumer(route);
+            } else if (stoppedByPolicy) {
+                // the leadership was taken while the route was suspended: resuming a consumer that this policy had
+                // stopped does not start it again (a SEDA consumer is marked started without consuming), so restart it
+                LOGGER.debug("Restarting consumer for {} ({})", route.getId(), route.getConsumer());
+                stopConsumer(route.getConsumer());
+                startConsumer(route.getConsumer());
+            }
+        } catch (Exception e) {
+            handleException(e);
         } finally {
             lock.unlock();
         }
@@ -133,17 +198,19 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "HazelcastRoutePolicy");
 
         locks = instance.getMap(lockMapName);
-        future = executorService.submit(this::acquireLeadership);
+        // under the lock: BaseService.start() holds it (the same lock as the route callbacks of the policy)
+        if (!routes.isEmpty()) {
+            startLeadership();
+        }
 
         super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (future != null) {
-            future.cancel(true);
-            future = null;
-        }
+        // also interrupt the threads, so a wait for the lock does not delay the stop on a Hazelcast client (on a member
+        // tryLock ends after its timeout). Under the lock, which BaseService.stop() holds
+        stopLeadership(true);
 
         if (managedInstance) {
             instance.shutdown();
@@ -157,6 +224,49 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     //
     // *************************************************************************
 
+    // under the lock
+    private void addRoute(Route route) {
+        if (routes.add(route)) {
+            if (this.route == null) {
+                this.route = route;
+            }
+            // a route added to a policy that gave up the leadership when its routes were removed
+            if (leadershipRelease == null && isStarted()) {
+                startLeadership();
+            }
+        }
+    }
+
+    // under the lock
+    private void startLeadership() {
+        CountDownLatch release = new CountDownLatch(1);
+        leadershipRelease = release;
+        future = executorService.submit(() -> acquireLeadership(release));
+    }
+
+    // under the lock: the leadership thread releases the lock and ends, and this node is no longer the leader. The
+    // thread is told to end with its own latch, as isRunAllowed() stays true while the policy runs, and is not
+    // interrupted unless the policy stops: an interrupted thread cannot release the lock on a client instance, and a
+    // wait for the lock ends by itself after the tryLock timeout
+    private void stopLeadership(boolean interrupt) {
+        if (leadershipRelease != null) {
+            leadershipRelease.countDown();
+            leadershipRelease = null;
+        }
+        if (future != null) {
+            // a thread that waits for the lock ends after the tryLock timeout, or (on a Hazelcast client) when it is
+            // interrupted
+            releasedFutures.add(future);
+            future = null;
+        }
+        releasedFutures.removeIf(Future::isDone);
+        if (interrupt) {
+            releasedFutures.forEach(f -> f.cancel(true));
+            releasedFutures.clear();
+        }
+        setLeader(false);
+    }
+
     protected void setLeader(boolean isLeader) {
         if (isLeader && leader.compareAndSet(false, isLeader)) {
             LOGGER.info("Leadership taken (map={}, key={}, val={})",
@@ -165,13 +275,11 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
                     lockValue);
 
             startAllStoppedConsumers();
-        } else {
-            if (!leader.getAndSet(isLeader) && isLeader) {
-                LOGGER.info("Leadership lost (map={}, key={} val={})",
-                        lockMapName,
-                        lockKey,
-                        lockValue);
-            }
+        } else if (!isLeader && leader.getAndSet(false)) {
+            LOGGER.info("Leadership lost (map={}, key={}, val={})",
+                    lockMapName,
+                    lockKey,
+                    lockValue);
         }
     }
 
@@ -212,16 +320,18 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
 
     @ManagedAttribute(description = "The route id")
     public String getRouteId() {
-        if (route != null) {
-            return route.getId();
+        Route r = route;
+        if (r != null) {
+            return r.getId();
         }
         return null;
     }
 
     @ManagedAttribute(description = "The consumer endpoint", mask = true)
     public String getEndpointUrl() {
-        if (route != null && route.getConsumer() != null && route.getConsumer().getEndpoint() != null) {
-            return route.getConsumer().getEndpoint().toString();
+        Route r = route;
+        if (r != null && r.getConsumer() != null && r.getConsumer().getEndpoint() != null) {
+            return r.getConsumer().getEndpoint().toString();
         }
         return null;
     }
@@ -294,18 +404,18 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     //
     // *************************************************************************
 
-    private Void acquireLeadership() throws Exception {
+    private Void acquireLeadership(CountDownLatch release) {
         boolean locked = false;
-        while (isRunAllowed()) {
+        while (isRunAllowed() && release.getCount() > 0) {
             try {
                 locked = locks.tryLock(lockKey, tryLockTimeout, tryLockTimeoutUnit);
-                if (locked) {
+                if (locked && release.getCount() > 0) {
                     locks.put(lockKey, lockValue);
-                    setLeader(true);
-
-                    // Wait almost forever
-                    Thread.sleep(Long.MAX_VALUE);
-                } else {
+                    if (takeLeadership(release)) {
+                        // hold the lock until the policy stops or its routes are removed
+                        release.await();
+                    }
+                } else if (!locked) {
                     LOGGER.debug("Failed to acquire lock (map={}, key={}, val={}) after {} {}",
                             lockMapName,
                             lockKey,
@@ -319,8 +429,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
                 getExceptionHandler().handleException(e);
             } finally {
                 if (locked) {
-                    locks.remove(lockKey);
-                    locks.unlock(lockKey);
+                    releaseLock();
                     locked = false;
                 }
 
@@ -329,5 +438,37 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         }
 
         return null;
+    }
+
+    private boolean takeLeadership(CountDownLatch release) {
+        // under the lock, so the leadership is not taken after the routes were removed (stopLeadership)
+        lock.lock();
+        try {
+            if (release.getCount() == 0) {
+                return false;
+            }
+            setLeader(true);
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void releaseLock() {
+        // with the interrupt flag cleared: on a client instance an interrupted thread fails to remove and unlock
+        boolean interrupted = Thread.interrupted();
+        try {
+            try {
+                locks.remove(lockKey);
+            } finally {
+                locks.unlock(lockKey);
+            }
+        } catch (Exception e) {
+            getExceptionHandler().handleException(e);
+        } finally {
+            if (interrupted) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 }
