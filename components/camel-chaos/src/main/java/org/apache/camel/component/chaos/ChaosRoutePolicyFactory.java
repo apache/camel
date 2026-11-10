@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
@@ -64,7 +68,9 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
             ChaosRule[] rules = set.entry;
             // an expectation on the time of the route needs when the exchange entered it (CAMEL-26726)
             boolean timed = set.timedRoutes.contains(route.getRouteId());
-            if (rules.length == 0 && !timed) {
+            // an expectation of duplicates needs the key of the message as it enters, each time (CAMEL-26791)
+            List<ChaosRule> keyed = set.keyedRoutes.get(route.getRouteId());
+            if (rules.length == 0 && !timed && keyed == null) {
                 return;
             }
             ChaosExchangeState exchangeState = ChaosExchangeState.of(exchange);
@@ -72,6 +78,16 @@ final class ChaosRoutePolicyFactory implements RoutePolicyFactory {
             long now = TimeSource.currentTimeMillis();
             if (timed && first) {
                 exchangeState.route(route.getRouteId()).enteredAt = now;
+            }
+            if (keyed != null) {
+                Map<ChaosRule.Expectation, String> keys = new HashMap<>(2);
+                for (ChaosRule rule : keyed) {
+                    String key = rule.keyOf(exchange);
+                    if (key != null) {
+                        keys.put(rule.expectation, key);
+                    }
+                }
+                exchangeState.route(route.getRouteId()).passKeys = keys.isEmpty() ? null : keys;
             }
             if (rules.length == 0 || !first) {
                 return;

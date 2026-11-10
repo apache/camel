@@ -297,6 +297,34 @@ final class ChaosAdvisor {
                 from.isRemote());
     }
 
+    /**
+     * The route of the integration that receives a send: the route that consumes the endpoint (direct, seda), or for an
+     * HTTP call to this machine the platform-http route of its path; null when it is another system.
+     */
+    static String receiver(String uri, Map<String, String> consumers) {
+        String route = consumers.get(uri);
+        if (route != null) {
+            return route;
+        }
+        String scheme = ChaosPatterns.scheme(uri);
+        if (!"http".equals(scheme) && !"https".equals(scheme)) {
+            return null;
+        }
+        String rest = uri.substring(uri.indexOf("//") + 2);
+        int slash = rest.indexOf('/');
+        String host = (slash >= 0 ? rest.substring(0, slash) : rest).split(":")[0];
+        if (!"localhost".equals(host) && !"127.0.0.1".equals(host) && !"0.0.0.0".equals(host)) {
+            return null;
+        }
+        String path = slash >= 0 ? rest.substring(slash) : "/";
+        for (Map.Entry<String, String> e : consumers.entrySet()) {
+            if (e.getKey().startsWith("platform-http:") && path.equals(httpPath(e.getKey()))) {
+                return e.getValue();
+            }
+        }
+        return null;
+    }
+
     /** The method of a platform-http or rest input: the one it restricts to, else POST. */
     static String httpMethod(String uri) {
         if (uri.startsWith("rest:")) {
@@ -451,10 +479,21 @@ final class ChaosAdvisor {
                         "a call to " + uri + ": what does a slow answer do to the route and its input?", 50);
             }
             if (atLeastOnce) {
+                int before = answer.size();
                 add(answer, recipes, "duplicate", id, Kind.DUPLICATE, Map.of("endpoint", uri),
                         "the input of route " + id + " can deliver a message again: is the call to " + uri
                                                                                                + " safe to make twice?",
                         80);
+                // a route of the integration receives the call: the expectation tells whether it did the work twice
+                // (CAMEL-26791)
+                String receiver = receiver(uri, consumers);
+                if (receiver != null && answer.size() > before) {
+                    Suggestion d = answer.remove(answer.size() - 1);
+                    answer.add(new Suggestion(
+                            d.route(), d.kind(), d.recipe(), d.title(), d.rule() + " expect=" + receiver + ":duplicates<=0",
+                            d.why() + " Route " + receiver + " receives it, and the expectation counts what it does twice",
+                            d.rank(), d.routes(), d.with()));
+                }
             }
         }
 

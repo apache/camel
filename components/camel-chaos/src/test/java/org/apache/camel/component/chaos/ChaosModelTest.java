@@ -93,14 +93,14 @@ class ChaosModelTest {
         assertThat(paramNames(byName("faults", "lifecycle"))).containsExactly("action", "duration", "every", "repeat");
         assertThat(paramNames(byName("faults", "error")))
                 .containsExactly("after", "body", "exception", "header.<name>", "message", "status");
-        assertThat(strings(byName("faults", "lifecycle").get("options"))).containsExactly("expect", "from", "within");
+        assertThat(strings(byName("faults", "lifecycle").get("options"))).containsExactly("expect", "from", "key", "within");
         assertThat(strings(byName("faults", "error").get("hooks"))).containsExactly("send", "reply", "dlq", "poll", "entry",
                 "step");
         // duplicate is a fault of the sends only
         assertThat(strings(byName("faults", "duplicate").get("hooks"))).containsExactly("send");
         assertThat(strings(byName("faults", "duplicate").get("targets"))).containsExactly("component", "endpoint");
         assertThat(paramNames(byName("faults", "duplicate"))).isEmpty();
-        assertThat(names("options")).containsExactly("at", "draw", "expect", "from", "in", "rate", "until", "when",
+        assertThat(names("options")).containsExactly("at", "draw", "expect", "from", "in", "key", "rate", "until", "when",
                 "within");
         // the TUI form picks the route of in=
         assertThat(byName("options", "in").getString("pick")).isEqualTo("routes");

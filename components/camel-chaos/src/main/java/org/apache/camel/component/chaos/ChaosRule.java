@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StreamCache;
 import org.apache.camel.support.MessageHelper;
@@ -169,6 +171,10 @@ final class ChaosRule {
     // added, so it is null in a rule made without a context
     final String when;
     private final Predicate condition;
+    // the key of a message for an expectation of duplicates (key=, in the simple language), else null: the body; the
+    // expression is made when the rule is added, so it is null in a rule made without a context (CAMEL-26791)
+    final String key;
+    private final Expression keyExpression;
     private final boolean conditionReadsBody;
     // the endpoint= pattern without the // after its scheme, made once (the hooks match it on every send and poll)
     private final String uriPattern;
@@ -262,6 +268,8 @@ final class ChaosRule {
         this.in = b.in;
         this.when = b.when;
         this.condition = b.condition;
+        this.key = b.key;
+        this.keyExpression = b.keyExpression;
         this.conditionReadsBody = b.whenReadsBody;
         this.uriPattern = target == Target.ENDPOINT ? ChaosPatterns.withoutSlashes(pattern) : null;
         this.hooks = Set.copyOf(b.hooks);
@@ -573,6 +581,9 @@ final class ChaosRule {
                     sb.append(e.op.words).append(' ').append(e.count).append(' ').append(e.kind.words(e.count));
                 }
                 sb.append(" in route ").append(e.route);
+                if (key != null) {
+                    sb.append(" (a message known by ").append(key).append(')');
+                }
             }
             if (within != plus(from, runFor)) {
                 // a within= of its own (the default is until the rule ends)
@@ -833,6 +844,43 @@ final class ChaosRule {
      * not cached yet (such as the reply of a send) is cached first, and the cache is reset after the check, so the
      * route reads the body as before.
      */
+    /**
+     * The key of the message as it enters a route, for an expectation of duplicates (CAMEL-26791): the value of key=,
+     * else the body as text. Null when there is none (no body, an empty one, or a stream that cannot be read twice), as
+     * such a message is not counted.
+     */
+    String keyOf(Exchange exchange) {
+        try {
+            Object value;
+            if (keyExpression != null) {
+                if (key.contains("body")) {
+                    cacheStreamBody(exchange);
+                }
+                value = keyExpression.evaluate(exchange, String.class);
+            } else {
+                cacheStreamBody(exchange);
+                Object body = exchange.getMessage().getBody();
+                if (body == null || (body instanceof InputStream || body instanceof Reader) && !(body instanceof StreamCache)) {
+                    return null;
+                }
+                value = exchange.getMessage().getBody(String.class);
+                if (body instanceof StreamCache cache) {
+                    cache.reset();
+                }
+            }
+            String text = value != null ? value.toString() : null;
+            if (text == null || text.isEmpty()) {
+                return null;
+            }
+            // a long body is kept as its length and hash, not as itself
+            return text.length() <= 200 ? text : text.length() + ":" + Integer.toHexString(text.hashCode());
+        } catch (Exception e) {
+            LOG.debug("The key of chaos rule {} ({}) failed on exchange {}: {}", id, key != null ? "key=" + key : "the body",
+                    exchange.getExchangeId(), e.getMessage(), e);
+            return null;
+        }
+    }
+
     boolean matchesWhen(Exchange exchange) {
         Predicate c = condition;
         if (c == null) {
@@ -933,7 +981,12 @@ final class ChaosRule {
                      "The longest time of an exchange in the route, from entering it until done, such as maxTime<=5s"),
             // the messages one route completed that the next one did not: <route>-><next route>:lost<=0
             LOST("lost", "message lost", "messages lost",
-                 "The messages completed in the route and not in the next one, such as orders->shipping:lost<=0");
+                 "The messages completed in the route and not in the next one, such as orders->shipping:lost<=0"),
+            // the messages a route completed again, with the key of one it completed before, that no idempotent
+            // consumer recognised as a duplicate (CAMEL-26791)
+            DUPLICATES("duplicates", "duplicate processed", "duplicates processed",
+                       "The messages the route completed a second time (the same body, or the same key=) that no"
+                                                                                    + " idempotent consumer recognised as a duplicate, such as payment:duplicates<=0");
 
             final String key;
             // for the reason of an unmet expectation
@@ -973,6 +1026,9 @@ final class ChaosRule {
             }
         }
 
+        // the most keys a duplicates expectation keeps; the messages after that are not counted as duplicates
+        static final int MAX_KEYS = 100_000;
+
         final String route;
         // the next route of a lost expectation, else null
         final String toRoute;
@@ -987,6 +1043,8 @@ final class ChaosRule {
         private long sum;
         private long max;
         private long toValue;
+        // duplicates: the keys of the messages the route completed (at most MAX_KEYS)
+        private Set<String> keys;
         // when it was decided before the time was up (met for at least, unmet for at most and exactly), and how
         private long decidedAt = -1;
         private Outcome decided;
@@ -1027,6 +1085,28 @@ final class ChaosRule {
             if (decided == null && (op == Op.AT_LEAST ? value >= count : value > count)) {
                 decided = op == Op.AT_LEAST ? Outcome.MET : Outcome.UNMET;
                 decidedAt = now;
+            }
+        }
+
+        /**
+         * A message completed in the route of a duplicates expectation, with its key: the second time a key completes
+         * it is a duplicate processed, unless an idempotent consumer recognised it ({@code CamelDuplicateMessage}).
+         */
+        synchronized void recordKey(String key, boolean recognised) {
+            long now = TimeSource.currentTimeMillis();
+            if (frozenAt >= 0 || now > deadline) {
+                return;
+            }
+            samples++;
+            if (keys == null) {
+                keys = new HashSet<>();
+            }
+            if (keys.contains(key)) {
+                if (!recognised) {
+                    recordAt(now);
+                }
+            } else if (keys.size() < MAX_KEYS) {
+                keys.add(key);
             }
         }
 
@@ -1155,6 +1235,8 @@ final class ChaosRule {
                           + reading.samples() + (reading.samples() == 1 ? " exchange" : " exchanges");
                 case LOST -> reading.value() + " lost (" + reading.samples() + " completed in " + route + ", "
                              + reading.next() + " in " + toRoute + ")";
+                case DUPLICATES -> reading.value() + (reading.value() == 1 ? " duplicate" : " duplicates")
+                                   + " processed (" + reading.samples() + " completed in " + route + ")";
                 default -> reading.value() + " " + kind.key;
             };
         }
@@ -1232,6 +1314,8 @@ final class ChaosRule {
         String when;
         boolean whenReadsBody;
         Predicate condition;
+        String key;
+        Expression keyExpression;
         Hook at;
         Set<Hook> hooks;
         Fault fault;

@@ -84,7 +84,9 @@ public final class ChaosExplorePlaybook {
                 wrong, not a guess such as failed<=5, which hides the messages that were lost: expect=<route>:failed<=0 \
                 (nothing fails), expect=<route>-><next route>:lost<=0 (nothing lost when a route hands messages to \
                 the next route, as the suggestions of kind lost name them), \
-                expect=<route>:20 (20 completed), expect=<route>:maxTime<=5s (none slower than 5s)
+                expect=<route>:20 (20 completed), expect=<route>:maxTime<=5s (none slower than 5s), \
+                expect=<route>:duplicates<=0 for a duplicate fault (the route that receives the message did not do \
+                the work twice; add key=${header.<id>} when the body does not tell the messages apart)
                    - feed: a route that does not feed itself gets no messages unless you give feed. When the feed \
                 of the suggestion is kind send, always give its endpoint, with body (a message as the route \
                 expects it, such as JSON), repeat (such as 20) and interval (such as 100..300); leave feed out \

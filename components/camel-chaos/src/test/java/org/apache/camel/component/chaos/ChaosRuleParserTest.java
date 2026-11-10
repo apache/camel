@@ -392,9 +392,9 @@ class ChaosRuleParserTest {
             "route=orders stall duration=1m until=1m|until= does not apply to the fault stall",
             "route=orders stall duration=1m at=entry|at= does not apply to the fault stall",
             "route=orders stall duration=1m mode=headers|unknown parameter mode for the fault stall (its parameters are"
-                                                                                             + " duration, every, repeat, expect, from, within)",
+                                                                                             + " duration, every, repeat, expect, from, key, within)",
             "route=orders lifecycle action=stop duration=1m mode=x|unknown parameter mode for the fault lifecycle (its"
-                                                                                                                                                  + " parameters are action, duration, every, repeat, expect, from, within)",
+                                                                                                                                                       + " parameters are action, duration, every, repeat, expect, from, key, within)",
             "route=orders stall lifecycle duration=1m|a rule has one fault, found stall and lifecycle",
             "endpoint=kafka:x stall duration=1m|the fault stall acts on a route, so it takes only a route=<id> target, not"
                                                                                                         + " endpoint=",
@@ -463,7 +463,7 @@ class ChaosRuleParserTest {
             "endpoint=x error expect=orders:|is not <route>:<count>",
             "endpoint=x error expect=orders:0|needs a count of 1 or more",
             "endpoint=x error expect=orders:completed>=0|needs a count of 1 or more",
-            "endpoint=x error expect=orders:speed<=0|counts speed: the kinds are completed, handled, failed, redeliveries, meanTime, maxTime and lost",
+            "endpoint=x error expect=orders:speed<=0|counts speed: the kinds are completed, handled, failed, redeliveries, meanTime, maxTime, lost and duplicates",
             "endpoint=x error expect=orders:<=0|counts nothing",
             "endpoint=x error expect=orders:handled<0|needs >=, <= or = after handled",
             "endpoint=x error expect=orders:handled<=x|needs a count that is a whole number",

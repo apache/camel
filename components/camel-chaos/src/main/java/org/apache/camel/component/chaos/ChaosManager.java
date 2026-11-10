@@ -38,6 +38,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
@@ -262,6 +263,17 @@ public final class ChaosManager {
             } catch (RuntimeException e) {
                 throw new IllegalArgumentException(
                         "Invalid chaos rule [" + b.text + "]: when=" + b.when + " is not a valid simple predicate: "
+                                                   + e.getMessage(),
+                        e);
+            }
+        }
+        if (b.key != null) {
+            try {
+                b.keyExpression = camelContext.resolveLanguage("simple").createExpression(b.key);
+                b.keyExpression.init(camelContext);
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException(
+                        "Invalid chaos rule [" + b.text + "]: key=" + b.key + " is not a valid simple expression: "
                                                    + e.getMessage(),
                         e);
             }
@@ -1021,6 +1033,15 @@ public final class ChaosManager {
         }
         ChaosExchangeState.Outcome outcome = outcome(route, exchange);
         ChaosExchangeState.RouteState state = ChaosExchangeState.of(exchange).route(routeId);
+        if (state.passKeys != null) {
+            // each pass through the route counts for the duplicates: the second send of a duplicate fault to a direct
+            // route is the same exchange again (CAMEL-26791)
+            if (outcome == ChaosExchangeState.Outcome.COMPLETED) {
+                boolean recognised = exchange.getProperty(ExchangePropertyKey.DUPLICATE_MESSAGE, false, Boolean.class);
+                state.passKeys.forEach((expectation, key) -> expectation.recordKey(key, recognised));
+            }
+            state.passKeys = null;
+        }
         ChaosExchangeState.Outcome previous = state.counts == counts ? state.outcome : ChaosExchangeState.Outcome.ENTERED;
         if (previous == outcome) {
             return;
@@ -1351,6 +1372,9 @@ public final class ChaosManager {
         final ChaosRule[] expectationRules;
         // the routes with an expectation on their time, whose route policy notes when an exchange enters
         final Set<String> timedRoutes;
+        // the rules with an expectation of duplicates, per route: the route policy notes the key of each message as it
+        // enters (CAMEL-26791)
+        final Map<String, List<ChaosRule>> keyedRoutes;
 
         RuleSet(List<ChaosRule> rules, long now) {
             // also the rules that start later (from=): the hooks skip them until then
@@ -1370,6 +1394,11 @@ public final class ChaosManager {
                     .toArray(ChaosRule.Expectation[]::new);
             timedRoutes = Arrays.stream(expectations).filter(e -> e.kind.time()).map(e -> e.route)
                     .collect(Collectors.toUnmodifiableSet());
+            Set<ChaosRule.Expectation> pending = Set.of(expectations);
+            keyedRoutes = Arrays.stream(expectationRules)
+                    .filter(r -> r.expectation.kind == ChaosRule.Expectation.Kind.DUPLICATES
+                            && pending.contains(r.expectation))
+                    .collect(Collectors.groupingBy(r -> r.expectation.route));
         }
     }
 
