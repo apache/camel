@@ -408,7 +408,7 @@ budget ends, also when the TUI is closed. For a longer exploration, where an AI 
 
 image::jbang/camel-tui-chaos-let-there-be.png[Let there be chaos: the rules to pick, among them an outage of the route a circuit breaker calls, the HTTP calls of a toD, and the routes that take the files a file route took again]
 
-image::jbang/camel-tui-chaos-let-there-be-done.png[A rule tried for two minutes: the same three files taken again and again, and 45 orders lost at the seda hand-off between two routes]
+image::jbang/camel-tui-chaos-let-there-be-done.png[A rule tried for two minutes: the same three files taken again and again, and 39 orders lost at the seda hand-off between two routes, which failed in the second route after the first had completed]
 
 image::jbang/camel-tui-chaos-explore.png[The exploration of the chaos example on the Chaos tab: six experiments in five minutes on a strip of time, and the failed one in detail: 2 orders lost at the dead letter channel]
 

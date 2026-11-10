@@ -109,8 +109,10 @@ final class ChaosExploreView {
                                + (ex.ran() > 0 ? " after " + ChaosTab.shortTime(ex.ran()) : "")
                                + " (budget " + ChaosTab.shortTime(ex.budget()) + ")"));
         }
-        first.add(Span.styled("   focus ", Theme.muted()));
-        first.add(Span.raw(ex.focus() != null ? ex.focus() : "all routes"));
+        if (ex.focus() != null) {
+            first.add(Span.styled("   focus ", Theme.muted()));
+            first.add(Span.raw(ex.focus()));
+        }
         first.add(Span.styled("   experiments ", Theme.muted()));
         first.add(Span.raw(String.valueOf(ex.experiments().size())));
         long pass = ex.count("PASS");
@@ -214,6 +216,8 @@ final class ChaosExploreView {
                     .build(), area);
             return;
         }
+        // the width of the evidence column (2 of the 5 parts the last two share), for a clean cut
+        int evidenceWidth = Math.max(10, (area.width() - 2 - 3 - 3 - 6 - 13 - 4) * 2 / 5);
         List<Row> rows = new ArrayList<>();
         for (ChaosInfo.Experiment e : ex.experiments()) {
             rows.add(Row.from(
@@ -221,7 +225,7 @@ final class ChaosExploreView {
                     Cell.from(Span.styled(clock(e.at()), Theme.muted())),
                     Cell.from(Span.styled(verdict(e), verdictStyle(e).bold())),
                     Cell.from(e.hypothesis() != null ? e.hypothesis() : String.join("; ", e.rules())),
-                    Cell.from(Span.styled(evidence(e), Theme.muted()))));
+                    Cell.from(Span.styled(cut(evidence(e), evidenceWidth), Theme.muted()))));
         }
         Style bold = Style.EMPTY.bold();
         Table table = Table.builder()
@@ -264,17 +268,51 @@ final class ChaosExploreView {
             sj.add(e.lostAtDlc() + " lost at the dead letter channel");
         }
         for (String x : e.expectations()) {
-            // orders:failed<=0: unmet, 5 failed -> 5 failed in orders
+            // orders:failed<=0: unmet, 5 failed -> 5 failed in orders; the counts in parentheses are in the detail
             int colon = x.indexOf(": ");
             int comma = x.indexOf(", ", colon + 2);
             String route = x.contains(":") ? x.substring(0, x.indexOf(':')) : "";
             if (comma > 0) {
                 String value = x.substring(comma + 2);
-                sj.add(value + (route.isEmpty() || value.contains(route) ? "" : " in " + route));
+                int paren = value.indexOf(" (");
+                value = paren > 0 ? value.substring(0, paren) : value;
+                int arrow = route.indexOf("->");
+                if (arrow > 0) {
+                    // inbox->ship:lost<=0
+                    sj.add(value + " from " + route.substring(0, arrow) + " to " + route.substring(arrow + 2));
+                } else {
+                    sj.add(value + (route.isEmpty() || value.contains(route) ? "" : " in " + route));
+                }
             }
         }
-        e.alsoFailed().forEach((route, n) -> sj.add("also " + n + " failed in " + route));
+        e.alsoFailed().forEach((route, n) -> {
+            if (handedOffTo(e, route) == null) {
+                sj.add("also " + n + " failed in " + route);
+            }
+        });
         return sj.toString();
+    }
+
+    /**
+     * The route that handed the messages over to the route, when an expectation of the experiment counts what is lost
+     * between them ({@code inbox->ship:lost<=0}): the failures of the route are then where the lost messages failed.
+     * Null otherwise.
+     */
+    static String handedOffTo(ChaosInfo.Experiment e, String route) {
+        for (String x : e.expectations()) {
+            int arrow = x.indexOf("->");
+            int colon = x.indexOf(':');
+            if (arrow > 0 && colon > arrow && x.substring(arrow + 2, colon).equals(route)
+                    && x.startsWith(":lost", colon)) {
+                return x.substring(0, arrow);
+            }
+        }
+        return null;
+    }
+
+    /** The text cut to the width, with … where it was cut. */
+    static String cut(String text, int width) {
+        return text.length() <= width ? text : text.substring(0, Math.max(0, width - 1)).stripTrailing() + "…";
     }
 
     // ---- the selected experiment ----
@@ -311,11 +349,27 @@ final class ChaosExploreView {
                                 + " at the dead letter channel, handled there without being delivered",
                             Theme.error())));
         }
-        if (!e.alsoFailed().isEmpty()) {
-            StringJoiner sj = new StringJoiner(", ");
-            e.alsoFailed().forEach((route, n) -> sj.add(route + " " + n));
+        StringJoiner also = new StringJoiner(", ");
+        e.alsoFailed().forEach((route, n) -> {
+            String from = handedOffTo(e, route);
+            if (from != null) {
+                // the same messages as the lost ones: route ship failed them after inbox had completed
+                lines.add(Line.from(Span.styled(" where     ", label),
+                        Span.styled(n + (n == 1 ? " message" : " messages") + " failed in " + route + ", after " + from
+                                    + " had handed them over and completed: they are the lost ones",
+                                Theme.error())));
+            } else {
+                also.add(route + " " + n);
+            }
+        });
+        if (also.length() > 0) {
             lines.add(Line.from(Span.styled(" also      ", label),
-                    Span.styled("failed, in no expectation: " + sj, Theme.warning())));
+                    Span.styled("failed, in no expectation: " + also, Theme.warning())));
+        }
+        if (!e.routes().isEmpty()) {
+            // the expectations count until they are decided, the routes until the experiment ended: a little more
+            lines.add(Line.from(Span.styled(" routes    ", label),
+                    Span.styled("over the whole experiment (an expectation counts until it is decided)", label)));
         }
         for (String r : e.routes()) {
             lines.add(Line.from(Span.styled(" route     ", label), Span.raw(r)));

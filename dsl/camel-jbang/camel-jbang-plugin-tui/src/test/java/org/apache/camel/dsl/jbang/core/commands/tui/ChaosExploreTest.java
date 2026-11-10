@@ -194,7 +194,13 @@ class ChaosExploreTest {
                 "orders: Returns an error (HTTP status)", "orders: The route after a hand-off fails",
                 "orders: An outage while the dead letter channel fails");
         assertThat(explorer.progress("1234")).matches("Done after \\d+ms of 10m: 3 rules tried, 3 FAIL");
-        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("of 10m: 3 rules tried, 3 FAIL");
+        // each says it ran for its share, as its rule says until= and within= of the share
+        assertThat(integration.notes).hasSize(3)
+                .allMatch(n -> n
+                        .matches("Tried for its (\\d+m)?\\d+s share of the 10m budget: until= and within= are set to it"));
+        // the exploration shows how it went, so no line above it says it again
+        assertThat(explorer.line("1234")).isNull();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).doesNotContain("🎲");
     }
 
     @Test
@@ -291,6 +297,7 @@ class ChaosExploreTest {
         final List<String> rules = new CopyOnWriteArrayList<>();
         final List<String> hypotheses = new CopyOnWriteArrayList<>();
         final List<String> replayed = new CopyOnWriteArrayList<>();
+        final List<String> notes = new CopyOnWriteArrayList<>();
         volatile String budget;
         volatile boolean decided = true;
         private volatile int number;
@@ -311,6 +318,7 @@ class ChaosExploreTest {
                 }
                 case "replay" -> replayed.add(request.getString("route"));
                 case "experiment-end" -> {
+                    notes.add(request.getString("note"));
                     answer.put("number", number);
                     answer.put("verdict", "FAIL");
                     answer.put("open", false);

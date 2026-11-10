@@ -141,11 +141,14 @@ final class ChaosExploreRun {
                 ChaosExploreDialog.Item pick = picks.get(i);
                 String verdict;
                 try {
-                    // a file route that does not get messages by itself takes the files it took again
+                    // a file route that does not get messages by itself takes the files it took again; the rule as it
+                    // ran says until= and within= of the share, which the note explains
+                    String note = "Tried for its " + ChaosTab.shortTime(share) + " share of the " + budget
+                                  + " budget: until= and within= are set to it";
                     JsonObject ended = ChaosExperimentRun.run(integration, pick.route() + ": " + pick.title(),
                             forShare(pick.rule(), share),
                             pick.replays() ? ChaosExperimentRun.Feed.replay(pick.replayRoute()) : null,
-                            share + GRACE, null);
+                            share + GRACE, note);
                     verdict = ended.getString("verdict");
                     if (ended.getLongOrDefault("timeLeft", 1) <= 0) {
                         // the deadline of the exploration: camel-chaos has ended it
@@ -236,6 +239,18 @@ final class ChaosExploreRun {
                        ? ", " + ChaosTab.countdown(left) + " left of " + ChaosTab.shortTime(share)
                        : ", waiting for the verdict")
                + (tried() == 0 ? "" : " · " + verdictCounts());
+    }
+
+    /**
+     * The line above the exploration: the rule being tried while it runs; after it, only what the exploration does not
+     * show itself (a rule the integration refused, or why it did not start). Null when there is nothing to say.
+     */
+    String line(String pid) {
+        String answer = progress(pid);
+        if (answer == null || running || refusal != null || answer.startsWith("Not started")) {
+            return answer;
+        }
+        return null;
     }
 
     /**

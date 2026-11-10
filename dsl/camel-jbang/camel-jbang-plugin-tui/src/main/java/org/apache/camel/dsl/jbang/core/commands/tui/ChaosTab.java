@@ -258,7 +258,7 @@ class ChaosTab extends AbstractTableTab {
                 tableState.select(experiments - 1);
             }
             lastTableArea = ChaosExploreView.render(frame, area, chaos.exploration, tableState, info.name,
-                    control.explorer().progress(info.pid));
+                    control.explorer().line(info.pid));
             lastDetailArea = null;
             control.render(frame, area);
             return;

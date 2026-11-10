@@ -286,6 +286,43 @@ class ChaosTabRenderTest {
     }
 
     @Test
+    void theMessagesLostAtAHandOff() throws Exception {
+        JsonObject chaos = (JsonObject) Jsoner.deserialize(CHAOS);
+        ((JsonObject) chaos.get("report")).put("exploration", Jsoner.deserialize("""
+                {"running": false, "finishedBy": "deadline", "startedAt": 1000000, "budget": 120000, "ran": 120000,
+                 "experiments": [
+                   {"number": 1, "hypothesis": "inbox: The route after a hand-off fails", "verdict": "FAIL",
+                    "open": false, "startedAt": 1001000, "elapsed": 118000,
+                    "ruleTexts": ["route=ship error rate=0.2 until=116s expect=inbox->ship:lost<=0 within=116s"],
+                    "faults": {"r1": 45},
+                    "expectations": [{"rule": "r1", "expect": "inbox->ship:lost<=0", "state": "unmet",
+                                      "value": "45 lost (231 completed in inbox, 186 in ship)"}],
+                    "routes": [{"route": "inbox", "completed": 234, "failed": 0},
+                               {"route": "ship", "completed": 189, "failed": 45}],
+                    "alsoFailed": {"ship": 45, "audit": 2},
+                    "note": "Tried for its 1m56s share of the 2m budget: until= and within= are set to it"}
+                 ]}
+                """));
+        info.chaos = ChaosInfo.parse(chaos);
+        ChaosInfo.Experiment e = info.chaos.exploration.experiments().get(0);
+        // short: the counts are in the detail, and the failures in ship are where the lost ones failed
+        assertThat(ChaosExploreView.evidence(e)).isEqualTo("45 lost from inbox to ship; also 2 failed in audit");
+        assertThat(ChaosExploreView.handedOffTo(e, "ship")).isEqualTo("inbox");
+        assertThat(ChaosExploreView.handedOffTo(e, "audit")).isNull();
+        assertThat(ChaosExploreView.cut("45 lost from inbox to ship", 10)).isEqualTo("45 lost f…");
+
+        ChaosTab tab = new ChaosTab(ctx);
+        tab.toggleExplore();
+        String screen = TuiTestHelper.renderToString(tab, 160, 44);
+        assertThat(screen).contains("finished at its deadline").doesNotContain("focus")
+                .contains("45 messages failed in ship, after inbox had handed them over and completed: they are the lost"
+                          + " ones")
+                .contains("failed, in no expectation: audit 2").doesNotContain("in no expectation: ship")
+                .contains("over the whole experiment (an expectation counts until it is decided)")
+                .contains("Tried for its 1m56s share of the 2m budget");
+    }
+
+    @Test
     void withoutCamelChaosOrWhenItIsOff() throws Exception {
         String none = TuiTestHelper.renderToString(new ChaosTab(ctx), 120, 15);
         assertThat(none).contains("camel-chaos is not in this integration: run it with camel run --chaos");
