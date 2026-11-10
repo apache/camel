@@ -180,6 +180,7 @@ public final class KeyValueRepositoryHelper {
      *
      * @param  ttl a positive time-to-live
      * @return     the expiration time in milliseconds since the epoch, at most {@link Long#MAX_VALUE}
+     * @since      4.24
      */
     public static long expiresAt(Duration ttl) {
         try {
