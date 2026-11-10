@@ -149,11 +149,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                                                 + "any existing target file. This option only applies when you use fileExist=Override and the "
                                                                                 + "tempFileName option as well. You can use this to disable (set it to false) deleting the target "
                                                                                 + "file before the temp file is written. For example you may write big files and want the target file "
-                                                                                + "to exists during the temp file is being written. This ensure the target file is only deleted until "
+                                                                                + "to exist during the temp file is being written. This ensures the target file is only deleted until "
                                                                                 + "the very last moment, just before the temp file is being renamed to the target filename. This option "
                                                                                 + "is also used to control whether to delete any existing files when fileExist=Move is enabled, and an "
                                                                                 + "existing file exists. If this option is false, then an exception will be thrown "
-                                                                                + "if an existing file existed, if its true, then the existing file is deleted before the move operation.")
+                                                                                + "if an existing file existed, if it's true, then the existing file is deleted before the move operation.")
     protected boolean eagerDeleteTargetFile = true;
     @UriParam(label = "producer,advanced", description = "Will keep the last modified timestamp from the source file "
                                                          + "(if any). Will use the FileConstants.FILE_LAST_MODIFIED header to located the timestamp. This header can "
@@ -1147,10 +1147,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * Whether or not to eagerly delete any existing target file. This option only applies when you use
      * fileExist=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting
      * the target file before the temp file is written. For example you may write big files and want the target file to
-     * exists during the temp file is being written. This ensure the target file is only deleted until the very last
+     * exist during the temp file is being written. This ensures the target file is only deleted until the very last
      * moment, just before the temp file is being renamed to the target filename. This option is also used to control
      * whether to delete any existing files when fileExist=Move is enabled, and an existing file exists. If this option
-     * is false, then an exception will be thrown if an existing file existed, if its true, then the existing file is
+     * is false, then an exception will be thrown if an existing file existed, if it's true, then the existing file is
      * deleted before the move operation.
      */
     public void setEagerDeleteTargetFile(boolean eagerDeleteTargetFile) {
