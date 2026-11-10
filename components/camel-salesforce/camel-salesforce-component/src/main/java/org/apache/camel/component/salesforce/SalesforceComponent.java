@@ -126,7 +126,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     @Metadata(description = "Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web"
                             + " application and configure a callback URL to receive the refresh token, or configure using the builtin"
                             + " callback at https://login.salesforce.com/services/oauth2/success or "
-                            + " https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the"
+                            + " https://test.salesforce.com/services/oauth2/success and then retrieve the refresh_token from the URL at the"
                             + " end of the flow. Note that in development organizations Salesforce allows hosting the callback web "
                             + " application at localhost.",
               label = "common,security", security = "secret")

@@ -1881,7 +1881,7 @@ public interface SalesforceComponentBuilderFactory {
          * needs to setup a web application and configure a callback URL to
          * receive the refresh token, or configure using the builtin callback at
          * https://login.salesforce.com/services/oauth2/success or
-         * https://test.salesforce.com/services/oauth2/success and then retrive
+         * https://test.salesforce.com/services/oauth2/success and then retrieve
          * the refresh_token from the URL at the end of the flow. Note that in
          * development organizations Salesforce allows hosting the callback web
          * application at localhost.
