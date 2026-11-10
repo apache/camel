@@ -193,9 +193,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <code>null</code> or an empty string or an empty collection/map.
+     * Tests whether the value is <code>null</code> or a blank string (empty or only whitespace).
      *
-     * @param  value the value, if its a String it will be tested for text length as well
+     * @param  value the value to test
      * @return       true if empty
      */
     public static boolean isEmpty(String value) {
@@ -203,7 +203,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <code>null</code> or an an empty collection
+     * Tests whether the value is <code>null</code> or an empty collection
      *
      * @param  value the value to test
      * @return       true if empty
@@ -213,7 +213,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <code>null</code> or an an empty map
+     * Tests whether the value is <code>null</code> or an empty map
      *
      * @param  value the value to test
      * @return       true if empty
@@ -263,20 +263,20 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <code>null</code> or an an empty collection
+     * Tests whether the value is <b>not</b> <code>null</code> and <b>not</b> an empty collection
      *
      * @param  value the value to test
-     * @return       true if empty
+     * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Collection<?> value) {
         return !isEmpty(value);
     }
 
     /**
-     * Tests whether the value is <code>null</code> or an an empty map
+     * Tests whether the value is <b>not</b> <code>null</code> and <b>not</b> an empty map
      *
      * @param  value the value to test
-     * @return       true if empty
+     * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Map<?, ?> value) {
         return !isEmpty(value);
