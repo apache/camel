@@ -194,7 +194,7 @@ public final class IOHelper {
      * @param  input            the input stream buffer
      * @param  output           the output stream buffer
      * @param  bufferSize       the size of the buffer used for the copies
-     * @param  flushOnEachWrite whether to flush the data everytime that data is written to the buffer
+     * @param  flushOnEachWrite whether to flush the data every time that data is written to the buffer
      * @return                  the number of bytes copied
      * @throws IOException      for I/O errors
      */
@@ -210,7 +210,7 @@ public final class IOHelper {
      * @param  input            the input stream buffer
      * @param  output           the output stream buffer
      * @param  bufferSize       the size of the buffer used for the copies
-     * @param  flushOnEachWrite whether to flush the data everytime that data is written to the buffer
+     * @param  flushOnEachWrite whether to flush the data every time that data is written to the buffer
      * @param  maxSize          the maximum number of bytes allowed to be copied, or 0 or less for no limit
      * @return                  the number of bytes copied, or {@link Integer#MAX_VALUE} if more bytes than that were
      *                          copied
