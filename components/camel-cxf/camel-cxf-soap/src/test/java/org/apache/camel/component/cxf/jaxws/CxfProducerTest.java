@@ -43,6 +43,7 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,7 +134,7 @@ public class CxfProducerTest {
     }
 
     @Test
-    public void testInvokingAWrongServer() throws Exception {
+    void testInvokingAWrongServer() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUri());
         assertNotNull(reply.getException(), "We should get the exception here");
         assertTrue(reply.getException().getCause() instanceof ConnectException);
@@ -147,6 +148,22 @@ public class CxfProducerTest {
         reply = sendSimpleMessageWithRawMessage(getWrongEndpointUri() + "&dataFormat=RAW");
         assertNotNull(reply.getException(), "We should get the exception here");
         assertTrue(reply.getException().getCause() instanceof ConnectException);
+    }
+
+    // CAMEL-26696: async producer must always complete the exchange when the connection fails.
+    // The @Timeout(30s) on the class guards against the exchange hanging in
+    // DefaultAsyncProcessorAwaitManager if camelAsyncCallback.done() is never called.
+    // For the callback exception-handling semantics (binding throws, Error thrown, etc.)
+    // see CxfClientCallbackTest which tests CxfClientCallback directly via Mockito.
+    // Disabled: this test passes with or without the fix (CXF goes through handleException, not
+    // through populateExchangeFromCxfResponse, on a connection failure), and CXF-9272 makes it
+    // hang occasionally under load. The CxfClientCallbackTest unit tests cover the invariants.
+    @Disabled("CXF-9272: may hang under load; callback invariants covered by CxfClientCallbackTest")
+    @Test
+    void testInvokingAWrongServerAsync() throws Exception {
+        Exchange reply = sendSimpleMessage(getWrongEndpointUriAsync());
+        assertNotNull(reply.getException(), "Async wrong-server call must complete with an exception");
+        assertInstanceOf(IOException.class, reply.getException().getCause());
     }
 
     @Test
@@ -177,7 +194,20 @@ public class CxfProducerTest {
     }
 
     protected String getWrongEndpointUri() {
-        return "cxf://" + getWrongServerAddress() + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService";
+        // CAMEL-26600: synchronous=true, as with the CXF async client the callback sometimes never completes
+        // when the connection fails, leaving the exchange waiting forever.
+        // The async error path is not covered here; see CxfClientCallbackTest and CAMEL-26696.
+        return "cxf://" + getWrongServerAddress()
+               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+               + "&cxfConfigurer=#wrongServerConfigurer"
+               + "&synchronous=true";
+    }
+
+    // CAMEL-26696: async (synchronous=false) wrong-server endpoint — callback must always complete
+    protected String getWrongEndpointUriAsync() {
+        return "cxf://" + getWrongServerAddress()
+               + "?serviceClass=org.apache.camel.component.cxf.jaxws.HelloService"
+               + "&cxfConfigurer=#wrongServerConfigurer";
     }
 
     protected Exchange sendSimpleMessage() {
