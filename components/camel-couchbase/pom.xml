@@ -102,17 +102,17 @@
                                 <configuration>
                                     <forkCount>1</forkCount>
                                     <reuseForks>false</reuseForks>
-                                    <excludedGroups>couchbase-71</excludedGroups>
+                                    <excludedGroups>couchbase-7</excludedGroups>
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>couchbase-71</id>
+                                <id>couchbase-7</id>
                                 <goals>
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <groups>couchbase-71</groups>
+                                    <groups>couchbase-7</groups>
                                     <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
                                     <systemPropertyVariables>
                                         <couchbase.container>couchbase/server:7.1.5</couchbase.container>
