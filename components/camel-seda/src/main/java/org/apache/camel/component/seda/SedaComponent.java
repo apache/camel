@@ -57,8 +57,8 @@ public class SedaComponent extends DefaultComponent {
                             + " continue, meaning that the message was not sent to the SEDA queue.")
     private boolean defaultDiscardWhenFull;
     @Metadata(label = "producer,advanced",
-              description = "Sets the default offer timeout, which can be added to the block case when the queue is full."
-                            + " You can disable timeout by using 0 or a negative value.")
+              description = "Sets the default offer timeout (in milliseconds) used when blockWhenFull is enabled and the queue"
+                            + " is full. The default 0 blocks without a timeout.")
     private long defaultOfferTimeout;
     @Metadata(label = "consumer,advanced", defaultValue = "1000",
               description = "The timeout (in milliseconds) used when polling. When a timeout occurs, the consumer can check whether it is"
@@ -135,8 +135,8 @@ public class SedaComponent extends DefaultComponent {
     }
 
     /**
-     * Sets the default offer timeout, which can be added to the block case when the queue is full. You can disable
-     * timeout by using 0 or a negative value.
+     * Sets the default offer timeout (in milliseconds) used when blockWhenFull is enabled and the queue is full. The
+     * default 0 blocks without a timeout.
      */
     public void setDefaultOfferTimeout(long defaultOfferTimeout) {
         this.defaultOfferTimeout = defaultOfferTimeout;

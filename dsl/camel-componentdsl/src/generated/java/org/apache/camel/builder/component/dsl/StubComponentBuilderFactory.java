@@ -183,9 +183,9 @@ public interface StubComponentBuilderFactory {
         }
     
         /**
-         * Sets the default offer timeout, which can be added to the block case
-         * when the queue is full. You can disable timeout by using 0 or a
-         * negative value.
+         * Sets the default offer timeout (in milliseconds) used when
+         * blockWhenFull is enabled and the queue is full. The default 0 blocks
+         * without a timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
