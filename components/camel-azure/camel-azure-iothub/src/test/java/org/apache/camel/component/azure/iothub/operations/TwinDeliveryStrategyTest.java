@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -52,7 +53,7 @@ class TwinDeliveryStrategyTest {
         DeviceClient client = mock(DeviceClient.class);
         Twin twin = mock(Twin.class);
         TwinCollection reported = new TwinCollection();
-        when(client.getTwin()).thenReturn(twin);
+        when(client.getTwin(anyInt())).thenReturn(twin);
         when(twin.getReportedProperties()).thenReturn(reported);
 
         Map<String, Object> body = new HashMap<>();
@@ -62,7 +63,7 @@ class TwinDeliveryStrategyTest {
         strategy.execute(client, "dev1", new DeliveryContext(null, body));
 
         ArgumentCaptor<TwinCollection> captor = ArgumentCaptor.forClass(TwinCollection.class);
-        verify(client).updateReportedProperties(captor.capture());
+        verify(client).updateReportedProperties(captor.capture(), anyInt());
         TwinCollection sent = captor.getValue();
         assertEquals("1.2.3", sent.get("firmware"));
         assertEquals(95, sent.get("battery"));
@@ -74,7 +75,7 @@ class TwinDeliveryStrategyTest {
         Twin twin = mock(Twin.class);
         TwinCollection reported = new TwinCollection();
         reported.put("firmware", "1.2.3");
-        when(client.getTwin()).thenReturn(twin);
+        when(client.getTwin(anyInt())).thenReturn(twin);
         when(twin.getReportedProperties()).thenReturn(reported);
 
         Map<String, Object> body = new HashMap<>();
@@ -82,7 +83,7 @@ class TwinDeliveryStrategyTest {
 
         strategy.execute(client, "dev1", new DeliveryContext(null, body));
 
-        verify(client, never()).updateReportedProperties(any());
+        verify(client, never()).updateReportedProperties(any(), anyInt());
     }
 
     @Test
@@ -90,7 +91,7 @@ class TwinDeliveryStrategyTest {
         DeviceClient client = mock(DeviceClient.class);
         Twin twin = mock(Twin.class);
         TwinCollection reported = new TwinCollection();
-        when(client.getTwin()).thenReturn(twin);
+        when(client.getTwin(anyInt())).thenReturn(twin);
         when(twin.getReportedProperties()).thenReturn(reported);
 
         Map<String, Object> body = new HashMap<>();
@@ -100,7 +101,7 @@ class TwinDeliveryStrategyTest {
         strategy.execute(client, "dev1", new DeliveryContext(null, body));
 
         ArgumentCaptor<TwinCollection> captor = ArgumentCaptor.forClass(TwinCollection.class);
-        verify(client).updateReportedProperties(captor.capture());
+        verify(client).updateReportedProperties(captor.capture(), anyInt());
         TwinCollection sent = captor.getValue();
         assertTrue(sent.containsKey("keep"));
         assertFalse(sent.containsKey("drop"));
@@ -119,7 +120,7 @@ class TwinDeliveryStrategyTest {
         Twin twin = mock(Twin.class);
         TwinCollection reported = new TwinCollection();
         reported.put("battery", 95L);
-        when(client.getTwin()).thenReturn(twin);
+        when(client.getTwin(anyInt())).thenReturn(twin);
         when(twin.getReportedProperties()).thenReturn(reported);
 
         Map<String, Object> body = new HashMap<>();
@@ -127,7 +128,28 @@ class TwinDeliveryStrategyTest {
 
         strategy.execute(client, "dev1", new DeliveryContext(null, body));
 
-        verify(client, never()).updateReportedProperties(any());
+        verify(client, never()).updateReportedProperties(any(), anyInt());
+    }
+
+    @Test
+    void testEmptyNestedMapsArePreserved() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        Twin twin = mock(Twin.class);
+        TwinCollection reported = new TwinCollection();
+        when(client.getTwin(anyInt())).thenReturn(twin);
+        when(twin.getReportedProperties()).thenReturn(reported);
+
+        Map<String, Object> body = new HashMap<>();
+        Map<String, Object> nested = new HashMap<>();
+        body.put("status", nested);
+
+        strategy.execute(client, "dev1", new DeliveryContext(null, body));
+
+        ArgumentCaptor<TwinCollection> captor = ArgumentCaptor.forClass(TwinCollection.class);
+        verify(client).updateReportedProperties(captor.capture(), anyInt());
+        TwinCollection sent = captor.getValue();
+        assertTrue(sent.containsKey("status"));
+        assertEquals(new TwinCollection(), sent.get("status"));
     }
 
 }

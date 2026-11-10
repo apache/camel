@@ -16,17 +16,30 @@
  */
 package org.apache.camel.component.azure.iothub;
 
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.atomic.AtomicReference;
 
+import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
-import org.apache.camel.FailedToCreateProducerException;
+import com.microsoft.azure.sdk.iot.device.Message;
+import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.azure.iothub.client.DeviceClientPool;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class IoTHubComponentTest extends CamelTestSupport {
 
@@ -41,7 +54,6 @@ class IoTHubComponentTest extends CamelTestSupport {
         assertEquals(IoTHubDeliveryMode.TELEMETRY, endpoint.getConfiguration().getDeliveryMode());
         assertEquals("application/json", endpoint.getConfiguration().getContentType());
         assertEquals(Duration.ofSeconds(10), endpoint.getConfiguration().getSendTimeout());
-        assertEquals(10000, endpoint.getConfiguration().getSendTimeoutMillis());
     }
 
     @Test
@@ -58,7 +70,6 @@ class IoTHubComponentTest extends CamelTestSupport {
         assertEquals(IoTHubDeliveryMode.TWIN, endpoint.getConfiguration().getDeliveryMode());
         assertEquals("application/x-protobuf", endpoint.getConfiguration().getContentType());
         assertEquals(Duration.ofSeconds(5), endpoint.getConfiguration().getSendTimeout());
-        assertEquals(5000, endpoint.getConfiguration().getSendTimeoutMillis());
         assertEquals(120, endpoint.getConfiguration().getDeviceClientIdleTimeout().getSeconds());
         assertEquals(10, endpoint.getConfiguration().getDeviceClientEvictionInterval().getSeconds());
     }
@@ -79,11 +90,88 @@ class IoTHubComponentTest extends CamelTestSupport {
         }));
     }
 
+    @Test
+    void testProducerProcessTelemetryConversion() throws Exception {
+        IoTHubConfiguration configuration = new IoTHubConfiguration();
+        configuration.setConnectionString("HostName=h;DeviceId=myDevice;SharedAccessKey=k");
+        configuration.setDeviceId("myDevice");
+        configuration.setProtocol(IotHubClientProtocol.MQTT);
+
+        DeviceClient client = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+
+        IoTHubComponent component = new IoTHubComponent();
+        component.setCamelContext(context);
+        setField(component, "clientPool", pool);
+
+        IoTHubEndpoint endpoint = new IoTHubEndpoint(
+                "azure-iothub:myDevice?connectionString=HostName=h;DeviceId=myDevice;SharedAccessKey=k",
+                component, configuration);
+        IoTHubProducer producer = new IoTHubProducer(endpoint);
+        producer.start();
+
+        Exchange exchange = new DefaultExchange(context);
+        String payload = "{\"foo\":\"bar\"}";
+        exchange.getIn().setBody(new ByteArrayInputStream(payload.getBytes(StandardCharsets.UTF_8)));
+
+        AtomicReference<Message> sent = new AtomicReference<>();
+        doAnswer(invocation -> {
+            sent.set(invocation.getArgument(0));
+            return null;
+        }).when(client).sendEvent(any(Message.class), anyInt());
+
+        producer.process(exchange);
+
+        assertNotNull(sent.get());
+        assertEquals("application/json", sent.get().getContentType());
+        assertEquals(payload, new String(sent.get().getBytes(), StandardCharsets.UTF_8));
+        verify(client).sendEvent(any(Message.class), anyInt());
+    }
+
+    @Test
+    void testProducerRejectsBothModeWithoutTwinHeader() throws Exception {
+        IoTHubConfiguration configuration = new IoTHubConfiguration();
+        configuration.setConnectionString("HostName=h;DeviceId=myDevice;SharedAccessKey=k");
+        configuration.setDeviceId("myDevice");
+        configuration.setProtocol(IotHubClientProtocol.MQTT);
+        configuration.setDeliveryMode(IoTHubDeliveryMode.BOTH);
+
+        DeviceClient client = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+
+        IoTHubComponent component = new IoTHubComponent();
+        component.setCamelContext(context);
+        setField(component, "clientPool", pool);
+
+        IoTHubEndpoint endpoint = new IoTHubEndpoint(
+                "azure-iothub:myDevice?connectionString=HostName=h;DeviceId=myDevice;SharedAccessKey=k",
+                component, configuration);
+        IoTHubProducer producer = new IoTHubProducer(endpoint);
+        producer.start();
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody("{\"foo\":\"bar\"}");
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> producer.process(exchange));
+        assertEquals(
+                "BOTH delivery requires twin properties via the CamelAzureIoTHubTwinProperties header before dispatching telemetry",
+                ex.getMessage());
+        verify(client, org.mockito.Mockito.never()).sendEvent(any(Message.class), anyInt());
+    }
+
+    private static void setField(Object target, String fieldName, Object value) throws Exception {
+        Field field = target.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
+    }
+
     private Producer assertDoesNotThrowProducer(IoTHubEndpoint endpoint) {
         try {
             return endpoint.createProducer();
         } catch (Exception e) {
-            throw new FailedToCreateProducerException(endpoint, e);
+            throw new org.apache.camel.FailedToCreateProducerException(endpoint, e);
         }
     }
 }

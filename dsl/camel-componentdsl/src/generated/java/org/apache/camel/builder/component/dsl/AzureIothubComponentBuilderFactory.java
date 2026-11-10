@@ -147,8 +147,7 @@ public interface AzureIothubComponentBuilderFactory {
     
         
         /**
-         * Timeout for a device-to-cloud telemetry send. Twin updates do not
-         * accept a separate timeout in the Azure SDK.
+         * Timeout for telemetry sends and twin reported-property updates.
          * 
          * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
@@ -160,25 +159,6 @@ public interface AzureIothubComponentBuilderFactory {
          */
         default AzureIothubComponentBuilder sendTimeout(java.time.Duration sendTimeout) {
             doSetProperty("sendTimeout", sendTimeout);
-            return this;
-        }
-    
-        
-        /**
-         * Deprecated alias for sendTimeout: timeout in milliseconds for a
-         * device-to-cloud telemetry send.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 10000
-         * Group: producer
-         * 
-         * @param sendTimeoutMillis the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AzureIothubComponentBuilder sendTimeoutMillis(int sendTimeoutMillis) {
-            doSetProperty("sendTimeoutMillis", sendTimeoutMillis);
             return this;
         }
     
@@ -280,7 +260,6 @@ public interface AzureIothubComponentBuilderFactory {
             case "lazyStartProducer": ((IoTHubComponent) component).setLazyStartProducer((boolean) value); return true;
             case "protocol": getOrCreateConfiguration((IoTHubComponent) component).setProtocol((com.microsoft.azure.sdk.iot.device.IotHubClientProtocol) value); return true;
             case "sendTimeout": getOrCreateConfiguration((IoTHubComponent) component).setSendTimeout((java.time.Duration) value); return true;
-            case "sendTimeoutMillis": getOrCreateConfiguration((IoTHubComponent) component).setSendTimeoutMillis((int) value); return true;
             case "autowiredEnabled": ((IoTHubComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "deviceClientEvictionInterval": getOrCreateConfiguration((IoTHubComponent) component).setDeviceClientEvictionInterval((java.time.Duration) value); return true;
             case "deviceClientIdleTimeout": getOrCreateConfiguration((IoTHubComponent) component).setDeviceClientIdleTimeout((java.time.Duration) value); return true;

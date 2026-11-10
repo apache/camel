@@ -17,6 +17,7 @@
 package org.apache.camel.component.azure.iothub.operations;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +43,16 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(TwinDeliveryStrategy.class);
 
+    private final int timeoutMillis;
+
+    public TwinDeliveryStrategy() {
+        this(Duration.ofSeconds(10));
+    }
+
+    public TwinDeliveryStrategy(Duration sendTimeout) {
+        this.timeoutMillis = Math.toIntExact(sendTimeout.toMillis());
+    }
+
     @Override
     public void execute(DeviceClient client, String deviceId, DeliveryContext context) throws Exception {
         Map<String, Object> twinProperties = context.twinProperties();
@@ -52,7 +63,7 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
         }
 
         Map<String, Object> propertyMap = clean(twinProperties);
-        Twin twin = client.getTwin();
+        Twin twin = client.getTwin(timeoutMillis);
         TwinCollection reportedProperties = twin.getReportedProperties();
 
         Map<String, Object> delta = computeDelta(propertyMap, reportedProperties);
@@ -62,7 +73,7 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
         }
 
         TwinCollection update = new TwinCollection(delta);
-        client.updateReportedProperties(update);
+        client.updateReportedProperties(update, timeoutMillis);
         LOG.debug("Device twin updated for device: {}", deviceId);
     }
 
@@ -97,21 +108,13 @@ public class TwinDeliveryStrategy implements DeliveryStrategy {
             Object value = entry.getValue();
             if (value instanceof Map) {
                 Map<String, Object> nested = clean((Map<String, Object>) value);
-                if (!nested.isEmpty()) {
-                    cleaned.put(entry.getKey(), nested);
-                } else {
-                    cleaned.put(entry.getKey(), null);
-                }
+                cleaned.put(entry.getKey(), nested.isEmpty() ? new HashMap<>() : nested);
             } else if (value instanceof List<?> list) {
                 List<Object> cleanedList = new ArrayList<>();
                 for (Object item : list) {
                     if (item instanceof Map) {
                         Map<String, Object> nested = clean((Map<String, Object>) item);
-                        if (!nested.isEmpty()) {
-                            cleanedList.add(nested);
-                        } else {
-                            cleanedList.add(null);
-                        }
+                        cleanedList.add(nested.isEmpty() ? new HashMap<>() : nested);
                     } else {
                         cleanedList.add(item);
                     }

@@ -39,8 +39,6 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "protocol": target.getConfiguration().setProtocol(property(camelContext, com.microsoft.azure.sdk.iot.device.IotHubClientProtocol.class, value)); return true;
         case "sendtimeout":
         case "sendTimeout": target.getConfiguration().setSendTimeout(property(camelContext, java.time.Duration.class, value)); return true;
-        case "sendtimeoutmillis":
-        case "sendTimeoutMillis": target.getConfiguration().setSendTimeoutMillis(property(camelContext, int.class, value)); return true;
         default: return false;
         }
     }
@@ -63,8 +61,6 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "protocol": return com.microsoft.azure.sdk.iot.device.IotHubClientProtocol.class;
         case "sendtimeout":
         case "sendTimeout": return java.time.Duration.class;
-        case "sendtimeoutmillis":
-        case "sendTimeoutMillis": return int.class;
         default: return null;
         }
     }
@@ -88,8 +84,6 @@ public class IoTHubEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "protocol": return target.getConfiguration().getProtocol();
         case "sendtimeout":
         case "sendTimeout": return target.getConfiguration().getSendTimeout();
-        case "sendtimeoutmillis":
-        case "sendTimeoutMillis": return target.getConfiguration().getSendTimeoutMillis();
         default: return null;
         }
     }

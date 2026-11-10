@@ -17,12 +17,22 @@
 package org.apache.camel.component.azure.iothub.client;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
+import com.microsoft.azure.sdk.iot.device.ConnectionStatusChangeContext;
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
+import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeCallback;
+import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeReason;
+import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -30,6 +40,8 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,6 +49,68 @@ import static org.mockito.Mockito.verify;
 class DeviceClientPoolTest {
 
     private static final String CS = "HostName=h;DeviceId=d;SharedAccessKey=k";
+
+    @Test
+    void testLeaseInUseIsReusedAndReleased() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+
+        try (DeviceClientPool.Lease first = pool.lease("d", CS, IotHubClientProtocol.MQTT)) {
+            assertSame(client, first.getClient());
+            assertEquals(1, pool.getActiveClientCount());
+
+            try (DeviceClientPool.Lease second = pool.lease("d", CS, IotHubClientProtocol.MQTT)) {
+                assertSame(client, second.getClient());
+                assertEquals(1, pool.getActiveClientCount());
+            }
+        }
+
+        assertEquals(1, pool.getActiveClientCount());
+    }
+
+    @Test
+    void testConcurrentFirstAcquireCreatesSingleClient() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        AtomicInteger created = new AtomicInteger();
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            created.incrementAndGet();
+            return client;
+        });
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        CountDownLatch ready = new CountDownLatch(2);
+        CountDownLatch start = new CountDownLatch(1);
+        List<DeviceClientPool.Lease> leases = new ArrayList<>();
+
+        for (int i = 0; i < 2; i++) {
+            executor.submit(() -> {
+                ready.countDown();
+                try {
+                    start.await();
+                    DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT);
+                    synchronized (leases) {
+                        leases.add(lease);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+
+        ready.await();
+        start.countDown();
+        executor.shutdown();
+        executor.awaitTermination(5, TimeUnit.SECONDS);
+
+        assertEquals(1, created.get(), "only one client should be created for first acquire");
+        assertEquals(1, pool.getActiveClientCount());
+        for (DeviceClientPool.Lease lease : leases) {
+            lease.close();
+        }
+    }
 
     @Test
     void testGetOrCreateCreatesOnceAndReuses() throws Exception {
@@ -125,5 +199,34 @@ class DeviceClientPoolTest {
 
         assertThrows(RuntimeException.class, () -> pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT));
         assertEquals(0, pool.getActiveClientCount());
+    }
+
+    @Test
+    void testDisconnectedCallbackEvictsClientImmediately() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        AtomicReference<IotHubConnectionStatusChangeCallback> callbackRef = new AtomicReference<>();
+
+        doAnswer(invocation -> {
+            callbackRef.set(invocation.getArgument(0));
+            return null;
+        }).when(client).setConnectionStatusChangeCallback(any(), any());
+
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+
+        pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+        assertEquals(1, pool.getActiveClientCount());
+
+        IotHubConnectionStatusChangeCallback callback = callbackRef.get();
+        ConnectionStatusChangeContext context = mock(ConnectionStatusChangeContext.class);
+        Mockito.when(context.getNewStatus()).thenReturn(IotHubConnectionStatus.DISCONNECTED);
+        Mockito.when(context.getPreviousStatus()).thenReturn(IotHubConnectionStatus.CONNECTED);
+        Mockito.when(context.getNewStatusReason()).thenReturn(IotHubConnectionStatusChangeReason.CLIENT_CLOSE);
+
+        callback.onStatusChanged(context);
+
+        Awaitility.await().atMost(2, TimeUnit.SECONDS).until(() -> pool.getActiveClientCount() == 0);
+        assertEquals(0, pool.getActiveClientCount(), "client should be evicted immediately on DISCONNECTED");
+        verify(client, Mockito.atLeastOnce()).close();
     }
 }

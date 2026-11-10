@@ -49,7 +49,7 @@ public class IoTHubProducer extends DefaultProducer {
 
         List<DeliveryStrategy> strategies = List.of(
                 new TelemetryDeliveryStrategy(config.getContentType(), config.getSendTimeout()),
-                new TwinDeliveryStrategy());
+                new TwinDeliveryStrategy(config.getSendTimeout()));
 
         operations = new IoTHubSendOperations(pool, strategies);
     }
@@ -103,9 +103,21 @@ public class IoTHubProducer extends DefaultProducer {
                 Map<String, Object> twin = twinHeader != null
                         ? twinHeader
                         : (body instanceof Map ? (Map<String, Object>) body : null);
+                if (twin == null) {
+                    throw new IllegalArgumentException(
+                            "Twin delivery expects twin properties (a Map) to be provided either as the message body "
+                                                       + "or via the " + IoTHubConstants.TWIN_PROPERTIES + " header");
+                }
                 yield new DeliveryContext(null, twin);
             }
-            case BOTH -> new DeliveryContext(resolveTelemetryBody(exchange, body), twinHeader);
+            case BOTH -> {
+                if (twinHeader == null) {
+                    throw new IllegalArgumentException(
+                            "BOTH delivery requires twin properties via the " + IoTHubConstants.TWIN_PROPERTIES
+                                                       + " header before dispatching telemetry");
+                }
+                yield new DeliveryContext(resolveTelemetryBody(exchange, body), twinHeader);
+            }
         };
     }
 
