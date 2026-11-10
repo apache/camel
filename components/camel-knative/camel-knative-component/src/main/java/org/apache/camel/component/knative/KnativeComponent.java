@@ -89,7 +89,7 @@ public class KnativeComponent extends HealthCheckComponent {
     }
 
     /**
-     * The path ot the environment definition
+     * The path of the environment definition
      */
     public void setEnvironmentPath(String environmentPath) {
         this.environmentPath = environmentPath;
