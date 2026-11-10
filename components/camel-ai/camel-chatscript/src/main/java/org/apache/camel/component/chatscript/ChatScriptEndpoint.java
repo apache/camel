@@ -62,7 +62,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     private String botName;
     @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route")
     private String chatUserName;
-    @UriParam(description = "Issues :reset command to start a new conversation everytime", defaultValue = "false")
+    @UriParam(description = "Issues :reset command to start a new conversation every time", defaultValue = "false")
     private boolean resetChat;
 
     public ChatScriptEndpoint() {
