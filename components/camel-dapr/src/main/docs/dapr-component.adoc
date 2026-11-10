@@ -529,12 +529,12 @@ YAML::
 
 - `configuration` -
 
-._Java-only: uses `List.of()` to set configuration key list_
+._Java-only: sets configuration keys as a comma-separated String_
 [source,java]
 ----
 from("direct:start")
     .process(exchange -> {
-        exchange.getIn().setHeader("CamelDaprConfigKeys", List.of("k1", "k2"));
+        exchange.getIn().setHeader("CamelDaprConfigKeys", "k1,k2");
     })
     .to("dapr:configuration?configStore=myStore")
     .log("Received config updates from Dapr: ${body}")

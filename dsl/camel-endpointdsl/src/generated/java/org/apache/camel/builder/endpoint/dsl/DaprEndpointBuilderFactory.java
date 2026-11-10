@@ -1916,7 +1916,7 @@ public interface DaprEndpointBuilderFactory {
             return "CamelDaprBindingOperation";
         }
         /**
-         * List of keys for configuration operation.
+         * Comma-separated list of keys for configuration operation.
          * 
          * The option is a: {@code String} type.
          * 

@@ -166,7 +166,8 @@ public class DaprConfigurationOptionsProxy {
     }
 
     public List<String> getConfigKeysAsList(final Exchange exchange) {
-        return configuration.getConfigKeysAsList();
+        String configKeys = getConfigKeys(exchange);
+        return configKeys != null ? List.of(configKeys.split(",")) : null;
     }
 
     public LockOperation getLockOperation(final Exchange exchange) {
