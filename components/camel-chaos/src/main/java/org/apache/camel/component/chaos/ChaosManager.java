@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +83,9 @@ public final class ChaosManager {
 
     // the most removed, replaced or ended rules the report keeps
     static final int MAX_HISTORY = 100;
+
+    // the most files a replay puts back at a time
+    static final int MAX_REPLAY = 1000;
 
     private static final Logger LOG = LoggerFactory.getLogger(ChaosManager.class);
 
@@ -532,7 +540,9 @@ public final class ChaosManager {
      * @return {@code suggestions}: a list of {@code route}, {@code kind}, {@code recipe}, {@code title}, {@code rule},
      *         {@code why}, {@code tried} when a rule of its kind faulted the route already, and {@code routes} when it
      *         is for several routes (a dead letter channel they share), and the {@code feed} of the route, with
-     *         {@code fed} when it gets messages without one
+     *         {@code fed} when it gets messages without one, and {@code replay} (a folder), {@code files} and
+     *         {@code replayRoute} when the files the route took, or a file route that sends to it took, can be put back
+     *         ({@link #replayFiles(String)} of that route)
      */
     public Map<String, Object> suggest() {
         JsonArray list = new JsonArray();
@@ -549,6 +559,8 @@ public final class ChaosManager {
         Map<String, ChaosAdvisor.Feed> feeds = new HashMap<>();
         // the routes that get messages without a feed, so an experiment can run without one (null when not known)
         Set<String> fed = ChaosAdvisor.fedRoutes(camelContext);
+        // the routes that get messages when a file route takes the files it took again
+        Map<String, String> replayVia = ChaosAdvisor.replayVia(camelContext);
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
             JsonObject jo = new JsonObject();
             // a dead letter channel that routes share is tried by a rule of its kind in any of them; two faults at once
@@ -584,12 +596,84 @@ public final class ChaosManager {
                 if ("self".equals(feed.kind()) || fed != null && fed.contains(s.route())) {
                     f.put("fed", true);
                 }
+                // the files the route took, or a file route that sends to it took, which the chaos command replay puts
+                // back (CAMEL-26817)
+                String via = feed.replay() != null ? s.route() : replayVia.get(s.route());
+                ChaosAdvisor.Feed files = via != null
+                        ? feeds.computeIfAbsent(via, k -> ChaosAdvisor.feed(camelContext.getRoute(k)))
+                        : null;
+                if (files != null && files.replay() != null) {
+                    if (!via.equals(s.route())) {
+                        // the route gets its messages from the file route
+                        f.put("hint", "route " + via + " sends to it: " + files.hint());
+                    }
+                    f.put("replay", files.replay());
+                    f.put("files", files.files());
+                    f.put("replayRoute", via);
+                }
                 jo.put("feed", f);
             }
             list.add(jo);
         }
         JsonObject answer = new JsonObject();
         answer.put("suggestions", list);
+        return answer;
+    }
+
+    /**
+     * Puts the files a file route took back into its folder, so it takes the same files again (CAMEL-26817): the files
+     * it moved to {@code .camel} (or the folder of its {@code move} option), under their own names. The route moves
+     * them there again, over the copies, so a replay is the same each time, as an experiment that is run again needs.
+     * Each is written under a hidden name first, which the route does not take, and then renamed. A file of that name
+     * that the route has not taken yet is left as it is.
+     *
+     * @param  routeId                  the id of the route
+     * @return                          {@code route}, {@code folder} (where the files were), {@code files} (how many
+     *                                  were put back) and {@code skipped} (those still waiting in the folder)
+     * @throws IllegalArgumentException when the route does not take files it moves, or has taken none
+     */
+    public Map<String, Object> replayFiles(String routeId) {
+        Route route = routeId != null ? camelContext.getRoute(routeId) : null;
+        if (route == null) {
+            throw new IllegalArgumentException("There is no route " + routeId);
+        }
+        File done = route.getEndpoint() != null ? ChaosAdvisor.doneFolder(route.getEndpoint()) : null;
+        if (done == null) {
+            throw new IllegalArgumentException(
+                    "Route " + routeId + " does not take files it moves to a folder (file: without noop or delete)");
+        }
+        List<File> taken = ChaosAdvisor.takenFiles(done);
+        if (taken.isEmpty()) {
+            throw new IllegalArgumentException("Route " + routeId + " has taken no files yet: " + done + " is empty");
+        }
+        if (taken.size() > MAX_REPLAY) {
+            taken = taken.subList(0, MAX_REPLAY);
+        }
+        File folder = ChaosAdvisor.inputFolder(route.getEndpoint());
+        int files = 0;
+        int skipped = 0;
+        for (File file : taken) {
+            Path target = folder.toPath().resolve(file.getName());
+            if (Files.exists(target)) {
+                skipped++;
+                continue;
+            }
+            Path hidden = folder.toPath().resolve(".chaos-" + file.getName());
+            try {
+                Files.copy(file.toPath(), hidden, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(hidden, target, StandardCopyOption.ATOMIC_MOVE);
+                files++;
+            } catch (IOException e) {
+                throw new IllegalStateException("Cannot put back " + file + ": " + e.getMessage(), e);
+            }
+        }
+        Map<String, Object> answer = new JsonObject();
+        answer.put("route", routeId);
+        answer.put("folder", done.getAbsolutePath());
+        answer.put("files", files);
+        if (skipped > 0) {
+            answer.put("skipped", skipped);
+        }
         return answer;
     }
 

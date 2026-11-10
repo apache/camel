@@ -107,13 +107,30 @@ public final class ChaosExperimentRun {
      * The traffic of an experiment, as camel cmd send sends it.
      *
      * @param endpoint the endpoint or the id of the route to send to
-     * @param body     the body, file:&lt;path&gt;, or file:&lt;folder&gt; for a message per file
+     * @param body     the body, file:&lt;path&gt;, file:&lt;folder&gt; for a message per file, or {@link #REPLAY} for
+     *                 the files a file route took, put back into its folder (the endpoint is then the route)
      * @param headers  the headers as key=value lines, or null
      * @param repeat   how many messages in all; 0 to send once (each file of a folder once)
      * @param interval the pause between two messages, such as 200ms or a range such as 100..500, or null
      */
     public record Feed(String endpoint, String body, String headers, int repeat, String interval) {
+
+        /**
+         * The files the file route took, which it moved to .camel, put back into its folder under their own names, so
+         * the route takes the same files each time the experiment is run (CAMEL-26817). They are put back again while
+         * the experiment runs, as the route takes them, so a rule with a rate meets enough messages.
+         */
+        public static Feed replay(String route) {
+            return new Feed(route, REPLAY, null, 0, null);
+        }
+
+        boolean isReplay() {
+            return REPLAY.equals(body);
+        }
     }
+
+    /** The body of a feed that puts back the files a file route took ({@link Feed#replay(String)}). */
+    public static final String REPLAY = "replay:";
 
     /** The time, and a pause; the tests give a clock that does not wait. */
     interface Clock {
@@ -189,7 +206,9 @@ public final class ChaosExperimentRun {
             http = ChaosHttpFeed.target(status, route, feed.endpoint());
             // a file route reads the files its filter takes: the messages are written as such files
             String from = route != null ? route.getString("from") : null;
-            String name = from != null && from.startsWith("file:") ? fileName(from, feed, clock.now()) : null;
+            // the files of a replay keep their own names
+            String name = from != null && from.startsWith("file:") && !feed.isReplay()
+                    ? fileName(from, feed, clock.now()) : null;
             if (name != null) {
                 feed = new Feed(
                         feed.endpoint(), feed.body(),
@@ -233,6 +252,8 @@ public final class ChaosExperimentRun {
             }
         }
         JsonObject traffic = null;
+        // the file route whose files are put back, again and again while the experiment runs
+        String replayRoute = null;
         long waited = 0;
         ChaosHttpFeed.Sender sender = null;
         Thread sending = null;
@@ -241,6 +262,9 @@ public final class ChaosExperimentRun {
                 // sent while the experiment waits for its verdict, and stopped when it ends
                 sender = new ChaosHttpFeed.Sender(integration, http, feed, clock);
                 sending = Thread.ofVirtual().name("chaos-http-feed").start(sender);
+            } else if (feed != null && feed.isReplay()) {
+                replayRoute = fedRoute != null ? fedRoute.getString("routeId") : feed.endpoint();
+                traffic = replay(integration, replayRoute);
             } else if (feed != null) {
                 traffic = traffic(integration, feed);
             }
@@ -255,6 +279,14 @@ public final class ChaosExperimentRun {
                     break;
                 }
                 clock.sleep(POLL);
+                if (replayRoute != null && "success".equals(traffic.getString("status"))) {
+                    // a few files make a few messages, which a rule with a rate may miss: they are put back again while
+                    // the experiment runs, those the route took since (a file still waiting is left as it is)
+                    JsonObject again = replay(integration, replayRoute);
+                    if ("success".equals(again.getString("status"))) {
+                        traffic.put("files", traffic.getIntegerOrDefault("files", 0) + again.getIntegerOrDefault("files", 0));
+                    }
+                }
             }
             waited = clock.now() - start;
         } finally {
@@ -385,6 +417,21 @@ public final class ChaosExperimentRun {
         if (!answer.containsKey("endpoint")) {
             answer.put("endpoint", feed.endpoint());
         }
+        return answer;
+    }
+
+    /** Puts back the files the route took: the summary of the replay, or why it could not. */
+    private static JsonObject replay(Integration integration, String route) {
+        JsonObject answer;
+        try {
+            answer = new JsonObject(integration.chaos("replay", root -> root.put("route", route)));
+            answer.put("status", "success");
+        } catch (RuntimeException e) {
+            answer = new JsonObject();
+            answer.put("status", "failed");
+            answer.put("error", e.getMessage());
+        }
+        answer.put("endpoint", route);
         return answer;
     }
 
