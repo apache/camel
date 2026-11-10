@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.azure.iothub.operations;
 
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.UUID;
@@ -45,7 +44,12 @@ public class TelemetryDeliveryStrategy implements DeliveryStrategy {
 
     @Override
     public void execute(DeviceClient client, String deviceId, DeliveryContext context) throws Exception {
-        byte[] payload = toBytes(context.telemetry());
+        Object telemetry = context.telemetry();
+        if (!(telemetry instanceof byte[] payload)) {
+            throw new IllegalArgumentException(
+                    "Telemetry delivery expects a byte[] payload but was: "
+                                               + (telemetry == null ? "null" : telemetry.getClass().getName()));
+        }
 
         Message msg = new Message(payload);
         msg.setContentType(contentType);
@@ -56,25 +60,6 @@ public class TelemetryDeliveryStrategy implements DeliveryStrategy {
         LOG.debug("Dispatching telemetry for device: {} with timeout {}ms", deviceId, timeoutMillis);
         client.sendEvent(msg, timeoutMillis);
         LOG.debug("Telemetry sent for device: {}", deviceId);
-    }
-
-    private byte[] toBytes(Object body) {
-        if (body instanceof byte[] bytes) {
-            return bytes;
-        }
-        if (body instanceof String s) {
-            return s.getBytes(StandardCharsets.UTF_8);
-        }
-        if (body instanceof InputStream is) {
-            try {
-                return is.readAllBytes();
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Failed to read InputStream payload", e);
-            }
-        }
-        throw new IllegalArgumentException(
-                "Telemetry delivery expects a byte[], String, or InputStream body but was: "
-                                           + (body == null ? "null" : body.getClass().getName()));
     }
 
     @Override

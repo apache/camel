@@ -108,6 +108,7 @@ public class DeviceClientPool {
     private final Duration idleTimeout;
     private final Duration evictionInterval;
     private final Map<String, PooledClient> pool = new ConcurrentHashMap<>();
+    private final Map<String, Object> creationLocks = new ConcurrentHashMap<>();
     private final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     private DeviceClientFactory deviceClientFactory = DeviceClient::new;
@@ -156,15 +157,28 @@ public class DeviceClientPool {
             return existing.client;
         }
 
-        DeviceClient client = createClient(deviceId, connectionString, protocol);
-        PooledClient pooled = new PooledClient(client, now);
-        PooledClient previous = pool.putIfAbsent(poolKey, pooled);
-        if (previous != null) {
-            pooled.client.close();
-            previous.touch(now);
-            return previous.client;
+        Object lock = creationLocks.computeIfAbsent(poolKey, k -> new Object());
+        synchronized (lock) {
+            try {
+                existing = pool.get(poolKey);
+                if (existing != null) {
+                    existing.touch(now);
+                    return existing.client;
+                }
+
+                DeviceClient client = createClient(deviceId, connectionString, protocol);
+                PooledClient pooled = new PooledClient(client, now);
+                PooledClient previous = pool.putIfAbsent(poolKey, pooled);
+                if (previous != null) {
+                    pooled.client.close();
+                    previous.touch(now);
+                    return previous.client;
+                }
+                return pooled.client;
+            } finally {
+                creationLocks.remove(poolKey, lock);
+            }
         }
-        return pooled.client;
     }
 
     public Lease acquire(String deviceId, String connectionString, IotHubClientProtocol protocol) {
@@ -182,17 +196,31 @@ public class DeviceClientPool {
             return new Lease(this, poolKey, existing);
         }
 
-        DeviceClient client = createClient(deviceId, connectionString, protocol);
-        PooledClient pooled = new PooledClient(client, now);
-        PooledClient previous = pool.putIfAbsent(poolKey, pooled);
-        if (previous != null) {
-            pooled.client.close();
-            previous.touch(now);
-            previous.acquire();
-            return new Lease(this, poolKey, previous);
+        Object lock = creationLocks.computeIfAbsent(poolKey, k -> new Object());
+        synchronized (lock) {
+            try {
+                existing = pool.get(poolKey);
+                if (existing != null) {
+                    existing.touch(now);
+                    existing.acquire();
+                    return new Lease(this, poolKey, existing);
+                }
+
+                DeviceClient client = createClient(deviceId, connectionString, protocol);
+                PooledClient pooled = new PooledClient(client, now);
+                PooledClient previous = pool.putIfAbsent(poolKey, pooled);
+                if (previous != null) {
+                    pooled.client.close();
+                    previous.touch(now);
+                    previous.acquire();
+                    return new Lease(this, poolKey, previous);
+                }
+                pooled.acquire();
+                return new Lease(this, poolKey, pooled);
+            } finally {
+                creationLocks.remove(poolKey, lock);
+            }
         }
-        pooled.acquire();
-        return new Lease(this, poolKey, pooled);
     }
 
     public Lease lease(String deviceId, String connectionString, IotHubClientProtocol protocol) {
@@ -312,8 +340,10 @@ public class DeviceClientPool {
     }
 
     private void touchAndMaybeEvict(String poolKey, PooledClient pooled) {
-        pooled.touch(nowMillisSupplier.getAsLong());
-        if ((nowMillisSupplier.getAsLong() - pooled.lastUsed) > idleTimeout.toMillis() && pool.remove(poolKey, pooled)) {
+        long now = nowMillisSupplier.getAsLong();
+        long elapsed = now - pooled.lastUsed;
+        pooled.touch(now);
+        if (elapsed > idleTimeout.toMillis() && pool.remove(poolKey, pooled)) {
             closeQuietly(poolKey, pooled.client, "idle eviction");
         }
     }

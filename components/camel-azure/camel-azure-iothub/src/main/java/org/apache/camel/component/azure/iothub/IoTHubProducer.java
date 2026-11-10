@@ -94,19 +94,26 @@ public class IoTHubProducer extends DefaultProducer {
      * </ul>
      */
     @SuppressWarnings("unchecked")
-    private DeliveryContext buildContext(Exchange exchange, IoTHubDeliveryMode mode, Object body) {
+    private DeliveryContext buildContext(Exchange exchange, IoTHubDeliveryMode mode, Object body) throws Exception {
         Map<String, Object> twinHeader = exchange.getIn().getHeader(IoTHubConstants.TWIN_PROPERTIES, Map.class);
 
         return switch (mode) {
-            case TELEMETRY -> new DeliveryContext(body, null);
+            case TELEMETRY -> new DeliveryContext(resolveTelemetryBody(exchange, body), null);
             case TWIN -> {
                 Map<String, Object> twin = twinHeader != null
                         ? twinHeader
                         : (body instanceof Map ? (Map<String, Object>) body : null);
                 yield new DeliveryContext(null, twin);
             }
-            case BOTH -> new DeliveryContext(body, twinHeader);
+            case BOTH -> new DeliveryContext(resolveTelemetryBody(exchange, body), twinHeader);
         };
+    }
+
+    private byte[] resolveTelemetryBody(Exchange exchange, Object body) throws Exception {
+        if (body instanceof byte[] bytes) {
+            return bytes;
+        }
+        return exchange.getIn().getMandatoryBody(byte[].class);
     }
 
     private String header(Exchange exchange, String name, String fallback) {
