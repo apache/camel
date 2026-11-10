@@ -65,6 +65,22 @@ class ObservedOutsTest {
     }
 
     @Test
+    void anOutTheRuntimeHasEncodedIsTheOneOfTheRoutes() {
+        // contracts/openapi-client: the route names rest-openapi:stock-api.json#reserveStock, the runtime counts it
+        // as rest-openapi://stock-api.json%23reserveStock
+        IntegrationInfo info = new IntegrationInfo();
+        info.endpoints.add(endpoint("reserve-order-lines", "out", "rest-openapi://stock-api.json%23reserveStock",
+                "remote", 6));
+        List<About.Out> known = List.of(new About.Out(
+                "http", "rest-openapi:stock-api.json#reserveStock", "out",
+                "reserve-order-lines"));
+
+        assertThat(ObservedOuts.of(info, known)).isEmpty();
+        assertThat(AboutView.outHits(info, "rest-openapi:stock-api.json#reserveStock", "reserve-order-lines"))
+                .isEqualTo(6);
+    }
+
+    @Test
     void theServiceOfAUriIsAllButItsLastSegment() {
         assertThat(ObservedOuts.group("http://localhost:8080/stock/CAMEL-MUG")).isEqualTo("http://localhost:8080/stock/");
         assertThat(ObservedOuts.group("http://localhost:8080")).isEqualTo("http://localhost:8080");

@@ -176,6 +176,11 @@ class AboutTest {
         assertThat(AboutReport.baseUri("file:/tmp/in?noop=true")).isEqualTo(AboutReport.baseUri("file:///tmp/in"));
         assertThat(AboutReport.baseUri("kafka://orders")).isEqualTo("kafka:orders");
         assertThat(AboutReport.baseUri("direct:orders")).isEqualTo("direct:orders");
+        // the runtime has it encoded, the sources as written (contracts/openapi-client, connect/stock-api)
+        assertThat(AboutReport.baseUri("rest-openapi://stock-api.json%23reserveStock"))
+                .isEqualTo(AboutReport.baseUri("rest-openapi:stock-api.json#reserveStock"));
+        assertThat(AboutReport.baseUri("platform-http:///stock/%7Bsku%7D")).isEqualTo("platform-http:stock/{sku}");
+        assertThat(AboutReport.baseUri("http:shop/a+b/100%")).isEqualTo("http:shop/a+b/100%");
     }
 
     @Test
