@@ -40,6 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -175,9 +176,10 @@ class CxfClientCallbackTest {
     }
 
     @Test
-    void handleException_withConduitSelector_fallsBackToOriginalExWhenMessageContentIsNull() {
-        // When ConduitSelector is set but neither message carries a resolved exception,
-        // the original transport exception must be preserved (not silently dropped)
+    void handleException_withConduitSelector_noExceptionOnMessages_doesNotSetException() {
+        // When ConduitSelector is set and neither message carries an exception, the failover
+        // succeeded — do NOT fall back to the original transport exception, leave the exchange
+        // clean so the re-dispatched request can proceed.
         RuntimeException transportEx = new RuntimeException("connection refused");
 
         ConduitSelector conduitSelector = mock(ConduitSelector.class);
@@ -195,8 +197,8 @@ class CxfClientCallbackTest {
         cb.handleException(ctx, transportEx);
 
         assertEquals(1, doneCount.get(), "done(false) must be called exactly once");
-        // must fall back to the original transport exception, not null
-        verify(camelExchange).setException(transportEx);
+        // failover succeeded: setException must NOT be called (exchange should remain clean)
+        verify(camelExchange, never()).setException(any());
     }
 
     @Test

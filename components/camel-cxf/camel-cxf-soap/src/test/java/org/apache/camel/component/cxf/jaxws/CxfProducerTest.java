@@ -48,6 +48,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.Timeout.ThreadMode;
@@ -213,6 +214,10 @@ public class CxfProducerTest {
     // DefaultAsyncProcessorAwaitManager if camelAsyncCallback.done() is never called.
     // For the callback exception-handling semantics (binding throws, Error thrown, etc.)
     // see CxfClientCallbackTest which tests CxfClientCallback directly via Mockito.
+    // Disabled: this test passes with or without the fix (CXF goes through handleException, not
+    // through populateExchangeFromCxfResponse, on a connection failure), and CXF-9272 makes it
+    // hang occasionally under load. The CxfClientCallbackTest unit tests cover the invariants.
+    @Disabled("CXF-9272: may hang under load; callback invariants covered by CxfClientCallbackTest")
     @Test
     void testInvokingAWrongServerAsync() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUriAsync());

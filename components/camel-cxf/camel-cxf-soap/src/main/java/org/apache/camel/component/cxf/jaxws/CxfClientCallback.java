@@ -102,12 +102,21 @@ public class CxfClientCallback extends ClientCallback {
 
     @Override
     public void handleException(Map<String, Object> ctx, Throwable ex) {
+        // If done(false) was already signalled (e.g. handleResponse ran first and then CXF re-dispatched
+        // to handleException after it threw), skip all exchange mutations: the exchange is already done.
+        if (doneFired.get()) {
+            return;
+        }
         try {
             super.handleException(ctx, ex);
             // need to call the conduitSelector complete method to enable the fail over feature
             ConduitSelector conduitSelector = cxfExchange.get(ConduitSelector.class);
             if (conduitSelector != null) {
                 conduitSelector.complete(cxfExchange);
+                // For FailoverTargetSelector, conduitSelector.complete() runs the retry itself.
+                // If failover succeeds, neither message will carry an exception — do not set one,
+                // as the exchange should remain clean for the re-dispatch to succeed.
+                // Only propagate an exception when a message explicitly carries one.
                 Throwable resolved = null;
                 if (cxfExchange.getOutMessage() != null) {
                     resolved = cxfExchange.getOutMessage().getContent(Exception.class);
@@ -115,8 +124,9 @@ public class CxfClientCallback extends ClientCallback {
                 if (resolved == null && cxfExchange.getInMessage() != null) {
                     resolved = cxfExchange.getInMessage().getContent(Exception.class);
                 }
-                // fall back to the original exception if neither message carries one
-                camelExchange.setException(resolved != null ? resolved : ex);
+                if (resolved != null) {
+                    camelExchange.setException(resolved);
+                }
             } else {
                 camelExchange.setException(ex);
             }
