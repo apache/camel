@@ -22,7 +22,7 @@ The Overview tab (key *1*) has two views, switched with *v*: *About* an integrat
 *Integrations*, the table of all of them. About tells what an integration you have not seen before does, and what has
 happened to it, with no AI:
 
-image::jbang/camel-tui-about.png[About the chaos demo: its purpose, what comes in, its routes and what goes out, the last 5 minutes after an outage of the stock service, and a line per route of what happened]
+image::jbang/camel-tui-about.png[About the circuit breaker example: its purpose, the timer it starts from, the supplier route it calls, the exchanges and errors of the last minutes, and a line per route of what happened, zoomed in on the outage of the supplier]
 
 * The header has the Camel version, runtime, files, routes and uptime, and the purpose: the comment at the top of a
 route file (a YAML `#` comment, a Javadoc or `//` comment in Java, an XML comment), else the first paragraph of the
@@ -45,10 +45,10 @@ move a zoomed window. *4* opens the Timeline for each second.
 
 The Timeline tab (key *4*) shows the last minute of the selected integration on one time axis, one column per second:
 what went wrong on top, and what it did to the routes under it. Read from left to right, it tells the story of an
-outage: the stock service answered 503 for fifteen seconds, the orders went to the dead letter channel, shipping had
-nothing to ship, and everything recovered by itself.
+outage: in the circuit breaker example the supplier refuses three calls, the circuit breaker of stock-check opens and
+answers from its fallback for ten seconds, and everything recovers by itself.
 
-image::jbang/camel-tui-timeline.png[The Timeline tab in an outage of the stock service: the errors per second on top, the routes under it, and the orders route in detail]
+image::jbang/camel-tui-timeline.png[The Timeline tab in an outage of the supplier: the errors per second on top, the routes under it, and the supplier route in detail]
 
 * *Errors/s* stacks the errors per second by the kind of exception, with the HTTP status when there is one. With
 camel-chaos, the faults of each chaos rule are a layer of their own, marked 🎲, so an injected fault and a real one stay
@@ -73,7 +73,7 @@ lists the exchanges of the second at the cursor: the failed, handled and recover
 outcome, time and slowest call. *Enter* again shows the selected exchange with the remote calls it made and its exception,
 or for a recovered one the failure it was redelivered for.
 
-image::jbang/camel-tui-timeline-exchanges.png[The exchanges of a second in the outage: the orders handled by the dead letter channel, one of them faulted by chaos rule r1]
+image::jbang/camel-tui-timeline-exchanges.png[The exchanges of a second of the error handling example: one order recovered by redelivery, and one handled by the error handler and parked as a file]
 
 *Shift+F8* asks the AI to explain what happened, as a story of cause and effect.
 

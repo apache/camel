@@ -33,7 +33,10 @@ happened to it, with no AI:
   service are one line (`http://localhost:8080/stock/…`).
 - **Last 5m** — the exchanges and how they ended, the cause that
   happened most and when (a chaos rule marked 🎲), and the exchanges
-  since it started.
+  since it started. An exchange counts once, not once for every route it
+  passes: a route called with `direct:` is part of its caller's
+  exchange, and of one handed off with `seda:` only what went wrong
+  there counts.
 - **Watch** — the errors that happened, the kinds that happened most and
   when the last one did, routes not started, exchanges in flight. Errors
   that stopped more than a minute ago are history: the line says there

@@ -1227,6 +1227,16 @@ final class AboutView {
         return dot >= 0 ? type.substring(dot + 1) : type;
     }
 
+    /** How each route that another one sends to is reached: call (direct) or a hand-off (seda); none for the others. */
+    private Map<String, String> howCalled() {
+        Map<String, String> how = new LinkedHashMap<>();
+        About.Model m = model;
+        if (m != null) {
+            m.routes().stream().filter(r -> r.how() != null).forEach(r -> how.put(r.routeId(), r.how()));
+        }
+        return how;
+    }
+
     /** Where to go next: the README and the summary of the project too. */
     private Line next() {
         List<Span> spans = new ArrayList<>(
@@ -1266,18 +1276,32 @@ final class AboutView {
         long recovered = 0;
         long handled = 0;
         long failed = 0;
+        // what went wrong on a hand-off, to an exchange already counted
+        long handedOff = 0;
+        Map<String, String> how = howCalled();
         for (Timeline.RouteSeries r : series) {
-            completed += r.total(r.completed());
-            recovered += r.total(r.recovered());
+            String called = how.get(r.route());
+            if ("call".equals(called)) {
+                // a route called with direct is part of the exchange of its caller, which gets its failure too
+                continue;
+            }
+            if (called == null) {
+                completed += r.total(r.completed());
+                recovered += r.total(r.recovered());
+                for (int i = 0; i < HAPPENED_SECONDS; i++) {
+                    perSecond[i] += Math.max(0, r.completed()[i]) + Math.max(0, r.recovered()[i])
+                                    + Math.max(0, r.handled()[i]) + Math.max(0, r.failed()[i]);
+                }
+            }
+            // one handed off (seda) carries the same message on: only what went wrong there, which its sender does not see
             handled += r.total(r.handled());
             failed += r.total(r.failed());
-            for (int i = 0; i < HAPPENED_SECONDS; i++) {
-                perSecond[i] += Math.max(0, r.completed()[i]) + Math.max(0, r.recovered()[i])
-                                + Math.max(0, r.handled()[i]) + Math.max(0, r.failed()[i]);
+            if (called != null) {
+                handedOff += r.total(r.handled()) + r.total(r.failed());
             }
         }
         spans.add(Span.styled(spark(perSecond, 30), Theme.info()));
-        long done = completed + recovered + handled + failed;
+        long done = completed + recovered + handled + failed - handedOff;
         spans.add(Span.styled("  " + done, Theme.success()));
         spans.add(Span.raw(done == 1 ? " exchange" : " exchanges"));
         if (recovered > 0) {

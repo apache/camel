@@ -426,6 +426,56 @@ class AboutViewTest {
     }
 
     @Test
+    void lastFiveMinutesCountsAnExchangeOnceNotOncePerRouteItPasses() throws Exception {
+        // fail-well/circuit-breaker: stock-check calls supplier with direct, once a second
+        Files.writeString(dir.resolve("circuit-breaker.camel.yaml"), """
+                - route:
+                    id: stock-check
+                    from:
+                      uri: timer:stock
+                      steps:
+                        - to: direct:supplier
+                        - to: seda:report
+                - route:
+                    id: supplier
+                    from:
+                      uri: direct:supplier
+                      steps:
+                        - log: called
+                - route:
+                    id: report
+                    from:
+                      uri: seda:report
+                      steps:
+                        - log: reported
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "circuit-breaker";
+        info.directory = dir.toString();
+        for (String id : List.of("stock-check", "supplier", "report")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            r.state = "Started";
+            info.routes.add(r);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        for (int i = 50; i < 60; i++) {
+            t.route("stock-check", "completed", i, 1).route("supplier", "completed", i, 1);
+            // the report, handed off, fails once: its sender does not see that
+            t.route("report", i == 55 ? "failed" : "completed", i, 1);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("↳ supplier")
+                // 10 checks, not 30 for the three routes they went through
+                .contains("10 exchanges · 1 failed").doesNotContain("30 exchanges").doesNotContain("20 exchanges"));
+    }
+
+    @Test
     void aboutAnIntegrationWithWhatHasHappened() throws Exception {
         Files.writeString(dir.resolve("shop.camel.yaml"), """
                 # Every order is checked against the stock and shipped.
