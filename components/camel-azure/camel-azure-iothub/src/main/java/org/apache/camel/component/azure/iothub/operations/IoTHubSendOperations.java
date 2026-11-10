@@ -60,8 +60,8 @@ public class IoTHubSendOperations {
             throw new InterruptedException("Thread interrupted before dispatch for device: " + deviceId);
         }
 
-        DeviceClient client = pool.getOrCreate(deviceId, connectionString, protocol);
-        try {
+        try (DeviceClientPool.Lease lease = pool.lease(deviceId, connectionString, protocol)) {
+            DeviceClient client = lease.client();
             executeStrategies(client, deviceId, context, mode);
         } catch (Exception e) {
             if (isShutdownInterruption(e)) {

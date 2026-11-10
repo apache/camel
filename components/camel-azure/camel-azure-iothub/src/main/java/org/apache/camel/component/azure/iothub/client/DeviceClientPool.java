@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.LongSupplier;
 
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
@@ -52,6 +53,7 @@ public class DeviceClientPool {
     private static final class PooledClient {
         final DeviceClient client;
         volatile long lastUsed;
+        final AtomicInteger inUse = new AtomicInteger();
 
         PooledClient(DeviceClient client, long nowMillis) {
             this.client = client;
@@ -60,6 +62,46 @@ public class DeviceClientPool {
 
         void touch(long nowMillis) {
             this.lastUsed = nowMillis;
+        }
+
+        void acquire() {
+            inUse.incrementAndGet();
+        }
+
+        boolean release() {
+            return inUse.decrementAndGet() == 0;
+        }
+    }
+
+    public static final class Lease implements AutoCloseable {
+        private final DeviceClientPool pool;
+        private final String poolKey;
+        private final PooledClient pooled;
+        private boolean closed;
+
+        private Lease(DeviceClientPool pool, String poolKey, PooledClient pooled) {
+            this.pool = pool;
+            this.poolKey = poolKey;
+            this.pooled = pooled;
+        }
+
+        public DeviceClient getClient() {
+            return pooled.client;
+        }
+
+        public DeviceClient client() {
+            return pooled.client;
+        }
+
+        @Override
+        public void close() {
+            if (closed) {
+                return;
+            }
+            closed = true;
+            if (pooled.release()) {
+                pool.touchAndMaybeEvict(poolKey, pooled);
+            }
         }
     }
 
@@ -123,6 +165,38 @@ public class DeviceClientPool {
             return previous.client;
         }
         return pooled.client;
+    }
+
+    public Lease acquire(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        if (Thread.currentThread().isInterrupted() || shuttingDown.get()) {
+            throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
+        }
+
+        String poolKey = resolvePoolKey(deviceId, connectionString);
+        final long now = nowMillisSupplier.getAsLong();
+
+        PooledClient existing = pool.get(poolKey);
+        if (existing != null) {
+            existing.touch(now);
+            existing.acquire();
+            return new Lease(this, poolKey, existing);
+        }
+
+        DeviceClient client = createClient(deviceId, connectionString, protocol);
+        PooledClient pooled = new PooledClient(client, now);
+        PooledClient previous = pool.putIfAbsent(poolKey, pooled);
+        if (previous != null) {
+            pooled.client.close();
+            previous.touch(now);
+            previous.acquire();
+            return new Lease(this, poolKey, previous);
+        }
+        pooled.acquire();
+        return new Lease(this, poolKey, pooled);
+    }
+
+    public Lease lease(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+        return acquire(deviceId, connectionString, protocol);
     }
 
     public void remove(String deviceId, String connectionString) {
@@ -237,6 +311,13 @@ public class DeviceClientPool {
         }
     }
 
+    private void touchAndMaybeEvict(String poolKey, PooledClient pooled) {
+        pooled.touch(nowMillisSupplier.getAsLong());
+        if ((nowMillisSupplier.getAsLong() - pooled.lastUsed) > idleTimeout.toMillis() && pool.remove(poolKey, pooled)) {
+            closeQuietly(poolKey, pooled.client, "idle eviction");
+        }
+    }
+
     private void evictIdleClients() {
         if (shuttingDown.get()) {
             return;
@@ -245,9 +326,13 @@ public class DeviceClientPool {
         Iterator<Map.Entry<String, PooledClient>> it = pool.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, PooledClient> entry = it.next();
-            if ((now - entry.getValue().lastUsed) > idleTimeout.toMillis()
-                    && pool.remove(entry.getKey(), entry.getValue())) {
-                closeQuietly(entry.getKey(), entry.getValue().client, "idle eviction");
+            PooledClient pooled = entry.getValue();
+            if (pooled.inUse.get() > 0) {
+                continue;
+            }
+            if ((now - pooled.lastUsed) > idleTimeout.toMillis()
+                    && pool.remove(entry.getKey(), pooled)) {
+                closeQuietly(entry.getKey(), pooled.client, "idle eviction");
             }
         }
     }

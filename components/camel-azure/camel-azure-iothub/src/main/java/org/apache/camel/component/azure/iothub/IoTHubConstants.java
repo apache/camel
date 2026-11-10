@@ -33,7 +33,8 @@ public final class IoTHubConstants {
     @Metadata(label = "producer",
               description = "The per-device IoT Hub connection string. Overrides the connection string "
                             + "configured on the endpoint.",
-              javaType = "String")
+              javaType = "String",
+              secret = true)
     public static final String CONNECTION_STRING = HEADER_PREFIX + "ConnectionString";
 
     @Metadata(label = "producer",
