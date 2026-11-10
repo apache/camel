@@ -100,10 +100,8 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
             }
         });
 
+        // should be able to startup (start is synchronous)
         context.start();
-
-        // should be able to startup
-        Thread.sleep(500);
 
         context.stop();
     }

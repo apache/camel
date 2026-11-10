@@ -21,6 +21,8 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.io.CloseMode;
 
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_LENGTH;
 import static org.apache.hc.core5.http.HttpHeaders.CONTENT_TYPE;
@@ -55,5 +57,19 @@ public abstract class BaseHttpTest extends HttpServerTestSupport {
 
     protected String getExpectedContent() {
         return "camel rocks!";
+    }
+
+    /**
+     * Closes the servers without waiting for their open (keep-alive) connections: the graceful close of an
+     * {@link HttpServer} waits up to 5 seconds for them to terminate.
+     */
+    protected static AutoCloseable closeImmediately(HttpServer... servers) {
+        return () -> {
+            for (HttpServer server : servers) {
+                if (server != null) {
+                    server.close(CloseMode.IMMEDIATE);
+                }
+            }
+        };
     }
 }

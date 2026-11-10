@@ -17,7 +17,9 @@
 package org.apache.camel.component.http;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.core5.http.HttpStatus;
@@ -26,6 +28,7 @@ import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpProducerRestartTest extends BaseHttpTest {
@@ -78,9 +81,8 @@ public class HttpProducerRestartTest extends BaseHttpTest {
         assertEquals("Bye World", out);
 
         context.getRouteController().stopRoute("foo");
-
-        // a little delay before starting again
-        Thread.sleep(1000);
+        await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("foo")));
 
         context.getRouteController().startRoute("foo");
         out = template.requestBody("direct:start", "Hello World", String.class);

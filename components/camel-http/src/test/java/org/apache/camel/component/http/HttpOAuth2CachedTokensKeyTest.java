@@ -30,6 +30,7 @@ import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.NoHttpResponseException;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.io.CloseMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,7 +97,7 @@ public class HttpOAuth2CachedTokensKeyTest extends BaseHttpTest {
 
     @Test
     public void theEndpointHasTheOptions() throws Exception {
-        try (HttpServer localServer = createLocalServer()) {
+        try (HttpServer localServer = createLocalServer(); AutoCloseable shutdown = closeImmediately(localServer)) {
             HttpEndpoint endpoint = context.getEndpoint("http://localhost:" + localServer.getLocalPort()
                                                         + "/post?oauth2CachedTokensKey=HOST_AND_PATH",
                     HttpEndpoint.class);
@@ -116,7 +117,8 @@ public class HttpOAuth2CachedTokensKeyTest extends BaseHttpTest {
 
     @Test
     public void aClassResolverIsTheSameInstanceOnTheEndpoint() throws Exception {
-        try (HttpServer localServer = createLocalServer(); HttpServer oauth2Server = createLocalOAuth2Server()) {
+        try (HttpServer localServer = createLocalServer(); HttpServer oauth2Server = createLocalOAuth2Server();
+             AutoCloseable shutdown = closeImmediately(localServer, oauth2Server)) {
             String uri = uri(localServer, oauth2Server, "/post",
                     "&oauth2CachedTokensKeyResolver=#class:" + RecordingResolver.class.getName());
             assertOk(template.request(uri, e -> {
@@ -144,20 +146,22 @@ public class HttpOAuth2CachedTokensKeyTest extends BaseHttpTest {
     }
 
     private void assertSecondRequestReusesToken(String first, String second, String options) throws Exception {
-        try (HttpServer localServer = createLocalServer(); HttpServer oauth2Server = createLocalOAuth2Server()) {
+        try (HttpServer localServer = createLocalServer(); HttpServer oauth2Server = createLocalOAuth2Server();
+             AutoCloseable shutdown = closeImmediately(localServer, oauth2Server)) {
             assertOk(template.request(uri(localServer, oauth2Server, first, options), e -> {
             }));
-            oauth2Server.close();
+            oauth2Server.close(CloseMode.IMMEDIATE);
             assertOk(template.request(uri(localServer, oauth2Server, second, options), e -> {
             }));
         }
     }
 
     private void assertSecondRequestRequestsNewToken(String first, String second, String options) throws Exception {
-        try (HttpServer localServer = createLocalServer(); HttpServer oauth2Server = createLocalOAuth2Server()) {
+        try (HttpServer localServer = createLocalServer(); HttpServer oauth2Server = createLocalOAuth2Server();
+             AutoCloseable shutdown = closeImmediately(localServer, oauth2Server)) {
             assertOk(template.request(uri(localServer, oauth2Server, first, options), e -> {
             }));
-            oauth2Server.close();
+            oauth2Server.close(CloseMode.IMMEDIATE);
             Exchange exchange = template.request(uri(localServer, oauth2Server, second, options), e -> {
             });
             // When the token endpoint server is closed, the HTTP client may report either

@@ -17,20 +17,28 @@
 package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.protocol.HttpContext;
 
-public class DelayValidationHandler extends BasicValidationHandler {
+/**
+ * Handler which does not answer until the given latch is released, so tests can deterministically trigger client side
+ * timeouts (never release the latch) or get an immediate answer (release the latch before sending the request).
+ */
+public class BlockingValidationHandler extends BasicValidationHandler {
 
-    protected final int delay;
+    private static final int MAX_WAIT_SECONDS = 30;
 
-    public DelayValidationHandler(String expectedMethod, String expectedQuery,
-                                  Object expectedContent, String responseContent, int delay) {
+    private final CountDownLatch release;
+
+    public BlockingValidationHandler(String expectedMethod, String expectedQuery,
+                                     Object expectedContent, String responseContent, CountDownLatch release) {
         super(expectedMethod, expectedQuery, expectedContent, responseContent);
-        this.delay = delay;
+        this.release = release;
     }
 
     @Override
@@ -39,7 +47,8 @@ public class DelayValidationHandler extends BasicValidationHandler {
             final HttpContext context)
             throws HttpException, IOException {
         try {
-            Thread.sleep(delay);
+            // bounded wait to never hang the server thread forever
+            release.await(MAX_WAIT_SECONDS, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
