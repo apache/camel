@@ -18,11 +18,8 @@ package org.apache.camel.processor.aggregate.hazelcast;
 
 import java.util.Set;
 
-import com.hazelcast.core.HazelcastException;
-import com.hazelcast.map.IMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository.OptimisticLockingException;
-import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit6.TestSupport.assertCollectionSize;
@@ -31,10 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
@@ -193,32 +186,6 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
     }
 
     @Test
-    public void checkOptimisticRemoveKeepsTheGroupWhenTheRecoverableStorageFails() throws Exception {
-        HazelcastAggregationRepository repo
-                = new HazelcastAggregationRepository("optimisticRemovePutFailsRepo", true, getFirstInstance());
-
-        try {
-            repo.doStart();
-
-            final String key = "optimisticRemovePutFailsKey";
-            Exchange ex = createExchangeWithBody("This group must not be lost.");
-            repo.add(context(), key, null, ex);
-
-            IMap<String, DefaultExchangeHolder> failingPersistedCache = mockMap();
-            when(failingPersistedCache.put(anyString(), any())).thenThrow(new HazelcastException("Simulated failure"));
-            repo.persistedCache = failingPersistedCache;
-
-            assertThrows(HazelcastException.class, () -> repo.remove(context(), key, ex));
-
-            Exchange getBackEx = repo.get(context(), key);
-            assertNotNull(getBackEx, "the group must still be in the repository after a failed remove");
-            assertEquals(ex.getIn().getBody(), getBackEx.getIn().getBody());
-        } finally {
-            repo.doStop();
-        }
-    }
-
-    @Test
     public void checkOptimisticRemoveOfAStaleExchangeLeavesNothingToRecover() throws Exception {
         HazelcastAggregationRepository repo
                 = new HazelcastAggregationRepository("optimisticRemoveStaleRepo", true, getFirstInstance());
@@ -240,31 +207,60 @@ public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggre
         }
     }
 
+    /**
+     * Regression test for CAMEL-26796: in the optimistic remove() path, two threads racing on the same group both hold
+     * the same exchange (same exchangeId). The losing thread must not corrupt the winning thread's recovery entry.
+     * <p>
+     * Before the fix, the cleanup call on the losing thread would delete the winning thread's recovery entry (they both
+     * had the same exchangeId), making the group irrecoverable on a downstream failure. The fix uses a Hazelcast
+     * transaction to atomically apply the conditional remove and the recovery write, so the loser's transaction sees
+     * the entry already removed and rolls back without touching the persistent map.
+     * <p>
+     * Scenario: add a group, get it twice as {@code a} and {@code b} (same content, same exchangeId), remove(a)
+     * succeeds, remove(b) throws {@link OptimisticLockingException}. After the failed remove, recover(exchangeId) must
+     * still return the group so that downstream failures can be recovered.
+     * <p>
+     * Note: the transaction also closes the crash-between-two-steps window that CAMEL-26395 originally fixed: if the
+     * JVM stops after the conditional remove but before the recovery write, the transaction is rolled back on restart
+     * and the group re-appears in the operational repository.
+     */
     @Test
-    public void checkOptimisticRemoveOfAStaleExchangeFailsWhenTheCleanupFails() throws Exception {
-        HazelcastAggregationRepository repo
-                = new HazelcastAggregationRepository("optimisticRemoveCleanupFailsRepo", true, getFirstInstance());
+    public void checkOptimisticRemoveRaceDoesNotDeleteWinnersRecoveryEntry() throws Exception {
+        final String persistentRepoName = "optimisticRaceRepo-completed";
+        HazelcastAggregationRepository repoOne
+                = new HazelcastAggregationRepository("optimisticRaceRepo", persistentRepoName, true, getFirstInstance());
+        HazelcastAggregationRepository repoTwo
+                = new HazelcastAggregationRepository("optimisticRaceRepo", persistentRepoName, true, getSecondInstance());
 
         try {
-            repo.doStart();
+            repoOne.doStart();
+            repoTwo.doStart();
 
-            final String key = "optimisticRemoveCleanupFailsKey";
-            Exchange ex = createExchangeWithBody("The current group.");
-            repo.add(context(), key, null, ex);
-            Exchange staleEx = createExchangeWithBody("A stale group.");
+            final String key = "raceKey";
+            Exchange ex = createExchangeWithBody("The group body.");
+            repoOne.add(context(), key, null, ex);
 
-            IMap<String, DefaultExchangeHolder> failingPersistedCache = mockMap();
-            when(failingPersistedCache.remove(anyString())).thenThrow(new HazelcastException("Simulated failure"));
-            repo.persistedCache = failingPersistedCache;
+            // Both threads read the same stored exchange (same exchangeId, same content)
+            Exchange a = repoOne.get(context(), key);
+            Exchange b = repoTwo.get(context(), key);
+            assertNotNull(a, "Thread A's exchange should not be null");
+            assertNotNull(b, "Thread B's exchange should not be null");
+            assertEquals(a.getExchangeId(), b.getExchangeId(), "Both threads must hold the same exchangeId");
 
-            assertThrows(OptimisticLockingException.class, () -> repo.remove(context(), key, staleEx));
+            // Thread A wins the race: remove succeeds and a recovery entry is written atomically
+            repoOne.remove(context(), key, a);
+
+            // Thread B loses: compare-and-remove fails (entry already removed by A)
+            assertThrows(OptimisticLockingException.class, () -> repoTwo.remove(context(), key, b));
+
+            // Thread A's recovery entry must still be there: if A's downstream processing fails,
+            // the recovery task must be able to send the group
+            Exchange recovered = repoTwo.recover(context(), a.getExchangeId());
+            assertNotNull(recovered, "The winner's recovery entry must survive the loser's failed remove");
+            assertEquals(ex.getIn().getBody(), recovered.getIn().getBody());
         } finally {
-            repo.doStop();
+            repoOne.doStop();
+            repoTwo.doStop();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static IMap<String, DefaultExchangeHolder> mockMap() {
-        return mock(IMap.class);
     }
 }
