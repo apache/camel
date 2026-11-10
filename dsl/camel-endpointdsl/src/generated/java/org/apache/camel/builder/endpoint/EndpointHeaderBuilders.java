@@ -841,6 +841,19 @@ public class EndpointHeaderBuilders {
         return FunctionsEndpointBuilderFactory.FunctionsHeaderNameBuilder.INSTANCE;
     }
     /**
+     * Azure IoT Hub (camel-azure-iothub)
+     * Send device telemetry and device-twin updates to Azure IoT Hub.
+     * 
+     * Category: cloud,iot,messaging
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-azure-iothub
+     * 
+     * @return the dsl builder for the headers' name.
+     */
+    public static IoTHubEndpointBuilderFactory.IoTHubHeaderNameBuilder azureIothub() {
+        return IoTHubEndpointBuilderFactory.IoTHubHeaderNameBuilder.INSTANCE;
+    }
+    /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
      * 

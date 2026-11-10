@@ -128,7 +128,41 @@ public interface IoTHubEndpointBuilderFactory {
             return this;
         }
         /**
-         * Timeout in milliseconds for a device-to-cloud telemetry send.
+         * Timeout for a device-to-cloud telemetry send. Twin updates do not
+         * accept a separate timeout in the Azure SDK.
+         * 
+         * The option is a: <code>java.time.Duration</code> type.
+         * 
+         * Default: 10s
+         * Group: producer
+         * 
+         * @param sendTimeout the value to set
+         * @return the dsl builder
+         */
+        default IoTHubEndpointBuilder sendTimeout(java.time.Duration sendTimeout) {
+            doSetProperty("sendTimeout", sendTimeout);
+            return this;
+        }
+        /**
+         * Timeout for a device-to-cloud telemetry send. Twin updates do not
+         * accept a separate timeout in the Azure SDK.
+         * 
+         * The option will be converted to a <code>java.time.Duration</code>
+         * type.
+         * 
+         * Default: 10s
+         * Group: producer
+         * 
+         * @param sendTimeout the value to set
+         * @return the dsl builder
+         */
+        default IoTHubEndpointBuilder sendTimeout(String sendTimeout) {
+            doSetProperty("sendTimeout", sendTimeout);
+            return this;
+        }
+        /**
+         * Deprecated alias for sendTimeout: timeout in milliseconds for a
+         * device-to-cloud telemetry send.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -138,12 +172,14 @@ public interface IoTHubEndpointBuilderFactory {
          * @param sendTimeoutMillis the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IoTHubEndpointBuilder sendTimeoutMillis(int sendTimeoutMillis) {
             doSetProperty("sendTimeoutMillis", sendTimeoutMillis);
             return this;
         }
         /**
-         * Timeout in milliseconds for a device-to-cloud telemetry send.
+         * Deprecated alias for sendTimeout: timeout in milliseconds for a
+         * device-to-cloud telemetry send.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -153,6 +189,7 @@ public interface IoTHubEndpointBuilderFactory {
          * @param sendTimeoutMillis the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default IoTHubEndpointBuilder sendTimeoutMillis(String sendTimeoutMillis) {
             doSetProperty("sendTimeoutMillis", sendTimeoutMillis);
             return this;

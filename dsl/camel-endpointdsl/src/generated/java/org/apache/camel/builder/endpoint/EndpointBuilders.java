@@ -195,6 +195,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.InfinispanRemoteEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.InfluxDb2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.IoTHubEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory,

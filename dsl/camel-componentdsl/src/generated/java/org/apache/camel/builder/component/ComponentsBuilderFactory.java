@@ -889,6 +889,19 @@ public interface ComponentsBuilderFactory {
         return AzureFunctionsComponentBuilderFactory.azureFunctions();
     }
     /**
+     * Azure IoT Hub (camel-azure-iothub)
+     * Send device telemetry and device-twin updates to Azure IoT Hub.
+     * 
+     * Category: cloud,iot,messaging
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-azure-iothub
+     * 
+     * @return the dsl builder
+     */
+    static AzureIothubComponentBuilderFactory.AzureIothubComponentBuilder azureIothub() {
+        return AzureIothubComponentBuilderFactory.azureIothub();
+    }
+    /**
      * Azure Key Vault (camel-azure-key-vault)
      * Manage secrets and keys in Azure Key Vault Service
      * 
