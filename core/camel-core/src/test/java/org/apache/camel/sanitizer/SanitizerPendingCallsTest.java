@@ -32,6 +32,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -225,6 +226,28 @@ class SanitizerPendingCallsTest {
         assertTrue(withStacks.report().contains("1 call reported still pending (warnings), no violations"),
                 withStacks.report());
         assertTrue(session.drain().isEmpty());
+    }
+
+    @Test
+    void aCheckThatFailsWithAnErrorDoesNotStopTheLaterChecks() {
+        // an Error thrown out of a task of scheduleWithFixedDelay would cancel its later runs
+        AtomicLong failures = new AtomicLong(2);
+        PendingCalls failing = new PendingCalls(TIMEOUT, () -> {
+            if (failures.getAndDecrement() > 0) {
+                throw new AssertionError("Forced");
+            }
+            return clock.get();
+        }, (route, step) -> false);
+        Sanitizer s = new Sanitizer(context, 0, session, failing);
+        s.checkPending();
+        s.checkPending();
+        assertEquals(0, s.getStillPendingCount());
+
+        Object call = new SanitizerStepListener(s).onStepCall(new DefaultExchange(context), "r", "lost");
+        assertNotNull(call);
+        clock.addAndGet(TIMEOUT);
+        s.checkPending();
+        assertEquals(1, s.getStillPendingCount());
     }
 
     @Test

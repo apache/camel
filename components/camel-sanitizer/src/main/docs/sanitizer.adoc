@@ -103,7 +103,12 @@ an INFO line says after how long. A call that threw stays pending until its call
 recipient list is not a step: a producer of a recipient that does not call back shows as the recipient list step still
 pending. Steps that wait on purpose for longer than the timeout are reported too: a delay or a throttle, a redelivery
 delay, a `pollEnrich` that waits, a processor that waits for something, or one that sends with a `ProducerTemplate` and
-waits for the reply.
+waits for the reply. So are steps that wait for an exchange copy of their own, as the consumer side works on that copy,
+not on a part: a request-reply `to` over `seda` or `vm` whose consumer is slow but still making progress, and an
+`aggregate` step whose completion runs the aggregated exchange synchronously in the caller. A chaos `delay` on a step
+(a `step=` rule of camel-chaos) runs before the step is called, so a delay longer than `pendingTimeout` shows up at the
+enclosing step that waits (such as a split, or the `to` of the calling route), and not at all at the top level of a
+route; a `delay` on an endpoint (an `endpoint=` rule) runs inside the send, so it shows at that `to` step.
 
 [source,text]
 ----

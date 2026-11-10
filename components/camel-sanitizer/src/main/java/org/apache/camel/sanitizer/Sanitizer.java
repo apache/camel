@@ -83,7 +83,8 @@ public final class Sanitizer {
 
     // the thread that looks for still pending calls, shared by the contexts of the JVM that run with the check: it is
     // not a thread pool of a context, so the pools of the application (and their JMX beans) are as without the
-    // sanitizer. Created by the first check and shut down after the last one (guarded by the class)
+    // sanitizer. Created by the first check and shut down after the last one (guarded by CHECKER_LOCK)
+    private static final Object CHECKER_LOCK = new Object();
     private static ScheduledExecutorService pendingChecker;
     private static int pendingChecks;
 
@@ -95,6 +96,8 @@ public final class Sanitizer {
     private final ConcurrentLinkedQueue<SanitizerViolation> violations = new ConcurrentLinkedQueue<>();
     private final AtomicInteger kept = new AtomicInteger();
     private final AtomicBoolean overflowLogged = new AtomicBoolean();
+    // whether a check of the pending calls failed: the first failure is logged at WARN, the others at DEBUG
+    private final AtomicBoolean checkFailed = new AtomicBoolean();
     // the class of the processor of a user, by "routeId|stepId"
     private final Map<String, String> userProcessors = new ConcurrentHashMap<>();
     // the steps that run their work on correlated copies of the exchange and wait for them (split, multicast, recipient
@@ -579,9 +582,17 @@ public final class Sanitizer {
                     }
                 }
             }
-        } catch (RuntimeException e) {
-            // the check runs again at the next period
-            LOG.debug("Cannot check the pending calls of CamelContext {}", camelContext.getName(), e);
+        } catch (Throwable e) {
+            // also an Error: thrown out of a task of scheduleWithFixedDelay, it would cancel the later checks of this
+            // context without a word. The check runs again at the next period (a call of this period that was not
+            // logged yet is not reported again)
+            if (checkFailed.compareAndSet(false, true)) {
+                LOG.warn("Exchange sanitizer: cannot check the pending calls of CamelContext {}; the check runs again"
+                         + " at the next period, and further failures are logged at DEBUG",
+                        camelContext.getName(), e);
+            } else {
+                LOG.debug("Cannot check the pending calls of CamelContext {}", camelContext.getName(), e);
+            }
         }
     }
 
@@ -750,7 +761,7 @@ public final class Sanitizer {
     private static final class PendingCheck implements Runnable {
 
         private final WeakReference<Sanitizer> sanitizer;
-        // guarded by Sanitizer.class
+        // guarded by CHECKER_LOCK
         private ScheduledFuture<?> future;
 
         PendingCheck(Sanitizer sanitizer) {
@@ -758,7 +769,7 @@ public final class Sanitizer {
         }
 
         void schedule(long period) {
-            synchronized (Sanitizer.class) {
+            synchronized (CHECKER_LOCK) {
                 if (pendingChecker == null) {
                     ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1, r -> {
                         Thread t = new Thread(r, "Camel exchange sanitizer (still pending)");
@@ -774,7 +785,7 @@ public final class Sanitizer {
         }
 
         void cancel() {
-            synchronized (Sanitizer.class) {
+            synchronized (CHECKER_LOCK) {
                 if (future == null) {
                     return;
                 }

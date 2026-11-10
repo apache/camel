@@ -51,8 +51,11 @@ import org.apache.camel.ExchangePropertyKey;
  * throw and fails the exchange, but before those fixes the exchange hung there. An exchange that is done (its unit of
  * work, as the events of the exchange tell) is dropped with its parts.
  * <p/>
- * At most {@link #MAX_PENDING} calls are kept: past it the oldest is dropped and counted. All methods take the lock of
- * this table, which is held briefly and never while calling out.
+ * At most {@link #MAX_PENDING} calls are kept: past it the oldest is dropped and counted. The ids of the parts (the
+ * {@code partOf} map, and the {@code partIds} of their exchange) are not counted in that bound: the id of a part goes
+ * when the part is done, or when its exchange has no pending call left. All methods take the lock of this table, which
+ * is held briefly and never while calling out ({@link #stalled()} scans every exchange of the table under it, once per
+ * period of the check).
  */
 final class PendingCalls {
 
