@@ -311,7 +311,8 @@ Beyond the core tabs described above, the TUI includes several specialized scree
 
 === Chaos
 
-With xref:next@components:others:chaos.adoc[camel-chaos] (`camel run --chaos`), the Chaos tab (under More >
+With xref:next@components:others:chaos.adoc[camel-chaos] (`camel run --chaos`, or *Chaos testing* in the run options
+form of the TUI), the Chaos tab (under More >
 Observability) shows the faults that the chaos rules inject into the running integration, and what they do:
 
 * The verdict of the report (PASS or FAIL with the reason), the messages lost, the expectations (met, unmet, pending)

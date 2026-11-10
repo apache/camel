@@ -57,7 +57,10 @@ class RunOptionsForm {
     private static final int ROW_STUB = 11;
     private static final int ROW_OTEL_AGENT = 12;
     private static final int ROW_JFR = 13;
-    private static final int ROW_COUNT = 14;
+    private static final int ROW_CHAOS = 14;
+    private static final int ROW_COUNT = 15;
+    /** The last row of the options page: Down and Tab go on from it to the properties page. */
+    private static final int ROW_LAST = ROW_CHAOS;
     /** Height of the options page: a row per option plus the border; the properties page is aligned to it. */
     private static final int PAGE1_HEIGHT = ROW_COUNT + 2;
 
@@ -117,6 +120,7 @@ class RunOptionsForm {
     private boolean otelAgent;
     private int otelExportTarget; // 0=TUI, 1=Jaeger
     private boolean jfrEnabled;
+    private boolean chaos;
     private boolean webConsole;
 
     private String exampleTitle;
@@ -160,6 +164,7 @@ class RunOptionsForm {
         otelAgent = false;
         otelExportTarget = 0;
         jfrEnabled = false;
+        chaos = false;
         webConsole = false;
         selectedRow = ROW_NAME;
         page = PAGE_OPTIONS;
@@ -209,6 +214,15 @@ class RunOptionsForm {
         }
         portWarning = PortCheck.warning(port, integrations.get());
         return portWarning;
+    }
+
+    /** Chaos is asked for, and the profile is not prod (where camel-chaos stays off). */
+    boolean isChaosEnabled() {
+        return chaos && !isProdProfile();
+    }
+
+    private boolean isProdProfile() {
+        return "prod".equals(PROFILE_VALUES[profileMode]);
     }
 
     boolean isJaegerExport() {
@@ -319,6 +333,10 @@ class RunOptionsForm {
         if (jfrEnabled) {
             args.add("--jfr");
         }
+        // camel-chaos stays off with profile prod, so the form does not ask for it then
+        if (isChaosEnabled()) {
+            args.add("--chaos");
+        }
         if (webConsole) {
             args.add("--console");
         }
@@ -346,7 +364,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isDown()) {
-            if (selectedRow == ROW_JFR && hasProperties()) {
+            if (selectedRow == ROW_LAST && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -355,7 +373,7 @@ class RunOptionsForm {
             return true;
         }
         if (ke.isFocusNext()) {
-            if (selectedRow == ROW_JFR && hasProperties()) {
+            if (selectedRow == ROW_LAST && hasProperties()) {
                 page = PAGE_PROPERTIES;
                 selectedProperty = 0;
             } else {
@@ -425,6 +443,10 @@ class RunOptionsForm {
                 case ROW_STUB -> stubMode = !stubMode;
                 case ROW_OTEL_AGENT -> otelAgent = !otelAgent;
                 case ROW_JFR -> jfrEnabled = !jfrEnabled;
+                case ROW_CHAOS -> {
+                    if (!isProdProfile())
+                        chaos = !chaos;
+                }
                 case ROW_CONSOLE -> webConsole = !webConsole;
             }
             return true;
@@ -457,7 +479,7 @@ class RunOptionsForm {
             editingKey = false;
             if (selectedProperty == 0) {
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_JFR;
+                selectedRow = ROW_LAST;
             } else {
                 selectedProperty--;
             }
@@ -487,7 +509,7 @@ class RunOptionsForm {
             } else if (selectedProperty == 0) {
                 editingKey = false;
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_JFR;
+                selectedRow = ROW_LAST;
             } else {
                 editingKey = false;
                 selectedProperty--;
@@ -503,7 +525,7 @@ class RunOptionsForm {
                     return true;
                 }
                 page = PAGE_OPTIONS;
-                selectedRow = ROW_JFR;
+                selectedRow = ROW_LAST;
                 editingKey = false;
                 return true;
             }
@@ -518,7 +540,7 @@ class RunOptionsForm {
                     }
                     if (properties.isEmpty()) {
                         page = PAGE_OPTIONS;
-                        selectedRow = ROW_JFR;
+                        selectedRow = ROW_LAST;
                     }
                     return true;
                 }
@@ -648,6 +670,17 @@ class RunOptionsForm {
         rowY++;
 
         renderCheckbox(frame, innerX, rowY, innerW, "Java Flight Recorder (JFR)", jfrEnabled, selectedRow == ROW_JFR);
+        rowY++;
+
+        if (isProdProfile()) {
+            frame.renderWidget(Paragraph.from(Line.from(
+                    Span.styled(" [ ] Chaos testing (not available with profile prod)",
+                            selectedRow == ROW_CHAOS ? Style.EMPTY.dim().reversed() : Style.EMPTY.dim()))),
+                    new Rect(innerX, rowY, innerW, 1));
+        } else {
+            renderCheckbox(frame, innerX, rowY, innerW, "Chaos testing (inject faults with camel-chaos)", chaos,
+                    selectedRow == ROW_CHAOS);
+        }
 
         if (warning != null) {
             rowY++;
