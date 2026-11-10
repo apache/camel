@@ -211,7 +211,7 @@ Chaos rules to try, the most worth trying first:
 
 1. route orders: Returns an error (HTTP status) (errors)
    an HTTP call to http://stock/check without a circuit breaker: what does the route do when the service answers 503?
-   camel cmd chaos-add --rule='endpoint=http://stock/check error status=503 rate=0.25 until=10m'
+   camel cmd chaos-add --rule='endpoint=http://stock/check error status=503 rate=0.25 until=10m expect=orders:failed<=0'
 
 2. route orders: The route after a hand-off fails (lost)
    route orders hands the message to route shipping over seda and does not wait: when shipping fails, is the message lost?
@@ -261,6 +261,18 @@ channel fails too. Are messages lost? The report counts what the dead letter cha
 does an exchange take?
 |===
 
+Every suggestion says what should hold despite its faults, as an expectation (see
+<<_expectations_on_the_error_handler,Expectations on the error handler>>), so it can be run as an experiment of an
+exploration as it is, and a rule added from it has a verdict that tells something. A hand-off expects that no message is
+lost between the two routes, and a duplicate that the route receiving the call does no work twice. Every other
+suggestion expects that no exchange fails in its route (`expect=orders:failed<=0`): whatever the fault does, each
+exchange it hits is recovered by redelivery or handled by the error handler. A route without error handling for the
+fault then fails the verdict, which is the finding, and a route with a dead letter channel, redelivery or a circuit
+breaker with a fallback passes. A fault that fails or stalls a route that another route of the integration calls (over
+`direct`, `seda` or HTTP to the integration's own server) expects of that caller instead (`expect=orders:failed<=0` for
+a stalled `payment` that `orders` calls): the route fails where the fault is, and what should hold is that its caller
+copes. Change the expectation when the route is meant to fail, such as a sender that should see the error.
+
 Two faults at once (kind `combined`) come after the single faults, as most bugs that lose messages need two failures
 that meet. Their rules are added together:
 
@@ -268,15 +280,18 @@ that meet. Their rules are added together:
 ----
 5. route orders: An outage while the dead letter channel fails (combined)
    route orders sends what fails to the dead letter channel direct:parked: when http://payment/charge is down for a minute and the dead letter channel fails too, are messages lost? The report counts what the dead letter channel did not take as lost
-   camel cmd chaos-add --rule='endpoint=http://payment/charge error status=503 until=1m' --rule='endpoint=direct:parked error at=dlq until=1m'
+   camel cmd chaos-add --rule='endpoint=http://payment/charge error status=503 until=1m expect=orders:failed<=0' --rule='endpoint=direct:parked error at=dlq until=1m'
 ----
 
-Each of their rules counts as its own kind in what has been tried, so a pair is never "not tried yet".
+Each of their rules counts as its own kind in what has been tried, so a pair is never "not tried yet". The expectation
+is on the first rule, and the messages the dead letter channel did not take fail the verdict too.
 
 The rules leave the query of the endpoint out: its options do not tell which endpoint it is, and may hold a secret.
 `ChaosManager.suggest()` gives the same as JSON: `suggestions`, each with `route`, `kind`, `recipe`, `title`, `rule`,
 `why`, `tried`, `routes` for a dead letter channel that several routes share, `feed`, and `rules` for two faults at
-once. A `feed` has its `kind` (one of `self`, `http`, `file` and `send`), a `hint` and `real`. `rules` has all the
+once. A `feed` has its `kind` (one of `self`, `http`, `file` and `send`), a `hint`, `real`, and `fed` when the route
+gets messages without a feed: it makes its own (a timer), or a route that does sends to it, also with an HTTP call to
+the server of the integration. Such a suggestion can run as an experiment without sending anything. `rules` has all the
 rules to add together. The chaos screen of the Camel TUI lists the suggestions (key `w`), where Enter types the rule
 in to change or add (the rules of two faults at once separated by `;`).
 

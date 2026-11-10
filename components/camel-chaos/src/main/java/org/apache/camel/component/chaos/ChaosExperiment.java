@@ -196,6 +196,10 @@ final class ChaosExperiment {
             for (ChaosRule.Hook hook : ChaosRule.Hook.values()) {
                 fired += r.firedAt(hook);
             }
+            if (r.lifecycle != null) {
+                // a stall or lifecycle rule fired when it took its route down, as the report counts it
+                fired += r.lifecycle.read(now).round();
+            }
             faults.put(id, fired);
             firedAll += fired;
             long kept = r.lostAtDlqCount();

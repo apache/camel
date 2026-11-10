@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.stub.StubComponent;
@@ -50,7 +53,8 @@ class ChaosFeedTest extends ChaosTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer:tick?period=100000").routeId("ticker").to("mock:tick");
+                from("timer:tick?period=100000").routeId("ticker").to("mock:tick").to("direct:orders").to("remotemq:jobs");
+                from("remotemq:jobs").routeId("jobs").to("mock:jobs");
                 from("direct:orders").routeId("orders").to("mock:orders");
                 from("file:target/chaos-inbox?initialDelay=100000").routeId("inbox").to("mock:inbox");
                 from("remotemq:refunds?breakOnFirstError=true").routeId("refunds").to("mock:refunds");
@@ -90,6 +94,29 @@ class ChaosFeedTest extends ChaosTestSupport {
         JsonObject payments = list.stream().map(JsonObject.class::cast)
                 .filter(s -> "payments".equals(s.getString("route"))).findFirst().orElseThrow();
         assertThat(payments.getMap("feed").get("real")).isEqualTo(true);
+    }
+
+    @Test
+    void theRoutesThatGetMessagesWithoutAFeed() {
+        // the timer makes its own, and sends them to orders and jobs
+        assertThat(ChaosAdvisor.fedRoutes(context)).containsExactlyInAnyOrder("ticker", "orders", "jobs");
+
+        JsonArray list = (JsonArray) chaos().suggest().get("suggestions");
+        JsonObject refunds = list.stream().map(JsonObject.class::cast)
+                .filter(s -> "refunds".equals(s.getString("route"))).findFirst().orElseThrow();
+        // refunds gets its messages from outside only
+        assertThat(refunds.getMap("feed").containsKey("fed")).isFalse();
+    }
+
+    @Test
+    void aFaultOfARouteThatAnotherRouteCallsExpectsOfTheCaller() {
+        Map<String, String> rules = new HashMap<>();
+        ChaosAdvisor.suggest(context).forEach(s -> rules.put(s.route() + " " + s.recipe(), s.rule()));
+        // jobs fails where the fault is: what should hold is that ticker, which sends to it, copes
+        assertThat(rules.get("jobs route-error")).endsWith("expect=ticker:failed<=0");
+        assertThat(rules.get("jobs stall")).endsWith("expect=ticker:failed<=0");
+        // refunds has no caller in the integration: its own failures count
+        assertThat(rules.get("refunds route-error")).endsWith("expect=refunds:failed<=0");
     }
 
     @Test

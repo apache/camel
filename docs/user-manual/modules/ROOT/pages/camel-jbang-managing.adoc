@@ -907,7 +907,7 @@ and with `--dry-run` it adds nothing, and prints what the rule would hit now: th
 their route.
 `camel cmd chaos-suggest` suggests rules to try per route from what the routes do (an HTTP call without a circuit
 breaker, a dead letter channel, a hand-off over seda, an input from outside), the most worth trying first, each with
-why and the `chaos-add` command that adds it.
+why and the `chaos-add` command that adds it, with an expectation of what should hold despite the faults.
 `camel get chaos` lists the current rules with their id, version, state, matches and the faults that fired, and
 `--report` shows the report: the verdict, the seed, every version of every rule, the counts per route, and what has
 been tried per route (the kinds of fault, how it went, and what the suggestions offer that no rule tried yet). Chaos is for

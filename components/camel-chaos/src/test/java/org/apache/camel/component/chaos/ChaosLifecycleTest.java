@@ -17,6 +17,8 @@
 package org.apache.camel.component.chaos;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -119,6 +121,28 @@ class ChaosLifecycleTest extends ChaosTestSupport {
 
     private void awaitLifecycle(String id, String state) {
         await().atMost(20, TimeUnit.SECONDS).until(() -> state.equals(lifecycle(id).getString("state")));
+    }
+
+    @Test
+    void anExperimentCountsTheStallAsAFault() {
+        chaos().startExploration("10m", null);
+        Map<String, Object> begun = chaos().beginExperiment("orders cope while route a stalls",
+                "route=a stall duration=200ms expect=orders:failed<=0 within=2s");
+        String id = String.valueOf(((List<?>) begun.get("rules")).get(0));
+        awaitLifecycle(id, "back");
+        template.sendBody("direct:orders", "order");
+        await().atMost(20, TimeUnit.SECONDS).until(() -> !"PENDING".equals(experiment().getString("verdict")));
+
+        // the stall took the route down: the experiment was put to the test, it did not say "never fired"
+        JsonObject experiment = experiment();
+        assertThat(((JsonObject) experiment.get("faults")).getLong(id)).isEqualTo(1);
+        assertThat(experiment.getString("verdict")).isEqualTo("PASS");
+    }
+
+    private JsonObject experiment() {
+        JsonObject exploration = (JsonObject) chaos().report().toJson().get("exploration");
+        List<Object> experiments = exploration.getCollection("experiments");
+        return (JsonObject) experiments.get(0);
     }
 
     @Test

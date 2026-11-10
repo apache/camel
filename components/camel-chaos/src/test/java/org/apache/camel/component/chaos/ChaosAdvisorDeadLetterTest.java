@@ -59,7 +59,7 @@ class ChaosAdvisorDeadLetterTest extends ChaosTestSupport {
         assertThat(s.route()).isEqualTo("orders");
         // the route that consumes the dead letter channel is not one of its routes
         assertThat(s.routes()).containsExactly("orders", "billing", "audit");
-        assertThat(s.rule()).isEqualTo("endpoint=seda:dlq error at=dlq");
+        assertThat(s.rule()).isEqualTo("endpoint=seda:dlq error at=dlq expect=orders:failed<=0");
         assertThat(s.why()).startsWith("routes orders, billing, audit send what fails to the dead letter channel seda:dlq");
     }
 
