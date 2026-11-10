@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.hazelcast.policy;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -46,8 +48,11 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     private final Set<Route> suspendedRoutes;
     private final Set<Route> routes;
     private final Set<Route> suspendedWhileStopped;
+    // the leadership threads told to end that may still wait for or release the lock (guarded by lock)
+    private final List<Future<Void>> releasedFutures;
 
-    private Route route;
+    // a route of the policy, for JMX
+    private volatile Route route;
     private CamelContext camelContext;
     private ExecutorService executorService;
     private HazelcastInstance instance;
@@ -76,6 +81,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         this.suspendedRoutes = new HashSet<>();
         this.routes = new HashSet<>();
         this.suspendedWhileStopped = new HashSet<>();
+        this.releasedFutures = new ArrayList<>();
         this.leader = new AtomicBoolean();
         this.lockMapName = null;
         this.lockKey = null;
@@ -100,15 +106,10 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     @Override
     public void onInit(Route route) {
         super.onInit(route);
-        this.route = route;
 
         lock.lock();
         try {
-            routes.add(route);
-            // a route added to a policy that gave up the leadership when its routes were removed
-            if (leadershipRelease == null && isStarted()) {
-                startLeadership();
-            }
+            addRoute(route);
         } finally {
             lock.unlock();
         }
@@ -120,10 +121,15 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         try {
             suspendedRoutes.remove(route);
             suspendedWhileStopped.remove(route);
-            if (routes.remove(route) && routes.isEmpty()) {
-                // no route uses this policy any more: give up the leadership, so another node runs the route. The
-                // thread is only interrupted when the CamelContext stops (as the stop of the policy does)
-                stopLeadership(camelContext != null && camelContext.isStopping());
+            if (routes.remove(route)) {
+                if (this.route == route) {
+                    this.route = routes.isEmpty() ? null : routes.iterator().next();
+                }
+                if (routes.isEmpty()) {
+                    // no route uses this policy any more: give up the leadership, so another node runs the route. The
+                    // thread is only interrupted when the CamelContext stops (as the stop of the policy does)
+                    stopLeadership(camelContext != null && camelContext.isStopping());
+                }
             }
         } finally {
             lock.unlock();
@@ -192,6 +198,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "HazelcastRoutePolicy");
 
         locks = instance.getMap(lockMapName);
+        // under the lock: BaseService.start() holds it (the same lock as the route callbacks of the policy)
         if (!routes.isEmpty()) {
             startLeadership();
         }
@@ -201,7 +208,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
 
     @Override
     protected void doStop() throws Exception {
-        // also interrupt the thread, so a wait for the lock does not delay the stop
+        // also interrupt the threads, so a wait for the lock does not delay the stop on a Hazelcast client (on a member
+        // tryLock ends after its timeout). Under the lock, which BaseService.stop() holds
         stopLeadership(true);
 
         if (managedInstance) {
@@ -215,6 +223,19 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
     // *************************************************************************
     //
     // *************************************************************************
+
+    // under the lock
+    private void addRoute(Route route) {
+        if (routes.add(route)) {
+            if (this.route == null) {
+                this.route = route;
+            }
+            // a route added to a policy that gave up the leadership when its routes were removed
+            if (leadershipRelease == null && isStarted()) {
+                startLeadership();
+            }
+        }
+    }
 
     // under the lock
     private void startLeadership() {
@@ -233,10 +254,15 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
             leadershipRelease = null;
         }
         if (future != null) {
-            if (interrupt) {
-                future.cancel(true);
-            }
+            // a thread that waits for the lock ends after the tryLock timeout, or (on a Hazelcast client) when it is
+            // interrupted
+            releasedFutures.add(future);
             future = null;
+        }
+        releasedFutures.removeIf(Future::isDone);
+        if (interrupt) {
+            releasedFutures.forEach(f -> f.cancel(true));
+            releasedFutures.clear();
         }
         setLeader(false);
     }
@@ -294,16 +320,18 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
 
     @ManagedAttribute(description = "The route id")
     public String getRouteId() {
-        if (route != null) {
-            return route.getId();
+        Route r = route;
+        if (r != null) {
+            return r.getId();
         }
         return null;
     }
 
     @ManagedAttribute(description = "The consumer endpoint", mask = true)
     public String getEndpointUrl() {
-        if (route != null && route.getConsumer() != null && route.getConsumer().getEndpoint() != null) {
-            return route.getConsumer().getEndpoint().toString();
+        Route r = route;
+        if (r != null && r.getConsumer() != null && r.getConsumer().getEndpoint() != null) {
+            return r.getConsumer().getEndpoint().toString();
         }
         return null;
     }

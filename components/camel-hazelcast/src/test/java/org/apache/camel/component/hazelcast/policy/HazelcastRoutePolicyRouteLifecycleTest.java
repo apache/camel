@@ -38,8 +38,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -124,6 +126,8 @@ class HazelcastRoutePolicyRouteLifecycleTest {
         // the policy still has a route on node a
         a.getRouteController().stopRoute("other");
         a.removeRoute("other");
+        // JMX shows a route that still uses the policy
+        assertEquals(ROUTE_ID, policyA.getRouteId());
         await().during(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
                 .untilAsserted(() -> {
                     assertTrue(policyA.isLeader(), "Node a gave up the leadership while a route still uses the policy");
@@ -133,6 +137,7 @@ class HazelcastRoutePolicyRouteLifecycleTest {
 
         a.getRouteController().stopRoute(ROUTE_ID);
         a.removeRoute(ROUTE_ID);
+        assertNull(policyA.getRouteId());
         awaitLeader(b, policyB);
         assertConsumes(b);
     }
@@ -211,6 +216,52 @@ class HazelcastRoutePolicyRouteLifecycleTest {
         b.getRouteController().resumeRoute(ROUTE_ID);
         assertTrue(consumerStarted(b), "The consumer of the leader is not started after the route was resumed");
         assertConsumes(b);
+    }
+
+    @Test
+    void restartedNodeCompetesForTheLeadershipAgain() throws Exception {
+        HazelcastRoutePolicy policyA = newPolicy("a");
+        CamelContext a = startNode("a", policyA);
+        awaitLeader(a, policyA);
+        HazelcastRoutePolicy policyB = newPolicy("b");
+        CamelContext b = startNode("b", policyB);
+        assertFollower(b, policyB);
+
+        // the stop of the CamelContext removes the route from the policy (onRemove), and the start gives it back
+        a.stop();
+        awaitLeader(b, policyB);
+        a.start();
+        assertFollower(a, policyA);
+
+        // node a waits for the lock again, so it takes over when node b stops
+        b.stop();
+        awaitLeader(a, policyA);
+        assertConsumes(a);
+    }
+
+    @Test
+    void stopAfterTheRouteWasRemovedDoesNotWaitForTheLock() throws Exception {
+        HazelcastRoutePolicy policyA = newPolicy("a");
+        CamelContext a = startNode("a", policyA);
+        awaitLeader(a, policyA);
+        // node b uses a Hazelcast client, whose wait in tryLock ends when the thread is interrupted (on a member it
+        // ends after the tryLock timeout)
+        HazelcastRoutePolicy policyB = newPolicy(newClient(), "b");
+        // the follower waits a long time for the lock, longer than the graceful shutdown of its thread pool
+        policyB.setTryLockTimeout(60, TimeUnit.SECONDS);
+        CamelContext b = startNode("b", policyB);
+        b.getExecutorServiceManager().setShutdownAwaitTermination(TimeUnit.SECONDS.toMillis(30));
+        assertFollower(b, policyB);
+
+        // the route is removed while the leadership thread of node b waits for the lock
+        b.getRouteController().stopRoute(ROUTE_ID);
+        b.removeRoute(ROUTE_ID);
+
+        // the stop of the policy ends that thread too, instead of waiting for the end of its tryLock
+        long start = System.nanoTime();
+        b.stop();
+        long took = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+        assertTrue(took < TimeUnit.SECONDS.toMillis(10), "The stop of node b took " + took + " ms");
     }
 
     private HazelcastRoutePolicy newPolicy(String node) {
