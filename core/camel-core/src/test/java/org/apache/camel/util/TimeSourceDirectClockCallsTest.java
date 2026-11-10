@@ -17,10 +17,12 @@
 package org.apache.camel.util;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -41,8 +43,17 @@ import static org.junit.jupiter.api.Assertions.fail;
  * The core classes that read the clock and sleep through {@link TimeSource} (CAMEL-25911) must not call the system
  * clock directly, or a deterministic simulation test (camel-test-dst) would not run that wait in virtual time. The
  * check is a textual scan of their sources, as Camel does not use the forbidden-apis plugin: it finds the usual forms
- * of these calls, it is not a parser. camel-chaos is not scanned: nothing was moved there, and the waits of its
- * assertions run in real time on purpose.
+ * of these calls only, it is not a parser. It finds, as calls or method references (also fully qualified):
+ * {@code System.nanoTime()}, {@code System.currentTimeMillis()}, {@code Thread.sleep},
+ * {@code TimeUnit.SECONDS.sleep(...)} and the other units, {@code Instant.now()}, the {@code now()} of
+ * {@code LocalDateTime}, {@code LocalDate}, {@code LocalTime}, {@code OffsetDateTime}, {@code OffsetTime} and
+ * {@code ZonedDateTime}, {@code new Date()} and {@code Clock.systemUTC()} and the other {@code Clock.system...} clocks;
+ * and the static imports of {@code System.nanoTime}, {@code System.currentTimeMillis}, {@code Thread.sleep},
+ * {@code System.*} and {@code Thread.*}. It does not find other static imports (such as of {@code Instant.now} or of a
+ * {@code TimeUnit} constant), nor a {@code sleep} on a variable or a field, such as {@code unit.sleep(x)}: the listed
+ * classes make such calls that are fine ({@code TimeSource} calls its provider, and the redelivery error handler
+ * {@code RedeliveryPolicy.sleep}), so that rule would only add false reports. camel-chaos is not scanned: nothing was
+ * moved there, and the waits of its assertions run in real time on purpose.
  */
 class TimeSourceDirectClockCallsTest {
 
@@ -106,19 +117,44 @@ class TimeSourceDirectClockCallsTest {
             rule("\\bThread\\s*::\\s*sleep\\b", "Thread::sleep", "TimeSource::sleep"),
             rule("\\bInstant\\s*::\\s*now\\b", "Instant::now", "TimeSource::instant"),
             rule("\\bInstant\\s*\\.\\s*now\\s*\\(", "Instant.now()", "TimeSource.instant()"),
-            rule("\\bTimeUnit\\s*\\.\\s*[A-Z]+\\s*\\.\\s*sleep\\s*\\(", "TimeUnit.<unit>.sleep(...)",
+            rule("\\bTimeUnit\\s*\\.\\s*[A-Z]+\\s*(\\.\\s*sleep\\s*\\(|::\\s*sleep\\b)", "TimeUnit.<unit>.sleep(...)",
                     "TimeSource.sleep(unit.toMillis(duration))"),
-            rule("\\bimport\\s+static\\s+java\\.lang\\.(System\\s*\\.\\s*(nanoTime|currentTimeMillis)"
-                 + "|Thread\\s*\\.\\s*sleep)\\b",
-                    "a static import of the system clock or sleep", "the TimeSource methods"));
+            rule("\\bimport\\s+static\\s+java\\.lang\\.(System\\s*\\.\\s*(nanoTime|currentTimeMillis|\\*)"
+                 + "|Thread\\s*\\.\\s*(sleep|\\*))",
+                    "a static import of the system clock or sleep", "the TimeSource methods"),
+            rule("\\b(LocalDateTime|LocalDate|LocalTime|OffsetDateTime|OffsetTime|ZonedDateTime)\\s*(\\.|::)\\s*now\\b",
+                    "<java.time type>.now()", "TimeSource.instant()"),
+            rule("\\bnew\\s+(java\\s*\\.\\s*util\\s*\\.\\s*)?Date\\s*\\(\\s*\\)|\\bDate\\s*::\\s*new\\b", "new Date()",
+                    "new Date(TimeSource.currentTimeMillis())"),
+            rule("\\bClock\\s*(\\.|::)\\s*system\\w*\\b", "Clock.<system clock>()",
+                    "TimeSource.instant()"));
 
     private static Rule rule(String regex, String call, String instead) {
         return new Rule(Pattern.compile(regex), call, instead);
     }
 
-    /** The core directory: the parent of the camel-core module. */
-    private static Path coreDir() {
-        return Paths.get(System.getProperty("basedir", ".")).toAbsolutePath().normalize().getParent();
+    /**
+     * The core directory: the parent of the camel-core module, found from where this test class is loaded (such as
+     * camel-core/target/test-classes), so the test also runs from an IDE with another working directory.
+     */
+    static Path coreDir() {
+        CodeSource source = TimeSourceDirectClockCallsTest.class.getProtectionDomain().getCodeSource();
+        if (source == null) {
+            return fail("The location of " + TimeSourceDirectClockCallsTest.class.getName() + " is not known");
+        }
+        Path start;
+        try {
+            start = Paths.get(source.getLocation().toURI());
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException(e);
+        }
+        for (Path dir = start.toAbsolutePath().normalize(); dir != null; dir = dir.getParent()) {
+            if (Files.isDirectory(dir.resolve("camel-util/src/main/java"))
+                    && Files.isDirectory(dir.resolve("camel-core/src"))) {
+                return dir;
+            }
+        }
+        return fail("The core directory (with camel-util and camel-core) is not found above " + start);
     }
 
     @Test
@@ -190,6 +226,10 @@ class TimeSourceDirectClockCallsTest {
                     Object d = Instant.now();
                     LongSupplier e = System::nanoTime;
                     long f = TimeSource.nanoTime();
+                    Object g = LocalDateTime.now();
+                    Object h = new java.util.Date();
+                    Object i = Clock.systemUTC(); Object k = TimeUnit.SECONDS::sleep; Supplier<Date> m = Date::new;
+                    void j(TimeUnit unit, RedeliveryPolicy policy) throws Exception { unit.sleep(1); policy.sleep(2); }
                     static final class SystemProvider {
                         long nanoTime() {
                             return System.nanoTime();
@@ -204,9 +244,19 @@ class TimeSourceDirectClockCallsTest {
                 "Foo.java:12: TimeUnit.<unit>.sleep(...), use TimeSource.sleep(unit.toMillis(duration)) instead",
                 "Foo.java:14: System.currentTimeMillis(), use TimeSource.currentTimeMillis() instead",
                 "Foo.java:15: Instant.now(), use TimeSource.instant() instead",
-                "Foo.java:16: System::nanoTime, use TimeSource::nanoTime instead"),
+                "Foo.java:16: System::nanoTime, use TimeSource::nanoTime instead",
+                "Foo.java:18: <java.time type>.now(), use TimeSource.instant() instead",
+                "Foo.java:19: new Date(), use new Date(TimeSource.currentTimeMillis()) instead",
+                "Foo.java:20: TimeUnit.<unit>.sleep(...), use TimeSource.sleep(unit.toMillis(duration)) instead",
+                "Foo.java:20: new Date(), use new Date(TimeSource.currentTimeMillis()) instead",
+                "Foo.java:20: Clock.<system clock>(), use TimeSource.instant() instead"),
                 scan("Foo.java", source, "SystemProvider"));
-        assertEquals(7, scan("Foo.java", source, null).size());
+        assertEquals(12, scan("Foo.java", source, null).size());
+        assertEquals(List.of(
+                "Bar.java:1: a static import of the system clock or sleep, use the TimeSource methods instead",
+                "Bar.java:2: a static import of the system clock or sleep, use the TimeSource methods instead"),
+                scan("Bar.java", "import static java.lang.System.*;\nimport static java.lang.Thread.*;\nclass Bar {}\n",
+                        null));
         assertThrows(AssertionFailedError.class, () -> scan("Foo.java", "class Foo { /* no end", null));
         assertThrows(AssertionFailedError.class, () -> scan("Foo.java", "class Foo { String s = \"no end\n}", null));
     }
