@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * <pre>{@code
  * from("direct:embeddings")
  *         .setHeader("CamelLangchain4jEmbeddingStoreAction", constant("ADD"))
- *         .setHeader("CamelLangchain4jEmbeddingEmbedding", () -> myEmbedding)
+ *         .setHeader("CamelLangChain4jEmbeddingsEmbedding", () -> myEmbedding)
  *         .to("langchain4j-embeddingstore:mystore");
  * }</pre>
  *
