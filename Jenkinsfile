@@ -51,7 +51,7 @@ pipeline {
 
     parameters {
         booleanParam(name: 'VIRTUAL_THREAD', defaultValue: false, description: 'Perform the build using virtual threads')
-        choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu-avx'], description: 'Run on specific platform')
+        choice(name: 'PLATFORM_FILTER', choices: ['all', 'ppc64le', 's390x', 'ubuntu'], description: 'Run on specific platform')
         choice(name: 'JDK_FILTER', choices: ['all', 'jdk_17_latest' ,'jdk_21_latest', 'jdk_25_latest'], description: 'Run on specific jdk')
     }
     agent none
@@ -81,7 +81,7 @@ pipeline {
                     }
                     axis {
                         name 'PLATFORM'
-                        values 'ppc64le', 's390x', 'ubuntu-avx'
+                        values 'ppc64le', 's390x', 'ubuntu'
                     }
                 }
                 excludes {
@@ -112,7 +112,7 @@ pipeline {
                         }
                         axis {
                             name 'PLATFORM'
-                            values 'ubuntu-avx'
+                            values 'ubuntu'
                         }
                     }
                     exclude {
@@ -145,9 +145,9 @@ pipeline {
                             cleanWs()
                             sh 'if [ -d /home/jenkins/.m2/repository/org/apache/camel ]; then rm -rf /home/jenkins/.m2/repository/org/apache/camel; fi'
                             script {
-                                // Use full clone for JDK 21 on ubuntu-avx (needed for Sonar analysis)
+                                // Use full clone for JDK 21 on ubuntu (needed for Sonar analysis)
                                 // Use shallow clone for all other combinations
-                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_21_latest") {
+                                if ("${PLATFORM}" == "ubuntu" && "${JDK_NAME}" == "jdk_21_latest") {
                                     echo "Using full clone for ${PLATFORM}-${JDK_NAME} (required for code coverage and Sonar)"
                                     checkout scm
                                 } else {
@@ -171,7 +171,7 @@ pipeline {
                             sh 'java -version'
                             timeout(unit: 'MINUTES', time: 450) {
                                 script {
-                                    if ("${PLATFORM}" == "ubuntu-avx") {
+                                    if ("${PLATFORM}" == "ubuntu") {
                                         if ("${JDK_NAME}" == "jdk_21_latest") {
                                             // Enable virtual threads and coverage required later by Sonar check
                                             sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS_UBUNTU -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true install -Dcamel.threads.virtual.enabled=${params.VIRTUAL_THREAD} -Pcoverage"
@@ -201,7 +201,7 @@ pipeline {
                             script {
                                 echo "Do Static code analysis for ${PLATFORM}-${JDK_NAME}"
                                 // We only execute this on the main PLATFORM/JDK target
-                                if ("${PLATFORM}" == "ubuntu-avx" && "${JDK_NAME}" == "jdk_21_latest") {
+                                if ("${PLATFORM}" == "ubuntu" && "${JDK_NAME}" == "jdk_21_latest") {
                                     withCredentials([string(credentialsId: 'apache-camel-core', variable: 'SONAR_TOKEN')]) {
                                         echo "Code quality review ENABLED for ${PLATFORM} with ${JDK_NAME}"
                                         sh "./mvnw $MAVEN_PARAMS -Dsonar.host.url=https://sonarcloud.io -Dsonar.java.experimental.batchModeSizeInKB=2048 -Dsonar.organization=apache -Dsonar.projectKey=apache_camel -Dsonar.branch.name=$BRANCH_NAME org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.coverage.exclusions=test-infra/**,tooling/**"
