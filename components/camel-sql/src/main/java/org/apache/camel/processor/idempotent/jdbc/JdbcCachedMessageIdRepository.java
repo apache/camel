@@ -104,7 +104,8 @@ public class JdbcCachedMessageIdRepository extends JdbcMessageIdRepository {
         cancelCacheAfterCommit(key);
         boolean removed = super.remove(key);
         // and again after the delete: an add of the key on another thread whose transaction committed while this delete
-        // waited for its row lock has cached it meanwhile
+        // waited for its row lock may have cached it meanwhile. This narrows the window in which the cache keeps a
+        // deleted key; it does not close it, as that add's afterCommit can still run after this line.
         cache.remove(key);
         return removed;
     }
