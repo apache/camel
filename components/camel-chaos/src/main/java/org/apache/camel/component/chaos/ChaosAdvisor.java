@@ -436,7 +436,8 @@ final class ChaosAdvisor {
                 LOG.debug("No chaos suggestions for route {}: {}", route.getRouteId(), e.getMessage(), e);
             }
         }
-        answer.replaceAll(ChaosAdvisor::withExpectation);
+        Map<String, String> callers = callers(routes, consumers);
+        answer.replaceAll(s -> withExpectation(s, callers));
         answer.sort(Comparator.comparingInt(Suggestion::rank).reversed());
         return answer.size() > MAX ? List.copyOf(answer.subList(0, MAX)) : answer;
     }
@@ -445,15 +446,48 @@ final class ChaosAdvisor {
      * The suggestion with what should hold despite its faults, when none of its rules says (CAMEL-26817): every
      * exchange the faults hit in its route is recovered by redelivery or handled by the error handler, and none fails
      * ({@code expect=orders:failed<=0}). An experiment needs an expectation, and a rule added without one passes
-     * whatever happens. For two faults at once the first rule has it.
+     * whatever happens. For two faults at once the first rule has it. A fault that fails or stalls the route itself,
+     * when another route of the integration calls it, expects of the caller: the route fails where the fault is, and
+     * what should hold is that the caller copes.
+     *
+     * @param callers per route, a route of the integration that calls it
      */
-    static Suggestion withExpectation(Suggestion s) {
+    static Suggestion withExpectation(Suggestion s, Map<String, String> callers) {
         if (s.rules().stream().anyMatch(r -> r.contains(" expect="))) {
             return s;
         }
+        String route = s.route();
+        if ((s.kind() == Kind.CONSUMER || s.kind() == Kind.LIFECYCLE) && s.rule().startsWith("route=")
+                && callers.containsKey(route)) {
+            route = callers.get(route);
+        }
         return new Suggestion(
-                s.route(), s.kind(), s.recipe(), s.title(), s.rule() + " expect=" + s.route() + ":failed<=0", s.why(),
+                s.route(), s.kind(), s.recipe(), s.title(), s.rule() + " expect=" + route + ":failed<=0", s.why(),
                 s.rank(), s.routes(), s.with());
+    }
+
+    /**
+     * Per route, the first route of the integration that calls it by a static send: over direct or seda, or with an
+     * HTTP call to its server.
+     */
+    static Map<String, String> callers(List<Route> routes, Map<String, String> consumers) {
+        Map<String, String> answer = new HashMap<>();
+        for (Route route : routes) {
+            try {
+                for (Processor processor : route.filter("*")) {
+                    if (processor instanceof EndpointAware aware && aware.getEndpoint() != null) {
+                        String called = receiver(uri(aware.getEndpoint()), consumers);
+                        if (called != null && !called.equals(route.getRouteId())) {
+                            answer.putIfAbsent(called, route.getRouteId());
+                        }
+                    }
+                }
+            } catch (RuntimeException e) {
+                // the route changed while it was read: no callers from it now
+                LOG.debug("No callers from route {}: {}", route.getRouteId(), e.getMessage(), e);
+            }
+        }
+        return answer;
     }
 
     private static void suggest(

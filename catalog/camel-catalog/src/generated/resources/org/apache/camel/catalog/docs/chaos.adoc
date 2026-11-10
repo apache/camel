@@ -268,8 +268,10 @@ lost between the two routes, and a duplicate that the route receiving the call d
 suggestion expects that no exchange fails in its route (`expect=orders:failed<=0`): whatever the fault does, each
 exchange it hits is recovered by redelivery or handled by the error handler. A route without error handling for the
 fault then fails the verdict, which is the finding, and a route with a dead letter channel, redelivery or a circuit
-breaker with a fallback passes. Change the expectation when the route is meant to fail, such as a sender that should see
-the error.
+breaker with a fallback passes. A fault that fails or stalls a route that another route of the integration calls (over
+`direct`, `seda` or HTTP to the integration's own server) expects of that caller instead (`expect=orders:failed<=0` for
+a stalled `payment` that `orders` calls): the route fails where the fault is, and what should hold is that its caller
+copes. Change the expectation when the route is meant to fail, such as a sender that should see the error.
 
 Two faults at once (kind `combined`) come after the single faults, as most bugs that lose messages need two failures
 that meet. Their rules are added together:
