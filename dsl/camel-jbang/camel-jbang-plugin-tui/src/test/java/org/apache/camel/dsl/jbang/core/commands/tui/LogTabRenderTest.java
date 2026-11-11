@@ -110,6 +110,36 @@ class LogTabRenderTest {
         assertEquals(LogTab.View.COMPACT, tab.view());
     }
 
+    @Test
+    void spacePausesAndResumesWithTheBadgeOfTheTimeline() {
+        List<LogEntry> entries = new ArrayList<>();
+        for (int i = 0; i < 40; i++) {
+            entries.add(LogTab.parseLogLine("2026-11-11 10:00:" + String.format("%02d", i)
+                                            + ".000  INFO 42 --- [main] route1 : Line " + i));
+        }
+        LogTab tab = new LogTab(ctx);
+        tab.setEntriesForTesting(entries);
+
+        String live = TuiTestHelper.renderToString(tab, 140, 12);
+        assertTrue(live.contains("● live"), live);
+        assertTrue(footer(tab).matches(".*Space +pause.*"), footer(tab));
+
+        // CAMEL-26864: Space pauses, as on the Timeline; the badge says so, not only the footer
+        assertTrue(tab.handleKeyEvent(KeyEvent.ofChar(' ')));
+        String paused = TuiTestHelper.renderToString(tab, 140, 12);
+        assertTrue(paused.contains("‖ PAUSED") && !paused.contains("● live"), paused);
+        assertTrue(footer(tab).matches(".*Space +resume.*"), footer(tab));
+
+        tab.pageUp();
+        String above = TuiTestHelper.renderToString(tab, 140, 12);
+        assertTrue(above.contains("‖ PAUSED, more below"), above);
+
+        // End (and f) still resume
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.END));
+        String resumed = TuiTestHelper.renderToString(tab, 140, 12);
+        assertTrue(resumed.contains("● live") && resumed.contains("Line 39"), resumed);
+    }
+
     private static String footer(LogTab tab) {
         List<Span> spans = new ArrayList<>();
         tab.renderFooter(spans);

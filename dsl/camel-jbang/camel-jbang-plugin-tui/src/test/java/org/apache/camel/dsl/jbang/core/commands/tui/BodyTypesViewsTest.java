@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import dev.tamboui.text.Line;
+import dev.tamboui.text.Span;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -113,11 +114,22 @@ class BodyTypesViewsTest {
         assertThat(BodyTypes.label(List.of("java.lang.String", "byte[]"), List.of("payload")))
                 .isEqualTo("String | byte[]");
         assertThat(BodyTypes.label(List.of("null", "java.util.LinkedHashMap"), List.of("null", "data")))
-                .isEqualTo(TuiIcons.WARN + " null | LinkedHashMap (null and data)");
+                .isEqualTo(TuiIcons.WARN + " (no body) | LinkedHashMap (no body and data)");
         assertThat(BodyTypes.label(List.of(), List.of())).isEmpty();
         assertThat(BodyTypes.shortLabel(List.of("null", "java.util.LinkedHashMap"), List.of("null", "data")))
-                .isEqualTo(TuiIcons.WARN + " null | LinkedHashMap");
-        assertThat(BodyTypes.kinds(List.of("null", "payload", "data"))).isEqualTo("null, payload and data");
+                .isEqualTo(TuiIcons.WARN + " (no body) | LinkedHashMap");
+        assertThat(BodyTypes.kinds(List.of("null", "payload", "data"))).isEqualTo("no body, payload and data");
+        // CAMEL-26864: a step reached without a body, as the setBody after a timer, says so, not "null"
+        assertThat(BodyTypes.label(List.of("null"), List.of("null"))).isEqualTo("(no body)");
+        assertThat(BodyTypes.fit(List.of("null"), List.of("null"), 20)).isEqualTo("(no body)");
+    }
+
+    @Test
+    void inspectSaysAMessageHasNoBody() {
+        List<Line> lines = new ArrayList<>();
+        HistoryTab.addBodyLines(lines, null, "null", -1, false);
+        String text = lines.get(0).spans().stream().map(Span::content).reduce("", String::concat);
+        assertThat(text).isEqualTo(" Body: (no body)");
     }
 
     @Test

@@ -209,7 +209,8 @@ class LogTab extends AbstractTab {
             logLevelListState.select(2);
             return true;
         }
-        if (ke.isCharIgnoreCase('f')) {
+        if (ke.isChar(' ') || ke.isCharIgnoreCase('f')) {
+            // Space pauses and resumes, as on the Timeline
             followMode = !followMode;
             return true;
         }
@@ -355,18 +356,17 @@ class LogTab extends AbstractTab {
         } else {
             titleSpans.add(Span.raw(" Log "));
         }
-        if (hasNew) {
-            // follow mode is off (a scroll or Home/PgUp switches it off) and lines arrived below the view
-            titleSpans.add(Span.styled("(paused, End follows)", Theme.warning()));
-            titleSpans.add(Span.raw(" "));
-        }
+        titleSpans.add(followBadge(hasNew));
+        titleSpans.add(Span.raw(" "));
         if (ctx.logPinned && ctx.logPinPercent > 0 && ctx.logPinVisible) {
             titleSpans.add(Span.styled(" Ctrl+L ", Theme.hintKey()));
             titleSpans.add(Span.raw(" pin (" + ctx.logPinPercent + "%)  "));
         }
         titleLine = Line.from(titleSpans);
+        // paused, the border is in the warning colour, so a log that stays put does not pass for one that follows
         Block block = Block.builder()
                 .borderType(BorderType.ROUNDED).borders(Borders.ALL)
+                .borderStyle(followMode ? Style.EMPTY : Theme.warning())
                 .title(Title.from(titleLine))
                 .build();
         frame.renderWidget(block, area);
@@ -485,6 +485,18 @@ class LogTab extends AbstractTab {
         }
     }
 
+    /**
+     * The badge of the title, the same as on the Timeline: a green {@code ● live} while the log follows the newest
+     * lines, a reversed {@code ‖ PAUSED} when it stays put (Space, f, a scroll, Home or PgUp), which says so when there
+     * are lines below the view.
+     */
+    Span followBadge(boolean hasNew) {
+        if (followMode) {
+            return Span.styled("● live", Theme.success().bold());
+        }
+        return Span.styled(" ‖ PAUSED" + (hasNew ? ", more below " : " "), Theme.warning().bold().reversed());
+    }
+
     @Override
     public void renderFooter(List<Span> spans) {
         search.renderFooterHints(spans);
@@ -513,7 +525,7 @@ class LogTab extends AbstractTab {
         if (!ctx.isInfraSelected()) {
             hint(spans, "l", "level");
         }
-        hint(spans, "f", "follow" + (followMode ? " [on]" : " [off]"));
+        hint(spans, "Space", followMode ? "pause" : "resume");
         if (ctx.logPinned) {
             hint(spans, "Ctrl+L", "pin (" + ctx.logPinPercent + "%)");
         } else {

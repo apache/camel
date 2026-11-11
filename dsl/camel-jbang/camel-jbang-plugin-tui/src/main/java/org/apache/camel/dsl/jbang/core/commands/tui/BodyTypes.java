@@ -32,6 +32,12 @@ public final class BodyTypes {
     /** The mark of a step reached with bodies of more than one kind. */
     public static final String MARK = TuiIcons.WARN;
 
+    /**
+     * A message without a body, which the app gives as the type "null" (MessageHelper): the word null alone reads as a
+     * class name.
+     */
+    public static final String NO_BODY = "(no body)";
+
     private BodyTypes() {
     }
 
@@ -40,9 +46,9 @@ public final class BodyTypes {
         return kinds != null && kinds.size() > 1;
     }
 
-    /** The simple class name of a type: LinkedHashMap, byte[]. */
+    /** The simple class name of a type: LinkedHashMap, byte[], or (no body). */
     public static String simpleName(String type) {
-        return type.substring(type.lastIndexOf('.') + 1);
+        return "null".equals(type) ? NO_BODY : type.substring(type.lastIndexOf('.') + 1);
     }
 
     /** The types by their simple class names: String | LinkedHashMap. */
@@ -54,12 +60,13 @@ public final class BodyTypes {
         return sj.toString();
     }
 
-    /** The kinds in words: payload and data, or null, payload and data. */
+    /** The kinds in words: payload and data, or no body, payload and data. */
     public static String kinds(List<String> kinds) {
-        if (kinds.size() < 2) {
-            return String.join("", kinds);
+        List<String> words = kinds.stream().map(k -> "null".equals(k) ? "no body" : k).toList();
+        if (words.size() < 2) {
+            return String.join("", words);
         }
-        return String.join(", ", kinds.subList(0, kinds.size() - 1)) + " and " + kinds.get(kinds.size() - 1);
+        return String.join(", ", words.subList(0, words.size() - 1)) + " and " + words.get(words.size() - 1);
     }
 
     /**
