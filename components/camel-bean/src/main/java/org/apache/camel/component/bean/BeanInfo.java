@@ -269,7 +269,7 @@ public class BeanInfo {
     }
 
     /**
-     * The public method name of the bean closest to the given one (a typo such as length for length), or null.
+     * The public method name of the bean closest to the given one (a typo such as lenght for length), or null.
      */
     private String closestMethodName(String name) {
         if (name == null || name.length() < 3) {
