@@ -82,6 +82,9 @@ public class OpaEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (configuration.getInputExpression() != null) {
+            configuration.getInputExpression().init(getCamelContext());
+        }
         String mode = configuration.getEvaluationMode();
         if (WASM_MODE.equalsIgnoreCase(mode)) {
             if (configuration.isBatch()) {
@@ -103,7 +106,7 @@ public class OpaEndpoint extends DefaultEndpoint {
                 evaluator = new OpaRestEvaluator(
                         opaClient, null, policyPath, configuration.getAllowKey(), configuration.getIncludeHeaders(),
                         configuration.getIncludeProperties(), configuration.isIncludeBody(),
-                        configuration.isFailOpen());
+                        configuration.isFailOpen(), configuration.getInputExpression());
             } else {
                 sslContext = createSslContext();
                 OpaHttpClient transport = OpaRestEvaluator.createTransport(
@@ -115,7 +118,7 @@ public class OpaEndpoint extends DefaultEndpoint {
                         opaClient, transport, policyPath, configuration.getAllowKey(),
                         configuration.getIncludeHeaders(),
                         configuration.getIncludeProperties(), configuration.isIncludeBody(),
-                        configuration.isFailOpen());
+                        configuration.isFailOpen(), configuration.getInputExpression());
             }
         }
     }
@@ -169,7 +172,7 @@ public class OpaEndpoint extends DefaultEndpoint {
                 getCamelContext(), configuration.getPolicyBundle(), configuration.getEntrypoint(),
                 configuration.getPoolSize(), configuration.getBorrowTimeout(), policyPath, configuration.getAllowKey(),
                 configuration.getIncludeHeaders(), configuration.getIncludeProperties(), configuration.isIncludeBody(),
-                configuration.isFailOpen());
+                configuration.isFailOpen(), configuration.getInputExpression());
     }
 
     @Override

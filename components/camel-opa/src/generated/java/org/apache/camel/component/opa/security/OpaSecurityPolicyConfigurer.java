@@ -45,6 +45,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "includeHeaders": target.setIncludeHeaders(property(camelContext, java.lang.String.class, value)); return true;
         case "includeproperties":
         case "includeProperties": target.setIncludeProperties(property(camelContext, java.lang.String.class, value)); return true;
+        case "inputexpression":
+        case "inputExpression": target.setInputExpression(property(camelContext, org.apache.camel.Expression.class, value)); return true;
         case "opaclient":
         case "opaClient": target.setOpaClient(property(camelContext, com.styra.opa.OPAClient.class, value)); return true;
         case "policybundle":
@@ -89,6 +91,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "includeHeaders": return java.lang.String.class;
         case "includeproperties":
         case "includeProperties": return java.lang.String.class;
+        case "inputexpression":
+        case "inputExpression": return org.apache.camel.Expression.class;
         case "opaclient":
         case "opaClient": return com.styra.opa.OPAClient.class;
         case "policybundle":
@@ -134,6 +138,8 @@ public class OpaSecurityPolicyConfigurer extends org.apache.camel.support.compon
         case "includeHeaders": return target.getIncludeHeaders();
         case "includeproperties":
         case "includeProperties": return target.getIncludeProperties();
+        case "inputexpression":
+        case "inputExpression": return target.getInputExpression();
         case "opaclient":
         case "opaClient": return target.getOpaClient();
         case "policybundle":

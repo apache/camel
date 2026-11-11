@@ -356,6 +356,27 @@ public interface OpaComponentBuilderFactory {
         }
     
         /**
+         * An expression producing the complete policy input as a Map, object
+         * JSON node or POJO. Replaces the default input envelope;
+         * includeHeaders, includeProperties and includeBody then do not apply.
+         * In batch mode it sees each element as the body on an exchange copy.
+         * Null, scalar and streaming results fail closed. Reference a
+         * configured expression bean.
+         *
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
+         *
+         * Group: advanced
+         *
+         * @param inputExpression the value to set
+         * @return the dsl builder
+         */
+        default OpaComponentBuilder inputExpression(org.apache.camel.Expression inputExpression) {
+            doSetProperty("inputExpression", inputExpression);
+            return this;
+        }
+
+        /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
          * 
@@ -562,6 +583,7 @@ public interface OpaComponentBuilderFactory {
             case "autowiredEnabled": ((OpaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "borrowTimeout": getOrCreateConfiguration((OpaComponent) component).setBorrowTimeout((long) value); return true;
             case "connectionTimeout": getOrCreateConfiguration((OpaComponent) component).setConnectionTimeout((long) value); return true;
+            case "inputExpression": getOrCreateConfiguration((OpaComponent) component).setInputExpression((org.apache.camel.Expression) value); return true;
             case "opaClient": getOrCreateConfiguration((OpaComponent) component).setOpaClient((com.styra.opa.OPAClient) value); return true;
             case "poolSize": getOrCreateConfiguration((OpaComponent) component).setPoolSize((int) value); return true;
             case "requestTimeout": getOrCreateConfiguration((OpaComponent) component).setRequestTimeout((long) value); return true;

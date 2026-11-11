@@ -17,6 +17,7 @@
 package org.apache.camel.component.opa;
 
 import com.styra.opa.OPAClient;
+import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -42,6 +43,13 @@ public class OpaConfiguration implements Cloneable {
 
     @UriParam
     private boolean includeBody;
+
+    @UriParam(label = "advanced",
+              description = "An expression producing the complete policy input as a Map, object JSON node or POJO."
+                            + " Replaces the default input envelope; includeHeaders, includeProperties and includeBody"
+                            + " then do not apply. In batch mode it sees each element as the body on an exchange copy."
+                            + " Null, scalar and streaming results fail closed. Reference a configured expression bean.")
+    private Expression inputExpression;
 
     @UriParam(label = "security", security = "secret")
     private String bearerToken;
@@ -78,6 +86,19 @@ public class OpaConfiguration implements Cloneable {
               description = "An existing OPAClient to use. When set, serverUrl and bearerToken are ignored.")
     @Metadata(autowired = true)
     private OPAClient opaClient;
+
+    public Expression getInputExpression() {
+        return inputExpression;
+    }
+
+    /**
+     * An expression producing the complete policy input. Replaces the default envelope and its inclusion options. The
+     * result must be a Map, object JSON node or JSON-convertible POJO. In a batch the expression sees each element as
+     * the body on an exchange copy. Null, scalar and streaming results fail closed.
+     */
+    public void setInputExpression(Expression inputExpression) {
+        this.inputExpression = inputExpression;
+    }
 
     /**
      * The base URL of the OPA server, without the {@code /v1/data} suffix. The default assumes OPA running as a sidecar

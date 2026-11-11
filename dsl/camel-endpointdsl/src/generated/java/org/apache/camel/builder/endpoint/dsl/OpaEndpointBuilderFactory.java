@@ -506,6 +506,45 @@ public interface OpaEndpointBuilderFactory {
             return this;
         }
         /**
+         * An expression producing the complete policy input as a Map, object
+         * JSON node or POJO. Replaces the default input envelope;
+         * includeHeaders, includeProperties and includeBody then do not apply.
+         * In batch mode it sees each element as the body on an exchange copy.
+         * Null, scalar and streaming results fail closed. Reference a
+         * configured expression bean.
+         *
+         * The option is a: <code>org.apache.camel.Expression</code> type.
+         *
+         * Group: advanced
+         *
+         * @param inputExpression the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder inputExpression(org.apache.camel.Expression inputExpression) {
+            doSetProperty("inputExpression", inputExpression);
+            return this;
+        }
+        /**
+         * An expression producing the complete policy input as a Map, object
+         * JSON node or POJO. Replaces the default input envelope;
+         * includeHeaders, includeProperties and includeBody then do not apply.
+         * In batch mode it sees each element as the body on an exchange copy.
+         * Null, scalar and streaming results fail closed. Reference a
+         * configured expression bean.
+         *
+         * The option will be converted to a
+         * <code>org.apache.camel.Expression</code> type.
+         *
+         * Group: advanced
+         *
+         * @param inputExpression the value to set
+         * @return the dsl builder
+         */
+        default AdvancedOpaEndpointBuilder inputExpression(String inputExpression) {
+            doSetProperty("inputExpression", inputExpression);
+            return this;
+        }
+        /**
          * An existing OPAClient to use. When set, serverUrl and bearerToken are
          * ignored.
          * 
