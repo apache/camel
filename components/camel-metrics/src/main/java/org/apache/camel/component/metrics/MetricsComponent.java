@@ -137,6 +137,6 @@ public class MetricsComponent extends DefaultComponent {
             metricRegistry = getOrCreateMetricRegistry(camelRegistry, METRIC_REGISTRY_NAME);
         }
 
-        ObjectHelper.notNull(metricRegistry, "MetricsRegistry", this);
+        ObjectHelper.notNull(metricRegistry, "metricRegistry", this);
     }
 }
