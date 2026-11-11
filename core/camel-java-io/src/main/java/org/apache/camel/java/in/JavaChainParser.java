@@ -220,10 +220,6 @@ final class JavaChainParser {
                 superclasses);
     }
 
-    /**
-     * The token ranges of the bodies of {@code configure()} (a RouteBuilder) and {@code configuration()} (a
-     * RouteConfigurationBuilder), collecting the constants of the class on the way.
-     */
     /** What a route builder is called with: the chains of its lambdas start on their parameter. */
     private static final Set<String> BUILDER_ENTRIES = Set.of(
             "from", "fromF", "fromV", "rest", "restConfiguration", "routeTemplate", "templatedRoute", "routeConfiguration",
@@ -240,6 +236,10 @@ final class JavaChainParser {
                 && BUILDER_ENTRIES.contains(tokens.get(p + 2).text()) && tokens.get(p + 3).is("(");
     }
 
+    /**
+     * The token ranges of the bodies of {@code configure()} (a RouteBuilder) and {@code configuration()} (a
+     * RouteConfigurationBuilder), collecting the constants of the class on the way.
+     */
     private List<int[]> findMethodBodies(Map<String, Node> constants) {
         List<int[]> bodies = new ArrayList<>();
         int depth = 0;

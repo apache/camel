@@ -148,6 +148,14 @@ public class SimpleTokenizer {
     }
 
     /**
+     * Whether a {@code !} in front of a function negates it. Only a predicate parser turns this on: in an expression a
+     * {@code !} is ordinary text, as in {@code Hello ${body}!}, and must never become an operator (CAMEL-24984).
+     */
+    public void setNotOperator(boolean notOperator) {
+        this.notOperator = notOperator;
+    }
+
+    /**
      * Create the next token
      *
      * @param  expression  the input expression
@@ -156,14 +164,6 @@ public class SimpleTokenizer {
      * @param  filter      defines the accepted token types to be returned (character is always used as fallback)
      * @return             the created token, will always return a token
      */
-    /**
-     * Whether a {@code !} in front of a function negates it. Only a predicate parser turns this on: in an expression a
-     * {@code !} is ordinary text, as in {@code Hello ${body}!}, and must never become an operator (CAMEL-24984).
-     */
-    public void setNotOperator(boolean notOperator) {
-        this.notOperator = notOperator;
-    }
-
     public SimpleToken nextToken(String expression, int index, boolean allowEscape, TokenType... filter) {
         return doNextToken(expression, index, allowEscape, filter);
     }

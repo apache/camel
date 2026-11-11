@@ -839,12 +839,6 @@ final class ChaosRule {
     }
 
     /**
-     * Whether the message meets the condition of {@code when=} (true for a rule without one). A condition that throws
-     * is not met, and counts as skipped. A condition on the body reads a stream body from its cache: a stream that is
-     * not cached yet (such as the reply of a send) is cached first, and the cache is reset after the check, so the
-     * route reads the body as before.
-     */
-    /**
      * The key of the message as it enters a route, for an expectation of duplicates (CAMEL-26791): the value of key=,
      * else the body as text. Null when there is none (no body, an empty one, or a stream that cannot be read twice), as
      * such a message is not counted.
@@ -881,6 +875,12 @@ final class ChaosRule {
         }
     }
 
+    /**
+     * Whether the message meets the condition of {@code when=} (true for a rule without one). A condition that throws
+     * is not met, and counts as skipped. A condition on the body reads a stream body from its cache: a stream that is
+     * not cached yet (such as the reply of a send) is cached first, and the cache is reset after the check, so the
+     * route reads the body as before.
+     */
     boolean matchesWhen(Exchange exchange) {
         Predicate c = condition;
         if (c == null) {
@@ -1246,12 +1246,6 @@ final class ChaosRule {
         }
     }
 
-    /**
-     * The effect of the faults of a rule on the exchanges it faulted, each counted once when it is done: completed
-     * (without a redelivery after the fault, such as after a delay), recovered by a redelivery of the error handler,
-     * handled by the error handler (such as the dead letter channel), or failed. The others are still in flight. Only
-     * the exchanges with a unit of work count, as it tells when the exchange is done.
-     */
     /** What a rule did in one route: its faults there, and how the exchanges it faulted there were done. */
     static final class InRoute {
 
@@ -1259,6 +1253,12 @@ final class ChaosRule {
         final Effect effect = new Effect();
     }
 
+    /**
+     * The effect of the faults of a rule on the exchanges it faulted, each counted once when it is done: completed
+     * (without a redelivery after the fault, such as after a delay), recovered by a redelivery of the error handler,
+     * handled by the error handler (such as the dead letter channel), or failed. The others are still in flight. Only
+     * the exchanges with a unit of work count, as it tells when the exchange is done.
+     */
     static final class Effect {
 
         /** How an exchange was done, after the rule faulted it. */

@@ -45,9 +45,6 @@ public final class EasyPredicateOperators {
     }
 
     /**
-     * Does the expression have any operator (with single space around)?
-     */
-    /**
      * Does the expression have any operator (with a single space around it on each side)?
      *
      * @param  exp the expression to inspect
