@@ -1151,7 +1151,6 @@ public final class IntegrationSummary {
         return new Capability(name, routes, sentence);
     }
 
-    /** Strips Markdown emphasis, code ticks and quotes around a value. */
     /**
      * The route a line of the answer is about, and what follows its colon (null when there is no colon). A route
      * without an id has a key with a colon of its own ({@code src/main/java/OrderRoute.java:32}), so the key is the
@@ -1192,6 +1191,7 @@ public final class IntegrationSummary {
         return slash >= 0 && key.matches(".*:\\d+$") ? key.substring(slash + 1) : key;
     }
 
+    /** Strips Markdown emphasis, code ticks and quotes around a value. */
     private static String clean(String s) {
         String t = s.strip();
         t = t.replaceAll("^[*_`\"']+|[*_`\"']+$", "").strip();
