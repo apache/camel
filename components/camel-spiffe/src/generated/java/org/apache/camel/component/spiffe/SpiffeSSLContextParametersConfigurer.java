@@ -32,6 +32,8 @@ public class SpiffeSSLContextParametersConfigurer extends org.apache.camel.suppo
         case "camelContext": target.setCamelContext(property(camelContext, org.apache.camel.CamelContext.class, value)); return true;
         case "inittimeout":
         case "initTimeout": target.setInitTimeout(property(camelContext, long.class, value)); return true;
+        case "localspiffeid":
+        case "localSpiffeId": target.setLocalSpiffeId(property(camelContext, java.lang.String.class, value)); return true;
         case "spiffesocketpath":
         case "spiffeSocketPath": target.setSpiffeSocketPath(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -49,6 +51,8 @@ public class SpiffeSSLContextParametersConfigurer extends org.apache.camel.suppo
         case "camelContext": return org.apache.camel.CamelContext.class;
         case "inittimeout":
         case "initTimeout": return long.class;
+        case "localspiffeid":
+        case "localSpiffeId": return java.lang.String.class;
         case "spiffesocketpath":
         case "spiffeSocketPath": return java.lang.String.class;
         default: return null;
@@ -67,6 +71,8 @@ public class SpiffeSSLContextParametersConfigurer extends org.apache.camel.suppo
         case "camelContext": return target.getCamelContext();
         case "inittimeout":
         case "initTimeout": return target.getInitTimeout();
+        case "localspiffeid":
+        case "localSpiffeId": return target.getLocalSpiffeId();
         case "spiffesocketpath":
         case "spiffeSocketPath": return target.getSpiffeSocketPath();
         default: return null;

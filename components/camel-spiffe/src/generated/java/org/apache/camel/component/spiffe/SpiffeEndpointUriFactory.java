@@ -29,6 +29,7 @@ public class SpiffeEndpointUriFactory extends org.apache.camel.support.component
         props.add("audience");
         props.add("label");
         props.add("lazyStartProducer");
+        props.add("localSpiffeId");
         props.add("operation");
         props.add("preserveBody");
         props.add("spiffeSocketPath");
