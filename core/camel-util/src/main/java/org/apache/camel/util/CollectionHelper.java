@@ -48,7 +48,7 @@ public final class CollectionHelper {
      * Returns the size of the collection if it can be determined to be a collection
      *
      * @param  value the collection
-     * @return       the size, or <tt>null</tt> if not a collection
+     * @return       the size, or <code>null</code> if not a collection
      */
     public static Integer size(Object value) {
         if (value != null) {

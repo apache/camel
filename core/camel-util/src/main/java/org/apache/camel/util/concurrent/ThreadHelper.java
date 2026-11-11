@@ -41,8 +41,8 @@ public final class ThreadHelper {
 
     /**
      * Creates a new thread name with the given pattern
-     * <p/>
-     * See {@link org.apache.camel.spi.ExecutorServiceManager#setThreadNamePattern(String)} for supported patterns.
+     * <p>
+     * See {@code org.apache.camel.spi.ExecutorServiceManager#setThreadNamePattern(String)} for supported patterns.
      *
      * @param  pattern the pattern
      * @param  name    the name

@@ -142,7 +142,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Asserts whether the value is <b>not</b> <tt>null</tt>
+     * Asserts whether the value is <b>not</b> <code>null</code>
      *
      * @param  value                    the value to test
      * @param  name                     the key that resolved the value
@@ -173,7 +173,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Asserts whether the value is <b>not</b> <tt>null</tt>
+     * Asserts whether the value is <b>not</b> <code>null</code>
      *
      * @param  value                    the value to test
      * @param  on                       additional description to indicate where this problem occurred (appended as
@@ -193,9 +193,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an empty string or an empty collection/map.
+     * Tests whether the value is <code>null</code> or a blank string (empty or only whitespace).
      *
-     * @param  value the value, if its a String it will be tested for text length as well
+     * @param  value the value to test
      * @return       true if empty
      */
     public static boolean isEmpty(String value) {
@@ -203,7 +203,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an an empty collection
+     * Tests whether the value is <code>null</code> or an empty collection
      *
      * @param  value the value to test
      * @return       true if empty
@@ -213,7 +213,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an an empty map
+     * Tests whether the value is <code>null</code> or an empty map
      *
      * @param  value the value to test
      * @return       true if empty
@@ -223,7 +223,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt>, an empty string or an empty collection/map.
+     * Tests whether the value is <code>null</code>, an empty string or an empty collection/map.
      *
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if empty
@@ -243,7 +243,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection/map.
+     * Tests whether the value is <b>not</b> <code>null</code>, an empty string or an empty collection/map.
      *
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if <b>not</b> empty
@@ -253,9 +253,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string
+     * Tests whether the value is <b>not</b> <code>null</code> and <b>not</b> a blank string
      *
-     * @param  value the value, if its a String it will be tested for text length as well
+     * @param  value the value to test
      * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(String value) {
@@ -263,30 +263,30 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an an empty collection
+     * Tests whether the value is <b>not</b> <code>null</code> and <b>not</b> an empty collection
      *
      * @param  value the value to test
-     * @return       true if empty
+     * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Collection<?> value) {
         return !isEmpty(value);
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an an empty map
+     * Tests whether the value is <b>not</b> <code>null</code> and <b>not</b> an empty map
      *
      * @param  value the value to test
-     * @return       true if empty
+     * @return       true if <b>not</b> empty
      */
     public static boolean isNotEmpty(Map<?, ?> value) {
         return !isEmpty(value);
     }
 
     /**
-     * Returns the first non null object <tt>null</tt>.
+     * Returns the first non-null object.
      *
      * @param  values the values
-     * @return        an Optional
+     * @return        an Optional with the first non-null object, or an empty Optional if all the values are null
      */
     public static Optional<Object> firstNotNull(Object... values) {
         for (Object value : values) {
@@ -299,7 +299,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt>, an empty string, an empty collection or a map
+     * Tests whether the value is <code>null</code>, an empty string, an empty collection or a map
      *
      * @param value    the value, if its a String it will be tested for text length as well
      * @param supplier the supplier, the supplier to be used to get a value if value is null
@@ -314,7 +314,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string, an empty collection or a map
+     * Tests whether the value is <b>not</b> <code>null</code>, an empty string, an empty collection or a map
      *
      * @param value    the value, if its a String it will be tested for text length as well
      * @param consumer the consumer, the operation to be executed against value if not empty
@@ -329,7 +329,7 @@ public final class ObjectHelper {
      * Returns the predicate matching boolean on a {@link List} result set where if the first element is a boolean its
      * value is used otherwise this method returns true if the collection is not empty
      *
-     * @return <tt>true</tt> if the first element is a boolean, and its value is true or if the list is non-empty
+     * @return <code>true</code> if the first element is a boolean, and its value is true or if the list is non-empty
      */
     public static boolean matches(List<?> list) {
         if (!list.isEmpty()) {
@@ -408,7 +408,7 @@ public final class ObjectHelper {
      * class
      *
      * @param  name the name of the class to load
-     * @return      the class or <tt>null</tt> if it could not be loaded
+     * @return      the class or <code>null</code> if it could not be loaded
      */
     public static Class<?> loadClass(String name) {
         return loadClass(name, ObjectHelper.class.getClassLoader());
@@ -419,7 +419,7 @@ public final class ObjectHelper {
      *
      * @param  name   the name of the class to load
      * @param  loader the class loader to use after the thread context class loader
-     * @return        the class or <tt>null</tt> if it could not be loaded
+     * @return        the class or <code>null</code> if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
         return loadClass(name, loader, false);
@@ -430,8 +430,8 @@ public final class ObjectHelper {
      *
      * @param  name       the name of the class to load
      * @param  loader     the class loader to use after the thread context class loader
-     * @param  needToWarn when <tt>true</tt> logs a warning when a class with the given name could not be loaded
-     * @return            the class or <tt>null</tt> if it could not be loaded
+     * @param  needToWarn when <code>true</code> logs a warning when a class with the given name could not be loaded
+     * @return            the class or <code>null</code> if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader, boolean needToWarn) {
         // must clean the name so its pure java name, eg removing \n or whatever people can do in the Spring XML
@@ -491,7 +491,7 @@ public final class ObjectHelper {
      * Load a simple type
      *
      * @param  name the name of the class to load
-     * @return      the class or <tt>null</tt> if it could not be loaded
+     * @return      the class or <code>null</code> if it could not be loaded
      */
     public static Class<?> loadSimpleType(String name) {
         // special for byte[] or Object[] as its common to use
@@ -754,12 +754,12 @@ public final class ObjectHelper {
 
     /**
      * Tests whether the target method overrides the source method.
-     * <p/>
+     * <p>
      * Tests whether they have the same name, return type, and parameter list.
      *
      * @param  source the source method
      * @param  target the target method
-     * @return        <tt>true</tt> if it override, <tt>false</tt> otherwise
+     * @return        <code>true</code> if it override, <code>false</code> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target) {
         return isOverridingMethod(source, target, true);
@@ -767,14 +767,14 @@ public final class ObjectHelper {
 
     /**
      * Tests whether the target method overrides the source method.
-     * <p/>
+     * <p>
      * Tests whether they have the same name, return type, and parameter list.
      *
      * @param  source the source method
      * @param  target the target method
-     * @param  exact  <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types should be
-     *                assignable
-     * @return        <tt>true</tt> if it override, <tt>false</tt> otherwise
+     * @param  exact  <code>true</code> if the override must be exact same types, <code>false</code> if the types should
+     *                be assignable
+     * @return        <code>true</code> if it override, <code>false</code> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
         return isOverridingMethod(target.getDeclaringClass(), source, target, exact);
@@ -782,15 +782,15 @@ public final class ObjectHelper {
 
     /**
      * Tests whether the target method overrides the source method from the inheriting class.
-     * <p/>
+     * <p>
      * Tests whether they have the same name, return type, and parameter list.
      *
      * @param  inheritingClass the class inheriting the target method overriding the source method
      * @param  source          the source method
      * @param  target          the target method
-     * @param  exact           <tt>true</tt> if the override must be exact same types, <tt>false</tt> if the types
-     *                         should be assignable
-     * @return                 <tt>true</tt> if it override, <tt>false</tt> otherwise
+     * @param  exact           <code>true</code> if the override must be exact same types, <code>false</code> if the
+     *                         types should be assignable
+     * @return                 <code>true</code> if it override, <code>false</code> otherwise
      */
     public static boolean isOverridingMethod(Class<?> inheritingClass, Method source, Method target, boolean exact) {
 
@@ -1094,7 +1094,7 @@ public final class ObjectHelper {
      *
      * @param  instance the instance
      * @param  type     the annotation
-     * @return          the annotation, or <tt>null</tt> if the instance does not have the given annotation
+     * @return          the annotation, or <code>null</code> if the instance does not have the given annotation
      */
     public static <A extends Annotation> A getAnnotation(Object instance, Class<A> type) {
         return instance.getClass().getAnnotation(type);
@@ -1105,7 +1105,7 @@ public final class ObjectHelper {
      *
      * @param  instance the instance
      * @param  type     the annotation
-     * @return          the annotation, or <tt>null</tt> if the instance does not have the given annotation
+     * @return          the annotation, or <code>null</code> if the instance does not have the given annotation
      */
     public static <A extends Annotation> A getAnnotationDeep(Object instance, Class<A> type) {
         Class<?> clazz = instance.getClass();
@@ -1254,15 +1254,15 @@ public final class ObjectHelper {
 
     /**
      * Retrieves the given exception type from the exception.
-     * <p/>
+     * <p>
      * Is used to get the caused exception that typically have been wrapped in some sort of Camel wrapper exception
-     * <p/>
+     * <p>
      * The strategy is to look in the exception hierarchy to find the first given cause that matches the type. Will
      * start from the bottom (the real cause) and walk upwards.
      *
      * @param  type      the exception type wanted to retrieve
      * @param  exception the caused exception
-     * @return           the exception found (or <tt>null</tt> if not found in the exception hierarchy)
+     * @return           the exception found (or <code>null</code> if not found in the exception hierarchy)
      */
     public static <T> T getException(Class<T> type, Throwable exception) {
         if (exception == null) {
@@ -1296,7 +1296,7 @@ public final class ObjectHelper {
      *
      * @param  clazz the class
      * @param  name  the name of the field to lookup
-     * @return       the value of the constant field, or <tt>null</tt> if not found
+     * @return       the value of the constant field, or <code>null</code> if not found
      */
     public static String lookupConstantFieldValue(Class<?> clazz, String name) {
         if (clazz == null) {
@@ -1327,7 +1327,7 @@ public final class ObjectHelper {
      * Is the given value a numeric NaN type
      *
      * @param  value the value
-     * @return       <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
+     * @return       <code>true</code> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
         return value instanceof Float floatValue && floatValue.isNaN()
