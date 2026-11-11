@@ -15,7 +15,7 @@ encryption and decryption of messages using Camel's familiar marshall
 and unmarshal formatting mechanism. It assumes marshaling to mean
 encryption to ciphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
-(shared-key) encryption and decyption.
+(shared-key) encryption and decryption.
 
 == CryptoDataFormat Options
 

@@ -17,7 +17,7 @@
 The http://www.hazelcast.com/[Hazelcast] PN Counter component is one of Camel Hazelcast Components which allows you to access a Hazelcast PN Counter (CRDT counter).
 A PN Counter is a Conflict-free Replicated Data Type (CRDT) that provides a distributed counter with eventual consistency guarantees.    
 
-This component is not a direct replacement for the hazelcast-atomicvalue component that is available in Camel 2.7 -> 4.19, but it does replicates most of the functionality (get / increment / decrement / getAndAdd / destroy) apart from the compare method.
+This component is not a direct replacement for the hazelcast-atomicvalue component that is available in Camel 2.7 -> 4.19, but it does replicate most of the functionality (get / increment / decrement / getAndAdd / destroy) apart from the compare method.
 
 
 // component options: START
