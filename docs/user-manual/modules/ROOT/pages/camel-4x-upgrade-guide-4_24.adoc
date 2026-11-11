@@ -1166,6 +1166,20 @@ built for Camel 4.24:
 * A test sets the options of a command with `CommandLineTestHelper.parse(command, args...)` (in the test jar of
   `camel-jbang-core`) instead of `CommandLine.populateCommand`.
 
+=== camel-jbang - plugins declare which commands they contribute to
+
+A CLI plugin can now declare which built-in commands it participates in beyond its own command, using the
+`appliesTo` attribute on `@CamelJBangPlugin`. For example, a plugin that provides a `PluginExporter` should declare
+`@CamelJBangPlugin(name = "...", firstVersion = "...", appliesTo = {"export"})` so it is loaded during `camel export`
+but not during `camel run`.
+
+Existing plugins that do not declare `appliesTo` are loaded for all built-in commands as before (backward compatible).
+Once a plugin declares `appliesTo` (even an empty array), only the declared commands load it.
+
+When adding a plugin via `camel plugin add`, the `appliesTo` value from the `@CamelJBangPlugin` annotation (for known
+Camel plugins) or from the plugin's metadata is stored in the configuration. After a plugin is downloaded for the first
+time, its `appliesTo` is learned from its annotation and cached for subsequent invocations.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the

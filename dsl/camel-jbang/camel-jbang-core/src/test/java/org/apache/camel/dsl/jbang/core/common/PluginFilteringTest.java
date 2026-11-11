@@ -27,6 +27,7 @@ import java.util.Map;
 import org.aesh.command.Command;
 import org.aesh.command.CommandResult;
 import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CliExportContext;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
@@ -62,7 +63,7 @@ class PluginFilteringTest {
     void setup() {
         previousHome = CommandLineHelper.getHomeDir();
         CommandLineHelper.useHomeDir(tempDir.toString());
-        camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        camelVersion = new DefaultCamelCatalog().getCatalogVersion();
     }
 
     @AfterEach
@@ -105,30 +106,28 @@ class PluginFilteringTest {
                 .containsKey("beta");
     }
 
-    // ---- The "run" command should not load unrelated plugins ----
+    // ---- Legacy plugins without appliesTo are loaded for built-in commands (backward compat) ----
 
     @Test
-    void runCommandDoesNotLoadUnrelatedPlugin() throws Exception {
+    void legacyPluginWithoutAppliesToIsLoadedForRunTarget() throws Exception {
         writeTwoPluginConfig("alpha", "beta");
 
         CamelJBangMain main = new CamelJBangMain();
         Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "run");
 
-        assertThat(plugins).doesNotContainKey("alpha")
-                .doesNotContainKey("beta");
+        assertThat(plugins).containsKey("alpha")
+                .containsKey("beta");
     }
 
-    // ---- The "export" command should not load unrelated plugins ----
-
     @Test
-    void exportCommandDoesNotLoadUnrelatedPlugin() throws Exception {
+    void legacyPluginWithoutAppliesToIsLoadedForExportTarget() throws Exception {
         writeTwoPluginConfig("alpha", "beta");
 
         CamelJBangMain main = new CamelJBangMain();
         Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "export");
 
-        assertThat(plugins).doesNotContainKey("alpha")
-                .doesNotContainKey("beta");
+        assertThat(plugins).containsKey("alpha")
+                .containsKey("beta");
     }
 
     // ---- A broken unrelated plugin should not break the "run" target ----
@@ -203,11 +202,25 @@ class PluginFilteringTest {
     }
 
     @Test
-    void pluginWithAppliesToExportIsLoadedByCliExportContext() throws Exception {
-        Path jar = tempDir.resolve("fake-exporter.jar");
-        FakePluginJar.write(jar, "exporter");
+    void pluginWithEmptyAppliesToIsNotLoadedForBuiltinTarget() throws Exception {
+        Path jar = tempDir.resolve("fake-alpha.jar");
+        FakePluginJar.write(jar, "alpha");
 
-        JsonObject entry = buildEntry("exporter", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
+        JsonObject entry = buildEntry("alpha", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
+        entry.put("appliesTo", jsonArray());
+        writeConfig(entry);
+
+        CamelJBangMain main = new CamelJBangMain();
+        Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "export");
+
+        assertThat(plugins).doesNotContainKey("alpha");
+    }
+
+    @Test
+    void pluginWithAppliesToExportIsLoadedByCliExportContext() throws Exception {
+        // A broken entry with appliesTo ["export"]: if CliExportContext includes it, resolution
+        // fails — proving the plugin was included in the export target.
+        JsonObject entry = buildBrokenEntry("exporter");
         entry.put("appliesTo", jsonArray("export"));
         writeConfig(entry);
 
@@ -216,82 +229,74 @@ class PluginFilteringTest {
 
         ExportContext context = CliExportContext.create(main, printer, true);
 
-        assertThatCode(() -> context.getPlugins(null))
-                .doesNotThrowAnyException();
+        assertThatThrownBy(() -> context.getPlugins(null))
+                .isInstanceOf(CliException.class)
+                .hasMessageContaining("camel-jbang-plugin-exporter not found");
     }
 
-    // ---- auto-migration of old configs for known plugins ----
+    // ---- Known PluginType appliesTo is used at runtime without config entry ----
 
     @Test
-    void oldConfigForKnownPluginIsAutoMigrated() throws Exception {
+    void knownPluginTypeAppliesToIsUsedAtRuntime() throws Exception {
         Path jar = tempDir.resolve("fake-test.jar");
         FakePluginJar.write(jar, "test");
 
-        // simulate old config: known plugin "test" without appliesTo
+        // config entry for "test" plugin without explicit appliesTo
         JsonObject entry = buildEntry("test", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
         writeConfig(entry);
 
-        StringPrinter printer = new StringPrinter();
-        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
+        CamelJBangMain main = new CamelJBangMain();
 
-        // target "export" — without migration, "test" plugin would be skipped
+        // PluginType.TEST declares appliesTo = {"export"}, so it should be loaded for "export"
         Map<String, Plugin> plugins = PluginHelper.getActivePlugins(main, null, "export");
         assertThat(plugins).containsKey("test");
 
-        // verify the config was updated on disk
-        JsonObject savedConfig = PluginHelper.getPluginConfig();
-        JsonObject savedPlugins = savedConfig.getMap("plugins");
-        JsonObject savedPlugin = savedPlugins.getMap("test");
-        assertThat(savedPlugin.get("appliesTo"))
-                .isInstanceOf(List.class)
-                .asList().contains("export");
+        // ... but not for "run"
+        Map<String, Plugin> runPlugins = PluginHelper.getActivePlugins(main, null, "run");
+        assertThat(runPlugins).doesNotContainKey("test");
     }
 
-    @Test
-    void oldConfigForKnownPluginEmitsWarning() throws Exception {
-        Path jar = tempDir.resolve("fake-test.jar");
-        FakePluginJar.write(jar, "test");
-
-        JsonObject entry = buildEntry("test", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
-        writeConfig(entry);
-
-        StringPrinter printer = new StringPrinter();
-        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
-
-        PluginHelper.getActivePlugins(main, null, "export");
-
-        assertThat(printer.getOutput())
-                .contains("appliesTo");
-    }
-
-    // ---- CliExportContext should not resolve unrelated plugins ----
+    // ---- CliExportContext should not resolve unrelated plugins (with explicit appliesTo) ----
 
     @Test
     void cliExportContextDoesNotResolveUnrelatedPlugins() throws Exception {
         Path goodJar = tempDir.resolve("fake-good.jar");
         FakePluginJar.write(goodJar, "good");
 
-        writeConfig(
-                buildEntry("good", camelVersion, goodJar, Files.getLastModifiedTime(goodJar).toMillis()),
-                buildBrokenEntry("broken"));
+        JsonObject goodEntry = buildEntry("good", camelVersion, goodJar, Files.getLastModifiedTime(goodJar).toMillis());
+        goodEntry.put("appliesTo", jsonArray("export"));
+
+        // broken plugin with empty appliesTo — explicitly opted out of other commands
+        JsonObject brokenEntry = buildBrokenEntry("broken");
+        brokenEntry.put("appliesTo", jsonArray());
+
+        writeConfig(goodEntry, brokenEntry);
 
         StringPrinter printer = new StringPrinter();
         CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
 
         ExportContext context = CliExportContext.create(main, printer, true);
 
-        // CliExportContext.create() passes "export" as target, so the broken plugin
-        // (whose command is "broken") is filtered out before resolution.
+        // the broken plugin has appliesTo [] (explicitly empty) so it is filtered out
         assertThatCode(() -> context.getPlugins(null))
-                .as("CliExportContext should not resolve plugins unrelated to export")
+                .as("CliExportContext should not resolve plugins that opted out of export")
                 .doesNotThrowAnyException();
     }
 
-    // ---- addPlugins should not customize unrelated plugins for "run" ----
+    // ---- addPlugins should not customize unrelated plugins ----
 
     @Test
-    void addPluginsForRunDoesNotCustomizeUnrelatedPlugin() throws Exception {
-        writeTwoPluginConfig("alpha", "beta");
+    void addPluginsForRunDoesNotCustomizePluginWithNonMatchingAppliesTo() throws Exception {
+        Path jarA = tempDir.resolve("fake-alpha.jar");
+        FakePluginJar.write(jarA, "alpha");
+        Path jarB = tempDir.resolve("fake-beta.jar");
+        FakePluginJar.write(jarB, "beta");
+
+        JsonObject entryA = buildEntry("alpha", camelVersion, jarA, Files.getLastModifiedTime(jarA).toMillis());
+        entryA.put("appliesTo", jsonArray("export"));
+        JsonObject entryB = buildEntry("beta", camelVersion, jarB, Files.getLastModifiedTime(jarB).toMillis());
+        entryB.put("appliesTo", jsonArray("export"));
+        writeConfig(entryA, entryB);
 
         CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
         CommandTree commandLine = new CommandTree(main);
@@ -299,16 +304,23 @@ class PluginFilteringTest {
 
         PluginHelper.addPlugins(commandLine, main, "run", "foo.yaml");
 
-        // "run" is a plugin-consuming builtin, but neither plugin's command is "run",
-        // so they should be filtered out
         assertThat(commandLine.getSubcommands())
                 .doesNotContainKey("alpha")
                 .doesNotContainKey("beta");
     }
 
     @Test
-    void addPluginsForExportDoesNotCustomizeUnrelatedPlugin() throws Exception {
-        writeTwoPluginConfig("alpha", "beta");
+    void addPluginsForExportDoesNotCustomizePluginWithNonMatchingAppliesTo() throws Exception {
+        Path jarA = tempDir.resolve("fake-alpha.jar");
+        FakePluginJar.write(jarA, "alpha");
+        Path jarB = tempDir.resolve("fake-beta.jar");
+        FakePluginJar.write(jarB, "beta");
+
+        JsonObject entryA = buildEntry("alpha", camelVersion, jarA, Files.getLastModifiedTime(jarA).toMillis());
+        entryA.put("appliesTo", jsonArray("run"));
+        JsonObject entryB = buildEntry("beta", camelVersion, jarB, Files.getLastModifiedTime(jarB).toMillis());
+        entryB.put("appliesTo", jsonArray("run"));
+        writeConfig(entryA, entryB);
 
         CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
         CommandTree commandLine = new CommandTree(main);
@@ -328,15 +340,19 @@ class PluginFilteringTest {
         Path goodJar = tempDir.resolve("fake-good.jar");
         FakePluginJar.write(goodJar, "good");
 
+        // broken plugin with empty appliesTo — explicitly not related to "run"
+        JsonObject brokenEntry = buildBrokenEntry("broken");
+        brokenEntry.put("appliesTo", jsonArray());
+
         writeConfig(
                 buildEntry("good", camelVersion, goodJar, Files.getLastModifiedTime(goodJar).toMillis()),
-                buildBrokenEntry("broken"));
+                brokenEntry);
 
         CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
         CommandTree commandLine = new CommandTree(main);
         commandLine.addSubcommand("run", new CommandTree(new NoOpCommand()));
 
-        // addPlugins for "run" should skip the broken plugin since it doesn't match
+        // addPlugins for "run" should skip the broken plugin since its appliesTo excludes "run"
         assertThatCode(() -> PluginHelper.addPlugins(commandLine, main, "run", "foo.yaml"))
                 .doesNotThrowAnyException();
     }
