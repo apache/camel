@@ -1,0 +1,654 @@
+---
+title: Kamelets in Camel
+authors:
+  - "@davsclaus"
+reviewers: []
+approvers: []
+creation-date: 2026-11-09
+last-updated: 2026-11-09
+status: proposed
+see-also:
+  - "CAMEL-21049"
+  - "CAMEL-21249"
+  - "CAMEL-21843"
+  - "CAMEL-22857"
+  - "CAMEL-24547"
+replaces: []
+superseded-by: []
+---
+
+== Summary
+
+The Kamelet catalog (259 Kamelets, the `org.apache.camel.kamelets` artifacts and their docs) lives in the
+`apache/camel-kamelets` repository and is released on its own, a few days to a few weeks after each Camel release.
+This document proposes to move it into `apache/camel`, build it in the Camel reactor, and release it with Camel under
+the same version. The Kamelets would then be part of the Camel release, the Camel docs and the Camel catalog, in the
+same way as a component.
+
+The Maven coordinates stay the same (`org.apache.camel.kamelets:camel-kamelets`, `camel-kamelets-catalog`, ...). Only
+the version scheme changes: the catalog of Camel 4.x.y is `4.x.y`. The old repository keeps its `4.18.x` and `4.22.x`
+branches until those LTS lines end, and is archived after that.
+
+The Kamelet runtime (`components/camel-kamelet`, `dsl/camel-kamelet-main`) is already in `apache/camel`. So are the
+former `camel-kamelets-utils` classes (CAMEL-21249, CAMEL-21843). The YAML files, their tests and their docs are the
+last part that lives outside.
+
+This document was drafted by Claude Code on behalf of Claus Ibsen. All facts are taken from the repositories as of
+2026-11-09: `apache/camel` main at `7941461d6afb` and `apache/camel-kamelets` main at `87f3498b1`. Paths starting with
+`camel-kamelets:` are in the `apache/camel-kamelets` repository. All other paths are in `apache/camel` unless
+another repository is named. Anything that could not be checked is marked *(unverified)*.
+
+== Motivation
+
+=== Adoption: Kamelets should feel like ordinary Camel
+
+End users take up what comes with the Camel release. Today a Kamelet is "an extra project": its own version, its own
+release notes (`camel-website: content/releases/kamelets/`, 76 release pages), its own docs component on the website
+(`/camel-kamelets/`), its own GitHub issues, and its own entry in each downstream BOM. A user who wants the Kamelets
+of Camel 4.23 has to know that they come as version `4.23.0` of another artifact, which comes out some days later.
+
+The website even keeps Kamelet pages out of its search. `camel-website: antora-ui-camel/src/js/08-docsearch.js`
+lists `/camel-kamelets/` in `EXCLUDED_SUBPROJECTS`, next to Camel K and Camel Quarkus, and drops those results on
+the client side. So a search for "kafka" on camel.apache.org should not show the Kafka Kamelets *(read from the
+code, not tried on the live site)*.
+
+When the Kamelets have the Camel version, the Camel docs, and an entry in the Camel catalog, they are easier to find
+and easier to trust. This is the main reason to move them, next to the version cycle below.
+
+=== The version cycle
+
+The catalog depends on Camel, and Camel depends on the catalog:
+
+* `camel-kamelets: pom.xml` has `org.apache.camel:camel-dependencies:4.23.0` as parent, and `camel.version` is
+  `4.23.0`. A catalog release needs a released Camel.
+* `parent/pom.xml:110` sets `camel-kamelets-catalog-version` to `4.23.0`, and
+  `dsl/camel-jbang/camel-launcher/pom.xml:50` sets `camel-kamelets-version` to `4.23.0`. Camel JBang bundles the
+  `camel-kamelets` jar (`camel-launcher/pom.xml:127`). `camel-kamelet-main` compiles the version into
+  `KameletCatalogHelper.KAMELETS_VERSION`
+  (`dsl/camel-kamelet-main/src/main/java-templates/org/apache/camel/main/util/KameletCatalogHelper.java`).
+
+So each Camel release ships with the catalog of the previous minor release. The versions in the Camel release tags
+show this (read from `parent/pom.xml` and `camel-launcher/pom.xml` at each tag):
+
+[cols="1,1,1",options="header"]
+|===
+| Camel release | `camel-kamelets-catalog-version` | `camel-kamelets-version` (launcher)
+| camel-4.18.0 | 4.17.0 | 4.17.0
+| camel-4.18.5 | 4.17.0 | 4.18.1
+| camel-4.22.0 | 4.21.0 | 4.20.0
+| camel-4.22.2 | 4.21.0 | 4.20.0
+| camel-4.23.0 | 4.22.1 | 4.22.1
+|===
+
+The two properties do not even agree with each other in three of the five releases. The bump is a manual task after
+each catalog release (for example CAMEL-24547 "Upgrade Camel Kamelets to 4.22.0", opened 2026-08-28, after Camel
+4.22.0 was released on 2026-08-11).
+
+The catalog release dates on the website (`camel-website: content/releases/release-*.md` and
+`content/releases/kamelets/release-*.md`):
+
+[cols="1,1,1",options="header"]
+|===
+| Version | Camel released | Kamelets released
+| 4.18.0 | 2026-02-17 | 2026-02-23
+| 4.22.0 | 2026-08-11 | 2026-08-29
+| 4.22.1 | 2026-09-17 | 2026-09-21
+| 4.23.0 | 2026-10-15 | 2026-10-23
+| 4.22.2 | 2026-10-22 | tag `v4.22.2` exists, release issue camel-kamelets#3115 still open
+|===
+
+Some Camel releases get no catalog with the same version at all. In the last 12 months: Camel 4.19.0, 4.18.4, 4.18.5,
+4.14.3, 4.14.6 to 4.14.9, 4.10.8 and 4.10.9 have no `camel-kamelets` release of the same number (tags of both repositories;
+the latest 4.18.x catalog is `v4.18.3`, release issue camel-kamelets#3099 for 4.18.5 is open). This matters for Camel
+K, which installs `camel-kamelets:<Camel version>` (see <<camel-k>>).
+
+=== The motivating case: Jackson 3 in 4.24
+
+CAMEL-22857 (PR apache/camel#29461, open) makes Jackson 3 the primary Jackson line in 4.24. In Camel JBang the `json`,
+`avroJackson` and `protobufJackson` data formats then resolve to Jackson 3. 24 Kamelets name Jackson 2 classes
+(`grep -l com.fasterxml.jackson camel-kamelets:kamelets/*.yaml`), for example
+`unmarshalType: com.fasterxml.jackson.databind.JsonNode` in `json-deserialize-action`. Camel 4.24.0 would ship with
+the 4.23.0 catalog. A plain `camel run` with these Kamelets would be broken on 4.24.0, unless a catalog release comes
+out ahead of Camel. It cannot: the catalog build needs the released `camel-dependencies:4.24.0` as parent. With the
+Kamelets in `apache/camel`, PR #29461 would have changed them too, and the build would have failed on them.
+
+=== Kamelets are coupled to Camel code, but tested apart from it
+
+* 80 of the 259 Kamelets name a Camel Java class (`grep -l 'org\.apache\.camel\.' camel-kamelets:kamelets/*.yaml`),
+  such as `org.apache.camel.component.kafka.KafkaHeaderDeserializer` (9 Kamelets) or
+  `org.apache.camel.component.sql.SqlComponent` (16). A rename in a component breaks them without any signal in the
+  Camel build.
+* The catalog build checks the endpoint options of each `from` against the *released* Camel catalog
+  (`camel-kamelets: library/kamelets-maven-plugin/src/main/java/org/apache/camel/kamelets/maven/plugin/ValidateKameletsMojo.java`,
+  `DefaultCamelCatalog`). A renamed or removed option shows up only when the catalog moves to the next Camel release,
+  after Camel is out.
+* The behaviour tests (Citrus) run against a released Camel JBang
+  (`camel-kamelets: tests/camel-kamelets-itest/src/test/resources-filtered/citrus-application.properties`,
+  `citrus.camel.cli.version=${camel.version}`).
+
+=== Two trackers, two sets of rules
+
+Kamelets use GitHub issues (15 open, 71 opened in the last 12 months, read with `gh api` on 2026-11-09). Camel uses
+JIRA, and GitHub issues are off on `apache/camel`. The `camel-kamelets: AGENTS.md` duplicates most of the Camel agent
+rules, with other commit and branch conventions (`Fix #<issue>:` instead of `CAMEL-XXXX:`).
+
+== Goals
+
+* The Kamelets of Camel 4.x.y are released with Camel 4.x.y, under that version, in the same vote.
+* A Camel change that breaks a Kamelet fails the Camel build (structure, endpoint options, class names), and the
+  behaviour tests run against the Camel being built.
+* The Kamelet docs are part of the Camel docs, versioned and searched like the component docs.
+* Downstream projects keep the same Maven coordinates.
+* One tracker (JIRA) and one set of contribution rules.
+
+== Non-goals
+
+* Changing the Kamelet format or the Kamelet CRD (`camel.apache.org/v1` `Kamelet`).
+* Rewriting Kamelets in Java or generating them (see <<compile-time-checks>>; a later step).
+* Moving the Kamelet runtime: it is already in `components/camel-kamelet` and `dsl/camel-kamelet-main`.
+* Moving `apache/camel-kamelets-examples` (see <<downstream>>).
+* Changing the LTS branches `camel-4.18.x` and `camel-4.22.x`.
+
+== Current state
+
+=== The Kamelets
+
+`camel-kamelets: kamelets/` holds 259 files `<name>.kamelet.yaml`. By the `camel.apache.org/kamelet.type` label:
+99 sources, 98 sinks, 62 actions. Support level: 223 `Stable`, 36 `Preview`. 21 carry
+`camel.apache.org/kamelet.verified: "true"` (they have behaviour tests). 8 carry
+`camel.apache.org/requires.runtime: camel-k`.
+
+The same 259 files are committed a second time in
+`camel-kamelets: library/camel-kamelets/src/main/resources/kamelets/`. The `maven-resources-plugin` of
+`library/camel-kamelets/pom.xml` copies them there in the `install` phase. `docs/modules/ROOT/examples/yaml` is a
+symlink to that copy.
+
+Dependencies inside the Kamelets: `camel:<component>` entries, and `mvn:` coordinates of third-party libraries
+(commons-dbcp2 in 16 Kamelets, artemis client, JDBC drivers, Azure, Apicurio, DJL). The `mvn:` versions are kept in
+`version.<groupId>.<artifactId>` properties of `camel-kamelets: pom.xml`. The `groovy-maven-plugin` runs
+`script/version/UpdateDepsVersionKamelets.groovy` in `process-resources` and rewrites the YAML files. The antrun
+target `update-kamelets.xml` rewrites the `camel.apache.org/catalog.version` annotation of every Kamelet to the project
+version (`releaseVersion` at release time).
+
+=== Maven modules and artifacts
+
+All under groupId `org.apache.camel.kamelets`, version `4.24.0-SNAPSHOT` on main, Java 17
+(`camel-kamelets: pom.xml`):
+
+[cols="2,1,4",options="header"]
+|===
+| Module (path) | Packaging | Content
+| `camel-kamelets-parent` (`pom.xml`) | pom | Parent: `camel-dependencies:4.23.0`; groovy and antrun steps above
+| `camel-kamelets` (`library/camel-kamelets`) | jar | The YAML files under `kamelets/` in the jar. No Java code
+| `camel-kamelets-catalog` (`library/camel-kamelets-catalog`) | jar | `org.apache.camel.kamelets.catalog.KameletsCatalog`, a Java API over the YAML. Depends on `camel-kamelets`, `camel-kamelets-crds`, `camel-catalog` and `camel-tooling-model` (compile), jackson-dataformat-yaml, classgraph. Tests: `KameletsCatalogTest` (20 tests), `KameletsCanonicalTest`
+| `camel-kamelets-crds` (`library/camel-kamelets-crds`) | jar | Java model generated from the CRD YAML with fabric8 `java-generator-maven-plugin` 8.0.0, Lombok (provided). `src/main/resources` is a symlink to `crds/config/crd/`
+| `kamelets-maven-plugin` (`library/kamelets-maven-plugin`) | maven-plugin | Goals `validate`, `generate-nav`, `generate-catalog-sbom` (1081 lines of Java)
+| `camel-kamelets-bom` (`library/camel-kamelets-bom`) | pom | Manages the third-party libraries the Kamelets use. Its build runs the three plugin goals
+| `camel-kamelets-itest` (`tests/camel-kamelets-itest`) | jar | Citrus tests. Also deployed to Maven Central (44 versions, latest 4.23.0)
+|===
+
+`camel-kamelets-utils` is on Maven Central up to 4.8.8 only. Its classes moved into Camel components in 4.9 and 4.11
+(CAMEL-21249, CAMEL-21843).
+
+=== Generated files
+
+* `docs/modules/ROOT/nav.adoc`: by `kamelets-maven-plugin:generate-nav`.
+* `camel-kamelets-sbom/camel-kamelets-catalog-sbom.json`: by `generate-catalog-sbom`, scanned weekly against osv.dev
+  by `.github/workflows/catalog-dependency-scan.yml` with `script/security/scan_catalog_dependencies.py`.
+* The YAML rewrites of the groovy script and the antrun target.
+* The CRD (`crds/config/crd/camel.apache.org_kamelets.yaml`) and Go client: by `make generate` from the Go types in
+  `crds/pkg/apis/camel/v1` (Go module `github.com/apache/camel-kamelets/crds`, 63 files under `crds/`).
+* A `Build Regen` workflow (`.github/workflows/main-push-regen.yaml`) opens a PR with uncommitted regenerated files
+  after each push to main.
+
+=== Tests
+
+* Unit tests in `camel-kamelets-catalog` and the `validate` goal: structure (names, labels, title, description,
+  properties, icon, provider and version annotations; `CatalogValidator.java`) and the `from` endpoint options
+  against the released Camel catalog (`ValidateKameletsMojo.java`).
+* Behaviour tests: 79 Citrus YAML tests (`*.citrus.it.yaml`) under
+  `tests/camel-kamelets-itest/src/test/resources/<area>/`, run by 16 JUnit classes (`src/test/java/*IT.java`, one per
+  area: Aws, Kafka, Postgres, ...). 28 of the YAML tests start containers with the Citrus Testcontainers support
+  (Redpanda, LocalStack image `floci/floci`, Postgres, MongoDB, ...). Each test starts the Kamelet route with Camel
+  JBang (`citrus-jbang-connector`) as a separate process. `citrus.camel.cli.kamelets.local.dir` points the tests at the
+  working tree, not at a released catalog.
+* CI: `.github/workflows/integration-tests.yaml` installs JBang with SDKMAN, a Java 25 for the Camel launcher and Java
+  17 for Maven, then runs `./mvnw clean verify -pl :camel-kamelets-itest -Denable.integration.tests`. The test job
+  took 31 to 32 minutes in three recent green runs on main (runs 41074020188, 40189666572, 38700902067). Of the last
+  30 runs, 14 passed, 9 failed and 7 were cancelled.
+
+=== Docs
+
+`camel-kamelets: docs/` is an Antora component named `camel-kamelets` (`docs/antora.yml`, version `next` on main,
+`4.22.x` and `4.18.x` on the branches). Hand-written pages: `index.adoc`, `development.adoc`, `security-model.adoc`,
+`apis/`. 196 partials (per-Kamelet descriptions). The per-Kamelet pages are not in the repository. The website build
+creates them: `docs/indexPages.yml` (used by the playbook, `camel-website: antora-playbook-snippets/antora-playbook.yml:155`)
+renders `examples/template/kamelet-options.adoc` once for each YAML file, with `examples/js/kamelets.js`. The playbook
+takes `main`, `4.22.x` and `4.18.x` of `apache/camel-kamelets` (`antora-playbook.yml:37-42`).
+
+=== Release
+
+`camel-kamelets: README.md` ("Releasing"): `mvnw release:prepare/perform -Prelease`, a staging repository, a source
+upload with `release-utils/scripts/upload-source.sh`, a vote on dev@, then `promote-release.sh` to
+`dist/release/camel/camel-kamelets`, a release page PR on the website, and for a new minor a docs branch and playbook
+change. The repository has its own `KEYS` file. In the last 12 months there were 13 catalog releases (tags `v4.14.4`
+to `v4.22.2`).
+
+=== Branches
+
+`origin/4.18.x` (at `4.18.4-SNAPSHOT`, last commit 2026-07-13) and `origin/4.22.x` (at `4.22.3-SNAPSHOT`) are the
+active maintenance branches. There are 473 remote branches in total, most of them old topic branches.
+
+=== Who consumes the catalog
+
+[cols="2,3,3",options="header"]
+|===
+| Consumer | What it uses | Where
+| Camel JBang / Camel CLI | Bundles `camel-kamelets`; downloads `camel-kamelets-catalog` by version for `camel catalog kamelet`, `camel doc`, `camel init --from-kamelet`, the MCP Kamelet tools; adds `camel-kamelets` to exports. Option `--kamelets-version` on `run`, `export`, `init`, `catalog`, `doc`, `kubernetes run` | `dsl/camel-jbang/camel-launcher/pom.xml:127`, `dsl/camel-jbang/camel-jbang-run/.../catalog/KameletCatalogHelper.java:181`, `.../export/Exporter.java:327`, `.../commands/Run.java:174`, `dsl/camel-jbang/camel-jbang-mcp/.../KameletTools.java`
+| camel-kamelet-main | Downloads `camel-kamelets:<version>` and the Kamelet dependencies | `dsl/camel-kamelet-main/.../download/DependencyDownloaderKamelet.java:135`
+| Camel JBang edit plugin | `camel-kamelets-catalog` (also excluded from `camel-lsp-server`, which brings its own) | `dsl/camel-jbang/camel-jbang-plugin-edit/pom.xml:50`
+| camel-yaml-dsl, VersionHelper | Recognise the jar by name: `/camel-kamelets-[^/!]*\.jar!/kamelets/` and `camel-kamelets-(\d...).jar` | `dsl/camel-yaml-dsl/camel-yaml-dsl-common/.../YamlDeserializationContext.java:123`, `dsl/camel-kamelet-main/.../util/VersionHelper.java:31`
+| Camel K operator | Installs `org.apache.camel.kamelets:camel-kamelets:<Camel version>` into the cluster; copies the Go CRD types from `apache/camel-kamelets` tag `v4.18.1` | `camel-k: pkg/controller/integrationplatform/kamelets.go`, `create.go:177-178`, `script/clone_kamelets.sh`; CI pins `4.22.0` and `4.18.1` in `.github/workflows/*.yml`
+| Camel Quarkus | `camel-kamelets.version` property (4.23.0) and a BOM entry; Dependabot updates it; the `langchain4j-ingest` extension and the kamelet integration test depend on it | `camel-quarkus: pom.xml:47`, `poms/bom/pom.xml:8043`, `extensions/langchain4j-ingest/runtime/pom.xml:49`, `.github/dependabot.yml:48`
+| Camel Spring Boot | Nothing found: no reference to `camel-kamelets` in the repository | `git grep` in `camel-spring-boot` main (`0f78ec722bb`)
+| Karavan | `camel-kamelets-catalog` in its generator | `camel-karavan: karavan-generator/pom.xml:62`, `KameletGenerator.java`
+| Kaoto | `camel-kamelets` with one `version.camel-kamelets` (4.18.0) for all its catalogs | `KaotoIO/camel-catalog: pom.xml`, `docs/CATALOG_VERSIONS.md` (read through the GitHub API, not cloned)
+| Camel LSP | `camel-kamelets-catalog` *(seen only as an exclusion in Camel's edit plugin pom; not checked in its repository)* |
+| camel-kamelets-examples | 79 JBang examples; READMEs name old catalog versions | `camel-kamelets-examples: jbang/`
+| Website | Antora component `camel-kamelets`, release pages, search exclusion | see above
+|===
+
+== Proposal
+
+The key decision is the version: *the catalog is released with Camel under the Camel version*. The other parts
+follow from it.
+
+=== Layout in apache/camel
+
+A new top-level directory `kamelets/`, built between `catalog` and `dsl` in the root `pom.xml`:
+
+----
+kamelets/
+  pom.xml                          camel-kamelets-parent (groupId org.apache.camel.kamelets)
+  camel-kamelets/                  jar: src/main/resources/kamelets/*.kamelet.yaml  (the one copy)
+  camel-kamelets-catalog/          jar: KameletsCatalog API + tests
+  camel-kamelets-bom/              pom: third-party libraries used inside Kamelets
+  camel-kamelets-itest/            Citrus tests, in a profile, not deployed
+  src/main/docs/                   hand-written pages (index, development, security model)
+----
+
+The YAML files sit in one place, inside the jar module, as the component docs sit inside each component. The
+duplicate copy and the symlinks go away.
+
+Why a top-level directory and not `catalog/` or `dsl/`:
+
+* `catalog/camel-catalog` must build before the Kamelets (the validation needs the Camel catalog of the build), and
+  `dsl/camel-jbang/camel-launcher` must build after them (it bundles `camel-kamelets`). A top-level `kamelets/`
+  between `catalog` and `dsl` says this order plainly. Maven orders the reactor by dependencies anyway.
+* The Kamelets are not a DSL, and `catalog/` holds tooling over metadata, not content.
+* Contributors look for "the Kamelets" by name. A top-level folder is what the old repository had.
+
+`catalog/camel-kamelets*` works as well. This is a decision for the PMC (<<open-questions>>).
+
+=== Build integration
+
+* `kamelets/pom.xml` has `org.apache.camel:camel-parent` (via `parent/`) as parent, so all versions come from
+  `parent/pom.xml`. The `version.*` properties of the third-party libraries move there as normal `*-version`
+  properties, so the normal Dependabot setup of `apache/camel` updates them.
+* The `kamelets-maven-plugin` goals move into `tooling/maven/camel-package-maven-plugin` as new goals (validate
+  Kamelets, generate the Kamelet doc nav or pages, generate the catalog SBOM). Camel generates its catalog and docs with
+  that plugin; the Kamelets should do the same. The groovy script and the antrun target are replaced by such a goal:
+  Camel has no `groovy-maven-plugin` and no Lombok today (`git grep` of all `pom.xml`).
+* `camel.apache.org/catalog.version` is no longer rewritten in the 259 source files at each release. Either the
+  annotation is set in `target/classes` at build time, or it is dropped. *(Who reads this annotation outside the
+  validator is unverified; the Camel K operator writes its own `camel.apache.org/version` annotation.)*
+* `camel-kamelets-catalog` depends on `camel-kamelets-crds` for the model of a Kamelet. Two options: keep a crds
+  module with the fabric8 generator (a new build plugin and Lombok in Camel), or move the catalog onto the Kamelet
+  model Camel tooling already has (`KameletModel`, used by `CatalogDoc` and `KameletCatalogHelper` in
+  `dsl/camel-jbang`). The second is cleaner. It needs a check that the public API of `KameletsCatalog` (used by
+  Karavan) stays the same.
+* Java: the modules build with Java 21, like the rest of Camel 4.24 (`camel-kamelets` builds with 17 today). The YAML
+  jar has no classes. The catalog jar is used by tooling that already needs Camel 4.24 or later.
+* `bom/pom.xml` includes only `org.apache.camel:*` and `org.apache.camel.maven:*`. Add `org.apache.camel.kamelets:*`,
+  so `camel-bom` manages `camel-kamelets` and Camel Quarkus, Camel Spring Boot and users get the version from there.
+
+=== Coordinates
+
+Keep `org.apache.camel.kamelets:camel-kamelets`, `camel-kamelets-catalog` and `camel-kamelets-bom`. Stop deploying
+`camel-kamelets-itest` and `kamelets-maven-plugin` (the goals live in `camel-package-maven-plugin`). Decide on
+`camel-kamelets-crds` with the model question above.
+
+Reasons to keep the groupId:
+
+* The Camel K operator builds the coordinate itself (`camel-k: pkg/controller/integrationplatform/kamelets.go`,
+  `-Dartifact=org.apache.camel.kamelets:camel-kamelets:%s:jar`). Released operators cannot be changed.
+* Camel JBang of older releases resolves the catalog under this groupId, and the JBang of the new release still has
+  to run older Camel versions (`--camel-version`). Two jar name patterns in Camel match on `camel-kamelets-<version>`.
+* Camel Quarkus, Kaoto and Karavan declare it in their poms.
+* Apache Camel already deploys other groupIds from this repository: `org.apache.camel.maven` and
+  `org.apache.camel.archetypes`.
+
+The user does not see the groupId in daily use. Same version, same docs and same catalog make the Kamelets feel like
+ordinary Camel; a new groupId (for example `org.apache.camel:camel-kamelets`) would not add much to that, and would
+need relocation poms. `org.apache.camel:camel-kamelets` would also sit next to `org.apache.camel:camel-kamelet` (the
+component), a one-letter difference.
+
+=== Version and release
+
+* The modules have the Camel version. Camel 4.N.0 ships `camel-kamelets:4.N.0`, released in the same staging
+  repository and the same vote. Patch releases (4.N.1, ...) ship a catalog with the same number even when no Kamelet
+  changed.
+* `camel-kamelets-catalog-version` (`parent/pom.xml:110`) and `camel-kamelets-version`
+  (`camel-launcher/pom.xml:50`) are removed and replaced by `${project.version}`. `KameletCatalogHelper.KAMELETS_VERSION`
+  and `RuntimeType.KAMELETS_VERSION` become the project version. The fallback
+  `${camel-kamelets.version:4.22.0}` in `dsl/camel-jbang/camel-jbang-main/src/main/jbang/main/CamelJBang.java:25` stays
+  only for Camel 4.16 and older (see `Run.java:1215-1219`).
+* JBang `--kamelets-version` stays. It selects another catalog, for example a Kamelet fix from a newer release, or the
+  separate catalog of a Camel release from before the move. The default is: the Camel version when it is the first
+  merged release or later, otherwise the last catalog known for that Camel minor. *(How JBang picks the catalog for
+  `--camel-version` today was not traced to the end; `RunProfileProperties.java:120` falls back to the classpath or
+  the compiled-in version.)*
+* A SNAPSHOT build of Camel uses the SNAPSHOT catalog of the same build. Today it uses 4.23.0.
+* The Camel source release contains `kamelets/`. The separate source upload and `dist/release/camel/camel-kamelets`
+  area stop for new versions. The `KEYS` of Camel is used.
+* LTS: `camel-4.18.x` and `camel-4.22.x` are not changed. Kamelet fixes for those lines go to the `4.18.x` and
+  `4.22.x` branches of `apache/camel-kamelets` and are released from there as today, until the LTS line ends. The
+  first LTS line with the Kamelets inside is the first LTS cut after the move. A backport of a Kamelet fix to a later
+  LTS branch is then a normal Camel backport.
+* Release cost: the release build gets a few more modules. The Citrus tests are not part of the release build.
+
+=== Catalog
+
+`camel-kamelets-catalog` stays the Java API over the Kamelets in the first step. Later, the Camel catalog can list
+the Kamelets of the same release (names, type, title, properties), as it lists components, so tools need one artifact
+of one version. This is a separate decision, after the move.
+
+=== Documentation
+
+Option preferred here: the Kamelets get their own section of the docs, as data formats and languages have, and are
+not mixed in with the components. The Kamelet pages become a module of the `components` Antora component,
+`docs/components/modules/kamelets/`, with pages at `/components/next/kamelets/<name>.html`. The module has its own
+`nav.adoc` (from a `docs/kamelets-nav.adoc.template`, as `dataformats` and `languages` have), listed in
+`docs/components/antora.yml`, so the site shows a separate *Kamelets* section, and its own index page with the
+catalog cards, as today. The Kamelets are then versioned with the component docs (`camel-4.22.x` gives `4.22.x`) and
+found by the site search, which skips `/camel-kamelets/` today.
+
+Steps:
+
+* The hand-written pages move to `kamelets/src/main/docs/` and are linked into the docs module, as component pages
+  are linked from `docs/components/modules/ROOT/pages/`.
+* The per-Kamelet `.adoc` pages, their icons (`images/kamelets/<name>.svg`, decoded from the icon annotation) and the
+  module `nav.adoc` are generated in the Camel build by a `camel-package-maven-plugin` goal and committed, as
+  component pages are. They can then be checked in a PR and read on GitHub. The pages keep the jsonpath tables over
+  the Kamelet YAML (the properties and the dependencies), as component pages do over their JSON. This replaces the
+  website generation (`indexPages.yml` and `kamelets.js`) from the start: the docs xref check
+  (`XRefCheckMojo`) also reads the nav files, so a nav that lists pages only the website creates would fail it.
+* `camel cmd catalog doc` builds a `/camel-kamelets/<version>/<name>.html` link
+  (`dsl/camel-jbang/camel-jbang-core/.../catalog/CatalogDoc.java`); it links to the new pages for the versions that
+  have them.
+* The playbook keeps `apache/camel-kamelets` branches `4.22.x` and `4.18.x` for the old `camel-kamelets` component
+  until those lines end. Main moves to the Camel source.
+* Links: `camel-website` has 158 occurrences of `camel-kamelets` in 107 files under `content/` (mostly release pages
+  and blog posts). Old URLs need redirects, in `camel-website: static/.htaccess` (the site uses the `httpd` redirect facility).
+  *(Whether Antora `page-aliases` can map pages across components for this case is unverified.)*
+
+A simpler alternative keeps a separate Antora component `camel-kamelets` sourced from `apache/camel`. URLs stay the
+same, but the Kamelets keep a separate identity on the site and stay out of the search unless the website changes its
+exclusion list.
+
+=== Testing
+
+Three levels:
+
+. *Every build (fast, no containers).* The structure and endpoint-option validation and the catalog tests, against
+  the Camel catalog of the same build. A new test loads every Kamelet into a `CamelContext` with `camel-yaml-dsl` and
+  `camel-kamelet`, resolves the template with placeholder values, and resolves each class the YAML names
+  (`#class:`, `unmarshalType`, bean types) on a classpath built from the Kamelet's `camel:` dependencies. This catches
+  the Jackson 2 classes of CAMEL-22857 and the renamed classes of the 80 Kamelets that name Camel classes. Cost: the
+  test module depends on the components the Kamelets use, so it builds late in the reactor.
+. *PR CI.* The incremental build (`.github/actions/incremental-build/incremental-build.sh`) tests the changed modules
+  and, with `-amd`, their dependents. It excludes `camel-catalog`, `camel-yaml-dsl`, `camel-kamelet-main` and the
+  JBang modules from that expansion (`EXCLUSION_LIST`, line 49), and stops testing dependents above 50 modules
+  (line 46). So a component change would not reach the Kamelet tests by itself. Add a mapping: a change in
+  `components/camel-<x>` runs the fast Kamelet tests when a Kamelet declares `camel:<x>`, in the style of
+  `manual-it-mapping.txt`. The fast tests are cheap enough to run on every PR that touches a component.
+. *Behaviour tests (Citrus).* Not in PR CI: 32 minutes, containers, and a failure rate that needs work first (9
+  failures and 7 cancellations in the last 30 runs). They run like `dsl/camel-jbang/camel-jbang-it`: a Maven profile,
+  a Jenkins job after the snapshot deploy (`Jenkinsfile.jbangtest` runs the JBang ITs this way), and on demand with a
+  PR label. They must run Camel JBang of the build (`citrus.camel.cli.version=${project.version}` with the local
+  repository), not the last release. Citrus is at 5.0.2 in the catalog and 5.1.0 in `parent/pom.xml:117`.
+
+Container images: Camel asks for images outside Docker Hub and for `amd64`, `ppc64le` and `s390x`, or else
+`skipITs.ppc64le` / `skipITs.s390x` (`CLAUDE.md`). The Kamelet tests use `floci/floci` for LocalStack and the
+`mirror.gcr.io` mirror only in CI. Each image needs this check. *(Not done for this document.)*
+
+=== CRDs
+
+The Go types in `crds/` are the source of the Kamelet CRD. Camel has no Go code. Camel K copies these Go files by tag
+(`camel-k: script/clone_kamelets.sh`) and is the main Go consumer.
+
+Proposal: move the Go types and the CRD generation to `apache/camel-k`, which already generates the other Camel CRDs.
+`apache/camel` keeps a copy of the generated CRD YAML only if a Java module still needs it. The CRD is `v1` and
+stable (`camel-kamelets: crds/README.md`), so it changes rarely. Camel K maintainers need to agree. The Go module path
+`github.com/apache/camel-kamelets/crds` changes. *(Whether any project imports that Go module is unverified.)*
+
+=== Issues and contribution rules
+
+* Kamelet issues go to JIRA, component `camel-kamelet` (or a new `camel-kamelets` component). The 15 open GitHub
+  issues are moved to JIRA or closed (two are release tasks, camel-kamelets#3115 and #3099, which end with the move
+  for main). GitHub issues are then turned off in `camel-kamelets: .asf.yaml` (`features: issues: true` today).
+* The authoring rules of `camel-kamelets: README.md` and the Kamelet part of `AGENTS.md` move to
+  `kamelets/src/main/docs/development.adoc` and a short `kamelets/AGENTS.md`, using the Camel conventions
+  (`CAMEL-XXXX:` commits, JIRA, upgrade guide).
+* The catalog security model (`camel-kamelets: docs/modules/ROOT/pages/security-model.adoc`) becomes a section of,
+  or a page linked from, `docs/user-manual/modules/ROOT/pages/security-model.adoc`.
+
+[[downstream]]
+=== Tooling and downstream impact
+
+[[camel-k]]
+Camel K:: The operator installs `camel-kamelets:<Camel version of the runtime>`
+(`camel-k: pkg/controller/integrationplatform/create.go:177-178`). With the same version for Camel and catalog, this
+artifact always exists. Today it does not for Camel 4.18.4, 4.18.5 or 4.19.0, and the platform condition
+`KameletCatalogAvailable` then turns false *(from reading the code, not tested)*. Camel K needs a new source for the
+Go CRD types (above). Its CI pins catalog versions in `.github/workflows/*.yml`; it can use the Camel version instead.
+
+Camel Quarkus:: `camel-kamelets.version` becomes the Camel version (or comes from `camel-bom`), and the Dependabot
+entry for it goes. No code change.
+
+Camel Spring Boot:: No change needed (no reference found). The CSB BOM can manage `camel-kamelets` through `camel-bom`
+later.
+
+Camel JBang and camel-kamelet-main:: Simpler: no download of the catalog of the running version, because it is
+bundled; no version property to bump; `camel doc`, `camel catalog kamelet` and the MCP tools show the Kamelets that
+belong to the running Camel. Golden files in `dsl/camel-jbang/camel-jbang-core/src/test/resources/golden/expected/`
+that name a catalog version change once.
+
+Kaoto, Karavan, Camel LSP:: Same coordinates. They can take the catalog version equal to the Camel version of each
+catalog they build. Kaoto uses one catalog version for all its Camel catalogs today, so this removes a mismatch.
+
+Website:: Playbook source change, redirects from `/camel-kamelets/`, no more `content/releases/kamelets/` pages for new
+versions (Kamelet changes go into the Camel release notes), the docsearch exclusion no longer applies to the new
+pages.
+
+camel-kamelets-examples:: Not moved. Its READMEs name old catalog versions (for example `0.7.1`, `3.20.0`); a note
+that the catalog version is the Camel version from 4.N on is enough. Merging it into `apache/camel-jbang-examples`
+is a separate question.
+
+== Alternatives considered
+
+Keep the repository, release faster:: Release the catalog on the same day as Camel. It cannot be earlier than Camel:
+the catalog needs the released Camel parent. The bundled version in Camel is still one release behind, and component
+changes still break Kamelets after the Camel release.
+
+Keep the repository, use Camel snapshots:: Build the catalog against Camel SNAPSHOTs and test it nightly. This finds
+breakage earlier, but the release order, the separate version, the separate docs and the separate tracker stay.
+
+Move, keep a separate version and release:: Build in `apache/camel` but release the catalog on its own. Breakage is
+caught, but the adoption and version problems stay, and the Camel reactor gets a module with another version, which
+Maven releases do not handle well.
+
+Fold the Kamelets into `components/camel-kamelet`:: Put the YAML in the component jar. Every user of `kamelet:` would
+pull 259 Kamelets and the `camel-kamelets` coordinate would go away, which breaks Camel K and Camel Quarkus. Rejected.
+
+New groupId `org.apache.camel`:: See <<_coordinates>>. Possible with relocation poms, little gain.
+
+== Migration
+
+=== Order of work
+
+Each step is one PR to `apache/camel` unless noted.
+
+. *Decide* the open questions below on dev@ (a `[DISCUSS]` thread, then a vote or lazy consensus).
+. *Interim fix for 4.24* (independent of the move, needed whatever is decided): a catalog release that works on 4.24.0
+  for the 24 Jackson Kamelets, for example a `camel-kamelets` release from the old repository right after Camel 4.24.0
+  plus a JBang default that picks it, or Kamelets that do not name Jackson classes. Owner: the CAMEL-22857 work.
+. *Import* the repository with history into `kamelets/` (see below), as is, in its own module, not yet in the root
+  reactor. One merge commit; `apache/camel` allows merge commits (`.asf.yaml`, `enabled_merge_buttons`).
+. *Wire the build*: `kamelets/pom.xml` on the Camel parent, Java 21, versions from `parent/pom.xml`, remove the
+  duplicate YAML copy and the symlinks, add `kamelets` to the root `pom.xml`, `org.apache.camel.kamelets:*` to
+  `bom/pom.xml`. Formatting and RAT rules of Camel apply.
+. *Move the generators* into `camel-package-maven-plugin` (validate, nav and pages, SBOM, third-party versions);
+  drop the groovy, antrun and Lombok parts; decide the crds module.
+. *Fast tests*: the validation against the build's Camel catalog and the new load test. Fix what they find (expected:
+  the Jackson 3 Kamelets if CAMEL-22857 is merged by then).
+. *Switch the consumers inside Camel*: `${project.version}` for the catalog in `parent/pom.xml`, the launcher,
+  `camel-kamelet-main` and the JBang templates; the JBang default for `--kamelets-version`; golden files; upgrade
+  guide entry ("the Kamelet catalog is now released with Camel and has the Camel version").
+. *CI*: the component-to-Kamelet mapping in the incremental build; the Citrus tests in a profile and a Jenkins job;
+  the image checks.
+. *Docs*: move the pages into the docs tree; PR to `camel-website` for the playbook and the redirects.
+. *Old repository* (PRs to `apache/camel-kamelets`): on `main`, a README that points to `apache/camel` and no more
+  code changes; GitHub issues moved to JIRA and turned off; Dependabot and the regen, changelog and SBOM workflows
+  off on `main`. The `4.18.x` and `4.22.x` branches keep their CI.
+. *Downstream* (PRs to the other repositories): Camel K CRD source and catalog version in CI; Camel Quarkus version
+  property; Kaoto and Karavan catalog version; camel-kamelets-examples note.
+. *Archive* `apache/camel-kamelets` (INFRA ticket) after the last release from `4.22.x`.
+
+=== History
+
+Option A, keep the history (preferred here). On a fresh clone of `apache/camel-kamelets` main, run
+`git filter-repo --to-subdirectory-filter kamelets/`, drop the paths that do not move (the duplicate YAML copy, `crds/`
+if it goes to Camel K, workflows), rewrite GitHub references in commit messages (`#123` to
+`apache/camel-kamelets#123`, with `--message-callback`, or they link to the wrong `apache/camel` PRs), then merge
+into `apache/camel` with `--allow-unrelated-histories`. Size: 4714 commits since 2020-11-26, pack 31.7 MiB, against
+1.32 GiB for `apache/camel` (`git count-objects -vH`). About 300 of the commits of the last year are bot commits
+(153 Dependabot, 146 github-actions). Benefit: `git log` and `git blame` work on the Kamelets in place, which the
+Camel investigation rules ask for (`CLAUDE.md`, "Issue Investigation").
+
+Option B, a plain copy in one commit, with a link to the archived repository for history. Smaller and simpler;
+`git blame` stops at the import.
+
+=== Transition period
+
+* Until the first Camel release with the Kamelets inside: the old repository stays the source of releases, and Kamelet
+  PRs go to the old repository. After the import PR is merged, Kamelet changes go to `apache/camel` only, so the two
+  copies do not drift. Changes merged in the old repository between the filter-repo run and the import are replayed
+  by hand.
+* After the move: Kamelet fixes for 4.18.x and 4.22.x go to the old repository branches, and are released from there.
+  Fixes for main go to `apache/camel`. A fix needed on both is done twice (cherry-picks between repositories do not
+  apply as-is because the paths differ).
+
+=== ASF and PMC checklist
+
+* `[DISCUSS]` on dev@camel.apache.org, with this document. Then a `[VOTE]` or lazy consensus on the move and the
+  version change. The code is already Apache Camel code under the same PMC and license, so no IP clearance is needed.
+  *(A vote is not strictly required for a move inside one PMC; a vote makes the release change explicit.)*
+* Announce on users@ and in the release notes of the first Camel release with the Kamelets inside, and in the upgrade
+  guide.
+* Release process docs of Camel: the staging repository contains `org/apache/camel/kamelets`; no separate catalog
+  release, vote, dist upload or website release page.
+* `dist/release/camel/camel-kamelets`: keep the existing releases; new 4.18.x and 4.22.x catalog releases continue
+  there until those lines end.
+* JIRA: a component for the Kamelets, and the move of the open GitHub issues.
+* INFRA: turn off GitHub issues on `apache/camel-kamelets`, change its description, and archive it at the end.
+* Website: release pages, playbook, redirects, search.
+* Security: the catalog security model joins the Camel one; `SECURITY.md` of the old repository points to Camel.
+* Reporter data (reporter.apache.org) and `doap.rdf` *(not checked whether they list the catalog separately)*.
+
+== Compatibility
+
+* Coordinates stay. The catalog version jumps from "one minor behind" to "the same as Camel" at the first merged
+  release.
+* `--kamelets-version` stays, with a new default.
+* Old catalog versions and the old repository tags stay available. Camel K's `clone_kamelets.sh` keeps working with
+  tags until it is changed.
+* Kamelet docs URLs change if they move into the `components` component; redirects are needed.
+* No change to the Kamelet format, the CRD or the runtime.
+
+== Risks
+
+* *Camel build time and CI load.* 259 YAML files are small, but the load test pulls in many components, and the Citrus
+  tests are slow and flaky. Mitigation: only the fast tests in PR CI, the Citrus tests in a nightly job.
+* *Release blocked by a Kamelet.* A broken Kamelet now blocks a Camel release. This is the point of the change, but
+  the release manager needs a way out: mark the Kamelet `Preview` or deprecated, or exclude it from the release.
+* *Downstream surprise.* Projects that pin a catalog version (Kaoto pins one version for all catalogs, Camel K CI pins
+  two) need to know the version scheme changes.
+* *Review load.* Kamelet PRs (Dependabot updates of libraries inside Kamelets, new Kamelets) add to the Camel PR queue.
+  Bot traffic was about 300 commits last year in the old repository.
+* *Two places for LTS fixes* during the transition, up to the end of the 4.22 LTS line.
+* *Go code.* Moving `crds/` into `apache/camel` would add Go to a Java repository; moving it to Camel K needs that
+  project's agreement.
+* *History noise.* Option A adds 4714 commits, many of them bot commits.
+
+[[open-questions]]
+== Open questions
+
+To decide first, in this order:
+
+. *Move and same version.* Do we move the catalog into `apache/camel` and release it with Camel under the Camel
+  version? The other answers depend on this.
+. *Target release.* Which development cycle: 4.24 (short; the Jackson 3 case needs an interim fix anyway) or 4.25?
+  And so which LTS line is the first with the Kamelets inside *(the next LTS version was not checked)*.
+. *Interim fix for 4.24* (CAMEL-22857): an early catalog release, or Jackson-neutral Kamelets, or both.
+. *Coordinates.* Keep `org.apache.camel.kamelets` (proposed), or move to `org.apache.camel` with relocation poms.
+
+Then:
+
+. Layout: top-level `kamelets/` (proposed) or `catalog/camel-kamelets*`.
+. Docs: a module of the `components` Antora component (proposed) or a separate `camel-kamelets` component from the
+  Camel repository.
+. History: filter-repo with history (proposed) or a plain copy.
+. CRDs: Go types to Camel K (proposed), to `apache/camel`, or left in the archived repository.
+. `camel-kamelets-crds` and the catalog model: keep the fabric8 model, or move `KameletsCatalog` onto Camel's
+  `KameletModel`.
+. JIRA component: reuse `camel-kamelet` or add `camel-kamelets`.
+. The Camel catalog listing the Kamelets: later, or as part of the move.
+. `camel-kamelets-examples`: keep, or merge into `camel-jbang-examples`.
+
+[[compile-time-checks]]
+== Compile-time checks for Kamelets (later)
+
+CAMEL-21049 also asks to write Kamelets in a form with compile-time checks, for example the Java DSL or a source from
+which the YAML is generated. This document leaves it out of scope, for these reasons:
+
+* The YAML is the published contract. Camel K applies it as `Kamelet` resources, and Kaoto, Karavan and JBang read it.
+  A generator would still have to produce the same YAML for all 259 Kamelets.
+* Most of the checks a compiler would give come from the move itself: endpoint options checked against the Camel
+  catalog of the same build, class names resolved on the classpath, and the load test. Camel already checks Kamelets in
+  `camel validate` and the AI tools (CAMEL-25379, CAMEL-25411, CAMEL-25381).
+* The move changes no file format and can be done in small PRs. A new authoring format would change every Kamelet at
+  once.
+
+After the move, a generator can be tried on a few Kamelets in the same repository, with the YAML output compared in
+the build. It needs its own design.
+
+== Related tickets
+
+* CAMEL-21049 Consider moving Kamelets to Camel (open, 2024-08-06), with the Jackson 3 comment of 2026-11-09.
+* CAMEL-21249 Move Kamelets utils in Camel Kamelets component (resolved, 4.9.0).
+* CAMEL-21843 Move kamelet utils to corresponding components (resolved, 4.11.0).
+* CAMEL-22857 Add support for Jackson 3 (open); PR apache/camel#29461 (open).
+* CAMEL-24547 camel-jbang - Upgrade Camel Kamelets to 4.22.0 (resolved): an example of the manual bump.
+
+== Not verified
+
+* Who reads the `camel.apache.org/catalog.version` annotation outside the catalog validator.
+* How Camel JBang picks the catalog version for `--camel-version` of an older release.
+* Whether Antora page aliases can redirect `camel-kamelets::` pages to a module of `components`.
+* The architectures of the container images used by the Citrus tests.
+* Whether anything imports the Go module `github.com/apache/camel-kamelets/crds`.
+* Camel LSP's use of `camel-kamelets-catalog` in its own repository.
+* Kaoto: read through the GitHub API only (`KaotoIO/camel-catalog: pom.xml`, `docs/CATALOG_VERSIONS.md`), not cloned.
+* The Camel K `KameletCatalogAvailable` failure for a Camel version without a catalog: read from the code, not run.
+* Release dates are those of the website release pages; tag dates in a shallow clone may differ.
