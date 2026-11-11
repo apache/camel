@@ -179,7 +179,8 @@ final class ChaosAdvisor {
             case DROP -> consumer ? Kind.CONSUMER : Kind.LOST;
             case CORRUPT -> Kind.CORRUPT;
             case DUPLICATE -> Kind.DUPLICATE;
-            default -> consumer ? Kind.CONSUMER : Kind.ERRORS;
+            // an error that waits first (after=) is a call that times out, which the suggestions offer as slow
+            default -> consumer ? Kind.CONSUMER : rule.after > 0 ? Kind.SLOW : Kind.ERRORS;
         };
     }
 
