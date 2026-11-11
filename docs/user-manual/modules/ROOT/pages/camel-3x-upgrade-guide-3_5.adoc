@@ -29,7 +29,7 @@ Load-balancing policy has changed. There are no existing load balancing policies
 To customize load balancing policy, please use the parameter `loadBalancingPolicyClass` and provide own implementation
 of load balancing policy.
 
-Session impelentation class has changed from `com.datastax.driver.core.Session` to
+Session implementation class has changed from `com.datastax.driver.core.Session` to
 `com.datastax.oss.driver.api.core.CqlSession` (see https://docs.datastax.com/en/developer/java-driver/4.3/upgrade_guide/#session[upgrade guide]).
 This could have direct impact on the type of parameter `beanRef` if you are using `Provided Session reference`.
 
