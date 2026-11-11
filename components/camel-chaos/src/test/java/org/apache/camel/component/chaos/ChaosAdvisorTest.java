@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -58,6 +59,17 @@ class ChaosAdvisorTest extends ChaosTestSupport {
                         .end();
                 from("testpoll:inbox?delay=100000&initialDelay=100000").routeId("inbox").to("mock:inbox");
                 from("direct:archive").routeId("archive").to("file:target/chaos-archive");
+                // a circuit breaker around a call to another route, which stands for the service
+                from("direct:check").routeId("check")
+                        .circuitBreaker()
+                        .to("direct:supplier")
+                        .onFallback().setBody(constant("cached"))
+                        .end();
+                from("direct:supplier").routeId("supplier").setBody(constant("in stock"));
+                // an HTTP call per message, known only when it sends
+                from("direct:lookup").routeId("lookup")
+                        .toD("http://stock/items/${header.sku}?throwExceptionOnFailure=false")
+                        .toD("${header.target}");
             }
         };
     }
@@ -105,6 +117,42 @@ class ChaosAdvisorTest extends ChaosTestSupport {
         // the most worth trying first
         assertThat(suggestions.get(0).recipe()).isEqualTo("http-error");
         assertThat(suggestions.get(0).why()).contains("without a circuit breaker");
+    }
+
+    @Test
+    void aCircuitBreakerAroundACallToAnotherRoute() {
+        List<String> rules = ChaosAdvisor.suggest(context).stream().filter(s -> s.route().equals("check"))
+                .map(ChaosAdvisor.Suggestion::rule).toList();
+        // down for a while, so the breaker opens, and half of the calls failing, past its failure rate: the fallback
+        // answers, so the route does not fail
+        assertThat(rules).containsExactly(
+                "endpoint=direct://supplier error rate=burst:10s/1m until=10m expect=check:failed<=0",
+                "endpoint=direct://supplier error exception=java.net.ConnectException rate=0.5 until=10m"
+                                                                                                       + " expect=check:failed<=0");
+        // a call to another route without a breaker is not a service to fail
+        assertThat(ChaosAdvisor.suggest(context)).noneMatch(s -> s.rule().startsWith("endpoint=direct://check"));
+    }
+
+    @Test
+    void theHttpCallsOfToD() {
+        List<String> rules = ChaosAdvisor.suggest(context).stream().filter(s -> s.route().equals("lookup"))
+                .map(ChaosAdvisor.Suggestion::rule).toList();
+        // by the address up to the first expression; a call to ${header.target} says nothing of where it goes
+        assertThat(rules).containsExactly(
+                "endpoint=http://stock/items/* error status=503 rate=0.25 until=10m expect=lookup:failed<=0",
+                "endpoint=http://stock/items/* error status=404 rate=0.25 until=10m expect=lookup:failed<=0");
+    }
+
+    @Test
+    void aRuleOfToDFailsTheCall() throws Exception {
+        chaos().addRule("endpoint=http://stock/items/* error status=404");
+        Exchange out = template.request("direct:lookup", e -> {
+            e.getMessage().setHeader("sku", "mug");
+            e.getMessage().setHeader("target", "mock:out");
+        });
+        // throwExceptionOnFailure=false: the response with the status, as the HTTP component gives it
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE)).isEqualTo(404);
     }
 
     @Test

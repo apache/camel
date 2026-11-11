@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.io.File;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashMap;
@@ -36,6 +40,7 @@ import org.apache.camel.Route;
 import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.errorhandler.DeadLetterChannelDefinition;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.util.URISupport;
@@ -132,12 +137,19 @@ final class ChaosAdvisor {
     /**
      * How to feed a route with messages (CAMEL-26771), so a rule can be tried on it.
      *
-     * @param kind {@code self} (the route feeds itself), {@code http}, {@code file} or {@code send}
-     * @param hint how, such as the command to run
-     * @param real whether the messages go to the real system the route reads, rather than a stub of it
-     *             ({@code camel run --stub=remote})
+     * @param kind   {@code self} (the route feeds itself), {@code http}, {@code file} or {@code send}
+     * @param hint   how, such as the command to run
+     * @param real   whether the messages go to the real system the route reads, rather than a stub of it
+     *               ({@code camel run --stub=remote})
+     * @param replay the folder the route moved the files it took to, when it holds some: the chaos command replay puts
+     *               them back, so the route takes the same files again (CAMEL-26817); null otherwise
+     * @param files  how many files the replay puts back
      */
-    record Feed(String kind, String hint, boolean real) {
+    record Feed(String kind, String hint, boolean real, String replay, int files) {
+
+        Feed(String kind, String hint, boolean real) {
+            this(kind, hint, real, null, 0);
+        }
     }
 
     /**
@@ -287,6 +299,15 @@ final class ChaosAdvisor {
         }
         if (LOCAL_FILES.contains(scheme)) {
             String folder = ChaosPatterns.withoutSlashes(uri(from)).substring(scheme.length() + 1);
+            File done = doneFolder(from);
+            List<File> taken = done != null ? takenFiles(done) : List.of();
+            if (!taken.isEmpty()) {
+                return new Feed(
+                        "file", "the " + taken.size() + (taken.size() == 1 ? " file" : " files") + " the route took, in "
+                                + done + ", put back into " + folder + ": an experiment with --feed=" + route.getRouteId()
+                                + " --body=replay:",
+                        false, done.getAbsolutePath(), taken.size());
+            }
             return new Feed("file", "write a file into " + folder, false);
         }
         // the route id as the endpoint: the send console sends to the input of the route, with all its options
@@ -295,6 +316,61 @@ final class ChaosAdvisor {
                 "send", "camel cmd send " + name + " --endpoint=" + route.getRouteId()
                         + " --body=<message> --repeat=20 --interval=200ms",
                 from.isRemote());
+    }
+
+    /**
+     * The folder a file input moves the files it took to (CAMEL-26817): {@code .camel} in its folder, or the folder of
+     * its {@code move} option. Null when it leaves them (noop, which also never takes a file of the same name again),
+     * deletes them, or moves them to a name made by an expression other than the file name.
+     */
+    static File doneFolder(Endpoint from) {
+        String uri = from.getEndpointUri();
+        if (!"file".equals(ChaosPatterns.scheme(uri))) {
+            return null;
+        }
+        Map<String, Object> options;
+        try {
+            options = URISupport.parseQuery(URISupport.extractQuery(uri));
+        } catch (Exception e) {
+            return null;
+        }
+        if ("true".equals(String.valueOf(options.get("noop"))) || "true".equals(String.valueOf(options.get("delete")))) {
+            return null;
+        }
+        String move = ".camel";
+        if (options.get("move") != null) {
+            try {
+                // as the endpoint URI has it, %24%7B for ${; a + stays a +
+                move = URLDecoder.decode(options.get("move").toString().replace("+", "%2B"), StandardCharsets.UTF_8);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+        for (String name : List.of("${file:name}", "${file:onlyname}")) {
+            if (move.endsWith(name)) {
+                move = move.substring(0, move.length() - name.length());
+            }
+        }
+        if (move.isEmpty() || move.contains("${") || move.contains("$simple{")) {
+            return null;
+        }
+        File done = new File(move);
+        return done.isAbsolute() ? done : new File(inputFolder(from), move);
+    }
+
+    /** The folder a file input takes its files from, as its URI names it. */
+    static File inputFolder(Endpoint from) {
+        return new File(ChaosPatterns.withoutSlashes(uri(from)).substring("file:".length()));
+    }
+
+    /** The files in the folder a file input moved them to, by name: not the hidden ones, which it does not take. */
+    static List<File> takenFiles(File folder) {
+        File[] files = folder.listFiles(f -> f.isFile() && !f.getName().startsWith("."));
+        if (files == null) {
+            return List.of();
+        }
+        Arrays.sort(files, Comparator.comparing(File::getName));
+        return List.of(files);
     }
 
     /**
@@ -528,6 +604,20 @@ final class ChaosAdvisor {
                         85));
                 continue;
             }
+            if (breaker && "direct".equals(scheme) && consumers.containsKey(uri) && !id.equals(consumers.get(uri))) {
+                // a call to another route of the integration in a route with a circuit breaker (CAMEL-26817): that
+                // route stands for the service the breaker guards
+                String next = consumers.get(uri);
+                add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", uri),
+                        "route " + id + " calls route " + next + " in a circuit breaker: when " + next
+                                                                                         + " is down for a while, does the breaker open, and does the fallback answer?",
+                        70);
+                add(answer, recipes, "connection-refused", id, Kind.ERRORS, Map.of("endpoint", uri, "rate", "0.5"),
+                        "route " + id + " calls route " + next + " in a circuit breaker: when half of the calls fail,"
+                                                                                                                    + " does the breaker open at its failure rate, and close again?",
+                        62);
+                continue;
+            }
             if (!ChaosStubs.isRemote(to)) {
                 continue;
             }
@@ -576,6 +666,28 @@ final class ChaosAdvisor {
                             d.rank(), d.routes(), d.with()));
                 }
             }
+        }
+
+        // the HTTP calls known only when they send (toD), by the address before the first expression (CAMEL-26817)
+        for (String pattern : dynamicHttpCalls(route)) {
+            if (!seen.add(pattern)) {
+                continue;
+            }
+            if (breaker) {
+                add(answer, recipes, "outage", id, Kind.ERRORS, Map.of("endpoint", pattern),
+                        "the HTTP calls to " + pattern + " in a route with a circuit breaker: when the service is down"
+                                                                                             + " for a while, does the breaker open, and does the fallback answer?",
+                        70);
+            } else {
+                add(answer, recipes, "http-error", id, Kind.ERRORS, Map.of("endpoint", pattern),
+                        "the HTTP calls to " + pattern + " without a circuit breaker: what does the route do when the"
+                                                                                                 + " service answers 503?",
+                        88);
+            }
+            add(answer, recipes, "http-error", id, Kind.ERRORS, Map.of("endpoint", pattern, "status", "404"),
+                    "the HTTP calls to " + pattern + " ask for a resource per message: what does the route do when it"
+                                                                                                              + " is not there (404)?",
+                    72);
         }
 
         // the dead letter channel of the route: once for the routes that share it, with the first of them
@@ -629,6 +741,56 @@ final class ChaosAdvisor {
             add(answer, recipes, "stall", id, Kind.LIFECYCLE, Map.of("route", id),
                     "route " + id + " stops taking messages for a while: does the sender wait, retry or lose them?", 30);
         }
+    }
+
+    /**
+     * The HTTP calls of the route that are known only when they send (toD), each as a pattern of its address up to the
+     * first expression, such as {@code http://localhost:8080/stock/*} for
+     * {@code http://localhost:8080/stock/${variable.sku}}. A call whose address starts with an expression says nothing
+     * of where it goes, and is left out.
+     */
+    static List<String> dynamicHttpCalls(Route route) {
+        if (!(route.getRoute() instanceof RouteDefinition definition)) {
+            return List.of();
+        }
+        List<String> uris = new ArrayList<>();
+        for (ToDynamicDefinition to : ProcessorDefinitionHelper.filterTypeInOutputs(definition.getOutputs(),
+                ToDynamicDefinition.class)) {
+            if (to.getUri() != null) {
+                uris.add(to.getUri());
+            }
+        }
+        List<String> answer = new ArrayList<>();
+        for (String uri : uris) {
+            try {
+                uri = route.getCamelContext().resolvePropertyPlaceholders(uri);
+            } catch (Exception e) {
+                // a placeholder that does not resolve now: the address up to it
+            }
+            int query = uri.indexOf('?');
+            String address = query > 0 ? uri.substring(0, query) : uri;
+            int cut = address.length();
+            for (String start : List.of("${", "$simple{", "{{")) {
+                int at = address.indexOf(start);
+                if (at >= 0) {
+                    cut = Math.min(cut, at);
+                }
+            }
+            String scheme = ChaosPatterns.scheme(address);
+            if (cut == address.length() || scheme == null || !ChaosRuleParser.HTTP_SCHEMES.contains(scheme)) {
+                continue;
+            }
+            String prefix = address.substring(0, cut);
+            // the host must be known: a call to ${header.host} could go anywhere
+            if (ChaosPatterns.withoutSlashes(prefix).length() <= scheme.length() + 1) {
+                continue;
+            }
+            String pattern = prefix + "*";
+            if (!answer.contains(pattern)) {
+                answer.add(pattern);
+            }
+        }
+        return answer;
     }
 
     /**
@@ -749,6 +911,28 @@ final class ChaosAdvisor {
     static Set<String> fedRoutes(CamelContext camelContext) {
         Map<String, Boolean> reached = reach(camelContext, selfFeeding(camelContext), true);
         return reached != null ? reached.keySet() : null;
+    }
+
+    /**
+     * Per route, the file route whose files, put back, reach it (CAMEL-26817): a file route that took files reaches
+     * itself, and the routes it sends to, also over HTTP to the integration's own server. A route reached through a
+     * send known only when it sends is left out.
+     */
+    static Map<String, String> replayVia(CamelContext camelContext) {
+        Map<String, String> answer = new HashMap<>();
+        for (Route route : camelContext.getRoutes()) {
+            Endpoint from = route.getEndpoint();
+            File done = from != null ? doneFolder(from) : null;
+            if (done == null || takenFiles(done).isEmpty()) {
+                continue;
+            }
+            answer.putIfAbsent(route.getRouteId(), route.getRouteId());
+            Map<String, Boolean> reached = reach(camelContext, List.of(route.getRouteId()), true);
+            if (reached != null) {
+                reached.keySet().forEach(r -> answer.putIfAbsent(r, route.getRouteId()));
+            }
+        }
+        return answer;
     }
 
     /**

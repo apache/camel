@@ -245,6 +245,13 @@ system: the CLI says so, and `real` is `true` in the JSON. Run with `--stub=remo
 (`timeout`)
 |An HTTP call, in a route with a circuit breaker |The service is down for a while (`outage`): does the breaker open, and
 does the fallback answer?
+|An HTTP call that is known only when it sends (`toD`) |By its address up to the first expression
+(`endpoint=http://stock/items/*` for `+http://stock/items/${variable.sku}+`): the service answers 503 (or is down for a
+while, with a circuit breaker), and the resource is not there (`status=404`). An address that starts with an
+expression says nothing of where it goes, and is left out
+|A call to another route (`direct`), in a route with a circuit breaker |That route stands for the service: it is down
+for a while (`outage`), and half of the calls fail (`rate=0.5`), past the failure rate of the breaker. Does the breaker
+open, and does the fallback answer?
 |A call over another protocol |The connection is refused, and the call is slow
 |An input that can deliver a message again (Kafka, JMS, AMQP, SQS and more, or a consumer that reads a failed message
 again, such as a file without `moveFailed`) |The call out is made twice (`duplicate`): is it safe to repeat?
@@ -291,7 +298,14 @@ The rules leave the query of the endpoint out: its options do not tell which end
 `why`, `tried`, `routes` for a dead letter channel that several routes share, `feed`, and `rules` for two faults at
 once. A `feed` has its `kind` (one of `self`, `http`, `file` and `send`), a `hint`, `real`, and `fed` when the route
 gets messages without a feed: it makes its own (a timer), or a route that does sends to it, also with an HTTP call to
-the server of the integration. Such a suggestion can run as an experiment without sending anything. `rules` has all the
+the server of the integration. Such a suggestion can run as an experiment without sending anything. A route that starts
+from `file:<folder>` and moved the files it took (to `.camel`, or the folder of its `move` option) has `replay`, that
+folder, and `files`, how many there are: `ChaosManager.replayFiles(route)` (the chaos command `replay`) puts them back
+into its folder under their own names, so the route takes the same files again. The route moves them over the files
+there, so a replay is the same each time, as an experiment that is run again needs. A replay puts back at most 1000 files, the
+first by name; the answer has `left`, how many it did not put back, and a WARN is logged. A route with `noop=true` never takes
+a file of the same name again, and one with `delete=true` keeps none: they have no `replay`. A route that such a file
+route sends to has them too, with `replayRoute`, the file route to replay for it. `rules` has all the
 rules to add together. The chaos screen of the Camel TUI lists the suggestions (key `w`), where Enter types the rule
 in to change or add (the rules of two faults at once separated by `;`).
 

@@ -981,6 +981,11 @@ one on another host is not fed.
 A route that starts from `file:<folder>` is fed with files: each message is written as a file into the folder the route
 polls, named so the route takes it: `chaos-<time>.json`, numbered as `chaos-<time>-<n>.json` when the messages are
 repeated, with the extension of its `include` or `antInclude` filter, else of the body. A `CamelFileName` in `--header` names the files instead.
+With `--body=replay:` nothing is sent: the files the route took, which it moved to `.camel` (or the folder of its `move`
+option), are put back into its folder under their own names, and again while the experiment runs, as the route takes
+them, so a rule with a rate meets enough messages. The route moves them over the ones there, so an experiment that is
+run again has the same messages. A route with `noop=true` never takes a file of
+the same name again, so it cannot be replayed.
 
 A feed to a remote system that is not stubbed, such as a Kafka broker, has a warning, as the messages go to that system:
 use a local one (`camel infra run kafka`), or stub it. A broker that `camel infra run` started on this machine is such a

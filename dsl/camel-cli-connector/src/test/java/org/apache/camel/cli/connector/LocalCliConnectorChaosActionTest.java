@@ -224,6 +224,21 @@ class LocalCliConnectorChaosActionTest {
     }
 
     @Test
+    void replayPutsBackTheFilesARouteTook() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+
+        // the route is required, and it must be a file route that moves the files it took
+        assertThat(chaos("replay", null, null).error()).isEqualTo("The id of the route is required");
+        JsonObject action = new JsonObject();
+        action.put("action", "chaos");
+        action.put("command", "replay");
+        action.put("route", "start");
+        CliActionOutcome replayed = CliActionOutcome.dispatch(connector, (JsonObject) Jsoner.deserialize(action.toJson()))
+                .get(10, TimeUnit.SECONDS);
+        assertThat(replayed.error()).startsWith("Route start does not take files it moves to a folder");
+    }
+
+    @Test
     void anExplorationStartsAndFinishes() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
         JsonObject action = new JsonObject();

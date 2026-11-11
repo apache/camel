@@ -411,6 +411,30 @@ class ChaosExperimentRunTest {
     }
 
     @Test
+    void aReplayPutsBackTheFilesTheRouteTookAfterTheRulesAreAdded() throws Exception {
+        JsonObject status = statusWith(experiment("PENDING", true));
+        status.put("routes", new JsonArray(
+                List.of(new JsonObject(Map.of("routeId", "invoices", "from", "file://invoices")))));
+        integration.statuses.add(status);
+        integration.shows("PENDING", true);
+        integration.shows("PASS", true);
+
+        JsonObject result = ChaosExperimentRun.run(integration, null, RULE, ChaosExperimentRun.Feed.replay("invoices"),
+                60_000, null, clock);
+
+        // nothing is sent: the files keep their names, so the route takes the same files each time
+        assertThat(integration.sent).isNull();
+        // again while the experiment runs, so a rule with a rate meets enough messages
+        assertThat(integration.actions).extracting(a -> a.getString("command"))
+                .containsSubsequence("experiment-begin", "replay", "replay", "experiment-end");
+        assertThat(integration.actions).filteredOn(a -> "replay".equals(a.getString("command")))
+                .extracting(a -> a.getString("route")).containsOnly("invoices");
+        JsonObject traffic = (JsonObject) result.get("traffic");
+        assertThat(traffic.getString("status")).isEqualTo("success");
+        assertThat(traffic.getString("endpoint")).isEqualTo("invoices");
+    }
+
+    @Test
     void theRouteTheFeedReachesGoesWithTheExperiment() throws Exception {
         JsonObject status = statusWith(experiment("PENDING", true));
         status.put("routes", new JsonArray(
