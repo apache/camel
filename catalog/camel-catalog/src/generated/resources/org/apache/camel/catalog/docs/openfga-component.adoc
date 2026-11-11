@@ -52,7 +52,7 @@ Maven users will need to add the following dependency to their `pom.xml`.
 openfga:operation[?options]
 ------------------------------------------------------------
 
-Where `operation` is one of `check`, `batchCheck`, `listObjects`, `listRelations`, `listUsers`, `readTuples`,
+Where `operation` is one of `check`, `batchCheck`, `listObjects`, `streamedListObjects`, `listRelations`, `listUsers`, `readTuples`,
 `readChanges`, `expand`, `writeTuples` or `deleteTuples`.
 
 // component options: START
@@ -254,6 +254,57 @@ The body comes back holding only the identifiers the check allowed, in the order
 rather than filtering a list you already have:
 
 [tabs]
+=== Streaming object queries
+
+`streamedListObjects` uses OpenFGA's streamed object query and returns an
+`OpenFgaObjectIterator`, implementing `Iterator<String>` and `java.io.Closeable`.
+It opens the response lazily on first iteration and reads as the caller advances,
+without collecting the full result list or adding a producer queue. A bounded
+reader buffer provides pull backpressure. Ordinary `listObjects` still returns a
+complete list; neither operation offers continuation-token pagination.
+
+Use a streaming splitter to process each object incrementally:
+
+[source,java]
+----
+from("direct:enumerate")
+    .to("openfga:streamedListObjects?storeId={{fga.store}}"
+        + "&authorizationModelId={{fga.model}}&relation=reader"
+        + "&user=user:${exchangeProperty.subject}&type=document")
+    .split(body()).streaming()
+        .to("direct:processObject")
+    .end();
+----
+
+For `ProducerTemplate.requestBody`, consume the returned `OpenFgaObjectIterator`
+in a try-with-resources block. It remains usable after the exchange completes.
+Always close it when abandoning iteration. The streaming splitter closes a
+`Closeable` iterator; exhaustion, failure and producer stop also close the response.
+
+`isComplete()` becomes true only after iteration observes the end of the response.
+Closing early leaves it false. Server errors, malformed records, timeouts and
+connection errors throw from `hasNext()` or `next()`, including after earlier
+objects have been delivered. Treat those earlier objects as partial results.
+`failOpen` does not suppress streaming query failures. The component does not retry
+this stream automatically, because replay could repeat objects already delivered.
+
+`streamMaxResults` defaults to 10000 and fails iteration if another object arrives;
+it never silently truncates the answer. `streamMaxLineLength` defaults to 65536
+characters and bounds one JSON record. Both must be positive. `readTimeout` bounds
+waiting for response headers and each blocking attempt to read the next record;
+it does not limit time spent processing an object between calls. Closing the
+iterator cancels an in-flight request and closes an active response body.
+
+The operation preserves `authorizationModelId`, `consistency`, `conditionContext`
+and configured contextual tuples. With the component-created client it uses the
+SDK's authentication, serialization and TLS configuration. SDK 0.11 does not
+expose a cancellable response-body handle from an injected `OpenFgaClient`.
+Therefore an injected SDK client requires an explicit `streamingClient` implementing
+`OpenFgaStreamingClient`, plus `storeId` and a positive `readTimeout`. This SPI must
+return the actual cancellable request future and its closeable response body;
+the application owns the SPI client's lifecycle. Endpoint credentials are not used
+to guess the configuration of an injected SDK client.
+
 ====
 Java::
 +
@@ -498,7 +549,7 @@ YAML::
 ----
 ====
 
-It applies to `check`, `batchCheck`, `listObjects`, `listRelations` and `listUsers`. On `batchCheck` the batch fans
+It applies to `check`, `batchCheck`, `listObjects`, `streamedListObjects`, `listRelations` and `listUsers`. On `batchCheck` the batch fans
 out into one check per object and the context goes on *every* item, so each object is judged against the same facts.
 
 `OpenFgaSecurityPolicy` takes both options as well, through `setContextualTuples` and `setConditionContext`. They are

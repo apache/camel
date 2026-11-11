@@ -85,6 +85,12 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "startTime": getOrCreateConfiguration(target).setStartTime(property(camelContext, java.lang.String.class, value)); return true;
         case "storeid":
         case "storeId": getOrCreateConfiguration(target).setStoreId(property(camelContext, java.lang.String.class, value)); return true;
+        case "streammaxlinelength":
+        case "streamMaxLineLength": getOrCreateConfiguration(target).setStreamMaxLineLength(property(camelContext, int.class, value)); return true;
+        case "streammaxresults":
+        case "streamMaxResults": getOrCreateConfiguration(target).setStreamMaxResults(property(camelContext, int.class, value)); return true;
+        case "streamingclient":
+        case "streamingClient": getOrCreateConfiguration(target).setStreamingClient(property(camelContext, org.apache.camel.component.openfga.OpenFgaStreamingClient.class, value)); return true;
         case "type": getOrCreateConfiguration(target).setType(property(camelContext, java.lang.String.class, value)); return true;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": target.setUseGlobalSslContextParameters(property(camelContext, boolean.class, value)); return true;
@@ -97,7 +103,7 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"openFgaClient"};
+        return new String[]{"openFgaClient", "streamingClient"};
     }
 
     @Override
@@ -157,6 +163,12 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "startTime": return java.lang.String.class;
         case "storeid":
         case "storeId": return java.lang.String.class;
+        case "streammaxlinelength":
+        case "streamMaxLineLength": return int.class;
+        case "streammaxresults":
+        case "streamMaxResults": return int.class;
+        case "streamingclient":
+        case "streamingClient": return org.apache.camel.component.openfga.OpenFgaStreamingClient.class;
         case "type": return java.lang.String.class;
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return boolean.class;
@@ -225,6 +237,12 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "startTime": return getOrCreateConfiguration(target).getStartTime();
         case "storeid":
         case "storeId": return getOrCreateConfiguration(target).getStoreId();
+        case "streammaxlinelength":
+        case "streamMaxLineLength": return getOrCreateConfiguration(target).getStreamMaxLineLength();
+        case "streammaxresults":
+        case "streamMaxResults": return getOrCreateConfiguration(target).getStreamMaxResults();
+        case "streamingclient":
+        case "streamingClient": return getOrCreateConfiguration(target).getStreamingClient();
         case "type": return getOrCreateConfiguration(target).getType();
         case "useglobalsslcontextparameters":
         case "useGlobalSslContextParameters": return target.isUseGlobalSslContextParameters();

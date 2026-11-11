@@ -115,9 +115,49 @@ public class OpenFgaConfiguration implements Cloneable {
     @UriParam(label = "advanced",
               description = "An existing OpenFgaClient to use. When set, every option describing how to reach the"
                             + " server - apiUrl, storeId, the credentials, the timeouts and sslContextParameters - is"
-                            + " ignored, because they are baked into the client that was handed over.")
+                            + " ignored, because they are baked into the client that was handed over. streamedListObjects additionally requires an explicit streamingClient, storeId and readTimeout.")
     @Metadata(autowired = true)
     private OpenFgaClient openFgaClient;
+
+    @UriParam(label = "advanced", defaultValue = "10000")
+    private int streamMaxResults = 10000;
+
+    @UriParam(label = "advanced", defaultValue = "65536")
+    private int streamMaxLineLength = 65536;
+
+    @UriParam(label = "advanced")
+    @Metadata(autowired = true)
+    private OpenFgaStreamingClient streamingClient;
+
+    public int getStreamMaxResults() {
+        return streamMaxResults;
+    }
+
+    /** Maximum streamed objects before iteration fails; must be positive. No partial answer is silently truncated. */
+    public void setStreamMaxResults(int streamMaxResults) {
+        this.streamMaxResults = streamMaxResults;
+    }
+
+    public int getStreamMaxLineLength() {
+        return streamMaxLineLength;
+    }
+
+    /** Maximum characters in one streamed JSON record; must be positive. */
+    public void setStreamMaxLineLength(int streamMaxLineLength) {
+        this.streamMaxLineLength = streamMaxLineLength;
+    }
+
+    public OpenFgaStreamingClient getStreamingClient() {
+        return streamingClient;
+    }
+
+    /**
+     * Transport for streamedListObjects. Required with an injected OpenFgaClient, whose HTTP configuration is opaque.
+     * The caller owns this transport's lifecycle. storeId and readTimeout remain required for streaming.
+     */
+    public void setStreamingClient(OpenFgaStreamingClient streamingClient) {
+        this.streamingClient = streamingClient;
+    }
 
     /**
      * The base URL of the OpenFGA HTTP API, without a trailing path. The default assumes OpenFGA running as a sidecar

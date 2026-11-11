@@ -71,6 +71,9 @@ import org.slf4j.LoggerFactory;
                                            @BodyType.When(option = "operation", value = "listObjects",
                                                           carriers = Carrier.LIST,
                                                           javaType = "java.util.List<java.lang.String>"),
+                                           @BodyType.When(option = "operation", value = "streamedListObjects",
+                                                          carriers = Carrier.POJO,
+                                                          javaType = "org.apache.camel.component.openfga.OpenFgaObjectIterator"),
                                            @BodyType.When(option = "operation", value = "listRelations",
                                                           carriers = Carrier.LIST,
                                                           javaType = "java.util.List<java.lang.String>"),
@@ -91,7 +94,8 @@ import org.slf4j.LoggerFactory;
                                    description = "check, writeTuples and deleteTuples keep the body: the verdict is in the"
                                                  + " CamelOpenFgaAllowed header, the count in CamelOpenFgaWrittenTuples or"
                                                  + " CamelOpenFgaDeletedTuples. batchCheck: the allowed objects of the body;"
-                                                 + " the list operations: a List of String identifiers; readTuples and"
+                                                 + " listObjects, listRelations and listUsers: a List of String identifiers;"
+                                                 + " streamedListObjects: a closeable OpenFgaObjectIterator; readTuples and"
                                                  + " readChanges: a List of Maps with user, relation, object and timestamp"
                                                  + " (and operation for a change); expand: the UsersetTree, or null when the"
                                                  + " object or relation does not resolve"))
@@ -111,6 +115,8 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
     private volatile OpenFgaAuthorizer authorizer;
     private volatile SSLContext sslContext;
     private volatile OffsetDateTime startTime;
+    private OpenFgaStreamingClient streamingClient;
+    private boolean ownedStreamingClient;
 
     public OpenFgaEndpoint(final String uri, final Component component, final OpenFgaConfiguration configuration) {
         super(uri, component);
@@ -133,6 +139,23 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
         }
         this.startTime = parseStartTime();
         validateOperationOptions();
+        if (operation == OpenFgaOperation.streamedListObjects) {
+            require(configuration.getStoreId(), "storeId", "names the store to stream objects from");
+            if (configuration.getReadTimeout() <= 0 || configuration.getStreamMaxResults() <= 0
+                    || configuration.getStreamMaxLineLength() <= 0) {
+                throw new IllegalArgumentException(
+                        "Streaming readTimeout, streamMaxResults and streamMaxLineLength must be positive");
+            }
+            streamingClient = configuration.getStreamingClient();
+            if (streamingClient == null) {
+                if (configuration.getOpenFgaClient() != null) {
+                    throw new IllegalArgumentException(
+                            "streamedListObjects with an injected OpenFgaClient requires streamingClient");
+                }
+                streamingClient = OpenFgaClientFactory.createStreamingClient(configuration, sslContext);
+                ownedStreamingClient = true;
+            }
+        }
         authorizer = new OpenFgaAuthorizer(client, configuration, getCamelContext());
     }
 
@@ -150,7 +173,7 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
                     require(configuration.getObject(), "object", "names the resource being accessed");
                 }
             }
-            case listObjects -> {
+            case listObjects, streamedListObjects -> {
                 require(configuration.getUser(), "user", "names the subject to list objects for");
                 require(configuration.getRelation(), "relation", "names the relation to list objects through");
                 require(configuration.getType(), "type", "names the object type to enumerate");
@@ -245,6 +268,11 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         // the SDK holds one HttpClient for the life of the client and, on the Java 17 baseline, HttpClient is not
         // AutoCloseable - so there is nothing to close here, only a reference to drop
+        if (ownedStreamingClient && streamingClient != null) {
+            streamingClient.close();
+        }
+        streamingClient = null;
+        ownedStreamingClient = false;
         authorizer = null;
         super.doStop();
     }
@@ -281,6 +309,10 @@ public class OpenFgaEndpoint extends DefaultEndpoint {
 
     public void setConfiguration(OpenFgaConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    OpenFgaStreamingClient getStreamingClient() {
+        return streamingClient;
     }
 
     OpenFgaAuthorizer getAuthorizer() {
