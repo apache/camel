@@ -17,7 +17,8 @@ camel cmd chaos-load test/chaos/outage.chaos myapp
 
 A scenario (`test/chaos/outage.chaos`) keeps the rules of an experiment in
 the project: one rule per line, `#` comments and a `seed=` line.
-`camel run --chaos=test/chaos/outage.chaos` starts with one, and
+`camel run --chaos=test/chaos/outage.chaos` starts with one (in the
+run options form of F2: ←→ on Chaos testing picks one), and
 `chaos-load` loads one into a running integration (a new report).
 
 While a rule injects faults, the title bar shows a badge on every

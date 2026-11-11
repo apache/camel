@@ -16,16 +16,20 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -162,6 +166,57 @@ class RunOptionsFormTest {
         form.handleKeyEvent(KeyEvent.ofChar(' '));
 
         assertThat(form.buildArgs()).contains("--profile=dev").doesNotContain("--chaos");
+    }
+
+    @Test
+    void aChaosScenarioOfTheExampleIsPickedNextToChaosTesting() {
+        RunOptionsForm form = openForm();
+        form.setChaosScenarios(RunOptionsForm.chaosScenarios(List.of("README.md", "chaos.camel.yaml",
+                "test/chaos/payment-outage.chaos", "test/chaos.citrus.it.yaml", "test/chaos/reports/run.chaos")));
+        form.handleKeyEvent(key(KeyCode.UP));
+        // offered once chaos is on
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("Chaos testing (inject faults with camel-chaos)"));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("[x] Chaos testing, scenario: ◂ none ▸"));
+        List<Span> footer = new ArrayList<>();
+        form.renderFooter(footer);
+        assertThat(footer.stream().map(Span::content).reduce("", String::concat)).contains("scenario");
+
+        form.handleKeyEvent(key(KeyCode.RIGHT));
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("scenario: ◂ payment-outage ▸"));
+        assertThat(form.buildArgs()).contains("--chaos=test/chaos/payment-outage.chaos").doesNotContain("--chaos");
+        // and back to none
+        form.handleKeyEvent(key(KeyCode.LEFT));
+        assertThat(form.buildArgs()).contains("--chaos");
+    }
+
+    @Test
+    void theChaosScenariosOfAFolder(@TempDir Path dir) throws Exception {
+        Files.createDirectories(dir.resolve("test/chaos/reports"));
+        Files.writeString(dir.resolve("test/chaos/outage.chaos"), "endpoint=http* error\n");
+        Files.writeString(dir.resolve("test/chaos/slow.chaos"), "endpoint=http* delay duration=1s\n");
+        Files.writeString(dir.resolve("test/chaos/notes.md"), "notes\n");
+
+        assertThat(RunOptionsForm.chaosScenarios(dir)).containsExactly(
+                dir.resolve("test/chaos/outage.chaos").toAbsolutePath().toString(),
+                dir.resolve("test/chaos/slow.chaos").toAbsolutePath().toString());
+        assertThat(RunOptionsForm.chaosScenarios(dir.resolve("test"))).isEmpty();
+    }
+
+    @Test
+    void aChaosScenarioIsNotPassedWithProfileProd() {
+        RunOptionsForm form = openForm();
+        form.setChaosScenarios(List.of("test/chaos/payment-outage.chaos"));
+        form.handleKeyEvent(key(KeyCode.UP));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        form.handleKeyEvent(key(KeyCode.RIGHT));
+        assertThat(form.chaosScenario()).isEqualTo("test/chaos/payment-outage.chaos");
+        // Profile is row 2: down from the last row wraps to Name, then Runtime, then Profile
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertThat(form.buildArgs()).contains("--profile=prod").noneMatch(a -> a.startsWith("--chaos"));
     }
 
     @Test
