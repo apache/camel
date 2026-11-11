@@ -106,7 +106,7 @@ NOTE:  Some external systems do not handle HL7 NACKS ( HL7 Application Reject Ac
 Acknowledgements) - they do not interrogate the HL7 Acknowledgment to determine if it is a negative acknowledgement and 
 assume any acknowledgement received is an HL7 ACK (HL7 Application Accept Acknowledgement).  In order to prevent message 
 loss when dealing with external systems that behave in this fashion, the MLLP-Consumer must be capable of closing the 
-TCP connection in lieu of sending and HL7 NACK, which will force the external system to resend the message.  Additionally,
+TCP connection in lieu of sending an HL7 NACK, which will force the external system to resend the message.  Additionally,
 the MLLP-Consumer may be required to behave differently for each type of HL7 NACK - it may need to close the TCP connection
 instead of sending HL7 Application Error Acknowledgements, and route the messages that would be normally not be persisted 
 to an alternate durable store before sending the HL7 Application Reject acknowledgement.
