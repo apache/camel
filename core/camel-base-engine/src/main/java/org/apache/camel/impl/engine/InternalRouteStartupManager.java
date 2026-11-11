@@ -317,7 +317,7 @@ final class InternalRouteStartupManager {
             RouteService routeService = entry.getValue().getRouteService();
             StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(Route.class,
                     routeService.getId(),
-                    "Warump Route");
+                    "Warmup Route");
             try {
                 LOG.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
                 setupRoute.set(routeService.getRoute());
