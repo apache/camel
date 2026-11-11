@@ -130,7 +130,7 @@ public final class PluginHelper {
         }
         Path fileName = pluginConfigPath.getFileName();
         if (Files.isRegularFile(pluginConfigPath)
-                || fileName != null && fileName.toString().toLowerCase(Locale.ROOT).endsWith(".json")) {
+                || (fileName != null && fileName.toString().toLowerCase(Locale.ROOT).endsWith(".json"))) {
             return pluginConfigPath;
         }
         // does not exist and has no .json suffix — treated as a directory (created on first save)
