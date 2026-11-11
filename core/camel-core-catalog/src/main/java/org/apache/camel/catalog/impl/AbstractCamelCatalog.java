@@ -702,7 +702,7 @@ public abstract class AbstractCamelCatalog {
                     options.put(key, word2.get(pos));
                 }
             } else {
-                // we have a little problem as we do not not have all options
+                // we have a little problem as we do not have all options
                 if (!option.isRequired()) {
                     Object value = null;
 
