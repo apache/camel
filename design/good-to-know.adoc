@@ -263,6 +263,9 @@ its readers (`CamelCatalog.goodToKnowJson()`), as it gives the chaos model.
 }
 ----
 
+The order of the file is the order of the hints: the groups in the order of `groups`, and within a group the rules in
+the order they are listed. A rule that matters more is listed first; there is no separate rank field.
+
 The conditions are a closed vocabulary that the engine knows, over one route at a time. Two conditions follow a send
 into the route it reaches: `deadLetter.canFail` and `receiver` (see <<Explaining a failure>>). The engine already reads
 all the routes, so this is a lookup of the route that consumes the endpoint (over `direct`, a hand-off, or HTTP to the
@@ -492,8 +495,8 @@ The explanation finds its rule from what was seen:
 2. The rules whose `outcome` has it, evaluated on the routes of the outcome. Each rule that matches is a why, and more
    than one can (a hand-off and a dead letter channel that fails can both lose a message between two routes). All are
    given, in order: for a chaos experiment the rule whose `tryChaos` is the recipe that ran comes first, as it is the
-   cause that was tried; then by the order of the groups and the `rank` of the rule, as on the About screen. With more
-   than one, the explanation says that it is one of these, and an AI weighs them with what was seen.
+   cause that was tried; then in the order of the file (the groups, then the rules within a group), as on the About
+   screen. With more than one, the explanation says that it is one of these, and an AI weighs them with what was seen.
 3. Its text, impact and choices, with what was seen (the counts, the exception, the message history of the failed
    exchange) and the facts the rule used.
 
@@ -590,8 +593,8 @@ a component without a fact gives no hint.
   explanation of a failure uses the facts the running integration reads from its JARs, so its "why" is about what ran.
   When the two differ, the explanation says which version it used.
 - The vocabulary may grow into a language. New conditions are added only for a hint that needs them, with a test.
-- Too many hints are noise. The About screen shows a few per integration, the most important first (by group order and
-  a `rank` of the rule, if needed).
+- Too many hints are noise. The About screen shows a few per integration, the most important first (in the order of
+  the file: the groups, then the rules within a group).
 
 == Open questions
 
