@@ -49,7 +49,7 @@ class IoTHubSendOperationsTest {
     }
 
     @Test
-    void testNullBodyIsSkipped() throws Exception {
+    void testNullBodyIsSkipped() {
         DeviceClient client = mock(DeviceClient.class);
         CountingStrategy strategy = new CountingStrategy(0);
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, null), List.of(strategy));
@@ -60,7 +60,7 @@ class IoTHubSendOperationsTest {
     }
 
     @Test
-    void testEmptyContextIsSkipped() throws Exception {
+    void testEmptyContextIsSkipped() {
         DeviceClient client = mock(DeviceClient.class);
         CountingStrategy strategy = new CountingStrategy(0);
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, null), List.of(strategy));

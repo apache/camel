@@ -22,8 +22,6 @@ import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import org.apache.camel.component.azure.iothub.IoTHubDeliveryMode;
 import org.apache.camel.component.azure.iothub.client.DeviceClientPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Dispatches a message body to Azure IoT Hub using a single delivery attempt per exchange.
@@ -34,8 +32,6 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public class IoTHubSendOperations {
-
-    private static final Logger LOG = LoggerFactory.getLogger(IoTHubSendOperations.class);
 
     private final DeviceClientPool pool;
     private final List<DeliveryStrategy> strategies;
