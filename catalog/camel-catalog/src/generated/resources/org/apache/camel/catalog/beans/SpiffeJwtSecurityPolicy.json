@@ -1,0 +1,16 @@
+{
+  "bean": {
+    "kind": "bean",
+    "name": "SpiffeJwtSecurityPolicy",
+    "javaType": "org.apache.camel.component.spiffe.SpiffeJwtSecurityPolicy",
+    "interfaceType": "org.apache.camel.spi.AuthorizationPolicy",
+    "title": "Spiffe Jwt Security Policy",
+    "description": "Validates a JWT-SVID and authorizes its SPIFFE identity before a route segment, preserving the application body. A missing, rejected or unauthorized token fails closed.",
+    "deprecated": false,
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-spiffe",
+    "version": "4.24.0-SNAPSHOT",
+    "properties": { "audience": { "index": 0, "kind": "property", "displayName": "Audience", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Comma-separated audiences to validate against. A token is accepted when it validates for any configured audience. Message headers cannot override this check." }, "acceptedSpiffeIds": { "index": 1, "kind": "property", "displayName": "Accepted Spiffe Ids", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Comma-separated allow-list of validated SPIFFE identities to authorize. Set exactly one of acceptedSpiffeIds and acceptAnySpiffeId." }, "acceptAnySpiffeId": { "index": 2, "kind": "property", "displayName": "Accept Any Spiffe Id", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": false, "description": "Authorize any SPIFFE identity whose JWT-SVID validates for a configured audience, leaving further authorization to a downstream policy. Mutually exclusive with acceptedSpiffeIds." }, "spiffeSocketPath": { "index": 3, "kind": "property", "displayName": "Spiffe Socket Path", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Path to the Workload API endpoint. Defaults to the SPIFFE_ENDPOINT_SOCKET environment variable. Ignored when workloadApiClient is supplied." }, "workloadApiClient": { "index": 4, "kind": "property", "displayName": "Workload Api Client", "label": "advanced", "required": false, "type": "object", "javaType": "io.spiffe.workloadapi.WorkloadApiClient", "deprecated": false, "autowired": true, "secret": false, "description": "An existing WorkloadApiClient to use. It remains owned by its supplier and is not closed when the guarded route stops." } }
+  }
+}
+

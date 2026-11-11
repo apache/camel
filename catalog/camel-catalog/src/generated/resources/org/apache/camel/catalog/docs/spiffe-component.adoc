@@ -119,6 +119,136 @@ A missing token fails with `IllegalArgumentException`; a rejected one (invalid, 
 with `io.spiffe.exception.JwtSvidException`. Catch both — `onException(io.spiffe.exception.JwtSvidException.class,
 IllegalArgumentException.class)` — to answer `401`.
 
+== Preserve an application body during JWT validation
+
+Set `preserveBody=true` on `validateJwtSvid` to validate a request without replacing or reading its body. In this mode
+supply the token through `CamelSpiffeToken` or `Authorization: Bearer`; there is no body-token fallback, including
+when the header is missing. The default remains `preserveBody=false`, which returns the SDK `JwtSvid` in the body.
+
+After validation the `CamelSpiffeJwtIdentity` exchange property contains a `SpiffeJwtIdentity` with getters for
+`spiffeId`, `expiry` (`Instant`), `audience` and `claims`. It contains no bearer token. Claims are copied into
+unmodifiable maps/lists and omitted from `toString`, but can still contain sensitive application data: select only
+the fields a downstream authorization policy needs. The identity property and identity/expiry output headers are
+cleared before each validation, including one that fails.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("platform-http:/orders")
+    .to("spiffe:auth?operation=validateJwtSvid&audience=spiffe://example.org/orders&preserveBody=true")
+    .removeHeaders("Authorization")
+    .setProperty("subject", simple("${exchangeProperty.CamelSpiffeJwtIdentity.spiffeId}"))
+    .to("direct:handleOrder");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="platform-http:/orders"/>
+  <to uri="spiffe:auth?operation=validateJwtSvid&amp;audience=spiffe://example.org/orders&amp;preserveBody=true"/>
+  <removeHeaders pattern="Authorization"/>
+  <setProperty name="subject"><simple>${exchangeProperty.CamelSpiffeJwtIdentity.spiffeId}</simple></setProperty>
+  <to uri="direct:handleOrder"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: platform-http:/orders
+      steps:
+        - to:
+            uri: "spiffe:auth?operation=validateJwtSvid&audience=spiffe://example.org/orders&preserveBody=true"
+        - removeHeaders:
+            pattern: Authorization
+        - setProperty:
+            name: subject
+            simple: "${exchangeProperty.CamelSpiffeJwtIdentity.spiffeId}"
+        - to:
+            uri: direct:handleOrder
+----
+====
+
+== Protect a route segment with a JWT-SVID policy
+
+`SpiffeJwtSecurityPolicy` combines audience validation with an explicit identity rule, preserves the application body,
+and throws `CamelAuthorizationException` before the guarded processor runs for missing, rejected or unauthorized
+tokens. Set `audience` and exactly one of `acceptedSpiffeIds` or `acceptAnySpiffeId=true`. Audience and identity rules
+come from policy configuration; message headers cannot override them. The policy reads tokens from the same two
+headers as body-preserving producer validation and never from the body.
+
+Each guarded processor owns an endpoint-managed Workload API client, released when its route stops and recreated
+on restart. An injected `workloadApiClient` remains owned by its supplier and is never closed by the policy. The
+policy also supports `spiffeSocketPath`, defaulting to `SPIFFE_ENDPOINT_SOCKET` when no client is supplied.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+SpiffeJwtSecurityPolicy jwtPolicy = new SpiffeJwtSecurityPolicy();
+jwtPolicy.setAudience("spiffe://example.org/orders");
+jwtPolicy.setAcceptedSpiffeIds("spiffe://example.org/frontend");
+getContext().getRegistry().bind("jwtPolicy", jwtPolicy);
+
+from("platform-http:/orders")
+    .policy(jwtPolicy)
+    .removeHeaders("Authorization")
+    .to("direct:handleOrder");
+----
+XML::
++
+[source,xml]
+----
+<bean id="jwtPolicy" class="org.apache.camel.component.spiffe.SpiffeJwtSecurityPolicy">
+  <property name="audience" value="spiffe://example.org/orders"/>
+  <property name="acceptedSpiffeIds" value="spiffe://example.org/frontend"/>
+</bean>
+<route>
+  <from uri="platform-http:/orders"/>
+  <policy ref="jwtPolicy">
+    <removeHeaders pattern="Authorization"/>
+    <to uri="direct:handleOrder"/>
+  </policy>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: jwtPolicy
+      type: org.apache.camel.component.spiffe.SpiffeJwtSecurityPolicy
+      properties:
+        audience: spiffe://example.org/orders
+        acceptedSpiffeIds: spiffe://example.org/frontend
+- route:
+    from:
+      uri: platform-http:/orders
+      steps:
+        - policy:
+            ref: jwtPolicy
+            steps:
+              - removeHeaders:
+                  pattern: Authorization
+              - to:
+                  uri: direct:handleOrder
+----
+====
+
+The successful policy publishes the same token-free `CamelSpiffeJwtIdentity` property. Extract verified fields into
+exchange properties to compose with OPA or OpenFGA; for example, copy its `spiffeId` into `subject`, use
+`includeProperties=subject` with OPA, or a configured OpenFGA `user` expression based on that property. Choosing
+`acceptAnySpiffeId` asserts that audience validation is sufficient at this step and leaves finer authorization to
+the downstream policy. Always remove credential headers before forwarding requests to an unrelated destination.
+
 == Mutual TLS with SPIFFE (SSLContextParameters)
 
 For X.509-based zero-trust mTLS, the component provides

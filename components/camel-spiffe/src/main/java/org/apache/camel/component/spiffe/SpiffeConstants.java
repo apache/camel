@@ -43,7 +43,7 @@ public final class SpiffeConstants {
     public static final String SPIFFE_ID = HEADER_PREFIX + "SpiffeId";
 
     @Metadata(label = "producer",
-              description = "The expiry of the returned SVID: the token expiry for fetchJwtSvid, or the leaf"
+              description = "The expiry of the returned SVID: the token expiry for fetchJwtSvid or validateJwtSvid, or the leaf"
                             + " certificate's notAfter for fetchX509Svid.",
               javaType = "java.util.Date")
     public static final String EXPIRY = HEADER_PREFIX + "Expiry";
@@ -54,6 +54,12 @@ public final class SpiffeConstants {
      * message, and so a downstream policy can forward it - for example the OPA policy's {@code includeProperties}.
      */
     public static final String PEER_SPIFFE_ID = HEADER_PREFIX + "PeerId";
+
+    /**
+     * Exchange property carrying the token-free verified JWT identity and claims as a {@link SpiffeJwtIdentity}.
+     * Cleared before each validation and populated only after successful validation and, for a policy, authorization.
+     */
+    public static final String JWT_IDENTITY = HEADER_PREFIX + "JwtIdentity";
 
     private SpiffeConstants() {
     }
