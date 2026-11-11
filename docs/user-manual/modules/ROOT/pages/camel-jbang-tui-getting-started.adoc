@@ -49,7 +49,8 @@ turn on chaos testing (`--chaos`, to inject faults with camel-chaos; not with pr
 says by whom, so a second app with an HTTP server does not fail to start.
 
 When the example or folder has chaos scenarios (`test/chaos/*.chaos`), ←→ on the chaos testing row picks one, which
-is run with `--chaos=test/chaos/<name>.chaos`, so its rules are added at startup.
+is run with `--chaos=test/chaos/<name>.chaos`, so its rules are added at startup. Without one (`none, add rules
+yourself`, the default), chaos is on with no rules, and you add them while it runs.
 
 image::jbang/camel-tui-run-chaos-scenario.png[The run options form of the chaos example, with chaos testing on and its payment-outage scenario picked]
 

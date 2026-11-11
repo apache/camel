@@ -266,11 +266,14 @@ class RunOptionsForm {
                 && file.indexOf('/', CHAOS_SCENARIOS.length() + 1) < 0;
     }
 
-    /** The name of the scenario picked, as the file without its folder and .chaos, or none. */
+    /**
+     * The name of the scenario picked, as the file without its folder and .chaos; without one, chaos is on with no
+     * rules, which is not obvious from [x] alone.
+     */
     private String chaosScenarioName() {
         String scenario = chaosScenario();
         if (scenario == null) {
-            return "none";
+            return "none, add rules yourself";
         }
         String name = Path.of(scenario).getFileName().toString();
         return name.substring(0, name.length() - ".chaos".length());

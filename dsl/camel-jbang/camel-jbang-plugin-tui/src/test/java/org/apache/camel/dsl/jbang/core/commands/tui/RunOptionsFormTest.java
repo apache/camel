@@ -177,7 +177,8 @@ class RunOptionsFormTest {
         // offered once chaos is on
         assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("Chaos testing (inject faults with camel-chaos)"));
         form.handleKeyEvent(KeyEvent.ofChar(' '));
-        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("[x] Chaos testing, scenario: ◂ none ▸"));
+        assertThat(renderPopupRows(form))
+                .anyMatch(row -> row.contains("[x] Chaos testing, scenario: ◂ none, add rules yourself ▸"));
         List<Span> footer = new ArrayList<>();
         form.renderFooter(footer);
         assertThat(footer.stream().map(Span::content).reduce("", String::concat)).contains("scenario");
@@ -185,9 +186,10 @@ class RunOptionsFormTest {
         form.handleKeyEvent(key(KeyCode.RIGHT));
         assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("scenario: ◂ payment-outage ▸"));
         assertThat(form.buildArgs()).contains("--chaos=test/chaos/payment-outage.chaos").doesNotContain("--chaos");
-        // and back to none
+        // and back to none: chaos on without rules, to add them while it runs
         form.handleKeyEvent(key(KeyCode.LEFT));
         assertThat(form.buildArgs()).contains("--chaos");
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("scenario: ◂ none, add rules yourself ▸"));
     }
 
     @Test
