@@ -322,12 +322,11 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
 
     /**
      * Checks whether we need an {@link InputStream} to access the message body or header.
-     * <p/>
+     * <p>
      * Depending on the content in the message body or header, we may not need to convert to {@link InputStream}.
      *
      * @param  exchange the current exchange
-     * @return          <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source}
-     *                  afterward.
+     * @return          <code>true</code> to convert to {@link InputStream} before converting to {@link Source}
      */
     protected boolean isInputStreamNeeded(Exchange exchange) {
         Object content = getContentToValidate(exchange);
@@ -355,10 +354,10 @@ public class ValidatingProcessor extends AsyncProcessorSupport {
 
     /**
      * Converts the inbound body or header to a {@link Source}, if it is <b>not</b> already a {@link Source}.
-     * <p/>
+     * <p>
      * This implementation will prefer to source in the following order:
      * <ul>
-     * <li>DOM - DOM if explicit configured to use DOM</li>
+     * <li>DOM - DOM if explicitly configured to use DOM</li>
      * <li>SAX - SAX as 2nd choice</li>
      * <li>Stream - Stream as 3rd choice</li>
      * <li>DOM - DOM as 4th choice</li>

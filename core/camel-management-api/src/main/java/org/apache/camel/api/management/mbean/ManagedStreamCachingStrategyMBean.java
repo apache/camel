@@ -22,7 +22,7 @@ import org.apache.camel.api.management.ManagedOperation;
 public interface ManagedStreamCachingStrategyMBean extends ManagedServiceMBean {
 
     /**
-     * Used for selecting if the memory limit is <tt>committed</tt> or <tt>maximum</tt> heap memory setting.
+     * Used for selecting if the memory limit is <code>committed</code> or <code>maximum</code> heap memory setting.
      */
     enum SpoolUsedHeapMemoryLimit {
         Committed,

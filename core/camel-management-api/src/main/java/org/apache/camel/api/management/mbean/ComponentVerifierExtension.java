@@ -32,7 +32,7 @@ import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Verifica
  * Defines the interface used for validating component/endpoint parameters. The central method of this interface is
  * {@link ManagedComponentMBean#verify(String, Map)} which takes a scope and a set of parameters which should be
  * verified.
- * <p/>
+ * <p>
  * The return value is a {@link ComponentVerifierExtension.Result} of the verification
  */
 public final class ComponentVerifierExtension {

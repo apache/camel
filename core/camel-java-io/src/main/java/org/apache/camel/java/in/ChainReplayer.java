@@ -84,7 +84,7 @@ import org.apache.camel.support.builder.Namespaces;
  * Builds the model by replaying the chains of a Java source against Camel's own DSL: {@code from("a").to("b")} calls
  * {@code from("a")} on a route builder and {@code to("b")} on the route it returns. So {@code end()}, blocks,
  * expression clauses and ids behave exactly as in a compiled route, for every EIP.
- * <p/>
+ * <p>
  * Nothing of the parsed project runs or is loaded. Only methods of Camel's model and builder types are called (see
  * {@link #isAllowed(Method)}); a class of the project becomes an empty stub with its name ({@link StubClassLoader}); a
  * lambda, an anonymous class or {@code new Foo()} becomes a placeholder object of the type the DSL asks for; a value
