@@ -437,7 +437,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                                                      + "entry after X minutes - this ensures no problems with race conditions. <p/> See more details at the "
                                                      + "readLockIdempotentReleaseDelay option.")
     protected boolean readLockRemoveOnCommit;
-    @UriParam(label = "consumer,lock", description = "Whether to delay the release task for a period of millis. <p/> "
+    @UriParam(label = "consumer,lock", description = "How many millis to delay the release task. <p/> "
                                                      + "This can be used to delay the release tasks to expand the window when a file is regarded as "
                                                      + "read-locked, in an active/active cluster scenario with a shared idempotent repository, to ensure "
                                                      + "other nodes cannot potentially scan and acquire the same file, due to race-conditions. By expanding "
@@ -1358,7 +1358,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Whether to delay the release task for a period of millis.
+     * How many millis to delay the release task.
      * <p/>
      * This can be used to delay the release tasks to expand the window when a file is regarded as read-locked, in an
      * active/active cluster scenario with a shared idempotent repository, to ensure other nodes cannot potentially scan
