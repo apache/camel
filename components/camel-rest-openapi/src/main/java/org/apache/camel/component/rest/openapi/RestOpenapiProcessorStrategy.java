@@ -29,13 +29,13 @@ import org.apache.camel.support.processor.RestBindingAdvice;
 public interface RestOpenapiProcessorStrategy {
 
     /**
-     * Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that are not mapped to
+     * Whether the consumer should fail, ignore or return a mock response for OpenAPI operations that are not mapped to
      * a corresponding route.
      */
     void setMissingOperation(String missingOperation);
 
     /**
-     * Whether the consumer should fail,ignore or return a dummy response for OpenAPI operations that are not mapped to
+     * Whether the consumer should fail, ignore or return a mock response for OpenAPI operations that are not mapped to
      * a corresponding route.
      */
     String getMissingOperation();
