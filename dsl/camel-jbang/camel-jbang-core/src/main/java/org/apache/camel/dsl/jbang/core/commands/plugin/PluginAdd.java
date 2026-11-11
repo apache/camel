@@ -18,6 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands.plugin;
 
 import java.util.Optional;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -37,56 +40,40 @@ import org.apache.camel.main.download.DependencyDownloader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "add",
-                     description = "Add new plugin", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel plugin add --command=my-cmd --gav=com.foo:bar:1.0" })
+@CommandDefinition(name = "add", description = "Add new plugin", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel plugin add --command=my-cmd --gav=com.foo:bar:1.0" })
 public class PluginAdd extends PluginBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel plugin to add",
-                            paramLabel = "<name>")
+    @Argument(required = true, description = "The Camel plugin to add", paramLabel = "<name>")
     String name;
 
-    @CommandLine.Option(names = { "--command" },
-                        description = "The command that the plugin uses")
+    @Option(name = "command", description = "The command that the plugin uses")
     String command;
 
-    @CommandLine.Option(names = { "--description" },
-                        description = "A short description of the plugin")
+    @Option(name = "description", description = "A short description of the plugin")
     String description;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories to use for downloading the plugin (Use commas to separate multiple repositories)")
+    @Option(name = "repo", aliases = { "repos" },
+            description = "Additional maven repositories to use for downloading the plugin (Use commas to separate multiple repositories)")
     String repositories;
 
-    @CommandLine.Option(names = { "--artifactId" },
-                        description = "Maven artifactId")
+    @Option(name = "artifactId", description = "Maven artifactId")
     String artifactId;
 
-    @CommandLine.Option(names = { "--groupId" },
-                        defaultValue = "org.apache.camel",
-                        description = "Maven groupId")
+    @Option(name = "groupId", description = "Maven groupId", defaultValue = "org.apache.camel")
     String groupId = "org.apache.camel";
 
-    @CommandLine.Option(names = { "--version" },
-                        defaultValue = "${camel-version}",
-                        description = "Maven artifact version")
+    @Option(name = "version", description = "Maven artifact version", defaultValue = "${camel-version}")
     String version;
 
-    @CommandLine.Option(names = { "--first-version" },
-                        defaultValue = "${camel-version}",
-                        description = "First version of this plugin")
+    @Option(name = "first-version", description = "First version of this plugin", defaultValue = "${camel-version}")
     String firstVersion;
 
-    @CommandLine.Option(names = { "--gav" },
-                        description = "Maven group and artifact coordinates.")
+    @Option(name = "gav", description = "Maven group and artifact coordinates.")
     String gav;
-
-    @CommandLine.Spec
-    CommandLine.Model.CommandSpec commandSpec;
 
     public PluginAdd(CamelJBangMain main) {
         super(main);
@@ -316,12 +303,8 @@ public class PluginAdd extends PluginBaseCommand {
      * or environment variable).
      */
     private boolean isVersionGiven() {
-        CommandLine.ParseResult result = commandSpec != null ? commandSpec.commandLine().getParseResult() : null;
-        if (result != null) {
-            return result.hasMatchedOption("--version");
-        }
-        // without picocli (such as in tests) the field is only set when asked for
-        return version != null;
+        // without a command line (such as in tests) the field is only set when asked for
+        return isOptionGiven("--version") || version != null;
     }
 
     /**

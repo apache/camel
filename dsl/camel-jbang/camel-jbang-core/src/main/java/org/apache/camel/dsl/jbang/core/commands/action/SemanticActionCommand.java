@@ -16,12 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.UsageErrorHandler;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -29,22 +33,18 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
 public abstract class SemanticActionCommand extends ActionBaseCommand implements UsageErrorHandler {
 
-    @CommandLine.Parameters(description = "Name or pid of a running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of a running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = "--json", description = "Output a single JSON document")
+    @Option(name = "json", hasValue = false, description = "Output a single JSON document")
     boolean json;
 
-    @CommandLine.Option(names = "--timeout", defaultValue = "60000", converter = TimeoutConverter.class,
-                        description = "Timeout waiting for the integration, in millis or as a duration such as 30s")
+    @Option(name = "timeout", description = "Timeout waiting for the integration, in millis or as a duration such as 30s",
+            defaultValue = "60000", converter = TimeoutConverter.class)
     long timeout = 60000;
-
-    @CommandLine.Spec
-    CommandLine.Model.CommandSpec commandSpec;
 
     protected SemanticActionCommand(CamelJBangMain main) {
         super(main);
@@ -102,7 +102,7 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
             }
             return printResponse(response);
         } catch (Exception e) {
-            e.printStackTrace(commandSpec.commandLine().getErr());
+            printer().printDiagnostic(stackTrace(e));
             return error(CliExitCode.INTERNAL, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName(), null);
         }
     }
@@ -122,7 +122,7 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
     }
 
     protected int error(int code, String message, JsonObject result) {
-        commandSpec.commandLine().getErr().println(message);
+        printer().printErr(message);
         if (json) {
             JsonObject response = new JsonObject();
             if (result != null) {
@@ -194,4 +194,11 @@ public abstract class SemanticActionCommand extends ActionBaseCommand implements
     protected abstract JsonObject request();
 
     protected abstract void render(JsonObject response);
+
+    private static String stackTrace(Exception e) {
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
+    }
+
 }

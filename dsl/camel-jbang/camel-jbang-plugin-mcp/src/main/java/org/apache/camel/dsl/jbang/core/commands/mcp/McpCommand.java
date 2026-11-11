@@ -19,33 +19,27 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "mcp",
-                     description = "MCP server for AI coding assistants",
-                     sortOptions = false)
+@CommandDefinition(name = "mcp", description = "MCP server for AI coding assistants", generateHelp = true)
 public class McpCommand extends CamelCommand {
 
-    @CommandLine.Option(names = { "--http" },
-                        description = "Enable HTTP transport (Streamable HTTP and SSE). Default uses STDIO transport.",
-                        defaultValue = "false")
+    @Option(name = "http", hasValue = false,
+            description = "Enable HTTP transport (Streamable HTTP and SSE). Default uses STDIO transport.",
+            defaultValue = "false")
     boolean http;
 
-    @CommandLine.Option(names = { "--port" },
-                        description = "HTTP server port (only used with --http)",
-                        defaultValue = "8080")
+    @Option(name = "port", description = "HTTP server port (only used with --http)", defaultValue = "8080")
     int port = 8080;
 
-    @CommandLine.Option(names = { "--log-level" },
-                        description = "Log level (ERROR, WARN, INFO, DEBUG, TRACE)",
-                        defaultValue = "WARN")
+    @Option(name = "log-level", description = "Log level (ERROR, WARN, INFO, DEBUG, TRACE)", defaultValue = "WARN")
     String logLevel = "WARN";
 
-    @CommandLine.Option(names = { "--version" },
-                        description = "Camel MCP server version to use (default: current Camel version)")
+    @Option(name = "version", description = "Camel MCP server version to use (default: current Camel version)")
     String version;
 
     public McpCommand(CamelJBangMain main) {

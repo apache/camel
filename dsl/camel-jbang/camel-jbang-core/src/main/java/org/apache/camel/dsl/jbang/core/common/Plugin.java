@@ -21,7 +21,6 @@ import java.util.Optional;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.PluginExporter;
 import org.apache.camel.dsl.jbang.run.common.PluginRunCustomizer;
-import picocli.CommandLine;
 
 @FunctionalInterface
 public interface Plugin {
@@ -32,7 +31,7 @@ public interface Plugin {
      * @param commandLine the command line to adjust.
      * @param main        the current JBang main.
      */
-    void customize(CommandLine commandLine, CamelJBangMain main);
+    void customize(CommandTree commandLine, CamelJBangMain main);
 
     /**
      * Custom classloader that was used when downloading additional dependencies.

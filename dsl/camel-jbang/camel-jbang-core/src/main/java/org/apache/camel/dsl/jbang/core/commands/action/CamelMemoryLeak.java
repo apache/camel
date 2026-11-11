@@ -26,6 +26,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
@@ -34,62 +37,57 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "memory-leak",
-         description = "Diagnose memory leaks in a running Camel integration",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nNote: Sizes are sampled during the recording window, not total heap usage.",
-                 "A longer recording captures more samples and shows larger totals for the same leak.",
-                 "Use values to compare classes relative to each other, not as absolute heap numbers.",
-                 "%nExamples:",
-                 "  camel cmd memory-leak --start",
-                 "  camel cmd memory-leak --start --duration 60",
-                 "  camel cmd memory-leak --stop",
-                 "  camel cmd memory-leak --status",
-                 "  camel cmd memory-leak --query",
-                 "  camel cmd memory-leak --query --min-size 1MB",
-                 "  camel cmd memory-leak --query --stacktrace",
-                 "  camel cmd memory-leak --start --mode dual" })
+@CommandDefinition(name = "memory-leak", description = "Diagnose memory leaks in a running Camel integration",
+                   generateHelp = true,
+                   footer = {
+                           "Note: Sizes are sampled during the recording window, not total heap usage.",
+                           "A longer recording captures more samples and shows larger totals for the same leak.",
+                           "Use values to compare classes relative to each other, not as absolute heap numbers.",
+                           "",
+                           "Examples:",
+                           "  camel cmd memory-leak --start",
+                           "  camel cmd memory-leak --start --duration 60",
+                           "  camel cmd memory-leak --stop",
+                           "  camel cmd memory-leak --status",
+                           "  camel cmd memory-leak --query",
+                           "  camel cmd memory-leak --query --min-size 1MB",
+                           "  camel cmd memory-leak --query --stacktrace",
+                           "  camel cmd memory-leak --start --mode dual" })
 public class CamelMemoryLeak extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--start" }, description = "Start a JFR recording for OldObjectSample events")
+    @Option(name = "start", hasValue = false, description = "Start a JFR recording for OldObjectSample events")
     boolean start;
 
-    @CommandLine.Option(names = { "--stop" }, description = "Stop the active recording and display results")
+    @Option(name = "stop", hasValue = false, description = "Stop the active recording and display results")
     boolean stop;
 
-    @CommandLine.Option(names = { "--status" }, description = "Check recording status")
+    @Option(name = "status", hasValue = false, description = "Check recording status")
     boolean status;
 
-    @CommandLine.Option(names = { "--query" }, description = "Query cached results from the last recording")
+    @Option(name = "query", hasValue = false, description = "Query cached results from the last recording")
     boolean query;
 
-    @CommandLine.Option(names = { "--mode" },
-                        description = "Recording mode: dual (default, two recordings with trend comparison) or single (one recording)",
-                        defaultValue = "dual")
+    @Option(name = "mode",
+            description = "Recording mode: dual (default, two recordings with trend comparison) or single (one recording)",
+            defaultValue = "dual")
     String mode;
 
-    @CommandLine.Option(names = { "--duration" },
-                        description = "Recording duration in seconds (auto-stops after this time)", defaultValue = "60")
+    @Option(name = "duration", description = "Recording duration in seconds (auto-stops after this time)", defaultValue = "60")
     int duration;
 
-    @CommandLine.Option(names = { "--top" },
-                        description = "Show only the top N samples", defaultValue = "50")
+    @Option(name = "top", description = "Show only the top N samples", defaultValue = "50")
     int top;
 
-    @CommandLine.Option(names = { "--min-size" },
-                        description = "Only show samples with total size above this value (e.g. 1024, 10KB, 1MB). Default 1KB in dual mode to filter noise",
-                        defaultValue = "0")
+    @Option(name = "min-size",
+            description = "Only show samples with total size above this value (e.g. 1024, 10KB, 1MB). Default 1KB in dual mode to filter noise",
+            defaultValue = "0")
     String minSize;
 
-    @CommandLine.Option(names = { "--stacktrace" },
-                        description = "Show allocation stack trace for each sample")
+    @Option(name = "stacktrace", hasValue = false, description = "Show allocation stack trace for each sample")
     boolean stacktrace;
 
     public CamelMemoryLeak(CamelJBangMain main) {

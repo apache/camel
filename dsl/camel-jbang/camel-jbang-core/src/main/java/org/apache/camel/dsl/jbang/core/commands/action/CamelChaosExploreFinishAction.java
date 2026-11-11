@@ -18,27 +18,28 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "chaos-explore-finish",
-                     description = "Finish the chaos exploration of a running integration before its deadline",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nThe rules are removed (an open experiment is ended with what came of it so far), and",
-                             "the journal stays in the report (camel get chaos --report) until the next",
-                             "exploration starts or the report is reset.",
-                             "%nExamples:",
-                             "  camel cmd chaos-explore-finish",
-                             "  camel cmd chaos-explore-finish myApp" })
+@CommandDefinition(name = "chaos-explore-finish",
+                   description = "Finish the chaos exploration of a running integration before its deadline",
+                   generateHelp = true,
+                   footer = {
+                           "The rules are removed (an open experiment is ended with what came of it so far), and",
+                           "the journal stays in the report (camel get chaos --report) until the next",
+                           "exploration starts or the report is reset.",
+                           "",
+                           "Examples:",
+                           "  camel cmd chaos-explore-finish",
+                           "  camel cmd chaos-explore-finish myApp" })
 public class CamelChaosExploreFinishAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one); without it,"
-                                          + " the only one running, or the only one with chaos switched on",
-                            arity = "0..1")
+    @Argument(description = "Name or pid of the running Camel integration (must match one); without it,"
+                            + " the only one running, or the only one with chaos switched on")
     String name;
 
     public CamelChaosExploreFinishAction(CamelJBangMain main) {

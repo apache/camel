@@ -26,6 +26,8 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -35,31 +37,27 @@ import org.apache.camel.dsl.jbang.core.model.ListProcessDTO;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
-@Command(name = "ps", description = "List running Camel integrations", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel ps",
-                 "  camel ps --sort=name",
-                 "  camel ps --watch" })
+@CommandDefinition(name = "ps", description = "List running Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel ps",
+                           "  camel ps --sort=name",
+                           "  camel ps --watch" })
 public class ListProcess extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--remote" },
-                        description = "Break down counters into remote/total pairs")
+    @Option(name = "remote", hasValue = false, description = "Break down counters into remote/total pairs")
     boolean remote;
 
-    @CommandLine.Option(names = { "--pid" },
-                        description = "List only pid in the output")
+    @Option(name = "pid", hasValue = false, description = "List only pid in the output")
     boolean pid;
 
     public ListProcess(CamelJBangMain main) {

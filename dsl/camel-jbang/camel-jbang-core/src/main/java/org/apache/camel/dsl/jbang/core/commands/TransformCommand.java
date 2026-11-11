@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import picocli.CommandLine;
+import org.aesh.command.CommandDefinition;
 
-@CommandLine.Command(name = "transform",
-                     description = "Transform message or Camel routes (use transform --help to see sub commands)",
-                     sortOptions = false, showDefaultValues = true)
+@CommandDefinition(name = "transform",
+                   description = "Transform message or Camel routes (use transform --help to see sub commands)",
+                   generateHelp = true)
 public class TransformCommand extends CamelCommand {
 
     public TransformCommand(CamelJBangMain main) {

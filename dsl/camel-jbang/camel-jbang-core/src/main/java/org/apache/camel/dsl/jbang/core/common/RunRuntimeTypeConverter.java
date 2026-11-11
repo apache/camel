@@ -17,12 +17,11 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
-import picocli.CommandLine;
 
 /**
  * Converts the {@code --runtime} option for {@code camel run}, which also accepts the in-process {@code jbang} runtime.
  */
-public class RunRuntimeTypeConverter implements CommandLine.ITypeConverter<RuntimeType> {
+public class RunRuntimeTypeConverter extends StringConverter<RuntimeType> {
 
     public RuntimeType convert(String value) throws Exception {
         return RuntimeType.fromValue(value);

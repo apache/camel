@@ -246,6 +246,8 @@ class KubernetesRunTest extends KubernetesBaseTestSupport {
                 return runPlatformDir;
             }
         };
+        // the files on the command line too: aesh empties a list option that is not given
+        argsLst.addAll(files);
         CommandLineTestHelper.parse(command, argsLst.toArray(new String[0]));
         command.imageBuild = false;
         command.imagePush = false;

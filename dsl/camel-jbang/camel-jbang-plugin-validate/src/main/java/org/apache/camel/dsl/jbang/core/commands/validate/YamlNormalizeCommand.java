@@ -31,8 +31,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -46,10 +49,9 @@ import org.apache.camel.spi.DumpRoutesStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "normalize",
-                     description = "Normalize YAML routes to canonical (explicit) form")
+@CommandDefinition(name = "normalize", description = "Normalize YAML routes to canonical (explicit) form", generateHelp = true,
+                   sortOptions = true)
 public class YamlNormalizeCommand extends CamelCommand {
 
     private static final String IGNORE_FILE = "application";
@@ -57,27 +59,24 @@ public class YamlNormalizeCommand extends CamelCommand {
     private static final Set<String> SCOPED = Set.of("onException", "errorHandler", "onCompletion", "intercept",
             "interceptFrom", "interceptSendToEndpoint");
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
     // the warnings go to stderr, so that stdout has only the normalized YAML
     PrintStream stderr = System.err;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "File or directory to write normalized output. If not specified, output is printed to console."
-                                      + " A directory (an existing one, or a name ending with /) gets one file per input file,"
-                                      + " with the name of the input file; input files with the same name are written as"
-                                      + " <parent directory>-<name> (or <name>-<n>, with the first number no other file uses,"
-                                      + " when that clashes too), and what was not loaded from an input file goes to"
-                                      + " normalized.yaml. A file gets the routes of all the input files merged."
-                                      + " The output must not overwrite one of the input files.")
+    @Option(name = "output",
+            description = "File or directory to write normalized output. If not specified, output is printed to console."
+                          + " A directory (an existing one, or a name ending with /) gets one file per input file,"
+                          + " with the name of the input file; input files with the same name are written as"
+                          + " <parent directory>-<name> (or <name>-<n>, with the first number no other file uses,"
+                          + " when that clashes too), and what was not loaded from an input file goes to"
+                          + " normalized.yaml. A file gets the routes of all the input files merged."
+                          + " The output must not overwrite one of the input files.")
     private String output;
 
-    @CommandLine.Parameters(description = { "The Camel YAML source files to normalize." },
-                            arity = "1..9",
-                            paramLabel = "<files>",
-                            parameterConsumer = FilesConsumer.class)
     Path[] filePaths;
+    @Arguments(required = true, description = "The Camel YAML source files to normalize.", paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
     public YamlNormalizeCommand(CamelJBangMain main) {
@@ -447,13 +446,5 @@ public class YamlNormalizeCommand extends CamelCommand {
         }
         ext = ext.toLowerCase(Locale.ROOT);
         return "yml".equals(ext) || "yaml".equals(ext);
-    }
-
-    static class FilesConsumer extends CamelCommand.ParameterConsumer<YamlNormalizeCommand> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, YamlNormalizeCommand cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
     }
 }

@@ -16,12 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.config.BaseConfigTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -105,25 +106,29 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
     private static String run(String... args) {
         StringPrinter out = new StringPrinter();
         CamelJBangMain main = new CamelJBangMain().withPrinter(out);
-        CommandLine commandLine = new CommandLine(main)
-                .addSubcommand("echo", new CommandLine(new EchoCommand(main)))
-                .addSubcommand("other", new CommandLine(new EchoCommand(main)))
-                .addSubcommand("dev", new CommandLine(new DevCommand(main)))
-                .addSubcommand("plugin", new CommandLine(new PluginCommand(main))
-                        .addSubcommand("echo", new CommandLine(new EchoCommand(main))));
+        CommandTree commandLine = new CommandTree(main)
+                .addSubcommand("echo", new CommandTree(new EchoCommand(main)))
+                .addSubcommand("other", new CommandTree(new EchoCommand(main)))
+                .addSubcommand("dev", new CommandTree(new DevCommand(main)))
+                .addSubcommand("plugin", new CommandTree(new PluginCommand(main))
+                        .addSubcommand("echo", new CommandTree(new EchoCommand(main))));
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
 
-        assertThat(commandLine.execute(args)).isZero();
+        try {
+            assertThat(commandLine.execute(args).getResultValue()).isZero();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
         return out.getStdout();
     }
 
     // no name of its own: it is the name it is added with
     static class EchoCommand extends CamelCommand {
 
-        @CommandLine.Option(names = { "--sort" }, defaultValue = "pid")
+        @Option(name = "sort", defaultValue = "pid")
         String sort;
 
-        @CommandLine.Option(names = { "--repos" })
+        @Option(name = "repos")
         String repos;
 
         EchoCommand(CamelJBangMain main) {
@@ -145,7 +150,7 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
     // an option with two long names, as --reload,--dev of camel run
     static class DevCommand extends CamelCommand {
 
-        @CommandLine.Option(names = { "--reload", "--dev" })
+        @Option(name = "reload", aliases = { "dev" }, hasValue = false)
         boolean dev;
 
         DevCommand(CamelJBangMain main) {

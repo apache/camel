@@ -28,7 +28,12 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -37,15 +42,12 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "route-group", description = "Get status of Camel route groups",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get route-group",
-                 "  camel get route-group --watch" })
+@CommandDefinition(name = "group", description = "Get status of Camel route groups", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get route-group",
+                           "  camel get route-group --watch" })
 public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -54,7 +56,7 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
             .text("group", r -> r.group)
             .numeric("age", r -> r.uptime);
 
-    public static class PidNameAgeGroupCompletionCandidates implements Iterable<String> {
+    public static class PidNameAgeGroupCompletionCandidates extends CompletionCandidates {
 
         public PidNameAgeGroupCompletionCandidates() {
         }
@@ -66,27 +68,23 @@ public class CamelRouteGroupStatus extends ProcessWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeGroupCompletionCandidates.class,
-                        description = "Sort by pid, name, age or group", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name, age or group", defaultValue = "pid",
+            completer = PidNameAgeGroupCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter groups by limiting to the given number of rows")
+    @Option(name = "limit", description = "Filter groups by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter-mean" },
-                        description = "Filter groups that must be slower than the given time (ms)")
+    @Option(name = "filter-mean", description = "Filter groups that must be slower than the given time (ms)")
     long mean;
 
-    @CommandLine.Option(names = { "--running" },
-                        description = "Only include running groups")
+    @Option(name = "running", hasValue = false, description = "Only include running groups")
     boolean running;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter groups by name")
+    @OptionList(name = "filter", valueSeparator = OptionList.NO_SEPARATOR, description = "Filter groups by name")
     String[] filter;
 
     public CamelRouteGroupStatus(CamelJBangMain main) {

@@ -23,7 +23,7 @@ import java.util.List;
  * Completion candidates for the {@code --runtime} option of {@code camel run}, which also offers the in-process
  * {@code jbang} runtime.
  */
-public class RunRuntimeCompletionCandidates implements Iterable<String> {
+public class RunRuntimeCompletionCandidates extends CompletionCandidates {
 
     public RunRuntimeCompletionCandidates() {
     }

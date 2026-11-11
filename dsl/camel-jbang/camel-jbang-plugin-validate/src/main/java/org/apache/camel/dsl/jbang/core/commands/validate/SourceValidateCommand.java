@@ -22,36 +22,36 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
-import picocli.CommandLine;
 
 /**
  * Validates any source file camel run would load: YAML routes (schema, endpoints, simple, bean references), properties
  * (camel.* keys), Java (compiles it), XSLT (compiles the stylesheet) and XML (well formed), with the same checks the
  * MCP tools and the TUI apply before writing a file (CAMEL-24698).
  */
-@CommandLine.Command(name = "source", description = "Validate any Camel source file: YAML, properties, Java, XSLT, XML")
+@CommandDefinition(name = "source", description = "Validate any Camel source file: YAML, properties, Java, XSLT, XML",
+                   generateHelp = true, sortOptions = true)
 public class SourceValidateCommand extends CamelCommand {
 
-    @CommandLine.Parameters(description = { "The source files to validate." },
-                            arity = "1..99",
-                            paramLabel = "<files>",
-                            parameterConsumer = FilesConsumer.class)
+    @Arguments(required = true, description = "The source files to validate.", paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
-    @CommandLine.Mixin
+    @Mixin
     CatalogVersionMixin catalogVersion;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
-                                      + " camel_validate_source answers")
+    @Option(name = "json", hasValue = false,
+            description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
+                          + " camel_validate_source answers")
     boolean jsonOutput;
 
     public SourceValidateCommand(CamelJBangMain main) {
@@ -99,11 +99,5 @@ public class SourceValidateCommand extends CamelCommand {
         }
         printer().println("Validation success (files:" + reports.size() + ")");
         return 0;
-    }
-
-    static class FilesConsumer extends CamelCommand.ParameterConsumer<SourceValidateCommand> {
-        protected void doConsumeParameters(Stack<String> args, SourceValidateCommand cmd) {
-            cmd.files.add(args.pop());
-        }
     }
 }

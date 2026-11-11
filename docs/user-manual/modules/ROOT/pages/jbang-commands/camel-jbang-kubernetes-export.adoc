@@ -91,7 +91,7 @@ camel kubernetes export [options]
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `--volume` | Mount a volume into the integration container, for instance "--volume pvcname:/container/path". |  | String[]
 | `--yes,-y` | Automatically answer yes to confirmation prompts (e.g. when using --clean-dir) | false | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

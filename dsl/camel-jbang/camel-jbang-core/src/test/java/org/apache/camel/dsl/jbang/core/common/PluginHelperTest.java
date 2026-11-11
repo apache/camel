@@ -21,6 +21,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
+import org.aesh.command.Command;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
@@ -28,7 +32,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -174,13 +177,13 @@ public class PluginHelperTest {
     @Test
     public void testShouldDiscoverPlugins() {
         CamelJBangMain main = new CamelJBangMain();
-        CommandLine cl = new CommandLine(main);
-        cl.addSubcommand("version", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("get", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("run", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("export", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("shell", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("cmd", new CommandLine(new NoOpCommand()));
+        CommandTree cl = new CommandTree(main);
+        cl.addSubcommand("version", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("get", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("run", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("export", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("shell", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("cmd", new CommandTree(new NoOpCommand()));
 
         // built-in non-plugin-consuming commands → short-circuit
         assertFalse(PluginHelper.shouldDiscoverPlugins(cl, "version"));
@@ -233,6 +236,22 @@ public class PluginHelperTest {
         assertEquals("camel-jbang-plugin-fake not found", e.getMessage(),
                 "expected resolver to give up when cache is invalid and no download path is viable");
         assertFalse(main.quitCalled, "the error ends the command, not the JVM");
+    }
+
+    @Test
+    public void testCachedPluginThatDoesNotLinkIsResolvedAgain() throws Exception {
+        Path jar = tempDir.resolve("unlinked-plugin.jar");
+        FakePluginJar.write(jar, "fake", UnlinkedFakePlugin.class.getName());
+
+        String camelVersion = new org.apache.camel.catalog.DefaultCamelCatalog().getCatalogVersion();
+        JsonObject entry = buildEntry("fake", camelVersion, jar, Files.getLastModifiedTime(jar).toMillis());
+        ((JsonObject) entry.get("resolved")).put("className", UnlinkedFakePlugin.class.getName());
+        writeConfig(entry);
+
+        // the cache is not used, as when it is stale: there is no other way to resolve the plugin here
+        QuitCapture main = new QuitCapture();
+        CliException e = assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "fake"));
+        assertEquals("camel-jbang-plugin-fake not found", e.getMessage());
     }
 
     @Test
@@ -445,11 +464,11 @@ public class PluginHelperTest {
         }
     }
 
-    @CommandLine.Command(name = "noop")
-    private static class NoOpCommand implements Runnable {
+    @CommandDefinition(name = "noop", description = "", generateHelp = true, sortOptions = true)
+    private static class NoOpCommand implements Command<CommandInvocation> {
         @Override
-        public void run() {
-            // no-op
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
         }
     }
 }

@@ -31,6 +31,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Export;
@@ -57,84 +60,78 @@ import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "export", description = "Export as Maven project that contains a Kubernetes deployment manifest",
-         sortOptions = false)
+@CommandDefinition(name = "export", description = "Export as Maven project that contains a Kubernetes deployment manifest",
+                   generateHelp = true)
 public class KubernetesExport extends Export {
 
-    @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
+    @Option(name = "service-account", description = "The service account used to run the application.")
     protected String serviceAccount;
 
-    @CommandLine.Option(names = { "--config" },
-                        description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
+    @OptionList(name = "config", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
     protected String[] configs;
 
-    @CommandLine.Option(names = { "--resource" },
-                        description = "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
+    @OptionList(name = "resource", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
     protected String[] resources;
 
-    @CommandLine.Option(names = { "--env" },
-                        description = "Set an environment variable in the integration container, for instance \"--env MY_VAR=my-value\".")
+    @OptionList(name = "env", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Set an environment variable in the integration container, for instance \"--env MY_VAR=my-value\".")
     protected String[] envVars;
 
-    @CommandLine.Option(names = { "--volume" },
-                        description = "Mount a volume into the integration container, for instance \"--volume pvcname:/container/path\".")
+    @OptionList(name = "volume", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Mount a volume into the integration container, for instance \"--volume pvcname:/container/path\".")
     protected String[] volumes;
 
-    @CommandLine.Option(names = { "--connect" },
-                        description = "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
+    @OptionList(name = "connect", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
     protected String[] connects;
 
-    @CommandLine.Option(names = { "--annotation" },
-                        description = "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
+    @OptionList(name = "annotation", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
     protected String[] annotations;
 
-    @CommandLine.Option(names = { "--label" },
-                        description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
+    @OptionList(name = "label", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
     protected String[] labels;
 
-    @CommandLine.Option(names = { "--trait" },
-                        description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
+    @OptionList(name = "trait", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
     protected String[] traits;
 
-    @CommandLine.Option(names = { "--image" },
-                        description = "The image name to be built.")
+    @Option(name = "image", description = "The image name to be built.")
     protected String image;
 
-    @CommandLine.Option(names = { "--image-registry" },
-                        description = "The image registry to hold the app container image.")
+    @Option(name = "image-registry", description = "The image registry to hold the app container image.")
     protected String imageRegistry;
 
-    @CommandLine.Option(names = { "--image-group" },
-                        description = "The image registry group used to push images to.")
+    @Option(name = "image-group", description = "The image registry group used to push images to.")
     protected String imageGroup;
 
-    @CommandLine.Option(names = { "--image-builder" }, defaultValue = "jib",
-                        description = "The image builder used to build the container image (e.g. docker, jib, s2i).")
+    @Option(name = "image-builder",
+            description = "The image builder used to build the container image (e.g. docker, jib, s2i).", defaultValue = "jib")
     protected String imageBuilder = "jib";
 
-    @CommandLine.Option(names = { "--image-push" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to push the container image to a given image registry.")
+    @Option(name = "image-push", hasValue = false,
+            description = "Whether to push the container image to a given image registry.", defaultValue = "true")
     protected boolean imagePush = true;
 
-    @CommandLine.Option(names = { "--image-platform" },
-                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    @OptionList(name = "image-platform", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
     protected String[] imagePlatforms;
 
-    @CommandLine.Option(names = { "--base-image" },
-                        description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>).")
+    @Option(name = "base-image",
+            description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:21-jdk:<java-version>).")
     protected String baseImage;
 
-    @CommandLine.Option(names = { "--registry-mirror" },
-                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    @Option(name = "registry-mirror",
+            description = "Optional Docker registry mirror where to pull images from when building the container image.")
     protected String registryMirror;
 
-    @CommandLine.Option(names = { "--cluster-type" },
-                        completionCandidates = ClusterTypeCompletionCandidates.class,
-                        converter = ClusterTypeConverter.class,
-                        description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
+    @Option(name = "cluster-type",
+            description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.",
+            completer = ClusterTypeCompletionCandidates.class, converter = ClusterTypeConverter.class)
     protected String clusterType;
 
     private static final String SRC_MAIN_RESOURCES = "/src/main/resources/";

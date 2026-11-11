@@ -26,6 +26,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -34,21 +37,19 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "chaos",
-         description = "Get the chaos rules of running integrations, or their report (camel-chaos)", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nLists the current rules of the integrations that have camel-chaos switched on: id, version, state,",
-                 "matches, the faults that fired, the observed rate, when a rule last fired, the effect of its faults",
-                 "on the exchanges, and the rule with what it does in plain words. With --report it shows the report instead: the verdict, the seed, all rules (also",
-                 "the removed and replaced versions), the counts per route, the recent faults and the reasons of a FAIL.",
-                 "%nExamples:",
-                 "  camel get chaos",
-                 "  camel get chaos myApp --report",
-                 "  camel get chaos myApp --report --json" })
+@CommandDefinition(name = "chaos", description = "Get the chaos rules of running integrations, or their report (camel-chaos)",
+                   generateHelp = true,
+                   footer = {
+                           "Lists the current rules of the integrations that have camel-chaos switched on: id, version, state,",
+                           "matches, the faults that fired, the observed rate, when a rule last fired, the effect of its faults",
+                           "on the exchanges, and the rule with what it does in plain words. With --report it shows the report instead: the verdict, the seed, all rules (also",
+                           "the removed and replaced versions), the counts per route, the recent faults and the reasons of a FAIL.",
+                           "",
+                           "Examples:",
+                           "  camel get chaos",
+                           "  camel get chaos myApp --report",
+                           "  camel get chaos myApp --report --json" })
 public class ListChaos extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
@@ -58,15 +59,15 @@ public class ListChaos extends ProcessWatchCommand {
             "lostAtDlq", "startsIn", "rate", "observedRate", "nextFireIn", "burstEndsIn", "nextBurstIn", "lastFiredAgo",
             "faultsLastMinute", "faultsPerSecond", "effect");
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--report" },
-                        description = "Show the report: verdict, seed, all rules, the counts per route, the recent faults")
+    @Option(name = "report", hasValue = false,
+            description = "Show the report: verdict, seed, all rules, the counts per route, the recent faults")
     boolean report;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
     public ListChaos(CamelJBangMain main) {

@@ -17,11 +17,11 @@
 package org.apache.camel.dsl.jbang.core.commands.process;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -51,7 +51,11 @@ class HawtioTest {
 
     private static boolean openUrl(String... args) {
         TestHawtio hawtio = new TestHawtio();
-        assertThat(new CommandLine(hawtio).execute(args)).isZero();
+        try {
+            assertThat(new CommandTree(hawtio).execute(args).getResultValue()).isZero();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
         return hawtio.opened;
     }
 

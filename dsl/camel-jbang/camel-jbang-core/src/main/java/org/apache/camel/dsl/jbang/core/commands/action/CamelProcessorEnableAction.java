@@ -16,16 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "enable-processor",
-                     description = "Enable Camel processor", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd enable-processor --id=myId",
-                             "  camel cmd enable-processor myApp --id=myId" })
+@CommandDefinition(name = "enable-processor", description = "Enable Camel processor", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd enable-processor --id=myId",
+                           "  camel cmd enable-processor myApp --id=myId" })
 public class CamelProcessorEnableAction extends CamelProcessorAction {
 
     public CamelProcessorEnableAction(CamelJBangMain main) {

@@ -25,7 +25,7 @@ camel mcp [options]
 | `--log-level` | Log level (ERROR, WARN, INFO, DEBUG, TRACE) | WARN | String
 | `--port` | HTTP server port (only used with --http) | 8080 | int
 | `--version` | Camel MCP server version to use (default: current Camel version) |  | String
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

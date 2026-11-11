@@ -16,41 +16,39 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.version;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "set", description = "Set/change current Camel version", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel version set 4.10.0",
-                             "  camel version set --runtime=spring-boot 4.10.0",
-                             "  camel version set --reset" })
+@CommandDefinition(name = "set", description = "Set/change current Camel version", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel version set 4.10.0",
+                           "  camel version set --runtime=spring-boot 4.10.0",
+                           "  camel version set --reset" })
 public class VersionSet extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Camel version", arity = "0..1")
+    @Argument(description = "Camel version")
     String version;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", completer = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class)
     RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Maven repository for downloading the dependencies (Use commas to separate multiple repositories)")
+    @Option(name = "repo", aliases = { "repos" },
+            description = "Maven repository for downloading the dependencies (Use commas to separate multiple repositories)")
     String repo;
 
-    @CommandLine.Option(names = { "--reset" }, description = "Reset by removing any custom version settings")
+    @Option(name = "reset", hasValue = false, description = "Reset by removing any custom version settings")
     boolean reset;
 
-    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
-                        description = "Use global or local configuration")
+    @Option(name = "global", hasValue = false, description = "Use global or local configuration")
     boolean global = true;
 
     public VersionSet(CamelJBangMain main) {

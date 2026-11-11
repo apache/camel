@@ -27,7 +27,7 @@ camel plugin add [options]
 | `--groupId` | Maven groupId | org.apache.camel | String
 | `--repo,--repos` | Additional maven repositories to use for downloading the plugin (Use commas to separate multiple repositories) |  | String
 | `--version` | Maven artifact version |  | String
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

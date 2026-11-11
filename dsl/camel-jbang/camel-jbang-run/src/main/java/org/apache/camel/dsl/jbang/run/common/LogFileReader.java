@@ -64,13 +64,13 @@ public final class LogFileReader {
     private static final Pattern FRAME = Pattern.compile("^\\tat (\\S+\\(.*\\))$");
 
     /**
-     * Frames of the runtime, not of the user's code: Camel, the JDK, Groovy, Vert.x and the like, and picocli, the
-     * command line library of the CLI, which a start that failed has under the frames of Camel.
+     * Frames of the runtime, not of the user's code: Camel, the JDK, Groovy, Vert.x and the like, and aesh, the command
+     * line library of the CLI, which a start that failed has under the frames of Camel.
      */
     private static final List<String> RUNTIME_PACKAGES = List.of(
             "org.apache.camel.", "java.", "javax.", "jakarta.", "jdk.", "sun.", "com.sun.", "groovy.",
             "org.codehaus.groovy.", "org.apache.groovy.", "io.vertx.", "io.netty.", "io.smallrye.", "io.quarkus.",
-            "org.springframework.", "com.fasterxml.", "org.jboss.", "kotlin.", "picocli.");
+            "org.springframework.", "com.fasterxml.", "org.jboss.", "kotlin.", "org.aesh.");
 
     /** Internal fields of a record, removed before it is returned. */
     private static final String TRACE = "_trace";

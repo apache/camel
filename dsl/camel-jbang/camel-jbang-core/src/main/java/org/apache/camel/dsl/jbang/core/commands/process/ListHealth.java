@@ -30,6 +30,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -42,49 +45,40 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "health", description = "Get health check status of running Camel integrations", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get health",
-                 "  camel get health myApp --down",
-                 "  camel get health --watch" })
+@CommandDefinition(name = "health", description = "Get health check status of running Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get health",
+                           "  camel get health myApp --down",
+                           "  camel get health --watch" })
 public class ListHealth extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--level" },
-                        description = "Level of details: full, or default", defaultValue = "default")
+    @Option(name = "level", description = "Level of details: full, or default", defaultValue = "default")
     String level;
 
-    @CommandLine.Option(names = { "--down" },
-                        description = "Show only checks which are DOWN")
+    @Option(name = "down", hasValue = false, description = "Show only checks which are DOWN")
     boolean down;
 
-    @CommandLine.Option(names = { "--ready" },
-                        description = "Show only readiness checks")
+    @Option(name = "ready", hasValue = false, description = "Show only readiness checks")
     boolean ready;
 
-    @CommandLine.Option(names = { "--live" },
-                        description = "Show only liveness checks")
+    @Option(name = "live", hasValue = false, description = "Show only liveness checks")
     boolean live;
 
-    @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces in error messages", defaultValue = "false")
+    @Option(name = "trace", hasValue = false, description = "Include stack-traces in error messages", defaultValue = "false")
     boolean trace;
 
-    @CommandLine.Option(names = { "--depth" },
-                        description = "Max depth of stack-trace", defaultValue = "1")
+    @Option(name = "depth", description = "Max depth of stack-trace", defaultValue = "1")
     int depth;
 
     public ListHealth(CamelJBangMain main) {

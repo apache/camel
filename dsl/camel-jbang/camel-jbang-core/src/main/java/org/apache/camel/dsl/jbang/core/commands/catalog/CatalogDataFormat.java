@@ -19,16 +19,15 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.DataFormatModel;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "dataformat",
-                     description = "List data formats from the Camel Catalog", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel catalog dataformat",
-                             "  camel catalog dataformat --filter=json" })
+@CommandDefinition(name = "dataformat", description = "List data formats from the Camel Catalog", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel catalog dataformat",
+                           "  camel catalog dataformat --filter=json" })
 public class CatalogDataFormat extends CatalogBaseCommand {
 
     public CatalogDataFormat(CamelJBangMain main) {

@@ -20,9 +20,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
+import org.aesh.command.Command;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.jline.shell.CommandSession;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,20 +35,29 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class CamelShellCommandRegistryTest {
 
-    @CommandLine.Command(name = "root", subcommands = { Greet.class })
-    static class Root {
+    @CommandDefinition(name = "root", description = "", generateHelp = true, sortOptions = true)
+    static class Root implements Command<CommandInvocation> {
+        @Override
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
+        }
     }
 
-    @CommandLine.Command(name = "greet")
-    static class Greet implements Runnable {
+    @CommandDefinition(name = "greet", description = "", generateHelp = true, sortOptions = true)
+    static class Greet implements Command<CommandInvocation> {
         @Override
-        public void run() {
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
         }
+    }
+
+    private static CommandTree root() {
+        return new CommandTree(new Root()).addSubcommand("greet", new CommandTree(new Greet()));
     }
 
     @Test
     void camelIsACommandOfTheShell() {
-        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(new CommandLine(new Root()));
+        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(root());
 
         assertThat(registry.hasCommand("camel")).isTrue();
         assertThat(registry.hasCommand("greet")).isTrue();
@@ -53,7 +66,7 @@ class CamelShellCommandRegistryTest {
 
     @Test
     void anUnknownCommandAfterCamelIsSaidSo() throws Exception {
-        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(new CommandLine(new Root()));
+        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(root());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         registry.command("camel").execute(session(out), new String[] { "nope" });
@@ -63,7 +76,7 @@ class CamelShellCommandRegistryTest {
 
     @Test
     void aBareCamelSaysHowToTypeACommand() throws Exception {
-        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(new CommandLine(new Root()));
+        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(root());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         registry.command("camel").execute(session(out), new String[0]);

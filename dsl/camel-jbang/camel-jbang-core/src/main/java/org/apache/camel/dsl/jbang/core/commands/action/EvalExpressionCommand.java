@@ -20,6 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
@@ -37,59 +42,50 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "expression",
-                     description = "Evaluates Camel expression", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel eval expression --language=simple --template='${body}' --body='Hello World'",
-                             "  camel eval expression myApp --language=simple --template='${header.foo}'" })
+@CommandDefinition(name = "expression", description = "Evaluates Camel expression", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel eval expression --language=simple --template='${body}' --body='Hello World'",
+                           "  camel eval expression myApp --language=simple --template='${header.foo}'" })
 public class EvalExpressionCommand extends ActionWatchCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--isolated" },
-                        description = "Whether to run evaluation isolated in local process", defaultValue = "false")
+    @Option(name = "isolated", hasValue = false, description = "Whether to run evaluation isolated in local process",
+            defaultValue = "false")
     boolean isolated;
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To run using a different Camel version than the default version.")
+    @Option(name = "camel-version", description = "To run using a different Camel version than the default version.")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--language" },
-                        description = "Language to use", defaultValue = "simple")
+    @Option(name = "language", description = "Language to use", defaultValue = "simple")
     String language;
 
-    @CommandLine.Option(names = { "--predicate" },
-                        description = "Whether to force evaluating as predicate", defaultValue = "false")
+    @Option(name = "predicate", hasValue = false, description = "Whether to force evaluating as predicate",
+            defaultValue = "false")
     boolean predicate;
 
-    @CommandLine.Option(names = {
-            "--template" },
-                        description = "The template to use for evaluating (prefix with file: to refer to loading template from file)",
-                        required = true)
+    @Option(name = "template",
+            description = "The template to use for evaluating (prefix with file: to refer to loading template from file)",
+            required = true)
     String template;
 
-    @CommandLine.Option(names = { "--body" },
-                        description = "Message body (prefix with file: to refer to loading message body from file)")
+    @Option(name = "body", description = "Message body (prefix with file: to refer to loading message body from file)")
     String body;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Message header (key=value)")
+    @OptionList(name = "header", valueSeparator = OptionList.NO_SEPARATOR, description = "Message header (key=value)")
     List<String> headers;
 
-    @CommandLine.Option(names = { "--variable" },
-                        description = "Exchange variable (key=value)")
+    @OptionList(name = "variable", valueSeparator = OptionList.NO_SEPARATOR, description = "Exchange variable (key=value)")
     List<String> variables;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000", converter = TimeoutConverter.class,
-                        description = "Timeout waiting for evaluation to be done, in millis or as a duration such as 30s")
+    @Option(name = "timeout", description = "Timeout waiting for evaluation to be done, in millis or as a duration such as 30s",
+            defaultValue = "10000", converter = TimeoutConverter.class)
     long timeout = 10000;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
     long pid;

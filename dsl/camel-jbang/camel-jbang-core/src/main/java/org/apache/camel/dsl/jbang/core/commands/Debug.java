@@ -38,6 +38,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.action.MessageTableHelper;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
@@ -75,81 +77,73 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.CAMEL_JBANG_WORK_DIR;
 import static org.apache.camel.util.IOHelper.buffered;
 
-@Command(name = "debug", description = "Debug local Camel integration", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel debug hello.java",
-                 "  camel debug hello.yaml --breakpoint=myBreakpoint",
-                 "  camel debug hello.java --stop-on-exit=false" })
+@CommandDefinition(name = "debug", description = "Debug local Camel integration", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel debug hello.java",
+                           "  camel debug hello.yaml --breakpoint=myBreakpoint",
+                           "  camel debug hello.java --stop-on-exit=false" })
 public class Debug extends Run {
 
     // how long a command to the debugger in the integration may wait until the integration took it
     private static final long DEBUG_COMMAND_TIMEOUT = 5000;
 
-    @CommandLine.Option(names = { "--remote-attach" },
-                        description = "Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger)")
+    @Option(name = "remote-attach", hasValue = false,
+            description = "Attaches debugger remotely to an existing running Camel integration. (Add camel-cli-debug JAR to the existing Camel application and run before attaching this debugger)")
     boolean remoteAttach;
 
-    @CommandLine.Option(names = { "--breakpoint" },
-                        description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
+    @Option(name = "breakpoint",
+            description = "To set breakpoint at the given node id (Multiple ids can be separated by comma). If no breakpoint is set, then the first route is automatic selected.")
     String breakpoint;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "File to store the current message body (will override). This allows for manual inspecting the message later.")
+    @Option(name = "output",
+            description = "File to store the current message body (will override). This allows for manual inspecting the message later.")
     String output;
 
-    @CommandLine.Option(names = { "--stop-on-exit" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to stop the running Camel on exit")
+    @Option(name = "stop-on-exit", hasValue = false, description = "Whether to stop the running Camel on exit",
+            defaultValue = "true")
     boolean stopOnExit = true;
 
-    @CommandLine.Option(names = { "--log-lines" }, defaultValue = "10",
-                        description = "Number of log lines to display on top of screen")
+    @Option(name = "log-lines", description = "Number of log lines to display on top of screen", defaultValue = "10")
     int logLines = 10;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Print timestamp.")
+    @Option(name = "timestamp", hasValue = false, description = "Print timestamp.", defaultValue = "true")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--ago" },
-                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    @Option(name = "ago", hasValue = false, description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @Option(name = "mask", hasValue = false,
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @Option(name = "source", hasValue = false, description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in debug messages")
+    @Option(name = "show-exchange-properties", hasValue = false, description = "Show exchange properties in debug messages",
+            defaultValue = "false")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exchange variables in debug messages")
+    @Option(name = "show-exchange-variables", hasValue = false, description = "Show exchange variables in debug messages",
+            defaultValue = "true")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers in debug messages")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers in debug messages",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body in debug messages")
+    @Option(name = "show-body", hasValue = false, description = "Show message body in debug messages", defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exception and stacktrace for failed messages")
+    @Option(name = "show-exception", hasValue = false, description = "Show exception and stacktrace for failed messages",
+            defaultValue = "true")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false, description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
     private MessageTableHelper tableHelper;
@@ -586,7 +580,7 @@ public class Debug extends Run {
     }
 
     protected int doRunDebug(KameletMain main) throws Exception {
-        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds = new ArrayList<>(originalArgs());
 
         // debug should be run
         cmds.remove(0);

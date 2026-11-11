@@ -21,8 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -30,25 +35,22 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
-@Command(name = "route-dump", description = "Dump Camel route in XML, YAML, or Java DSL format", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel cmd route-dump",
-                 "  camel cmd route-dump --format=yaml",
-                 "  camel cmd route-dump --json" })
+@CommandDefinition(name = "route-dump", description = "Dump Camel route in XML, YAML, or Java DSL format", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd route-dump",
+                           "  camel cmd route-dump --format=yaml",
+                           "  camel cmd route-dump --json" })
 public class CamelRouteDumpAction extends ActionBaseCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .text("name", r -> r.location)
             .text("id", r -> r.routeId);
 
-    public static class NameIdCompletionCandidates implements Iterable<String> {
+    public static class NameIdCompletionCandidates extends CompletionCandidates {
 
         public NameIdCompletionCandidates() {
         }
@@ -60,7 +62,7 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
     }
 
-    public static class FormatCompletionCandidates implements Iterable<String> {
+    public static class FormatCompletionCandidates extends CompletionCandidates {
 
         public FormatCompletionCandidates() {
         }
@@ -72,34 +74,32 @@ public class CamelRouteDumpAction extends ActionBaseCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--format" }, completionCandidates = FormatCompletionCandidates.class,
-                        description = "Output format (xml, yaml, or java)", defaultValue = "yaml")
+    @Option(name = "format", description = "Output format (xml, yaml, or java)", defaultValue = "yaml",
+            completer = FormatCompletionCandidates.class)
     String format;
 
-    @CommandLine.Option(names = { "--raw" },
-                        description = "To output raw without metadata")
+    @Option(name = "raw", hasValue = false, description = "To output raw without metadata")
     boolean raw;
 
-    @CommandLine.Option(names = { "--uri-as-parameters" },
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
-                        defaultValue = "true", arity = "0..1", fallbackValue = "true")
+    @Option(name = "uri-as-parameters", hasValue = false,
+            description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
+            defaultValue = "true")
     boolean uriAsParameters;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter route by filename or route id (multiple names can be separated by comma)")
+    @Option(name = "filter", description = "Filter route by filename or route id (multiple names can be separated by comma)")
     String filter;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = NameIdCompletionCandidates.class,
-                        description = "Sort route by name or id", defaultValue = "name")
+    @Option(name = "sort", description = "Sort route by name or id", defaultValue = "name",
+            completer = NameIdCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

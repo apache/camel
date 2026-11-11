@@ -26,6 +26,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -33,32 +36,29 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "stop", description = "Shuts down running Camel integrations", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel stop hello",
-                 "  camel stop *",
-                 "  camel stop 12345",
-                 "  camel stop hello --timeout=2m",
-                 "  camel stop hello --kill" })
+@CommandDefinition(name = "stop", description = "Shuts down running Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel stop hello",
+                           "  camel stop *",
+                           "  camel stop 12345",
+                           "  camel stop hello --timeout=2m",
+                           "  camel stop hello --kill" })
 public class StopProcess extends ProcessBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration(s)", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration(s)")
     String name = "*";
 
-    @CommandLine.Option(names = { "--kill" },
-                        description = "To force killing the process (SIGKILL)")
+    @Option(name = "kill", hasValue = false, description = "To force killing the process (SIGKILL)")
     boolean kill;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "60000", converter = TimeoutConverter.class,
-                        description = "How long to wait for the integration to stop, in millis or as a duration such as 30s")
+    @Option(name = "timeout",
+            description = "How long to wait for the integration to stop, in millis or as a duration such as 30s",
+            defaultValue = "60000", converter = TimeoutConverter.class)
     long timeout = 60000;
 
-    @CommandLine.Option(names = { "--no-wait" },
-                        description = "Do not wait for the integration to stop")
+    @Option(name = "no-wait", hasValue = false, description = "Do not wait for the integration to stop")
     boolean noWait;
 
     public StopProcess(CamelJBangMain main) {

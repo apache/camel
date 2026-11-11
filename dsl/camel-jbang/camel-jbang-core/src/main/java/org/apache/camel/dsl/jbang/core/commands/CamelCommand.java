@@ -18,39 +18,37 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Stack;
-import java.util.concurrent.Callable;
 
+import org.aesh.command.Command;
+import org.aesh.command.CommandResult;
+import org.aesh.command.DefaultValueProvider;
+import org.aesh.command.impl.internal.ProcessedCommand;
+import org.aesh.command.impl.internal.ProcessedOption;
+import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.dsl.jbang.core.commands.exceptionhandler.CliExecutionExceptionHandler;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
-import org.apache.camel.util.StringHelper;
 import org.jline.jansi.AnsiConsole;
-import picocli.CommandLine;
-import picocli.CommandLine.IParameterConsumer;
-import picocli.CommandLine.Model.ArgSpec;
-import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.ParameterException;
 
-public abstract class CamelCommand implements Callable<Integer> {
+public abstract class CamelCommand implements Command<CommandInvocation>, CommandTree.ParsedCommandAware {
 
-    @CommandLine.Spec
-    CommandLine.Model.CommandSpec spec;
+    // the model of the options of this command, and the tree it runs in (set when the command line is built)
+    private ProcessedCommand<?, ?> processedCommand;
+    private CommandTree tree;
+    private CommandInvocation invocation;
 
     private final CamelJBangMain main;
-
-    @CommandLine.Option(names = { "-h", "--help" }, usageHelp = true, description = "Display the help and sub-commands")
-    private boolean helpRequested = false;
 
     protected CamelCommand(CamelJBangMain main) {
         this.main = main;
@@ -69,6 +67,24 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     @Override
+    public void setProcessedCommand(ProcessedCommand<?, ?> processedCommand, CommandTree tree) {
+        this.processedCommand = processedCommand;
+        this.tree = tree;
+    }
+
+    @Override
+    public CommandResult execute(CommandInvocation invocation) {
+        this.invocation = invocation;
+        if (main.parseOnly(this)) {
+            return CommandResult.SUCCESS;
+        }
+        try {
+            return CommandResult.valueOf(call());
+        } catch (Exception e) {
+            return CommandResult.valueOf(new CliExecutionExceptionHandler(main).handle(e, this));
+        }
+    }
+
     public Integer call() throws Exception {
         if (disarrangeLogging()) {
             configureLoggingOff();
@@ -80,23 +96,53 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     private void replacePlaceholders() throws Exception {
-        if (spec != null) {
-            for (CommandLine.Model.ArgSpec argSpec : spec.args()) {
-                var provider = spec.defaultValueProvider();
-                String defaultValue = provider != null ? provider.defaultValue(argSpec) : null;
-                if (defaultValue != null &&
-                        argSpec instanceof CommandLine.Model.OptionSpec optionSpec) {
-                    for (String name : optionSpec.names()) {
-                        String placeholder = "#" + StringHelper.after(name, "--");
-                        Object v = argSpec.getValue();
-                        if (v != null &&
-                                v.toString().contains(placeholder)) {
-                            argSpec.setValue(v.toString().replace(placeholder, defaultValue));
-                        }
-                    }
+        DefaultValueProvider provider = tree != null ? tree.getDefaultValueProvider() : null;
+        if (processedCommand == null || provider == null) {
+            return;
+        }
+        for (ProcessedOption option : processedCommand.getOptions()) {
+            String defaultValue = provider.defaultValue(option);
+            Object holder = holderOf(option);
+            if (defaultValue == null || holder == null) {
+                continue;
+            }
+            List<String> names = new ArrayList<>();
+            names.add(option.name());
+            names.addAll(option.getAliases());
+            for (String name : names) {
+                String placeholder = "#" + name;
+                Object v = option.getFieldValue(holder);
+                if (v instanceof String text && text.contains(placeholder)) {
+                    option.setFieldValue(holder, text.replace(placeholder, defaultValue));
                 }
             }
         }
+    }
+
+    /**
+     * The arguments of the command line that runs this command, or {@code null} when it runs without one.
+     */
+    protected List<String> originalArgs() {
+        return tree != null ? tree.getArgs() : null;
+    }
+
+    private ProcessedOption findOption(String name) {
+        if (processedCommand == null) {
+            return null;
+        }
+        String n = name.startsWith("--") ? name.substring(2) : name;
+        for (ProcessedOption option : processedCommand.getOptions()) {
+            if (n.equals(option.name()) || option.getAliases().contains(n)) {
+                return option;
+            }
+        }
+        return null;
+    }
+
+    // the object to read and write the field of the option on: the command itself, as aesh finds the mixin (also a
+    // mixin of a mixin) that holds the field from the command
+    private Object holderOf(ProcessedOption option) {
+        return this;
     }
 
     public abstract Integer doCall() throws Exception;
@@ -106,11 +152,7 @@ public abstract class CamelCommand implements Callable<Integer> {
      * stdout too, see {@link JsonOutput}. A command with another way to ask for JSON overrides this.
      */
     public boolean isJsonOutput() {
-        if (spec != null) {
-            CommandLine.Model.OptionSpec option = spec.findOption(JsonOutput.OPTION);
-            return option != null && Boolean.TRUE.equals(option.getValue());
-        }
-        return false;
+        return Boolean.TRUE.equals(optionValue(JsonOutput.OPTION));
     }
 
     /**
@@ -119,17 +161,18 @@ public abstract class CamelCommand implements Callable<Integer> {
      * @param  name the name of the option
      * @return      the value, or <tt>null</tt> when the command has no such option, or runs without picocli
      */
-    protected Object optionValue(String name) {
-        CommandLine.Model.OptionSpec option = spec != null ? spec.findOption(name) : null;
-        return option != null ? option.getValue() : null;
+    public Object optionValue(String name) {
+        ProcessedOption option = findOption(name);
+        Object holder = option != null ? holderOf(option) : null;
+        return holder != null ? option.getFieldValue(holder) : null;
     }
 
     /**
      * Whether an option was given on the command line, rather than having its default value.
      */
     protected boolean isOptionGiven(String name) {
-        CommandLine.ParseResult result = spec != null ? spec.commandLine().getParseResult() : null;
-        return result != null && result.hasMatchedOption(name);
+        ProcessedOption option = findOption(name);
+        return option != null && !option.getValues().isEmpty();
     }
 
     /**
@@ -162,8 +205,9 @@ public abstract class CamelCommand implements Callable<Integer> {
      * @return the exit code
      */
     protected int printHelp() {
-        CommandLine cl = spec != null ? spec.commandLine() : new CommandLine(this);
-        printer().print(cl.getUsageMessage());
+        if (invocation != null) {
+            printer().println(invocation.getHelpInfo());
+        }
         return CliExitCode.OK;
     }
 
@@ -175,7 +219,19 @@ public abstract class CamelCommand implements Callable<Integer> {
      * @return         the exit code of the command
      */
     protected int runDefault(CamelCommand command, String... args) {
-        return getMain().withErrorHandling(new CommandLine(command)).execute(args);
+        try {
+            return new CommandTree(command).setOutput(text -> command.printer().print(text)).execute(args)
+                    .getResultValue();
+        } catch (Exception e) {
+            return new CliExecutionExceptionHandler(getMain()).handle(e, command);
+        }
+    }
+
+    /**
+     * The values of an option of several values as an array, or {@code null}.
+     */
+    protected static String[] array(List<String> values) {
+        return values != null ? values.toArray(new String[0]) : null;
     }
 
     protected static String getScheme(String name) {
@@ -275,40 +331,21 @@ public abstract class CamelCommand implements Callable<Integer> {
     }
 
     protected void printConfigurationValues(String header) {
-        if (spec != null) {
+        if (processedCommand != null) {
             final Properties configProperties = new Properties();
             CommandLineHelper.loadProperties(configProperties::putAll);
             List<String> lines = new ArrayList<>();
-            spec.options().forEach(opt -> {
-                if (Arrays.stream(opt.names()).anyMatch(name ->
-                // name starts with --
-                configProperties.containsKey(name.substring(2)))) {
-                    lines.add(String.format("    %s=%s",
-                            opt.longestName(), Optional.ofNullable(opt.getValue()).orElse("")));
+            for (ProcessedOption opt : processedCommand.getOptions()) {
+                Object holder = holderOf(opt);
+                if (configProperties.containsKey(opt.name()) && holder != null) {
+                    lines.add(String.format("    --%s=%s",
+                            opt.name(), Optional.ofNullable(opt.getFieldValue(holder)).orElse("")));
                 }
-            });
+            }
             if (!lines.isEmpty()) {
                 printer().println(header);
                 lines.forEach(printer()::println);
             }
-        }
-    }
-
-    protected abstract static class ParameterConsumer<T> implements IParameterConsumer {
-
-        @Override
-        public void consumeParameters(Stack<String> args, ArgSpec argSpec, CommandSpec cmdSpec) {
-            if (failIfEmptyArgs() && args.isEmpty()) {
-                throw new ParameterException(cmdSpec.commandLine(), "Error: missing required parameter");
-            }
-            T cmd = (T) cmdSpec.userObject();
-            doConsumeParameters(args, cmd);
-        }
-
-        protected abstract void doConsumeParameters(Stack<String> args, T cmd);
-
-        protected boolean failIfEmptyArgs() {
-            return true;
         }
     }
 

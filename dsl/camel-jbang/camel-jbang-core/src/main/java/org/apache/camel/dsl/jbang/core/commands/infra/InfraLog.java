@@ -28,6 +28,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
@@ -36,29 +40,28 @@ import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListener;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "log", description = "Displays external service logs", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel infra log",
-                             "  camel infra log kafka" })
+@CommandDefinition(name = "log", description = "Displays external service logs", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel infra log",
+                           "  camel infra log kafka" })
 public class InfraLog extends InfraBaseCommand {
 
-    @CommandLine.Parameters(description = "Service name", arity = "0..2")
+    @Arguments(description = "Service name")
     List<String> serviceName;
 
-    @CommandLine.Option(names = { "--lines" }, defaultValue = "50",
-                        description = "The number of lines from the end of the log to use as starting offset")
+    @Option(name = "lines", description = "The number of lines from the end of the log to use as starting offset",
+            defaultValue = "50")
     private int logLines = 50;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Keep following and outputting new log lines (press enter to exit)."
-                                      + " Without an interactive terminal the default is false, unless --duration is given.")
+    @Option(name = "follow", hasValue = false,
+            description = "Keep following and outputting new log lines (press enter to exit)."
+                          + " Without an interactive terminal the default is false, unless --duration is given.",
+            defaultValue = "true")
     boolean follow = true;
 
-    @CommandLine.Mixin
+    @Mixin
     DurationMixin durationOption = new DurationMixin();
 
     private ExecutorService executorService;

@@ -18,9 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.edit;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Stack;
 import java.util.function.Supplier;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.jline.builtins.ClasspathResourceUtil;
@@ -29,14 +30,13 @@ import org.jline.builtins.Nano;
 import org.jline.builtins.Options;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "edit", description = "Edit Camel with suggestions and diagnostics")
+@CommandDefinition(name = "edit", description = "Edit Camel with suggestions and diagnostics", generateHelp = true,
+                   sortOptions = true)
 public class EditCommand extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of file", arity = "1",
-                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
+    @Argument(required = true, description = "Name of file", paramLabel = "<file>")
     private String file;
 
     public EditCommand(CamelJBangMain main) {
@@ -63,12 +63,5 @@ public class EditCommand extends CamelCommand {
             }
         }
         return 0;
-    }
-
-    static class FileConsumer extends ParameterConsumer<EditCommand> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, EditCommand cmd) {
-            cmd.file = args.pop();
-        }
     }
 }

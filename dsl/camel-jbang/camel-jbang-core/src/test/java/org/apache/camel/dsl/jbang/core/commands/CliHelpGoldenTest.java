@@ -31,6 +31,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.aesh.command.impl.parser.CommandLineParser;
+import org.aesh.command.invocation.CommandInvocation;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
@@ -40,7 +42,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -125,10 +126,11 @@ class CliHelpGoldenTest extends CamelCommandBaseTestSupport {
     }
 
     // the sections of the file by their title line: the help of each command, then each wrong command line
-    private Map<String, String> sections() {
+    private Map<String, String> sections() throws Exception {
         Map<String, String> answer = new LinkedHashMap<>();
-        CommandLine root = new CamelJBangMain().withPrinter(printer).createCommandLine(null);
-        answer.put("== camel --help", normalize(root.getUsageMessage(CommandLine.Help.Ansi.OFF)));
+        CommandLineParser<CommandInvocation> root = new CamelJBangMain().withPrinter(printer).createCommandLine(null).parser();
+        root.updateAnsiMode(false);
+        answer.put("== camel --help", normalize(root.printHelp()));
         help(root, "camel", answer, Collections.newSetFromMap(new IdentityHashMap<>()));
         for (List<String> args : ERRORS) {
             answer.put("== camel " + String.join(" ", args), normalize(error(args)));
@@ -137,17 +139,19 @@ class CliHelpGoldenTest extends CamelCommandBaseTestSupport {
     }
 
     // the help of the sub-commands, in the order of their names
-    private static void help(CommandLine parent, String path, Map<String, String> answer, Set<CommandLine> seen) {
-        Map<String, CommandLine> subcommands = new TreeMap<>();
-        parent.getSubcommands().forEach((name, sub) -> {
-            // a command is in the map under the name it was added with, and after that under its aliases
+    private static void help(
+            CommandLineParser<CommandInvocation> parent, String path, Map<String, String> answer,
+            Set<CommandLineParser<CommandInvocation>> seen) {
+        Map<String, CommandLineParser<CommandInvocation>> subcommands = new TreeMap<>();
+        for (CommandLineParser<CommandInvocation> sub : parent.getAllChildParsers()) {
             if (seen.add(sub)) {
-                subcommands.put(name, sub);
+                subcommands.put(sub.getProcessedCommand().name(), sub);
             }
-        });
+        }
         subcommands.forEach((name, sub) -> {
             String subPath = path + " " + name;
-            answer.put("== " + subPath + " --help", normalize(sub.getUsageMessage(CommandLine.Help.Ansi.OFF)));
+            sub.updateAnsiMode(false);
+            answer.put("== " + subPath + " --help", normalize(sub.printHelp()));
             help(sub, subPath, answer, seen);
         });
     }

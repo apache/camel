@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -45,7 +47,6 @@ import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
 
@@ -55,44 +56,35 @@ public abstract class CatalogBaseCommand extends CamelCommand {
             .alias("support-level", "level")
             .text("description", r -> r.description);
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To use a different Camel version than the default version")
+    @Option(name = "camel-version", description = "To use a different Camel version than the default version")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", completer = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class)
     RuntimeType runtime;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
-    @CommandLine.Mixin
+    @Mixin
     QuarkusPlatformMixin quarkusPlatform;
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by name, support-level, or description", defaultValue = "name")
+    @Option(name = "sort", description = "Sort by name, support-level, or description", defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--display-gav" },
-                        description = "Display Maven GAV instead of name", defaultValue = "false")
+    @Option(name = "display-gav", hasValue = false, description = "Display Maven GAV instead of name", defaultValue = "false")
     boolean displayGav;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter by name or description")
+    @Option(name = "filter", description = "Filter by name or description")
     String filterName;
 
-    @CommandLine.Option(names = { "--since-before" },
-                        description = "Filter by version older (inclusive)")
+    @Option(name = "since-before", description = "Filter by version older (inclusive)")
     String sinceBefore;
 
-    @CommandLine.Option(names = { "--since-after" },
-                        description = "Filter by version more recent (inclusive)")
+    @Option(name = "since-after", description = "Filter by version more recent (inclusive)")
     String sinceAfter;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
     CamelCatalog catalog;

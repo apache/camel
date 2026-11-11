@@ -26,23 +26,26 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "heap-histogram", description = "Display class-level heap memory usage in a running Camel integration",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel cmd heap-histogram",
-                 "  camel cmd heap-histogram --sort instances",
-                 "  camel cmd heap-histogram --filter camel --top 30" })
+@CommandDefinition(name = "heap-histogram",
+                   description = "Display class-level heap memory usage in a running Camel integration", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd heap-histogram",
+                           "  camel cmd heap-histogram --sort instances",
+                           "  camel cmd heap-histogram --filter camel --top 30" })
 public class CamelHeapHistogram extends ActionWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -50,7 +53,7 @@ public class CamelHeapHistogram extends ActionWatchCommand {
             .by("instances", Comparator.comparingLong((Row r) -> r.instances).reversed())
             .text("className", r -> r.className);
 
-    public static class SortCompletionCandidates implements Iterable<String> {
+    public static class SortCompletionCandidates extends CompletionCandidates {
 
         public SortCompletionCandidates() {
         }
@@ -61,25 +64,23 @@ public class CamelHeapHistogram extends ActionWatchCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = SortCompletionCandidates.class,
-                        description = "Sort by bytes, instances, or className", defaultValue = "bytes")
+    @Option(name = "sort", description = "Sort by bytes, instances, or className", defaultValue = "bytes",
+            completer = SortCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--top" },
-                        description = "Show only the top N classes", defaultValue = "50")
+    @Option(name = "top", description = "Show only the top N classes", defaultValue = "50")
     int top;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter class names (use all to include all classes)", defaultValue = "all")
+    @Option(name = "filter", description = "Filter class names (use all to include all classes)", defaultValue = "all")
     String filter;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

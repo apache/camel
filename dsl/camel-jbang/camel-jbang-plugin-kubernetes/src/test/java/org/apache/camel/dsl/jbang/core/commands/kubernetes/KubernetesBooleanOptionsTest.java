@@ -17,14 +17,14 @@
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.aesh.command.impl.internal.ProcessedOption;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
-import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Model.OptionSpec;
 
 /**
  * A boolean option given without a value is on, also for an option that is on by default: <tt>camel kubernetes run
@@ -33,41 +33,42 @@ import picocli.CommandLine.Model.OptionSpec;
 class KubernetesBooleanOptionsTest {
 
     @Test
-    void everyOptionThatIsOnByDefaultIsOnWhenGivenWithoutValue() {
+    void everyOptionThatIsOnByDefaultIsOnWhenGivenWithoutValue() throws Exception {
         CamelJBangMain main = new CamelJBangMain();
-        CommandLine commandLine = new CommandLine(main);
+        CommandTree commandLine = new CommandTree(main);
         new KubernetesPlugin().customize(commandLine, main);
 
         List<String> wrong = new ArrayList<>();
         check(commandLine, wrong);
 
         Assertions.assertEquals(List.of(), wrong,
-                "boolean options that are on by default, without arity = \"0..1\", fallbackValue = \"true\"");
+                "boolean options that need a value");
     }
 
     @Test
-    void cleanupWithoutValue() {
+    void cleanupWithoutValue() throws Exception {
         CamelJBangMain main = new CamelJBangMain();
-        CommandLine commandLine = new CommandLine(main);
+        CommandTree commandLine = new CommandTree(main);
         new KubernetesPlugin().customize(commandLine, main);
 
-        CommandLine.ParseResult result = commandLine.parseArgs("kubernetes", "run", "--dev", "--cleanup", "route.yaml");
-        CommandSpec run = result.subcommand().subcommand().commandSpec();
+        commandLine.parse("kubernetes", "run", "--dev", "--cleanup", "route.yaml");
+        KubernetesRun run = (KubernetesRun) commandLine.getSubcommands().get("kubernetes").getSubcommands().get("run")
+                .getCommand();
 
-        Assertions.assertEquals(Boolean.TRUE, run.findOption("--cleanup").getValue());
+        Assertions.assertTrue(run.cleanup);
         // the file after the flag is not taken as its value
-        Assertions.assertEquals(List.of("route.yaml"), ((KubernetesRun) run.userObject()).files);
+        Assertions.assertEquals(List.of("route.yaml"), run.files);
     }
 
-    private static void check(CommandLine commandLine, List<String> wrong) {
-        CommandSpec spec = commandLine.getCommandSpec();
-        for (OptionSpec option : spec.options()) {
-            boolean flag = option.type() == boolean.class || option.type() == Boolean.class;
-            boolean onByDefault = "true".equals(option.defaultValue()) || Boolean.TRUE.equals(option.initialValue());
-            if (flag && onByDefault && !(option.arity().min() == 0 && "true".equals(option.fallbackValue()))) {
-                wrong.add(spec.qualifiedName(" ") + " " + option.longestName());
+    private static void check(CommandTree commandLine, List<String> wrong) throws Exception {
+        for (CommandTree sub : new LinkedHashSet<>(commandLine.getSubcommands().values())) {
+            for (ProcessedOption option : sub.processedCommand().getOptions()) {
+                boolean flag = option.type() == boolean.class || option.type() == Boolean.class;
+                if (flag && option.hasValue() && !option.isOptionalValue()) {
+                    wrong.add(sub.getQualifiedName() + " --" + option.name());
+                }
             }
+            check(sub, wrong);
         }
-        commandLine.getSubcommands().values().forEach(sub -> check(sub, wrong));
     }
 }

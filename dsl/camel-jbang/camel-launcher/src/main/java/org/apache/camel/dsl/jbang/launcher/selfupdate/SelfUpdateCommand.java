@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -34,34 +36,35 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.FileUtil;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "self-update",
-                     description = "Checks for and installs updates to the Camel CLI launcher",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel self-update",
-                             "  camel self-update --version 4.23.0",
-                             "  camel self-update --version SNAPSHOT",
-                             "  camel self-update --check",
-                             "%nAn install pinned with the web installer's --version X.Y.Z never moves; one pinned with",
-                             "--version X.Y or --version LTS moves to the newest release of that line, or the newest LTS.",
-                             "%n--version SNAPSHOT (main) or X.Y.Z-SNAPSHOT installs the newest nightly build from the Apache",
-                             "snapshot repository, and pins it, so camel self-update follows the nightly builds. Nightly",
-                             "builds are development builds for testing, not Apache releases. A nightly build of a",
-                             "maintenance branch is updated by re-running the installer with --version X.Y.Z-SNAPSHOT.",
-                             "%n--version switches the pin to another selector: SNAPSHOT, X.Y.Z-SNAPSHOT, one nightly build",
-                             "(which never moves), LTS or X.Y. --version X.Y.Z installs that release without a pin." })
+@CommandDefinition(name = "self-update", description = "Checks for and installs updates to the Camel CLI launcher",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel self-update",
+                           "  camel self-update --version 4.23.0",
+                           "  camel self-update --version SNAPSHOT",
+                           "  camel self-update --check",
+                           "",
+                           "An install pinned with the web installer's --version X.Y.Z never moves; one pinned with",
+                           "--version X.Y or --version LTS moves to the newest release of that line, or the newest LTS.",
+                           "",
+                           "--version SNAPSHOT (main) or X.Y.Z-SNAPSHOT installs the newest nightly build from the Apache",
+                           "snapshot repository, and pins it, so camel self-update follows the nightly builds. Nightly",
+                           "builds are development builds for testing, not Apache releases. A nightly build of a",
+                           "maintenance branch is updated by re-running the installer with --version X.Y.Z-SNAPSHOT.",
+                           "",
+                           "--version switches the pin to another selector: SNAPSHOT, X.Y.Z-SNAPSHOT, one nightly build",
+                           "(which never moves), LTS or X.Y. --version X.Y.Z installs that release without a pin." })
 public class SelfUpdateCommand extends CamelCommand {
 
-    @CommandLine.Option(names = { "--version" },
-                        description = "Install a specific version instead of the latest: X.Y.Z, the newest release of X.Y or"
-                                      + " LTS (pinned), the nightly builds of SNAPSHOT (main) or X.Y.Z-SNAPSHOT (pinned), or"
-                                      + " one nightly build X.Y.Z-YYYYMMDD.HHMMSS-N (pinned)")
+    @Option(name = "version",
+            description = "Install a specific version instead of the latest: X.Y.Z, the newest release of X.Y or"
+                          + " LTS (pinned), the nightly builds of SNAPSHOT (main) or X.Y.Z-SNAPSHOT (pinned), or"
+                          + " one nightly build X.Y.Z-YYYYMMDD.HHMMSS-N (pinned)")
     String version;
 
-    @CommandLine.Option(names = { "--check" }, description = "Only report whether a newer version is available")
+    @Option(name = "check", hasValue = false, description = "Only report whether a newer version is available")
     boolean checkOnly;
 
     private final ManifestFetcher fetcherOverride;

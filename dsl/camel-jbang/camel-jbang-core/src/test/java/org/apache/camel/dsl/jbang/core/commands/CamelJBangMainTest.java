@@ -20,10 +20,10 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,7 +45,7 @@ class CamelJBangMainTest extends CamelCommandBaseTestSupport {
         // set the static commandLine field so printAvailablePlugins() can check subcommands
         Field f = CamelJBangMain.class.getDeclaredField("commandLine");
         f.setAccessible(true);
-        f.set(null, new CommandLine(main));
+        f.set(null, new CommandTree(main));
     }
 
     @Test

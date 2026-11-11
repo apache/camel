@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -25,10 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.impl.internal.ProcessedCommand;
+import org.aesh.command.impl.internal.ProcessedOption;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
+import org.aesh.command.option.OptionVisibility;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
-import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Model.OptionSpec;
 
 /**
  * The commands of the CLI as plain data, read from the command model the CLI runs: the camel-package-maven-plugin
@@ -39,8 +44,7 @@ import picocli.CommandLine.Model.OptionSpec;
  * {@code options} and {@code subcommands}. An option is a map with {@code names} (comma separated),
  * {@code description}, {@code defaultValue}, {@code javaType}, {@code required}, {@code hidden}, {@code deprecated},
  * {@code paramLabel} and {@code completionCandidates}. Descriptions and default values are as written in the
- * annotations, with their placeholders: picocli would fill in a variable such as {@code ${camel-version}} from the
- * system properties of the JVM that builds the documentation.
+ * annotations, with their placeholders, such as {@code ${camel-version}}.
  */
 public final class CommandMetadata {
 
@@ -50,7 +54,7 @@ public final class CommandMetadata {
     /**
      * The commands of the CLI, without the commands of the plugins.
      */
-    public static List<Map<String, Object>> commands() {
+    public static List<Map<String, Object>> commands() throws Exception {
         return commands(new CamelJBangMain().createCommandLine(null));
     }
 
@@ -59,19 +63,18 @@ public final class CommandMetadata {
      *
      * @param pluginClass the class of the plugin
      */
-    public static List<Map<String, Object>> pluginCommands(Class<?> pluginClass) throws ReflectiveOperationException {
+    public static List<Map<String, Object>> pluginCommands(Class<?> pluginClass) throws Exception {
         Plugin plugin = (Plugin) pluginClass.getDeclaredConstructor().newInstance();
         CamelJBangMain main = new CamelJBangMain();
-        CommandLine commandLine = new CommandLine(main);
+        CommandTree commandLine = new CommandTree(main);
         plugin.customize(commandLine, main);
         return commands(commandLine);
     }
 
-    private static List<Map<String, Object>> commands(CommandLine parent) {
+    private static List<Map<String, Object>> commands(CommandTree parent) throws Exception {
         List<Map<String, Object>> answer = new ArrayList<>();
-        Set<CommandLine> added = Collections.newSetFromMap(new IdentityHashMap<>());
-        for (Map.Entry<String, CommandLine> entry : parent.getSubcommands().entrySet()) {
-            // a command is in the map under the name it was added with, and after that under its aliases
+        Set<CommandTree> added = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Map.Entry<String, CommandTree> entry : parent.getSubcommands().entrySet()) {
             if (added.add(entry.getValue())) {
                 answer.add(command(entry.getKey(), entry.getValue()));
             }
@@ -79,54 +82,137 @@ public final class CommandMetadata {
         return answer;
     }
 
-    private static Map<String, Object> command(String name, CommandLine commandLine) {
-        CommandSpec spec = commandLine.getCommandSpec();
-        Object command = spec.userObject();
-        CommandLine.Command annotation = command.getClass().getAnnotation(CommandLine.Command.class);
+    private static Map<String, Object> command(String name, CommandTree tree) throws Exception {
+        Object command = tree.getCommand();
+        CommandDefinition annotation = CommandTree.definitionOf(command.getClass());
+        ProcessedCommand<?, ?> processed = tree.processedCommand();
         Map<String, Object> answer = new LinkedHashMap<>();
         answer.put("name", name);
-        answer.put("description",
-                String.join(" ", annotation != null ? annotation.description() : spec.usageMessage().description()));
-        answer.put("hidden", spec.usageMessage().hidden());
+        answer.put("description", annotation != null ? annotation.description() : processed.description());
+        // aesh has no hidden commands
+        answer.put("hidden", false);
         answer.put("deprecated", command.getClass().isAnnotationPresent(Deprecated.class));
         answer.put("sourceClass", command.getClass().getCanonicalName());
         List<Map<String, Object>> options = new ArrayList<>();
-        for (OptionSpec option : spec.options()) {
-            // an option of a parent command for its sub-commands (scope = INHERIT) belongs to the parent
-            if (!option.inherited()) {
-                options.add(option(option));
-            }
+        for (ProcessedOption option : processed.getOptions()) {
+            options.add(option(command, option));
         }
         answer.put("options", options);
-        answer.put("subcommands", commands(commandLine));
+        answer.put("subcommands", commands(tree));
         return answer;
     }
 
-    private static Map<String, Object> option(OptionSpec option) {
-        CommandLine.Option annotation = option.userObject() instanceof AnnotatedElement element
-                ? element.getAnnotation(CommandLine.Option.class) : null;
+    private static Map<String, Object> option(Object command, ProcessedOption option) {
+        Field field = field(command, option);
         Map<String, Object> answer = new LinkedHashMap<>();
-        answer.put("names", String.join(",", option.names()));
-        String description = String.join(" ", annotation != null ? annotation.description() : option.description());
+        answer.put("names", names(option));
+        String description = option.description() != null ? option.description() : "";
         answer.put("description", description);
-        answer.put("defaultValue", annotation != null ? defaultValue(annotation) : option.defaultValue());
-        answer.put("javaType", option.type().getCanonicalName());
-        answer.put("required", option.required());
-        answer.put("hidden", option.hidden());
-        answer.put("deprecated", option.userObject() instanceof AnnotatedElement element
-                && element.isAnnotationPresent(Deprecated.class));
-        // the label picocli makes up for an option without one is not documented
-        answer.put("paramLabel", annotation != null && !annotation.paramLabel().isEmpty() ? annotation.paramLabel() : null);
-        if (description.contains("${COMPLETION-CANDIDATES}") && option.completionCandidates() != null) {
+        List<String> defaults = rawDefaultValues(field, option);
+        answer.put("defaultValue", defaults == null || defaults.isEmpty() ? null : String.join(",", defaults));
+        // the help option that aesh generates is a Boolean without a field
+        answer.put("javaType", isGeneratedHelp(option)
+                ? "boolean"
+                : (field != null ? field.getType() : option.type()).getCanonicalName());
+        answer.put("required", option.isRequired());
+        answer.put("hidden", option.getVisibility() == OptionVisibility.HIDDEN);
+        answer.put("deprecated", field != null && field.isAnnotationPresent(Deprecated.class));
+        // aesh does not read the argument of @Option into its model: the label from the annotation
+        String label = field != null && field.getAnnotation(Option.class) instanceof Option o
+                ? o.argument()
+                : option.getArgument();
+        answer.put("paramLabel", label == null || label.isEmpty() ? null : label);
+        if (description.contains("${COMPLETION-CANDIDATES}")) {
             List<String> candidates = new ArrayList<>();
-            option.completionCandidates().forEach(candidates::add);
-            answer.put("completionCandidates", candidates);
+            if (option.completer() instanceof Iterable<?> iterable) {
+                iterable.forEach(c -> candidates.add(String.valueOf(c)));
+            } else if (option.hasAllowedValues()) {
+                candidates.addAll(option.getAllowedValues());
+            }
+            if (!candidates.isEmpty()) {
+                answer.put("completionCandidates", candidates);
+            }
         }
         return answer;
     }
 
-    private static String defaultValue(CommandLine.Option annotation) {
-        // how picocli marks an option without a default value
-        return "__no_default_value__".equals(annotation.defaultValue()) ? null : annotation.defaultValue();
+    /**
+     * The names as the CLI declares them: the long names, then the short name; the help option that aesh generates as
+     * {@code -h,--help}.
+     */
+    private static String names(ProcessedOption option) {
+        List<String> names = new ArrayList<>();
+        boolean help = isGeneratedHelp(option);
+        if (help && option.shortName() != null) {
+            names.add("-" + option.shortName());
+        }
+        names.add("--" + option.name());
+        for (String alias : option.getAliases()) {
+            names.add("--" + alias);
+        }
+        if (!help && option.shortName() != null) {
+            names.add("-" + option.shortName());
+        }
+        return String.join(",", names);
+    }
+
+    /**
+     * The default value as written in the annotation, with its placeholders: aesh fills in a variable such as
+     * {@code ${camel-version}} from the system properties of the JVM that builds the documentation (or drops it), and
+     * keeps the value as written to itself.
+     */
+    private static List<String> rawDefaultValues(Field field, ProcessedOption option) {
+        if (field != null) {
+            if (field.getAnnotation(Option.class) instanceof Option o) {
+                return List.of(o.defaultValue());
+            } else if (field.getAnnotation(OptionList.class) instanceof OptionList o) {
+                return List.of(o.defaultValue());
+            }
+        }
+        return option.getDefaultValues();
+    }
+
+    private static boolean isGeneratedHelp(ProcessedOption option) {
+        return "generatedHelp".equals(option.getFieldName());
+    }
+
+    /**
+     * The field of the option: in the class of the command (or a super class), or in the class of one of its mixins,
+     * also a mixin of a mixin.
+     */
+    private static Field field(Object command, ProcessedOption option) {
+        if (option.getFieldName() == null) {
+            return null;
+        }
+        return findOptionField(command.getClass(), option.getFieldName());
+    }
+
+    private static Field findOptionField(Class<?> type, String name) {
+        Field answer = findField(type, name);
+        if (answer != null) {
+            return answer;
+        }
+        for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field mixin : c.getDeclaredFields()) {
+                if (mixin.isAnnotationPresent(Mixin.class)) {
+                    answer = findOptionField(mixin.getType(), name);
+                    if (answer != null) {
+                        return answer;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Field findField(Class<?> type, String name) {
+        for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
+            try {
+                return c.getDeclaredField(name);
+            } catch (NoSuchFieldException e) {
+                // look in the super class
+            }
+        }
+        return null;
     }
 }

@@ -26,11 +26,11 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
 /**
  * Runs a Camel CLI command in this JVM, as camel ask and the TUI do, and gives what a script running camel gets: the
@@ -104,12 +104,12 @@ public final class CliRunner {
      * @param timeoutMillis how long the command may run, or 0 to wait until it has finished
      */
     public static CliResult run(List<String> args, long timeoutMillis) {
-        CommandLine main = CamelJBangMain.getCommandLine();
+        CommandTree main = CamelJBangMain.getCommandLine();
         if (main == null) {
             throw new IllegalStateException("The Camel CLI is not initialized");
         }
         // new instances of the commands, so that no field keeps the value a run before left in it
-        CommandLine commandLine = ((CamelJBangMain) main.getCommand()).newCommandLine();
+        CommandTree commandLine = ((CamelJBangMain) main.getCommand()).newCommandLine();
         Output output = new Output();
         long start = System.nanoTime();
         if (timeoutMillis <= 0) {
@@ -163,7 +163,7 @@ public final class CliRunner {
         return "";
     }
 
-    private static int execute(CommandLine commandLine, List<String> args, Output output, AtomicBoolean abandoned) {
+    private static int execute(CommandTree commandLine, List<String> args, Output output, AtomicBoolean abandoned) {
         CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
         synchronized (LOCK) {
             if (abandoned.get()) {
@@ -171,21 +171,15 @@ public final class CliRunner {
                 return CliExitCode.TIMEOUT;
             }
             Printer printer = main.getOut();
-            PrintWriter out = commandLine.getOut();
-            PrintWriter err = commandLine.getErr();
+            // the help and the usage errors are printed with the printer of the CLI too
             main.setOut(output.printer);
-            // picocli prints the help on its out, and a usage error on its err
-            commandLine.setOut(output.helpOut);
-            commandLine.setErr(output.helpErr);
             try {
                 RuntimeUtil.newCommand();
-                return commandLine.execute(args.toArray(String[]::new));
+                return main.run(commandLine, args.toArray(String[]::new));
             } finally {
                 output.helpOut.flush();
                 output.helpErr.flush();
                 main.setOut(printer);
-                commandLine.setOut(out);
-                commandLine.setErr(err);
             }
         }
     }

@@ -17,13 +17,13 @@
 package org.apache.camel.dsl.jbang.core.commands.validate;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.aesh.command.impl.internal.ProcessedOption;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
-import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Model.OptionSpec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,27 +34,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ValidateBooleanOptionsTest {
 
     @Test
-    void everyOptionThatIsOnByDefaultIsOnWhenGivenWithoutValue() {
+    void everyOptionThatIsOnByDefaultIsOnWhenGivenWithoutValue() throws Exception {
         CamelJBangMain main = new CamelJBangMain();
-        CommandLine commandLine = new CommandLine(main);
+        CommandTree commandLine = new CommandTree(main);
         new ValidatePlugin().customize(commandLine, main);
 
         List<String> wrong = new ArrayList<>();
         check(commandLine, wrong);
 
-        assertThat(wrong).as("boolean options that are on by default, without arity = \"0..1\", fallbackValue = \"true\"")
+        assertThat(wrong).as("boolean options that need a value")
                 .isEmpty();
     }
 
-    private static void check(CommandLine commandLine, List<String> wrong) {
-        CommandSpec spec = commandLine.getCommandSpec();
-        for (OptionSpec option : spec.options()) {
-            boolean flag = option.type() == boolean.class || option.type() == Boolean.class;
-            boolean onByDefault = "true".equals(option.defaultValue()) || Boolean.TRUE.equals(option.initialValue());
-            if (flag && onByDefault && !(option.arity().min() == 0 && "true".equals(option.fallbackValue()))) {
-                wrong.add(spec.qualifiedName(" ") + " " + option.longestName());
+    private static void check(CommandTree commandLine, List<String> wrong) throws Exception {
+        for (CommandTree sub : new LinkedHashSet<>(commandLine.getSubcommands().values())) {
+            for (ProcessedOption option : sub.processedCommand().getOptions()) {
+                boolean flag = option.type() == boolean.class || option.type() == Boolean.class;
+                if (flag && option.hasValue() && !option.isOptionalValue()) {
+                    wrong.add(sub.getQualifiedName() + " --" + option.name());
+                }
             }
+            check(sub, wrong);
         }
-        commandLine.getSubcommands().values().forEach(sub -> check(sub, wrong));
     }
 }

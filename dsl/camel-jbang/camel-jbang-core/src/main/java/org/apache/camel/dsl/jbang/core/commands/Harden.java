@@ -34,20 +34,21 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 /**
  * Command to suggest security hardening improvements for Camel routes using AI/LLM services.
@@ -56,17 +57,16 @@ import picocli.CommandLine.Parameters;
  * validation, and other security best practices. Supports multiple LLM providers: Ollama, OpenAI, Azure OpenAI, vLLM,
  * LM Studio, LocalAI, etc.
  */
-@Command(name = "harden",
-         description = "Suggest security hardening for Camel routes using AI/LLM",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel harden hello.java",
-                 "  camel harden hello.yaml --format=markdown",
-                 "  camel harden hello.java --model=gpt-4" })
+@CommandDefinition(name = "harden", description = "Suggest security hardening for Camel routes using AI/LLM",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel harden hello.java",
+                           "  camel harden hello.yaml --format=markdown",
+                           "  camel harden hello.java --model=gpt-4" })
 public class Harden extends CamelCommand {
 
-    public static class FormatCompletionCandidates implements Iterable<String> {
+    public static class FormatCompletionCandidates extends CompletionCandidates {
 
         public FormatCompletionCandidates() {
         }
@@ -136,62 +136,46 @@ public class Harden extends CamelCommand {
         }
     }
 
-    @Parameters(description = "Route file(s) to analyze for security hardening", arity = "1..*")
+    @Arguments(required = true, description = "Route file(s) to analyze for security hardening")
     List<String> files;
 
-    @Option(names = { "--url" },
-            description = "LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified.")
+    @Option(name = "url", description = "LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified.")
     String url;
 
-    @Option(names = { "--api-type" },
-            description = "API type: 'ollama' or 'openai' (OpenAI-compatible)",
-            defaultValue = "ollama")
+    @Option(name = "api-type", description = "API type: 'ollama' or 'openai' (OpenAI-compatible)", defaultValue = "ollama")
     ApiType apiType = ApiType.ollama;
 
-    @Option(names = { "--api-key" },
-            description = "API key for authentication. Also reads OPENAI_API_KEY or LLM_API_KEY env vars")
+    @Option(name = "api-key", description = "API key for authentication. Also reads OPENAI_API_KEY or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(names = { "--model" },
-            description = "Model to use",
-            defaultValue = DEFAULT_MODEL)
+    @Option(name = "model", description = "Model to use", defaultValue = DEFAULT_MODEL)
     String model = DEFAULT_MODEL;
 
-    @Option(names = { "--verbose", "-v" },
+    @Option(name = "verbose", shortName = 'v', hasValue = false,
             description = "Include detailed security recommendations with code examples")
     boolean verbose;
 
-    @Option(names = { "--format" },
-            completionCandidates = FormatCompletionCandidates.class,
-            description = "Output format (${COMPLETION-CANDIDATES})",
-            defaultValue = "text")
+    @Option(name = "format", description = "Output format (${COMPLETION-CANDIDATES})", defaultValue = "text",
+            completer = FormatCompletionCandidates.class)
     String format = "text";
 
-    @Option(names = { "--timeout" },
-            description = "Timeout in seconds for LLM response",
-            defaultValue = "120")
+    @Option(name = "timeout", description = "Timeout in seconds for LLM response", defaultValue = "120")
     int timeout = 120;
 
-    @Option(names = { "--catalog-context" },
-            description = "Include Camel Catalog descriptions in the prompt")
+    @Option(name = "catalog-context", hasValue = false, description = "Include Camel Catalog descriptions in the prompt")
     boolean catalogContext;
 
-    @Option(names = { "--show-prompt" },
-            description = "Show the prompt sent to the LLM")
+    @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
-    @Option(names = { "--temperature" },
-            description = "Temperature for response generation (0.0-2.0)",
-            defaultValue = "0.7")
+    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.7")
     double temperature = 0.7;
 
-    @Option(names = { "--system-prompt" },
-            description = "Custom system prompt")
+    @Option(name = "system-prompt", description = "Custom system prompt")
     String systemPrompt;
 
-    @Option(names = { "--stream" },
-            description = "Stream the response as it's generated (shows progress)",
-            defaultValue = "true", arity = "0..1", fallbackValue = "true")
+    @Option(name = "stream", hasValue = false, description = "Stream the response as it's generated (shows progress)",
+            defaultValue = "true")
     boolean stream = true;
 
     // whether the answer for the current file was printed as it came (reset per file)

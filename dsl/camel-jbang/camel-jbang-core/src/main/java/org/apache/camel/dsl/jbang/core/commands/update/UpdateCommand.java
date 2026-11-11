@@ -16,12 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.update;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "update",
-                     description = "Update Camel project")
+@CommandDefinition(name = "update", description = "Update Camel project", generateHelp = true, sortOptions = true)
 public class UpdateCommand extends CamelCommand {
 
     public UpdateCommand(CamelJBangMain main) {

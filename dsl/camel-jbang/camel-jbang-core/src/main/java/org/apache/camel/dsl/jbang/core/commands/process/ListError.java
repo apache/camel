@@ -29,6 +29,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
 import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
@@ -54,11 +57,8 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.terminal.impl.TerminalGraphics;
 import org.jline.terminal.impl.TerminalGraphicsManager;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "error",
-         description = "Get captured routing errors of Camel integrations", sortOptions = false, showDefaultValues = true)
+@CommandDefinition(name = "error", description = "Get captured routing errors of Camel integrations", generateHelp = true)
 public class ListError extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -66,59 +66,49 @@ public class ListError extends ProcessWatchCommand {
             .text("name", r -> r.name)
             .numeric("age", r -> r.timestamp);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--route" },
-                        description = "Filter by route ID")
+    @Option(name = "route", description = "Filter by route ID")
     String route;
 
-    @CommandLine.Option(names = { "--exception" },
-                        description = "Filter by exception type (substring match)")
+    @Option(name = "exception", description = "Filter by exception type (substring match)")
     String exception;
 
-    @CommandLine.Option(names = { "--ago" },
-                        description = "Filter by time window, e.g. 60s, 5m, 1h")
+    @Option(name = "ago", description = "Filter by time window, e.g. 60s, 5m, 1h")
     String ago;
 
-    @CommandLine.Option(names = { "--handled" },
-                        description = "Filter by handled status (true or false)")
+    @Option(name = "handled", description = "Filter by handled status (true or false)")
     String handled;
 
-    @CommandLine.Option(names = { "--id" },
-                        description = "Filter by exchange ID")
+    @Option(name = "id", description = "Filter by exchange ID")
     String id;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Maximum number of entries to display")
+    @Option(name = "limit", description = "Maximum number of entries to display")
     int limit;
 
-    @CommandLine.Option(names = { "--show" },
-                        description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections")
+    @Option(name = "show",
+            description = "Comma-separated detail sections to show: body, headers, properties, variables, history, stackTrace, or 'all' for all sections")
     String show;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--detail" },
-                        description = "Show full details of each error entry")
+    @Option(name = "detail", hasValue = false, description = "Show full details of each error entry")
     boolean detail;
 
-    @CommandLine.Option(names = { "--last" },
-                        description = "Show only the last (newest) error with full details")
+    @Option(name = "last", hasValue = false, description = "Show only the last (newest) error with full details")
     boolean last;
 
-    @CommandLine.Option(names = { "--diagram" },
-                        description = "Display a route diagram with the error path highlighted")
+    @Option(name = "diagram", hasValue = false, description = "Display a route diagram with the error path highlighted")
     boolean diagram;
 
-    @CommandLine.Option(names = { "--theme" }, defaultValue = "unicode",
-                        description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)")
+    @Option(name = "theme", description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)",
+            defaultValue = "unicode")
     String theme = "unicode";
 
     public ListError(CamelJBangMain main) {

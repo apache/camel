@@ -31,6 +31,10 @@ import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -43,41 +47,34 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.logging.log4j.core.config.Configurator;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.RunHelper.addCamelCLICommand;
 
-@CommandLine.Command(name = "run", description = "Run an external service", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel infra run kafka",
-                             "  camel infra run kafka --background",
-                             "  camel infra run ollama --property ollama.model=qwen2.5:0.5b" })
+@CommandDefinition(name = "run", description = "Run an external service", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel infra run kafka",
+                           "  camel infra run kafka --background",
+                           "  camel infra run ollama --property ollama.model=qwen2.5:0.5b" })
 public class InfraRun extends InfraBaseCommand {
 
-    @CommandLine.Spec
-    CommandLine.Model.CommandSpec spec;
-
-    @CommandLine.Parameters(description = "Service name", arity = "1")
+    @Arguments(required = true, description = "Service name")
     private List<String> serviceName;
 
-    @CommandLine.Option(names = { "--log" },
-                        description = "Log container output to console")
+    @Option(name = "log", hasValue = false, description = "Log container output to console")
     boolean logToStdout;
 
-    @CommandLine.Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
+    @Option(name = "background", hasValue = false, description = "Run in the background", defaultValue = "false")
     boolean background;
 
-    @CommandLine.Option(names = { "--port" },
-                        description = "Override the default port for the service")
+    @Option(name = "port", description = "Override the default port for the service")
     Integer port;
 
-    @CommandLine.Option(names = { "--no-ui" }, defaultValue = "false",
-                        description = "Do not start companion UI containers")
+    @Option(name = "no-ui", hasValue = false, description = "Do not start companion UI containers", defaultValue = "false")
     boolean noUi;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
     List<String> serviceProperties = new ArrayList<>();
 
     public InfraRun(CamelJBangMain main) {
@@ -144,8 +141,8 @@ public class InfraRun extends InfraBaseCommand {
 
     protected int runBackground(String testService) throws Exception {
         List<String> cmds;
-        if (spec != null) {
-            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        if (originalArgs() != null) {
+            cmds = new ArrayList<>(originalArgs());
         } else {
             cmds = new ArrayList<>();
             cmds.add("infra");

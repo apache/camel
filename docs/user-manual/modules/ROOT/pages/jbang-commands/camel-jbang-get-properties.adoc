@@ -27,7 +27,7 @@ camel get properties [options]
 | `--startup` | List only startup configuration |  | boolean
 | `--verbose` | Whether to include more details |  | boolean
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

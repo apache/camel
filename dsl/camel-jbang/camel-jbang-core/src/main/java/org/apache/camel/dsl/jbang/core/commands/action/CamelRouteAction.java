@@ -16,20 +16,21 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
 public abstract class CamelRouteAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--id" },
-                        description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
+    @Option(name = "id", description = "Route ids (multiple ids can be separated by comma)", defaultValue = "*")
     String id = "*";
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     protected CamelRouteAction(CamelJBangMain main) {

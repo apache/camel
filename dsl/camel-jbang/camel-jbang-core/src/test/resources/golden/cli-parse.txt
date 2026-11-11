@@ -5,7 +5,6 @@
 > ask
   apiKey=null
   apiType=null
-  helpRequested=false
   maxIterations=25
   model=null
   nameOrPid=null
@@ -52,8 +51,6 @@
 > bind v --sink v --source v
   errorHandler=null
   file="v"
-  filePath=null
-  helpRequested=false
   output="file"
   properties=null
   sink="v"
@@ -68,13 +65,10 @@
 > bind v --sink v --source v --step v --step w
   steps=["v", "w"]
 > catalog
-  helpRequested=false
 > catalog component
   camelVersion=null
-  catalog:helpRequested=false
   displayGav=false
   filterName=null
-  helpRequested=false
   jsonOutput=false
   mavenResolver.download=true
   mavenResolver.fresh=false
@@ -127,10 +121,8 @@
   sort="v"
 > catalog dataformat
   camelVersion=null
-  catalog:helpRequested=false
   displayGav=false
   filterName=null
-  helpRequested=false
   jsonOutput=false
   mavenResolver.download=true
   mavenResolver.fresh=false
@@ -183,10 +175,8 @@
   sort="v"
 > catalog dev-console
   camelVersion=null
-  catalog:helpRequested=false
   displayGav=false
   filterName=null
-  helpRequested=false
   jsonOutput=false
   mavenResolver.download=true
   mavenResolver.fresh=false
@@ -238,10 +228,8 @@
 > catalog dev-console --sort v
   sort="v"
 > catalog kamelet
-  catalog:helpRequested=false
   filterName=null
   filterType=null
-  helpRequested=false
   jsonOutput=false
   kameletsVersion=null
   mavenResolver.download=true
@@ -272,10 +260,8 @@
   sort="v"
 > catalog language
   camelVersion=null
-  catalog:helpRequested=false
   displayGav=false
   filterName=null
-  helpRequested=false
   jsonOutput=false
   mavenResolver.download=true
   mavenResolver.fresh=false
@@ -328,10 +314,8 @@
   sort="v"
 > catalog other
   camelVersion=null
-  catalog:helpRequested=false
   displayGav=false
   filterName=null
-  helpRequested=false
   jsonOutput=false
   mavenResolver.download=true
   mavenResolver.fresh=false
@@ -384,10 +368,8 @@
   sort="v"
 > catalog transformer
   camelVersion=null
-  catalog:helpRequested=false
   displayGav=false
   filterName=null
-  helpRequested=false
   jsonOutput=false
   mavenResolver.download=true
   mavenResolver.fresh=false
@@ -439,14 +421,11 @@
 > catalog transformer --sort v
   sort="v"
 > cmd
-  helpRequested=false
 > cmd browse
   bodyMaxChars=0
-  cmd:helpRequested=false
   dump=false
   endpoint=null
   freshSize=false
-  helpRequested=false
   jsonOutput=false
   limit=100
   loggingColor=true
@@ -518,9 +497,7 @@
 > cmd browse --wide-uri=false
   (defaults)
 > cmd chaos-add --rule v
-  cmd:helpRequested=false
   dryRun=false
-  helpRequested=false
   name=null
   rules=["v"]
   timeoutOption.timeout=10000
@@ -531,8 +508,6 @@
 > cmd chaos-add --rule v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-change --id v --rule v
-  cmd:helpRequested=false
-  helpRequested=false
   id="v"
   name=null
   rule="v"
@@ -540,8 +515,6 @@
 > cmd chaos-change --id v --rule v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-clear
-  cmd:helpRequested=false
-  helpRequested=false
   name="*"
   reset=false
   timeoutOption.timeout=10000
@@ -553,11 +526,9 @@
   timeoutOption.timeout=7
 > cmd chaos-experiment
   body=null
-  cmd:helpRequested=false
   end=false
   feed=null
   headers=null
-  helpRequested=false
   hypothesis=null
   interval=null
   name=null
@@ -594,9 +565,7 @@
   apiKey=null
   apiType=null
   budget="10m"
-  cmd:helpRequested=false
   focus=null
-  helpRequested=false
   maxIterations=100
   model=null
   name=null
@@ -642,17 +611,13 @@
 > cmd chaos-explore --yes=false
   (defaults)
 > cmd chaos-explore-finish
-  cmd:helpRequested=false
-  helpRequested=false
   name=null
   timeoutOption.timeout=10000
 > cmd chaos-explore-finish --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-explore-start
   budget="10m"
-  cmd:helpRequested=false
   focus=null
-  helpRequested=false
   name=null
   timeoutOption.timeout=10000
 > cmd chaos-explore-start --budget v
@@ -662,31 +627,23 @@
 > cmd chaos-explore-start --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-load v
-  cmd:helpRequested=false
   file="v"
-  helpRequested=false
   name=null
   timeoutOption.timeout=10000
 > cmd chaos-load v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-remove --id v
-  cmd:helpRequested=false
-  helpRequested=false
   id="v"
   name=null
   timeoutOption.timeout=10000
 > cmd chaos-remove --id v --timeout 7
   timeoutOption.timeout=7
 > cmd chaos-suggest
-  cmd:helpRequested=false
-  helpRequested=false
   name=null
   timeoutOption.timeout=10000
 > cmd chaos-suggest --timeout 7
   timeoutOption.timeout=7
 > cmd disable-processor
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -695,8 +652,6 @@
 > cmd disable-processor --timeout 7
   timeoutOption.timeout=7
 > cmd enable-processor
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -705,16 +660,12 @@
 > cmd enable-processor --timeout 7
   timeoutOption.timeout=7
 > cmd gc
-  cmd:helpRequested=false
-  helpRequested=false
   name="*"
   timeoutOption.timeout=10000
 > cmd gc --timeout 7
   timeoutOption.timeout=7
 > cmd heap-dump
-  cmd:helpRequested=false
   dumpName=null
-  helpRequested=false
   jsonOutput=false
   live=true
   name="*"
@@ -732,10 +683,8 @@
 > cmd heap-dump --timeout 7
   timeout=7
 > cmd heap-histogram
-  cmd:helpRequested=false
   durationOption.duration=0
   filter="all"
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="bytes"
@@ -761,8 +710,6 @@
 > cmd heap-histogram --watch=false
   (defaults)
 > cmd load
-  cmd:helpRequested=false
-  helpRequested=false
   name="*"
   restart=false
   source=null
@@ -776,8 +723,6 @@
 > cmd load --timeout 7
   timeoutOption.timeout=7
 > cmd logger
-  cmd:helpRequested=false
-  helpRequested=false
   jsonOutput=false
   logger="root"
   loggingLevel=null
@@ -797,9 +742,7 @@
 > cmd logger --timeout 7
   timeoutOption.timeout=7
 > cmd memory-leak
-  cmd:helpRequested=false
   duration=60
-  helpRequested=false
   minSize="0"
   mode="dual"
   name="*"
@@ -839,14 +782,12 @@
   top=7
 > cmd receive
   action="status"
-  cmd:helpRequested=false
   compact=true
   durationOption.duration=0
   endpoint=null
   find=null
   follow=true
   grep=null
-  helpRequested=false
   loggingColor=true
   mask=false
   mavenResolver.download=true
@@ -958,22 +899,16 @@
 > cmd receive --wide-uri=false
   (defaults)
 > cmd reload
-  cmd:helpRequested=false
-  helpRequested=false
   name="*"
   timeoutOption.timeout=10000
 > cmd reload --timeout 7
   timeoutOption.timeout=7
 > cmd reset-stats
-  cmd:helpRequested=false
-  helpRequested=false
   name="*"
   timeoutOption.timeout=10000
 > cmd reset-stats --timeout 7
   timeoutOption.timeout=7
 > cmd resume-route
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -984,15 +919,12 @@
 > cmd route-diagram
   bodyTypes=true
   boxWidth=180
-  cmd:helpRequested=false
   compile=false
   durationOption.duration=0
   errors=false
-  filePaths=null
   files=[]
   filter=null
   fontSize=12
-  helpRequested=false
   highlight=null
   highlightStyle="success"
   ignoreLoadingError=false
@@ -1055,10 +987,8 @@
 > cmd route-diagram --width 7
   width=7
 > cmd route-dump
-  cmd:helpRequested=false
   filter=null
   format="yaml"
-  helpRequested=false
   jsonOutput=false
   name="*"
   raw=false
@@ -1087,11 +1017,9 @@
   uriAsParameters=false
 > cmd route-structure
   brief=false
-  cmd:helpRequested=false
   compile=false
   description=false
   filter=null
-  helpRequested=false
   ignoreLoadingError=false
   jsonOutput=false
   name="*"
@@ -1135,15 +1063,12 @@
   (defaults)
 > cmd route-topology
   boxWidth=180
-  cmd:helpRequested=false
   compile=false
   description=false
   errors=false
   external=false
-  filePaths=null
   files=[]
   fontSize=12
-  helpRequested=false
   ignoreLoadingError=false
   jsonOutput=false
   kamelets=false
@@ -1195,10 +1120,8 @@
   timeoutOption.timeout=7
 > cmd send
   body=null
-  cmd:helpRequested=false
   endpoint=null
   headers=null
-  helpRequested=false
   infra=null
   interval=null
   loggingColor=true
@@ -1286,10 +1209,8 @@
 > cmd send --timeout 7
   timeout=7
 > cmd span
-  cmd:helpRequested=false
   filter=null
   flat=false
-  helpRequested=false
   jsonOutput=false
   limit=500
   loggingColor=true
@@ -1320,9 +1241,7 @@
 > cmd span --trace v
   trace="v"
 > cmd sql v --query v
-  cmd:helpRequested=false
   datasource=null
-  helpRequested=false
   jsonOutput=false
   maxRows=100
   name="v"
@@ -1339,8 +1258,6 @@
 > cmd sql v --query v --query-timeout 7
   queryTimeout=7
 > cmd start-group
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -1349,8 +1266,6 @@
 > cmd start-group --timeout 7
   timeoutOption.timeout=7
 > cmd start-route
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -1359,8 +1274,6 @@
 > cmd start-route --timeout 7
   timeoutOption.timeout=7
 > cmd stop-group
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -1369,8 +1282,6 @@
 > cmd stop-group --timeout 7
   timeoutOption.timeout=7
 > cmd stop-route
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -1380,13 +1291,11 @@
   timeoutOption.timeout=7
 > cmd stub
   browse=false
-  cmd:helpRequested=false
   compact=true
   durationOption.duration=0
   filter=null
   find=null
   grep=null
-  helpRequested=false
   jsonOutput=false
   limit=10
   loggingColor=true
@@ -1458,8 +1367,6 @@
 > cmd stub --watch=false
   (defaults)
 > cmd suspend-route
-  cmd:helpRequested=false
-  helpRequested=false
   id="*"
   name="*"
   timeoutOption.timeout=10000
@@ -1468,11 +1375,9 @@
 > cmd suspend-route --timeout 7
   timeoutOption.timeout=7
 > cmd thread-dump
-  cmd:helpRequested=false
   depth=1
   durationOption.duration=0
   filters=["Camel"]
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="id"
@@ -1505,13 +1410,9 @@
 > cmd thread-dump --watch=false
   (defaults)
 > completion
-  helpRequested=false
 > config
-  helpRequested=false
 > config get v
-  config:helpRequested=false
   global=true
-  helpRequested=false
   jsonOutput=false
   key="v"
 > config get v --global
@@ -1523,9 +1424,7 @@
 > config get v --json=false
   (defaults)
 > config list
-  config:helpRequested=false
   global=true
-  helpRequested=false
   jsonOutput=false
 > config list --global
   (defaults)
@@ -1536,18 +1435,14 @@
 > config list --json=false
   (defaults)
 > config set v
-  config:helpRequested=false
   configuration="v"
   global=true
-  helpRequested=false
 > config set v --global
   (defaults)
 > config set v --global=false
   global=false
 > config unset v
-  config:helpRequested=false
   global=true
-  helpRequested=false
   key="v"
 > config unset v --global
   (defaults)
@@ -1560,7 +1455,7 @@
   breakpoint=null
   camelSpringBootVersion=null
   camelVersion=null
-  chaos=false
+  chaos="false"
   chaosReport=null
   code=null
   dataDir=null
@@ -1578,10 +1473,8 @@
   executionLimitOptions.maxIdleSeconds=0
   executionLimitOptions.maxMessages=0
   executionLimitOptions.maxSeconds=0
-  filePaths=null
   files=[]
   gav=null
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   jvmArgs=null
@@ -1665,7 +1558,7 @@
 > debug --camel-version v
   camelVersion="v"
 > debug --chaos
-  chaos=true
+  chaos="true"
 > debug --chaos=false
   (defaults)
 > debug --chaos-report v
@@ -1903,7 +1796,6 @@
 > debug --verbose=false
   (defaults)
 > dependency
-  helpRequested=false
 > dependency copy
   applicationProperties=null
   buildProperties=[]
@@ -1913,18 +1805,15 @@
   cleanExportDir=false
   console=false
   dependencies=[]
-  dependency:helpRequested=false
   docker=true
   dryRun=false
   excludes=[]
   exportDir="."
-  filePaths=null
   files=[]
   gav=null
   groovyPrecompiled=false
   hawtio=false
   hawtioVersion=${hawtio-version}
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   kameletsVersion=null
@@ -2125,18 +2014,15 @@
   cleanExportDir=false
   console=false
   dependencies=[]
-  dependency:helpRequested=false
   docker=true
   dryRun=false
   excludes=[]
   exportDir="."
-  filePaths=null
   files=[]
   gav=null
   groovyPrecompiled=false
   hawtio=false
   hawtioVersion=${hawtio-version}
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   kameletsVersion=null
@@ -2326,13 +2212,11 @@
 > dependency list --yes=false
   (defaults)
 > dependency runtime v
-  dependency:helpRequested=false
-  helpRequested=false
   jsonOutput=false
   mavenResolver.download=true
   mavenResolver.fresh=false
   mavenResolver.repos=null
-  pomXml="v"
+  pomXml="${cwd}/v"
 > dependency runtime v --download
   (defaults)
 > dependency runtime v --download=false
@@ -2357,18 +2241,15 @@
   cleanExportDir=false
   console=false
   dependencies=[]
-  dependency:helpRequested=false
   docker=true
   dryRun=false
   excludes=[]
   exportDir="."
-  filePaths=null
   files=["v"]
   gav=null
   groovyPrecompiled=false
   hawtio=false
   hawtioVersion=${hawtio-version}
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   kameletsVersion=null
@@ -2406,7 +2287,6 @@
   scanRoutes=false
   skipPlugins=false
   springBootVersion=${spring-boot-version}
-  targetFiles=["v"]
   verbose=false
   yes=false
 > dependency update v --build-property v --build-property w
@@ -2572,7 +2452,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
-  chaos=false
+  chaos="false"
   chaosReport=null
   code=null
   dataDir=null
@@ -2590,10 +2470,8 @@
   executionLimitOptions.maxIdleSeconds=0
   executionLimitOptions.maxMessages=0
   executionLimitOptions.maxSeconds=0
-  filePaths=null
   files=[]
   gav=null
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   jvmArgs=null
@@ -2658,7 +2536,7 @@
 > dev --camel-version v
   camelVersion="v"
 > dev --chaos
-  chaos=true
+  chaos="true"
 > dev --chaos=false
   (defaults)
 > dev --chaos-report v
@@ -2849,7 +2727,6 @@
   (defaults)
 > dirty
   clean=false
-  helpRequested=false
 > dirty --clean
   clean=true
 > dirty --clean=false
@@ -2859,7 +2736,6 @@
   example=false
   filter=null
   headers=false
-  helpRequested=false
   jsonOutput=false
   kameletsVersion=null
   mavenResolver.download=true
@@ -2920,21 +2796,17 @@
 > doc v --url=false
   (defaults)
 > doctor
-  helpRequested=false
   jsonOutput=false
 > doctor --json
   jsonOutput=true
 > doctor --json=false
   (defaults)
 > eval
-  helpRequested=false
 > eval expression --template v
   body=null
   camelVersion=null
   durationOption.duration=0
-  eval:helpRequested=false
   headers=null
-  helpRequested=false
   isolated=false
   language="simple"
   mavenResolver.download=true
@@ -2988,7 +2860,6 @@
   catalogContext=false
   files=["v"]
   format="text"
-  helpRequested=false
   model="llama3.2"
   showPrompt=false
   stream=true
@@ -3042,13 +2913,11 @@
   dryRun=false
   excludes=[]
   exportDir="."
-  filePaths=null
   files=[]
   gav=null
   groovyPrecompiled=false
   hawtio=false
   hawtioVersion=${hawtio-version}
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   kameletsVersion=null
@@ -3235,7 +3104,6 @@
 > export --yes=false
   (defaults)
 > get
-  helpRequested=false
   watch=false
 > get --watch
   watch=true
@@ -3243,9 +3111,7 @@
   (defaults)
 > get about
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   watch=false
@@ -3262,9 +3128,7 @@
 > get bean
   dsl=false
   filter="all"
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   internal=false
   jsonOutput=false
   name="*"
@@ -3303,9 +3167,7 @@
   timeoutOption.timeout=7
 > get blocked
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3324,9 +3186,7 @@
   (defaults)
 > get chaos
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   report=false
@@ -3350,9 +3210,7 @@
   (defaults)
 > get circuit-breaker
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3372,9 +3230,7 @@
 > get consumer
   durationOption.duration=0
   filter=null
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   limit=0
   name="*"
@@ -3413,9 +3269,7 @@
   (defaults)
 > get context
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   remote=false
@@ -3440,9 +3294,7 @@
 > get count
   durationOption.duration=0
   fail=false
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3470,9 +3322,7 @@
   (defaults)
 > get datasource
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3494,9 +3344,7 @@
   filter=null
   filterDirection=null
   filterTotal=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   limit=0
   name="*"
@@ -3543,10 +3391,8 @@
   diagram=false
   durationOption.duration=0
   exception=null
-  get:helpRequested=false
   get:watch=false
   handled=null
-  helpRequested=false
   id=null
   jsonOutput=false
   last=false
@@ -3605,9 +3451,7 @@
 > get event
   durationOption.duration=0
   filter=null
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3628,9 +3472,7 @@
   (defaults)
 > get groovy
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3650,9 +3492,7 @@
 > get group
   durationOption.duration=0
   filter=null
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   limit=0
   mean=0
@@ -3686,9 +3526,7 @@
   depth=1
   down=false
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   level="default"
   live=false
@@ -3734,9 +3572,7 @@
   depth=9
   diagram=false
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   it=false
   jsonOutput=false
   limitSplit=0
@@ -3826,9 +3662,7 @@
   (defaults)
 > get inflight
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3847,9 +3681,7 @@
   (defaults)
 > get internal-task
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3869,9 +3701,7 @@
 > get kafka
   committed=false
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   shortUri=false
@@ -3907,9 +3737,7 @@
   custom=false
   durationOption.duration=0
   filter=null
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3944,9 +3772,7 @@
 > get platform-http
   all=false
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -3971,10 +3797,8 @@
   description=false
   durationOption.duration=0
   filter=null
-  get:helpRequested=false
   get:watch=false
   group=null
-  helpRequested=false
   jsonOutput=false
   limit=0
   mean=0
@@ -4033,9 +3857,7 @@
 > get producer
   durationOption.duration=0
   filter=null
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   limit=0
   name="*"
@@ -4069,9 +3891,7 @@
   (defaults)
 > get properties
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   internal=false
   jsonOutput=false
   mask=true
@@ -4110,9 +3930,7 @@
   (defaults)
 > get rest
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -4140,10 +3958,8 @@
   durationOption.duration=0
   error=false
   filter=null
-  get:helpRequested=false
   get:watch=false
   group=null
-  helpRequested=false
   jsonOutput=false
   limit=0
   mean=0
@@ -4220,10 +4036,8 @@
 > get route-controller
   depth=1
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
   header=true
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="id"
@@ -4256,9 +4070,7 @@
   (defaults)
 > get service
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   metadata=false
   name="*"
@@ -4292,9 +4104,7 @@
   (defaults)
 > get source
   filter=null
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="name"
@@ -4311,9 +4121,7 @@
   timeoutOption.timeout=7
 > get sql-trace
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -4332,9 +4140,7 @@
   (defaults)
 > get startup-recorder
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort=null
@@ -4359,9 +4165,7 @@
   errors=false
   exchanges=false
   filter=null
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   limit=0
   name="*"
@@ -4405,9 +4209,7 @@
 > get timeline --wide-uri=false
   (defaults)
 > get transformer
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -4419,9 +4221,7 @@
   (defaults)
 > get variable
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -4440,9 +4240,7 @@
   (defaults)
 > get vault
   durationOption.duration=0
-  get:helpRequested=false
   get:watch=false
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="pid"
@@ -4465,7 +4263,6 @@
   catalogContext=false
   files=["v"]
   format="text"
-  helpRequested=false
   model="llama3.2"
   showPrompt=false
   stream=true
@@ -4507,7 +4304,6 @@
 > harden v --verbose=false
   (defaults)
 > hawtio
-  helpRequested=false
   host="127.0.0.1"
   name=null
   openUrl=true
@@ -4524,15 +4320,12 @@
 > hawtio --version v
   version="v"
 > infra
-  helpRequested=false
   jsonOutput=false
 > infra --json
   jsonOutput=true
 > infra --json=false
   (defaults)
 > infra get
-  helpRequested=false
-  infra:helpRequested=false
   infra:jsonOutput=false
   jsonOutput=false
   name="*"
@@ -4541,8 +4334,6 @@
 > infra get --json=false
   (defaults)
 > infra list
-  helpRequested=false
-  infra:helpRequested=false
   infra:jsonOutput=false
   jsonOutput=false
 > infra list --json
@@ -4552,8 +4343,6 @@
 > infra log
   durationOption.duration=0
   follow=true
-  helpRequested=false
-  infra:helpRequested=false
   infra:jsonOutput=false
   jsonOutput=false
   logLines=50
@@ -4571,8 +4360,6 @@
 > infra log --lines 7
   logLines=7
 > infra ps
-  helpRequested=false
-  infra:helpRequested=false
   infra:jsonOutput=false
   jsonOutput=false
   serviceName=null
@@ -4582,8 +4369,6 @@
   (defaults)
 > infra restart v
   background=false
-  helpRequested=false
-  infra:helpRequested=false
   infra:jsonOutput=false
   jsonOutput=false
   kill=false
@@ -4613,8 +4398,6 @@
   serviceProperties=["v", "w"]
 > infra run v
   background=false
-  helpRequested=false
-  infra:helpRequested=false
   infra:jsonOutput=false
   jsonOutput=false
   logToStdout=false
@@ -4643,8 +4426,6 @@
 > infra run v --property v --property w
   serviceProperties=["v", "w"]
 > infra stop
-  helpRequested=false
-  infra:helpRequested=false
   infra:jsonOutput=false
   jsonOutput=false
   kill=false
@@ -4661,10 +4442,8 @@
   cleanDirectory=false
   directory="."
   file=null
-  filePath=null
   force=false
   fromKamelet=null
-  helpRequested=false
   kameletsVersion=null
   list=false
   pipe=false
@@ -4694,7 +4473,6 @@
 > init --repos v
   repositories="v"
 > jolokia v
-  helpRequested=false
   name="v"
   port=0
   stop=false
@@ -4709,7 +4487,6 @@
   find=null
   follow=true
   grep=null
-  helpRequested=false
   loggingColor=true
   name="*"
   prefix="auto"
@@ -4756,8 +4533,6 @@
   timestamp=false
 > nano v
   file="v"
-  filePath=null
-  helpRequested=false
 > overview
   ai=false
   apiKey=null
@@ -4765,7 +4540,6 @@
   applyDescriptions=false
   directory=null
   format="markdown"
-  helpRequested=false
   model="llama3.2"
   save=false
   showPrompt=false
@@ -4803,7 +4577,6 @@
 > overview --url v
   url="v"
 > plugin
-  helpRequested=false
 > plugin add v
   artifactId=null
   command=null
@@ -4811,9 +4584,7 @@
   firstVersion=null
   gav=null
   groupId="org.apache.camel"
-  helpRequested=false
   name="v"
-  plugin:helpRequested=false
   repositories=null
   version=null
 > plugin add v --artifactId v
@@ -4833,14 +4604,10 @@
 > plugin add v --version v
   version="v"
 > plugin delete v
-  helpRequested=false
   name="v"
-  plugin:helpRequested=false
 > plugin get
   all=false
-  helpRequested=false
   jsonOutput=false
-  plugin:helpRequested=false
   repos=false
 > plugin get --all
   all=true
@@ -4856,9 +4623,7 @@
   (defaults)
 > plugin list
   all=false
-  helpRequested=false
   jsonOutput=false
-  plugin:helpRequested=false
   repos=false
 > plugin list --all
   all=true
@@ -4874,7 +4639,6 @@
   (defaults)
 > ps
   durationOption.duration=0
-  helpRequested=false
   jsonOutput=false
   pid=false
   remote=false
@@ -4901,7 +4665,6 @@
 > ps --watch=false
   (defaults)
 > restart v
-  helpRequested=false
   name="v"
   timeout=60000
 > restart v --timeout 7
@@ -4911,7 +4674,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
-  chaos=false
+  chaos="false"
   chaosReport=null
   code=null
   dataDir=null
@@ -4929,10 +4692,8 @@
   executionLimitOptions.maxIdleSeconds=0
   executionLimitOptions.maxMessages=0
   executionLimitOptions.maxSeconds=0
-  filePaths=null
   files=[]
   gav=null
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   jvmArgs=null
@@ -4997,7 +4758,7 @@
 > run --camel-version v
   camelVersion="v"
 > run --chaos
-  chaos=true
+  chaos="true"
 > run --chaos=false
   (defaults)
 > run --chaos-report v
@@ -5200,13 +4961,11 @@
   dryRun=false
   excludes=[]
   exportDir="."
-  filePaths=null
   files=[]
   gav=null
   groovyPrecompiled=false
   hawtio=false
   hawtioVersion=${hawtio-version}
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   kameletsVersion=null
@@ -5411,8 +5170,6 @@
   (defaults)
 > script v
   file="v"
-  filePath=null
-  helpRequested=false
   logging=false
   loggingLevel="info"
   maxIdleSeconds=1
@@ -5438,7 +5195,6 @@
   property=["v", "w"]
 > semantic
   expert=null
-  helpRequested=false
   json=false
   name="*"
   timeout=60000
@@ -5461,7 +5217,6 @@
   exchangeId=null
   executingRouteId=null
   expert=null
-  helpRequested=false
   includeInput=false
   json=false
   limit=50
@@ -5476,7 +5231,6 @@
   scoreMax=null
   scoreMin=null
   semantic:expert=null
-  semantic:helpRequested=false
   semantic:json=false
   semantic:name="*"
   semantic:timeout=60000
@@ -5518,7 +5272,7 @@
 > semantic audit --operation v
   operation="v"
 > semantic audit --output v
-  output="v"
+  output="${cwd}/v"
 > semantic audit --result-label v
   resultLabel="v"
 > semantic audit --result-type v
@@ -5543,14 +5297,12 @@
   evaluationTimeout=50000
   expert=null
   headers=null
-  helpRequested=false
   input=null
   json=false
   name="*"
   operation=null
   parameters=null
   semantic:expert=null
-  semantic:helpRequested=false
   semantic:json=false
   semantic:name="*"
   semantic:timeout=60000
@@ -5582,11 +5334,9 @@
   variables=["v", "w"]
 > semantic get
   expert=null
-  helpRequested=false
   json=false
   name="*"
   semantic:expert=null
-  semantic:helpRequested=false
   semantic:json=false
   semantic:name="*"
   semantic:timeout=60000
@@ -5600,11 +5350,9 @@
 > semantic get --timeout 7
   timeout=7
 > semantic monitoring
-  helpRequested=false
   json=false
   name="*"
   semantic:expert=null
-  semantic:helpRequested=false
   semantic:json=false
   semantic:name="*"
   semantic:timeout=60000
@@ -5619,9 +5367,7 @@
 > semantic monitoring --timeout 7
   timeout=7
 > shell
-  helpRequested=false
 > stop
-  helpRequested=false
   kill=false
   name="*"
   noWait=false
@@ -5637,7 +5383,6 @@
 > stop --timeout 7
   timeout=7
 > top
-  helpRequested=false
   watch=false
 > top --watch
   watch=true
@@ -5645,11 +5390,9 @@
   (defaults)
 > top context
   durationOption.duration=0
-  helpRequested=false
   jsonOutput=false
   name="*"
   sort="mem"
-  top:helpRequested=false
   top:watch=false
   watch=false
 > top context --duration 7
@@ -5667,14 +5410,12 @@
 > top group
   durationOption.duration=0
   filter=null
-  helpRequested=false
   jsonOutput=false
   limit=0
   mean=0
   name="*"
   running=false
   sort="pid"
-  top:helpRequested=false
   top:watch=false
   watch=false
 > top group --duration 7
@@ -5704,7 +5445,6 @@
   durationOption.duration=0
   filter=null
   group=null
-  helpRequested=false
   jsonOutput=false
   limit=0
   mean=0
@@ -5715,7 +5455,6 @@
   showGroup=false
   sort="pid"
   source=false
-  top:helpRequested=false
   top:watch=false
   watch=false
 > top processor --description
@@ -5769,7 +5508,6 @@
   error=false
   filter=null
   group=null
-  helpRequested=false
   jsonOutput=false
   limit=0
   mean=0
@@ -5781,7 +5519,6 @@
   showGroup=false
   sort="pid"
   source=false
-  top:helpRequested=false
   top:watch=false
   watch=false
   wideUri=false
@@ -5847,13 +5584,11 @@
   (defaults)
 > top source
   durationOption.duration=0
-  helpRequested=false
   jsonOutput=false
   limit=0
   mean=0
   name="*"
   timeoutOption.timeout=10000
-  top:helpRequested=false
   top:watch=false
   watch=false
 > top source --duration 7
@@ -5881,7 +5616,6 @@
   find=null
   follow=true
   grep=null
-  helpRequested=false
   jsonOutput=false
   latest=false
   loggingColor=true
@@ -5985,14 +5719,11 @@
 > trace --timestamp=false
   timestamp=false
 > transform
-  helpRequested=false
 > transform dataweave
   expression=null
-  helpRequested=false
   includeComments=true
   input=null
   output=null
-  transform:helpRequested=false
 > transform dataweave --expression v
   expression="v"
 > transform dataweave --include-comments
@@ -6010,7 +5741,6 @@
   dataformat=null
   durationOption.duration=0
   headers=null
-  helpRequested=false
   language=null
   loggingColor=true
   mavenResolver.download=true
@@ -6026,7 +5756,6 @@
   source=null
   template=null
   timeout=20000
-  transform:helpRequested=false
   watch=false
 > transform message --body v --camel-version v
   camelVersion="v"
@@ -6090,17 +5819,14 @@
   (defaults)
 > transform route
   compile=false
-  filePaths=null
   files=[]
   format=null
-  helpRequested=false
   ignoreLoadingError=false
   mavenResolver.download=true
   mavenResolver.fresh=false
   mavenResolver.repos=null
   output=null
   resolvePlaceholders=false
-  transform:helpRequested=false
   uriAsParameters=true
 > transform route --compile
   compile=true
@@ -6133,12 +5859,9 @@
 > transform route --uri-as-parameters=false
   uriAsParameters=false
 > update
-  helpRequested=false
 > update list
-  helpRequested=false
   jsonOutput=false
   repos=null
-  update:helpRequested=false
   useCache=false
 > update list --json
   jsonOutput=true
@@ -6151,8 +5874,6 @@
 > update list --use-cache=false
   (defaults)
 > update run v
-  helpRequested=false
-  update:helpRequested=false
   updateMixin.camelArtifactCoordinates="camel-upgrade-recipes"
   updateMixin.camelSpringBootArtifactCoordinates="camel-spring-boot-upgrade-recipes"
   updateMixin.debug=false
@@ -6208,11 +5929,8 @@
 > update run v --upgradeTimeout 7
   updateMixin.upgradeTimeout=7
 > version
-  helpRequested=false
 > version get
   global=true
-  helpRequested=false
-  version:helpRequested=false
 > version get --global
   (defaults)
 > version get --global=false
@@ -6223,7 +5941,6 @@
   eol=true
   fromDate=null
   fromVersion=null
-  helpRequested=false
   jsonOutput=false
   lts=false
   mavenResolver.download=true
@@ -6238,7 +5955,6 @@
   toDate=null
   toVersion=null
   vendor=null
-  version:helpRequested=false
 > version list --date-format v
   dateFormat="v"
 > version list --days
@@ -6295,12 +6011,10 @@
   vendor="v"
 > version set
   global=true
-  helpRequested=false
   repo=null
   reset=false
   runtime=null
   version=null
-  version:helpRequested=false
 > version set --global
   (defaults)
 > version set --global=false
@@ -6317,7 +6031,6 @@
   camelVersion=null
   commandName="camel"
   directory="."
-  helpRequested=false
   repoUrl="https://repo1.maven.org/maven2"
 > wrapper --camel-version v
   camelVersion="v"
@@ -6365,10 +6078,10 @@
   global=false
 > run --unknown-option
   error
-  # Unknown option: '--unknown-option'
+  # OptionParserException: The option --unknown-option is unknown.
 > no-such-command
   error
-  # Unmatched argument at index 0: 'no-such-command'
+  # OptionParserException: Unexpected positional value 'no-such-command' at index 0. Declared positional indexes: none.
 
 @config logging-level=debug
 > run
@@ -6376,7 +6089,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
-  chaos=false
+  chaos="false"
   chaosReport=null
   code=null
   dataDir=null
@@ -6394,10 +6107,8 @@
   executionLimitOptions.maxIdleSeconds=0
   executionLimitOptions.maxMessages=0
   executionLimitOptions.maxSeconds=0
-  filePaths=null
   files=[]
   gav=null
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   jvmArgs=null
@@ -6464,13 +6175,11 @@
   dryRun=false
   excludes=[]
   exportDir="."
-  filePaths=null
   files=[]
   gav=null
   groovyPrecompiled=false
   hawtio=false
   hawtioVersion=${hawtio-version}
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   kameletsVersion=null
@@ -6517,7 +6226,7 @@
   backgroundWait=60000
   camelSpringBootVersion=null
   camelVersion=null
-  chaos=false
+  chaos="false"
   chaosReport=null
   code=null
   dataDir=null
@@ -6535,10 +6244,8 @@
   executionLimitOptions.maxIdleSeconds=0
   executionLimitOptions.maxMessages=0
   executionLimitOptions.maxSeconds=0
-  filePaths=null
   files=[]
   gav=null
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   jvmArgs=null
@@ -6603,13 +6310,11 @@
   dryRun=false
   excludes=[]
   exportDir="."
-  filePaths=null
   files=[]
   gav=null
   groovyPrecompiled=false
   hawtio=false
   hawtioVersion=${hawtio-version}
-  helpRequested=false
   ignoreLoadingError=false
   javaVersion="21"
   kameletsVersion=null
@@ -6656,8 +6361,6 @@
   firstVersion=null
   gav=null
   groupId="org.apache.camel"
-  helpRequested=false
   name="bar"
-  plugin:helpRequested=false
   repositories=null
   version=null

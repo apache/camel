@@ -27,10 +27,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +35,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.HawtioVersion;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -46,10 +44,6 @@ import org.apache.camel.util.StringHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
-import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Model.OptionSpec;
-import picocli.CommandLine.Model.PositionalParamSpec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -64,25 +58,24 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
  * <li>{@code > args} is a case: the command line, without {@code camel};</li>
  * <li>the first case of a command gives it no options, and lists the value of every field of the command (the
  * defaults); the other cases list only the fields whose value differs from the defaults;</li>
- * <li>{@code error} is a command line the parser rejects, and the comment after it is the message of picocli, which is
- * not compared;</li>
+ * <li>{@code error} is a command line the parser rejects, and the comment after it is the message of the parser, which
+ * is not compared;</li>
  * <li>{@code @config} is the user configuration (camel config set) of the cases after it.</li>
  * </ul>
  * A field that the file does not list (a new option) is not compared, so a new option does not fail the test; a field
- * that is gone, or a value that changed, does. Only the parsing is specific to picocli
- * ({@link #parse(CommandLine, List)}); the fields are read from the command objects by the names of their annotations.
- * Run with -Dcamel.golden.update=true to write the cases again from the commands of the CLI and their options (with the
- * cases of a new option), and review the difference.
+ * that is gone, or a value that changed, does. Only the parsing is specific to aesh ({@link #parse(List)}); the fields
+ * are read from the command objects by the names of their annotations. Run with -Dcamel.golden.update=true to write the
+ * cases of the file again as they parse now, and review the difference.
  */
 class CliParseGoldenTest extends CamelCommandBaseTestSupport {
 
     private static final Path GOLDEN = Path.of("src/test/resources/golden/cli-parse.txt");
     private static final boolean UPDATE = Boolean.getBoolean("camel.golden.update");
 
-    // the annotations of the fields that the command line sets, of picocli and of aesh
+    // the annotations of the fields that the command line sets
     private static final Set<String> OPTION_ANNOTATIONS
-            = Set.of("Option", "Parameters", "Argument", "Arguments", "OptionList", "OptionGroup");
-    private static final Set<String> GROUP_ANNOTATIONS = Set.of("Mixin", "ArgGroup");
+            = Set.of("Option", "Argument", "Arguments", "OptionList", "OptionGroup");
+    private static final Set<String> GROUP_ANNOTATIONS = Set.of("Mixin");
     // the fields that the parameter consumers set, which have no annotation
     private static final Set<String> CONSUMED_FIELDS = Set.of("file", "files");
 
@@ -145,14 +138,17 @@ class CliParseGoldenTest extends CamelCommandBaseTestSupport {
         // the default of --logging-color of camel run comes from the environment (FORCE_COLOR), and is off in CI and in
         // the tests, which have no console
         assumeFalse(EnvironmentHelper.isColorEnabled(), "the colors of the logging are on (FORCE_COLOR)");
-        if (UPDATE) {
-            Files.writeString(GOLDEN, render(generate(), null), StandardCharsets.UTF_8);
-            return;
-        }
 
         List<String> golden = Files.readAllLines(GOLDEN, StandardCharsets.UTF_8);
         Map<String, List<String>> expected = results(golden);
-        Map<String, List<String>> actual = results(List.of(render(read(golden), expected).split("\n")));
+        String rendered = render(read(golden), expected);
+        Files.writeString(Path.of("target/cli-parse-actual.txt"), rendered, StandardCharsets.UTF_8);
+        if (UPDATE) {
+            // the cases of the file, as they parse now
+            Files.writeString(GOLDEN, rendered, StandardCharsets.UTF_8);
+            return;
+        }
+        Map<String, List<String>> actual = results(List.of(rendered.split("\n")));
 
         List<String> differences = new ArrayList<>();
         expected.forEach((key, lines) -> {
@@ -168,113 +164,14 @@ class CliParseGoldenTest extends CamelCommandBaseTestSupport {
     }
 
     // the cases: the defaults and the options of every command, and the cases of hand
-    private List<Case> generate() throws Exception {
-        List<Case> cases = new ArrayList<>();
-        CommandLine root = newCommandLine(null);
-        Map<String, CommandLine> commands = new TreeMap<>();
-        collect(root, "", commands, new IdentityHashMap<>());
-        for (Map.Entry<String, CommandLine> command : commands.entrySet()) {
-            CommandSpec spec = command.getValue().getCommandSpec();
-            // the command with the values it requires
-            List<String> base = new ArrayList<>(List.of(command.getKey().split(" ")));
-            for (PositionalParamSpec positional : spec.positionalParameters()) {
-                for (int i = 0; i < positional.arity().min(); i++) {
-                    base.add(sample(positional.type(), positional.auxiliaryTypes(), null, 0));
-                }
-            }
-            List<OptionSpec> options = spec.options().stream()
-                    .filter(o -> !o.usageHelp() && !o.versionHelp() && !o.inherited())
-                    .sorted((a, b) -> a.longestName().compareTo(b.longestName()))
-                    .toList();
-            for (OptionSpec option : options) {
-                if (option.required()) {
-                    base.add(option.longestName());
-                    base.add(sample(option.type(), option.auxiliaryTypes(), option.completionCandidates(), 0));
-                }
-            }
-            cases.add(new Case("", base));
-            for (OptionSpec option : options) {
-                if (option.required()) {
-                    continue;
-                }
-                for (List<String> given : optionCases(option)) {
-                    List<String> args = new ArrayList<>(base);
-                    args.addAll(given);
-                    cases.add(new Case("", args));
-                }
-            }
-        }
-        cases.addAll(MORE);
-        return new ArrayList<>(new LinkedHashSet<>(cases));
-    }
 
     // the commands of the CLI by the names they are added with (which is not always the name of the command), once
     // each: an alias is the same command
-    private static void collect(
-            CommandLine commandLine, String prefix, Map<String, CommandLine> commands, Map<CommandLine, Boolean> seen) {
-        for (Map.Entry<String, CommandLine> sub : commandLine.getSubcommands().entrySet()) {
-            if (seen.put(sub.getValue(), Boolean.TRUE) == null) {
-                String path = prefix + sub.getKey();
-                commands.put(path, sub.getValue());
-                collect(sub.getValue(), path + " ", commands, seen);
-            }
-        }
-    }
 
     // a boolean is given without a value and with false, an option with an optional value without a value and with
     // one, and any other option with a value (two values when it takes more than one)
-    private static List<List<String>> optionCases(OptionSpec option) {
-        String name = option.longestName();
-        Class<?> type = option.type();
-        if (type == boolean.class || type == Boolean.class) {
-            return List.of(List.of(name), List.of(name + "=false"));
-        }
-        String value = sample(type, option.auxiliaryTypes(), option.completionCandidates(), 0);
-        if (option.arity().min() == 0) {
-            return List.of(List.of(name), List.of(name + "=" + value));
-        }
-        if (option.isMultiValue()) {
-            String other = sample(type, option.auxiliaryTypes(), option.completionCandidates(), 1);
-            return List.of(List.of(name, value, name, other));
-        }
-        return List.of(List.of(name, value));
-    }
 
     // a value of the type: the first (or second) value that completion offers, else one that converts to the type
-    private static String sample(Class<?> type, Class<?>[] auxiliaryTypes, Iterable<String> candidates, int index) {
-        if (candidates != null) {
-            try {
-                Iterator<String> it = candidates.iterator();
-                for (int i = 0; it.hasNext(); i++) {
-                    String candidate = it.next();
-                    if (i == index) {
-                        return candidate;
-                    }
-                }
-            } catch (Exception e) {
-                // no completion
-            }
-        }
-        Class<?> element = type;
-        if ((Collection.class.isAssignableFrom(type) || type.isArray()) && auxiliaryTypes.length > 0) {
-            element = auxiliaryTypes[0];
-        }
-        if (Map.class.isAssignableFrom(type)) {
-            return index == 0 ? "k=v" : "k2=v2";
-        }
-        if (element.isEnum()) {
-            Object[] constants = element.getEnumConstants();
-            return constants[Math.min(index, constants.length - 1)].toString();
-        }
-        if (element == int.class || element == Integer.class || element == long.class || element == Long.class
-                || element == short.class || element == Short.class) {
-            return index == 0 ? "7" : "8";
-        }
-        if (element == double.class || element == Double.class || element == float.class || element == Float.class) {
-            return index == 0 ? "1.5" : "2.5";
-        }
-        return index == 0 ? "v" : "w";
-    }
 
     // the golden file: the cases and what they parse to, with only the fields of the expected file when it is given
     private String render(List<Case> cases, Map<String, List<String>> expected) throws Exception {
@@ -293,9 +190,8 @@ class CliParseGoldenTest extends CamelCommandBaseTestSupport {
                 known.clear();
             }
             sb.append("> ").append(String.join(" ", c.args())).append('\n');
-            // new commands for every case, as picocli does not reset every field when it parses again (an option of an
-            // ArgGroup without a default keeps its value)
-            Parsed parsed = parse(newCommandLine(c.args().get(0)), c.args());
+            // new commands for every case, so that no value of a case is left in the next one
+            Parsed parsed = parse(c.args());
             if (parsed.error() != null) {
                 sb.append("  error\n");
                 sb.append("  # ").append(parsed.error().replace('\n', ' ')).append('\n');
@@ -377,30 +273,38 @@ class CliParseGoldenTest extends CamelCommandBaseTestSupport {
 
     // a command line of the named command of the CLI (or all of them), with the user configuration, as the CLI creates
     // it for a command line
-    private CommandLine newCommandLine(String only) {
-        CommandLine commandLine = new CamelJBangMain().withPrinter(printer).createCommandLine(only);
-        CommandLineHelper.augmentWithUserConfiguration(commandLine);
-        return commandLine;
-    }
 
     record Parsed(String path, Map<String, String> fields, String error) {
     }
 
-    // parses the command line (picocli), and reads the fields of the commands that it names
-    private Parsed parse(CommandLine root, List<String> args) {
-        CommandLine.ParseResult result;
+    // parses the command line (aesh), and reads the fields of the commands that it names
+
+    // parses the command line (aesh): runs it on new commands that record the command instead of running it
+    private Parsed parse(List<String> args) {
+        CamelCommand[] parsed = new CamelCommand[1];
+        CamelJBangMain main = new CamelJBangMain() {
+            @Override
+            public boolean parseOnly(CamelCommand command) {
+                parsed[0] = command;
+                return true;
+            }
+        }.withPrinter(printer);
+        CommandTree root = main.createCommandLine(args.get(0));
+        CommandLineHelper.augmentWithUserConfiguration(root);
         try {
-            result = root.parseArgs(args.toArray(new String[0]));
-        } catch (CommandLine.ParameterException e) {
-            return new Parsed(null, null, e.getMessage());
+            root.execute(args.toArray(new String[0]));
+        } catch (Exception e) {
+            return new Parsed(null, null, e.getClass().getSimpleName() + ": " + e.getMessage());
         }
-        List<String> path = new ArrayList<>();
+        if (parsed[0] == null) {
+            return new Parsed(null, null, "no command ran");
+        }
         Map<String, String> fields = new TreeMap<>();
-        while (result.hasSubcommand()) {
-            result = result.subcommand();
-            path.add(result.commandSpec().name());
-            String prefix = result.hasSubcommand() ? result.commandSpec().name() + ":" : "";
-            readFields(result.commandSpec().userObject(), prefix, fields);
+        List<String> path = new ArrayList<>();
+        CommandTree tree = CommandTree.of(parsed[0]);
+        for (CommandTree t = tree; t != null && t.getParent() != null; t = t.getParent()) {
+            path.add(0, t.getName());
+            readFields(t.getCommand(), t == tree ? "" : t.getName() + ":", fields);
         }
         return new Parsed(String.join(" ", path), fields, null);
     }

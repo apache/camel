@@ -27,7 +27,7 @@ camel init [options]
 | `--list` | List available templates |  | boolean
 | `--pipe` | When creating a yaml file should it be created as a Pipe CR |  | boolean
 | `--repo,--repos` | Additional maven repositories (Use commas to separate multiple repositories) |  | String
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

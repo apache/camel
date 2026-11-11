@@ -20,24 +20,27 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
 import org.apache.camel.util.FileUtil;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.common.CommandLineHelper.getCamelDir;
 
-@CommandLine.Command(name = "dirty",
-                     description = "Check if there are dirty files from previous Camel runs that did not terminate gracefully",
-                     footer = {
-                             "%nExamples:",
-                             "  camel dirty",
-                             "  camel dirty --clean" })
+@CommandDefinition(name = "dirty",
+                   description = "Check if there are dirty files from previous Camel runs that did not terminate gracefully",
+                   generateHelp = true, sortOptions = true,
+                   footer = {
+                           "Examples:",
+                           "  camel dirty",
+                           "  camel dirty --clean" })
 public class Dirty extends ProcessBaseCommand {
 
-    @CommandLine.Option(names = { "--clean" }, defaultValue = "false",
-                        description = "Clean dirty files which are no longer in use, and the logs of the previous"
-                                      + " runs of the integrations (camel log --previous)")
+    @Option(name = "clean", hasValue = false,
+            description = "Clean dirty files which are no longer in use, and the logs of the previous"
+                          + " runs of the integrations (camel log --previous)",
+            defaultValue = "false")
     boolean clean;
 
     // the log a log4j configuration of the CLI writes when the pid system property is not set yet

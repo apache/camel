@@ -25,6 +25,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -34,26 +37,23 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "groovy", description = "Groovy Sources used of Camel integrations", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get groovy",
-                 "  camel get groovy --watch" })
+@CommandDefinition(name = "groovy", description = "Groovy Sources used of Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get groovy",
+                           "  camel get groovy --watch" })
 public class ListGroovy extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .number("pid", r -> r.pid)
             .text("name", r -> r.name);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = CamelProcessorStatus.PidNameCompletionCandidates.class,
-                        description = "Sort by pid or name", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid or name", defaultValue = "pid",
+            completer = CamelProcessorStatus.PidNameCompletionCandidates.class)
     String sort;
 
     public ListGroovy(CamelJBangMain main) {

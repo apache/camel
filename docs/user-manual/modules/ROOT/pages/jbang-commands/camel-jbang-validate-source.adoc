@@ -31,7 +31,7 @@ camel validate source [options]
 | `--quarkus-version` | version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry |  | String
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus); spring-boot and quarkus use the catalog of that runtime, so a component without a starter or extension is an error |  | RuntimeType
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

@@ -20,37 +20,40 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "chaos-load",
-                     description = "Load a chaos scenario into a running integration (camel-chaos, for development only)",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nA scenario is a file of the project, such as test/chaos/outage.chaos, with one",
-                             "rule per line, # comments and an optional seed= line, which makes it fail the",
-                             "same messages each time. The phases of an experiment come from from= and until=",
-                             "of its rules. Loading it removes the rules there are and starts a new report,",
-                             "then adds the rules of the scenario, all or none: a line that is not valid is",
-                             "refused with its line number, and the rules there are stay.",
-                             "%nTo start with a scenario: camel run --chaos=test/chaos/outage.chaos",
-                             "%nWithout a name or pid, the scenario goes to the only integration that runs, or",
-                             "the only one with chaos switched on; when that is not clear, the command fails",
-                             "with the list of the running integrations (exit code 2).",
-                             "%nExamples:",
-                             "  camel cmd chaos-load test/chaos/outage.chaos",
-                             "  camel cmd chaos-load test/chaos/outage.chaos myApp" })
+@CommandDefinition(name = "chaos-load",
+                   description = "Load a chaos scenario into a running integration (camel-chaos, for development only)",
+                   generateHelp = true,
+                   footer = {
+                           "A scenario is a file of the project, such as test/chaos/outage.chaos, with one",
+                           "rule per line, # comments and an optional seed= line, which makes it fail the",
+                           "same messages each time. The phases of an experiment come from from= and until=",
+                           "of its rules. Loading it removes the rules there are and starts a new report,",
+                           "then adds the rules of the scenario, all or none: a line that is not valid is",
+                           "refused with its line number, and the rules there are stay.",
+                           "",
+                           "To start with a scenario: camel run --chaos=test/chaos/outage.chaos",
+                           "",
+                           "Without a name or pid, the scenario goes to the only integration that runs, or",
+                           "the only one with chaos switched on; when that is not clear, the command fails",
+                           "with the list of the running integrations (exit code 2).",
+                           "",
+                           "Examples:",
+                           "  camel cmd chaos-load test/chaos/outage.chaos",
+                           "  camel cmd chaos-load test/chaos/outage.chaos myApp" })
 public class CamelChaosLoadAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(index = "0", description = "The scenario file, such as test/chaos/outage.chaos")
-    Path file;
+    @Argument(index = "0", required = true, description = "The scenario file, such as test/chaos/outage.chaos")
+    String file;
 
-    @CommandLine.Parameters(index = "1", arity = "0..1",
-                            description = "Name or pid of the running Camel integration (must match one); without it,"
-                                          + " the only one running, or the only one with chaos switched on")
+    @Argument(index = "1", description = "Name or pid of the running Camel integration (must match one); without it,"
+                                         + " the only one running, or the only one with chaos switched on")
     String name;
 
     public CamelChaosLoadAction(CamelJBangMain main) {
@@ -59,8 +62,9 @@ public class CamelChaosLoadAction extends CamelChaosAction {
 
     @Override
     public Integer doCall() throws Exception {
+        Path file = Path.of(this.file);
         if (!Files.isRegularFile(file)) {
-            throw CliException.fileNotFound("The chaos scenario does not exist: " + file);
+            throw CliException.fileNotFound("The chaos scenario does not exist: " + this.file);
         }
         String text = Files.readString(file);
         CamelProcess process = findChaosTarget(name);

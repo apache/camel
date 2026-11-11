@@ -19,9 +19,14 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.impl.parser.CommandLineParser;
+import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.StdErr;
 import org.junitpioneer.jupiter.StdIo;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -129,14 +133,15 @@ class ExitCodeContractTest {
     @StdIo
     void unknownOptionIsUsageError(StdErr err) {
         assertThat(run("test-ok", "--no-such-option")).isEqualTo(CliExitCode.USAGE);
-        assertThat(err.capturedLines()[0]).isEqualTo("Unknown option: '--no-such-option'");
+        assertThat(printer.getStderr().lines().findFirst()).hasValue("ERROR: The option --no-such-option is unknown.");
     }
 
     @Test
     @StdIo
     void unknownCommandIsUsageError(StdErr err) {
         assertThat(run("no-such-command")).isEqualTo(CliExitCode.USAGE);
-        assertThat(err.capturedLines()[0]).isEqualTo("Unmatched argument at index 0: 'no-such-command'");
+        assertThat(printer.getStderr().lines().findFirst().orElse(""))
+                .startsWith("ERROR: 'camel no-such-command' is not a subcommand of 'camel'.");
     }
 
     @Test
@@ -159,9 +164,10 @@ class ExitCodeContractTest {
     }
 
     @Test
-    void rootHelpListsTheExitCodes() {
-        CommandLine cl = new CommandLine(new CamelJBangMain());
-        String help = cl.getUsageMessage(CommandLine.Help.Ansi.OFF);
+    void rootHelpListsTheExitCodes() throws Exception {
+        CommandLineParser<CommandInvocation> parser = new CommandTree(new CamelJBangMain()).parser();
+        parser.updateAnsiMode(false);
+        String help = parser.printHelp();
         assertThat(help).contains("Exit Codes:")
                 .containsPattern("\\s0\\s+Success")
                 .containsPattern("\\s3\\s+Not found")
@@ -175,7 +181,7 @@ class ExitCodeContractTest {
         // without plugin discovery (embedded use) the command did not run: it must not look like it succeeded
         PluginHelper.createPluginConfig();
         assertThat(run("kubernetes")).isEqualTo(CliExitCode.FAILURE);
-        assertThat(String.join("\n", err.capturedLines())).contains("Installed plugin: kubernetes")
+        assertThat(printer.getStderr()).contains("Installed plugin: kubernetes")
                 .contains("Run the command again");
     }
 
@@ -188,13 +194,13 @@ class ExitCodeContractTest {
         int exitCode = -1;
 
         @Override
-        public void postAddCommands(CommandLine commandLine, String[] args) {
-            commandLine.addSubcommand("test-ok", new CommandLine(new OkCommand(this)));
-            commandLine.addSubcommand("test-fail", new CommandLine(new FailCommand(this)));
-            commandLine.addSubcommand("test-crash", new CommandLine(new CrashCommand(this)));
-            commandLine.addSubcommand("test-error", new CommandLine(new ErrorCommand(this)));
-            commandLine.addSubcommand("test-missing-file", new CommandLine(new MissingFileCommand(this)));
-            commandLine.addSubcommand("test-parent", new CommandLine(new ParentCommand(this)));
+        public void postAddCommands(CommandTree commandLine, String[] args) {
+            commandLine.addSubcommand("test-ok", new CommandTree(new OkCommand(this)));
+            commandLine.addSubcommand("test-fail", new CommandTree(new FailCommand(this)));
+            commandLine.addSubcommand("test-crash", new CommandTree(new CrashCommand(this)));
+            commandLine.addSubcommand("test-error", new CommandTree(new ErrorCommand(this)));
+            commandLine.addSubcommand("test-missing-file", new CommandTree(new MissingFileCommand(this)));
+            commandLine.addSubcommand("test-parent", new CommandTree(new ParentCommand(this)));
         }
 
         @Override
@@ -203,7 +209,7 @@ class ExitCodeContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-ok")
+    @CommandDefinition(name = "test-ok", description = "", generateHelp = true, sortOptions = true)
     static class OkCommand extends CamelCommand {
         OkCommand(CamelJBangMain main) {
             super(main);
@@ -216,15 +222,15 @@ class ExitCodeContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-fail")
+    @CommandDefinition(name = "test-fail", description = "", generateHelp = true, sortOptions = true)
     static class FailCommand extends CamelCommand {
-        @CommandLine.Option(names = "--code")
+        @Option(name = "code")
         int code;
 
-        @CommandLine.Option(names = "--message")
+        @Option(name = "message")
         String message = "failed";
 
-        @CommandLine.Option(names = "--verbose")
+        @Option(name = "verbose", hasValue = false)
         boolean verbose;
 
         FailCommand(CamelJBangMain main) {
@@ -237,7 +243,7 @@ class ExitCodeContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-crash")
+    @CommandDefinition(name = "test-crash", description = "", generateHelp = true, sortOptions = true)
     static class CrashCommand extends CamelCommand {
         CrashCommand(CamelJBangMain main) {
             super(main);
@@ -249,7 +255,7 @@ class ExitCodeContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-error")
+    @CommandDefinition(name = "test-error", description = "", generateHelp = true, sortOptions = true)
     static class ErrorCommand extends CamelCommand {
         ErrorCommand(CamelJBangMain main) {
             super(main);
@@ -261,7 +267,7 @@ class ExitCodeContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-missing-file")
+    @CommandDefinition(name = "test-missing-file", description = "", generateHelp = true, sortOptions = true)
     static class MissingFileCommand extends CamelCommand {
         MissingFileCommand(CamelJBangMain main) {
             super(main);
@@ -273,7 +279,7 @@ class ExitCodeContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-parent")
+    @CommandDefinition(name = "test-parent", description = "", generateHelp = true, sortOptions = true)
     static class ParentCommand extends CamelCommand {
         ParentCommand(CamelJBangMain main) {
             super(main);

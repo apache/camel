@@ -16,23 +16,22 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "get",
-                     description = "Get status of Camel integrations (use get --help to see sub commands)",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel get",
-                             "  camel get route",
-                             "  camel get health",
-                             "  camel get endpoint" })
+@CommandDefinition(name = "get", description = "Get status of Camel integrations (use get --help to see sub commands)",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get",
+                           "  camel get route",
+                           "  camel get health",
+                           "  camel get endpoint" })
 public class CamelStatus extends CamelCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
+    @Option(name = "watch", hasValue = false, description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
     public CamelStatus(CamelJBangMain main) {

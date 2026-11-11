@@ -22,27 +22,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.HomeHelper;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;
-import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
 import org.jline.shell.ShellBuilder;
 import org.jline.shell.impl.DefaultAliasManager;
 import org.jline.shell.widget.CommandTailTipWidgets;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "shell",
-                     description = "Interactive Camel CLI shell.",
-                     footer = {
-                             "%nExamples:",
-                             "  camel shell",
-                             "",
-                             "Press Ctrl-C to exit." })
+@CommandDefinition(name = "shell", description = "Interactive Camel CLI shell.", generateHelp = true, sortOptions = true,
+                   footer = {
+                           "Examples:",
+                           "  camel shell",
+                           "",
+                           "Press Ctrl-C to exit." })
 public class Shell extends CamelCommand {
 
     // Camel orange color (packed RGB)
@@ -58,7 +56,7 @@ public class Shell extends CamelCommand {
     @Override
     public Integer doCall() throws Exception {
         requireInteractiveTerminal("camel shell");
-        PicocliCommandRegistry registry = new CamelShellCommandRegistry(CamelJBangMain.getCommandLine());
+        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(CamelJBangMain.getCommandLine());
 
         String homeDir = HomeHelper.resolveHomeDir();
         Path history = Paths.get(homeDir, ".camel-jbang-history");

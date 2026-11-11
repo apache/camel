@@ -28,7 +28,7 @@ camel cmd memory-leak [options]
 | `--status` | Check recording status |  | boolean
 | `--stop` | Stop the active recording and display results |  | boolean
 | `--top` | Show only the top N samples | 50 | int
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

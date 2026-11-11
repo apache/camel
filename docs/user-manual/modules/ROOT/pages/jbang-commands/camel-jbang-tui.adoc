@@ -42,7 +42,7 @@ camel tui [options]
 | `--theme` | Color theme: dark or light (overrides persisted preference for this session) |  | String
 | `--web` | Enable browser-accessible terminal (WebSocket) server; without an interactive terminal it serves browsers only |  | boolean
 | `--web-port` | Web terminal server port | 8090 | int
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

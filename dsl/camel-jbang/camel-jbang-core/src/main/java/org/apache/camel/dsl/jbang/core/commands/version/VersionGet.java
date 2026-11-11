@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.version;
 
 import java.time.format.DateTimeFormatter;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -25,17 +27,14 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.InstallDetector;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "Displays current Camel version", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel version get" })
+@CommandDefinition(name = "get", description = "Displays current Camel version", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel version get" })
 public class VersionGet extends CamelCommand {
 
-    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
-                        description = "Use global or local configuration")
+    @Option(name = "global", hasValue = false, description = "Use global or local configuration")
     boolean global = true;
 
     public VersionGet(CamelJBangMain main) {

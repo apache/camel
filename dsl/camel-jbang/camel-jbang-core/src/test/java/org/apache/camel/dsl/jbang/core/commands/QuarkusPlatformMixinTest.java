@@ -26,6 +26,11 @@ import java.util.function.Function;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import org.aesh.command.Command;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.option.Mixin;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
@@ -186,9 +191,9 @@ class QuarkusPlatformMixinTest {
     };
 
     private static QuarkusPlatformBom resolveWithFlag(WireMockExtension registry) {
-        QuarkusPlatformMixin mixin = new QuarkusPlatformMixin();
-        CommandLineTestHelper.parse(mixin, "--quarkus-ext-registry=" + registry.baseUrl());
-        return mixin.resolve("4.14.5", RESOLVER, true, false);
+        // aesh parses commands, not a mixin alone
+        WithMixin command = CommandLineTestHelper.parse(new WithMixin(), "--quarkus-ext-registry=" + registry.baseUrl());
+        return command.mixin.resolve("4.14.5", RESOLVER, true, false);
     }
 
     private static QuarkusPlatformBom resolveWithProperty(WireMockExtension registry) {
@@ -231,4 +236,14 @@ class QuarkusPlatformMixinTest {
         assertAskedOnce(registryB);
     }
 
+    @CommandDefinition(name = "with-mixin", description = "")
+    public static class WithMixin implements Command<CommandInvocation> {
+        @Mixin
+        QuarkusPlatformMixin mixin;
+
+        @Override
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
+        }
+    }
 }

@@ -24,18 +24,17 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "Top performing routes",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel top route",
-                 "  camel top route --watch" })
+@CommandDefinition(name = "route", description = "Top performing routes", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel top route",
+                           "  camel top route --watch" })
 public class CamelRouteTop extends CamelRouteStatus {
 
     public CamelRouteTop(CamelJBangMain main) {

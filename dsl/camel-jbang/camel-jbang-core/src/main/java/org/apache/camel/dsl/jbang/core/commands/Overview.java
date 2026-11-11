@@ -23,16 +23,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.IntegrationSummary;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteDescriptions;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 /**
  * A high-level overview of the integrations in a project directory, from the route sources: routes, entry points, how
@@ -40,19 +41,19 @@ import picocli.CommandLine.Parameters;
  * capabilities and descriptions of the routes that have none into the project's integration summary file, marked as
  * AI-assisted.
  */
-@Command(name = "overview",
-         description = "High-level overview of the integrations in a project, optionally explained by AI/LLM",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel overview",
-                 "  camel overview src/main/resources/camel --format=json",
-                 "  camel overview --ai",
-                 "  camel overview --ai --api-type=anthropic",
-                 "  camel overview --apply-descriptions" })
+@CommandDefinition(name = "overview",
+                   description = "High-level overview of the integrations in a project, optionally explained by AI/LLM",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel overview",
+                           "  camel overview src/main/resources/camel --format=json",
+                           "  camel overview --ai",
+                           "  camel overview --ai --api-type=anthropic",
+                           "  camel overview --apply-descriptions" })
 public class Overview extends CamelCommand {
 
-    public static class FormatCompletionCandidates implements Iterable<String> {
+    public static class FormatCompletionCandidates extends CompletionCandidates {
 
         public FormatCompletionCandidates() {
         }
@@ -65,57 +66,48 @@ public class Overview extends CamelCommand {
 
     private static final String DEFAULT_MODEL = "llama3.2";
 
-    @Parameters(description = "Project directory (default: the current directory)", arity = "0..1")
+    @Argument(description = "Project directory (default: the current directory)")
     String directory;
 
-    @Option(names = { "--format" },
-            completionCandidates = FormatCompletionCandidates.class,
-            description = "Output format (${COMPLETION-CANDIDATES})",
-            defaultValue = "markdown")
+    @Option(name = "format", description = "Output format (${COMPLETION-CANDIDATES})", defaultValue = "markdown",
+            completer = FormatCompletionCandidates.class)
     String format = "markdown";
 
-    @Option(names = { "--save" },
+    @Option(name = "save", hasValue = false,
             description = "Save the overview as camel-summary.md in the project directory, keeping its AI-assisted sections")
     boolean save;
 
-    @Option(names = { "--ai" },
+    @Option(name = "ai", hasValue = false,
             description = "Ask an LLM to explain the project (an overview, the capabilities, labels and notes of routes"
                           + " that have none) and save it in camel-summary.md, marked as AI-assisted")
     boolean ai;
 
-    @Option(names = { "--apply-descriptions" },
+    @Option(name = "apply-descriptions", hasValue = false,
             description = "Put the AI-assisted route descriptions and notes of camel-summary.md into the route sources, so they become part of the routes")
     boolean applyDescriptions;
 
-    @Option(names = { "--url" },
+    @Option(name = "url",
             description = "LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars")
     String url;
 
-    @Option(names = { "--api-type" },
+    @Option(name = "api-type",
             description = "API type: 'ollama', 'openai' (OpenAI-compatible), 'anthropic' (Anthropic/Vertex AI), or 'watsonx' (IBM watsonx.ai)")
     LlmClient.ApiType apiType;
 
-    @Option(names = { "--api-key" },
+    @Option(name = "api-key",
             description = "API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(names = { "--model" },
-            description = "Model to use",
-            defaultValue = DEFAULT_MODEL)
+    @Option(name = "model", description = "Model to use", defaultValue = DEFAULT_MODEL)
     String model = DEFAULT_MODEL;
 
-    @Option(names = { "--timeout" },
-            description = "Timeout in seconds for LLM response",
-            defaultValue = "300")
+    @Option(name = "timeout", description = "Timeout in seconds for LLM response", defaultValue = "300")
     int timeout = 300;
 
-    @Option(names = { "--temperature" },
-            description = "Temperature for response generation (0.0-2.0)",
-            defaultValue = "0.3")
+    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.3")
     double temperature = 0.3;
 
-    @Option(names = { "--show-prompt" },
-            description = "Show the prompt sent to the LLM")
+    @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
     public Overview(CamelJBangMain main) {

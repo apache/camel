@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "plugin",
-                     description = "Manage plugins that add sub-commands to this CLI")
+@CommandDefinition(name = "plugin", description = "Manage plugins that add sub-commands to this CLI", generateHelp = true,
+                   sortOptions = true)
 public class PluginCommand extends PluginBaseCommand {
 
     public PluginCommand(CamelJBangMain main) {

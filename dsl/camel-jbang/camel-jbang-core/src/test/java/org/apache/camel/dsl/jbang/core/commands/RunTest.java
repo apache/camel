@@ -288,7 +288,7 @@ class RunTest extends CamelCommandBaseTestSupport {
     void chaosWithAScenarioFileOrAFileToRun(@TempDir Path dir) throws Exception {
         Run command = new Run(new CamelJBangMain());
         CommandLineTestHelper.parse(command, "--chaos", "route.yaml");
-        assertThat(command.chaos).isTrue();
+        assertThat(command.chaosEnabled).isTrue();
         assertThat(command.chaosScenario).isNull();
         assertThat(command.files).containsExactly("route.yaml");
 
@@ -296,14 +296,14 @@ class RunTest extends CamelCommandBaseTestSupport {
                 { "--chaos=test/chaos/outage.chaos", "route.yaml" }, { "--chaos", "test/chaos/outage.chaos", "route.yaml" } }) {
             command = new Run(new CamelJBangMain());
             CommandLineTestHelper.parse(command, args);
-            assertThat(command.chaos).isTrue();
+            assertThat(command.chaosEnabled).isTrue();
             assertThat(command.chaosScenario).isEqualTo("test/chaos/outage.chaos");
             assertThat(command.files).containsExactly("route.yaml");
         }
 
         command = new Run(new CamelJBangMain());
         CommandLineTestHelper.parse(command, "--chaos=false", "route.yaml");
-        assertThat(command.chaos).isFalse();
+        assertThat(command.chaosEnabled).isFalse();
 
         // the scenario must be there; it is passed on as an absolute path
         Path scenario = Files.writeString(dir.resolve("outage.chaos"), "endpoint=http:* error\n");

@@ -126,18 +126,13 @@
             <version>${commons-io-version}</version>
         </dependency>
         <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
-            <version>${picocli-version}</version>
+            <groupId>org.aesh</groupId>
+            <artifactId>aesh</artifactId>
+            <version>${aesh-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jline</groupId>
             <artifactId>jline</artifactId>
-            <version>${jline-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jline</groupId>
-            <artifactId>jline-picocli</artifactId>
             <version>${jline-version}</version>
         </dependency>
         <dependency>

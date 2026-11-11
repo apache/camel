@@ -26,6 +26,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -37,44 +40,37 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "consumer", description = "Get status of Camel consumers", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get consumer",
-                 "  camel get consumer --scheduled",
-                 "  camel get consumer --watch" })
+@CommandDefinition(name = "consumer", description = "Get status of Camel consumers", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get consumer",
+                           "  camel get consumer --scheduled",
+                           "  camel get consumer --watch" })
 public class ListConsumer extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter consumers by limiting to the given number of rows")
+    @Option(name = "limit", description = "Filter consumers by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter consumers by URI")
+    @Option(name = "filter", description = "Filter consumers by URI")
     String filter;
 
-    @CommandLine.Option(names = { "--scheduled" },
-                        description = "Filter consumer to only show scheduled based consumers")
+    @Option(name = "scheduled", hasValue = false, description = "Filter consumer to only show scheduled based consumers")
     boolean scheduled;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @Option(name = "short-uri", hasValue = false, description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
     public ListConsumer(CamelJBangMain main) {

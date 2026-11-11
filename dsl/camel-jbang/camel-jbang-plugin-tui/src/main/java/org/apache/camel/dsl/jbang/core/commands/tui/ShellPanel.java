@@ -49,11 +49,11 @@ import dev.tamboui.widgets.scrollbar.Scrollbar;
 import dev.tamboui.widgets.scrollbar.ScrollbarState;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CamelShellCommandRegistry;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.jline.builtins.InteractiveCommandGroup;
 import org.jline.builtins.PosixCommandGroup;
-import org.jline.picocli.PicocliCommandRegistry;
 import org.jline.reader.LineReader;
 import org.jline.shell.Shell;
 import org.jline.shell.ShellBuilder;
@@ -64,7 +64,6 @@ import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.ScreenTerminal;
 import org.jline.utils.ScreenTerminalOutputStream;
-import picocli.CommandLine;
 
 /**
  * Embeds a JLine interactive shell inside the TUI using a virtual terminal.
@@ -448,7 +447,7 @@ class ShellPanel {
     private void startShell(int width, int height) {
         // the command line of the Camel CLI, taken here and not in the shell thread: that thread starts later, and
         // the shell must swap the printer of this command line only (a test may point the static at another one by then)
-        CommandLine commandLine = CamelJBangMain.getCommandLine();
+        CommandTree commandLine = CamelJBangMain.getCommandLine();
         if (commandLine == null) {
             startError = "The shell needs the Camel CLI";
             return;
@@ -491,7 +490,7 @@ class ShellPanel {
     private void runShell(LineDisciplineTerminal terminal, CamelJBangMain main) {
         try {
             // all the commands of the CLI and the plugins, as the CLI created only the command it ran (camel tui)
-            PicocliCommandRegistry registry = new CamelShellCommandRegistry(main.newCommandLine());
+            CamelShellCommandRegistry registry = new CamelShellCommandRegistry(main.newCommandLine());
             // Redirect command output (printer()) through the virtual terminal
             // so it renders in the shell panel instead of the TUI's real terminal
             Printer originalPrinter = main.getOut();
@@ -541,7 +540,7 @@ class ShellPanel {
         }
     }
 
-    private static Shell buildShell(LineDisciplineTerminal terminal, PicocliCommandRegistry registry) throws IOException {
+    private static Shell buildShell(LineDisciplineTerminal terminal, CamelShellCommandRegistry registry) throws IOException {
         ShellBuilder builder = Shell.builder()
                 .terminal(terminal)
                 .prompt(ShellPanel::buildPrompt)

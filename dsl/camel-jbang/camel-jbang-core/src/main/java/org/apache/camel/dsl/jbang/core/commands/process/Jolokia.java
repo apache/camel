@@ -25,32 +25,32 @@ import java.nio.file.Path;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.jolokia.jvmagent.client.command.CommandDispatcher;
 import org.jolokia.jvmagent.client.util.OptionsAndArgs;
 import org.jolokia.jvmagent.client.util.PlatformUtils;
 import org.jolokia.jvmagent.client.util.VirtualMachineHandlerOperations;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel jolokia myApp",
-                 "  camel jolokia myApp --stop" })
+@CommandDefinition(name = "jolokia", description = "Attach Jolokia JVM Agent to a running Camel integration",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel jolokia myApp",
+                           "  camel jolokia myApp --stop" })
 public class Jolokia extends ProcessBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
+    @Argument(required = true, description = "Name or pid of running Camel integration")
     String name;
 
-    @CommandLine.Option(names = { "--stop" },
-                        description = "Stops the Jolokia JVM Agent in the running Camel integration")
+    @Option(name = "stop", hasValue = false, description = "Stops the Jolokia JVM Agent in the running Camel integration")
     boolean stop;
 
-    @CommandLine.Option(names = { "--port" },
-                        description = "To use a specific port number when attaching Jolokia JVM Agent (default a free port is found in range 8778-9999)")
+    @Option(name = "port",
+            description = "To use a specific port number when attaching Jolokia JVM Agent (default a free port is found in range 8778-9999)")
     int port;
 
     private volatile long pid;

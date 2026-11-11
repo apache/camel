@@ -23,12 +23,12 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.terminal.Frame;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
-import picocli.CommandLine;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -80,12 +80,12 @@ class ShellPanelLifecycleTest {
         CamelJBangMain mainB = new CamelJBangMain();
         Printer printerB = mainB.getOut();
 
-        commandLineField.set(null, new CommandLine(mainA));
+        commandLineField.set(null, new CommandTree(mainA));
         ShellPanel panel = new ShellPanel();
         panel.open();
         render(panel);
         // as another test does while the shell thread is still starting
-        commandLineField.set(null, new CommandLine(mainB));
+        commandLineField.set(null, new CommandTree(mainB));
 
         await().atMost(10, TimeUnit.SECONDS).until(() -> mainA.getOut() != printerA);
         assertNotSame(printerA, mainA.getOut(), "the shell writes into the panel");

@@ -16,17 +16,17 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import picocli.CommandLine;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 
 /**
- * Renders the camel CLI subcommand list grouped by functional category, replacing the default flat alphabetical list.
+ * Groups the sub-commands of the camel CLI by functional category in its help, in place of a flat alphabetical list:
+ * aesh lists the sub-commands by their help group, and the ones without a group last, under "Other".
  */
-public class GroupedCommandHelpRenderer implements CommandLine.IHelpSectionRenderer {
+public final class GroupedCommandHelpRenderer {
 
     private static final Map<String, List<String>> GROUPS = new LinkedHashMap<>();
 
@@ -41,60 +41,22 @@ public class GroupedCommandHelpRenderer implements CommandLine.IHelpSectionRende
         GROUPS.put("AI", List.of("ask", "harden", "overview", "semantic"));
     }
 
-    @Override
-    public String render(CommandLine.Help help) {
-        Map<String, CommandLine> subcommands = help.commandSpec().subcommands();
-        if (subcommands.isEmpty()) {
-            return "";
-        }
-
-        int nameWidth = subcommands.keySet().stream().mapToInt(String::length).max().orElse(10);
-
-        List<String> assigned = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-
-        for (Map.Entry<String, List<String>> entry : GROUPS.entrySet()) {
-            List<CommandLine> present = new ArrayList<>();
-            for (String name : entry.getValue()) {
-                CommandLine sub = subcommands.get(name);
-                if (sub != null) {
-                    // don't print hidden commands (picocli hides them too), but still
-                    // count them as assigned so they don't pop up under "Other"
-                    if (!sub.getCommandSpec().usageMessage().hidden()) {
-                        present.add(sub);
-                    }
-                    assigned.add(name);
-                }
-            }
-            if (!present.isEmpty()) {
-                sb.append(String.format("%n  %s:%n", entry.getKey()));
-                for (CommandLine sub : present) {
-                    appendCommand(sb, sub, nameWidth);
-                }
-            }
-        }
-
-        List<CommandLine> ungrouped = new ArrayList<>();
-        for (Map.Entry<String, CommandLine> entry : subcommands.entrySet()) {
-            if (!assigned.contains(entry.getKey())
-                    && !entry.getValue().getCommandSpec().usageMessage().hidden()) {
-                ungrouped.add(entry.getValue());
-            }
-        }
-        if (!ungrouped.isEmpty()) {
-            sb.append(String.format("%n  Other:%n"));
-            for (CommandLine sub : ungrouped) {
-                appendCommand(sb, sub, nameWidth);
-            }
-        }
-
-        return sb.toString();
+    private GroupedCommandHelpRenderer() {
     }
 
-    private static void appendCommand(StringBuilder sb, CommandLine sub, int nameWidth) {
-        String name = sub.getCommandSpec().name();
-        String[] desc = sub.getCommandSpec().usageMessage().description();
-        String description = desc != null && desc.length > 0 ? desc[0] : "";
-        sb.append(String.format("    %-" + nameWidth + "s   %s%n", name, description));
+    /**
+     * Puts the sub-commands of the root command in their help groups, in the order of the groups.
+     */
+    public static void apply(CommandTree root) {
+        int order = 0;
+        for (Map.Entry<String, List<String>> entry : GROUPS.entrySet()) {
+            for (String name : entry.getValue()) {
+                CommandTree sub = root.getSubcommands().get(name);
+                if (sub != null) {
+                    sub.setHelpGroup(entry.getKey(), order);
+                }
+                order++;
+            }
+        }
     }
 }

@@ -47,6 +47,9 @@ import java.util.stream.Stream;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -73,17 +76,15 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.CAMEL_INSTANCE_TYPE;
 
-@CommandLine.Command(name = "list", description = "Displays available Camel versions",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel version list",
-                             "  camel version list --runtime=spring-boot",
-                             "  camel version list --lts" })
+@CommandDefinition(name = "list", description = "Displays available Camel versions", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel version list",
+                           "  camel version list --runtime=spring-boot",
+                           "  camel version list --lts" })
 public class VersionList extends CamelCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -103,70 +104,58 @@ public class VersionList extends CamelCommand {
 
     private static final String DEFAULT_DATE_FORMAT = "MMMM yyyy";
 
-    @CommandLine.Option(names = { "--runtime" },
-                        defaultValue = "camel-main",
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", defaultValue = "camel-main",
+            completer = RuntimeCompletionCandidates.class, converter = RuntimeTypeConverter.class)
     public RuntimeType runtime = RuntimeType.main;
 
-    @CommandLine.Option(names = { "--from-version" },
-                        description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
+    @Option(name = "from-version",
+            description = "Filter by Camel version (inclusive). Will start from 4.0 if no version ranges provided.")
     public String fromVersion;
 
-    @CommandLine.Option(names = { "--to-version" },
-                        description = "Filter by Camel version (exclusive)")
+    @Option(name = "to-version", description = "Filter by Camel version (exclusive)")
     public String toVersion;
 
-    @CommandLine.Option(names = { "--from-date" },
-                        description = "Filter by release date (inclusive)")
+    @Option(name = "from-date", description = "Filter by release date (inclusive)")
     public String fromDate;
 
-    @CommandLine.Option(names = { "--to-date" },
-                        description = "Filter by release date (exclusive)")
+    @Option(name = "to-date", description = "Filter by release date (exclusive)")
     public String toDate;
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by (version, date, or days)", defaultValue = "version")
+    @Option(name = "sort", description = "Sort by (version, date, or days)", defaultValue = "version")
     public String sort;
 
-    @CommandLine.Mixin
+    @Mixin
     public MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--vendor" },
-                        description = "Vendor of Apache Camel distribution to use when filtering versions")
+    @Option(name = "vendor", description = "Vendor of Apache Camel distribution to use when filtering versions")
     public String vendor;
 
-    @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases", defaultValue = "false")
+    @Option(name = "lts", hasValue = false, description = "Only show LTS supported releases", defaultValue = "false")
     public boolean lts;
 
-    @CommandLine.Option(names = { "--eol" }, description = "Include releases that are end-of-life", defaultValue = "true",
-                        arity = "0..1", fallbackValue = "true")
+    @Option(name = "eol", hasValue = false, description = "Include releases that are end-of-life", defaultValue = "true")
     public boolean eol = true;
 
-    @CommandLine.Option(names = { "--patch" }, description = "Whether to include patch releases (x.y.z)", defaultValue = "true",
-                        arity = "0..1", fallbackValue = "true")
+    @Option(name = "patch", hasValue = false, description = "Whether to include patch releases (x.y.z)", defaultValue = "true")
     public boolean patch = true;
 
-    @CommandLine.Option(names = { "--rc" }, description = "Include also milestone or RC releases", defaultValue = "false")
+    @Option(name = "rc", hasValue = false, description = "Include also milestone or RC releases", defaultValue = "false")
     public boolean rc;
 
-    @CommandLine.Option(names = { "--days" }, description = "Whether to include days since release", defaultValue = "true",
-                        arity = "0..1", fallbackValue = "true")
+    @Option(name = "days", hasValue = false, description = "Whether to include days since release", defaultValue = "true")
     public boolean days;
 
-    @CommandLine.Option(names = { "--date-format" }, description = "The format to show the date (such as dd-MM-yyyy)",
-                        defaultValue = DEFAULT_DATE_FORMAT)
+    @Option(name = "date-format", description = "The format to show the date (such as dd-MM-yyyy)",
+            defaultValue = DEFAULT_DATE_FORMAT)
     public String dateFormat;
 
-    @CommandLine.Option(names = { "--tail" },
-                        description = "The number of lines from the end of the table to show.")
+    @Option(name = "tail", description = "The number of lines from the end of the table to show.")
     public int tail;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format", defaultValue = "false")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format", defaultValue = "false")
     public boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     QuarkusExtensionRegistryMixin quarkusExtensionRegistry;
 
     public VersionList(CamelJBangMain main) {

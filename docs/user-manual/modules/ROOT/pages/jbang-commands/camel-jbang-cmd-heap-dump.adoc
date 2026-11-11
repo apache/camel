@@ -23,7 +23,7 @@ camel cmd heap-dump [options]
 | `--json` | Output in JSON Format |  | boolean
 | `--live` | Whether to dump only live objects | true | boolean
 | `--timeout` | How long to wait for the heap dump to be written, in millis or as a duration such as 2m | 60000 | long
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

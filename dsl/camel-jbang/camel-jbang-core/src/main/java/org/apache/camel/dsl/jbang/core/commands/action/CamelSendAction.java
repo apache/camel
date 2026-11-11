@@ -35,6 +35,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.cli.connector.RepeatedSend;
@@ -56,116 +61,106 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "send",
-                     description = "Send messages to endpoints", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nWith --repeat the message is sent that many times, with --interval between two",
-                             "(a range such as 100..500 draws each pause at random), and a summary is printed",
-                             "instead of each reply. A body of file:<folder> sends the",
-                             "files of the folder in name order, one message per file; 001.properties has the",
-                             "headers of 001.json. With --repeat it goes round the files again.",
-                             "%nExamples:",
-                             "  camel cmd send --endpoint=kafka:myTopic --body='Hello World'",
-                             "  camel cmd send hello --endpoint=direct:foo --body='Hello'",
-                             "  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=200ms",
-                             "  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=100..500",
-                             "  camel cmd send --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/" })
+@CommandDefinition(name = "send", description = "Send messages to endpoints", generateHelp = true,
+                   footer = {
+                           "With --repeat the message is sent that many times, with --interval between two",
+                           "(a range such as 100..500 draws each pause at random), and a summary is printed",
+                           "instead of each reply. A body of file:<folder> sends the",
+                           "files of the folder in name order, one message per file; 001.properties has the",
+                           "headers of 001.json. With --repeat it goes round the files again.",
+                           "",
+                           "Examples:",
+                           "  camel cmd send --endpoint=kafka:myTopic --body='Hello World'",
+                           "  camel cmd send hello --endpoint=direct:foo --body='Hello'",
+                           "  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=200ms",
+                           "  camel cmd send --endpoint=kafka:refunds --body=file:refund.json --repeat=50 --interval=100..500",
+                           "  camel cmd send --endpoint=kafka:refunds --body=file:test/chaos/refunds-fails/" })
 public class CamelSendAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "To use an existing running Camel integration for sending the message (name or pid)",
-                            arity = "0..1")
+    @Argument(description = "To use an existing running Camel integration for sending the message (name or pid)")
     String name;
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
-                                      +
-                                      " (ex. /path/to/file.properties,/path/to/other.properties")
+    @Option(name = "properties",
+            description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
+                          +
+                          " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)")
     String[] property;
 
-    @CommandLine.Option(names = { "--endpoint", "--uri" },
-                        description = "Endpoint where to send the message (can be uri, pattern, or refer to a route id)")
+    @Option(name = "endpoint", aliases = { "uri" },
+            description = "Endpoint where to send the message (can be uri, pattern, or refer to a route id)")
     String endpoint;
 
-    @CommandLine.Option(names = { "--poll" },
-                        description = "Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue.")
+    @Option(name = "poll", hasValue = false,
+            description = "Poll instead of sending a message. This can be used to receive latest message from a Kafka topic or JMS queue.")
     boolean poll;
 
-    @CommandLine.Option(names = { "--reply" },
-                        description = "Whether to expect a reply message (InOut vs InOut messaging style)")
+    @Option(name = "reply", hasValue = false,
+            description = "Whether to expect a reply message (InOut vs InOut messaging style)")
     boolean reply;
 
-    @CommandLine.Option(names = { "--reply-file" },
-                        description = "Saves reply message to the file with the given name (override if exists)")
+    @Option(name = "reply-file", description = "Saves reply message to the file with the given name (override if exists)")
     String replyFile;
 
-    @CommandLine.Option(names = { "--body" },
-                        description = "Message body to send (prefix with file: to refer to loading message body from file)")
+    @Option(name = "body", description = "Message body to send (prefix with file: to refer to loading message body from file)")
     String body;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Message header (key=value)")
+    @OptionList(name = "header", valueSeparator = OptionList.NO_SEPARATOR, description = "Message header (key=value)")
     List<String> headers;
 
-    @CommandLine.Option(names = { "--repeat" },
-                        description = "Send the message this many times (going round the files of a folder body), and"
-                                      + " print a summary instead of each reply (at most 10000)")
+    @Option(name = "repeat", description = "Send the message this many times (going round the files of a folder body), and"
+                                           + " print a summary instead of each reply (at most 10000)")
     int repeat;
 
-    @CommandLine.Option(names = { "--interval" },
-                        description = "The pause between two messages with --repeat or a folder body, in millis or as a"
-                                      + " duration such as 200ms or 1s, or a range such as 100..500 or 100ms..2s to draw"
-                                      + " each pause at random (at most 60s)")
+    @Option(name = "interval", description = "The pause between two messages with --repeat or a folder body, in millis or as a"
+                                             + " duration such as 200ms or 1s, or a range such as 100..500 or 100ms..2s to draw"
+                                             + " each pause at random (at most 60s)")
     String interval;
 
     // the shortest and the longest pause of --interval, in millis
     private long intervalMin;
     private long intervalMax;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
-                        description = "Timeout waiting for message to be sent (and reply message if InOut messaging),"
-                                      + " in millis or as a duration such as 30s")
+    @Option(name = "timeout", description = "Timeout waiting for message to be sent (and reply message if InOut messaging),"
+                                            + " in millis or as a duration such as 30s",
+            defaultValue = "20000", converter = TimeoutConverter.class)
     long timeout = 20000;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties from response message (InOut)")
+    @Option(name = "show-exchange-properties", hasValue = false,
+            description = "Show exchange properties from response message (InOut)", defaultValue = "false")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
-                        description = "Show exchange variables from response message (InOut)")
+    @Option(name = "show-exchange-variables", hasValue = false,
+            description = "Show exchange variables from response message (InOut)", defaultValue = "false")
     boolean showExchangeVariables;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers from response message (InOut)")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers from response message (InOut)",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body from response message (InOut)")
+    @Option(name = "show-body", hasValue = false, description = "Show message body from response message (InOut)",
+            defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exception and stacktrace for failed messages")
+    @Option(name = "show-exception", hasValue = false, description = "Show exception and stacktrace for failed messages",
+            defaultValue = "true")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print response message body (InOut) when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false,
+            description = "Pretty print response message body (InOut) when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--infra" },
-                        description = "Send to infrastructure service (e.g., nats, kafka)")
+    @Option(name = "infra", description = "Send to infrastructure service (e.g., nats, kafka)")
     String infra;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
     private volatile long pid;

@@ -18,16 +18,15 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.Comparator;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
-import picocli.CommandLine.Command;
 
-@Command(name = "processor", description = "Top performing processors",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel top processor",
-                 "  camel top processor --watch" })
+@CommandDefinition(name = "processor", description = "Top performing processors", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel top processor",
+                           "  camel top processor --watch" })
 public class CamelProcessorTop extends CamelProcessorStatus {
 
     public CamelProcessorTop(CamelJBangMain main) {

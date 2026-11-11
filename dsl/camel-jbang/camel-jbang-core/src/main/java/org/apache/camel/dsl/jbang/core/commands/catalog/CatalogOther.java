@@ -19,16 +19,14 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.OtherModel;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "other",
-                     description = "List miscellaneous components from the Camel Catalog", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel catalog other" })
+@CommandDefinition(name = "other", description = "List miscellaneous components from the Camel Catalog", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel catalog other" })
 public class CatalogOther extends CatalogBaseCommand {
 
     public CatalogOther(CamelJBangMain main) {

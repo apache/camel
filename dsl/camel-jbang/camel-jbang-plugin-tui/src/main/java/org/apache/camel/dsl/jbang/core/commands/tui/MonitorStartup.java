@@ -21,9 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.Printer;
-import picocli.CommandLine;
 
 /**
  * What the monitor works out from its options before it starts.
@@ -51,23 +51,25 @@ final class MonitorStartup {
     /**
      * Validates and applies the --theme and --panel-theme options.
      *
-     * @throws CommandLine.ParameterException for a theme that does not exist
+     * @throws CliException (usage) for a theme that does not exist
      */
-    static void applyThemeOptions(CommandLine command, String theme, String panelTheme) {
+    static void applyThemeOptions(String theme, String panelTheme) {
         if (theme != null) {
             if (!Theme.isValidMode(theme)) {
                 String expected = String.join("' or '", ThemeMode.ids());
-                throw new CommandLine.ParameterException(
-                        command, "Invalid value for option '--theme': expected '" + expected + "', was '" + theme + "'");
+                throw new CliException(
+                        CliExitCode.USAGE,
+                        "Invalid value for option '--theme': expected '" + expected + "', was '" + theme + "'");
             }
             Theme.applyStartupMode(theme);
         }
         if (panelTheme != null) {
             if (!Theme.isValidMode(panelTheme) && !Theme.PANEL_THEME_SAME.equalsIgnoreCase(panelTheme.strip())) {
                 String expected = String.join("' or '", ThemeMode.ids());
-                throw new CommandLine.ParameterException(
-                        command, "Invalid value for option '--panel-theme': expected '" + Theme.PANEL_THEME_SAME + "' or '"
-                                 + expected + "', was '" + panelTheme + "'");
+                throw new CliException(
+                        CliExitCode.USAGE,
+                        "Invalid value for option '--panel-theme': expected '" + Theme.PANEL_THEME_SAME + "' or '"
+                                           + expected + "', was '" + panelTheme + "'");
             }
             Theme.setPanelTheme(panelTheme);
         }

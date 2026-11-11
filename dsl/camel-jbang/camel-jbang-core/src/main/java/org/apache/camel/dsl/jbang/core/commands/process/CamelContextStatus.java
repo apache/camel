@@ -27,6 +27,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -38,32 +41,27 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
-@Command(name = "context",
-         description = "Get status of Camel integrations",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get context",
-                 "  camel get context myApp",
-                 "  camel get context --watch" })
+@CommandDefinition(name = "context", description = "Get status of Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get context",
+                           "  camel get context myApp",
+                           "  camel get context --watch" })
 public class CamelContextStatus extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--remote" },
-                        description = "Break down counters into remote/total pairs")
+    @Option(name = "remote", hasValue = false, description = "Break down counters into remote/total pairs")
     boolean remote;
 
     public CamelContextStatus(CamelJBangMain main) {

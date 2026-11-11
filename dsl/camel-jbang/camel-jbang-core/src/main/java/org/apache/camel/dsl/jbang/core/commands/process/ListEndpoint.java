@@ -27,7 +27,11 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.EndpointScope;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -37,22 +41,20 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "endpoint", description = "Get usage of Camel endpoints", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get endpoint",
-                 "  camel get endpoint --filter=kafka*",
-                 "  camel get endpoint --watch" })
+@CommandDefinition(name = "endpoint", description = "Get usage of Camel endpoints", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get endpoint",
+                           "  camel get endpoint --filter=kafka*",
+                           "  camel get endpoint --watch" })
 public class ListEndpoint extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime)
             .number("total", r -> r.total)
             .numeric("size", r -> r.meanBodySize);
 
-    public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
+    public static class PidNameAgeTotalCompletionCandidates extends CompletionCandidates {
 
         public PidNameAgeTotalCompletionCandidates() {
         }
@@ -64,39 +66,32 @@ public class ListEndpoint extends ProcessWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeTotalCompletionCandidates.class,
-                        description = "Sort by pid, name, age, total, or size", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name, age, total, or size", defaultValue = "pid",
+            completer = PidNameAgeTotalCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter endpoints by limiting to the given number of rows")
+    @Option(name = "limit", description = "Filter endpoints by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter endpoints by URI")
+    @Option(name = "filter", description = "Filter endpoints by URI")
     String filter;
 
-    @CommandLine.Option(names = { "--filter-direction" },
-                        description = "Filter by direction (in or out)")
+    @Option(name = "filter-direction", description = "Filter by direction (in or out)")
     String filterDirection;
 
-    @CommandLine.Option(names = { "--filter-total" },
-                        description = "Filter endpoints that must be higher than the given usage")
+    @Option(name = "filter-total", description = "Filter endpoints that must be higher than the given usage")
     long filterTotal;
 
-    @CommandLine.Option(names = { "--verbose" },
-                        description = "Show additional size statistics (min/max body and headers)")
+    @Option(name = "verbose", hasValue = false, description = "Show additional size statistics (min/max body and headers)")
     boolean verbose;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @Option(name = "short-uri", hasValue = false, description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
     public ListEndpoint(CamelJBangMain main) {

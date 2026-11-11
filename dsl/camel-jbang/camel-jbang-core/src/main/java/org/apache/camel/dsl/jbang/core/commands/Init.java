@@ -27,9 +27,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Stack;
 import java.util.StringJoiner;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
@@ -45,59 +47,49 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.io.IOUtils;
 import org.jline.terminal.Terminal;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.run.common.GistHelper.fetchGistUrls;
 import static org.apache.camel.dsl.jbang.run.common.GitHubHelper.asGithubSingleUrl;
 import static org.apache.camel.dsl.jbang.run.common.GitHubHelper.fetchGithubUrls;
 
-@Command(name = "init", description = "Creates a new Camel integration",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel init hello.java",
-                 "  camel init hello.yaml",
-                 "  camel init hello.xml",
-                 "  camel init --list" })
+@CommandDefinition(name = "init", description = "Creates a new Camel integration", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel init hello.java",
+                           "  camel init hello.yaml",
+                           "  camel init hello.xml",
+                           "  camel init --list" })
 public class Init extends CamelCommand {
 
-    @Parameters(description = "Name of integration file (or a github link)", arity = "0..1",
-                paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
+    @Argument(description = "Name of integration file (or a github link)", paramLabel = "<file>")
     private String file;
 
-    @Option(names = { "--list" }, description = "List available templates")
+    @Option(name = "list", hasValue = false, description = "List available templates")
     private boolean list;
 
-    @Option(names = {
-            "--dir",
-            "--directory" }, description = "Directory relative path where the new Camel integration will be saved",
-            defaultValue = ".")
+    @Option(name = "dir", aliases = { "directory" },
+            description = "Directory relative path where the new Camel integration will be saved", defaultValue = ".")
     private String directory;
 
-    @Option(names = { "--clean-dir", "--clean-directory" },
+    @Option(name = "clean-dir", aliases = { "clean-directory" }, hasValue = false,
             description = "Whether to clean directory first (deletes all files in directory)")
     private boolean cleanDirectory;
 
-    @Option(names = { "--force" },
+    @Option(name = "force", hasValue = false,
             description = "Overwrite a file that exists already (by default the command fails instead)")
     private boolean force;
 
-    @Option(names = { "--from-kamelet" },
-            description = "To be used when extending an existing Kamelet")
+    @Option(name = "from-kamelet", description = "To be used when extending an existing Kamelet")
     private String fromKamelet;
 
-    @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     private String kameletsVersion;
 
-    @Option(names = { "--pipe" },
-            description = "When creating a yaml file should it be created as a Pipe CR")
+    @Option(name = "pipe", hasValue = false, description = "When creating a yaml file should it be created as a Pipe CR")
     private boolean pipe;
 
-    @Option(names = { "--repo", "--repos" },
+    @Option(name = "repo", aliases = { "repos" },
             description = "Additional maven repositories (Use commas to separate multiple repositories)")
     protected String repositories;
 
@@ -529,13 +521,6 @@ public class Init extends CamelCommand {
         }
 
         return 0;
-    }
-
-    static class FileConsumer extends ParameterConsumer<Init> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, Init cmd) {
-            cmd.file = args.pop();
-        }
     }
 
 }

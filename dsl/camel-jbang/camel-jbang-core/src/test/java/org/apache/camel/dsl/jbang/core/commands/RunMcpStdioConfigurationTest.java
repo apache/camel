@@ -18,9 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import org.apache.camel.dsl.jbang.core.commands.config.BaseConfigTestSupport;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,9 +49,13 @@ class RunMcpStdioConfigurationTest extends BaseConfigTestSupport {
     private static String printRunConfiguration(String... args) {
         StringPrinter out = new StringPrinter();
         Run run = new Run(new CamelJBangMain().withPrinter(out));
-        CommandLine commandLine = new CommandLine(run);
+        CommandTree commandLine = new CommandTree(run);
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
-        commandLine.parseArgs(args);
+        try {
+            commandLine.parse(args);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
         run.printRunConfiguration();
         return out.getStdout();
     }

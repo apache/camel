@@ -20,10 +20,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.camel.catalog.CamelCatalog;
+import org.aesh.command.Command;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.option.Option;
+import org.aesh.command.parser.CommandLineParserException;
+import org.aesh.command.validator.OptionValidatorException;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.*;
 import org.apache.camel.dsl.jbang.core.commands.bind.Bind;
@@ -67,31 +72,33 @@ import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true,
-         exitCodeListHeading = "%nExit Codes:%n",
-         exitCodeList = {
-                 "  0:Success",
-                 "  1:Failed: the command ran, but the outcome is negative",
-                 "  2:Usage error: invalid option or argument",
-                 "  3:Not found: no such integration, route or service",
-                 " 66:File not found: no such file or directory",
-                 " 70:Internal error: an unexpected exception",
-                 "124:Timed out: no reply from the integration in time" })
-public class CamelJBangMain implements Callable<Integer> {
+@CommandDefinition(name = "camel", description = "Apache Camel CLI", generateHelp = true, sortOptions = true,
+                   footer = {
+                           "Exit Codes:",
+                           "    0   Success",
+                           "    1   Failed: the command ran, but the outcome is negative",
+                           "    2   Usage error: invalid option or argument",
+                           "    3   Not found: no such integration, route or service",
+                           "   66   File not found: no such file or directory",
+                           "   70   Internal error: an unexpected exception",
+                           "  124   Timed out: no reply from the integration in time" })
+public class CamelJBangMain implements Command<CommandInvocation> {
     // the commands that use the other commands of the CLI, besides the ones that use the plugins (which may add to any
     // command, see PluginHelper.isPluginConsumingCommand): the shell and the completion script
     private static final Set<String> FULL_COMMANDS = Set.of("shell", "completion");
 
-    private static CommandLine commandLine;
+    private static CommandTree commandLine;
+
+    @Option(name = "version", shortName = 'V', hasValue = false, description = "Print version information and exit")
+    boolean versionRequested;
 
     private Printer out = new Printer.SystemOutPrinter();
 
@@ -151,22 +158,10 @@ public class CamelJBangMain implements Callable<Integer> {
         }
         withErrorHandling(commandLine);
 
-        commandLine.getCommandSpec().versionProvider(() -> {
-            CamelCatalog catalog = new DefaultCamelCatalog();
-            String v = catalog.getCatalogVersion();
-            return new String[] { v };
-        });
-
         CommandLineHelper.migrateLegacyUserConfig(out);
         CommandLineHelper.augmentWithUserConfiguration(commandLine);
         preExecute(commandLine, args);
-        int exitCode;
-        try {
-            exitCode = commandLine.execute(args);
-        } catch (Error e) {
-            // picocli hands exceptions to the handler, but an error (such as a class missing at runtime) escapes it
-            exitCode = new CliExecutionExceptionHandler(this).handle(e, commandLine.getParseResult());
-        }
+        int exitCode = run(commandLine, args);
         if (isHelpRequest(args) && EnvironmentHelper.isInteractiveTerminal()) {
             printAvailablePlugins();
         }
@@ -203,7 +198,7 @@ public class CamelJBangMain implements Callable<Integer> {
      * @param  args        the arguments it runs
      * @return             {@code true} when it has only that command
      */
-    public static boolean hasOnlyCommand(CommandLine commandLine, String... args) {
+    public static boolean hasOnlyCommand(CommandTree commandLine, String... args) {
         String only = onlyCommand(args);
         return only != null && commandLine.getSubcommands().size() == 1 && commandLine.getSubcommands().containsKey(only);
     }
@@ -217,7 +212,7 @@ public class CamelJBangMain implements Callable<Integer> {
      * @param  args        the arguments it runs
      * @return             the name of the command, or {@code null} when the command line needs all plugins
      */
-    public static String onlyPluginCommand(CommandLine commandLine, String... args) {
+    public static String onlyPluginCommand(CommandTree commandLine, String... args) {
         String only = onlyCommand(args);
         return only != null && commandLine.getSubcommands().isEmpty() ? only : null;
     }
@@ -241,246 +236,243 @@ public class CamelJBangMain implements Callable<Integer> {
      *
      * @param only the name of the one command to create, or {@code null} for all commands
      */
-    CommandLine createCommandLine(String only) {
-        CommandLine commandLine = new CommandLine(this);
+    CommandTree createCommandLine(String only) {
+        // the help of --help is printed with the printer of the CLI too
+        CommandTree commandLine = new CommandTree(this).setOutput(text -> out.print(text));
         if (shouldCreate(only, "bind")) {
-            commandLine.addSubcommand("bind", new CommandLine(new Bind(this)));
+            commandLine.addSubcommand("bind", new CommandTree(new Bind(this)));
         }
         if (shouldCreate(only, "catalog")) {
-            commandLine.addSubcommand("catalog", new CommandLine(new CatalogCommand(this))
-                    .addSubcommand("component", new CommandLine(new CatalogComponent(this)))
-                    .addSubcommand("dataformat", new CommandLine(new CatalogDataFormat(this)))
-                    .addSubcommand("dev-console", new CommandLine(new CatalogDevConsole(this)))
-                    .addSubcommand("kamelet", new CommandLine(new CatalogKamelet(this)))
-                    .addSubcommand("transformer", new CommandLine(new CatalogTransformer(this)))
-                    .addSubcommand("language", new CommandLine(new CatalogLanguage(this)))
-                    .addSubcommand("other", new CommandLine(new CatalogOther(this))));
+            commandLine.addSubcommand("catalog", new CommandTree(new CatalogCommand(this))
+                    .addSubcommand("component", new CommandTree(new CatalogComponent(this)))
+                    .addSubcommand("dataformat", new CommandTree(new CatalogDataFormat(this)))
+                    .addSubcommand("dev-console", new CommandTree(new CatalogDevConsole(this)))
+                    .addSubcommand("kamelet", new CommandTree(new CatalogKamelet(this)))
+                    .addSubcommand("transformer", new CommandTree(new CatalogTransformer(this)))
+                    .addSubcommand("language", new CommandTree(new CatalogLanguage(this)))
+                    .addSubcommand("other", new CommandTree(new CatalogOther(this))));
         }
         if (shouldCreate(only, "cmd")) {
-            commandLine.addSubcommand("cmd", new CommandLine(new CamelAction(this))
-                    .addSubcommand("browse", new CommandLine(new CamelBrowseAction(this)))
-                    .addSubcommand("chaos-add", new CommandLine(new CamelChaosAddAction(this)))
-                    .addSubcommand("chaos-change", new CommandLine(new CamelChaosChangeAction(this)))
-                    .addSubcommand("chaos-clear", new CommandLine(new CamelChaosClearAction(this)))
-                    .addSubcommand("chaos-experiment", new CommandLine(new CamelChaosExperimentAction(this)))
-                    .addSubcommand("chaos-explore", new CommandLine(new ChaosExplore(this)))
-                    .addSubcommand("chaos-explore-finish", new CommandLine(new CamelChaosExploreFinishAction(this)))
-                    .addSubcommand("chaos-explore-start", new CommandLine(new CamelChaosExploreStartAction(this)))
-                    .addSubcommand("chaos-load", new CommandLine(new CamelChaosLoadAction(this)))
-                    .addSubcommand("chaos-remove", new CommandLine(new CamelChaosRemoveAction(this)))
-                    .addSubcommand("chaos-suggest", new CommandLine(new CamelChaosSuggestAction(this)))
-                    .addSubcommand("disable-processor", new CommandLine(new CamelProcessorDisableAction(this)))
-                    .addSubcommand("enable-processor", new CommandLine(new CamelProcessorEnableAction(this)))
-                    .addSubcommand("gc", new CommandLine(new CamelGCAction(this)))
-                    .addSubcommand("heap-dump", new CommandLine(new CamelHeapDump(this)))
-                    .addSubcommand("heap-histogram", new CommandLine(new CamelHeapHistogram(this)))
-                    .addSubcommand("memory-leak", new CommandLine(new CamelMemoryLeak(this)))
-                    .addSubcommand("load", new CommandLine(new CamelLoadAction(this)))
-                    .addSubcommand("logger", new CommandLine(new LoggerAction(this)))
-                    .addSubcommand("receive", new CommandLine(new CamelReceiveAction(this)))
-                    .addSubcommand("reload", new CommandLine(new CamelReloadAction(this)))
-                    .addSubcommand("reset-stats", new CommandLine(new CamelResetStatsAction(this)))
-                    .addSubcommand("resume-route", new CommandLine(new CamelRouteResumeAction(this)))
-                    .addSubcommand("route-diagram", new CommandLine(new CamelRouteDiagramAction(this)))
-                    .addSubcommand("route-dump", new CommandLine(new CamelRouteDumpAction(this)))
-                    .addSubcommand("route-structure", new CommandLine(new CamelRouteStructureAction(this)))
-                    .addSubcommand("route-topology", new CommandLine(new CamelRouteTopologyAction(this)))
-                    .addSubcommand("send", new CommandLine(new CamelSendAction(this)))
-                    .addSubcommand("sql", new CommandLine(new CamelSqlQueryAction(this)))
-                    .addSubcommand("span", new CommandLine(new CamelSpanAction(this)))
-                    .addSubcommand("start-group", new CommandLine(new CamelRouteGroupStartAction(this)))
-                    .addSubcommand("start-route", new CommandLine(new CamelRouteStartAction(this)))
-                    .addSubcommand("stop-group", new CommandLine(new CamelRouteGroupStopAction(this)))
-                    .addSubcommand("stop-route", new CommandLine(new CamelRouteStopAction(this)))
-                    .addSubcommand("stub", new CommandLine(new CamelStubAction(this)))
-                    .addSubcommand("suspend-route", new CommandLine(new CamelRouteSuspendAction(this)))
-                    .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(this))));
+            commandLine.addSubcommand("cmd", new CommandTree(new CamelAction(this))
+                    .addSubcommand("browse", new CommandTree(new CamelBrowseAction(this)))
+                    .addSubcommand("chaos-add", new CommandTree(new CamelChaosAddAction(this)))
+                    .addSubcommand("chaos-change", new CommandTree(new CamelChaosChangeAction(this)))
+                    .addSubcommand("chaos-clear", new CommandTree(new CamelChaosClearAction(this)))
+                    .addSubcommand("chaos-experiment", new CommandTree(new CamelChaosExperimentAction(this)))
+                    .addSubcommand("chaos-explore", new CommandTree(new ChaosExplore(this)))
+                    .addSubcommand("chaos-explore-finish", new CommandTree(new CamelChaosExploreFinishAction(this)))
+                    .addSubcommand("chaos-explore-start", new CommandTree(new CamelChaosExploreStartAction(this)))
+                    .addSubcommand("chaos-load", new CommandTree(new CamelChaosLoadAction(this)))
+                    .addSubcommand("chaos-remove", new CommandTree(new CamelChaosRemoveAction(this)))
+                    .addSubcommand("chaos-suggest", new CommandTree(new CamelChaosSuggestAction(this)))
+                    .addSubcommand("disable-processor", new CommandTree(new CamelProcessorDisableAction(this)))
+                    .addSubcommand("enable-processor", new CommandTree(new CamelProcessorEnableAction(this)))
+                    .addSubcommand("gc", new CommandTree(new CamelGCAction(this)))
+                    .addSubcommand("heap-dump", new CommandTree(new CamelHeapDump(this)))
+                    .addSubcommand("heap-histogram", new CommandTree(new CamelHeapHistogram(this)))
+                    .addSubcommand("memory-leak", new CommandTree(new CamelMemoryLeak(this)))
+                    .addSubcommand("load", new CommandTree(new CamelLoadAction(this)))
+                    .addSubcommand("logger", new CommandTree(new LoggerAction(this)))
+                    .addSubcommand("receive", new CommandTree(new CamelReceiveAction(this)))
+                    .addSubcommand("reload", new CommandTree(new CamelReloadAction(this)))
+                    .addSubcommand("reset-stats", new CommandTree(new CamelResetStatsAction(this)))
+                    .addSubcommand("resume-route", new CommandTree(new CamelRouteResumeAction(this)))
+                    .addSubcommand("route-diagram", new CommandTree(new CamelRouteDiagramAction(this)))
+                    .addSubcommand("route-dump", new CommandTree(new CamelRouteDumpAction(this)))
+                    .addSubcommand("route-structure", new CommandTree(new CamelRouteStructureAction(this)))
+                    .addSubcommand("route-topology", new CommandTree(new CamelRouteTopologyAction(this)))
+                    .addSubcommand("send", new CommandTree(new CamelSendAction(this)))
+                    .addSubcommand("sql", new CommandTree(new CamelSqlQueryAction(this)))
+                    .addSubcommand("span", new CommandTree(new CamelSpanAction(this)))
+                    .addSubcommand("start-group", new CommandTree(new CamelRouteGroupStartAction(this)))
+                    .addSubcommand("start-route", new CommandTree(new CamelRouteStartAction(this)))
+                    .addSubcommand("stop-group", new CommandTree(new CamelRouteGroupStopAction(this)))
+                    .addSubcommand("stop-route", new CommandTree(new CamelRouteStopAction(this)))
+                    .addSubcommand("stub", new CommandTree(new CamelStubAction(this)))
+                    .addSubcommand("suspend-route", new CommandTree(new CamelRouteSuspendAction(this)))
+                    .addSubcommand("thread-dump", new CommandTree(new CamelThreadDump(this))));
         }
         if (shouldCreate(only, "config")) {
-            commandLine.addSubcommand("config", new CommandLine(new ConfigCommand(this))
-                    .addSubcommand("get", new CommandLine(new ConfigGet(this)))
-                    .addSubcommand("list", new CommandLine(new ConfigList(this)))
-                    .addSubcommand("set", new CommandLine(new ConfigSet(this)))
-                    .addSubcommand("unset", new CommandLine(new ConfigUnset(this))));
+            commandLine.addSubcommand("config", new CommandTree(new ConfigCommand(this))
+                    .addSubcommand("get", new CommandTree(new ConfigGet(this)))
+                    .addSubcommand("list", new CommandTree(new ConfigList(this)))
+                    .addSubcommand("set", new CommandTree(new ConfigSet(this)))
+                    .addSubcommand("unset", new CommandTree(new ConfigUnset(this))));
         }
         if (shouldCreate(only, "completion")) {
-            commandLine.addSubcommand("completion", new CommandLine(new Complete(this)));
+            commandLine.addSubcommand("completion", new CommandTree(new Complete(this)));
         }
         if (shouldCreate(only, "doc")) {
-            commandLine.addSubcommand("doc", new CommandLine(new CatalogDoc(this)));
+            commandLine.addSubcommand("doc", new CommandTree(new CatalogDoc(this)));
         }
         if (shouldCreate(only, "debug")) {
-            commandLine.addSubcommand("debug", new CommandLine(new Debug(this)));
+            commandLine.addSubcommand("debug", new CommandTree(new Debug(this)));
         }
         if (shouldCreate(only, "dev")) {
-            commandLine.addSubcommand("dev", new CommandLine(new Dev(this)));
+            commandLine.addSubcommand("dev", new CommandTree(new Dev(this)));
         }
         if (shouldCreate(only, "dependency")) {
-            commandLine.addSubcommand("dependency", new CommandLine(new DependencyCommand(this))
-                    .addSubcommand("copy", new CommandLine(new DependencyCopy(this)))
-                    .addSubcommand("list", new CommandLine(new DependencyList(this)))
-                    .addSubcommand("runtime", new CommandLine(new DependencyRuntime(this)))
-                    .addSubcommand("update", new CommandLine(new DependencyUpdate(this))));
+            commandLine.addSubcommand("dependency", new CommandTree(new DependencyCommand(this))
+                    .addSubcommand("copy", new CommandTree(new DependencyCopy(this)))
+                    .addSubcommand("list", new CommandTree(new DependencyList(this)))
+                    .addSubcommand("runtime", new CommandTree(new DependencyRuntime(this)))
+                    .addSubcommand("update", new CommandTree(new DependencyUpdate(this))));
         }
         if (shouldCreate(only, "dirty")) {
-            commandLine.addSubcommand("dirty", new CommandLine(new Dirty(this)));
+            commandLine.addSubcommand("dirty", new CommandTree(new Dirty(this)));
         }
         if (shouldCreate(only, "doctor")) {
-            commandLine.addSubcommand("doctor", new CommandLine(new Doctor(this)));
+            commandLine.addSubcommand("doctor", new CommandTree(new Doctor(this)));
         }
         if (shouldCreate(only, "eval")) {
-            commandLine.addSubcommand("eval", new CommandLine(new EvalCommand(this))
-                    .addSubcommand("expression", new CommandLine(new EvalExpressionCommand(this))));
+            commandLine.addSubcommand("eval", new CommandTree(new EvalCommand(this))
+                    .addSubcommand("expression", new CommandTree(new EvalExpressionCommand(this))));
         }
         if (shouldCreate(only, "export")) {
-            commandLine.addSubcommand("export", new CommandLine(new Export(this)));
+            commandLine.addSubcommand("export", new CommandTree(new Export(this)));
         }
         if (shouldCreate(only, "explain")) {
-            commandLine.addSubcommand("explain", new CommandLine(new Explain(this)));
+            commandLine.addSubcommand("explain", new CommandTree(new Explain(this)));
         }
         if (shouldCreate(only, "overview")) {
-            commandLine.addSubcommand("overview", new CommandLine(new Overview(this)));
+            commandLine.addSubcommand("overview", new CommandTree(new Overview(this)));
         }
         if (shouldCreate(only, "ask")) {
-            commandLine.addSubcommand("ask", new CommandLine(new Ask(this)));
+            commandLine.addSubcommand("ask", new CommandTree(new Ask(this)));
         }
         if (shouldCreate(only, "harden")) {
-            commandLine.addSubcommand("harden", new CommandLine(new Harden(this)));
+            commandLine.addSubcommand("harden", new CommandTree(new Harden(this)));
         }
         if (shouldCreate(only, "get")) {
-            commandLine.addSubcommand("get", new CommandLine(new CamelStatus(this))
-                    .addSubcommand("bean", new CommandLine(new CamelBeanDump(this)))
-                    .addSubcommand("blocked", new CommandLine(new ListBlocked(this)))
-                    .addSubcommand("chaos", new CommandLine(new ListChaos(this)))
-                    .addSubcommand("circuit-breaker", new CommandLine(new ListCircuitBreaker(this)))
-                    .addSubcommand("consumer", new CommandLine(new ListConsumer(this)))
-                    .addSubcommand("context", new CommandLine(new CamelContextStatus(this)))
-                    .addSubcommand("count", new CommandLine(new CamelCount(this)))
-                    .addSubcommand("datasource", new CommandLine(new ListDataSource(this)))
-                    .addSubcommand("endpoint", new CommandLine(new ListEndpoint(this)))
-                    .addSubcommand("error", new CommandLine(new ListError(this)))
-                    .addSubcommand("event", new CommandLine(new ListEvent(this)))
-                    .addSubcommand("groovy", new CommandLine(new ListGroovy(this)))
-                    .addSubcommand("group", new CommandLine(new CamelRouteGroupStatus(this)))
-                    .addSubcommand("health", new CommandLine(new ListHealth(this)))
-                    .addSubcommand("history", new CommandLine(new CamelHistoryAction(this)))
-                    .addSubcommand("inflight", new CommandLine(new ListInflight(this)))
-                    .addSubcommand("internal-task", new CommandLine(new ListInternalTask(this)))
-                    .addSubcommand("kafka", new CommandLine(new ListKafka(this)))
-                    .addSubcommand("metric", new CommandLine(new ListMetric(this)))
-                    .addSubcommand("platform-http", new CommandLine(new ListPlatformHttp(this)))
-                    .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(this)))
-                    .addSubcommand("producer", new CommandLine(new ListProducer(this)))
-                    .addSubcommand("properties", new CommandLine(new ListProperties(this)))
-                    .addSubcommand("rest", new CommandLine(new ListRest(this)))
-                    .addSubcommand("route", new CommandLine(new CamelRouteStatus(this)))
-                    .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(this)))
-                    .addSubcommand("service", new CommandLine(new ListService(this)))
-                    .addSubcommand("source", new CommandLine(new CamelSourceAction(this)))
-                    .addSubcommand("sql-trace", new CommandLine(new ListSqlTrace(this)))
-                    .addSubcommand("startup-recorder", new CommandLine(new CamelStartupRecorderAction(this)))
-                    .addSubcommand("timeline", new CommandLine(new ListTimeline(this)))
-                    .addSubcommand("about", new CommandLine(new ListAbout(this)))
-                    .addSubcommand("transformer", new CommandLine(new ListTransformer(this)))
-                    .addSubcommand("variable", new CommandLine(new ListVariable(this)))
-                    .addSubcommand("vault", new CommandLine(new ListVault(this))));
+            commandLine.addSubcommand("get", new CommandTree(new CamelStatus(this))
+                    .addSubcommand("bean", new CommandTree(new CamelBeanDump(this)))
+                    .addSubcommand("blocked", new CommandTree(new ListBlocked(this)))
+                    .addSubcommand("chaos", new CommandTree(new ListChaos(this)))
+                    .addSubcommand("circuit-breaker", new CommandTree(new ListCircuitBreaker(this)))
+                    .addSubcommand("consumer", new CommandTree(new ListConsumer(this)))
+                    .addSubcommand("context", new CommandTree(new CamelContextStatus(this)))
+                    .addSubcommand("count", new CommandTree(new CamelCount(this)))
+                    .addSubcommand("datasource", new CommandTree(new ListDataSource(this)))
+                    .addSubcommand("endpoint", new CommandTree(new ListEndpoint(this)))
+                    .addSubcommand("error", new CommandTree(new ListError(this)))
+                    .addSubcommand("event", new CommandTree(new ListEvent(this)))
+                    .addSubcommand("groovy", new CommandTree(new ListGroovy(this)))
+                    .addSubcommand("group", new CommandTree(new CamelRouteGroupStatus(this)))
+                    .addSubcommand("health", new CommandTree(new ListHealth(this)))
+                    .addSubcommand("history", new CommandTree(new CamelHistoryAction(this)))
+                    .addSubcommand("inflight", new CommandTree(new ListInflight(this)))
+                    .addSubcommand("internal-task", new CommandTree(new ListInternalTask(this)))
+                    .addSubcommand("kafka", new CommandTree(new ListKafka(this)))
+                    .addSubcommand("metric", new CommandTree(new ListMetric(this)))
+                    .addSubcommand("platform-http", new CommandTree(new ListPlatformHttp(this)))
+                    .addSubcommand("processor", new CommandTree(new CamelProcessorStatus(this)))
+                    .addSubcommand("producer", new CommandTree(new ListProducer(this)))
+                    .addSubcommand("properties", new CommandTree(new ListProperties(this)))
+                    .addSubcommand("rest", new CommandTree(new ListRest(this)))
+                    .addSubcommand("route", new CommandTree(new CamelRouteStatus(this)))
+                    .addSubcommand("route-controller", new CommandTree(new RouteControllerAction(this)))
+                    .addSubcommand("service", new CommandTree(new ListService(this)))
+                    .addSubcommand("source", new CommandTree(new CamelSourceAction(this)))
+                    .addSubcommand("sql-trace", new CommandTree(new ListSqlTrace(this)))
+                    .addSubcommand("startup-recorder", new CommandTree(new CamelStartupRecorderAction(this)))
+                    .addSubcommand("timeline", new CommandTree(new ListTimeline(this)))
+                    .addSubcommand("about", new CommandTree(new ListAbout(this)))
+                    .addSubcommand("transformer", new CommandTree(new ListTransformer(this)))
+                    .addSubcommand("variable", new CommandTree(new ListVariable(this)))
+                    .addSubcommand("vault", new CommandTree(new ListVault(this))));
         }
         if (shouldCreate(only, "hawtio")) {
-            commandLine.addSubcommand("hawtio", new CommandLine(new Hawtio(this)));
+            commandLine.addSubcommand("hawtio", new CommandTree(new Hawtio(this)));
         }
         if (shouldCreate(only, "infra")) {
-            commandLine.addSubcommand("infra", new CommandLine(new InfraCommand(this))
-                    .addSubcommand("get", new CommandLine(new InfraGet(this)))
-                    .addSubcommand("list", new CommandLine(new InfraList(this)))
-                    .addSubcommand("log", new CommandLine(new InfraLog(this)))
-                    .addSubcommand("ps", new CommandLine(new InfraPs(this)))
-                    .addSubcommand("restart", new CommandLine(new InfraRestart(this)))
-                    .addSubcommand("run", new CommandLine(new InfraRun(this)))
-                    .addSubcommand("stop", new CommandLine(new InfraStop(this))));
+            commandLine.addSubcommand("infra", new CommandTree(new InfraCommand(this))
+                    .addSubcommand("get", new CommandTree(new InfraGet(this)))
+                    .addSubcommand("list", new CommandTree(new InfraList(this)))
+                    .addSubcommand("log", new CommandTree(new InfraLog(this)))
+                    .addSubcommand("ps", new CommandTree(new InfraPs(this)))
+                    .addSubcommand("restart", new CommandTree(new InfraRestart(this)))
+                    .addSubcommand("run", new CommandTree(new InfraRun(this)))
+                    .addSubcommand("stop", new CommandTree(new InfraStop(this))));
         }
         if (shouldCreate(only, "init")) {
-            commandLine.addSubcommand("init", new CommandLine(new Init(this)));
+            commandLine.addSubcommand("init", new CommandTree(new Init(this)));
         }
         if (shouldCreate(only, "jolokia")) {
-            commandLine.addSubcommand("jolokia", new CommandLine(new Jolokia(this)));
+            commandLine.addSubcommand("jolokia", new CommandTree(new Jolokia(this)));
         }
         if (shouldCreate(only, "log")) {
-            commandLine.addSubcommand("log", new CommandLine(new CamelLogAction(this)));
+            commandLine.addSubcommand("log", new CommandTree(new CamelLogAction(this)));
         }
         if (shouldCreate(only, "nano")) {
-            commandLine.addSubcommand("nano", new CommandLine(new Nano(this)));
+            commandLine.addSubcommand("nano", new CommandTree(new Nano(this)));
         }
         if (shouldCreate(only, "plugin")) {
-            commandLine.addSubcommand("plugin", new CommandLine(new PluginCommand(this))
-                    .addSubcommand("add", new CommandLine(new PluginAdd(this)))
-                    .addSubcommand("delete", new CommandLine(new PluginDelete(this)))
-                    .addSubcommand("get", new CommandLine(new PluginGet(this)))
-                    .addSubcommand("list", new CommandLine(new PluginList(this))));
+            commandLine.addSubcommand("plugin", new CommandTree(new PluginCommand(this))
+                    .addSubcommand("add", new CommandTree(new PluginAdd(this)))
+                    .addSubcommand("delete", new CommandTree(new PluginDelete(this)))
+                    .addSubcommand("get", new CommandTree(new PluginGet(this)))
+                    .addSubcommand("list", new CommandTree(new PluginList(this))));
         }
         if (shouldCreate(only, "ps")) {
-            commandLine.addSubcommand("ps", new CommandLine(new ListProcess(this)));
+            commandLine.addSubcommand("ps", new CommandTree(new ListProcess(this)));
         }
         if (shouldCreate(only, "restart")) {
-            commandLine.addSubcommand("restart", new CommandLine(new RestartProcess(this)));
+            commandLine.addSubcommand("restart", new CommandTree(new RestartProcess(this)));
         }
         if (shouldCreate(only, "run")) {
-            commandLine.addSubcommand("run", new CommandLine(new Run(this)));
+            commandLine.addSubcommand("run", new CommandTree(new Run(this)));
         }
         if (shouldCreate(only, "sbom")) {
-            commandLine.addSubcommand("sbom", new CommandLine(new SBOMGenerator(this)));
+            commandLine.addSubcommand("sbom", new CommandTree(new SBOMGenerator(this)));
         }
         if (shouldCreate(only, "script")) {
-            commandLine.addSubcommand("script", new CommandLine(new Script(this)));
+            commandLine.addSubcommand("script", new CommandTree(new Script(this)));
         }
         if (shouldCreate(only, "semantic")) {
-            commandLine.addSubcommand("semantic", new CommandLine(new CamelSemantic(this))
-                    .addSubcommand("get", new CommandLine(new SemanticGet(this)))
-                    .addSubcommand("eval", new CommandLine(new SemanticEvaluate(this)))
-                    .addSubcommand("audit", new CommandLine(new SemanticAudit(this)))
-                    .addSubcommand("monitoring", new CommandLine(new SemanticMonitoring(this))));
+            commandLine.addSubcommand("semantic", new CommandTree(new CamelSemantic(this))
+                    .addSubcommand("get", new CommandTree(new SemanticGet(this)))
+                    .addSubcommand("eval", new CommandTree(new SemanticEvaluate(this)))
+                    .addSubcommand("audit", new CommandTree(new SemanticAudit(this)))
+                    .addSubcommand("monitoring", new CommandTree(new SemanticMonitoring(this))));
         }
         if (shouldCreate(only, "shell")) {
-            commandLine.addSubcommand("shell", new CommandLine(new Shell(this)));
+            commandLine.addSubcommand("shell", new CommandTree(new Shell(this)));
         }
         if (shouldCreate(only, "stop")) {
-            commandLine.addSubcommand("stop", new CommandLine(new StopProcess(this)));
+            commandLine.addSubcommand("stop", new CommandTree(new StopProcess(this)));
         }
         if (shouldCreate(only, "top")) {
-            commandLine.addSubcommand("top", new CommandLine(new CamelTop(this))
-                    .addSubcommand("context", new CommandLine(new CamelContextTop(this)))
-                    .addSubcommand("group", new CommandLine(new CamelRouteGroupTop(this)))
-                    .addSubcommand("processor", new CommandLine(new CamelProcessorTop(this)))
-                    .addSubcommand("route", new CommandLine(new CamelRouteTop(this)))
-                    .addSubcommand("source", new CommandLine(new CamelSourceTop(this))));
+            commandLine.addSubcommand("top", new CommandTree(new CamelTop(this))
+                    .addSubcommand("context", new CommandTree(new CamelContextTop(this)))
+                    .addSubcommand("group", new CommandTree(new CamelRouteGroupTop(this)))
+                    .addSubcommand("processor", new CommandTree(new CamelProcessorTop(this)))
+                    .addSubcommand("route", new CommandTree(new CamelRouteTop(this)))
+                    .addSubcommand("source", new CommandTree(new CamelSourceTop(this))));
         }
         if (shouldCreate(only, "trace")) {
-            commandLine.addSubcommand("trace", new CommandLine(new CamelTraceAction(this)));
+            commandLine.addSubcommand("trace", new CommandTree(new CamelTraceAction(this)));
         }
         if (shouldCreate(only, "transform")) {
-            commandLine.addSubcommand("transform", new CommandLine(new TransformCommand(this))
-                    .addSubcommand("dataweave", new CommandLine(new TransformDataWeave(this)))
-                    .addSubcommand("message", new CommandLine(new TransformMessageAction(this)))
-                    .addSubcommand("route", new CommandLine(new TransformRoute(this))));
+            commandLine.addSubcommand("transform", new CommandTree(new TransformCommand(this))
+                    .addSubcommand("dataweave", new CommandTree(new TransformDataWeave(this)))
+                    .addSubcommand("message", new CommandTree(new TransformMessageAction(this)))
+                    .addSubcommand("route", new CommandTree(new TransformRoute(this))));
         }
         if (shouldCreate(only, "update")) {
-            commandLine.addSubcommand("update", new CommandLine(new UpdateCommand(this))
-                    .addSubcommand("list", new CommandLine(new UpdateList(this)))
-                    .addSubcommand("run", new CommandLine(new UpdateRun(this))));
+            commandLine.addSubcommand("update", new CommandTree(new UpdateCommand(this))
+                    .addSubcommand("list", new CommandTree(new UpdateList(this)))
+                    .addSubcommand("run", new CommandTree(new UpdateRun(this))));
         }
         if (shouldCreate(only, "version")) {
-            commandLine.addSubcommand("version", new CommandLine(new VersionCommand(this))
-                    .addSubcommand("get", new CommandLine(new VersionGet(this)))
-                    .addSubcommand("list", new CommandLine(new VersionList(this)))
-                    .addSubcommand("set", new CommandLine(new VersionSet(this))));
+            commandLine.addSubcommand("version", new CommandTree(new VersionCommand(this))
+                    .addSubcommand("get", new CommandTree(new VersionGet(this)))
+                    .addSubcommand("list", new CommandTree(new VersionList(this)))
+                    .addSubcommand("set", new CommandTree(new VersionSet(this))));
         }
         if (shouldCreate(only, "wrapper")) {
-            commandLine.addSubcommand("wrapper", new CommandLine(new WrapperCommand(this)));
+            commandLine.addSubcommand("wrapper", new CommandTree(new WrapperCommand(this)));
         }
-        commandLine.setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
-
-        commandLine.getHelpSectionMap().put(
-                CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST,
-                new GroupedCommandHelpRenderer());
+        GroupedCommandHelpRenderer.apply(commandLine);
         return commandLine;
     }
 
@@ -489,14 +481,13 @@ public class CamelJBangMain implements Callable<Integer> {
      * has loaded. A command that runs on it starts from its defaults, not from what a run before left in its fields:
      * {@link CliRunner} runs each command on a new command line.
      */
-    public CommandLine newCommandLine() {
-        CommandLine answer = createCommandLine(null);
+    public CommandTree newCommandLine() {
+        CommandTree answer = createCommandLine(null);
         postAddCommands(answer, new String[0]);
         for (Plugin plugin : plugins) {
             plugin.customize(answer, this);
         }
         withErrorHandling(answer);
-        answer.getCommandSpec().versionProvider(() -> new String[] { new DefaultCamelCatalog().getCatalogVersion() });
         CommandLineHelper.augmentWithUserConfiguration(answer);
         return answer;
     }
@@ -518,31 +509,57 @@ public class CamelJBangMain implements Callable<Integer> {
      * @param  commandLine the command line
      * @return             the same command line
      */
-    public CommandLine withErrorHandling(CommandLine commandLine) {
-        CliExecutionExceptionHandler handler = new CliExecutionExceptionHandler(this);
-        return commandLine.setExecutionExceptionHandler(handler)
-                .setExitCodeExceptionMapper(handler)
-                .setParameterExceptionHandler(new MissingPluginParameterExceptionHandler(this));
+    public CommandTree withErrorHandling(CommandTree commandLine) {
+        // the commands handle their exceptions (CamelCommand), and execute(String...) the errors of the parser
+        return commandLine;
+    }
+
+    /**
+     * Runs the command line with the error handling of the CLI.
+     *
+     * @param  commandLine the commands
+     * @param  args        the arguments
+     * @return             the exit code
+     */
+    public int run(CommandTree commandLine, String... args) {
+        try {
+            return commandLine.execute(args).getResultValue();
+        } catch (CommandLineParserException | OptionValidatorException e) {
+            return new MissingPluginParameterExceptionHandler(this).handleParseException(e, args, commandLine);
+        } catch (Exception | Error e) {
+            // a command handles its own exceptions, so this is aesh, or an error (such as a class missing at runtime)
+            return new CliExecutionExceptionHandler(this).handle(e, null);
+        }
+    }
+
+    /**
+     * Whether the command only parses its command line, and does not run (for the tests of the parsing).
+     *
+     * @param  command the command, with the values of the command line in its fields
+     * @return         {@code true} to not run it
+     */
+    public boolean parseOnly(CamelCommand command) {
+        return false;
     }
 
     /**
      * Called after default commands has been added
      */
-    public void postAddCommands(CommandLine commandLine, String[] args) {
+    public void postAddCommands(CommandTree commandLine, String[] args) {
         // noop
     }
 
     /**
      * Called just before the command line is executed
      */
-    public void preExecute(CommandLine commandLine, String[] args) {
+    public void preExecute(CommandTree commandLine, String[] args) {
         // noop
     }
 
     /**
      * Called just after the command line is executed
      */
-    public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+    public void postExecute(CommandTree commandLine, String[] args, int exitCode) {
         // noop
     }
 
@@ -555,9 +572,13 @@ public class CamelJBangMain implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception {
-        commandLine.execute("--help");
-        return 0;
+    public CommandResult execute(CommandInvocation invocation) {
+        if (versionRequested) {
+            out.println(new DefaultCamelCatalog().getCatalogVersion());
+        } else {
+            out.println(invocation.getHelpInfo());
+        }
+        return CommandResult.SUCCESS;
     }
 
     // camel and camel --help, which list all commands
@@ -658,7 +679,7 @@ public class CamelJBangMain implements Callable<Integer> {
         return this;
     }
 
-    public static CommandLine getCommandLine() {
+    public static CommandTree getCommandLine() {
         return commandLine;
     }
 }

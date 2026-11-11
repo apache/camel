@@ -18,20 +18,19 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
-import picocli.CommandLine.Command;
 
-@Command(name = "export",
-         description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel export hello.java",
-                 "  camel export --runtime=spring-boot hello.java",
-                 "  camel export --runtime=quarkus *",
-                 "  camel export --gav=com.example:myapp:1.0 hello.java",
-                 "  camel export --dry-run hello.java" })
+@CommandDefinition(name = "export", description = "Export to other runtimes (Camel Main, Spring Boot, or Quarkus)",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel export hello.java",
+                           "  camel export --runtime=spring-boot hello.java",
+                           "  camel export --runtime=quarkus *",
+                           "  camel export --gav=com.example:myapp:1.0 hello.java",
+                           "  camel export --dry-run hello.java" })
 public class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {

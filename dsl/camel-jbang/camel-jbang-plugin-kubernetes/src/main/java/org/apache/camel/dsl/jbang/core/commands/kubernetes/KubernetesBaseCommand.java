@@ -33,13 +33,13 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.PodResource;
 import io.fabric8.kubernetes.client.dsl.Resource;
+import org.aesh.command.option.Option;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.SourceScheme;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import picocli.CommandLine;
 
 /**
  * Base command supports Kubernetes client related options such as namespace or custom kube config option. Automatically
@@ -47,15 +47,13 @@ import picocli.CommandLine;
  */
 public abstract class KubernetesBaseCommand extends CamelCommand {
 
-    @CommandLine.Option(names = { "--kube-config" },
-                        description = "Path to the kube config file to initialize Kubernetes client")
+    @Option(name = "kube-config", description = "Path to the kube config file to initialize Kubernetes client")
     String kubeConfig;
 
-    @CommandLine.Option(names = { "--namespace", "-n" }, description = "Namespace to use for all operations")
+    @Option(name = "namespace", shortName = 'n', description = "Namespace to use for all operations")
     String namespace;
 
-    @CommandLine.Option(names = { "--name" },
-                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    @Option(name = "name", description = "The integration name. Use this when the name should not get derived otherwise.")
     String name;
 
     List<Supplier<String>> projectNameSuppliers = new ArrayList<>();

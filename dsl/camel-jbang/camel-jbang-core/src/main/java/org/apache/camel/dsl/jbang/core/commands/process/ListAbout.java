@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -31,21 +33,20 @@ import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "about",
-         description = "Get what an integration does and what has happened: its purpose, what comes in, its routes, what goes out, and the last minutes",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nThe purpose is the comment at the top of the main source file, else the descriptions of the routes.",
-                 "The last minutes come from the timeline the integration records (the timeline dev console, on in profile dev).",
-                 "%nExamples:",
-                 "  camel get about",
-                 "  camel get about myapp --json" })
+@CommandDefinition(name = "about",
+                   description = "Get what an integration does and what has happened: its purpose, what comes in, its routes, what goes out, and the last minutes",
+                   generateHelp = true,
+                   footer = {
+                           "The purpose is the comment at the top of the main source file, else the descriptions of the routes.",
+                           "The last minutes come from the timeline the integration records (the timeline dev console, on in profile dev).",
+                           "",
+                           "Examples:",
+                           "  camel get about",
+                           "  camel get about myapp --json" })
 public class ListAbout extends ProcessWatchCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
     private CamelCatalog catalog;

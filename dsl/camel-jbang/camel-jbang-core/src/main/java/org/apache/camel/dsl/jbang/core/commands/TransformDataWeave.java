@@ -23,34 +23,29 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.component.dataweave.DataWeaveConversionException;
 import org.apache.camel.component.dataweave.DataWeaveConverter;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "dataweave",
-         description = "Convert DataWeave scripts to DataSonnet format",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel transform dataweave --input=script.dwl --output=script.ds" })
+@CommandDefinition(name = "dataweave", description = "Convert DataWeave scripts to DataSonnet format", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel transform dataweave --input=script.dwl --output=script.ds" })
 public class TransformDataWeave extends CamelCommand {
 
-    @CommandLine.Option(names = { "--input", "-i" },
-                        description = "Input .dwl file or directory containing .dwl files")
+    @Option(name = "input", shortName = 'i', description = "Input .dwl file or directory containing .dwl files")
     private String input;
 
-    @CommandLine.Option(names = { "--output", "-o" },
-                        description = "Output .ds file or directory (defaults to stdout)")
+    @Option(name = "output", shortName = 'o', description = "Output .ds file or directory (defaults to stdout)")
     private String output;
 
-    @CommandLine.Option(names = { "--expression", "-e" },
-                        description = "Inline DataWeave expression to convert")
+    @Option(name = "expression", shortName = 'e', description = "Inline DataWeave expression to convert")
     private String expression;
 
-    @CommandLine.Option(names = { "--include-comments" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Include conversion notes as comments in output")
+    @Option(name = "include-comments", hasValue = false, description = "Include conversion notes as comments in output",
+            defaultValue = "true")
     private boolean includeComments = true;
 
     public TransformDataWeave(CamelJBangMain main) {

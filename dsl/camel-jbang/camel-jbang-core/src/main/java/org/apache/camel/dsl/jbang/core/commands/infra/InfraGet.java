@@ -19,21 +19,21 @@ package org.apache.camel.dsl.jbang.core.commands.infra;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "Displays running service(s) information", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel infra get kafka",
-                             "  camel infra get kafka --json" })
+@CommandDefinition(name = "get", description = "Displays running service(s) information", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel infra get kafka",
+                           "  camel infra get kafka --json" })
 public class InfraGet extends InfraBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
+    @Argument(description = "Name or pid of running service(s)")
     String name = "*";
 
     public InfraGet(CamelJBangMain main) {

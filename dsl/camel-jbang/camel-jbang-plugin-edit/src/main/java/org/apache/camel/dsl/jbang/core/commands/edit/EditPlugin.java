@@ -18,15 +18,15 @@ package org.apache.camel.dsl.jbang.core.commands.edit;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-edit", firstVersion = "4.12.0")
 public class EditPlugin implements Plugin {
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("edit", new EditCommand(main));
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        commandLine.addSubcommand("edit", new CommandTree(new EditCommand(main)));
     }
 
 }

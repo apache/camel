@@ -18,10 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
+import org.apache.camel.dsl.jbang.core.common.OptionalValueParser;
+import org.apache.camel.dsl.jbang.core.common.StringConverter;
 import org.apache.camel.util.TimeUtils;
-import picocli.CommandLine;
 
 /**
  * The <tt>--background-wait</tt> option of camel run: how long to wait for an integration that runs in the background
@@ -42,7 +42,7 @@ final class BackgroundWait {
         try {
             parse(text);
             return true;
-        } catch (CommandLine.TypeConversionException e) {
+        } catch (IllegalArgumentException e) {
             return false;
         }
     }
@@ -65,7 +65,7 @@ final class BackgroundWait {
         } catch (RuntimeException e) {
             // not a duration
         }
-        throw new CommandLine.TypeConversionException(
+        throw new IllegalArgumentException(
                 "'" + text + "' is not a time to wait: use true, false, millis or a duration such as 2m");
     }
 
@@ -90,7 +90,14 @@ final class BackgroundWait {
         return answer;
     }
 
-    static class Converter implements CommandLine.ITypeConverter<Long> {
+    public static class Parser extends OptionalValueParser {
+        @Override
+        protected boolean isValue(String word) {
+            return BackgroundWait.isValue(word);
+        }
+    }
+
+    public static class Converter extends StringConverter<Long> {
         @Override
         public Long convert(String value) {
             return parse(value);
@@ -101,15 +108,4 @@ final class BackgroundWait {
      * Takes the next argument as the value only when it is one, so <tt>--background-wait hello.yaml</tt> runs
      * hello.yaml, as it did when the option was a boolean.
      */
-    static class Consumer implements CommandLine.IParameterConsumer {
-        @Override
-        public void consumeParameters(
-                Stack<String> args, CommandLine.Model.ArgSpec argSpec, CommandLine.Model.CommandSpec commandSpec) {
-            String value = "true";
-            if (!args.isEmpty() && isValue(args.peek())) {
-                value = args.pop();
-            }
-            argSpec.setValue(parse(value));
-        }
-    }
 }

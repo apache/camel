@@ -16,20 +16,19 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "delete",
-                     description = "Removes a plugin", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel plugin delete my-cmd" })
+@CommandDefinition(name = "delete", description = "Removes a plugin", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel plugin delete my-cmd" })
 public class PluginDelete extends PluginBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel plugin to remove",
-                            paramLabel = "<plugin>")
+    @Argument(required = true, description = "The Camel plugin to remove", paramLabel = "<plugin>")
     String name;
 
     public PluginDelete(CamelJBangMain main) {

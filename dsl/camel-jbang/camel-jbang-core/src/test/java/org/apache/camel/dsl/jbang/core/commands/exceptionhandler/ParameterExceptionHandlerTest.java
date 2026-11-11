@@ -30,15 +30,17 @@ class ParameterExceptionHandlerTest {
         CamelJBangMain camelJBangMainNotExiting = createCamelJBangMain();
         CamelJBangMain.run(camelJBangMainNotExiting, "firstInvalid");
 
+        // aesh: the error with the commands there are (or "did you mean" for a close one), the usage, then the hints
         String[] lines = err.capturedLines();
-        Assertions.assertEquals(5, lines.length, "5 lines for the error is expected but received " + lines.length);
-        Assertions.assertEquals("Unmatched argument at index 0: 'firstInvalid'", lines[0],
-                "First line mentioning unmatched argument");
-        Assertions.assertEquals("Did you mean: camel eval or camel stop or camel infra?", lines[1],
-                "Second line with suggestion in case it is a typo");
+        Assertions.assertTrue(lines.length >= 4, "At least 4 lines for the error is expected but received " + lines.length);
+        Assertions.assertTrue(lines[0].startsWith("ERROR: 'camel firstInvalid' is not a subcommand of 'camel'."),
+                "First line mentioning the unknown command");
+        Assertions.assertTrue(lines[1].startsWith("Usage: camel "), "Second line with the usage");
+        Assertions.assertEquals("Try 'camel --help' for more information.", lines[lines.length - 2],
+                "Second to last line with the help");
         Assertions.assertEquals(
                 "Maybe a specific Camel CLI plugin must be installed? (Try 'camel plugin --help' for more information)",
-                lines[4], "Last line suggesting new plugin");
+                lines[lines.length - 1], "Last line suggesting new plugin");
     }
 
     @Test
@@ -49,10 +51,9 @@ class ParameterExceptionHandlerTest {
 
         String[] lines = err.capturedLines();
         Assertions.assertTrue(lines.length >= 3, "At least 3 lines for the error is expected but received " + lines.length);
-        Assertions.assertEquals("Unmatched argument at index 1: 'secondInvalid'", lines[0],
-                "First line mentioning unmatched argument");
-        Assertions.assertEquals("Usage: camel plugin [-h] [COMMAND]", lines[lines.length - 2],
-                "Second to last line with usage");
+        Assertions.assertTrue(lines[0].startsWith("ERROR: 'plugin secondInvalid' is not a subcommand of 'plugin'."),
+                "First line mentioning the unknown sub-command");
+        Assertions.assertTrue(lines[1].startsWith("Usage: camel plugin "), "Second line with the usage");
         Assertions.assertEquals("Try 'camel plugin --help' for more information.", lines[lines.length - 1],
                 "Last line with what to try to get help");
     }

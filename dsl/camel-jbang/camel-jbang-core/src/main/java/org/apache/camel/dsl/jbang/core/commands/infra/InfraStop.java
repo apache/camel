@@ -20,25 +20,25 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "stop",
-                     description = "Shuts down running external services", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel infra stop kafka" })
+@CommandDefinition(name = "stop", description = "Shuts down running external services", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel infra stop kafka" })
 public class InfraStop extends InfraBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running service(s)", arity = "0..1")
+    @Argument(description = "Name or pid of running service(s)")
     String name = "*";
 
-    @CommandLine.Option(names = { "--kill" },
-                        description = "To force killing the process (SIGKILL)")
+    @Option(name = "kill", hasValue = false, description = "To force killing the process (SIGKILL)")
     boolean kill;
 
     public InfraStop(CamelJBangMain main) {

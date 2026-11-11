@@ -19,27 +19,27 @@ package org.apache.camel.dsl.jbang.core.commands.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays user configuration", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel config list",
-                             "  camel config list --global",
-                             "  camel config list --json" })
+@CommandDefinition(name = "list", description = "Displays user configuration", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel config list",
+                           "  camel config list --global",
+                           "  camel config list --json" })
 public class ConfigList extends CamelCommand {
 
-    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
-                        description = "Use global or local configuration")
+    @Option(name = "global", hasValue = false, description = "Use global or local configuration")
     boolean global = true;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format: one entry per key, with its scope (local or global)")
+    @Option(name = "json", hasValue = false,
+            description = "Output in JSON Format: one entry per key, with its scope (local or global)")
     boolean jsonOutput;
 
     public ConfigList(CamelJBangMain main) {

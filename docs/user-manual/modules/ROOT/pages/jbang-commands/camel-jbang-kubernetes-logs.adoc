@@ -27,7 +27,7 @@ camel kubernetes logs [options]
 | `--name` | The integration name. Use this when the name should not get derived otherwise. |  | String
 | `--namespace,-n` | Namespace to use for all operations |  | String
 | `--tail` | The number of lines from the end of the logs to show. Defaults to -1 to show all the lines. | -1 | int
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

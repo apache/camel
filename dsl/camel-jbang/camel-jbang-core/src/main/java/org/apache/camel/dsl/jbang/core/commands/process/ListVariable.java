@@ -26,7 +26,11 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -34,14 +38,12 @@ import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "variable", description = "List variables of Camel integrations", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get variable",
-                 "  camel get variable --watch" })
+@CommandDefinition(name = "variable", description = "List variables of Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get variable",
+                           "  camel get variable --watch" })
 public class ListVariable extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -49,7 +51,7 @@ public class ListVariable extends ProcessWatchCommand {
             .text("name", r -> r.name)
             .text("key", r -> r.key);
 
-    public static class PidNameKeyCompletionCandidates implements Iterable<String> {
+    public static class PidNameKeyCompletionCandidates extends CompletionCandidates {
 
         public PidNameKeyCompletionCandidates() {
         }
@@ -61,11 +63,11 @@ public class ListVariable extends ProcessWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameKeyCompletionCandidates.class,
-                        description = "Sort by pid, name or key", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or key", defaultValue = "pid",
+            completer = PidNameKeyCompletionCandidates.class)
     String sort;
 
     public ListVariable(CamelJBangMain main) {

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import picocli.CommandLine;
+import org.aesh.command.CommandDefinition;
 
-@CommandLine.Command(name = "eval",
-                     description = "Evaluate Camel expressions and scripts (use transform --help to see sub commands)",
-                     sortOptions = false, showDefaultValues = true)
+@CommandDefinition(name = "eval",
+                   description = "Evaluate Camel expressions and scripts (use transform --help to see sub commands)",
+                   generateHelp = true)
 public class EvalCommand extends CamelCommand {
 
     public EvalCommand(CamelJBangMain main) {

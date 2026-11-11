@@ -38,7 +38,7 @@ camel version list [options]
 | `--to-date` | Filter by release date (exclusive) |  | String
 | `--to-version` | Filter by Camel version (exclusive) |  | String
 | `--vendor` | Vendor of Apache Camel distribution to use when filtering versions |  | String
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

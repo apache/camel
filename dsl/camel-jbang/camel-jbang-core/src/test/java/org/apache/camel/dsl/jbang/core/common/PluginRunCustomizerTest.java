@@ -24,7 +24,6 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.PluginRunCustomizer;
 import org.apache.camel.main.KameletMain;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,7 +50,7 @@ public class PluginRunCustomizerTest {
 
         Plugin plugin = new Plugin() {
             @Override
-            public void customize(CommandLine commandLine, CamelJBangMain main) {
+            public void customize(CommandTree commandLine, CamelJBangMain main) {
                 // no-op
             }
 

@@ -34,7 +34,7 @@ camel update run [options]
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--runtime` | Runtime (camel-main, spring-boot, quarkus) | camel-main | RuntimeType
 | `--upgradeTimeout` | Time to wait, in seconds, before shutting down the upgrade process | 240 | int
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

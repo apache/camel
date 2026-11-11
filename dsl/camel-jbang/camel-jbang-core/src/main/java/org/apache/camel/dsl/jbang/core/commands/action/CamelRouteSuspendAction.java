@@ -16,16 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "suspend-route",
-                     description = "Suspend Camel routes", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd suspend-route --id=myRoute",
-                             "  camel cmd suspend-route myApp --id=myRoute" })
+@CommandDefinition(name = "suspend-route", description = "Suspend Camel routes", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd suspend-route --id=myRoute",
+                           "  camel cmd suspend-route myApp --id=myRoute" })
 public class CamelRouteSuspendAction extends CamelRouteAction {
 
     public CamelRouteSuspendAction(CamelJBangMain main) {

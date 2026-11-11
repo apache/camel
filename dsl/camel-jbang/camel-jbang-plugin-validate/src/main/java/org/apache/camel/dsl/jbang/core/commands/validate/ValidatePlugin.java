@@ -18,19 +18,19 @@ package org.apache.camel.dsl.jbang.core.commands.validate;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-validate", firstVersion = "4.18.0")
 public class ValidatePlugin implements Plugin {
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new CommandLine(new ValidateCommand(main))
-                .addSubcommand("yaml", new CommandLine(new YamlValidateCommand(main)))
-                .addSubcommand("normalize", new CommandLine(new YamlNormalizeCommand(main)))
-                .addSubcommand("properties", new CommandLine(new PropertiesValidateCommand(main)))
-                .addSubcommand("source", new CommandLine(new SourceValidateCommand(main)));
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        var cmd = new CommandTree(new ValidateCommand(main))
+                .addSubcommand("yaml", new CommandTree(new YamlValidateCommand(main)))
+                .addSubcommand("normalize", new CommandTree(new YamlNormalizeCommand(main)))
+                .addSubcommand("properties", new CommandTree(new PropertiesValidateCommand(main)))
+                .addSubcommand("source", new CommandTree(new SourceValidateCommand(main)));
 
         commandLine.addSubcommand("validate", cmd);
     }

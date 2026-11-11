@@ -25,9 +25,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Stack;
 
 import com.networknt.schema.Error;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -37,35 +40,33 @@ import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "yaml", description = "Parse and validate YAML routes")
+@CommandDefinition(name = "yaml", description = "Parse and validate YAML routes", generateHelp = true, sortOptions = true)
 public class YamlValidateCommand extends CamelCommand {
 
     private static final String IGNORE_FILE = "application";
 
-    @CommandLine.Option(names = { "--canonical" }, defaultValue = "false",
-                        description = "Validate against the canonical schema: reports the deprecated compact notation (string shorthands,"
-                                      + " implicit expressions) with the canonical form to write")
+    @Option(name = "canonical", hasValue = false,
+            description = "Validate against the canonical schema: reports the deprecated compact notation (string shorthands,"
+                          + " implicit expressions) with the canonical form to write",
+            defaultValue = "false")
     boolean canonical;
 
-    @CommandLine.Option(names = { "--catalog" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Also check endpoint URIs and simple expressions against the Camel catalog"
-                                      + " (use --catalog=false for the schema only)")
+    @Option(name = "catalog", hasValue = false,
+            description = "Also check endpoint URIs and simple expressions against the Camel catalog"
+                          + " (use --catalog=false for the schema only)",
+            defaultValue = "true")
     boolean catalog = true;
 
-    @CommandLine.Mixin
+    @Mixin
     CatalogVersionMixin catalogVersion;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
-                                      + " camel_validate_source answers")
+    @Option(name = "json", hasValue = false,
+            description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
+                          + " camel_validate_source answers")
     boolean jsonOutput;
 
-    @CommandLine.Parameters(description = { "The Camel YAML source files to parse." },
-                            arity = "1..9",
-                            paramLabel = "<files>",
-                            parameterConsumer = FilesConsumer.class)
+    @Arguments(required = true, description = "The Camel YAML source files to parse.", paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
     public YamlValidateCommand(CamelJBangMain main) {
@@ -185,12 +186,5 @@ public class YamlValidateCommand extends CamelCommand {
             count += list.size();
         }
         return count;
-    }
-
-    static class FilesConsumer extends CamelCommand.ParameterConsumer<YamlValidateCommand> {
-        protected void doConsumeParameters(Stack<String> args, YamlValidateCommand cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
     }
 }

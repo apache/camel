@@ -16,14 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import picocli.CommandLine.Command;
+import org.aesh.command.CommandDefinition;
 
-@Command(name = "dev", description = "Run in dev mode with live reload", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel dev",
-                 "  camel dev hello.yaml",
-                 "  camel dev --port=8080" })
+@CommandDefinition(name = "dev", description = "Run in dev mode with live reload", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel dev",
+                           "  camel dev hello.yaml",
+                           "  camel dev --port=8080" })
 public class Dev extends Run {
 
     public Dev(CamelJBangMain main) {

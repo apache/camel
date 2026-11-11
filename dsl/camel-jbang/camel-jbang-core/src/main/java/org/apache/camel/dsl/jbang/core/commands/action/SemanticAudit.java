@@ -34,6 +34,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.ColumnData;
 import com.github.freva.asciitable.HorizontalAlign;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.SemanticAuditFilters;
@@ -42,88 +45,85 @@ import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.dsl.jbang.core.common.SemanticResultFormatter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "audit", description = "Retrieve retained expert evaluations and related lifecycle records",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel semantic audit my-app --category=evaluation --route-id=support",
-                             "  camel semantic audit my-app --expert=guard --limit=20 --json",
-                             "  camel semantic audit my-app --event-id=<event-id> --json" })
+@CommandDefinition(name = "audit", description = "Retrieve retained expert evaluations and related lifecycle records",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel semantic audit my-app --category=evaluation --route-id=support",
+                           "  camel semantic audit my-app --expert=guard --limit=20 --json",
+                           "  camel semantic audit my-app --event-id=<event-id> --json" })
 public class SemanticAudit extends SemanticActionCommand {
 
-    @CommandLine.Option(names = "--event-id", description = "Retrieve one recorded event instead of a page")
+    @Option(name = "event-id", description = "Retrieve one recorded event instead of a page")
     String eventId;
 
-    @CommandLine.Option(names = "--category",
-                        description = "Filter by record category: evaluation or request")
+    @Option(name = "category", description = "Filter by record category: evaluation or request")
     String category;
 
-    @CommandLine.Option(names = "--expert", description = "Filter by expert bean reference")
+    @Option(name = "expert", description = "Filter by expert bean reference")
     String expert;
 
-    @CommandLine.Option(names = "--route-id", description = "Filter by entry route ID")
+    @Option(name = "route-id", description = "Filter by entry route ID")
     String routeId;
 
-    @CommandLine.Option(names = "--breadcrumb-id", description = "Filter by Camel breadcrumb ID")
+    @Option(name = "breadcrumb-id", description = "Filter by Camel breadcrumb ID")
     String breadcrumbId;
 
-    @CommandLine.Option(names = "--since", description = "Earliest timestamp, inclusive, in ISO-8601 format with a UTC offset")
+    @Option(name = "since", description = "Earliest timestamp, inclusive, in ISO-8601 format with a UTC offset")
     String since;
 
-    @CommandLine.Option(names = "--until", description = "Latest timestamp, exclusive, in ISO-8601 format with a UTC offset")
+    @Option(name = "until", description = "Latest timestamp, exclusive, in ISO-8601 format with a UTC offset")
     String until;
 
-    @CommandLine.Option(names = "--definition", description = "Filter by recorded definition name")
+    @Option(name = "definition", description = "Filter by recorded definition name")
     String definition;
 
-    @CommandLine.Option(names = "--operation", description = "Filter by recorded expert operation")
+    @Option(name = "operation", description = "Filter by recorded expert operation")
     String operation;
 
-    @CommandLine.Option(names = "--result-type", description = "Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION")
+    @Option(name = "result-type", description = "Captured result type: BOOLEAN, CHOICE, SCORE or CLASSIFICATION")
     String resultType;
 
-    @CommandLine.Option(names = "--result-value",
-                        description = "Exact Boolean, Choice or numeric Score value; requires --result-type")
+    @Option(name = "result-value", description = "Exact Boolean, Choice or numeric Score value; requires --result-type")
     String resultValue;
 
-    @CommandLine.Option(names = "--result-label",
-                        description = "Exact Classification member; requires --result-type=CLASSIFICATION")
+    @Option(name = "result-label", description = "Exact Classification member; requires --result-type=CLASSIFICATION")
     String resultLabel;
 
-    @CommandLine.Option(names = "--score-min", description = "Inclusive numeric lower bound; requires --result-type=SCORE")
+    @Option(name = "score-min", description = "Inclusive numeric lower bound; requires --result-type=SCORE")
     String scoreMin;
 
-    @CommandLine.Option(names = "--score-max", description = "Inclusive numeric upper bound; requires --result-type=SCORE")
+    @Option(name = "score-max", description = "Inclusive numeric upper bound; requires --result-type=SCORE")
     String scoreMax;
 
-    @CommandLine.Option(names = "--cursor", description = "Opaque cursor for an older page; retain the original filters")
+    @Option(name = "cursor", description = "Opaque cursor for an older page; retain the original filters")
     String cursor;
 
-    @CommandLine.Option(names = "--limit", defaultValue = "50", description = "Maximum records per page (1-200)")
+    @Option(name = "limit", description = "Maximum records per page (1-200)", defaultValue = "50")
     int limit = 50;
 
-    @CommandLine.Option(names = "--executing-route-id", description = "Filter by executing route ID, when supported")
+    @Option(name = "executing-route-id", description = "Filter by executing route ID, when supported")
     String executingRouteId;
 
-    @CommandLine.Option(names = "--exchange-id", description = "Filter by recorded exchange ID, when supported")
+    @Option(name = "exchange-id", description = "Filter by recorded exchange ID, when supported")
     String exchangeId;
 
-    @CommandLine.Option(names = "--case-event-id", description = "Retrieve a source-local case anchored at this event")
+    @Option(name = "case-event-id", description = "Retrieve a source-local case anchored at this event")
     String caseEventId;
 
-    @CommandLine.Option(names = "--event-ids", split = ",", description = "Export these event IDs; at most 1000")
+    @OptionList(name = "event-ids", valueSeparator = ',', description = "Export these event IDs; at most 1000")
     List<String> eventIds;
 
-    @CommandLine.Option(names = "--max-records", defaultValue = "200", description = "Case/export retrieval budget (1-1000)")
+    @Option(name = "max-records", description = "Case/export retrieval budget (1-1000)", defaultValue = "200")
     int maxRecords = 200;
 
-    @CommandLine.Option(names = "--include-input", description = "Include untrusted captured input in an explicit case/export")
+    @Option(name = "include-input", hasValue = false,
+            description = "Include untrusted captured input in an explicit case/export")
     boolean includeInput;
 
-    @CommandLine.Option(names = "--output",
-                        description = "Write the full JSON response to a new file, including requested captured image data")
+    @Option(name = "output",
+            description = "Write the full JSON response to a new file, including requested captured image data")
     Path output;
 
     public SemanticAudit(CamelJBangMain main) {
@@ -159,7 +159,7 @@ public class SemanticAudit extends SemanticActionCommand {
         SemanticAuditFilters.validateQuery(request);
         if (caseEventId != null || eventIds != null) {
             if (eventId != null || caseEventId != null && eventIds != null || cursor != null
-                    || commandSpec.commandLine().getParseResult().hasMatchedOption("--limit")
+                    || isOptionGiven("--limit")
                     || request.size() > (since == null ? 1 : 2) || maxRecords < 1 || maxRecords > 1000) {
                 throw new IllegalArgumentException(
                         "Case/export selectors cannot be combined with event lookup or page filters");
@@ -175,11 +175,11 @@ public class SemanticAudit extends SemanticActionCommand {
             request.put("includeInput", includeInput);
             return request;
         }
-        if (includeInput || commandSpec.commandLine().getParseResult().hasMatchedOption("--max-records")) {
+        if (includeInput || isOptionGiven("--max-records")) {
             throw new IllegalArgumentException("--include-input and --max-records require an explicit case/export");
         }
         if (eventId != null) {
-            if (request.size() > 1 || commandSpec.commandLine().getParseResult().hasMatchedOption("--limit")) {
+            if (request.size() > 1 || isOptionGiven("--limit")) {
                 throw new IllegalArgumentException("--event-id cannot be combined with filters, --cursor or --limit");
             }
             option(request, "eventId", eventId, "--event-id", 256);

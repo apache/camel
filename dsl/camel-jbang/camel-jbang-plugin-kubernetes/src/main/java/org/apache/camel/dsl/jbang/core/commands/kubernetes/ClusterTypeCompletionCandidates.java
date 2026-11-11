@@ -19,7 +19,9 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class ClusterTypeCompletionCandidates implements Iterable<String> {
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
+
+public class ClusterTypeCompletionCandidates extends CompletionCandidates {
 
     public ClusterTypeCompletionCandidates() {
     }

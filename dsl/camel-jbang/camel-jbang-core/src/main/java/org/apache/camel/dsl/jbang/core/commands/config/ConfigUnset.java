@@ -16,23 +16,23 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.config;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "unset",
-                     description = "Remove user configuration value", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel config unset myKey" })
+@CommandDefinition(name = "unset", description = "Remove user configuration value", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel config unset myKey" })
 public class ConfigUnset extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Configuration key", arity = "1")
+    @Argument(required = true, description = "Configuration key")
     String key;
 
-    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
-                        description = "Use global or local configurations")
+    @Option(name = "global", hasValue = false, description = "Use global or local configurations")
     boolean global = true;
 
     public ConfigUnset(CamelJBangMain main) {

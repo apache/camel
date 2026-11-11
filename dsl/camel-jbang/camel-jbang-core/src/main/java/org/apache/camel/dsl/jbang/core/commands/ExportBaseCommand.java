@@ -25,9 +25,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Stack;
 import java.util.stream.Stream;
 
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
+import org.aesh.command.option.OptionVisibility;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
@@ -45,8 +49,6 @@ import org.apache.camel.dsl.jbang.run.export.ExportContext;
 import org.apache.camel.dsl.jbang.run.export.ExportRequest;
 import org.apache.camel.dsl.jbang.run.export.ProjectExporter;
 import org.apache.camel.tooling.maven.MavenGav;
-import picocli.CommandLine;
-import picocli.CommandLine.Mixin;
 
 import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
 
@@ -55,212 +57,197 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Path exportBaseDir;
     private Printer quietPrinter;
 
-    @CommandLine.Parameters(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
     protected Path[] filePaths; // Defined only for file path completion; the field never used
 
+    @Arguments(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
+               paramLabel = "<files>")
     protected List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
-                        split = ",")
+    @OptionList(name = "dep", aliases = { "dependency" }, valueSeparator = ',', description = "Add additional dependencies")
     protected List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", completer = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class)
     protected RuntimeType runtime;
 
-    @CommandLine.Option(names = { "--name" },
-                        description = "The integration name. Use this when the name should not get derived otherwise.")
+    @Option(name = "name", description = "The integration name. Use this when the name should not get derived otherwise.")
     protected String name;
 
-    @CommandLine.Option(names = { "--port" },
-                        description = "Embeds a local HTTP server on this port")
+    @Option(name = "port", description = "Embeds a local HTTP server on this port")
     int port = -1;
 
-    @CommandLine.Option(names = { "--management-port" },
-                        description = "To use a dedicated port for HTTP management")
+    @Option(name = "management-port", description = "To use a dedicated port for HTTP management")
     int managementPort = -1;
 
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
+    @Option(name = "gav", description = "The Maven group:artifact:version")
     protected String gav;
 
-    @CommandLine.Option(names = { "--parent-pom" }, description = "The Maven parent POM group:artifact:version")
+    @Option(name = "parent-pom", description = "The Maven parent POM group:artifact:version")
     protected String parentPom;
 
-    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @OptionList(name = "exclude", valueSeparator = OptionList.NO_SEPARATOR, description = "Exclude files by name or pattern")
     protected List<String> excludes = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--maven-settings" },
-                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
-                                      + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    @Option(name = "maven-settings",
+            description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
+                          + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     protected String mavenSettings;
 
-    @CommandLine.Option(names = { "--maven-settings-security" },
-                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
+    @Option(name = "maven-settings-security",
+            description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     protected String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether downloading JARs from Maven Central repository is enabled")
+    @Option(name = "maven-central-enabled", hasValue = false,
+            description = "Whether downloading JARs from Maven Central repository is enabled", defaultValue = "true")
     protected boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true", arity = "0..1",
-                        fallbackValue = "true",
-                        description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    @Option(name = "maven-apache-snapshot-enabled", hasValue = false,
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled", defaultValue = "true")
     protected boolean mavenApacheSnapshotEnabled = true;
 
-    @CommandLine.Option(names = { "--main-classname" },
-                        description = "The class name of the Camel Main application class",
-                        defaultValue = "CamelApplication")
+    @Option(name = "main-classname", description = "The class name of the Camel Main application class",
+            defaultValue = "CamelApplication")
     protected String mainClassname = "CamelApplication";
 
-    @CommandLine.Option(names = {
-            "--java-version",
-            "--java" }, completionCandidates = JavaVersionCompletionCandidates.class,
-                        description = "Java version (${COMPLETION-CANDIDATES})", defaultValue = "21")
+    @Option(name = "java-version", aliases = { "java" }, description = "Java version (${COMPLETION-CANDIDATES})",
+            defaultValue = "21", completer = JavaVersionCompletionCandidates.class)
     protected String javaVersion = "21";
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To export using a different Camel version than the default version.")
+    @Option(name = "camel-version", description = "To export using a different Camel version than the default version.")
     protected String camelVersion;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     protected String kameletsVersion;
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
-                        completionCandidates = ProfileCompletionCandidates.class,
-                        description = "Profile to export (${COMPLETION-CANDIDATES}).")
+    @Option(name = "profile", description = "Profile to export (${COMPLETION-CANDIDATES}).", inherited = true,
+            completer = ProfileCompletionCandidates.class)
     protected String profile;
 
-    @CommandLine.Option(names = { "--local-kamelet-dir" },
-                        description = "Local directory for loading Kamelets (takes precedence)")
+    @Option(name = "local-kamelet-dir", description = "Local directory for loading Kamelets (takes precedence)")
     protected String localKameletDir;
 
-    @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = RuntimeType.SPRING_BOOT_VERSION)
+    @Option(name = "spring-boot-version", description = "Spring Boot version", defaultValue = RuntimeType.SPRING_BOOT_VERSION)
     protected String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
-    @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
+    @Option(name = "camel-spring-boot-version", description = "Camel version to use with Spring Boot")
     protected String camelSpringBootVersion;
 
-    @CommandLine.Mixin
+    @Mixin
     protected QuarkusPlatformMixin quarkusPlatform;
 
     @Deprecated
-    @CommandLine.Option(names = { "--quarkus-package-type" },
-                        description = "Deprecated: Quarkus always uses fast-jar (layered) packaging",
-                        defaultValue = "fast-jar",
-                        hidden = true)
+    @Option(name = "quarkus-package-type", description = "Deprecated: Quarkus always uses fast-jar (layered) packaging",
+            defaultValue = "fast-jar", visibility = OptionVisibility.HIDDEN)
     protected String quarkusPackageType = "fast-jar";
 
-    @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Include Maven Wrapper files in exported project")
+    @Option(name = "maven-wrapper", hasValue = false, description = "Include Maven Wrapper files in exported project",
+            defaultValue = "true")
     protected boolean mavenWrapper = true;
 
-    @CommandLine.Option(names = { "--camel-wrapper" }, defaultValue = "false",
-                        description = "Include Camel Wrapper scripts in exported project for version pinning")
+    @Option(name = "camel-wrapper", hasValue = false,
+            description = "Include Camel Wrapper scripts in exported project for version pinning", defaultValue = "false")
     protected boolean camelWrapper;
 
-    @CommandLine.Option(names = { "--docker" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Include Docker files in exported project")
+    @Option(name = "docker", hasValue = false, description = "Include Docker files in exported project", defaultValue = "true")
     protected boolean docker = true;
 
-    @CommandLine.Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
+    @Option(name = "open-api", description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     protected String openapi;
 
-    @CommandLine.Option(names = { "--observe" }, defaultValue = "false",
-                        description = "Enable observability services")
+    @Option(name = "observe", hasValue = false, description = "Enable observability services", defaultValue = "false")
     protected boolean observe;
 
-    @CommandLine.Option(names = { "--console" }, defaultValue = "false",
-                        description = "Developer console on the local HTTP server (port 8080 by default): /q/dev with Camel Main,"
-                                      + " /actuator/camel with Spring Boot, and /q/camel/dev-console with Quarkus."
-                                      + " The exported project only has the console with the dev profile.")
+    @Option(name = "console", hasValue = false,
+            description = "Developer console on the local HTTP server (port 8080 by default): /q/dev with Camel Main,"
+                          + " /actuator/camel with Spring Boot, and /q/camel/dev-console with Quarkus."
+                          + " The exported project only has the console with the dev profile.",
+            defaultValue = "false")
     protected boolean console;
 
-    @CommandLine.Option(names = {
-            "--dir",
-            "--directory" }, description = "Directory where the project will be exported", defaultValue = ".")
+    @Option(name = "dir", aliases = { "directory" }, description = "Directory where the project will be exported",
+            defaultValue = ".")
     protected String exportDir;
 
-    @CommandLine.Option(names = { "--clean-dir" }, defaultValue = "false",
-                        description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)")
+    @Option(name = "clean-dir", hasValue = false,
+            description = "If exporting to current directory (default) then all existing files are preserved. Enabling this option will force cleaning current directory including all sub dirs (use this with care)",
+            defaultValue = "false")
     protected boolean cleanExportDir;
 
-    @CommandLine.Option(names = { "--yes", "-y" }, defaultValue = "false",
-                        description = "Automatically answer yes to confirmation prompts (e.g. when using --clean-dir)")
+    @Option(name = "yes", shortName = 'y', hasValue = false,
+            description = "Automatically answer yes to confirmation prompts (e.g. when using --clean-dir)",
+            defaultValue = "false")
     protected boolean yes;
 
-    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info",
-                        completionCandidates = LoggingLevelCompletionCandidates.class,
-                        description = "Logging level (${COMPLETION-CANDIDATES})")
+    @Option(name = "logging-level", description = "Logging level (${COMPLETION-CANDIDATES})", defaultValue = "info",
+            completer = LoggingLevelCompletionCandidates.class)
     protected String loggingLevel = "info";
 
-    @CommandLine.Option(names = { "--package-name" },
-                        description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
-                                      + "Use false to turn off and not include package name in the Java source files.")
+    @Option(name = "package-name",
+            description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
+                          + "Use false to turn off and not include package name in the Java source files.")
     protected String packageName;
 
-    @CommandLine.Mixin
+    @Mixin
     protected MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
+    @Option(name = "package-scan-jars", hasValue = false,
+            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI",
+            defaultValue = "false")
     protected boolean packageScanJars;
 
-    @CommandLine.Option(names = { "--resource-dir", "--resource-dirs" },
-                        description = "Additional resource directories to include in src/main/resources (recursive, preserving structure)",
-                        split = ",")
+    @OptionList(name = "resource-dir", aliases = { "resource-dirs" }, valueSeparator = ',',
+                description = "Additional resource directories to include in src/main/resources (recursive, preserving structure)")
     protected List<String> resourceDirs = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--build-property" },
-                        description = "Maven build properties, ex. --build-property=prop1=foo")
+    @OptionList(name = "build-property", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Maven build properties, ex. --build-property=prop1=foo")
     protected List<String> buildProperties = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Camel application properties, ex. --property=prop1=foo")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Camel application properties, ex. --property=prop1=foo")
     protected String[] applicationProperties;
 
-    @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory)")
+    @Option(name = "logging", hasValue = false,
+            description = "Can be used to turn on logging to console (logs by default to file in <user home>/.camel directory)",
+            defaultValue = "false")
     protected boolean logging;
 
-    @CommandLine.Option(names = { "--quiet" }, defaultValue = "false",
-                        description = "Will be quiet, only print when error occurs")
+    @Option(name = "quiet", hasValue = false, description = "Will be quiet, only print when error occurs",
+            defaultValue = "false")
     protected boolean quiet;
 
-    @CommandLine.Option(names = { "--verbose" }, defaultValue = "false",
-                        description = "Verbose output of startup activity (dependency resolution and downloading")
+    @Option(name = "verbose", hasValue = false,
+            description = "Verbose output of startup activity (dependency resolution and downloading", defaultValue = "false")
     protected boolean verbose;
 
-    @CommandLine.Option(names = { "--dry-run" }, defaultValue = "false",
-                        description = "Preview export without writing files")
+    @Option(name = "dry-run", hasValue = false, description = "Preview export without writing files", defaultValue = "false")
     protected boolean dryRun;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
-                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    @Option(name = "ignore-loading-error", hasValue = false,
+            description = "Whether to ignore route loading and compilation errors (use this with care!)",
+            defaultValue = "false")
     protected boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--lazy-bean" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to use lazy bean initialization (can help with complex classloading issues")
+    @Option(name = "lazy-bean", hasValue = false,
+            description = "Whether to use lazy bean initialization (can help with complex classloading issues",
+            defaultValue = "true")
     protected boolean lazyBean = true;
 
-    @CommandLine.Option(names = { "--skip-plugins" }, defaultValue = "false",
-                        description = "Skip plugins during export")
+    @Option(name = "skip-plugins", hasValue = false, description = "Skip plugins during export", defaultValue = "false")
     protected boolean skipPlugins;
 
-    @CommandLine.Option(names = { "--groovy-pre-compiled" }, defaultValue = "false",
-                        description = "Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main)")
+    @Option(name = "groovy-pre-compiled", hasValue = false,
+            description = "Whether to include pre-compiled Groovy classes in the export (only supported with runtime=camel-main)",
+            defaultValue = "false")
     protected boolean groovyPrecompiled;
 
-    @CommandLine.Option(names = { "--hawtio" }, defaultValue = "false",
-                        description = "Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus)")
+    @Option(name = "hawtio", hasValue = false,
+            description = "Whether to include Hawtio web console (only available for exporting to Spring Boot or Quarkus)",
+            defaultValue = "false")
     protected boolean hawtio;
 
-    @CommandLine.Option(names = { "--hawtio-version" },
-                        description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
+    @Option(name = "hawtio-version", description = "Version of the Hawtio web console",
+            defaultValue = HawtioVersion.HAWTIO_VERSION)
     protected String hawtioVersion;
 
     protected ExportBaseCommand(CamelJBangMain main) {
@@ -519,13 +506,5 @@ public abstract class ExportBaseCommand extends CamelCommand {
         }
 
         return super.printer();
-    }
-
-    static class FilesConsumer extends ParameterConsumer<Export> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, Export cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
     }
 }

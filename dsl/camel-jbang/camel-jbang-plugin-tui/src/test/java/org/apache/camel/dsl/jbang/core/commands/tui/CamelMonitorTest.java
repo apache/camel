@@ -25,10 +25,10 @@ import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,7 +52,7 @@ class CamelMonitorTest {
         CamelMonitor monitor = new CamelMonitor(new CamelJBangMain(), Thread.currentThread().getContextClassLoader());
         monitor.theme = "sepia";
 
-        CommandLine.ParameterException ex = assertThrows(CommandLine.ParameterException.class, monitor::doCall,
+        CliException ex = assertThrows(CliException.class, monitor::doCall,
                 "an invalid --theme value must be rejected before any TUI/terminal setup runs");
         assertTrue(ex.getMessage().contains("sepia"), "the rejected value should be echoed back in the error message");
     }

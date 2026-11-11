@@ -18,26 +18,26 @@ package org.apache.camel.dsl.jbang.core.commands.config;
 
 import java.io.IOException;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.util.StringHelper;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "set",
-                     description = "Set user configuration value", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel config set camel-version=4.10.0",
-                             "  camel config set runtime=spring-boot" })
+@CommandDefinition(name = "set", description = "Set user configuration value", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel config set camel-version=4.10.0",
+                           "  camel config set runtime=spring-boot" })
 public class ConfigSet extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Configuration parameter (ex. key=value)", arity = "1")
+    @Argument(required = true, description = "Configuration parameter (ex. key=value)")
     String configuration;
 
-    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
-                        description = "Use global or local configuration")
+    @Option(name = "global", hasValue = false, description = "Use global or local configuration")
     boolean global = true;
 
     public ConfigSet(CamelJBangMain main) {

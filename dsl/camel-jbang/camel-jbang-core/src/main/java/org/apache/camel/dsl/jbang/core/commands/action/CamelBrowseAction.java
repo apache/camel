@@ -26,8 +26,13 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
@@ -39,21 +44,19 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "browse",
-                     description = "Browse pending messages on endpoints", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd browse --endpoint=seda:foo",
-                             "  camel cmd browse --endpoint=seda:foo --limit=10" })
+@CommandDefinition(name = "browse", description = "Browse pending messages on endpoints", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd browse --endpoint=seda:foo",
+                           "  camel cmd browse --endpoint=seda:foo --limit=10" })
 public class CamelBrowseAction extends ActionBaseCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .text("uri", r -> r.uri)
             .numeric("size", r -> r.queueSize);
 
-    public static class UriSizeCompletionCandidates implements Iterable<String> {
+    public static class UriSizeCompletionCandidates extends CompletionCandidates {
 
         public UriSizeCompletionCandidates() {
         }
@@ -65,73 +68,63 @@ public class CamelBrowseAction extends ActionBaseCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--endpoint" },
-                        description = "Endpoint to browse messages from (can be uri, pattern, or refer to a route id)")
+    @Option(name = "endpoint", description = "Endpoint to browse messages from (can be uri, pattern, or refer to a route id)")
     String endpoint;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @Option(name = "short-uri", hasValue = false, description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @Option(name = "mask", hasValue = false,
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--dump" }, defaultValue = "false",
-                        description = "Whether to include message dumps")
+    @Option(name = "dump", hasValue = false, description = "Whether to include message dumps", defaultValue = "false")
     boolean dump;
 
-    @CommandLine.Option(names = { "--limit" }, defaultValue = "100",
-                        description = "Limits the number of messages to dump per endpoint")
+    @Option(name = "limit", description = "Limits the number of messages to dump per endpoint", defaultValue = "100")
     int limit;
 
-    @CommandLine.Option(names = { "--tail" },
-                        description = "The number of messages from the end (latest) to dump")
+    @Option(name = "tail", description = "The number of messages from the end (latest) to dump")
     int tail;
 
-    @CommandLine.Option(names = { "--fresh-size" }, defaultValue = "false",
-                        description = "Whether to calculate fresh queue size information (performance overhead)")
+    @Option(name = "fresh-size", hasValue = false,
+            description = "Whether to calculate fresh queue size information (performance overhead)", defaultValue = "false")
     boolean freshSize;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = UriSizeCompletionCandidates.class,
-                        description = "Sort by uri, or size", defaultValue = "uri")
+    @Option(name = "sort", description = "Sort by uri, or size", defaultValue = "uri",
+            completer = UriSizeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers in browsed messages")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers in browsed messages",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body in browsed messages")
+    @Option(name = "show-body", hasValue = false, description = "Show message body in browsed messages", defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--only-body" }, defaultValue = "false",
-                        description = "Show only message body in browsed messages")
+    @Option(name = "only-body", hasValue = false, description = "Show only message body in browsed messages",
+            defaultValue = "false")
     boolean onlyBody;
 
-    @CommandLine.Option(names = { "--body-max-chars" },
-                        description = "Maximum size of the message body to include in the dump")
+    @Option(name = "body-max-chars", description = "Maximum size of the message body to include in the dump")
     int bodyMaxChars;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false, description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

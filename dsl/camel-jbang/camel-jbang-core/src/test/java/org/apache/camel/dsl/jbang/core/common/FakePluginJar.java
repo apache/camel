@@ -34,8 +34,12 @@ final class FakePluginJar {
     }
 
     static void write(Path target, String pluginName) throws Exception {
-        // Copy the existing .class for CachedFakePlugin into a jar; that class implements Plugin already.
-        String classResource = PLUGIN_CLASS.replace('.', '/') + ".class";
+        write(target, pluginName, PLUGIN_CLASS);
+    }
+
+    static void write(Path target, String pluginName, String pluginClass) throws Exception {
+        // Copy the existing .class of the plugin into a jar; that class implements Plugin already.
+        String classResource = pluginClass.replace('.', '/') + ".class";
         byte[] classBytes;
         try (var in = FakePluginJar.class.getClassLoader().getResourceAsStream(classResource)) {
             if (in == null) {
@@ -52,7 +56,7 @@ final class FakePluginJar {
 
             JarEntry svc = new JarEntry(PluginHelper.PLUGIN_SERVICE_DIR + "camel-jbang-plugin-" + pluginName);
             jos.putNextEntry(svc);
-            jos.write(("class=" + PLUGIN_CLASS + "\n").getBytes());
+            jos.write(("class=" + pluginClass + "\n").getBytes());
             jos.closeEntry();
         }
     }

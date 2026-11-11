@@ -17,20 +17,19 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.util.TimeUtils;
-import picocli.CommandLine;
 
 /**
  * Converts the <tt>--timeout</tt> option of the commands that talk to a running integration, to millis: a number is
  * millis (<tt>20000</tt>), and a duration has units (<tt>30s</tt>, <tt>1m30s</tt>).
  */
-public class TimeoutConverter implements CommandLine.ITypeConverter<Long> {
+public class TimeoutConverter extends StringConverter<Long> {
 
     @Override
     public Long convert(String value) {
         try {
             return TimeUtils.toMilliSeconds(value.trim());
         } catch (RuntimeException e) {
-            throw new CommandLine.TypeConversionException(
+            throw new IllegalArgumentException(
                     "'" + value + "' is not a timeout: use millis, or a duration such as 30s");
         }
     }

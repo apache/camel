@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -28,37 +32,33 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
-@Command(name = "source", description = "Display Camel route source code", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get source",
-                 "  camel get source --filter=myRoute",
-                 "  camel get source --json" })
+@CommandDefinition(name = "source", description = "Display Camel route source code", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get source",
+                           "  camel get source --filter=myRoute",
+                           "  camel get source --json" })
 public class CamelSourceAction extends ActionBaseCommand {
 
     // a route without a source location sorts first
     private static final RowSort<Row> ORDER = new RowSort<Row>().text("name", r -> r.location);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter source by filename (multiple names can be separated by comma)")
+    @Option(name = "filter", description = "Filter source by filename (multiple names can be separated by comma)")
     String filter;
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort source by name", defaultValue = "name")
+    @Option(name = "sort", description = "Sort source by name", defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

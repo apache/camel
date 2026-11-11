@@ -21,10 +21,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.ClearSystemProperty;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -64,17 +64,17 @@ class CamelMonitorRecordOptionsTest {
     @Test
     void rejectsNonPositiveDimensions() {
         assertThatThrownBy(() -> monitor.parseRecordSize("0x44"))
-                .isInstanceOf(CommandLine.ParameterException.class)
+                .isInstanceOf(CliException.class)
                 .hasMessageContaining("--record-size");
     }
 
     @Test
     void rejectsMalformedValues() {
         assertThatThrownBy(() -> monitor.parseRecordSize("160"))
-                .isInstanceOf(CommandLine.ParameterException.class)
+                .isInstanceOf(CliException.class)
                 .hasMessageContaining("--record-size");
         assertThatThrownBy(() -> monitor.parseRecordSize("wide x tall"))
-                .isInstanceOf(CommandLine.ParameterException.class)
+                .isInstanceOf(CliException.class)
                 .hasMessageContaining("--record-size");
     }
 
@@ -95,7 +95,7 @@ class CamelMonitorRecordOptionsTest {
         monitor.web = true;
 
         assertThatThrownBy(monitor::configureRecording)
-                .isInstanceOf(CommandLine.ParameterException.class)
+                .isInstanceOf(CliException.class)
                 .hasMessageContaining("--record")
                 .hasMessageContaining("--web");
     }
@@ -144,7 +144,7 @@ class CamelMonitorRecordOptionsTest {
         monitor.record = tempDir.resolve("missing.tape").toString();
 
         assertThatThrownBy(monitor::configureRecording)
-                .isInstanceOf(CommandLine.ParameterException.class)
+                .isInstanceOf(CliException.class)
                 .hasMessageContaining("Tape file not found");
     }
 

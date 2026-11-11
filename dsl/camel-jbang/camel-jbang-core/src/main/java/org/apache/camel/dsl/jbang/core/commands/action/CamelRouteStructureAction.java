@@ -24,11 +24,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.TransformJavaRoutes;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -40,24 +45,21 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.support.LoggerHelper.stripSourceLocationLineNumber;
 
-@Command(name = "route-structure", description = "Dump Camel route structure", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel cmd route-structure",
-                 "  camel cmd route-structure --filter=myRoute" })
+@CommandDefinition(name = "route-structure", description = "Dump Camel route structure", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd route-structure",
+                           "  camel cmd route-structure --filter=myRoute" })
 public class CamelRouteStructureAction extends ActionBaseCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .text("name", r -> r.location)
             .text("id", r -> r.routeId);
 
-    public static class NameIdCompletionCandidates implements Iterable<String> {
+    public static class NameIdCompletionCandidates extends CompletionCandidates {
 
         public NameIdCompletionCandidates() {
         }
@@ -69,49 +71,46 @@ public class CamelRouteStructureAction extends ActionBaseCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Source file name, or name/pid of a running Camel integration", arity = "0..1")
+    @Argument(description = "Source file name, or name/pid of a running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--raw" },
-                        description = "To output raw without metadata")
+    @Option(name = "raw", hasValue = false, description = "To output raw without metadata")
     boolean raw;
 
-    @CommandLine.Option(names = { "--brief" },
-                        description = "To show less detailed route structure")
+    @Option(name = "brief", hasValue = false, description = "To show less detailed route structure")
     boolean brief;
 
-    @CommandLine.Option(names = { "--description" },
-                        description = "To show description instead of code")
+    @Option(name = "description", hasValue = false, description = "To show description instead of code")
     boolean description;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter route by filename or route id (multiple names can be separated by comma)")
+    @Option(name = "filter", description = "Filter route by filename or route id (multiple names can be separated by comma)")
     String filter;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--varied" },
-                        description = "To show only the steps that have been reached with more than one body type, as the"
-                                      + " running integration has seen them (the message history records them, such as"
-                                      + " with camel run --dev)")
+    @Option(name = "varied", hasValue = false,
+            description = "To show only the steps that have been reached with more than one body type, as the"
+                          + " running integration has seen them (the message history records them, such as"
+                          + " with camel run --dev)")
     boolean varied;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
-                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    @Option(name = "ignore-loading-error", hasValue = false,
+            description = "Whether to ignore route loading and compilation errors (use this with care!)",
+            defaultValue = "false")
     boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
-                        description = "Whether to compile Java source files and load their routes. By default Java "
-                                      + "routes are read by the Java DSL parser, without compiling them")
+    @Option(name = "compile", hasValue = false,
+            description = "Whether to compile Java source files and load their routes. By default Java "
+                          + "routes are read by the Java DSL parser, without compiling them",
+            defaultValue = "false")
     boolean compile;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = NameIdCompletionCandidates.class,
-                        description = "Sort route by name or id", defaultValue = "name")
+    @Option(name = "sort", description = "Sort route by name or id", defaultValue = "name",
+            completer = NameIdCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

@@ -22,7 +22,7 @@ camel cmd chaos-change [options]
 | `--id` | The id of the rule, such as r1 |  | String
 | `--rule` | The new rule, one rule in its one-line text form, as one entry of camel.chaos.rules |  | String
 | `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

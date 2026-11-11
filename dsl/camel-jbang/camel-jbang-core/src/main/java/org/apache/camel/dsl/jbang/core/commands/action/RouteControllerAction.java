@@ -26,8 +26,13 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -36,22 +41,19 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "route-controller", description = "List status of route controller",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get route-controller",
-                 "  camel get route-controller --json" })
+@CommandDefinition(name = "route-controller", description = "List status of route controller", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get route-controller",
+                           "  camel get route-controller --json" })
 public class RouteControllerAction extends ActionWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .text("id", r -> r.routeId)
             .text("state", r -> r.status);
 
-    public static class IdStateCompletionCandidates implements Iterable<String> {
+    public static class IdStateCompletionCandidates extends CompletionCandidates {
 
         public IdStateCompletionCandidates() {
         }
@@ -63,31 +65,26 @@ public class RouteControllerAction extends ActionWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = IdStateCompletionCandidates.class,
-                        description = "Sort by id, or state", defaultValue = "id")
+    @Option(name = "sort", description = "Sort by id, or state", defaultValue = "id",
+            completer = IdStateCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Include controller configuration details", defaultValue = "true", arity = "0..1",
-                        fallbackValue = "true")
+    @Option(name = "header", hasValue = false, description = "Include controller configuration details", defaultValue = "true")
     boolean header;
 
-    @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces in error messages", defaultValue = "true", arity = "0..1",
-                        fallbackValue = "true")
+    @Option(name = "trace", hasValue = false, description = "Include stack-traces in error messages", defaultValue = "true")
     boolean trace;
 
-    @CommandLine.Option(names = { "--depth" },
-                        description = "Max depth of stack-trace", defaultValue = "1")
+    @Option(name = "depth", description = "Max depth of stack-trace", defaultValue = "1")
     int depth;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

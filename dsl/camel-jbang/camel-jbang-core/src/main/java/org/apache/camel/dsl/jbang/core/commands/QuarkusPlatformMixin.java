@@ -19,34 +19,32 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.Properties;
 import java.util.function.Function;
 
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatform;
 import org.apache.camel.dsl.jbang.run.common.QuarkusPlatformMixinSpec;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
-import picocli.CommandLine;
 
 /**
  * Options related to Quarkus Platform.
  */
 public class QuarkusPlatformMixin extends QuarkusExtensionRegistryMixin implements QuarkusPlatformMixinSpec {
 
-    @CommandLine.Option(names = {
-            "--quarkus-group-id" }, description = "groupId of Quarkus Platform BOM; honored only if --quarkus-version is set",
-                        defaultValue = "io.quarkus.platform")
+    @Option(name = "quarkus-group-id",
+            description = "groupId of Quarkus Platform BOM; honored only if --quarkus-version is set",
+            defaultValue = "io.quarkus.platform")
     String quarkusGroupId = "io.quarkus.platform";
 
-    @CommandLine.Option(names = {
-            "--quarkus-artifact-id" },
-                        description = "Deprecated. This value is not used anymore. It is kept only for backwards compatibility and will be removed in Camel 5.x. Camel commands may use either 'quarkus-bom' or 'quarkus-camel-bom' artifactIds depending on the context.",
-                        defaultValue = "quarkus-bom")
+    @Option(name = "quarkus-artifact-id",
+            description = "Deprecated. This value is not used anymore. It is kept only for backwards compatibility and will be removed in Camel 5.x. Camel commands may use either 'quarkus-bom' or 'quarkus-camel-bom' artifactIds depending on the context.",
+            defaultValue = "quarkus-bom")
     @Deprecated(forRemoval = true, since = "4.21.0")
     String quarkusArtifactId = "quarkus-bom";
 
-    @CommandLine.Option(names = {
-            "--quarkus-version" },
-                        description = "version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry")
+    @Option(name = "quarkus-version",
+            description = "version of Quarkus Platform BOM; the default value is looked up in Quarkus Extension Registry")
     String quarkusVersion;
 
     /**

@@ -19,9 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -32,7 +35,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junitpioneer.jupiter.StdErr;
 import org.junitpioneer.jupiter.StdIo;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -96,10 +98,10 @@ class JsonOutputContractTest {
     void usageErrorIsAJsonDocument(StdErr err) {
         assertThat(run("test-fail", "--json", "--no-such-option")).isEqualTo(CliExitCode.USAGE);
         assertThat(stdoutObject()).containsEntry("status", "error")
-                .containsEntry("message", "Unknown option: '--no-such-option'");
+                .containsEntry("message", "The option --no-such-option is unknown.");
         assertThat(stdoutObject().getInteger("code")).isEqualTo(CliExitCode.USAGE);
-        // the usage is on stderr
-        assertThat(err.capturedLines()[0]).isEqualTo("Unknown option: '--no-such-option'");
+        // the usage error is on stderr, from the printer of the CLI
+        assertThat(printer.getStderr().lines().findFirst()).hasValue("ERROR: The option --no-such-option is unknown.");
     }
 
     @Test
@@ -238,9 +240,9 @@ class JsonOutputContractTest {
         int exitCode = -1;
 
         @Override
-        public void postAddCommands(CommandLine commandLine, String[] args) {
-            commandLine.addSubcommand("test-fail", new CommandLine(new FailCommand(this)));
-            commandLine.addSubcommand("test-crash", new CommandLine(new CrashCommand(this)));
+        public void postAddCommands(CommandTree commandLine, String[] args) {
+            commandLine.addSubcommand("test-fail", new CommandTree(new FailCommand(this)));
+            commandLine.addSubcommand("test-crash", new CommandTree(new CrashCommand(this)));
         }
 
         @Override
@@ -249,15 +251,15 @@ class JsonOutputContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-fail")
+    @CommandDefinition(name = "test-fail", description = "", generateHelp = true, sortOptions = true)
     static class FailCommand extends CamelCommand {
-        @CommandLine.Option(names = "--code")
+        @Option(name = "code")
         int code;
 
-        @CommandLine.Option(names = "--message")
+        @Option(name = "message")
         String message = "failed";
 
-        @CommandLine.Option(names = "--json")
+        @Option(name = "json", hasValue = false)
         boolean json;
 
         FailCommand(CamelJBangMain main) {
@@ -270,9 +272,9 @@ class JsonOutputContractTest {
         }
     }
 
-    @CommandLine.Command(name = "test-crash")
+    @CommandDefinition(name = "test-crash", description = "", generateHelp = true, sortOptions = true)
     static class CrashCommand extends CamelCommand {
-        @CommandLine.Option(names = "--json")
+        @Option(name = "json", hasValue = false)
         boolean json;
 
         CrashCommand(CamelJBangMain main) {

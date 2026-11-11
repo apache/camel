@@ -27,25 +27,27 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "bean", description = "List beans in a running Camel integration", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get bean",
-                 "  camel get bean --filter=myBean",
-                 "  camel get bean --scope=user",
-                 "  camel get bean --json" })
+@CommandDefinition(name = "bean", description = "List beans in a running Camel integration", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get bean",
+                           "  camel get bean --filter=myBean",
+                           "  camel get bean --scope=user",
+                           "  camel get bean --json" })
 public class CamelBeanDump extends ActionBaseCommand {
 
     private static final List<String> SCOPES = List.of("all", "user", "camel", "spring", "quarkus");
@@ -54,7 +56,7 @@ public class CamelBeanDump extends ActionBaseCommand {
             .text("name", r -> r.name)
             .text("type", r -> r.type);
 
-    public static class NameTypeCompletionCandidates implements Iterable<String> {
+    public static class NameTypeCompletionCandidates extends CompletionCandidates {
 
         public NameTypeCompletionCandidates() {
         }
@@ -66,7 +68,7 @@ public class CamelBeanDump extends ActionBaseCommand {
 
     }
 
-    public static class ScopeCompletionCandidates implements Iterable<String> {
+    public static class ScopeCompletionCandidates extends CompletionCandidates {
 
         public ScopeCompletionCandidates() {
         }
@@ -78,42 +80,37 @@ public class CamelBeanDump extends ActionBaseCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = NameTypeCompletionCandidates.class,
-                        description = "Sort by name or type", defaultValue = "name")
+    @Option(name = "sort", description = "Sort by name or type", defaultValue = "name",
+            completer = NameTypeCompletionCandidates.class)
     String sort = "name";
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter beans names (use all to include all beans)", defaultValue = "all")
+    @Option(name = "filter", description = "Filter beans names (use all to include all beans)", defaultValue = "all")
     String filter = "all";
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "Show bean properties", defaultValue = "true", arity = "0..1", fallbackValue = "true")
+    @Option(name = "properties", hasValue = false, description = "Show bean properties", defaultValue = "true")
     boolean properties;
 
-    @CommandLine.Option(names = { "--nulls" },
-                        description = "Include null values", defaultValue = "true", arity = "0..1", fallbackValue = "true")
+    @Option(name = "nulls", hasValue = false, description = "Include null values", defaultValue = "true")
     boolean nulls;
 
-    @CommandLine.Option(names = { "--scope" }, completionCandidates = ScopeCompletionCandidates.class,
-                        description = "Filter beans by scope: all, user (excludes Camel/Spring/Quarkus/JDK), camel, spring, quarkus",
-                        defaultValue = "all")
+    @Option(name = "scope",
+            description = "Filter beans by scope: all, user (excludes Camel/Spring/Quarkus/JDK), camel, spring, quarkus",
+            defaultValue = "all", completer = ScopeCompletionCandidates.class)
     String scope = "all";
 
-    @CommandLine.Option(names = { "--internal" },
-                        description = "Include internal Camel beans", defaultValue = "false")
+    @Option(name = "internal", hasValue = false, description = "Include internal Camel beans", defaultValue = "false")
     boolean internal;
 
-    @CommandLine.Option(names = { "--dsl" },
-                        description = "Include only beans from YAML or XML DSL", defaultValue = "false")
+    @Option(name = "dsl", hasValue = false, description = "Include only beans from YAML or XML DSL", defaultValue = "false")
     boolean dsl;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

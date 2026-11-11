@@ -29,10 +29,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 
+import org.aesh.command.DefaultValueProvider;
+import org.aesh.command.impl.internal.ProcessedOption;
 import org.apache.camel.dsl.jbang.run.common.CamelHome;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.util.OrderedProperties;
-import picocli.CommandLine;
 
 /**
  * Helper for CLI command line.
@@ -125,14 +126,13 @@ public final class CommandLineHelper {
         return Files.exists(Paths.get(LOCAL_USER_CONFIG));
     }
 
-    public static void augmentWithUserConfiguration(CommandLine commandLine) {
+    public static void augmentWithUserConfiguration(CommandTree commandLine) {
         Path file = getUserConfigurationFile();
         if (Files.isRegularFile(file) && Files.exists(file)) {
             Properties properties = new Properties();
             try (Reader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
                 properties.load(reader);
             } catch (IOException e) {
-                commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
                 return;
             }
 
@@ -235,65 +235,43 @@ public final class CommandLineHelper {
         return CamelHome.getWorkDir();
     }
 
-    private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {
+    /**
+     * The defaults of the options from the user configuration: {@code camel.<command path>.<option>} for one command,
+     * else {@code <option>} (as the properties default provider of picocli looked them up). The commands of camel
+     * plugin take no defaults from it.
+     */
+    private static class CamelUserConfigDefaultValueProvider implements DefaultValueProvider {
 
         private final Properties properties;
 
-        public CamelUserConfigDefaultValueProvider(Path file) {
-            super(file.toFile());
-            this.properties = null;
-        }
-
-        public CamelUserConfigDefaultValueProvider(Properties properties) {
-            super(properties);
+        CamelUserConfigDefaultValueProvider(Properties properties) {
             this.properties = properties;
         }
 
         @Override
-        public String defaultValue(CommandLine.Model.ArgSpec argSpec) throws Exception {
-            // all plugin commands should not support default values from the user configuration file
-            CommandLine.Model.CommandSpec parent = argSpec.command().parent();
-            if (parent != null && parent.name().equals("plugin")) {
+        public String defaultValue(ProcessedOption option) {
+            CommandTree tree = CommandTree.of(option.parent() != null ? option.parent().getCommand() : null);
+            if (tree != null && tree.getParent() != null && "plugin".equals(tree.getParent().getName())) {
                 return null;
             }
-            if (properties != null && argSpec instanceof CommandLine.Model.OptionSpec option) {
-                return optionDefaultValue(option);
-            }
-            return super.defaultValue(argSpec);
-        }
-
-        // picocli only looks up the longest name of an option, so dev=true would not set --reload,--dev:
-        // look up every long name, first for the command (camel.run.dev) and then for all commands (dev)
-        private String optionDefaultValue(CommandLine.Model.OptionSpec option) {
             List<String> names = new ArrayList<>();
-            names.add(option.longestName());
-            for (String name : option.names()) {
-                if (name.startsWith("--") && !names.contains(name)) {
-                    names.add(name);
-                }
-            }
-            String command = option.command().qualifiedName(".");
-            for (String name : names) {
-                String value = properties.getProperty(command + "." + stripPrefix(name));
-                if (value != null) {
-                    return value;
+            names.add(option.name());
+            names.addAll(option.getAliases());
+            if (tree != null) {
+                for (String name : names) {
+                    String value = properties.getProperty(tree.getQualifiedName().replace(' ', '.') + "." + name);
+                    if (value != null) {
+                        return value;
+                    }
                 }
             }
             for (String name : names) {
-                String value = properties.getProperty(stripPrefix(name));
+                String value = properties.getProperty(name);
                 if (value != null) {
                     return value;
                 }
             }
             return null;
-        }
-
-        private static String stripPrefix(String name) {
-            int i = 0;
-            while (i < name.length() && !Character.isJavaIdentifierPart(name.charAt(i))) {
-                i++;
-            }
-            return name.substring(i);
         }
     }
 

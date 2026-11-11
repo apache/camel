@@ -61,24 +61,25 @@ import dev.tamboui.widgets.tabs.Tabs;
 import dev.tamboui.widgets.tabs.TabsState;
 import dev.tamboui.widgets.wavetext.WaveText;
 import dev.tamboui.widgets.wavetext.WaveTextState;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
+import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 import sun.misc.Signal;
 
 import static org.apache.camel.dsl.jbang.core.commands.tui.TabRegistry.*;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
 import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hintLast;
 
-@Command(name = "monitor",
-         description = "Live dashboard for monitoring Camel integrations",
-         sortOptions = false)
+@CommandDefinition(name = "monitor", description = "Live dashboard for monitoring Camel integrations", generateHelp = true)
 public class CamelMonitor extends CamelCommand {
 
     private static final Logger LOG = System.getLogger(CamelMonitor.class.getName());
@@ -102,68 +103,58 @@ public class CamelMonitor extends CamelCommand {
     // Below this width the tab bar uses tight "|" dividers instead of spaced " | " so all 10 labels still fit
     private static final int TABS_FULL_MIN_WIDTH = 157;
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--refresh" },
-                        description = "Refresh interval in milliseconds (default: ${DEFAULT-VALUE})",
-                        defaultValue = "100")
+    @Option(name = "refresh", description = "Refresh interval in milliseconds (default: ${DEFAULT-VALUE})",
+            defaultValue = "100")
     long refreshInterval = DEFAULT_REFRESH_MS;
 
-    @CommandLine.Option(names = { "--record" },
-                        description = "Play a .tape file in the TUI and record it to an Asciinema .cast file",
-                        arity = "0..1")
+    @Option(name = "record", optionalValue = true,
+            description = "Play a .tape file in the TUI and record it to an Asciinema .cast file")
     String record;
 
-    @CommandLine.Option(names = { "--record-size" },
-                        description = "Size of the recorded terminal for --record, as <cols>x<rows> (default: ${DEFAULT-VALUE})",
-                        defaultValue = "200x50")
+    @Option(name = "record-size",
+            description = "Size of the recorded terminal for --record, as <cols>x<rows> (default: ${DEFAULT-VALUE})",
+            defaultValue = "200x50")
     String recordSize = "200x50";
 
-    @CommandLine.Option(names = { "--record-fps" },
-                        description = "Frames per second captured by --record (default: ${DEFAULT-VALUE})",
-                        defaultValue = "10")
+    @Option(name = "record-fps", description = "Frames per second captured by --record (default: ${DEFAULT-VALUE})",
+            defaultValue = "10")
     int recordFps = 10;
 
-    @CommandLine.Option(names = { "--record-duration" },
-                        description = "Maximum duration in milliseconds captured by --record (default: ${DEFAULT-VALUE})",
-                        defaultValue = "120000")
+    @Option(name = "record-duration",
+            description = "Maximum duration in milliseconds captured by --record (default: ${DEFAULT-VALUE})",
+            defaultValue = "120000")
     int recordDuration = 120000;
 
-    @CommandLine.Option(names = { "--mcp" },
-                        description = "Enable embedded MCP server for AI agent access to the TUI")
+    @Option(name = "mcp", hasValue = false, description = "Enable embedded MCP server for AI agent access to the TUI")
     boolean mcp;
 
-    @CommandLine.Option(names = { "--mcp-port" },
-                        description = "MCP server port (default: ${DEFAULT-VALUE})",
-                        defaultValue = "8123")
+    @Option(name = "mcp-port", description = "MCP server port (default: ${DEFAULT-VALUE})", defaultValue = "8123")
     // written by ensureMcpServer() on the AI panel's agent thread, read on the event and main threads
     volatile int mcpPort = 8123;
 
-    @CommandLine.Option(names = { "--web" },
-                        description = "Enable browser-accessible terminal (WebSocket) server; without an interactive"
-                                      + " terminal it serves browsers only")
+    @Option(name = "web", hasValue = false,
+            description = "Enable browser-accessible terminal (WebSocket) server; without an interactive"
+                          + " terminal it serves browsers only")
     boolean web;
 
-    @CommandLine.Option(names = { "--web-port" },
-                        description = "Web terminal server port (default: ${DEFAULT-VALUE})",
-                        defaultValue = "8090")
+    @Option(name = "web-port", description = "Web terminal server port (default: ${DEFAULT-VALUE})", defaultValue = "8090")
     int webPort = 8090;
 
-    @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme (overrides persisted preference for this session)",
-                        completionCandidates = ThemeModeCompletionCandidates.class)
+    @Option(name = "theme", description = "Color theme (overrides persisted preference for this session)",
+            completer = ThemeModeCompletionCandidates.class)
     String theme;
 
-    @CommandLine.Option(names = { "--panel-theme" },
-                        description = "Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme"
-                                      + " (overrides the Panel Theme setting for this session)",
-                        completionCandidates = ThemeModeCompletionCandidates.class)
+    @Option(name = "panel-theme", description = "Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme"
+                                                + " (overrides the Panel Theme setting for this session)",
+            completer = ThemeModeCompletionCandidates.class)
     String panelTheme;
 
-    @CommandLine.Option(names = { "--defaults" },
-                        description = "Start with the default settings, as a new user sees the TUI; changes last for the"
-                                      + " session and are not saved")
+    @Option(name = "defaults", hasValue = false,
+            description = "Start with the default settings, as a new user sees the TUI; changes last for the"
+                          + " session and are not saved")
     boolean defaults;
 
     // State
@@ -292,10 +283,10 @@ public class CamelMonitor extends CamelCommand {
                 // fall through to the parameter error below
             }
         }
-        throw new CommandLine.ParameterException(
-                new CommandLine(this),
+        throw new CliException(
+                CliExitCode.USAGE,
                 "Invalid value for option '--record-size': expected '<cols>x<rows>' with positive numbers, was '"
-                                       + size + "'");
+                                   + size + "'");
     }
 
     /**
@@ -311,17 +302,15 @@ public class CamelMonitor extends CamelCommand {
             // The properties below are process-wide, so every browser session spawned by TuiWebServer would be
             // wrapped for recording too, all writing the same cast file. The two modes are also conceptually
             // exclusive: --record drives a headless TUI from a tape rather than from a connected terminal.
-            throw new CommandLine.ParameterException(
-                    new CommandLine(this),
-                    "Option '--record' cannot be combined with '--web': recording replays a tape headlessly "
-                                           + "and would be inherited by every browser session");
+            throw new CliException(
+                    CliExitCode.USAGE, "Option '--record' cannot be combined with '--web': recording replays a tape headlessly "
+                                       + "and would be inherited by every browser session");
         }
         Path tapeFile = Path.of(record);
         Path castFile = Path.of(record.replaceAll("\\.tape$", "") + ".cast");
         int[] size = parseRecordSize(recordSize);
         if (!Files.isRegularFile(tapeFile)) {
-            throw new CommandLine.ParameterException(
-                    new CommandLine(this), "Tape file not found: " + tapeFile.toAbsolutePath());
+            throw new CliException(CliExitCode.USAGE, "Tape file not found: " + tapeFile.toAbsolutePath());
         }
         System.setProperty("tamboui.record", castFile.toAbsolutePath().toString());
         System.setProperty("tamboui.record.width", String.valueOf(size[0]));
@@ -438,7 +427,7 @@ public class CamelMonitor extends CamelCommand {
 
     /** Validates and applies the --theme and --panel-theme options. */
     void applyThemeOption() {
-        MonitorStartup.applyThemeOptions(new CommandLine(this), theme, panelTheme);
+        MonitorStartup.applyThemeOptions(theme, panelTheme);
     }
 
     /**

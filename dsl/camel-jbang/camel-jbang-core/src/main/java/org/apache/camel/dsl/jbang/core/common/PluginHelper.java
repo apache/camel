@@ -58,7 +58,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
 
 /**
  * Helper for command line plugins that add sub-commands and functionality when enabled by the user. Loads and saves
@@ -96,7 +95,7 @@ public final class PluginHelper {
      * @param  args        the raw CLI args; only args[0] is inspected
      * @return             true if plugin discovery should run, false to short-circuit
      */
-    public static boolean shouldDiscoverPlugins(CommandLine commandLine, String... args) {
+    public static boolean shouldDiscoverPlugins(CommandTree commandLine, String... args) {
         if (args == null || args.length == 0) {
             return true;
         }
@@ -117,7 +116,7 @@ public final class PluginHelper {
 
     /**
      * Whether the command of the CLI uses the plugins, so they are loaded when it runs (see
-     * {@link #shouldDiscoverPlugins(CommandLine, String...)}).
+     * {@link #shouldDiscoverPlugins(CommandTree, String...)}).
      *
      * @param  command the name of the command
      * @return         {@code true} for shell, run, export and cmd
@@ -159,7 +158,7 @@ public final class PluginHelper {
      * @param commandLine the command line to add commands to
      * @param main        the current Camel CLI main
      */
-    public static void addPlugins(CommandLine commandLine, CamelJBangMain main, String... args) {
+    public static void addPlugins(CommandTree commandLine, CamelJBangMain main, String... args) {
         // first arg is the command name (ie camel generate xxx)
         // if the first arg is a flag (e.g. --help), treat as no target so all plugins load
         String target = args != null && args.length > 0 ? args[0] : null;
@@ -205,12 +204,12 @@ public final class PluginHelper {
      * Installs a known Camel plugin the first time its command is used, and adds its commands to the command line, so
      * the command runs right away.
      *
-     * @param  commandLine the command line, after {@link #addPlugins(CommandLine, CamelJBangMain, String...)}
+     * @param  commandLine the command line, after {@link #addPlugins(CommandTree, CamelJBangMain, String...)}
      * @param  main        the current Camel CLI main
      * @param  args        the raw CLI args; only args[0] is inspected
      * @return             true if a plugin was installed
      */
-    public static boolean installOnFirstUse(CommandLine commandLine, CamelJBangMain main, String... args) {
+    public static boolean installOnFirstUse(CommandTree commandLine, CamelJBangMain main, String... args) {
         String target = args != null && args.length > 0 ? args[0] : null;
         if (target == null || target.startsWith("-") || commandLine.getSubcommands().containsKey(target)) {
             return false;
@@ -230,8 +229,16 @@ public final class PluginHelper {
     }
 
     // adds the commands of the plugin, and the main remembers the plugin for the command lines it makes later
-    private static void apply(Plugin plugin, CommandLine commandLine, CamelJBangMain main) {
-        plugin.customize(commandLine, main);
+    private static void apply(Plugin plugin, CommandTree commandLine, CamelJBangMain main) {
+        try {
+            plugin.customize(commandLine, main);
+        } catch (LinkageError e) {
+            // a plugin built for the Camel CLI before aesh (picocli): its commands are left out, the CLI runs on
+            main.getOut().printErr("Plugin " + plugin.getClass().getName()
+                                   + " is built for an older Camel CLI and is not loaded (" + e.getClass().getSimpleName()
+                                   + "). Install a version of the plugin for this Camel CLI.");
+            return;
+        }
         main.addPlugin(plugin);
     }
 
@@ -431,7 +438,8 @@ public final class PluginHelper {
             Plugin instance = (Plugin) ObjectHelper.newInstance(pluginClass);
             instance.setClassLoader(cl);
             return Optional.of(instance);
-        } catch (Exception e) {
+        } catch (Exception | LinkageError e) {
+            // such as a plugin cached for another build of the CLI that no longer links with it: resolve it again
             return Optional.empty();
         }
     }
@@ -787,7 +795,7 @@ public final class PluginHelper {
      * Scans the classpath for embedded plugins and loads them directly. This bypasses the JSON configuration and
      * download phase for fat-jar scenarios.
      */
-    public static boolean addEmbeddedPlugins(CommandLine commandLine, CamelJBangMain main, String target) {
+    public static boolean addEmbeddedPlugins(CommandTree commandLine, CamelJBangMain main, String target) {
         boolean foundAny = false;
         try {
             ClassLoader classLoader = PluginHelper.class.getClassLoader();
@@ -808,7 +816,7 @@ public final class PluginHelper {
     }
 
     private static boolean scanJarForPlugins(
-            CommandLine commandLine, CamelJBangMain main, String target,
+            CommandTree commandLine, CamelJBangMain main, String target,
             ClassLoader classLoader, URL jarUrl) {
         boolean foundAny = false;
         try {
@@ -844,7 +852,7 @@ public final class PluginHelper {
     }
 
     private static boolean loadPluginFromService(
-            CommandLine commandLine, CamelJBangMain main, String target,
+            CommandTree commandLine, CamelJBangMain main, String target,
             ClassLoader classLoader, URL serviceUrl, String pluginName) {
         try (InputStream is = serviceUrl.openStream()) {
             Properties prop = new Properties();

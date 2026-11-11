@@ -26,7 +26,11 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -36,14 +40,12 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "properties", description = "List configuration properties", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get properties",
-                 "  camel get properties --verbose" })
+@CommandDefinition(name = "properties", description = "List configuration properties", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get properties",
+                           "  camel get properties --verbose" })
 public class ListProperties extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -51,7 +53,7 @@ public class ListProperties extends ProcessWatchCommand {
             .text("name", r -> r.name)
             .text("key", r -> r.key);
 
-    public static class PidNameKeyCompletionCandidates implements Iterable<String> {
+    public static class PidNameKeyCompletionCandidates extends CompletionCandidates {
 
         public PidNameKeyCompletionCandidates() {
         }
@@ -63,25 +65,25 @@ public class ListProperties extends ProcessWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameKeyCompletionCandidates.class,
-                        description = "Sort by pid, name or key", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or key", defaultValue = "pid",
+            completer = PidNameKeyCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--startup" }, description = "List only startup configuration")
+    @Option(name = "startup", hasValue = false, description = "List only startup configuration")
     boolean startup;
 
-    @CommandLine.Option(names = { "--verbose" }, description = "Whether to include more details")
+    @Option(name = "verbose", hasValue = false, description = "Whether to include more details")
     boolean verbose;
 
-    @CommandLine.Option(names = { "--internal" }, description = "Whether to include internal configuration")
+    @Option(name = "internal", hasValue = false, description = "Whether to include internal configuration")
     boolean internal;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask configuration values to avoid printing sensitive information such as password or access keys",
-                        defaultValue = "true", arity = "0..1", fallbackValue = "true")
+    @Option(name = "mask", hasValue = false,
+            description = "Whether to mask configuration values to avoid printing sensitive information such as password or access keys",
+            defaultValue = "true")
     boolean mask = true;
 
     public ListProperties(CamelJBangMain main) {

@@ -29,7 +29,7 @@ camel get health [options]
 | `--sort` | Sort by pid, name or age | pid | String
 | `--trace` | Include stack-traces in error messages | false | boolean
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 
