@@ -48,6 +48,12 @@ in-process in the Camel CLI JVM, which starts faster but has the CLI on the clas
 turn on chaos testing (`--chaos`, to inject faults with camel-chaos; not with profile prod), and add extra dependencies. When the port the app will listen on (the one you set, else 8080) is taken already, the form
 says by whom, so a second app with an HTTP server does not fail to start.
 
+When the example or folder has chaos scenarios (`test/chaos/*.chaos`), ←→ on the chaos testing row picks one, which
+is run with `--chaos=test/chaos/<name>.chaos`, so its rules are added at startup. Without one (`none, add rules
+yourself`, the default), chaos is on with no rules, and you add them while it runs.
+
+image::jbang/camel-tui-run-chaos-scenario.png[The run options form of the chaos example, with chaos testing on and its payment-outage scenario picked]
+
 The example starts running in the background. The TUI auto-selects it as soon as it appears.
 From there you can explore tabs, watch messages flow, inspect the route diagram, and experiment.
 
