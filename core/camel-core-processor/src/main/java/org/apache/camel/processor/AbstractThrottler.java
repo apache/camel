@@ -62,7 +62,7 @@ public abstract class AbstractThrottler extends BaseProcessorSupport
         this.camelContext = camelContext;
         this.rejectExecution = rejectExecution;
         this.correlationExpression = correlation;
-        this.maxRequestsExpression = ObjectHelper.notNull(maxRequestsExpression, "maxConcurrentRequestsExpression");
+        this.maxRequestsExpression = ObjectHelper.notNull(maxRequestsExpression, "maxRequestsExpression");
     }
 
     /**
