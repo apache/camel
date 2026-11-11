@@ -88,7 +88,10 @@ were done then, of which these were kept.
 - **w** — The window: 1 minute, 2 minutes or 5 minutes (several seconds
   a column when the screen is too narrow)
 - **Space** — Pause, to read a moment while it scrolls away; Space
-  follows now again
+  resumes, following now again. The title says `● live` or `‖ PAUSED`
+  (with how long ago the moment is), and the border is in the warning
+  colour while paused. Paused on seconds with no data (before the
+  integration started), the screen says so
 - **Left/Right** — While paused, move the cursor a second; at the edge
   the window moves
 - **Shift+Left/Right** — While paused, go back and forth in the 5
