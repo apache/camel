@@ -6915,6 +6915,18 @@ resumed after the failed record. The new consumer leaves and rejoins the consume
 rebalance of the group, also when the partition has a committed offset. There is no option to keep the previous
 behaviour.
 
+=== camel-kafka - the Kafka idempotent and key-value repositories use the acks of the Kafka client
+
+`KafkaIdempotentRepository` and `KafkaKeyValueRepository` no longer set `acks=1` on their producer, so the default of
+the Kafka client applies: `acks=all` with idempotence. Every change of a repository is now acknowledged once the
+in-sync replicas have it, so it is not lost when the leader of the partition fails over. Each change waits for the
+replicas; with fewer in-sync replicas than `min.insync.replicas` it waits up to `delivery.timeout.ms` (2 minutes by
+default) and then fails, where it succeeded with `acks=1`. A broker before Kafka 2.8 that uses ACLs needs the
+`IdempotentWrite` permission for the repository's producer. A `producerConfig` that sets only
+`enable.idempotence=true` no longer fails at start. To keep the previous behaviour, set `acks=1` in the `producerConfig`
+of the repository (with `bootstrap.servers`, as a `producerConfig` replaces the `bootstrapServers` of the repository
+for the producer).
+
 === camel-dns - dig without a type, and the wikipedia type
 
 `dns:dig` without the `CamelDnsType` header now asks for type A, and without the `CamelDnsName` header fails with an
