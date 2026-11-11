@@ -36,7 +36,7 @@ public final class QuickFixes {
     /**
      * A replacement on the line of a problem.
      *
-     * @param label   what the fix does, such as "peroid → period"
+     * @param label   what the fix does, such as "period → period"
      * @param oldText the text on the line to replace (its first occurrence)
      * @param newText what it is replaced with
      */

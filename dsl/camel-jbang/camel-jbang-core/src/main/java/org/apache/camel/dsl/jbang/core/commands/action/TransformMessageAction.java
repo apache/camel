@@ -294,7 +294,7 @@ public class TransformMessageAction extends ActionWatchCommand {
     }
 
     private void printStatusLine(JsonObject jo) {
-        // timstamp
+        // timestamp
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         // an action the integration failed has no timestamp nor elapsed time
         String ts = sdf.format(new Date(jo.getLongOrDefault("timestamp", System.currentTimeMillis())));
