@@ -697,6 +697,10 @@ public final class ProjectRoutes {
 
         private void rest(MappingNode m, int line) {
             String base = str(value(m, "path"));
+            if (child(m, "openApi") instanceof MappingNode oa && str(value(oa, "specification")) != null) {
+                // contract first: the operations are in the contract, which the overview reads
+                routes.add(RestContracts.contract(str(value(oa, "specification")), base, file, line, "yaml"));
+            }
             for (NodeTuple t : m.getValue()) {
                 String verb = scalar(t.getKeyNode());
                 if (verb == null || !REST_VERBS.contains(verb) || !(t.getValueNode() instanceof SequenceNode ops)) {
@@ -1129,6 +1133,11 @@ public final class ProjectRoutes {
 
         private void rest(Element rest) {
             String base = attr(rest, "path");
+            Element openApi = firstChild(rest, "openApi");
+            if (openApi != null && attr(openApi, "specification") != null) {
+                routes.add(RestContracts.contract(attr(openApi, "specification"), base, file, lineOf("rest", null),
+                        "xml"));
+            }
             NodeList children = rest.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 if (!(children.item(i) instanceof Element op) || !REST_VERBS.contains(localName(op))) {

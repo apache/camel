@@ -1012,7 +1012,7 @@ final class AboutView {
             }
             Long total = e.route() != null ? totals.get(e.route()) : null;
             // with the values of its properties: the period or the schedule it runs with, its profile applied
-            in.add(Line.from(Span.raw(" " + icon(e.kind()) + " "),
+            in.add(Line.from(Span.raw(" " + inIcon(e.kind()) + " "),
                     Span.styled(Placeholders.resolve(e.label(), info), Style.EMPTY.bold()),
                     Span.styled(total != null ? "  " + total : "", Theme.success())));
             inTargets.add(e.route() != null ? new Target(e.route(), null) : null);
@@ -1146,13 +1146,29 @@ final class AboutView {
         return AboutReport.baseUri(uri);
     }
 
-    private static String icon(String kind) {
+    /**
+     * The icon of a consumer of In, by its scheme: one the icons do not know (aws2-sqs) has the icon of its kind of
+     * system in the catalog (messaging), as Out has it.
+     */
+    static String inIcon(String scheme) {
+        String icon = icon(scheme);
+        if ("•".equals(icon) && scheme != null && !scheme.isBlank()) {
+            icon = icon(ProjectOverview.category(scheme, ArchitectureView.catalog()));
+        }
+        return icon;
+    }
+
+    static String icon(String kind) {
         String k = kind != null ? kind.toLowerCase(Locale.ROOT) : "";
         if (k.contains("file") || k.contains("storage") || k.equals("ftp") || k.equals("sftp") || k.equals("s3")) {
             return "📁";
         }
         if (k.contains("kafka") || k.contains("jms") || k.contains("amqp") || k.contains("mqtt") || k.equals("seda")) {
             return "📨";
+        }
+        if (k.equals("ai") || k.startsWith("ai-") || k.startsWith("langchain4j") || k.equals("openai")) {
+            // a route an AI agent calls as a tool (ai-tool), or a model it calls
+            return TuiIcons.MCP;
         }
         return switch (k) {
             case "schedule" -> "⏱";
@@ -1257,6 +1273,15 @@ final class AboutView {
         return dot >= 0 ? type.substring(dot + 1) : type;
     }
 
+    /**
+     * Whether the route is the one Camel adds to serve an OpenAPI contract (from rest-openapi:, a route the sources do
+     * not have), which hands each request to the route direct:operationId.
+     */
+    private static boolean servesAContract(IntegrationInfo info, String routeId) {
+        return info.routes.stream().anyMatch(r -> routeId.equals(r.routeId) && r.from != null
+                && r.from.startsWith("rest-openapi:"));
+    }
+
     /** How each route that another one sends to is reached: call (direct) or a hand-off (seda); none for the others. */
     private Map<String, String> howCalled() {
         Map<String, String> how = new LinkedHashMap<>();
@@ -1311,8 +1336,9 @@ final class AboutView {
         Map<String, String> how = howCalled();
         for (Timeline.RouteSeries r : series) {
             String called = how.get(r.route());
-            if ("call".equals(called)) {
-                // a route called with direct is part of the exchange of its caller, which gets its failure too
+            if ("call".equals(called) || servesAContract(info, r.route())) {
+                // a route called with direct is part of the exchange of its caller, which gets its failure too; the
+                // route that serves a contract hands each request on to the route of its operation, which counts it
                 continue;
             }
             if (called == null) {

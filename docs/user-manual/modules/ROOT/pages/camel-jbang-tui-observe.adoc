@@ -29,7 +29,7 @@ route file (a YAML `#` comment, a Javadoc or `//` comment in Java, an XML commen
 README, else the descriptions of the routes, else the overview an AI wrote in `camel-summary.md`. *r* opens the README,
 and *s* the summary of the project.
 * *In*, *Routes* and *Out* say what starts it (a timer or a cron with the period or schedule of its properties, its
-profile applied), its routes (a route called with `direct` sits under its caller with `↳`,
+profile applied; the operations of an OpenAPI contract the REST DSL serves, from the contract), its routes (a route called with `direct` sits under its caller with `↳`,
 one handed off with `seda` or a `wireTap` with `⇢`) and what it talks to, with the exchanges since it started and a sparkline of the
 last 5 minutes. *Up* and *Down* select a line, and *Enter* opens a route drilled down on the Diagram, or an endpoint with
 its details on the Endpoint tab.
