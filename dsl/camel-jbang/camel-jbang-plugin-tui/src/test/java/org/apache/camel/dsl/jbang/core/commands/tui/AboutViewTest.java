@@ -545,6 +545,8 @@ class AboutViewTest {
         assertThat(AboutView.icon("ai-tool")).isEqualTo(TuiIcons.MCP);
         assertThat(AboutView.icon("ai")).isEqualTo(TuiIcons.MCP);
         assertThat(AboutView.icon("http")).isEqualTo("🌐");
+        // cloud/aws-sqs: the queue the courier route consumes has the icon Out gives it, from the catalog
+        assertThat(AboutView.inIcon("aws2-sqs")).isEqualTo("📨");
     }
 
     @Test

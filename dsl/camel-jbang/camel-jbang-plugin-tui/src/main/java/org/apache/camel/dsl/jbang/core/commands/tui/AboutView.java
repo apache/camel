@@ -990,7 +990,7 @@ final class AboutView {
             }
             Long total = e.route() != null ? totals.get(e.route()) : null;
             // with the values of its properties: the period or the schedule it runs with, its profile applied
-            in.add(Line.from(Span.raw(" " + icon(e.kind()) + " "),
+            in.add(Line.from(Span.raw(" " + inIcon(e.kind()) + " "),
                     Span.styled(Placeholders.resolve(e.label(), info), Style.EMPTY.bold()),
                     Span.styled(total != null ? "  " + total : "", Theme.success())));
             inTargets.add(e.route() != null ? new Target(e.route(), null) : null);
@@ -1122,6 +1122,18 @@ final class AboutView {
     /** The URI without its options, and the same with or without the // after the scheme. */
     static String baseUri(String uri) {
         return AboutReport.baseUri(uri);
+    }
+
+    /**
+     * The icon of a consumer of In, by its scheme: one the icons do not know (aws2-sqs) has the icon of its kind of
+     * system in the catalog (messaging), as Out has it.
+     */
+    static String inIcon(String scheme) {
+        String icon = icon(scheme);
+        if ("•".equals(icon) && scheme != null && !scheme.isBlank()) {
+            icon = icon(ProjectOverview.category(scheme, ArchitectureView.catalog()));
+        }
+        return icon;
     }
 
     static String icon(String kind) {

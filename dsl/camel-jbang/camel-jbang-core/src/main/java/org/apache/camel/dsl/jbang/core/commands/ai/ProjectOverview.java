@@ -200,7 +200,7 @@ public final class ProjectOverview {
      * (SaaS, chat, documents), http, cloud, schedule, internal (plumbing inside Camel such as direct, seda, log, bean)
      * or other.
      */
-    static String category(String scheme, CamelCatalog catalog) {
+    public static String category(String scheme, CamelCatalog catalog) {
         String s = scheme.toLowerCase(Locale.ROOT);
         if ("direct".equals(s) || IN_MEMORY.contains(s) || "kamelet".equals(s) || s.startsWith("dynamic")) {
             return "internal";
