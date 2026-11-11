@@ -1532,10 +1532,10 @@ class McpFacade {
         return editFile(name, file, find, replace, null, confirm);
     }
 
-    /** As {@link #editFile(String, String, String, String, boolean)} with several edits, written once (CAMEL-25501). */
     /** The statuses of a write that changed the file: written directly, or saved in the editor after a live replay. */
     private static final Set<String> APPLIED_WRITES = Set.of("overwritten", "created", "written");
 
+    /** As {@link #editFile(String, String, String, String, boolean)} with several edits, written once (CAMEL-25501). */
     JsonObject editFile(String name, String file, String find, String replace, String edits, boolean confirm) {
         IntegrationInfo target = findIntegration(name);
         if (target == null) {
