@@ -105,7 +105,7 @@ public @interface CsvRecord {
     boolean autospanLine() default false;
 
     /**
-     * The allowEmptyStream parameter will allow to prcoess the unavaiable stream for CSV file.
+     * The allowEmptyStream parameter will allow to process the unavailable stream for CSV file.
      */
     boolean allowEmptyStream() default false;
 

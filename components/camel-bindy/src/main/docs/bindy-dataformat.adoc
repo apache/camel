@@ -105,7 +105,7 @@ character supported is tab (\t). No other whitespace characters (spaces) are not
 interpreted as a regular expression. If you want to use a sign which has a special meaning in regular
 expressions, e.g., the '\|' sign, then you have to mask it, like '\|'
 
-| allowEmptyStream | boolean |  | false | The allowEmptyStream parameter will allow to prcoess the unavaiable stream for CSV file.
+| allowEmptyStream | boolean |  | false | The allowEmptyStream parameter will allow to process the unavailable stream for CSV file.
 
 | autospanLine | boolean |  | false a| Last record spans rest of line (optional) - if enabled then the last column is auto spanned to end of line, for
 example if it is a comment, etc this allows the line to contain all characters, also the delimiter char.
@@ -1313,7 +1313,7 @@ Header classes
 
 The KeyValuePairField annotation defines the property of a key value
 pair field. Each KeyValuePairField is identified by a tag (= key) and
-its value associated, a type (string, int, date, ...), optionaly a
+its value associated, a type (string, int, date, ...), optionally a
 pattern and if the field is required.
 
 [width="100%",cols="15%s,15%,60%",options="header",]
@@ -1342,7 +1342,7 @@ to @Message.continueParseOnFailure.
 
 | name | String |  |  | name of the field (optional)
 
-| pattern | String |  |  | pattern that the formater will use to transform the data (optional)
+| pattern | String |  |  | pattern that the formatter will use to transform the data (optional)
 
 | position | int |  | 0 a| Position of the field in the message generated - must be used when the position of the key/tag in the FIX message
 must be different
