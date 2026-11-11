@@ -7483,6 +7483,13 @@ over the leadership later than before, by up to the shutdown timeout of the Came
 hand over sooner, lower the shutdown timeout (`camel.main.shutdownTimeout`, or
 `CamelContext.getShutdownStrategy().setTimeout`).
 
+When a `ClusteredRouteController` is stopped or shut down while the CamelContext keeps running (for example after it
+was replaced by another route controller), it now stops its cluster service only if it started that service itself and
+the service is not a service of the CamelContext (Camel Main, Spring Boot and Quarkus add the cluster services they
+configure to the CamelContext). Before, it always stopped it, so the cluster route policies, master consumers and route
+controllers that share the cluster service of the CamelContext gave up their leadership too. To leave the cluster while
+the CamelContext runs, stop the cluster service itself.
+
 === camel-quartz - a route that keeps its trigger fires again when it is added again or after a restart
 
 With `deleteJob=false` (as with `pauseJob=true`), a route pauses its trigger when it stops, and only the same endpoint
