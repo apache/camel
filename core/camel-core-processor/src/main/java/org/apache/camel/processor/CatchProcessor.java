@@ -179,19 +179,16 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
         exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
         // a route called from the doTry (such as with direct) that failed unhandled has marked the exchange as failure
-        // handled, and as not handled by the error handler, before the exception came back here. A failure in a route
-        // that the doCatch block calls must be handled by that route's error handler as usual (which does not handle a
-        // new failure of an exchange that is failure handled, and keeps a "not handled" that is already set), as when
-        // the doTry failed in this route. So both marks are cleared when the doCatch takes over the exception
+        // handled, and as not handled by the error handler, before the exception came back here. The doCatch handles
+        // that failure, so the exchange must carry neither mark, as when the doTry failed in this route: an error
+        // handler does not handle a new failure of an exchange that is failure handled (in a route the doCatch block
+        // calls, later in this route, in a route the doFinally calls, or in a calling route), and the readers of the
+        // mark at the end of the exchange (such as the idempotent consumer) would treat the message as not processed.
+        // So both marks are cleared when the doCatch takes over the exception, and neither is set again after the block
+        // (CAMEL-26447): a failure that the block handles itself (such as a dead letter channel of a route it calls) is
+        // marked by that error handler
         final ExchangeExtension ext = exchange.getExchangeExtension();
-        final boolean failureHandled = ext.isFailureHandled();
-        // a primitive "set and true" snapshot, as the doFinally does: a "not handled" of the caught failure is not set
-        // again, as the doCatch handled that failure (as when the doTry failed in this route). No known case reaches
-        // the restore of a true mark today (a failure that an error handler handled has no exception left for a doCatch
-        // to catch); it is kept for symmetry with FinallyProcessor
-        final boolean errorHandlerHandled = ext.isErrorHandlerHandledSet() && ext.isErrorHandlerHandled();
-        final boolean restore = failureHandled || ext.isErrorHandlerHandledSet();
-        if (restore) {
+        if (ext.isFailureHandled() || ext.isErrorHandlerHandledSet()) {
             ext.setFailureHandled(false);
             ext.setErrorHandlerHandled(null);
         }
@@ -211,18 +208,6 @@ public class CatchProcessor extends BaseDelegateProcessorSupport
 
                 // always clear redelivery exhausted in a catch clause
                 exchange.getExchangeExtension().setRedeliveryExhausted(false);
-
-                if (restore) {
-                    // set the marks of the earlier failure again, unless a route called from the block set the handled
-                    // mark itself (such as its dead letter channel that handled its failure); failure handled is set
-                    // again but never cleared, so a failure that the block handled itself stays marked
-                    if (errorHandlerHandled && !ext.isErrorHandlerHandledSet()) {
-                        ext.setErrorHandlerHandled(true);
-                    }
-                    if (failureHandled) {
-                        ext.setFailureHandled(true);
-                    }
-                }
 
                 if (rollbackOnly || rollbackOnlyLast || stop) {
                     exchange.setRouteStop(stop);

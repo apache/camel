@@ -25,11 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The doTry calls a route that fails unhandled (default error handler), and the doCatch then calls a route with an
@@ -368,9 +368,9 @@ class DoCatchCalledRouteAfterUnhandledCalleeTest extends ContextTestSupport {
         assertNull(out.getException());
         assertEquals(1, count("mock:catch"), "mock:catch");
         assertEquals(1, count("mock:after"), "mock:after");
-        // failure handled is set again after the doCatch block, as before; the "not handled" of the caught failure is
-        // not, as when the doTry failed in this route
-        assertTrue(out.getExchangeExtension().isFailureHandled(), "failure handled");
+        // neither the failure handled mark nor the "not handled" of the caught failure is set again after the doCatch
+        // block, as when the doTry failed in this route (CAMEL-26447)
+        assertFalse(out.getExchangeExtension().isFailureHandled(), "failure handled");
         assertNull(out.getExchangeExtension().getErrorHandlerHandled(), "handled by the error handler");
     }
 
@@ -381,7 +381,9 @@ class DoCatchCalledRouteAfterUnhandledCalleeTest extends ContextTestSupport {
         assertEquals("in catch", out.getException().getMessage());
         assertEquals(1, count("mock:catch"), "mock:catch");
         assertEquals(0, count("mock:after"), "mock:after");
-        assertTrue(out.getExchangeExtension().isFailureHandled(), "failure handled");
+        // the failure handled mark of the caught failure is not set again (CAMEL-26447), as when the doTry failed in
+        // this route (DoCatchFailureHandledMarkTest.failureOfTheDoCatchIsNotFailureHandled)
+        assertFalse(out.getExchangeExtension().isFailureHandled(), "failure handled");
         assertNull(out.getExchangeExtension().getErrorHandlerHandled(), "handled by the error handler");
     }
 
@@ -435,7 +437,8 @@ class DoCatchCalledRouteAfterUnhandledCalleeTest extends ContextTestSupport {
 
     @Test
     void secondDoTryAfterCaughtCalleeFailure() {
-        // the failure handled mark that is set again after the first doCatch is cleared again by the second doCatch
+        // the first doCatch clears the failure handled mark of the caught failure, so the second doTry runs as in
+        // the route
         assertSecondDoTry(send("direct:secondDoTryViaCallee"));
     }
 
