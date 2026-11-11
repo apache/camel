@@ -43,6 +43,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "authorizationModelId": getOrCreateConfiguration(target).setAuthorizationModelId(property(camelContext, java.lang.String.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
+        case "batchcheckmode":
+        case "batchCheckMode": getOrCreateConfiguration(target).setBatchCheckMode(property(camelContext, org.apache.camel.component.openfga.OpenFgaBatchCheckMode.class, value)); return true;
         case "clientid":
         case "clientId": getOrCreateConfiguration(target).setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "clientsecret":
@@ -65,6 +67,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckProducerEnabled": target.setHealthCheckProducerEnabled(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "maxbatchsize":
+        case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxparallelrequests":
         case "maxParallelRequests": getOrCreateConfiguration(target).setMaxParallelRequests(property(camelContext, int.class, value)); return true;
         case "maxretries":
@@ -115,6 +119,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "authorizationModelId": return java.lang.String.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
+        case "batchcheckmode":
+        case "batchCheckMode": return org.apache.camel.component.openfga.OpenFgaBatchCheckMode.class;
         case "clientid":
         case "clientId": return java.lang.String.class;
         case "clientsecret":
@@ -137,6 +143,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckProducerEnabled": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "maxbatchsize":
+        case "maxBatchSize": return int.class;
         case "maxparallelrequests":
         case "maxParallelRequests": return int.class;
         case "maxretries":
@@ -183,6 +191,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "authorizationModelId": return getOrCreateConfiguration(target).getAuthorizationModelId();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
+        case "batchcheckmode":
+        case "batchCheckMode": return getOrCreateConfiguration(target).getBatchCheckMode();
         case "clientid":
         case "clientId": return getOrCreateConfiguration(target).getClientId();
         case "clientsecret":
@@ -205,6 +215,8 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "healthCheckProducerEnabled": return target.isHealthCheckProducerEnabled();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "maxbatchsize":
+        case "maxBatchSize": return getOrCreateConfiguration(target).getMaxBatchSize();
         case "maxparallelrequests":
         case "maxParallelRequests": return getOrCreateConfiguration(target).getMaxParallelRequests();
         case "maxretries":

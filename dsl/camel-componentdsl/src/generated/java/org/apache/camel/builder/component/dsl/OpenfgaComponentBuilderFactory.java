@@ -92,6 +92,28 @@ public interface OpenfgaComponentBuilderFactory {
             doSetProperty("authorizationModelId", authorizationModelId);
             return this;
         }
+
+
+        /**
+         * Whether batchCheck fans out individual checks (client, the compatible
+         * default) or uses the native server BatchCheck API (server, requires
+         * OpenFGA 1.8.0 or later). Server mode chunks checks by maxBatchSize
+         * and correlates responses back to the original objects. Failures never
+         * fall back to an unfiltered result or another mode.
+         *
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.openfga.OpenFgaBatchCheckMode&lt;/code&gt; type.
+         *
+         * Default: client
+         * Group: producer
+         *
+         * @param batchCheckMode the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder batchCheckMode(org.apache.camel.component.openfga.OpenFgaBatchCheckMode batchCheckMode) {
+            doSetProperty("batchCheckMode", batchCheckMode);
+            return this;
+        }
     
         /**
          * Context passed to the CEL expressions of any conditioned relation the
@@ -462,9 +484,28 @@ public interface OpenfgaComponentBuilderFactory {
     
         
         /**
-         * How many of a batchCheck's checks may be in flight at once. The batch
-         * is issued as one request per object, so this bounds the load one
-         * exchange puts on the server.
+         * Maximum number of checks per native server BatchCheck request, from 1
+         * to 50. Applies only when batchCheckMode=server; the SDK splits larger
+         * input lists into requests of at most this size.
+         *
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         *
+         * Default: 50
+         * Group: advanced
+         *
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
+         */
+        default OpenfgaComponentBuilder maxBatchSize(int maxBatchSize) {
+            doSetProperty("maxBatchSize", maxBatchSize);
+            return this;
+        }
+
+
+        /**
+         * How many HTTP requests a batchCheck may have in flight at once. In
+         * client mode each request checks one object; in server mode each
+         * request checks up to maxBatchSize objects.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -761,6 +802,7 @@ public interface OpenfgaComponentBuilderFactory {
             switch (name) {
             case "apiUrl": getOrCreateConfiguration((OpenFgaComponent) component).setApiUrl((java.lang.String) value); return true;
             case "authorizationModelId": getOrCreateConfiguration((OpenFgaComponent) component).setAuthorizationModelId((java.lang.String) value); return true;
+            case "batchCheckMode": getOrCreateConfiguration((OpenFgaComponent) component).setBatchCheckMode((org.apache.camel.component.openfga.OpenFgaBatchCheckMode) value); return true;
             case "conditionContext": getOrCreateConfiguration((OpenFgaComponent) component).setConditionContext((java.util.Map) value); return true;
             case "configuration": ((OpenFgaComponent) component).setConfiguration((org.apache.camel.component.openfga.OpenFgaConfiguration) value); return true;
             case "consistency": getOrCreateConfiguration((OpenFgaComponent) component).setConsistency((java.lang.String) value); return true;
@@ -778,6 +820,7 @@ public interface OpenfgaComponentBuilderFactory {
             case "userFilters": getOrCreateConfiguration((OpenFgaComponent) component).setUserFilters((java.lang.String) value); return true;
             case "autowiredEnabled": ((OpenFgaComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectTimeout": getOrCreateConfiguration((OpenFgaComponent) component).setConnectTimeout((long) value); return true;
+            case "maxBatchSize": getOrCreateConfiguration((OpenFgaComponent) component).setMaxBatchSize((int) value); return true;
             case "maxParallelRequests": getOrCreateConfiguration((OpenFgaComponent) component).setMaxParallelRequests((int) value); return true;
             case "maxRetries": getOrCreateConfiguration((OpenFgaComponent) component).setMaxRetries((int) value); return true;
             case "openFgaClient": getOrCreateConfiguration((OpenFgaComponent) component).setOpenFgaClient((dev.openfga.sdk.api.client.OpenFgaClient) value); return true;
