@@ -3,6 +3,8 @@
 - restConfiguration:
     bindingMode: json
     apiContextPath: openapi
+    host: localhost
+    port: "{{camel.server.port}}"
 
 - rest:
     path: /orders
