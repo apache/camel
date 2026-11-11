@@ -2055,12 +2055,14 @@ lives inside the private key, so two processes that load the same key from a sha
 two replicas reading one vault secret - each advance their own copy and hand out the same index.
 
 Before it first signs with a stateful key, the `pqc` producer now claims it from the configured
-`KeyLifecycleManager`, through the new `KeyLifecycleManager.claimStatefulKey(String)` and
-`releaseStatefulKey(String)` methods. Both have a default implementation, so a custom manager still compiles; the
-default grants no claim.
+`KeyLifecycleManager`, through the new `KeyLifecycleManager.claimStatefulKey(String, PublicKey)` and
+`releaseStatefulKey(String, PublicKey)` methods. Both have a default implementation, so a custom manager still
+compiles; the default grants no claim. The claim is on the key material, identified by the public key (see the new
+`KeyLifecycleManager.fingerprint(PublicKey)`), not on the name the `CamelPQCKeyId` header gives the key: the same key
+under two names, or under none, is one claim, so an exchange that carries no header is claimed too.
 
-* `FileBasedKeyLifecycleManager` takes an exclusive `FileLock` on a `<keyId>.lock` file in the key directory, so a
-  second process reading that directory is refused.
+* `FileBasedKeyLifecycleManager` takes an exclusive `FileLock` on a lock file in the key directory named from the
+  SHA-256 fingerprint of the public key, so a second process reading that directory is refused.
 * `InMemoryKeyLifecycleManager` grants the claim - its keys never leave the process.
 * The vault-backed managers (AWS Secrets Manager, Azure Key Vault, Hashicorp Vault) cannot offer a lease Camel can
   take, so they do not grant it. **An endpoint signing with a stateful key through one of them now fails**, with a
