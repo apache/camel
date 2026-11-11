@@ -103,7 +103,7 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
 
     /**
      * Sets the logging level to use for logging transactional rollback.
-     * <p/>
+     * <p>
      * This option is default WARN.
      */
     public TransactionErrorHandlerDefinition rollbackLoggingLevel(String rollbackLoggingLevel) {
@@ -113,7 +113,7 @@ public abstract class TransactionErrorHandlerDefinition extends DefaultErrorHand
 
     /**
      * Sets the logging level to use for logging transactional rollback.
-     * <p/>
+     * <p>
      * This option is default WARN.
      */
     public TransactionErrorHandlerDefinition rollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {

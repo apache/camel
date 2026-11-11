@@ -50,22 +50,22 @@ public final class AdviceWith {
      * <pre>
      * AdviceWith.adviceWith(context, "myRoute", a -> a.weaveAddLast().to("mock:result"));
      * </pre>
-     * <p/>
+     * <p>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
      * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
      * involved.
-     * <p/>
+     * <p>
      * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
      * builder to this route.
-     * <p/>
+     * <p>
      * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
-     * <p/>
+     * <p>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
      * @param  camelContext the camel context
-     * @param  routeId      either the route id as a string value, or <tt>null</tt> to chose the 1st route, or you can
-     *                      specify a number for the n'th route, or provide the route definition instance directly as
-     *                      well.
+     * @param  routeId      either the route id as a string value, or <code>null</code> to choose the 1st route, or you
+     *                      can specify a number for the n'th route, or provide the route definition instance directly
+     *                      as well.
      * @param  builder      the advice with route builder
      * @return              a new route which is this route merged with the route builder
      * @throws Exception    can be thrown from the route builder
@@ -88,22 +88,22 @@ public final class AdviceWith {
      * <pre>
      * AdviceWith.adviceWith(context, "myRoute", false, a -> a.weaveAddLast().to("mock:result"));
      * </pre>
-     * <p/>
+     * <p>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
      * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
      * involved.
-     * <p/>
+     * <p>
      * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
      * builder to this route.
-     * <p/>
+     * <p>
      * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
-     * <p/>
+     * <p>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
      * @param  camelContext the camel context
-     * @param  routeId      either the route id as a string value, or <tt>null</tt> to chose the 1st route, or you can
-     *                      specify a number for the n'th route, or provide the route definition instance directly as
-     *                      well.
+     * @param  routeId      either the route id as a string value, or <code>null</code> to choose the 1st route, or you
+     *                      can specify a number for the n'th route, or provide the route definition instance directly
+     *                      as well.
      * @param  logXml       whether to log the before and after advices routes as XML to the log (this can be turned off
      *                      to perform faster)
      * @param  builder      the advice with route builder
@@ -126,25 +126,25 @@ public final class AdviceWith {
 
     /**
      * Advices this route with the route builder.
-     * <p/>
+     * <p>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
      * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
      * involved. The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is
      * needed to support this properly.
-     * <p/>
+     * <p>
      * You can use a regular {@link RouteBuilder} but the specialized {@link AdviceWithRouteBuilder} has additional
      * features when using the advice with feature. We therefore suggest you to use the {@link AdviceWithRouteBuilder}.
-     * <p/>
+     * <p>
      * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
      * builder to this route.
-     * <p/>
+     * <p>
      * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
-     * <p/>
+     * <p>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
-     * @param  routeId      either the route id as a string value, or <tt>null</tt> to chose the 1st route, or you can
-     *                      specify a number for the n'th route, or provide the route definition instance directly as
-     *                      well.
+     * @param  routeId      either the route id as a string value, or <code>null</code> to choose the 1st route, or you
+     *                      can specify a number for the n'th route, or provide the route definition instance directly
+     *                      as well.
      * @param  camelContext the camel context
      * @param  builder      the route builder
      * @return              a new route which is this route merged with the route builder
@@ -159,20 +159,20 @@ public final class AdviceWith {
 
     /**
      * Advices this route with the route builder.
-     * <p/>
+     * <p>
      * <b>Important:</b> It is recommended to only advice a given route once (you can of course advice multiple routes).
      * If you do it multiple times, then it may not work as expected, especially when any kind of error handling is
      * involved. The Camel team plan for Camel 3.0 to support this as internal refactorings in the routing engine is
      * needed to support this properly.
-     * <p/>
+     * <p>
      * You can use a regular {@link RouteBuilder} but the specialized {@link AdviceWithRouteBuilder} has additional
      * features when using the advice with feature. We therefore suggest you to use the {@link AdviceWithRouteBuilder}.
-     * <p/>
+     * <p>
      * The advice process will add the interceptors, on exceptions, on completions etc. configured from the route
      * builder to this route.
-     * <p/>
+     * <p>
      * This is mostly used for testing purpose to add interceptors and the likes to an existing route.
-     * <p/>
+     * <p>
      * Will stop and remove the old route from camel context and add and start this new advised route.
      *
      * @param  definition   the model definition

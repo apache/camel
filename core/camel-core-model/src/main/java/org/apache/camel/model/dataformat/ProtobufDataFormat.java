@@ -644,7 +644,7 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
 
         /**
          * If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip
-         * these null values, you can set this option to <tt>NON_NULL</tt>
+         * these null values, you can set this option to <code>NON_NULL</code>
          */
         public Builder include(String include) {
             this.include = include;
@@ -717,13 +717,13 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * Set of features to enable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-         * <p/>
+         * Set of features to enable on the Jackson <code>com.fasterxml.jackson.databind.ObjectMapper</code>.
+         * <p>
+         * The features should be a name that matches an enum from
+         * <code>com.fasterxml.jackson.databind.SerializationFeature</code>,
+         * <code>com.fasterxml.jackson.databind.DeserializationFeature</code>, or
+         * <code>com.fasterxml.jackson.databind.MapperFeature</code>
+         * <p>
          * Multiple features can be separated by comma
          */
         public Builder enableFeatures(String enableFeatures) {
@@ -732,13 +732,13 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         }
 
         /**
-         * Set of features to disable on the Jackson <tt>com.fasterxml.jackson.databind.ObjectMapper</tt>.
-         * <p/>
-         * The features should be a name that matches a enum from
-         * <tt>com.fasterxml.jackson.databind.SerializationFeature</tt>,
-         * <tt>com.fasterxml.jackson.databind.DeserializationFeature</tt>, or
-         * <tt>com.fasterxml.jackson.databind.MapperFeature</tt>
-         * <p/>
+         * Set of features to disable on the Jackson <code>com.fasterxml.jackson.databind.ObjectMapper</code>.
+         * <p>
+         * The features should be a name that matches an enum from
+         * <code>com.fasterxml.jackson.databind.SerializationFeature</code>,
+         * <code>com.fasterxml.jackson.databind.DeserializationFeature</code>, or
+         * <code>com.fasterxml.jackson.databind.MapperFeature</code>
+         * <p>
          * Multiple features can be separated by comma
          */
         public Builder disableFeatures(String disableFeatures) {
@@ -749,7 +749,7 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         /**
          * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
          * unmarshalling.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(String allowUnmarshallType) {
@@ -760,7 +760,7 @@ public class ProtobufDataFormat extends DataFormatDefinition implements ContentT
         /**
          * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
          * unmarshalling.
-         * <p/>
+         * <p>
          * This should only be enabled when desired to be used.
          */
         public Builder allowUnmarshallType(boolean allowUnmarshallType) {
