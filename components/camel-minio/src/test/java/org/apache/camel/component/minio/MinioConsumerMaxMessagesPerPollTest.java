@@ -35,14 +35,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * A poll lists and routes at most maxMessagesPerPoll objects: with more objects in the bucket, the following polls
- * continue after the last listed object until the bucket is drained, and a later poll starts over.
+ * continue after the last listed object until the bucket is drained, and a later poll starts over. A configured
+ * startAfter marks where each pass through the bucket begins: the polls of a pass still continue after the last listed
+ * object, they do not start over at startAfter on every poll.
  */
 class MinioConsumerMaxMessagesPerPollTest extends CamelTestSupport {
 
     private static final int OBJECTS = 30;
     private static final int MAX_PER_POLL = 10;
+    // the objects after the configured startAfter of the second route: name(6) to name(30)
+    private static final String START_AFTER = "o005.txt";
+    private static final int AFTER_START_AFTER = OBJECTS - 5;
 
     private final List<Integer> polledCounts = new CopyOnWriteArrayList<>();
+    private final List<Integer> polledCountsStartAfter = new CopyOnWriteArrayList<>();
     private FakeS3Server s3;
 
     @Override
@@ -56,7 +62,11 @@ class MinioConsumerMaxMessagesPerPollTest extends CamelTestSupport {
         context.getRegistry().bind("recordPolls", new DefaultPollingConsumerPollStrategy() {
             @Override
             public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
-                polledCounts.add(polledMessages);
+                if (endpoint.getEndpointUri().contains("startAfter")) {
+                    polledCountsStartAfter.add(polledMessages);
+                } else {
+                    polledCounts.add(polledMessages);
+                }
             }
         });
         return context;
@@ -77,6 +87,10 @@ class MinioConsumerMaxMessagesPerPollTest extends CamelTestSupport {
                 from("minio://bkt?accessKey=xxx&secretKey=yyy&region=us-east-1&delay=10&pollStrategy=#recordPolls"
                      + "&maxMessagesPerPoll=" + MAX_PER_POLL + "&deleteAfterRead=false&endpoint=" + s3.endpoint())
                         .to("mock:result");
+                from("minio://bkt?accessKey=xxx&secretKey=yyy&region=us-east-1&delay=10&pollStrategy=#recordPolls"
+                     + "&maxMessagesPerPoll=" + MAX_PER_POLL + "&deleteAfterRead=false&startAfter=" + START_AFTER
+                     + "&endpoint=" + s3.endpoint())
+                        .to("mock:resultStartAfter");
             }
         };
     }
@@ -108,6 +122,36 @@ class MinioConsumerMaxMessagesPerPollTest extends CamelTestSupport {
                 "the first polls should each route one full page: " + polledCounts);
         assertTrue(nonEmpty.stream().allMatch(n -> n <= MAX_PER_POLL),
                 "no poll should route more than maxMessagesPerPoll objects: " + polledCounts);
+    }
+
+    @Test
+    void pollWithStartAfterProgressesPastTheFirstPage() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:resultStartAfter");
+        // a minimum, not an exact count: with deleteAfterRead=false the polls keep cycling through the objects
+        // after startAfter once a pass has covered them, so more messages can arrive while the assertions run
+        mock.expectedMinimumMessageCount(AFTER_START_AFTER);
+        mock.assertIsSatisfied();
+
+        // the first messages after startAfter are all the objects beyond it, in listing order: the polls of the
+        // pass continued after the last listed object instead of listing the first page after startAfter again
+        List<String> bodies = mock.getExchanges().stream()
+                .limit(AFTER_START_AFTER)
+                .map(e -> e.getIn().getBody(String.class))
+                .toList();
+        List<String> expected = new ArrayList<>();
+        for (int i = 6; i <= OBJECTS; i++) {
+            expected.add("content-" + i);
+        }
+        assertEquals(expected, bodies);
+
+        // the pass was two full pages and a last page with the remaining objects
+        List<Integer> nonEmpty = polledCountsStartAfter.stream().filter(n -> n > 0).toList();
+        assertTrue(nonEmpty.size() >= 3, "expected at least three non-empty polls: " + polledCountsStartAfter);
+        assertEquals(List.of(MAX_PER_POLL, MAX_PER_POLL, AFTER_START_AFTER - 2 * MAX_PER_POLL),
+                nonEmpty.subList(0, 3),
+                "the first polls should progress through the objects after startAfter: " + polledCountsStartAfter);
+        assertTrue(nonEmpty.stream().allMatch(n -> n <= MAX_PER_POLL),
+                "no poll should route more than maxMessagesPerPoll objects: " + polledCountsStartAfter);
     }
 
     private static String name(int i) {
