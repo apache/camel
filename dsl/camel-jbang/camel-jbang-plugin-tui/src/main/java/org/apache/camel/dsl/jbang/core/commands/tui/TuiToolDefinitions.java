@@ -367,7 +367,7 @@ final class TuiToolDefinitions {
         tools.add(tool(toolDef(
                 "tui_get_diagram",
                 "The Diagram tab's diagram as JSON: level, boxes (row, col, height, width) and links, "
-                                   + "or a route's steps (id, type, label, parent, children).",
+                                   + "or a route's steps.",
                 Map.of()), args -> r.callGetDiagram(), READ_ONLY));
         tools.add(tool(toolDef(
                 "tui_get_history",
