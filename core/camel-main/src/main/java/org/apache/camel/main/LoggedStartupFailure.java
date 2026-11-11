@@ -21,7 +21,7 @@ package org.apache.camel.main;
  * logged: the JVM does not print that failure a second time when it leaves main, also not when a launcher wraps it (the
  * launcher of a fat jar calls main by reflection, and wraps the failure in an InvocationTargetException). Any other
  * exception goes to the handler the thread had before, which prints it as the JVM does.
- * <p/>
+ * <p>
  * Spring Boot does the same for an application that fails to start.
  */
 final class LoggedStartupFailure implements Thread.UncaughtExceptionHandler {

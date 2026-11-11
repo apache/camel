@@ -179,7 +179,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     /**
      * Whether to enable developer console (not intended for production use). Dev console must also be enabled on
      * CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code
-     * <tt>camelContext.setDevConsole(true);</tt> If enabled then you can access a basic developer console on
+     * <code>camelContext.setDevConsole(true);</code> If enabled then you can access a basic developer console on
      * context-path: /q/dev.
      */
     public void setDevConsoleEnabled(boolean devConsoleEnabled) {
@@ -498,7 +498,7 @@ public class HttpManagementServerConfigurationProperties implements BootstrapClo
     /**
      * Whether to enable developer console (not intended for production use). Dev console must also be enabled on
      * CamelContext. For example by setting camel.context.dev-console=true in application.properties, or via code
-     * <tt>camelContext.setDevConsole(true);</tt> If enabled then you can access a basic developer console on
+     * <code>camelContext.setDevConsole(true);</code> If enabled then you can access a basic developer console on
      * context-path: /observe/dev.
      */
     public HttpManagementServerConfigurationProperties withDevConsoleEnabled(boolean devConsoleEnabled) {

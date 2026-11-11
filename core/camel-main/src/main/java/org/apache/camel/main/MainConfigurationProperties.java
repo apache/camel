@@ -588,12 +588,12 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1
      * - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as
      * seda,direct,jaxb.
-     * <p/>
-     * The auto configuration also works for any options on components that is a complex type (not standard Java type)
+     * <p>
+     * The auto configuration also works for any options on components that are a complex type (not standard Java type)
      * and there has been an explicit single bean instance registered to the Camel registry via the
      * {@link org.apache.camel.spi.Registry#bind(String, Object)} method or by using the
      * {@link org.apache.camel.BindToRegistry} annotation style.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
@@ -608,7 +608,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule
      * any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds:
      * CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public void setAutoConfigurationEnvironmentVariablesEnabled(boolean autoConfigurationEnvironmentVariablesEnabled) {
@@ -623,9 +623,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any
      * configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D
      * camel.main.shutdown-timeout=5.
-     * <p/>
+     * <p>
      * Note that JVM system properties take precedence over OS environment variables.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public void setAutoConfigurationSystemPropertiesEnabled(boolean autoConfigurationSystemPropertiesEnabled) {
@@ -638,8 +638,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     /**
      * Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason
-     * such as a invalid property name, etc.
-     * <p/>
+     * such as an invalid property name, etc.
+     * <p>
      * This option is default enabled.
      */
     public void setAutoConfigurationFailFast(boolean autoConfigurationFailFast) {
@@ -652,7 +652,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     /**
      * Whether auto configuration should log a summary with the configured properties.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public void setAutoConfigurationLogSummary(boolean autoConfigurationLogSummary) {
@@ -913,12 +913,12 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1
      * - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2
      * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
-     * <p/>
-     * The auto configuration also works for any options on components that is a complex type (not standard Java type)
+     * <p>
+     * The auto configuration also works for any options on components that are a complex type (not standard Java type)
      * and there has been an explicit single bean instance registered to the Camel registry via the
      * {@link org.apache.camel.spi.Registry#bind(String, Object)} method or by using the
      * {@link org.apache.camel.BindToRegistry} annotation style.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public MainConfigurationProperties withAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
@@ -930,7 +930,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule
      * any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds:
      * CAMEL_MAIN_SHUTDOWNTIMEOUT=5.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public MainConfigurationProperties withAutoConfigurationEnvironmentVariablesEnabled(
@@ -943,9 +943,9 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any
      * configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D
      * camel.main.shutdown-timeout=5.
-     * <p/>
+     * <p>
      * Note that JVM system properties take precedence over OS environment variables.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public MainConfigurationProperties withAutoConfigurationSystemPropertiesEnabled(
@@ -956,8 +956,8 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     /**
      * Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason
-     * such as a invalid property name, etc.
-     * <p/>
+     * such as an invalid property name, etc.
+     * <p>
      * This option is default enabled.
      */
     public MainConfigurationProperties withAutoConfigurationFailFast(boolean autoConfigurationFailFast) {
@@ -967,7 +967,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
 
     /**
      * Whether auto configuration should log a summary with the configured properties.
-     * <p/>
+     * <p>
      * This option is default enabled.
      */
     public MainConfigurationProperties withAutoConfigurationLogSummary(boolean autoConfigurationLogSummary) {

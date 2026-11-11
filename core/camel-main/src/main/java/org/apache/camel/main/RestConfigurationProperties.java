@@ -87,7 +87,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
 
     /**
      * The scheme to use for exposing the REST service. Usually http or https is supported.
-     * <p/>
+     * <p>
      * The default value is http
      */
     public RestConfigurationProperties withScheme(String scheme) {
@@ -105,7 +105,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
 
     /**
      * To use a specific hostname for the API documentation (such as swagger or openapi)
-     * <p/>
+     * <p>
      * This can be used to override the generated host with this configured hostname
      */
     public RestConfigurationProperties withApiHost(String apiHost) {
@@ -140,11 +140,11 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
 
     /**
      * Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query
-     * parameters are valid accordingly to the api document. This requires adding camel-openapi-java to the classpath,
-     * and any miss configuration will let Camel fail on startup and report the error(s).
-     * <p/>
-     * The location of the api document is loaded from classpath by default, but you can use <tt>file:</tt> or
-     * <tt>http:</tt> to refer to resources to load from file or http url.
+     * parameters are valid according to the api document. This requires adding camel-openapi-java to the classpath, and
+     * any misconfiguration will let Camel fail on startup and report the error(s).
+     * <p>
+     * The location of the api document is loaded from classpath by default, but you can use <code>file:</code> or
+     * <code>http:</code> to refer to resources to load from file or http url.
      */
     public RestConfigurationProperties withProducerApiDoc(String producerApiDoc) {
         setProducerApiDoc(producerApiDoc);
@@ -153,10 +153,10 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
 
     /**
      * Sets a leading context-path the REST services will be using.
-     * <p/>
-     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application is
-     * deployed using a context-path. Or for components such as <tt>camel-jetty</tt> or <tt>camel-netty-http</tt> that
-     * includes a HTTP server.
+     * <p>
+     * This can be used when using components such as <code>camel-servlet</code> where the deployed web application is
+     * deployed using a context-path. Or for components such as <code>camel-jetty</code> or
+     * <code>camel-netty-http</code> that include an HTTP server.
      */
     public RestConfigurationProperties withContextPath(String contextPath) {
         setContextPath(contextPath);
@@ -164,12 +164,12 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
     }
 
     /**
-     * The path, such as <tt>/api-doc</tt>, where the REST DSL serves the API documentation of the REST services, as an
-     * OpenAPI document.
-     * <p/>
-     * The API documentation is only served when this option is set. This requires <tt>camel-openapi-java</tt> on the
-     * classpath. The document is JSON by default, or YAML when the request path ends with <tt>.yaml</tt>. The path is
-     * relative to contextPath, when that option is set.
+     * The path, such as <code>/api-doc</code>, where the REST DSL serves the API documentation of the REST services, as
+     * an OpenAPI document.
+     * <p>
+     * The API documentation is only served when this option is set. This requires <code>camel-openapi-java</code> on
+     * the classpath. The document is JSON by default, or YAML when the request path ends with <code>.yaml</code>. The
+     * path is relative to contextPath, when that option is set.
      */
     public RestConfigurationProperties withApiContextPath(String apiContextPath) {
         setApiContextPath(apiContextPath);
@@ -178,7 +178,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
 
     /**
      * Sets the route id to use for the route that services the REST API.
-     * <p/>
+     * <p>
      * The route will by default use an auto assigned route id.
      */
     public RestConfigurationProperties withApiContextRouteId(String apiContextRouteId) {
@@ -207,7 +207,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
 
     /**
      * Sets the binding mode to use.
-     * <p/>
+     * <p>
      * The possible values are: auto, off, json, xml, json_xml The default value is off
      */
     public RestConfigurationProperties withBindingMode(String bindingMode) {
@@ -260,7 +260,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
 
     /**
      * Whether to enable CORS headers in the HTTP response.
-     * <p/>
+     * <p>
      * The default value is false.
      */
     public RestConfigurationProperties withEnableCORS(boolean enableCORS) {
@@ -275,7 +275,7 @@ public class RestConfigurationProperties extends RestConfiguration implements Bo
      * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
      * a single route, however this requires to use direct endpoints, which must be unique per service.
      *
-     * This option is default <tt>false</tt>.
+     * This option is default <code>false</code>.
      */
     public RestConfigurationProperties withInlineRoutes(boolean inlineRoutes) {
         setInlineRoutes(inlineRoutes);

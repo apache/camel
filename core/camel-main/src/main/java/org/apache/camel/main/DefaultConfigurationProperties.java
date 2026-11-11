@@ -446,8 +446,8 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel
-     * 2.x. Its recommended to migrate to use fast type converter loading by setting <tt>@Converter(loader = true)</tt>
-     * on your custom type converter classes.
+     * 2.x. It's recommended to migrate to use fast type converter loading by setting
+     * <code>@Converter(loader = true)</code> on your custom type converter classes.
      */
     public void setLoadTypeConverters(boolean loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
@@ -854,18 +854,18 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * The global name to use for Log EIP
      *
-     * The name is default the routeId or the source:line if source location is enabled. You can also specify the name
-     * using tokens:
+     * The name is by default the routeId or the source:line if source location is enabled. You can also specify the
+     * name using tokens:
      *
-     * <br/>
-     * ${class} - the logger class name (org.apache.camel.processor.LogProcessor) <br/>
-     * ${contextId} - the camel context id <br/>
-     * ${routeId} - the route id <br/>
-     * ${groupId} - the route group id <br/>
-     * ${nodeId} - the node id <br/>
-     * ${nodePrefixId} - the node prefix id <br/>
-     * ${source} - the source:line (source location must be enabled) <br/>
-     * ${source.name} - the source filename (source location must be enabled) <br/>
+     * <br>
+     * ${class} - the logger class name (org.apache.camel.processor.LogProcessor) <br>
+     * ${contextId} - the camel context id <br>
+     * ${routeId} - the route id <br>
+     * ${groupId} - the route group id <br>
+     * ${nodeId} - the node id <br>
+     * ${nodePrefixId} - the node prefix id <br>
+     * ${source} - the source:line (source location must be enabled) <br>
+     * ${source.name} - the source filename (source location must be enabled) <br>
      * ${source.line} - the source line number (source location must be enabled)
      *
      * For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}
@@ -1031,10 +1031,10 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the
-     * consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by
-     * the routing Error Handler.
-     * <p/>
+     * Allows for bridging the consumer to the Camel routing Error Handler, which means any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled
+     * by the routing Error Handler.
+     * <p>
      * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
      *
@@ -1466,7 +1466,7 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Used for inclusive filtering of routes from directories.
      *
-     * Typical used for specifying to accept routes in XML or YAML files, such as <tt>*.yaml,*.xml</tt>. Multiple
+     * Typically used for specifying to accept routes in XML or YAML files, such as <code>*.yaml,*.xml</code>. Multiple
      * patterns can be specified separated by comma.
      */
     public void setRoutesReloadPattern(String routesReloadPattern) {
@@ -1721,7 +1721,7 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Sets global options that can be referenced in the camel context
-     * <p/>
+     * <p>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
      * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      */
@@ -1730,8 +1730,8 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Adds a global options that can be referenced in the camel context
-     * <p/>
+     * Adds global options that can be referenced in the camel context
+     * <p>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
      * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      */
@@ -2030,8 +2030,8 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel
-     * 2.x. Its recommended to migrate to use fast type converter loading by setting <tt>@Converter(loader = true)</tt>
-     * on your custom type converter classes.
+     * 2.x. It's recommended to migrate to use fast type converter loading by setting
+     * <code>@Converter(loader = true)</code> on your custom type converter classes.
      */
     public T withLoadTypeConverters(boolean loadTypeConverters) {
         this.loadTypeConverters = loadTypeConverters;
@@ -2324,18 +2324,18 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * The global name to use for Log EIP
      *
-     * The name is default the routeId or the source:line if source location is enabled. You can also specify the name
-     * using tokens:
+     * The name is by default the routeId or the source:line if source location is enabled. You can also specify the
+     * name using tokens:
      *
-     * <br/>
-     * ${class} - the logger class name (org.apache.camel.processor.LogProcessor) <br/>
-     * ${contextId} - the camel context id <br/>
-     * ${routeId} - the route id <br/>
-     * ${groupId} - the route group id <br/>
-     * ${nodeId} - the node id <br/>
-     * ${nodePrefixId} - the node prefix id <br/>
-     * ${source} - the source:line (source location must be enabled) <br/>
-     * ${source.name} - the source filename (source location must be enabled) <br/>
+     * <br>
+     * ${class} - the logger class name (org.apache.camel.processor.LogProcessor) <br>
+     * ${contextId} - the camel context id <br>
+     * ${routeId} - the route id <br>
+     * ${groupId} - the route group id <br>
+     * ${nodeId} - the node id <br>
+     * ${nodePrefixId} - the node prefix id <br>
+     * ${source} - the source:line (source location must be enabled) <br>
+     * ${source.name} - the source filename (source location must be enabled) <br>
      * ${source.line} - the source line number (source location must be enabled)
      *
      * For example to use the route and node id you can specify the name as: ${routeId}/${nodeId}
@@ -2454,10 +2454,10 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
-     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the
-     * consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by
-     * the routing Error Handler.
-     * <p/>
+     * Allows for bridging the consumer to the Camel routing Error Handler, which means any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled
+     * by the routing Error Handler.
+     * <p>
      * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be
      * logged at WARN/ERROR level and ignored.
      *
@@ -2819,8 +2819,8 @@ public abstract class DefaultConfigurationProperties<T> {
     /**
      * Used for inclusive filtering of routes from directories.
      *
-     * Typical used for specifying to accept routes in XML or YAML files. The default pattern is <tt>*.yaml,*.xml</tt>
-     * Multiple patterns can be specified separated by comma.
+     * Typically used for specifying to accept routes in XML or YAML files. The default pattern is
+     * <code>*.yaml,*.xml</code> Multiple patterns can be specified separated by comma.
      */
     public T withRoutesReloadPattern(String routesReloadPattern) {
         this.routesReloadPattern = routesReloadPattern;
@@ -2973,7 +2973,7 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Sets global options that can be referenced in the camel context
-     * <p/>
+     * <p>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
      * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      */
@@ -2987,7 +2987,7 @@ public abstract class DefaultConfigurationProperties<T> {
 
     /**
      * Sets global options that can be referenced in the camel context
-     * <p/>
+     * <p>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
      * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      */
