@@ -29,6 +29,7 @@ import com.styra.opa.openapi.models.errors.AuthException;
 import com.styra.opa.openapi.models.errors.ClientError;
 import com.styra.opa.openapi.models.errors.SDKError;
 import com.styra.opa.openapi.models.errors.ServerError;
+import org.apache.camel.Expression;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -42,7 +43,13 @@ public class OpaRestEvaluator extends OpaPolicyEvaluator implements AutoCloseabl
     public OpaRestEvaluator(OPAClient client, OpaHttpClient transport, String policyPath, String allowKey,
                             String includeHeaders,
                             String includeProperties, boolean includeBody, boolean failOpen) {
-        super(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen);
+        this(client, transport, policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen, null);
+    }
+
+    public OpaRestEvaluator(OPAClient client, OpaHttpClient transport, String policyPath, String allowKey,
+                            String includeHeaders, String includeProperties, boolean includeBody, boolean failOpen,
+                            Expression inputExpression) {
+        super(policyPath, allowKey, includeHeaders, includeProperties, includeBody, failOpen, inputExpression);
         this.client = ObjectHelper.notNull(client, "client");
         this.transport = transport;
     }

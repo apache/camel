@@ -37,6 +37,7 @@ public class OpaEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("includeBody");
         props.add("includeHeaders");
         props.add("includeProperties");
+        props.add("inputExpression");
         props.add("lazyStartProducer");
         props.add("opaClient");
         props.add("policyBundle");

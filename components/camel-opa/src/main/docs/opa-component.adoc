@@ -241,6 +241,75 @@ conversion applies at depth.
 The component's own `CamelOpa*` decision headers are never sent back to OPA, so a policy cannot be shown a
 verdict that an inbound message claimed for itself.
 
+=== Custom input expressions
+
+Set `inputExpression=#domainInput` to evaluate a configured Camel `Expression` bean that produces the complete
+policy input. This replaces the default envelope in both REST and WASM modes, and also applies to
+`OpaSecurityPolicy`. The expression result may be a `Map`, an object JSON node, or a POJO supported by the
+component's Jackson JSON mapping. Nested maps, lists and POJOs are normalized to JSON-native values; a top-level
+JSON string is not parsed implicitly. Null, scalar, array and streaming results fail closed before the policy
+engine is called, even when `failOpen=true`.
+
+For example, if the body is already the desired domain object, bind a body expression and reference it:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+context.getRegistry().bind("domainInput",
+        org.apache.camel.support.builder.ExpressionBuilder.bodyExpression());
+
+from("direct:orders")
+    .to("opa:authz/orders/allow?inputExpression=#domainInput");
+----
+
+XML::
++
+[source,xml]
+----
+<bean id="domainInput" class="org.apache.camel.support.builder.ExpressionBuilder"
+      factory-method="bodyExpression"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:orders"/>
+        <to uri="opa:authz/orders/allow?inputExpression=#domainInput"/>
+    </route>
+</camelContext>
+----
+
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: domainInput
+      type: org.apache.camel.support.builder.ExpressionBuilder
+      factoryMethod: bodyExpression
+- route:
+    from:
+      uri: direct:orders
+      steps:
+        - to:
+            uri: opa:authz/orders/allow
+            parameters:
+              inputExpression: "#domainInput"
+----
+====
+
+The `includeHeaders`, `includeProperties` and `includeBody` options configure only the default envelope; they do
+not add or filter fields in a custom input. The expression decides what to include, so select verified identity
+and application data deliberately and avoid copying credentials. Decision headers are still cleared before
+mapping. Custom expression beans must support concurrent evaluation.
+
+In batch mode, the expression is evaluated once per element against an exchange copy whose body is that element.
+Headers and properties remain available to the expression, while the route's original List body is preserved.
+The expression must produce one JSON object per element; a mapping failure stops the batch before calling OPA.
+The component does not consume streams automatically. If an expression explicitly reads a stream, configure
+stream caching or handle its lifetime in the route.
+
 == Reading the verdict
 
 `CamelOpaDecision` holds the decision document exactly as OPA returned it. `CamelOpaDecisionAllow` holds the
