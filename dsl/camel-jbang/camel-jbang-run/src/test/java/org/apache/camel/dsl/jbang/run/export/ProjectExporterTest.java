@@ -122,6 +122,39 @@ class ProjectExporterTest {
     }
 
     @Test
+    void propertyOverridesTheKeyOfTheApplicationProperties() throws Exception {
+        Path route = writeRoute("shop");
+        Files.writeString(dir.resolve("application.properties"), """
+                order.period=1000
+                camel.server.port=8080
+                """);
+        // camel run puts the --property values in the run settings
+        DependencyResolver overriding = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    camel.server.port=9090
+                    dependency=camel:timer
+                    """.formatted(r.files.get(0)));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.baseDir = dir;
+        request.applicationProperties = new String[] { "camel.server.port=9090" };
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(overriding))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        assertThat(exportDir.resolve("src/main/resources/application.properties")).content()
+                .contains("order.period=1000", "camel.server.port=9090")
+                .doesNotContain("camel.server.port=8080");
+    }
+
+    @Test
     void exportsInParallelWithWorkDirsOfTheirOwn() throws Exception {
         List<String> before = listWorkDir();
 
