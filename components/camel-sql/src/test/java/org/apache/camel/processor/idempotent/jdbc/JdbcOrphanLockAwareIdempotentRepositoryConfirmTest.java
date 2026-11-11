@@ -16,7 +16,13 @@
  */
 package org.apache.camel.processor.idempotent.jdbc;
 
+import java.lang.reflect.Proxy;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +32,7 @@ import org.apache.camel.processor.idempotent.jdbc.JdbcOrphanLockAwareIdempotentR
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
@@ -33,6 +40,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -136,37 +144,132 @@ class JdbcOrphanLockAwareIdempotentRepositoryConfirmTest {
         TransactionTemplate transaction = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
         transaction.executeWithoutResult(status -> {
             assertTrue(nodeA.confirm("FILE_7"));
+            // the key leaves the keep-alive right away, as in a remove, so a later keep-alive does not wait for its row
+            assertFalse(nodeA.getProcessorNameMessageIdSet().contains(id("FILE_7")),
+                    "A key confirmed in a transaction of the caller must leave the keep-alive right away");
             status.setRollbackOnly();
         });
 
-        // the confirm did not happen, so the lease is still kept alive while this instance runs (passes on main too, where
-        // confirm does nothing; it guards the removal from the keep-alive after the commit)
-        assertTrue(nodeA.getProcessorNameMessageIdSet().contains(id("FILE_7")));
+        // the confirm did not happen, so the lease is kept alive again while this instance runs
+        assertTrue(nodeA.getProcessorNameMessageIdSet().contains(id("FILE_7")),
+                "A confirm that rolled back must keep the lease alive again");
         assertNotNull(createdAt("FILE_7"));
     }
 
     @Test
-    void testConfirmWithAColumnThatDoesNotStoreNull() {
-        // as a MySQL TIMESTAMP column with explicit_defaults_for_timestamp=OFF, which stores the current time for null
-        nodeA.setConfirmQuery(
-                "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt = CURRENT_TIMESTAMP WHERE processorName = ? AND messageId = ?");
-        assertTrue(nodeA.add("FILE_8"));
+    void testConfirmOfAKeyWhoseRowWasDeletedDoesNotKeepItAlive() {
+        assertTrue(nodeA.add("FILE_15"));
+        // removed meanwhile, for example by a clear of another instance
+        jdbcTemplate.update("DELETE FROM CAMEL_MESSAGEPROCESSED WHERE messageId = 'FILE_15'");
 
-        assertFalse(nodeA.confirm("FILE_8"));
-        assertTrue(nodeA.getProcessorNameMessageIdSet().contains(id("FILE_8")),
-                "A key that could not be confirmed must still be kept alive");
-        assertNotNull(createdAt("FILE_8"));
+        assertFalse(nodeA.confirm("FILE_15"));
+        assertFalse(nodeA.getProcessorNameMessageIdSet().contains(id("FILE_15")),
+                "A key without a row must not be kept alive, as another instance may insert it later");
     }
 
     @Test
-    void testConfirmWithANotNullColumn() {
-        jdbcTemplate.execute("ALTER TABLE CAMEL_MESSAGEPROCESSED ALTER COLUMN createdAt SET NOT NULL");
+    void testKeepAliveDoesNotWaitForAConfirmInACallerTransaction() throws Exception {
+        assertTrue(nodeA.add("FILE_12"));
+        assertTrue(nodeA.add("FILE_13"));
+        Timestamp old = new Timestamp(System.currentTimeMillis() - LOCK_MAX_AGE_MILLIS / 2);
+        jdbcTemplate.update("UPDATE CAMEL_MESSAGEPROCESSED SET createdAt = ? WHERE messageId = 'FILE_13'", old);
+
+        ExecutorService keeper = Executors.newSingleThreadExecutor();
+        try {
+            TransactionTemplate transaction = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+            transaction.executeWithoutResult(status -> {
+                // the confirm locks the row of FILE_12 until this transaction commits
+                assertTrue(nodeA.confirm("FILE_12"));
+                try {
+                    // a keep-alive meanwhile refreshes FILE_13, and does not wait for the row of FILE_12 (which would end
+                    // in a lock timeout of the whole batch)
+                    keeper.submit(nodeA::keepAlive).get(30, TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+                Timestamp refreshed = createdAt("FILE_13");
+                assertTrue(refreshed.after(old), "The keep-alive must refresh the other leases while the confirm is open");
+            });
+        } finally {
+            keeper.shutdownNow();
+        }
+        assertNull(createdAt("FILE_12"));
+    }
+
+    @Test
+    void testCheckAtStartWithAConfirmQueryThatDoesNotStoreNull() {
+        // as a MySQL TIMESTAMP column with explicit_defaults_for_timestamp=OFF, which stores the current time for null
+        List<String> warnings = new CopyOnWriteArrayList<>();
+        JdbcOrphanLockAwareIdempotentRepository node = newRepository();
+        node.log = recordingLogger(warnings);
+        node.setConfirmQuery(
+                "UPDATE CAMEL_MESSAGEPROCESSED SET createdAt = CURRENT_TIMESTAMP WHERE processorName = ? AND messageId = ?");
+        node.start();
+        try {
+            assertEquals(1, warnings.size(), "The check at start must log one WARN: " + warnings);
+            assertTrue(node.add("FILE_8"));
+            Timestamp leased = new Timestamp(System.currentTimeMillis() - 60_000L);
+            jdbcTemplate.update("UPDATE CAMEL_MESSAGEPROCESSED SET createdAt = ? WHERE messageId = 'FILE_8'", leased);
+
+            // the key is not confirmed, and no statement is sent: the key stays a lock that is kept alive, as before
+            assertTrue(node.confirm("FILE_8"));
+            assertTrue(node.getProcessorNameMessageIdSet().contains(id("FILE_8")),
+                    "A key that is not confirmed must still be kept alive");
+            assertEquals(leased, createdAt("FILE_8"), "No confirm statement must be sent");
+            assertEquals(1, warnings.size(), "A confirm must not log again: " + warnings);
+        } finally {
+            node.shutdown();
+        }
+    }
+
+    @Test
+    void testCheckAtStartWithANotNullColumnKeepsTheCallerTransactionCommittable() {
+        jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED_NN (processorName VARCHAR(255), messageId VARCHAR(100), "
+                             + "createdAt TIMESTAMP NOT NULL, PRIMARY KEY (processorName, messageId))");
+        List<String> warnings = new CopyOnWriteArrayList<>();
+        JdbcOrphanLockAwareIdempotentRepository node = newRepository();
+        node.log = recordingLogger(warnings);
+        node.setTableName("CAMEL_MESSAGEPROCESSED_NN");
+        node.start();
+        try {
+            assertEquals(1, warnings.size(), "The check at start must log one WARN: " + warnings);
+            assertEquals(0, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED_NN", Integer.class),
+                    "The check at start must roll back its row");
+
+            // a transacted route with completionEager=true on the same DataSource: the confirm must not mark the
+            // transaction of the caller as rollback only, so that it commits as before
+            TransactionTemplate transaction = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
+            transaction.executeWithoutResult(status -> {
+                assertTrue(node.add("FILE_9"));
+                assertTrue(node.confirm("FILE_9"));
+            });
+
+            assertEquals(1, jdbcTemplate.queryForObject("SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED_NN", Integer.class));
+            assertTrue(node.getProcessorNameMessageIdSet().contains(id("FILE_9")),
+                    "A key that is not confirmed must still be kept alive");
+        } finally {
+            node.shutdown();
+        }
+    }
+
+    @Test
+    void testConfirmThatFailsLogsAWarnEachTime() {
+        List<String> warnings = new CopyOnWriteArrayList<>();
+        nodeA.log = recordingLogger(warnings);
         assertTrue(nodeA.add("FILE_9"));
+        assertTrue(nodeA.add("FILE_14"));
+        // the column no longer stores null after the start (a failure the check at start cannot see)
+        jdbcTemplate.execute("ALTER TABLE CAMEL_MESSAGEPROCESSED ALTER COLUMN createdAt SET NOT NULL");
 
         assertFalse(nodeA.confirm("FILE_9"));
+        assertFalse(nodeA.confirm("FILE_14"));
+
         assertTrue(nodeA.getProcessorNameMessageIdSet().contains(id("FILE_9")),
                 "A key that could not be confirmed must still be kept alive");
+        assertTrue(nodeA.getProcessorNameMessageIdSet().contains(id("FILE_14")));
         assertTrue(nodeA.contains("FILE_9"));
+        assertEquals(2, warnings.size(), "Each failed confirm must log a WARN: " + warnings);
+        assertFalse(warnings.get(1).contains("nullable"), "A failed confirm must not log the hint of the check at start");
     }
 
     @Test
@@ -279,6 +382,33 @@ class JdbcOrphanLockAwareIdempotentRepositoryConfirmTest {
         return jdbcTemplate.queryForObject(
                 "SELECT createdAt FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?", Timestamp.class,
                 PROCESSOR_NAME, key);
+    }
+
+    // records the WARN messages of the repository
+    private static Logger recordingLogger(List<String> warnings) {
+        return (Logger) Proxy.newProxyInstance(Logger.class.getClassLoader(), new Class<?>[] { Logger.class },
+                (proxy, method, args) -> {
+                    switch (method.getName()) {
+                        case "hashCode":
+                            return System.identityHashCode(proxy);
+                        case "equals":
+                            return proxy == args[0];
+                        case "toString":
+                            return "recordingLogger";
+                        default:
+                            break;
+                    }
+                    if ("warn".equals(method.getName()) && args != null && args.length > 0) {
+                        warnings.add(String.valueOf(args[0]));
+                    }
+                    if (method.getReturnType() == boolean.class) {
+                        return false;
+                    }
+                    if (method.getReturnType() == String.class) {
+                        return "test";
+                    }
+                    return null;
+                });
     }
 
     private static ProcessorNameAndMessageId id(String key) {
