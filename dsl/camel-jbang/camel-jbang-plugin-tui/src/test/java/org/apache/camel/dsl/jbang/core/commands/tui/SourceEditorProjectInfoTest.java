@@ -157,7 +157,7 @@ class SourceEditorProjectInfoTest {
         SourceTab tab = newTab();
         assertThat(tab.loadDirectory(dir)).isTrue();
 
-        Map<Integer, SourceViewer.JumpLink> links = tab.computeJumpLinks(route);
+        Map<Integer, JumpLink> links = tab.computeJumpLinks(route);
         assertThat(links.get(5).routeId()).isEqualTo("orders");
         assertThat(links.get(5).filePath()).endsWith("OrderService.java");
         assertThat(links.get(5).targetLine()).isEqualTo(2);

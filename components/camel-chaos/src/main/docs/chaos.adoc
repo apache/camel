@@ -324,9 +324,9 @@ $ camel get chaos --report
   shipping  dead letter channel                    not tried yet
 ----
 
-* The kinds are `errors` (a send or a step fails), `slow` (a delay), `lost` (a send is dropped), `corrupt`, `duplicate`,
-`consumer` (the polls, or the entry of the route), `lifecycle` (stall and lifecycle) and `dead letter channel`
-(`at=dlq`). A rule has one kind, from its fault and where it acts.
+* The kinds are `errors` (a send or a step fails), `slow` (a delay, or an error that waits first: a timeout), `lost`
+(a send is dropped), `corrupt`, `duplicate`, `consumer` (the polls, or the entry of the route), `lifecycle` (stall and
+lifecycle) and `dead letter channel` (`at=dlq`). A rule has one kind, from its fault and where it acts.
 * A kind is tried in a route when a rule of that kind fired in it: a rule counts its faults per route, so a rule that
 reaches several routes is tried in each. A rule that expects no message lost between two routes
 (`expect=orders->shipping:lost<=0`) also tries `lost` for the first route, as the hand-off suggestion fails the next

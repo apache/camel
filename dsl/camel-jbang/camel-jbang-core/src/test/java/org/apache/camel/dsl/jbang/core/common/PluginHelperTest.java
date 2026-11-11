@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -252,6 +254,20 @@ public class PluginHelperTest {
         QuitCapture main = new QuitCapture();
         CliException e = assertThrows(CliException.class, () -> PluginHelper.getActivePlugins(main, null, "fake"));
         assertEquals("camel-jbang-plugin-fake not found", e.getMessage());
+    }
+
+    @Test
+    public void testJarFileOfAJarInAFolderWithASpace() throws Exception {
+        // the CLI installed in such a folder, as C:\Program Files on Windows: the URL has the space as %20
+        Path folder = Files.createDirectories(tempDir.resolve("my camel"));
+        Path jar = folder.resolve("camel-launcher.jar");
+        FakePluginJar.write(jar, "fake");
+        URL url = URI.create("jar:" + jar.toUri() + "!/" + PluginHelper.PLUGIN_SERVICE_DIR).toURL();
+        assertTrue(url.toString().contains("my%20camel"), url.toString());
+
+        Path file = PluginHelper.jarFileOf(url);
+        assertEquals(jar.toRealPath(), file.toRealPath());
+        assertTrue(Files.isRegularFile(file));
     }
 
     @Test

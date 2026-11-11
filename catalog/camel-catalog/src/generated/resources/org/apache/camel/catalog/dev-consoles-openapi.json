@@ -7394,8 +7394,15 @@
 													"handling": {
 														"type": "string",
 														"description": "For an error path, what happens to the failure: handled (the message ends there), continued (the route goes on after it) or notHandled (the failure goes on to the caller); absent when a predicate decides it"
+													},
+													"reply": {
+														"type": "boolean",
+														"description": "Whether the source route waits for the answer of the target route: a call (direct) or a request-reply over a broker, rather than a hand-off"
 													}
-												}
+												},
+												"required": [
+													"reply"
+												]
 											},
 											"description": "The connections between nodes (only present when a route topology dumper is available)"
 										},

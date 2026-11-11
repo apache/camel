@@ -25,7 +25,11 @@ happened to it, with no AI:
 - **In, Routes, Out** — what starts it (timers, HTTP, consumers, the
   operations of an OpenAPI contract the REST DSL serves), its
   routes (a route called with `direct:` sits under its caller with `↳`,
-  one handed off with `seda:` or a `wireTap` with `⇢`) and what it talks to, from its
+  one handed off with `seda:` or a `wireTap` with `⇢`; for a running
+  integration as its route topology has it, so a queue or topic between
+  its own routes is `↳` for a request-reply, `⇢` for a hand-off, and
+  `on failure` for a dead letter queue, and is no In or Out, unless
+  messages came from outside too: `+5 from outside`) and what it talks to, from its
   sources. Each line has the exchanges since it started (for an
   endpoint, the sends to it), and In and Out a sparkline of the last 5
   minutes with the rate now, or `idle`. Out also has the systems the

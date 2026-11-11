@@ -52,6 +52,24 @@ class TopologyHelperErrorPathTest {
                 .containsExactly("errorHandler/handled", "onException/notHandled");
     }
 
+    @Test
+    void anEdgeSaysWhetherTheRouteWaitsForTheAnswer() {
+        // CAMEL-26823: reply is on every edge of a 4.24 integration; an older one does not say it
+        JsonObject root = new JsonObject();
+        JsonArray edges = new JsonArray();
+        JsonObject stock = edge("reserve-order", "stock-service", "call", null, null);
+        stock.put("reply", true);
+        edges.add(stock);
+        JsonObject shipping = edge("reserve-order", "shipping", "call", null, null);
+        shipping.put("reply", false);
+        edges.add(shipping);
+        edges.add(edge("legacy", "parked", null, null, null));
+        root.put("edges", edges);
+
+        assertThat(TopologyHelper.parseEdges(root)).extracting(e -> e.toRouteId + (e.reply ? " waits" : ""))
+                .containsExactly("stock-service waits", "shipping", "parked");
+    }
+
     private static JsonObject edge(String from, String to, String kind, String via, String handling) {
         JsonObject e = new JsonObject();
         e.put("fromRouteId", from);

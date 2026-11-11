@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -148,6 +149,35 @@ class ChaosExploreTest {
         assertThat(dialog.cannotStart()).startsWith("Too many rules for 2m");
         assertThat(dialog.handleKey(KeyEvent.ofKey(KeyCode.ENTER, KeyModifiers.NONE)))
                 .isEqualTo(ChaosExploreDialog.Outcome.NONE);
+    }
+
+    @Test
+    void theDialogOpensWithTheBudgetAndThePicksOfLastTime() {
+        key('L');
+        // the first rule unpicked, refunds picked, and 5 minutes
+        key(' ');
+        press(KeyCode.DOWN);
+        press(KeyCode.DOWN);
+        key(' ');
+        press(KeyCode.LEFT);
+        press(KeyCode.ESCAPE);
+        assertThat(tab.isTextInputActive()).isFalse();
+
+        key('L');
+        assertThat(TuiTestHelper.renderToString(tab, 160, 40)).contains("5m", "3 rules, 1m40s each",
+                "[ ] Returns an error (HTTP status)", "[x] The route after a hand-off fails", "[x] The route fails",
+                "[x] An outage while the dead letter channel fails");
+    }
+
+    @Test
+    void thePicksOfLastTimeThatAreNoLongerSuggestedAreNot() throws Exception {
+        ChaosExploreDialog dialog = dialog();
+        dialog.restore(new ChaosExploreDialog.Picks("30m", Set.of("route=gone error")));
+        assertThat(dialog.budget()).isEqualTo("30m");
+        // picked by itself, as none of last time is suggested
+        assertThat(dialog.picked()).extracting(ChaosExploreDialog.Item::title)
+                .containsExactly("Returns an error (HTTP status)", "The route after a hand-off fails",
+                        "An outage while the dead letter channel fails");
     }
 
     @Test

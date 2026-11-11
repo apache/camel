@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.stream.Stream;
@@ -37,7 +38,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class ExportMainApplicationProperties {
+class ExportMainApplicationPropertiesTest {
 
     private File workingDir;
     private File profile = new File(".", "application.properties");
@@ -99,7 +100,8 @@ class ExportMainApplicationProperties {
         if (args != null) {
             CommandLineTestHelper.parse(command, args);
         }
-        command.files = Arrays.asList(files);
+        // the export adds the application.properties it finds
+        command.files = new ArrayList<>(Arrays.asList(files));
         return command;
     }
 

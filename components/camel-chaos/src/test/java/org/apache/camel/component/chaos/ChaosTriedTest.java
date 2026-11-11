@@ -168,6 +168,9 @@ class ChaosTriedTest extends ChaosTestSupport {
     void theKindOfARule() {
         assertThat(kind("endpoint=x error")).isEqualTo(ChaosAdvisor.Kind.ERRORS);
         assertThat(kind("endpoint=x delay duration=1s")).isEqualTo(ChaosAdvisor.Kind.SLOW);
+        // Times out: the suggestion of an HTTP call is slow, so trying it marks it tried
+        assertThat(kind("endpoint=x error after=5s exception=java.net.SocketTimeoutException"))
+                .isEqualTo(ChaosAdvisor.Kind.SLOW);
         assertThat(kind("endpoint=x drop")).isEqualTo(ChaosAdvisor.Kind.LOST);
         assertThat(kind("endpoint=x drop at=poll")).isEqualTo(ChaosAdvisor.Kind.CONSUMER);
         assertThat(kind("endpoint=x error at=poll")).isEqualTo(ChaosAdvisor.Kind.CONSUMER);

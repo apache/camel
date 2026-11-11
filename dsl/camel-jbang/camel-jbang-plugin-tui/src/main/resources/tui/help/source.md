@@ -188,6 +188,11 @@ Lines with `to:`, `toD:`, `wireTap:`, or similar endpoints that reference
 another route show a **↵ routeId** indicator. Press **Enter** on such a line
 to jump to the target route's definition (within the same file or across files).
 Reverse links are shown on `from:` lines, indicating which route calls this one.
+Before the route, **↳** says the route waits for the answer (a `direct` route,
+`exchangePattern=InOut`, an `enrich`) and **⇢** that it hands the message off
+(a queue, a topic, a `wireTap`), as in the About view. While the integration
+runs, and its Diagram, Routes or About has been open, the running routes decide
+it: a route that consumes a request (from `platform-http`) waits on a queue too.
 This works for YAML, XML and Java DSL routes, across all the folders of the
 project and files of different DSLs (build output and `src/test` are left out);
 Java routes are read without compiling them. The case and otherwise of a

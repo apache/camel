@@ -58,7 +58,7 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
     }
 
     /**
-     * How to log in to Hashicorp Vault: token, approle, kubernetes or jwt
+     * How to log in to Hashicorp Vault: token, approle, kubernetes, jwt or cert
      */
     public HashicorpVaultConfigurationProperties withAuthentication(String authentication) {
         setAuthentication(authentication);
@@ -110,6 +110,39 @@ public class HashicorpVaultConfigurationProperties extends HashicorpVaultConfigu
      */
     public HashicorpVaultConfigurationProperties withAuthMountPath(String authMountPath) {
         setAuthMountPath(authMountPath);
+        return this;
+    }
+
+    /**
+     * The file with the certificates to trust for the TLS connection to Hashicorp Vault: a PKCS12 or JKS trust store,
+     * or PEM certificates
+     */
+    public HashicorpVaultConfigurationProperties withTrustStore(String trustStore) {
+        setTrustStore(trustStore);
+        return this;
+    }
+
+    /**
+     * The password of the trust store, when it is a PKCS12 or JKS trust store
+     */
+    public HashicorpVaultConfigurationProperties withTrustStorePassword(String trustStorePassword) {
+        setTrustStorePassword(trustStorePassword);
+        return this;
+    }
+
+    /**
+     * The file with the TLS client certificate and its private key: a PKCS12 or JKS key store, or PEM
+     */
+    public HashicorpVaultConfigurationProperties withKeyStore(String keyStore) {
+        setKeyStore(keyStore);
+        return this;
+    }
+
+    /**
+     * The password of the key store and of its private key, when it is a PKCS12 or JKS key store
+     */
+    public HashicorpVaultConfigurationProperties withKeyStorePassword(String keyStorePassword) {
+        setKeyStorePassword(keyStorePassword);
         return this;
     }
 

@@ -390,8 +390,10 @@ camel.vault.hashicorp.cloud = true
 camel.vault.hashicorp.namespace = namespace
 ----
 
-Instead of a token, Camel can log in with an AppRole, with the service account of a Kubernetes pod, or with a JWT,
-such as a workload identity token, which `camel.vault.hashicorp.authentication` chooses. For example:
+Instead of a token, Camel can log in with an AppRole, with the service account of a Kubernetes pod, with a JWT, such
+as a workload identity token, or with a TLS client certificate, which `camel.vault.hashicorp.authentication` chooses.
+For a Vault whose certificate is signed by a private CA, `camel.vault.hashicorp.trustStore` sets the certificates to
+trust. For example:
 
 [source,properties]
 ----

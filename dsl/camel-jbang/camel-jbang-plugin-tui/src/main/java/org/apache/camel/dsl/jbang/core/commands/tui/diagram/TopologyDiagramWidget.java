@@ -601,6 +601,8 @@ public class TopologyDiagramWidget implements Widget {
         }
 
         boolean dashed = isExternal(edge.from) || isExternal(edge.to) || ERROR_HANDLING.equals(edge.to.nodeType);
+        // ⇅ the route waits for the answer (a call, a request-reply over a broker), ▼ it hands the message off
+        char head = edge.reply ? REPLY_ARROW : ARROW;
         char vChar = dashed ? DASH_V : V;
         char hChar = dashed ? DASH_H : H;
         boolean edgeHighlighted = !dashed
@@ -617,7 +619,7 @@ public class TopologyDiagramWidget implements Widget {
             for (int r = fromBottom; r < toTop - 1; r++) {
                 plotLine(buffer, area, r, fromCx, vChar, edgeStyle);
             }
-            setChar(buffer, area, toTop - 1, toCx, ARROW, edgeStyle);
+            setChar(buffer, area, toTop - 1, toCx, head, edgeStyle);
         } else {
             int midRow = fromBottom + (toTop - fromBottom) / 2;
 
@@ -637,7 +639,7 @@ public class TopologyDiagramWidget implements Widget {
             for (int r = midRow + 1; r < toTop - 1; r++) {
                 plotLine(buffer, area, r, toCx, vChar, edgeStyle);
             }
-            setChar(buffer, area, toTop - 1, toCx, ARROW, edgeStyle);
+            setChar(buffer, area, toTop - 1, toCx, head, edgeStyle);
         }
     }
 

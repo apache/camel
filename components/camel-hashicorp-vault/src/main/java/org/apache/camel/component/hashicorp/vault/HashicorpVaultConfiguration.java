@@ -39,7 +39,7 @@ public class HashicorpVaultConfiguration implements Cloneable {
     private String scheme = "https";
     @UriParam
     private String secretPath;
-    @UriParam(label = "security", defaultValue = "token", enums = "token,approle,kubernetes,jwt")
+    @UriParam(label = "security", defaultValue = "token", enums = "token,approle,kubernetes,jwt,cert")
     private String authentication = "token";
     @UriParam(label = "security", security = "secret")
     private String token;
@@ -55,6 +55,14 @@ public class HashicorpVaultConfiguration implements Cloneable {
     private String jwtFile;
     @UriParam(label = "security")
     private String authMountPath;
+    @UriParam(label = "security")
+    private String trustStore;
+    @UriParam(label = "security", security = "secret")
+    private String trustStorePassword;
+    @UriParam(label = "security")
+    private String keyStore;
+    @UriParam(label = "security", security = "secret")
+    private String keyStorePassword;
     @UriParam
     private boolean cloud;
     @UriParam
@@ -87,8 +95,9 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     /**
      * How to log in to HashiCorp Vault: token (a fixed token), approle (a role ID and a secret ID), kubernetes (the
-     * service account token of the pod) or jwt (a JWT, such as a workload identity token). The token is renewed before
-     * it expires, and the endpoint logs in again when the token can no longer be renewed.
+     * service account token of the pod), jwt (a JWT, such as a workload identity token) or cert (the TLS client
+     * certificate of the keyStore). The token is renewed before it expires, and the endpoint logs in again when the
+     * token can no longer be renewed.
      */
     public String getAuthentication() {
         return authentication;
@@ -177,6 +186,54 @@ public class HashicorpVaultConfiguration implements Cloneable {
 
     public void setAuthMountPath(String authMountPath) {
         this.authMountPath = authMountPath;
+    }
+
+    /**
+     * The file with the certificates to trust for the TLS connection to HashiCorp Vault, such as the CA certificate of
+     * a private CA: a PKCS12 or JKS trust store, or PEM certificates. When not set, the JVM trusts the certificate as
+     * for any other TLS connection.
+     */
+    public String getTrustStore() {
+        return trustStore;
+    }
+
+    public void setTrustStore(String trustStore) {
+        this.trustStore = trustStore;
+    }
+
+    /**
+     * The password of the trust store, when it is a PKCS12 or JKS trust store
+     */
+    public String getTrustStorePassword() {
+        return trustStorePassword;
+    }
+
+    public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+    }
+
+    /**
+     * The file with the TLS client certificate and its private key, which the endpoint presents to HashiCorp Vault: for
+     * the cert login, or for a Vault that requires client certificates. A PKCS12 or JKS key store, or PEM with the
+     * certificate and the PKCS#8 private key.
+     */
+    public String getKeyStore() {
+        return keyStore;
+    }
+
+    public void setKeyStore(String keyStore) {
+        this.keyStore = keyStore;
+    }
+
+    /**
+     * The password of the key store and of its private key, when it is a PKCS12 or JKS key store
+     */
+    public String getKeyStorePassword() {
+        return keyStorePassword;
+    }
+
+    public void setKeyStorePassword(String keyStorePassword) {
+        this.keyStorePassword = keyStorePassword;
     }
 
     /**

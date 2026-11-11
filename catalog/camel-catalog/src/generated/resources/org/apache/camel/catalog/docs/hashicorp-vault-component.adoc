@@ -74,10 +74,14 @@ The `authentication` option chooses how the component logs in to HashiCorp Vault
 | `jwt`
 | `jwt`, or `jwtFile` to read the JWT from a file. `role` is the Vault role to log in as, which can be left out when the
 JWT login of Vault has a default role.
+
+| `cert`
+| `keyStore`: the TLS client certificate, see <<TLS>>. `role` is the name of the certificate role in Vault; without
+it, Vault tries every certificate role that trusts the certificate. The login needs the `https` scheme.
 |===
 
-When the login method is not mounted at its default path in Vault (`approle`, `kubernetes` or `jwt`), set the path with
-`authMountPath`, without `auth/`.
+When the login method is not mounted at its default path in Vault (`approle`, `kubernetes`, `jwt` or `cert`), set the
+path with `authMountPath`, without `auth/`.
 
 Camel renews the token before it expires, and logs in again when the token can no longer be renewed, such as when it
 reached its maximum time to live. A JWT read from a file is read again at every login, so a token that the platform
@@ -97,11 +101,36 @@ from("direct:start")
     .log("${body}");
 ----
 
+=== TLS
+
+With the `https` scheme, the component trusts the certificate of Vault as any other TLS connection of the JVM does. For
+a Vault whose certificate is signed by a private CA, set `trustStore` to the certificates to trust: a PKCS12 or JKS
+trust store with its `trustStorePassword`, or a PEM file with the CA certificates, such as the file that the
+`VAULT_CACERT` environment variable of the Vault CLI points to.
+
+To present a client certificate to Vault, for the `cert` login or for a Vault that requires client certificates, set
+`keyStore`: a PKCS12 or JKS key store with its `keyStorePassword`, or a PEM file with the certificate and its private
+key. The key of a PEM file is not encrypted, in PKCS#8 (`-----BEGIN PRIVATE KEY-----`) or, for an RSA key, in PKCS#1
+(`-----BEGIN RSA PRIVATE KEY-----`).
+
+For example, the properties function logs in with a client certificate:
+
+[source,properties]
+----
+camel.vault.hashicorp.host = vault.example.com
+camel.vault.hashicorp.port = 8200
+camel.vault.hashicorp.scheme = https
+camel.vault.hashicorp.trustStore = /etc/vault/ca.pem
+camel.vault.hashicorp.authentication = cert
+camel.vault.hashicorp.role = my-application
+camel.vault.hashicorp.keyStore = /etc/vault/client.pem
+----
+
 === OpenBao
 
 The component, the properties function and the secret refresh task also work with https://openbao.org/[OpenBao], the
-open source fork of HashiCorp Vault, which keeps the API of Vault. OpenBao has the token, AppRole, Kubernetes and JWT
-logins built in.
+open source fork of HashiCorp Vault, which keeps the API of Vault. OpenBao has the token, AppRole, Kubernetes, JWT and
+TLS certificate logins built in.
 
 
 == Examples
@@ -389,7 +418,9 @@ camel.vault.hashicorp.role = my-application
 The properties function also reads these options from the environment variables
 `CAMEL_HASHICORP_VAULT_AUTHENTICATION`, `CAMEL_HASHICORP_VAULT_ROLE_ID`, `CAMEL_HASHICORP_VAULT_SECRET_ID`,
 `CAMEL_HASHICORP_VAULT_ROLE`, `CAMEL_HASHICORP_VAULT_JWT`, `CAMEL_HASHICORP_VAULT_JWT_FILE` and
-`CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH`. When any of the `CAMEL_HASHICORP_VAULT_*` environment variables is set, the
+`CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH`, and the settings of <<TLS>> from `CAMEL_HASHICORP_VAULT_TRUST_STORE`,
+`CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD`, `CAMEL_HASHICORP_VAULT_KEY_STORE` and
+`CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD`. When any of the `CAMEL_HASHICORP_VAULT_*` environment variables is set, the
 properties function takes all its settings from the environment variables, and none from the `camel.vault.hashicorp`
 configuration. The secret refresh task logs in the same way as the properties function.
 

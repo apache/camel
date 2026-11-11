@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import dev.tamboui.backend.jline3.JLineBackend;
 import dev.tamboui.terminal.Backend;
+import dev.tamboui.terminal.KeyboardProtocol;
 import dev.tamboui.tui.TuiConfig;
 import dev.tamboui.tui.TuiRunner;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -42,7 +43,10 @@ final class TuiBackendHelper {
      * itself when {@code --record} configured the {@code tamboui.record*} system properties.
      */
     static TuiRunner createTuiRunner(Backend backend) throws Exception {
+        // TamboUI 0.7 turns on the Kitty keyboard protocol by default, and then some keys arrive differently
+        // (Ctrl+I vs Tab, Esc and Alt combinations); stay on the legacy keys until the key bindings are reviewed
         return TuiRunner.create(
-                TuiConfig.builder().backend(backend).mouseCapture(true).bracketedPaste(true).build());
+                TuiConfig.builder().backend(backend).mouseCapture(true).bracketedPaste(true)
+                        .keyboardProtocol(KeyboardProtocol.LEGACY).build());
     }
 }

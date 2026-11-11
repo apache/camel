@@ -16,9 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
@@ -63,6 +68,8 @@ class RunOptionsForm {
     private static final int ROW_LAST = ROW_CHAOS;
     /** Height of the options page: a row per option plus the border; the properties page is aligned to it. */
     private static final int PAGE1_HEIGHT = ROW_COUNT + 2;
+    // the folder of the chaos scenarios of an example or project
+    private static final String CHAOS_SCENARIOS = "test/chaos";
 
     private boolean visible;
     private int page;
@@ -121,6 +128,9 @@ class RunOptionsForm {
     private int otelExportTarget; // 0=TUI, 1=Jaeger
     private boolean jfrEnabled;
     private boolean chaos;
+    // the chaos scenarios of the example or folder (test/chaos/*.chaos), and the one picked: 0 is none
+    private List<String> chaosScenarios = List.of();
+    private int chaosScenario;
     private boolean webConsole;
 
     private String exampleTitle;
@@ -165,6 +175,8 @@ class RunOptionsForm {
         otelExportTarget = 0;
         jfrEnabled = false;
         chaos = false;
+        chaosScenarios = List.of();
+        chaosScenario = 0;
         webConsole = false;
         selectedRow = ROW_NAME;
         page = PAGE_OPTIONS;
@@ -214,6 +226,61 @@ class RunOptionsForm {
         }
         portWarning = PortCheck.warning(port, integrations.get());
         return portWarning;
+    }
+
+    /**
+     * The chaos scenarios to offer next to Chaos testing, as --chaos takes them: a path relative to the folder the
+     * integration runs in, or absolute. Call after open.
+     */
+    void setChaosScenarios(List<String> scenarios) {
+        chaosScenarios = scenarios != null ? List.copyOf(scenarios) : List.of();
+        chaosScenario = 0;
+    }
+
+    /** The chaos scenario picked, or null for none. */
+    String chaosScenario() {
+        return chaosScenario > 0 && chaosScenario <= chaosScenarios.size() ? chaosScenarios.get(chaosScenario - 1) : null;
+    }
+
+    /** The chaos scenarios of an example, from the files of its catalog entry, as paths relative to the example. */
+    static List<String> chaosScenarios(Collection<String> files) {
+        return files.stream().filter(RunOptionsForm::isChaosScenario).sorted().toList();
+    }
+
+    /** The chaos scenarios of a folder (its test/chaos/*.chaos files), as absolute paths. */
+    static List<String> chaosScenarios(Path folder) {
+        Path dir = folder.resolve(CHAOS_SCENARIOS);
+        if (!Files.isDirectory(dir)) {
+            return List.of();
+        }
+        try (Stream<Path> files = Files.list(dir)) {
+            return files.filter(f -> Files.isRegularFile(f) && f.getFileName().toString().endsWith(".chaos"))
+                    .map(f -> f.toAbsolutePath().normalize().toString()).sorted().toList();
+        } catch (IOException e) {
+            return List.of();
+        }
+    }
+
+    private static boolean isChaosScenario(String file) {
+        return file.startsWith(CHAOS_SCENARIOS + "/") && file.endsWith(".chaos")
+                && file.indexOf('/', CHAOS_SCENARIOS.length() + 1) < 0;
+    }
+
+    /**
+     * The name of the scenario picked, as the file without its folder and .chaos; without one, chaos is on with no
+     * rules, which is not obvious from [x] alone.
+     */
+    private String chaosScenarioName() {
+        String scenario = chaosScenario();
+        if (scenario == null) {
+            return "none, add rules yourself";
+        }
+        String name = Path.of(scenario).getFileName().toString();
+        return name.substring(0, name.length() - ".chaos".length());
+    }
+
+    private boolean picksChaosScenario() {
+        return chaos && !isProdProfile() && !chaosScenarios.isEmpty();
     }
 
     /** Chaos is asked for, and the profile is not prod (where camel-chaos stays off). */
@@ -268,7 +335,9 @@ class RunOptionsForm {
             } else if (selectedRow >= ROW_CONSOLE) {
                 hint(spans, "Space", "toggle");
             }
-            if (hasProperties()) {
+            if (selectedRow == ROW_CHAOS && picksChaosScenario()) {
+                hint(spans, TuiIcons.KEY_LEFT + TuiIcons.KEY_RIGHT, "scenario");
+            } else if (hasProperties()) {
                 hint(spans, TuiIcons.KEY_RIGHT, "properties");
             }
             hint(spans, "Enter", "launch");
@@ -335,7 +404,8 @@ class RunOptionsForm {
         }
         // camel-chaos stays off with profile prod, so the form does not ask for it then
         if (isChaosEnabled()) {
-            args.add("--chaos");
+            String scenario = chaosScenario();
+            args.add(scenario != null ? "--chaos=" + scenario : "--chaos");
         }
         if (webConsole) {
             args.add("--console");
@@ -383,6 +453,12 @@ class RunOptionsForm {
         }
         if (ke.isFocusPrevious()) {
             selectedRow = (selectedRow - 1 + ROW_COUNT) % ROW_COUNT;
+            return true;
+        }
+        // a chaos scenario next to Chaos testing: none, or one of them
+        if ((ke.isRight() || ke.isLeft()) && selectedRow == ROW_CHAOS && picksChaosScenario()) {
+            int count = chaosScenarios.size() + 1;
+            chaosScenario = (chaosScenario + (ke.isRight() ? 1 : count - 1)) % count;
             return true;
         }
         if (ke.isRight() && selectedRow == ROW_OTEL_AGENT && otelAgent) {
@@ -677,6 +753,10 @@ class RunOptionsForm {
                     Span.styled(" [ ] Chaos testing (not available with profile prod)",
                             selectedRow == ROW_CHAOS ? Style.EMPTY.dim().reversed() : Style.EMPTY.dim()))),
                     new Rect(innerX, rowY, innerW, 1));
+        } else if (picksChaosScenario()) {
+            renderCheckbox(frame, innerX, rowY, innerW,
+                    "Chaos testing, scenario: ◂ " + chaosScenarioName() + " ▸",
+                    chaos, selectedRow == ROW_CHAOS);
         } else {
             renderCheckbox(frame, innerX, rowY, innerW, "Chaos testing (inject faults with camel-chaos)", chaos,
                     selectedRow == ROW_CHAOS);

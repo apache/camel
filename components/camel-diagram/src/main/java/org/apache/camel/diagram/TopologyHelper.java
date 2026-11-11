@@ -88,6 +88,8 @@ public final class TopologyHelper {
             edge.kind = eo.getStringOrDefault("kind", "call");
             edge.via = eo.getString("via");
             edge.handling = eo.getString("handling");
+            // an integration before 4.24 does not say it: its edges are drawn as before
+            edge.reply = Boolean.TRUE.equals(eo.get("reply"));
             if (includeErrorPaths || !edge.isErrorPath()) {
                 edges.add(edge);
             }

@@ -40,11 +40,16 @@ public final class HashicorpVaultClientSettings {
     static final String JWT_ENV = "CAMEL_HASHICORP_VAULT_JWT";
     static final String JWT_FILE_ENV = "CAMEL_HASHICORP_VAULT_JWT_FILE";
     static final String AUTH_MOUNT_PATH_ENV = "CAMEL_HASHICORP_VAULT_AUTH_MOUNT_PATH";
+    static final String TRUST_STORE_ENV = "CAMEL_HASHICORP_VAULT_TRUST_STORE";
+    static final String TRUST_STORE_PASSWORD_ENV = "CAMEL_HASHICORP_VAULT_TRUST_STORE_PASSWORD";
+    static final String KEY_STORE_ENV = "CAMEL_HASHICORP_VAULT_KEY_STORE";
+    static final String KEY_STORE_PASSWORD_ENV = "CAMEL_HASHICORP_VAULT_KEY_STORE_PASSWORD";
 
     // any of these set means the settings come from the environment variables (the cloud variable alone does not)
     private static final List<String> ENVIRONMENT_SETTINGS = List.of(
             TOKEN_ENV, HOST_ENV, PORT_ENV, SCHEME_ENV, NAMESPACE_ENV, AUTHENTICATION_ENV, ROLE_ID_ENV, SECRET_ID_ENV,
-            ROLE_ENV, JWT_ENV, JWT_FILE_ENV, AUTH_MOUNT_PATH_ENV);
+            ROLE_ENV, JWT_ENV, JWT_FILE_ENV, AUTH_MOUNT_PATH_ENV, TRUST_STORE_ENV, TRUST_STORE_PASSWORD_ENV, KEY_STORE_ENV,
+            KEY_STORE_PASSWORD_ENV);
 
     private String host;
     private String port;
@@ -59,6 +64,10 @@ public final class HashicorpVaultClientSettings {
     private String jwt;
     private String jwtFile;
     private String authMountPath;
+    private String trustStore;
+    private String trustStorePassword;
+    private String keyStore;
+    private String keyStorePassword;
 
     /**
      * The settings of the properties function and the secret refresh task: from the CAMEL_HASHICORP_VAULT_* environment
@@ -87,6 +96,10 @@ public final class HashicorpVaultClientSettings {
             settings.setJwt(environment.apply(JWT_ENV));
             settings.setJwtFile(environment.apply(JWT_FILE_ENV));
             settings.setAuthMountPath(environment.apply(AUTH_MOUNT_PATH_ENV));
+            settings.setTrustStore(environment.apply(TRUST_STORE_ENV));
+            settings.setTrustStorePassword(environment.apply(TRUST_STORE_PASSWORD_ENV));
+            settings.setKeyStore(environment.apply(KEY_STORE_ENV));
+            settings.setKeyStorePassword(environment.apply(KEY_STORE_PASSWORD_ENV));
         } else if (configuration != null) {
             settings.setHost(configuration.getHost());
             settings.setPort(configuration.getPort());
@@ -101,6 +114,10 @@ public final class HashicorpVaultClientSettings {
             settings.setJwt(configuration.getJwt());
             settings.setJwtFile(configuration.getJwtFile());
             settings.setAuthMountPath(configuration.getAuthMountPath());
+            settings.setTrustStore(configuration.getTrustStore());
+            settings.setTrustStorePassword(configuration.getTrustStorePassword());
+            settings.setKeyStore(configuration.getKeyStore());
+            settings.setKeyStorePassword(configuration.getKeyStorePassword());
         }
         return settings;
     }
@@ -158,7 +175,7 @@ public final class HashicorpVaultClientSettings {
     }
 
     /**
-     * How to log in: token (the default), approle, kubernetes or jwt
+     * How to log in: token (the default), approle, kubernetes, jwt or cert
      */
     public void setAuthentication(String authentication) {
         this.authentication = authentication;
@@ -218,5 +235,37 @@ public final class HashicorpVaultClientSettings {
 
     public void setAuthMountPath(String authMountPath) {
         this.authMountPath = authMountPath;
+    }
+
+    public String getTrustStore() {
+        return trustStore;
+    }
+
+    public void setTrustStore(String trustStore) {
+        this.trustStore = trustStore;
+    }
+
+    public String getTrustStorePassword() {
+        return trustStorePassword;
+    }
+
+    public void setTrustStorePassword(String trustStorePassword) {
+        this.trustStorePassword = trustStorePassword;
+    }
+
+    public String getKeyStore() {
+        return keyStore;
+    }
+
+    public void setKeyStore(String keyStore) {
+        this.keyStore = keyStore;
+    }
+
+    public String getKeyStorePassword() {
+        return keyStorePassword;
+    }
+
+    public void setKeyStorePassword(String keyStorePassword) {
+        this.keyStorePassword = keyStorePassword;
     }
 }

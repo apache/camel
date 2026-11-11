@@ -212,9 +212,10 @@ public interface HashicorpVaultEndpointBuilderFactory {
         /**
          * How to log in to HashiCorp Vault: token (a fixed token), approle (a
          * role ID and a secret ID), kubernetes (the service account token of
-         * the pod) or jwt (a JWT, such as a workload identity token). The token
-         * is renewed before it expires, and the endpoint logs in again when the
-         * token can no longer be renewed.
+         * the pod), jwt (a JWT, such as a workload identity token) or cert (the
+         * TLS client certificate of the keyStore). The token is renewed before
+         * it expires, and the endpoint logs in again when the token can no
+         * longer be renewed.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -278,6 +279,38 @@ public interface HashicorpVaultEndpointBuilderFactory {
             return this;
         }
         /**
+         * The file with the TLS client certificate and its private key, which
+         * the endpoint presents to HashiCorp Vault: for the cert login, or for
+         * a Vault that requires client certificates. A PKCS12 or JKS key store,
+         * or PEM with the certificate and the PKCS#8 private key.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param keyStore the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder keyStore(String keyStore) {
+            doSetProperty("keyStore", keyStore);
+            return this;
+        }
+        /**
+         * The password of the key store and of its private key, when it is a
+         * PKCS12 or JKS key store.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param keyStorePassword the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder keyStorePassword(String keyStorePassword) {
+            doSetProperty("keyStorePassword", keyStorePassword);
+            return this;
+        }
+        /**
          * The HashiCorp Vault role to log in as, for the kubernetes and jwt
          * logins. The jwt login can leave it out when the login method has a
          * default role.
@@ -333,6 +366,38 @@ public interface HashicorpVaultEndpointBuilderFactory {
          */
         default HashicorpVaultEndpointBuilder token(String token) {
             doSetProperty("token", token);
+            return this;
+        }
+        /**
+         * The file with the certificates to trust for the TLS connection to
+         * HashiCorp Vault, such as the CA certificate of a private CA: a PKCS12
+         * or JKS trust store, or PEM certificates. When not set, the JVM trusts
+         * the certificate as for any other TLS connection.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustStore the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder trustStore(String trustStore) {
+            doSetProperty("trustStore", trustStore);
+            return this;
+        }
+        /**
+         * The password of the trust store, when it is a PKCS12 or JKS trust
+         * store.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         * 
+         * @param trustStorePassword the value to set
+         * @return the dsl builder
+         */
+        default HashicorpVaultEndpointBuilder trustStorePassword(String trustStorePassword) {
+            doSetProperty("trustStorePassword", trustStorePassword);
             return this;
         }
     }

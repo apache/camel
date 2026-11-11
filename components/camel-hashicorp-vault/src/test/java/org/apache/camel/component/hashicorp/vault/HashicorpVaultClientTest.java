@@ -272,7 +272,7 @@ class HashicorpVaultClientTest {
         assertInvalid("The jwt login takes a JWT or a file to read it from, not both", settings);
 
         settings = settings("ldap");
-        assertInvalid("Unknown HashiCorp Vault login: ldap. Use one of: token, approle, kubernetes, jwt", settings);
+        assertInvalid("Unknown HashiCorp Vault login: ldap. Use one of: token, approle, kubernetes, jwt, cert", settings);
 
         settings = approle();
         settings.setHost(null);
