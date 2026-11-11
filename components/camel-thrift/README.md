@@ -11,7 +11,7 @@ For linux/osx you download the .tar distro, and untar it, and then
     make
     sudo make install
 
-If its succesful, you can type
+If its successful, you can type
 
     thrift --version
 

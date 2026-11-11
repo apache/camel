@@ -30,7 +30,7 @@ kubectl create secret tls edge-tls \
     --cert=helm/tls/localtest.me+1.pem \
     --key=helm/tls/localtest.me+1-key.pem
 
-# The above shold also install the root cert with the Java system truststore. This is matter of mkcert finding the correct JRE home.
+# The above should also install the root cert with the Java system truststore. This is matter of mkcert finding the correct JRE home.
 # In case it does not, you may need to import the mkcert rootCA.pem manually to the Java truststore.
 keytool -delete -cacerts -alias mkcert-root -storepass changeit
 keytool -importcert -cacerts -alias mkcert-root -storepass changeit -noprompt \
