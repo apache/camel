@@ -22,12 +22,12 @@ when the consumer is done with the exchange.
 The default implementations in `DefaultConsumer` has adapted this API and 3rd party components can continue as is, by using
 the older APIs. For these 3rd party components to support recycling exchanges, then they must be updated to use this new API.
 
-A new `org.apache.camel.spi.ResourceLoader` has been introduced as part of https://issues.apache.org/jira/browse/CAMEL-16285[CAMEL-16285] which provide a way to support additional schemas to resolve resources. As a consequece:
+A new `org.apache.camel.spi.ResourceLoader` has been introduced as part of https://issues.apache.org/jira/browse/CAMEL-16285[CAMEL-16285] which provide a way to support additional schemas to resolve resources. As a consequence:
 
 - `org.apache.camel.support.ResourceHelper` has been updated to use such mechanism instead of the old one.
 - it is not more possible to provide support for additional schemas using the URL protocol handler mechanism but instead, custom schemas can be added by implementing `org.apache.camel.spi.ResourceResolver` and either bind an instance to the Camel Registry (using `resource-loader-` as a prefix) or using the Service Factory mechanism (under the path `META-INF/services/org/apache/camel/resource-resolver/`)
 
-As example, assuming you want to provide a support for the schema `foo`, then you either have to binbd your instance to the Camel Registry with `resource-loader-foo` as a key, or create a factory finder file with path `META-INF/services/org/apache/camel/resource-resolver/foo`
+As example, assuming you want to provide a support for the schema `foo`, then you either have to bind your instance to the Camel Registry with `resource-loader-foo` as a key, or create a factory finder file with path `META-INF/services/org/apache/camel/resource-resolver/foo`
 The method for retrieving a resource URL provided by the `org.apache.camel.support.ResourceHelper` class, i.e. `resolveMandatoryResourceAsUrl` ad ` resolveResourceAsUr` have been amended to accept a `CamelContext` instance instead of a `ClassResolver`.
 
 === Exchange properties
@@ -155,7 +155,7 @@ The camel-jclouds feature for Camel on Karaf has been removed.
 
 === camel-kafka
 
-The camel-kafka consumer has been improved to be more roboust and have more confirations how to deal with exceptions while polling from Kafka Brokers.
+The camel-kafka consumer has been improved to be more robust and have more configurations how to deal with exceptions while polling from Kafka Brokers.
 In case of any exception thrown, then previously the consumer will re-connect and therefore try again. This leads to Kafka broker would reassign the partitions,
 but it may assign back the same consumer again, or another standby consumer.
 
