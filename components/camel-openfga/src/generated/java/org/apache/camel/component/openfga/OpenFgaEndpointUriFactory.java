@@ -44,6 +44,8 @@ public class OpenFgaEndpointUriFactory extends org.apache.camel.support.componen
         props.add("maxParallelRequests");
         props.add("maxRetries");
         props.add("object");
+        props.add("onDuplicate");
+        props.add("onMissing");
         props.add("openFgaClient");
         props.add("operation");
         props.add("pageSize");

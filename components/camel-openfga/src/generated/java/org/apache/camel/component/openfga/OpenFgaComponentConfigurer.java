@@ -74,6 +74,10 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "maxretries":
         case "maxRetries": getOrCreateConfiguration(target).setMaxRetries(property(camelContext, int.class, value)); return true;
         case "object": getOrCreateConfiguration(target).setObject(property(camelContext, java.lang.String.class, value)); return true;
+        case "onduplicate":
+        case "onDuplicate": getOrCreateConfiguration(target).setOnDuplicate(property(camelContext, org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class, value)); return true;
+        case "onmissing":
+        case "onMissing": getOrCreateConfiguration(target).setOnMissing(property(camelContext, org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class, value)); return true;
         case "openfgaclient":
         case "openFgaClient": getOrCreateConfiguration(target).setOpenFgaClient(property(camelContext, dev.openfga.sdk.api.client.OpenFgaClient.class, value)); return true;
         case "pagesize":
@@ -150,6 +154,10 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "maxretries":
         case "maxRetries": return int.class;
         case "object": return java.lang.String.class;
+        case "onduplicate":
+        case "onDuplicate": return org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class;
+        case "onmissing":
+        case "onMissing": return org.apache.camel.component.openfga.OpenFgaWriteConflictMode.class;
         case "openfgaclient":
         case "openFgaClient": return dev.openfga.sdk.api.client.OpenFgaClient.class;
         case "pagesize":
@@ -222,6 +230,10 @@ public class OpenFgaComponentConfigurer extends PropertyConfigurerSupport implem
         case "maxretries":
         case "maxRetries": return getOrCreateConfiguration(target).getMaxRetries();
         case "object": return getOrCreateConfiguration(target).getObject();
+        case "onduplicate":
+        case "onDuplicate": return getOrCreateConfiguration(target).getOnDuplicate();
+        case "onmissing":
+        case "onMissing": return getOrCreateConfiguration(target).getOnMissing();
         case "openfgaclient":
         case "openFgaClient": return getOrCreateConfiguration(target).getOpenFgaClient();
         case "pagesize":
