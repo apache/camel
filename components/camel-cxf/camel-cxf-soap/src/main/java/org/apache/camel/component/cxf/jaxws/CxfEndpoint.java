@@ -1214,7 +1214,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                         this,
                         this.properties);
             } catch (Exception e) {
-                // TODO: Why don't we rethrown this exception
+                // TODO: Why don't we rethrow this exception
                 LOG.warn("Error setting properties. This exception will be ignored.", e);
             }
         }
