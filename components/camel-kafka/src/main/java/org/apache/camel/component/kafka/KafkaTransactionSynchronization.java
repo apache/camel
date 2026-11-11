@@ -121,8 +121,15 @@ class KafkaTransactionSynchronization extends SynchronizationAdapter {
                     : exchange.getProperty(KafkaExactlyOnceMetadata.SECONDARY_SEND_FAILURE_PROPERTY, Throwable.class);
             var exchangeExtension = exchange.getExchangeExtension();
             boolean failureHandled = exchangeExtension != null && exchangeExtension.isFailureHandled();
-            boolean handledRedeliveryRejection = failureHandled
-                    && Boolean.TRUE.equals(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY));
+            // a send that the producer rejected in the open transaction after an earlier send failed (a redelivery, or
+            // another send through the producer, such as in a loop), which marked the exchange rollback only, and whose
+            // failure was handled: by an error handler, or by a doCatch (which leaves no exception but does not mark
+            // the exchange failure handled when the doTry failed in its own route, and, once CAMEL-26447 is merged, when
+            // it caught the failure of a route the doTry called). A rejection that nothing handled keeps its exception
+            // and is rolled back below
+            boolean handledRedeliveryRejection = exchange.getException() == null
+                    && Boolean.TRUE.equals(exchange.getProperty(KafkaExactlyOnceMetadata.RETRY_ROLLBACK_PROPERTY))
+                    && (failureHandled || sendFailure != null);
 
             if (exchangeMetadata != null && exchangeMetadata.isClaimRejected()) {
                 if (exchange.getException() == null) {
