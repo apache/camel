@@ -100,7 +100,7 @@ This actuator was becoming problematic to maintain during Spring Boot upgrades d
 `HttpRegistryProvider` is added and used in `DefaultHttpRegistry` instead of `CamelServlet`.
 
 These changes had effects on camel-atmosphere-websocket and camel-servlet and also camel-resteasy.
-Users of these components where they would have custom implemetations on `DefaultHttpRegistry` and using `CamelServlet` class should take this change into account.
+Users of these components where they would have custom implementations on `DefaultHttpRegistry` and using `CamelServlet` class should take this change into account.
 
 === camel-sql
 

@@ -15,7 +15,7 @@ easily as shown:
 ----
 ConsumerTemplate template = exchange.getContext().createConsumerTemplate();
 
-// recieve from default endpoint
+// receive from default endpoint
 Object body = template.receiveBody();
 
 // receive from a specific queue

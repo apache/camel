@@ -198,7 +198,7 @@ For a general explanation of Antora xref syntax see https://docs.antora.org/anto
 Due to the logical structure of the Camel documentation, xrefs will have a very limited choice of structure.
 
 IMPORTANT: A bit of confusion is possible here between Antora components and Camel components.
-Generally an Antora component corresponds more or less to a Camel subproject, and never to a camel commponent.
+Generally an Antora component corresponds more or less to a Camel subproject, and never to a camel component.
 All the camel components are documented in an Antora component named `components`.
 In this section the word `component` means an Antora component.
 
