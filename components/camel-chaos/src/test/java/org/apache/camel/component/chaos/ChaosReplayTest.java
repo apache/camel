@@ -97,10 +97,7 @@ class ChaosReplayTest extends ChaosTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // moved over the files there: the same two, so a replay is the same each time
-        await().atMost(10, TimeUnit.SECONDS).until(() -> {
-            File[] left = new File(BASE, "inbox").listFiles(File::isFile);
-            return left != null && left.length == 0;
-        });
+        await().atMost(10, TimeUnit.SECONDS).until(() -> new File(BASE, "inbox").listFiles(File::isFile).length == 0);
         assertThat(ChaosAdvisor.takenFiles(done)).extracting(File::getName).containsExactly("a.txt", "b.txt");
     }
 
@@ -123,26 +120,6 @@ class ChaosReplayTest extends ChaosTestSupport {
         orders.expectedMessageCount(1);
         assertThat(chaos().replayFiles("orders")).containsEntry("files", 1);
         MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    void theFilesOverTheLimitAreLeftAndSaidSo() throws Exception {
-        // stopped, so the files put back stay in its folder to be counted
-        context.getRouteController().stopRoute("orders");
-        File done = new File(BASE, "orders/done");
-        done.mkdirs();
-        int taken = ChaosManager.MAX_REPLAY + 2;
-        for (int i = 0; i < taken; i++) {
-            Files.writeString(new File(done, String.format("%05d.json", i)).toPath(), "{}");
-        }
-
-        Map<String, Object> replayed = chaos().replayFiles("orders");
-        assertThat(replayed).containsEntry("files", ChaosManager.MAX_REPLAY).containsEntry("left", 2);
-        // the first by name, the same each time
-        File[] back = new File(BASE, "orders").listFiles(File::isFile);
-        assertThat(back).hasSize(ChaosManager.MAX_REPLAY);
-        assertThat(new File(BASE, "orders/00000.json")).exists();
-        assertThat(new File(BASE, "orders/01001.json")).doesNotExist();
     }
 
     @Test

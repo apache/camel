@@ -18,7 +18,6 @@ package org.apache.camel.component.chaos;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -630,8 +629,7 @@ public final class ChaosManager {
      *
      * @param  routeId                  the id of the route
      * @return                          {@code route}, {@code folder} (where the files were), {@code files} (how many
-     *                                  were put back), {@code skipped} (those still waiting in the folder) and
-     *                                  {@code left} (those over the limit of {@value #MAX_REPLAY}, not put back)
+     *                                  were put back) and {@code skipped} (those still waiting in the folder)
      * @throws IllegalArgumentException when the route does not take files it moves, or has taken none
      */
     public Map<String, Object> replayFiles(String routeId) {
@@ -648,12 +646,7 @@ public final class ChaosManager {
         if (taken.isEmpty()) {
             throw new IllegalArgumentException("Route " + routeId + " has taken no files yet: " + done + " is empty");
         }
-        int left = 0;
         if (taken.size() > MAX_REPLAY) {
-            // the first of them by name, the same each time; the rest are left where they are, and said so
-            left = taken.size() - MAX_REPLAY;
-            LOG.warn("Route {} has taken {} files: only the first {} are put back, {} are left in {}",
-                    routeId, taken.size(), MAX_REPLAY, left, done);
             taken = taken.subList(0, MAX_REPLAY);
         }
         File folder = ChaosAdvisor.inputFolder(route.getEndpoint());
@@ -668,20 +661,9 @@ public final class ChaosManager {
             Path hidden = folder.toPath().resolve(".chaos-" + file.getName());
             try {
                 Files.copy(file.toPath(), hidden, StandardCopyOption.REPLACE_EXISTING);
-                try {
-                    Files.move(hidden, target, StandardCopyOption.ATOMIC_MOVE);
-                } catch (AtomicMoveNotSupportedException e) {
-                    // the hidden file is in the same folder, but a file system may still not move atomically
-                    Files.move(hidden, target, StandardCopyOption.REPLACE_EXISTING);
-                }
+                Files.move(hidden, target, StandardCopyOption.ATOMIC_MOVE);
                 files++;
             } catch (IOException e) {
-                // no hidden copy is left behind in the folder the route consumes from
-                try {
-                    Files.deleteIfExists(hidden);
-                } catch (IOException e2) {
-                    e.addSuppressed(e2);
-                }
                 throw new IllegalStateException("Cannot put back " + file + ": " + e.getMessage(), e);
             }
         }
@@ -691,9 +673,6 @@ public final class ChaosManager {
         answer.put("files", files);
         if (skipped > 0) {
             answer.put("skipped", skipped);
-        }
-        if (left > 0) {
-            answer.put("left", left);
         }
         return answer;
     }

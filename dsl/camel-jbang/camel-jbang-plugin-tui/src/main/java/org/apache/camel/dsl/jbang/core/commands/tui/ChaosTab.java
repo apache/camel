@@ -67,6 +67,8 @@ class ChaosTab extends AbstractTableTab {
     // the exploration instead of the rules (l, let there be chaos), and the selected rule meanwhile
     private boolean explore;
     private Integer rulesSelection;
+    // the selection follows the experiment that runs, of an exploration started here, until another one is selected
+    private boolean followRunning;
 
     ChaosTab(MonitorContext ctx) {
         this(ctx, new ChaosControl(ctx));
@@ -125,11 +127,20 @@ class ChaosTab extends AbstractTableTab {
             toggleExplore();
             return true;
         }
-        if (explore) {
-            // the exploration is read-only: the keys of the rules do not act on it
+        IntegrationInfo info = ctx.findSelectedIntegration();
+        if (ke.isChar('L') && control.step() == ChaosControl.Step.NONE) {
+            // let there be chaos: pick the rules to try, for a budget of time (CAMEL-26760)
+            control.openExplore(info);
+            return true;
+        }
+        if (explore && control.step() == ChaosControl.Step.NONE) {
+            // the exploration is read-only: the keys of the rules do not act on it, but one started here can be stopped
+            if (ke.isChar('x') && info != null && control.explorer().isRunning(info.pid)) {
+                control.explorer().stop();
+                return true;
+            }
             return false;
         }
-        IntegrationInfo info = ctx.findSelectedIntegration();
         ChaosInfo.Rule rule = info != null && info.chaos != null ? selectedRule(info.chaos) : null;
         if (ke.isKey(KeyCode.F8) && ke.hasShift() && control.step() == ChaosControl.Step.NONE) {
             // explain with AI what the selected rule did (CAMEL-26702)
@@ -144,7 +155,15 @@ class ChaosTab extends AbstractTableTab {
             ctx.askAiCallback.ask(ChaosAiPrompt.ofTest(info, rule));
             return true;
         }
-        return control.handleKey(ke, info, rule);
+        boolean used = control.handleKey(ke, info, rule);
+        if (control.takeExploreStarted()) {
+            // the exploration that was just started
+            if (!explore) {
+                toggleExplore();
+            }
+            followRunning = true;
+        }
+        return used;
     }
 
     @Override
@@ -190,6 +209,7 @@ class ChaosTab extends AbstractTableTab {
     @Override
     public void navigateUp() {
         if (!control.isOpen()) {
+            followRunning = false;
             super.navigateUp();
         }
     }
@@ -197,6 +217,7 @@ class ChaosTab extends AbstractTableTab {
     @Override
     public void navigateDown() {
         if (!control.isOpen()) {
+            followRunning = false;
             super.navigateDown();
         }
     }
@@ -227,11 +248,19 @@ class ChaosTab extends AbstractTableTab {
                     .text(Text.from(Line.from(Span.raw("")), Line.from(Span.styled("  " + why, Theme.muted()))))
                     .block(block(" Chaos "))
                     .build(), area);
+            // such as why L does nothing here
+            control.render(frame, area);
             return;
         }
         if (explore) {
-            lastTableArea = ChaosExploreView.render(frame, area, chaos.exploration, tableState, info.name);
+            int experiments = chaos.exploration != null ? chaos.exploration.experiments().size() : 0;
+            if (followRunning && experiments > 0 && control.explorer().isRunning(info.pid)) {
+                tableState.select(experiments - 1);
+            }
+            lastTableArea = ChaosExploreView.render(frame, area, chaos.exploration, tableState, info.name,
+                    control.explorer().line(info.pid));
             lastDetailArea = null;
+            control.render(frame, area);
             return;
         }
         int tableHeight = Math.max(5, Math.min(chaos.rules.size() + 3, area.height() / 3));
@@ -849,14 +878,26 @@ class ChaosTab extends AbstractTableTab {
             hint(spans, "Esc", "back");
             return;
         }
-        if (explore) {
+        if (explore && control.step() == ChaosControl.Step.NONE) {
             hint(spans, "↑↓", "experiment");
+            if (control.explorer().isRunning(info.pid)) {
+                hint(spans, "x", "stop");
+            } else {
+                hint(spans, "L", "let there be chaos");
+            }
             hint(spans, "l", "rules");
             hint(spans, "Esc", "back");
             return;
         }
+        if (explore) {
+            // the keys of the open dialog
+            control.renderFooter(spans, false);
+            return;
+        }
         control.renderFooter(spans, !info.chaos.rules.isEmpty());
-        hint(spans, "l", "explore");
+        if (control.step() == ChaosControl.Step.NONE) {
+            hint(spans, "l", "explore");
+        }
     }
 
     @Override
