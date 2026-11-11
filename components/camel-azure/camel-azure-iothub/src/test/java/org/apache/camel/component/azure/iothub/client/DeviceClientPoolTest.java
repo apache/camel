@@ -42,6 +42,7 @@ import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -270,9 +271,9 @@ class DeviceClientPoolTest {
 
         assertFalse(creator.isAlive(), "creator should exit after the factory throws");
         assertFalse(waiter.isAlive(), "waiter should exit when the creator error is propagated");
-        assertTrue(creatorFailure.get() instanceof NoClassDefFoundError,
+        assertInstanceOf(NoClassDefFoundError.class, creatorFailure.get(),
                 "creator should rethrow the original Error");
-        assertTrue(waiterFailure.get() instanceof NoClassDefFoundError,
+        assertInstanceOf(NoClassDefFoundError.class, waiterFailure.get(),
                 "waiter should observe the creator's Error");
     }
 
@@ -304,7 +305,7 @@ class DeviceClientPoolTest {
         creator.join(TimeUnit.SECONDS.toMillis(5));
 
         assertFalse(creator.isAlive(), "creator should exit after shutdown during callback registration");
-        assertTrue(creatorFailure.get() instanceof IllegalStateException,
+        assertInstanceOf(IllegalStateException.class, creatorFailure.get(),
                 "shutdown should fail creation with an IllegalStateException");
         assertEquals(0, pool.getActiveClientCount());
         verify(client, times(1)).close();
@@ -417,6 +418,53 @@ class DeviceClientPoolTest {
             assertEquals(1, pool.getActiveClientCount());
         } finally {
             pool.shutdown();
+        }
+    }
+
+    @Test
+    void testShutdownClosesRetiredClientQueuedOnEvictor() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        AtomicReference<IotHubConnectionStatusChangeCallback> callbackRef = new AtomicReference<>();
+        CountDownLatch evictorBlocked = new CountDownLatch(1);
+        CountDownLatch allowEvictorToContinue = new CountDownLatch(1);
+
+        doAnswer(invocation -> {
+            callbackRef.set(invocation.getArgument(0));
+            return null;
+        }).when(client).setConnectionStatusChangeCallback(any(), any());
+
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.submit(() -> {
+            evictorBlocked.countDown();
+            try {
+                allowEvictorToContinue.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return null;
+        });
+
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30), executor);
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+        pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+
+        assertTrue(evictorBlocked.await(5, TimeUnit.SECONDS), "evictor should be blocked before retirement is queued");
+
+        IotHubConnectionStatusChangeCallback callback = callbackRef.get();
+        ConnectionStatusChangeContext context = mock(ConnectionStatusChangeContext.class);
+        Mockito.when(context.getNewStatus()).thenReturn(IotHubConnectionStatus.DISCONNECTED);
+        Mockito.when(context.getPreviousStatus()).thenReturn(IotHubConnectionStatus.CONNECTED);
+        Mockito.when(context.getNewStatusReason()).thenReturn(IotHubConnectionStatusChangeReason.COMMUNICATION_ERROR);
+
+        callback.onStatusChanged(context);
+        pool.shutdown();
+
+        try {
+            Awaitility.await().atMost(2, TimeUnit.SECONDS)
+                    .untilAsserted(() -> verify(client, Mockito.atLeastOnce()).close());
+        } finally {
+            allowEvictorToContinue.countDown();
+            executor.shutdownNow();
         }
     }
 

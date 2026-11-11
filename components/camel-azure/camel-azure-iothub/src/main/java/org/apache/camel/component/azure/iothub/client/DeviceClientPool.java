@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.iothub.client;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -123,6 +124,7 @@ public class DeviceClientPool {
     private final Duration evictionInterval;
     private final Map<String, PooledClient> pool = new ConcurrentHashMap<>();
     private final Map<String, CompletableFuture<DeviceClient>> creationFutures = new ConcurrentHashMap<>();
+    private final Set<PooledClient> pendingClose = ConcurrentHashMap.newKeySet();
     private final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     private DeviceClientFactory deviceClientFactory = DeviceClient::new;
@@ -520,18 +522,30 @@ public class DeviceClientPool {
     }
 
     private void closeRetired(PooledClient pooled) {
-        if (pooled.closed.compareAndSet(false, true)) {
-            ScheduledExecutorService executor = evictionExecutor;
-            if (executor != null && !executor.isShutdown()) {
+        if (!pooled.closed.compareAndSet(false, true)) {
+            return;
+        }
+        ScheduledExecutorService executor = evictionExecutor;
+        if (executor != null && !executor.isShutdown()) {
+            if (pendingClose.add(pooled)) {
                 try {
-                    executor.execute(() -> closeQuietly("retired", pooled.client, "retired eviction"));
+                    executor.execute(() -> {
+                        try {
+                            if (!pendingClose.remove(pooled)) {
+                                return;
+                            }
+                            closeQuietly("retired", pooled.client, "retired eviction");
+                        } finally {
+                            pendingClose.remove(pooled);
+                        }
+                    });
                     return;
                 } catch (RejectedExecutionException ignored) {
-                    // Fall through to synchronous close if the executor was shut down concurrently.
+                    pendingClose.remove(pooled);
                 }
             }
-            closeQuietly("retired", pooled.client, "retired eviction");
         }
+        closeQuietly("retired", pooled.client, "retired eviction");
     }
 
     private void evictIdleClients() {
@@ -569,8 +583,11 @@ public class DeviceClientPool {
             return;
         }
         if (evictionExecutor != null) {
-            for (Runnable task : evictionExecutor.shutdownNow()) {
-                task.run();
+            evictionExecutor.shutdownNow();
+        }
+        for (PooledClient pooled : pendingClose) {
+            if (pendingClose.remove(pooled)) {
+                closeQuietly("retired", pooled.client, "shutdown");
             }
         }
         creationFutures.clear();
