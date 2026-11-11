@@ -13,6 +13,13 @@ See the xref:camel-upgrade-recipes-tool.adoc[documentation] page for details.
 
 == Upgrading Camel 4.23 to 4.24
 
+=== camel-opa - batch fail-open marker
+
+Batch evaluation now sets `CamelOpaDecisionFailedOpen=true` when any element proceeds because its decision point
+was unavailable and `failOpen=true`. Previously this marker was set only for single-element evaluation. Routes
+that inspect the marker after a batch should account for it applying to any element; the per-element outcome
+list identifies the affected elements. The existing `CamelOpaBatchDecision` Boolean list is unchanged.
+
 === camel-observability-services - promoted to Stable
 
 The `camel-observability-services` component has been promoted from _Preview_ to _Stable_ support level.
