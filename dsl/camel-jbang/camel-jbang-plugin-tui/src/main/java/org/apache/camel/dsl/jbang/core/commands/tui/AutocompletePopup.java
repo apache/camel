@@ -604,16 +604,16 @@ class AutocompletePopup {
         listState.select(filteredItems.isEmpty() ? null : 0);
     }
 
-    /**
-     * The title of the list with its count. When the list has the properties of a Kamelet, the count is of those: the
-     * options of the kamelet component below the divider are for special uses, and not what the title names
-     * (CAMEL-25411).
-     */
     /** An option of an advanced group of the catalog: "advanced", "consumer (advanced)", "producer (advanced)". */
     static boolean isAdvanced(CompletionItem item) {
         return item.group() != null && item.group().contains("advanced");
     }
 
+    /**
+     * The title of the list with its count. When the list has the properties of a Kamelet, the count is of those: the
+     * options of the kamelet component below the divider are for special uses, and not what the title names
+     * (CAMEL-25411).
+     */
     String title() {
         String label = titlePrefix != null ? titlePrefix : "Completions";
         boolean kamelet = allItems.stream().anyMatch(AutocompletePopup::isKameletProperty);
