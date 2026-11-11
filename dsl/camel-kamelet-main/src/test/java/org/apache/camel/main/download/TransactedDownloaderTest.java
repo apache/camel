@@ -26,6 +26,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.spi.TransactedPolicy;
 import org.junit.jupiter.api.Test;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -79,6 +80,37 @@ public class TransactedDownloaderTest {
             transacted.setRef("myPolicy");
             assertFalse(TransactedDownloader.bindPassThroughPolicies(context, transacted));
             assertNull(context.getRegistry().lookupByName("PROPAGATION_REQUIRED"));
+        }
+    }
+
+    @Test
+    public void oneDataSourceWithSpringJdbcGetsALocalTransactionManager() throws Exception {
+        // CAMEL-26851: Camel makes a local transaction manager for it, so no placeholder is bound
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("orders", new DriverManagerDataSource("jdbc:h2:mem:orders"));
+            assertTrue(TransactedDownloader.usesLocalTransactionManager(context, new TransactedDefinition()));
+        }
+    }
+
+    @Test
+    public void noLocalTransactionManagerWithoutExactlyOneDataSource() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            assertFalse(TransactedDownloader.usesLocalTransactionManager(context, new TransactedDefinition()));
+            context.getRegistry().bind("orders", new DriverManagerDataSource("jdbc:h2:mem:orders"));
+            context.getRegistry().bind("audit", new DriverManagerDataSource("jdbc:h2:mem:audit"));
+            assertFalse(TransactedDownloader.usesLocalTransactionManager(context, new TransactedDefinition()));
+        }
+    }
+
+    @Test
+    public void noLocalTransactionManagerForAPolicyOfItsOwn() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            context.getRegistry().bind("orders", new DriverManagerDataSource("jdbc:h2:mem:orders"));
+            TransactedDefinition transacted = new TransactedDefinition();
+            transacted.setRef("myPolicy");
+            assertFalse(TransactedDownloader.usesLocalTransactionManager(context, transacted));
+            context.getRegistry().bind("PROPAGATION_REQUIRED", new CountingPolicy());
+            assertFalse(TransactedDownloader.usesLocalTransactionManager(context, new TransactedDefinition()));
         }
     }
 

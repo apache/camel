@@ -16,6 +16,8 @@
  */
 package org.apache.camel.main.download;
 
+import javax.sql.DataSource;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
@@ -59,10 +61,16 @@ public class TransactedDownloader {
                         if (downloader != null) {
                             downloader.downloadDependency("org.apache.camel", "camel-jta",
                                     route.getCamelContext().getVersion());
-                            if (bindPassThroughPolicies(route.getCamelContext(), transacted)) {
+                            if (usesLocalTransactionManager(route.getCamelContext(), transacted)) {
+                                // CAMEL-26851: Camel makes a local transaction manager for the one DataSource, and the
+                                // policy of it, which is in camel-spring
+                                downloader.downloadDependency("org.apache.camel", "camel-spring",
+                                        route.getCamelContext().getVersion());
+                            } else if (bindPassThroughPolicies(route.getCamelContext(), transacted)) {
                                 LOG.warn("Route {} uses transacted, but there is no transaction manager: the route runs"
-                                         + " without a transaction. Declare a transaction manager bean, or export to"
-                                         + " Spring Boot or Quarkus, for transactions.",
+                                         + " without a transaction. Declare one DataSource (spring.datasource.*) with"
+                                         + " spring-jdbc on the classpath, as the sql component has, or a transaction"
+                                         + " manager bean, or export to Spring Boot or Quarkus, for transactions.",
                                         route.getRouteId());
                             }
                         }
@@ -90,6 +98,21 @@ public class TransactedDownloader {
             }
         }
         return true;
+    }
+
+    /**
+     * Whether Camel makes a local transaction manager for the transacted (CAMEL-26851): it has no policy or reference
+     * of its own, the registry has no transaction manager but exactly one DataSource, and spring-jdbc is on the
+     * classpath.
+     */
+    static boolean usesLocalTransactionManager(CamelContext context, TransactedDefinition transacted) {
+        if (transacted.getPolicy() != null || transacted.getRef() != null || hasTransactionManager(context)) {
+            return false;
+        }
+        // with the application class loader, as for the PlatformTransactionManager below
+        Class<?> jtm = ObjectHelper.loadClass("org.springframework.jdbc.support.JdbcTransactionManager",
+                context.getApplicationContextClassLoader());
+        return jtm != null && context.getRegistry().findByType(DataSource.class).size() == 1;
     }
 
     /**
