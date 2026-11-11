@@ -331,12 +331,23 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         listener.setZooKeeperPassword(zooKeeperPassword);
         // set before it starts, as the group may tell it that this node is the master while it starts
         this.groupListener = listener;
-        ServiceHelper.startService(listener);
+        try {
+            ServiceHelper.startService(listener);
 
-        LOG.info("Attempting to become master for endpoint: {} in {} with singletonID: {}", route.getEndpoint(),
-                getCamelContext(), getGroupName());
-        thisNodeState = createNodeState(route);
-        listener.updateState(thisNodeState);
+            LOG.info("Attempting to become master for endpoint: {} in {} with singletonID: {}", route.getEndpoint(),
+                    getCamelContext(), getGroupName());
+            thisNodeState = createNodeState(route);
+            listener.updateState(thisNodeState);
+        } catch (Exception e) {
+            // undo the half joined state: the JMX attributes and the leadership checks must not read the group of a
+            // join that failed, and the policy joins again when the route is added again or the policy is started again
+            try {
+                closeGroup(listener);
+            } catch (Exception e2) {
+                e.addSuppressed(e2);
+            }
+            throw e;
+        }
     }
 
     // under the service lock: leaves the group, and this node is no longer the master
@@ -345,24 +356,33 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         if (listener == null) {
             return;
         }
-        // the client the listener registered itself on (the curator of the policy, or one from the registry)
-        CuratorFramework client = null;
         try {
-            client = listener.getCurator();
-        } catch (RuntimeException e) {
-            // the listener did not start: it registered itself on the curator of the policy, if any
-            client = curator;
-        }
-        // a start (or retry) that checks the leadership from now on does not start the consumer
-        groupListener = null;
-        // the group thread is interrupted before the leadership lock is taken, as in doStop: a consumer start in flight
-        // on it holds the lock. Closing the group tells the listeners that it is disconnected, which stops the consumer
-        try {
-            ServiceHelper.stopAndShutdownServices(listener);
+            closeGroup(listener);
         } catch (Exception e) {
             LOG.warn("Failed to leave the group of: {}. This exception is ignored.", route.getEndpoint(), e);
         }
-        // the group listener registered itself on a CuratorFramework of the user or the registry, which outlives it
+        if (camelContext.isStopping()) {
+            LOG.debug("Left the group as the route was removed: {}", route.getEndpoint());
+        } else {
+            LOG.info("Left the group as the route was removed: {}", route.getEndpoint());
+        }
+    }
+
+    // under the service lock: closes the group the listener joined (or tried to join), when the route is removed, the
+    // policy stops, or the join failed. Throws the first failure once all of it is cleaned up
+    private void closeGroup(ZookeeperGroupListenerSupport<CamelNodeState> listener) throws Exception {
+        // the client the listener registered itself on, which outlives it
+        CuratorFramework client = registeredCurator();
+        // a start (or retry) that checks the leadership from now on does not start the consumer
+        groupListener = null;
+        Exception failure = null;
+        // the group thread is interrupted before the leadership lock is taken: a consumer start in flight on it holds the
+        // lock. Closing the group tells the listeners that it is disconnected, which stops the consumer
+        try {
+            ServiceHelper.stopAndShutdownServices(listener);
+        } catch (Exception e) {
+            failure = e;
+        }
         if (client != null) {
             client.getConnectionStateListenable().removeListener(listener);
         }
@@ -371,19 +391,36 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
             thisNodeState = null;
             failedStarts = 0;
             cancelRetry();
-            if (masterConsumer.getAndSet(false)) {
+            Route current = this.route;
+            if (masterConsumer.getAndSet(false) && current != null) {
                 // a start that completed while the group was closed
-                stopConsumer(route.getConsumer());
+                stopConsumer(current.getConsumer());
             }
         } catch (Exception e) {
-            LOG.warn("Failed to stop master consumer: {}. This exception is ignored.", route.getEndpoint(), e);
+            if (failure == null) {
+                failure = e;
+            } else {
+                failure.addSuppressed(e);
+            }
         } finally {
             leadershipLock.unlock();
         }
-        if (camelContext.isStopping()) {
-            LOG.debug("Left the group as the route was removed: {}", route.getEndpoint());
-        } else {
-            LOG.info("Left the group as the route was removed: {}", route.getEndpoint());
+        if (failure != null) {
+            throw failure;
+        }
+    }
+
+    // the CuratorFramework the group listener registered itself on (ZookeeperGroupSupport.setCurator): the curator of
+    // the policy, or else the one named curator in the registry. It does not register on a client its group factory
+    // creates, which the factory closes
+    private CuratorFramework registeredCurator() {
+        if (curator != null) {
+            return curator;
+        }
+        try {
+            return camelContext.getRegistry().lookupByNameAndType("curator", CuratorFramework.class);
+        } catch (RuntimeException e) {
+            return null;
         }
     }
 
@@ -402,14 +439,24 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
             camelContext.getExecutorServiceManager().shutdownNow(retryExecutor);
             retryExecutor = null;
         }
-        ServiceHelper.stopAndShutdownServices(groupListener);
-        leadershipLock.lock();
-        try {
-            failedStarts = 0;
-            cancelRetry();
-            masterConsumer.set(false);
-        } finally {
-            leadershipLock.unlock();
+        // the same clean up as when the route is removed (the policy may be stopped on its own, from JMX), so that a
+        // shared CuratorFramework does not keep the listener and the JMX attributes do not read a closed group
+        ZookeeperGroupListenerSupport<CamelNodeState> listener = groupListener;
+        if (listener != null) {
+            try {
+                closeGroup(listener);
+            } catch (Exception e) {
+                LOG.warn("Failed to leave the group of: {}. This exception is ignored.", groupName, e);
+            }
+        } else {
+            leadershipLock.lock();
+            try {
+                failedStarts = 0;
+                cancelRetry();
+                masterConsumer.set(false);
+            } finally {
+                leadershipLock.unlock();
+            }
         }
     }
 

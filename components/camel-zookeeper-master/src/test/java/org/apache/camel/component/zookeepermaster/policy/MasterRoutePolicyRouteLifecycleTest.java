@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -31,6 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.zookeepermaster.ZookeeperGroupSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
@@ -38,6 +40,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.listen.ListenerManager;
 import org.apache.curator.retry.RetryOneTime;
 import org.apache.zookeeper.server.NIOServerCnxnFactory;
 import org.apache.zookeeper.server.ZooKeeperServer;
@@ -49,6 +52,7 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -64,6 +68,7 @@ class MasterRoutePolicyRouteLifecycleTest {
 
     private final int port = AvailablePortFinder.getNextAvailable();
     private final List<CamelContext> contexts = new ArrayList<>();
+    private final List<CuratorFramework> clients = new ArrayList<>();
 
     private ZooKeeperServer server;
     private NIOServerCnxnFactory factory;
@@ -81,6 +86,7 @@ class MasterRoutePolicyRouteLifecycleTest {
     void stopServer() {
         // the CamelContexts first, so their policies leave the group while the server runs
         contexts.forEach(CamelContext::stop);
+        clients.forEach(CuratorFramework::close);
         if (factory != null) {
             factory.shutdown();
         }
@@ -235,6 +241,83 @@ class MasterRoutePolicyRouteLifecycleTest {
         assertConsumes(b);
     }
 
+    @Test
+    void failedJoinLeavesNoHalfJoinedState() throws Exception {
+        CuratorFramework client = newClient();
+        MasterRoutePolicy policy = newPolicy();
+        policy.setCurator(client);
+        // the first join fails after the group listener started (the node state cannot be created)
+        AtomicInteger failures = new AtomicInteger(1);
+        policy.setContainerIdFactory(() -> {
+            if (failures.getAndDecrement() > 0) {
+                throw new IllegalStateException("Forced failure to create the container id");
+            }
+            return "node-a";
+        });
+        CamelContext a = new DefaultCamelContext();
+        contexts.add(a);
+        a.start();
+
+        // the route is added to the running CamelContext, and the join fails: the policy must not keep the listener
+        // (the JMX attributes would read its group) nor leave it on the shared CuratorFramework
+        a.addRoutes(route(policy));
+        assertTrue(failures.get() <= 0, "The policy must have tried to join");
+        assertFalse(policy.isConnected(), "The policy must not keep the group of a failed join");
+        assertEquals(0, groupListenersOn(client), "The listener of a failed join must be removed from the curator");
+        assertFalse(isConsumerStarted(a));
+
+        // the route is added again: the policy joins the group and the node runs the route
+        a.getRouteController().stopRoute(ROUTE);
+        assertTrue(a.removeRoute(ROUTE));
+        a.addRoutes(route(policy));
+        awaitConsuming(a);
+        assertConsumes(a);
+        assertEquals(1, groupListenersOn(client));
+    }
+
+    @Test
+    void failedJoinAtStartLeavesNoListenerOnTheCurator() throws Exception {
+        CuratorFramework client = newClient();
+        MasterRoutePolicy policy = newPolicy();
+        policy.setCurator(client);
+        policy.setContainerIdFactory(() -> {
+            throw new IllegalStateException("Forced failure to create the container id");
+        });
+        CamelContext a = new DefaultCamelContext();
+        contexts.add(a);
+        a.addRoutes(route(policy));
+
+        // the policy joins when the CamelContext starts, which fails with the join. A control: the CamelContext that
+        // fails to start also removes the route, whose onRemove cleaned up before the join undid itself
+        assertThrows(Exception.class, a::start);
+        assertFalse(policy.isConnected());
+        assertEquals(0, groupListenersOn(client), "The listener of a failed join must be removed from the curator");
+    }
+
+    @Test
+    void policyStoppedOnItsOwnLeavesTheGroupAndJoinsAgainWhenStarted() throws Exception {
+        CuratorFramework client = newClient();
+        MasterRoutePolicy policy = newPolicy();
+        policy.setCurator(client);
+        CamelContext a = startNode(policy);
+        awaitConsuming(a);
+        assertEquals(1, groupListenersOn(client));
+
+        // the policy is stopped on its own (from JMX): it leaves the group like a removed route, and the shared
+        // CuratorFramework must not keep its listener
+        ServiceHelper.stopService(policy);
+        assertEquals(0, groupListenersOn(client), "The stopped policy must remove its listener from the curator");
+        assertFalse(policy.isConnected());
+        assertFalse(policy.isMaster());
+        assertFalse(isConsumerStarted(a), "A node that left the group must not consume");
+
+        // started again, it joins the group again and runs the route
+        ServiceHelper.startService(policy);
+        awaitConsuming(a);
+        assertConsumes(a);
+        assertEquals(1, groupListenersOn(client));
+    }
+
     private MasterRoutePolicy newPolicy() {
         MasterRoutePolicy policy = new MasterRoutePolicy();
         policy.setZooKeeperUrl("127.0.0.1:" + port);
@@ -266,6 +349,26 @@ class MasterRoutePolicyRouteLifecycleTest {
         context.addRoutes(route(policy, autoStartup));
         context.start();
         return context;
+    }
+
+    // a CuratorFramework of the user, shared by the policies, which outlives them
+    private CuratorFramework newClient() throws Exception {
+        CuratorFramework client = CuratorFrameworkFactory.newClient("127.0.0.1:" + port, new RetryOneTime(100));
+        clients.add(client);
+        client.start();
+        assertTrue(client.blockUntilConnected(20, TimeUnit.SECONDS));
+        return client;
+    }
+
+    // the group listeners of the policies that are registered on the client
+    private static int groupListenersOn(CuratorFramework client) {
+        AtomicInteger count = new AtomicInteger();
+        ((ListenerManager<?, ?>) client.getConnectionStateListenable()).forEach(listener -> {
+            if (listener instanceof ZookeeperGroupSupport) {
+                count.incrementAndGet();
+            }
+        });
+        return count.get();
     }
 
     // the members of the group in ZooKeeper
@@ -305,11 +408,10 @@ class MasterRoutePolicyRouteLifecycleTest {
         MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
         mock.reset();
         mock.expectedBodiesReceived("hello");
-        mock.setResultWaitTime(20000);
         try (ProducerTemplate template = context.createProducerTemplate()) {
             template.sendBody("seda:in", "hello");
         }
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
     }
 
     // an endpoint that runs a check when its consumer is created
