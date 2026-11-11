@@ -293,12 +293,12 @@ final class Timeline {
         if (e.get("endpointSends") instanceof List<?> sends) {
             for (Object o : sends) {
                 if (o instanceof JsonObject s) {
-                    calls.add(new Call(s.getString("endpointUri"), s.getLongOrDefault("elapsed", 0)));
+                    calls.add(new Call(StatusParser.masked(s, "endpointUri"), s.getLongOrDefault("elapsed", 0)));
                 }
             }
         }
         return new Kept(
-                e.getString("exchangeId"), e.getString("routeId"), e.getString("fromEndpointUri"),
+                e.getString("exchangeId"), e.getString("routeId"), StatusParser.masked(e, "fromEndpointUri"),
                 e.getLongOrDefault("timestamp", 0), e.getLongOrDefault("elapsed", 0), e.getBooleanOrDefault("failed", false),
                 e.getBooleanOrDefault("handled", false), e.getBooleanOrDefault("redelivered", false),
                 e.getString("exception"), e.getString("chaosRule"), List.copyOf(calls));

@@ -93,3 +93,5 @@ actions:
           - jsonPath:
               - expression: "$.paths['/orders/{id}'].get.operationId"
                 value: "getOrder"
+              - expression: "$.servers[0].url"
+                value: "http://localhost:8080"
