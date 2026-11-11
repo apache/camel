@@ -1223,6 +1223,31 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
     
+        /**
+         * Factory to create a PollExceptionStrategy per Kafka consumer fetch
+         * thread. Unlike the pollExceptionStrategy option, which shares a
+         * single strategy across all consumer threads, the factory is invoked
+         * each time a fetch thread creates its Kafka consumer (on start and on
+         * every reconnect), so each thread gets its own strategy bound to its
+         * current consumer. This is required by strategies that drive the
+         * consumer (such as the built-in reconnect, stop, and bridge
+         * strategies), and it also works correctly when an endpoint uses
+         * multiple consumer threads. The factory may be called concurrently and
+         * must be thread-safe.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.kafka.PollExceptionStrategyFactory&lt;/code&gt; type.
+         * 
+         * Group: consumer (advanced)
+         * 
+         * @param pollExceptionStrategyFactory the value to set
+         * @return the dsl builder
+         */
+        default KafkaComponentBuilder pollExceptionStrategyFactory(org.apache.camel.component.kafka.PollExceptionStrategyFactory pollExceptionStrategyFactory) {
+            doSetProperty("pollExceptionStrategyFactory", pollExceptionStrategyFactory);
+            return this;
+        }
+    
         
         /**
          * The delay in millis seconds to wait before trying again to subscribe
@@ -2718,6 +2743,7 @@ public interface KafkaComponentBuilderFactory {
             case "isolationLevel": getOrCreateConfiguration((KafkaComponent) component).setIsolationLevel((java.lang.String) value); return true;
             case "kafkaManualCommitFactory": ((KafkaComponent) component).setKafkaManualCommitFactory((org.apache.camel.component.kafka.consumer.KafkaManualCommitFactory) value); return true;
             case "pollExceptionStrategy": ((KafkaComponent) component).setPollExceptionStrategy((org.apache.camel.component.kafka.PollExceptionStrategy) value); return true;
+            case "pollExceptionStrategyFactory": ((KafkaComponent) component).setPollExceptionStrategyFactory((org.apache.camel.component.kafka.PollExceptionStrategyFactory) value); return true;
             case "subscribeConsumerBackoffInterval": ((KafkaComponent) component).setSubscribeConsumerBackoffInterval((long) value); return true;
             case "subscribeConsumerBackoffMaxAttempts": ((KafkaComponent) component).setSubscribeConsumerBackoffMaxAttempts((int) value); return true;
             case "subscribeConsumerTopicMustExists": ((KafkaComponent) component).setSubscribeConsumerTopicMustExists((boolean) value); return true;

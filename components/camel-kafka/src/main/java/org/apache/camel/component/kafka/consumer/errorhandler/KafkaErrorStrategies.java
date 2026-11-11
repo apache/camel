@@ -17,15 +17,16 @@
 
 package org.apache.camel.component.kafka.consumer.errorhandler;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.KafkaFetchRecords;
 import org.apache.camel.component.kafka.PollExceptionStrategy;
-import org.apache.camel.component.kafka.PollOnError;
+import org.apache.camel.component.kafka.PollExceptionStrategyFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 
 public final class KafkaErrorStrategies {
+
+    private static final DefaultPollExceptionStrategyFactory DEFAULT_FACTORY = new DefaultPollExceptionStrategyFactory();
 
     private KafkaErrorStrategies() {
 
@@ -35,26 +36,19 @@ public final class KafkaErrorStrategies {
             KafkaFetchRecords recordFetcher, KafkaEndpoint endpoint, Consumer<?, ?> consumer) {
         ObjectHelper.notNull(consumer, "consumer");
 
+        // the factory is invoked each time a fetch thread creates its consumer, so it supports the fetcher-bound
+        // built-in strategies and works correctly with multiple consumer threads
+        PollExceptionStrategyFactory factory = endpoint.getComponent().getPollExceptionStrategyFactory();
+        if (factory != null) {
+            return factory.create(recordFetcher, endpoint, consumer);
+        }
+
+        // a single strategy instance shared across all fetch threads; kept for backwards compatibility
         PollExceptionStrategy strategy = endpoint.getComponent().getPollExceptionStrategy();
         if (strategy != null) {
             return strategy;
         }
 
-        PollOnError onError = endpoint.getConfiguration().getPollOnError();
-
-        switch (onError) {
-            case RETRY:
-                return new RetryErrorStrategy();
-            case RECONNECT:
-                return new ReconnectErrorStrategy(recordFetcher);
-            case ERROR_HANDLER:
-                return new BridgeErrorStrategy(recordFetcher, consumer);
-            case DISCARD:
-                return new DiscardErrorStrategy(consumer);
-            case STOP:
-                return new StopErrorStrategy(recordFetcher);
-            default:
-                throw new RuntimeCamelException("The provided pollOnError strategy is invalid");
-        }
+        return DEFAULT_FACTORY.create(recordFetcher, endpoint, consumer);
     }
 }
