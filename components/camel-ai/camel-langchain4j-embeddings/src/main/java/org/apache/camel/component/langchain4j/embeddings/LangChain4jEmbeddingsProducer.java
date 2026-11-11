@@ -28,7 +28,8 @@ import java.util.List;
 import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.output.Response;
+import dev.langchain4j.model.embedding.request.EmbeddingRequest;
+import dev.langchain4j.model.embedding.response.EmbeddingResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -84,12 +85,13 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            final Response<Embedding> result = model.embed(in);
+            final EmbeddingResponse result = model.embed(EmbeddingRequest.builder().textSegment(in).build());
             populateHeaders(message, result, in, observationContext.requestModel());
+            // an EmbeddingResponse has no finish reason
             observation.recordSuccess(GenAiUsage.of(
                     result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
                     result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
-                    result.finishReason(),
+                    null,
                     null));
         } catch (RuntimeException e) {
             GenAiErrorSupport.apply(exchange, e);
@@ -116,13 +118,14 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
                 .build();
         GenAiObservation observation = GenAiObservability.start(exchange, observationContext);
         try {
-            final Response<List<Embedding>> result = model.embedAll(segments);
+            final EmbeddingResponse result = model.embed(EmbeddingRequest.builder().textSegments(segments).build());
 
             populateBatchHeaders(message, result, segments, observationContext.requestModel());
+            // an EmbeddingResponse has no finish reason
             observation.recordSuccess(GenAiUsage.of(
                     result.tokenUsage() != null ? result.tokenUsage().inputTokenCount() : null,
                     result.tokenUsage() != null ? result.tokenUsage().outputTokenCount() : null,
-                    result.finishReason(),
+                    null,
                     null));
         } catch (RuntimeException e) {
             GenAiErrorSupport.apply(exchange, e);
@@ -194,14 +197,13 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
     }
 
     private static void populateHeaders(
-            Message message, Response<Embedding> result, TextSegment textSegment, String requestModel) {
+            Message message, EmbeddingResponse result, TextSegment textSegment, String requestModel) {
         removeResultHeaders(message);
         if (requestModel != null) {
             message.setHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL, requestModel);
         }
-
-        if (result.finishReason() != null) {
-            message.setHeader(LangChain4jEmbeddingsHeaders.FINISH_REASON, result.finishReason());
+        if (result.modelName() != null) {
+            message.setHeader(LangChain4jEmbeddingsHeaders.RESPONSE_MODEL, result.modelName());
         }
 
         if (result.tokenUsage() != null) {
@@ -210,20 +212,20 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
             message.setHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
         }
 
-        message.setHeader(LangChain4jEmbeddingsHeaders.VECTOR, result.content().vector());
+        Embedding embedding = result.embeddings().get(0);
+        message.setHeader(LangChain4jEmbeddingsHeaders.VECTOR, embedding.vector());
         message.setHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENT, textSegment);
-        message.setHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, result.content());
+        message.setHeader(LangChain4jEmbeddingsHeaders.EMBEDDING, embedding);
     }
 
     private static void populateBatchHeaders(
-            Message message, Response<List<Embedding>> result, List<TextSegment> segments, String requestModel) {
+            Message message, EmbeddingResponse result, List<TextSegment> segments, String requestModel) {
         removeResultHeaders(message);
         if (requestModel != null) {
             message.setHeader(LangChain4jEmbeddingsHeaders.REQUEST_MODEL, requestModel);
         }
-
-        if (result.finishReason() != null) {
-            message.setHeader(LangChain4jEmbeddingsHeaders.FINISH_REASON, result.finishReason());
+        if (result.modelName() != null) {
+            message.setHeader(LangChain4jEmbeddingsHeaders.RESPONSE_MODEL, result.modelName());
         }
 
         if (result.tokenUsage() != null) {
@@ -232,8 +234,7 @@ public class LangChain4jEmbeddingsProducer extends DefaultProducer {
             message.setHeader(LangChain4jEmbeddingsHeaders.TOTAL_TOKEN_COUNT, result.tokenUsage().totalTokenCount());
         }
 
-        List<Embedding> embeddings = result.content();
-        message.setHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS, embeddings);
+        message.setHeader(LangChain4jEmbeddingsHeaders.EMBEDDINGS, result.embeddings());
         // Preserve text segments so downstream embedding store can associate them with embeddings
         message.setHeader(LangChain4jEmbeddingsHeaders.TEXT_SEGMENTS, segments);
     }

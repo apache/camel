@@ -8046,3 +8046,14 @@ A `java.time` value in a POJO body no longer fails: `callFunction` of `camel-goo
 Exceptions: `camel-huaweicloud-dms` and `camel-huaweicloud-iam` let a failure to write a response as JSON through as the
 unchecked `tools.jackson.core.JacksonException`, which is not an `IOException`, so `onException(IOException.class)` does not
 match it.
+
+=== camel-langchain4j-embeddings - the producer uses the EmbeddingRequest API of LangChain4j
+
+The producer now calls `EmbeddingModel.embed(EmbeddingRequest)` instead of `embed(TextSegment)` and
+`embedAll(List<TextSegment>)`, so the `CamelLangChain4jEmbeddingsResponseModel` header is now set with the
+model name of the response. `EmbeddingResponse` has no finish reason, so the
+`CamelLangChain4jEmbeddingsFinishReason` header is no longer set.
+
+A custom `EmbeddingModel` must implement `embedAll(List<TextSegment>)` (or `doEmbed(EmbeddingRequest)`), as
+the LangChain4j models do. A model that only overrides `embed(TextSegment)` is no longer called, and the
+default methods of LangChain4j then fail with a `StackOverflowError`.

@@ -91,6 +91,21 @@ class LangChain4jEmbeddingsObservabilityTest extends CamelTestSupport {
         assertThat(tags.get(GenAiAttributes.CAMEL_COMPONENT)).isEqualTo("langchain4j-embeddings");
     }
 
+    @Test
+    void shouldSetResponseModelHeader() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+
+        template.sendBody("direct:start", TextSegment.from("Hello"));
+        template.sendBody("direct:start", List.of("Hello"));
+
+        mock.assertIsSatisfied(10, TimeUnit.SECONDS);
+        for (var exchange : mock.getReceivedExchanges()) {
+            assertThat(exchange.getMessage().getHeader(LangChain4jEmbeddingsHeaders.RESPONSE_MODEL))
+                    .isEqualTo("text-embedding-3-small");
+        }
+    }
+
     private static final class StubEmbeddingModel implements EmbeddingModel {
         @Override
         public ModelProvider provider() {
@@ -103,8 +118,8 @@ class LangChain4jEmbeddingsObservabilityTest extends CamelTestSupport {
         }
 
         @Override
-        public Response<Embedding> embed(TextSegment textSegment) {
-            return Response.from(Embedding.from(new float[] { 0.1f, 0.2f }),
+        public Response<List<Embedding>> embedAll(List<TextSegment> textSegments) {
+            return Response.from(List.of(Embedding.from(new float[] { 0.1f, 0.2f })),
                     new TokenUsage(4, 0, 4));
         }
     }
