@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.camel.RuntimeCamelException;
@@ -44,13 +45,15 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     private static final Logger LOGGER = LoggerFactory.getLogger(ZooKeeperClusterView.class);
 
     private final ZooKeeperCuratorConfiguration configuration;
-    private final CuratorFramework client;
+    // the client of the cluster service, read when the view starts: a service that is stopped and started again
+    // closes its client and creates a new one
+    private final Supplier<CuratorFramework> client;
     private final CuratorLocalMember localMember;
     private volatile LeaderSelector leaderSelector;
     private volatile boolean leader;
 
     public ZooKeeperClusterView(CamelClusterService cluster, ZooKeeperCuratorConfiguration configuration,
-                                CuratorFramework client, String namespace) {
+                                Supplier<CuratorFramework> client, String namespace) {
         super(cluster, namespace);
 
         this.localMember = new CuratorLocalMember();
@@ -109,7 +112,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     @Override
     protected void doStart() throws Exception {
         if (leaderSelector == null) {
-            leaderSelector = new LeaderSelector(client, getFullPath(), new CamelLeaderElectionListener());
+            leaderSelector = new LeaderSelector(client.get(), getFullPath(), new CamelLeaderElectionListener());
             leaderSelector.setId(getClusterService().getId());
             leaderSelector.autoRequeue();
             leaderSelector.start();
