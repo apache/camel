@@ -185,7 +185,7 @@ final class ChaosExploreDialog {
 
     /** The budget and the rules picked now. */
     Picks picks() {
-        return new Picks(budget(), picked().stream().map(Item::rule).collect(Collectors.toSet()));
+        return new Picks(budget(), picked().stream().map(Item::rule).collect(Collectors.toUnmodifiableSet()));
     }
 
     /**
