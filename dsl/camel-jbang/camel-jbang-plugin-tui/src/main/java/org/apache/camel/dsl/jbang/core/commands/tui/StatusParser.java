@@ -1550,7 +1550,7 @@ final class StatusParser {
                 ei.elapsed = elapsed;
             }
             ei.endpointUri = masked(ej, "endpointUri");
-            ei.fromEndpointUri = ej.getString("fromEndpointUri");
+            ei.fromEndpointUri = masked(ej, "fromEndpointUri");
             JsonObject ex = (JsonObject) ej.get("exception");
             if (ex != null) {
                 ei.exceptionType = ex.getString("type");

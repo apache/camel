@@ -106,6 +106,23 @@ class StatusParserTest {
     }
 
     @Test
+    void theSecretsOfTheEndpointsOfAnErrorAreMasked() {
+        JsonObject error = new JsonObject();
+        error.put("routeId", "courier");
+        error.put("endpointUri", "ftp://localhost:2121/courier?password=RAW(admin)");
+        error.put("fromEndpointUri", "sftp://localhost:2222/inbox?password=RAW(secret)");
+        JsonArray errors = new JsonArray();
+        errors.add(error);
+        JsonObject root = new JsonObject();
+        root.put("errors", errors);
+
+        ErrorInfo ei = StatusParser.parseErrors(root).get(0);
+
+        assertEquals("ftp://localhost:2121/courier?password=xxxxxx", ei.endpointUri);
+        assertEquals("sftp://localhost:2222/inbox?password=xxxxxx", ei.fromEndpointUri);
+    }
+
+    @Test
     void aFailedReloadIsReadAsCamelPsReadsIt() {
         JsonObject root = new JsonObject();
         JsonObject context = new JsonObject();
