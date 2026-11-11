@@ -82,6 +82,6 @@ public enum PluginType {
     }
 
     public String[] getAppliesTo() {
-        return appliesTo;
+        return appliesTo.clone();
     }
 }

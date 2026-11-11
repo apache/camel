@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.aesh.command.Command;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CliExportContext;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
@@ -34,7 +37,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -278,12 +280,10 @@ class PluginFilteringTest {
 
         ExportContext context = CliExportContext.create(main, printer, true);
 
-        // CliExportContext.create() calls getActivePlugins(main, repos) WITHOUT a target filter.
-        // This means it will attempt to resolve the broken plugin, causing a CliException.
-        // If the filtering were correct, the broken plugin would be skipped and this would succeed.
+        // CliExportContext.create() passes "export" as target, so the broken plugin
+        // (whose command is "broken") is filtered out before resolution.
         assertThatCode(() -> context.getPlugins(null))
-                .as("CliExportContext should not resolve plugins unrelated to run/export, "
-                    + "but it currently calls getActivePlugins without a target filter")
+                .as("CliExportContext should not resolve plugins unrelated to export")
                 .doesNotThrowAnyException();
     }
 
@@ -294,8 +294,8 @@ class PluginFilteringTest {
         writeTwoPluginConfig("alpha", "beta");
 
         CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
-        CommandLine commandLine = new CommandLine(main);
-        commandLine.addSubcommand("run", new CommandLine(new NoOpCommand()));
+        CommandTree commandLine = new CommandTree(main);
+        commandLine.addSubcommand("run", new CommandTree(new NoOpCommand()));
 
         PluginHelper.addPlugins(commandLine, main, "run", "foo.yaml");
 
@@ -311,8 +311,8 @@ class PluginFilteringTest {
         writeTwoPluginConfig("alpha", "beta");
 
         CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
-        CommandLine commandLine = new CommandLine(main);
-        commandLine.addSubcommand("export", new CommandLine(new NoOpCommand()));
+        CommandTree commandLine = new CommandTree(main);
+        commandLine.addSubcommand("export", new CommandTree(new NoOpCommand()));
 
         PluginHelper.addPlugins(commandLine, main, "export");
 
@@ -333,8 +333,8 @@ class PluginFilteringTest {
                 buildBrokenEntry("broken"));
 
         CamelJBangMain main = new CamelJBangMain().withPrinter(new StringPrinter());
-        CommandLine commandLine = new CommandLine(main);
-        commandLine.addSubcommand("run", new CommandLine(new NoOpCommand()));
+        CommandTree commandLine = new CommandTree(main);
+        commandLine.addSubcommand("run", new CommandTree(new NoOpCommand()));
 
         // addPlugins for "run" should skip the broken plugin since it doesn't match
         assertThatCode(() -> PluginHelper.addPlugins(commandLine, main, "run", "foo.yaml"))
@@ -346,12 +346,12 @@ class PluginFilteringTest {
     @Test
     void builtInCommandDoesNotTriggerPluginDiscovery() {
         CamelJBangMain main = new CamelJBangMain();
-        CommandLine cl = new CommandLine(main);
-        cl.addSubcommand("version", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("ps", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("get", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("config", new CommandLine(new NoOpCommand()));
-        cl.addSubcommand("catalog", new CommandLine(new NoOpCommand()));
+        CommandTree cl = new CommandTree(main);
+        cl.addSubcommand("version", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("ps", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("get", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("config", new CommandTree(new NoOpCommand()));
+        cl.addSubcommand("catalog", new CommandTree(new NoOpCommand()));
 
         assertThat(PluginHelper.shouldDiscoverPlugins(cl, "version")).isFalse();
         assertThat(PluginHelper.shouldDiscoverPlugins(cl, "ps")).isFalse();
@@ -426,10 +426,10 @@ class PluginFilteringTest {
         return array;
     }
 
-    @CommandLine.Command(name = "noop")
-    private static class NoOpCommand implements Runnable {
+    private static class NoOpCommand implements Command<CommandInvocation> {
         @Override
-        public void run() {
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
         }
     }
 }

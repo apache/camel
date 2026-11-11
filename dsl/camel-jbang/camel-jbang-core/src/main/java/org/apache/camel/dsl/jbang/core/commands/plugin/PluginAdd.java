@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.aesh.command.CommandDefinition;
@@ -40,7 +39,6 @@ import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Unavailable;
 import org.apache.camel.main.download.DependencyDownloader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
-import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "add", description = "Add new plugin", generateHelp = true,
@@ -144,9 +142,7 @@ public class PluginAdd extends PluginBaseCommand {
         plugin.put("description",
                 description != null ? description : "Plugin %s called with command %s".formatted(name, command));
         if (appliesTo != null && appliesTo.length > 0) {
-            JsonArray appliesToArray = new JsonArray();
-            appliesToArray.addAll(Arrays.asList(appliesTo));
-            plugin.put("appliesTo", appliesToArray);
+            plugin.put("appliesTo", PluginHelper.toJsonArray(appliesTo));
         }
 
         boolean explicit = gav != null || isVersionGiven();
