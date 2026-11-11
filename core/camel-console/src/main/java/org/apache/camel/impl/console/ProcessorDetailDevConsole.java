@@ -52,7 +52,7 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
     public static final String ROUTE_ID = "routeId";
 
     public record ProcessorEntry(
-            @Metadata(description = "The processor ID") String id,
+            @Metadata(description = "The processor ID (the id of the from for the route input, as in the trace and message history)") String id,
             @Metadata(description = "The processor type (the XML element name, or 'from' for the route input)") String type,
             @Metadata(description = "The endpoint URI (only present for the route input entry)") String endpointUri,
             @Metadata(description = "The source line number (only present when known)") Integer line,
@@ -160,6 +160,8 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
         List<ProcessorEntry> processors = new ArrayList<>();
 
         Integer fromLine = null;
+        // the from has a node id of its own (from1), which the trace and message history name it by
+        String fromId = routeId;
 
         try {
             String xml = mr.dumpRouteAsXml(false, true, true);
@@ -175,7 +177,11 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
                 // extract source line number for the from entry from the <from> child element
                 NodeList fromNodes = routeElement.getElementsByTagName("from");
                 if (fromNodes.getLength() > 0) {
-                    fromLine = extractSourceLineNumber((Element) fromNodes.item(0));
+                    Element from = (Element) fromNodes.item(0);
+                    fromLine = extractSourceLineNumber(from);
+                    if (!from.getAttribute("id").isEmpty()) {
+                        fromId = from.getAttribute("id");
+                    }
                 }
 
                 collectProcessors(routeElement, processors);
@@ -184,7 +190,7 @@ public class ProcessorDetailDevConsole extends AbstractDevConsole {
             // ignore
         }
 
-        ProcessorEntry fromEntry = new ProcessorEntry(routeId, "from", mr.getEndpointUri(), fromLine, new LinkedHashMap<>());
+        ProcessorEntry fromEntry = new ProcessorEntry(fromId, "from", mr.getEndpointUri(), fromLine, new LinkedHashMap<>());
         processors.add(0, fromEntry);
 
         return new RouteDetail(routeId, processors);

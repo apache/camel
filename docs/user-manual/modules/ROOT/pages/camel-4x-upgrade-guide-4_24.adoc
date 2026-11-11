@@ -278,6 +278,12 @@ new `reply` component; its seven-argument constructor is kept and creates an edg
 A `wireTap` or a `toD` to an endpoint the route names, rather than one it computes with an expression, is now an edge
 too (a wire tap never waits for the answer), and an external endpoint when no route consumes from it.
 
+=== camel-console - the processor-detail console names the route input by the id of its from
+
+The first entry of the `processor-detail` developer console, the route input (`type` is `from`), now has the id of the
+`from` of the route as `id` (such as `from1`, or the id given to the `from`), which the tracer, the message history and
+the backlog debugger name it by. It had the route id before, which is still the `routeId` of the response.
+
 === camel-management - LastExchangeCompletedExchangeId is updated at most once per millisecond
 
 The JMX attribute `LastExchangeCompletedExchangeId`, of the `CamelContext`, route and processor MBeans, is now updated
