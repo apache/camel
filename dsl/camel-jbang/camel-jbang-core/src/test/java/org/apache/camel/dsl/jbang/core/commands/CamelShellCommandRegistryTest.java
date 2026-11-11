@@ -37,9 +37,38 @@ class CamelShellCommandRegistryTest {
 
     @CommandLine.Command(name = "greet")
     static class Greet implements Runnable {
+        static int runs;
+
         @Override
         public void run() {
+            runs++;
         }
+    }
+
+    @Test
+    void aCommandRunsOnACommandLineThatWasNeverParsed() throws Exception {
+        // the shell panel of camel tui builds the commands with CamelJBangMain.newCommandLine(), whose root is never
+        // parsed; picocli asks each parent of the command it runs whether help was requested (CAMEL-26863)
+        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(new CommandLine(new Root()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int before = Greet.runs;
+
+        registry.command("greet").execute(session(out), new String[0]);
+        registry.command("camel").execute(session(out), new String[] { "greet" });
+
+        assertThat(Greet.runs).isEqualTo(before + 2);
+        assertThat(out.toString(StandardCharsets.UTF_8)).doesNotContain("NullPointerException");
+    }
+
+    @Test
+    void theParseResultOfTheCommandLineThatRanTheShellIsKept() {
+        // camel shell hands over the command line that ran it
+        CommandLine commandLine = new CommandLine(new Root());
+        commandLine.parseArgs("greet");
+
+        new CamelShellCommandRegistry(commandLine);
+
+        assertThat(commandLine.getParseResult().originalArgs()).containsExactly("greet");
     }
 
     @Test
