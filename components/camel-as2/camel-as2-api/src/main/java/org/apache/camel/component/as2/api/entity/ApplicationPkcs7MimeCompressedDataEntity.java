@@ -57,7 +57,7 @@ public class ApplicationPkcs7MimeCompressedDataEntity extends MimeEntity {
         try {
             this.compressedData = createCompressedData(entity2Encrypt, dataGenerator, compressor);
         } catch (Exception e) {
-            throw new HttpException("Failed to create compressed data");
+            throw new HttpException("Failed to create compressed data", e);
         }
     }
 

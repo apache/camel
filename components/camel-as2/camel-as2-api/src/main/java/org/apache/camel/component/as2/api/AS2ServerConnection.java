@@ -724,7 +724,7 @@ public class AS2ServerConnection {
                                                              throws IOException {
         this.sslContext = sslContext;
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
-        this.originServer = ObjectHelper.notNull(originServer, "originServer");
+        this.originServer = ObjectHelper.notNull(originServer, "server");
         this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
         final Integer parserServerPortNumber = ObjectHelper.notNull(serverPortNumber, "serverPortNumber");
 
