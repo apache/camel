@@ -221,7 +221,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
     @SuppressWarnings("unchecked")
     public <T extends Enum<T>> T getEnum(final int index) throws ClassNotFoundException {
         /*
-         * Supressing the unchecked warning because the returnType is
+         * Suppressing the unchecked warning because the returnType is
          * dynamically identified and could lead to a ClassCastException when
          * returnType is cast to Class<T>, which is expected by the method's
          * contract.

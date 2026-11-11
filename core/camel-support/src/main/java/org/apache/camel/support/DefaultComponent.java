@@ -395,7 +395,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      *
      * This method will call the {@link Endpoint#configureProperties(Map)} method which should delegate the the
      * endpoint's {@link PropertyConfigurer} instance. In some rare cases, you need to override this method to
-     * explicitely set parameters in case a simple generated configurer can not be used.
+     * explicitly set parameters in case a simple generated configurer can not be used.
      *
      * @param endpoint   the endpoint
      * @param parameters properties to set

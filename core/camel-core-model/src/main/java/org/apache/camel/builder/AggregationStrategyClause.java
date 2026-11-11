@@ -47,7 +47,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
     // *******************************
 
     /**
-     * Define an aggregation strategy which targets the exchnage.
+     * Define an aggregation strategy which targets the exchange.
      */
     public T exchange(final BiFunction<Exchange, Exchange, Exchange> function) {
         strategy = function::apply;

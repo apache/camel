@@ -364,7 +364,7 @@ public abstract class AbstractCamelCatalog {
 
                 // is duration
                 if (!multiValue && !valuePlaceholder && !lookup && "duration".equals(row.getType())) {
-                    // value must be convertable to a duration
+                    // value must be convertible to a duration
                     boolean valid = validateDuration(value);
                     if (!valid) {
                         result.addInvalidDuration(name, value);
@@ -1363,7 +1363,7 @@ public abstract class AbstractCamelCatalog {
 
             // is duration
             if (!optionPlaceholder && !lookup && "duration".equals(row.getType())) {
-                // value must be convertable to a duration
+                // value must be convertible to a duration
                 boolean valid = validateDuration(value);
                 if (!valid) {
                     result.addInvalidDuration(longKey, value);

@@ -427,7 +427,7 @@ public class ResequencerEngine<E> {
     }
 
     /**
-     * Retuns <code>true</code> if the given element is before the last delivered element.
+     * Returns <code>true</code> if the given element is before the last delivered element.
      *
      * @param  element an element.
      * @return         <code>true</code> if the given element is before the last delivered element.

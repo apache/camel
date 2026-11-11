@@ -127,7 +127,7 @@ public final class TypeConvertible<F, T> {
     }
 
     /**
-     * Tests whether the types defined in this type convertable pair are assignable from another type convertable pair
+     * Tests whether the types defined in this type convertible pair are assignable from another type convertible pair
      *
      * @param  that the type convertible pair to test
      * @return      true if the types in this instance are assignable from the respective types in the given type

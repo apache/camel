@@ -131,7 +131,7 @@ public class XmlStreamDetector {
                             String value = reader.getAttributeValue(at);
                             String localPart = qn.getLocalPart();
                             if (nsURI.isEmpty() || prefix.isEmpty()) {
-                                // according to XML spec, this attribut is not namespaced, not in default namespace
+                                // according to XML spec, this attribute is not namespaced, not in default namespace
                                 // https://www.w3.org/TR/xml-names/#defaulting
                                 // > The namespace name for an unprefixed attribute name always has no value.
                                 information.attributes.put(localPart, value);
