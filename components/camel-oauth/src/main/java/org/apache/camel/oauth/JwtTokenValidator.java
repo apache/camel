@@ -17,8 +17,8 @@
 package org.apache.camel.oauth;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -198,26 +198,32 @@ final class JwtTokenValidator {
      * may be space-delimited strings or collections of scope strings.
      */
     private static List<String> readScopes(Object scopeClaim, Object scpClaim) {
-        List<String> scopes = new ArrayList<>();
+        Set<String> scopes = new LinkedHashSet<>();
         addScopes(scopes, scopeClaim);
         addScopes(scopes, scpClaim);
         return scopes.isEmpty() ? Collections.emptyList() : List.copyOf(scopes);
     }
 
-    private static void addScopes(List<String> scopes, Object claim) {
+    private static void addScopes(Set<String> scopes, Object claim) {
         if (claim instanceof String value) {
-            if (!value.isBlank()) {
-                for (String scope : value.trim().split("\\s+")) {
-                    if (!scope.isBlank() && !scopes.contains(scope)) {
-                        scopes.add(scope);
-                    }
-                }
-            }
+            addScopeString(scopes, value);
         } else if (claim instanceof List<?> values) {
             for (Object value : values) {
-                if (value instanceof String scope && !scope.isBlank() && !scopes.contains(scope)) {
-                    scopes.add(scope);
+                if (value instanceof String scope) {
+                    // Array elements may themselves contain space-delimited scope values.
+                    addScopeString(scopes, scope);
                 }
+            }
+        }
+    }
+
+    private static void addScopeString(Set<String> scopes, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+        for (String scope : value.trim().split("\\s+")) {
+            if (!scope.isBlank()) {
+                scopes.add(scope);
             }
         }
     }

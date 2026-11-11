@@ -84,21 +84,6 @@ class DefaultMcpServerFactoryTest extends CamelTestSupport {
     }
 
     @Test
-    void rejectsNonRootHttpContextPathWhenOAuthIsConfigured() {
-        DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
-        HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();
-        server.setMcpEnabled(true);
-        server.setPath("/api");
-        server.setMcpOauthProfile("keycloak");
-        server.setMcpResourceUri("https://mcp.example.test/mcp");
-
-        assertThatThrownBy(() -> factory.newMcpServer(context, server))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("camel.server.path='/'")
-                .hasMessageContaining("camel.server.mcp-path");
-    }
-
-    @Test
     void rejectsRequiredScopesWithoutOAuthProfile() {
         DefaultMcpServerFactory factory = new DefaultMcpServerFactory();
         HttpServerConfigurationProperties server = new MainConfigurationProperties().httpServer();

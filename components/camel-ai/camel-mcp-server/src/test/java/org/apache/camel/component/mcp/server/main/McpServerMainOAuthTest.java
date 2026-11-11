@@ -42,6 +42,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * End-to-end tests for the CAMEL-26356 MCP OAuth HTTP boundary and identity propagation. A deterministic in-memory
@@ -190,6 +191,25 @@ class McpServerMainOAuthTest {
                         .contains("error=\"insufficient_scope\"")
                         .contains("resource_metadata=\"" + RESOURCE_METADATA_URI + "\"")
                         .contains("scope=\"mcp:read mcp:write\""));
+    }
+
+    @Test
+    void rejectsNonRootHttpContextPathWhenOAuthEngineStarts() {
+        Main nonRootMain = new Main();
+        nonRootMain.addInitialProperty("camel.server.enabled", "true");
+        nonRootMain.addInitialProperty("camel.server.port", String.valueOf(AvailablePortFinder.getNextAvailable()));
+        nonRootMain.addInitialProperty("camel.server.path", "/api");
+        nonRootMain.addInitialProperty("camel.server.mcp-enabled", "true");
+        nonRootMain.addInitialProperty("camel.server.mcp-oauth-profile", "mcp-test");
+        nonRootMain.addInitialProperty("camel.server.mcp-resource-uri", "https://localhost/mcp");
+
+        try {
+            assertThatThrownBy(nonRootMain::start)
+                    .hasStackTraceContaining(
+                            "RFC 9728 protected-resource metadata must be available at the origin root");
+        } finally {
+            nonRootMain.stop();
+        }
     }
 
     @Test

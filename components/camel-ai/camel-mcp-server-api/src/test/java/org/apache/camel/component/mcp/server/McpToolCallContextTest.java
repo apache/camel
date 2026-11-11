@@ -56,6 +56,10 @@ class McpToolCallContextTest {
                 .isInstanceOf(UnsupportedOperationException.class);
         assertThatThrownBy(() -> context.oauthClaims().put("admin", true))
                 .isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> ((List<?>) context.oauthClaims().get("roles")).clear())
+                .isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> ((List<?>) context.oauthClaims().get("roles")).add(null))
+                .isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test

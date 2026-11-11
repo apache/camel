@@ -101,21 +101,10 @@ public class DefaultMcpServerFactory implements McpServerFactory {
                     "camel.server.mcp-resource-uri requires camel.server.mcp-oauth-profile to be configured");
         }
 
-        if (hasProfile) {
-            if (!hasResourceUri) {
-                throw new IllegalArgumentException(
-                        "camel.server.mcp-oauth-profile requires camel.server.mcp-resource-uri to be configured "
-                                                   + "with the public HTTPS MCP endpoint URI");
-            }
-            // The embedded server mounts MCP routes below camel.server.path. The RFC 9728 well-known
-            // route is currently registered at the router root, so a non-root context path cannot
-            // produce a discoverable resource URL. Reject it rather than advertise a broken URL.
-            if (!"/".equals(configuration.getPath())) {
-                throw new IllegalArgumentException(
-                        "OAuth-protected MCP requires camel.server.path='/' because RFC 9728 metadata is "
-                                                   + "currently registered at the HTTP root; configure the public path with "
-                                                   + "camel.server.mcp-path instead");
-            }
+        if (hasProfile && !hasResourceUri) {
+            throw new IllegalArgumentException(
+                    "camel.server.mcp-oauth-profile requires camel.server.mcp-resource-uri to be configured "
+                                               + "with the public HTTPS MCP endpoint URI");
         }
     }
 

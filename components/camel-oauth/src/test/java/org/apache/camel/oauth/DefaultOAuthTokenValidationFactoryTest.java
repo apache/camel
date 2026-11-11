@@ -459,7 +459,7 @@ class DefaultOAuthTokenValidationFactoryTest {
                 new AtomicReference<>(),
                 """
                         {"active":true,"sub":"opaque-user","iss":"%s","aud":["%s"],
-                        "scope":"mcp:read common","scp":["mcp:write","common"],"exp":%d}
+                        "scope":"mcp:read common","scp":["mcp:write common","common"],"exp":%d}
                         """
                         .formatted(ISSUER, AUDIENCE, System.currentTimeMillis() / 1000L + 300));
         try {

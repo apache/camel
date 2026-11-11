@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -387,13 +388,13 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
     }
 
     private static List<String> readScope(JsonObject json) {
-        List<String> scopes = new ArrayList<>();
+        Set<String> scopes = new LinkedHashSet<>();
         addScopeValues(scopes, json.get("scope"));
         addScopeValues(scopes, json.get("scp"));
         return scopes.isEmpty() ? Collections.emptyList() : List.copyOf(scopes);
     }
 
-    private static void addScopeValues(List<String> scopes, JsonElement claim) {
+    private static void addScopeValues(Set<String> scopes, JsonElement claim) {
         if (isString(claim)) {
             addScopeString(scopes, claim.getAsString());
         } else if (claim != null && claim.isJsonArray()) {
@@ -405,12 +406,12 @@ public class DefaultOAuthTokenValidationFactory implements OAuthTokenValidationF
         }
     }
 
-    private static void addScopeString(List<String> scopes, String value) {
+    private static void addScopeString(Set<String> scopes, String value) {
         if (value == null || value.isBlank()) {
             return;
         }
         for (String scope : value.trim().split("\\s+")) {
-            if (!scope.isBlank() && !scopes.contains(scope)) {
+            if (!scope.isBlank()) {
                 scopes.add(scope);
             }
         }

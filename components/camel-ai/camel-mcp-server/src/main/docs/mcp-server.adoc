@@ -429,7 +429,7 @@ following rules:
 === OAuth bearer-token authentication (Camel Main / Camel JBang)
 
 The Vert.x streamable HTTP engine can protect the MCP endpoint with OAuth bearer tokens. Add
-`camel-oauth` to the runtime classpath and configure a named incoming-token validation profile.
+xref:oauth.adoc[camel-oauth] to the runtime classpath and configure a named incoming-token validation profile.
 For production, use HTTPS for both the MCP endpoint and the authorization-server endpoints, and
 configure an expected issuer and audience.
 
@@ -450,9 +450,10 @@ camel.oauth.keycloak.allowed-jws-algorithms = RS256
 `camel.server.mcp-resource-uri` is the canonical, externally visible HTTPS URI of the protected
 MCP resource. It must not contain user-info, a query, or a fragment, and its path must exactly match
 `camel.server.mcp-path`. The embedded HTTP context path `camel.server.path` must remain `/` while
-OAuth is enabled; a non-root context path is rejected at startup because the current well-known
-metadata route is registered at the router root. Configure any public path prefix in
-`camel.server.mcp-path` and in the resource URI. TLS may terminate at a trusted reverse proxy, but
+OAuth is enabled; a non-root context path is rejected by the Vert.x engine because RFC 9728 requires
+the protected-resource metadata document to be discoverable from the origin root, not below the
+HTTP context-path prefix. Configure any public path prefix in `camel.server.mcp-path` and in the
+resource URI. TLS may terminate at a trusted reverse proxy, but
 the configured resource URI must be the URL that clients use. The OAuth profile's
 `allow-insecure-http` option applies only to local authorization-server discovery/JWKS/introspection
 endpoints; it does not permit an HTTP MCP resource URI.

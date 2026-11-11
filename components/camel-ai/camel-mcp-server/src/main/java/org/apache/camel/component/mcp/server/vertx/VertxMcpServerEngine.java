@@ -135,6 +135,7 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
     @Override
     protected void doStart() throws Exception {
         VertxPlatformHttpRouter router = lookupRouter();
+        validateOAuthResourceMetadataPath(router);
         jsonMapper = McpJsonDefaults.getMapper();
         OAuthHttpSecuritySupport oauthSecurity
                 = OAuthHttpSecuritySupport.create(camelContext, info.oauthProfile());
@@ -168,6 +169,24 @@ public class VertxMcpServerEngine extends ServiceSupport implements McpServerEng
                     "application/json,text/event-stream", null);
         }
         LOG.info("MCP server '{}' serving tools, resources and prompts on path {}", info.serverName(), info.path());
+    }
+
+    /**
+     * RFC 9728 protected-resource metadata for a path-based resource must be discoverable from the origin root. The
+     * selected platform-http router is mounted below the server's context path, so a non-root context path would also
+     * prefix the well-known metadata URL and make discovery fail.
+     */
+    private void validateOAuthResourceMetadataPath(VertxPlatformHttpRouter router) {
+        if (info.oauthProfile() == null || info.oauthProfile().isBlank()) {
+            return;
+        }
+        String contextPath = router.getServer().getPath();
+        if (!"/".equals(contextPath)) {
+            throw new IllegalArgumentException(
+                    "OAuth-protected MCP requires camel.server.path='/' because RFC 9728 protected-resource metadata "
+                                               + "must be available at the origin root; configure the public path prefix "
+                                               + "with camel.server.mcp-path instead");
+        }
     }
 
     @Override

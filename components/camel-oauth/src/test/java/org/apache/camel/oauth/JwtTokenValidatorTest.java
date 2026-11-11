@@ -153,7 +153,7 @@ class JwtTokenValidatorTest {
                 .expirationTime(futureDate(300))
                 .issueTime(new Date())
                 .claim("scope", "mcp:read common")
-                .claim("scp", List.of("mcp:write", "common"))
+                .claim("scp", List.of("mcp:write common", "common"))
                 .build();
         String token = signClaims(claims);
 
