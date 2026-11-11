@@ -511,10 +511,6 @@ final class AboutView {
     }
 
     /**
-     * The routes in the order of the Routes panel, where a route comes after the one that calls it, then those it does
-     * not have; the integration lists its routes by id, which puts a called route before its caller.
-     */
-    /**
      * The name of a route on its strip: its id, or for a route the sources do not have and Camel named route1, its
      * endpoint (rest-api:openapi, the route that serves the API description of the REST DSL).
      */
@@ -532,6 +528,10 @@ final class AboutView {
         return (q >= 0 ? from.substring(0, q) : from).replaceFirst("://", ":");
     }
 
+    /**
+     * The routes in the order of the Routes panel, where a route comes after the one that calls it, then those it does
+     * not have; the integration lists its routes by id, which puts a called route before its caller.
+     */
     private List<String> routeOrder(IntegrationInfo info) {
         List<String> running = info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
         List<String> order = new ArrayList<>();
