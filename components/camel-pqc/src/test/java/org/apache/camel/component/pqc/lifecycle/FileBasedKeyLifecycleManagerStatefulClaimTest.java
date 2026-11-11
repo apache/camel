@@ -316,6 +316,32 @@ public class FileBasedKeyLifecycleManagerStatefulClaimTest {
         arriving.releaseStatefulKey(KEY_ID, atStartup.getPublic());
     }
 
+    @Test
+    void anUnnamedClaimReadsTheStoreAgainToo(@TempDir Path tempDir) throws Exception {
+        Path keyDir = tempDir.resolve("keys");
+        FileBasedKeyLifecycleManager leaving = new FileBasedKeyLifecycleManager(keyDir.toString());
+        FileBasedKeyLifecycleManager arriving = new FileBasedKeyLifecycleManager(keyDir.toString());
+
+        KeyPair atStartup = leaving.generateKeyPair("LMS", KEY_ID);
+        assertTrue(leaving.claimStatefulKey(KEY_ID, atStartup.getPublic()));
+        assertArrayEquals(atStartup.getPublic().getEncoded(), arriving.getKey(KEY_ID).getPublic().getEncoded());
+        assertEquals(0, arriving.getKeyMetadata(KEY_ID).getUsageCount());
+
+        KeyPair advanced = leaving.generateKeyPair("LMS", KEY_ID);
+        KeyMetadata used = leaving.getKeyMetadata(KEY_ID);
+        used.setUsageCount(42);
+        leaving.updateKeyMetadata(KEY_ID, used);
+        leaving.releaseStatefulKey(KEY_ID, atStartup.getPublic());
+
+        // the claim names no key, but a later read under the name must still come from the store, not the cache
+        assertTrue(arriving.claimStatefulKey(null, atStartup.getPublic()));
+        assertArrayEquals(advanced.getPublic().getEncoded(), arriving.getKey(KEY_ID).getPublic().getEncoded(),
+                "a claim without a name must drop the cached key as well");
+        assertEquals(42, arriving.getKeyMetadata(KEY_ID).getUsageCount(),
+                "a claim without a name must drop the cached metadata as well");
+        arriving.releaseStatefulKey(null, atStartup.getPublic());
+    }
+
     /**
      * A public key that gives no encoding, as a hardware-backed or otherwise opaque key may.
      */

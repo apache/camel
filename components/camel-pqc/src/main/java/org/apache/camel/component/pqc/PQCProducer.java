@@ -1325,6 +1325,12 @@ public class PQCProducer extends DefaultProducer {
             synchronized (statefulClaimLock) {
                 if (!statefulKeyClaimed) {
                     doClaimStatefulKey(klm, keyId, publicKey);
+                    // The first re-read happens before the claim is published, so no concurrent exchange, under
+                    // another name or none, signs from the key loaded at startup while the stored one is read
+                    if (keyId != null) {
+                        adoptStoredStatefulKeyIfAhead(klm, keyId);
+                        statefulKeyAdoptions.put(keyId, Boolean.TRUE);
+                    }
                     claimedStatefulKeyId = keyId;
                     claimedStatefulPublicKey = publicKey;
                     statefulKeyClaimed = true;

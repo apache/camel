@@ -548,9 +548,8 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
      * {@link #JVM_CLAIMS} first, under its real path, and a second manager of the same directory is refused there,
      * before any channel is opened. A channel is only ever closed here when this process holds no lock on the file.
      * <p/>
-     * Taking a new lock also drops the cached key and metadata of the name the key is stored under: the next read comes
-     * from the store, which is how a producer that waited for the claim resumes from the index the previous owner
-     * reached.
+     * Taking a new lock also drops the cached keys and metadata: the next read comes from the store, which is how a
+     * producer that waited for the claim resumes from the index the previous owner reached.
      */
     private StatefulClaim openAndLock(String lockName, String keyId, String label) {
         Path lockFile = resolveKeyFile(lockName, LOCK_SUFFIX);
@@ -567,11 +566,11 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             return this;
         });
 
-        // The store may have moved on while the previous owner held the key: read it again rather than from cache
-        if (keyId != null) {
-            keyCache.remove(keyId);
-            metadataCache.remove(keyId);
-        }
+        // The store may have moved on while the previous owner held the key: read it again rather than from cache.
+        // Both caches go, not only the entry of the name the claim was made under: the key may be read back under
+        // another name, or the claim may have no name at all, and claims are rare.
+        keyCache.clear();
+        metadataCache.clear();
         LOG.info("Claimed the stateful key {} through {}", label, lockFile);
         return new StatefulClaim(lockPath, opened[0]);
     }

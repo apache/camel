@@ -1321,8 +1321,10 @@ to sign anyway. There is no such thing as a safe default here: the option exists
 
 The claim does not depend on the `CamelPQCKeyId` header: the key is claimed by its public key, under whatever name
 the exchange gives it, or none. The header still names the stored copy, for the usage recording and for the re-read
-after the claim. An endpoint signing with a stateful key and no `KeyLifecycleManager` persists no index at all, and
-already warns about it; nothing can be claimed in that case either.
+after the claim. Resuming from the stored index therefore needs the header: an unnamed claim serialises the signers,
+but nothing names the copy to read back, so the producer keeps the key it loaded until an exchange names it. An
+endpoint signing with a stateful key and no `KeyLifecycleManager` persists no index at all, and already warns about
+it; nothing can be claimed in that case either.
 
 A custom `KeyLifecycleManager` that can guarantee exclusivity - a database row lock, a distributed lease - should
 override `claimStatefulKey(String, PublicKey)` to take it and return `true`, and `releaseStatefulKey(String, PublicKey)`
