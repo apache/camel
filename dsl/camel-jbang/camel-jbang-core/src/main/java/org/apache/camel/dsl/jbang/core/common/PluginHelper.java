@@ -361,23 +361,14 @@ public final class PluginHelper {
                 final String firstVersion = properties.getOrDefault("firstVersion", "").toString();
                 final String gav = properties.getOrDefault("dependency", "").toString();
 
-                // auto-migrate old config entries for known plugins that now declare appliesTo
-                if (properties.get("appliesTo") == null) {
-                    Optional<PluginType> knownType = PluginType.findByName(name);
-                    if (knownType.isPresent() && knownType.get().getAppliesTo().length > 0) {
-                        properties.put("appliesTo", toJsonArray(knownType.get().getAppliesTo()));
-                        configDirty = true;
-                        main.getOut().printWarn(
-                                ("Plugin '%s' configuration updated with 'appliesTo' filter. "
-                                 + "Run 'camel plugin add %s' to refresh the full configuration.")
-                                        .formatted(name, name));
-                    }
-                }
-
                 // skip plugins that don't match the target command to avoid unnecessary downloads
                 if (target != null && !"shell".equals(target) && !target.equals(command)) {
-                    Object appliesToObj = properties.get("appliesTo");
-                    if (!(appliesToObj instanceof Collection<?> appliesToList) || !appliesToList.contains(target)) {
+                    Collection<?> appliesTo = effectiveAppliesTo(properties, name);
+                    if (appliesTo != null) {
+                        if (!appliesTo.contains(target)) {
+                            continue;
+                        }
+                    } else if (!PLUGIN_CONSUMING_BUILTINS.contains(target)) {
                         continue;
                     }
                 }
@@ -439,6 +430,16 @@ public final class PluginHelper {
         boolean cacheWritten = false;
         if (dr.plugin().isPresent() && entry != null && dr.classLoader() != null && dr.className() != null) {
             cacheWritten = writeCache(entry, defaultVersion, gav, repos, dr.className(), dr.classLoader(), name, depVersion);
+        }
+        if (dr.plugin().isPresent() && entry != null && entry.get("appliesTo") == null) {
+            CamelJBangPlugin ann = dr.plugin().get().getClass().getAnnotation(CamelJBangPlugin.class);
+            if (ann != null && ann.appliesTo().length > 0) {
+                JsonObject resolved = entry.getMap("resolved");
+                if (resolved != null && resolved.get("appliesTo") == null) {
+                    resolved.put("appliesTo", toJsonArray(ann.appliesTo()));
+                    cacheWritten = true;
+                }
+            }
         }
         return new ResolveResult(dr.plugin(), cacheWritten);
     }
@@ -622,6 +623,32 @@ public final class PluginHelper {
 
     private static String asString(Object o) {
         return o == null ? null : o.toString();
+    }
+
+    /**
+     * Returns the effective {@code appliesTo} for a plugin entry, checking (in order) the top-level config, the
+     * {@code resolved} block from a previous download, and the {@link PluginType} enum for known Camel plugins. Returns
+     * {@code null} when no {@code appliesTo} information is available — the caller treats this as a legacy plugin that
+     * should be loaded for all targets.
+     */
+    private static Collection<?> effectiveAppliesTo(JsonObject properties, String name) {
+        Object obj = properties.get("appliesTo");
+        if (obj instanceof Collection<?> list) {
+            return list;
+        }
+        JsonObject resolved = properties.getMap("resolved");
+        if (resolved != null) {
+            Object resolvedObj = resolved.get("appliesTo");
+            if (resolvedObj instanceof Collection<?> list) {
+                return list;
+            }
+        }
+        Optional<PluginType> knownType = PluginType.findByName(name);
+        if (knownType.isPresent()) {
+            String[] at = knownType.get().getAppliesTo();
+            return at.length > 0 ? Arrays.asList(at) : List.of();
+        }
+        return null;
     }
 
     public static JsonArray toJsonArray(String[] values) {
