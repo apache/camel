@@ -8099,3 +8099,10 @@ A `java.time` value in a POJO body no longer fails: `callFunction` of `camel-goo
 Exceptions: `camel-huaweicloud-dms` and `camel-huaweicloud-iam` let a failure to write a response as JSON through as the
 unchecked `tools.jackson.core.JacksonException`, which is not an `IOException`, so `onException(IOException.class)` does not
 match it.
+
+=== camel-docling - the apiKeyHeader option is deprecated
+
+The `apiKeyHeader` option never had any effect: the name of the header that carries the API key is fixed in the
+docling-serve client, which always sends it as `X-Api-Key`, and the producer never read the option. It is now
+deprecated, with a `deprecationNote` that says so. Remove `apiKeyHeader` from the endpoint URI or the configuration:
+with `authenticationScheme=API_KEY` and `authenticationToken` set, the key is still sent, as `X-Api-Key`.
