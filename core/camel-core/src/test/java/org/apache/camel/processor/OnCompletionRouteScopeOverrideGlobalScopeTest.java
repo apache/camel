@@ -68,7 +68,7 @@ public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSu
             @Override
             public void configure() {
                 // define a global on completion that is invoked when the
-                // exchage is complete
+                // exchange is complete
                 onCompletion().to("log:global").to("mock:global");
 
                 // START SNIPPET: e1

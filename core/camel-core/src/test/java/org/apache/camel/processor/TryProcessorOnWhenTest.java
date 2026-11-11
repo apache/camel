@@ -109,8 +109,8 @@ public class TryProcessorOnWhenTest extends ContextTestSupport {
                         .doTry().process(new ProcessorFail()).to("mock:result")
                         // here we catch the following 2 exceptions but only if
                         // the onWhen predicate matches, eg if the exception
-                        // messsage
-                        // conatins the string word Damn
+                        // message
+                        // contains the string word Damn
                         .doCatch(IOException.class, IllegalStateException.class).onWhen(exceptionMessage().contains("Damn"))
                         .to("mock:catch")
                         // another catch for CamelExchangeException that does not

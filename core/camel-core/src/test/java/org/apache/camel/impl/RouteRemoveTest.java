@@ -50,7 +50,7 @@ public class RouteRemoveTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         assertEquals(1, context.getRoutes().size());
 
-        // must be stopped so we cant remove
+        // must be stopped so we can't remove
         boolean removed = context.removeRoute("foo");
         assertFalse(removed);
 

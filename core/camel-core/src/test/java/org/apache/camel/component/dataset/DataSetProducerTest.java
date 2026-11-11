@@ -129,7 +129,7 @@ public class DataSetProducerTest extends ContextTestSupport {
     }
 
     /**
-     * Verify that the CamelDataSetIndex header is ignored when the dataSetIndex URI paramter is set to off
+     * Verify that the CamelDataSetIndex header is ignored when the dataSetIndex URI parameter is set to off
      */
     @Test
     public void testNotSettingDataSetIndexHeaderWhenDataSetIndexUriParameterSetToOff() throws Exception {

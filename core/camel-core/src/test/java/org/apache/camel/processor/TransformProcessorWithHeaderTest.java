@@ -22,7 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that headers can be propogated with the transform DSL.
+ * Unit test to verify that headers can be propagated with the transform DSL.
  */
 public class TransformProcessorWithHeaderTest extends ContextTestSupport {
 

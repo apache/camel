@@ -70,7 +70,7 @@ public class OnCompletionAndInterceptGlobalTest extends ContextTestSupport {
                 intercept().to("mock:intercept");
 
                 // define a global on completion that is invoked when the
-                // exchage is complete
+                // exchange is complete
                 onCompletion().to("log:global").to("mock:sync");
 
                 // START SNIPPET: e1

@@ -122,7 +122,7 @@ public class PredicateBinaryCoerceTypeTest extends TestSupport {
 
     @Test
     public void testGreatherThanOrEqual() {
-        // greather than
+        // greater than
         Expression a = ExpressionBuilder.constantExpression("200");
         Expression b = ExpressionBuilder.constantExpression(Integer.valueOf("100"));
 
