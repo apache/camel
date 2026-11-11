@@ -21,10 +21,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -180,6 +186,107 @@ public class OpaRestTransportTest extends CamelTestSupport {
         server.start();
         open.add(() -> server.stop(0));
         return server.getAddress().getPort();
+    }
+
+    /** Sends response headers and an incomplete JSON document, then waits for test cleanup. */
+    private int stalledBodyPort(CountDownLatch headersSent) throws IOException {
+        CountDownLatch release = new CountDownLatch(1);
+        HttpServer server = HttpServer.create(new InetSocketAddress("localhost", 0), 0);
+        server.createContext("/v1/data/authz/allow", exchange -> {
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, 0);
+            try (OutputStream out = exchange.getResponseBody()) {
+                out.write('{');
+                out.flush();
+                headersSent.countDown();
+                try {
+                    release.await(60, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        server.start();
+        open.add(() -> {
+            release.countDown();
+            server.stop(0);
+        });
+        return server.getAddress().getPort();
+    }
+
+    @Test
+    @Timeout(10)
+    void failsClosedWhenTheResponseBodyStallsAfterHeaders() throws Exception {
+        CountDownLatch headersSent = new CountDownLatch(1);
+        Exchange out = template.request(
+                "opa:authz/allow?serverUrl=http://localhost:" + stalledBodyPort(headersSent)
+                                        + "&requestTimeout=500",
+                e -> {
+                });
+
+        assertThat(out.getException()).isInstanceOf(OpaPolicyEvaluationException.class);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isNull();
+        assertThat(headersSent.getCount()).isZero();
+    }
+
+    @Test
+    @Timeout(10)
+    void reportsFailOpenWhenTheResponseBodyStallsAfterHeaders() throws Exception {
+        CountDownLatch headersSent = new CountDownLatch(1);
+        Exchange out = template.request(
+                "opa:authz/allow?serverUrl=http://localhost:" + stalledBodyPort(headersSent)
+                                        + "&requestTimeout=500&failOpen=true",
+                e -> {
+                });
+
+        assertThat(out.getException()).isNull();
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_ALLOW)).isEqualTo(true);
+        assertThat(out.getMessage().getHeader(OpaConstants.DECISION_FAILED_OPEN)).isEqualTo(true);
+        assertThat(headersSent.getCount()).isZero();
+    }
+
+    @Test
+    @Timeout(10)
+    void interruptsTheWaitForAStalledResponseBody() throws Exception {
+        CountDownLatch headersSent = new CountDownLatch(1);
+        CountDownLatch interrupted = new CountDownLatch(1);
+        HttpRequest request = HttpRequest.newBuilder(
+                URI.create("http://localhost:" + stalledBodyPort(headersSent) + "/v1/data/authz/allow")).build();
+
+        try (OpaHttpClient transport = new OpaHttpClient(1000, 30000, null, null);
+             var executor = Executors.newSingleThreadExecutor()) {
+            var call = executor.submit(() -> {
+                try {
+                    transport.send(request);
+                } catch (InterruptedException e) {
+                    interrupted.countDown();
+                    Thread.currentThread().interrupt();
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
+            assertThat(headersSent.await(5, TimeUnit.SECONDS)).isTrue();
+            assertThat(call.cancel(true)).isTrue();
+            assertThat(interrupted.await(5, TimeUnit.SECONDS)).isTrue();
+        }
+    }
+
+    @Test
+    @Timeout(10)
+    void retainsResponseMetadataAndTheCompletedBody() throws Exception {
+        URI uri = URI.create("http://localhost:" + recordingPort(new AtomicReference<>()) + "/v1/data/authz/allow");
+        HttpRequest request = HttpRequest.newBuilder(uri).build();
+
+        try (OpaHttpClient transport = new OpaHttpClient(1000, 5000, null, null)) {
+            HttpResponse<InputStream> response = transport.send(request);
+            assertThat(response.statusCode()).isEqualTo(200);
+            assertThat(response.uri()).isEqualTo(uri);
+            assertThat(response.request().uri()).isEqualTo(request.uri());
+            assertThat(response.headers().firstValue("Content-Type")).contains("application/json");
+            try (InputStream body = response.body()) {
+                assertThat(new String(body.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo("{\"result\":true}");
+            }
+        }
     }
 
     @Test

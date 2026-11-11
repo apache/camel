@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.opa;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpTimeoutException;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.SSLContext;
 
@@ -85,6 +91,28 @@ public class OpaHttpClient implements HTTPClient, AutoCloseable {
         if (bearerToken != null) {
             builder.header(AUTHORIZATION, "Bearer " + bearerToken);
         }
-        return client.send(builder.build(), HttpResponse.BodyHandlers.ofInputStream());
+        // A streaming body handler completes as soon as headers arrive, leaving the SDK's subsequent body read
+        // outside HttpRequest.timeout(). Complete the body before returning its stream and bound that entire wait.
+        CompletableFuture<HttpResponse<InputStream>> response = client.sendAsync(builder.build(),
+                info -> HttpResponse.BodySubscribers.mapping(HttpResponse.BodySubscribers.ofByteArray(),
+                        bytes -> new ByteArrayInputStream(bytes)));
+        try {
+            return response.get(requestTimeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            response.cancel(true);
+            throw new HttpTimeoutException("Timed out waiting for the complete OPA response after " + requestTimeout);
+        } catch (InterruptedException e) {
+            response.cancel(true);
+            throw e;
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException io) {
+                throw io;
+            }
+            if (cause instanceof RuntimeException runtime) {
+                throw runtime;
+            }
+            throw new IOException("OPA HTTP request failed", cause);
+        }
     }
 }
