@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -96,6 +97,8 @@ final class ChaosControl {
     // the exploration started here (L), and whether one was just started, for the screen to show it
     private final ChaosExploreRun explorer;
     private boolean exploreStarted;
+    // the budget and the picks of the dialog per integration, as it was closed last, while the TUI runs
+    private final Map<String, ChaosExploreDialog.Picks> lastPicks = new ConcurrentHashMap<>();
     // set by the background task that sends the action, read when the screen is drawn
     private volatile Step step = Step.NONE;
     private Command command;
@@ -404,7 +407,9 @@ final class ChaosControl {
                         : reply.getString("error"));
                 return;
             }
-            exploreDialog = new ChaosExploreDialog(of, reply);
+            ChaosExploreDialog dialog = new ChaosExploreDialog(of, reply);
+            dialog.restore(lastPicks.get(of));
+            exploreDialog = dialog;
         };
         if (sender != null) {
             task.run();
@@ -422,8 +427,12 @@ final class ChaosControl {
             return true;
         }
         switch (dialog.handleKey(ke)) {
-            case CLOSED -> close();
+            case CLOSED -> {
+                lastPicks.put(dialog.name(), dialog.picks());
+                close();
+            }
             case START -> {
+                lastPicks.put(dialog.name(), dialog.picks());
                 explorer.start(pid, dialog.picked(), dialog.budget(), dialog.budgetMillis());
                 exploreStarted = true;
                 close();

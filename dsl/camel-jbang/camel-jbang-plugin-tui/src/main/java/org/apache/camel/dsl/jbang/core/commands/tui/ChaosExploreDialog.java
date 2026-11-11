@@ -95,6 +95,10 @@ final class ChaosExploreDialog {
         }
     }
 
+    /** The budget and the rules picked, to open the dialog with them again. */
+    record Picks(String budget, Set<String> rules) {
+    }
+
     /** The budgets to pick from: an exploration by hand is short, the long ones are for camel cmd chaos-explore. */
     static final List<String> BUDGETS = List.of("2m", "5m", "10m", "15m", "30m");
     // the shortest time a rule is tried, so its faults fire and the routes have messages
@@ -173,6 +177,34 @@ final class ChaosExploreDialog {
 
     List<Item> items() {
         return items;
+    }
+
+    String name() {
+        return name;
+    }
+
+    /** The budget and the rules picked now. */
+    Picks picks() {
+        return new Picks(budget(), picked().stream().map(Item::rule).collect(Collectors.toSet()));
+    }
+
+    /**
+     * Opens with the budget and the picks of last time, to try them again (after a change to the routes): the rules of
+     * last time that the integration still suggests, else the ones picked by itself.
+     */
+    void restore(Picks last) {
+        if (last == null) {
+            return;
+        }
+        int index = BUDGETS.indexOf(last.budget());
+        if (index >= 0) {
+            budget = index;
+        }
+        if (items.stream().anyMatch(item -> last.rules().contains(item.rule()))) {
+            for (int i = 0; i < items.size(); i++) {
+                picked.set(i, last.rules().contains(items.get(i).rule()));
+            }
+        }
     }
 
     /** The picked rules, in the order of the list. */
