@@ -135,6 +135,25 @@ public interface SpiffeEndpointBuilderFactory {
             return this;
         }
         /**
+         * The exact local SPIFFE ID to select for fetchX509Svid when the
+         * Workload API supplies several identities. The default uses the SDK's
+         * default SVID. A configured identity that is absent fails without
+         * selecting a different identity. This option comes only from endpoint
+         * configuration, never from a message header; it does not select an
+         * identity for either JWT operation.
+         *
+         * The option is a: <code>java.lang.String</code> type.
+         *
+         * Group: security
+         *
+         * @param localSpiffeId the value to set
+         * @return the dsl builder
+         */
+        default SpiffeEndpointBuilder localSpiffeId(String localSpiffeId) {
+            doSetProperty("localSpiffeId", localSpiffeId);
+            return this;
+        }
+        /**
          * The address of the SPIFFE Workload API endpoint (for example
          * unix:///tmp/agent.sock or tcp://127.0.0.1:8082). When not set, the
          * SPIFFE_ENDPOINT_SOCKET environment variable is used.

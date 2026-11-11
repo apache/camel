@@ -19,18 +19,22 @@ package org.apache.camel.component.spiffe;
 import java.util.Arrays;
 
 import io.spiffe.exception.JwtSvidException;
+import io.spiffe.spiffeid.SpiffeId;
 import io.spiffe.svid.jwtsvid.JwtSvid;
 import io.spiffe.svid.x509svid.X509Svid;
 import io.spiffe.workloadapi.WorkloadApiClient;
+import io.spiffe.workloadapi.X509Context;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 public class SpiffeProducer extends DefaultProducer {
+    private final SpiffeId localSpiffeId;
 
     public SpiffeProducer(final SpiffeEndpoint endpoint) {
         super(endpoint);
+        localSpiffeId = SpiffeX509SvidSelector.parse(endpoint.getConfiguration().getLocalSpiffeId());
     }
 
     @Override
@@ -50,8 +54,16 @@ public class SpiffeProducer extends DefaultProducer {
     }
 
     private void fetchX509Svid(WorkloadApiClient client, Exchange exchange) throws Exception {
-        X509Svid svid = client.fetchX509Context().getDefaultSvid();
         Message message = getMessageForResponse(exchange);
+        if (localSpiffeId != null) {
+            message.removeHeader(SpiffeConstants.SPIFFE_ID);
+            message.removeHeader(SpiffeConstants.EXPIRY);
+        }
+        X509Context context = client.fetchX509Context();
+        X509Svid svid = localSpiffeId == null
+                ? context.getDefaultSvid()
+                : SpiffeX509SvidSelector.require(
+                        SpiffeX509SvidSelector.select(context.getX509Svids(), localSpiffeId), localSpiffeId);
         // the identity is always available through the headers, so a route that only needs it can avoid the key
         message.setHeader(SpiffeConstants.SPIFFE_ID, svid.getSpiffeId().toString());
         message.setHeader(SpiffeConstants.EXPIRY, svid.getLeaf().getNotAfter());

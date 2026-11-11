@@ -29,6 +29,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audience": target.getConfiguration().setAudience(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "localspiffeid":
+        case "localSpiffeId": target.getConfiguration().setLocalSpiffeId(property(camelContext, java.lang.String.class, value)); return true;
         case "operation": target.getConfiguration().setOperation(property(camelContext, org.apache.camel.component.spiffe.SpiffeOperation.class, value)); return true;
         case "spiffesocketpath":
         case "spiffeSocketPath": target.getConfiguration().setSpiffeSocketPath(property(camelContext, java.lang.String.class, value)); return true;
@@ -53,6 +55,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audience": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "localspiffeid":
+        case "localSpiffeId": return java.lang.String.class;
         case "operation": return org.apache.camel.component.spiffe.SpiffeOperation.class;
         case "spiffesocketpath":
         case "spiffeSocketPath": return java.lang.String.class;
@@ -73,6 +77,8 @@ public class SpiffeEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "audience": return target.getConfiguration().getAudience();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "localspiffeid":
+        case "localSpiffeId": return target.getConfiguration().getLocalSpiffeId();
         case "operation": return target.getConfiguration().getOperation();
         case "spiffesocketpath":
         case "spiffeSocketPath": return target.getConfiguration().getSpiffeSocketPath();

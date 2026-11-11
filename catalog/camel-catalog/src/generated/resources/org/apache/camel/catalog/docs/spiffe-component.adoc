@@ -180,6 +180,108 @@ YAML::
 ----
 ====
 
+== Select a local X.509 identity
+
+A workload can receive several X.509-SVIDs from the Workload API. Set `localSpiffeId` to choose an exact local
+identity instead of the default SVID. The producer's `fetchX509Svid` operation and `SpiffeSSLContextParameters` both
+support this option. It is distinct from `acceptedSpiffeIds`, which restricts *remote peers*: selecting a local
+identity does not broaden the TLS peer allow-list.
+
+The selector is route/bean configuration, never a message header or a per-message expression. An invalid SPIFFE ID
+fails before opening the source. An identity that is missing does not fall back to the default or another identity.
+The two JWT operations do not use `localSpiffeId`.
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:identity")
+    .to("spiffe:identity?operation=fetchX509Svid&localSpiffeId=spiffe://example.org/billing&x509Response=id");
+----
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:identity"/>
+  <to uri="spiffe:identity?operation=fetchX509Svid&amp;localSpiffeId=spiffe://example.org/billing&amp;x509Response=id"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:identity
+      steps:
+        - to:
+            uri: "spiffe:identity?operation=fetchX509Svid&localSpiffeId=spiffe://example.org/billing&x509Response=id"
+----
+====
+
+The selected identity's normal `x509Response` behavior and identity/expiry headers still apply. A fetch selects from
+the current Workload API context, so a rotated certificate for that same identity is picked up on the next fetch.
+If the identity disappears, the fetch fails and clears its identity/expiry outputs.
+
+For TLS, configure the same option on the SSL parameters bean:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+SpiffeSSLContextParameters ssl = new SpiffeSSLContextParameters();
+ssl.setLocalSpiffeId("spiffe://example.org/billing");
+ssl.setAcceptedSpiffeIds("spiffe://example.org/backend");
+getContext().getRegistry().bind("billingSsl", ssl);
+
+from("direct:callBackend")
+    .to("https://backend.example.org/api?sslContextParameters=#billingSsl");
+----
+XML::
++
+[source,xml]
+----
+<bean id="billingSsl" class="org.apache.camel.component.spiffe.SpiffeSSLContextParameters">
+  <property name="localSpiffeId" value="spiffe://example.org/billing"/>
+  <property name="acceptedSpiffeIds" value="spiffe://example.org/backend"/>
+</bean>
+<route>
+  <from uri="direct:callBackend"/>
+  <to uri="https://backend.example.org/api?sslContextParameters=#billingSsl"/>
+</route>
+----
+YAML::
++
+[source,yaml]
+----
+- beans:
+    - name: billingSsl
+      type: org.apache.camel.component.spiffe.SpiffeSSLContextParameters
+      properties:
+        localSpiffeId: spiffe://example.org/billing
+        acceptedSpiffeIds: spiffe://example.org/backend
+- route:
+    from:
+      uri: direct:callBackend
+      steps:
+        - to:
+            uri: "https://backend.example.org/api?sslContextParameters=#billingSsl"
+----
+====
+
+The TLS source reselects on every Workload API update and retains only the configured identity. It refuses to start
+if that identity is initially absent. If a later update removes it, reads of the local TLS identity fail clearly;
+the source does not retain the old selected credential or silently choose another. A subsequent update restoring
+the configured identity makes its new credential available again. Existing established TLS sessions are not
+terminated by changing the source; this selection applies when JSSE asks for the local identity. Configure
+`localSpiffeId` before creating the SSL context; changing the bean afterwards does not replace its cached context.
+Leaving the option unset preserves the SDK's default selection.
+
 == Authorizing a route on the peer SPIFFE ID (SpiffeSecurityPolicy)
 
 `SpiffeSSLContextParameters` decides *which peers may connect*; `org.apache.camel.component.spiffe.SpiffeSecurityPolicy`

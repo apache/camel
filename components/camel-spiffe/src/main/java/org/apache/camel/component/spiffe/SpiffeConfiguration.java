@@ -31,6 +31,9 @@ public class SpiffeConfiguration implements Cloneable {
     @UriParam(label = "producer,security", defaultValue = "chain")
     private SpiffeX509Response x509Response = SpiffeX509Response.chain;
 
+    @UriParam(label = "producer,security")
+    private String localSpiffeId;
+
     @UriParam(label = "security")
     private String spiffeSocketPath;
 
@@ -71,6 +74,20 @@ public class SpiffeConfiguration implements Cloneable {
      */
     public void setX509Response(SpiffeX509Response x509Response) {
         this.x509Response = x509Response;
+    }
+
+    public String getLocalSpiffeId() {
+        return localSpiffeId;
+    }
+
+    /**
+     * The exact local SPIFFE ID to select for fetchX509Svid when the Workload API supplies several identities. The
+     * default uses the SDK's default SVID. A configured identity that is absent fails without selecting a different
+     * identity. This option comes only from endpoint configuration, never from a message header; it does not select an
+     * identity for either JWT operation.
+     */
+    public void setLocalSpiffeId(String localSpiffeId) {
+        this.localSpiffeId = localSpiffeId;
     }
 
     /**

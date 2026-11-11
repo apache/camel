@@ -79,6 +79,7 @@ public class SpiffeEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        SpiffeX509SvidSelector.parse(configuration.getLocalSpiffeId());
         if (configuration.getWorkloadApiClient() != null) {
             workloadApiClient = configuration.getWorkloadApiClient();
             ownClient = false;

@@ -79,6 +79,11 @@ public class SpiffeSSLContextParameters extends SSLContextParameters implements 
               description = "Comma-separated allow-list of peer SPIFFE IDs to accept during the TLS handshake"
                             + " (for example spiffe://example.org/client). Mutually exclusive with acceptAnySpiffeId.")
     private String acceptedSpiffeIds;
+    @Metadata(label = "security",
+              description = "Exact local SPIFFE ID to use for TLS when the Workload API supplies multiple X.509-SVIDs."
+                            + " Defaults to the SDK's default SVID. If configured, an absent or removed identity fails"
+                            + " without falling back to another local identity. This does not select accepted peers.")
+    private String localSpiffeId;
     @Metadata(label = "security", defaultValue = "false", security = "insecure:ssl",
               description = "Accept any peer SPIFFE ID that validates against the trust bundle, instead of an"
                             + " explicit acceptedSpiffeIds allow-list. This authenticates the trust domain but not"
@@ -103,6 +108,15 @@ public class SpiffeSSLContextParameters extends SSLContextParameters implements 
      */
     public void setSpiffeSocketPath(String spiffeSocketPath) {
         this.spiffeSocketPath = spiffeSocketPath;
+    }
+
+    public String getLocalSpiffeId() {
+        return localSpiffeId;
+    }
+
+    /** Select the local TLS identity by exact SPIFFE ID; unrelated to the peer allow-list. */
+    public void setLocalSpiffeId(String localSpiffeId) {
+        this.localSpiffeId = localSpiffeId;
     }
 
     public String getAcceptedSpiffeIds() {
@@ -180,7 +194,8 @@ public class SpiffeSSLContextParameters extends SSLContextParameters implements 
                 protocol = DEFAULT_PROTOCOL;
             }
 
-            X509Source source = createX509Source();
+            SpiffeId requested = SpiffeX509SvidSelector.parse(parsePropertyValue(localSpiffeId));
+            X509Source source = createX509Source(requested);
             X509SourceService service = new X509SourceService(source);
             try {
                 SslContextOptions.SslContextOptionsBuilder options
@@ -210,16 +225,27 @@ public class SpiffeSSLContextParameters extends SSLContextParameters implements 
         }
     }
 
-    private X509Source createX509Source() {
+    private X509Source createX509Source(SpiffeId requested) {
+        X509Source source = null;
         try {
             X509SourceOptions.Builder builder = X509SourceOptions.builder().initTimeout(Duration.ofMillis(initTimeout));
             if (ObjectHelper.isNotEmpty(spiffeSocketPath)) {
                 builder.spiffeSocketPath(parsePropertyValue(spiffeSocketPath));
             }
-            return DefaultX509Source.newSource(builder.build());
+            if (requested != null) {
+                builder.svidPicker(svids -> SpiffeX509SvidSelector.select(svids, requested));
+            }
+            source = DefaultX509Source.newSource(builder.build());
+            if (requested == null) {
+                return source;
+            }
+            X509Source selected = SpiffeX509SvidSelector.guard(source, requested);
+            selected.getX509Svid();
+            return selected;
         } catch (Exception e) {
+            closeQuietly(source);
             throw new RuntimeCamelException(
-                    "Could not create the SPIFFE X509Source (is a Workload API endpoint reachable?)", e);
+                    "Could not create the SPIFFE X509Source (check Workload API availability and localSpiffeId)", e);
         }
     }
 

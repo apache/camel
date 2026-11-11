@@ -193,6 +193,26 @@ public interface SpiffeComponentBuilderFactory {
         }
     
         /**
+         * The exact local SPIFFE ID to select for fetchX509Svid when the
+         * Workload API supplies several identities. The default uses the SDK's
+         * default SVID. A configured identity that is absent fails without
+         * selecting a different identity. This option comes only from endpoint
+         * configuration, never from a message header; it does not select an
+         * identity for either JWT operation.
+         *
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         *
+         * Group: security
+         *
+         * @param localSpiffeId the value to set
+         * @return the dsl builder
+         */
+        default SpiffeComponentBuilder localSpiffeId(java.lang.String localSpiffeId) {
+            doSetProperty("localSpiffeId", localSpiffeId);
+            return this;
+        }
+
+        /**
          * The address of the SPIFFE Workload API endpoint (for example
          * unix:///tmp/agent.sock or tcp://127.0.0.1:8082). When not set, the
          * SPIFFE_ENDPOINT_SOCKET environment variable is used.
@@ -260,6 +280,7 @@ public interface SpiffeComponentBuilderFactory {
             case "autowiredEnabled": ((SpiffeComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "workloadApiClient": getOrCreateConfiguration((SpiffeComponent) component).setWorkloadApiClient((io.spiffe.workloadapi.WorkloadApiClient) value); return true;
             case "allowOperationHeader": getOrCreateConfiguration((SpiffeComponent) component).setAllowOperationHeader((boolean) value); return true;
+            case "localSpiffeId": getOrCreateConfiguration((SpiffeComponent) component).setLocalSpiffeId((java.lang.String) value); return true;
             case "spiffeSocketPath": getOrCreateConfiguration((SpiffeComponent) component).setSpiffeSocketPath((java.lang.String) value); return true;
             case "x509Response": getOrCreateConfiguration((SpiffeComponent) component).setX509Response((org.apache.camel.component.spiffe.SpiffeX509Response) value); return true;
             default: return false;
