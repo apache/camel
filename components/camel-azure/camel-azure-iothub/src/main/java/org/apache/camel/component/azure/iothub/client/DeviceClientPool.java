@@ -17,30 +17,34 @@
 package org.apache.camel.component.azure.iothub.client;
 
 import java.time.Duration;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.LongSupplier;
 
 import com.microsoft.azure.sdk.iot.device.ConnectionStatusChangeContext;
 import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
+import com.microsoft.azure.sdk.iot.device.IotHubConnectionStatusChangeReason;
 import com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Thread-safe pool of Azure IoT Hub {@link DeviceClient} instances, keyed by the device identity in the connection
- * string instead of only the raw device id.
+ * Thread-safe pool of Azure IoT Hub {@link DeviceClient} instances, keyed by the resolved hub/device/module identity
+ * derived from the connection string instead of only the raw device id.
  *
  * <p>
- * Clients are created lazily, reused across messages, and evicted after an idle timeout. The Azure device SDK does not
- * expose connection state, so broken clients are removed by the caller on send failure (see the send operations).
+ * Clients are created lazily, reused across messages, and evicted after an idle timeout. Connection status changes are
+ * monitored through the Azure SDK callback, and broken clients are removed by the caller on send failure or disconnect
+ * as needed.
  * </p>
  */
 public class DeviceClientPool {
@@ -102,7 +106,7 @@ public class DeviceClientPool {
             }
             closed = true;
             if (pooled.release()) {
-                pool.touchAndMaybeEvict(poolKey, pooled);
+                pool.touchAndMaybeEvict(poolKey);
             }
         }
     }
@@ -110,7 +114,7 @@ public class DeviceClientPool {
     private final Duration idleTimeout;
     private final Duration evictionInterval;
     private final Map<String, PooledClient> pool = new ConcurrentHashMap<>();
-    private final Map<String, Object> creationLocks = new ConcurrentHashMap<>();
+    private final Map<String, CompletableFuture<DeviceClient>> creationFutures = new ConcurrentHashMap<>();
     private final AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     private DeviceClientFactory deviceClientFactory = DeviceClient::new;
@@ -160,27 +164,43 @@ public class DeviceClientPool {
             return existing.client;
         }
 
-        Object lock = creationLocks.computeIfAbsent(poolKey, k -> new Object());
-        synchronized (lock) {
+        CompletableFuture<DeviceClient> inFlight = creationFutures.putIfAbsent(poolKey, new CompletableFuture<>());
+        if (inFlight == null) {
+            CompletableFuture<DeviceClient> createdFuture = creationFutures.get(poolKey);
             try {
-                existing = pool.get(poolKey);
-                if (existing != null) {
-                    existing.touch(now);
-                    return existing.client;
-                }
-
                 DeviceClient client = createClient(deviceId, connectionString, protocol);
                 PooledClient pooled = new PooledClient(client, now);
                 PooledClient previous = pool.putIfAbsent(poolKey, pooled);
                 if (previous != null) {
-                    pooled.client.close();
+                    client.close();
                     previous.touch(now);
+                    createdFuture.complete(previous.client);
                     return previous.client;
                 }
-                return pooled.client;
+                createdFuture.complete(client);
+                return client;
+            } catch (Exception e) {
+                createdFuture.completeExceptionally(e);
+                throw e;
             } finally {
-                creationLocks.remove(poolKey, lock);
+                creationFutures.remove(poolKey, createdFuture);
             }
+        }
+
+        try {
+            return inFlight.get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while waiting for DeviceClient creation for device: " + deviceId, e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException re) {
+                throw re;
+            }
+            if (cause instanceof Error err) {
+                throw err;
+            }
+            throw new RuntimeException("DeviceClient creation failed for device: " + deviceId, cause);
         }
     }
 
@@ -192,7 +212,7 @@ public class DeviceClientPool {
         String poolKey = resolvePoolKey(deviceId, connectionString);
         final long now = nowMillisSupplier.getAsLong();
 
-        java.util.concurrent.atomic.AtomicReference<PooledClient> evicted = new java.util.concurrent.atomic.AtomicReference<>();
+        AtomicReference<PooledClient> evicted = new AtomicReference<>();
         PooledClient existing = pool.computeIfPresent(poolKey, (key, pooled) -> {
             if (pooled.inUse.get() > 0) {
                 pooled.touch(now);
@@ -214,37 +234,24 @@ public class DeviceClientPool {
             closeQuietly(poolKey, evicted.get().client, "idle eviction");
         }
 
-        Object lock = creationLocks.computeIfAbsent(poolKey, k -> new Object());
-        synchronized (lock) {
-            try {
-                existing = pool.get(poolKey);
-                if (existing != null) {
-                    existing.touch(now);
-                    existing.acquire();
-                    return new Lease(this, poolKey, existing);
-                }
-
-                DeviceClient client = createClient(deviceId, connectionString, protocol);
-                PooledClient pooled = new PooledClient(client, now);
-                PooledClient previous = pool.putIfAbsent(poolKey, pooled);
-                if (previous != null) {
-                    pooled.client.close();
-                    previous.touch(now);
-                    previous.acquire();
-                    return new Lease(this, poolKey, previous);
-                }
-                pooled.acquire();
-                return new Lease(this, poolKey, pooled);
-            } finally {
-                creationLocks.remove(poolKey, lock);
-            }
+        DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
+        PooledClient pooled = pool.get(poolKey);
+        if (pooled == null) {
+            throw new IllegalStateException("DeviceClient not present in pool after creation for device: " + deviceId);
         }
+        if (pooled.client != client) {
+            throw new IllegalStateException("Pool returned a different client instance for device: " + deviceId);
+        }
+        pooled.touch(now);
+        pooled.acquire();
+        return new Lease(this, poolKey, pooled);
     }
 
     public Lease lease(String deviceId, String connectionString, IotHubClientProtocol protocol) {
         return acquire(deviceId, connectionString, protocol);
     }
 
+    @SuppressWarnings("unused")
     void remove(String deviceId, String connectionString) {
         String poolKey = resolvePoolKey(deviceId, connectionString);
         PooledClient pooled = pool.remove(poolKey);
@@ -253,6 +260,7 @@ public class DeviceClientPool {
         }
     }
 
+    @SuppressWarnings({ "unused", "ConstantConditions", "ConstantValue" })
     void remove(String deviceId) {
         if (deviceId == null || deviceId.isBlank()) {
             return;
@@ -264,8 +272,7 @@ public class DeviceClientPool {
             return;
         }
 
-        for (Iterator<Map.Entry<String, PooledClient>> it = pool.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<String, PooledClient> entry = it.next();
+        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
             String key = entry.getKey();
             if (matchesDeviceId(key, deviceId)) {
                 if (pool.remove(key, entry.getValue())) {
@@ -334,7 +341,7 @@ public class DeviceClientPool {
             }
             identity.append(moduleId);
         }
-        return identity.length() > 0 ? identity.toString() : deviceId;
+        return !identity.isEmpty() ? identity.toString() : deviceId;
     }
 
     private DeviceClient createClient(String deviceId, String connectionString, IotHubClientProtocol protocol) {
@@ -351,7 +358,7 @@ public class DeviceClientPool {
                         return;
                     }
                     if (context.getNewStatus()
-                        == com.microsoft.azure.sdk.iot.device.transport.IotHubConnectionStatus.DISCONNECTED) {
+                        == IotHubConnectionStatus.DISCONNECTED) {
                         evictDisconnectedClient(deviceId, connectionString, client, context);
                     }
                 }, null);
@@ -374,10 +381,13 @@ public class DeviceClientPool {
     private void evictDisconnectedClient(
             String deviceId, String connectionString, DeviceClient client,
             ConnectionStatusChangeContext context) {
-        if (context == null) {
+        if (context == null || shuttingDown.get()) {
             return;
         }
         if (context.getNewStatus() != IotHubConnectionStatus.DISCONNECTED) {
+            return;
+        }
+        if (context.getNewStatusReason() == IotHubConnectionStatusChangeReason.CLIENT_CLOSE) {
             return;
         }
 
@@ -387,27 +397,26 @@ public class DeviceClientPool {
             LOG.warn("Evicted DeviceClient for device {} after disconnect. previousStatus={}, reason={}, cause={}",
                     deviceId, context.getPreviousStatus(), context.getNewStatusReason(), context.getCause());
             closeQuietly(deviceId, client, "connection status changed to DISCONNECTED");
-            return;
-        }
-
-        for (Iterator<Map.Entry<String, PooledClient>> it = pool.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<String, PooledClient> entry = it.next();
-            PooledClient candidate = entry.getValue();
-            if (candidate != null && candidate.client == client && pool.remove(entry.getKey(), candidate)) {
-                LOG.warn("Evicted DeviceClient for device {} after disconnect. previousStatus={}, reason={}, cause={}",
-                        deviceId, context.getPreviousStatus(), context.getNewStatusReason(), context.getCause());
-                closeQuietly(deviceId, client, "connection status changed to DISCONNECTED");
-                return;
-            }
         }
     }
 
-    private void touchAndMaybeEvict(String poolKey, PooledClient pooled) {
+    private void touchAndMaybeEvict(String poolKey) {
         long now = nowMillisSupplier.getAsLong();
-        long elapsed = now - pooled.lastUsed;
-        pooled.touch(now);
-        if (elapsed > idleTimeout.toMillis() && pool.remove(poolKey, pooled)) {
-            closeQuietly(poolKey, pooled.client, "idle eviction");
+        AtomicReference<PooledClient> evicted = new AtomicReference<>();
+        pool.computeIfPresent(poolKey, (key, current) -> {
+            if (current.inUse.get() > 0) {
+                current.touch(now);
+                return current;
+            }
+            if ((now - current.lastUsed) > idleTimeout.toMillis()) {
+                evicted.set(current);
+                return null;
+            }
+            current.touch(now);
+            return current;
+        });
+        if (evicted.get() != null) {
+            closeQuietly(poolKey, evicted.get().client, "idle eviction");
         }
     }
 
@@ -416,16 +425,21 @@ public class DeviceClientPool {
             return;
         }
         long now = nowMillisSupplier.getAsLong();
-        Iterator<Map.Entry<String, PooledClient>> it = pool.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, PooledClient> entry = it.next();
-            PooledClient pooled = entry.getValue();
-            if (pooled.inUse.get() > 0) {
-                continue;
-            }
-            if ((now - pooled.lastUsed) > idleTimeout.toMillis()
-                    && pool.remove(entry.getKey(), pooled)) {
-                closeQuietly(entry.getKey(), pooled.client, "idle eviction");
+        for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
+            String key = entry.getKey();
+            AtomicReference<PooledClient> evicted = new AtomicReference<>();
+            pool.computeIfPresent(key, (k, current) -> {
+                if (current.inUse.get() > 0) {
+                    return current;
+                }
+                if ((now - current.lastUsed) > idleTimeout.toMillis()) {
+                    evicted.set(current);
+                    return null;
+                }
+                return current;
+            });
+            if (evicted.get() != null) {
+                closeQuietly(key, evicted.get().client, "idle eviction");
             }
         }
     }

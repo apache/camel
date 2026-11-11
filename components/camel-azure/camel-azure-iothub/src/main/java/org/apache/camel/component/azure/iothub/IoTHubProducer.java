@@ -76,17 +76,14 @@ public class IoTHubProducer extends DefaultProducer {
 
         Object body = exchange.getIn().getBody();
         DeliveryContext context = buildContext(exchange, mode, body);
-        boolean sent = operations.send(deviceId, connectionString, protocol, mode, context);
-        if (!sent) {
-            throw new IllegalStateException("IoTHub send operation reported no success for device: " + deviceId);
-        }
+        operations.send(deviceId, connectionString, protocol, mode, context);
     }
 
     /**
      * Resolves the telemetry payload and twin properties for this exchange based on the delivery mode.
      *
      * <ul>
-     * <li>{@code TELEMETRY}: the body is the telemetry payload (byte[]/String).</li>
+     * <li>{@code TELEMETRY}: the body is the telemetry payload, converted to a byte array when needed.</li>
      * <li>{@code TWIN}: the twin properties come from the {@code CamelAzureIoTHubTwinProperties} header, or the body
      * when it is a {@link Map}.</li>
      * <li>{@code BOTH}: the body is the telemetry payload and the twin properties come from the

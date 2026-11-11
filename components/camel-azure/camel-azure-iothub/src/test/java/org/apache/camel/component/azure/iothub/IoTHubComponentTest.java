@@ -26,6 +26,7 @@ import com.microsoft.azure.sdk.iot.device.DeviceClient;
 import com.microsoft.azure.sdk.iot.device.IotHubClientProtocol;
 import com.microsoft.azure.sdk.iot.device.Message;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.azure.iothub.client.DeviceClientPool;
 import org.apache.camel.support.DefaultExchange;
@@ -39,6 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 class IoTHubComponentTest extends CamelTestSupport {
@@ -168,7 +170,7 @@ class IoTHubComponentTest extends CamelTestSupport {
         assertEquals(
                 "BOTH delivery requires twin properties via the CamelAzureIoTHubTwinProperties header before dispatching telemetry",
                 ex.getMessage());
-        verify(client, org.mockito.Mockito.never()).sendEvent(any(Message.class), anyInt());
+        verify(client, never()).sendEvent(any(Message.class), anyInt());
     }
 
     private static void setField(Object target, String fieldName, Object value) throws Exception {
@@ -187,7 +189,7 @@ class IoTHubComponentTest extends CamelTestSupport {
         try {
             return endpoint.createProducer();
         } catch (Exception e) {
-            throw new org.apache.camel.FailedToCreateProducerException(endpoint, e);
+            throw new FailedToCreateProducerException(endpoint, e);
         }
     }
 }

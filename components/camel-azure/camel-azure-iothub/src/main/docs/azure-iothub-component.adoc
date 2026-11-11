@@ -17,7 +17,8 @@
 The Azure IoT Hub component provides the capability to send device-to-cloud
 telemetry and to update device-twin reported properties on
 https://azure.microsoft.com/services/iot-hub/[Azure IoT Hub], using the
-Azure IoT device SDK. Device connections are pooled and reused per device id.
+Azure IoT device SDK. Device connections are pooled and reused by the
+resolved hub/device/module identity from the connection string.
 
 *Prerequisites*
 
@@ -56,7 +57,7 @@ include::partial$component-endpoint-headers.adoc[]
 The producer sends the message body to Azure IoT Hub. The delivery mode selects
 how the body is interpreted:
 
-* `TELEMETRY` - the body (a `byte[]` or `String`) is sent as a device-to-cloud message.
+* `TELEMETRY` - the body is sent as a device-to-cloud message, using the payload as a `byte[]`/`String`-compatible value.
 * `TWIN` - the body (a `java.util.Map`) is applied as device-twin reported properties
   using a delta update (only changed properties are sent).
 * `BOTH` - sends the message body as telemetry and applies twin reported properties from the

@@ -64,7 +64,7 @@ public class IoTHubComponent extends DefaultComponent {
         return configuration;
     }
 
-    public DeviceClientPool getOrCreateClientPool() {
+    DeviceClientPool getOrCreateClientPool() {
         DeviceClientPool pool = clientPool;
         if (pool == null) {
             synchronized (this) {

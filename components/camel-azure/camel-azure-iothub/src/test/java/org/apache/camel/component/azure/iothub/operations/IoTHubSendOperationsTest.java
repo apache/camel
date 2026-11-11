@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -78,7 +77,7 @@ class IoTHubSendOperationsTest {
         CountingStrategy strategy = new CountingStrategy(0);
         IoTHubSendOperations ops = new IoTHubSendOperations(poolReturning(client, null), List.of(strategy));
 
-        assertTrue(ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload")));
+        ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.TELEMETRY, telemetry("payload"));
         assertEquals(1, strategy.executed());
     }
 
@@ -90,8 +89,8 @@ class IoTHubSendOperationsTest {
         IoTHubSendOperations ops
                 = new IoTHubSendOperations(poolReturning(client, null), List.of(telemetry, twin));
 
-        assertTrue(ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.BOTH,
-                new DeliveryContext("payload", Map.of("firmware", "1.0"))));
+        ops.send("d", CS, IotHubClientProtocol.MQTT, IoTHubDeliveryMode.BOTH,
+                new DeliveryContext("payload", Map.of("firmware", "1.0")));
         assertEquals(1, telemetry.executed());
         assertEquals(1, twin.executed());
     }

@@ -48,7 +48,7 @@ public class IoTHubSendOperations {
     /**
      * @throws Exception if the send is invalid or cannot be delivered
      */
-    public boolean send(
+    public void send(
             String deviceId, String connectionString, IotHubClientProtocol protocol,
             IoTHubDeliveryMode mode, DeliveryContext context)
             throws Exception {
@@ -71,7 +71,6 @@ public class IoTHubSendOperations {
             }
             throw e;
         }
-        return true;
     }
 
     private void executeStrategies(DeviceClient client, String deviceId, DeliveryContext context, IoTHubDeliveryMode mode)

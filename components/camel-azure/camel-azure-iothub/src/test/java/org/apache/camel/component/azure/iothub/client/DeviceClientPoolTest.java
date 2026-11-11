@@ -40,6 +40,7 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -73,37 +74,42 @@ class DeviceClientPoolTest {
     void testConcurrentFirstAcquireCreatesSingleClient() throws Exception {
         DeviceClient client = mock(DeviceClient.class);
         AtomicInteger created = new AtomicInteger();
+        CountDownLatch factoryStarted = new CountDownLatch(1);
+        CountDownLatch releaseFactory = new CountDownLatch(1);
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
         pool.setDeviceClientFactory((cs, protocol) -> {
             created.incrementAndGet();
+            factoryStarted.countDown();
+            try {
+                assertTrue(releaseFactory.await(5, TimeUnit.SECONDS), "factory should be released after both tasks start");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
             return client;
         });
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        CountDownLatch ready = new CountDownLatch(2);
-        CountDownLatch start = new CountDownLatch(1);
         List<DeviceClientPool.Lease> leases = new ArrayList<>();
+        List<java.util.concurrent.Future<?>> futures = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
-            executor.submit(() -> {
-                ready.countDown();
-                try {
-                    start.await();
-                    DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT);
-                    synchronized (leases) {
-                        leases.add(lease);
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException(e);
+            futures.add(executor.submit(() -> {
+                DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT);
+                synchronized (leases) {
+                    leases.add(lease);
                 }
-            });
+                return null;
+            }));
         }
 
-        ready.await();
-        start.countDown();
+        assertTrue(factoryStarted.await(5, TimeUnit.SECONDS), "one thread should open the first client");
+        releaseFactory.countDown();
         executor.shutdown();
-        executor.awaitTermination(5, TimeUnit.SECONDS);
+        assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS), "worker tasks did not finish");
+        for (java.util.concurrent.Future<?> future : futures) {
+            future.get();
+        }
 
         assertEquals(1, created.get(), "only one client should be created for first acquire");
         assertEquals(1, pool.getActiveClientCount());
@@ -221,7 +227,7 @@ class DeviceClientPoolTest {
         ConnectionStatusChangeContext context = mock(ConnectionStatusChangeContext.class);
         Mockito.when(context.getNewStatus()).thenReturn(IotHubConnectionStatus.DISCONNECTED);
         Mockito.when(context.getPreviousStatus()).thenReturn(IotHubConnectionStatus.CONNECTED);
-        Mockito.when(context.getNewStatusReason()).thenReturn(IotHubConnectionStatusChangeReason.CLIENT_CLOSE);
+        Mockito.when(context.getNewStatusReason()).thenReturn(IotHubConnectionStatusChangeReason.COMMUNICATION_ERROR);
 
         callback.onStatusChanged(context);
 
