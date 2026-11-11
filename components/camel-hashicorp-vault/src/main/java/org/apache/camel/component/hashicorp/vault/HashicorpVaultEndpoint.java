@@ -116,6 +116,10 @@ public class HashicorpVaultEndpoint extends DefaultEndpoint {
         settings.setJwt(configuration.getJwt());
         settings.setJwtFile(configuration.getJwtFile());
         settings.setAuthMountPath(configuration.getAuthMountPath());
+        settings.setTrustStore(configuration.getTrustStore());
+        settings.setTrustStorePassword(configuration.getTrustStorePassword());
+        settings.setKeyStore(configuration.getKeyStore());
+        settings.setKeyStorePassword(configuration.getKeyStorePassword());
         return settings;
     }
 

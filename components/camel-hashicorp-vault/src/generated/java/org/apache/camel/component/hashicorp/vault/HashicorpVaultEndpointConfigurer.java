@@ -32,6 +32,10 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "jwt": target.getConfiguration().setJwt(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtfile":
         case "jwtFile": target.getConfiguration().setJwtFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystore":
+        case "keyStore": target.getConfiguration().setKeyStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": target.getConfiguration().setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "namespace": target.getConfiguration().setNamespace(property(camelContext, java.lang.String.class, value)); return true;
@@ -46,6 +50,10 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "secretpath":
         case "secretPath": target.getConfiguration().setSecretPath(property(camelContext, java.lang.String.class, value)); return true;
         case "token": target.getConfiguration().setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststore":
+        case "trustStore": target.getConfiguration().setTrustStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststorepassword":
+        case "trustStorePassword": target.getConfiguration().setTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "vaulttemplate":
         case "vaultTemplate": target.getConfiguration().setVaultTemplate(property(camelContext, org.springframework.vault.core.VaultTemplate.class, value)); return true;
         default: return false;
@@ -68,6 +76,10 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "jwt": return java.lang.String.class;
         case "jwtfile":
         case "jwtFile": return java.lang.String.class;
+        case "keystore":
+        case "keyStore": return java.lang.String.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "namespace": return java.lang.String.class;
@@ -82,6 +94,10 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "secretpath":
         case "secretPath": return java.lang.String.class;
         case "token": return java.lang.String.class;
+        case "truststore":
+        case "trustStore": return java.lang.String.class;
+        case "truststorepassword":
+        case "trustStorePassword": return java.lang.String.class;
         case "vaulttemplate":
         case "vaultTemplate": return org.springframework.vault.core.VaultTemplate.class;
         default: return null;
@@ -100,6 +116,10 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "jwt": return target.getConfiguration().getJwt();
         case "jwtfile":
         case "jwtFile": return target.getConfiguration().getJwtFile();
+        case "keystore":
+        case "keyStore": return target.getConfiguration().getKeyStore();
+        case "keystorepassword":
+        case "keyStorePassword": return target.getConfiguration().getKeyStorePassword();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "namespace": return target.getConfiguration().getNamespace();
@@ -114,6 +134,10 @@ public class HashicorpVaultEndpointConfigurer extends PropertyConfigurerSupport 
         case "secretpath":
         case "secretPath": return target.getConfiguration().getSecretPath();
         case "token": return target.getConfiguration().getToken();
+        case "truststore":
+        case "trustStore": return target.getConfiguration().getTrustStore();
+        case "truststorepassword":
+        case "trustStorePassword": return target.getConfiguration().getTrustStorePassword();
         case "vaulttemplate":
         case "vaultTemplate": return target.getConfiguration().getVaultTemplate();
         default: return null;

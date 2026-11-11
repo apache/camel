@@ -35,6 +35,8 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         map.put("IBMSecretsManagerVaultConfiguration", org.apache.camel.vault.IBMSecretsManagerVaultConfiguration.class);
         map.put("Jwt", java.lang.String.class);
         map.put("JwtFile", java.lang.String.class);
+        map.put("KeyStore", java.lang.String.class);
+        map.put("KeyStorePassword", java.lang.String.class);
         map.put("KubernetesConfigMapVaultConfiguration", org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class);
         map.put("KubernetesVaultConfiguration", org.apache.camel.vault.KubernetesVaultConfiguration.class);
         map.put("Namespace", java.lang.String.class);
@@ -48,6 +50,8 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         map.put("Secrets", java.lang.String.class);
         map.put("SpringCloudConfigConfiguration", org.apache.camel.vault.SpringCloudConfigConfiguration.class);
         map.put("Token", java.lang.String.class);
+        map.put("TrustStore", java.lang.String.class);
+        map.put("TrustStorePassword", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
@@ -75,6 +79,10 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "jwt": target.setJwt(property(camelContext, java.lang.String.class, value)); return true;
         case "jwtfile":
         case "jwtFile": target.setJwtFile(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystore":
+        case "keyStore": target.setKeyStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "keystorepassword":
+        case "keyStorePassword": target.setKeyStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "kubernetesconfigmapvaultconfiguration":
         case "kubernetesConfigMapVaultConfiguration": target.setKubernetesConfigMapVaultConfiguration(property(camelContext, org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class, value)); return true;
         case "kubernetesvaultconfiguration":
@@ -95,6 +103,10 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": target.setSpringCloudConfigConfiguration(property(camelContext, org.apache.camel.vault.SpringCloudConfigConfiguration.class, value)); return true;
         case "token": target.setToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststore":
+        case "trustStore": target.setTrustStore(property(camelContext, java.lang.String.class, value)); return true;
+        case "truststorepassword":
+        case "trustStorePassword": target.setTrustStorePassword(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -127,6 +139,10 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "jwt": return java.lang.String.class;
         case "jwtfile":
         case "jwtFile": return java.lang.String.class;
+        case "keystore":
+        case "keyStore": return java.lang.String.class;
+        case "keystorepassword":
+        case "keyStorePassword": return java.lang.String.class;
         case "kubernetesconfigmapvaultconfiguration":
         case "kubernetesConfigMapVaultConfiguration": return org.apache.camel.vault.KubernetesConfigMapVaultConfiguration.class;
         case "kubernetesvaultconfiguration":
@@ -147,6 +163,10 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": return org.apache.camel.vault.SpringCloudConfigConfiguration.class;
         case "token": return java.lang.String.class;
+        case "truststore":
+        case "trustStore": return java.lang.String.class;
+        case "truststorepassword":
+        case "trustStorePassword": return java.lang.String.class;
         default: return null;
         }
     }
@@ -175,6 +195,10 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "jwt": return target.getJwt();
         case "jwtfile":
         case "jwtFile": return target.getJwtFile();
+        case "keystore":
+        case "keyStore": return target.getKeyStore();
+        case "keystorepassword":
+        case "keyStorePassword": return target.getKeyStorePassword();
         case "kubernetesconfigmapvaultconfiguration":
         case "kubernetesConfigMapVaultConfiguration": return target.getKubernetesConfigMapVaultConfiguration();
         case "kubernetesvaultconfiguration":
@@ -195,6 +219,10 @@ public class HashicorpVaultConfigurationPropertiesConfigurer extends org.apache.
         case "springcloudconfigconfiguration":
         case "springCloudConfigConfiguration": return target.getSpringCloudConfigConfiguration();
         case "token": return target.getToken();
+        case "truststore":
+        case "trustStore": return target.getTrustStore();
+        case "truststorepassword":
+        case "trustStorePassword": return target.getTrustStorePassword();
         default: return null;
         }
     }

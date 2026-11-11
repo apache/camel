@@ -17,8 +17,14 @@
 package org.apache.camel.component.hashicorp.vault;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -30,6 +36,8 @@ import org.springframework.vault.authentication.AppRoleAuthenticationOptions;
 import org.springframework.vault.authentication.AppRoleAuthenticationOptions.RoleId;
 import org.springframework.vault.authentication.AppRoleAuthenticationOptions.SecretId;
 import org.springframework.vault.authentication.ClientAuthentication;
+import org.springframework.vault.authentication.ClientCertificateAuthentication;
+import org.springframework.vault.authentication.ClientCertificateAuthenticationOptions;
 import org.springframework.vault.authentication.JwtAuthentication;
 import org.springframework.vault.authentication.JwtAuthenticationOptions;
 import org.springframework.vault.authentication.KubernetesAuthentication;
@@ -83,11 +91,12 @@ public final class HashicorpVaultClient implements Closeable {
         endpoint.setPort(Integer.parseInt(settings.getPort()));
         endpoint.setScheme(settings.getScheme());
 
-        VaultClient client = vaultClient(endpoint, null);
+        SimpleClientHttpRequestFactory requestFactory = requestFactory(HashicorpVaultTls.sslContext(settings));
+        VaultClient client = vaultClient(endpoint, requestFactory, null);
         // on HashiCorp Cloud the login methods are in the namespace, while Camel reads the secrets with the namespace in
         // their path: so only the login, and the renewal and revocation of its token, are sent to the namespace
         String namespace = settings.getCloudNamespace();
-        VaultClient loginClient = namespace != null ? vaultClient(endpoint, namespace) : client;
+        VaultClient loginClient = namespace != null ? vaultClient(endpoint, requestFactory, namespace) : client;
         ClientAuthentication authentication = createAuthentication(settings, loginClient);
 
         ExecutorServiceManager executorServiceManager = camelContext.getExecutorServiceManager();
@@ -143,6 +152,15 @@ public final class HashicorpVaultClient implements Closeable {
                 }
                 validateJwt(settings, "jwt");
             }
+            case CERT -> {
+                if (ObjectHelper.isEmpty(settings.getKeyStore())) {
+                    throw new IllegalArgumentException("The cert login needs a key store with the client certificate");
+                }
+                if (!"https".equalsIgnoreCase(settings.getScheme())) {
+                    // the client certificate is presented in the TLS handshake
+                    throw new IllegalArgumentException("The cert login needs the https scheme");
+                }
+            }
             default -> throw new IllegalStateException("Unexpected login: " + settings.getAuthentication());
         }
     }
@@ -163,6 +181,7 @@ public final class HashicorpVaultClient implements Closeable {
             case APPROLE -> new AppRoleAuthentication(appRoleOptions(settings), loginClient);
             case KUBERNETES -> new KubernetesAuthentication(kubernetesOptions(settings), loginClient);
             case JWT -> new JwtAuthentication(jwtOptions(settings), loginClient);
+            case CERT -> new ClientCertificateAuthentication(certOptions(settings), loginClient);
         };
     }
 
@@ -201,6 +220,18 @@ public final class HashicorpVaultClient implements Closeable {
         return builder.build();
     }
 
+    static ClientCertificateAuthenticationOptions certOptions(HashicorpVaultClientSettings settings) {
+        ClientCertificateAuthenticationOptions.ClientCertificateAuthenticationOptionsBuilder builder
+                = ClientCertificateAuthenticationOptions.builder();
+        if (ObjectHelper.isNotEmpty(settings.getRole())) {
+            builder.role(settings.getRole());
+        }
+        if (ObjectHelper.isNotEmpty(settings.getAuthMountPath())) {
+            builder.path(settings.getAuthMountPath());
+        }
+        return builder.build();
+    }
+
     /**
      * The JWT given, else the JWT in the file, read at every login, so that a token replaced in the file (such as a
      * projected service account token) is picked up.
@@ -216,13 +247,36 @@ public final class HashicorpVaultClient implements Closeable {
         return () -> content.get().trim();
     }
 
-    private static VaultClient vaultClient(VaultEndpoint endpoint, String namespace) {
-        // the HTTP client that Spring Vault uses for a VaultTemplate of an endpoint, with the timeouts it applies by
-        // default, so that no request to Vault (such as the revocation of the token on stop) waits forever
+    /**
+     * The HTTP client that Spring Vault uses for a VaultTemplate of an endpoint, with the timeouts it applies by
+     * default, so that no request to Vault (such as the revocation of the token on stop) waits forever, and with the
+     * TLS context of the trust store and key store when set.
+     */
+    private static SimpleClientHttpRequestFactory requestFactory(SSLContext sslContext) {
+        SimpleClientHttpRequestFactory requestFactory;
+        if (sslContext == null) {
+            requestFactory = new SimpleClientHttpRequestFactory();
+        } else {
+            // one socket factory for all connections, which the JDK then keeps alive and reuses
+            SSLSocketFactory socketFactory = sslContext.getSocketFactory();
+            requestFactory = new SimpleClientHttpRequestFactory() {
+                @Override
+                protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
+                    super.prepareConnection(connection, httpMethod);
+                    if (connection instanceof HttpsURLConnection https) {
+                        https.setSSLSocketFactory(socketFactory);
+                    }
+                }
+            };
+        }
         ClientOptions options = new ClientOptions();
-        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         requestFactory.setConnectTimeout(options.getConnectionTimeout());
         requestFactory.setReadTimeout(options.getReadTimeout());
+        return requestFactory;
+    }
+
+    private static VaultClient vaultClient(
+            VaultEndpoint endpoint, SimpleClientHttpRequestFactory requestFactory, String namespace) {
         VaultClient.Builder builder = VaultClient.builder().endpoint(endpoint).requestFactory(requestFactory);
         if (namespace != null) {
             builder.defaultNamespace(namespace);
