@@ -82,7 +82,7 @@ public class InfluxDb2Endpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "default", description = "Define the retention policy to the data created by the endpoint.")
     private String retentionPolicy = "default";
 
-    @UriParam(defaultValue = "INSERT", description = "Define if this operation is an insert of ping.")
+    @UriParam(defaultValue = "INSERT", description = "Define if this operation is an insert or a ping.")
     private Operation operation = Operation.INSERT;
     @UriParam(defaultValue = "true", description = "Define if we want to auto create the organization if it's not present.")
     private boolean autoCreateOrg = true;
