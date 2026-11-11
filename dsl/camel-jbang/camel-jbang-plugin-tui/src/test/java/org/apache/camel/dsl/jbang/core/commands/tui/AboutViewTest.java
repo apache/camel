@@ -445,6 +445,73 @@ class AboutViewTest {
     }
 
     @Test
+    void theRouteCamelAddsForTheApiDescriptionIsNamedByItsEndpoint() throws Exception {
+        // contracts/rest-code-first: the REST DSL serves /openapi from a route Camel adds and names route1
+        Files.writeString(dir.resolve("rest-code-first.camel.yaml"), """
+                - route:
+                    id: list-orders
+                    from:
+                      uri: direct:list-orders
+                      steps:
+                        - log: listed
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "rest-code-first";
+        info.directory = dir.toString();
+        for (String[] r : List.of(new String[] { "list-orders", "direct://list-orders" },
+                new String[] { "route1", "rest-api://openapi" })) {
+            RouteInfo route = new RouteInfo();
+            route.routeId = r[0];
+            route.from = r[1];
+            route.state = "Started";
+            info.routes.add(route);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        t.route("list-orders", "completed", 55, 1).route("route1", "completed", 56, 1);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<String> strips = render(about, info, 200, 34).lines().dropWhile(l -> !l.contains("What happened"))
+                    .filter(l -> l.contains("    list-orders ") || l.contains("    rest-api:openapi ")).toList();
+            assertThat(strips).hasSize(2);
+        });
+        assertThat(render(about, info, 200, 34)).doesNotContain(" route1 ");
+    }
+
+    @Test
+    void aLongRouteNameIsShownInFullWhenTheStripsLeaveRoom() throws Exception {
+        // route/content-based-router: its one route has the name of the example
+        Files.writeString(dir.resolve("content-based-router.camel.yaml"), """
+                - route:
+                    id: content-based-router
+                    from:
+                      uri: file:orders
+                      steps:
+                        - log: routed
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "content-based-router";
+        info.directory = dir.toString();
+        RouteInfo route = new RouteInfo();
+        route.routeId = "content-based-router";
+        route.state = "Started";
+        info.routes.add(route);
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        t.route("content-based-router", "completed", 55, 3);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34).lines()
+                .dropWhile(l -> !l.contains("What happened")).filter(l -> l.contains("content-based-rout")).toList())
+                .singleElement().satisfies(l -> assertThat(l).contains("content-based-router ").doesNotContain("…")));
+    }
+
+    @Test
     void lastFiveMinutesCountsAnExchangeOnceNotOncePerRouteItPasses() throws Exception {
         // fail-well/circuit-breaker: stock-check calls supplier with direct, once a second
         Files.writeString(dir.resolve("circuit-breaker.camel.yaml"), """

@@ -485,6 +485,24 @@ final class AboutView {
      * The routes in the order of the Routes panel, where a route comes after the one that calls it, then those it does
      * not have; the integration lists its routes by id, which puts a called route before its caller.
      */
+    /**
+     * The name of a route on its strip: its id, or for a route the sources do not have and Camel named route1, its
+     * endpoint (rest-api:openapi, the route that serves the API description of the REST DSL).
+     */
+    private String stripName(IntegrationInfo info, String routeId) {
+        About.Model m = model;
+        if (m == null || !routeId.matches("route\\d+") || m.routes().stream().anyMatch(r -> routeId.equals(r.routeId()))) {
+            return routeId;
+        }
+        String from = info.routes.stream().filter(r -> routeId.equals(r.routeId) && r.from != null).map(r -> r.from)
+                .findFirst().orElse(null);
+        if (from == null) {
+            return routeId;
+        }
+        int q = from.indexOf('?');
+        return (q >= 0 ? from.substring(0, q) : from).replaceFirst("://", ":");
+    }
+
     private List<String> routeOrder(IntegrationInfo info) {
         List<String> running = info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
         List<String> order = new ArrayList<>();
@@ -720,7 +738,8 @@ final class AboutView {
         int seconds = seconds();
         List<String> order = routeOrder(info);
         // the names, then one space: every line starts its columns at the same place
-        int label = Math.min(18, Math.max(8, order.stream().mapToInt(String::length).max().orElse(8))) + 4;
+        int longest = Math.max(8, order.stream().mapToInt(id -> stripName(info, id).length()).max().orElse(8));
+        int label = Math.min(18, longest) + 4;
         List<Timeline.RouteSeries> series = ctx.timeline.routes(info.pid, order, end, seconds);
         // what the line of a route has after its strip (its exchanges, an open circuit breaker, the worst that
         // happened, with the cause of a recovery up to CAUSE_WIDTH) takes the room it needs, and the strips the rest
@@ -729,6 +748,8 @@ final class AboutView {
             notes = Math.max(notes, width(stripNotes(info, r, last, end, seconds, CAUSE_WIDTH)));
         }
         int columns = stripColumns(seconds, width - label - notes - 1);
+        // a longer name in full, in what the strips leave (content-based-router)
+        label += Math.max(0, Math.min(longest + 4 - label, width - label - notes - 1 - columns));
         // the cause gets what the strips leave too
         int causeRoom = CAUSE_WIDTH + Math.max(0, width - label - notes - 1 - columns);
         stripColumns = columns;
@@ -741,7 +762,8 @@ final class AboutView {
             if (spaced && !lines.isEmpty()) {
                 lines.add(Line.from(Span.raw("")));
             }
-            String name = r.route().length() > label - 3 ? r.route().substring(0, label - 4) + "…" : r.route();
+            String name = stripName(info, r.route());
+            name = name.length() > label - 3 ? name.substring(0, label - 4) + "…" : name;
             long max = 1;
             // completed, recovered, handled, failed, down, redelivery attempts: the height is the exchanges done, the
             // attempts only colour the column (an exchange retried many times is still one exchange)

@@ -17,6 +17,8 @@
 package org.apache.camel.dsl.jbang.core.commands.ai;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -347,7 +349,23 @@ public final class AboutReport {
         int q = uri.indexOf('?');
         String answer = q >= 0 ? uri.substring(0, q) : uri;
         answer = answer.replaceFirst("^([a-zA-Z0-9+.-]+):/{0,3}", "$1:");
+        // the runtime has the URI encoded as Camel normalizes it (rest-openapi://stock-api.json%23reserveStock,
+        // platform-http:///stock/%7Bsku%7D), the sources as written
+        answer = decoded(answer);
         return answer.endsWith("/") ? answer.substring(0, answer.length() - 1) : answer;
+    }
+
+    private static String decoded(String uri) {
+        if (uri.indexOf('%') < 0) {
+            return uri;
+        }
+        try {
+            // a + is a plus in a path, not a space
+            return URLDecoder.decode(uri.replace("+", "%2B"), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            // a % that is no escape
+            return uri;
+        }
     }
 
     private static String total(JsonObject jo) {
