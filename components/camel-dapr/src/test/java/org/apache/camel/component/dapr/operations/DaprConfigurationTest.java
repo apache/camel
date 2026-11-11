@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dapr.operations;
 
+import java.util.List;
 import java.util.Map;
 
 import io.dapr.client.DaprClient;
@@ -31,6 +32,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,6 +75,47 @@ public class DaprConfigurationTest extends CamelTestSupport {
         assertNotNull(operationResponse);
         assertEquals(mockBody, operationResponse.getBody());
         assertEquals(mockResponse, operationResponse.getHeaders().get(DaprConstants.RAW_CONFIG_RESPONSE));
+    }
+
+    @Test
+    void testConfigKeysFromHeader() {
+        assertEquals(List.of("key1", "key2"), sentConfigKeys("endpointKey", "key1,key2"));
+    }
+
+    @Test
+    void testConfigKeysFromListHeader() {
+        assertEquals(List.of("key1", "key2"), sentConfigKeys("endpointKey", List.of("key1", " key2 ")));
+    }
+
+    @Test
+    void testConfigKeysFromHeaderAreTrimmed() {
+        assertEquals(List.of("key1", "key2"), sentConfigKeys("endpointKey", " key1, ,key2 ,"));
+    }
+
+    @Test
+    void testConfigKeysFromEndpointWithoutHeader() {
+        assertEquals(List.of("k1", "k2"), sentConfigKeys("k1, k2", null));
+    }
+
+    private List<String> sentConfigKeys(String endpointKeys, Object header) {
+        when(endpoint.getClient()).thenReturn(client);
+        when(client.getConfiguration(any(GetConfigurationRequest.class))).thenReturn(Mono.just(Map.of()));
+
+        DaprConfiguration configuration = new DaprConfiguration();
+        configuration.setOperation(DaprOperation.configuration);
+        configuration.setConfigStore("myStore");
+        configuration.setConfigKeys(endpointKeys);
+        DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(DaprConstants.CONFIG_KEYS, header);
+
+        final DaprConfigurationHandler operation = new DaprConfigurationHandler(configurationOptionsProxy, endpoint);
+        operation.handle(exchange);
+
+        ArgumentCaptor<GetConfigurationRequest> captor = ArgumentCaptor.forClass(GetConfigurationRequest.class);
+        verify(client).getConfiguration(captor.capture());
+        return captor.getValue().getKeys();
     }
 
     @Test

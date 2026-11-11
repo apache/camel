@@ -529,17 +529,57 @@ YAML::
 
 - `configuration` -
 
-._Java-only: uses `List.of()` to set configuration key list_
+The `CamelDaprConfigKeys` header takes the place of the `configKeys` option. It is a comma-separated String or a
+`Collection` of keys.
+
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
-    .process(exchange -> {
-        exchange.getIn().setHeader("CamelDaprConfigKeys", List.of("k1", "k2"));
-    })
-    .to("dapr:configuration?configStore=myStore")
-    .log("Received config updates from Dapr: ${body}")
-    .to("mock:result");
+  .setHeader("CamelDaprConfigKeys", constant("k1,k2"))
+  .to("dapr:configuration?configStore=myStore")
+  .log("Received config updates from Dapr: ${body}")
+  .to("mock:result");
 ----
+
+XML::
++
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <setHeader name="CamelDaprConfigKeys">
+    <constant>k1,k2</constant>
+  </setHeader>
+  <to uri="dapr:configuration?configStore=myStore"/>
+  <log message="Received config updates from Dapr: ${body}"/>
+  <to uri="mock:result"/>
+</route>
+----
+
+YAML::
++
+[source,yaml]
+----
+- route:
+    from:
+      uri: direct:start
+      steps:
+        - setHeader:
+            name: CamelDaprConfigKeys
+            constant: "k1,k2"
+        - to:
+            uri: dapr:configuration
+            parameters:
+              configStore: myStore
+        - log: "Received config updates from Dapr: ${body}"
+        - to:
+            uri: mock:result
+----
+====
 
 - `lock: tryLock` -
 
