@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.opa;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -43,10 +43,10 @@ import com.styra.opa.wasm.OpaPolicy;
  */
 final class OpaWasmPolicyPool implements AutoCloseable {
 
-    private final Deque<OpaPolicy> idle = new ConcurrentLinkedDeque<>();
+    private final Deque<OpaPolicy> idle = new ArrayDeque<>();
     private final Semaphore permits;
     private final Supplier<OpaPolicy> factory;
-    private final AtomicBoolean closed = new AtomicBoolean();
+    private volatile boolean closed;
     private final int size;
     private final long borrowTimeout;
 
@@ -64,7 +64,7 @@ final class OpaWasmPolicyPool implements AutoCloseable {
      * @throws InterruptedException if the thread was interrupted while waiting; the interrupt flag is left set
      */
     Lease borrow() throws TimeoutException, InterruptedException {
-        if (closed.get()) {
+        if (closed) {
             throw new IllegalStateException("The policy pool is closed");
         }
         boolean acquired;
@@ -83,22 +83,34 @@ final class OpaWasmPolicyPool implements AutoCloseable {
                                        + " exchanges concurrently than that, or borrowTimeout if the policy itself"
                                        + " legitimately takes this long to evaluate");
         }
-        OpaPolicy policy;
         try {
-            policy = idle.pollFirst();
+            OpaPolicy policy;
+            synchronized (idle) {
+                if (closed) {
+                    throw new IllegalStateException("The policy pool is closed");
+                }
+                policy = idle.pollFirst();
+            }
             if (policy == null) {
+                // Construction can be expensive, so do not prevent another lease returning or the pool closing.
                 policy = factory.get();
+            }
+            synchronized (idle) {
+                if (closed) {
+                    throw new IllegalStateException("The policy pool is closed");
+                }
+                return new Lease(policy);
             }
         } catch (RuntimeException e) {
             permits.release();
             throw e;
         }
-        return new Lease(policy);
     }
 
     @Override
     public void close() {
-        if (closed.compareAndSet(false, true)) {
+        synchronized (idle) {
+            closed = true;
             idle.clear();
         }
         // threads already waiting are not woken here: they are bounded by borrowTimeout, and a shutdown that
@@ -136,8 +148,10 @@ final class OpaWasmPolicyPool implements AutoCloseable {
                 return;
             }
             try {
-                if (!closed.get()) {
-                    idle.offerFirst(policy);
+                synchronized (idle) {
+                    if (!closed) {
+                        idle.offerFirst(policy);
+                    }
                 }
             } finally {
                 permits.release();
