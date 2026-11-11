@@ -35,7 +35,7 @@
     "producerOut": { "carriers": [ "unchanged" ] }
   },
   "properties": {
-    "loggerName": { "index": 0, "kind": "path", "displayName": "Logger Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Name of the logging category to use" },
+    "loggerName": { "index": 0, "kind": "path", "displayName": "Logger Name", "group": "producer", "label": "", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Name of the logging category to use" },
     "groupActiveOnly": { "index": 1, "kind": "parameter", "displayName": "Group Active Only", "group": "producer", "label": "", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "autowired": false, "secret": false, "defaultValue": true, "description": "If true, will hide stats when no new messages have been received for a time interval, if false, show stats regardless of message traffic." },
     "groupDelay": { "index": 2, "kind": "parameter", "displayName": "Group Delay", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "description": "Set the initial delay for stats (in millis)" },
     "groupInterval": { "index": 3, "kind": "parameter", "displayName": "Group Interval", "group": "producer", "label": "", "required": false, "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "autowired": false, "secret": false, "description": "If specified will group message stats by this time interval (in millis)" },
