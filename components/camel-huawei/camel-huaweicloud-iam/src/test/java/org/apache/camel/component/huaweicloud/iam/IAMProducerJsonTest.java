@@ -24,8 +24,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneGroupResult;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsRequest;
 import com.huaweicloud.sdk.iam.v3.model.KeystoneListGroupsResponse;
@@ -51,6 +49,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -68,7 +69,7 @@ class IAMProducerJsonTest extends CamelTestSupport {
     private static final String USER_JSON = "{\"name\":\"User 19\",\"description\":\"Zürich ✓\",\"pwd_status\":true}";
     private static final String GROUP_JSON = "{\"name\":\"Group 43\",\"description\":\"Zürich ✓\",\"domain_id\":\"123\"}";
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
 
     TestConfiguration testConfiguration = new TestConfiguration();
 

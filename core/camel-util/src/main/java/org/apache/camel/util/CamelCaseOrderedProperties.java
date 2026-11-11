@@ -22,12 +22,12 @@ import java.util.Properties;
 /**
  * This class is a camelCase ordered {@link Properties} where the key/values are stored in the order they are added or
  * loaded.
- * <p/>
+ * <p>
  * The keys are stored in the original case, for example a key of <code>camel.main.stream-caching-enabled</code> is
  * stored as <code>camel.main.stream-caching-enabled</code>.
- * <p/>
- * However the lookup of a value by key with the <tt>get</tt> methods, will support camelCase or dash style.
- * <p/>
+ * <p>
+ * However the lookup of a value by key with the <code>get</code> methods, will support camelCase or dash style.
+ * <p>
  * Note: This implementation is only intended as implementation detail for Camel tooling such as camel-jbang, and has
  * only been designed to provide the needed functionality. The complex logic for loading properties has been kept from
  * the JDK {@link Properties} class.

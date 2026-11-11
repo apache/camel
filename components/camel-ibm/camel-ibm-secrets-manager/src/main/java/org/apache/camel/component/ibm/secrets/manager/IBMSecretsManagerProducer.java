@@ -28,9 +28,6 @@ import javax.xml.transform.Source;
 
 import org.w3c.dom.Node;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.secrets_manager_sdk.secrets_manager.v2.model.*;
 import org.apache.camel.Endpoint;
@@ -40,10 +37,14 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class IBMSecretsManagerProducer extends DefaultProducer {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {
     };
 
@@ -262,7 +263,7 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         }
         try {
             return MAPPER.writeValueAsString(body);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException(
                     "The message body of type " + body.getClass().getName()
                                                + " cannot be stored as JSON in an arbitrary secret. Convert it to text first.",
@@ -287,7 +288,7 @@ public class IBMSecretsManagerProducer extends DefaultProducer {
         }
         try {
             return MAPPER.readValue(json, MAP_TYPE);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             // the cause is not kept, as the message of the JSON parser can quote the secret
             throw new IllegalArgumentException(
                     "Secret data must be provided as a Map or a JSON object in the message body for a kv secret,"

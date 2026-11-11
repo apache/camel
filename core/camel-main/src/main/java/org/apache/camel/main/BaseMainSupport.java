@@ -2848,6 +2848,9 @@ public abstract class BaseMainSupport extends BaseService {
             pc.addOverrideProperty(PREFIX_SANITIZER + "checks", config.getChecks());
         }
         pc.addOverrideProperty(PREFIX_SANITIZER + "stackDepth", Integer.toString(config.getStackDepth()));
+        if (config.getPendingTimeout() != null) {
+            pc.addOverrideProperty(PREFIX_SANITIZER + "pendingTimeout", config.getPendingTimeout());
+        }
         pc.addOverrideProperty(PREFIX_SANITIZER + "reportOnShutdown", Boolean.toString(config.isReportOnShutdown()));
 
         // with profile dev or enabled=true the sanitizer would be switched on (never with profile prod), but the options

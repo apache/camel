@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
@@ -68,6 +67,8 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.io.Content;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 public abstract class AbstractClientBase extends ServiceSupport
         implements SalesforceSession.SalesforceSessionListener, HttpClientHolder {
@@ -300,8 +301,7 @@ public abstract class AbstractClientBase extends ServiceSupport
     }
 
     final List<RestError> readErrorsFrom(
-            final InputStream responseContent, final ObjectMapper objectMapper)
-            throws IOException {
+            final InputStream responseContent, final ObjectMapper objectMapper) {
         final List<RestError> restErrors;
         restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
         return restErrors;
@@ -328,7 +328,7 @@ public abstract class AbstractClientBase extends ServiceSupport
                     String body = null;
                     try {
                         restErrors = readErrorsFrom(responseContent, objectMapper);
-                    } catch (IOException ignored) {
+                    } catch (JacksonException ignored) {
                         // ok. could be a custom response
                     }
                     try {

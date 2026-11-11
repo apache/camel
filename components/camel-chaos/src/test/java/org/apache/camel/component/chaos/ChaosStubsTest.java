@@ -88,9 +88,10 @@ class ChaosStubsTest extends ChaosTestSupport {
     void theSuggestionsSeeTheStubbedRemoteEndpoints() {
         Map<String, String> rules = rules(ChaosAdvisor.suggest(context));
         assertThat(rules)
-                .containsEntry("mq route-error consumer", "route=mq error rate=0.05 until=10m")
+                .containsEntry("mq route-error consumer", "route=mq error rate=0.05 until=10m expect=mq:failed<=0")
                 .containsEntry("mq connection-refused errors",
-                        "endpoint=remotemq://out error exception=java.net.ConnectException rate=0.25 until=10m");
+                        "endpoint=remotemq://out error exception=java.net.ConnectException rate=0.25 until=10m"
+                                                               + " expect=mq:failed<=0");
         // the stub of audit stands in for nothing, so there is nothing remote to try in route plain
         assertThat(rules.keySet()).noneMatch(k -> k.startsWith("plain "));
     }

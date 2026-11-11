@@ -27,12 +27,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.Configuration;
+import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Option;
-import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
-import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.jayway.jsonpath.spi.json.Jackson3JsonProvider;
+import com.jayway.jsonpath.spi.mapper.Jackson3MappingProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -43,6 +43,10 @@ import org.apache.camel.support.BodyFacts;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static com.jayway.jsonpath.Option.ALWAYS_RETURN_LIST;
 import static com.jayway.jsonpath.Option.DEFAULT_PATH_LEAF_TO_NULL;
@@ -53,6 +57,8 @@ public class JsonPathEngine {
     private static final Logger LOG = LoggerFactory.getLogger(JsonPathEngine.class);
 
     private static final String JACKSON_JSON_ADAPTER = "org.apache.camel.jsonpath.jackson.JacksonJsonAdapter";
+    private static final String JACKSON2_NODE_PACKAGE = "com.fasterxml.jackson.databind.node.";
+    private static final ObjectMapper DEFAULT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private static final Pattern SIMPLE_PATTERN = Pattern.compile("\\$\\{[^\\}]+\\}", Pattern.MULTILINE);
     private final String expression;
@@ -80,13 +86,11 @@ public class JsonPathEngine {
         }
         // Use custom ObjectMapper if provided (CAMEL-17956)
         ObjectMapper objectMapper = findRegisteredMapper(context);
-        if (objectMapper != null) {
-            builder.jsonProvider(new JacksonJsonProvider(objectMapper));
-            builder.mappingProvider(new JacksonMappingProvider(objectMapper));
-        } else {
-            builder.jsonProvider(new JacksonJsonProvider());
-            builder.mappingProvider(new JacksonMappingProvider());
+        if (objectMapper == null) {
+            objectMapper = DEFAULT_MAPPER;
         }
+        builder.jsonProvider(new JsonProvider(objectMapper));
+        builder.mappingProvider(new Jackson3MappingProvider(objectMapper));
 
         if (suppressExceptions) {
             builder.options(SUPPRESS_EXCEPTIONS);
@@ -146,7 +150,7 @@ public class JsonPathEngine {
                 Iterable<Object> it = (Iterable<Object>) answer;
                 for (Object o : it) {
                     if (adapter != null) {
-                        String json = adapter.writeAsString(o, exchange);
+                        String json = writeAsString(o, exchange);
                         if (json != null) {
                             list.add(json);
                         }
@@ -154,7 +158,7 @@ public class JsonPathEngine {
                 }
                 return list;
             } else {
-                String json = adapter.writeAsString(answer, exchange);
+                String json = writeAsString(answer, exchange);
                 if (json != null) {
                     return json;
                 }
@@ -162,6 +166,14 @@ public class JsonPathEngine {
         }
 
         return answer;
+    }
+
+    private String writeAsString(Object value, Exchange exchange) {
+        return isJackson2Node(value) ? value.toString() : adapter.writeAsString(value, exchange);
+    }
+
+    private static boolean isJackson2Node(Object value) {
+        return value != null && value.getClass().getName().startsWith(JACKSON2_NODE_PACKAGE);
     }
 
     private Object getPayload(Exchange exchange) {
@@ -200,6 +212,10 @@ public class JsonPathEngine {
         } else if (json instanceof List list) {
             LOG.trace("JSonPath: {} is read as List: {}", path, json);
             return JsonPath.using(configuration).parse(list).read(path);
+        } else if (json instanceof JsonNode || isJackson2Node(json)) {
+            // Jackson 3 would convert a Jackson 2 node as a bean; the text of a node of either line is its JSON
+            LOG.trace("JSonPath: {} is read as JsonNode: {}", path, json);
+            return JsonPath.using(configuration).parse(json.toString()).read(path);
         } else {
             //try to auto convert into inputStream
             answer = readWithInputStream(path, exchange);
@@ -320,6 +336,26 @@ public class JsonPathEngine {
                         e);
             }
             initJsonAdapter = true;
+        }
+    }
+
+    /**
+     * Invalid JSON in a stream fails with {@link InvalidJsonException} as well: the provider only wraps an IOException
+     * there, which a Jackson 3 exception is not.
+     */
+    private static final class JsonProvider extends Jackson3JsonProvider {
+
+        JsonProvider(ObjectMapper objectMapper) {
+            super(objectMapper);
+        }
+
+        @Override
+        public Object parse(InputStream jsonStream, String charset) {
+            try {
+                return super.parse(jsonStream, charset);
+            } catch (JacksonException e) {
+                throw new InvalidJsonException(e);
+            }
         }
     }
 }

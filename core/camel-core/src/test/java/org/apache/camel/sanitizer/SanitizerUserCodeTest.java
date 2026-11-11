@@ -17,11 +17,11 @@
 package org.apache.camel.sanitizer;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,12 +31,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Rule R1 on processors and strategies of a user that break the contract of AsyncProcessor: each test fails with a
- * report that names the step and the class, and says so with {@link ExpectSanitizerViolation}.
+ * report that names the step and the class, and says so with {@link ExpectSanitizerViolation}. The tests without it
+ * check what Camel handles so that no rule is broken, such as an Error (not a VirtualMachineError) of a plain
+ * Processor.
  */
 @CamelSanitizer
 class SanitizerUserCodeTest extends ContextTestSupport {
@@ -65,7 +68,7 @@ class SanitizerUserCodeTest extends ContextTestSupport {
                 // no id: the step has the id Camel generates, as process1
                 from("direct:autoId").routeId("autoId").process(new BrokenUserCode.ThrowsInProcess());
                 from("direct:plainError").process(new BrokenUserCode.ThrowsError()).id("plainError");
-                from("direct:beanError").bean(new BrokenUserCode.ThrowsError()).id("beanError");
+                from("direct:beanError").routeId("beanRoute").bean(new BrokenUserCode.ThrowsError()).id("beanError");
                 from("direct:late").process(throwsThenCallsBack).id("late");
                 from("direct:aggregateError")
                         .aggregate(constant(true), new BrokenUserCode.ErrorStrategy()).completionSize(2).id("aggregate")
@@ -160,57 +163,27 @@ class SanitizerUserCodeTest extends ContextTestSupport {
     }
 
     @Test
-    @ExpectSanitizerViolation(value = Violation.THREW_AFTER_CALLBACK, step = "plainError")
-    void anErrorOfAPlainProcessorIsReportedAsCamelsAdapter() {
-        sendAndCatchTheError("direct:plainError");
-
-        SanitizerViolation v = awaitOne(Violation.THREW_AFTER_CALLBACK);
-        assertEquals(BrokenUserCode.ThrowsError.class.getName(), v.getProcessor());
-        assertAdapterReport(v);
+    void anErrorOfAPlainProcessorFailsTheExchange() {
+        // Camel's adapter around a plain Processor sets what it throws on the exchange, also an Error, and then calls the
+        // callback: no rule is broken
+        assertFailedWithTheError(template.send("direct:plainError", e -> e.getMessage().setBody("x")));
+        assertEquals(0, Sanitizer.get(context).getViolations().size());
     }
 
     @Test
-    @ExpectSanitizerViolation(value = Violation.THREW_AFTER_CALLBACK, step = "beanError")
-    void aBeanIsNamedByItsClass() {
-        sendAndCatchTheError("direct:beanError");
-
-        SanitizerViolation v = awaitOne(Violation.THREW_AFTER_CALLBACK);
-        // the bean, not Camel's BeanProcessor that calls it
-        assertEquals(BrokenUserCode.ThrowsError.class.getName(), v.getProcessor());
-        assertAdapterReport(v);
+    void anErrorOfABeanThatIsAProcessorFailsTheExchange() {
+        assertFailedWithTheError(template.send("direct:beanError", e -> e.getMessage().setBody("x")));
+        assertEquals(0, Sanitizer.get(context).getViolations().size());
+        // a report at this step would name the bean, not Camel's BeanProcessor that calls it
+        assertEquals(BrokenUserCode.ThrowsError.class.getName(),
+                Sanitizer.get(context).processorOf("beanRoute", "beanError"));
     }
 
-    @Test
-    void theAdaptersOfCamelAreFoundByTheirNames() throws Exception {
-        // the adapters are known by class and method name (one is a private nested class, one is in camel-bean): a
-        // rename or a move of one must be followed in Sanitizer.Trace.SYNC_ADAPTERS
-        for (String adapter : Sanitizer.Trace.SYNC_ADAPTERS) {
-            int dot = adapter.lastIndexOf('.');
-            Class<?> type = Class.forName(adapter.substring(0, dot));
-            String method = adapter.substring(dot + 1);
-            assertTrue(Arrays.stream(type.getDeclaredMethods()).anyMatch(m -> m.getName().equals(method)), adapter);
-        }
-    }
-
-    private void sendAndCatchTheError(String uri) {
-        // the exchange stays inflight after the Error went through, so the stop of the context does not wait the
-        // default 10 seconds for it
-        context.getShutdownStrategy().setTimeout(1);
-        try {
-            template.send(uri, e -> e.getMessage().setBody("x"));
-        } catch (BrokenUserCode.StrategyBug e) {
-            // the Error goes through Camel's adapter, after the callback; only the report matters here
-        }
-    }
-
-    private static void assertAdapterReport(SanitizerViolation v) {
-        // the callback was called by Camel's adapter around the plain Processor, not by the processor: the report says
-        // so, and does not tell the author of the processor to stop throwing after the callback
-        assertTrue(v.getText().contains("the callback was called by Camel's adapter for a plain Processor"), v.getText());
-        assertTrue(v.getText().contains(BrokenUserCode.StrategyBug.class.getName() + ": Forced by ThrowsError"),
-                v.getText());
-        assertTrue(v.getText().contains("Usual fix: " + SanitizerStepListener.StepCall.SYNC_ADAPTER_FIX), v.getText());
-        assertTrue(v.getText().contains("at " + BrokenUserCode.ThrowsError.class.getName() + ".process"), v.getText());
+    private static void assertFailedWithTheError(Exchange out) {
+        // the exchange keeps the Error wrapped in a CamelExecutionException
+        assertInstanceOf(CamelExecutionException.class, out.getException());
+        assertInstanceOf(BrokenUserCode.StrategyBug.class, out.getException().getCause());
+        assertEquals("Forced by ThrowsError", out.getException().getCause().getMessage());
     }
 
     @Test

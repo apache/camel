@@ -41,6 +41,8 @@ public class DefaultTransformerResolver implements TransformerResolver<Transform
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultTransformerResolver.class);
 
+    private static final String JACKSON3_PACKAGE = "org.apache.camel.component.jackson3";
+
     @Override
     public Transformer resolve(TransformerKey key, CamelContext context) {
         String normalizedKey = normalize(key);
@@ -64,20 +66,39 @@ public class DefaultTransformerResolver implements TransformerResolver<Transform
         FactoryFinder ff = context.getCamelContextExtension().getBootstrapFactoryFinder(DATA_TYPE_TRANSFORMER_RESOURCE_PATH);
         Optional<Transformer> transformer = ResolverHelper.resolveService(context, ff, key, Transformer.class);
 
-        // Special handling for Jackson transformers - detect which implementation is available
-        if (transformer.isEmpty() && isJacksonTransformer(key)) {
-            Class<?> transformerClass = detectJacksonTransformer(key, context);
-            if (transformerClass != null) {
-                try {
-                    Transformer instance = (Transformer) context.getInjector().newInstance(transformerClass, false);
-                    transformer = Optional.of(instance);
-                } catch (Exception e) {
-                    LOG.debug("Failed to instantiate Jackson transformer class: {}", transformerClass.getName(), e);
+        if (isJacksonTransformer(key)) {
+            if (transformer.isPresent()) {
+                // The Jackson 2.x (camel-jackson) and Jackson 3.x (camel-jackson3) lines register the same transformer
+                // names. When both are on the classpath the service file found first would win, so prefer the
+                // Jackson 3.x one.
+                if (!transformer.get().getClass().getName().startsWith(JACKSON3_PACKAGE)) {
+                    Class<?> jackson3 = resolveJackson3TransformerClass(key, context);
+                    if (jackson3 != null) {
+                        Optional<Transformer> preferred = newTransformer(jackson3, context);
+                        if (preferred.isPresent()) {
+                            transformer = preferred;
+                        }
+                    }
+                }
+            } else {
+                // Special handling for Jackson transformers - detect which implementation is available
+                Class<?> transformerClass = detectJacksonTransformer(key, context);
+                if (transformerClass != null) {
+                    transformer = newTransformer(transformerClass, context);
                 }
             }
         }
 
         return transformer;
+    }
+
+    private Optional<Transformer> newTransformer(Class<?> transformerClass, CamelContext context) {
+        try {
+            return Optional.of((Transformer) context.getInjector().newInstance(transformerClass, false));
+        } catch (Exception e) {
+            LOG.debug("Failed to instantiate Jackson transformer class: {}", transformerClass.getName(), e);
+            return Optional.empty();
+        }
     }
 
     /**

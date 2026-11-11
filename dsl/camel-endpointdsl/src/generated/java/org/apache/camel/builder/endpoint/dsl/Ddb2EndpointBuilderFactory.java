@@ -861,7 +861,7 @@ public interface Ddb2EndpointBuilderFactory {
             return "CamelAwsDdbItem";
         }
         /**
-         * The list of attributes returned by the operation.
+         * The list of items returned by the operation.
          * 
          * The option is a: {@code List<Map<String,AttributeValue>>} type.
          * 

@@ -1044,7 +1044,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
             return "CamelGoogleMailStreamCc";
         }
         /**
-         * The blind carbon cpoy of the message.
+         * The blind carbon copy of the message.
          * 
          * The option is a: {@code String} type.
          * 

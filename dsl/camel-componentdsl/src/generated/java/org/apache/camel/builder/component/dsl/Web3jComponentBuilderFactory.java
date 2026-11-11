@@ -539,7 +539,7 @@ public interface Web3jComponentBuilderFactory {
         }
     
         /**
-         * The transaction index position withing a block.
+         * The transaction index position within a block.
          * 
          * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 

@@ -20,11 +20,11 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 public class OpenAIMockMultipleToolsTest {
 
@@ -60,15 +60,15 @@ public class OpenAIMockMultipleToolsTest {
             JsonNode message1 = choice1.path("message");
 
             // Assert first tool call
-            Assertions.assertEquals("assistant", message1.path("role").asText());
+            Assertions.assertEquals("assistant", message1.path("role").asString());
             JsonNode toolCalls1 = message1.path("tool_calls");
             Assertions.assertEquals(1, toolCalls1.size());
             JsonNode toolCall1 = toolCalls1.get(0);
             Assertions.assertEquals("FindsTheLatitudeAndLongitudeOfAGivenCity",
-                    toolCall1.path("function").path("name").asText());
-            Assertions.assertEquals("{\"name\":\"London\"}", toolCall1.path("function").path("arguments").asText());
-            String toolCallId1 = toolCall1.path("id").asText();
-            Assertions.assertEquals("tool_calls", choice1.path("finish_reason").asText());
+                    toolCall1.path("function").path("name").asString());
+            Assertions.assertEquals("{\"name\":\"London\"}", toolCall1.path("function").path("arguments").asString());
+            String toolCallId1 = toolCall1.path("id").asString();
+            Assertions.assertEquals("tool_calls", choice1.path("finish_reason").asString());
 
             // Second request: LLM provides tool output for the first tool call
             String secondRequestBody = String.format(
@@ -88,15 +88,15 @@ public class OpenAIMockMultipleToolsTest {
             JsonNode message2 = choice2.path("message");
 
             // Assert second tool call
-            Assertions.assertEquals("assistant", message2.path("role").asText());
+            Assertions.assertEquals("assistant", message2.path("role").asString());
             JsonNode toolCalls2 = message2.path("tool_calls");
             Assertions.assertEquals(1, toolCalls2.size());
             JsonNode toolCall2 = toolCalls2.get(0);
             Assertions.assertEquals("ForecastsTheWeatherForTheGivenLatitudeAndLongitude",
-                    toolCall2.path("function").path("name").asText());
+                    toolCall2.path("function").path("name").asString());
             Assertions.assertEquals("{\"latitude\":\"51.50758961965397\",\"longitude\":\"-0.13388057363742217\"}",
-                    toolCall2.path("function").path("arguments").asText());
-            Assertions.assertEquals("tool_calls", choice2.path("finish_reason").asText());
+                    toolCall2.path("function").path("arguments").asString());
+            Assertions.assertEquals("tool_calls", choice2.path("finish_reason").asString());
         }
     }
 }

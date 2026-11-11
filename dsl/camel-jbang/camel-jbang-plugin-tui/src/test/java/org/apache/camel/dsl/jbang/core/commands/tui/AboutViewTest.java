@@ -445,6 +445,73 @@ class AboutViewTest {
     }
 
     @Test
+    void theRouteCamelAddsForTheApiDescriptionIsNamedByItsEndpoint() throws Exception {
+        // contracts/rest-code-first: the REST DSL serves /openapi from a route Camel adds and names route1
+        Files.writeString(dir.resolve("rest-code-first.camel.yaml"), """
+                - route:
+                    id: list-orders
+                    from:
+                      uri: direct:list-orders
+                      steps:
+                        - log: listed
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "rest-code-first";
+        info.directory = dir.toString();
+        for (String[] r : List.of(new String[] { "list-orders", "direct://list-orders" },
+                new String[] { "route1", "rest-api://openapi" })) {
+            RouteInfo route = new RouteInfo();
+            route.routeId = r[0];
+            route.from = r[1];
+            route.state = "Started";
+            info.routes.add(route);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        t.route("list-orders", "completed", 55, 1).route("route1", "completed", 56, 1);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<String> strips = render(about, info, 200, 34).lines().dropWhile(l -> !l.contains("What happened"))
+                    .filter(l -> l.contains("    list-orders ") || l.contains("    rest-api:openapi ")).toList();
+            assertThat(strips).hasSize(2);
+        });
+        assertThat(render(about, info, 200, 34)).doesNotContain(" route1 ");
+    }
+
+    @Test
+    void aLongRouteNameIsShownInFullWhenTheStripsLeaveRoom() throws Exception {
+        // route/content-based-router: its one route has the name of the example
+        Files.writeString(dir.resolve("content-based-router.camel.yaml"), """
+                - route:
+                    id: content-based-router
+                    from:
+                      uri: file:orders
+                      steps:
+                        - log: routed
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "content-based-router";
+        info.directory = dir.toString();
+        RouteInfo route = new RouteInfo();
+        route.routeId = "content-based-router";
+        route.state = "Started";
+        info.routes.add(route);
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        t.route("content-based-router", "completed", 55, 3);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34).lines()
+                .dropWhile(l -> !l.contains("What happened")).filter(l -> l.contains("content-based-rout")).toList())
+                .singleElement().satisfies(l -> assertThat(l).contains("content-based-router ").doesNotContain("…")));
+    }
+
+    @Test
     void lastFiveMinutesCountsAnExchangeOnceNotOncePerRouteItPasses() throws Exception {
         // fail-well/circuit-breaker: stock-check calls supplier with direct, once a second
         Files.writeString(dir.resolve("circuit-breaker.camel.yaml"), """
@@ -492,6 +559,61 @@ class AboutViewTest {
                 .contains("↳ supplier")
                 // 10 checks, not 30 for the three routes they went through
                 .contains("10 exchanges · 1 failed").doesNotContain("30 exchanges").doesNotContain("20 exchanges"));
+    }
+
+    @Test
+    void theOperationsOfAContractComeInAndAreCountedOnce() throws Exception {
+        // contracts/openapi-server: the REST DSL serves stock-api.json; Camel adds route2 to serve it, which hands each
+        // request to the route of its operation
+        Files.writeString(dir.resolve("stock-api.json"), """
+                {"servers": [{"url": "http://localhost:8080/api"}],
+                 "paths": {"/stock/{sku}/reserve": {"post": {"operationId": "reserveStock"}}}}
+                """);
+        Files.writeString(dir.resolve("openapi-server.camel.yaml"), """
+                - rest:
+                    openApi:
+                      specification: stock-api.json
+                - route:
+                    id: reserveStock
+                    from:
+                      uri: direct:reserveStock
+                      steps:
+                        - log: reserved
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "openapi-server";
+        info.directory = dir.toString();
+        for (String[] r : List.of(new String[] { "reserveStock", "direct://reserveStock" },
+                new String[] { "route2", "rest-openapi://stock-api.json?clientRequestValidation=true" })) {
+            RouteInfo route = new RouteInfo();
+            route.routeId = r[0];
+            route.from = r[1];
+            route.state = "Started";
+            info.routes.add(route);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        for (int i = 50; i < 56; i++) {
+            t.route("reserveStock", "completed", i, 1).route("route2", "completed", i, 1);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("POST /api/stock/{sku}/reserve").doesNotContain("nothing from outside")
+                // 6 reservations, not 12 with the route that served them
+                .contains("6 exchanges").doesNotContain("12 exchanges"));
+    }
+
+    @Test
+    void aRouteAnAiAgentCallsAsAToolHasTheIconOfAi() {
+        // ai/mcp-server: its routes start from ai-tool
+        assertThat(AboutView.icon("ai-tool")).isEqualTo(TuiIcons.MCP);
+        assertThat(AboutView.icon("ai")).isEqualTo(TuiIcons.MCP);
+        assertThat(AboutView.icon("http")).isEqualTo("🌐");
+        // cloud/aws-sqs: the queue the courier route consumes has the icon Out gives it, from the catalog
+        assertThat(AboutView.inIcon("aws2-sqs")).isEqualTo("📨");
     }
 
     @Test

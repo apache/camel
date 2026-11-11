@@ -18,10 +18,10 @@ package org.apache.camel.component.a2a.model;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.a2a.util.A2AJsonMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,7 +35,7 @@ class PartTest {
         JsonNode json = mapper.valueToTree(new TextPart("hello"));
 
         assertThat(json.has("kind")).isFalse();
-        assertThat(json.get("text").asText()).isEqualTo("hello");
+        assertThat(json.get("text").asString()).isEqualTo("hello");
     }
 
     @Test

@@ -19,7 +19,6 @@ package org.apache.camel.component.clickup;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -29,10 +28,13 @@ import org.apache.camel.component.clickup.model.Event;
 import org.apache.camel.component.clickup.service.ClickUpWebhookService;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class ClickUpWebhookProcessor extends AsyncProcessorSupport {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private final AsyncProcessor nextProcessor;
 
@@ -63,7 +65,7 @@ public class ClickUpWebhookProcessor extends AsyncProcessorSupport {
         Event event;
         try (InputStream body = exchange.getIn().getBody(InputStream.class)) {
             event = MAPPER.readValue(body, Event.class);
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             exchange.setException(e);
 
             callback.done(true);

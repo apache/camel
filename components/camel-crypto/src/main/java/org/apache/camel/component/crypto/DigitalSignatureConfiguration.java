@@ -284,7 +284,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the reference name for a PrivateKey that can be found in the registry.
+     * Sets the reference name for a Certificate that can be found in the registry.
      */
     public void setCertificateName(String certificateName) {
         if (context != null && certificateName != null) {
@@ -299,7 +299,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Gets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A
+     * Gets the KeyStore that can contain keys and Certificates for use in signing and verifying exchanges. A
      * {@link KeyStore} is typically used with an alias, either one supplied in the Route definition or dynamically via
      * the message header "CamelSignatureKeyStoreAlias". If no alias is supplied and there is only a single entry in the
      * Keystore, then this single entry will be used.
@@ -309,7 +309,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A
+     * Sets the KeyStore that can contain keys and Certificates for use in signing and verifying exchanges. A
      * {@link KeyStore} is typically used with an alias, either one supplied in the Route definition or dynamically via
      * the message header "CamelSignatureKeyStoreAlias". If no alias is supplied and there is only a single entry in the
      * Keystore, then this single entry will be used.
@@ -356,7 +356,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     }
 
     /**
-     * Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the
+     * Sets the KeyStore that can contain keys and Certificates for use in signing and verifying exchanges based on the
      * given KeyStoreParameters. A {@link KeyStore} is typically used with an alias, either one supplied in the Route
      * definition or dynamically via the message header "CamelSignatureKeyStoreAlias". If no alias is supplied and there
      * is only a single entry in the Keystore, then this single entry will be used.

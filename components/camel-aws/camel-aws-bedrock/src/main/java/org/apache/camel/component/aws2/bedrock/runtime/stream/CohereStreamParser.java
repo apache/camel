@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.aws2.bedrock.runtime.stream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Parser for Cohere model streaming responses
@@ -30,35 +30,35 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class CohereStreamParser implements StreamResponseParser {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     @Override
-    public String extractText(String chunk) throws JsonProcessingException {
+    public String extractText(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return "";
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode eventType = node.get("event_type");
 
-        if (ObjectHelper.isNotEmpty(eventType) && "text-generation".equals(eventType.asText())) {
+        if (ObjectHelper.isNotEmpty(eventType) && "text-generation".equals(eventType.asString())) {
             JsonNode text = node.get("text");
-            return ObjectHelper.isNotEmpty(text) && !text.isNull() ? text.asText() : "";
+            return ObjectHelper.isNotEmpty(text) && !text.isNull() ? text.asString() : "";
         }
         return "";
     }
 
     @Override
-    public String extractCompletionReason(String chunk) throws JsonProcessingException {
+    public String extractCompletionReason(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
         JsonNode node = MAPPER.readTree(chunk);
         JsonNode finishReason = node.get("finish_reason");
-        return ObjectHelper.isNotEmpty(finishReason) && !finishReason.isNull() ? finishReason.asText() : null;
+        return ObjectHelper.isNotEmpty(finishReason) && !finishReason.isNull() ? finishReason.asString() : null;
     }
 
     @Override
-    public Integer extractTokenCount(String chunk) throws JsonProcessingException {
+    public Integer extractTokenCount(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return null;
         }
@@ -78,7 +78,7 @@ public class CohereStreamParser implements StreamResponseParser {
     }
 
     @Override
-    public boolean isFinalChunk(String chunk) throws JsonProcessingException {
+    public boolean isFinalChunk(String chunk) {
         if (chunk == null || chunk.trim().isEmpty()) {
             return false;
         }

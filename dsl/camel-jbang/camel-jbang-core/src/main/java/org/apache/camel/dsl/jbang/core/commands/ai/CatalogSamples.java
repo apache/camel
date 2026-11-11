@@ -763,6 +763,19 @@ public final class CatalogSamples {
         if (catalog.asciiDoc(name + "-dataformat") != null) {
             return List.of(name + "-dataformat");
         }
+        // a data format with a page per variant (jackson2 and jackson3) is on all of them, whichever artifact the
+        // catalog names for it
+        List<String> variants = new ArrayList<>();
+        Pattern variant = Pattern.compile(Pattern.quote(name) + "\\d+-dataformat");
+        for (String doc : catalog.findDocNames()) {
+            if (variant.matcher(doc).matches()) {
+                variants.add(doc);
+            }
+        }
+        if (!variants.isEmpty()) {
+            Collections.sort(variants);
+            return variants;
+        }
         DataFormatModel model = catalog.findDataFormatNames().contains(name) ? catalog.dataFormatModel(name) : null;
         String artifactId = model != null ? model.getArtifactId() : null;
         if (artifactId != null && artifactId.startsWith("camel-")) {
@@ -771,14 +784,6 @@ public final class CatalogSamples {
                 return List.of(page);
             }
         }
-        List<String> variants = new ArrayList<>();
-        Pattern variant = Pattern.compile(Pattern.quote(name) + "\\d+-dataformat");
-        for (String doc : catalog.findDocNames()) {
-            if (variant.matcher(doc).matches()) {
-                variants.add(doc);
-            }
-        }
-        Collections.sort(variants);
         return variants;
     }
 

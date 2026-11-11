@@ -249,9 +249,9 @@ Camel JSONPath supports message body using the following types:
 | String | Plain strings
 | Map | Message bodies as `java.util.Map` types
 | List | Message bodies as `java.util.List` types
-| POJO | *Optional* If Jackson is on the classpath, then camel-jsonpath
-  is able to use Jackson to read the message body as POJO and convert to `java.util.Map`
-  which is supported by JSONPath. For example, you can add `camel-jackson` as dependency to include Jackson.
+| JsonNode | A Jackson 3 (`tools.jackson`) or Jackson 2 (`com.fasterxml.jackson`) `JsonNode`
+| POJO | camel-jsonpath uses Jackson 3 to read the message body as POJO and convert to `java.util.Map`
+  which is supported by JSONPath.
 | InputStream | If none of the above types matches, then Camel will attempt to read the message body as a `java.io.InputStream`.
 |===
 

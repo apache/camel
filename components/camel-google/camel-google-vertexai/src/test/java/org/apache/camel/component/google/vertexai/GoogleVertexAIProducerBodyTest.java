@@ -32,8 +32,6 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.HttpBody;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
@@ -63,6 +61,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -104,7 +105,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
     // the bytes of an image are not text: 0x89, 0xff and 0xfe do not survive a conversion to a String and back
     private static final byte[] IMAGE = { (byte) 0x89, 'P', 'N', 'G', (byte) 0xff, 0x00, (byte) 0xfe, 0x01 };
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
     private static final List<JsonNode> GEMINI_REQUESTS = new CopyOnWriteArrayList<>();
     private static volatile String geminiAnswer = ANSWER;
     private static HttpServer gemini;
@@ -165,9 +166,9 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         assertNull(exchange.getException());
         assertEquals("A cat", exchange.getMessage().getBody());
         JsonNode parts = lastGeminiParts();
-        assertEquals("Describe this image", parts.get(0).get("text").asText());
+        assertEquals("Describe this image", parts.get(0).get("text").asString());
         assertArrayEquals(IMAGE, mediaBytes(parts.get(1)));
-        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asText());
+        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asString());
     }
 
     @Test
@@ -193,7 +194,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         JsonNode parts = lastGeminiParts();
         assertEquals(2, parts.size());
         assertArrayEquals(IMAGE, mediaBytes(parts.get(1)));
-        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asText());
+        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asString());
     }
 
     @Test
@@ -209,7 +210,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         JsonNode parts = lastGeminiParts();
         assertEquals(2, parts.size());
         assertArrayEquals(IMAGE, mediaBytes(parts.get(1)));
-        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asText());
+        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asString());
     }
 
     @Test
@@ -232,7 +233,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         JsonNode parts = lastGeminiParts();
         assertEquals(2, parts.size());
         assertArrayEquals(IMAGE, mediaBytes(parts.get(1)));
-        assertEquals("image/jpeg", parts.get(1).at("/inlineData/mimeType").asText());
+        assertEquals("image/jpeg", parts.get(1).at("/inlineData/mimeType").asString());
     }
 
     @Test
@@ -266,7 +267,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         assertNull(exchange.getException());
         JsonNode parts = lastGeminiParts();
         assertEquals(1, parts.size());
-        assertEquals("What is Apache Camel?", parts.get(0).get("text").asText());
+        assertEquals("What is Apache Camel?", parts.get(0).get("text").asString());
     }
 
     @Test
@@ -291,7 +292,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         assertNull(exchange.getException());
         JsonNode parts = lastGeminiParts();
         assertEquals(1, parts.size());
-        assertEquals("What is Apache Camel?", parts.get(0).get("text").asText());
+        assertEquals("What is Apache Camel?", parts.get(0).get("text").asString());
     }
 
     @Test
@@ -304,7 +305,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         assertNull(exchange.getException());
         JsonNode parts = lastGeminiParts();
         assertEquals(1, parts.size());
-        assertEquals("What is Apache Camel?", parts.get(0).get("text").asText());
+        assertEquals("What is Apache Camel?", parts.get(0).get("text").asString());
     }
 
     @Test
@@ -320,7 +321,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         JsonNode parts = lastGeminiParts();
         assertEquals(2, parts.size());
         assertArrayEquals(IMAGE, mediaBytes(parts.get(1)));
-        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asText());
+        assertEquals("image/png", parts.get(1).at("/inlineData/mimeType").asString());
     }
 
     // ==================== headers of the generate operations ====================
@@ -340,9 +341,9 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
 
         assertNull(exchange.getException());
         JsonNode request = GEMINI_REQUESTS.get(GEMINI_REQUESTS.size() - 1);
-        assertEquals("You answer in one sentence", request.at("/systemInstruction/parts/0/text").asText());
-        assertEquals("HARM_CATEGORY_HARASSMENT", request.at("/safetySettings/0/category").asText());
-        assertEquals("BLOCK_LOW_AND_ABOVE", request.at("/safetySettings/0/threshold").asText());
+        assertEquals("You answer in one sentence", request.at("/systemInstruction/parts/0/text").asString());
+        assertEquals("HARM_CATEGORY_HARASSMENT", request.at("/safetySettings/0/category").asString());
+        assertEquals("BLOCK_LOW_AND_ABOVE", request.at("/safetySettings/0/threshold").asString());
     }
 
     @Test
@@ -427,8 +428,8 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
 
         assertNull(exchange.getException());
         JsonNode request = MAPPER.readTree(predictionService.lastRequest());
-        assertEquals("vertex-2023-10-16", request.get("anthropic_version").asText());
-        assertEquals("What is Camel?", request.at("/messages/0/content").asText());
+        assertEquals("vertex-2023-10-16", request.get("anthropic_version").asString());
+        assertEquals("What is Camel?", request.at("/messages/0/content").asString());
         assertEquals("An integration framework", exchange.getMessage().getBody());
     }
 
@@ -441,8 +442,8 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
 
         assertNull(exchange.getException());
         JsonNode request = MAPPER.readTree(predictionService.lastRequest());
-        assertEquals("vertex-2099-01-01", request.get("anthropic_version").asText());
-        assertEquals("What is Camel?", request.at("/messages/0/content").asText());
+        assertEquals("vertex-2099-01-01", request.get("anthropic_version").asString());
+        assertEquals("What is Camel?", request.at("/messages/0/content").asString());
     }
 
     @Test
@@ -476,7 +477,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
         assertNull(exchange.getException());
         JsonNode request = MAPPER.readTree(predictionService.lastRequest());
         assertTrue(request.get("stream").asBoolean());
-        assertEquals("vertex-2023-10-16", request.get("anthropic_version").asText());
+        assertEquals("vertex-2023-10-16", request.get("anthropic_version").asString());
         assertEquals("An integration framework", exchange.getMessage().getBody());
         assertEquals(2, exchange.getMessage().getHeader(GoogleVertexAIConstants.CHUNK_COUNT, Integer.class));
     }
@@ -497,7 +498,7 @@ class GoogleVertexAIProducerBodyTest extends CamelTestSupport {
     }
 
     private static byte[] mediaBytes(JsonNode part) {
-        return Base64.getDecoder().decode(part.at("/inlineData/data").asText());
+        return Base64.getDecoder().decode(part.at("/inlineData/data").asString());
     }
 
     /**

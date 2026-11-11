@@ -29,11 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -47,6 +42,12 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 /**
  * Generates a YAML DSL completion tree JSON from the canonical schema and catalog metadata. The completion tree is a
@@ -72,7 +73,9 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
     @Parameter(required = true)
     private File outputFile;
 
-    private final ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+    private final ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .build();
     private CamelCatalog catalog;
 
     // map from FQ definition name → short node name
@@ -105,7 +108,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             Set<String> stepDefinitions = new java.util.HashSet<>();
             JsonNode processorDef = definitions.get(PROCESSOR_DEFINITION);
             if (processorDef != null && processorDef.has("properties")) {
-                processorDef.get("properties").fields().forEachRemaining(e -> {
+                processorDef.get("properties").properties().forEach(e -> {
                     String ref = resolveRefFq(e.getValue());
                     if (ref != null) {
                         stepDefinitions.add(ref);
@@ -115,7 +118,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
 
             // collect which FQ definitions are top-level elements
             Set<String> topLevelDefinitions = new java.util.HashSet<>();
-            topLevelProps.fields().forEachRemaining(e -> {
+            topLevelProps.properties().forEach(e -> {
                 String ref = resolveRefFq(e.getValue());
                 if (ref != null) {
                     topLevelDefinitions.add(ref);
@@ -150,7 +153,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         Map<String, String> fqToYamlName = new HashMap<>();
         collectYamlPropertyNames(fqToYamlName, definitions.get(PROCESSOR_DEFINITION));
         if (topLevelProps != null) {
-            topLevelProps.fields().forEachRemaining(e -> {
+            topLevelProps.properties().forEach(e -> {
                 String ref = resolveRefFq(e.getValue());
                 if (ref != null) {
                     fqToYamlName.putIfAbsent(ref, e.getKey());
@@ -158,7 +161,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             });
         }
 
-        Iterator<String> fieldNames = definitions.fieldNames();
+        Iterator<String> fieldNames = definitions.propertyNames().iterator();
         while (fieldNames.hasNext()) {
             String fqName = fieldNames.next();
             // prefer the YAML property name from the canonical schema over the derived class name
@@ -172,7 +175,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         if (definition == null || !definition.has("properties")) {
             return;
         }
-        definition.get("properties").fields().forEachRemaining(e -> {
+        definition.get("properties").properties().forEach(e -> {
             String ref = resolveRefFq(e.getValue());
             if (ref != null) {
                 fqToYamlName.putIfAbsent(ref, e.getKey());
@@ -221,7 +224,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         rootNode.put("listChildren", true);
 
         ArrayNode children = mapper.createArrayNode();
-        Iterator<Map.Entry<String, JsonNode>> fields = topLevelProps.fields();
+        Iterator<Map.Entry<String, JsonNode>> fields = topLevelProps.properties().iterator();
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> entry = fields.next();
             String name = entry.getKey();
@@ -263,7 +266,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         if (props != null) {
             // sort by name for consistent output
             List<Map.Entry<String, JsonNode>> entries = new ArrayList<>();
-            props.fields().forEachRemaining(entries::add);
+            props.properties().forEach(entries::add);
             entries.sort(Comparator.comparing(Map.Entry::getKey));
 
             for (Map.Entry<String, JsonNode> entry : entries) {
@@ -304,7 +307,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         JsonNode props = exprDef.get("properties");
         if (props != null) {
             List<Map.Entry<String, JsonNode>> entries = new ArrayList<>();
-            props.fields().forEachRemaining(entries::add);
+            props.properties().forEach(entries::add);
             entries.sort(Comparator.comparing(Map.Entry::getKey));
 
             for (Map.Entry<String, JsonNode> entry : entries) {
@@ -346,7 +349,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
     private void buildDefinitionNodes(
             ObjectNode nodes, JsonNode definitions,
             Set<String> stepDefinitions, Set<String> topLevelDefinitions) {
-        Iterator<Map.Entry<String, JsonNode>> fields = definitions.fields();
+        Iterator<Map.Entry<String, JsonNode>> fields = definitions.properties().iterator();
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> entry = fields.next();
             String fqName = entry.getKey();
@@ -459,7 +462,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         String nodeName = defToNodeName.get(fqName);
         Map<String, BaseOptionModel> catalogOptions = loadCatalogOptions(nodeName, fqName);
 
-        Iterator<Map.Entry<String, JsonNode>> propFields = props.fields();
+        Iterator<Map.Entry<String, JsonNode>> propFields = props.properties().iterator();
         while (propFields.hasNext()) {
             Map.Entry<String, JsonNode> propEntry = propFields.next();
             String propName = propEntry.getKey();
@@ -472,20 +475,20 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             String ref = resolveRef(prop);
             if (ref != null) {
                 // object reference
-                if (prop.has("type") && "array".equals(prop.get("type").asText())) {
+                if (prop.has("type") && "array".equals(prop.get("type").asString())) {
                     child.put("type", "array");
                 } else {
                     child.put("type", "object");
                 }
                 child.put("ref", ref);
             } else if (prop.has("type")) {
-                String type = prop.get("type").asText();
+                String type = prop.get("type").asString();
                 List<String> multiEnum = prop.has("pattern")
-                        ? GenerateYamlSchemaMojo.multiEnumValues(prop.get("pattern").asText()) : null;
+                        ? GenerateYamlSchemaMojo.multiEnumValues(prop.get("pattern").asString()) : null;
                 if (prop.has("enum")) {
                     child.put("type", "enum");
                     ArrayNode enumValues = mapper.createArrayNode();
-                    prop.get("enum").forEach(e -> enumValues.add(e.asText()));
+                    prop.get("enum").forEach(e -> enumValues.add(e.asString()));
                     child.set("enum", enumValues);
                 } else if (multiEnum != null) {
                     // several of the enum values, separated by comma: the schema has a pattern of them
@@ -510,13 +513,13 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
             putIfPresent(child, "title", prop, "title");
 
             if (prop.has("default")) {
-                child.put("default", prop.get("default").asText());
+                child.put("default", prop.get("default").asString());
             }
 
             // check required from schema
             if (def.has("required")) {
                 for (JsonNode req : def.get("required")) {
-                    if (propName.equals(req.asText())) {
+                    if (propName.equals(req.asString())) {
                         child.put("required", true);
                         break;
                     }
@@ -568,7 +571,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
         // sort by index (if available), then by name
         childList.sort(Comparator
                 .<ObjectNode, Integer> comparing(n -> n.has("index") ? n.get("index").asInt() : Integer.MAX_VALUE)
-                .thenComparing(n -> n.get("name").asText()));
+                .thenComparing(n -> n.get("name").asString()));
 
         ArrayNode children = mapper.createArrayNode();
         childList.forEach(children::add);
@@ -642,10 +645,10 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
 
     private String resolveRefFq(JsonNode prop) {
         if (prop.has("$ref")) {
-            return prop.get("$ref").asText().replace("#/items/definitions/", "");
+            return prop.get("$ref").asString().replace("#/items/definitions/", "");
         }
         if (prop.has("items") && prop.get("items").has("$ref")) {
-            return prop.get("items").get("$ref").asText().replace("#/items/definitions/", "");
+            return prop.get("items").get("$ref").asString().replace("#/items/definitions/", "");
         }
         return null;
     }
@@ -653,13 +656,13 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
     private String resolveRef(JsonNode prop) {
         // direct $ref
         if (prop.has("$ref")) {
-            String refPath = prop.get("$ref").asText();
+            String refPath = prop.get("$ref").asString();
             String fqRef = refPath.replace("#/items/definitions/", "");
             return defToNodeName.get(fqRef);
         }
         // array items $ref
         if (prop.has("items") && prop.get("items").has("$ref")) {
-            String refPath = prop.get("items").get("$ref").asText();
+            String refPath = prop.get("items").get("$ref").asString();
             String fqRef = refPath.replace("#/items/definitions/", "");
             return defToNodeName.get(fqRef);
         }
@@ -682,7 +685,7 @@ public class GenerateYamlCompletionMojo extends AbstractMojo {
 
     private void putIfPresent(ObjectNode target, String targetField, JsonNode source, String sourceField) {
         if (source.has(sourceField)) {
-            target.put(targetField, source.get(sourceField).asText());
+            target.put(targetField, source.get(sourceField).asString());
         }
     }
 

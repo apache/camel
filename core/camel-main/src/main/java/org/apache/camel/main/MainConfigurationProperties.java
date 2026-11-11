@@ -637,7 +637,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason
+     * Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason
      * such as a invalid property name, etc.
      * <p/>
      * This option is default enabled.
@@ -955,7 +955,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
-     * Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason
+     * Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason
      * such as a invalid property name, etc.
      * <p/>
      * This option is default enabled.

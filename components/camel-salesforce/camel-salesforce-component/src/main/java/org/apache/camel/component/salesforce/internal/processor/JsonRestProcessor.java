@@ -23,11 +23,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -46,6 +41,12 @@ import org.apache.camel.component.salesforce.api.dto.UpsertSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
 import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.core.JsonToken;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.apache.camel.component.salesforce.SalesforceConstants.HEADER_SALESFORCE_QUERY_RESULT_TOTAL_SIZE;
 
@@ -181,7 +182,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             objectMapper.writeValue(out, object);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             final String msg = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(msg, e);
         }
@@ -228,7 +229,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                 }
                 out.setBody(response);
             }
-        } catch (IOException e) {
+        } catch (JacksonException | IOException e) {
             String msg = "Error parsing JSON response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));
         } finally {
@@ -254,14 +255,16 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
     private Class<?> detectResponseClass(Exchange exchange, InputStream responseEntity) throws IOException {
         Class<?> responseClass;
-        try (final JsonParser parser = new JsonFactory().createParser(responseEntity)) {
+        try (final JsonParser parser = JsonFactory.builder()
+                .build()
+                .createParser(responseEntity)) {
             String type = null;
             JsonToken token;
             while ((token = parser.nextToken()) != null && token != JsonToken.END_OBJECT) {
                 String propName = parser.currentName();
                 if ("type".equals(propName)) {
                     parser.nextToken();
-                    type = parser.getText();
+                    type = parser.getString();
                     break;
                 }
             }

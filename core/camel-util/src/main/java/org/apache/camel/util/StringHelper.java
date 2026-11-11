@@ -183,7 +183,7 @@ public final class StringHelper {
      * Whether the string starts and ends with either single or double quotes.
      *
      * @param  s the string
-     * @return   <tt>true</tt> if the string starts and ends with either single or double quotes.
+     * @return   <code>true</code> if the string starts and ends with either single or double quotes.
      */
     public static boolean isQuoted(String s) {
         return isSingleQuoted(s) || isDoubleQuoted(s);
@@ -193,7 +193,7 @@ public final class StringHelper {
      * Whether the string starts and ends with single quotes.
      *
      * @param  s the string
-     * @return   <tt>true</tt> if the string starts and ends with single quotes.
+     * @return   <code>true</code> if the string starts and ends with single quotes.
      */
     public static boolean isSingleQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
@@ -211,7 +211,7 @@ public final class StringHelper {
      * Whether the string starts and ends with double quotes.
      *
      * @param  s the string
-     * @return   <tt>true</tt> if the string starts and ends with double quotes.
+     * @return   <code>true</code> if the string starts and ends with double quotes.
      */
     public static boolean isDoubleQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
@@ -265,7 +265,7 @@ public final class StringHelper {
      * Determines if the string has at least one letter in upper case
      *
      * @param  text the text
-     * @return      <tt>true</tt> if at least one letter is upper case, <tt>false</tt> otherwise
+     * @return      <code>true</code> if at least one letter is upper case, <code>false</code> otherwise
      */
     public static boolean hasUpperCase(String text) {
         if (text == null) {
@@ -303,7 +303,7 @@ public final class StringHelper {
      *
      * @param  expression the expression
      * @param  language   the name of the language, such as simple
-     * @return            <tt>true</tt> if the expression contains the start token, <tt>false</tt> otherwise
+     * @return            <code>true</code> if the expression contains the start token, <code>false</code> otherwise
      */
     public static boolean hasStartToken(String expression, String language) {
         if (expression == null) {
@@ -324,7 +324,7 @@ public final class StringHelper {
 
     /**
      * Replaces the first from token in the given input string.
-     * <p/>
+     * <p>
      * This implementation is not recursive, not does it check for tokens in the replacement string. If from or to is
      * null, then the input string is returned as-is
      *
@@ -718,7 +718,7 @@ public final class StringHelper {
      *
      * @param  text  the text
      * @param  after the token
-     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
+     * @return       the text after the token, or <code>null</code> if text does not contain the token
      */
     public static String after(String text, String after) {
         if (text == null) {
@@ -766,7 +766,7 @@ public final class StringHelper {
      *
      * @param  text  the text
      * @param  after the token
-     * @return       the text after the token, or <tt>null</tt> if text does not contain the token
+     * @return       the text after the token, or <code>null</code> if text does not contain the token
      */
     public static String afterLast(String text, String after) {
         if (text == null) {
@@ -797,7 +797,7 @@ public final class StringHelper {
      *
      * @param  text   the text
      * @param  before the token
-     * @return        the text before the token, or <tt>null</tt> if text does not contain the token
+     * @return        the text before the token, or <code>null</code> if text does not contain the token
      */
     public static String before(String text, String before) {
         if (text == null) {
@@ -862,7 +862,7 @@ public final class StringHelper {
      *
      * @param  text   the text
      * @param  before the token
-     * @return        the text before the token, or <tt>null</tt> if the text does not contain the token
+     * @return        the text before the token, or <code>null</code> if the text does not contain the token
      */
     public static String beforeLast(String text, String before) {
         if (text == null) {
@@ -892,7 +892,7 @@ public final class StringHelper {
      * @param  text   the text
      * @param  after  the before token
      * @param  before the after token
-     * @return        the text between the tokens, or <tt>null</tt> if the text does not contain the tokens
+     * @return        the text between the tokens, or <code>null</code> if the text does not contain the tokens
      */
     public static String between(final String text, String after, String before) {
         String ret = after(text, after);
@@ -950,17 +950,17 @@ public final class StringHelper {
 
     /**
      * Returns the string between the most outer pair of tokens
-     * <p/>
+     * <p>
      * The number of token pairs must be even, e.g., there must be same number of before and after tokens, otherwise
-     * <tt>null</tt> is returned
-     * <p/>
+     * <code>null</code> is returned
+     * <p>
      * This implementation skips matching when the text is either single or double-quoted. For example:
-     * <tt>${body.matches("foo('bar')")</tt> Will not match the parenthesis from the quoted text.
+     * <code>${body.matches("foo('bar')")</code> Will not match the parenthesis from the quoted text.
      *
      * @param  text   the text
      * @param  after  the before token
      * @param  before the after token
-     * @return        the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     * @return        the text between the outer most tokens, or <code>null</code> if text does not contain the tokens
      */
     public static String betweenOuterPair(String text, char before, char after) {
         if (text == null) {
@@ -1053,7 +1053,7 @@ public final class StringHelper {
 
     /**
      * Cleans the string to a pure Java identifier so we can use it for loading class names.
-     * <p/>
+     * <p>
      * Especially from Spring DSL people can have \n \t or other characters that otherwise would result in
      * ClassNotFoundException
      *

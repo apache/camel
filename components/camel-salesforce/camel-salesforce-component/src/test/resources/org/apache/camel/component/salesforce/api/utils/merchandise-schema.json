@@ -1,0 +1,125 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:org:apache:camel:component:salesforce:dto",
+  "$schema" : "http://json-schema.org/draft-04/schema#",
+  "oneOf" : [ {
+    "id" : "urn:jsonschema:org:apache:camel:component:salesforce:dto:Merchandise__c",
+    "title" : "Merchandise",
+    "properties" : {
+      "Id" : {
+        "type" : "string",
+        "required" : true,
+        "readonly" : true,
+        "description" : "idLookup",
+        "title" : "Record ID"
+      },
+      "OwnerId" : {
+        "type" : "string",
+        "required" : true,
+        "readonly" : false,
+        "title" : "Owner ID"
+      },
+      "IsDeleted" : {
+        "type" : "boolean",
+        "required" : true,
+        "readonly" : true,
+        "title" : "Deleted"
+      },
+      "Name" : {
+        "type" : "string",
+        "readonly" : false,
+        "description" : "idLookup",
+        "title" : "Merchandise Name"
+      },
+      "CreatedDate" : {
+        "type" : "string",
+        "required" : true,
+        "readonly" : true,
+        "title" : "Created Date",
+        "format" : "date-time"
+      },
+      "CreatedById" : {
+        "type" : "string",
+        "required" : true,
+        "readonly" : true,
+        "title" : "Created By ID"
+      },
+      "LastModifiedDate" : {
+        "type" : "string",
+        "required" : true,
+        "readonly" : true,
+        "title" : "Last Modified Date",
+        "format" : "date-time"
+      },
+      "LastModifiedById" : {
+        "type" : "string",
+        "required" : true,
+        "readonly" : true,
+        "title" : "Last Modified By ID"
+      },
+      "SystemModstamp" : {
+        "type" : "string",
+        "required" : true,
+        "readonly" : true,
+        "title" : "System Modstamp",
+        "format" : "date-time"
+      },
+      "LastActivityDate" : {
+        "type" : "string",
+        "readonly" : true,
+        "title" : "Last Activity Date",
+        "format" : "date"
+      },
+      "LastViewedDate" : {
+        "type" : "string",
+        "readonly" : true,
+        "title" : "Last Viewed Date",
+        "format" : "date-time"
+      },
+      "LastReferencedDate" : {
+        "type" : "string",
+        "readonly" : true,
+        "title" : "Last Referenced Date",
+        "format" : "date-time"
+      },
+      "Description__c" : {
+        "type" : "string",
+        "readonly" : false,
+        "title" : "Description"
+      },
+      "Price__c" : {
+        "type" : "number",
+        "required" : true,
+        "readonly" : false,
+        "title" : "Price"
+      },
+      "Total_Inventory__c" : {
+        "type" : "number",
+        "required" : true,
+        "readonly" : false,
+        "title" : "Total_Inventory"
+      }
+    }
+  }, {
+    "id" : "urn:jsonschema:org:apache:camel:component:salesforce:dto:QueryRecordsMerchandise__c",
+    "properties" : {
+      "done" : {
+        "type" : "boolean"
+      },
+      "totalSize" : {
+        "type" : "integer"
+      },
+      "nextRecordsUrl" : {
+        "type" : "string"
+      },
+      "records" : {
+        "type" : "array",
+        "required" : true,
+        "items" : {
+          "type" : "object",
+          "$ref" : "urn:jsonschema:org:apache:camel:component:salesforce:dto:Merchandise__c"
+        }
+      }
+    }
+  } ]
+}

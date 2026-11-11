@@ -24,13 +24,15 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.clickup.ClickUpComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A support test class for ClickUp tests.
@@ -55,10 +57,10 @@ public class ClickUpTestSupport extends CamelTestSupport {
      * @return          the object representation of the JSON file
      */
     public static <T> T getJSONResource(String fileName, Class<T> clazz) {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder().build();
         try (InputStream stream = ClickUpTestSupport.class.getClassLoader().getResourceAsStream(fileName)) {
             return mapper.readValue(stream, clazz);
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new IllegalArgumentException("Unable to load file " + fileName, e);
         }
     }

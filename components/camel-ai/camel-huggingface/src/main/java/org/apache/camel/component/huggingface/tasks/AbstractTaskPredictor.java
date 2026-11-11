@@ -34,11 +34,6 @@ import ai.djl.modality.Input;
 import ai.djl.modality.Output;
 import ai.djl.repository.zoo.Criteria;
 import ai.djl.repository.zoo.ZooModel;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huggingface.HuggingFaceConfiguration;
@@ -47,13 +42,18 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.json.JsonMapper;
 
 public abstract class AbstractTaskPredictor implements TaskPredictor {
 
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractTaskPredictor.class);
     // reads a whole output as one JSON value, so a text that only starts with a JSON object is not read as one
     private static final ObjectReader OUTPUT_READER
-            = new ObjectMapper().reader().with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
+            = JsonMapper.builderWithJackson2Defaults().build().reader().with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
     private final ReentrantLock lock = new ReentrantLock();
     protected HuggingFaceEndpoint endpoint;
     protected HuggingFaceConfiguration config;
@@ -198,7 +198,7 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
             JsonNode node;
             try {
                 node = OUTPUT_READER.readTree(text);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 // not a JSON object, so a text result
                 return;
             }
@@ -212,7 +212,7 @@ public abstract class AbstractTaskPredictor implements TaskPredictor {
      */
     protected static void failOnPythonError(JsonNode output) {
         if (output != null && output.isObject() && output.size() == 1 && output.has("error")) {
-            throw new RuntimeCamelException("Python inference failed: " + output.get("error").asText());
+            throw new RuntimeCamelException("Python inference failed: " + output.get("error").asString());
         }
     }
 

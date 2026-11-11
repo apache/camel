@@ -23,10 +23,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.IOHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Utility functions for telegram tests.
@@ -89,8 +89,8 @@ public final class TelegramTestUtil {
 
     public static String serialize(Object result) {
         try {
-            return new ObjectMapper().writeValueAsString(result);
-        } catch (JsonProcessingException e) {
+            return JsonMapper.builder().build().writeValueAsString(result);
+        } catch (JacksonException e) {
             throw new RuntimeCamelException(e);
         }
     }

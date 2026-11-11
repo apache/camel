@@ -21,13 +21,13 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
 /**
- * This is the interface to be implemented when a custom implementation needs to be provided in case of fileExists=Move
+ * This is the interface to be implemented when a custom implementation needs to be provided in case of fileExist=Move
  * is in use while moving any existing file in producer endpoints.
  */
 public interface FileMoveExistingStrategy {
 
     /**
-     * Moves any existing file due fileExists=Move is in use.
+     * Moves any existing file due fileExist=Move is in use.
      *
      * @param  endpoint   the given endpoint of the component
      * @param  operations file operations API of the relevant component's API

@@ -310,6 +310,11 @@ final class JavaRouteReader {
     }
 
     private void rest(RestDefinition rest) {
+        if (rest.getOpenApi() != null && rest.getOpenApi().getSpecification() != null) {
+            // contract first: the operations are in the contract, which the overview reads
+            routes.add(RestContracts.contract(rest.getOpenApi().getSpecification(), rest.getPath(), file,
+                    Math.max(1, rest.getLineNumber()), "java"));
+        }
         for (VerbDefinition v : rest.getVerbs()) {
             List<Endpoint> produces = new ArrayList<>();
             if (v.getTo() != null) {

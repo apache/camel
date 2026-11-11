@@ -27,9 +27,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Builder class for creating different types of OpenAI API mock responses.
@@ -278,9 +278,9 @@ public class ResponseBuilder {
 
     private Optional<String> extractLastToolContent(JsonNode messagesNode) {
         return StreamSupport.stream(messagesNode.spliterator(), false)
-                .filter(entry -> entry.has("role") && "tool".equals(entry.get("role").asText()))
+                .filter(entry -> entry.has("role") && "tool".equals(entry.get("role").asString()))
                 .reduce((first, second) -> second) // Get the last one
                 .map(entry -> entry.get("content"))
-                .map(JsonNode::asText);
+                .map(content -> content.asString(""));
     }
 }

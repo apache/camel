@@ -114,8 +114,6 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
-
         leadershipLock.lock();
         try {
             // a start can still be pending, cancel it first so it cannot start the delegated consumer
@@ -126,19 +124,31 @@ public class MasterConsumer extends DefaultConsumer implements ResumeAware<Resum
             leadershipLock.unlock();
         }
 
-        // note: removeEventListener below needs the write lock of the cluster view, while an event dispatch
-        // takes the read lock of the view and then leadershipLock. This thread must not hold leadershipLock
-        // here, or the two orders deadlock
-
-        if (view != null) {
-            view.removeEventListener(leadershipListener);
-            clusterService.releaseView(view);
-            view = null;
+        try {
+            // the delegated consumer is stopped while this node still holds the leadership, and before the processor
+            // of the route, so no other node starts consuming while it stops, and the messages it still routes while
+            // it stops (a consumer may wait in its stop for the messages it processes) reach a started route. A
+            // leadership event that comes meanwhile is ignored, as this consumer is stopping
+            Consumer delegate = delegatedConsumer;
+            delegatedConsumer = null;
+            ServiceHelper.stopAndShutdownServices(delegate, delegatedEndpoint);
+            // the start task was cancelled above
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(leaderPool);
+        } finally {
+            try {
+                super.doStop();
+            } finally {
+                // note: removeEventListener below needs the write lock of the cluster view, while an event dispatch
+                // takes the read lock of the view and then leadershipLock. This thread must not hold leadershipLock
+                // here, or the two orders deadlock
+                CamelClusterView current = view;
+                view = null;
+                if (current != null) {
+                    current.removeEventListener(leadershipListener);
+                    clusterService.releaseView(current);
+                }
+            }
         }
-
-        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(leaderPool);
-        ServiceHelper.stopAndShutdownServices(delegatedConsumer, delegatedEndpoint);
-        delegatedConsumer = null;
     }
 
     @Override

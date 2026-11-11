@@ -63,7 +63,7 @@ This section lists all available operations, along with their header information
 ** `CamelInfinispanValue`
 * *Optional Headers*: 
 ** `CamelInfinispanLifespanTime`
-** `CamelInfinispanLifespanTimeUnit`
+** `CamelInfinispanTimeUnit`
 ** `CamelInfinispanMaxIdleTime`
 ** `CamelInfinispanMaxIdleTimeUnit`
 * *Result*:
@@ -81,7 +81,7 @@ This section lists all available operations, along with their header information
 ** `CamelInfinispanMap`
 * *Optional Headers*: 
 ** `CamelInfinispanLifespanTime`
-** `CamelInfinispanLifespanTimeUnit`
+** `CamelInfinispanTimeUnit`
 ** `CamelInfinispanMaxIdleTime`
 ** `CamelInfinispanMaxIdleTimeUnit`
 
@@ -150,7 +150,7 @@ The resulting value is returned in the exchange *body*.
 ** `CamelInfinispanOldValue`
 * *Optional Headers*:
 ** `CamelInfinispanLifespanTime`
-** `CamelInfinispanLifespanTimeUnit`
+** `CamelInfinispanTimeUnit`
 ** `CamelInfinispanMaxIdleTime`
 ** `CamelInfinispanMaxIdleTimeUnit`
 * *Result*:

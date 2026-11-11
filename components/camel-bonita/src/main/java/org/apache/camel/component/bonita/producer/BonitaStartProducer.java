@@ -23,9 +23,6 @@ import java.util.Map;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -37,10 +34,14 @@ import org.apache.camel.component.bonita.api.BonitaAPIBuilder;
 import org.apache.camel.component.bonita.api.model.CaseCreationResponse;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class BonitaStartProducer extends BonitaProducer {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     // one JAX-RS client for all the exchanges of this producer, created on start and closed on stop
     private volatile Client client;
@@ -99,7 +100,7 @@ public class BonitaStartProducer extends BonitaProducer {
             JsonNode json;
             try {
                 json = MAPPER.readTree(text);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new InvalidPayloadException(exchange, Map.class, in, e);
             }
             if (json == null || !json.isObject()) {

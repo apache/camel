@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -61,6 +59,8 @@ import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithRespo
 import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelWithResponseStreamResponseHandler;
 import software.amazon.awssdk.services.bedrockruntime.model.Message;
 import software.amazon.awssdk.services.bedrockruntime.model.ResponseStream;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -146,7 +146,7 @@ public class BedrockProducerRequestTest {
 
     @Test
     public void jsonNodeBodyIsSentAsJson() throws Exception {
-        assertEquals(REQUEST, sentRequest(new ObjectMapper().readTree(REQUEST)));
+        assertEquals(REQUEST, sentRequest(JsonMapper.builder().build().readTree(REQUEST)));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class BedrockProducerRequestTest {
 
         assertNull(exchange.getException());
         JsonNode body = assertInstanceOf(JsonNode.class, exchange.getMessage().getBody());
-        assertEquals("Hi", body.get(0).get("message").get("content").asText());
+        assertEquals("Hi", body.get(0).get("message").get("content").asString());
     }
 
     @Test
@@ -214,7 +214,7 @@ public class BedrockProducerRequestTest {
 
         assertNull(exchange.getException());
         JsonNode body = assertInstanceOf(JsonNode.class, exchange.getMessage().getBody());
-        assertEquals("Hi", body.get("content").get(0).get("text").asText());
+        assertEquals("Hi", body.get("content").get(0).get("text").asString());
     }
 
     @Test

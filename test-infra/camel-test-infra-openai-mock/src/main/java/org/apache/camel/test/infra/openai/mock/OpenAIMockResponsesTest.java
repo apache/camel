@@ -20,10 +20,10 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -53,65 +53,76 @@ public class OpenAIMockResponsesTest {
     public void testFunctionCallsAreFollowedByTheFinalAnswer() throws Exception {
         JsonNode first = post("{\"model\":\"gpt-5\",\"input\":\"weather in Rome\"}");
         JsonNode call = first.path("output").get(0);
-        assertEquals("function_call", call.path("type").asText());
-        assertEquals("get_weather", call.path("name").asText());
-        assertEquals("Rome", new ObjectMapper().readTree(call.path("arguments").asText()).path("city").asText());
+        assertEquals("function_call", call.path("type").asString());
+        assertEquals("get_weather", call.path("name").asString());
+        assertEquals("Rome", new ObjectMapper().readTree(call.path("arguments").asString()).path("city").asString());
 
-        String callId = call.path("call_id").asText();
+        String callId = call.path("call_id").asString();
         JsonNode second = post("""
                 {"model":"gpt-5","input":[
                   {"role":"user","content":"weather in Rome"},
                   {"type":"function_call","call_id":"%s","name":"get_weather","arguments":"{}"},
                   {"type":"function_call_output","call_id":"%s","output":"sunny"}]}""".formatted(callId, callId));
-        assertEquals("It is sunny in Rome", second.path("output").get(0).path("content").get(0).path("text").asText());
+        assertEquals("It is sunny in Rome", second.path("output").get(0).path("content").get(0).path("text").asString());
+    }
+
+    @Test
+    public void testFunctionCallOutputCanBeAnArray() throws Exception {
+        String callId = post("{\"model\":\"gpt-5\",\"input\":\"weather in Rome\"}").path("output").get(0).path("call_id")
+                .asString();
+        JsonNode second = post("""
+                {"model":"gpt-5","input":[
+                  {"type":"function_call_output","call_id":"%s","output":[{"type":"output_text","text":"sunny"}]}]}"""
+                .formatted(callId));
+        assertEquals("It is sunny in Rome", second.path("output").get(0).path("content").get(0).path("text").asString());
     }
 
     @Test
     public void testFunctionCallOutputIsMatchedByCallIdWithoutTheUserInput() throws Exception {
         JsonNode first = post("{\"model\":\"gpt-5\",\"conversation\":\"conv_1\",\"input\":\"weather in Rome\"}");
-        String callId = first.path("output").get(0).path("call_id").asText();
+        String callId = first.path("output").get(0).path("call_id").asString();
 
         // in a stored conversation the follow-up only carries the tool result
         JsonNode second = post("""
                 {"model":"gpt-5","conversation":"conv_1","input":[
                   {"type":"function_call_output","call_id":"%s","output":"sunny"}]}""".formatted(callId));
-        assertEquals("It is sunny in Rome", second.path("output").get(0).path("content").get(0).path("text").asText());
+        assertEquals("It is sunny in Rome", second.path("output").get(0).path("content").get(0).path("text").asString());
     }
 
     @Test
     public void testOutputItemsAreReturned() throws Exception {
         JsonNode response = post("{\"model\":\"gpt-5\",\"input\":\"approval please\"}");
 
-        assertEquals("completed", response.path("status").asText());
-        assertEquals("mcp_approval_request", response.path("output").get(0).path("type").asText());
-        assertEquals("deepwiki", response.path("output").get(0).path("server_label").asText());
+        assertEquals("completed", response.path("status").asString());
+        assertEquals("mcp_approval_request", response.path("output").get(0).path("type").asString());
+        assertEquals("deepwiki", response.path("output").get(0).path("server_label").asString());
     }
 
     @Test
     public void testCustomResponseFunctionIsUsed() throws Exception {
         JsonNode response = post("{\"model\":\"gpt-5\",\"input\":\"custom\"}");
 
-        assertEquals("resp_custom", response.path("id").asText());
+        assertEquals("resp_custom", response.path("id").asString());
     }
 
     @Test
     public void testBackgroundResponseIsQueuedThenRetrievedCompleted() throws Exception {
         JsonNode queued = post("{\"model\":\"gpt-5\",\"input\":\"count to three\",\"background\":true}");
-        assertEquals("queued", queued.path("status").asText());
+        assertEquals("queued", queued.path("status").asString());
         assertEquals(0, queued.path("output").size());
 
-        JsonNode retrieved = send("GET", "/v1/responses/" + queued.path("id").asText(), null);
-        assertEquals("completed", retrieved.path("status").asText());
-        assertEquals("1, 2, 3", retrieved.path("output").get(0).path("content").get(0).path("text").asText());
+        JsonNode retrieved = send("GET", "/v1/responses/" + queued.path("id").asString(), null);
+        assertEquals("completed", retrieved.path("status").asString());
+        assertEquals("1, 2, 3", retrieved.path("output").get(0).path("content").get(0).path("text").asString());
     }
 
     @Test
     public void testResponseCanBeCancelled() throws Exception {
         JsonNode queued = post("{\"model\":\"gpt-5\",\"input\":\"count to three\",\"background\":true}");
-        String path = "/v1/responses/" + queued.path("id").asText();
+        String path = "/v1/responses/" + queued.path("id").asString();
 
-        assertEquals("cancelled", send("POST", path + "/cancel", "").path("status").asText());
-        assertEquals("cancelled", send("GET", path, null).path("status").asText());
+        assertEquals("cancelled", send("POST", path + "/cancel", "").path("status").asString());
+        assertEquals("cancelled", send("GET", path, null).path("status").asString());
     }
 
     @Test

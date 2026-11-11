@@ -27,8 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -74,6 +72,9 @@ import org.apache.camel.component.telegram.model.payments.SendInvoiceMessage;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Adapts the {@code RestBotAPI} to the {@code TelegramService} interface.
@@ -93,7 +94,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         this.client = client;
 
         this.baseUri = telegramBaseUri + "/bot" + authorizationToken;
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper.builderWithJackson2Defaults().build();
         final TelegramApiClient apiClient = new TelegramApiClient(client, mapper, baseUri, bufferSize);
         this.handlerRegistry = TelegramHandlerRegistry.builder(apiClient)
                 // Media handlers (require custom addBody logic)
@@ -170,7 +171,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                         "Could not " + description + ": " + response.statusCode() + " " + response.body(),
                         response.statusCode(), response.body());
             }
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RuntimeCamelException("Could not parse the response from " + description, e);
         } catch (IOException e) {
             throw new RuntimeCamelException("Could not request " + description, e);

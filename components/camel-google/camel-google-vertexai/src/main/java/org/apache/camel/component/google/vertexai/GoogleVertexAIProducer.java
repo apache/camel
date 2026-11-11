@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.HttpBody;
 import com.google.api.gax.rpc.ServerStream;
 import com.google.cloud.aiplatform.v1.PredictionServiceClient;
@@ -56,11 +55,13 @@ import org.apache.camel.util.MimeTypeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class GoogleVertexAIProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleVertexAIProducer.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private static final String CHUNKS_OUTPUT_MODE = "chunks";
     private static final String JSON_MIME_TYPE = "application/json";
 

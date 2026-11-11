@@ -22,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import org.apache.camel.CamelContext;
@@ -34,6 +33,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JacksonException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.anyRequestedFor;
@@ -177,7 +177,7 @@ class BonitaStartProducerTest {
         Exchange exchange = template.send("direct:start", e -> e.getIn().setBody("amount=1"));
 
         InvalidPayloadException cause = assertNoCaseStarted(exchange);
-        assertInstanceOf(JsonProcessingException.class, cause.getCause(), "cause of the failure");
+        assertInstanceOf(JacksonException.class, cause.getCause(), "cause of the failure");
     }
 
     @Test

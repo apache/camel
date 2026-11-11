@@ -7486,8 +7486,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7505,8 +7504,7 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
-by comma.
+Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -7515,8 +7513,7 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
-separated by comma.
+Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8932,8 +8929,7 @@ Jackson. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8951,11 +8947,11 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that
-matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature,
-JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be
-separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to enable on the Jackson ObjectMapper. The features should be a name that matches a enum from
+SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature,
+StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma.
+When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to
+tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -8964,11 +8960,11 @@ SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name
-that matches a enum from SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature,
-JsonNodeFeature, StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be
-separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to disable on the Jackson ObjectMapper. The features should be a name that matches a enum from
+SerializationFeature, DeserializationFeature, MapperFeature, DateTimeFeature, EnumFeature, JsonNodeFeature,
+StreamReadFeature, StreamWriteFeature, XmlReadFeature or XmlWriteFeature. Multiple features can be separated by comma.
+When using Jackson 3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to
+tell apart features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9316,8 +9312,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9335,9 +9330,9 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
-by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma. When using Jackson
+3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart
+features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9346,9 +9341,9 @@ SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
-separated by comma. When using Jackson 3, a feature can be qualified with its enum class name (e.g.
-SerializationFeature.WRAP_ROOT_VALUE) to tell apart features with the same name.
+Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma. When using Jackson
+3, a feature can be qualified with its enum class name (e.g. SerializationFeature.WRAP_ROOT_VALUE) to tell apart
+features with the same name.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9966,8 +9961,7 @@ To unmarshal to a List of Map or a List of Pojo. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-To use custom Jackson modules com.fasterxml.jackson.databind.Module specified as a String with FQN class names. Multiple
-classes can be separated by comma.
+To use custom Jackson modules specified as a String with FQN class names. Multiple classes can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9985,8 +9979,7 @@ To use custom Jackson modules referred from the Camel registry. Multiple modules
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be separated
-by comma.
+Set of features to enable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>
@@ -9995,8 +9988,7 @@ by comma.
           <xs:annotation>
             <xs:documentation xml:lang="en">
 <![CDATA[
-Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. Multiple features can be
-separated by comma.
+Set of features to disable on the Jackson ObjectMapper. Multiple features can be separated by comma.
 ]]>
             </xs:documentation>
           </xs:annotation>

@@ -63,8 +63,12 @@ public final class AsyncProcessorConverterHelper {
             }
             try {
                 processor.process(exchange);
-            } catch (Exception e) {
-                // must catch throwable so we catch all
+            } catch (VirtualMachineError e) {
+                // left as before (thrown on after the callback): the application must not handle a JVM-level failure
+                // such as an OutOfMemoryError with Camel's error handling
+                throw e;
+            } catch (Throwable e) {
+                // any other Throwable, as in DelegateSyncProcessor: the callback is called in finally
                 exchange.setException(e);
             } finally {
                 // we are bridging a sync processor as async so callback with true

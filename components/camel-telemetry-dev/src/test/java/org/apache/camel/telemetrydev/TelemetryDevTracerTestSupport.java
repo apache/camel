@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.telemetry.Op;
 import org.apache.camel.telemetry.TagConstants;
 import org.apache.camel.test.junit6.ExchangeTestSupport;
@@ -32,10 +31,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.junit.jupiter.api.BeforeEach;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class TelemetryDevTracerTestSupport extends ExchangeTestSupport {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
 
     protected Map<String, DevTrace> tracesFromLog() throws IOException {
         Map<String, DevTrace> answer = new HashMap<>();

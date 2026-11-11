@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class InlineQueryResultCachedVoiceTest {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
     @Test
     void testBuilderAssignsVoiceFileId() {
@@ -54,7 +54,7 @@ class InlineQueryResultCachedVoiceTest {
     }
 
     @Test
-    void testSerializesToJsonWithVoiceFileId() throws JsonProcessingException {
+    void testSerializesToJsonWithVoiceFileId() {
         InlineQueryResultCachedVoice result = InlineQueryResultCachedVoice.builder()
                 .id("1")
                 .voiceFileId("voice-file-789")
@@ -73,7 +73,7 @@ class InlineQueryResultCachedVoiceTest {
     }
 
     @Test
-    void testDeserializesFromJson() throws JsonProcessingException {
+    void testDeserializesFromJson() {
         String json = "{\"type\":\"voice\",\"id\":\"1\",\"voice_file_id\":\"voice-file-abc\",\"title\":\"Voice\"}";
 
         InlineQueryResultCachedVoice result = objectMapper.readValue(json, InlineQueryResultCachedVoice.class);

@@ -141,6 +141,16 @@ final class ChaosAction {
                 if (reset) {
                     answer.put("reset", true);
                 }
+            } else if ("replay".equals(command)) {
+                String route = root.getString("route");
+                if (isBlank(route)) {
+                    output.error("The id of the route is required");
+                    return;
+                }
+                // the files a file route took are put back, so it takes the same files again (CAMEL-26817)
+                @SuppressWarnings("unchecked")
+                Map<String, Object> replayed = (Map<String, Object>) call(type, chaos, "replayFiles", route);
+                answer.putAll(replayed);
             } else if ("explore-start".equals(command)) {
                 // an exploration (CAMEL-26773): camel-chaos keeps its journal and ends its rules at the deadline
                 @SuppressWarnings("unchecked")
@@ -157,9 +167,12 @@ final class ChaosAction {
                     return;
                 }
                 // an experiment of the exploration (CAMEL-26774): its rules are added together, with an expectation
+                // the route the feed reaches, so an experiment that would say nothing is refused (CAMEL-26803)
+                String feedRoute = root.getString("feedRoute");
                 @SuppressWarnings("unchecked")
-                Map<String, Object> begun = (Map<String, Object>) call(type, chaos, "beginExperiment",
-                        root.getString("hypothesis"), rule);
+                Map<String, Object> begun = (Map<String, Object>) (feedRoute != null
+                        ? call(type, chaos, "beginExperiment", root.getString("hypothesis"), rule, feedRoute)
+                        : call(type, chaos, "beginExperiment", root.getString("hypothesis"), rule));
                 answer.putAll(begun);
                 // a rule that matches nothing makes the experiment say nothing: as with add, the reason goes along
                 warnings(type, chaos, (List<?>) begun.get("rules"), answer);
@@ -171,8 +184,8 @@ final class ChaosAction {
                 answer.putAll(ended);
             } else {
                 output.error("Unknown chaos command: " + command
-                             + " (add, check, change, remove, clear, load, suggest, explore-start, explore-finish,"
-                             + " experiment-begin or experiment-end)");
+                             + " (add, check, change, remove, clear, load, suggest, replay, explore-start,"
+                             + " explore-finish, experiment-begin or experiment-end)");
                 return;
             }
         } catch (IllegalArgumentException | IllegalStateException e) {

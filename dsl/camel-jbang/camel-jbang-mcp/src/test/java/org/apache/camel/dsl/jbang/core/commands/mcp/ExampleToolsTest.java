@@ -70,13 +70,17 @@ class ExampleToolsTest {
 
     @Test
     void searchesByNameAndHonoursTheLimit() {
-        JsonObject kafka = new ExampleTools().camel_catalog_examples("kafka", null, 1);
+        // the filter also matches the description, so the first in reading order is not always a kafka example
+        // (the chaos example of fail-well has a refunds route from Kafka)
+        JsonObject all = new ExampleTools().camel_catalog_examples("kafka", null, null);
+        assertThat(objects(all, "examples")).anySatisfy(e -> {
+            assertThat(e.getString("name")).contains("kafka");
+            assertThat(e.<List<String>> getCollection("infraServices")).contains("kafka");
+        });
 
-        assertThat(kafka.getInteger("total")).isGreaterThanOrEqualTo(1);
-        assertThat(kafka.getInteger("count")).isEqualTo(1);
-        JsonObject first = objects(kafka, "examples").get(0);
-        assertThat(first.getString("name")).contains("kafka");
-        assertThat(first.<List<String>> getCollection("infraServices")).contains("kafka");
+        JsonObject one = new ExampleTools().camel_catalog_examples("kafka", null, 1);
+        assertThat(one.getInteger("total")).isEqualTo(all.getInteger("total")).isGreaterThan(1);
+        assertThat(one.getInteger("count")).isEqualTo(1);
     }
 
     @Test

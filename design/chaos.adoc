@@ -342,9 +342,9 @@ on `System` in a DST run (`test-dst.adoc`), so the report does not use them. A `
 one-stack model of `test-dst.adoc`: a suspend or stop cannot see an exchange that is blocked in a synchronous call
 below it on the stack finish, so such a world calls its downstream with `DstCamel.asyncStep`. Chaos does not need DST.
 
-The Javadoc of `TimeSource` says it is internal and not an API for components. `camel-chaos` may use it: it reads the
-clock and sleeps through it, and never installs a provider (only a test harness such as `camel-test-dst` does that).
-The Javadoc is updated to say so with the first chaos pull request.
+The Javadoc of `TimeSource` says it is internal and not an API for components: a component gets virtual time through
+the core classes it already uses. `camel-chaos` is the one exception: it reads the clock and sleeps through it, and
+never installs a provider (only a test harness such as `camel-test-dst` does that).
 
 === The report
 

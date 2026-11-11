@@ -19,7 +19,6 @@ package org.apache.camel.component.langchain4j.chat;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -51,8 +50,6 @@ public class LangChain4jChatProducer extends DefaultProducer {
     private final LangChain4jChatEndpoint endpoint;
 
     private ChatModel chatModel;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public LangChain4jChatProducer(LangChain4jChatEndpoint endpoint) {
         super(endpoint);

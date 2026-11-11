@@ -32,11 +32,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -58,6 +53,7 @@ import org.apache.camel.component.a2a.model.TaskState;
 import org.apache.camel.component.a2a.model.TaskStatus;
 import org.apache.camel.component.a2a.model.TaskStatusUpdateEvent;
 import org.apache.camel.component.a2a.model.TextPart;
+import org.apache.camel.component.a2a.protocol.JsonRpcProtocol;
 import org.apache.camel.component.a2a.state.A2ATaskStore;
 import org.apache.camel.component.a2a.state.InMemoryTaskStore;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -67,6 +63,11 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -82,11 +83,10 @@ class A2AConsumerTest {
     private CamelContext context;
 
     private static ObjectMapper createObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper;
+        return JsonMapper.builder()
+                .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
     }
 
     private static void enableStreaming(A2AConfiguration config) {
@@ -2413,7 +2413,7 @@ class A2AConsumerTest {
         assertThat(exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class))
                 .isEqualTo(A2AConstants.JSONRPC_CONTENT_TYPE);
         JsonNode envelope = OBJECT_MAPPER.readTree(exchange.getMessage().getBody(byte[].class));
-        assertThat(envelope.get("id").asText()).isEqualTo("json-media");
+        assertThat(envelope.get("id").asString()).isEqualTo("json-media");
         assertThat(envelope.has("result")).isTrue();
     }
 
@@ -2435,9 +2435,9 @@ class A2AConsumerTest {
         assertThat(exchange.getMessage().getHeader(Exchange.CONTENT_TYPE, String.class))
                 .isEqualTo(A2AConstants.JSONRPC_CONTENT_TYPE);
         JsonNode envelope = OBJECT_MAPPER.readTree(exchange.getMessage().getBody(byte[].class));
-        assertThat(envelope.get("id").asText()).isEqualTo("version-1");
+        assertThat(envelope.get("id").asString()).isEqualTo("version-1");
         assertThat(envelope.get("error").get("code").asInt()).isEqualTo(-32009);
-        assertThat(envelope.get("error").get("data").get(0).get("reason").asText())
+        assertThat(envelope.get("error").get("data").get(0).get("reason").asString())
                 .isEqualTo("VERSION_NOT_SUPPORTED");
     }
 
@@ -2455,7 +2455,7 @@ class A2AConsumerTest {
         consumer.handleJsonRpcDispatch(exchange);
 
         JsonNode envelope = OBJECT_MAPPER.readTree(exchange.getMessage().getBody(byte[].class));
-        assertThat(envelope.get("id").asText()).isEqualTo("bad-method-type");
+        assertThat(envelope.get("id").asString()).isEqualTo("bad-method-type");
         assertThat(envelope.get("error").get("code").asInt()).isEqualTo(-32600);
     }
 
@@ -2511,6 +2511,52 @@ class A2AConsumerTest {
         A2AError error = OBJECT_MAPPER.readValue(exchange.getMessage().getBody(byte[].class), A2AError.class);
         assertThat(error.getCode()).isEqualTo("InvalidParamsError");
         assertThat(error.getMessage()).contains("Malformed JSON request");
+    }
+
+    @Test
+    void jsonRpcParamsThatCannotBeConvertedReturnInvalidParams() throws Exception {
+        A2AConfiguration config = new A2AConfiguration();
+        config.setName("JSON-RPC Agent");
+        config.setVersion("1.0.0");
+        config.setProtocolBinding("jsonrpc");
+        config.setValidateAuth(false);
+        enableStreaming(config);
+        A2AConsumer consumer = new A2AConsumer(createEndpoint("a2a:jsonrpc-params", "jsonrpc-params", config), exchange -> {
+            throw new AssertionError("Route should not be reached for invalid params");
+        });
+        String badPart = "{\"message\":{\"role\":\"user\",\"messageId\":\"m\",\"parts\":[{}]}}";
+
+        for (String[] request : new String[][] {
+                { "SendMessage", badPart },
+                { "SendStreamingMessage", badPart },
+                { "ListTasks", "{\"pageSize\":\"not-a-number\"}" },
+                { "CreateTaskPushNotificationConfig", "{\"taskId\":\"t\",\"authentication\":\"not-an-object\"}" } }) {
+            Exchange exchange = new DefaultExchange(context);
+            exchange.getMessage().setBody("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"" + request[0]
+                                          + "\",\"params\":" + request[1] + "}");
+
+            consumer.handleJsonRpcDispatch(exchange);
+
+            JsonNode error = OBJECT_MAPPER.readTree(exchange.getMessage().getBody(byte[].class)).get("error");
+            assertThat(error.get("code").asInt()).as(request[0]).isEqualTo(JsonRpcProtocol.INVALID_PARAMS);
+            assertThat(error.get("message").asString()).as(request[0]).startsWith("Invalid params: ");
+        }
+    }
+
+    @Test
+    void restBodyThatCannotBeReadReturnsA2AInvalidParamsError() throws Exception {
+        A2AConsumer consumer = createRestConsumer(exchange -> {
+            throw new AssertionError("Route should not be reached for an invalid part");
+        });
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setBody("{\"message\":{\"role\":\"user\",\"messageId\":\"m\",\"parts\":[{}]}}");
+
+        consumer.handleSendMessage(exchange);
+
+        assertThat(exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class)).isEqualTo(400);
+        A2AError error = OBJECT_MAPPER.readValue(exchange.getMessage().getBody(byte[].class), A2AError.class);
+        assertThat(error.getCode()).isEqualTo("InvalidParamsError");
+        assertThat(error.getMessage()).contains("Cannot determine A2A part kind");
     }
 
     @Test

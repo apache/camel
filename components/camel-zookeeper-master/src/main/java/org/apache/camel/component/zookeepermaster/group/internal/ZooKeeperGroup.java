@@ -39,8 +39,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.GroupListener;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
@@ -57,6 +55,10 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * <p>
@@ -74,7 +76,7 @@ import org.slf4j.LoggerFactory;
 public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperGroup.class);
-    private static ObjectMapper mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    private static ObjectMapper mapper = newMapper();
 
     private final Class<T> clazz;
     private final CuratorFramework client;
@@ -209,8 +211,8 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
                 handleException(e);
             }
             listeners.clear();
-            mapper.getTypeFactory().clearCache();
-            mapper = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            mapper.clearCaches();
+            mapper = newMapper();
 
             client.clearWatcherReferences(childrenWatcher);
             client.clearWatcherReferences(dataWatcher);
@@ -582,19 +584,25 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         }
     }
 
+    private static ObjectMapper newMapper() {
+        return JsonMapper.builderWithJackson2Defaults()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
+    }
+
     private byte[] encode(T state) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             mapper.writeValue(baos, state);
             return baos.toByteArray();
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new IllegalStateException("Unable to decode data", e);
         }
     }
 
-    private T decode(byte[] data) {
+    T decode(byte[] data) {
         try {
             return mapper.readValue(data, clazz);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new IllegalStateException("Unable to decode data", e);
         }
     }

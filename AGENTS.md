@@ -116,6 +116,8 @@ Camel is a large, long-lived project — code often looks "wrong" but exists for
    [`exchange-sanitizer.adoc`](design/exchange-sanitizer.adoc) (proposed exchange sanitizer, dev-mode checks),
    [`java-dsl-parser.adoc`](design/java-dsl-parser.adoc) (`LwJavaParser`, reading Java routes without compiling them),
    [`payload-mode.adoc`](design/payload-mode.adoc) (proposed `payloadMode`, the `PayloadMode` SPI),
+   [`kamelets-in-camel.adoc`](design/kamelets-in-camel.adoc) (proposed move of `camel-kamelets` into Camel, released
+   with Camel),
    [`good-to-know.adoc`](design/good-to-know.adoc) (proposed hint rules in the catalog, facts per component).
 5. **Understand the broader context**: if a module replaced another (e.g. `camel-opentelemetry2`), understand what was
    intentionally changed vs. accidentally omitted.

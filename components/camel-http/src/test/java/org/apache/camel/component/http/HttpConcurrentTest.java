@@ -20,9 +20,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.hc.core5.http.HttpStatus;
@@ -37,6 +39,9 @@ public class HttpConcurrentTest extends BaseHttpTest {
 
     private final AtomicInteger counter = new AtomicInteger();
 
+    // released when the expected number of requests are being processed by the server at the same time
+    private volatile CountDownLatch concurrentRequests = new CountDownLatch(0);
+
     private HttpServer localServer;
 
     @Override
@@ -46,10 +51,13 @@ public class HttpConcurrentTest extends BaseHttpTest {
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
                 .register("/", (request, response, context) -> {
+                    // wait until the expected number of requests are in flight to prove they are concurrent
+                    CountDownLatch latch = concurrentRequests;
+                    latch.countDown();
                     try {
-                        Thread.sleep(1000);
+                        latch.await(10, TimeUnit.SECONDS);
                     } catch (InterruptedException e) {
-                        // ignore
+                        Thread.currentThread().interrupt();
                     }
                     response.setCode(HttpStatus.SC_OK);
                     response.setEntity(new StringEntity(Integer.toString(counter.incrementAndGet())));
@@ -76,6 +84,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
+        concurrentRequests = new CountDownLatch(poolSize);
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         // we access the responses Map below only inside the main thread,
         // so no need for a thread-safe Map implementation

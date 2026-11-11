@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.elasticsearch.rest.client;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -32,10 +31,6 @@ import java.util.stream.Collectors;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -59,6 +54,11 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.sniff.Sniffer;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.apache.camel.component.elasticsearch.rest.client.ElasticSearchRestClientConstant.OPERATION;
 
@@ -168,9 +168,9 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
                         callback.done(false);
                     }
 
-                    private JsonObject convertHttpEntityToJsonObject(String httpResponse) throws IOException {
+                    private JsonObject convertHttpEntityToJsonObject(String httpResponse) {
                         // Jackson ObjectMapper
-                        ObjectMapper objectMapper = new ObjectMapper();
+                        ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
                         // Convert JSON content to Map<String, Object>
                         Map<String, Object> map = objectMapper.readValue(httpResponse, new TypeReference<>() {
@@ -311,7 +311,7 @@ public class ElasticsearchRestClientProducer extends DefaultAsyncProducer {
      * creates an Elasticsearch Json Query based on matches
      */
     private String createQueryFromMap(Map<String, String> queryParameters) {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
         ObjectNode matchObject = objectMapper.createObjectNode();
         ArrayNode mustArray = objectMapper.createArrayNode();
 

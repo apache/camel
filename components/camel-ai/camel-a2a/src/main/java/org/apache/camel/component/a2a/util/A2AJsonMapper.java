@@ -16,37 +16,49 @@
  */
 package org.apache.camel.component.a2a.util;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Shared ObjectMapper configuration for A2A component. Keeps a private configured blueprint for A2A protocol
- * serialization/deserialization: JavaTimeModule for ISO 8601 dates, lenient unknown property handling.
+ * Shared ObjectMapper for the A2A component: ISO 8601 dates, lenient unknown property handling.
  */
 public final class A2AJsonMapper {
 
-    private static final ObjectMapper BLUEPRINT = create();
+    // A2A is a wire protocol, so the JSON must not follow changes to the Jackson 3 defaults
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .build();
 
     private A2AJsonMapper() {
     }
 
     /**
-     * Returns a configured ObjectMapper copy. The returned mapper can be customized by the caller without mutating
-     * other A2A component code paths.
+     * Returns the shared immutable ObjectMapper. Use {@link ObjectMapper#rebuild()} to derive a customized mapper.
      *
-     * @return a configured ObjectMapper
+     * @return the configured ObjectMapper
      */
     public static ObjectMapper instance() {
-        return BLUEPRINT.copy();
+        return MAPPER;
     }
 
-    private static ObjectMapper create() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return mapper;
+    /**
+     * Converts a value as {@link ObjectMapper#convertValue(Object, Class)} does, and reports a failed conversion as an
+     * {@link IllegalArgumentException}.
+     *
+     * @param  value                    the value to convert
+     * @param  type                     the target type
+     * @return                          the converted value
+     * @throws IllegalArgumentException if the value cannot be converted
+     */
+    public static <T> T convertValue(Object value, Class<T> type) {
+        try {
+            return MAPPER.convertValue(value, type);
+        } catch (JacksonException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
 }

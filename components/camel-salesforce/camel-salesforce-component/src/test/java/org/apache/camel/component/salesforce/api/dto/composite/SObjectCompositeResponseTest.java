@@ -21,10 +21,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,6 +55,22 @@ public class SObjectCompositeResponseTest {
                 StandardCharsets.UTF_8);
 
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
+
+        final SObjectCompositeResponse response = mapper.readerFor(SObjectCompositeResponse.class).readValue(json);
+
+        assertSuccessfulResponse(response);
+    }
+
+    @Test
+    public void shouldDeserializeSuccessfulJsonResponseWithDefaultMapper() throws IOException {
+
+        final String json = IOUtils.toString(
+                this.getClass().getResourceAsStream(
+                        "/org/apache/camel/component/salesforce/api/dto/composite_response_example_success.json"),
+                StandardCharsets.UTF_8);
+
+        // users can configure their own mapper, which has the Jackson 3 defaults
+        final ObjectMapper mapper = JsonMapper.builder().build();
 
         final SObjectCompositeResponse response = mapper.readerFor(SObjectCompositeResponse.class).readValue(json);
 

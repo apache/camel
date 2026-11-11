@@ -26,9 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.FunctionCounter;
@@ -48,6 +45,10 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.APP_INFO_METER_NAME;
 
@@ -163,7 +164,7 @@ public class AbstractMicrometerService extends ServiceSupport {
         }
         try {
             return writer.writeValueAsString(getMeterRegistry());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
@@ -175,7 +176,7 @@ public class AbstractMicrometerService extends ServiceSupport {
         }
         try {
             return writer.writeValueAsString(getMeterRegistry());
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
@@ -196,12 +197,14 @@ public class AbstractMicrometerService extends ServiceSupport {
         }
 
         // json mapper
-        this.mapper = new ObjectMapper()
-                .registerModule(new MicrometerModule(getDurationUnit(), getMatchingNames(), getMatchingTags()));
+        this.mapper = JsonMapper.builderWithJackson2Defaults()
+                .addModule(new MicrometerModule(getDurationUnit(), getMatchingNames(), getMatchingTags()))
+                .build();
         this.secondsMapper = getDurationUnit() == TimeUnit.SECONDS
                 ? this.mapper
-                : new ObjectMapper()
-                        .registerModule(new MicrometerModule(TimeUnit.SECONDS, getMatchingNames(), getMatchingTags()));
+                : JsonMapper.builderWithJackson2Defaults()
+                        .addModule(new MicrometerModule(TimeUnit.SECONDS, getMatchingNames(), getMatchingTags()))
+                        .build();
     }
 
     @Override

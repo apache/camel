@@ -18,11 +18,11 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.OffsetTime;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.ValueDeserializer;
 
-final class OffsetTimeDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.OffsetTimeDeserializer {
+final class OffsetTimeDeserializer extends tools.jackson.databind.ext.javatime.deser.OffsetTimeDeserializer {
 
-    static final JsonDeserializer<OffsetTime> INSTANCE = new OffsetTimeDeserializer();
+    static final ValueDeserializer<OffsetTime> INSTANCE = new OffsetTimeDeserializer();
 
     private static final long serialVersionUID = 1L;
 

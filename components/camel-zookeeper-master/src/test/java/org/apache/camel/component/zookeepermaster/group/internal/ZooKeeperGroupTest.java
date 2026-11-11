@@ -19,11 +19,10 @@ package org.apache.camel.component.zookeepermaster.group.internal;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -32,10 +31,12 @@ import org.apache.zookeeper.data.Stat;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ZooKeeperGroupTest {
 
@@ -74,9 +75,21 @@ public class ZooKeeperGroupTest {
     private static void putChildData(ZooKeeperGroup<NodeState> group, String path, String container) throws Exception {
         NodeState node = new NodeState("test", container);
         ByteArrayOutputStream data = new ByteArrayOutputStream();
-        new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).writeValue(data, node);
+        JsonMapper.builder().build().writeValue(data, node);
         ChildData<NodeState> child = new ChildData<>(path, new Stat(), data.toByteArray(), node);
         group.putCurrentData(path, child);
+    }
+
+    @Test
+    public void testDecodeIgnoresUnknownProperties() {
+        NodeState state = group.decode("{\"id\":\"test\",\"container\":\"c1\",\"unknown\":1}".getBytes(StandardCharsets.UTF_8));
+        assertThat(state.getContainer(), equalTo("c1"));
+    }
+
+    @Test
+    public void testDecodeFailureIsAnIllegalStateException() {
+        byte[] data = "not json".getBytes(StandardCharsets.UTF_8);
+        assertThrows(IllegalStateException.class, () -> group.decode(data));
     }
 
     @Test

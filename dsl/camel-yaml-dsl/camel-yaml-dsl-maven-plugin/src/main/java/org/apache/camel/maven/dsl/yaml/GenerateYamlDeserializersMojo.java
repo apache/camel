@@ -35,8 +35,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palantir.javapoet.AnnotationSpec;
 import com.palantir.javapoet.ClassName;
 import com.palantir.javapoet.CodeBlock;
@@ -67,6 +65,9 @@ import org.jboss.jandex.ParameterizedType;
 import org.jboss.jandex.Type;
 import org.snakeyaml.engine.v2.api.ConstructNode;
 import org.snakeyaml.engine.v2.nodes.Node;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Mojo(
       name = "generate-yaml-deserializers",
@@ -83,7 +84,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
     protected File resourcesOutputDir;
 
     private static final CamelCatalog CATALOG = new DefaultCamelCatalog();
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private final Map<String, Schema> schemes = new HashMap<>();
 
@@ -118,8 +119,8 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         Schema descriptor = new Schema(MAPPER.createObjectNode(), MAPPER.createObjectNode());
         Schema schema = MAPPER.readerForUpdating(descriptor).readValue(s);
         JsonNode type = schema.meta.at("/javaType");
-        if (!type.isMissingNode() && type.isTextual()) {
-            schemes.put(type.asText(), schema);
+        if (!type.isMissingNode() && type.isString()) {
+            schemes.put(type.asString(), schema);
         }
     }
 
@@ -680,7 +681,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
                 "org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1");
 
         JsonNode yamlTypeDisplayName = descriptor.meta.at("/title");
-        if (!yamlTypeDisplayName.isMissingNode() && yamlTypeDisplayName.isTextual()) {
+        if (!yamlTypeDisplayName.isMissingNode() && yamlTypeDisplayName.isString()) {
             yamlTypeAnnotation.addMember(
                     "displayName",
                     "$S",
@@ -688,7 +689,7 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         }
 
         JsonNode yamlTypeDescription = descriptor.meta.at("/description");
-        if (!yamlTypeDescription.isMissingNode() && yamlTypeDescription.isTextual()) {
+        if (!yamlTypeDescription.isMissingNode() && yamlTypeDescription.isString()) {
             yamlTypeAnnotation.addMember(
                     "description",
                     "$S",

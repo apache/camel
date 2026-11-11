@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -71,8 +71,8 @@ public class OpenAIMockConversationHistoryTest {
             JsonNode choice = responseJson.path("choices").get(0);
             JsonNode message = choice.path("message");
 
-            assertEquals("assistant", message.path("role").asText());
-            assertEquals("SUV", message.path("content").asText());
+            assertEquals("assistant", message.path("role").asString());
+            assertEquals("SUV", message.path("content").asString());
 
             // Verify assertion was executed
             assertTrue(secondAssertionExecuted.get(), "Second assertion should have been executed");

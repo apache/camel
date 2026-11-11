@@ -17,22 +17,19 @@
 
 package org.apache.camel.component.aws2.ddb.transform;
 
-import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.component.aws2.ddb.Ddb2Constants;
 import org.apache.camel.component.aws2.ddb.Ddb2Operations;
-import org.apache.camel.component.jackson.JacksonDataFormat;
-import org.apache.camel.component.jackson.transform.Json;
 import org.apache.camel.spi.BodyType;
 import org.apache.camel.spi.BodyType.Carrier;
 import org.apache.camel.spi.BodyTypes;
@@ -40,6 +37,8 @@ import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeTransformer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import software.amazon.awssdk.services.dynamodb.model.AttributeAction;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValueUpdate;
@@ -99,7 +98,8 @@ import software.amazon.awssdk.services.dynamodb.model.ReturnValue;
                                       description = "Sets the item, key, update values and operation headers of the aws2-ddb producer"))
 public class Ddb2JsonDataTypeTransformer extends Transformer {
 
-    private final JacksonDataFormat dataFormat = new JacksonDataFormat(Json.mapper(), JsonNode.class);
+    private static final String JACKSON2_NODE_PACKAGE = "com.fasterxml.jackson.databind.";
+    private static final String JACKSON3_NODE_PACKAGE = "tools.jackson.databind.";
 
     @Override
     public void transform(Message message, DataType fromType, DataType toType) {
@@ -108,7 +108,7 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
             return;
         }
 
-        JsonNode jsonBody = getBodyAsJsonNode(message);
+        Map<String, Object> jsonBody = getBodyAsMap(message);
 
         String operation = null;
         if (message.getExchange().hasProperties()
@@ -120,33 +120,16 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
             operation = message.getHeader(Ddb2Constants.OPERATION, Ddb2Operations.class).name();
         }
 
-        JsonNode bodyOperation = jsonBody.get("operation");
+        Object bodyOperation = jsonBody.get("operation");
         if (bodyOperation != null) {
-            checkBodyOperation(bodyOperation.asText(), operation);
+            checkBodyOperation(bodyOperation.toString(), operation);
             // the operation field is no attribute of the item or key
-            jsonBody = jsonBody.deepCopy();
-            ((ObjectNode) jsonBody).remove("operation");
+            jsonBody = new LinkedHashMap<>(jsonBody);
+            jsonBody.remove("operation");
         }
 
-        JsonNode key = jsonBody.get("key");
-        JsonNode item = jsonBody.get("item");
-
-        Map<String, Object> keyProps;
-        if (ObjectHelper.isNotEmpty(key)) {
-            keyProps = dataFormat.getObjectMapper().convertValue(key, new TypeReference<>() {
-            });
-        } else {
-            keyProps = dataFormat.getObjectMapper().convertValue(jsonBody, new TypeReference<>() {
-            });
-        }
-
-        Map<String, Object> itemProps;
-        if (ObjectHelper.isNotEmpty(item)) {
-            itemProps = dataFormat.getObjectMapper().convertValue(item, new TypeReference<>() {
-            });
-        } else {
-            itemProps = keyProps;
-        }
+        Map<String, Object> keyProps = jsonBody.get("key") != null ? asObject(message, jsonBody.get("key")) : jsonBody;
+        Map<String, Object> itemProps = jsonBody.get("item") != null ? asObject(message, jsonBody.get("item")) : keyProps;
 
         final Map<String, AttributeValue> keyMap = getAttributeValueMap(keyProps);
 
@@ -196,15 +179,71 @@ public class Ddb2JsonDataTypeTransformer extends Transformer {
         }
     }
 
-    private JsonNode getBodyAsJsonNode(Message message) {
+    /**
+     * The body as a JSON object: a Jackson node of either line is its JSON text, any other body is read as text.
+     */
+    private Map<String, Object> getBodyAsMap(Message message) {
         try {
-            if (message.getBody() instanceof JsonNode) {
-                return message.getMandatoryBody(JsonNode.class);
-            }
-
-            return (JsonNode) dataFormat.unmarshal(message.getExchange(), message.getMandatoryBody(InputStream.class));
+            Object body = message.getBody();
+            String json = isJacksonNode(body) ? body.toString() : message.getMandatoryBody(String.class);
+            return asObject(message, normalize(Jsoner.deserialize(json)));
         } catch (Exception e) {
             throw new CamelExecutionException("Failed to get mandatory Json node from message body", message.getExchange(), e);
+        }
+    }
+
+    private static boolean isJacksonNode(Object body) {
+        if (body == null) {
+            return false;
+        }
+        String className = body.getClass().getName();
+        return className.startsWith(JACKSON3_NODE_PACKAGE) || className.startsWith(JACKSON2_NODE_PACKAGE);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> asObject(Message message, Object json) {
+        if (json instanceof Map) {
+            return (Map<String, Object>) json;
+        }
+        throw new CamelExecutionException(
+                "Failed to get mandatory Json node from message body", message.getExchange(),
+                new InvalidPayloadException(message.getExchange(), JsonObject.class));
+    }
+
+    /**
+     * Gives the numbers of a parsed JSON value the types Jackson gives them: an integral literal is an Integer, Long or
+     * BigInteger, any other number a Double.
+     */
+    @SuppressWarnings("unchecked")
+    private static Object normalize(Object value) {
+        if (value instanceof BigDecimal number) {
+            return toJavaNumber(number);
+        }
+        if (value instanceof Map<?, ?> map) {
+            for (Map.Entry<String, Object> entry : ((Map<String, Object>) map).entrySet()) {
+                entry.setValue(normalize(entry.getValue()));
+            }
+        } else if (value instanceof List<?> list) {
+            for (ListIterator<Object> it = ((List<Object>) list).listIterator(); it.hasNext();) {
+                it.set(normalize(it.next()));
+            }
+        }
+        return value;
+    }
+
+    private static Number toJavaNumber(BigDecimal number) {
+        if (number.scale() != 0) {
+            return number.doubleValue();
+        }
+        try {
+            return number.intValueExact();
+        } catch (ArithmeticException e) {
+            // too large for an int
+        }
+        try {
+            return number.longValueExact();
+        } catch (ArithmeticException e) {
+            return number.toBigInteger();
         }
     }
 

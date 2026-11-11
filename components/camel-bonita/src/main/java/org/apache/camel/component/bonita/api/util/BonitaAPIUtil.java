@@ -28,7 +28,6 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.filter.JsonClientFilter;
 import org.apache.camel.component.bonita.api.model.FileInput;
@@ -37,6 +36,8 @@ import org.apache.camel.component.bonita.api.model.UploadFileResponse;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.AttachmentBuilder;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.jakarta.rs.json.JacksonJsonProvider;
 
 import static jakarta.ws.rs.client.Entity.entity;
 
@@ -57,9 +58,16 @@ public class BonitaAPIUtil {
     public static BonitaAPIUtil getInstance(BonitaAPIConfig bonitaAPIConfig) {
         ClientBuilder clientBuilder = ClientBuilder.newBuilder();
         Client client = clientBuilder.build();
-        client.register(JacksonJsonProvider.class);
+        client.register(jsonProvider());
         client.register(new BonitaAuthFilter(bonitaAPIConfig));
         return forClient(client, bonitaAPIConfig);
+    }
+
+    /**
+     * The JSON provider of the Bonita clients. It keeps the Jackson 2 defaults, so requests do not change.
+     */
+    public static JacksonJsonProvider jsonProvider() {
+        return new JacksonJsonProvider(JsonMapper.builderWithJackson2Defaults().build());
     }
 
     /**

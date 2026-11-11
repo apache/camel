@@ -1,0 +1,42 @@
+name: chaos-test
+description: The chaos example runs its scenario, takes the payment service down and brings it back, and still ships orders
+actions:
+  - camel:
+      cli:
+        run:
+          integration:
+            name: "chaos"
+            file: "../chaos.camel.yaml"
+            systemProperties:
+              file: "../application.properties"
+          resources:
+            - "parked.camel.yaml"
+            - "test/chaos/payment-outage.chaos"
+          args:
+            - "--chaos=test/chaos/payment-outage.chaos"
+  - camel:
+      cli:
+        verify:
+          integration: "chaos"
+          logMessage: "Order ORD-1 shipped"
+  - camel:
+      cli:
+        verify:
+          integration: "chaos"
+          logMessage: "Chaos rule r3 suspended route payment for 10s"
+          maxAttempts: 30
+          delayBetweenAttempts: 1000
+  - camel:
+      cli:
+        verify:
+          integration: "chaos"
+          logMessage: "Chaos rule r3 resumed route payment"
+          maxAttempts: 20
+          delayBetweenAttempts: 1000
+  - camel:
+      cli:
+        verify:
+          integration: "chaos"
+          logMessage: "Order ORD-35 shipped"
+          maxAttempts: 20
+          delayBetweenAttempts: 1000

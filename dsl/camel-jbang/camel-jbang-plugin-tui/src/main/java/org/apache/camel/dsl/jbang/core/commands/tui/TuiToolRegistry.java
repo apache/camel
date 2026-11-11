@@ -1287,7 +1287,8 @@ class TuiToolRegistry {
         }
         String body = args.get("body") instanceof String s ? s : null;
         String headers = args.get("headers") instanceof String s ? s : null;
-        JsonObject response = facade.sendMessage(endpoint, body, headers);
+        Boolean reply = args.get("reply") instanceof Boolean b ? b : null;
+        JsonObject response = facade.sendMessage(endpoint, body, headers, reply);
         if (response == null) {
             return "Error: no integration selected or PID unavailable";
         }

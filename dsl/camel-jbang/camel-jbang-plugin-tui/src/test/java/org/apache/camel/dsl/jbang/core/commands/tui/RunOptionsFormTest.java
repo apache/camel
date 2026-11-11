@@ -30,9 +30,9 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Drives {@link RunOptionsForm} through key events to verify the JFR checkbox row toggles {@code --jfr} into
- * {@link RunOptionsForm#buildArgs()}, and that inserting that row did not break navigation past the other checkbox rows
- * or the down-wrap back to row 0.
+ * Drives {@link RunOptionsForm} through key events to verify the JFR and chaos checkbox rows toggle {@code --jfr} and
+ * {@code --chaos} into {@link RunOptionsForm#buildArgs()}, and that inserting those rows did not break navigation past
+ * the other checkbox rows or the down-wrap back to row 0.
  */
 class RunOptionsFormTest {
 
@@ -80,11 +80,11 @@ class RunOptionsFormTest {
     }
 
     @Test
-    void downNavigationWrapsFromJfrRowBackToNameRow() {
+    void downNavigationWrapsFromChaosRowBackToNameRow() {
         RunOptionsForm form = openForm();
 
-        // 14 rows total (0=Name .. 13=JFR); 14 downs from row 0 wraps back to row 0 (Name).
-        for (int i = 0; i < 14; i++) {
+        // 15 rows total (0=Name .. 13=JFR, 14=Chaos); 15 downs from row 0 wraps back to row 0 (Name).
+        for (int i = 0; i < 15; i++) {
             form.handleKeyEvent(key(KeyCode.DOWN));
         }
         form.handleKeyEvent(KeyEvent.ofChar('x'));
@@ -108,6 +108,63 @@ class RunOptionsFormTest {
     }
 
     @Test
+    void chaosOffByDefaultOmitsFlag() {
+        RunOptionsForm form = openForm();
+
+        assertThat(form.buildArgs()).doesNotContain("--chaos");
+        assertThat(form.isChaosEnabled()).isFalse();
+    }
+
+    @Test
+    void togglingChaosRowAddsChaosFlag() {
+        RunOptionsForm form = openForm();
+
+        // up from Name wraps to the last row, Chaos
+        form.handleKeyEvent(key(KeyCode.UP));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+
+        assertThat(form.buildArgs()).contains("--chaos").doesNotContain("--jfr");
+        assertThat(form.isChaosEnabled()).isTrue();
+    }
+
+    @Test
+    void chaosNotPassedWithProfileProd() {
+        RunOptionsForm form = openForm();
+
+        form.handleKeyEvent(key(KeyCode.UP));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        // Profile is row 2: cycle it from dev to prod
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+
+        assertThat(form.buildArgs()).contains("--profile=prod").doesNotContain("--chaos");
+        assertThat(renderPopupRows(form)).anyMatch(row -> row.contains("Chaos testing (not available with profile prod)"));
+    }
+
+    @Test
+    void chaosRowCannotBeToggledWithProfileProd() {
+        RunOptionsForm form = openForm();
+
+        // Profile is row 2: cycle it from dev to prod, then go up to the Chaos row and try to tick it
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(key(KeyCode.DOWN));
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        for (int i = 0; i < 3; i++) {
+            form.handleKeyEvent(key(KeyCode.UP));
+        }
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+        // back to dev: the box was not ticked while prod was selected
+        for (int i = 0; i < 3; i++) {
+            form.handleKeyEvent(key(KeyCode.DOWN));
+        }
+        form.handleKeyEvent(KeyEvent.ofChar(' '));
+
+        assertThat(form.buildArgs()).contains("--profile=dev").doesNotContain("--chaos");
+    }
+
+    @Test
     void optionsPageHasNoBlankRows() {
         RunOptionsForm form = openForm();
         // no app holds a port, so the form shows no port warning that would take a row of its own
@@ -115,8 +172,8 @@ class RunOptionsFormTest {
 
         List<String> inner = renderPopupRows(form);
 
-        // Name .. JFR: one row each, nothing left empty below the last checkbox
-        assertThat(inner).hasSize(14 + (form.portWarning(MonotonicClock.millis()) != null ? 1 : 0));
+        // Name .. Chaos: one row each, nothing left empty below the last checkbox
+        assertThat(inner).hasSize(15 + (form.portWarning(MonotonicClock.millis()) != null ? 1 : 0));
         assertThat(inner).noneMatch(String::isBlank);
     }
 

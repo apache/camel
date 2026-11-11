@@ -117,6 +117,20 @@ public final class DoclingHeaders {
     @Metadata(description = "Whether to merge peer chunks in hybrid chunking", javaType = "Boolean")
     public static final String CHUNKING_MERGE_PEERS = "CamelDoclingChunkingMergePeers";
 
+    @Metadata(description = "Status of the async conversion task checked by CHECK_CONVERSION_STATUS: PENDING,"
+                            + " IN_PROGRESS, COMPLETED, FAILED or UNKNOWN",
+              javaType = "String")
+    public static final String TASK_STATUS = "CamelDoclingTaskStatus";
+
+    @Metadata(description = "Progress of the async conversion task, when the server reports one", javaType = "Integer")
+    public static final String TASK_PROGRESS = "CamelDoclingTaskProgress";
+
+    @Metadata(description = "The converted document of a completed async conversion task", javaType = "String")
+    public static final String TASK_RESULT = "CamelDoclingResult";
+
+    @Metadata(description = "The error message of a failed async conversion task", javaType = "String")
+    public static final String TASK_ERROR_MESSAGE = "CamelDoclingErrorMessage";
+
     private DoclingHeaders() {
     }
 

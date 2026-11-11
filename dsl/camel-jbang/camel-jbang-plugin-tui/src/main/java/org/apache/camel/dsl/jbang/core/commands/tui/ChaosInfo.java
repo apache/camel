@@ -45,6 +45,8 @@ final class ChaosInfo {
     final List<RecentFault> recentFaults = new ArrayList<>();
     // what has been tried per route, by the route (CAMEL-26728)
     final Map<String, TriedRoute> tried = new LinkedHashMap<>();
+    // the exploration of the report (let there be chaos, CAMEL-26760), or null when there is none
+    Exploration exploration;
 
     /** A current rule, with its live state. */
     static final class Rule {
@@ -257,6 +259,46 @@ final class ChaosInfo {
     record TriedRoute(String route, List<String> tried, List<String> notTried) {
     }
 
+    /**
+     * An exploration: an AI (or a user) tries chaos for a budget of time, one experiment at a time.
+     *
+     * @param running     whether it still runs
+     * @param budget      its budget, in millis
+     * @param timeLeft    the time left of the budget while it runs, in millis, else -1
+     * @param ran         how long it ran once finished, in millis, else -1
+     * @param finishedBy  how it finished (finished, deadline), or null while it runs
+     * @param focus       what it explores, or null for all routes
+     * @param experiments its experiments, in their order
+     */
+    record Exploration(boolean running, long budget, long timeLeft, long ran, String finishedBy, String focus,
+            List<Experiment> experiments) {
+
+        /** How far into the budget it is: the time it ran, or the budget less the time left. */
+        long elapsed() {
+            return running ? Math.max(0, budget - Math.max(0, timeLeft)) : Math.max(0, ran);
+        }
+
+        long count(String verdict) {
+            return experiments.stream().filter(e -> verdict.equals(e.verdict())).count();
+        }
+    }
+
+    /**
+     * An experiment of an exploration: a hypothesis, the rules that test it, and what came of it.
+     *
+     * @param at           when it began, in millis after the exploration began
+     * @param elapsed      how long it ran, in millis
+     * @param expectations per rule its expectation, state and value: orders:failed<=0: unmet, 5 failed
+     * @param routes       what the routes did while it ran: orders 41 completed, 0 failed
+     * @param lostAtDlc    the messages its rules lost at a dead letter channel (CAMEL-26789)
+     * @param alsoFailed   the routes that failed outside its expectations, with how many (CAMEL-26790)
+     * @param reason       why it is INCONCLUSIVE, or null
+     */
+    record Experiment(int number, String hypothesis, String verdict, boolean open, long at, long elapsed,
+            List<String> rules, List<String> expectations, List<String> routes, long faults, long lostAtDlc,
+            Map<String, Long> alsoFailed, String reason, String note) {
+    }
+
     /** A recent fault of a rule. */
     record RecentFault(long ago, String rule, String fault, String hook, String route, String where, String exchangeId) {
     }
@@ -338,6 +380,9 @@ final class ChaosInfo {
                     }
                 }
             }
+            if (report.get("exploration") instanceof JsonObject exploration) {
+                info.exploration = exploration(exploration);
+            }
             if (report.get("recentFaults") instanceof JsonArray faults) {
                 for (Object o : faults) {
                     if (o instanceof JsonObject f) {
@@ -350,6 +395,73 @@ final class ChaosInfo {
             }
         }
         return info;
+    }
+
+    private static Exploration exploration(JsonObject jo) {
+        long startedAt = num(jo.get("startedAt"), 0);
+        long finishedAt = num(jo.get("finishedAt"), -1);
+        List<Experiment> experiments = new ArrayList<>();
+        if (jo.get("experiments") instanceof JsonArray list) {
+            for (Object o : list) {
+                if (o instanceof JsonObject e) {
+                    experiments.add(experiment(e, startedAt));
+                }
+            }
+        }
+        boolean running = jo.getBooleanOrDefault("running", false);
+        return new Exploration(
+                running, num(jo.get("budget"), 0), running ? num(jo.get("timeLeft"), -1) : -1,
+                finishedAt > 0 && startedAt > 0 ? finishedAt - startedAt : -1, jo.getString("finishedBy"),
+                jo.getString("focus"), experiments);
+    }
+
+    private static Experiment experiment(JsonObject e, long explorationStartedAt) {
+        List<String> rules = strings(e.get("ruleTexts"));
+        if (rules.isEmpty()) {
+            rules = strings(e.get("rules"));
+        }
+        List<String> expectations = new ArrayList<>();
+        if (e.get("expectations") instanceof JsonArray list) {
+            for (Object o : list) {
+                if (o instanceof JsonObject x) {
+                    expectations.add(x.getString("expect") + ": " + x.getString("state") + ", " + x.getString("value"));
+                }
+            }
+        }
+        List<String> routes = new ArrayList<>();
+        if (e.get("routes") instanceof JsonArray list) {
+            for (Object o : list) {
+                if (o instanceof JsonObject r) {
+                    routes.add(r.getString("route") + " " + num(r.get("completed"), 0) + " completed, "
+                               + num(r.get("failed"), 0) + " failed");
+                }
+            }
+        }
+        long faults = 0;
+        if (e.get("faults") instanceof Map<?, ?> perRule) {
+            for (Object v : perRule.values()) {
+                faults += num(v, 0);
+            }
+        }
+        Map<String, Long> alsoFailed = new LinkedHashMap<>();
+        if (e.get("alsoFailed") instanceof Map<?, ?> also) {
+            also.forEach((k, v) -> alsoFailed.put(String.valueOf(k), num(v, 0)));
+        }
+        long startedAt = num(e.get("startedAt"), 0);
+        return new Experiment(
+                (int) num(e.get("number"), 0), e.getString("hypothesis"), e.getString("verdict"),
+                e.getBooleanOrDefault("open", false),
+                startedAt > 0 && explorationStartedAt > 0 ? startedAt - explorationStartedAt : 0,
+                num(e.get("elapsed"), 0), rules, expectations, routes, faults,
+                num(e.get("lostAtDeadLetterChannel"), 0), alsoFailed, e.getString("reason"), e.getString("note"));
+    }
+
+    private static List<String> strings(Object value) {
+        List<String> answer = new ArrayList<>();
+        if (value instanceof List<?> list) {
+            list.forEach(o -> answer.add(String.valueOf(o)));
+        }
+        return answer;
     }
 
     private static Rule rule(JsonObject jo) {

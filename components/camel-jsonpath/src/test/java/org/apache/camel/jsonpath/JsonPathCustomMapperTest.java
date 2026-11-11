@@ -17,29 +17,29 @@
 package org.apache.camel.jsonpath;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonPathCustomMapperTest extends CamelTestSupport {
 
-    static class CustomDoubleSerializer extends JsonSerializer<Double> {
+    static class CustomDoubleSerializer extends ValueSerializer<Double> {
 
         @Override
-        public void serialize(Double value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(Double value, JsonGenerator gen, SerializationContext serializers) {
             gen.writeRawValue(String.format(Locale.US, "%.6f", value));
         }
     }
@@ -67,9 +67,8 @@ public class JsonPathCustomMapperTest extends CamelTestSupport {
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        ObjectMapper customMapper = new ObjectMapper();
-        Module doubleModule = new CustomModule();
-        customMapper.registerModule(doubleModule);
+        JacksonModule doubleModule = new CustomModule();
+        ObjectMapper customMapper = JsonMapper.builder().addModule(doubleModule).build();
         registry.bind("customMapper", customMapper);
     }
 

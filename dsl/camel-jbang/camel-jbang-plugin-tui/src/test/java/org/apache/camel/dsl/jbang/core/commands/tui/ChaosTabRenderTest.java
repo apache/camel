@@ -208,6 +208,120 @@ class ChaosTabRenderTest {
         assertThat(screen.lines().filter(l -> l.contains("…286B")).count()).isEqualTo(1);
     }
 
+    // an exploration as camel-chaos reports it (CAMEL-26760): three experiments ended, the fourth running
+    private static final String EXPLORATION
+            = """
+                    {"running": true, "startedAt": 1000000, "budget": 600000, "timeLeft": 300000, "focus": "refunds",
+                     "experiments": [
+                       {"number": 1, "hypothesis": "When payment returns 503, orders should retry", "verdict": "PASS",
+                        "open": false, "startedAt": 1026000, "elapsed": 41000,
+                        "ruleTexts": ["endpoint=http://localhost:8080/payment error status=503 rate=0.25 expect=orders:failed<=0 within=40s"],
+                        "faults": {"r1": 11},
+                        "expectations": [{"rule": "r1", "expect": "orders:failed<=0", "state": "met", "value": "0 failed"}],
+                        "routes": [{"route": "orders", "completed": 41, "failed": 0}]},
+                       {"number": 2, "hypothesis": "When payment returns 503, refunds should handle errors", "verdict": "FAIL",
+                        "open": false, "startedAt": 1117000, "elapsed": 7000,
+                        "ruleTexts": ["endpoint=http://localhost:8080/payment error status=503 rate=0.25 expect=refunds:failed<=0 within=40s"],
+                        "faults": {"r2": 8},
+                        "expectations": [{"rule": "r2", "expect": "refunds:failed<=0", "state": "unmet", "value": "5 failed"}],
+                        "routes": [{"route": "refunds", "completed": 15, "failed": 5}],
+                        "note": "refunds has no error handling"},
+                       {"number": 3, "hypothesis": "HTTP clients see proper error responses", "verdict": "INCONCLUSIVE",
+                        "open": false, "startedAt": 1200000, "elapsed": 41000,
+                        "ruleTexts": ["route=payment error rate=0.05 expect=payment:failed<=0 within=40s"], "faults": {"r3": 0},
+                        "expectations": [{"rule": "r3", "expect": "payment:failed<=0", "state": "met", "value": "0 failed"}],
+                        "routes": [], "alsoFailed": {"refunds": 2},
+                        "reason": "its faults never fired, so its expectations say nothing about them"},
+                       {"number": 4, "hypothesis": "nothing is lost when payment and parking fail", "verdict": "PENDING",
+                        "open": true, "startedAt": 1280000, "elapsed": 20000,
+                        "ruleTexts": ["endpoint=direct:parked error at=dlq expect=orders:failed<=0 within=90s"],
+                        "faults": {"r4": 30}, "lostAtDeadLetterChannel": 12,
+                        "expectations": [{"rule": "r4", "expect": "orders:failed<=0", "state": "pending", "value": "0 failed"}],
+                        "routes": []}
+                     ]}
+                    """;
+
+    @Test
+    void theExplorationWithItsExperiments() throws Exception {
+        JsonObject chaos = (JsonObject) Jsoner.deserialize(CHAOS);
+        ((JsonObject) chaos.get("report")).put("exploration", Jsoner.deserialize(EXPLORATION));
+        info.chaos = ChaosInfo.parse(chaos);
+        ChaosTab tab = new ChaosTab(ctx);
+        // the rules first; l shows the exploration (let there be chaos)
+        assertThat(TuiTestHelper.renderToString(tab, 160, 44)).contains("Rules [3]");
+        tab.toggleExplore();
+        String screen = TuiTestHelper.renderToString(tab, 160, 44);
+
+        assertThat(screen).contains("Let there be chaos").contains("exploring 5m of 10m").contains("focus refunds")
+                .contains("1 pass").contains("1 fail").contains("1 inconclusive").contains("1 running");
+        assertThat(screen).contains("Experiments [4]").contains("0:26").contains("PASS").contains("FAIL")
+                .contains("INCONCLUSIVE").contains("running").contains("refunds should handle errors")
+                .contains("5 failed in refunds").contains("the faults never fired")
+                .contains("12 lost at the dead letter channel");
+        assertThat(screen).containsPattern("│ 0 {100,}10m");
+        // the latest experiment is selected, in detail
+        assertThat(screen).contains("Experiment 4").contains("endpoint=direct:parked error at=dlq")
+                .contains("12 messages at the dead letter channel, handled there without being delivered");
+        // the rules again
+        tab.toggleExplore();
+        assertThat(TuiTestHelper.renderToString(tab, 160, 44)).contains("Rules [3]").doesNotContain("Experiments [");
+    }
+
+    @Test
+    void theExperimentThatCouldNotTell() throws Exception {
+        ChaosInfo.Exploration ex = ChaosInfo.parse((JsonObject) Jsoner.deserialize(
+                "{\"enabled\": true, \"report\": {\"exploration\": " + EXPLORATION + "}}")).exploration;
+
+        ChaosInfo.Experiment third = ex.experiments().get(2);
+        assertThat(third.alsoFailed()).containsEntry("refunds", 2L);
+        assertThat(third.at()).isEqualTo(200_000);
+        assertThat(ChaosExploreView.evidence(third)).isEqualTo(
+                "the faults never fired; 0 failed in payment; also 2 failed in refunds");
+        assertThat(ChaosExploreView.clock(third.at())).isEqualTo("3:20");
+        // the strip: the experiments as bars where they ran, the time gone by, the time left
+        String strip = ChaosExploreView.strip(ex, 60).rawContent();
+        assertThat(strip).hasSize(61).contains("█").contains("─").contains("·");
+        assertThat(strip.indexOf('█')).isEqualTo(1 + 26_000 * 60 / 600_000);
+        assertThat(ex.elapsed()).isEqualTo(300_000);
+    }
+
+    @Test
+    void theMessagesLostAtAHandOff() throws Exception {
+        JsonObject chaos = (JsonObject) Jsoner.deserialize(CHAOS);
+        ((JsonObject) chaos.get("report")).put("exploration", Jsoner.deserialize("""
+                {"running": false, "finishedBy": "deadline", "startedAt": 1000000, "budget": 120000, "ran": 120000,
+                 "experiments": [
+                   {"number": 1, "hypothesis": "inbox: The route after a hand-off fails", "verdict": "FAIL",
+                    "open": false, "startedAt": 1001000, "elapsed": 118000,
+                    "ruleTexts": ["route=ship error rate=0.2 until=116s expect=inbox->ship:lost<=0 within=116s"],
+                    "faults": {"r1": 45},
+                    "expectations": [{"rule": "r1", "expect": "inbox->ship:lost<=0", "state": "unmet",
+                                      "value": "45 lost (231 completed in inbox, 186 in ship)"}],
+                    "routes": [{"route": "inbox", "completed": 234, "failed": 0},
+                               {"route": "ship", "completed": 189, "failed": 45}],
+                    "alsoFailed": {"ship": 45, "audit": 2},
+                    "note": "Tried for its 1m56s share of the 2m budget: until= and within= are set to it"}
+                 ]}
+                """));
+        info.chaos = ChaosInfo.parse(chaos);
+        ChaosInfo.Experiment e = info.chaos.exploration.experiments().get(0);
+        // short: the counts are in the detail, and the failures in ship are where the lost ones failed
+        assertThat(ChaosExploreView.evidence(e)).isEqualTo("45 lost from inbox to ship; also 2 failed in audit");
+        assertThat(ChaosExploreView.handedOffTo(e, "ship")).isEqualTo("inbox");
+        assertThat(ChaosExploreView.handedOffTo(e, "audit")).isNull();
+        assertThat(ChaosExploreView.cut("45 lost from inbox to ship", 10)).isEqualTo("45 lost f…");
+
+        ChaosTab tab = new ChaosTab(ctx);
+        tab.toggleExplore();
+        String screen = TuiTestHelper.renderToString(tab, 160, 44);
+        assertThat(screen).contains("finished at its deadline").doesNotContain("focus")
+                .contains("45 messages failed in ship, after inbox had handed them over and completed: they are the lost"
+                          + " ones")
+                .contains("failed, in no expectation: audit 2").doesNotContain("in no expectation: ship")
+                .contains("over the whole experiment (an expectation counts until it is decided)")
+                .contains("Tried for its 1m56s share of the 2m budget");
+    }
+
     @Test
     void withoutCamelChaosOrWhenItIsOff() throws Exception {
         String none = TuiTestHelper.renderToString(new ChaosTab(ctx), 120, 15);

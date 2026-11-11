@@ -23,8 +23,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -36,10 +34,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.support.VaultResponse;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class HashicorpVaultProducer extends DefaultProducer {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     public HashicorpVaultProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -131,7 +132,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
             Map<?, ?> fields;
             try {
                 fields = MAPPER.readValue(json, Map.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 // the cause is left out on purpose, as its message can quote the text of the secret
                 fields = null;
             }

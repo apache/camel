@@ -391,7 +391,7 @@ final class ChaosTargets {
         return new Reach(uris, dynamic, polled, byRoute);
     }
 
-    private static void dynamicSends(List<ProcessorDefinition<?>> outputs, List<String> uris) {
+    static void dynamicSends(List<ProcessorDefinition<?>> outputs, List<String> uris) {
         for (ToDynamicDefinition to : ProcessorDefinitionHelper.filterTypeInOutputs(outputs, ToDynamicDefinition.class)) {
             String uri = to.getUri();
             EndpointProducerBuilder builder = to.getEndpointProducerBuilder();

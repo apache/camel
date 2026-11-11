@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.telegram.TelegramComponent;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
@@ -29,6 +28,9 @@ import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A support test class for Telegram tests.
@@ -79,11 +81,11 @@ public class TelegramTestSupport extends CamelTestSupport {
      * @return          the object representation of the JSON file
      */
     public static <T> T getJSONResource(String fileName, Class<T> clazz) {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder().build();
         try (InputStream stream = TelegramTestSupport.class.getClassLoader().getResourceAsStream(fileName)) {
             T value = mapper.readValue(stream, clazz);
             return value;
-        } catch (IOException e) {
+        } catch (IOException | JacksonException e) {
             throw new IllegalArgumentException("Unable to load file " + fileName, e);
         }
     }

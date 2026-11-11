@@ -18,13 +18,14 @@ package org.apache.camel.component.stitch.client;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public final class JsonUtils {
 
-    static final ObjectMapper MAPPER = new ObjectMapper();
+    static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private JsonUtils() {
     }
@@ -32,7 +33,7 @@ public final class JsonUtils {
     public static String convertMapToJson(final Map<String, Object> inputMap) {
         try {
             return MAPPER.writeValueAsString(inputMap);
-        } catch (JsonProcessingException exception) {
+        } catch (JacksonException exception) {
             throw new RuntimeException("Error occurred writing data map to JSON.", exception);
         }
     }
@@ -41,7 +42,7 @@ public final class JsonUtils {
         try {
             return MAPPER.readValue(jsonString, new TypeReference<Map<String, Object>>() {
             });
-        } catch (JsonProcessingException exception) {
+        } catch (JacksonException exception) {
             throw new RuntimeException("Error occurred writing JSON to Map.", exception);
         }
     }

@@ -6,18 +6,22 @@ exception, the exchange state at the time of failure, and the full path
 the message took through the route before it failed.
 
 Camel maintains an error registry that keeps the most recent errors
-(up to a configurable limit), and only the newest few of each kind of
-error, so a storm of one failure does not push the others out. When
-more errors happened than are kept, the title says how many happened.
+(up to a configurable limit), and only the newest few exchanges of each
+kind of error (the same exception at the same node of the same route),
+so a storm of one failure does not push the others out. The table has
+a row per kind of error, with how often it happened; the detail shows
+its newest exchange, and `[` / `]` step to the older ones that are kept.
+When more errors happened than are listed, the title says how many
+happened.
 
 ## Error List
 
-- **ID** — Exchange identifier (e.g., `ID-myhost-1234-5`). This uniquely identifies the message that failed
-- **AGO** — How long ago the error occurred (e.g., `5s`, `2m`, `1h`). Recent errors appear first by default
+- **ID** — Exchange identifier (e.g., `ID-myhost-1234-5`) of the newest exchange of the kind of error
+- **AGO** — How long ago the error last occurred (e.g., `5s`, `2m`, `1h`). Recent errors appear first by default
 - **ROUTE** — Route where the error happened
 - **NODE** — The specific processor/node in the route where the exception was thrown (e.g., `to1`, `bean2`, `process3`). This tells you exactly which step failed
 - **HANDLED** — Whether the error was caught by Camel's error handling: `true` (handled) or `false` (unhandled)
-- **COUNT** — How often this kind of error (the same exception in the same route) happened, on its newest entry. The older entries of the kind are left blank, so the column adds up to the errors that happened
+- **COUNT** — How often this kind of error (the same exception at the same node of the same route) happened, also the times whose exchanges are no longer kept, so the column adds up to the errors that happened
 - **EXCEPTION** — Exception class name in short form (e.g., `IOException`, `HttpOperationFailedException`)
 - **MESSAGE** — The exception message text explaining what went wrong
 
@@ -26,7 +30,6 @@ more errors happened than are kept, the title says how many happened.
 ```
  ID                  AGO  ROUTE        NODE   HANDLED  COUNT  EXCEPTION    MESSAGE
  ID-myhost-1234-5    5s   timer-route  to1    false    4      IOException  Connection refused
- ID-myhost-1234-4    9s   timer-route  to1    false           IOException  Connection refused
  ID-myhost-1234-3    2m   kafka-route  bean2  true     1      NPE          null reference in processor
 ```
 
@@ -73,6 +76,9 @@ Press `Enter` on an error to see the full details:
 - **Body**: Message body content
 - **Properties**: Exchange-level properties
 - **Variables**: Exchange variables
+- **Repeated** and **Kept**: how often the kind of error happened, and which of its
+  kept exchanges the detail shows (`exchange 3 of 3 (the newest)`); `[` and `]` go
+  to the older and newer ones, to compare their bodies and headers
 
 Use `h`, `b`, `p`, `v` keys to toggle each section.
 
@@ -114,6 +120,7 @@ Press `Esc` to navigate back one route in drill-down mode.
 
 - `Up/Down` — select error (list) / navigate path steps (diagram)
 - `Enter` — view error details
+- `[ ]` — the older (`[`) or newer (`]`) kept exchange of the selected kind of error in the detail
 - `Shift+F8` — fix with AI: ask the AI about the selected error, on the source line it happened at. For an error a chaos rule made (marked 🎲), it is explain with AI instead: the error was made on purpose, so the AI explains what the fault did and how the route coped, and does not chase it as a bug
 - `!` — a chaos rule of the selected error, when chaos is on: the Chaos screen opens with a rule that makes the same error again (the same exception and message at the same step, or the same HTTP status at the same endpoint), ten times, such as `step=callStock error exception=java.net.ConnectException message="Connection refused" until=10`. Change it if you like, and Enter adds it after you confirm. Fix the bug, then prove the fix against the same failure without waiting for it to happen again
 - `d` — toggle error diagram (open and close)

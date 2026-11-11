@@ -178,6 +178,8 @@ public final class ProjectOverview {
         for (Map.Entry<String, String> e : sources.entrySet()) {
             routes.addAll(ProjectRoutes.parse(e.getKey(), e.getValue(), catalog, constants));
         }
+        // the operations of a contract the REST DSL serves, from the contract
+        routes = new ArrayList<>(RestContracts.expand(dir, routes, catalog));
         if (routes.size() > MAX_ROUTES) {
             routes = new ArrayList<>(routes.subList(0, MAX_ROUTES));
         }
@@ -198,7 +200,7 @@ public final class ProjectOverview {
      * (SaaS, chat, documents), http, cloud, schedule, internal (plumbing inside Camel such as direct, seda, log, bean)
      * or other.
      */
-    static String category(String scheme, CamelCatalog catalog) {
+    public static String category(String scheme, CamelCatalog catalog) {
         String s = scheme.toLowerCase(Locale.ROOT);
         if ("direct".equals(s) || IN_MEMORY.contains(s) || "kamelet".equals(s) || s.startsWith("dynamic")) {
             return "internal";

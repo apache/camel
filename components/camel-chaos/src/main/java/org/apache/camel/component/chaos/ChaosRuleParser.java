@@ -58,8 +58,8 @@ final class ChaosRuleParser {
     // the options of a rule besides the parameters of its fault: all of them for the faults at a hook, and those of a
     // stall or lifecycle rule, which acts on its route at no hook
     static final Set<String> GENERAL_KEYS
-            = Set.of("at", "in", "when", "rate", "until", "from", "expect", "within", "draw");
-    static final Set<String> LIFECYCLE_KEYS = Set.of("from", "expect", "within");
+            = Set.of("at", "in", "when", "rate", "until", "from", "expect", "within", "key", "draw");
+    static final Set<String> LIFECYCLE_KEYS = Set.of("from", "expect", "within", "key");
     // the prefix of the response headers of error status=: header.<name>=<value>
     static final String HEADER_PREFIX = "header.";
     private static final Set<String> ERROR_KEYS
@@ -241,6 +241,7 @@ final class ChaosRuleParser {
             // stall and lifecycle act on the route: no hook, rate or until
             lifecycle(b, params, maxDuration);
             expectation(b, params.get("expect"), params.get("within"), maxDuration);
+            key(b, params.get("key"));
             return b;
         }
 
@@ -321,6 +322,7 @@ final class ChaosRuleParser {
                                                + " fire");
         }
         expectation(b, params.get("expect"), params.get("within"), maxDuration);
+        key(b, params.get("key"));
         return b;
     }
 
@@ -928,6 +930,28 @@ final class ChaosRuleParser {
         }
     }
 
+    /**
+     * The key of a message for an expectation of duplicates (key=, in the simple language): two messages with the same
+     * key are the same message. Without it the body is the key (CAMEL-26791).
+     */
+    private static void key(ChaosRule.Builder b, String key) {
+        if (key == null) {
+            return;
+        }
+        if (b.expectKind != ChaosRule.Expectation.Kind.DUPLICATES) {
+            throw new IllegalArgumentException(
+                    "key= is the key of a message for an expectation of duplicates, such as"
+                                               + " expect=payment:duplicates<=0 key=${header.orderId}");
+        }
+        if (languagePrefix(key) != null) {
+            throw new IllegalArgumentException(
+                    "key= takes an expression in the simple language, without a language in front ("
+                                               + languagePrefix(key) + ": is not supported), such as"
+                                               + " key=${header.orderId}");
+        }
+        b.key = key;
+    }
+
     private static void expectation(ChaosRule.Builder b, String expect, String within, long maxDuration) {
         if (expect == null) {
             if (within != null) {
@@ -977,7 +1001,7 @@ final class ChaosRuleParser {
                 throw new IllegalArgumentException(
                         "expect=" + expect + " counts " + (kind.isEmpty() ? "nothing" : kind)
                                                    + ": the kinds are completed, handled, failed, redeliveries, meanTime,"
-                                                   + " maxTime and lost, such as expect=orders:handled<=0,"
+                                                   + " maxTime, lost and duplicates, such as expect=orders:handled<=0,"
                                                    + " expect=orders:meanTime<=2s or expect=orders->shipping:lost<=0");
             }
             String rest = spec.substring(op);
@@ -1014,6 +1038,11 @@ final class ChaosRuleParser {
             }
             withinOf(b, within, maxDuration);
             return;
+        }
+        if (b.expectKind == ChaosRule.Expectation.Kind.DUPLICATES && b.expectOp == ChaosRule.Expectation.Op.AT_LEAST) {
+            throw new IllegalArgumentException(
+                    "expect=" + expect + " needs <= or = for the duplicates processed, such as expect=" + b.expectRoute
+                                               + ":duplicates<=0");
         }
         if (b.expectKind == ChaosRule.Expectation.Kind.LOST && b.expectOp == ChaosRule.Expectation.Op.AT_LEAST) {
             throw new IllegalArgumentException(

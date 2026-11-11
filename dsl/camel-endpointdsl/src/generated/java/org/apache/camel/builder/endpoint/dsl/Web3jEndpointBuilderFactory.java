@@ -921,7 +921,7 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * The transaction index position withing a block.
+         * The transaction index position within a block.
          * 
          * The option is a: <code>java.math.BigInteger</code> type.
          * 
@@ -935,7 +935,7 @@ public interface Web3jEndpointBuilderFactory {
             return this;
         }
         /**
-         * The transaction index position withing a block.
+         * The transaction index position within a block.
          * 
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
@@ -1586,7 +1586,7 @@ public interface Web3jEndpointBuilderFactory {
             return "CamelWeb3jToAddress";
         }
         /**
-         * The transaction index position withing a block.
+         * The transaction index position within a block.
          * 
          * The option is a: {@code String} type.
          * 

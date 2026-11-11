@@ -32,7 +32,8 @@ fault and a real one stay apart.
 When no exchange failed, the WARN and ERROR lines of the log are the
 cause instead (`log ERROR`, `log WARN`): something that went wrong outside
 an exchange, such as a consumer that cannot connect. They are read from
-the log file, from the last part of it when the TUI starts.
+the log file, from the last part of it when the TUI starts. The WARN
+camel-chaos logs when it is switched on is not counted.
 
 When nothing went wrong, the band is one line: `Errors/s none`.
 

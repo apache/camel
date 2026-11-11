@@ -23,8 +23,8 @@ import java.net.http.HttpResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -76,7 +76,7 @@ public class OpenAIMockTest {
             JsonNode choice = responseJson.path("choices").get(0);
             JsonNode message = choice.path("message");
 
-            assertEquals("assistant", message.path("role").asText());
+            assertEquals("assistant", message.path("role").asString());
             assertEquals(true, message.path("content").isNull());
             assertEquals(true, message.path("refusal").isNull());
 
@@ -84,9 +84,9 @@ public class OpenAIMockTest {
             assertEquals(1, toolCalls.size());
 
             JsonNode toolCall = toolCalls.get(0);
-            assertEquals("function", toolCall.path("type").asText());
-            assertEquals("toolName", toolCall.path("function").path("name").asText());
-            assertEquals("{\"param1\":\"value1\"}", toolCall.path("function").path("arguments").asText());
+            assertEquals("function", toolCall.path("type").asString());
+            assertEquals("toolName", toolCall.path("function").path("name").asString());
+            assertEquals("{\"param1\":\"value1\"}", toolCall.path("function").path("arguments").asString());
         }
     }
 
@@ -109,8 +109,8 @@ public class OpenAIMockTest {
             JsonNode choice = responseJson.path("choices").get(0);
             JsonNode message = choice.path("message");
 
-            assertEquals("assistant", message.path("role").asText());
-            assertEquals("hello World", message.path("content").asText());
+            assertEquals("assistant", message.path("role").asString());
+            assertEquals("hello World", message.path("content").asString());
             assertEquals(true, message.path("refusal").isNull());
             assertEquals(true, message.path("tool_calls").isMissingNode());
         }
@@ -135,7 +135,7 @@ public class OpenAIMockTest {
             JsonNode choice = responseJson.path("choices").get(0);
             JsonNode message = choice.path("message");
 
-            assertEquals("assistant", message.path("role").asText());
+            assertEquals("assistant", message.path("role").asString());
             assertEquals(true, message.path("content").isNull());
             assertEquals(true, message.path("refusal").isNull());
 
@@ -143,14 +143,14 @@ public class OpenAIMockTest {
             assertEquals(2, toolCalls.size());
 
             JsonNode toolCall1 = toolCalls.get(0);
-            assertEquals("function", toolCall1.path("type").asText());
-            assertEquals("tool1", toolCall1.path("function").path("name").asText());
-            assertEquals("{\"p1\":\"v1\"}", toolCall1.path("function").path("arguments").asText());
+            assertEquals("function", toolCall1.path("type").asString());
+            assertEquals("tool1", toolCall1.path("function").path("name").asString());
+            assertEquals("{\"p1\":\"v1\"}", toolCall1.path("function").path("arguments").asString());
 
             JsonNode toolCall2 = toolCalls.get(1);
-            assertEquals("function", toolCall2.path("type").asText());
-            assertEquals("tool2", toolCall2.path("function").path("name").asText());
-            assertEquals("{\"p2\":\"v2\",\"p3\":\"v3\"}", toolCall2.path("function").path("arguments").asText());
+            assertEquals("function", toolCall2.path("type").asString());
+            assertEquals("tool2", toolCall2.path("function").path("name").asString());
+            assertEquals("{\"p2\":\"v2\",\"p3\":\"v3\"}", toolCall2.path("function").path("arguments").asString());
         }
     }
 
@@ -190,7 +190,7 @@ public class OpenAIMockTest {
             JsonNode choice1 = responseJson1.path("choices").get(0);
             JsonNode message1 = choice1.path("message");
 
-            assertEquals("assistant", message1.path("role").asText());
+            assertEquals("assistant", message1.path("role").asString());
             assertEquals(true, message1.path("content").isNull());
             assertEquals(true, message1.path("refusal").isNull());
 
@@ -198,10 +198,10 @@ public class OpenAIMockTest {
             assertEquals(1, toolCalls.size());
 
             JsonNode toolCall = toolCalls.get(0);
-            String toolCallId = toolCall.path("id").asText();
-            assertEquals("function", toolCall.path("type").asText());
-            assertEquals("toolName", toolCall.path("function").path("name").asText());
-            assertEquals("{\"param1\":\"value1\"}", toolCall.path("function").path("arguments").asText());
+            String toolCallId = toolCall.path("id").asString();
+            assertEquals("function", toolCall.path("type").asString());
+            assertEquals("toolName", toolCall.path("function").path("name").asString());
+            assertEquals("{\"param1\":\"value1\"}", toolCall.path("function").path("arguments").asString());
 
             // Second request with tool result
             String secondRequestBody = String.format(
@@ -217,7 +217,7 @@ public class OpenAIMockTest {
             JsonNode responseJson2 = objectMapper.readTree(responseBody2);
 
             JsonNode choice2 = responseJson2.path("choices").get(0);
-            assertEquals("stop", choice2.path("finish_reason").asText());
+            assertEquals("stop", choice2.path("finish_reason").asString());
         }
     }
 }

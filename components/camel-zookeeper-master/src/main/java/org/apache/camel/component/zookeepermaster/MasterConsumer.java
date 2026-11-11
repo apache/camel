@@ -22,9 +22,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
@@ -35,6 +32,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A consumer which is only really active while it holds the master lock
@@ -87,9 +86,9 @@ public class MasterConsumer extends DefaultConsumer {
     @ManagedOperation(description = "Information about all the slaves")
     public String slaves() {
         try {
-            return new ObjectMapper()
+            return JsonMapper.builderWithJackson2Defaults()
                     .enable(SerializationFeature.INDENT_OUTPUT)
-                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .build()
                     .writeValueAsString(groupListener.getGroup().slaves());
         } catch (Exception e) {
             return null;

@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -45,6 +43,8 @@ import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveAndGene
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveRequest;
 import software.amazon.awssdk.services.bedrockagentruntime.model.RetrieveResponse;
 import software.amazon.awssdk.services.bedrockagentruntime.model.SearchType;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -257,7 +257,7 @@ public class BedrockAgentRuntimeProducerRetrieveTest {
 
     @Test
     public void retrieveAndGenerateSendsJsonNodeBodyAsJson() {
-        ObjectNode body = new ObjectMapper().createObjectNode().put("question", "what is camel?");
+        ObjectNode body = JsonMapper.builder().build().createObjectNode().put("question", "what is camel?");
         Exchange result = template.send("direct:retrieve-and-generate", exchange -> exchange.getMessage().setBody(body));
 
         assertNull(result.getException(), "Exchange should not fail");

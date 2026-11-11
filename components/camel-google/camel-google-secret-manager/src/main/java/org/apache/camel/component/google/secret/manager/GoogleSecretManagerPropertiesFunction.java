@@ -21,9 +21,6 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.api.gax.rpc.ApiException;
 import com.google.auth.Credentials;
@@ -41,6 +38,10 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.GcpVaultConfiguration;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from GCP Secrets Manager service.
@@ -80,7 +81,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     private static final String CAMEL_VAULT_GCP_PROJECT_ID = "CAMEL_VAULT_GCP_PROJECT_ID";
     private static final String CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE = "CAMEL_VAULT_GCP_USE_DEFAULT_INSTANCE";
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     boolean useDefaultInstance;
 
@@ -192,7 +193,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
         if (key != null) {
             try {
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new RuntimeCamelException(
                         "Error getting secret from vault using key: " + key + " due to: " + e.getMessage(), e);
             }
@@ -202,8 +203,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
     }
 
     private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            String key, String subkey, String defaultValue, String version) {
 
         // capture name of secret
         secrets.add(key);
@@ -220,7 +220,7 @@ public class GoogleSecretManagerPropertiesFunction extends ServiceSupport implem
                 JsonNode actualObj = MAPPER.readTree(returnValue);
                 JsonNode field = actualObj.get(subkey);
                 if (ObjectHelper.isNotEmpty(field)) {
-                    returnValue = field.textValue();
+                    returnValue = field.stringValue(null);
                 } else {
                     returnValue = null;
                 }

@@ -24,7 +24,7 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.StepIdAware;
 
 /**
- * A processor which removes one ore more headers from the IN or OUT message
+ * A processor which removes one or more headers from the IN or OUT message
  */
 public class RemoveHeadersProcessor extends BaseProcessorSupport implements Traceable, IdAware, RouteIdAware, StepIdAware {
     private String id;

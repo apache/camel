@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 
@@ -61,6 +62,22 @@ final class ChaosExperiment {
         return (routes.size() == 1 ? "route " : "routes ") + String.join(", ", routes)
                + " had no messages while it ran, so " + (routes.size() == 1 ? "its expectation says" : "their expectations say")
                + " nothing: feed " + (routes.size() == 1 ? "it" : "them");
+    }
+
+    /**
+     * Why an experiment is INCONCLUSIVE when the route of an expectation failed exchanges that no expectation counts
+     * (CAMEL-26797), such as refunds->payment:lost<=0 while refunds failed: lost counts what one route completed and
+     * the next did not, so a failure in the first route is not in it.
+     */
+    static String uncountedFailures(Map<String, Long> routes) {
+        StringJoiner failed = new StringJoiner(", ");
+        StringJoiner expect = new StringJoiner(" ");
+        routes.forEach((route, n) -> {
+            failed.add(routes.size() == 1 ? route + " failed " + n + (n == 1 ? " exchange" : " exchanges") : route + " " + n);
+            expect.add("expect=" + route + ":failed<=0");
+        });
+        return (routes.size() == 1 ? "route " + failed : "routes " + failed + " failed exchanges")
+               + " that its expectations do not count, so they say nothing about the failures: " + expect + " counts them";
     }
 
     /** How an experiment ended. */
@@ -163,6 +180,10 @@ final class ChaosExperiment {
         long firedAll = 0;
         // the routes whose failures an expectation counts, and the routes of the expectations that are met
         Set<String> failedExpected = new HashSet<>();
+        // the routes of the expectations, and the routes whose failures an expectation counts in some way: failed,
+        // completed (a failure is not completed), or the next route of lost (what it did not complete)
+        Set<String> expectRoutes = new HashSet<>();
+        Set<String> failuresCounted = new HashSet<>();
         Set<String> metRoutes = new TreeSet<>();
         Set<String> unmetTimes = new HashSet<>();
         for (String id : rules) {
@@ -175,6 +196,10 @@ final class ChaosExperiment {
             for (ChaosRule.Hook hook : ChaosRule.Hook.values()) {
                 fired += r.firedAt(hook);
             }
+            if (r.lifecycle != null) {
+                // a stall or lifecycle rule fired when it took its route down, as the report counts it
+                fired += r.lifecycle.read(now).round();
+            }
             faults.put(id, fired);
             firedAll += fired;
             long kept = r.lostAtDlqCount();
@@ -186,6 +211,12 @@ final class ChaosExperiment {
             if (e != null) {
                 if (e.kind == Expectation.Kind.FAILED) {
                     failedExpected.add(e.route);
+                }
+                expectRoutes.add(e.route);
+                if (e.kind == Expectation.Kind.FAILED || e.kind == Expectation.Kind.COMPLETED) {
+                    failuresCounted.add(e.route);
+                } else if (e.kind == Expectation.Kind.LOST) {
+                    failuresCounted.add(e.toRoute);
                 }
                 Expectation.Reading reading = e.read(now);
                 // an expectation the experiment did not wait for is undecided, not cancelled
@@ -219,6 +250,7 @@ final class ChaosExperiment {
         JsonArray routes = new JsonArray();
         JsonObject alsoFailed = new JsonObject();
         Set<String> active = new HashSet<>();
+        Map<String, Long> uncounted = new TreeMap<>();
         counts.forEach((route, c) -> {
             long[] now0 = read(c);
             long[] then = before.getOrDefault(route, new long[5]);
@@ -240,6 +272,9 @@ final class ChaosExperiment {
                 routes.add(r);
                 if (delta[1] > 0 && !failedExpected.contains(route)) {
                     alsoFailed.put(route, delta[1]);
+                }
+                if (delta[1] > 0 && expectRoutes.contains(route) && !failuresCounted.contains(route)) {
+                    uncounted.put(route, delta[1]);
                 }
             }
         });
@@ -263,12 +298,16 @@ final class ChaosExperiment {
         }
         metRoutes.removeAll(active);
         boolean idle = !metRoutes.isEmpty();
+        // an expectation met while its route failed exchanges it does not count says nothing either (CAMEL-26797)
+        boolean hidden = !uncounted.isEmpty();
         String verdict = unmet || lost > 0
-                ? FAIL : !undecided && !neverFired && !idle ? PASS : ended ? INCONCLUSIVE : PENDING;
+                ? FAIL : !undecided && !neverFired && !idle && !hidden ? PASS : ended ? INCONCLUSIVE : PENDING;
         jo.put("verdict", verdict);
         if (INCONCLUSIVE.equals(verdict)) {
-            // never fired comes first: when no fault ran, the expectations that did not decide are a consequence of it
-            jo.put("reason", neverFired ? NEVER_FIRED : idle ? noMessages(metRoutes) : NOT_DECIDED);
+            // never fired comes first: when no fault ran, the expectations that did not decide are a consequence of it;
+            // failures not counted come before not decided, as waiting longer would not count them either
+            jo.put("reason", neverFired
+                    ? NEVER_FIRED : idle ? noMessages(metRoutes) : hidden ? uncountedFailures(uncounted) : NOT_DECIDED);
         }
         if (countsReset) {
             jo.put("countsReset", true);

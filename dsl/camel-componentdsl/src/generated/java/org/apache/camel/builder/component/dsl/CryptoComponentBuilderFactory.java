@@ -90,7 +90,7 @@ public interface CryptoComponentBuilderFactory {
         }
     
         /**
-         * Sets the reference name for a PrivateKey that can be found in the
+         * Sets the reference name for a Certificate that can be found in the
          * registry.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -106,7 +106,7 @@ public interface CryptoComponentBuilderFactory {
         }
     
         /**
-         * Sets the KeyStore that can contain keys and Certficates for use in
+         * Sets the KeyStore that can contain keys and Certificates for use in
          * signing and verifying exchanges. A KeyStore is typically used with an
          * alias, either one supplied in the Route definition or dynamically via
          * the message header CamelSignatureKeyStoreAlias. If no alias is
@@ -355,7 +355,7 @@ public interface CryptoComponentBuilderFactory {
         }
     
         /**
-         * Sets the KeyStore that can contain keys and Certficates for use in
+         * Sets the KeyStore that can contain keys and Certificates for use in
          * signing and verifying exchanges based on the given
          * KeyStoreParameters. A KeyStore is typically used with an alias,
          * either one supplied in the Route definition or dynamically via the

@@ -99,7 +99,7 @@
         <bouncycastle-version>1.86</bouncycastle-version>
         <box-java-sdk-version>4.16.4</box-java-sdk-version>
         <braintree-gateway-version>3.55.1</braintree-gateway-version>
-        <build-helper-maven-plugin-version>3.6.2</build-helper-maven-plugin-version>
+        <build-helper-maven-plugin-version>3.7.0</build-helper-maven-plugin-version>
         <bytebuddy-version>1.18.16</bytebuddy-version>
         <c3p0-version>0.14.2</c3p0-version>
         <caffeine-version>3.3.1</caffeine-version>
@@ -196,7 +196,7 @@
         <jaxb-xjc-version>4.0.9</jaxb-xjc-version>
         <jaxb-jxc-version>4.0.9</jaxb-jxc-version>
         <gmavenplus-plugin-version>5.1.0</gmavenplus-plugin-version>
-        <google-auth-library-oauth2-http-version>1.55.0</google-auth-library-oauth2-http-version>
+        <google-auth-library-oauth2-http-version>1.57.0</google-auth-library-oauth2-http-version>
         <google-api-client-version>2.9.1</google-api-client-version>
         <google-api-services-drive-version>v3-rev20251210-2.0.0</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20251207-2.0.0</google-api-services-calendar-version>
@@ -216,7 +216,7 @@
         <google-cloud-speech-version>4.97.0</google-cloud-speech-version>
         <google-cloud-texttospeech-version>2.103.0</google-cloud-texttospeech-version>
         <google-genai-version>1.75.0</google-genai-version>
-        <graalvm-version>25.4.4.1.1</graalvm-version>
+        <graalvm-version>25.5.5.0.3</graalvm-version>
         <graphql-java-version>26.1</graphql-java-version>
         <greenmail-version>2.1.15</greenmail-version>
         <groovy-version>5.1.2</groovy-version>
@@ -317,7 +317,7 @@
         <jline-version>4.4.8</jline-version>
         <libthrift-version>0.25.0</libthrift-version>
         <jodatime2-version>2.15.0</jodatime2-version>
-        <jolokia-version>2.6.4</jolokia-version>
+        <jolokia-version>2.6.5</jolokia-version>
         <jolt-version>1.3.0</jolt-version>
         <jool-version>0.9.15</jool-version>
         <!-- jooq 3.20 is Java 21+ only so we need to be 3.19.x -->
@@ -328,7 +328,7 @@
         <jsmpp-version>3.0.2</jsmpp-version>
         <jsch-version>2.28.8</jsch-version>
         <javax-json-api-version>1.1.4</javax-json-api-version>
-        <jsonschema-generator-version>4.38.0</jsonschema-generator-version>
+        <jsonschema-generator-version>5.0.0</jsonschema-generator-version>
         <jsonassert-version>1.5.3</jsonassert-version>
         <json-path-version>3.0.0</json-path-version>
         <json-smart-version>2.6.0</json-smart-version>

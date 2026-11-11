@@ -26,10 +26,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A fake HashiCorp Vault over HTTP, which records the requests it receives and answers them with the replies set per
@@ -37,7 +38,7 @@ import com.sun.net.httpserver.HttpServer;
  */
 final class FakeVault implements AutoCloseable {
 
-    private static final ObjectMapper JSON = new ObjectMapper();
+    private static final ObjectMapper JSON = JsonMapper.builder().build();
 
     /**
      * A request to Vault: the path is without /v1/, the token and namespace are the X-Vault-Token and X-Vault-Namespace
@@ -48,7 +49,7 @@ final class FakeVault implements AutoCloseable {
         Map<?, ?> json() {
             try {
                 return JSON.readValue(body, Map.class);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalStateException("Not JSON: " + body, e);
             }
         }
