@@ -29,7 +29,7 @@ public class ClusterRoleChangeListener implements RAFT.RoleChange {
     private final JGroupsRaftClusterView jgroupsRaftClusterView;
 
     public ClusterRoleChangeListener(JGroupsRaftClusterView jgroupsRaftClusterView) {
-        ObjectHelper.notNull(jgroupsRaftClusterView, "endpoint");
+        ObjectHelper.notNull(jgroupsRaftClusterView, "jgroupsRaftClusterView");
 
         this.jgroupsRaftClusterView = jgroupsRaftClusterView;
     }
