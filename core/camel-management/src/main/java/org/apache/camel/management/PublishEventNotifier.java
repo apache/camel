@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link org.apache.camel.spi.EventNotifier} which publishes the {@link EventObject} to some
  * {@link org.apache.camel.Endpoint}.
- * <p/>
+ * <p>
  * This notifier is only enabled when {@link CamelContext} is started. This avoids problems when sending notifications
  * during start/shutdown of {@link CamelContext} which causes problems by sending those events to Camel routes by this
  * notifier.

@@ -129,16 +129,17 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
     /**
      * Creates the {@link CamelContext} using {@link DefaultRegistry} as registry.
-     * <p/>
-     * Use one of the other constructors to force use an explicit registry.
+     * <p>
+     * Use one of the other constructors to force the use of an explicit registry.
      */
     public SimpleCamelContext() {
         this(true);
     }
 
     /**
-     * Creates the {@link CamelContext} and allows to control whether the context should automatic initialize or not.
-     * <p/>
+     * Creates the {@link CamelContext} and allows to control whether the context should automatically initialize or
+     * not.
+     * <p>
      * Note: Not for end users - this method is used internally by camel-blueprint/camel-cdi
      *
      * @param init whether to automatic initialize.
