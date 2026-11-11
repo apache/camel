@@ -1109,7 +1109,10 @@ public final class JsonMapper {
         prop.put("optionalPrefix", option.getOptionalPrefix());
         prop.put("multiValue", option.isMultiValue());
         prop.put("deprecated", option.isDeprecated());
-        prop.put("deprecationNote", option.getDeprecationNote());
+        if (!Strings.isNullOrEmpty(option.getDeprecationNote())) {
+            // only include if there is a note: the annotation default is an empty string
+            prop.put("deprecationNote", option.getDeprecationNote());
+        }
         prop.put("autowired", option.isAutowired());
         prop.put("secret", option.isSecret());
         if (!Strings.isNullOrEmpty(option.getSecurity())) {
