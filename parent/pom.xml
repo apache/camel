@@ -113,6 +113,7 @@
         <camunda-version>7.24.0</camunda-version>
         <camunda-client-java-version>8.10.7</camunda-client-java-version>
         <cassandra-driver-version>4.19.4</cassandra-driver-version>
+        <cedar-java-version>4.11.0</cedar-java-version>
         <clickhouse-client-version>0.11.0</clickhouse-client-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
@@ -1242,6 +1243,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-cbor</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-cedar</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

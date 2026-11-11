@@ -1100,6 +1100,19 @@ public interface ComponentsBuilderFactory {
         return CamundaComponentBuilderFactory.camunda();
     }
     /**
+     * Cedar (camel-cedar)
+     * Embedded Cedar authorization policies
+     *
+     * Category: security
+     * Since: 4.24
+     * Maven coordinates: org.apache.camel:camel-cedar
+     *
+     * @return the dsl builder
+     */
+    static CedarComponentBuilderFactory.CedarComponentBuilder cedar() {
+        return CedarComponentBuilderFactory.cedar();
+    }
+    /**
      * ChatScript (camel-chatscript)
      * Chat with a ChatScript Server.
      * 
