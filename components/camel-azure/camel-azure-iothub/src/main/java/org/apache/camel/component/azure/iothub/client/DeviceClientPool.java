@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -520,8 +521,16 @@ public class DeviceClientPool {
 
     private void closeRetired(PooledClient pooled) {
         if (pooled.closed.compareAndSet(false, true)) {
-            ScheduledExecutorService executor = getOrCreateEvictionExecutor();
-            executor.execute(() -> closeQuietly("retired", pooled.client, "retired eviction"));
+            ScheduledExecutorService executor = evictionExecutor;
+            if (executor != null && !executor.isShutdown()) {
+                try {
+                    executor.execute(() -> closeQuietly("retired", pooled.client, "retired eviction"));
+                    return;
+                } catch (RejectedExecutionException ignored) {
+                    // Fall through to synchronous close if the executor was shut down concurrently.
+                }
+            }
+            closeQuietly("retired", pooled.client, "retired eviction");
         }
     }
 
