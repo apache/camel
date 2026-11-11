@@ -216,7 +216,7 @@ language can often be run without change in the other.
 
 For example, here are some of the things that are the same:
 
-* `//` and `/* */` style commends.
+* `//` and `/* */` style comments.
 * Semicolons are optional unless there are multiple statements on the same line.
 * Closures: `{ x,y -> x + y}`, the implicit `it` variable, and trailing closure-call syntax `list.map{ it * 2 }`.
 * `def` for dynamic types
