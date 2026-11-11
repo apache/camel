@@ -40,7 +40,6 @@ final class ChaosRecipes {
             List<String> schemes, List<String> values) {
     }
 
-    /** A known rule. */
     /**
      * A known rule. Besides what it does, the model says what it can uncover, when not to use it and what to watch
      * while it runs (CAMEL-26699): empty with a catalog from before that.
