@@ -46,7 +46,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  * A content enricher that enriches input data by first obtaining additional data from a <i>resource</i> represented by
  * an endpoint <code>producer</code> and second by aggregating input data and additional data. Aggregation of input data
  * and additional data is delegated to an {@link AggregationStrategy} object.
- * <p/>
+ * <p>
  * Uses a {@link org.apache.camel.Producer} to obtain the additional data as opposed to {@link PollEnricher} that uses a
  * {@link org.apache.camel.PollingConsumer}.
  *

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for any processor which provides some kind of throttling or delayed processing.
- * <p/>
+ * <p>
  * This implementation will block while waiting.
  */
 public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport {
@@ -215,7 +215,7 @@ public abstract class DelayProcessorSupport extends BaseDelegateProcessorSupport
 
     /**
      * Delays the given time before continuing.
-     * <p/>
+     * <p>
      * This implementation will block while waiting
      *
      * @param delay    the delay time in millis

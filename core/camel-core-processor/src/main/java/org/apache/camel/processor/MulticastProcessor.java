@@ -976,15 +976,15 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     /**
      * Common work which must be done when we are done multicasting.
-     * <p/>
-     * This logic applies for both running synchronous and asynchronous as there are multiple exist points when using
-     * the asynchronous routing engine. And therefore we want the logic in one method instead of being scattered.
+     * <p>
+     * This logic applies for both running synchronous and asynchronous as there are multiple exit points when using the
+     * asynchronous routing engine. And therefore we want the logic in one method instead of being scattered.
      *
      * @param original     the original exchange
-     * @param subExchange  the current sub exchange, can be <tt>null</tt> for the synchronous part
+     * @param subExchange  the current sub exchange, can be <code>null</code> for the synchronous part
      * @param pairs        the pairs with the exchanges to process
      * @param callback     the callback
-     * @param doneSync     the <tt>doneSync</tt> parameter to call on callback
+     * @param doneSync     the <code>doneSync</code> parameter to call on callback
      * @param forceExhaust whether error handling is exhausted
      */
     protected void doDone(
@@ -1231,8 +1231,8 @@ public class MulticastProcessor extends BaseProcessorSupport
     }
 
     /**
-     * Creates the {@link ProcessorExchangePair} which holds the processor and exchange to be send out.
-     * <p/>
+     * Creates the {@link ProcessorExchangePair} which holds the processor and exchange to be sent out.
+     * <p>
      * You <b>must</b> use this method to create the instances of {@link ProcessorExchangePair} as they need to be
      * specially prepared before use.
      *
@@ -1371,7 +1371,7 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     /**
      * Prepares the exchange for participating in a shared unit of work
-     * <p/>
+     * <p>
      * This ensures a child exchange can access its parent {@link UnitOfWork} when it participates in a shared unit of
      * work.
      *
@@ -1514,11 +1514,11 @@ public class MulticastProcessor extends BaseProcessorSupport
 
     /**
      * Is the multicast processor working in streaming mode?
-     * <p/>
+     * <p>
      * In streaming mode:
      * <ul>
      * <li>we use {@link Iterable} to ensure we can send messages as soon as the data becomes available</li>
-     * <li>for parallel processing, we start aggregating responses as they get send back to the processor; this means
+     * <li>for parallel processing, we start aggregating responses as they get sent back to the processor; this means
      * the {@link AggregationStrategy} has to take care of handling out-of-order arrival of exchanges</li>
      * </ul>
      */

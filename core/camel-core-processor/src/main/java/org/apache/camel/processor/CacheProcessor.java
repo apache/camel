@@ -39,11 +39,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of the Cache EIP pattern that provides a read-through cache for a block of processing steps.
- * <p/>
+ * <p>
  * On cache hit (key found in the repository), the cached value is set as the message body and the nested processing
  * steps are skipped entirely. On cache miss, the nested steps execute normally and the resulting message body is stored
  * in the cache for subsequent requests with the same key.
- * <p/>
+ * <p>
  * Cache errors are handled gracefully — they are logged but never propagate to the exchange. Failed exchanges (those
  * with an exception set) are never cached.
  *
