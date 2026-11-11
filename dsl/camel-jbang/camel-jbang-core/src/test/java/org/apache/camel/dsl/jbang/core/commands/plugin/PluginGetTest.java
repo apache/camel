@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommandBaseTestSupport;
@@ -26,8 +29,12 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class PluginGetTest extends CamelCommandBaseTestSupport {
+
+    @TempDir
+    Path customConfigDir;
 
     @BeforeEach
     public void setup() throws Exception {
@@ -61,6 +68,60 @@ class PluginGetTest extends CamelCommandBaseTestSupport {
                 "kubernetes  kubernetes  ASF     org.apache.camel:camel-jbang-plugin-kubernetes  %s"
                         .formatted(PluginType.KUBERNETES.getDescription()),
                 output.get(3));
+    }
+
+    @Test
+    public void shouldUseCustomPluginConfigFile() throws Exception {
+        Path customConfig = customConfigDir.resolve("custom-plugins.json");
+        String configContent = """
+                {
+                  "plugins": {
+                    "custom-plugin": {
+                      "name": "custom-plugin",
+                      "command": "custom",
+                      "description": "Custom plugin from custom config"
+                    }
+                  }
+                }
+                """;
+        Files.writeString(customConfig, configContent, StandardOpenOption.CREATE);
+
+        PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
+        command.pluginConfig = customConfig.toString();
+        command.doCall();
+
+        List<String> output = printer.getLines();
+        Assertions.assertEquals(4, output.size());
+        Assertions.assertTrue(output.get(3).contains("custom-plugin"));
+        Assertions.assertTrue(output.get(3).contains("Custom plugin from custom config"));
+    }
+
+    @Test
+    public void shouldUseCustomPluginConfigDirectory() throws Exception {
+        Path configDir = customConfigDir.resolve("config-dir");
+        Files.createDirectories(configDir);
+        Path configFile = configDir.resolve(PluginHelper.PLUGIN_CONFIG);
+        String configContent = """
+                {
+                  "plugins": {
+                    "dir-plugin": {
+                      "name": "dir-plugin",
+                      "command": "dir",
+                      "description": "Plugin from directory config"
+                    }
+                  }
+                }
+                """;
+        Files.writeString(configFile, configContent, StandardOpenOption.CREATE);
+
+        PluginGet command = new PluginGet(new CamelJBangMain().withPrinter(printer));
+        command.pluginConfig = configDir.toString();
+        command.doCall();
+
+        List<String> output = printer.getLines();
+        Assertions.assertEquals(4, output.size());
+        Assertions.assertTrue(output.get(3).contains("dir-plugin"));
+        Assertions.assertTrue(output.get(3).contains("Plugin from directory config"));
     }
 
     @Test
