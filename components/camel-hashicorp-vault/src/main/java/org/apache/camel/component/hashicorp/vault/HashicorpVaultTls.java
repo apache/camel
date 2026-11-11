@@ -55,7 +55,7 @@ final class HashicorpVaultTls {
 
     private static final Pattern PEM_BLOCK = Pattern.compile(
             "-----BEGIN ([A-Z0-9 ]+)-----(.+?)-----END \\1-----", Pattern.DOTALL);
-    // the algorithms of a PKCS#8 private key that is tried in turn, as Java 17 cannot read the algorithm of the key
+    // the algorithms of a PKCS#8 private key that are tried in turn, as the JDK does not read the algorithm of the key
     private static final List<String> KEY_ALGORITHMS = List.of("RSA", "EC", "Ed25519", "Ed448");
 
     private HashicorpVaultTls() {
@@ -105,6 +105,13 @@ final class HashicorpVaultTls {
                 }
             } else {
                 store = KeyStore.getInstance(new File(file), toChars(password));
+                if (store.size() == 0) {
+                    // a PKCS12 trust store keeps its certificates encrypted: without the password it reads as empty
+                    throw new GeneralSecurityException(
+                            password == null
+                                    ? "no certificate in the trust store, which may need its trustStorePassword"
+                                    : "no certificate in the trust store");
+                }
             }
             TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             factory.init(store);
@@ -114,7 +121,7 @@ final class HashicorpVaultTls {
         }
     }
 
-    private static KeyManager[] keyManagers(String file, String password) {
+    static KeyManager[] keyManagers(String file, String password) {
         try {
             KeyStore store;
             char[] keyPassword;

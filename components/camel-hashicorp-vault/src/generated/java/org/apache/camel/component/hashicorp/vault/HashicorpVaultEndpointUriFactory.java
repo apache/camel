@@ -24,9 +24,14 @@ public class HashicorpVaultEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> ENDPOINT_IDENTITY_PROPERTY_NAMES;
     private static final Map<String, String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(22);
+        Set<String> props = new HashSet<>(27);
         props.add("authMountPath");
         props.add("authentication");
+        props.add("awsIamServerId");
+        props.add("awsRegion");
+        props.add("awsStsEndpoint");
+        props.add("azureClientId");
+        props.add("azureResource");
         props.add("cloud");
         props.add("host");
         props.add("jwt");
