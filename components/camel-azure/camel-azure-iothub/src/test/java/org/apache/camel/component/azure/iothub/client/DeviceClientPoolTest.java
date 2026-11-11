@@ -235,4 +235,39 @@ class DeviceClientPoolTest {
         assertEquals(0, pool.getActiveClientCount(), "client should be evicted immediately on DISCONNECTED");
         verify(client, Mockito.atLeastOnce()).close();
     }
+
+    @Test
+    void testDisconnectedCallbackDoesNotEvictInUseClient() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        AtomicReference<IotHubConnectionStatusChangeCallback> callbackRef = new AtomicReference<>();
+
+        doAnswer(invocation -> {
+            callbackRef.set(invocation.getArgument(0));
+            return null;
+        }).when(client).setConnectionStatusChangeCallback(any(), any());
+
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+
+        DeviceClientPool.Lease lease = pool.lease("d", CS, IotHubClientProtocol.MQTT);
+        assertEquals(1, pool.getActiveClientCount());
+
+        IotHubConnectionStatusChangeCallback callback = callbackRef.get();
+        ConnectionStatusChangeContext context = mock(ConnectionStatusChangeContext.class);
+        Mockito.when(context.getNewStatus()).thenReturn(IotHubConnectionStatus.DISCONNECTED);
+        Mockito.when(context.getPreviousStatus()).thenReturn(IotHubConnectionStatus.CONNECTED);
+        Mockito.when(context.getNewStatusReason()).thenReturn(IotHubConnectionStatusChangeReason.COMMUNICATION_ERROR);
+
+        callback.onStatusChanged(context);
+
+        assertEquals(1, pool.getActiveClientCount(), "in-use client should not be evicted on DISCONNECTED");
+        verify(client, Mockito.never()).close();
+
+        lease.close();
+        assertEquals(1, pool.getActiveClientCount(),
+                "leased client should remain in the pool until it is later evicted or shutdown");
+        verify(client, Mockito.never()).close();
+
+    }
+
 }

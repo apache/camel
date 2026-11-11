@@ -393,7 +393,7 @@ public class DeviceClientPool {
 
         String poolKey = resolvePoolKey(deviceId, connectionString);
         PooledClient pooled = pool.get(poolKey);
-        if (pooled != null && pooled.client == client && pool.remove(poolKey, pooled)) {
+        if (pooled != null && pooled.inUse.get() == 0 && pooled.client == client && pool.remove(poolKey, pooled)) {
             LOG.warn("Evicted DeviceClient for device {} after disconnect. previousStatus={}, reason={}, cause={}",
                     deviceId, context.getPreviousStatus(), context.getNewStatusReason(), context.getCause());
             closeQuietly(deviceId, client, "connection status changed to DISCONNECTED");
