@@ -451,9 +451,10 @@ integration's own server), with the same vocabulary as the route of the rule. Wi
 condition that looks past one route (see the conditions above): a hand-off is where most messages are lost, and it is
 between two routes. `${receiver}` is its id.
 |`outcome` |What is seen when the hint happens: `failed` in a route (an error), `lost` between two routes, `duplicates`
-in a route, `slow` (the time of a route), `lostAtDeadLetter`. It is the way back from a failure to its rule, as
-`tryChaos` is the way from a rule to its recipe. An error in a running integration matches `failed`; a chaos experiment
-also matches the outcome of its unmet expectation.
+in a route, `slow` (the time of a route), `lostAtDeadLetter` (the dead letter channel failed as well, so the message
+is logged as a WARN and gone; with `failed` the error handler still had it). It is the way back from a failure to its
+rule, as `tryChaos` is the way from a rule to its recipe. An error in a running integration matches `failed`; a chaos
+experiment also matches the outcome of its unmet expectation.
 |`impact` |What it means in production, in one sentence, for the explanation. The `text` stays "this happens".
 |`choices` |The choices the user decides between: a list of at least two objects, each with `text` (required, one
 line, with the placeholders of the rule) and `seeAlso` (optional, ids as above), and no other field. They are the
