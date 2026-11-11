@@ -90,6 +90,8 @@ final class AboutView {
     private final MonitorContext ctx;
     private volatile ProjectOverview.Overview overview;
     private volatile About.Model model;
+    // how the routes of the running integration reach each other; null as the sources have it
+    private volatile RuntimeLinks links;
     private volatile String purpose;
     private volatile String purposeFrom;
     private volatile boolean loading;
@@ -130,6 +132,30 @@ final class AboutView {
         this.ctx = ctx;
     }
 
+    /**
+     * The links of the running integration (its route topology, as the Diagram has it); null when it does not run, or
+     * does not answer, and the model is as the sources have it.
+     */
+    private RuntimeLinks runtimeLinks(IntegrationInfo info) {
+        if (info.phantom || info.pid == null || !alive(info.pid)) {
+            return null;
+        }
+        try {
+            JsonObject topology = ctx.diagramTopology.load(ctx, info.pid);
+            return topology != null ? RuntimeLinks.of(topology) : null;
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    private static boolean alive(String pid) {
+        try {
+            return ProcessHandle.of(Long.parseLong(pid)).map(ProcessHandle::isAlive).orElse(false);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     /** Reads the sources of the integration in the background, again when they may have changed. */
     private void load(IntegrationInfo info, Consumer<Runnable> onRenderThread) {
         Path d = info.directory != null ? Path.of(info.directory) : null;
@@ -152,9 +178,12 @@ final class AboutView {
         Thread t = new Thread(() -> {
             try {
                 ProjectOverview.Overview o = ProjectOverview.analyze(d, ArchitectureView.catalog());
-                About.Model m = About.of(d, o);
+                // how the routes reach each other as the runtime has it, a hop over a broker included
+                RuntimeLinks rl = runtimeLinks(info);
+                About.Model m = rl != null ? rl.apply(About.of(d, o), info) : About.of(d, o);
                 Path r = About.readme(d);
                 onRenderThread.accept(() -> {
+                    links = rl;
                     readme = r;
                     overview = o;
                     model = m;
@@ -1034,7 +1063,8 @@ final class AboutView {
             String how = r.how() == null ? "" : "call".equals(r.how()) ? "↳ " : "⇢ ";
             spans.add(Span.raw(" " + "  ".repeat(r.depth()) + how));
             spans.add(Span.styled(r.routeId(), Style.EMPTY.bold()));
-            spans.add(Span.styled("  " + r.from() + " → " + r.steps() + (r.steps() == 1 ? " step" : " steps"),
+            spans.add(Span.styled("  " + r.from() + " → " + r.steps() + (r.steps() == 1 ? " step" : " steps")
+                                  + ("error".equals(r.how()) ? ", on failure" : ""),
                     Theme.muted()));
             Long total = totals.get(r.routeId());
             if (total != null) {
@@ -1046,7 +1076,9 @@ final class AboutView {
 
         // and the ones the integration sent to that its routes do not name (a toD, a recipient list)
         List<About.Out> outs = new ArrayList<>(m.out());
-        outs.addAll(ObservedOuts.of(info, m.out()));
+        RuntimeLinks rl = links;
+        // a destination a route of the integration consumes is no system outside
+        ObservedOuts.of(info, m.out()).stream().filter(s -> rl == null || !rl.consumedHere(s)).forEach(outs::add);
         for (About.Out s : outs) {
             if (spaced && !out.isEmpty()) {
                 out.add(Line.from(Span.raw("")));
@@ -1402,11 +1434,12 @@ final class AboutView {
                     ? "  (the last exchange " + ChaosTab.shortTime((end - lastActive) * 1000) + " ago)"
                     : "  (quiet)", Theme.muted()));
         }
-        // what the routes that something starts did since the integration started, as their counters say
+        // what the routes that something from outside starts did since the integration started, as their counters
+        // say: not a route a queue of the integration itself feeds
         Set<String> entry = new LinkedHashSet<>();
-        ProjectOverview.Overview o = overview;
-        if (o != null) {
-            o.entryPoints().forEach(e -> entry.add(e.route()));
+        About.Model shown = model;
+        if (shown != null) {
+            shown.in().forEach(e -> entry.add(e.route()));
         }
         long total = 0;
         long totalFailed = 0;
