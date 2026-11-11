@@ -286,11 +286,12 @@ public final class Sanitizer {
         if (stackDepth <= 0) {
             return new Trace(thread, null);
         }
-        StackTraceElement[] frames = WALKER.walk(s -> s
+        // the frames are kept as they are, and turned into StackTraceElements (file and line) only when a report shows
+        // them: almost every trace is dropped without a report, and the conversion is about half of the cost
+        StackWalker.StackFrame[] frames = WALKER.walk(s -> s
                 .dropWhile(f -> isOwnFrame(f.getClassName()))
                 .limit(stackDepth)
-                .map(StackWalker.StackFrame::toStackTraceElement)
-                .toArray(StackTraceElement[]::new));
+                .toArray(StackWalker.StackFrame[]::new));
         return new Trace(thread, frames);
     }
 
@@ -1043,9 +1044,10 @@ public final class Sanitizer {
     static final class Trace {
 
         private final String thread;
-        private final StackTraceElement[] frames;
+        // StackTraceElements, or the StackFrames of a StackWalker, which are turned into StackTraceElements when shown
+        private final Object[] frames;
 
-        Trace(String thread, StackTraceElement[] frames) {
+        Trace(String thread, Object[] frames) {
             this.thread = thread;
             this.frames = frames;
         }
@@ -1053,8 +1055,10 @@ public final class Sanitizer {
         void appendTo(StringBuilder sb, String what) {
             sb.append("  ").append(what).append(": thread ").append(thread).append('\n');
             if (frames != null) {
-                for (StackTraceElement f : frames) {
-                    sb.append("      at ").append(f).append('\n');
+                for (Object f : frames) {
+                    StackTraceElement e
+                            = f instanceof StackWalker.StackFrame frame ? frame.toStackTraceElement() : (StackTraceElement) f;
+                    sb.append("      at ").append(e).append('\n');
                 }
             }
         }
