@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.spiffe.services;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -38,7 +39,9 @@ import org.testcontainers.containers.Network;
 import org.testcontainers.containers.SelinuxContext;
 import org.testcontainers.containers.startupcheck.IsRunningStartupCheckStrategy;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.utility.MountableFile;
+import org.testcontainers.images.builder.Transferable;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * Runs a SPIRE server and agent so a test can fetch SVIDs from a real Workload API.
@@ -81,6 +84,8 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
 
     private final String serverImage;
     private final String agentImage;
+    private final Duration workloadSvidTtl;
+    private final Duration caTtl;
 
     private Network network;
     private GenericContainer<?> server;
@@ -89,13 +94,31 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     private String socketPath;
 
     public SpiffeLocalContainerInfraService() {
+        this(Duration.ofHours(1), Duration.ofHours(24));
+    }
+
+    /** Uses a shorter registration TTL for rotation tests without changing the shared fixture defaults. */
+    public SpiffeLocalContainerInfraService(Duration workloadSvidTtl, Duration caTtl) {
         this(LocalPropertyResolver.getProperty(SpiffeLocalContainerInfraService.class,
                 SpiffeProperties.SPIFFE_SERVER_CONTAINER),
              LocalPropertyResolver.getProperty(SpiffeLocalContainerInfraService.class,
-                     SpiffeProperties.SPIFFE_AGENT_CONTAINER));
+                     SpiffeProperties.SPIFFE_AGENT_CONTAINER),
+             workloadSvidTtl, caTtl);
     }
 
     public SpiffeLocalContainerInfraService(String serverImage, String agentImage) {
+        this(serverImage, agentImage, Duration.ofHours(1), Duration.ofHours(24));
+    }
+
+    public SpiffeLocalContainerInfraService(String serverImage, String agentImage, Duration workloadSvidTtl, Duration caTtl) {
+        if (workloadSvidTtl == null || workloadSvidTtl.getSeconds() < 1) {
+            throw new IllegalArgumentException("Workload SVID TTL must be at least one second");
+        }
+        if (caTtl == null || caTtl.compareTo(workloadSvidTtl.multipliedBy(6)) < 0) {
+            throw new IllegalArgumentException("CA TTL must be at least six times the workload SVID TTL");
+        }
+        this.caTtl = caTtl;
+        this.workloadSvidTtl = workloadSvidTtl;
         this.serverImage = serverImage;
         this.agentImage = agentImage;
     }
@@ -122,7 +145,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         server = new GenericContainer<>(serverImage)
                 .withNetwork(network)
                 .withNetworkAliases(SERVER_ALIAS)
-                .withCopyFileToContainer(MountableFile.forClasspathResource(SERVER_CONF_RESOURCE), SERVER_CONF)
+                .withCopyToContainer(Transferable.of(serverConfiguration()), SERVER_CONF)
                 .withExposedPorts(SERVER_PORT)
                 .withCommand("-config", SERVER_CONF)
                 .waitingFor(Wait.forListeningPort());
@@ -136,7 +159,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         // the socket directory bind-mounted (SELinux-shared) so the host can reach the Workload API socket it creates
         agent = new GenericContainer<>(agentImage)
                 .withNetwork(network)
-                .withCopyFileToContainer(MountableFile.forClasspathResource(AGENT_CONF_RESOURCE), AGENT_CONF)
+                .withCopyToContainer(Transferable.of(agentConfiguration()), AGENT_CONF)
                 .withCreateContainerCmdModifier(cmd -> cmd.getHostConfig().withPidMode("host"))
                 .withStartupCheckStrategy(new IsRunningStartupCheckStrategy())
                 .withCommand("-config", AGENT_CONF, "-joinToken", joinToken);
@@ -155,6 +178,51 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
         LOG.info("SPIRE Workload API available at {}", socketPath);
     }
 
+    String agentConfiguration() {
+        try (var input = getClass().getClassLoader().getResourceAsStream(AGENT_CONF_RESOURCE)) {
+            if (input == null) {
+                throw new IllegalStateException("Missing SPIRE agent configuration");
+            }
+            // Restarting a process must retain its node key, rather than try to reuse a consumed join token.
+            String configuration = new String(input.readAllBytes(), StandardCharsets.UTF_8);
+            if (workloadSvidTtl.equals(Duration.ofHours(1)) && caTtl.equals(Duration.ofHours(24))) {
+                return configuration;
+            }
+            return configuration
+                    .replace("KeyManager \"memory\" {\n        plugin_data {}",
+                            "KeyManager \"disk\" {\n        plugin_data { directory = \"/tmp/spire-agent/keys\" }");
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read SPIRE agent configuration", e);
+        }
+    }
+
+    String serverConfiguration() {
+        try (var input = getClass().getClassLoader().getResourceAsStream(SERVER_CONF_RESOURCE)) {
+            if (input == null) {
+                throw new IllegalStateException("Missing SPIRE server configuration");
+            }
+            return new String(input.readAllBytes(), StandardCharsets.UTF_8)
+                    .replace("ca_ttl = \"24h\"", "ca_ttl = \"" + caTtl.getSeconds() + "s\"")
+                    .replace("default_x509_svid_ttl = \"1h\"",
+                            "default_x509_svid_ttl = \"" + workloadSvidTtl.getSeconds() + "s\"");
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read SPIRE server configuration", e);
+        }
+    }
+
+    /**
+     * Stops the existing container without removing its data. Use the custom-TTL fixture, which persists the node key,
+     * when restarting: the default in-memory key manager cannot recover a consumed join token.
+     */
+    public void stopAgent() {
+        agent.getDockerClient().stopContainerCmd(agent.getContainerId()).withTimeout(10).exec();
+    }
+
+    /** Restarts the same agent, retaining its node attestation and Workload API socket location. */
+    public void startAgent() {
+        agent.getDockerClient().startContainerCmd(agent.getContainerId()).exec();
+    }
+
     private void createHostSocketDir() {
         try {
             // keep the socket path short (AF_UNIX sun_path is limited to ~108 bytes); /tmp keeps it well within that
@@ -171,24 +239,9 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     }
 
     private void waitForServerHealthy() {
-        long deadline = System.currentTimeMillis() + Duration.ofSeconds(30).toMillis();
-        RuntimeException last = null;
-        while (System.currentTimeMillis() < deadline) {
-            try {
-                Container.ExecResult result = server.execInContainer(SERVER_BIN, "healthcheck");
-                if (result.getExitCode() == 0) {
-                    return;
-                }
-                last = new RuntimeException("healthcheck exit " + result.getExitCode() + ": " + result.getStderr());
-            } catch (IOException e) {
-                last = new RuntimeException(e);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException(e);
-            }
-            sleep(500);
-        }
-        throw new RuntimeException("SPIRE server did not become healthy in time", last);
+        await().alias("SPIRE server healthcheck").atMost(Duration.ofSeconds(30))
+                .pollInterval(Duration.ofMillis(500)).ignoreException(IOException.class)
+                .until(() -> server.execInContainer(SERVER_BIN, "healthcheck").getExitCode() == 0);
     }
 
     private String generateJoinToken() {
@@ -205,7 +258,7 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
     private void createWorkloadEntry(long uid) {
         LOG.info("Registering {} for the selector unix:uid:{}", WORKLOAD_SPIFFE_ID, uid);
         exec(server, SERVER_BIN, "entry", "create", "-parentID", AGENT_SPIFFE_ID, "-spiffeID", WORKLOAD_SPIFFE_ID,
-                "-selector", "unix:uid:" + uid);
+                "-selector", "unix:uid:" + uid, "-x509SVIDTTL", Long.toString(workloadSvidTtl.getSeconds()));
     }
 
     /**
@@ -266,14 +319,8 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
 
     private void waitForSocket() {
         Path socket = hostSocketDir.resolve(SOCKET_FILE);
-        long deadline = System.currentTimeMillis() + Duration.ofSeconds(60).toMillis();
-        while (System.currentTimeMillis() < deadline) {
-            if (Files.exists(socket)) {
-                return;
-            }
-            sleep(250);
-        }
-        throw new RuntimeException("The SPIRE agent did not create the Workload API socket at " + socket);
+        await().alias("SPIRE Workload API socket " + socket).atMost(Duration.ofSeconds(60))
+                .pollInterval(Duration.ofMillis(250)).until(() -> Files.exists(socket));
     }
 
     private Container.ExecResult exec(GenericContainer<?> container, String... command) {
@@ -287,15 +334,6 @@ public class SpiffeLocalContainerInfraService implements SpiffeInfraService, Con
             return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
