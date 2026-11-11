@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Turns a call of the endpoint DSL, {@code kafka("orders").brokers("b:9092")}, into the endpoint URI it stands for,
  * {@code kafka://orders?brokers=b:9092}, without the endpoint DSL on the class path.
- * <p/>
+ * <p>
  * {@link #NAMING} works by the rules the endpoint DSL is generated with, and needs nothing. A tool with the Camel
  * catalog can plug in its own (see {@link LwJavaParser#setEndpointDslResolver(EndpointDslResolver)}) to also confirm
  * the component exists, check option names, and know the prefix of multi-value options.

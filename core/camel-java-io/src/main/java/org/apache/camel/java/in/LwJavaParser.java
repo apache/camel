@@ -22,11 +22,11 @@ import java.util.Map;
 /**
  * Reads the routes of a Java DSL source into the Camel model without compiling it (CAMEL-25148), the reverse of
  * {@link org.apache.camel.java.LwModelToJavaDumper}.
- * <p/>
+ * <p>
  * It reads the source as text: the imports, the constants of the class, and the statements of {@code configure()} (or
  * the statements of a snippet), then replays each chain of calls against Camel's own DSL to build the model. Nothing of
  * the project is compiled, loaded or run, so it needs no classpath of the project and takes milliseconds.
- * <p/>
+ * <p>
  * What it cannot work out is reported in {@link JavaParseResult#unresolved()}, and a value it could not work out is
  * kept in the model as {@code ?{source text}}: values computed at runtime or in helper methods, routes built in loops,
  * lambdas and processors, the endpoint DSL.

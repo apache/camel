@@ -35,11 +35,11 @@ import org.apache.camel.support.builder.ValueBuilder;
 
 /**
  * Makes a replayed model what the other DSLs have, so tools see one model whatever the DSL.
- * <p/>
+ * <p>
  * Classes: the Java DSL keeps a class as a {@link Class} ({@code throwException(Foo.class, "msg")},
  * {@code convertBodyTo(byte[].class)}), where XML and YAML keep its name in a String option next to it
  * ({@code exceptionType}, {@code type}); the name is filled in.
- * <p/>
+ * <p>
  * Expressions: they are made plain languages where they can be. The Java DSL keeps an expression clause
  * ({@code setHeader("x").constant("y")}) or a value builder ({@code header("x")}) as an object wrapped in an
  * {@link ExpressionDefinition}, which no DSL can write back; the language inside it ({@code constant}, {@code header},

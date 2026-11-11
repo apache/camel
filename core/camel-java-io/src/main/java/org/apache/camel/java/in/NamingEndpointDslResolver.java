@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * ({@code platformHttp} is {@code platform-http}), its argument is the path, and each builder method is the option of
  * the same name. The URI is built as the endpoint DSL builds it for producers and consumers alike:
  * {@code scheme://path?option=value&...}.
- * <p/>
+ * <p>
  * Without the catalog it cannot tell a component from any other method of that name, so the parser only asks it for
  * sources that use the endpoint DSL; nor does it know the prefix of a multi-value option.
  */

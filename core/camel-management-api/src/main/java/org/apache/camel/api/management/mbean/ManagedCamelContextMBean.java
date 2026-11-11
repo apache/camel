@@ -267,7 +267,8 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * Creates the endpoint by the given uri
      *
      * @param  uri       uri of endpoint to create
-     * @return           <tt>true</tt> if a new endpoint was created, <tt>false</tt> if the endpoint already existed
+     * @return           <code>true</code> if a new endpoint was created, <code>false</code> if the endpoint already
+     *                   existed
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Creates the endpoint by the given URI")

@@ -20,7 +20,7 @@ package org.apache.camel.java.in;
  * The value of a constant the parser cannot read itself: one of a class that is not on its class path, such as a
  * component's header constant ({@code KafkaConstants.KEY}) or a constant of another source file of the project
  * ({@code Application.QUEUE}). The parser asks it before it reports the constant as unresolved.
- * <p/>
+ * <p>
  * A tool plugs one in with {@link LwJavaParser#setConstantResolver(ConstantResolver)}: with the Camel catalog it knows
  * every component's header constants, with the project's sources it knows their constants.
  */
