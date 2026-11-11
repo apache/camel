@@ -163,7 +163,7 @@ public interface BeanValidatorComponentBuilderFactory {
         }
     
         /**
-         * To use a a custom ValidationProviderResolver.
+         * To use a custom ValidationProviderResolver.
          * 
          * The option is a:
          * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt; type.
