@@ -220,6 +220,7 @@ public final class SecurityUtils {
                 "component:xj",
                 "component:xsltsaxon"));
         owners.put("serializablepackages", Set.of(
+                "component:avro",
                 "dataformat:avro"));
         owners.put("skiptlsverify", Set.of(
                 "component:splunkhec"));
