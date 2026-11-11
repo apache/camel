@@ -71,6 +71,12 @@ public class CamelShellCommandRegistry extends PicocliCommandRegistry {
     public CamelShellCommandRegistry(CommandLine commandLine) {
         // TODO: replace with new PicocliCommandRegistry(commandLine, "Camel") when JLine merges #1947
         super(commandLine);
+        if (commandLine.getParseResult() == null) {
+            // the shell runs a sub-command directly, and picocli then asks each of its parents whether help was
+            // requested: a command line that was never parsed (such as CamelJBangMain.newCommandLine()) fails that
+            // with a NullPointerException, so parse it once with no arguments
+            commandLine.parseArgs();
+        }
     }
 
     @Override
