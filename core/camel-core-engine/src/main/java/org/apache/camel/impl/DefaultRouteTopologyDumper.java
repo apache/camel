@@ -160,8 +160,12 @@ public class DefaultRouteTopologyDumper implements RouteTopologyDumper {
             String sendPattern = send instanceof SendDefinition<?> sd ? sd.getPattern()
                     : send instanceof ToDynamicDefinition td ? td.getPattern() : null;
             if (sendPattern != null) {
-                pattern = context.getTypeConverter().tryConvertTo(ExchangePattern.class,
-                        context.resolvePropertyPlaceholders(sendPattern));
+                try {
+                    pattern = context.getTypeConverter().tryConvertTo(ExchangePattern.class,
+                            context.resolvePropertyPlaceholders(sendPattern));
+                } catch (Exception e) {
+                    // a pattern that cannot be resolved says nothing
+                }
             }
         }
         if (pattern == null) {

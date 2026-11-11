@@ -87,6 +87,41 @@ class ProjectExporterTest {
     }
 
     @Test
+    void keepsTheKeysOfTheApplicationPropertiesThatTheRunSettingsRepeat() throws Exception {
+        Path route = writeRoute("shop");
+        Files.writeString(dir.resolve("application.properties"), """
+                order.period=1000
+                camel.server.port=8080
+                """);
+        // the run settings repeat camel.server.port of the application.properties, as camel run does
+        DependencyResolver repeating = r -> {
+            Path settings = r.workDir.resolve(ExportHelper.RUN_SETTINGS_FILE);
+            Files.createDirectories(settings.getParent());
+            Files.writeString(settings, """
+                    camel.main.routesIncludePattern=file:%s
+                    camel.component.properties.location=file:application.properties
+                    camel.server.port=8080
+                    dependency=camel:timer
+                    dependency=camel:log
+                    """.formatted(r.files.get(0)));
+            return 0;
+        };
+        Path exportDir = dir.resolve("export");
+        ExportRequest request = request(route, exportDir);
+        request.baseDir = dir;
+
+        StringPrinter printer = new StringPrinter();
+        int exit = new ProjectExporter(new ExportContext().withPrinter(printer).withDependencyResolver(repeating))
+                .export(request);
+
+        assertThat(exit).as(printer.getOutput()).isZero();
+        // a route may refer to it, {{camel.server.port}}, even when it is the default port
+        assertThat(exportDir.resolve("src/main/resources/application.properties")).content()
+                .contains("order.period=1000", "camel.server.port=8080")
+                .doesNotContain("camel.component.properties.location");
+    }
+
+    @Test
     void exportsInParallelWithWorkDirsOfTheirOwn() throws Exception {
         List<String> before = listWorkDir();
 

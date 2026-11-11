@@ -81,6 +81,21 @@ class ObservedOutsTest {
     }
 
     @Test
+    void anOutWithAPlaceholderIsTheOneTheRuntimeResolved() {
+        // fail-well/chaos: the route names http:localhost:{{camel.server.port}}/payment, the runtime counts it as
+        // http://localhost:8080/payment
+        IntegrationInfo info = new IntegrationInfo();
+        info.endpoints.add(endpoint("orders", "out", "http://localhost:8080/payment", "remote", 68));
+        List<About.Out> known = List.of(new About.Out("http", "http:localhost:{{camel.server.port}}/payment", "out", "orders"));
+
+        assertThat(ObservedOuts.of(info, known)).isEmpty();
+        assertThat(AboutView.outHits(info, "http:localhost:{{camel.server.port}}/payment", "orders")).isEqualTo(68);
+        // the placeholder is the port, not the rest of the URI
+        assertThat(ObservedOuts.matches("http:localhost:{{camel.server.port}}/payment", "http:localhost:8080/refund"))
+                .isFalse();
+    }
+
+    @Test
     void theServiceOfAUriIsAllButItsLastSegment() {
         assertThat(ObservedOuts.group("http://localhost:8080/stock/CAMEL-MUG")).isEqualTo("http://localhost:8080/stock/");
         assertThat(ObservedOuts.group("http://localhost:8080")).isEqualTo("http://localhost:8080");

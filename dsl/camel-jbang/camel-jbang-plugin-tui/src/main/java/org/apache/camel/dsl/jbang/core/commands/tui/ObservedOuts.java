@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.ai.About;
 import org.apache.camel.dsl.jbang.core.commands.ai.AboutReport;
@@ -61,7 +62,7 @@ final class ObservedOuts {
                 continue;
             }
             String base = AboutReport.baseUri(ep.uri);
-            if (knownUris.contains(base) || consumed.contains(ep.routeId + "|" + base)) {
+            if (knownUris.contains(base) || consumed.contains(ep.routeId + "|" + base) || named(known, ep.routeId, base)) {
                 continue;
             }
             String key = ep.routeId + "|" + group(base);
@@ -99,11 +100,48 @@ final class ObservedOuts {
         return scheme.startsWith("http") || scheme.endsWith("http") ? "http" : scheme;
     }
 
-    /** Whether the URI of a line stands for the URIs under it, and so matches the base URI of an endpoint. */
+    /**
+     * Whether the URI of a line stands for the URIs under it, and so matches the base URI of an endpoint. A property
+     * placeholder after the scheme stands for its value, which the runtime has:
+     * http:localhost:{{camel.server.port}}/payment is http://localhost:8080/payment.
+     */
     static boolean matches(String lineUri, String endpointBaseUri) {
         if (lineUri.endsWith(MORE)) {
             return endpointBaseUri.startsWith(lineUri.substring(0, lineUri.length() - MORE.length()));
         }
+        int placeholder = lineUri.indexOf("{{");
+        if (placeholder > 0 && lineUri.lastIndexOf(':', placeholder) > 0) {
+            // only after a scheme as written: {{ship.url}} can be any endpoint
+            return placeholders(lineUri).matcher(endpointBaseUri).matches();
+        }
         return lineUri.equals(endpointBaseUri);
+    }
+
+    /** Whether a route names the endpoint with a property placeholder, the endpoint being what the runtime resolved. */
+    private static boolean named(List<About.Out> known, String routeId, String base) {
+        for (About.Out o : known) {
+            if (routeId.equals(o.route()) && o.uri() != null && o.uri().contains("{{")
+                    && matches(AboutReport.baseUri(o.uri()), base)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static Pattern placeholders(String uri) {
+        StringBuilder regex = new StringBuilder();
+        int i = 0;
+        int start = uri.indexOf("{{");
+        while (start >= 0) {
+            int end = uri.indexOf("}}", start);
+            if (end < 0) {
+                break;
+            }
+            regex.append(Pattern.quote(uri.substring(i, start))).append(".+?");
+            i = end + 2;
+            start = uri.indexOf("{{", i);
+        }
+        regex.append(Pattern.quote(uri.substring(i)));
+        return Pattern.compile(regex.toString());
     }
 }

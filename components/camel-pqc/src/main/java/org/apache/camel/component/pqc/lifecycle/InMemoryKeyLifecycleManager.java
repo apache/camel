@@ -186,7 +186,7 @@ public class InMemoryKeyLifecycleManager implements KeyLifecycleManager {
      * always granted.
      */
     @Override
-    public boolean claimStatefulKey(String keyId) {
+    public boolean claimStatefulKey(String keyId, PublicKey publicKey) {
         return true;
     }
 

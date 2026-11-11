@@ -18,6 +18,7 @@ package org.apache.camel.tooling.model;
 
 import java.util.List;
 
+import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.tooling.model.ComponentModel.EndpointHeaderModel;
@@ -440,5 +441,41 @@ class JsonMapperTest {
         // the section is written again as it was read
         String json2 = JsonMapper.createParameterJsonSchema(model2);
         assertEquals(json.substring(json.indexOf("\"dstWorlds\"")), json2.substring(json2.indexOf("\"dstWorlds\"")));
+    }
+
+    @Test
+    void testEmptyDeprecationNoteIsNotWritten() {
+        // an option annotated with @Metadata gets the annotation default "" as deprecation note
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setName("directoryName");
+        option.setDeprecationNote("");
+
+        JsonObject json = JsonMapper.asJsonObject(option);
+        assertFalse(json.containsKey("deprecationNote"));
+        assertEquals(false, json.get("deprecated"));
+
+        ComponentModel model = new ComponentModel();
+        model.addEndpointOption(option);
+        String text = JsonMapper.createParameterJsonSchema(model);
+        assertFalse(text.contains("\"deprecationNote\""));
+        ComponentModel model2 = JsonMapper.generateComponentModel(text);
+        assertNull(model2.getEndpointOptions().get(0).getDeprecationNote());
+    }
+
+    @Test
+    void testDeprecationNoteIsWritten() {
+        ComponentModel.EndpointOptionModel option = new ComponentModel.EndpointOptionModel();
+        option.setName("oldOption");
+        option.setDeprecated(true);
+        option.setDeprecationNote("Use newOption instead");
+
+        JsonObject json = JsonMapper.asJsonObject(option);
+        assertEquals("Use newOption instead", json.get("deprecationNote"));
+
+        ComponentModel model = new ComponentModel();
+        model.addEndpointOption(option);
+        ComponentModel model2 = JsonMapper.generateComponentModel(JsonMapper.createParameterJsonSchema(model));
+        assertTrue(model2.getEndpointOptions().get(0).isDeprecated());
+        assertEquals("Use newOption instead", model2.getEndpointOptions().get(0).getDeprecationNote());
     }
 }

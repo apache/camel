@@ -261,9 +261,9 @@ that override `clearRouteModel()` can remove the override.
 Each edge of the route topology (the `route-topology` developer console, the topology JSON of the dump routes strategy
 and `RouteTopologyDumper`) now says whether the route waits for the answer of the route it sends to: `reply` is `true`
 for a send to `direct`, and for a send that is InOut, as a request-reply over a JMS queue is
-(`exchangePattern=InOut`). The topology JSON writes `reply` only when it is `true`, and the text output of the console
-marks a request-reply with `request-reply`. The `RouteTopologyDumper.TopologyEdge` record has the new `reply`
-component; its seven-argument constructor is kept and creates an edge without it.
+(`exchangePattern=InOut`). The JSON of the console and the topology JSON write `reply` on every edge, and the text
+output of the console marks a request-reply with `request-reply`. The `RouteTopologyDumper.TopologyEdge` record has the
+new `reply` component; its seven-argument constructor is kept and creates an edge without it.
 
 A `wireTap` or a `toD` to an endpoint the route names, rather than one it computes with an expression, is now an edge
 too (a wire tap never waits for the answer), and an external endpoint when no route consumes from it.
@@ -2067,12 +2067,14 @@ lives inside the private key, so two processes that load the same key from a sha
 two replicas reading one vault secret - each advance their own copy and hand out the same index.
 
 Before it first signs with a stateful key, the `pqc` producer now claims it from the configured
-`KeyLifecycleManager`, through the new `KeyLifecycleManager.claimStatefulKey(String)` and
-`releaseStatefulKey(String)` methods. Both have a default implementation, so a custom manager still compiles; the
-default grants no claim.
+`KeyLifecycleManager`, through the new `KeyLifecycleManager.claimStatefulKey(String, PublicKey)` and
+`releaseStatefulKey(String, PublicKey)` methods. Both have a default implementation, so a custom manager still
+compiles; the default grants no claim. The claim is on the key material, identified by the public key (see the new
+`KeyLifecycleManager.fingerprint(PublicKey)`), not on the name the `CamelPQCKeyId` header gives the key: the same key
+under two names, or under none, is one claim, so an exchange that carries no header is claimed too.
 
-* `FileBasedKeyLifecycleManager` takes an exclusive `FileLock` on a `<keyId>.lock` file in the key directory, so a
-  second process reading that directory is refused.
+* `FileBasedKeyLifecycleManager` takes an exclusive `FileLock` on a lock file in the key directory named from the
+  SHA-256 fingerprint of the public key, so a second process reading that directory is refused.
 * `InMemoryKeyLifecycleManager` grants the claim - its keys never leave the process.
 * The vault-backed managers (AWS Secrets Manager, Azure Key Vault, Hashicorp Vault) cannot offer a lease Camel can
   take, so they do not grant it. **An endpoint signing with a stateful key through one of them now fails**, with a
@@ -7661,6 +7663,13 @@ request was always sent as `application/json` in that case.
 A route whose message still carries a `Content-Type` header from an earlier step, for example from an HTTP
 consumer, now sends that Content-Type. Remove the header, or set the Content-Type in
 `CamelAzureFunctionsHttpHeaders`, to keep the old behavior.
+
+=== camel-catalog - an empty deprecationNote is no longer written
+
+The option metadata in the catalog (component, endpoint and header options, and the functions and operators of the
+simple language) no longer has `"deprecationNote": ""`. The key is now present only when there is a note, as was
+already the case for options without `@Metadata`. Tools that read the catalog JSON get no key (null with
+`camel-tooling-model`) instead of an empty string.
 
 === Jackson 3
 

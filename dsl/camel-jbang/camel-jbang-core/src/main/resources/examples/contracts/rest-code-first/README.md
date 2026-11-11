@@ -50,7 +50,8 @@ Stop the example with `ctrl` + `c`.
   JSON text.
 - `apiContextPath: openapi` serves the API description that Camel generates from the operations.
   `application.properties` adds `camel-openapi-java` for it, which `camel run` does not add by itself for a
-  code-first API.
+  code-first API. `host` and `port` of the REST configuration are the server the description names, so a client
+  generated from it calls `http://localhost:8080` (without them it says `http://0.0.0.0`).
 - `orders.json` holds the three orders of the shop.
 
 ## Build it step by step

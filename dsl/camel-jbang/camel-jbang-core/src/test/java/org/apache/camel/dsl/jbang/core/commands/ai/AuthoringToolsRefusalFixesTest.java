@@ -136,4 +136,38 @@ class AuthoringToolsRefusalFixesTest {
         assertThat(third.getString("status")).as(String.valueOf(third)).isEqualTo("created");
         assertThat(Files.readString(dir.resolve(FILE))).isEqualTo(content.replace("== 'paid'\n", "== 'paid'\"\n"));
     }
+
+    @Test
+    void aConstantWithSimpleIsWrittenAsTheRefusalsSaid(@TempDir Path dir) throws IOException {
+        // CAMEL-26825, r31n-7 contracts-rest-code-first step 1 (shortened): sent 13 times with two problems, the []
+        // whose refusal gave the line to write, and a constant with ${header.id} whose refusal gave none
+        String content = BRACKETS.replace("        - log: \"${body}\"\n", """
+                        - choice:
+                            when:
+                              - simple: "${body.size()} == 0"
+                                steps:
+                                  - setBody:
+                                      expression:
+                                        constant:
+                                          expression: '{"error": "unknown order ${header.id}"}'
+                        - log: "${body}"
+                """);
+        String[] lines = content.split("\n");
+        for (int i = 1; i <= 2; i++) {
+            JsonObject refused = write(dir, content);
+            assertThat(refused.getString("status")).as(String.valueOf(refused)).isEqualTo("invalid");
+            assertThat((JsonArray) refused.get("errors")).as(String.valueOf(refused)).hasSize(2)
+                    .anySatisfy(e -> assertThat(String.valueOf(e))
+                            .contains("constant: ${header.id} is not evaluated")
+                            .endsWith(". Write lines 17-18 as:\n" + lines[16].replace("constant:", "simple:") + "\n"
+                                      + lines[17]));
+        }
+        JsonObject third = write(dir, content);
+        assertThat(third.getString("status")).as(String.valueOf(third)).isEqualTo("created");
+        assertThat((JsonArray) third.get("repaired")).containsExactly(
+                "line 9: written as the refusals said: expression: \"$[?(@.orderId == '${header.id}')]\"",
+                "lines 17-18: written as the refusals said");
+        assertThat(Files.readString(dir.resolve(FILE)))
+                .isEqualTo(content.replace("')][]\"", "')]\"").replace("constant:\n", "simple:\n"));
+    }
 }
