@@ -481,6 +481,7 @@ final class StatusParser {
                     for (RouteInfo r : info.routes) {
                         if (r.routeId != null && r.routeId.equals(ci.id)) {
                             ci.total = r.total;
+                            break;
                         }
                     }
                     ci.delay = cj.getLong("delay");
