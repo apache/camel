@@ -176,7 +176,7 @@ final class HashicorpVaultTls {
                         "an encrypted PEM private key is not supported: use a PKCS12 key store with its password");
             }
         }
-        throw new GeneralSecurityException("no private key (-----BEGIN PRIVATE KEY-----) in the PEM file");
+        throw new GeneralSecurityException("no private key (-----BEGIN PRIVATE KEY----- or -----BEGIN RSA PRIVATE KEY-----) in the PEM file");
     }
 
     private static PrivateKey pkcs8PrivateKey(byte[] der) throws GeneralSecurityException {
