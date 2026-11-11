@@ -158,7 +158,12 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         }
         try {
             target.process(exchange);
-        } catch (AssertionError | Exception e) {
+        } catch (VirtualMachineError e) {
+            // left as before (thrown on after the callback): the application must not handle a JVM-level failure such
+            // as an OutOfMemoryError with Camel's error handling
+            throw e;
+        } catch (Throwable e) {
+            // any other Throwable, as in DelegateSyncProcessor: the callback is called in finally
             exchange.setException(e);
         } finally {
             callback.done(true);

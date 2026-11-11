@@ -48,12 +48,12 @@ fails the exchange with what was thrown, and the callback and that failure race 
 
 An exception that a processor throws on through an outer step is reported once, at the step that threw it first.
 
-An `Error` (such as an `AssertionError` of a test) that a plain `Processor` throws breaks the rule in Camel, not in the
-processor: the adapter Camel puts around a plain `Processor` (`DelegateSyncProcessor` for `process(...)`, the bridge of
-`AsyncProcessorConverterHelper`, and the bean component for a bean that is a `Processor`) calls the callback in
-`finally` and then lets the `Error` through. It is reported as `THREW_AFTER_CALLBACK` at that step, naming the
-processor, and the report says the callback was called by Camel's adapter and that the fix is in what threw the
-`Error`. Without stacks (`stackDepth=0`) the adapter cannot be seen, and the report is the one of an `AsyncProcessor`.
+A plain `Processor` does not break the rule when it throws: the adapter Camel puts around it (`DelegateSyncProcessor`
+for `process(...)`, the bridge of `AsyncProcessorConverterHelper`, and the bean component for a bean that is a
+`Processor`) sets what it throws on the exchange, also an `Error` such as an `AssertionError` of a test, and then calls
+the callback. The exchange fails, and nothing is reported. A `VirtualMachineError` (such as an `OutOfMemoryError` or
+a `StackOverflowError`) is the exception: the adapter does not catch it, so it is thrown on after the callback, as in
+earlier versions, and is reported as thrown after the callback (`THREW_AFTER_CALLBACK`).
 
 A report looks like this:
 
