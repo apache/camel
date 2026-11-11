@@ -397,7 +397,8 @@ final class TuiToolDefinitions {
                 Map.of("endpoint", propDef("string",
                         "Endpoint URI, e.g. 'direct:myRoute', 'paho-mqtt5:temperature?brokerUrl=tcp://localhost:1883'"),
                         "body", propDef("string", "Message body to send"),
-                        "headers", propDef("string", "Message headers as key=value pairs separated by newlines")),
+                        "headers", propDef("string", "Message headers as key=value pairs separated by newlines"),
+                        "reply", propDef("boolean", "Return the route's answer; default true for direct:")),
                 List.of("endpoint")), r::callSendMessage, CORE));
         // CAMEL-25307: the http tool group; the shared get_http_endpoints and http_request for the selected integration
         tools.add(tool(toolDef(

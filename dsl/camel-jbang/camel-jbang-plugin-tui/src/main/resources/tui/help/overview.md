@@ -22,7 +22,8 @@ happened to it, with no AI:
   else the overview an AI wrote in its `camel-summary.md`. A timer or a
   cron of In shows the period or schedule it runs with, from its
   properties with its profile applied.
-- **In, Routes, Out** — what starts it (timers, HTTP, consumers), its
+- **In, Routes, Out** — what starts it (timers, HTTP, consumers, the
+  operations of an OpenAPI contract the REST DSL serves), its
   routes (a route called with `direct:` sits under its caller with `↳`,
   one handed off with `seda:` or a `wireTap` with `⇢`) and what it talks to, from its
   sources. Each line has the exchanges since it started (for an

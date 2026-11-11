@@ -178,6 +178,8 @@ public final class ProjectOverview {
         for (Map.Entry<String, String> e : sources.entrySet()) {
             routes.addAll(ProjectRoutes.parse(e.getKey(), e.getValue(), catalog, constants));
         }
+        // the operations of a contract the REST DSL serves, from the contract
+        routes = new ArrayList<>(RestContracts.expand(dir, routes, catalog));
         if (routes.size() > MAX_ROUTES) {
             routes = new ArrayList<>(routes.subList(0, MAX_ROUTES));
         }

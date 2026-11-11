@@ -495,6 +495,59 @@ class AboutViewTest {
     }
 
     @Test
+    void theOperationsOfAContractComeInAndAreCountedOnce() throws Exception {
+        // contracts/openapi-server: the REST DSL serves stock-api.json; Camel adds route2 to serve it, which hands each
+        // request to the route of its operation
+        Files.writeString(dir.resolve("stock-api.json"), """
+                {"servers": [{"url": "http://localhost:8080/api"}],
+                 "paths": {"/stock/{sku}/reserve": {"post": {"operationId": "reserveStock"}}}}
+                """);
+        Files.writeString(dir.resolve("openapi-server.camel.yaml"), """
+                - rest:
+                    openApi:
+                      specification: stock-api.json
+                - route:
+                    id: reserveStock
+                    from:
+                      uri: direct:reserveStock
+                      steps:
+                        - log: reserved
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "openapi-server";
+        info.directory = dir.toString();
+        for (String[] r : List.of(new String[] { "reserveStock", "direct://reserveStock" },
+                new String[] { "route2", "rest-openapi://stock-api.json?clientRequestValidation=true" })) {
+            RouteInfo route = new RouteInfo();
+            route.routeId = r[0];
+            route.from = r[1];
+            route.state = "Started";
+            info.routes.add(route);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        for (int i = 50; i < 56; i++) {
+            t.route("reserveStock", "completed", i, 1).route("route2", "completed", i, 1);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("POST /api/stock/{sku}/reserve").doesNotContain("nothing from outside")
+                // 6 reservations, not 12 with the route that served them
+                .contains("6 exchanges").doesNotContain("12 exchanges"));
+    }
+
+    @Test
+    void aRouteAnAiAgentCallsAsAToolHasTheIconOfAi() {
+        // ai/mcp-server: its routes start from ai-tool
+        assertThat(AboutView.icon("ai-tool")).isEqualTo(TuiIcons.MCP);
+        assertThat(AboutView.icon("ai")).isEqualTo(TuiIcons.MCP);
+        assertThat(AboutView.icon("http")).isEqualTo("🌐");
+    }
+
+    @Test
     void aboutAnIntegrationWithWhatHasHappened() throws Exception {
         Files.writeString(dir.resolve("shop.camel.yaml"), """
                 # Every order is checked against the stock and shipped.

@@ -115,6 +115,30 @@ class RuntimeHelperTest {
     }
 
     @Test
+    void aSendWithReplyAsksForTheAnswerOfTheRoute() throws Exception {
+        // showcase/tui-hello-world: direct:greet answers Hello and the name
+        var result = executor.submit(() -> RuntimeHelper.sendMessage(123, "direct:greet", "Claus", null, true));
+        Path action = requestFile();
+        JsonObject request = (JsonObject) Jsoner.deserialize(Files.readString(action));
+        assertEquals("send", request.get("action"));
+        assertEquals("InOut", request.get("exchangePattern"));
+        Files.writeString(outputFile(action), "{\"status\":\"success\",\"message\":{\"body\":{\"value\":\"Hello Claus!\"}}}");
+        JsonObject message = (JsonObject) result.get(5, TimeUnit.SECONDS).get("message");
+        assertEquals("Hello Claus!", ((JsonObject) message.get("body")).get("value"));
+    }
+
+    @Test
+    void aSendWithoutReplyDoesNotWaitForAnAnswer() throws Exception {
+        var result = executor.submit(() -> RuntimeHelper.sendMessage(123, "kafka:orders", "x", null));
+        Path action = requestFile();
+        JsonObject request = (JsonObject) Jsoner.deserialize(Files.readString(action));
+        // over a broker InOut is request-reply, waiting for a reply that may not come
+        assertNull(request.get("exchangePattern"));
+        Files.writeString(outputFile(action), "{\"status\":\"success\"}");
+        assertEquals("success", result.get(5, TimeUnit.SECONDS).getString("status"));
+    }
+
+    @Test
     void jsonApiPropagatesPublicationFailureWhileTextApiKeepsItsDiagnostic() {
         CommandLineHelper.useHomeDir(home.resolve("missing").toString());
         assertThrows(IOException.class, () -> RuntimeHelper.executeAction(123, new JsonObject(), 100));
