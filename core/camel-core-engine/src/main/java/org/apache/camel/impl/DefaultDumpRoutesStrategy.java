@@ -341,6 +341,7 @@ public class DefaultDumpRoutesStrategy extends ServiceSupport implements DumpRou
             if (edge.handling() != null) {
                 jo.put("handling", edge.handling());
             }
+            jo.put("reply", edge.reply());
             edgesArr.add(jo);
         }
         root.put("edges", edgesArr);

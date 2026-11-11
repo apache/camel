@@ -66,7 +66,9 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
             @Metadata(description = "For an error path, what sends: errorHandler or onException") String via,
             @Metadata(description = "For an error path, what happens to the failure: handled (the message ends there),"
                                     + " continued (the route goes on after it) or notHandled (the failure goes on to the"
-                                    + " caller); absent when a predicate decides it") String handling) {
+                                    + " caller); absent when a predicate decides it") String handling,
+            @Metadata(description = "Whether the source route waits for the answer of the target route: a call (direct)"
+                                    + " or a request-reply over a broker, rather than a hand-off") boolean reply) {
     }
 
     public record ExternalEndpointEntry(
@@ -134,8 +136,12 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
                                 edge.toRouteId(), edge.endpoint(), edge.connectionType(), edge.via(),
                                 edge.handling() != null ? ", " + edge.handling() : ""));
                     } else {
-                        sb.append(String.format("    --> %s via %s [%s]%n",
-                                edge.toRouteId(), edge.endpoint(), edge.connectionType()));
+                        // a request-reply the component does not imply (direct always waits)
+                        boolean requestReply = edge.reply() && !edge.endpoint().startsWith("direct:")
+                                && !edge.endpoint().startsWith("kamelet:");
+                        sb.append(String.format("    --> %s via %s [%s%s]%n",
+                                edge.toRouteId(), edge.endpoint(), edge.connectionType(),
+                                requestReply ? ", request-reply" : ""));
                     }
                 }
             }
@@ -186,7 +192,7 @@ public class RouteTopologyDevConsole extends AbstractDevConsole {
         for (TopologyEdge edge : result.edges()) {
             edges.add(new EdgeEntry(
                     edge.fromRouteId(), edge.toRouteId(), edge.endpoint(), edge.connectionType(), edge.kind(),
-                    edge.via(), edge.handling()));
+                    edge.via(), edge.handling(), edge.reply()));
         }
 
         List<ExternalEndpointEntry> externalEndpoints = null;
