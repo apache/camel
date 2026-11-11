@@ -134,8 +134,8 @@ public final class QuarkusHelper {
 
     /**
      * Finds the newest Quarkus platform BOM {@code g:a:v} using the same or newer {@code major.minor} Camel version as
-     * the specified {@code camelVersion} by searching in Quarkus platform registry or returns the specified
-     * {@code buildTimeQuarkusVersion} if no compatible Platform version can be found.
+     * the specified {@code camelVersion} by searching in Quarkus platform registry, or {@code null} if no compatible
+     * platform version can be found.
      * <p>
      * This is used by export/run commands to query the registry for the correct platform BOM version instead of using
      * the build-time constant. The registry may have a newer compatible version.
@@ -147,9 +147,13 @@ public final class QuarkusHelper {
      *                                         Camel version of the currently running camel-jbang. Must not be
      *                                         {@code null}
      * @param  mavenResolver                   resolves a Maven artifact for a given GAV
+     * @param  download                        whether the registry may be fetched over the network; {@code false} uses
+     *                                         only what is already cached
      * @param  quarkusExtensionRegistryBaseUri base URI of the Quarkus platform registry
-     * @return                                 the resolved platform BOM version from the registry, or the original
-     *                                         buildTimeVersion if resolution fails
+     * @param  fresh                           ignore the cached registry response and the remembered Camel version
+     *                                         mapping, and ask the registry again
+     * @return                                 the resolved platform BOM, or {@code null} when the registry has no
+     *                                         compatible platform
      */
     public static QuarkusPlatformBom findQuarkusPlatformBom(
             String camelVersion,
@@ -416,12 +420,15 @@ public final class QuarkusHelper {
     }
 
     /**
+     * The platform BOM whose Camel version is closest to {@code wantedCamelVersion}, an exact match first; the streams
+     * are ordered by {@link MajorMinor#distanceTo} and the first one is taken.
      *
      * @param  streams                         the streams array from the registry
-     * @param  wantedCamelVersion              the major.minor Camel version to match (e.g., "3.15")
+     * @param  wantedCamelVersion              the major.minor Camel version to match (e.g., "4.18")
      * @param  mavenResolver                   resolves a Maven artifact for a given GAV
      * @param  quarkusExtensionRegistryBaseUri base URI of the Quarkus platform registry
-     * @return                                 the matching platform BOM, or empty if there is none
+     * @return                                 the platform BOM with the closest Camel version, or empty if there is
+     *                                         none
      */
     static Optional<QuarkusPlatformBom> findPlatformBom(
             JsonArray streams, MajorMinor wantedCamelVersion, Function<MavenGav, MavenArtifact> mavenResolver,
@@ -694,8 +701,8 @@ public final class QuarkusHelper {
          * <li>other newer major, closer is higher
          * <li>other older major, newer is higher
          * </ol>
-         * Example: for this version 2.3, the distances computed for the following {@code other} would
-         * give the following ordering:
+         * Example: for this version 2.3, the distances computed for the following {@code other} would give the
+         * following ordering:
          * <ul>
          * <li>2.3 (perfect match)
          * <li>2.4 (same major, closest newer minor)
