@@ -111,8 +111,8 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     /**
      * Creates the {@link ModelCamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
-     * <p/>
-     * Use one of the other constructors to force use an explicit registry.
+     * <p>
+     * Use one of the other constructors to force the use of an explicit registry.
      */
     public DefaultCamelContext() {
         this(true);

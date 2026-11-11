@@ -207,10 +207,10 @@ public abstract class AbstractReifier implements BeanRepository {
 
     /**
      * Looks up a bean by name as {@link #lookupByName(String)} does; the bean may be of any type (such as a POJO that
-     * is adapted afterwards). A <tt>#class:</tt> whose class does not exist fails here, with the built-in bean of the
-     * expected type that was likely meant, instead of answering <tt>null</tt>.
+     * is adapted afterwards). A <code>#class:</code> whose class does not exist fails here, with the built-in bean of
+     * the expected type that was likely meant, instead of answering <code>null</code>.
      *
-     * @param name         the bean name or <tt>#class:</tt> reference
+     * @param name         the bean name or <code>#class:</code> reference
      * @param expectedType the type the bean is expected to be, for the error message only
      */
     public Object lookupByName(String name, Class<?> expectedType) {

@@ -43,10 +43,8 @@ public final class CatalogHelper {
     }
 
     /**
-     * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
-     * <p/>
+     * Loads the entire stream into memory and adds each line to the given list.
+     * <p>
      * Warning, don't use for crazy big streams :)
      */
     public static void loadLines(InputStream in, List<String> lines) throws IOException {
@@ -60,10 +58,8 @@ public final class CatalogHelper {
     }
 
     /**
-     * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
-     * <p/>
+     * Loads the entire stream into memory and returns its lines.
+     * <p>
      * Warning, don't use for crazy big streams :)
      */
     public static List<String> loadLines(InputStream in) throws IOException {
@@ -74,9 +70,9 @@ public final class CatalogHelper {
 
     /**
      * Loads the entire stream into memory as a String and returns it.
-     * <p/>
-     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line terminator at the of the text.
-     * <p/>
+     * <p>
+     * <b>Notice:</b> This implementation appends a <code>\n</code> as line terminator at the end of the text.
+     * <p>
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
@@ -88,7 +84,7 @@ public final class CatalogHelper {
      *
      * @param  name    the name
      * @param  pattern the pattern
-     * @return         <tt>true</tt> if matched, or <tt>false</tt> if not
+     * @return         <code>true</code> if matched, or <code>false</code> if not
      */
     public static boolean matchWildcard(String name, String pattern) {
         // we have wildcard support in that hence you can match with: file* to match any file endpoints
@@ -99,7 +95,7 @@ public final class CatalogHelper {
     }
 
     /**
-     * Tests whether the value is <tt>null</tt> or an empty string.
+     * Tests whether the value is <code>null</code> or an empty string.
      *
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if empty
@@ -109,7 +105,7 @@ public final class CatalogHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     * Tests whether the value is <b>not</b> <code>null</code> or an empty string.
      *
      * @param  value the value, if its a String it will be tested for text length as well
      * @return       true if <b>not</b> empty
@@ -152,10 +148,10 @@ public final class CatalogHelper {
      * Parses the query part of the uri (eg the parameters) manually. This method is mostly used by the CamelCatalog in
      * order to be able to handle certain special characters markers (i.e.: "{{" and "}}"). It should not be used
      * anywhere else.
-     * <p/>
-     * The URI parameters will by default be URI encoded. However, you can define a parameter values with the syntax:
-     * <tt>key=RAW(value)</tt> which tells Camel to not encode the value, and use the value as is (eg key=value) and the
-     * value has <b>not</b> been encoded.
+     * <p>
+     * The URI parameters will by default be URI encoded. However, you can define parameter values with the syntax:
+     * <code>key=RAW(value)</code> which tells Camel to not encode the value, and use the value as is (eg key=value) and
+     * the value has <b>not</b> been encoded.
      *
      * @param  uri                the uri
      * @return                    the parameters, or an empty map if no parameters (eg never null)
