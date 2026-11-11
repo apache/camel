@@ -45,14 +45,38 @@ class CamelShellCommandRegistryTest {
 
     @CommandDefinition(name = "greet", description = "", generateHelp = true, sortOptions = true)
     static class Greet implements Command<CommandInvocation> {
+        static int runs;
+
         @Override
         public CommandResult execute(CommandInvocation invocation) {
+            runs++;
             return CommandResult.SUCCESS;
         }
     }
 
     private static CommandTree root() {
         return new CommandTree(new Root()).addSubcommand("greet", new CommandTree(new Greet()));
+    }
+
+    @Test
+    void aCommandRunsOnACommandLineThatWasNeverParsed() throws Exception {
+        // the shell panel of camel tui builds the commands with CamelJBangMain.newCommandLine(), whose root is never
+        // parsed (CAMEL-26863)
+        CamelJBangMain main = new CamelJBangMain() {
+            @Override
+            public CommandTree newCommandLine() {
+                return new CommandTree(this).addSubcommand("greet", new CommandTree(new Greet()));
+            }
+        };
+        CamelShellCommandRegistry registry = new CamelShellCommandRegistry(main.newCommandLine());
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int before = Greet.runs;
+
+        registry.command("greet").execute(session(out), new String[0]);
+        registry.command("camel").execute(session(out), new String[] { "greet" });
+
+        assertThat(Greet.runs).isEqualTo(before + 2);
+        assertThat(out.toString(StandardCharsets.UTF_8)).doesNotContain("NullPointerException");
     }
 
     @Test
