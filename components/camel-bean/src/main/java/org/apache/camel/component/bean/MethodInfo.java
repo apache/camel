@@ -270,14 +270,24 @@ public class MethodInfo {
                     MessageHelper.resetStreamCache(exchange.getIn());
                     return doProceed(callback);
                 } catch (InvocationTargetException e) {
-                    exchange.setException(e.getTargetException());
-                    callback.done(true);
-                    return true;
-                } catch (Exception e) {
-                    exchange.setException(e);
-                    callback.done(true);
-                    return true;
+                    // the bean method threw: reflection wraps any Throwable, a VirtualMachineError included
+                    return failed(e.getTargetException(), callback);
+                } catch (Throwable e) {
+                    // any Throwable, not only an Exception, such as an Error from a returned Callable
+                    return failed(e, callback);
                 }
+            }
+
+            private boolean failed(Throwable e, AsyncCallback callback) {
+                if (e instanceof VirtualMachineError vme) {
+                    // as a Processor in the bean component (and DelegateSyncProcessor): a JVM-level failure such as an
+                    // OutOfMemoryError is not given to Camel's error handling, but thrown on after the callback
+                    callback.done(true);
+                    throw vme;
+                }
+                exchange.setException(e);
+                callback.done(true);
+                return true;
             }
 
             private boolean doProceed(AsyncCallback callback) throws Exception {
