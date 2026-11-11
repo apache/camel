@@ -445,6 +445,11 @@ failure. Now such a failure is redelivered as any other, from attempt 1, so such
 before. The `CamelRedelivered`, `CamelRedeliveryCounter` and `CamelRedeliveryMaxCounter` headers stay on the message
 after the redelivered step succeeded, as before.
 
+The same applies after a `doCatch` caught the failure of a route that the `doTry` called (such as with `direct`) and
+whose error handler redelivered it: a later failure (after the `doTry`, in a route the `doCatch` or `doFinally` block
+calls, in a calling route when the `doCatch` block throws, or in a route called later) is redelivered from attempt 1.
+The redelivery headers of the called route stay readable in the `doCatch` block.
+
 === camel-core - a nested split no longer changes the processed items of the outer split
 
 With `errorThreshold` or `maxFailedRecords` on a split that contains another split, the inner split changed the number of
