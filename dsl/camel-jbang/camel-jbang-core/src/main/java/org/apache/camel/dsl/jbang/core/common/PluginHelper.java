@@ -22,6 +22,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -112,7 +114,7 @@ public final class PluginHelper {
             if (envValue != null && !envValue.isBlank()) {
                 try {
                     pluginConfigPath = Path.of(envValue);
-                } catch (java.nio.file.InvalidPathException e) {
+                } catch (InvalidPathException e) {
                     throw new IllegalStateException(
                             "Invalid path in " + PLUGIN_CONFIG_ENV + " environment variable: " + envValue, e);
                 }
@@ -125,9 +127,11 @@ public final class PluginHelper {
             return pluginConfigPath.resolve(PLUGIN_CONFIG);
         }
         Path fileName = pluginConfigPath.getFileName();
-        if (fileName != null && fileName.toString().toLowerCase().endsWith(".json")) {
+        if (Files.isRegularFile(pluginConfigPath)
+                || fileName != null && fileName.toString().toLowerCase(Locale.ROOT).endsWith(".json")) {
             return pluginConfigPath;
         }
+        // does not exist and has no .json suffix — treated as a directory (created on first save)
         return pluginConfigPath.resolve(PLUGIN_CONFIG);
     }
 
