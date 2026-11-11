@@ -79,24 +79,43 @@ public class DaprConfigurationTest extends CamelTestSupport {
 
     @Test
     void testConfigKeysFromHeader() {
+        assertEquals(List.of("key1", "key2"), sentConfigKeys("endpointKey", "key1,key2"));
+    }
+
+    @Test
+    void testConfigKeysFromListHeader() {
+        assertEquals(List.of("key1", "key2"), sentConfigKeys("endpointKey", List.of("key1", " key2 ")));
+    }
+
+    @Test
+    void testConfigKeysFromHeaderAreTrimmed() {
+        assertEquals(List.of("key1", "key2"), sentConfigKeys("endpointKey", " key1, ,key2 ,"));
+    }
+
+    @Test
+    void testConfigKeysFromEndpointWithoutHeader() {
+        assertEquals(List.of("k1", "k2"), sentConfigKeys("k1, k2", null));
+    }
+
+    private List<String> sentConfigKeys(String endpointKeys, Object header) {
         when(endpoint.getClient()).thenReturn(client);
         when(client.getConfiguration(any(GetConfigurationRequest.class))).thenReturn(Mono.just(Map.of()));
 
         DaprConfiguration configuration = new DaprConfiguration();
         configuration.setOperation(DaprOperation.configuration);
         configuration.setConfigStore("myStore");
-        configuration.setConfigKeys("endpointKey");
+        configuration.setConfigKeys(endpointKeys);
         DaprConfigurationOptionsProxy configurationOptionsProxy = new DaprConfigurationOptionsProxy(configuration);
 
         final Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(DaprConstants.CONFIG_KEYS, "key1,key2");
+        exchange.getMessage().setHeader(DaprConstants.CONFIG_KEYS, header);
 
         final DaprConfigurationHandler operation = new DaprConfigurationHandler(configurationOptionsProxy, endpoint);
         operation.handle(exchange);
 
         ArgumentCaptor<GetConfigurationRequest> captor = ArgumentCaptor.forClass(GetConfigurationRequest.class);
         verify(client).getConfiguration(captor.capture());
-        assertEquals(List.of("key1", "key2"), captor.getValue().getKeys());
+        return captor.getValue().getKeys();
     }
 
     @Test

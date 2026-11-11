@@ -1313,6 +1313,12 @@ The other operations do not change: the `state` operations still take the key fr
 other operations still take the metadata from the `CamelDaprMetadata` header, and the other `CamelDapr*` headers still
 take the place of the options of the endpoint, as before.
 
+=== camel-dapr - the CamelDaprConfigKeys header takes the place of the configKeys option
+
+The `configuration` operation of the `dapr` producer ignored the `CamelDaprConfigKeys` header and always sent the keys
+of the `configKeys` option of the endpoint. It now sends the keys of the header when it is set: a comma-separated String
+or a `Collection` of keys. A route that set this header, but relied on the keys of the endpoint, must remove the header.
+
 === camel-consul - no Optional in the body, and the CamelConsulResult header of every action
 
 The `GET_SESSIONS` action of `consul:kv`, the `RENEW` action of `consul:session` and the `GET` action of

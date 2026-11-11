@@ -18,10 +18,13 @@ package org.apache.camel.component.dapr;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import io.dapr.client.domain.HttpExtension;
 import io.dapr.client.domain.State;
@@ -166,8 +169,16 @@ public class DaprConfigurationOptionsProxy {
     }
 
     public List<String> getConfigKeysAsList(final Exchange exchange) {
-        String configKeys = getConfigKeys(exchange);
-        return configKeys != null ? List.of(configKeys.split(",")) : null;
+        // the header can be a Collection of keys or a comma-separated String
+        Object header = ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(DaprConstants.CONFIG_KEYS);
+        Object configKeys = ObjectHelper.isEmpty(header) ? configuration.getConfigKeys() : header;
+        if (configKeys == null) {
+            return null;
+        }
+        Stream<?> keys = configKeys instanceof Collection<?> collection
+                ? collection.stream()
+                : Arrays.stream(configKeys.toString().split(","));
+        return keys.map(key -> String.valueOf(key).trim()).filter(key -> !key.isEmpty()).toList();
     }
 
     public LockOperation getLockOperation(final Exchange exchange) {
