@@ -60,8 +60,6 @@ public class TransformRoute extends CamelCommand {
         }
     }
 
-    Path[] filePaths; // Defined only for file path completion; the field never used
-
     @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                paramLabel = "<files>")
     List<String> files = new ArrayList<>();

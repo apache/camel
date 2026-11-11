@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.aesh.command.CommandDefinition;
 import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.config.BaseConfigTestSupport;
 import org.apache.camel.dsl.jbang.core.commands.plugin.PluginCommand;
@@ -122,7 +123,8 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
         return out.getStdout();
     }
 
-    // no name of its own: it is the name it is added with
+    // added under other names too: it has the name it is added with
+    @CommandDefinition(name = "echo", description = "Prints its options")
     static class EchoCommand extends CamelCommand {
 
         @Option(name = "sort", defaultValue = "pid")
@@ -148,6 +150,7 @@ class UserConfigDefaultsTest extends BaseConfigTestSupport {
     }
 
     // an option with two long names, as --reload,--dev of camel run
+    @CommandDefinition(name = "dev", description = "Prints its option")
     static class DevCommand extends CamelCommand {
 
         @Option(name = "reload", aliases = { "dev" }, hasValue = false)

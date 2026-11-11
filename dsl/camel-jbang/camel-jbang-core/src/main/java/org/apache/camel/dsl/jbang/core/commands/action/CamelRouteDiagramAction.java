@@ -78,9 +78,6 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     private static final long DUMP_COMPLETION_TIMEOUT_MILLIS = 10000;
 
-    @SuppressWarnings("unused") // only declared so picocli offers file-path completion; values go into files instead
-    Path[] filePaths;
-
     @Arguments(description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
                              + "Camel integration",
                paramLabel = "<files>")

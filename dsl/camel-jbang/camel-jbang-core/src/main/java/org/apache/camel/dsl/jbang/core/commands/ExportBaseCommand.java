@@ -57,8 +57,6 @@ public abstract class ExportBaseCommand extends CamelCommand {
     protected Path exportBaseDir;
     private Printer quietPrinter;
 
-    protected Path[] filePaths; // Defined only for file path completion; the field never used
-
     @Arguments(description = "The Camel file(s) to export. If no files is specified then what was last run will be exported.",
                paramLabel = "<files>")
     protected List<String> files = new ArrayList<>();

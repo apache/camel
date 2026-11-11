@@ -131,7 +131,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
         boolean pluginCommand = false;
         if (only != null && !commandLine.getSubcommands().containsKey(only)) {
             // the command of a plugin needs none of the commands of the CLI, anything else (such as a typo, for which
-            // picocli suggests other commands) needs all of them
+            // aesh suggests other commands) needs all of them
             pluginCommand = isPluginCommand(only);
             if (!pluginCommand) {
                 commandLine = createCommandLine(null);
@@ -152,7 +152,7 @@ public class CamelJBangMain implements Command<CommandInvocation> {
             }
         }
         if (pluginCommand && !commandLine.getSubcommands().containsKey(only)) {
-            // no plugin added the command: all the commands of the CLI, for the commands that picocli suggests
+            // no plugin added the command: all the commands of the CLI, for the commands that aesh suggests
             commandLine = createCommandLine(null);
             postAddCommands(commandLine, args);
         }

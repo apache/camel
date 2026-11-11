@@ -451,7 +451,6 @@
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <pgvector-version>0.1.6</pgvector-version>
         <phase2-lib-version>6.2.2</phase2-lib-version>
-        <picocli-version>4.7.7</picocli-version>
         <pinecone-client-version>3.1.0</pinecone-client-version>
         <plc4x-version>1.0.0</plc4x-version>
         <plexus-archiver-version>4.15.0</plexus-archiver-version>

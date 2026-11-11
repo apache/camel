@@ -75,8 +75,6 @@ import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelp
 @CommandDefinition(name = "run", description = "Run Camel application on Kubernetes", generateHelp = true)
 public class KubernetesRun extends KubernetesBaseCommand {
 
-    Path[] filePaths; // Defined only for file path completion; the field never used
-
     @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
                paramLabel = "<files>")
     public List<String> files = new ArrayList<>();

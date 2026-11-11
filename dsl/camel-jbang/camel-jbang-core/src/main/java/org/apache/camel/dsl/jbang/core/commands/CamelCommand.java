@@ -159,7 +159,7 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
      * The value of an option of this command, such as {@code --timeout}.
      *
      * @param  name the name of the option
-     * @return      the value, or <tt>null</tt> when the command has no such option, or runs without picocli
+     * @return      the value, or <tt>null</tt> when the command has no such option, or was not parsed by aesh
      */
     public Object optionValue(String name) {
         ProcessedOption option = findOption(name);
@@ -337,7 +337,10 @@ public abstract class CamelCommand implements Command<CommandInvocation>, Comman
             List<String> lines = new ArrayList<>();
             for (ProcessedOption opt : processedCommand.getOptions()) {
                 Object holder = holderOf(opt);
-                if (configProperties.containsKey(opt.name()) && holder != null) {
+                // the configuration may name the option by any of its long names, such as dev for --reload,--dev
+                boolean configured = configProperties.containsKey(opt.name())
+                        || opt.getAliases().stream().anyMatch(configProperties::containsKey);
+                if (configured && holder != null) {
                     lines.add(String.format("    --%s=%s",
                             opt.name(), Optional.ofNullable(opt.getFieldValue(holder)).orElse("")));
                 }

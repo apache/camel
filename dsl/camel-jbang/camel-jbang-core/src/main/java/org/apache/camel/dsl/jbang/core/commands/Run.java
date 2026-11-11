@@ -122,8 +122,6 @@ public class Run extends CamelCommand implements CommandLifecycle {
     private Printer quietPrinter;
     private boolean mcpStdioMode;
 
-    Path[] filePaths; // Defined only for file path completion; the field never used
-
     @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run."
                              + " A Citrus test is run with camel test run.",
                paramLabel = "<files>")

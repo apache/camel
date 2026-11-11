@@ -75,7 +75,6 @@ public class YamlNormalizeCommand extends CamelCommand {
                           + " The output must not overwrite one of the input files.")
     private String output;
 
-    Path[] filePaths;
     @Arguments(required = true, description = "The Camel YAML source files to normalize.", paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
