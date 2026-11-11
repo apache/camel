@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.net.ssl.SSLContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
@@ -51,13 +50,15 @@ import org.apache.hc.core5.http.message.StatusLine;
 import org.apache.hc.core5.ssl.SSLContextBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * The Splunk HEC producer.
  */
 public class SplunkHECProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkHECProducer.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private final SplunkHECEndpoint endpoint;
     private CloseableHttpClient httpClient;
 

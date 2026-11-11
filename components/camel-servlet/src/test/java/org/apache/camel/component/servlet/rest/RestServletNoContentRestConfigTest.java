@@ -23,6 +23,7 @@ import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.apache.camel.converter.jaxb.JaxbConstants;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -82,8 +83,7 @@ public class RestServletNoContentRestConfigTest extends ServletCamelRouterTestSu
         WebResponse response = query(req, false);
 
         assertEquals(200, response.getResponseCode());
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}",
-                response.getText());
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", response.getText(), true);
     }
 
     @Test

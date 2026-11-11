@@ -196,6 +196,7 @@ class ChaosExpectTimeAndLossTest extends ChaosTestSupport {
         assertThatThrownBy(() -> chaos().addRule("step=callStock delay duration=1ms expect=orders->orders:lost<=0"))
                 .hasMessageContaining("needs two routes");
         assertThatThrownBy(() -> chaos().addRule("step=callStock delay duration=1ms expect=orders:speed<=1"))
-                .hasMessageContaining("the kinds are completed, handled, failed, redeliveries, meanTime, maxTime and lost");
+                .hasMessageContaining(
+                        "the kinds are completed, handled, failed, redeliveries, meanTime, maxTime, lost and duplicates");
     }
 }

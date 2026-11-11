@@ -345,7 +345,7 @@ public class LangChain4jEmbeddingStoreProducer extends DefaultProducer {
      * Expects the following headers:
      * </p>
      * <ul>
-     * <li>{@code CamelLangchain4jEmbeddingEmbedding} - Query embedding vector (required)</li>
+     * <li>{@code CamelLangChain4jEmbeddingsEmbedding} - Query embedding vector (required)</li>
      * <li>{@code CamelLangchain4jEmbeddingStoreMaxResults} - Maximum results to return (optional, default: 5)</li>
      * <li>{@code CamelLangchain4jEmbeddingStoreMinScore} - Minimum similarity score threshold (optional)</li>
      * <li>{@code CamelLangchain4jEmbeddingStoreFilter} - Search filter for metadata (optional)</li>

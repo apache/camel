@@ -86,6 +86,41 @@ class OverviewTabRenderTest {
     }
 
     @Test
+    void noTimesBeforeTheFirstExchange() {
+        // quick-start/rest-api before its first request: the percentiles are there, all 0
+        info.state = 5;
+        info.p50Time = 0;
+        info.p95Time = 0;
+        info.p99Time = 0;
+
+        OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
+        }).showIntegrations();
+        String row = TuiTestHelper.renderToString(tab, 160, 30).lines().filter(l -> l.contains("test-app")).findFirst()
+                .orElseThrow();
+        assertFalse(row.contains("0ms/0ms/0ms"), row);
+
+        info.exchangesTotal = 1;
+        row = TuiTestHelper.renderToString(tab, 160, 30).lines().filter(l -> l.contains("test-app")).findFirst()
+                .orElseThrow();
+        assertTrue(row.contains("0ms/0ms/0ms"), row);
+    }
+
+    @Test
+    void theNumbersStandNextToTheNamesOnAWideScreen() {
+        info.state = 5;
+        info.name = "circuit-breaker";
+
+        OverviewTab tab = new OverviewTab(ctx, new MetricsCollector(), new HashSet<>(), () -> {
+        }).showIntegrations();
+        String header = TuiTestHelper.renderToString(tab, 200, 30).lines()
+                .filter(l -> l.contains("VERSION")).findFirst().orElseThrow();
+
+        // NAME is as wide as the names need, not the rest of a 200 wide screen
+        int name = header.indexOf("NAME");
+        assertTrue(header.indexOf("VERSION") - name < 30, header);
+    }
+
+    @Test
     void tableDataExportsUptimeAsDurationNotStartTimestamp() {
         info.state = 5;
         info.uptime = System.currentTimeMillis() - 2 * 60 * 1000;

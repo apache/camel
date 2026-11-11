@@ -30,20 +30,22 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Resolves and caches public keys from Keycloak's JWKS endpoint for JWT signature verification.
  */
 public class KeycloakPublicKeyResolver {
     private static final Logger LOG = LoggerFactory.getLogger(KeycloakPublicKeyResolver.class);
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     public static final long DEFAULT_CACHE_REFRESH_INTERVAL_MS = 300_000; // 5 minutes
     public static final long DEFAULT_MIN_REFRESH_INTERVAL_MS = 10_000; // 10 seconds
@@ -175,7 +177,12 @@ public class KeycloakPublicKeyResolver {
 
     @SuppressWarnings("unchecked")
     void parseJwks(String jwksJson) throws IOException {
-        Map<String, Object> jwks = OBJECT_MAPPER.readValue(jwksJson, Map.class);
+        Map<String, Object> jwks;
+        try {
+            jwks = OBJECT_MAPPER.readValue(jwksJson, Map.class);
+        } catch (JacksonException e) {
+            throw new IOException("Failed to parse JWKS response", e);
+        }
         List<Map<String, Object>> keys = (List<Map<String, Object>>) jwks.get("keys");
 
         if (keys == null || keys.isEmpty()) {

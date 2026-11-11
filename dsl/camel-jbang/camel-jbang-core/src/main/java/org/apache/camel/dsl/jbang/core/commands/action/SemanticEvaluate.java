@@ -22,14 +22,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.json.JsonMapper;
 
 @CommandLine.Command(name = "eval", description = "Evaluate a semantic definition or expert operation",
                      sortOptions = false, showDefaultValues = true,
@@ -40,7 +40,7 @@ import picocli.CommandLine;
 public class SemanticEvaluate extends SemanticActionCommand {
 
     // Jsoner accepts trailing commas; command input must use strict JSON parsing.
-    private static final ObjectReader JSON_VALUE = new ObjectMapper().readerFor(Object.class)
+    private static final ObjectReader JSON_VALUE = JsonMapper.builderWithJackson2Defaults().build().readerFor(Object.class)
             .with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
     @CommandLine.Option(names = "--evaluation", description = "Named semantic definition to evaluate")

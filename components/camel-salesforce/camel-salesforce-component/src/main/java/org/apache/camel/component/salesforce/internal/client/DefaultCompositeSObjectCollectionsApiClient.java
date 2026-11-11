@@ -17,16 +17,11 @@
 package org.apache.camel.component.salesforce.internal.client;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
@@ -43,6 +38,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.InputStreamRequestContent;
 import org.eclipse.jetty.client.Request;
 import org.eclipse.jetty.http.HttpHeader;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.type.CollectionType;
 
 public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientBase
         implements CompositeSObjectCollectionsApiClient {
@@ -199,7 +198,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         return request;
     }
 
-    private <T> List<T> fromJsonList(final Class<T> expectedType, final InputStream responseStream) throws IOException {
+    private <T> List<T> fromJsonList(final Class<T> expectedType, final InputStream responseStream) {
         final CollectionType collectionType = mapper.getTypeFactory().constructCollectionType(List.class, expectedType);
         return mapper.readValue(responseStream, collectionType);
     }
@@ -223,7 +222,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         byte[] jsonBytes;
         try {
             jsonBytes = jsonWriterFor(obj).writeValueAsBytes(obj);
-        } catch (final JsonProcessingException e) {
+        } catch (final JacksonException e) {
             throw new SalesforceException("Unable to serialize given SObjectTree to JSON", e);
         }
 
@@ -237,7 +236,7 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
         }
         try {
             return Optional.of(fromJsonList(expectedType, responseStream));
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             log.warn("Unable to read response from the Composite API", e);
             return Optional.empty();
         } finally {

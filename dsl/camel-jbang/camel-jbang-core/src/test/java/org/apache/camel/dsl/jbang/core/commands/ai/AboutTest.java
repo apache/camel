@@ -90,6 +90,75 @@ class AboutTest {
     }
 
     @Test
+    void withoutACommentThePurposeIsTheFirstParagraphOfTheReadme() throws Exception {
+        // quick-start/routes: the bean file comes first, and neither file has a comment
+        Files.writeString(dir.resolve("beans.yaml"), "- beans:\n    - name: greeter\n      type: camel.example.Greeter\n");
+        Files.writeString(dir.resolve("routes.camel.yaml"), """
+                - route:
+                    id: greeting
+                    from:
+                      uri: timer:greet
+                      steps:
+                        - log: hello
+                """);
+        assertThat(About.of(dir, ProjectOverview.analyze(dir, CATALOG)).purpose()).isNull();
+
+        // what the AI wrote comes last
+        Files.writeString(dir.resolve(IntegrationSummary.FILE_NAME), """
+                # greeting
+
+                ## Overview ✦ AI-assisted
+
+                <!-- ai:begin -->
+                A timer greets every second.
+
+                It has one route.
+                <!-- ai:end -->
+                """);
+        About.Model m = About.of(dir, ProjectOverview.analyze(dir, CATALOG));
+        assertThat(m.purpose()).isEqualTo("A timer greets every second.");
+        assertThat(m.purposeFrom()).isEqualTo("from camel-summary.md (AI-assisted)");
+
+        // the author's words before: the README
+        Files.writeString(dir.resolve("README.md"), """
+                # Routes
+
+                [![build](https://example.org/badge.svg)](https://example.org)
+
+                The first step from YAML into your own code: a timer route in YAML calls a Java bean, `Greeter`, that
+                builds the message, and logs what the [bean](Greeter.java) returned.
+
+                ## What you will see
+                """);
+        m = About.of(dir, ProjectOverview.analyze(dir, CATALOG));
+        assertThat(m.purpose()).isEqualTo("The first step from YAML into your own code: a timer route in YAML calls a"
+                                          + " Java bean, Greeter, that builds the message, and logs what the bean"
+                                          + " returned.");
+        assertThat(m.purposeFrom()).isEqualTo("from README.md");
+        assertThat(About.readme(dir)).isEqualTo(dir.resolve("README.md"));
+    }
+
+    @Test
+    void theFirstParagraphOfAsciiDoc() {
+        assertThat(About.firstParagraph("""
+                = Orders
+                :toc:
+
+                // the shop
+                [NOTE]
+                Each order is reserved, paid and shipped, see link:docs/flow.adoc[the flow] and *the* _routes_.
+
+                == Run
+                """)).isEqualTo("Each order is reserved, paid and shipped, see the flow and the routes.");
+        // a heading or a list only, or too short to say anything
+        assertThat(About.firstParagraph("# Title\n\n- one\n- two\n")).isNull();
+        assertThat(About.firstParagraph("# Title\n\nSee below.\n")).isNull();
+        assertThat(About.firstParagraph(null)).isNull();
+        // snake_case is no emphasis
+        assertThat(About.firstParagraph("Reads the order_lines table of the shop database.")).contains("order_lines");
+    }
+
+    @Test
     void thePurposeIsTheCommentAfterTheLicenseHeader() {
         String yaml = "# Licensed to the Apache Software Foundation (ASF)\n# under the License.\n\n"
                       + "# Takes the orders\n# and ships them.\n\n- route:\n    from: {}\n";
@@ -107,6 +176,11 @@ class AboutTest {
         assertThat(AboutReport.baseUri("file:/tmp/in?noop=true")).isEqualTo(AboutReport.baseUri("file:///tmp/in"));
         assertThat(AboutReport.baseUri("kafka://orders")).isEqualTo("kafka:orders");
         assertThat(AboutReport.baseUri("direct:orders")).isEqualTo("direct:orders");
+        // the runtime has it encoded, the sources as written (contracts/openapi-client, connect/stock-api)
+        assertThat(AboutReport.baseUri("rest-openapi://stock-api.json%23reserveStock"))
+                .isEqualTo(AboutReport.baseUri("rest-openapi:stock-api.json#reserveStock"));
+        assertThat(AboutReport.baseUri("platform-http:///stock/%7Bsku%7D")).isEqualTo("platform-http:stock/{sku}");
+        assertThat(AboutReport.baseUri("http:shop/a+b/100%")).isEqualTo("http:shop/a+b/100%");
     }
 
     @Test

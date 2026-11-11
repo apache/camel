@@ -286,6 +286,24 @@ class TimelineTabRenderTest {
     }
 
     @Test
+    void theCursorHidesTheLabelOfTheAxisItIsOn() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        TuiTestHelper.renderToString(tab, 160, 40);
+        // paused, the cursor is on the last second, where the axis says now
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        String axis = TuiTestHelper.renderToString(tab, 160, 40).lines().filter(l -> l.contains("-60s")).findFirst()
+                .orElseThrow();
+        // no piece of a label next to the cursor; its time is at the right
+        assertThat(axis).doesNotContainPattern("[^ ▲]▲").contains("▲ now");
+        // the cursor on the start of the axis
+        for (int i = 0; i < 59; i++) {
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT));
+        }
+        axis = TuiTestHelper.renderToString(tab, 160, 40).lines().filter(l -> l.contains("-30s")).findFirst().orElseThrow();
+        assertThat(axis).doesNotContain("-60s").doesNotContainPattern("▲[^ ▲]");
+    }
+
+    @Test
     void enterShowsTheExchangesOfTheSecondAtTheCursorAndOneInDetail() {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         TuiTestHelper.renderToString(tab, 160, 40);
@@ -386,6 +404,50 @@ class TimelineTabRenderTest {
     }
 
     @Test
+    void pausedAClickOnASecondPutsTheCursorThere() {
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        Rect area = new Rect(0, 0, 160, 40);
+        List<String> lines = TuiTestHelper.renderToString(tab, 160, 40).lines().toList();
+        int shipping = indexOf(lines, "   shipping");
+        // the seconds start where the time axis does
+        int left = lines.get(indexOf(lines, "-60s")).indexOf("-60s");
+
+        // following now, a click selects the route and leaves the timeline following
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, left + 30, shipping), area)).isTrue();
+        assertThat(tab.isPaused()).isFalse();
+
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, left + 30, shipping), area)).isTrue();
+        assertThat(tab.cursorFrom()).isEqualTo(T0 / 1000 + 30);
+        assertThat(tab.getTableDataAsJson().getInteger("selectedIndex")).isEqualTo(1);
+        // the label of the route is no second
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, left - 3, shipping), area)).isTrue();
+        assertThat(tab.cursorFrom()).isEqualTo(T0 / 1000 + 30);
+    }
+
+    @Test
+    void aClickOnAnExchangeOfTheSecondsSelectsIt() {
+        // narrow: a column is two seconds, and has two exchanges
+        TimelineTab tab = new TimelineTab(ctx, now::get);
+        Rect area = new Rect(0, 0, 100, 40);
+        TuiTestHelper.renderToString(tab, 100, 40);
+        tab.handleKeyEvent(KeyEvent.ofChar(' '));
+        while (tab.cursorFrom() > T0 / 1000 + 30) {
+            tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.LEFT));
+        }
+        assertThat(tab.cursorTo()).isEqualTo(T0 / 1000 + 31);
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        List<String> lines = TuiTestHelper.renderToString(tab, 100, 40).lines().toList();
+
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 20, indexOf(lines, "H31")), area)).isTrue();
+        // below the last exchange is none
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 20, indexOf(lines, "H31") + 1), area))
+                .isFalse();
+        tab.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER));
+        assertThat(TuiTestHelper.renderToString(tab, 100, 40)).contains("H31").doesNotContain("H30");
+    }
+
+    @Test
     void thePanelTheKeysGoToHasTheFocusBorder() {
         TimelineTab tab = new TimelineTab(ctx, now::get);
         Buffer screen = TuiTestHelper.renderToBuffer(tab, 160, 40);
@@ -407,5 +469,16 @@ class TimelineTabRenderTest {
             }
         }
         throw new AssertionError("no line with " + text);
+    }
+
+    @Test
+    void aMillisecondOfJitterIsNoFullBar() {
+        // a fast route: 0 and 1 ms seconds are noise at the bottom, not spikes
+        assertThat(TimelineTab.meanScale(1, 0)).isEqualTo(10);
+        assertThat(TimelineTab.spark(new long[] { 0, 1, 0, 1 }, TimelineTab.meanScale(1, 0)))
+                .doesNotContain("█");
+        // a slow second still stands out against a steady time
+        assertThat(TimelineTab.meanScale(400, 50)).isEqualTo(400);
+        assertThat(TimelineTab.meanScale(60, 50)).isEqualTo(100);
     }
 }

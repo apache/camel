@@ -728,7 +728,7 @@ public interface JiraEndpointBuilderFactory {
         }
         /**
          * (OAuth only) The verification code from Jira generated in the first
-         * step of the authorization proccess.
+         * step of the authorization process.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1042,7 +1042,7 @@ public interface JiraEndpointBuilderFactory {
         }
         /**
          * (OAuth only) The verification code from Jira generated in the first
-         * step of the authorization proccess.
+         * step of the authorization process.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1249,7 +1249,7 @@ public interface JiraEndpointBuilderFactory {
         }
         /**
          * (OAuth only) The verification code from Jira generated in the first
-         * step of the authorization proccess.
+         * step of the authorization process.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 

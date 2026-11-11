@@ -43,11 +43,13 @@ import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.RouteAddedEvent;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
+import org.apache.camel.support.service.BaseService;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
@@ -77,6 +79,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
     private final Lock retainLock;
     private final AtomicReference<CamelClusterView> clusterView;
     private final AtomicBoolean leadershipChangePending;
+    // a route of this policy was added to the CamelContext, so the leader may now start it
+    private final AtomicBoolean routeAdded;
     private CamelClusterService clusterService;
     private volatile boolean startManagedRoutesEarly;
     private volatile boolean initialDelayElapsed;
@@ -100,6 +104,7 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         this.lock = new ReentrantLock();
         this.retainLock = new ReentrantLock();
         this.leadershipChangePending = new AtomicBoolean();
+        this.routeAdded = new AtomicBoolean();
         // the routes are started and stopped on the policy thread, while routes are added and removed by the caller
         this.stoppedRoutes = ConcurrentHashMap.newKeySet();
         this.startedRoutes = ConcurrentHashMap.newKeySet();
@@ -196,6 +201,14 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", getClass(), route.getId());
             route.setAutoStartup(false);
             this.stoppedRoutes.add(route);
+        }
+
+        if (camelContext.isStarted() && initialDelay != null && initialDelay.toMillis() > 0) {
+            // A policy attached to a CamelContext that has already started gets neither the started event nor the
+            // fully started callback, so its initial delay starts now (it applies only once). This is done here and
+            // not when the CamelContext is set, as the initial delay may be set after that. Only the timer is
+            // scheduled here: the policy lock is not taken, as the caller may hold the CamelContext route lock.
+            listener.onCamelContextStarted();
         }
 
         startManagedRoutes();
@@ -329,6 +342,8 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
                 return;
             }
 
+            // a route of this policy was added to the CamelContext since the last change
+            boolean added = routeAdded.getAndSet(false);
             boolean isLeader = view.getLocalMember().isLeader();
             if (isLeader && leader.compareAndSet(false, isLeader)) {
                 LOG.debug("Leadership taken");
@@ -336,6 +351,10 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             } else if (!isLeader && leader.getAndSet(isLeader)) {
                 LOG.debug("Leadership lost");
                 stopManagedRoutes();
+            } else if (isLeader && added) {
+                // a route that could not be started when the leadership was taken, as it was not added to the
+                // CamelContext yet (doStartManagedRoutes only starts the routes that are still stopped)
+                startManagedRoutes();
             }
         } finally {
             lock.unlock();
@@ -367,19 +386,40 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
         }
 
         if (!isRunAllowed()) {
+            if (isNew() || isBuild() || isInit()) {
+                // the leadership was taken before this policy started (a cluster service started on its own, with a
+                // view that is already the leader): start the routes once the CamelContext has started. A policy that
+                // is stopping or stopped does not start them
+                LOG.debug("Will defer starting managed routes until the policy and the camel context are started");
+                startManagedRoutesEarly = true;
+            }
             return;
         }
 
         try {
             for (Route route : stoppedRoutes) {
-                ServiceStatus status = getStatus(route);
+                ServiceStatus status = camelContext.getRouteController().getRouteStatus(route.getId());
+                if (status == null) {
+                    // the route is not added to the CamelContext yet: starting it now would do nothing, so it is
+                    // started when it is added (RouteAddedEvent)
+                    LOG.debug("Will defer starting route '{}' until it is added to the CamelContext", route.getId());
+                    continue;
+                }
                 boolean autostart = autoStartupRoutes.contains(route);
 
-                if (status != null && status.isStartable() && autostart) {
+                if (status.isStartable() && autostart) {
                     LOG.debug("Starting route '{}'", route.getId());
                     camelContext.getRouteController().startRoute(route.getId());
 
                     startedRoutes.add(route);
+                    if (camelContext.getRoute(route.getId()) != route
+                            || route instanceof BaseService service && service.isShutdown()) {
+                        // the route was removed while it was started (startRoute waited for the removal, and did
+                        // nothing): a route added later with the same id must not be stopped by this policy. Checked
+                        // after the add, as a removed route is shut down before onRemove forgets it
+                        LOG.debug("Route '{}' was removed while it was being started", route.getId());
+                        startedRoutes.remove(route);
+                    }
                 }
             }
 
@@ -517,12 +557,23 @@ public final class ClusteredRoutePolicy extends RoutePolicySupport implements Ca
             implements ExtendedStartupListener, NonManagedService {
         @Override
         public void notify(CamelEvent event) throws Exception {
-            onCamelContextStarted();
+            if (event instanceof RouteAddedEvent) {
+                // on the thread that adds the route, which holds the CamelContext route lock: the policy thread starts
+                // the route if this node is the leader (the route is known to the CamelContext from now on)
+                routeAdded.set(true);
+                handOverLeadershipChange();
+            } else {
+                onCamelContextStarted();
+            }
         }
 
         @Override
         public boolean isEnabled(CamelEvent event) {
-            return event instanceof CamelContextStartedEvent;
+            // a route added while the CamelContext starts is started (or deferred) with the others. The event also comes
+            // when a stopped route is warmed up again; the extra pass then has nothing to do
+            return event instanceof CamelContextStartedEvent
+                    || event instanceof RouteAddedEvent rae && camelContext.isStarted()
+                            && stoppedRoutes.contains(rae.getRoute());
         }
 
         @Override

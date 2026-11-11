@@ -1299,11 +1299,13 @@ holds the claim until the route stops. What the claim is worth depends on the st
 | Manager | Claim
 
 | `FileBasedKeyLifecycleManager`
-| An exclusive `FileLock` on a `<keyId>.lock` file in the key directory. A second process reading the same directory
-  is refused, and so is a second manager in the same JVM, even through another path to the directory; the operating
-  system releases the lock if the holder dies. Producers that share one manager share its claim, which is given back
-  when the last of them stops. Once the claim is granted the key and its metadata are read from the store again, so
-  a producer that waited for the claim resumes from the index the previous owner reached.
+| An exclusive `FileLock` on a lock file in the key directory, named from the SHA-256 fingerprint of the public key,
+  so the claim follows the key material: the same key signed under two `CamelPQCKeyId` values, or without the
+  header, is one claim. A second process reading the same directory is refused, and so is a second manager in the
+  same JVM, even through another path to the directory; the operating system releases the lock if the holder dies.
+  Producers that share one manager share its claim, which is given back when the last of them stops. Once the claim
+  is granted the key and its metadata are read from the store again, so a producer that waited for the claim resumes
+  from the index the previous owner reached.
 
 | `InMemoryKeyLifecycleManager`
 | Granted: the keys never leave the process.
@@ -1317,13 +1319,18 @@ A refused claim fails the exchange with a message naming the key. If a single si
 outside Camel - one replica, an external lock, a leader election - set `allowSharedStatefulKey=true` on the endpoint
 to sign anyway. There is no such thing as a safe default here: the option exists so the decision is explicit.
 
-The claim needs the `CamelPQCKeyId` header to name the key, which is the same header the usage recording uses. An
+The claim does not depend on the `CamelPQCKeyId` header: the key is claimed by its public key, under whatever name
+the exchange gives it, or none. The header still names the stored copy, for the usage recording and for the re-read
+after the claim. Resuming from the stored index therefore needs the header: an unnamed claim serialises the signers,
+but nothing names the copy to read back, so the producer keeps the key it loaded until an exchange names it. An
 endpoint signing with a stateful key and no `KeyLifecycleManager` persists no index at all, and already warns about
 it; nothing can be claimed in that case either.
 
 A custom `KeyLifecycleManager` that can guarantee exclusivity - a database row lock, a distributed lease - should
-override `claimStatefulKey` to take it and return `true`, and `releaseStatefulKey` to give it back. Count the claims
-when several producers can share the manager, so that the key is given back by the last of them, not the first.
+override `claimStatefulKey(String, PublicKey)` to take it and return `true`, and `releaseStatefulKey(String, PublicKey)`
+to give it back. Key the lease on `KeyLifecycleManager.fingerprint(publicKey)` rather than on the name, so that it
+follows the key, and count the claims when several producers can share the manager, so that the key is given back by
+the last of them, not the first.
 
 **5. Secure Key Export**
 

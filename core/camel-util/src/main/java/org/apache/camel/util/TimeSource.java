@@ -18,16 +18,21 @@ package org.apache.camel.util;
 
 import java.time.Instant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * The clock and the sleeps of the Camel core code that waits, times tasks or throttles (for example the redelivery
  * delay, the wait loop of the graceful shutdown, {@link StopWatch} and the throttlers).
  * <p>
- * <b>Internal:</b> this is not an API for Camel users or components, except that camel-chaos reads the clock through it
- * (so its rules end in virtual time in a deterministic simulation test, and the step and send hooks of camel-core wait
- * for its delays through it too); it never installs a provider. The default provider delegates to
- * {@link System#currentTimeMillis()}, {@link System#nanoTime()}, {@link Instant#now()} and {@link Thread#sleep(long)}.
- * Only a test harness, such as the deterministic simulation tests of camel-test-dst, installs another provider with
- * {@link #install(Provider)}, for example a virtual clock, and puts the previous one back when the test is done.
+ * <b>Internal:</b> this is not an API for Camel users or components. A component gets virtual time through the core
+ * classes it already uses (the task classes, the delayer, the throttlers, the redelivery), not by calling this class.
+ * camel-chaos is the one exception: it reads the clock and sleeps through it (so its rules end in virtual time in a
+ * deterministic simulation test, and the step and send hooks of camel-core wait for its delays through it too); it
+ * never installs a provider. The default provider delegates to {@link System#currentTimeMillis()},
+ * {@link System#nanoTime()}, {@link Instant#now()} and {@link Thread#sleep(long)}. Only a test harness, such as the
+ * deterministic simulation tests of camel-test-dst, installs another provider with {@link #install(Provider)}, for
+ * example a virtual clock, and puts the previous one back when the test is done.
  * <p>
  * The provider is static rather than per {@code CamelContext}, because {@link StopWatch} and the other timers have no
  * context. Event timestamps and the direct clock reads of the debugger, the tracer, management and the developer
@@ -70,6 +75,8 @@ public final class TimeSource {
          */
         void sleep(long millis) throws InterruptedException;
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(TimeSource.class);
 
     private static final Provider SYSTEM = new SystemProvider();
 
@@ -114,6 +121,10 @@ public final class TimeSource {
 
     /**
      * Installs a provider, for test harnesses only.
+     * <p>
+     * The provider is used by every {@code CamelContext} that shares this class (in a shared runtime such as Karaf, all
+     * of them), so installing a provider other than the default is logged at INFO with its class, and so is putting the
+     * default back.
      *
      * @param  provider the provider to use from now on
      * @return          the provider that was installed before, to be installed again when the test is done
@@ -123,6 +134,12 @@ public final class TimeSource {
         synchronized (TimeSource.class) {
             Provider previous = TimeSource.provider;
             TimeSource.provider = provider;
+            // logged under the lock, so the lines of two installs come in the order of the installs
+            if (provider != SYSTEM) {
+                LOG.info("Installed TimeSource provider: {}", provider.getClass().getName());
+            } else if (previous != SYSTEM) {
+                LOG.info("Installed default TimeSource provider (replacing: {})", previous.getClass().getName());
+            }
             return previous;
         }
     }

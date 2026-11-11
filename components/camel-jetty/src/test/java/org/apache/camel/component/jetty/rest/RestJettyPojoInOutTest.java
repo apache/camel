@@ -20,27 +20,27 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RestJettyPojoInOutTest extends BaseJettyTest {
 
     @Test
-    public void testJettyPojoInOut() {
+    public void testJettyPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         String out = template.requestBody("http://localhost:" + getPort() + "/users/lives", body, String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, true);
     }
 
     @Test
-    public void testJettyGetRequest() {
+    public void testJettyGetRequest() throws Exception {
         String out = template.requestBody("http://localhost:" + getPort() + "/users/lives", null, String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, true);
     }
 
     @Override

@@ -35,6 +35,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
+import tools.jackson.core.JacksonException;
 
 /*
  * Assuming it is loaded from a json for now
@@ -113,6 +114,8 @@ public class KnativeEnvironment {
     public static KnativeEnvironment mandatoryLoadFromSerializedString(String configuration) throws IOException {
         try (Reader reader = new StringReader(configuration)) {
             return Knative.MAPPER.readValue(reader, KnativeEnvironment.class);
+        } catch (JacksonException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -188,6 +191,8 @@ public class KnativeEnvironment {
     public static KnativeEnvironment mandatoryLoadFromResource(CamelContext context, String path) throws IOException {
         try (InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, path)) {
             return Knative.MAPPER.readValue(is, KnativeEnvironment.class);
+        } catch (JacksonException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 

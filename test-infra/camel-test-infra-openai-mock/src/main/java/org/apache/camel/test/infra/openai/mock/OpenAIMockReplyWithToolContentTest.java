@@ -22,8 +22,8 @@ import java.net.http.HttpResponse;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,17 +60,17 @@ public class OpenAIMockReplyWithToolContentTest {
             JsonNode choice1 = responseJson1.path("choices").get(0);
             JsonNode message1 = choice1.path("message");
 
-            assertEquals("assistant", message1.path("role").asText());
-            assertEquals("tool_calls", choice1.path("finish_reason").asText());
+            assertEquals("assistant", message1.path("role").asString());
+            assertEquals("tool_calls", choice1.path("finish_reason").asString());
 
             JsonNode toolCalls = message1.path("tool_calls");
             assertEquals(1, toolCalls.size());
 
             JsonNode toolCall = toolCalls.get(0);
-            String toolCallId = toolCall.path("id").asText();
-            assertEquals("function", toolCall.path("type").asText());
-            assertEquals("GetCoordinates", toolCall.path("function").path("name").asText());
-            assertEquals("{\"location\":\"Paris\"}", toolCall.path("function").path("arguments").asText());
+            String toolCallId = toolCall.path("id").asString();
+            assertEquals("function", toolCall.path("type").asString());
+            assertEquals("GetCoordinates", toolCall.path("function").path("name").asString());
+            assertEquals("{\"location\":\"Paris\"}", toolCall.path("function").path("arguments").asString());
 
             // Second request with tool result - should return tool content + custom message
             String secondRequestBody = String.format(
@@ -89,10 +89,10 @@ public class OpenAIMockReplyWithToolContentTest {
             JsonNode choice2 = responseJson2.path("choices").get(0);
             JsonNode message2 = choice2.path("message");
 
-            assertEquals("assistant", message2.path("role").asText());
-            assertEquals("stop", choice2.path("finish_reason").asText());
+            assertEquals("assistant", message2.path("role").asString());
+            assertEquals("stop", choice2.path("finish_reason").asString());
 
-            String content = message2.path("content").asText();
+            String content = message2.path("content").asString();
             // Should contain both the tool content and the custom message
             assertTrue(content.contains("{\"latitude\": \"48.8566\", \"longitude\": \"2.3522\"}"));
             assertTrue(content.contains("- This is the location data I found."));

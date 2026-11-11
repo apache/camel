@@ -37,8 +37,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -77,6 +75,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * A2A consumer that automatically registers HTTP endpoints via {@link RestConsumerFactory} SPI.
@@ -729,7 +729,7 @@ public class A2AConsumer extends DefaultConsumer {
         return switch (operation) {
             case MESSAGE_SEND -> {
                 requireParams(params, method);
-                SendMessageRequest request = OBJECT_MAPPER.convertValue(params, SendMessageRequest.class);
+                SendMessageRequest request = A2AJsonMapper.convertValue(params, SendMessageRequest.class);
                 validateSendMessageRequest(request);
                 yield processSendMessage(request, exchange);
             }
@@ -743,13 +743,13 @@ public class A2AConsumer extends DefaultConsumer {
             }
             case TASK_LIST -> {
                 TaskListRequest request = params != null
-                        ? OBJECT_MAPPER.convertValue(params, TaskListRequest.class)
+                        ? A2AJsonMapper.convertValue(params, TaskListRequest.class)
                         : new TaskListRequest();
                 yield processListTasks(request, exchange);
             }
             case PUSH_CONFIG_CREATE -> {
                 String taskId = requiredStringParam(params, "taskId");
-                TaskPushNotificationConfig config = OBJECT_MAPPER.convertValue(params, TaskPushNotificationConfig.class);
+                TaskPushNotificationConfig config = A2AJsonMapper.convertValue(params, TaskPushNotificationConfig.class);
                 validatePushConfig(config);
                 yield processPushConfigCreate(taskId, config, exchange);
             }
@@ -801,7 +801,7 @@ public class A2AConsumer extends DefaultConsumer {
         // a permit if convertValue or contextId resolution throws.
         SendMessageRequest request;
         try {
-            request = OBJECT_MAPPER.convertValue(params, SendMessageRequest.class);
+            request = A2AJsonMapper.convertValue(params, SendMessageRequest.class);
             validateSendMessageRequest(request);
             validateSendConfiguration(request.getConfiguration());
         } catch (IllegalArgumentException e) {
@@ -857,14 +857,10 @@ public class A2AConsumer extends DefaultConsumer {
         byte[] requestBody = readRestRequestBody(exchange);
         try {
             return OBJECT_MAPPER.readValue(requestBody, type);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new RestRequestException(
                     400, "InvalidParamsError",
                     "Malformed JSON request: " + e.getOriginalMessage());
-        } catch (IOException e) {
-            throw new RestRequestException(
-                    400, "InvalidParamsError",
-                    "Malformed JSON request: " + e.getMessage());
         }
     }
 

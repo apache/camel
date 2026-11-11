@@ -18,10 +18,10 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import java.util.Arrays;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

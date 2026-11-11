@@ -50,10 +50,11 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * File-based implementation of KeyLifecycleManager. Stores private keys in PKCS#8 format, public keys in X.509 format,
@@ -90,8 +91,9 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
 
     public FileBasedKeyLifecycleManager(String keyDirectoryPath) throws IOException {
         this.keyDirectory = Paths.get(keyDirectoryPath).toAbsolutePath().normalize();
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        this.objectMapper = JsonMapper.builderWithJackson2Defaults()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .build();
         Files.createDirectories(keyDirectory);
         restrictToOwner(keyDirectory);
         LOG.info("Initialized FileBasedKeyLifecycleManager with directory: {}", keyDirectory);
@@ -507,25 +509,31 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
     }
 
     /**
-     * Takes an exclusive {@link FileLock} on a lock file beside the key, so that a second process reading the same key
-     * directory - two containers on one volume, say - cannot sign from the same one-time index.
+     * Takes an exclusive {@link FileLock} on a lock file in the key directory, so that a second process reading the
+     * same key directory - two containers on one volume, say - cannot sign from the same one-time index.
+     * <p/>
+     * The lock file is named from the fingerprint of the public key, so the claim follows the key material: the same
+     * key signed under two names, or under no name at all, contends for one file. A key whose public key gives no
+     * encoding is claimed under its name instead.
      * <p/>
      * The lock lives as long as the channel, which this manager keeps open, so the operating system releases it if the
      * process dies without releasing the claim. Every claim counts as a holder of the key, so producers that share this
      * manager do not release each other's claim: the key is given back when the last holder releases it.
      */
     @Override
-    public boolean claimStatefulKey(String keyId) throws IOException {
+    public boolean claimStatefulKey(String keyId, PublicKey publicKey) throws IOException {
+        String lockName = lockName(keyId, publicKey);
+        String label = keyLabel(keyId, lockName);
         // compute so the whole open-lock-store sequence happens once per key: a plain containsKey check followed by
         // a separate put lets two concurrent first-time signers both open a channel, and the loser then finds the
         // file locked for no reason. A claim on a key this manager already holds adds a holder instead.
         try {
-            statefulClaims.compute(keyId, (id, claim) -> {
+            statefulClaims.compute(lockName, (name, claim) -> {
                 if (claim != null) {
                     claim.holders.incrementAndGet();
                     return claim;
                 }
-                return openAndLock(id);
+                return openAndLock(name, keyId, label);
             });
         } catch (UncheckedIOException e) {
             throw e.getCause();
@@ -542,35 +550,37 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
      * {@link #JVM_CLAIMS} first, under its real path, and a second manager of the same directory is refused there,
      * before any channel is opened. A channel is only ever closed here when this process holds no lock on the file.
      * <p/>
-     * Taking a new lock also drops the cached key and metadata: the next read comes from the store, which is how a
+     * Taking a new lock also drops the cached keys and metadata: the next read comes from the store, which is how a
      * producer that waited for the claim resumes from the index the previous owner reached.
      */
-    private StatefulClaim openAndLock(String keyId) {
-        Path lockFile = resolveKeyFile(keyId, LOCK_SUFFIX);
+    private StatefulClaim openAndLock(String lockName, String keyId, String label) {
+        Path lockFile = resolveKeyFile(lockName, LOCK_SUFFIX);
         Path lockPath = realPath(lockFile);
         FileChannel[] opened = new FileChannel[1];
         JVM_CLAIMS.compute(lockPath, (path, holder) -> {
             if (holder != null) {
                 throw new IllegalStateException(
-                        "The stateful key '" + keyId + "' is already claimed in this JVM through " + lockPath
+                        "The stateful key " + label + " is already claimed in this JVM through " + lockPath
                                                 + ". A stateful signature key must have a single owner: share the"
                                                 + " KeyLifecycleManager instance rather than the key directory.");
             }
-            opened[0] = openAndLockChannel(keyId, lockFile);
+            opened[0] = openAndLockChannel(label, lockFile);
             return this;
         });
 
-        // The store may have moved on while the previous owner held the key: read it again rather than from cache
-        keyCache.remove(keyId);
-        metadataCache.remove(keyId);
-        LOG.info("Claimed the stateful key '{}' through {}", keyId, lockFile);
+        // The store may have moved on while the previous owner held the key: read it again rather than from cache.
+        // Both caches go, not only the entry of the name the claim was made under: the key may be read back under
+        // another name, or the claim may have no name at all, and claims are rare.
+        keyCache.clear();
+        metadataCache.clear();
+        LOG.info("Claimed the stateful key {} through {}", label, lockFile);
         return new StatefulClaim(lockPath, opened[0]);
     }
 
     /**
      * Opens the lock file and takes the exclusive lock on it, returning the channel that holds the lock.
      */
-    private static FileChannel openAndLockChannel(String keyId, Path lockFile) {
+    private static FileChannel openAndLockChannel(String label, Path lockFile) {
         FileChannel channel;
         try {
             channel = FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
@@ -587,7 +597,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             // closed: closing it, now or when the garbage collector gets to it, would drop that lock.
             FOREIGN_LOCK_CHANNELS.add(channel);
             throw new IllegalStateException(
-                    "The stateful key '" + keyId + "' is locked in this JVM through " + lockFile
+                    "The stateful key " + label + " is locked in this JVM through " + lockFile
                                             + " outside of any FileBasedKeyLifecycleManager. A stateful signature key"
                                             + " must have a single owner.",
                     e);
@@ -601,7 +611,7 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             // Held by another process, so this one holds no lock on the file and may close its channel
             closeQuietly(channel);
             throw new IllegalStateException(
-                    "The stateful key '" + keyId + "' is held by another process through " + lockFile
+                    "The stateful key " + label + " is held by another process through " + lockFile
                                             + ". Signing from it here would hand out a one-time index twice, which"
                                             + " breaks the key. Give each process its own stateful key, or stop the"
                                             + " other one.");
@@ -615,15 +625,17 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
      * <p/>
      * The lock file itself is left behind on purpose. Deleting it would be unsafe: another process can already have the
      * same file open and locked, and unlinking it lets a third process create a fresh file at that path and lock that
-     * instead - two owners, each holding a valid lock on a different inode. An empty {@code .lock} file beside each
-     * stateful key is the cost of that safety.
+     * instead - two owners, each holding a valid lock on a different inode. An empty {@code .lock} file per stateful
+     * key is the cost of that safety.
      */
     @Override
-    public void releaseStatefulKey(String keyId) {
+    public void releaseStatefulKey(String keyId, PublicKey publicKey) {
+        String lockName = lockName(keyId, publicKey);
         StatefulClaim[] released = new StatefulClaim[1];
-        statefulClaims.computeIfPresent(keyId, (id, claim) -> {
+        statefulClaims.computeIfPresent(lockName, (name, claim) -> {
             if (claim.holders.decrementAndGet() > 0) {
-                LOG.debug("The stateful key '{}' stays claimed, {} holders remain", id, claim.holders.get());
+                LOG.debug("The stateful key {} stays claimed, {} holders remain", keyLabel(keyId, name),
+                        claim.holders.get());
                 return claim;
             }
             released[0] = claim;
@@ -633,8 +645,31 @@ public class FileBasedKeyLifecycleManager implements KeyLifecycleManager {
             // closing the channel releases the lock it holds, and only then is the file free for the next manager
             closeQuietly(released[0].channel);
             JVM_CLAIMS.remove(released[0].lockPath, this);
-            LOG.info("Released the claim on the stateful key '{}'", keyId);
+            LOG.info("Released the claim on the stateful key {}", keyLabel(keyId, lockName));
         }
+    }
+
+    /**
+     * The name of the lock file of a key: the fingerprint of its public key, so that the claim follows the key material
+     * whatever name the key is stored under, or the name when the key gives no encoding to fingerprint.
+     */
+    private static String lockName(String keyId, PublicKey publicKey) {
+        String fingerprint = KeyLifecycleManager.fingerprint(publicKey);
+        if (fingerprint != null) {
+            return fingerprint;
+        }
+        if (keyId != null && !keyId.isBlank()) {
+            return keyId;
+        }
+        throw new IllegalArgumentException(
+                "A stateful key is claimed by its public key, or by its name when the key gives no encoding; neither was given");
+    }
+
+    /**
+     * How a key is referred to in messages: its name when it has one, otherwise the fingerprint it is claimed under.
+     */
+    private static String keyLabel(String keyId, String lockName) {
+        return keyId != null ? "'" + keyId + "'" : "with fingerprint " + lockName;
     }
 
     /**

@@ -96,15 +96,15 @@ public final class StringQuoteHelper {
 
     /**
      * Splits the input safely honoring if values is enclosed in quotes.
-     * <p/>
+     * <p>
      * Though this method does not support double quoting values. A quoted value must start with the same start and
      * ending quote, which is either a single quote or double quote value.
-     * <p/>
+     * <p>
      * Will <i>trim</i> each split value by default.
      *
      * @param  input     the input
      * @param  separator the separator char to split the input, for example a comma.
-     * @return           the input split, or <tt>null</tt> if the input is null.
+     * @return           the input split, or <code>null</code> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator) {
         return splitSafeQuote(input, separator, true, false);
@@ -112,14 +112,14 @@ public final class StringQuoteHelper {
 
     /**
      * Splits the input safely honoring if values is enclosed in quotes.
-     * <p/>
+     * <p>
      * Though this method does not support double quoting values. A quoted value must start with the same start and
      * ending quote, which is either a single quote or double quote value.
      *
      * @param  input     the input
      * @param  separator the separator char to split the input, for example a comma.
      * @param  trim      whether to trim each split value
-     * @return           the input split, or <tt>null</tt> if the input is null.
+     * @return           the input split, or <code>null</code> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator, boolean trim) {
         return splitSafeQuote(input, separator, trim, false);
@@ -127,7 +127,7 @@ public final class StringQuoteHelper {
 
     /**
      * Splits the input safely honoring if values is enclosed in quotes.
-     * <p/>
+     * <p>
      * Though this method does not support double quoting values. A quoted value must start with the same start and
      * ending quote, which is either a single quote or double quote value.
      *
@@ -135,7 +135,7 @@ public final class StringQuoteHelper {
      * @param  separator  the separator char to split the input, for example a comma.
      * @param  trim       whether to trim each split value
      * @param  keepQuotes whether to keep quotes
-     * @return            the input split, or <tt>null</tt> if the input is null.
+     * @return            the input split, or <code>null</code> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator, boolean trim, boolean keepQuotes) {
         return splitSafeQuote(input, separator, trim, keepQuotes, false);
@@ -144,20 +144,21 @@ public final class StringQuoteHelper {
     /**
      * Splits the input safely honoring if values is enclosed in quotes, and optionally also if values is enclosed in
      * parenthesis or curly brackets.
-     * <p/>
+     * <p>
      * Though this method does not support double quoting values. A quoted value must start with the same start and
      * ending quote, which is either a single quote or double quote value.
-     * <p/>
-     * When <tt>nested</tt> is enabled then the separator is not used for splitting when it is inside <tt>( )</tt> or
-     * <tt>{ }</tt> (outside quotes), such as a comma in a simple expression <tt>${body.substring(0, 3)}</tt>. The input
-     * is otherwise split in the same way as when <tt>nested</tt> is disabled.
+     * <p>
+     * When <code>nested</code> is enabled then the separator is not used for splitting when it is inside
+     * <code>( )</code> or <code>{ }</code> (outside quotes), such as a comma in a simple expression
+     * <code>${body.substring(0, 3)}</code>. The input is otherwise split in the same way as when <code>nested</code> is
+     * disabled.
      *
      * @param  input      the input
      * @param  separator  the separator char to split the input, for example a comma.
      * @param  trim       whether to trim each split value
      * @param  keepQuotes whether to keep quotes
      * @param  nested     whether to not split inside parenthesis and curly brackets
-     * @return            the input split, or <tt>null</tt> if the input is null.
+     * @return            the input split, or <code>null</code> if the input is null.
      */
     public static String[] splitSafeQuote(String input, char separator, boolean trim, boolean keepQuotes, boolean nested) {
         if (input == null) {

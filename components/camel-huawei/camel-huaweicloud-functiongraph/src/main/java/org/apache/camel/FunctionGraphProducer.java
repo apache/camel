@@ -19,9 +19,6 @@ package org.apache.camel;
 import java.util.Locale;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.huaweicloud.sdk.functiongraph.v2.FunctionGraphClient;
 import com.huaweicloud.sdk.functiongraph.v2.model.InvokeFunctionRequest;
 import com.huaweicloud.sdk.functiongraph.v2.model.InvokeFunctionResponse;
@@ -33,10 +30,14 @@ import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class FunctionGraphProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(FunctionGraphProducer.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
     private FunctionGraphEndpoint endpoint;
     private FunctionGraphClient functionGraphClient;
 
@@ -127,7 +128,7 @@ public class FunctionGraphProducer extends DefaultProducer {
         JsonNode event;
         try {
             event = MAPPER.readTree(json);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException(
                     "Exchange body should be a Map or a JSON object, but the body (" + body.getClass().getName()
                                                + ") is not valid JSON",

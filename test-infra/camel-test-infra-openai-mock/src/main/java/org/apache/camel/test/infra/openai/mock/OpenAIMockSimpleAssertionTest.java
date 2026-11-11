@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,8 +72,8 @@ public class OpenAIMockSimpleAssertionTest {
             JsonNode choice1 = responseJson1.path("choices").get(0);
             JsonNode message1 = choice1.path("message");
 
-            assertEquals("assistant", message1.path("role").asText());
-            assertEquals("first response", message1.path("content").asText());
+            assertEquals("assistant", message1.path("role").asString());
+            assertEquals("first response", message1.path("content").asString());
 
             // Verify first assertion was executed
             assertTrue(firstAssertionExecuted.get(), "First assertion should have been executed");
@@ -95,8 +95,8 @@ public class OpenAIMockSimpleAssertionTest {
             JsonNode choice2 = responseJson2.path("choices").get(0);
             JsonNode message2 = choice2.path("message");
 
-            assertEquals("assistant", message2.path("role").asText());
-            assertEquals("second response", message2.path("content").asText());
+            assertEquals("assistant", message2.path("role").asString());
+            assertEquals("second response", message2.path("content").asString());
 
             // Verify second assertion was executed
             assertTrue(secondAssertionExecuted.get(), "Second assertion should have been executed");

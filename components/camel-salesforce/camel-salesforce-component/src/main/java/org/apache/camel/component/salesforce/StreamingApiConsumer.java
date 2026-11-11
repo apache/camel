@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -40,6 +38,8 @@ import org.cometd.common.HashMapMessage;
 import org.cometd.common.JacksonJSONContextClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * The Salesforce Streaming API consumer.
@@ -280,7 +280,7 @@ public class StreamingApiConsumer extends DefaultConsumer {
                 // create the expected SObject
                 in.setBody(objectMapper.readValue(new StringReader(sObjectString), sObjectClass));
             }
-        } catch (final IOException e) {
+        } catch (final JacksonException e) {
             final String msg
                     = String.format("Error parsing message [%s] from Topic %s: %s", message, topicName, e.getMessage());
             handleException(msg, new SalesforceException(msg, e));

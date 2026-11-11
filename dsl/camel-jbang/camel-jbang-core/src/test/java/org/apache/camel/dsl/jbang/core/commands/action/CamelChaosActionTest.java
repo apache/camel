@@ -36,8 +36,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear, chaos-load and chaos-suggest: the chaos action they
- * send, what they print, and that a refused rule is an error with the reason of the integration.
+ * camel cmd chaos-add, chaos-change, chaos-remove, chaos-clear, chaos-load, chaos-suggest, chaos-explore-start,
+ * chaos-explore-finish and chaos-experiment: the chaos action they send, what they print, and that a refused rule is an
+ * error with the reason of the integration.
  */
 @ExtendWith(MockitoExtension.class)
 class CamelChaosActionTest extends ActionCommandTestSupport {
@@ -168,6 +169,26 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         // a route that feeds itself needs no hint
         assertThat(out).doesNotContain("feeds itself");
         assertThat(out.split("real system", -1)).hasSize(2);
+    }
+
+    @Test
+    void suggestAddsTwoFaultsAtOnceTogether() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject pair = new JsonObject(
+                Map.of("route", "orders", "kind", "combined", "title", "An outage while the dead letter channel fails",
+                        "rule", "endpoint=http://pay error status=503 until=1m",
+                        "rules", new JsonArray(
+                                List.of("endpoint=http://pay error status=503 until=1m",
+                                        "endpoint=seda:dlq error at=dlq until=1m")),
+                        "why", "route orders sends what fails to the dead letter channel seda:dlq"));
+        JsonObject answer = new JsonObject(Map.of("suggestions", new JsonArray(List.of(pair))));
+
+        assertThat(callWithResponse(command(new CamelChaosSuggestAction(main()), "orders"), answer)).isZero();
+
+        assertThat(printer.getLines()).contains(
+                "1. route orders: An outage while the dead letter channel fails (combined)",
+                "camel cmd chaos-add --rule='endpoint=http://pay error status=503 until=1m'"
+                                                                                             + " --rule='endpoint=seda:dlq error at=dlq until=1m'");
     }
 
     @Test
@@ -459,6 +480,130 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
         assertThat(action.getString("command")).isEqualTo("clear");
         assertThat(action).doesNotContainKeys("id", "rule");
         assertThat(printer.getLines()).containsExactly("Removed chaos rules: 3");
+    }
+
+    @Test
+    void exploreStart() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+
+        assertThat(callWithResponse(command(new CamelChaosExploreStartAction(main()), "orders", "--budget=30m",
+                "--focus=orders"), new JsonObject(Map.of("running", true, "budget", 1_800_000L, "focus", "orders"))))
+                .isZero();
+
+        JsonObject action = readActionFile(TEST_PID);
+        assertThat(action.getString("command")).isEqualTo("explore-start");
+        assertThat(action.getString("budget")).isEqualTo("30m");
+        assertThat(action.getString("focus")).isEqualTo("orders");
+        assertThat(printer.getLines()).containsExactly("Chaos exploration started: 30m0s (focus: orders)");
+    }
+
+    @Test
+    void exploreFinish() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject answer = new JsonObject(
+                Map.of("running", false, "startedAt", 1_000_000L, "finishedAt", 1_250_000L,
+                        "rules", new JsonArray(List.of("r1", "r2", "r3")), "removed", 1L,
+                        "experiments", new JsonArray(
+                                List.of(new JsonObject(Map.of("number", 1, "verdict", "FAIL")),
+                                        new JsonObject(Map.of("number", 2, "verdict", "PASS"))))));
+
+        assertThat(callWithResponse(command(new CamelChaosExploreFinishAction(main()), "orders"), answer)).isZero();
+
+        assertThat(readActionFile(TEST_PID).getString("command")).isEqualTo("explore-finish");
+        assertThat(printer.getLines()).containsExactly(
+                "Chaos exploration finished after 4m10s: 3 rules tried, 1 removed, 2 experiments (1 failed)");
+    }
+
+    @Test
+    void experimentEndsTheOpenOne() throws Exception {
+        writeStatusFile(TEST_PID, "orders");
+        JsonObject answer = new JsonObject(
+                Map.of("number", 3, "open", false, "verdict", "FAIL", "endedBy", "ended",
+                        "hypothesis", "an order never fails", "elapsed", 64_000L, "rules", new JsonArray(List.of("r4")),
+                        "expectations", new JsonArray(
+                                List.of(new JsonObject(
+                                        Map.of("expect", "orders:failed<=0", "state", "unmet", "value", "9 failed")))),
+                        "note", "stopped by hand"));
+
+        // a FAIL verdict is exit code 1, as camel run --chaos has it
+        assertThat(callWithResponse(command(new CamelChaosExperimentAction(main()), "orders", "--end",
+                "--note=stopped by hand"), answer)).isEqualTo(CliExitCode.FAILURE);
+
+        JsonObject action = readActionFile(TEST_PID);
+        assertThat(action.getString("command")).isEqualTo("experiment-end");
+        assertThat(action.getString("note")).isEqualTo("stopped by hand");
+        assertThat(printer.getLines()).containsExactly(
+                "Experiment 3 FAIL  an order never fails (r4, ended after 1m4s)",
+                "expect orders:failed<=0: unmet, 9 failed", "note: stopped by hand");
+    }
+
+    @Test
+    void experimentNeedsItsRulesAndAFeedForItsMessages() {
+        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders").doCall())
+                .isInstanceOf(CliException.class).hasMessageStartingWith("--rule is required")
+                .extracting(e -> ((CliException) e).getExitCode()).isEqualTo(CliExitCode.USAGE);
+        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders",
+                "--rule=route=orders error expect=orders:failed<=0", "--repeat=20").doCall())
+                .isInstanceOf(CliException.class).hasMessageContaining("go with --feed");
+        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders",
+                "--rule=route=orders error expect=orders:failed<=0", "--wait=1h").doCall())
+                .isInstanceOf(CliException.class).hasMessage("--wait must be at most 10m, was: 1h");
+        assertThatThrownBy(() -> command(new CamelChaosExperimentAction(main()), "orders",
+                "--rule=route=orders error expect=orders:failed<=0", "--feed=orders", "--interval=500..100").doCall())
+                .isInstanceOf(CliException.class).hasMessageContaining("--interval must go from the shortest");
+    }
+
+    @Test
+    void experimentPrintsTheTrafficAndTheTimeLeft() {
+        JsonObject experiment = new JsonObject(
+                Map.of("number", 2, "open", false, "verdict", "INCONCLUSIVE",
+                        "endedBy", "ended", "elapsed", 125_000L, "rules", new JsonArray(List.of("r3")),
+                        "expectations", new JsonArray(
+                                List.of(new JsonObject(
+                                        Map.of("expect", "orders:100", "state", "pending", "value", "41 completed")))),
+                        "traffic", new JsonObject(
+                                Map.of("endpoint", "direct://orders", "sent", 20L, "failed", 2L,
+                                        "elapsed", 950L)),
+                        "waited", 120_000L, "timeLeft", 495_000L));
+
+        assertThat(CamelChaosExperimentAction.lines(experiment)).containsExactly(
+                "Experiment 2 INCONCLUSIVE (r3, ended after 2m5s)",
+                "  expect orders:100: pending, 41 completed",
+                "  traffic: 20 messages sent to direct://orders (2 failed) in 950ms",
+                "  waited 2m0s for the verdict; 8m15s left of the exploration",
+                "  An expectation was not decided when it ended: wait longer than its within= (--wait)");
+
+        JsonObject typo = new JsonObject(
+                Map.of("number", 4, "verdict", "PASS", "elapsed", 1_000L,
+                        "warnings",
+                        new JsonArray(List.of("r5: endpoint=file:/parked matches no endpoint of the context now"))));
+        assertThat(CamelChaosExperimentAction.lines(typo))
+                .contains("  Warning: r5: endpoint=file:/parked matches no endpoint of the context now");
+
+        // another reason: waiting longer would not help (CAMEL-26790)
+        JsonObject idle = new JsonObject(
+                Map.of("number", 4, "verdict", "INCONCLUSIVE", "rules", new JsonArray(List.of("r4")),
+                        "reason", "route billing had no messages while it ran, so its expectation says nothing: feed it"));
+        assertThat(CamelChaosExperimentAction.lines(idle))
+                .contains(
+                        "  inconclusive: route billing had no messages while it ran, so its expectation says nothing: feed it")
+                .doesNotContain("  An expectation was not decided when it ended: wait longer than its within= (--wait)");
+
+        JsonObject notSent = new JsonObject(
+                Map.of("number", 3, "verdict", "PASS", "elapsed", 1_000L,
+                        "traffic", new JsonObject(Map.of("endpoint", "refunds", "status", "failed", "error", "No endpoint"))));
+        assertThat(CamelChaosExperimentAction.lines(notSent)).contains("  traffic: not sent to refunds: No endpoint");
+
+        // an HTTP feed: the status codes the clients got (CAMEL-26793)
+        JsonObject http = new JsonObject(
+                Map.of("number", 3, "verdict", "PASS", "rules", new JsonArray(List.of("r3")),
+                        "traffic", new JsonObject(
+                                Map.of("endpoint", "POST http://localhost:8080/payment", "sent", 20L,
+                                        "failed", 0L, "elapsed", 4_200L, "planned", 30L,
+                                        "statusCodes", new JsonObject(Map.of("200", 17L, "503", 3L))))));
+        assertThat(CamelChaosExperimentAction.lines(http)).contains("  traffic: 20 messages sent to POST"
+                                                                    + " http://localhost:8080/payment in 4s, answered 200 x17, 503 x3 (of 30: the"
+                                                                    + " experiment ended first)");
     }
 
     /** The status of the integration orders, with the chaos dev console as the CLI connector puts it there. */

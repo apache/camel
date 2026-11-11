@@ -1069,10 +1069,10 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custum geolocation provider to determine the longitude and latitude
-         * to use when no location information is set. The default implementaion
-         * uses the ipstack API and requires geolocationAccessKey and
-         * geolocationRequestHostIP.
+         * A custom geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default
+         * implementation uses the ipstack API and requires geolocationAccessKey
+         * and geolocationRequestHostIP.
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
@@ -1087,10 +1087,10 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custum geolocation provider to determine the longitude and latitude
-         * to use when no location information is set. The default implementaion
-         * uses the ipstack API and requires geolocationAccessKey and
-         * geolocationRequestHostIP.
+         * A custom geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default
+         * implementation uses the ipstack API and requires geolocationAccessKey
+         * and geolocationRequestHostIP.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
@@ -1577,10 +1577,10 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custum geolocation provider to determine the longitude and latitude
-         * to use when no location information is set. The default implementaion
-         * uses the ipstack API and requires geolocationAccessKey and
-         * geolocationRequestHostIP.
+         * A custom geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default
+         * implementation uses the ipstack API and requires geolocationAccessKey
+         * and geolocationRequestHostIP.
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
@@ -1595,10 +1595,10 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custum geolocation provider to determine the longitude and latitude
-         * to use when no location information is set. The default implementaion
-         * uses the ipstack API and requires geolocationAccessKey and
-         * geolocationRequestHostIP.
+         * A custom geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default
+         * implementation uses the ipstack API and requires geolocationAccessKey
+         * and geolocationRequestHostIP.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
@@ -2043,10 +2043,10 @@ public interface WeatherEndpointBuilderFactory {
         }
 
         /**
-         * A custum geolocation provider to determine the longitude and latitude
-         * to use when no location information is set. The default implementaion
-         * uses the ipstack API and requires geolocationAccessKey and
-         * geolocationRequestHostIP.
+         * A custom geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default
+         * implementation uses the ipstack API and requires geolocationAccessKey
+         * and geolocationRequestHostIP.
          * 
          * The option is a:
          * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.
@@ -2061,10 +2061,10 @@ public interface WeatherEndpointBuilderFactory {
             return this;
         }
         /**
-         * A custum geolocation provider to determine the longitude and latitude
-         * to use when no location information is set. The default implementaion
-         * uses the ipstack API and requires geolocationAccessKey and
-         * geolocationRequestHostIP.
+         * A custom geolocation provider to determine the longitude and latitude
+         * to use when no location information is set. The default
+         * implementation uses the ipstack API and requires geolocationAccessKey
+         * and geolocationRequestHostIP.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.weather.geolocation.GeoLocationProvider</code> type.

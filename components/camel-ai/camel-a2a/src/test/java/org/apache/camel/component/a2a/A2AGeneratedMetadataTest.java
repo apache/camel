@@ -19,42 +19,43 @@ package org.apache.camel.component.a2a;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class A2AGeneratedMetadataTest {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
 
     @Test
     void generatedEndpointMetadataDocumentsSecurityCategoriesAndDescriptions() throws Exception {
         JsonNode properties = MAPPER.readTree(Files.readString(metadataPath())).path("properties");
 
         JsonNode validateAuth = properties.path("validateAuth");
-        assertThat(validateAuth.path("security").asText()).isEqualTo("insecure:dev");
-        assertThat(validateAuth.path("insecureValue").asText()).isEqualTo("false");
+        assertThat(validateAuth.path("security").asString()).isEqualTo("insecure:dev");
+        assertThat(validateAuth.path("insecureValue").asString()).isEqualTo("false");
         assertThat(validateAuth.path("defaultValue").asBoolean()).isTrue();
-        assertThat(validateAuth.path("description").asText())
+        assertThat(validateAuth.path("description").asString())
                 .contains("validate authentication")
                 .contains("Disable explicitly");
 
         JsonNode allowLocalWebhookUrls = properties.path("allowLocalWebhookUrls");
-        assertThat(allowLocalWebhookUrls.path("security").asText()).isEqualTo("insecure:dev");
-        assertThat(allowLocalWebhookUrls.path("insecureValue").asText()).isEqualTo("true");
+        assertThat(allowLocalWebhookUrls.path("security").asString()).isEqualTo("insecure:dev");
+        assertThat(allowLocalWebhookUrls.path("insecureValue").asString()).isEqualTo("true");
         assertThat(allowLocalWebhookUrls.path("defaultValue").asBoolean()).isFalse();
-        assertThat(allowLocalWebhookUrls.path("description").asText())
+        assertThat(allowLocalWebhookUrls.path("description").asString())
                 .contains("localhost")
                 .contains("SSRF protection");
 
         JsonNode pushRetryBackoffMs = properties.path("pushRetryBackoffMs");
         assertThat(pushRetryBackoffMs.path("defaultValue").asLong()).isEqualTo(1000L);
-        assertThat(pushRetryBackoffMs.path("description").asText()).contains("exponential backoff");
+        assertThat(pushRetryBackoffMs.path("description").asString()).contains("exponential backoff");
 
         JsonNode oauthProfile = properties.path("oauthProfile");
-        assertThat(oauthProfile.path("description").asText())
+        assertThat(oauthProfile.path("description").asString())
                 .contains("OAuth 2.0 Client Credentials")
                 .contains("camel-oauth");
     }

@@ -343,6 +343,16 @@ final class ChaosModel {
                                                                        + " (<route>:meanTime<=2s) or the messages lost"
                                                                        + " between two routes (<route>-><route>:lost<=0)",
                         "orders:handled<=0");
+                case "key" -> {
+                    JsonObject p = param("key", "expression", false,
+                            "The key of a message for an expectation of duplicates (<route>:duplicates<=0), in the"
+                                                                     + " simple language: two messages with the same key"
+                                                                     + " are the same message; without it the body is the"
+                                                                     + " key",
+                            "${header.orderId}");
+                    p.put("language", "simple");
+                    yield p;
+                }
                 case "within" -> param("within", "duration", false,
                         "The time of the expectation (by default until the rule ends)", "2m");
                 case "draw" -> param("draw", "ruleId", false,

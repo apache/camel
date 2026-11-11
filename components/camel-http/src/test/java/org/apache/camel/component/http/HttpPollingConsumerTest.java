@@ -17,9 +17,10 @@
 package org.apache.camel.component.http;
 
 import java.net.SocketTimeoutException;
+import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.handler.DelayValidationHandler;
+import org.apache.camel.component.http.handler.BlockingValidationHandler;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.Test;
@@ -32,17 +33,22 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class HttpPollingConsumerTest extends BaseHttpTest {
 
     private HttpServer localServer;
+    // the server only answers once the latch is released: the timeout test never releases it before the call
+    private CountDownLatch serverResponse;
     private final String user = "camel";
     private final String password = "password";
     private String endpointUrl;
 
     @Override
     public void setupResources() throws Exception {
+        serverResponse = new CountDownLatch(1);
         localServer = ServerBootstrap.bootstrap()
                 .setCanonicalHostName("localhost").setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
                 .setSslContext(getSSLContext())
-                .register("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
+                .register("/",
+                        new BlockingValidationHandler(GET.name(), null, null, getExpectedContent(), serverResponse))
+                .create();
         localServer.start();
 
         endpointUrl = "http://localhost:" + localServer.getLocalPort();
@@ -50,7 +56,8 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
 
     @Override
     public void cleanupResources() throws Exception {
-
+        // unblock any server thread still waiting
+        serverResponse.countDown();
         if (localServer != null) {
             localServer.stop();
         }
@@ -58,6 +65,7 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationShouldSuccess() {
+        serverResponse.countDown();
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
                                            + password,
                 String.class);
@@ -67,6 +75,7 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationPreemptiveShouldSuccess() {
+        serverResponse.countDown();
 
         String body = consumer.receiveBody(endpointUrl + "/?authUsername=" + user + "&authPassword="
                                            + password + "&authenticationPreemptive=true",
@@ -76,12 +85,14 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
 
     @Test
     public void testReceive() {
+        serverResponse.countDown();
         String body = consumer.receiveBody(endpointUrl + "/", String.class);
         assertEquals(getExpectedContent(), body);
     }
 
     @Test
     public void testReceiveTimeout() {
+        serverResponse.countDown();
         String body = consumer.receiveBody(endpointUrl + "/", 5000, String.class);
         assertEquals(getExpectedContent(), body);
     }
@@ -89,7 +100,7 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
     @Test
     public void testReceiveTimeoutTriggered() {
         RuntimeCamelException ex = assertThrows(RuntimeCamelException.class,
-                () -> consumer.receiveBody(endpointUrl + "/", 250, String.class),
+                () -> consumer.receiveBody(endpointUrl + "/", 100, String.class),
                 "Should have thrown exception");
         assertIsInstanceOf(SocketTimeoutException.class, ex.getCause());
     }

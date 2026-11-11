@@ -551,6 +551,116 @@
   (defaults)
 > cmd chaos-clear --timeout 7
   timeoutOption.timeout=7
+> cmd chaos-experiment
+  body=null
+  cmd:helpRequested=false
+  end=false
+  feed=null
+  headers=null
+  helpRequested=false
+  hypothesis=null
+  interval=null
+  name=null
+  note=null
+  repeat=0
+  rules=null
+  timeoutOption.timeout=10000
+  wait="2m"
+> cmd chaos-experiment --body v
+  body="v"
+> cmd chaos-experiment --end
+  end=true
+> cmd chaos-experiment --end=false
+  (defaults)
+> cmd chaos-experiment --feed v
+  feed="v"
+> cmd chaos-experiment --header v --header w
+  headers=["v", "w"]
+> cmd chaos-experiment --hypothesis v
+  hypothesis="v"
+> cmd chaos-experiment --interval v
+  interval="v"
+> cmd chaos-experiment --note v
+  note="v"
+> cmd chaos-experiment --repeat 7
+  repeat=7
+> cmd chaos-experiment --rule v --rule w
+  rules=["v", "w"]
+> cmd chaos-experiment --timeout 7
+  timeoutOption.timeout=7
+> cmd chaos-experiment --wait v
+  wait="v"
+> cmd chaos-explore
+  apiKey=null
+  apiType=null
+  budget="10m"
+  cmd:helpRequested=false
+  focus=null
+  helpRequested=false
+  maxIterations=100
+  model=null
+  name=null
+  save=true
+  showTools=false
+  timeout=300
+  tools=auto
+  url=null
+  verbose=false
+  yes=false
+> cmd chaos-explore --api-key v
+  apiKey="v"
+> cmd chaos-explore --api-type ollama
+  apiType=ollama
+> cmd chaos-explore --budget v
+  budget="v"
+> cmd chaos-explore --focus v
+  focus="v"
+> cmd chaos-explore --max-iterations 7
+  maxIterations=7
+> cmd chaos-explore --model v
+  model="v"
+> cmd chaos-explore --save
+  (defaults)
+> cmd chaos-explore --save=false
+  save=false
+> cmd chaos-explore --show-tools
+  showTools=true
+> cmd chaos-explore --show-tools=false
+  (defaults)
+> cmd chaos-explore --timeout 7
+  timeout=7
+> cmd chaos-explore --tools auto
+  (defaults)
+> cmd chaos-explore --url v
+  url="v"
+> cmd chaos-explore --verbose
+  verbose=true
+> cmd chaos-explore --verbose=false
+  (defaults)
+> cmd chaos-explore --yes
+  yes=true
+> cmd chaos-explore --yes=false
+  (defaults)
+> cmd chaos-explore-finish
+  cmd:helpRequested=false
+  helpRequested=false
+  name=null
+  timeoutOption.timeout=10000
+> cmd chaos-explore-finish --timeout 7
+  timeoutOption.timeout=7
+> cmd chaos-explore-start
+  budget="10m"
+  cmd:helpRequested=false
+  focus=null
+  helpRequested=false
+  name=null
+  timeoutOption.timeout=10000
+> cmd chaos-explore-start --budget v
+  budget="v"
+> cmd chaos-explore-start --focus v
+  focus="v"
+> cmd chaos-explore-start --timeout 7
+  timeoutOption.timeout=7
 > cmd chaos-load v
   cmd:helpRequested=false
   file="v"
@@ -1090,6 +1200,7 @@
   headers=null
   helpRequested=false
   infra=null
+  interval=null
   loggingColor=true
   mavenResolver.download=true
   mavenResolver.fresh=false
@@ -1099,6 +1210,7 @@
   pretty=false
   propertiesFiles=null
   property=null
+  repeat=0
   reply=false
   replyFile=null
   showBody=true
@@ -1123,6 +1235,8 @@
   headers=["v", "w"]
 > cmd send --infra v
   infra="v"
+> cmd send --interval v
+  interval="v"
 > cmd send --logging-color
   (defaults)
 > cmd send --logging-color=false
@@ -1139,6 +1253,8 @@
   propertiesFiles="v"
 > cmd send --property v --property w
   property=["v", "w"]
+> cmd send --repeat 7
+  repeat=7
 > cmd send --reply
   reply=true
 > cmd send --reply=false

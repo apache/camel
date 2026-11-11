@@ -241,12 +241,9 @@ class MetricsCollector {
     }
 
     void updateEndpointHistory(IntegrationInfo info) {
-        long inTotal = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
-        long outTotal = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction))
-                .mapToLong(ep -> ep.hits).sum();
+        // what comes in and goes out: a hand-off between its routes (direct, seda) is neither
+        long inTotal = EndpointFlow.total(info, "in", ep -> true);
+        long outTotal = EndpointFlow.total(info, "out", ep -> true);
         long inRemote = info.endpoints.stream()
                 .filter(ep -> "in".equals(ep.direction) && ep.remote)
                 .mapToLong(ep -> ep.hits).sum();
@@ -412,13 +409,24 @@ class MetricsCollector {
                 continue;
             }
             String key = info.pid + "/" + cb.id;
-            long success = cb.successfulCalls;
-            long failed = cb.failedCalls;
-            // Circuit breaker history stays unscaled (scale=1) because CircuitBreakerTab
-            // formats values as plain integers, not via formatThroughput()
+            long[] calls = cbCalls(cb);
+            long success = calls[0];
+            long failed = calls[1];
+            // scaled by THROUGHPUT_SCALE like the endpoint rates: in whole calls a second, a breaker called once a
+            // second reads 0 when the samples are a little more than a second apart
             recordEndpointSample(key, now, success, failed,
-                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory, 1);
+                    cbThroughputSamples, previousCbTime, cbSuccessHistory, cbFailHistory, THROUGHPUT_SCALE);
         }
+    }
+
+    /**
+     * The calls of a circuit breaker so far, as running totals: answered by the protected steps, and by the fallback (a
+     * failed, timed out or rejected call). The success and failed calls the breaker reports are those of its sliding
+     * window, which stay the same while the calls go on.
+     */
+    static long[] cbCalls(CircuitBreakerInfo cb) {
+        long fallback = cb.fallbackCalls;
+        return new long[] { Math.max(0, cb.total - fallback), fallback };
     }
 
     void updateHeapHistory(IntegrationInfo info) {
@@ -445,7 +453,7 @@ class MetricsCollector {
                 long deltaWallNanos = (nowMs - prev[1]) * 1_000_000L;
                 if (deltaWallNanos > 0) {
                     double cpuPct = (double) deltaCpuNanos / deltaWallNanos * 100.0;
-                    cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg()).update(Math.max(0, cpuPct));
+                    cpuLoadAvg.computeIfAbsent(pid, k -> new LoadAvg(0)).update(Math.max(0, cpuPct));
                 }
             }
             prevCpuSample.put(pid, new long[] { cpuNanos, nowMs });

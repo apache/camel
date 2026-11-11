@@ -311,7 +311,7 @@ public interface RobotframeworkComponentBuilderFactory {
         }
     
         /**
-         * Sets free metadata for the top level tests suites. comma seperated
+         * Sets free metadata for the top level tests suites. comma separated
          * list of string resulting as List.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.

@@ -372,8 +372,7 @@ public class ContentProcessor implements Processor {
         cv.setTitle("test document");
         cv.setPathOnClient("test_doc.html");
         byte[] document = message.getBody(byte[].class);
-        ObjectMapper mapper = new ObjectMapper();
-        String enc = mapper.convertValue(document, String.class);
+        String enc = Base64.getEncoder().encodeToString(document);
         cv.setVersionData(enc);  // Uses base64 encoding and standard JSON request
         message.setBody(cv);
     }

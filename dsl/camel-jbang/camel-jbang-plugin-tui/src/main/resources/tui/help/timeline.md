@@ -32,7 +32,8 @@ fault and a real one stay apart.
 When no exchange failed, the WARN and ERROR lines of the log are the
 cause instead (`log ERROR`, `log WARN`): something that went wrong outside
 an exchange, such as a consumer that cannot connect. They are read from
-the log file, from the last part of it when the TUI starts.
+the log file, from the last part of it when the TUI starts. The WARN
+camel-chaos logs when it is switched on is not counted.
 
 When nothing went wrong, the band is one line: `Errors/s none`.
 
@@ -92,6 +93,8 @@ were done then, of which these were kept.
   the window moves
 - **Shift+Left/Right** — While paused, go back and forth in the 5
   minutes kept
+- **Click** — Selects the route of a strip; paused, the cursor goes to the
+  second clicked. A click on an exchange of the list selects it
 - **Enter** — The exchanges of the second at the cursor (it pauses
   first), or the selected exchange in detail
 - **Esc** — Close the exchange, then the list, then follow now again

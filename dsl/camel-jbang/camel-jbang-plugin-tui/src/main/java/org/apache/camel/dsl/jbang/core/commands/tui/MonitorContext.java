@@ -102,6 +102,8 @@ class MonitorContext {
     final ChaosMarks chaosMarks = new ChaosMarks();
     // what happened second by second, for the Timeline screen (CAMEL-26691)
     final Timeline timeline = new Timeline();
+    // whether the integrations were ready and live, second by second, for the strip of the Health tab
+    final HealthHistory healthHistory = new HealthHistory();
     BiConsumer<String, String> openMarkdownCallback;
     /** Opens markdown in the doc viewer scrolled to a heading: title, markdown, heading (may be null). */
     MarkdownOpener openMarkdownAtCallback;
@@ -177,6 +179,20 @@ class MonitorContext {
         return confirmActions && !tapeDriven.getAsBoolean();
     }
 
+    /**
+     * The name of the selected integration or infra service as a name to act on: a camel command, an answer to a tool.
+     * {@link #selectedName()} is shortened for a title.
+     */
+    String selectedFullName() {
+        IntegrationInfo info = findSelectedIntegration();
+        if (info != null) {
+            return info.name;
+        }
+        InfraInfo infra = findSelectedInfra();
+        return infra != null ? infra.alias : "?";
+    }
+
+    /** The name of the selected integration or infra service for a title, at most 20 characters. */
     String selectedName() {
         IntegrationInfo info = findSelectedIntegration();
         if (info != null) {

@@ -19,8 +19,7 @@ package org.apache.camel.component.zookeepermaster.group;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class NodeState {
 
@@ -61,7 +60,7 @@ public class NodeState {
     @Override
     public String toString() {
         try {
-            return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).writeValueAsString(this);
+            return JsonMapper.builderWithJackson2Defaults().build().writeValueAsString(this);
         } catch (Exception e) {
             return super.toString();
         }

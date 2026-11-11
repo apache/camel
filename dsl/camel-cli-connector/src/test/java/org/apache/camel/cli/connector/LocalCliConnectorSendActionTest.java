@@ -68,7 +68,28 @@ class LocalCliConnectorSendActionTest {
             }
         });
         context.start();
-        connector = new LocalCliConnector(new DefaultCliConnectorFactory());
+        connector = new LocalCliConnector(new DefaultCliConnectorFactory()) {
+            @Override
+            protected CliConnectorTransport createTransport(String name) {
+                // the action is dispatched directly: the file transport would poll the {pid} files and take the
+                // action files of other tests running at the same time
+                return new CliConnectorTransport() {
+                    @Override
+                    public void configure(
+                            CamelContext camelContext, CliActionDispatcher dispatcher,
+                            CliSnapshotProducer snapshots, Runnable shutdown) {
+                    }
+
+                    @Override
+                    public void start() {
+                    }
+
+                    @Override
+                    public void stop() {
+                    }
+                };
+            }
+        };
         connector.setCamelContext(context);
         connector.start();
     }
@@ -124,6 +145,30 @@ class LocalCliConnectorSendActionTest {
         assertThat(answer.getLong("sent")).isEqualTo(5);
         // four pauses of 20 to 60 millis
         assertThat(answer.getLong("elapsed")).isGreaterThanOrEqualTo(80);
+    }
+
+    @Test
+    void aRepeatedFileNameIsNumbered() throws Exception {
+        // a file endpoint writes one file per message (CAMEL-26795)
+        Path inbox = dir.resolve("inbox");
+        JsonObject request = request("{}");
+        request.put("endpoint", "file:" + inbox);
+        request.put("repeat", 3);
+        JsonObject header = new JsonObject();
+        header.put("key", "CamelFileName");
+        header.put("value", "order.json");
+        request.put("headers", new JsonArray(List.of(header)));
+
+        JsonObject answer = send(request);
+
+        assertThat(answer.getLong("sent")).as(answer.toJson()).isEqualTo(3);
+        try (var files = Files.list(inbox)) {
+            assertThat(files.map(f -> f.getFileName().toString()).sorted())
+                    .containsExactly("order-1.json", "order-2.json", "order-3.json");
+        }
+        assertThat(RepeatedSend.numbered("order", 2)).isEqualTo("order-2");
+        assertThat(RepeatedSend.numbered("in.box/order", 2)).isEqualTo("in.box/order-2");
+        assertThat(RepeatedSend.numbered(".hidden", 2)).isEqualTo(".hidden-2");
     }
 
     @Test

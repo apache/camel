@@ -376,6 +376,7 @@
                                     <exclude>**/*.lock</exclude>
                                     <exclude>.claude/**</exclude>
                                     <exclude>.omc/**</exclude>
+                                    <exclude>.bob/**</exclude>
                                     <exclude>.mvn/**</exclude>
                                     <exclude>.sdkmanrc</exclude>
                                     <exclude>KEYS</exclude>
@@ -410,6 +411,7 @@
                             <Jenkinsfile.jbangtest>SLASHSTAR_STYLE</Jenkinsfile.jbangtest>
                             <Jenkinsfile.jdk26>SLASHSTAR_STYLE</Jenkinsfile.jdk26>
                             <Jenkinsfile.jdk27>SLASHSTAR_STYLE</Jenkinsfile.jdk27>
+                            <Jenkinsfile.occupier>SLASHSTAR_STYLE</Jenkinsfile.occupier>
                             <atom>XML_STYLE</atom>
                             <bpmn>XML_STYLE</bpmn>
                             <camel-eclipse-pmd>XML_STYLE</camel-eclipse-pmd>
@@ -604,6 +606,7 @@
                             <!-- Claude Code / OMC worktrees -->
                             <exclude>.claude/**/*</exclude>
                             <exclude>.omc/**/*</exclude>
+                            <exclude>.bob/**/*</exclude>
                             <!-- Maven Wrapper -->
                             <exclude>.mvn/**/*</exclude>
                             <exclude>**/maven-wrapper/*</exclude>

@@ -18,11 +18,11 @@ package org.apache.camel.component.xj;
 
 import java.io.File;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xslt.ResultHandler;
 import org.apache.camel.component.xslt.ResultHandlerFactory;
 import org.apache.camel.support.ExchangeHelper;
+import tools.jackson.core.json.JsonFactory;
 
 /**
  * A {@link JsonFileResultHandler} factory

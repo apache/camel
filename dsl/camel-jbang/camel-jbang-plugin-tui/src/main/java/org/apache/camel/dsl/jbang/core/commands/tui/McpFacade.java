@@ -1636,6 +1636,14 @@ class McpFacade {
     // ---- Integration messaging / control ----
 
     JsonObject sendMessage(String endpoint, String body, String headers) {
+        return sendMessage(endpoint, body, headers, null);
+    }
+
+    /**
+     * @param reply whether to wait for the answer of the route and give it back; null for the default: the answer of a
+     *              direct: route, which the send waits for anyway, but no request-reply over a broker
+     */
+    JsonObject sendMessage(String endpoint, String body, String headers, Boolean reply) {
         if (ctx.selectedPid == null) {
             return null;
         }
@@ -1650,7 +1658,8 @@ class McpFacade {
         String fileOutside = ToolConfirms.fileOutsideProject(
                 body, info != null ? info.directory : null, getSelectedSourceDirectory());
         JsonObject rejected = confirm(ToolConfirms.sendMessage(endpoint, selectedEndpointUris(), fileOutside));
-        return rejected != null ? rejected : RuntimeHelper.sendMessage(pid, endpoint, body, headers);
+        boolean inOut = reply != null ? reply : endpoint.startsWith("direct:");
+        return rejected != null ? rejected : RuntimeHelper.sendMessage(pid, endpoint, body, headers, inOut);
     }
 
     JsonObject executeSql(String sql, String datasource, int maxRows, int queryTimeout) {
@@ -1726,7 +1735,8 @@ class McpFacade {
         }
         if ("stop-all".equals(action)) {
             bridge.stopAll();
-            return "Stopping all processes";
+            // the user answers the dialog: the processes stop when they confirm it
+            return "Asked the user to stop all processes: they confirm it in the Stop All dialog";
         }
         if (nameOrPid != null && !nameOrPid.isBlank()) {
             String pid = findPidByNameOrPid(nameOrPid.trim());
@@ -1765,7 +1775,7 @@ class McpFacade {
         if (ctx.selectedPid == null) {
             return "Error: no integration selected; give its name or pid";
         }
-        String name = ctx.selectedName();
+        String name = ctx.selectedFullName();
         return switch (action) {
             case "reset-stats", "clear-stats" -> {
                 if (ctx.isInfraSelected()) {
@@ -1801,7 +1811,8 @@ class McpFacade {
             }
             case "stop" -> {
                 bridge.stopProcess(false);
-                yield "Stopping " + name;
+                String stuck = StatusAge.stopAnswer(ctx.findSelectedIntegration());
+                yield stuck != null ? stuck : "Stopping " + name;
             }
             case "kill" -> {
                 bridge.stopProcess(true);

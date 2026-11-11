@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Encoder for unsafe URI characters.
- * <p/>
+ * <p>
  * A good source for details is <a href="http://en.wikipedia.org/wiki/Url_encode">wikipedia url encode</a> article.
  */
 public final class UnsafeUriCharactersEncoder {

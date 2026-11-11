@@ -29,12 +29,6 @@ import com.azure.core.util.polling.SyncPoller;
 import com.azure.security.keyvault.secrets.models.DeletedSecret;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.azure.security.keyvault.secrets.models.SecretProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -43,6 +37,11 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 public class KeyVaultProducer extends DefaultProducer {
 
@@ -50,9 +49,8 @@ public class KeyVaultProducer extends DefaultProducer {
     public static final String MISSING_SECRET_PROPERTIES = "Secret Properties must be specified";
 
     // a date or a time, such as an OffsetDateTime in a Map, is written as ISO-8601 text
-    private static final ObjectMapper JSON_MAPPER = JsonMapper.builder()
-            .addModule(new JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    private static final ObjectMapper JSON_MAPPER = JsonMapper.builderWithJackson2Defaults()
+            .disable(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
 
     public KeyVaultProducer(final Endpoint endpoint) {
@@ -104,7 +102,7 @@ public class KeyVaultProducer extends DefaultProducer {
         if (body instanceof Map || body instanceof Collection) {
             try {
                 return JSON_MAPPER.writeValueAsString(body);
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 throw new IllegalArgumentException(
                         "The " + body.getClass().getName() + " body of createSecret cannot be stored as JSON", e);
             }
@@ -112,7 +110,7 @@ public class KeyVaultProducer extends DefaultProducer {
         if (body != null && !isPayload(body)) {
             final JsonNode json = toJson(body);
             // Jackson writes a value, such as a UUID, as a JSON string: it is stored as its text
-            if (json != null && json.isContainerNode()) {
+            if (json != null && json.isContainer()) {
                 return json.toString();
             }
         }
@@ -133,7 +131,7 @@ public class KeyVaultProducer extends DefaultProducer {
     private static JsonNode toJson(Object body) {
         try {
             return JSON_MAPPER.valueToTree(body);
-        } catch (IllegalArgumentException e) {
+        } catch (JacksonException e) {
             // not a POJO that Jackson can serialize, such as an object without properties
             return null;
         }

@@ -113,6 +113,23 @@ class IntegrationSummaryDocTest {
     }
 
     @Test
+    void namedAsTheIntegrationThatRunsFromTheDirectory() throws Exception {
+        // an example runs from a directory of its own, camel-example-7061..., which is no name
+        write(ROUTES);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "routes";
+        info.directory = project.toString();
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.selectedPid = "1234";
+        List<String> opened = new ArrayList<>();
+        ctx.openMarkdownAtCallback = (title, markdown, heading) -> opened.add(title + " | " + markdown.lines().findFirst()
+                .orElse(""));
+        assertNull(IntegrationSummaryDoc.open(ctx, project, null));
+        assertEquals(List.of("Integration summary · routes (not saved) | # Integration summary: routes"), opened);
+    }
+
+    @Test
     void viewerScrollsToThePendingHeading() {
         StringBuilder md = new StringBuilder("# Top\n\n");
         for (int i = 0; i < 60; i++) {

@@ -41,6 +41,18 @@ class LoadAvgTest {
     }
 
     @Test
+    void theCpuOfAJvmThatJustStartedIsNoAverageOfItsLast15Minutes() {
+        // the first second of a JVM: 500% CPU loading classes and compiling
+        LoadAvg cpu = new LoadAvg(0);
+        assertEquals("-", cpu.format("%.1f/%.1f/%.1f"));
+        cpu.update(500.0);
+        String[] parts = cpu.format("%.1f/%.1f/%.1f").split("/");
+        // a second of 500% is 8% of a minute, and much less of 15 minutes
+        assertEquals(8.3, Double.parseDouble(parts[0]), 0.1);
+        assertTrue(Double.parseDouble(parts[2]) < 1.0, parts[2]);
+    }
+
+    @Test
     void multipleUpdatesConvergeViaEwma() {
         LoadAvg avg = new LoadAvg();
         avg.update(100.0);

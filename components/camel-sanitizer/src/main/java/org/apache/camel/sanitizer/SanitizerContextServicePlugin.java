@@ -23,11 +23,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.VetoCamelContextStartException;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.ContextServicePlugin;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.component.PropertyConfigurerSupport;
+import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +42,8 @@ import org.slf4j.LoggerFactory;
  * {@code camel.sanitizer.enabled=true}, or for a context built on a thread that the JUnit extension marked
  * ({@link SanitizerTestSession}), and never with profile {@code prod} (checked first). Otherwise nothing is installed
  * but the lifecycle strategy that decides it. When it installs, it adds the step listener of rule R1 and logs a WARN
- * that the sanitizer is on.
+ * that the sanitizer is on. For the still pending warning of R1 it also adds an event notifier of the exchanges that
+ * are done, and looks for still pending calls while the context runs.
  *
  * @since 4.24
  */
@@ -49,6 +53,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
     static final String CHECKS = "camel.sanitizer.checks";
     static final String STACK_DEPTH = "camel.sanitizer.stackDepth";
     static final String REPORT_ON_SHUTDOWN = "camel.sanitizer.reportOnShutdown";
+    static final String PENDING_TIMEOUT = "camel.sanitizer.pendingTimeout";
 
     /**
      * The checks of this version: {@code callback} is rule R1.
@@ -104,6 +109,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             }
             Boolean enabled;
             int stackDepth;
+            long pendingTimeout;
             boolean callback;
             try {
                 String text = property(pc, ENABLED);
@@ -118,6 +124,7 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 }
                 callback = parseChecks(orElse(property(pc, CHECKS), CHECK_CALLBACK));
                 stackDepth = parseStackDepth(orElse(property(pc, STACK_DEPTH), "32"));
+                pendingTimeout = parsePendingTimeout(orElse(property(pc, PENDING_TIMEOUT), "60s"));
                 reportOnShutdown = parseBoolean(REPORT_ON_SHUTDOWN, orElse(property(pc, REPORT_ON_SHUTDOWN), "true"));
             } catch (IllegalArgumentException e) {
                 throw new VetoCamelContextStartException("camel-sanitizer: " + e.getMessage(), e, context);
@@ -132,12 +139,16 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 turnedOff(session);
                 return;
             }
-            Sanitizer s = new Sanitizer(context, stackDepth, session);
+            Sanitizer s = new Sanitizer(context, stackDepth, session, pendingTimeout);
             if (session != null) {
                 session.installed();
             }
             context.getCamelContextExtension().addContextPlugin(Sanitizer.class, s);
             context.getCamelContextExtension().addStepListener(new SanitizerStepListener(s));
+            if (pendingTimeout > 0) {
+                // an exchange that is done no longer waits for a call that is still pending (such as one that threw)
+                context.getManagementStrategy().addEventNotifier(new ExchangeDoneNotifier(s));
+            }
             sanitizer = s;
             String why = enabled != null ? ENABLED + "=true" : session != null ? "@CamelSanitizer" : "profile dev";
             String message = "The exchange sanitizer is switched on ({}): it checks each call of the steps of the routes"
@@ -146,6 +157,14 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 LOG.warn(message, why);
             } else {
                 LOG.debug(message, why);
+            }
+        }
+
+        @Override
+        public void onContextStarted(CamelContext context) {
+            Sanitizer s = sanitizer;
+            if (s != null) {
+                s.startPendingCheck();
             }
         }
 
@@ -168,8 +187,12 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
         @Override
         public void onContextStopped(CamelContext context) {
             Sanitizer s = sanitizer;
+            if (s != null) {
+                // the calls still pending when the context stops are listed
+                s.stopPendingCheck(reportOnShutdown);
+            }
             if (s != null && reportOnShutdown) {
-                if (s.hasViolations()) {
+                if (s.hasViolations() || s.hasWarnings()) {
                     LOG.warn("{}", s.summary());
                 }
                 if (LOG.isDebugEnabled()) {
@@ -238,6 +261,22 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
             return callback;
         }
 
+        /**
+         * The timeout of the still pending warning in milliseconds, such as {@code 60s} or {@code 500} (ms); 0 is off.
+         */
+        static long parsePendingTimeout(String text) {
+            long millis;
+            try {
+                millis = TimeUtils.toMilliSeconds(text);
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException(PENDING_TIMEOUT + "=" + text + " is not a duration", e);
+            }
+            if (millis < 0) {
+                throw new IllegalArgumentException(PENDING_TIMEOUT + "=" + text + " must be 0 or more");
+            }
+            return millis;
+        }
+
         static int parseStackDepth(String text) {
             int depth;
             try {
@@ -249,6 +288,45 @@ public class SanitizerContextServicePlugin implements ContextServicePlugin {
                 throw new IllegalArgumentException(STACK_DEPTH + "=" + text + " must be 0 or more");
             }
             return depth;
+        }
+    }
+
+    /**
+     * Tells the sanitizer that an exchange is done (its unit of work), so its calls that are still pending, such as one
+     * that threw, are no longer waited for. It asks for no other event.
+     */
+    static final class ExchangeDoneNotifier extends EventNotifierSupport {
+
+        private final Sanitizer sanitizer;
+
+        ExchangeDoneNotifier(Sanitizer sanitizer) {
+            this.sanitizer = sanitizer;
+            setIgnoreCamelContextEvents(true);
+            setIgnoreCamelContextInitEvents(true);
+            setIgnoreRouteEvents(true);
+            setIgnoreServiceEvents(true);
+            setIgnoreExchangeCreatedEvent(true);
+            setIgnoreExchangeRedeliveryEvents(true);
+            setIgnoreExchangeSendingEvents(true);
+            setIgnoreExchangeSentEvents(true);
+            setIgnoreStepEvents(true);
+        }
+
+        @Override
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof CamelEvent.ExchangeCompletedEvent || event instanceof CamelEvent.ExchangeFailedEvent;
+        }
+
+        @Override
+        public void notify(CamelEvent event) {
+            if (event instanceof CamelEvent.ExchangeEvent e && e.getExchange() != null) {
+                sanitizer.exchangeDone(e.getExchange().getExchangeId());
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "ExchangeSanitizer[R1 still pending]";
         }
     }
 }

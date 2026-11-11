@@ -194,6 +194,7 @@
           "expect",
           "from",
           "in",
+          "key",
           "rate",
           "until",
           "when",
@@ -232,6 +233,7 @@
           "expect",
           "from",
           "in",
+          "key",
           "rate",
           "until",
           "when",
@@ -259,6 +261,7 @@
           "expect",
           "from",
           "in",
+          "key",
           "rate",
           "until",
           "when",
@@ -308,6 +311,7 @@
           "expect",
           "from",
           "in",
+          "key",
           "rate",
           "until",
           "when",
@@ -333,6 +337,7 @@
           "expect",
           "from",
           "in",
+          "key",
           "rate",
           "until",
           "when",
@@ -388,6 +393,7 @@
         "options": [
           "expect",
           "from",
+          "key",
           "within"
         ]
       },
@@ -429,6 +435,7 @@
         "options": [
           "expect",
           "from",
+          "key",
           "within"
         ]
       }
@@ -478,6 +485,14 @@
         "example": "orders",
         "pattern": true,
         "pick": "routes"
+      },
+      {
+        "name": "key",
+        "type": "expression",
+        "required": false,
+        "description": "The key of a message for an expectation of duplicates (<route>:duplicates<=0), in the simple language: two messages with the same key are the same message; without it the body is the key",
+        "example": "${header.orderId}",
+        "language": "simple"
       },
       {
         "name": "rate",
@@ -543,6 +558,10 @@
         {
           "name": "lost",
           "description": "The messages completed in the route and not in the next one, such as orders->shipping:lost<=0"
+        },
+        {
+          "name": "duplicates",
+          "description": "The messages the route completed a second time (the same body, or the same key=) that no idempotent consumer recognised as a duplicate, such as payment:duplicates<=0"
         }
       ],
       "ops": [

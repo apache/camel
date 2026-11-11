@@ -50,7 +50,11 @@ public class ArtifactUtilsTest {
     @Test
     public void testDataFormatArtifact() {
         assertThat(ArtifactUtils.dataFormatArtifact("jaxb")).isEqualTo("camel-jaxb");
-        assertThat(ArtifactUtils.dataFormatArtifact("jackson")).isEqualTo("camel-jackson");
+        // the jackson data format name is registered by both Jackson lines; the artifact is the Jackson 3 one
+        assertThat(ArtifactUtils.dataFormatArtifact("jackson")).isEqualTo("camel-jackson3");
+        assertThat(ArtifactUtils.dataFormatArtifact("jacksonXml")).isEqualTo("camel-jackson3xml");
+        assertThat(ArtifactUtils.dataFormatArtifact("avroJackson")).isEqualTo("camel-jackson3-avro");
+        assertThat(ArtifactUtils.dataFormatArtifact("protobufJackson")).isEqualTo("camel-jackson3-protobuf");
         assertThat(ArtifactUtils.dataFormatArtifact("cheese")).isNull();
         assertThat(ArtifactUtils.dataFormatNames()).hasSizeGreaterThan(40).contains("jaxb", "csv");
     }

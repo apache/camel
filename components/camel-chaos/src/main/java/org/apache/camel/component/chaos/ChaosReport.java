@@ -577,13 +577,15 @@ public final class ChaosReport {
                 if (r.expectKind == ChaosRule.Expectation.Kind.COMPLETED) {
                     e.put("completed", r.value);
                 }
-                // the expectation as the rule writes it, and for a time (count and value in milliseconds) or the
-                // messages lost between two routes, the exchanges it counted (CAMEL-26726)
+                // the expectation as the rule writes it, and for a time (count and value in milliseconds), the
+                // messages lost between two routes (CAMEL-26726) or the duplicates processed (CAMEL-26791), the
+                // exchanges it counted
                 e.put("spec", r.expectSpec);
                 if (r.expectToRoute != null) {
                     e.put("toRoute", r.expectToRoute);
                 }
-                if (r.expectKind.time() || r.expectToRoute != null) {
+                if (r.expectKind.time() || r.expectToRoute != null
+                        || r.expectKind == ChaosRule.Expectation.Kind.DUPLICATES) {
                     e.put("samples", r.samples);
                 }
                 e.put("outcome", r.outcome.key);

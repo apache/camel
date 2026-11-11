@@ -302,7 +302,19 @@ public abstract class AbstractCamelClusterService<T extends CamelClusterView> ex
         V retain() {
             LOG.debug("Retain view {}, old-refs={}", view.getNamespace(), count.get());
 
-            count.retain();
+            try {
+                count.retain();
+            } catch (RuntimeException e) {
+                // The view could not be started, so the caller gets no reference: give it back, so the next caller
+                // starts the view again instead of getting a view that is never started, and a restart of the
+                // service does not start a view that nobody uses.
+                try {
+                    count.release();
+                } catch (RuntimeException e2) {
+                    e.addSuppressed(e2);
+                }
+                throw e;
+            }
 
             return get();
         }

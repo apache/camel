@@ -64,6 +64,10 @@ public final class RouteComponents {
             if ("rest".equals(r.kind())) {
                 // the rest DSL runs on the rest component
                 add(answer, "rest", catalog);
+            } else if (RestContracts.KIND.equals(r.kind())) {
+                // and serves a contract with rest-openapi
+                add(answer, "rest", catalog);
+                add(answer, "rest-openapi", catalog);
             }
             add(answer, r.from(), catalog);
             r.consumes().forEach(e -> add(answer, e, catalog));

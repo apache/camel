@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.pqc;
 
+import java.security.PublicKey;
 import java.security.Security;
 
 import org.apache.camel.CamelExecutionException;
@@ -122,6 +123,21 @@ public class PQCStatefulKeyClaimTest extends CamelTestSupport {
     }
 
     @Test
+    void anUnnamedStatefulKeyIsClaimedToo() throws Exception {
+        keyManager.generateKeyPair("LMS", KEY_ID);
+
+        // the claim is on the key material, so an exchange that names no key through CamelPQCKeyId is claimed as well
+        CamelExecutionException e = assertThrows(CamelExecutionException.class,
+                () -> templateSign.sendBody("direct:sign", "Hello"));
+
+        String message = e.getCause().getMessage();
+        assertTrue(message.contains("allowSharedStatefulKey"),
+                "the message must say how to proceed deliberately: " + message);
+        assertTrue(message.contains(PQCConstants.KEY_ID),
+                "the message must say that the exchange named no key: " + message);
+    }
+
+    @Test
     void aStatelessKeyIsNotClaimedAtAll() throws Exception {
         keyManager.generateKeyPair("MLDSA", "mldsa-key");
 
@@ -141,7 +157,7 @@ public class PQCStatefulKeyClaimTest extends CamelTestSupport {
     private static final class UnclaimableKeyManager extends InMemoryKeyLifecycleManager {
 
         @Override
-        public boolean claimStatefulKey(String keyId) {
+        public boolean claimStatefulKey(String keyId, PublicKey publicKey) {
             return false;
         }
     }

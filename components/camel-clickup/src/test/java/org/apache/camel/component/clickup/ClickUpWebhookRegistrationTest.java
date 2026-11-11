@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.clickup.model.WebhookCreationCommand;
 import org.apache.camel.component.clickup.util.ClickUpMockRoutes;
@@ -30,13 +29,15 @@ import org.apache.camel.component.clickup.util.ClickUpTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit6.TestExecutionConfiguration;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClickUpWebhookRegistrationTest extends ClickUpTestSupport {
 
     private static final Set<String> EVENTS = new HashSet<>(List.of("taskTimeTrackedUpdated"));
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = JsonMapper.builder().build();
     private static final String WEBHOOK_CREATED_JSON = "messages/webhook-created.json";
 
     @Override

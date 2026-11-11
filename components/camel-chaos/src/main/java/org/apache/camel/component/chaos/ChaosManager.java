@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.chaos;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,8 +28,10 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +44,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
+import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.component.chaos.ChaosRule.Hook;
@@ -75,6 +83,9 @@ public final class ChaosManager {
 
     // the most removed, replaced or ended rules the report keeps
     static final int MAX_HISTORY = 100;
+
+    // the most files a replay puts back at a time
+    static final int MAX_REPLAY = 1000;
 
     private static final Logger LOG = LoggerFactory.getLogger(ChaosManager.class);
 
@@ -265,6 +276,17 @@ public final class ChaosManager {
                         e);
             }
         }
+        if (b.key != null) {
+            try {
+                b.keyExpression = camelContext.resolveLanguage("simple").createExpression(b.key);
+                b.keyExpression.init(camelContext);
+            } catch (RuntimeException e) {
+                throw new IllegalArgumentException(
+                        "Invalid chaos rule [" + b.text + "]: key=" + b.key + " is not a valid simple expression: "
+                                                   + e.getMessage(),
+                        e);
+            }
+        }
         return b;
     }
 
@@ -451,7 +473,30 @@ public final class ChaosManager {
         if (target != null) {
             answer.add(target);
         }
+        String handOff = ChaosAdvisor.lostWithoutHandOff(camelContext, rule.expectation);
+        if (handOff != null) {
+            answer.add(handOff);
+        }
+        String dead = deadLetterOfFailedExpectation(rule);
+        if (dead != null) {
+            String route = rule.expectation.route;
+            answer.add("expects failed exchanges in route " + route + ", but its error handler is the dead letter channel "
+                       + dead + ", which handles what fails there, so nothing fails: expect=" + route
+                       + ":handled<=0 counts what the dead letter channel handled");
+        }
         return answer;
+    }
+
+    /**
+     * The dead letter channel of the route of an expectation of failed exchanges ({@code expect=parked:failed<=0}), as
+     * such an expectation is always met there (CAMEL-26790), or null.
+     */
+    private String deadLetterOfFailedExpectation(ChaosRule rule) {
+        if (rule.expectation == null || rule.expectation.kind != ChaosRule.Expectation.Kind.FAILED) {
+            return null;
+        }
+        Route route = camelContext.getRoute(rule.expectation.route);
+        return route != null ? ChaosAdvisor.deadLetterUri(route) : null;
     }
 
     /**
@@ -494,7 +539,10 @@ public final class ChaosManager {
      *
      * @return {@code suggestions}: a list of {@code route}, {@code kind}, {@code recipe}, {@code title}, {@code rule},
      *         {@code why}, {@code tried} when a rule of its kind faulted the route already, and {@code routes} when it
-     *         is for several routes (a dead letter channel they share)
+     *         is for several routes (a dead letter channel they share), and the {@code feed} of the route, with
+     *         {@code fed} when it gets messages without one, and {@code replay} (a folder), {@code files} and
+     *         {@code replayRoute} when the files the route took, or a file route that sends to it took, can be put back
+     *         ({@link #replayFiles(String)} of that route)
      */
     public Map<String, Object> suggest() {
         JsonArray list = new JsonArray();
@@ -509,10 +557,16 @@ public final class ChaosManager {
             route.tried().forEach(k -> tried.add(route.route() + " " + k.kind().key));
         }
         Map<String, ChaosAdvisor.Feed> feeds = new HashMap<>();
+        // the routes that get messages without a feed, so an experiment can run without one (null when not known)
+        Set<String> fed = ChaosAdvisor.fedRoutes(camelContext);
+        // the routes that get messages when a file route takes the files it took again
+        Map<String, String> replayVia = ChaosAdvisor.replayVia(camelContext);
         for (ChaosAdvisor.Suggestion s : ChaosAdvisor.suggest(camelContext)) {
             JsonObject jo = new JsonObject();
-            // a dead letter channel that routes share is tried by a rule of its kind in any of them
-            if (s.routes().stream().anyMatch(r -> tried.contains(r + " " + s.kind().key))) {
+            // a dead letter channel that routes share is tried by a rule of its kind in any of them; two faults at once
+            // are tried as their own kinds
+            if (s.kind() != ChaosAdvisor.Kind.COMBINED
+                    && s.routes().stream().anyMatch(r -> tried.contains(r + " " + s.kind().key))) {
                 jo.put("tried", true);
             }
             jo.put("route", s.route());
@@ -525,6 +579,10 @@ public final class ChaosManager {
             }
             jo.put("title", s.title());
             jo.put("rule", s.rule());
+            if (!s.with().isEmpty()) {
+                // two faults at once: all the rules to add together
+                jo.put("rules", new JsonArray(s.rules()));
+            }
             jo.put("why", s.why());
             Route route = camelContext.getRoute(s.route());
             ChaosAdvisor.Feed feed = route != null ? feeds.computeIfAbsent(s.route(), k -> ChaosAdvisor.feed(route)) : null;
@@ -535,12 +593,87 @@ public final class ChaosManager {
                 if (feed.real()) {
                     f.put("real", true);
                 }
+                if ("self".equals(feed.kind()) || fed != null && fed.contains(s.route())) {
+                    f.put("fed", true);
+                }
+                // the files the route took, or a file route that sends to it took, which the chaos command replay puts
+                // back (CAMEL-26817)
+                String via = feed.replay() != null ? s.route() : replayVia.get(s.route());
+                ChaosAdvisor.Feed files = via != null
+                        ? feeds.computeIfAbsent(via, k -> ChaosAdvisor.feed(camelContext.getRoute(k)))
+                        : null;
+                if (files != null && files.replay() != null) {
+                    if (!via.equals(s.route())) {
+                        // the route gets its messages from the file route
+                        f.put("hint", "route " + via + " sends to it: " + files.hint());
+                    }
+                    f.put("replay", files.replay());
+                    f.put("files", files.files());
+                    f.put("replayRoute", via);
+                }
                 jo.put("feed", f);
             }
             list.add(jo);
         }
         JsonObject answer = new JsonObject();
         answer.put("suggestions", list);
+        return answer;
+    }
+
+    /**
+     * Puts the files a file route took back into its folder, so it takes the same files again (CAMEL-26817): the files
+     * it moved to {@code .camel} (or the folder of its {@code move} option), under their own names. The route moves
+     * them there again, over the copies, so a replay is the same each time, as an experiment that is run again needs.
+     * Each is written under a hidden name first, which the route does not take, and then renamed. A file of that name
+     * that the route has not taken yet is left as it is.
+     *
+     * @param  routeId                  the id of the route
+     * @return                          {@code route}, {@code folder} (where the files were), {@code files} (how many
+     *                                  were put back) and {@code skipped} (those still waiting in the folder)
+     * @throws IllegalArgumentException when the route does not take files it moves, or has taken none
+     */
+    public Map<String, Object> replayFiles(String routeId) {
+        Route route = routeId != null ? camelContext.getRoute(routeId) : null;
+        if (route == null) {
+            throw new IllegalArgumentException("There is no route " + routeId);
+        }
+        File done = route.getEndpoint() != null ? ChaosAdvisor.doneFolder(route.getEndpoint()) : null;
+        if (done == null) {
+            throw new IllegalArgumentException(
+                    "Route " + routeId + " does not take files it moves to a folder (file: without noop or delete)");
+        }
+        List<File> taken = ChaosAdvisor.takenFiles(done);
+        if (taken.isEmpty()) {
+            throw new IllegalArgumentException("Route " + routeId + " has taken no files yet: " + done + " is empty");
+        }
+        if (taken.size() > MAX_REPLAY) {
+            taken = taken.subList(0, MAX_REPLAY);
+        }
+        File folder = ChaosAdvisor.inputFolder(route.getEndpoint());
+        int files = 0;
+        int skipped = 0;
+        for (File file : taken) {
+            Path target = folder.toPath().resolve(file.getName());
+            if (Files.exists(target)) {
+                skipped++;
+                continue;
+            }
+            Path hidden = folder.toPath().resolve(".chaos-" + file.getName());
+            try {
+                Files.copy(file.toPath(), hidden, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(hidden, target, StandardCopyOption.ATOMIC_MOVE);
+                files++;
+            } catch (IOException e) {
+                throw new IllegalStateException("Cannot put back " + file + ": " + e.getMessage(), e);
+            }
+        }
+        Map<String, Object> answer = new JsonObject();
+        answer.put("route", routeId);
+        answer.put("folder", done.getAbsolutePath());
+        answer.put("files", files);
+        if (skipped > 0) {
+            answer.put("skipped", skipped);
+        }
         return answer;
     }
 
@@ -649,7 +782,8 @@ public final class ChaosManager {
                 lostAtDlq, recentFaults.latestFirst(), ChaosTargets.reach(camelContext), tried);
         if (explored != null) {
             synchronized (lock) {
-                report.exploration(explored.toJson(now), explored.text(now));
+                Map<String, RouteCounts> live = new TreeMap<>(routes);
+                report.exploration(explored.toJson(now, this::findRule, live), explored.text(now, this::findRule, live));
             }
         }
         return report;
@@ -709,8 +843,125 @@ public final class ChaosManager {
                 throw new IllegalStateException("No exploration is running");
             }
             finish(now, ChaosExploration.Finish.FINISHED);
-            return exploration.toJson(now);
+            return exploration.toJson(now, this::findRule, new TreeMap<>(routes));
         }
+    }
+
+    /**
+     * Begins an experiment of the running exploration (CAMEL-26774): a hypothesis and the rules that test it, added
+     * together (all or none), with at least one expectation ({@code expect=}) to decide it. The counts per route are
+     * read now, so its end says what changed while it ran. One experiment is open at a time.
+     *
+     * @param  hypothesis               what the experiment tests, in a few words, such as "a failed refund is read
+     *                                  again"
+     * @param  rules                    the rules in their one-line text form, separated by {@code ;}
+     * @return                          the experiment, as in the report
+     * @throws IllegalArgumentException when a rule is not valid, or no rule has an expectation
+     * @throws IllegalStateException    when no exploration is running, or an experiment is open
+     */
+    public Map<String, Object> beginExperiment(String hypothesis, String rules) {
+        return beginExperiment(hypothesis, rules, null);
+    }
+
+    /**
+     * Begins an experiment whose messages are fed to a route: as {@link #beginExperiment(String, String)}, and refused
+     * when the route the feed reaches does not lead to a route of its expectations, as the experiment would then say
+     * nothing (CAMEL-26803).
+     *
+     * @param feedRoute the id of the route the feed of the experiment reaches, or null when it has no feed
+     */
+    public Map<String, Object> beginExperiment(String hypothesis, String rules, String feedRoute) {
+        List<String> texts = ChaosRuleParser.splitRules(rules);
+        if (texts.isEmpty()) {
+            throw new IllegalArgumentException("The chaos rule is empty");
+        }
+        List<ChaosRule.Builder> definitions = new ArrayList<>();
+        for (String text : texts) {
+            definitions.add(parse(text));
+        }
+        if (definitions.stream().allMatch(d -> d.expectRoute == null)) {
+            throw new IllegalArgumentException(
+                    "An experiment needs an expectation (expect=) on one of its rules to decide its hypothesis, such as"
+                                               + " expect=orders:failed<=0 within=1m");
+        }
+        String misses = ChaosAdvisor.feedMisses(camelContext, feedRoute,
+                definitions.stream().map(d -> d.expectRoute).filter(Objects::nonNull).toList());
+        if (misses != null) {
+            throw new IllegalArgumentException(misses);
+        }
+        synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            checkDeadline(now);
+            if (exploration == null || !exploration.isRunning()) {
+                throw new IllegalStateException("No exploration is running: an experiment is part of one");
+            }
+            ChaosExperiment open = exploration.openExperiment();
+            if (open != null) {
+                throw new IllegalStateException("Experiment " + open.number + " is open: end it first");
+            }
+            Map<String, RouteCounts> counts = new TreeMap<>(routes);
+            List<String> ids = add(definitions);
+            ChaosExperiment experiment = exploration.beginExperiment(hypothesis, ids, counts, now);
+            LOG.info("Chaos experiment {} began with rules {}{}", experiment.number, ids,
+                    experiment.hypothesis != null ? ": " + experiment.hypothesis : "");
+            return experiment.toJson(this::findRule, counts, now);
+        }
+    }
+
+    /**
+     * Ends the open experiment: what came of it is read (the difference of the counts per route, the faults of each
+     * rule, the states of the expectations and the verdict), its rules are removed, and it stays in the journal.
+     *
+     * @param  note                  what the agent makes of it (optional)
+     * @return                       the experiment, as in the report
+     * @throws IllegalStateException when no experiment is open
+     */
+    public Map<String, Object> endExperiment(String note) {
+        synchronized (lock) {
+            long now = TimeSource.currentTimeMillis();
+            // an experiment open at the deadline was ended with the exploration
+            checkDeadline(now);
+            ChaosExperiment open = exploration != null ? exploration.openExperiment() : null;
+            if (open == null) {
+                throw new IllegalStateException("No experiment is open");
+            }
+            endExperiment(open, now, ChaosExperiment.End.ENDED, note);
+            return open.result();
+        }
+    }
+
+    // reads what came of the experiment, and then removes its rules; with the lock
+    private int endExperiment(ChaosExperiment experiment, long now, ChaosExperiment.End by, String note) {
+        experiment.end(this::findRule, new TreeMap<>(routes), now, by, note);
+        int count = 0;
+        for (String id : experiment.rules) {
+            int index = indexOf(id);
+            if (index >= 0) {
+                ChaosRule removed = rules.remove(index);
+                removed.removed(State.REMOVED, now);
+                remember(removed);
+                count++;
+            }
+        }
+        update();
+        LOG.info("Chaos experiment {} ended: {}", experiment.number,
+                experiment.result().getString("verdict"));
+        return count;
+    }
+
+    // the rule with the id: the one in place, else the last one removed (a changed rule keeps its id); with the lock
+    private ChaosRule findRule(String id) {
+        int index = indexOf(id);
+        if (index >= 0) {
+            return rules.get(index);
+        }
+        for (Iterator<ChaosRule> it = history.descendingIterator(); it.hasNext();) {
+            ChaosRule rule = it.next();
+            if (rule.id.equals(id)) {
+                return rule;
+            }
+        }
+        return null;
     }
 
     // finishes the running exploration whose time is up; with the lock
@@ -721,7 +972,15 @@ public final class ChaosManager {
     }
 
     private void finish(long now, ChaosExploration.Finish by) {
-        int removedRules = clearRules();
+        ChaosExperiment open = exploration.openExperiment();
+        int removedRules = 0;
+        if (open != null) {
+            // read before the rules are removed
+            removedRules = endExperiment(open, now,
+                    by == ChaosExploration.Finish.DEADLINE ? ChaosExperiment.End.DEADLINE : ChaosExperiment.End.FINISHED,
+                    null);
+        }
+        removedRules += clearRules();
         exploration.finished(now, by, removedRules);
         // no rule is left and the exploration is done: the counting stops
         update();
@@ -881,6 +1140,15 @@ public final class ChaosManager {
         }
         ChaosExchangeState.Outcome outcome = outcome(route, exchange);
         ChaosExchangeState.RouteState state = ChaosExchangeState.of(exchange).route(routeId);
+        if (state.passKeys != null) {
+            // each pass through the route counts for the duplicates: the second send of a duplicate fault to a direct
+            // route is the same exchange again (CAMEL-26791)
+            if (outcome == ChaosExchangeState.Outcome.COMPLETED) {
+                boolean recognised = exchange.getProperty(ExchangePropertyKey.DUPLICATE_MESSAGE, false, Boolean.class);
+                state.passKeys.forEach((expectation, key) -> expectation.recordKey(key, recognised));
+            }
+            state.passKeys = null;
+        }
         ChaosExchangeState.Outcome previous = state.counts == counts ? state.outcome : ChaosExchangeState.Outcome.ENTERED;
         if (previous == outcome) {
             return;
@@ -1211,6 +1479,9 @@ public final class ChaosManager {
         final ChaosRule[] expectationRules;
         // the routes with an expectation on their time, whose route policy notes when an exchange enters
         final Set<String> timedRoutes;
+        // the rules with an expectation of duplicates, per route: the route policy notes the key of each message as it
+        // enters (CAMEL-26791)
+        final Map<String, List<ChaosRule>> keyedRoutes;
 
         RuleSet(List<ChaosRule> rules, long now) {
             // also the rules that start later (from=): the hooks skip them until then
@@ -1230,6 +1501,11 @@ public final class ChaosManager {
                     .toArray(ChaosRule.Expectation[]::new);
             timedRoutes = Arrays.stream(expectations).filter(e -> e.kind.time()).map(e -> e.route)
                     .collect(Collectors.toUnmodifiableSet());
+            Set<ChaosRule.Expectation> pending = Set.of(expectations);
+            keyedRoutes = Arrays.stream(expectationRules)
+                    .filter(r -> r.expectation.kind == ChaosRule.Expectation.Kind.DUPLICATES
+                            && pending.contains(r.expectation))
+                    .collect(Collectors.groupingBy(r -> r.expectation.route));
         }
     }
 

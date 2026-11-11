@@ -4217,8 +4217,8 @@ public interface MongoDbEndpointBuilderFactory {
             return "CamelMongoDbResultTotalSize";
         }
         /**
-         * Number of objects matching the query. This does not take limit/skip
-         * into consideration.
+         * Number of objects returned by the operation, after limit/skip have
+         * been applied.
          * 
          * The option is a: {@code Integer} type.
          * 

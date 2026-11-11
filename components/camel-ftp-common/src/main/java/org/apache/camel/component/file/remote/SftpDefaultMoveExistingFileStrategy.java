@@ -33,7 +33,7 @@ public class SftpDefaultMoveExistingFileStrategy implements FileMoveExistingStra
     private static final Logger LOG = LoggerFactory.getLogger(SftpDefaultMoveExistingFileStrategy.class);
 
     /**
-     * Moves any existing file due fileExists=Move is in use.
+     * Moves any existing file due fileExist=Move is in use.
      */
     @Override
     public boolean moveExistingFile(GenericFileEndpoint<?> endpoint, GenericFileOperations<?> operations, String fileName)

@@ -611,8 +611,19 @@ public final class KameletChecks {
         return model != null ? model.getArtifactId() : null;
     }
 
+    /**
+     * The artifacts of the Jackson 2 line. They register the same data format and transformer names as the Jackson 3
+     * line (camel-jackson3, camel-jackson3xml, camel-jackson3-avro, camel-jackson3-protobuf), which is the line the
+     * catalog documents, so the catalog does not name them.
+     */
+    private static final Set<String> JACKSON2_ARTIFACTS
+            = Set.of("camel-jackson", "camel-jacksonxml", "camel-jackson-avro", "camel-jackson-protobuf");
+
     /** Whether some component, data format, language or other of the catalog is in the given artifact. */
     private static boolean isArtifact(CamelCatalog catalog, String artifactId) {
+        if (JACKSON2_ARTIFACTS.contains(artifactId)) {
+            return true;
+        }
         for (String n : catalog.findComponentNames()) {
             if (artifactId.equals(artifactOf(catalog, n))) {
                 return true;

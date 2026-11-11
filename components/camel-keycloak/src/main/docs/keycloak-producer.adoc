@@ -189,7 +189,7 @@ Map<String, Object> passwordHeaders = new HashMap<>();
 passwordHeaders.put("CamelKeycloakRealmName", "my-realm");
 passwordHeaders.put("CamelKeycloakUsername", "john.doe");
 passwordHeaders.put("CamelKeycloakUserPassword", "secure-password");
-passwordHeaders.put("CamelKeycloakUserPasswordTemporary", false);
+passwordHeaders.put("CamelKeycloakPasswordTemporary", false);
 
 template.sendBodyAndHeaders("keycloak:admin?operation=resetUserPassword", null, passwordHeaders);
 

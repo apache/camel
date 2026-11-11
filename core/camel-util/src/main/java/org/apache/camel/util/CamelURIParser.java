@@ -32,7 +32,7 @@ public final class CamelURIParser {
     /**
      * Parses the URI (in fast mode).
      *
-     * If this parser cannot parse the uri then <tt>null</tt> is returned. And instead the follow code can be used:
+     * If this parser cannot parse the uri then <code>null</code> is returned. And instead the follow code can be used:
      *
      * <pre>
      * URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
@@ -40,7 +40,7 @@ public final class CamelURIParser {
      *
      * @param  uri the uri
      *
-     * @return     <tt>null</tt> if not possible to parse, if the uri is already normalized, then
+     * @return     <code>null</code> if not possible to parse, if the uri is already normalized, then
      *             {@link #URI_ALREADY_NORMALIZED} is returned, or an array[3] with scheme,path,query
      */
     public static String[] fastParseUri(String uri) {
@@ -50,7 +50,7 @@ public final class CamelURIParser {
     /**
      * Parses the URI.
      *
-     * If this parser cannot parse the uri then <tt>null</tt> is returned. And instead the follow code can be used:
+     * If this parser cannot parse the uri then <code>null</code> is returned. And instead the follow code can be used:
      *
      * <pre>
      * URI u = new URI(UnsafeUriCharactersEncoder.encode(uri, true));
@@ -58,7 +58,7 @@ public final class CamelURIParser {
      *
      * @param  uri the uri
      *
-     * @return     <tt>null</tt> if not possible to parse, or an array[3] with scheme,path,query
+     * @return     <code>null</code> if not possible to parse, or an array[3] with scheme,path,query
      */
     public static String[] parseUri(String uri) {
         return doParseUri(uri, false);

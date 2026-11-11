@@ -905,6 +905,36 @@ class ExportTest {
 
     @ParameterizedTest
     @MethodSource("runtimeProvider")
+    public void shouldExportJsonDataFormat(RuntimeType rt) throws Exception {
+        LOG.info("shouldExportJsonDataFormat {}", rt);
+        List<String> cmdArgs = new ArrayList<>(List.of("--gav=examples:route:1.0.0", "--dir=" + workingDir, "--quiet"));
+        if (rt == RuntimeType.springBoot) {
+            // a release whose Spring Boot catalog has camel-jackson3-starter (4.19 onwards)
+            cmdArgs.add("--camel-version=4.23.0");
+        }
+        Export command = createCommand(rt, new String[] { "src/test/resources/MyJson.java" }, cmdArgs.toArray(String[]::new));
+        int exit = command.doCall();
+
+        Assertions.assertEquals(0, exit);
+        Model model = readMavenModel();
+
+        // the jackson data format of the catalog is the Jackson 3 line
+        if (rt == RuntimeType.main) {
+            Assertions.assertTrue(containsDependency(model.getDependencies(), "org.apache.camel", "camel-jackson3", null));
+            Assertions.assertFalse(containsDependency(model.getDependencies(), "org.apache.camel", "camel-jackson", null));
+        } else if (rt == RuntimeType.springBoot) {
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.springboot", "camel-jackson3-starter", null));
+        } else if (rt == RuntimeType.quarkus) {
+            // Camel Quarkus has no camel-quarkus-jackson3: its jackson extension stands in for camel-jackson3
+            Assertions.assertTrue(
+                    containsDependency(model.getDependencies(), "org.apache.camel.quarkus", "camel-quarkus-jackson", null));
+            Assertions.assertFalse(containsDependency(model.getDependencies(), "org.apache.camel", "camel-jackson3", null));
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("runtimeProvider")
     public void shouldExportSecretBean(RuntimeType rt) throws Exception {
         LOG.info("shouldExportSecretBean {}", rt);
         Export command = createCommand(rt,

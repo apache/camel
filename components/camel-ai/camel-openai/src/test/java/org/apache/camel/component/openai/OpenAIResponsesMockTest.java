@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openai.models.responses.Response;
 import com.openai.models.responses.ResponseCreateParams;
 import org.apache.camel.Exchange;
@@ -35,6 +33,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,8 +52,8 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
             .when("assert-previous-id").assertRequest(request -> {
                 try {
                     JsonNode root = OBJECT_MAPPER.readTree(request);
-                    assertThat(root.get("previous_response_id").asText()).isEqualTo("resp_prev_123");
-                    assertThat(root.get("instructions").asText()).isEqualTo("You are helpful");
+                    assertThat(root.get("previous_response_id").asString()).isEqualTo("resp_prev_123");
+                    assertThat(root.get("instructions").asString()).isEqualTo("You are helpful");
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -168,12 +168,12 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         assertThat(result.getException()).isNull();
         JsonNode tool = openAIMock.getLastRequest().bodyAsJson().path("tools").path(0);
-        assertThat(tool.path("type").asText()).isEqualTo("mcp");
-        assertThat(tool.path("server_label").asText()).isEqualTo("deepwiki");
-        assertThat(tool.path("server_url").asText()).isEqualTo("https://mcp.deepwiki.com/mcp");
-        assertThat(tool.path("require_approval").asText()).isEqualTo("never");
+        assertThat(tool.path("type").asString()).isEqualTo("mcp");
+        assertThat(tool.path("server_label").asString()).isEqualTo("deepwiki");
+        assertThat(tool.path("server_url").asString()).isEqualTo("https://mcp.deepwiki.com/mcp");
+        assertThat(tool.path("require_approval").asString()).isEqualTo("never");
         assertThat(tool.path("allowed_tools").toString()).isEqualTo("[\"ask_question\"]");
-        assertThat(tool.path("headers").path("X-Api-Key").asText()).isEqualTo("secret");
+        assertThat(tool.path("headers").path("X-Api-Key").asString()).isEqualTo("secret");
     }
 
     @Test
@@ -186,9 +186,9 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         assertThat(result.getException()).isNull();
         JsonNode tool = openAIMock.getLastRequest().bodyAsJson().path("tools").path(0);
-        assertThat(tool.path("server_label").asText()).isEqualTo("deepwiki");
-        assertThat(tool.path("server_url").asText()).isEqualTo("https://mcp.deepwiki.com/mcp");
-        assertThat(tool.path("server_description").asText()).isEqualTo("Docs");
+        assertThat(tool.path("server_label").asString()).isEqualTo("deepwiki");
+        assertThat(tool.path("server_url").asString()).isEqualTo("https://mcp.deepwiki.com/mcp");
+        assertThat(tool.path("server_description").asString()).isEqualTo("Docs");
     }
 
     @Test
@@ -209,10 +209,10 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         assertThat(result.getException()).isNull();
         JsonNode input = openAIMock.getLastRequest().bodyAsJson().path("input");
-        assertThat(input.path(0).path("role").asText()).isEqualTo("developer");
-        assertThat(input.path(0).path("content").asText()).isEqualTo("Answer in French");
-        assertThat(input.path(1).path("role").asText()).isEqualTo("user");
-        assertThat(input.path(1).path("content").asText()).isEqualTo("hello-responses");
+        assertThat(input.path(0).path("role").asString()).isEqualTo("developer");
+        assertThat(input.path(0).path("content").asString()).isEqualTo("Answer in French");
+        assertThat(input.path(1).path("role").asString()).isEqualTo("user");
+        assertThat(input.path(1).path("content").asString()).isEqualTo("hello-responses");
     }
 
     @Test
@@ -240,9 +240,9 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(result.getException()).isNull();
         assertThat(result.getMessage().getBody(String.class)).isEqualTo("A short report");
         JsonNode file = openAIMock.getLastRequest().bodyAsJson().path("input").path(0).path("content").path(1);
-        assertThat(file.path("type").asText()).isEqualTo("input_file");
-        assertThat(file.path("filename").asText()).isEqualTo("report.pdf");
-        assertThat(file.path("file_data").asText()).startsWith("data:application/pdf;base64,");
+        assertThat(file.path("type").asString()).isEqualTo("input_file");
+        assertThat(file.path("filename").asString()).isEqualTo("report.pdf");
+        assertThat(file.path("file_data").asString()).startsWith("data:application/pdf;base64,");
     }
 
     @Test
@@ -253,7 +253,7 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         });
 
         assertThat(result.getException()).isNull();
-        assertThat(openAIMock.getLastRequest().bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+        assertThat(openAIMock.getLastRequest().bodyAsJson().path("conversation").asString()).isEqualTo("conv_123");
     }
 
     @Test
@@ -268,7 +268,7 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         var requests = openAIMock.getReceivedRequests();
         assertThat(requests).hasSize(2);
         assertThat(requests.get(0).bodyAsJson().has("previous_response_id")).isFalse();
-        assertThat(requests.get(1).bodyAsJson().path("previous_response_id").asText())
+        assertThat(requests.get(1).bodyAsJson().path("previous_response_id").asString())
                 .startsWith("resp_")
                 .isNotEqualTo(lastResponseId);
     }
@@ -286,11 +286,11 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         var requests = openAIMock.getReceivedRequests();
         assertThat(requests).hasSize(2);
-        assertThat(requests.get(0).bodyAsJson().path("tools").path(0).path("name").asText()).isEqualTo("get_weather");
+        assertThat(requests.get(0).bodyAsJson().path("tools").path(0).path("name").asString()).isEqualTo("get_weather");
         JsonNode input = requests.get(1).bodyAsJson().path("input");
         JsonNode toolOutput = input.path(input.size() - 1);
-        assertThat(toolOutput.path("type").asText()).isEqualTo("function_call_output");
-        assertThat(toolOutput.path("output").asText()).isEqualTo("Sunny in Rome");
+        assertThat(toolOutput.path("type").asString()).isEqualTo("function_call_output");
+        assertThat(toolOutput.path("output").asString()).isEqualTo("Sunny in Rome");
     }
 
     @Test
@@ -380,15 +380,15 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
 
         var requests = openAIMock.getReceivedRequests();
         assertThat(requests).hasSize(2);
-        assertThat(requests.get(0).bodyAsJson().path("conversation").asText()).isEqualTo("conv_123");
+        assertThat(requests.get(0).bodyAsJson().path("conversation").asString()).isEqualTo("conv_123");
         assertThat(toolConversationId).hasValue("conv_123");
         assertThat(toolCallId.get()).isNotBlank();
         JsonNode followUp = requests.get(1).bodyAsJson();
-        assertThat(followUp.path("conversation").asText()).isEqualTo("conv_123");
+        assertThat(followUp.path("conversation").asString()).isEqualTo("conv_123");
         // the server already stored the user input and the function calls, so only the tool result is sent
         assertThat(followUp.path("input")).hasSize(1);
-        assertThat(followUp.path("input").path(0).path("type").asText()).isEqualTo("function_call_output");
-        assertThat(followUp.path("input").path(0).path("output").asText()).isEqualTo("Sunny in Rome");
+        assertThat(followUp.path("input").path(0).path("type").asString()).isEqualTo("function_call_output");
+        assertThat(followUp.path("input").path(0).path("output").asString()).isEqualTo("Sunny in Rome");
     }
 
     @ParameterizedTest
@@ -403,7 +403,8 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         assertThat(toolConversationId).hasValue("conv_header");
         assertThat(toolCallId.get()).isNotBlank();
         assertThat(openAIMock.getReceivedRequests())
-                .allSatisfy(request -> assertThat(request.bodyAsJson().path("conversation").asText()).isEqualTo("conv_header"));
+                .allSatisfy(
+                        request -> assertThat(request.bodyAsJson().path("conversation").asString()).isEqualTo("conv_header"));
     }
 
     @Test
@@ -549,8 +550,8 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         List<String> names = new ArrayList<>();
         if (tools.isArray()) {
             for (JsonNode tool : tools) {
-                if ("function".equals(tool.path("type").asText())) {
-                    names.add(tool.path("name").asText());
+                if ("function".equals(tool.path("type").asString())) {
+                    names.add(tool.path("name").asString());
                 }
             }
         }
@@ -564,7 +565,7 @@ class OpenAIResponsesMockTest extends CamelTestSupport {
         if (tools != null && tools.isArray()) {
             for (JsonNode tool : tools) {
                 if (tool.has("type")) {
-                    types.add(tool.get("type").asText());
+                    types.add(tool.get("type").asString());
                 }
             }
         }

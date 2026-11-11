@@ -24,8 +24,9 @@ import org.apache.camel.spi.StepListener;
  * {@code process(exchange, callback)} does not throw.
  * <p/>
  * The record of a call ({@link StepCall}) is the state of the call that camel-core keeps in the callback of the call,
- * so it lives as long as anything can still call that callback, and needs no table. It holds ids, names, threads and
- * stacks, never the exchange.
+ * so it lives as long as anything can still call that callback. It holds ids, names, threads and stacks, never the
+ * exchange. Until its callback comes, the call is also in the table of the pending calls of the sanitizer, for the
+ * "still pending" warning ({@link PendingCalls}).
  */
 final class SanitizerStepListener implements StepListener {
 
@@ -39,7 +40,16 @@ final class SanitizerStepListener implements StepListener {
     public Object onStepCall(Exchange exchange, String routeId, String nodeId) {
         sanitizer.called();
         // only here may the exchange be read: the other events can come on a thread that does not own it
-        return new StepCall(sanitizer, exchange.getExchangeId(), routeId, nodeId);
+        StepCall call = new StepCall(sanitizer, exchange.getExchangeId(), routeId, nodeId);
+        sanitizer.pendingCalled(exchange, call);
+        return call;
+    }
+
+    @Override
+    public void onStepReturn(Object state, boolean doneSync) {
+        if (state instanceof StepCall call) {
+            sanitizer.pendingReturned(call, doneSync);
+        }
     }
 
     @Override
@@ -71,12 +81,6 @@ final class SanitizerStepListener implements StepListener {
      */
     static final class StepCall {
 
-        // the usual fix when a plain Processor threw an Error after Camel's adapter called the callback
-        static final String SYNC_ADAPTER_FIX
-                = "fix what threw the Error. The processor is a plain Processor, so the callback is not its own: Camel's"
-                  + " adapter around it (such as DelegateSyncProcessor for process(...)) calls the callback in finally and"
-                  + " then lets the Error through";
-
         private final Sanitizer sanitizer;
         private final String exchangeId;
         private final String routeId;
@@ -89,6 +93,17 @@ final class SanitizerStepListener implements StepListener {
         private String thrown;
         private Sanitizer.Trace throwTrace;
 
+        // the stripe of the table of the pending calls (PendingCalls) the call went into: its lock guards the fields below
+        volatile PendingCalls.Stripe stripe;
+        // guarded by the lock of that stripe, while the call is in it (owner is not null)
+        PendingCalls.ExchangeCalls owner;
+        long calledAt;
+        Thread inProcess;
+        Boolean returned;
+        String threw;
+        String processor;
+        boolean reported;
+
         StepCall(Sanitizer sanitizer, String exchangeId, String routeId, String nodeId) {
             this.sanitizer = sanitizer;
             this.exchangeId = exchangeId;
@@ -96,7 +111,21 @@ final class SanitizerStepListener implements StepListener {
             this.nodeId = nodeId;
         }
 
+        String getExchangeId() {
+            return exchangeId;
+        }
+
+        String getRouteId() {
+            return routeId;
+        }
+
+        String getNodeId() {
+            return nodeId;
+        }
+
         void callback() {
+            // no longer pending (only the first callback counts there)
+            sanitizer.pendingCallback(this);
             // the stack is taken before the lock: it is the main cost, and is kept for a second call that may come
             Sanitizer.Trace trace = sanitizer.trace();
             Violation violation;
@@ -130,12 +159,15 @@ final class SanitizerStepListener implements StepListener {
         }
 
         void threw(Throwable cause) {
+            String description = describe(cause);
+            // the call is still pending: Camel catches the throw and fails the exchange, but whether that step threw is
+            // what a still pending warning tells
+            sanitizer.pendingThrew(this, description);
             if (!sanitizer.firstReportOf(cause)) {
                 // reported at the inner step that threw it, and thrown on through this one: this call ignores it
                 return;
             }
             Sanitizer.Trace trace = sanitizer.trace(cause);
-            String description = describe(cause);
             Sanitizer.Trace first;
             synchronized (this) {
                 if (thrown != null) {
@@ -149,13 +181,6 @@ final class SanitizerStepListener implements StepListener {
             if (first == null) {
                 trace.appendTo(sb, "process threw " + description);
                 sanitizer.record(Violation.THREW_BEFORE_CALLBACK, exchangeId, routeId, nodeId, sb.toString());
-            } else if (cause instanceof Error && first.calledBySyncAdapter()) {
-                // a plain Processor threw an Error: Camel's adapter called the callback in finally and let the Error
-                // through, so the adapter breaks the rule, not the processor
-                first.appendTo(sb, "the callback was called by Camel's adapter for a plain Processor");
-                trace.appendTo(sb, "then the Error of the processor went through the adapter: " + description);
-                sanitizer.record(Violation.THREW_AFTER_CALLBACK, exchangeId, routeId, nodeId, sb.toString(),
-                        SYNC_ADAPTER_FIX);
             } else {
                 first.appendTo(sb, "the callback was called");
                 trace.appendTo(sb, "then process threw " + description);

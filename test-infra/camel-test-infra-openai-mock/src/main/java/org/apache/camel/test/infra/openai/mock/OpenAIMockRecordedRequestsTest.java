@@ -20,9 +20,9 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import tools.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,14 +49,14 @@ public class OpenAIMockRecordedRequestsTest {
             HttpResponse<String> response = hc.send(request, HttpResponse.BodyHandlers.ofString());
 
             String content = new ObjectMapper().readTree(response.body())
-                    .path("choices").get(0).path("message").path("content").asText();
+                    .path("choices").get(0).path("message").path("content").asString();
             assertEquals("hi", content);
 
             assertEquals(1, openAIMock.getReceivedRequests().size());
             RecordedRequest recorded = openAIMock.getLastRequest();
             assertEquals("POST", recorded.method());
             assertEquals("/v1/chat/completions", recorded.path());
-            assertEquals("gpt-5", recorded.bodyAsJson().path("model").asText());
+            assertEquals("gpt-5", recorded.bodyAsJson().path("model").asString());
         }
     }
 

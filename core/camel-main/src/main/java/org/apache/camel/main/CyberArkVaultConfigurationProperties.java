@@ -21,7 +21,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.vault.CyberArkVaultConfiguration;
 
 /**
- * Configuration for access to Hashicorp Vault Secret.
+ * Configuration for access to Cyberark Conjur Vault Secret.
  */
 @Configurer(extended = true)
 public class CyberArkVaultConfigurationProperties extends CyberArkVaultConfiguration implements BootstrapCloseable {
@@ -93,7 +93,7 @@ public class CyberArkVaultConfigurationProperties extends CyberArkVaultConfigura
      * The Cyberark Conjur Vault Api Key
      */
     public CyberArkVaultConfigurationProperties withApiKey(String apiKey) {
-        withApiKey(apiKey);
+        setApiKey(apiKey);
         return this;
     }
 
@@ -101,7 +101,7 @@ public class CyberArkVaultConfigurationProperties extends CyberArkVaultConfigura
      * The Cyberark Conjur Vault Verify SSL setting
      */
     public CyberArkVaultConfigurationProperties withVerifySSL(boolean verifySSL) {
-        withVerifySSL(verifySSL);
+        setVerifySsl(verifySSL);
         return this;
     }
 
@@ -109,7 +109,7 @@ public class CyberArkVaultConfigurationProperties extends CyberArkVaultConfigura
      * The Cyberark Conjur Vault Certificate Path
      */
     public CyberArkVaultConfigurationProperties withCertificatePath(String certificatePath) {
-        withCertificatePath(certificatePath);
+        setCertificatePath(certificatePath);
         return this;
     }
 

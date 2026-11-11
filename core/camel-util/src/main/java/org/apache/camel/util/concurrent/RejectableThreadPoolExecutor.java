@@ -27,23 +27,25 @@ import java.util.concurrent.TimeUnit;
 /**
  * Thread pool executor that creates {@link RejectableFutureTask} instead of {@link java.util.concurrent.FutureTask}
  * when registering new tasks for execution.
- * <p/>
+ * <p>
  * Instances of {@link RejectableFutureTask} are required to handle {@link ThreadPoolRejectedPolicy#Abort} policies
  * correctly, e.g. notify {@link Callable} and {@link Runnable} tasks when they are rejected. To be notified of
- * rejection tasks have to implement {@link Rejectable} interface: <br/>
- * <code><pre>
+ * rejection tasks have to implement {@link Rejectable} interface: <br>
+ *
+ * <pre>
  * public class RejectableTask implements Runnable, Rejectable {
  *     &#064;Override
  *     public void run() {
  *         // execute task
  *     }
+ *
  *     &#064;Override
  *     public void reject() {
  *         // do something useful on rejection
  *     }
  * }
- * </pre></code>
- * <p/>
+ * </pre>
+ * <p>
  * If the task does not implement {@link Rejectable} interface the behavior is exactly the same as with ordinary
  * {@link ThreadPoolExecutor}.
  *

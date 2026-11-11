@@ -1,0 +1,25 @@
+# Refunds arrive on Kafka from the returns desk, and the shop pays them back at the payment service.
+# It is a route of its own: a failed refund is logged, without the dead letter channel of the shop.
+- route:
+    id: refunds
+    errorHandler:
+      defaultErrorHandler: {}
+    from:
+      uri: kafka:refunds
+      parameters:
+        brokers: localhost:9092
+        groupId: shop
+      steps:
+        - setVariable:
+            name: refundId
+            expression:
+              jsonpath:
+                expression: "$.refundId"
+        - log:
+            message: "Refund ${variable.refundId} received"
+        - removeHeaders:
+            pattern: "*"
+        - to:
+            uri: "http://localhost:{{camel.server.port}}/payment"
+        - log:
+            message: "Refund ${variable.refundId} paid back: ${body}"

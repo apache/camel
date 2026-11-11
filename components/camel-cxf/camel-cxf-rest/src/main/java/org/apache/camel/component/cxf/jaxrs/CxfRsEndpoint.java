@@ -682,7 +682,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     /**
      * Set custom JAX-RS provider(s) list to the CxfRs endpoint. You can specify a string with a list of providers to
-     * lookup in the registy separated by comma.
+     * lookup in the registry separated by comma.
      */
     public void setProviders(List<?> providers) {
         this.providers.addAll(providers);

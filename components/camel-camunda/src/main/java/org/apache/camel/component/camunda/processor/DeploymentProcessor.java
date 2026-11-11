@@ -18,7 +18,6 @@ package org.apache.camel.component.camunda.processor;
 
 import java.io.InputStream;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.camunda.CamundaConstants;
@@ -27,6 +26,7 @@ import org.apache.camel.component.camunda.internal.CamundaService;
 import org.apache.camel.component.camunda.model.DeploymentRequest;
 import org.apache.camel.component.camunda.model.DeploymentResponse;
 import org.apache.camel.component.camunda.model.ProcessDeploymentResponse;
+import tools.jackson.core.JacksonException;
 
 public class DeploymentProcessor extends AbstractBaseProcessor {
     public DeploymentProcessor(CamundaEndpoint endpoint) {
@@ -54,8 +54,8 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
         } else if (body instanceof String) {
             try {
                 message = objectMapper.readValue((String) body, DeploymentRequest.class);
-            } catch (JsonProcessingException jsonProcessingException) {
-                throw new IllegalArgumentException("Cannot convert body to DeploymentRequest", jsonProcessingException);
+            } catch (JacksonException e) {
+                throw new IllegalArgumentException("Cannot convert body to DeploymentRequest", e);
             }
         } else {
             throw new CamelException("Deployment Resource missing");

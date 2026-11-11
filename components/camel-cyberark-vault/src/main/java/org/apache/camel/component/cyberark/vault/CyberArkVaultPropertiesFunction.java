@@ -22,9 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.net.ssl.SSLContext;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -35,6 +32,9 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.CyberArkVaultConfiguration;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * A {@link PropertiesFunction} that lookup the property value from CyberArk Conjur Vault service.
@@ -74,6 +74,8 @@ import org.apache.camel.vault.CyberArkVaultConfiguration;
  */
 @org.apache.camel.spi.annotations.PropertiesFunction("cyberark")
 public class CyberArkVaultPropertiesFunction extends ServiceSupport implements PropertiesFunction, CamelContextAware {
+
+    private static final ObjectMapper MAPPER = JsonMapper.builderWithJackson2Defaults().build();
 
     private static final String CAMEL_CYBERARK_VAULT_URL = "CAMEL_VAULT_CYBERARK_URL";
     private static final String CAMEL_CYBERARK_VAULT_ACCOUNT = "CAMEL_VAULT_CYBERARK_ACCOUNT";
@@ -230,8 +232,7 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
     }
 
     private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+            String key, String subkey, String defaultValue, String version) {
 
         // capture name of secret
         secrets.add(key);
@@ -242,11 +243,10 @@ public class CyberArkVaultPropertiesFunction extends ServiceSupport implements P
             returnValue = client.retrieveSecret(key, version);
 
             if (ObjectHelper.isNotEmpty(subkey)) {
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(returnValue);
+                JsonNode actualObj = MAPPER.readTree(returnValue);
                 JsonNode field = actualObj.get(subkey);
                 if (ObjectHelper.isNotEmpty(field)) {
-                    returnValue = field.textValue();
+                    returnValue = field.stringValue(null);
                 } else {
                     returnValue = null;
                 }

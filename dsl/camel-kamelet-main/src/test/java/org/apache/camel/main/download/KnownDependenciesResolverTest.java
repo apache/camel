@@ -105,6 +105,8 @@ public class KnownDependenciesResolverTest {
         assertGav(resolver, "com.fasterxml.jackson.databind.ObjectMapper", "com.fasterxml.jackson.core", "jackson-databind");
         assertGav(resolver, "com.fasterxml.jackson.dataformat.xml.XmlMapper", "com.fasterxml.jackson.dataformat",
                 "jackson-dataformat-xml");
+        assertGav(resolver, "tools.jackson.databind.ObjectMapper", "tools.jackson.core", "jackson-databind");
+        assertGav(resolver, "tools.jackson.dataformat.xml.XmlMapper", "tools.jackson.dataformat", "jackson-dataformat-xml");
         assertGav(resolver, "org.apache.commons.csv.CSVFormat", "org.apache.commons", "commons-csv");
         assertGav(resolver, "software.amazon.awssdk.services.sqs.SqsClient", "software.amazon.awssdk", "sqs");
         assertGav(resolver, "org.infinispan.client.hotrod.RemoteCacheManager", "org.infinispan", "infinispan-client-hotrod");

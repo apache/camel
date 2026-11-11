@@ -136,8 +136,8 @@ This route checks every minute that the route `foo` runs, and starts it when it 
 === Getting performance statistics
 
 This requires JMX to be enabled (it is enabled by default) then you can get the
-performance statics per route, or for the CamelContext.
-For example, to get the statics for a route named foo, we can use:
+performance statistics per route, or for the CamelContext.
+For example, to get the statistics for a route named foo, we can use:
 
 ._Java-only: Java test API (ProducerTemplate)_
 [source,java]
@@ -145,7 +145,7 @@ For example, to get the statics for a route named foo, we can use:
 String xml = template.requestBody("controlbus:route?routeId=foo&action=stats", null, String.class);
 ----
 
-The returned statics is in XML format.
+The returned statistics is in XML format.
 It is the same data you can get from JMX with the `dumpRouteStatsAsXml` operation on the `ManagedRouteMBean`.
 In a route, the XML is the message body.
 This route writes the statistics of the route `foo` to a file every minute:
@@ -169,7 +169,7 @@ This route writes the statistics of the route `foo` to a file every minute:
               fileName: "foo-${date:now:yyyyMMddHHmm}.xml"
 ----
 
-To get statics for the entire `CamelContext` you just omit the routeId parameter as shown below:
+To get statistics for the entire `CamelContext` you just omit the routeId parameter as shown below:
 
 ._Java-only: Java test API (ProducerTemplate)_
 [source,java]

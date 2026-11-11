@@ -313,7 +313,6 @@ public class SjmsEndpoint extends DefaultEndpoint
                             + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
                             + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"
                             + " in your routing - for example, using persistent queues to enable robust routing."
-                            + " Notice that if you also have transferExchange enabled, this option takes precedence."
                             + " The caught exception is required to be serializable."
                             + " The original Exception on the consumer side can be wrapped in an outer exception"
                             + " such as org.apache.camel.RuntimeCamelException when returned to the producer."

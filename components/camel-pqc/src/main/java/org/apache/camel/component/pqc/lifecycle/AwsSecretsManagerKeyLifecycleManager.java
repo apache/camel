@@ -31,8 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.pqc.PQCKeyEncapsulationAlgorithms;
 import org.apache.camel.component.pqc.PQCSignatureAlgorithms;
 import org.apache.camel.util.SecureRandomHelper;
@@ -61,6 +59,9 @@ import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueReques
 import software.amazon.awssdk.services.secretsmanager.model.ResourceNotFoundException;
 import software.amazon.awssdk.services.secretsmanager.model.SecretListEntry;
 import software.amazon.awssdk.services.secretsmanager.model.Tag;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * AWS Secrets Manager-based implementation of KeyLifecycleManager. Stores keys and metadata in AWS Secrets Manager with
@@ -85,7 +86,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
     private final String keyPrefix;
     private final ConcurrentHashMap<String, KeyPair> keyCache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, KeyMetadata> metadataCache = new ConcurrentHashMap<>();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     /**
      * Create an AwsSecretsManagerKeyLifecycleManager with an existing SecretsManagerClient
@@ -353,7 +354,7 @@ public class AwsSecretsManagerKeyLifecycleManager implements KeyLifecycleManager
             JsonNode node = objectMapper.readTree(secret);
             if (node.has("metadata")) {
                 // Legacy format: a Base64-encoded, Java-serialized KeyMetadata wrapped in an envelope
-                metadata = deserializeMetadata(node.get("metadata").asText());
+                metadata = deserializeMetadata(node.get("metadata").asString());
             } else {
                 metadata = KeyMetadataCodec.fromJson(secret);
             }

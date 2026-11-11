@@ -19,9 +19,40 @@ package org.apache.camel.component.printer;
 import javax.print.attribute.standard.MediaSizeName;
 
 public class MediaSizeAssigner {
-    private MediaSizeName mediaSizeName;
+
+    /**
+     * Resolves the media size as named by the {@link MediaSizeName} enumeration.
+     * <p/>
+     * The value is matched ignoring case, and {@code -} is accepted in place of {@code _}, so that the documented
+     * default of {@code na-letter} can also be given explicitly. A value that does not belong to the family its prefix
+     * suggests is looked up in the remaining sizes as well, so sizes such as {@code iso_designated_long} resolve.
+     *
+     * @param  size                     the configured media size
+     * @return                          the matching media size name
+     * @throws IllegalArgumentException if the value does not name a known media size
+     */
+    public MediaSizeName selectMediaSizeName(String size) {
+        String name = size.replace('-', '_');
+
+        MediaSizeName answer = null;
+        if (name.regionMatches(true, 0, "iso", 0, "iso".length())) {
+            answer = selectMediaSizeNameISO(name);
+        } else if (name.regionMatches(true, 0, "jis", 0, "jis".length())) {
+            answer = selectMediaSizeNameJIS(name);
+        } else if (name.regionMatches(true, 0, "na", 0, "na".length())) {
+            answer = selectMediaSizeNameNA(name);
+        }
+        if (answer == null) {
+            answer = selectMediaSizeNameOther(name);
+        }
+        if (answer == null) {
+            throw new IllegalArgumentException("Unknown mediaSize: " + size);
+        }
+        return answer;
+    }
 
     public MediaSizeName selectMediaSizeNameISO(String size) {
+        MediaSizeName mediaSizeName = null;
         if (size.equalsIgnoreCase("iso_a0")) {
             mediaSizeName = MediaSizeName.ISO_A0;
         } else if (size.equalsIgnoreCase("iso_a1")) {
@@ -85,7 +116,7 @@ public class MediaSizeAssigner {
     }
 
     public MediaSizeName selectMediaSizeNameJIS(String size) {
-
+        MediaSizeName mediaSizeName = null;
         if (size.equalsIgnoreCase("jis_b0")) {
             mediaSizeName = MediaSizeName.JIS_B0;
         } else if (size.equalsIgnoreCase("jis_b1")) {
@@ -114,6 +145,7 @@ public class MediaSizeAssigner {
     }
 
     public MediaSizeName selectMediaSizeNameNA(String size) {
+        MediaSizeName mediaSizeName = null;
         if (size.equalsIgnoreCase("na_letter")) {
             mediaSizeName = MediaSizeName.NA_LETTER;
         } else if (size.equalsIgnoreCase("na_legal")) {
@@ -188,6 +220,7 @@ public class MediaSizeAssigner {
     }
 
     public MediaSizeName selectMediaSizeNameOther(String size) {
+        MediaSizeName mediaSizeName = null;
         if (size.equalsIgnoreCase("executive")) {
             mediaSizeName = MediaSizeName.EXECUTIVE;
         } else if (size.equalsIgnoreCase("ledger")) {

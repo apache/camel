@@ -18,7 +18,7 @@ package org.apache.camel.test.infra.openai.mock;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Builder class for creating OpenAI audio transcription API mock responses.

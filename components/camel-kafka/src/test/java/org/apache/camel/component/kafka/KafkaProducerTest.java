@@ -967,7 +967,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMessageWithScalarJsonNode() throws Exception {
+    public void processSendsMessageWithJackson2ScalarNode() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
@@ -979,7 +979,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMessagesWithJsonArrayNode() throws Exception {
+    public void processSendsMessagesWithJackson2ArrayNode() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
@@ -995,8 +995,8 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMessageWithJsonObjectNode() throws Exception {
-        // CAMEL-25924: an object node is one record, not one record per field value
+    public void processSendsMessageWithJackson2ObjectNode() throws Exception {
+        // CAMEL-25924: a Jackson 2 object node is one record, not one record per field value
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
@@ -1014,7 +1014,7 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMessagesWithJackson3ArrayNode() throws Exception {
+    public void processSendsMessagesWithArrayNode() throws Exception {
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
@@ -1029,8 +1029,8 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMessageWithJackson3ObjectNode() throws Exception {
-        // CAMEL-25924: a Jackson 3 object node is one record, not one record per field value
+    public void processSendsMessageWithObjectNode() throws Exception {
+        // CAMEL-25924: an object node is one record, not one record per field value
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);
@@ -1045,8 +1045,8 @@ public class KafkaProducerTest {
     }
 
     @Test
-    public void processSendsMessageWithJackson3ScalarNode() throws Exception {
-        // CAMEL-25924: a Jackson 3 scalar node has no elements, and must be sent as one record and not dropped
+    public void processSendsMessageWithScalarNode() throws Exception {
+        // CAMEL-25924: a scalar node has no elements, and must be sent as one record and not dropped
         endpoint.getConfiguration().setTopic("sometopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getMessage()).thenReturn(in);

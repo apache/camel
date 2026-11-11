@@ -23,11 +23,12 @@ import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Shared serialization utilities for {@link org.apache.camel.spi.KeyValueRepository} implementations.
+ * Shared serialization and expiry utilities for {@link org.apache.camel.spi.KeyValueRepository} implementations.
  * <p/>
  * All persistent {@code KeyValueRepository} implementations need to serialize arbitrary Java objects to bytes (for BLOB
  * columns, Kafka messages, etc.) and deserialize them back. This helper centralises that logic to avoid the same
@@ -168,6 +169,26 @@ public final class KeyValueRepositoryHelper {
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
         return deserialize(bytes, deserializationFilter);
+    }
+
+    /**
+     * Returns the time, in milliseconds since the epoch, at which an entry stored now with the given time-to-live
+     * expires. When that time is beyond {@link Long#MAX_VALUE} (a time-to-live of about {@link Long#MAX_VALUE}
+     * milliseconds or more), {@link Long#MAX_VALUE} is returned, so the entry does not expire.
+     * <p/>
+     * The caller handles a {@code null}, zero or negative time-to-live (no expiration) itself.
+     *
+     * @param  ttl a positive time-to-live
+     * @return     the expiration time in milliseconds since the epoch, at most {@link Long#MAX_VALUE}
+     * @since      4.24
+     */
+    public static long expiresAt(Duration ttl) {
+        try {
+            return Math.addExact(System.currentTimeMillis(), ttl.toMillis());
+        } catch (ArithmeticException e) {
+            // toMillis() or the sum overflows: the entry would expire after the end of the long time range
+            return Long.MAX_VALUE;
+        }
     }
 
     private static Object doDeserialize(ByteArrayInputStream bis, String deserializationFilter)

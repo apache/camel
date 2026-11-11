@@ -47,6 +47,9 @@ public final class ToolGroups {
     public static final String CHAOS_CLEAR_TOOL = "camel_runtime_chaos_clear";
     public static final String CHAOS_SUGGEST_TOOL = "camel_runtime_chaos_suggest";
     public static final String CHAOS_LOAD_TOOL = "camel_runtime_chaos_load";
+    public static final String CHAOS_EXPLORE_START_TOOL = "camel_runtime_chaos_explore_start";
+    public static final String CHAOS_EXPERIMENT_TOOL = "camel_runtime_chaos_experiment";
+    public static final String CHAOS_EXPLORE_FINISH_TOOL = "camel_runtime_chaos_explore_finish";
 
     /**
      * A loaded group.
@@ -143,7 +146,8 @@ public final class ToolGroups {
                         f.chaosOn()
                                 ? List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL, CHAOS_SUGGEST_TOOL, CHAOS_CHECK_TOOL,
                                         CHAOS_ADD_TOOL, CHAOS_CHANGE_TOOL, CHAOS_REMOVE_TOOL, CHAOS_CLEAR_TOOL,
-                                        CHAOS_LOAD_TOOL)
+                                        CHAOS_LOAD_TOOL, CHAOS_EXPLORE_START_TOOL, CHAOS_EXPERIMENT_TOOL,
+                                        CHAOS_EXPLORE_FINISH_TOOL)
                                 : List.of(CHAOS_LIST_TOOL, CHAOS_REPORT_TOOL),
                         describeChaos(f)));
             }
@@ -242,7 +246,10 @@ public final class ToolGroups {
                + CHAOS_REPORT_TOOL + " show the rules and what they did; " + CHAOS_ADD_TOOL
                + " takes a rule such as endpoint=kafka:orders* error rate=0.1 until=5m, and " + CHAOS_CHECK_TOOL
                + " says what it would hit without adding it; " + CHAOS_SUGGEST_TOOL
-               + " suggests rules from what the routes do, and " + CHAOS_LOAD_TOOL + " loads a scenario.";
+               + " suggests rules from what the routes do, and " + CHAOS_LOAD_TOOL + " loads a scenario; "
+               + CHAOS_EXPLORE_START_TOOL + " starts an exploration with a time budget, in which " + CHAOS_EXPERIMENT_TOOL
+               + " runs one experiment per call (rules, traffic and the wait for the verdict), until "
+               + CHAOS_EXPLORE_FINISH_TOOL + ".";
     }
 
     /** {@code Circuit breakers in routes a, b}, or without the routes when they are not known. */

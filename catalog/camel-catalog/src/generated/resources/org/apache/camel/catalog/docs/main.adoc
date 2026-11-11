@@ -28,7 +28,7 @@ The camel.main supports 132 options, which are listed below.
 | `camel.main.allowUseOriginalMessage` | Sets whether to allow access to the original message from Camel's error handler, or from org.apache.camel.spi.UnitOfWork.getOriginalInMessage(). Turning this off can optimize performance, as defensive copy of the original message is not needed. Default is false. | false | boolean
 | `camel.main.autoConfigurationEnabled` | Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the configuration parameters are loaded from the properties component. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled. | true | boolean
 | `camel.main.autoConfigurationEnvironmentVariablesEnabled` | Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5. This option is default enabled. | true | boolean
-| `camel.main.autoConfigurationFailFast` | Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled. | true | boolean
+| `camel.main.autoConfigurationFailFast` | Whether auto configuration should fail fast when configuring one or more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled. | true | boolean
 | `camel.main.autoConfigurationLogSummary` | Whether auto configuration should log a summary with the configured properties. This option is default enabled. | true | boolean
 | `camel.main.autoConfigurationSystemPropertiesEnabled` | Whether auto configuration should include JVM system properties as well. When enabled this allows to overrule any configuration using a JVM system property. For example to set a shutdown timeout of 5 seconds: -D camel.main.shutdown-timeout=5. Note that JVM system properties take precedence over OS environment variables. This option is default enabled. | true | boolean
 | `camel.main.autoStartup` | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes are started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up. | true | boolean
@@ -151,7 +151,7 @@ The camel.main supports 132 options, which are listed below.
 | `camel.main.tracingTemplates` | Whether tracing should trace inner details from route templates (or kamelets). Turning this on increases the verbosity of tracing by including events from internal routes in the templates or kamelets. Default is false. | false | boolean
 | `camel.main.typeConverterStatisticsEnabled` | Sets whether type converter statistics is enabled. By default the type converter utilization statistics is disabled. Notice: If enabled then there is a slight performance impact under very heavy load. | false | boolean
 | `camel.main.useBreadcrumb` | Set whether breadcrumb is enabled. The default value is false. | false | boolean
-| `camel.main.useDataType` | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | boolean
+| `camel.main.useDataType` | Whether to enable using data type on Camel messages. Data type are automatic turned on if one or more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | boolean
 | `camel.main.useMdcLogging` | To turn on MDC logging (deprecated, use camel-mdc component instead) | false | boolean
 | `camel.main.uuidGenerator` | UUID generator to use. default (32 bytes), short (16 bytes), classic (32 bytes or longer), simple (long incrementing counter), off (turned off for exchanges - only intended for performance profiling) | default | String
 | `camel.main.virtualThreadsEnabled` | Whether to enable virtual threads when creating thread pools. When enabled, Camel will use virtual threads instead of platform threads for its thread pools. This can also be enabled via the JVM system property camel.threads.virtual.enabled=true . This option must be read early during bootstrap, so it is set as a system property before thread pools are created. | false | boolean
@@ -197,7 +197,7 @@ The camel.routecontroller supports 12 options, which are listed below.
 
 
 === Camel Embedded HTTP Server (only for standalone; not Spring Boot or Quarkus) configurations
-The camel.server supports 36 options, which are listed below.
+The camel.server supports 37 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -218,9 +218,10 @@ The camel.server supports 36 options, which are listed below.
 | `camel.server.jwtKeystoreType` | Type of the keystore used for JWT tokens validation (jks, pkcs12, etc.). |  | String
 | `camel.server.maxBodySize` | Maximum HTTP body size the embedded HTTP server can accept. |  | Long
 | `camel.server.mcpAllowedOrigins` | Comma-separated list of origins allowed to call the MCP endpoint on the Vert.x streamable transport. Each entry is an exact origin (scheme, host and port), or ends with a colon and an asterisk to match any port. Scheme and host are compared ignoring case, and a default port (80 for http, 443 for https) may be left out. A wildcard for all origins is not supported: an entry that is not of the form scheme://host or scheme://host:port fails the startup. A request without an Origin header is always served; a request with an Origin header that is not allowed is rejected with HTTP 403. When not set, only loopback origins are allowed (localhost, 127.0.0.1 and ::1 on any port). |  | String
-| `camel.server.mcpEnabled` | Whether to expose ai-tool routes as MCP tools and ai-resource routes as MCP resources. Requires camel-mcp-server on the classpath. Use setMcpTransport(String) to choose streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled. | false | boolean
+| `camel.server.mcpEnabled` | Whether to expose ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts. Requires camel-mcp-server on the classpath. Use setMcpTransport(String) to choose streamable HTTP (default) or stdio for IDE subprocess integration. By default, the MCP server is not enabled. | false | boolean
 | `camel.server.mcpInstructions` | Top-level MCP instructions returned to clients on initialize. |  | String
 | `camel.server.mcpPath` | HTTP path where the MCP endpoint is served. | /mcp | String
+| `camel.server.mcpPromptTimeout` | Per-request MCP prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the MCP client; the underlying route may continue running until it completes. | 20000 | long
 | `camel.server.mcpResourceTimeout` | Per-read MCP resource execution timeout in milliseconds. A read exceeding the timeout returns an error to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
 | `camel.server.mcpServerDescription` | MCP server description advertised to clients in serverInfo.description . |  | String
 | `camel.server.mcpServerIcons` | JSON array of MCP server icons advertised to clients in serverInfo.icons . Each entry must include a src URL and may include mimeType , sizes and theme . |  | String
@@ -229,9 +230,9 @@ The camel.server supports 36 options, which are listed below.
 | `camel.server.mcpServerWebsiteUrl` | MCP server website URL advertised to clients in serverInfo.websiteUrl . |  | String
 | `camel.server.mcpSessionIdleTtl` | Idle TTL in milliseconds for MCP sessions on the Vert.x streamable transport. Sessions with no activity for longer than this interval are evicted. 0 disables idle eviction. | 300000 | long
 | `camel.server.mcpSessionKeepAliveInterval` | Keep-alive ping interval in milliseconds for MCP sessions on the Vert.x streamable transport. Dead sessions are evicted after consecutive ping failures. 0 disables keep-alive pings. | 30000 | long
-| `camel.server.mcpTags` | Comma-separated list of tag patterns selecting the ai-tool routes to expose as MCP tools and the ai-resource routes to expose as MCP resources. Matching is case-insensitive and supports exact match, wildcard prefix ( foo* ), and * to match all tags. Only routes registered under a matching tag are exposed; the untagged default pools are never exposed. When not set, nothing is exposed. |  | String
+| `camel.server.mcpTags` | Comma-separated list of tag patterns selecting ai-tool routes as MCP tools, ai-resource routes as MCP resources and ai-prompt routes as MCP prompts. Matching is case-insensitive and supports exact match, wildcard prefix ( foo* ), and * to match all tags. Only routes registered under a matching tag are exposed; the untagged default pools are never exposed. When not set, nothing is exposed. |  | String
 | `camel.server.mcpToolTimeout` | Per-call MCP tool execution timeout in milliseconds. A call exceeding the timeout returns an error result to the MCP client; the underlying route keeps running until it completes on its own. | 20000 | long
-| `camel.server.mcpTransport` | MCP transport for ai-tool routes: http (streamable HTTP on the embedded server, default) or stdio (JSON-RPC on process stdin/stdout for local agent subprocesses). | http | String
+| `camel.server.mcpTransport` | MCP transport selection: http (streamable HTTP on the embedded server, serving tools, resources and prompts) or stdio (JSON-RPC on process stdin/stdout for local agent subprocesses, serving tools and prompts only). | http | String
 | `camel.server.path` | Context-path to use for embedded HTTP server | / | String
 | `camel.server.port` | Port to use for binding embedded HTTP server. Use 0 to dynamic assign a free random port number. | 8080 | int
 | `camel.server.staticContextPath` | The context-path to use for serving static content. By default, the root path is used. And if there is an index.html page then this is automatically loaded. | / | String
@@ -803,14 +804,15 @@ The camel.chaos supports 7 options, which are listed below.
 
 
 === Camel Sanitizer configurations
-The camel.sanitizer supports 4 options, which are listed below.
+The camel.sanitizer supports 5 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | `camel.sanitizer.checks` | The checks to run, separated by commas: callback (rule R1, the callback of each call of the processor of a step is called exactly once, and process does not throw). | callback | String
 | `camel.sanitizer.enabled` | Whether to install the exchange sanitizer. The default is false, and true with profile dev or in a test with the CamelSanitizer annotation. With profile prod the sanitizer stays off, also when this is true. | false | Boolean
-| `camel.sanitizer.reportOnShutdown` | Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation. | true | boolean
+| `camel.sanitizer.pendingTimeout` | How long an exchange waits, with nothing happening in it, before the call of a step whose callback has not come is reported as still pending (a warning of rule R1, which never fails a test), such as 60s or 500 (milliseconds). Only the innermost pending call of an exchange is reported. 0 turns the warning off. The parts of a split, multicast or recipient list with parallel processing share one lock of the table of pending calls, which orders their threads: use 0 when hunting races between such parts. | 60s | String
+| `camel.sanitizer.reportOnShutdown` | Whether to log the report of the sanitizer when the CamelContext stops, if it reported a violation or a still pending warning, and the calls of steps still pending then. | true | boolean
 | `camel.sanitizer.stackDepth` | How many frames of each stack a report keeps; 0 keeps only the name of the thread, which costs least. | 32 | int
 |===
 

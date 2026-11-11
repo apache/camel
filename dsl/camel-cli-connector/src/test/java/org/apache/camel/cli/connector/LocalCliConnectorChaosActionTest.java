@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.chaos.ChaosManager;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -223,6 +224,21 @@ class LocalCliConnectorChaosActionTest {
     }
 
     @Test
+    void replayPutsBackTheFilesARouteTook() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+
+        // the route is required, and it must be a file route that moves the files it took
+        assertThat(chaos("replay", null, null).error()).isEqualTo("The id of the route is required");
+        JsonObject action = new JsonObject();
+        action.put("action", "chaos");
+        action.put("command", "replay");
+        action.put("route", "start");
+        CliActionOutcome replayed = CliActionOutcome.dispatch(connector, (JsonObject) Jsoner.deserialize(action.toJson()))
+                .get(10, TimeUnit.SECONDS);
+        assertThat(replayed.error()).startsWith("Route start does not take files it moves to a folder");
+    }
+
+    @Test
     void anExplorationStartsAndFinishes() throws Exception {
         start(null, Map.of("camel.chaos.enabled", "true"));
         JsonObject action = new JsonObject();
@@ -246,6 +262,46 @@ class LocalCliConnectorChaosActionTest {
         assertThat(finished.result().getString("finishedBy")).isEqualTo("finished");
         assertThat(finished.result().getLong("removed")).isEqualTo(1L);
         assertThat(chaos("explore-finish", null, null).error()).isEqualTo("No exploration is running");
+    }
+
+    @Test
+    void anExperimentBeginsAndEnds() throws Exception {
+        start(null, Map.of("camel.chaos.enabled", "true"));
+        assertThat(chaos("explore-start", null, null).error()).isNull();
+        JsonObject action = new JsonObject();
+        action.put("action", "chaos");
+        action.put("command", "experiment-begin");
+        action.put("hypothesis", "start never fails");
+        action.put("rule", "endpoint=mock:target error expect=start:failed<=0 within=1m");
+
+        CliActionOutcome begun = CliActionOutcome.dispatch(connector, action).get(10, TimeUnit.SECONDS);
+        assertThat(begun.error()).isNull();
+        assertThat(begun.result().getInteger("number")).isEqualTo(1);
+        assertThat(begun.result().getString("verdict")).isEqualTo("PENDING");
+        // one at a time: the reason goes to the tool
+        assertThat(CliActionOutcome.dispatch(connector, action).get(10, TimeUnit.SECONDS).error())
+                .isEqualTo("Experiment 1 is open: end it first");
+
+        Exchange failed = context.createProducerTemplate().send("direct:start", e -> e.getMessage().setBody("x"));
+        assertThat(failed.getException()).isNotNull();
+        JsonObject end = new JsonObject();
+        end.put("action", "chaos");
+        end.put("command", "experiment-end");
+        end.put("note", "no error handler");
+        CliActionOutcome ended = CliActionOutcome.dispatch(connector, end).get(10, TimeUnit.SECONDS);
+        assertThat(ended.error()).isNull();
+        assertThat(ended.result().getString("verdict")).isEqualTo("FAIL");
+        assertThat(ended.result().getString("note")).isEqualTo("no error handler");
+        assertThat(chaos("experiment-end", null, null).error()).isEqualTo("No experiment is open");
+
+        // a rule that matches nothing (a typo) comes with its warning, as with add
+        action.put("rule", "endpoint=file:/nowhere error expect=start:failed<=0 within=1m");
+        CliActionOutcome typo = CliActionOutcome.dispatch(connector, action).get(10, TimeUnit.SECONDS);
+        assertThat(typo.error()).isNull();
+        assertThat(typo.result().<List<Object>> getCollection("warnings")).singleElement().asString()
+                .startsWith("r2: endpoint=file:/nowhere matches no");
+        assertThat(chaos("experiment-end", null, null).error()).isNull();
+        assertThat(chaos("experiment-begin", null, null).error()).isEqualTo("The rules of the experiment are required");
     }
 
     @Test

@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.function.Function;
 
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -32,7 +33,8 @@ import org.apache.camel.util.json.JsonObject;
  * the deadline the rules are removed and the exploration is finished, whatever the agent does.
  * <p/>
  * It has the baseline, the counts per route when it started, so the failures that were there before are not blamed on
- * chaos, and the rules added while it ran. The manager guards it with its lock.
+ * chaos, the rules added while it ran, and its experiments (CAMEL-26774): a hypothesis and the rules that test it, one
+ * at a time. The manager guards it with its lock.
  */
 final class ChaosExploration {
 
@@ -66,6 +68,8 @@ final class ChaosExploration {
     private boolean baselineReset;
     // the ids of the rules added while it ran (a changed rule keeps its id)
     private final List<String> rules = new ArrayList<>();
+    // the experiments, the open one last
+    private final List<ChaosExperiment> experiments = new ArrayList<>();
     private long finishedAt;
     private Finish finishedBy;
     private int removed;
@@ -97,6 +101,28 @@ final class ChaosExploration {
     void reportReset() {
         baseline.clear();
         baselineReset = true;
+        ChaosExperiment open = openExperiment();
+        if (open != null) {
+            open.reportReset();
+        }
+    }
+
+    /** The experiment that is open, or null. */
+    ChaosExperiment openExperiment() {
+        ChaosExperiment last = experiments.isEmpty() ? null : experiments.get(experiments.size() - 1);
+        return last != null && last.isOpen() ? last : null;
+    }
+
+    /** Begins an experiment with the rules just added for it (and taken in the rules tried). */
+    ChaosExperiment beginExperiment(
+            String hypothesis, List<String> ruleIds, Map<String, ChaosManager.RouteCounts> counts, long now) {
+        ChaosExperiment experiment = new ChaosExperiment(experiments.size() + 1, hypothesis, ruleIds, counts, now);
+        experiments.add(experiment);
+        return experiment;
+    }
+
+    int experimentCount() {
+        return experiments.size();
     }
 
     void finished(long now, Finish by, int removedRules) {
@@ -106,6 +132,14 @@ final class ChaosExploration {
     }
 
     JsonObject toJson(long now) {
+        return toJson(now, id -> null, Map.of());
+    }
+
+    /**
+     * As JSON, with the experiments: the rules of an open one are looked up by their id, and the counts of the routes
+     * now give what it did so far.
+     */
+    JsonObject toJson(long now, Function<String, ChaosRule> rule, Map<String, ChaosManager.RouteCounts> counts) {
         JsonObject jo = new JsonObject();
         jo.put("running", isRunning());
         jo.put("startedAt", startedAt);
@@ -141,6 +175,11 @@ final class ChaosExploration {
             jo.put("finishedBy", finishedBy.key);
             jo.put("removed", removed);
         }
+        JsonArray tried = new JsonArray();
+        for (ChaosExperiment experiment : experiments) {
+            tried.add(experiment.toJson(rule, counts, now));
+        }
+        jo.put("experiments", tried);
         return jo;
     }
 
@@ -149,8 +188,18 @@ final class ChaosExploration {
     }
 
     String text(long now) {
+        return text(now, id -> null, Map.of());
+    }
+
+    String text(long now, Function<String, ChaosRule> rule, Map<String, ChaosManager.RouteCounts> counts) {
         StringBuilder sb = new StringBuilder();
         appendText(sb, now);
+        if (!experiments.isEmpty()) {
+            sb.append("\n    experiments:");
+            for (ChaosExperiment experiment : experiments) {
+                sb.append(experiment.text(rule, counts, now));
+            }
+        }
         return sb.toString();
     }
 

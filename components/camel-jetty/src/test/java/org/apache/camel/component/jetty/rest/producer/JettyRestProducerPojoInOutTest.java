@@ -24,6 +24,7 @@ import org.apache.camel.component.jetty.rest.UserPojo;
 import org.apache.camel.component.jetty.rest.UserService;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,27 +32,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
 
     @Test
-    public void testJettyEmptyBody() {
+    public void testJettyEmptyBody() throws Exception {
         String out = fluentTemplate.to("rest:get:users/lives").withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .request(String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, true);
     }
 
     @Test
-    public void testJettyJSonBody() {
+    public void testJettyJSonBody() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
 
         String out = fluentTemplate.to("rest:post:users/lives").withHeader(Exchange.CONTENT_TYPE, "application/json")
                 .withBody(body).request(String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, true);
     }
 
     @Test
-    public void testJettyPojoIn() {
+    public void testJettyPojoIn() throws Exception {
         UserPojo user = new UserPojo();
         user.setId(123);
         user.setName("Donald Duck");
@@ -60,7 +61,7 @@ public class JettyRestProducerPojoInOutTest extends BaseJettyTest {
                 .withBody(user).request(String.class);
 
         assertNotNull(out);
-        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
+        JSONAssert.assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out, true);
     }
 
     @Test

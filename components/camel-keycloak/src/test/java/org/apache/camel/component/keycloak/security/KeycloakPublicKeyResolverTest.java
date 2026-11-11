@@ -53,6 +53,13 @@ public class KeycloakPublicKeyResolverTest {
     }
 
     @Test
+    void malformedJwksIsAnIOException() {
+        KeycloakPublicKeyResolver resolver = new KeycloakPublicKeyResolver("http://localhost", "realm");
+
+        assertThrows(IOException.class, () -> resolver.parseJwks("not json"));
+    }
+
+    @Test
     void selectsKeyMatchingTheKid() throws Exception {
         RSAPublicKey key1 = generateKey();
         RSAPublicKey key2 = generateKey();

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.weather.geolocation;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.weather.WeatherConfiguration;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -63,12 +64,12 @@ public class FreeGeoIpGeoLocationProvider implements GeoLocationProvider {
                                     "Got the unexpected value '" + geoLocation + "' for the geolocation");
                         }
 
-                        ObjectMapper mapper = new ObjectMapper();
+                        ObjectMapper mapper = JsonMapper.builderWithJackson2Defaults().build();
                         JsonNode node = mapper.readValue(geoLocation, JsonNode.class);
                         JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
                         JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
 
-                        return new GeoLocation(longitudeNode.asText(), latitudeNode.asText());
+                        return new GeoLocation(longitudeNode.asString(), latitudeNode.asString());
                     } finally {
                         getMethod.reset();
                     }

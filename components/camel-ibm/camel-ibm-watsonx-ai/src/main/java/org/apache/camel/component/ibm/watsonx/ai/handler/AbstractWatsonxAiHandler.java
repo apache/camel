@@ -39,6 +39,11 @@ import org.apache.camel.component.ibm.watsonx.ai.support.FileInput;
  */
 public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHandler {
 
+    /** The object key header set by camel-aws2-s3 ({@code AWS2S3Constants.KEY}). */
+    static final String AWS_S3_KEY_HEADER = "CamelAwsS3Key";
+    /** The blob name header set by camel-azure-storage-blob ({@code BlobConstants.BLOB_NAME}). */
+    static final String AZURE_BLOB_NAME_HEADER = "CamelAzureStorageBlobBlobName";
+
     protected final WatsonxAiEndpoint endpoint;
 
     protected AbstractWatsonxAiHandler(WatsonxAiEndpoint endpoint) {
@@ -241,12 +246,12 @@ public abstract class AbstractWatsonxAiHandler implements WatsonxAiOperationHand
             return extractFileName(fileName);
         }
 
-        fileName = in.getHeader("CamelAwsS3Key", String.class);
+        fileName = in.getHeader(AWS_S3_KEY_HEADER, String.class);
         if (fileName != null) {
             return extractFileName(fileName);
         }
 
-        fileName = in.getHeader("CamelAzureStorageBlobName", String.class);
+        fileName = in.getHeader(AZURE_BLOB_NAME_HEADER, String.class);
         if (fileName != null) {
             return extractFileName(fileName);
         }

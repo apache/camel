@@ -36,6 +36,7 @@ class SanitizerConfigurationPropertiesTest {
         main.addInitialProperty("camel.sanitizer.checks", "callback");
         main.addInitialProperty("camel.sanitizer.stack-depth", "0");
         main.addInitialProperty("camel.sanitizer.reportOnShutdown", "false");
+        main.addInitialProperty("camel.sanitizer.pending-timeout", "5s");
 
         main.start();
         try {
@@ -44,12 +45,14 @@ class SanitizerConfigurationPropertiesTest {
             assertEquals("callback", config.getChecks());
             assertEquals(0, config.getStackDepth());
             assertFalse(config.isReportOnShutdown());
+            assertEquals("5s", config.getPendingTimeout());
 
             PropertiesComponent pc = main.getCamelContext().getPropertiesComponent();
             assertEquals("true", pc.resolveProperty("camel.sanitizer.enabled").orElse(null));
             assertEquals("callback", pc.resolveProperty("camel.sanitizer.checks").orElse(null));
             assertEquals("0", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
+            assertEquals("5s", pc.resolveProperty("camel.sanitizer.pendingTimeout").orElse(null));
         } finally {
             main.stop();
         }
@@ -58,7 +61,8 @@ class SanitizerConfigurationPropertiesTest {
     @Test
     void optionsFromJavaArePublished() throws Exception {
         Main main = new Main();
-        main.configure().sanitizerConfig().withEnabled(false).withStackDepth(8).withReportOnShutdown(false);
+        main.configure().sanitizerConfig().withEnabled(false).withStackDepth(8).withReportOnShutdown(false)
+                .withPendingTimeout("0");
 
         main.start();
         try {
@@ -67,6 +71,7 @@ class SanitizerConfigurationPropertiesTest {
             assertEquals("callback", pc.resolveProperty("camel.sanitizer.checks").orElse(null));
             assertEquals("8", pc.resolveProperty("camel.sanitizer.stackDepth").orElse(null));
             assertEquals("false", pc.resolveProperty("camel.sanitizer.reportOnShutdown").orElse(null));
+            assertEquals("0", pc.resolveProperty("camel.sanitizer.pendingTimeout").orElse(null));
         } finally {
             main.stop();
         }

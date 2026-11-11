@@ -1419,7 +1419,7 @@ class ActionsPopup {
             setNotification("Failed: " + name + " (no output)", true);
             return;
         }
-        docViewerPopup.showFailureLog(name, logFile);
+        docViewerPopup.showFailureLog(name, logFile, ctx != null ? ctx.data.get() : List.of());
     }
 
     /**

@@ -45,6 +45,38 @@ public interface StateStoreEndpointBuilderFactory {
         }
 
         /**
+         * Whether to use a store-specific namespace prefix to isolate keys on a
+         * shared backend repository.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param namespaced the value to set
+         * @return the dsl builder
+         */
+        default StateStoreEndpointBuilder namespaced(boolean namespaced) {
+            doSetProperty("namespaced", namespaced);
+            return this;
+        }
+        /**
+         * Whether to use a store-specific namespace prefix to isolate keys on a
+         * shared backend repository.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param namespaced the value to set
+         * @return the dsl builder
+         */
+        default StateStoreEndpointBuilder namespaced(String namespaced) {
+            doSetProperty("namespaced", namespaced);
+            return this;
+        }
+        /**
          * The default operation to perform.
          * 
          * The option is a:

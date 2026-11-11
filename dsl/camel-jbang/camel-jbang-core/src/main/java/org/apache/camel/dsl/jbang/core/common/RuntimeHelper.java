@@ -229,6 +229,14 @@ public final class RuntimeHelper {
     }
 
     /**
+     * Sends a message, and with reply, waits for the answer of the route (InOut) and has it under message in the
+     * result. A request-reply over a broker (jms:, kafka:) waits for a reply that may not come: a reply suits direct:.
+     */
+    public static JsonObject sendMessage(long pid, String endpoint, String body, String headers, boolean reply) {
+        return sendMessage(pid, endpoint, body, headers, 0, null, reply);
+    }
+
+    /**
      * Sends a message, or with a repeat or a body of {@code file:<folder>} several messages, with a pause between them;
      * the answer is then a summary (sent, failed and the errors) rather than the reply.
      *
@@ -239,10 +247,18 @@ public final class RuntimeHelper {
      */
     public static JsonObject sendMessage(
             long pid, String endpoint, String body, String headers, int repeat, String interval) {
+        return sendMessage(pid, endpoint, body, headers, repeat, interval, false);
+    }
+
+    private static JsonObject sendMessage(
+            long pid, String endpoint, String body, String headers, int repeat, String interval, boolean reply) {
         JsonArray headerList = headers != null ? parseHeaders(headers) : null;
         long[] pause = RepeatedSend.interval(interval);
         String result = executeAction(pid, "send", root -> {
             root.put("endpoint", endpoint);
+            if (reply) {
+                root.put("exchangePattern", "InOut");
+            }
             if (body != null) {
                 root.put("body", body);
             }

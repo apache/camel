@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -205,5 +207,24 @@ public class AbstractClientBaseTest {
 
             verify(session).login(null);
         }
+    }
+
+    @Test
+    public void shouldKeepResponseBodyWhenErrorResponseIsNotJson() throws SalesforceException {
+        final AbstractClientBase defaultExceptions = new AbstractClientBase(
+                null, session, mock(SalesforceHttpClient.class), new SalesforceLoginConfig(), 1) {
+            @Override
+            protected void setAccessToken(final Request request) {
+            }
+        };
+        final Response response = mock(Response.class);
+        when(response.getStatus()).thenReturn(500);
+        when(response.getReason()).thenReturn("Server Error");
+
+        final SalesforceException exception = defaultExceptions.createRestException(response,
+                new ByteArrayInputStream("not json".getBytes(StandardCharsets.UTF_8)));
+
+        assertThat(exception.getStatusCode()).isEqualTo(500);
+        assertThat(exception.getMessage()).contains("See exception `errors` property for detail. not json");
     }
 }

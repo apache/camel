@@ -33,6 +33,7 @@ public class McpServerConfiguration {
     private String tags;
     private long toolTimeout = McpServerConstants.DEFAULT_TOOL_TIMEOUT;
     private long resourceTimeout = McpServerConstants.DEFAULT_RESOURCE_TIMEOUT;
+    private long promptTimeout = McpServerConstants.DEFAULT_PROMPT_TIMEOUT;
     private String path = McpServerConstants.DEFAULT_PATH;
     private String serverName;
     private String serverTitle;
@@ -79,6 +80,18 @@ public class McpServerConfiguration {
 
     public void setResourceTimeout(long resourceTimeout) {
         this.resourceTimeout = resourceTimeout;
+    }
+
+    /**
+     * Per-request prompt execution timeout in milliseconds. A request exceeding the timeout returns an error to the MCP
+     * client; the underlying route may continue running until it completes.
+     */
+    public long getPromptTimeout() {
+        return promptTimeout;
+    }
+
+    public void setPromptTimeout(long promptTimeout) {
+        this.promptTimeout = promptTimeout;
     }
 
     /**

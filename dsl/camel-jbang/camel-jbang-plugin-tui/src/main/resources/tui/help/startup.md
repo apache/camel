@@ -1,8 +1,9 @@
 # Startup
 
-The Startup tab shows a timeline of how the integration started up.
-Each step is displayed with a horizontal bar proportional to its
-duration, helping you visually identify which phases took the most time.
+The Startup tab shows a timeline of how the integration started up:
+a waterfall where each step's bar starts when the step started and is
+as long as it took, so you see what ran inside what, and what ran
+after what.
 
 This is useful for optimizing startup time — for example, finding
 components that take a long time to initialize, routes that are slow
@@ -12,25 +13,23 @@ to start, or external connections that delay readiness.
 
 Each line shows one startup step with:
 
-- **Bar** — Horizontal bar proportional to duration. Longer bars = slower steps. Color ranges from green (fast) through yellow to red (slowest steps)
 - **Duration** — Time in milliseconds this step took
-- **Name** — What this step does (e.g., component initialization, route startup)
+- **Name** — What this step does (e.g., component initialization, route startup), indented under the step it is part of
+- **Bar** — Where the step ran on the time line of the startup. Color ranges from green (fast) through yellow to red (slowest steps)
 
-Steps are indented to show parent-child relationships — a route startup
-step contains sub-steps for each processor initialization.
+The steps are in the order they started. `s` puts the slowest first,
+to find what to optimize without scrolling through the fast ones.
 
 ## Example Screen
 
 ```
- ████████████████████████████████████████  1234ms  Starting CamelContext
-   ██████████████████                      620ms   Start Routes
-     ████████████                          412ms   timer-to-log
-       ████                                150ms   Create Component: timer
-       ██                                  80ms    Create Component: log
-     ████                                  140ms   seda-consumer
-   ████████                                280ms   Start Consumers
-     ██████                                210ms   timer://hello
-     ██                                    70ms    seda://queue
+  1234ms Starting CamelContext   ████████████████████████████████████████
+   620ms   Start Routes                     ████████████████████
+   412ms     timer-to-log                   █████████████
+   150ms       Create Component: timer      █████
+    80ms       Create Component: log             ███
+   140ms     seda-consumer                               █████
+   280ms   Start Consumers                                    █████████
 ```
 
 In this example, the total startup took 1234ms. The slowest phase
@@ -61,5 +60,6 @@ the context is fully started — the data does not change during runtime.
 - `Up/Down` — scroll through steps
 - `PgUp/PgDn` — scroll by page
 - `Home/End` — jump to top/end
+- `s` — the slowest steps first, or the order they started
 - `F5` — reload startup data
 - `Esc` — back

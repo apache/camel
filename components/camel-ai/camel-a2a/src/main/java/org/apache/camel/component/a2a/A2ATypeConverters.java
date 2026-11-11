@@ -18,7 +18,6 @@ package org.apache.camel.component.a2a;
 
 import java.util.function.Function;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Converter;
 import org.apache.camel.component.a2a.model.DataPart;
 import org.apache.camel.component.a2a.model.FilePart;
@@ -27,6 +26,7 @@ import org.apache.camel.component.a2a.model.Part;
 import org.apache.camel.component.a2a.model.Task;
 import org.apache.camel.component.a2a.model.TextPart;
 import org.apache.camel.component.a2a.util.A2AJsonMapper;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Type converters for A2A model objects. Enables {@code convertBodyTo(String.class)} and {@code ${bodyAs(String)}} to

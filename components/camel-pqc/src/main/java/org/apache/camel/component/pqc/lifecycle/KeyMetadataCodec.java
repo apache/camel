@@ -20,8 +20,9 @@ import java.io.ObjectInputFilter;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Shared helpers for persisting {@link KeyMetadata} as JSON instead of Java serialization, and for safely reading
@@ -56,7 +57,9 @@ final class KeyMetadataCodec {
     static final ObjectInputFilter KEY_PAIR_FILTER = ObjectInputFilter.Config.createFilter(KEY_PAIR_PATTERN);
 
     private static final ObjectMapper MAPPER
-            = new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            = JsonMapper.builderWithJackson2Defaults()
+                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .build();
 
     private KeyMetadataCodec() {
     }

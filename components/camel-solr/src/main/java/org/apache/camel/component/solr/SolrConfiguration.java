@@ -259,7 +259,7 @@ public class SolrConfiguration {
     }
 
     /**
-     * For the delete instruction, interprete body as query/queries instead of id/ids.
+     * For the delete instruction, interpret body as query/queries instead of id/ids.
      */
     public boolean isDeleteByQuery() {
         return deleteByQuery;

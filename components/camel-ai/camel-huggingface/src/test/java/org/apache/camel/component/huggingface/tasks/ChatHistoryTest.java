@@ -26,9 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 import ai.djl.modality.Input;
 import ai.djl.modality.Output;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.huggingface.HuggingFaceConfiguration;
 import org.apache.camel.component.huggingface.HuggingFaceEndpoint;
@@ -37,6 +34,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.ArrayNode;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -50,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class ChatHistoryTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = JsonMapper.builder().build();
     private final Map<FutureTask<Void>, Thread> threads = new ConcurrentHashMap<>();
     private DefaultCamelContext context;
 
@@ -249,7 +250,7 @@ class ChatHistoryTest {
      * Answers the conversation with the whole conversation and the reply, as the text-generation pipeline does.
      */
     private Output answer(JsonNode sent, String reply) {
-        ArrayNode conversation = sent.deepCopy();
+        ArrayNode conversation = (ArrayNode) sent.deepCopy();
         conversation.addObject().put("role", "assistant").put("content", reply);
         ArrayNode result = mapper.createArrayNode();
         result.addObject().set("generated_text", conversation);
@@ -261,7 +262,7 @@ class ChatHistoryTest {
     private static List<String> messages(JsonNode sent) {
         List<String> messages = new ArrayList<>();
         for (JsonNode node : sent) {
-            messages.add(node.get("role").asText() + ":" + node.get("content").asText());
+            messages.add(node.get("role").asString() + ":" + node.get("content").asString());
         }
         return messages;
     }
@@ -313,7 +314,7 @@ class ChatHistoryTest {
         @Override
         protected Output infer(Input input) throws Exception {
             JsonNode conversation = mapper.readTree(input.getAsString("data"));
-            String message = conversation.get(conversation.size() - 1).get("content").asText();
+            String message = conversation.get(conversation.size() - 1).get("content").asString();
             sent.put(message, messages(conversation));
             assertTrue(release.await(10, TimeUnit.SECONDS), "the model was not released");
             return answer(conversation, "Reply to " + message);

@@ -31,7 +31,6 @@ import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
-import dev.tamboui.tui.event.MouseEvent;
 import dev.tamboui.widgets.block.Block;
 import dev.tamboui.widgets.block.BorderType;
 import dev.tamboui.widgets.block.Borders;
@@ -49,9 +48,11 @@ class BeansTab extends AbstractTableTab {
 
     private final AtomicBoolean loading = new AtomicBoolean(false);
 
-    private int filterIndex;
+    // the scope starts with the beans of the integration itself (user): the ones of Camel are many and the same in
+    // every integration
+    private int filterIndex = 1;
     private final FilterField filter = new FilterField(this::filterChanged);
-    private List<BeanData> allBeans = Collections.emptyList();
+    List<BeanData> allBeans = Collections.emptyList();
     private int detailScroll;
     private boolean detailFocused;
     private String lastPid;
@@ -63,6 +64,12 @@ class BeansTab extends AbstractTableTab {
     @Override
     protected int getRowCount() {
         return sortedBeans().size();
+    }
+
+    @Override
+    protected boolean selectsFirstRow() {
+        // the detail panel shows the selected row
+        return true;
     }
 
     @Override
@@ -157,12 +164,18 @@ class BeansTab extends AbstractTableTab {
     }
 
     @Override
-    public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        boolean handled = super.handleMouseEvent(me, area);
-        if (handled) {
-            detailScroll = 0;
-        }
-        return handled;
+    protected void focusDetail(boolean focused) {
+        detailFocused = focused;
+    }
+
+    @Override
+    protected void scrollDetail(int lines) {
+        detailScroll = Math.max(0, detailScroll + lines);
+    }
+
+    @Override
+    protected void rowClicked() {
+        detailScroll = 0;
     }
 
     @Override
@@ -198,11 +211,13 @@ class BeansTab extends AbstractTableTab {
                     Cell.from(Span.styled(shortType, Style.EMPTY))));
         }
 
+        String mode = filterModes()[filterIndex];
         if (rows.isEmpty()) {
-            rows.add(emptyRow("No beans", 2));
+            rows.add(emptyRow("user".equals(mode) && !allBeans.isEmpty() && filter.term() == null
+                    ? "No beans of its own: f shows the " + allBeans.size() + " of Camel"
+                    : "No beans", 2));
         }
 
-        String mode = filterModes()[filterIndex];
         String title = filter.term() != null
                 ? String.format(" Beans [%d] scope:%s filter:\"%s\" ", visible.size(), mode, filter.term())
                 : String.format(" Beans [%d] scope:%s ", visible.size(), mode);
@@ -231,6 +246,7 @@ class BeansTab extends AbstractTableTab {
     }
 
     private void renderDetail(Frame frame, Rect area, List<BeanData> visible) {
+        lastDetailArea = area;
         Style detailBorderStyle = ctx.paneBorder(detailFocused);
         Style detailTitleStyle = detailFocused ? Theme.title() : Style.EMPTY.fg(Theme.accent());
 
@@ -525,11 +541,14 @@ class BeansTab extends AbstractTableTab {
     @Override
     public JsonObject getTableDataAsJson() {
         List<BeanData> beans = sortedBeans();
-        if (beans.isEmpty()) {
+        if (allBeans.isEmpty()) {
             return null;
         }
         JsonObject result = new JsonObject();
         result.put("tab", "Beans");
+        // the rows are those of the scope (f): the beans of the integration itself at first, not those of Camel
+        result.put("scope", filterModes()[filterIndex]);
+        result.put("allBeans", allBeans.size());
         JsonArray rows = new JsonArray();
         for (BeanData b : beans) {
             JsonObject row = new JsonObject();

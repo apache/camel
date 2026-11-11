@@ -90,7 +90,8 @@ class CircuitBreakerTab extends AbstractTableTab {
             String fallback = cb.fallbackCalls > 0 ? String.valueOf(cb.fallbackCalls) : "";
             String timeout = cb.timedOutCalls > 0 ? String.valueOf(cb.timedOutCalls) : "";
             String rate = cb.failureRate >= 0 ? String.format("%.0f%%", cb.failureRate) : "";
-            String inflight = String.valueOf(cb.inflight);
+            // blank when zero, as the other counts, so the ones that are not stand out
+            String inflight = cb.inflight > 0 ? String.valueOf(cb.inflight) : "";
             String sinceLast = formatSinceLast(cb.sinceLastStarted, cb.sinceLastSuccess, cb.sinceLastFail);
 
             rows.add(Row.from(
@@ -113,6 +114,10 @@ class CircuitBreakerTab extends AbstractTableTab {
             rows.add(emptyRow("No circuit breakers", 13));
         }
 
+        // a breaker that shows up once the tab is open (the route is still starting) is selected like one that was there
+        if (!sorted.isEmpty() && tableState.selected() == null) {
+            tableState.select(0);
+        }
         CircuitBreakerInfo selectedCb = null;
         Integer sel = tableState.selected();
         if (sel != null && sel >= 0 && sel < sorted.size()) {
@@ -334,15 +339,17 @@ class CircuitBreakerTab extends AbstractTableTab {
         long curFail = failArr[renderPoints - 1];
         Line chartTitle = Line.from(
                 Span.styled("▬", Theme.success()),
-                Span.raw(String.format(" ok:%-4d ", curSuccess)),
+                Span.raw(String.format(" ok:%-4s ", MetricsCollector.formatThroughput(curSuccess))),
                 Span.styled("▬", Theme.error()),
-                Span.raw(String.format(" fail:%-4d msg/s ", curFail)));
+                Span.raw(String.format(" fallback:%-4s msg/s ", MetricsCollector.formatThroughput(curFail))));
         frame.renderWidget(DualSparkline.builder()
                 .topData(successArr)
                 .bottomData(failArr)
                 .topStyle(Theme.success())
                 .bottomStyle(Theme.error())
                 .showYAxis(true)
+                // the rates are scaled by THROUGHPUT_SCALE; the axis shows msg/s like the title
+                .yAxisFormatter(MetricsCollector::formatThroughput)
                 .xLabels("-" + renderPoints + "s", "-" + (renderPoints * 3 / 4) + "s",
                         "-" + (renderPoints / 2) + "s", "-" + (renderPoints / 4) + "s", "now")
                 .block(Block.builder().borderType(BorderType.ROUNDED).borders(Borders.ALL).borderStyle(ctx.paneBorder(false))

@@ -536,4 +536,30 @@ public class KeycloakSecurityHelperTest {
         assertTrue(permissions.isEmpty());
     }
 
+    @Test
+    void testExtractUserInfoKeepsTheClaims() {
+        AccessToken token = new AccessToken();
+        token.subject("user-id");
+        token.audience("first", "second");
+        token.exp(100L);
+        token.setOtherClaims("custom", Map.of("key", 1));
+
+        Map<String, Object> userInfo = KeycloakSecurityHelper.extractUserInfo(token);
+
+        assertEquals("user-id", userInfo.get("sub"));
+        assertEquals(List.of("first", "second"), userInfo.get("aud"));
+        assertEquals(100, userInfo.get("exp"));
+        assertEquals(Map.of("key", 1), userInfo.get("custom"));
+    }
+
+    @Test
+    void testExtractUserInfoSingleAudienceIsAString() {
+        AccessToken token = new AccessToken();
+        token.subject("user-id");
+        token.audience("single");
+
+        Map<String, Object> userInfo = KeycloakSecurityHelper.extractUserInfo(token);
+
+        assertEquals("single", userInfo.get("aud"));
+    }
 }

@@ -60,7 +60,7 @@ public interface ChatScriptEndpointBuilderFactory {
             return this;
         }
         /**
-         * Issues :reset command to start a new conversation everytime.
+         * Issues :reset command to start a new conversation every time.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -75,7 +75,7 @@ public interface ChatScriptEndpointBuilderFactory {
             return this;
         }
         /**
-         * Issues :reset command to start a new conversation everytime.
+         * Issues :reset command to start a new conversation every time.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 

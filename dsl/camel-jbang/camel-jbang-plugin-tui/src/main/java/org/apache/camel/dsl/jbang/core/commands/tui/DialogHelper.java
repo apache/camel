@@ -168,15 +168,20 @@ final class DialogHelper {
         return renderConfirm(frame, area, title, message, detail, acceptKey, acceptLabel, extraKey, extraLabel, null);
     }
 
-    /** As above, recording where the keys of the dialog are drawn in {@code clicks} (when not null). */
+    /**
+     * As above, recording where the keys of the dialog are drawn in {@code clicks} (when not null). Without an
+     * {@code acceptKey} it only waits, such as while the integration is asked: Esc cancels.
+     */
     static Rect renderConfirm(
             Frame frame, Rect area, String title, String message, String detail, String acceptKey, String acceptLabel,
             String extraKey, String extraLabel, HintClicks clicks) {
         Style accent = Theme.warning();
         String titleText = " " + title + " ";
         String msg = message.trim();
-        Line hints = extraKey != null
-                ? TuiHelper.hintLine(acceptKey, acceptLabel, extraKey, extraLabel, "Esc", "cancel")
+        Line hints = acceptKey == null
+                ? TuiHelper.hintLine("Esc", "cancel")
+                : extraKey != null
+                        ? TuiHelper.hintLine(acceptKey, acceptLabel, extraKey, extraLabel, "Esc", "cancel")
                 : TuiHelper.hintLine(acceptKey, acceptLabel, "Esc", "cancel");
         int contentW = Math.max(CharWidth.of(msg), Math.max(detail != null ? CharWidth.of(detail) : 0, hints.width()));
         int popupW = clampWidth(area, CONFIRM_MIN_WIDTH, Math.max(contentW + 6, CharWidth.of(titleText) + 4));

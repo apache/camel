@@ -428,7 +428,7 @@ public class JdbcKeyValueRepository extends ServiceSupport implements KeyValueRe
         if (ttl == null || ttl.isZero() || ttl.isNegative()) {
             return 0;
         }
-        return System.currentTimeMillis() + ttl.toMillis();
+        return KeyValueRepositoryHelper.expiresAt(ttl);
     }
 
     // ---- Getters and Setters ----

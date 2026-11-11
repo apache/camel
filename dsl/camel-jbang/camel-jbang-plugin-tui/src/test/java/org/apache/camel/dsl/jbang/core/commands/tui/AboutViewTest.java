@@ -112,8 +112,8 @@ class AboutViewTest {
         // the outage was 4.5 minutes ago, for 15 seconds
         ctx.timeline.merge("1234", TimelineTabRenderTest.outage(end, 300, 0).json(), true);
         AboutView about = new AboutView(ctx);
-        // 160 wide has room for 75 columns of 4 seconds
-        assertThat(render(about, info)).contains("What happened ─ last 5m, a column is 4s ─ + zoom in, 4 for each");
+        // 160 wide has room for 100 columns of 3 seconds next to the notes of the route
+        assertThat(render(about, info)).contains("What happened ─ last 5m, a column is 3s ─ + zoom in, 4 for each");
 
         assertThat(about.handleKeyEvent(KeyEvent.ofChar('+'), info)).isTrue();
         // 2 minutes from the first second recorded, with the outage in it
@@ -132,13 +132,77 @@ class AboutViewTest {
 
     @Test
     void theStripsAreAsWideAsTheRoomAllows() {
-        // a whole number of seconds in a column, at least 60 columns and at most 150
+        // a whole number of seconds in a column, at least 60 columns and at most 300
         assertThat(AboutView.stripColumns(300, 40)).isEqualTo(60);
         assertThat(AboutView.stripColumns(300, 94)).isEqualTo(75);
         assertThat(AboutView.stripColumns(300, 129)).isEqualTo(100);
-        assertThat(AboutView.stripColumns(300, 500)).isEqualTo(150);
+        assertThat(AboutView.stripColumns(300, 160)).isEqualTo(150);
+        assertThat(AboutView.stripColumns(300, 500)).isEqualTo(300);
         assertThat(AboutView.stripColumns(120, 129)).isEqualTo(120);
         assertThat(AboutView.stripColumns(60, 500)).isEqualTo(60);
+    }
+
+    @Test
+    void theStripsTakeTheRoomTheNotesLeave() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        RouteInfo r = new RouteInfo();
+        r.routeId = "stock-check";
+        info.routes.add(r);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", TimelineTabRenderTest.outage(T0 / 1000 + 299, 300, 0).json(), true);
+
+        // a 200 wide screen: the notes after a strip are short, so the strips get 150 columns of 2 seconds, not 100
+        assertThat(render(new AboutView(ctx), info, 200, 40)).contains("last 5m, a column is 2s");
+    }
+
+    @Test
+    void anIntegrationWithoutAStatusOfLateSaysSoInsteadOfRunning() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.errorCount = 2;
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        info.statusWrittenAt = System.currentTimeMillis();
+        assertThat(render(new AboutView(ctx), info)).contains("● running").contains("✗ 2 errors");
+
+        // a timer-log held with kill -STOP: its last status 30 seconds ago, and no CPU since
+        info.statusWrittenAt = System.currentTimeMillis() - 30_000;
+        info.cpuPercent = 0;
+        String rendered = render(new AboutView(ctx), info);
+        assertThat(rendered).contains("✗ no status").doesNotContain("● running")
+                .contains("(30s ago): idle at 0% CPU, as when a debugger holds it")
+                // what is to watch now; its errors are of then
+                .doesNotContain("2 errors");
+    }
+
+    @Test
+    void watchCalmsDownWhenTheErrorsStopped() {
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.errorCount = 13;
+        info.errorKinds = List.of(
+                new IntegrationInfo.ErrorKind(
+                        "stock-check", "io.github.resilience4j.circuitbreaker.CallNotPermittedException", 10),
+                new IntegrationInfo.ErrorKind("supplier", "java.net.ConnectException", 3));
+        ErrorInfo last = new ErrorInfo();
+        info.errors.add(last);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+
+        // the last error 20 seconds ago: still something to watch
+        last.timestamp = System.currentTimeMillis() - 20_000;
+        assertThat(render(new AboutView(ctx), info))
+                .contains("✗ 13 errors: CallNotPermittedException ×10 · ConnectException ×3 · the last 20s ago");
+
+        // 90 seconds ago: none in the last minute, the ones before for the record
+        last.timestamp = System.currentTimeMillis() - 90_000;
+        String rendered = render(new AboutView(ctx), info);
+        assertThat(rendered).contains("no errors in the last minute · 13 errors before: CallNotPermittedException ×10")
+                .contains("the last 1m30s ago").contains("9  show errors").doesNotContain("✗");
+
+        // the integration says when the newest error happened, without the Errors tab loading them
+        info.errors = List.of();
+        info.lastErrorTimestamp = System.currentTimeMillis() - 20_000;
+        assertThat(render(new AboutView(ctx), info)).contains("✗ 13 errors").contains("the last 20s ago");
     }
 
     @Test
@@ -291,6 +355,268 @@ class AboutViewTest {
     }
 
     @Test
+    void theStripsAreInTheOrderOfTheRoutesACalledRouteAfterItsCaller() throws Exception {
+        Files.writeString(dir.resolve("orders.camel.yaml"), """
+                - route:
+                    id: incoming
+                    from:
+                      uri: timer:orders
+                      steps:
+                        - wireTap: direct:audit
+                - route:
+                    id: audit
+                    from:
+                      uri: direct:audit
+                      steps:
+                        - log: audited
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "orders";
+        info.directory = dir.toString();
+        // the integration lists its routes by id: the called one first
+        for (String id : List.of("audit", "incoming")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            r.state = "Started";
+            info.routes.add(r);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", TimelineTabRenderTest.outage(T0 / 1000 + 59, 60, 0).json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<String> strips = render(about, info).lines()
+                    .dropWhile(l -> !l.contains("What happened"))
+                    .filter(l -> l.contains("    incoming ") || l.contains("    audit ")).toList();
+            assertThat(strips).hasSize(2);
+            assertThat(strips.get(0)).contains("incoming");
+            assertThat(strips.get(1)).contains("audit");
+        });
+    }
+
+    @Test
+    void theQuickStartRoutesExampleSaysWhatItDoesAndWhenItRuns() throws Exception {
+        // quick-start/routes: the bean file comes first, and no file has a comment
+        Files.writeString(dir.resolve("beans.yaml"), "- beans:\n    - name: greeter\n      type: camel.example.Greeter\n");
+        Files.writeString(dir.resolve("routes.camel.yaml"), """
+                - route:
+                    id: greeting
+                    from:
+                      uri: timer
+                      parameters:
+                        timerName: greet
+                        period: "{{greeter.period}}"
+                      steps:
+                        - log: hello
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "routes";
+        info.directory = dir.toString();
+        // the period the integration runs with, from its application.properties
+        ConfigurationTab.ConfigProperty period = new ConfigurationTab.ConfigProperty();
+        period.key = "greeter.period";
+        period.value = "2000";
+        info.configProperties.add(period);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+
+        AboutView first = new AboutView(ctx);
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(first, info, 200, 34))
+                // the file to put the comment in is the one with the route
+                .contains("No description yet: a comment at the top of routes.camel.yaml or a README says what it does")
+                .contains("timer:greet (period=2000)")
+                .contains("s  summary").doesNotContain("r  readme"));
+
+        Files.writeString(dir.resolve("README.md"), """
+                # Routes
+
+                The first step from YAML into your own code: a timer route calls a Java bean.
+                """);
+        AboutView about = new AboutView(ctx);
+        List<String> opened = new ArrayList<>();
+        ctx.openMarkdownCallback = (title, markdown) -> opened.add(title + ": " + markdown.lines().findFirst().orElse(""));
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("The first step from YAML into your own code: a timer route calls a Java bean.")
+                .contains("from README.md").contains("r  readme"));
+        assertThat(about.handleKeyEvent(KeyEvent.ofChar('r'), info)).isTrue();
+        assertThat(opened).containsExactly("routes - README.md: # Routes");
+        assertThat(about.tableJson(info).getString("keys")).contains("r the README, s the summary");
+    }
+
+    @Test
+    void theRouteCamelAddsForTheApiDescriptionIsNamedByItsEndpoint() throws Exception {
+        // contracts/rest-code-first: the REST DSL serves /openapi from a route Camel adds and names route1
+        Files.writeString(dir.resolve("rest-code-first.camel.yaml"), """
+                - route:
+                    id: list-orders
+                    from:
+                      uri: direct:list-orders
+                      steps:
+                        - log: listed
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "rest-code-first";
+        info.directory = dir.toString();
+        for (String[] r : List.of(new String[] { "list-orders", "direct://list-orders" },
+                new String[] { "route1", "rest-api://openapi" })) {
+            RouteInfo route = new RouteInfo();
+            route.routeId = r[0];
+            route.from = r[1];
+            route.state = "Started";
+            info.routes.add(route);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        t.route("list-orders", "completed", 55, 1).route("route1", "completed", 56, 1);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<String> strips = render(about, info, 200, 34).lines().dropWhile(l -> !l.contains("What happened"))
+                    .filter(l -> l.contains("    list-orders ") || l.contains("    rest-api:openapi ")).toList();
+            assertThat(strips).hasSize(2);
+        });
+        assertThat(render(about, info, 200, 34)).doesNotContain(" route1 ");
+    }
+
+    @Test
+    void aLongRouteNameIsShownInFullWhenTheStripsLeaveRoom() throws Exception {
+        // route/content-based-router: its one route has the name of the example
+        Files.writeString(dir.resolve("content-based-router.camel.yaml"), """
+                - route:
+                    id: content-based-router
+                    from:
+                      uri: file:orders
+                      steps:
+                        - log: routed
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "content-based-router";
+        info.directory = dir.toString();
+        RouteInfo route = new RouteInfo();
+        route.routeId = "content-based-router";
+        route.state = "Started";
+        info.routes.add(route);
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        t.route("content-based-router", "completed", 55, 3);
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34).lines()
+                .dropWhile(l -> !l.contains("What happened")).filter(l -> l.contains("content-based-rout")).toList())
+                .singleElement().satisfies(l -> assertThat(l).contains("content-based-router ").doesNotContain("…")));
+    }
+
+    @Test
+    void lastFiveMinutesCountsAnExchangeOnceNotOncePerRouteItPasses() throws Exception {
+        // fail-well/circuit-breaker: stock-check calls supplier with direct, once a second
+        Files.writeString(dir.resolve("circuit-breaker.camel.yaml"), """
+                - route:
+                    id: stock-check
+                    from:
+                      uri: timer:stock
+                      steps:
+                        - to: direct:supplier
+                        - to: seda:report
+                - route:
+                    id: supplier
+                    from:
+                      uri: direct:supplier
+                      steps:
+                        - log: called
+                - route:
+                    id: report
+                    from:
+                      uri: seda:report
+                      steps:
+                        - log: reported
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "circuit-breaker";
+        info.directory = dir.toString();
+        for (String id : List.of("stock-check", "supplier", "report")) {
+            RouteInfo r = new RouteInfo();
+            r.routeId = id;
+            r.state = "Started";
+            info.routes.add(r);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        for (int i = 50; i < 60; i++) {
+            t.route("stock-check", "completed", i, 1).route("supplier", "completed", i, 1);
+            // the report, handed off, fails once: its sender does not see that
+            t.route("report", i == 55 ? "failed" : "completed", i, 1);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("↳ supplier")
+                // 10 checks, not 30 for the three routes they went through
+                .contains("10 exchanges · 1 failed").doesNotContain("30 exchanges").doesNotContain("20 exchanges"));
+    }
+
+    @Test
+    void theOperationsOfAContractComeInAndAreCountedOnce() throws Exception {
+        // contracts/openapi-server: the REST DSL serves stock-api.json; Camel adds route2 to serve it, which hands each
+        // request to the route of its operation
+        Files.writeString(dir.resolve("stock-api.json"), """
+                {"servers": [{"url": "http://localhost:8080/api"}],
+                 "paths": {"/stock/{sku}/reserve": {"post": {"operationId": "reserveStock"}}}}
+                """);
+        Files.writeString(dir.resolve("openapi-server.camel.yaml"), """
+                - rest:
+                    openApi:
+                      specification: stock-api.json
+                - route:
+                    id: reserveStock
+                    from:
+                      uri: direct:reserveStock
+                      steps:
+                        - log: reserved
+                """);
+        IntegrationInfo info = new IntegrationInfo();
+        info.pid = "1234";
+        info.name = "openapi-server";
+        info.directory = dir.toString();
+        for (String[] r : List.of(new String[] { "reserveStock", "direct://reserveStock" },
+                new String[] { "route2", "rest-openapi://stock-api.json?clientRequestValidation=true" })) {
+            RouteInfo route = new RouteInfo();
+            route.routeId = r[0];
+            route.from = r[1];
+            route.state = "Started";
+            info.routes.add(route);
+        }
+        TimelineJson t = new TimelineJson(T0 / 1000 + 59, 60);
+        for (int i = 50; i < 56; i++) {
+            t.route("reserveStock", "completed", i, 1).route("route2", "completed", i, 1);
+        }
+        MonitorContext ctx = new MonitorContext(new AtomicReference<>(List.of(info)), new AtomicReference<>(List.of()));
+        ctx.timeline.merge("1234", t.json(), true);
+        AboutView about = new AboutView(ctx);
+
+        await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> assertThat(render(about, info, 200, 34))
+                .contains("POST /api/stock/{sku}/reserve").doesNotContain("nothing from outside")
+                // 6 reservations, not 12 with the route that served them
+                .contains("6 exchanges").doesNotContain("12 exchanges"));
+    }
+
+    @Test
+    void aRouteAnAiAgentCallsAsAToolHasTheIconOfAi() {
+        // ai/mcp-server: its routes start from ai-tool
+        assertThat(AboutView.icon("ai-tool")).isEqualTo(TuiIcons.MCP);
+        assertThat(AboutView.icon("ai")).isEqualTo(TuiIcons.MCP);
+        assertThat(AboutView.icon("http")).isEqualTo("🌐");
+        // cloud/aws-sqs: the queue the courier route consumes has the icon Out gives it, from the catalog
+        assertThat(AboutView.inIcon("aws2-sqs")).isEqualTo("📨");
+    }
+
+    @Test
     void aboutAnIntegrationWithWhatHasHappened() throws Exception {
         Files.writeString(dir.resolve("shop.camel.yaml"), """
                 # Every order is checked against the stock and shipped.
@@ -379,5 +705,29 @@ class AboutViewTest {
         assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
         assertThat(about.handleKeyEvent(KeyEvent.ofKey(KeyCode.ENTER), info)).isTrue();
         assertThat(opened).containsExactly(new AboutView.Target("orders", "http:localhost:8765/ship"));
+
+        // a click puts the cursor on an entry: a route, an endpoint by the line under it, an entry of In
+        List<String> screen = render(about, info).lines().toList();
+        assertThat(click(about, screen, "↳ stock")).isTrue();
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("stock", null));
+        assertThat(click(about, screen, "timer:orders")).isTrue();
+        assertThat(about.selectionContext().selectedIndex()).isZero();
+        assertThat(click(about, screen, "from orders")).isTrue();
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
+        // the head and What happened are no entries
+        assertThat(click(about, screen, "Every order is checked")).isFalse();
+        assertThat(click(about, screen, "What happened")).isFalse();
+        assertThat(about.selected()).isEqualTo(new AboutView.Target("orders", "http:localhost:8765/ship"));
+    }
+
+    /** Clicks on the first line that has the text, on its second character. */
+    private static boolean click(AboutView about, List<String> screen, String text) {
+        for (int y = 0; y < screen.size(); y++) {
+            int x = screen.get(y).indexOf(text);
+            if (x >= 0) {
+                return about.click(x + 1, y);
+            }
+        }
+        throw new AssertionError(text + " is not on the screen");
     }
 }

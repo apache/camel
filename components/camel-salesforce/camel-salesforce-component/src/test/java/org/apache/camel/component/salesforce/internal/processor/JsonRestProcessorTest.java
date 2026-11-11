@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,6 +24,7 @@ import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -159,6 +161,25 @@ public class JsonRestProcessorTest {
             try (InputStream stream = jsonRestProcessor.getRequestStream(exchange)) {
                 return IOUtils.toString(stream, StandardCharsets.UTF_8);
             }
+        }
+    }
+
+    @Test
+    public void shouldReportUnparsableResponseAsSalesforceException() throws Exception {
+        final SalesforceEndpoint endpoint = new SalesforceEndpoint(
+                "", new SalesforceComponent(), new SalesforceEndpointConfig(), OperationName.GET_SOBJECT, "");
+
+        try (final JsonRestProcessor jsonProcessor = new JsonRestProcessor(endpoint)) {
+            final Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+            exchange.setProperty(AbstractRestProcessor.RESPONSE_CLASS, TestObject.class);
+
+            jsonProcessor.processResponse(exchange,
+                    new ByteArrayInputStream("not json".getBytes(StandardCharsets.UTF_8)), Collections.emptyMap(), null,
+                    doneSync -> {
+                    });
+
+            assertThat(exchange.getException()).isInstanceOf(SalesforceException.class)
+                    .hasMessageContaining("Error parsing JSON response");
         }
     }
 }

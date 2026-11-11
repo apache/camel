@@ -78,7 +78,7 @@ public class HttpOAuth2ResourceIndicatorTest extends BaseHttpTest {
     // Sends a request that needs a token, and returns the parameters of the token request
     private Map<String, String> requestWithToken(boolean bodyAuthentication) throws Exception {
         tokenRequests.clear();
-        try (HttpServer localServer = createLocalServer()) {
+        try (HttpServer localServer = createLocalServer(); AutoCloseable shutdown = closeImmediately(localServer)) {
             String tokenEndpoint = "http://localhost:" + localServer.getLocalPort() + "/token";
             String requestUrl = "http://localhost:" + localServer.getLocalPort() + "/post?httpMethod=POST&oauth2ClientId="
                                 + CLIENT_ID + "&oauth2ClientSecret=" + CLIENT_SECRET + "&oauth2TokenEndpoint=" + tokenEndpoint

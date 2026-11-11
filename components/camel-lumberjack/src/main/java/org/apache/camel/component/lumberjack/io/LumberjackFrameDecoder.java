@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterOutputStream;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
@@ -32,6 +31,8 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_COMPRESS_HEADER_LENGTH;
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.FRAME_DATA_HEADER_LENGTH;
@@ -62,7 +63,7 @@ import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSI
 final class LumberjackFrameDecoder extends ByteToMessageDecoder {
     private static final Logger LOG = LoggerFactory.getLogger(LumberjackFrameDecoder.class);
 
-    private final ObjectMapper jackson = new ObjectMapper();
+    private final ObjectMapper jackson = JsonMapper.builderWithJackson2Defaults().build();
     private LumberjackWindow window;
 
     @Override

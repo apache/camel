@@ -68,6 +68,12 @@ class HeapHistogramTab extends AbstractTableTab {
     }
 
     @Override
+    protected boolean selectsFirstRow() {
+        // the detail panel shows the selected row
+        return true;
+    }
+
+    @Override
     public void onTabSelected() {
         String pid = ctx.selectedPid;
         if (pid != null && !pid.equals(lastPid)) {
@@ -168,6 +174,7 @@ class HeapHistogramTab extends AbstractTableTab {
                         .title(title).build())
                 .build();
 
+        lastTableArea = area;
         frame.renderStatefulWidget(table, area, tableState);
     }
 

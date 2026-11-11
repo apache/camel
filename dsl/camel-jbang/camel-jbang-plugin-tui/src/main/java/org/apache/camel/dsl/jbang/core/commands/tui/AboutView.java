@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -27,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -36,6 +40,7 @@ import dev.tamboui.layout.Padding;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Style;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.CharWidth;
 import dev.tamboui.text.Line;
 import dev.tamboui.text.Span;
 import dev.tamboui.text.Text;
@@ -47,6 +52,7 @@ import dev.tamboui.widgets.paragraph.Paragraph;
 import org.apache.camel.dsl.jbang.core.commands.ai.About;
 import org.apache.camel.dsl.jbang.core.commands.ai.AboutReport;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
+import org.apache.camel.dsl.jbang.core.commands.ai.ProjectRoutes;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -63,13 +69,15 @@ final class AboutView {
     // how often the sources are read again, to see a change
     private static final long RELOAD_MILLIS = 10_000;
     private static final int HAPPENED_SECONDS = 300;
+    // how long after the last error the Watch line calms down
+    private static final long WATCH_CALM_MILLIS = 60_000;
     private static final String BLOCKS = " ▁▂▃▄▅▆▇█";
     // the strips have at least this many columns, whatever the zoom, and as many as the width allows up to the most,
     // a column taking a whole number of seconds
     private static final int STRIP_COLUMNS = 60;
-    private static final int MAX_STRIP_COLUMNS = 150;
-    // what the line of a route has after its strip: its exchanges, an open circuit breaker, the worst that happened
-    private static final int STRIP_NOTES = 50;
+    private static final int MAX_STRIP_COLUMNS = 300;
+    // the cause of a recovery after the strip of a route, cut to this width when the strips need the room
+    private static final int CAUSE_WIDTH = 30;
     // the sparklines of In and Out, wider in a wider column
     private static final int SPARK_WIDTH = 14;
     private static final int MAX_SPARK_WIDTH = 30;
@@ -87,6 +95,8 @@ final class AboutView {
     private volatile boolean loading;
     private volatile String error;
     private Path dir;
+    // the README of the project, which r opens; null when it has none
+    private Path readme;
     private long loadedAt;
     // the zoom of What happened, as the windows of the Timeline tab (+ and -), and its last second when moved (← →);
     // -1 follows the last second recorded
@@ -94,12 +104,17 @@ final class AboutView {
     private long stripsEnd = -1;
     // the columns of the strips as last drawn, for the title of What happened
     private int stripColumns = STRIP_COLUMNS;
+    // the width of the text of the Out column, as the last render had it
+    private int outWidth = 40;
     // the line of In, Routes or Out the cursor is on (↑ ↓), in the order of the columns; -1 when none is
     private int cursor = -1;
     // the column the cursor is in: 0 In, 1 Routes, 2 Out, or -1 when it is on nothing; its panel has the focus border
     private int focus = -1;
     private volatile List<Target> targets = List.of();
     private volatile List<String> targetLabels = List.of();
+    // what In, Routes and Out show and where their lines are on the screen, for a click
+    private Columns shown;
+    private final Rect[] columnAreas = new Rect[3];
 
     /**
      * What a line of In, Routes or Out is about, for Enter: a route (opened on the Diagram) or an endpoint a route
@@ -138,7 +153,9 @@ final class AboutView {
             try {
                 ProjectOverview.Overview o = ProjectOverview.analyze(d, ArchitectureView.catalog());
                 About.Model m = About.of(d, o);
+                Path r = About.readme(d);
                 onRenderThread.accept(() -> {
+                    readme = r;
                     overview = o;
                     model = m;
                     purpose = m.purpose();
@@ -168,6 +185,14 @@ final class AboutView {
         if (ke.isConfirm()) {
             return open();
         }
+        if (ke.isChar('r') && readme != null) {
+            return openReadme(info);
+        }
+        if (ke.isChar('s') && dir != null) {
+            // the summary of the project, as the Diagram opens it: what an AI wrote, and what its sources say
+            IntegrationSummaryDoc.open(ctx, dir, null);
+            return true;
+        }
         long end = ctx.timeline.endSecond(info.pid);
         if (ke.isChar('+') || ke.isChar('=')) {
             if (zoom > 0 && end >= 0) {
@@ -195,6 +220,22 @@ final class AboutView {
             return true;
         }
         return false;
+    }
+
+    /** Opens the README of the project in the document viewer. */
+    private boolean openReadme(IntegrationInfo info) {
+        if (ctx.openMarkdownCallback == null) {
+            return false;
+        }
+        try {
+            String text = Files.readString(readme, StandardCharsets.UTF_8);
+            String name = readme.getFileName().toString();
+            String markdown = name.toLowerCase(Locale.ROOT).endsWith(".adoc") ? DocHelper.asciidocToMarkdown(text) : text;
+            ctx.openMarkdownCallback.accept((info.name != null ? info.name : info.pid) + " - " + name, markdown);
+        } catch (IOException e) {
+            error = "Cannot read " + readme + ": " + e.getMessage();
+        }
+        return true;
     }
 
     /** The lines the cursor can be on, for an agent (tui_get_state): the route, or the endpoint and its route. */
@@ -231,7 +272,7 @@ final class AboutView {
         JsonArray in = new JsonArray();
         for (About.In e : m.in()) {
             JsonObject jo = new JsonObject();
-            jo.put("label", e.label());
+            jo.put("label", Placeholders.resolve(e.label(), info));
             jo.put("kind", e.kind());
             jo.put("routeId", e.route());
             putTotalAndRate(jo, info, e.route(), totals);
@@ -328,7 +369,8 @@ final class AboutView {
             }
             result.put("selected", sel);
         }
-        result.put("keys", "v all integrations, Up/Down select a line, Enter opens it, +/- zoom, Left/Right move, 4 Timeline");
+        result.put("keys", "v all integrations, Up/Down select a line, Enter opens it, +/- zoom, Left/Right move, 4 Timeline,"
+                           + (readme != null ? " r the README," : "") + " s the summary");
         return result;
     }
 
@@ -355,6 +397,42 @@ final class AboutView {
         } else {
             cursor = Math.max(0, Math.min(n - 1, cursor + delta));
         }
+    }
+
+    /**
+     * A click on In, Routes or Out puts the cursor on the entry clicked: its name, or the line under it (its exchanges,
+     * or the route that sends to it). False when the click was on none.
+     */
+    boolean click(int x, int y) {
+        Columns c = shown;
+        if (c == null) {
+            return false;
+        }
+        List<List<Line>> lines = List.of(c.in(), c.routes(), c.out());
+        List<List<Target>> columns = List.of(c.inTargets(), c.routeTargets(), c.outTargets());
+        int before = 0;
+        for (int i = 0; i < columns.size(); i++) {
+            List<Target> col = columns.get(i);
+            Rect r = columnAreas[i];
+            if (r != null && r.contains(x, y)) {
+                int at = y - r.y();
+                if (at > 0 && at < col.size() && col.get(at) == null && col.get(at - 1) != null
+                        && !lines.get(i).get(at).rawContent().isBlank()) {
+                    at--;
+                }
+                if (at >= col.size() || col.get(at) == null) {
+                    return false;
+                }
+                cursor = before + count(col.subList(0, at));
+                return true;
+            }
+            before += count(col);
+        }
+        return false;
+    }
+
+    private static int count(List<Target> targets) {
+        return (int) targets.stream().filter(Objects::nonNull).count();
     }
 
     /** The line the cursor is on, or null. */
@@ -403,8 +481,45 @@ final class AboutView {
         return last;
     }
 
-    private static List<String> routeOrder(IntegrationInfo info) {
-        return info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+    /**
+     * The routes in the order of the Routes panel, where a route comes after the one that calls it, then those it does
+     * not have; the integration lists its routes by id, which puts a called route before its caller.
+     */
+    /**
+     * The name of a route on its strip: its id, or for a route the sources do not have and Camel named route1, its
+     * endpoint (rest-api:openapi, the route that serves the API description of the REST DSL).
+     */
+    private String stripName(IntegrationInfo info, String routeId) {
+        About.Model m = model;
+        if (m == null || !routeId.matches("route\\d+") || m.routes().stream().anyMatch(r -> routeId.equals(r.routeId()))) {
+            return routeId;
+        }
+        String from = info.routes.stream().filter(r -> routeId.equals(r.routeId) && r.from != null).map(r -> r.from)
+                .findFirst().orElse(null);
+        if (from == null) {
+            return routeId;
+        }
+        int q = from.indexOf('?');
+        return (q >= 0 ? from.substring(0, q) : from).replaceFirst("://", ":");
+    }
+
+    private List<String> routeOrder(IntegrationInfo info) {
+        List<String> running = info.routes.stream().map(r -> r.routeId).filter(id -> id != null).toList();
+        List<String> order = new ArrayList<>();
+        About.Model m = model;
+        if (m != null) {
+            for (About.RouteLine r : m.routes()) {
+                if (running.contains(r.routeId()) && !order.contains(r.routeId())) {
+                    order.add(r.routeId());
+                }
+            }
+        }
+        for (String id : running) {
+            if (!order.contains(id)) {
+                order.add(id);
+            }
+        }
+        return order;
     }
 
     /**
@@ -425,6 +540,8 @@ final class AboutView {
         ProjectOverview.Overview o = overview;
         About.Model m = model;
         int width = area.width();
+        // the text of the Out column: its 30 % of the width, less the border, padding and the space before it
+        outWidth = Math.max(0, width * 30 / 100 - 6);
         List<Line> head = head(info, o, width);
         int spark = sparkWidth(width);
         Columns columns = columns(o, m, info, spark, false);
@@ -446,7 +563,7 @@ final class AboutView {
             int tall = routes == 0 ? 1 : Math.max(1, Math.min(MAX_STRIP_ROWS, 1 + (area.height() - used - 2) / routes));
             strips = routeStrips(info, width - 4, spaced, tall);
         }
-        select(columns, m);
+        select(columns, m, info);
         String name = " " + (info.name != null ? info.name : info.pid) + " ";
         if (roomy) {
             renderRoomy(frame, area, info, name, head, columns, status, strips);
@@ -516,14 +633,13 @@ final class AboutView {
         List<Rect> cols = List.of(new Rect(area.x(), area.y(), w0, area.height()),
                 new Rect(area.x() + w0 + spacing, area.y(), w1, area.height()),
                 new Rect(area.x() + w0 + w1 + 2 * spacing, area.y(), w2, area.height()));
-        frame.renderWidget(Paragraph.builder().text(Text.from(columns.in())).block(block(" In ", padding, focus == 0)).build(),
-                cols.get(0));
-        frame.renderWidget(
-                Paragraph.builder().text(Text.from(columns.routes())).block(block(" Routes ", padding, focus == 1)).build(),
-                cols.get(1));
-        frame.renderWidget(
-                Paragraph.builder().text(Text.from(columns.out())).block(block(" Out ", padding, focus == 2)).build(),
-                cols.get(2));
+        List<List<Line>> texts = List.of(columns.in(), columns.routes(), columns.out());
+        String[] titles = { " In ", " Routes ", " Out " };
+        for (int i = 0; i < titles.length; i++) {
+            Block b = block(titles[i], padding, focus == i);
+            columnAreas[i] = b.inner(cols.get(i));
+            frame.renderWidget(Paragraph.builder().text(Text.from(texts.get(i))).block(b).build(), cols.get(i));
+        }
     }
 
     /** What the integration is, and its purpose: the comment at the top of its main file. */
@@ -531,8 +647,9 @@ final class AboutView {
         String p = purpose;
         String pFrom = purposeFrom;
         List<Line> head = new ArrayList<>();
-        head.add(Line.from(Span.raw(" "), Span.raw(meta(info, o)),
-                Span.styled(info.vanishing ? "  ○ stopped" : "  ● running",
+        head.add(Line.from(Span.raw(" "), Span.raw(meta(info, o)), StatusAge.stale(info)
+                ? Span.styled("  ✗ no status", Theme.error())
+                : Span.styled(info.vanishing ? "  ○ stopped" : "  ● running",
                         info.vanishing ? Theme.muted() : Theme.success())));
         if (p != null) {
             for (String l : wrap(p, Math.max(20, width - 8), 2)) {
@@ -541,7 +658,7 @@ final class AboutView {
             head.add(Line.from(Span.styled(" " + pFrom, Theme.muted())));
         } else if (o != null) {
             head.add(Line.from(Span.styled(" No description yet: a comment at the top of " + mainFile(o)
-                                           + " says what it does, or ask the AI (Shift+F8 on a route)",
+                                           + " or a README says what it does, or ask the AI (Shift+F8 on a route)",
                     Theme.muted())));
         } else {
             head.add(Line.from(Span.styled(error != null ? " " + error : " Reading the sources…", Theme.muted())));
@@ -550,12 +667,12 @@ final class AboutView {
     }
 
     /** The lines the cursor goes over, down In, then Routes, then Out; the line it is on in the selection colour. */
-    private void select(Columns c, About.Model m) {
+    private void select(Columns c, About.Model m, IntegrationInfo info) {
         List<Target> all = new ArrayList<>();
         List<String> labels = new ArrayList<>();
         List<String> inLabels = new ArrayList<>();
         if (m != null) {
-            m.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(e.label()));
+            m.in().stream().filter(e -> e.route() != null).forEach(e -> inLabels.add(Placeholders.resolve(e.label(), info)));
         }
         String[] names = { "in", "route", "out" };
         List<List<Target>> columns = List.of(c.inTargets(), c.routeTargets(), c.outTargets());
@@ -573,12 +690,13 @@ final class AboutView {
         }
         targets = all;
         targetLabels = labels;
+        shown = c;
         if (cursor >= all.size()) {
             cursor = all.size() - 1;
         }
         focus = -1;
         for (int i = 0, before = 0; i < columns.size() && cursor >= 0; i++) {
-            int n = (int) columns.get(i).stream().filter(t -> t != null).count();
+            int n = count(columns.get(i));
             if (cursor < before + n) {
                 focus = i;
                 break;
@@ -620,19 +738,32 @@ final class AboutView {
         int seconds = seconds();
         List<String> order = routeOrder(info);
         // the names, then one space: every line starts its columns at the same place
-        int label = Math.min(18, Math.max(8, order.stream().mapToInt(String::length).max().orElse(8))) + 4;
-        int columns = stripColumns(seconds, width - label - STRIP_NOTES);
+        int longest = Math.max(8, order.stream().mapToInt(id -> stripName(info, id).length()).max().orElse(8));
+        int label = Math.min(18, longest) + 4;
+        List<Timeline.RouteSeries> series = ctx.timeline.routes(info.pid, order, end, seconds);
+        // what the line of a route has after its strip (its exchanges, an open circuit breaker, the worst that
+        // happened, with the cause of a recovery up to CAUSE_WIDTH) takes the room it needs, and the strips the rest
+        int notes = 0;
+        for (Timeline.RouteSeries r : series) {
+            notes = Math.max(notes, width(stripNotes(info, r, last, end, seconds, CAUSE_WIDTH)));
+        }
+        int columns = stripColumns(seconds, width - label - notes - 1);
+        // a longer name in full, in what the strips leave (content-based-router)
+        label += Math.max(0, Math.min(longest + 4 - label, width - label - notes - 1 - columns));
+        // the cause gets what the strips leave too
+        int causeRoom = CAUSE_WIDTH + Math.max(0, width - label - notes - 1 - columns);
         stripColumns = columns;
         int per = seconds / columns;
         // the columns that end before the integration started are blank, as the sparklines have them, where a dot is
         // a time it ran and did nothing (uptime is the time it started)
         long startOffset = info.uptime > 0 ? info.uptime / 1000 - (end - seconds + 1) : 0;
         int before = (int) Math.max(0, Math.min(columns, startOffset / per));
-        for (Timeline.RouteSeries r : ctx.timeline.routes(info.pid, order, end, seconds)) {
+        for (Timeline.RouteSeries r : series) {
             if (spaced && !lines.isEmpty()) {
                 lines.add(Line.from(Span.raw("")));
             }
-            String name = r.route().length() > label - 3 ? r.route().substring(0, label - 4) + "…" : r.route();
+            String name = stripName(info, r.route());
+            name = name.length() > label - 3 ? name.substring(0, label - 4) + "…" : name;
             long max = 1;
             // completed, recovered, handled, failed, down, redelivery attempts: the height is the exchanges done, the
             // attempts only colour the column (an exchange retried many times is still one exchange)
@@ -658,7 +789,7 @@ final class AboutView {
                         ? "   " + name + " ".repeat(Math.max(1, label - 3 - name.length())) : " ".repeat(label)));
                 spans.addAll(rows.get(row));
                 if (row == tall - 1) {
-                    spans.addAll(stripNotes(info, r, last, end, seconds, width - label - columns - 40));
+                    spans.addAll(stripNotes(info, r, last, end, seconds, causeRoom));
                 }
                 lines.add(Line.from(spans));
             }
@@ -741,6 +872,14 @@ final class AboutView {
         return spans;
     }
 
+    private static int width(List<Span> spans) {
+        int w = 0;
+        for (Span span : spans) {
+            w += CharWidth.of(span.content());
+        }
+        return w;
+    }
+
     /**
      * The columns of the strips: the most that fit the room, up to {@value #MAX_STRIP_COLUMNS}, with a whole number of
      * seconds in each; at least {@value #STRIP_COLUMNS}.
@@ -813,8 +952,10 @@ final class AboutView {
         return sb.toString();
     }
 
+    /** The file of the first route, where its comment goes: not a file that only declares beans. */
     private static String mainFile(ProjectOverview.Overview o) {
-        return o.files().isEmpty() ? "the main file" : o.files().get(0);
+        return o.flows().stream().map(ProjectRoutes.Route::file).filter(f -> f != null).findFirst()
+                .orElse(o.files().isEmpty() ? "the main file" : o.files().get(0));
     }
 
     // ---- In, Routes, Out ----
@@ -870,13 +1011,15 @@ final class AboutView {
                 inTargets.add(null);
             }
             Long total = e.route() != null ? totals.get(e.route()) : null;
-            in.add(Line.from(Span.raw(" " + icon(e.kind()) + " "), Span.styled(e.label(), Style.EMPTY.bold()),
+            // with the values of its properties: the period or the schedule it runs with, its profile applied
+            in.add(Line.from(Span.raw(" " + inIcon(e.kind()) + " "),
+                    Span.styled(Placeholders.resolve(e.label(), info), Style.EMPTY.bold()),
                     Span.styled(total != null ? "  " + total : "", Theme.success())));
             inTargets.add(e.route() != null ? new Target(e.route(), null) : null);
             // the exchanges of the route it starts over the last minutes, and the rate now
             long[] perSecond = e.route() != null ? routePerSecond(info, e.route()) : null;
             if (perSecond != null) {
-                in.add(sparkLine("   ", perSecond, spark));
+                in.add(sparkLine("   ", perSecond, spark, StatusAge.stale(info)));
                 inTargets.add(null);
             }
         }
@@ -901,7 +1044,10 @@ final class AboutView {
             routeTargets.add(new Target(r.routeId(), null));
         }
 
-        for (About.Out s : m.out()) {
+        // and the ones the integration sent to that its routes do not name (a toD, a recipient list)
+        List<About.Out> outs = new ArrayList<>(m.out());
+        outs.addAll(ObservedOuts.of(info, m.out()));
+        for (About.Out s : outs) {
             if (spaced && !out.isEmpty()) {
                 out.add(Line.from(Span.raw("")));
                 outTargets.add(null);
@@ -916,7 +1062,9 @@ final class AboutView {
             // minutes, where a history of the sends would start with the TUI
             long[] perSecond = s.route() != null ? routePerSecond(info, s.route()) : null;
             if (perSecond != null) {
-                from.addAll(sparkLine("  ", perSecond, Math.max(8, Math.min(spark, spark + 10 - s.route().length())))
+                // the sparkline in what "    from <route>  " and the rate leave of the column
+                int room = outWidth - 9 - s.route().length() - 2 - 8;
+                from.addAll(sparkLine("  ", perSecond, Math.max(4, Math.min(spark, room)), StatusAge.stale(info))
                         .spans());
             }
             out.add(Line.from(from));
@@ -948,13 +1096,16 @@ final class AboutView {
         return null;
     }
 
-    /** The values as a sparkline and the rate now, or only idle when there was nothing. */
-    private static Line sparkLine(String indent, long[] values, int width) {
+    /**
+     * The values as a sparkline and the rate now, or only idle when there was nothing; the rate is not known when the
+     * integration wrote no status of late.
+     */
+    private static Line sparkLine(String indent, long[] values, int width, boolean noStatus) {
         if (Arrays.stream(values).allMatch(v -> v <= 0)) {
-            return Line.from(Span.raw(indent), Span.styled("idle", Theme.muted()));
+            return Line.from(Span.raw(indent), Span.styled(noStatus ? "-" : "idle", Theme.muted()));
         }
         return Line.from(Span.raw(indent), Span.styled(spark(values, width), Theme.info()),
-                Span.styled("  " + rate(values), Theme.muted()));
+                Span.styled("  " + (noStatus ? "-" : rate(values)), Theme.muted()));
     }
 
     /** The sparklines of In fill its column, between {@value #SPARK_WIDTH} and {@value #MAX_SPARK_WIDTH} wide. */
@@ -983,7 +1134,7 @@ final class AboutView {
         Long answer = null;
         for (EndpointInfo ep : info.endpoints) {
             if ("out".equals(ep.direction) && (route == null || route.equals(ep.routeId))
-                    && base.equals(baseUri(ep.uri))) {
+                    && ObservedOuts.matches(base, baseUri(ep.uri))) {
                 answer = (answer != null ? answer : 0) + ep.hits;
             }
         }
@@ -995,13 +1146,29 @@ final class AboutView {
         return AboutReport.baseUri(uri);
     }
 
-    private static String icon(String kind) {
+    /**
+     * The icon of a consumer of In, by its scheme: one the icons do not know (aws2-sqs) has the icon of its kind of
+     * system in the catalog (messaging), as Out has it.
+     */
+    static String inIcon(String scheme) {
+        String icon = icon(scheme);
+        if ("•".equals(icon) && scheme != null && !scheme.isBlank()) {
+            icon = icon(ProjectOverview.category(scheme, ArchitectureView.catalog()));
+        }
+        return icon;
+    }
+
+    static String icon(String kind) {
         String k = kind != null ? kind.toLowerCase(Locale.ROOT) : "";
         if (k.contains("file") || k.contains("storage") || k.equals("ftp") || k.equals("sftp") || k.equals("s3")) {
             return "📁";
         }
         if (k.contains("kafka") || k.contains("jms") || k.contains("amqp") || k.contains("mqtt") || k.equals("seda")) {
             return "📨";
+        }
+        if (k.equals("ai") || k.startsWith("ai-") || k.startsWith("langchain4j") || k.equals("openai")) {
+            // a route an AI agent calls as a tool (ai-tool), or a model it calls
+            return TuiIcons.MCP;
         }
         return switch (k) {
             case "schedule" -> "⏱";
@@ -1030,22 +1197,40 @@ final class AboutView {
         lines.add(happened(info, width));
         List<Span> watch = new ArrayList<>();
         watch.add(Span.styled(" Watch    ", Theme.muted()));
-        if (info.errorCount > 0) {
-            watch.add(Span.styled("✗ " + info.errorCount + (info.errorCount == 1 ? " error" : " errors"), Theme.error()));
+        List<Span> noStatus = StatusAge.watch(info);
+        if (!noStatus.isEmpty()) {
+            // its numbers are of when it stopped writing its status
+            watch.addAll(noStatus);
+        } else if (info.errorCount > 0) {
+            // errors that stopped a minute ago are history: the line says so, and calms down. A minute, not the 5 of
+            // Last 5m and the strips (which still show them): a fix that reloads should not stay red for long
+            long lastError = lastError(info);
+            boolean old = lastError > 0 && System.currentTimeMillis() - lastError > WATCH_CALM_MILLIS;
+            String count = info.errorCount + (info.errorCount == 1 ? " error" : " errors");
+            Style style = old ? Theme.muted() : Theme.error();
+            if (old) {
+                watch.add(Span.styled("no errors in the last minute", Theme.success()));
+                watch.add(Span.styled(" · " + count + " before", style));
+            } else {
+                watch.add(Span.styled("✗ " + count, style));
+            }
             // the kinds that happened most, when there are more than one
             List<IntegrationInfo.ErrorKind> kinds = info.errorKinds;
             if (kinds.size() > 1) {
                 for (int i = 0; i < Math.min(3, kinds.size()); i++) {
                     IntegrationInfo.ErrorKind k = kinds.get(i);
                     watch.add(Span.styled(i == 0 ? ": " : " · ", Theme.muted()));
-                    watch.add(Span.styled(simpleName(k.exceptionType()) + " ×" + k.count(), Theme.error()));
+                    watch.add(Span.styled(simpleName(k.exceptionType()) + " ×" + k.count(), style));
                 }
                 if (kinds.size() > 3) {
                     watch.add(Span.styled(" …", Theme.muted()));
                 }
             } else if (kinds.size() == 1) {
                 watch.add(Span.styled(": ", Theme.muted()));
-                watch.add(Span.styled(simpleName(kinds.get(0).exceptionType()), Theme.error()));
+                watch.add(Span.styled(simpleName(kinds.get(0).exceptionType()), style));
+            }
+            if (lastError > 0) {
+                watch.add(Span.styled(" · the last " + TimeUtils.printSince(lastError) + " ago", Theme.muted()));
             }
             // the key to the Errors tab, as the Next line has its keys (a bare 9 read as a second count of errors)
             watch.add(Span.raw("   "));
@@ -1068,6 +1253,18 @@ final class AboutView {
         return lines;
     }
 
+    /**
+     * When the newest error happened (epoch millis), 0 when not known: as the integration says it (Camel 4.24), else
+     * from the errors the Errors tab loaded.
+     */
+    private static long lastError(IntegrationInfo info) {
+        long last = info.lastErrorTimestamp;
+        for (ErrorInfo e : info.errors) {
+            last = Math.max(last, e.timestamp);
+        }
+        return last;
+    }
+
     private static String simpleName(String type) {
         if (type == null) {
             return "error";
@@ -1076,12 +1273,42 @@ final class AboutView {
         return dot >= 0 ? type.substring(dot + 1) : type;
     }
 
-    /** Where to go next. */
-    private static Line next() {
-        return Line.from(Span.styled(" Next     ", Theme.muted()), Span.styled(" 4 ", Theme.hintKey()),
-                Span.raw(" what happened, per second  "), Span.styled(" 5 ", Theme.hintKey()),
-                Span.raw(" diagram  "), Span.styled(" 2 ", Theme.hintKey()), Span.raw(" source  "),
-                Span.styled(" v ", Theme.hintKey()), Span.raw(" all integrations"));
+    /**
+     * Whether the route is the one Camel adds to serve an OpenAPI contract (from rest-openapi:, a route the sources do
+     * not have), which hands each request to the route direct:operationId.
+     */
+    private static boolean servesAContract(IntegrationInfo info, String routeId) {
+        return info.routes.stream().anyMatch(r -> routeId.equals(r.routeId) && r.from != null
+                && r.from.startsWith("rest-openapi:"));
+    }
+
+    /** How each route that another one sends to is reached: call (direct) or a hand-off (seda); none for the others. */
+    private Map<String, String> howCalled() {
+        Map<String, String> how = new LinkedHashMap<>();
+        About.Model m = model;
+        if (m != null) {
+            m.routes().stream().filter(r -> r.how() != null).forEach(r -> how.put(r.routeId(), r.how()));
+        }
+        return how;
+    }
+
+    /** Where to go next: the README and the summary of the project too. */
+    private Line next() {
+        List<Span> spans = new ArrayList<>(
+                List.of(Span.styled(" Next     ", Theme.muted()), Span.styled(" 4 ", Theme.hintKey()),
+                        Span.raw(" what happened, per second  "), Span.styled(" 5 ", Theme.hintKey()),
+                        Span.raw(" diagram  "), Span.styled(" 2 ", Theme.hintKey()), Span.raw(" source  ")));
+        if (readme != null) {
+            spans.add(Span.styled(" r ", Theme.hintKey()));
+            spans.add(Span.raw(" readme  "));
+        }
+        if (dir != null) {
+            spans.add(Span.styled(" s ", Theme.hintKey()));
+            spans.add(Span.raw(" summary  "));
+        }
+        spans.add(Span.styled(" v ", Theme.hintKey()));
+        spans.add(Span.raw(" all integrations"));
+        return Line.from(spans);
     }
 
     /**
@@ -1104,18 +1331,33 @@ final class AboutView {
         long recovered = 0;
         long handled = 0;
         long failed = 0;
+        // what went wrong on a hand-off, to an exchange already counted
+        long handedOff = 0;
+        Map<String, String> how = howCalled();
         for (Timeline.RouteSeries r : series) {
-            completed += r.total(r.completed());
-            recovered += r.total(r.recovered());
+            String called = how.get(r.route());
+            if ("call".equals(called) || servesAContract(info, r.route())) {
+                // a route called with direct is part of the exchange of its caller, which gets its failure too; the
+                // route that serves a contract hands each request on to the route of its operation, which counts it
+                continue;
+            }
+            if (called == null) {
+                completed += r.total(r.completed());
+                recovered += r.total(r.recovered());
+                for (int i = 0; i < HAPPENED_SECONDS; i++) {
+                    perSecond[i] += Math.max(0, r.completed()[i]) + Math.max(0, r.recovered()[i])
+                                    + Math.max(0, r.handled()[i]) + Math.max(0, r.failed()[i]);
+                }
+            }
+            // one handed off (seda) carries the same message on: only what went wrong there, which its sender does not see
             handled += r.total(r.handled());
             failed += r.total(r.failed());
-            for (int i = 0; i < HAPPENED_SECONDS; i++) {
-                perSecond[i] += Math.max(0, r.completed()[i]) + Math.max(0, r.recovered()[i])
-                                + Math.max(0, r.handled()[i]) + Math.max(0, r.failed()[i]);
+            if (called != null) {
+                handedOff += r.total(r.handled()) + r.total(r.failed());
             }
         }
         spans.add(Span.styled(spark(perSecond, 30), Theme.info()));
-        long done = completed + recovered + handled + failed;
+        long done = completed + recovered + handled + failed - handedOff;
         spans.add(Span.styled("  " + done, Theme.success()));
         spans.add(Span.raw(done == 1 ? " exchange" : " exchanges"));
         if (recovered > 0) {

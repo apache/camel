@@ -29,7 +29,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -64,14 +63,15 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.JsonNode;
 
 import static org.apache.camel.component.kafka.producer.support.ProducerUtil.tryConvertToSerializedType;
 
 public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaProducer.class);
-    private static final String JACKSON3_JSON_NODE = "tools.jackson.databind.JsonNode";
-    private static final String JACKSON3_ARRAY_NODE = "tools.jackson.databind.node.ArrayNode";
+    private static final String JACKSON2_JSON_NODE = "com.fasterxml.jackson.databind.JsonNode";
+    private static final String JACKSON2_ARRAY_NODE = "com.fasterxml.jackson.databind.node.ArrayNode";
 
     @SuppressWarnings("rawtypes")
     private Producer kafkaProducer;
@@ -348,23 +348,23 @@ public class KafkaProducer extends DefaultAsyncProducer implements RouteIdAware 
         }
 
         if (body instanceof Iterable) {
-            return !isJackson3NonArrayNode(body.getClass());
+            return !isJackson2NonArrayNode(body.getClass());
         }
 
         return body instanceof Iterator;
     }
 
     /**
-     * Whether the class is a Jackson 3 node other than an array node. Jackson 3 is recognized by class name, as
+     * Whether the class is a Jackson 2 node other than an array node. Jackson 2 is recognized by class name, as
      * camel-kafka does not depend on it.
      */
-    private static boolean isJackson3NonArrayNode(Class<?> type) {
+    private static boolean isJackson2NonArrayNode(Class<?> type) {
         for (Class<?> c = type; c != null && c != Object.class; c = c.getSuperclass()) {
             String name = c.getName();
-            if (JACKSON3_ARRAY_NODE.equals(name)) {
+            if (JACKSON2_ARRAY_NODE.equals(name)) {
                 return false;
             }
-            if (JACKSON3_JSON_NODE.equals(name)) {
+            if (JACKSON2_JSON_NODE.equals(name)) {
                 return true;
             }
         }

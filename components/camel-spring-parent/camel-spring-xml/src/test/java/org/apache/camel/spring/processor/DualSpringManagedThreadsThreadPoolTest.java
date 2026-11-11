@@ -21,6 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +29,7 @@ import static org.apache.camel.management.DefaultManagementObjectNameStrategy.TY
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+@Isolated
 public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
     @Override

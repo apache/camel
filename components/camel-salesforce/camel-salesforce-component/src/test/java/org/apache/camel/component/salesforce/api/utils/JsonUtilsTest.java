@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.salesforce.api.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.JsonSchema;
-import com.fasterxml.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.module.jsonSchema.jakarta.JsonSchema;
+import tools.jackson.module.jsonSchema.jakarta.types.ObjectSchema;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

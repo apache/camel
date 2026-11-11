@@ -56,6 +56,8 @@ import static org.apache.camel.dsl.jbang.core.commands.tui.TuiHelper.hint;
  */
 class TimelineTab extends AbstractTableTab {
 
+    // the mean time sparkline is at least this many milliseconds high: below it, a time is noise
+    static final long MIN_MEAN_SCALE_MILLIS = 10;
     static final int[] WINDOWS = { 60, 120, 300 };
     private static final String BLOCKS = "▁▂▃▄▅▆▇█";
     private static final int CAUSE_ROWS = 4;
@@ -84,6 +86,9 @@ class TimelineTab extends AbstractTableTab {
     private int routeTop = -1;
     private int routePitch = 1;
     private int routeStrip = 1;
+    // the column of the screen the seconds start at, and the lines of the exchanges of a second, for the clicks
+    private int stripLeft = -1;
+    private Rect drillArea;
     private final TimelineExchanges drill = new TimelineExchanges();
 
     TimelineTab(MonitorContext ctx) {
@@ -296,7 +301,13 @@ class TimelineTab extends AbstractTableTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
-        if (routeTop < 0 || !me.isClick() || lastTableArea == null || !lastTableArea.contains(me.x(), me.y())) {
+        if (!me.isClick()) {
+            return false;
+        }
+        if (drill.isOpen() && drillArea != null && drillArea.contains(me.x(), me.y())) {
+            return drill.click(me.y() - drillArea.y(), keptAtCursor().size(), drillArea.height());
+        }
+        if (routeTop < 0 || lastTableArea == null || !lastTableArea.contains(me.x(), me.y())) {
             return false;
         }
         // a click on a strip of a route selects it, not on the blank line between two routes
@@ -304,6 +315,14 @@ class TimelineTab extends AbstractTableTab {
         int i = dy / routePitch;
         if (dy >= 0 && dy % routePitch < routeStrip && i < getRowCount()) {
             tableState.select(i);
+            // paused, the cursor goes to the second clicked, and the exchanges open show that second
+            int column = me.x() >= stripLeft ? (me.x() - stripLeft) / width : -1;
+            if (pausedAt >= 0 && column >= 0 && column < columnCount() && column != cursor) {
+                cursor = column;
+                if (drill.isOpen()) {
+                    drill.open(cursorFrom(), cursorTo());
+                }
+            }
             return true;
         }
         return false;
@@ -423,13 +442,19 @@ class TimelineTab extends AbstractTableTab {
         routePitch = room.strip() + (room.spaced() ? 1 : 0);
         routeStrip = room.strip();
         lastTableArea = new Rect(top.x(), routeTop, top.width(), Math.max(1, routeHeight));
+        stripLeft = top.x() + 1 + gap + label;
+        drillArea = null;
         Padding padding = room.roomy() ? Padding.uniform(1) : Padding.NONE;
         frame.renderWidget(
                 Paragraph.builder().text(Text.from(lines)).block(block(title(info), padding, !drill.isOpen())).build(), top);
 
         if (drill.isOpen()) {
             List<Timeline.Kept> kept = keptAtCursor();
-            frame.renderWidget(Paragraph.builder().text(Text.from(drill.lines(kept, detailHeight - 2 - 2 * gap)))
+            Rect d = rows.get(2);
+            drillArea = new Rect(
+                    d.x() + 1 + gap, d.y() + 1 + gap, Math.max(0, d.width() - 2 - 2 * gap),
+                    Math.max(0, detailHeight - 2 - 2 * gap));
+            frame.renderWidget(Paragraph.builder().text(Text.from(drill.lines(kept, drillArea.height())))
                     .block(block(drill.title(kept, ctx.timeline.done(info.pid, drill.from(), drill.to())), padding, true))
                     .build(),
                     rows.get(2));
@@ -654,15 +679,14 @@ class TimelineTab extends AbstractTableTab {
         Arrays.fill(axis, ' ');
         String start = "-" + axisTime(seconds());
         String middle = "-" + axisTime(seconds() / 2);
-        String end = "now";
-        put(axis, 0, start);
-        put(axis, columns / 2 - middle.length() / 2, middle);
-        put(axis, columns - end.length(), pausedAt >= 0 ? "" : end);
-        if (pausedAt >= 0) {
-            long ago = Math.max(0, nowSecond() - pausedAt);
-            String at = ago > 0 ? "-" + ChaosTab.shortTime(ago * 1000) : end;
-            put(axis, columns - at.length(), at);
-        }
+        long pausedAgo = pausedAt >= 0 ? Math.max(0, nowSecond() - pausedAt) : 0;
+        String end = pausedAgo > 0 ? "-" + ChaosTab.shortTime(pausedAgo * 1000) : "now";
+        // a label the cursor is on is left out: the time of the cursor is at the right of the axis
+        int from = cursor >= 0 ? cursor * width : -1;
+        int to = cursor >= 0 ? from + width : -1;
+        label(axis, 0, start, from, to);
+        label(axis, columns / 2 - middle.length() / 2, middle, from, to);
+        label(axis, columns - end.length(), end, from, to);
         if (cursor >= 0) {
             // the cursor under its column, the time of it at the right of the axis
             for (int i = 0; i < width; i++) {
@@ -688,6 +712,12 @@ class TimelineTab extends AbstractTableTab {
     /** A time on the axis: 60s, 30s, 2m, 2m30s. */
     static String axisTime(int seconds) {
         return seconds <= 90 ? seconds + "s" : ChaosTab.shortTime(seconds * 1000L);
+    }
+
+    private static void label(char[] axis, int at, String s, int from, int to) {
+        if (at >= to || at + s.length() <= from) {
+            put(axis, at, s);
+        }
     }
 
     private static void put(char[] axis, int at, String s) {
@@ -737,8 +767,9 @@ class TimelineTab extends AbstractTableTab {
         }
         List<Span> meanLine = new ArrayList<>();
         meanLine.add(Span.styled(pad("   mean time", label), Theme.label()));
-        // relative to twice the average, so a steady time is a calm line and a slow second stands out
-        long scale = n > 0 ? Math.max(maxMean, 2 * sumMean / n) : 0;
+        // relative to twice the average, so a steady time is a calm line and a slow second stands out; at least
+        // MIN_MEAN_SCALE_MILLIS, so a millisecond of jitter on a fast route is not a full bar
+        long scale = n > 0 ? meanScale(maxMean, sumMean / n) : 0;
         meanLine.add(Span.styled(spark(mean, scale), Theme.info()));
         meanLine.add(Span.raw("  " + (n > 0 ? "avg " + ChaosTab.shortTime(sumMean / n) : "no exchange")));
         if (max > 0) {
@@ -845,6 +876,11 @@ class TimelineTab extends AbstractTableTab {
             lines.add(Line.from(spans));
         }
         return lines;
+    }
+
+    /** The height of the mean time sparkline: twice the average or the slowest second, at least 10 ms. */
+    static long meanScale(long maxMean, long avg) {
+        return Math.max(MIN_MEAN_SCALE_MILLIS, Math.max(maxMean, 2 * avg));
     }
 
     /** A sparkline of values (-1 is unknown, blank), relative to the highest. */

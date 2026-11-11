@@ -289,6 +289,10 @@ class OverviewTab extends AbstractTab {
 
     @Override
     public boolean handleMouseEvent(MouseEvent me, Rect area) {
+        if (showsAbout()) {
+            // About has no table: a click puts its cursor on an entry of In, Routes or Out, the wheel moves it
+            return me.isClick() && about.click(me.x(), me.y());
+        }
         if (vSplit.handleMouse(me, me.y())) {
             if (vSplit.isDragging() && me.kind() == MouseEventKind.DRAG) {
                 bottomPanelHeight = Math.max(5, Math.min(area.y() + area.height() - me.y(), area.height() - 5));
@@ -522,7 +526,7 @@ class OverviewTab extends AbstractTab {
                 }
                 Line nameLine = Line.from(nameSpans);
                 Style failStyle = info.failed > 0 ? Theme.error().bold() : Style.EMPTY;
-                String throughputDisplay = info.throughput;
+                String throughputDisplay = StatusAge.stale(info) ? "-" : info.throughput;
                 if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
                     LinkedList<Long> tpHist = throughputHistory.get(info.pid);
                     if (tpHist != null && !tpHist.isEmpty()) {
@@ -626,6 +630,7 @@ class OverviewTab extends AbstractTab {
             fixed[drop] = 0;
             nameWidth = overviewNameWidth(areaWidth, fixed);
         }
+        int nameColumn = Math.min(nameWidth, Math.max(MIN_NAME_WIDTH, namesWidth(infos) + 2));
         for (IntegrationInfo info : infos) {
             boolean isEven = (rowIndex++ % 2 == 0);
             Style rowBg = isEven ? Style.EMPTY.bg(Theme.zebra()) : Style.EMPTY;
@@ -635,7 +640,7 @@ class OverviewTab extends AbstractTab {
                 String nameText = platformIcon + " " + (info.name != null ? info.name : "");
                 rows.add(Row.from(
                         Cell.from(Span.styled("-", Theme.muted())),
-                        Cell.from(Span.styled(TuiHelper.truncate(nameText, nameWidth), Theme.info())),
+                        Cell.from(Span.styled(TuiHelper.truncate(nameText, nameColumn), Theme.info())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(Span.styled("", Theme.muted())),
                         Cell.from(projectStatus(info, MonotonicClock.millis())),
@@ -673,13 +678,12 @@ class OverviewTab extends AbstractTab {
                 } else if ("Running".equals(stateText) && info.routeStarted == 0 && info.routeTotal > 0) {
                     stateText = "Stopped";
                 }
-                if (info.reloadError != null && !"Stopping".equals(stateText)) {
-                    // its last reload failed, as camel ps shows it; the info panel says why
-                    stateText = "Error";
-                }
+                // its last reload failed, as camel ps shows it (the info panel says why); or it wrote no status of late
+                stateText = StatusAge.state(info,
+                        info.reloadError != null && !"Stopping".equals(stateText) ? "Error" : stateText);
                 Style statusStyle = switch (stateText) {
                     case "Started", "Running" -> Theme.success();
-                    case "Stopped", "Error" -> Theme.error();
+                    case "Stopped", "Error", StatusAge.NO_STATUS -> Theme.error();
                     default -> Theme.warning();
                 };
 
@@ -703,8 +707,8 @@ class OverviewTab extends AbstractTab {
                 if (hasDoc) {
                     nameSpans.add(Span.styled(" " + TuiIcons.README, Style.EMPTY));
                 }
-                Line nameLine = TuiHelper.fitLine(nameSpans, nameWidth);
-                String throughputDisplay = info.throughput;
+                Line nameLine = TuiHelper.fitLine(nameSpans, nameColumn);
+                String throughputDisplay = StatusAge.stale(info) ? "-" : info.throughput;
                 if (throughputDisplay == null || "0.00".equals(throughputDisplay)) {
                     LinkedList<Long> tpHist = throughputHistory.get(info.pid);
                     if (tpHist != null && !tpHist.isEmpty()) {
@@ -718,7 +722,7 @@ class OverviewTab extends AbstractTab {
                     throughputDisplay = TuiHelper.throughputPerMinute(throughputDisplay);
                 }
                 String timingCol;
-                if (hasPercentiles && info.p50Time >= 0) {
+                if (hasPercentiles && info.p50Time >= 0 && info.exchangesTotal > 0) {
                     timingCol = formatDurationMs(info.p50Time) + "/" + formatDurationMs(info.p95Time) + "/"
                                 + formatDurationMs(info.p99Time);
                 } else if (info.exchangesTotal > 0) {
@@ -767,7 +771,7 @@ class OverviewTab extends AbstractTab {
 
         Constraint[] widths = new Constraint[] {
                 Constraint.length(fixed[0]),
-                Constraint.fill(),
+                Constraint.length(nameColumn),
                 Constraint.length(fixed[1]),
                 Constraint.length(fixed[2]),
                 Constraint.length(fixed[3]),
@@ -775,15 +779,33 @@ class OverviewTab extends AbstractTab {
                 Constraint.length(fixed[5]),
                 Constraint.length(fixed[6]),
                 Constraint.length(fixed[7]),
-                // fixed, so NAME gets the rest of the width, as overviewNameWidth counts it
                 Constraint.length(fixed[8]),
-                Constraint.length(0)
+                Constraint.fill()
         };
         return new TableSpec(rows, header, widths);
     }
 
     // the narrowest NAME before other columns give way: room for an icon and a name
     static final int MIN_NAME_WIDTH = 20;
+
+    /**
+     * The width the names take: the runtime icon, the name, the project it was opened as, [dev] and the readme mark.
+     * NAME is as wide as that, so the numbers stand next to the names on a wide screen; the rest goes after the last
+     * column.
+     */
+    static int namesWidth(List<IntegrationInfo> infos) {
+        int width = 0;
+        for (IntegrationInfo info : infos) {
+            String name = info.name != null ? info.name : "";
+            int w = CharWidth.of(TuiIcons.runtimeIcon(info.platform != null ? info.platform : "")) + 1 + CharWidth.of(name);
+            if (info.openedAs != null && !info.openedAs.equalsIgnoreCase(info.name)) {
+                w += 3 + CharWidth.of(info.openedAs);
+            }
+            w += (info.devMode ? 6 : 0) + 1 + CharWidth.of(TuiIcons.README);
+            width = Math.max(width, w);
+        }
+        return width;
+    }
 
     /** The width the NAME column gets beside the other columns: the table's borders, ">> " and 1 between columns. */
     static int overviewNameWidth(int areaWidth, int[] fixed) {
@@ -1610,6 +1632,7 @@ class OverviewTab extends AbstractTab {
             if (info.reloadError != null) {
                 row.put("reloadError", info.reloadError);
             }
+            StatusAge.describe(info, row);
             row.put("ready", info.ready);
             // info.uptime holds the process start time (epoch millis), which the screen shows as an elapsed
             // duration; export the same duration plus the raw values with unambiguous names so an AI reading
@@ -1622,7 +1645,8 @@ class OverviewTab extends AbstractTab {
             row.put("exchangesTotal", info.exchangesTotal);
             row.put("failed", info.failed);
             row.put("inflight", info.inflight);
-            row.put("throughput", info.throughput);
+            // its rate now is not known without a status of late
+            row.put("throughput", StatusAge.stale(info) ? null : info.throughput);
             row.put("routeStarted", info.routeStarted);
             row.put("routeTotal", info.routeTotal);
             row.put("meanTime", info.meanTime);

@@ -21,10 +21,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import dev.tamboui.layout.Rect;
 import dev.tamboui.text.Span;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,6 +86,34 @@ class JfrTabRenderTest {
 
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 120, 20))
                 .contains("JFR runtime instrumentation is not available"));
+    }
+
+    @Test
+    void withoutARecordingTheTabSaysHowToStartOne() {
+        JsonObject noRecording = new JsonObject();
+        noRecording.put("runtimeEvents", false);
+        noRecording.put("recordings", new JsonArray());
+        TestMonitorContext statusCtx = new TestMonitorContext(dataWith(info), noRecording);
+        statusCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(statusCtx, Runnable::run);
+
+        tab.onTabSelected();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 160, 20))
+                .contains("No JFR recording is active").contains("Java Flight Recorder (JFR)")
+                .contains("jcmd 1234 JFR.start"));
+    }
+
+    @Test
+    void withARecordingThereIsNoHint() {
+        TestMonitorContext statusCtx = new TestMonitorContext(dataWith(info), statusResponse());
+        statusCtx.selectedPid = "1234";
+        JfrTab tab = new JfrTab(statusCtx, Runnable::run);
+
+        tab.onTabSelected();
+
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertThat(TuiTestHelper.renderToString(tab, 160, 20))
+                .contains("Runtime Events: Enabled").doesNotContain("No JFR recording is active"));
     }
 
     @Test
@@ -187,6 +218,23 @@ class JfrTabRenderTest {
             String rendered = TuiTestHelper.renderToString(tab, 140, 30);
             assertThat(rendered).contains("Endpoints");
         });
+    }
+
+    @Test
+    void aClickOnTheNameOfAViewShowsIt() {
+        JfrTab tab = new JfrTab(ctx);
+        Rect area = new Rect(0, 0, 140, 30);
+        List<String> lines = TuiTestHelper.renderToString(tab, 140, 30).lines().toList();
+        int y = 0;
+        while (!lines.get(y).contains("Redeliveries")) {
+            y++;
+        }
+        int x = lines.get(y).indexOf("Failures");
+
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, x + 2, y), area)).isTrue();
+        assertThat(TuiTestHelper.renderToString(tab, 140, 30)).contains("╭ Failures ");
+        // the space between two names is no view
+        assertThat(tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, x - 2, y), area)).isFalse();
     }
 
     @Test

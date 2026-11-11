@@ -45,7 +45,8 @@ import org.apache.camel.util.URISupport;
  * <li>a SQL statement that is not a single SELECT (or SHOW, DESCRIBE), and a row update;</li>
  * <li>an expression in a language that runs code, such as Groovy;</li>
  * <li>a chaos rule added or changed (camel-chaos): it makes messages of the integration fail, wait or get lost, and can
- * name any exception class. Removing a rule only takes faults away.</li>
+ * name any exception class. Removing a rule only takes faults away. A chaos exploration is confirmed once, when it
+ * starts: the experiments in it add rules without asking again, and camel-chaos removes them at its deadline.</li>
  * </ul>
  * A file write is confirmed with its diff ({@link #write}). {@code camel ask}, which shows no screen of the integration
  * while it works, also asks before a call that stops or starts an integration, browses an endpoint the integration does
@@ -329,6 +330,22 @@ public final class ToolConfirms {
                 "load chaos scenario" + name + " into " + where, scenario.strip(),
                 "The rules of the integration are replaced by those of the scenario and the report starts again; while"
                                                                                    + " they are active, the integration's messages fail, wait or get lost");
+    }
+
+    /**
+     * The call of starting a chaos exploration (chaos_explore_start): the consent to the experiments the AI then runs
+     * in it (chaos_experiment), each adding chaos rules without asking again. camel-chaos ends them at the deadline of
+     * the exploration, whatever the AI does.
+     */
+    public static Call chaosExplore(String integration, String budget, String focus) {
+        String where = integration != null && !integration.isBlank() ? integration : "the selected integration";
+        String time = budget != null && !budget.isBlank() ? budget.strip() : "10m";
+        return new Call(
+                "explore chaos in " + where + " for " + time,
+                focus != null && !focus.isBlank() ? "focus: " + focus.strip() : "all routes",
+                "For that time the AI adds chaos rules without asking again, and the integration's messages fail, wait"
+                                                                                              + " or get lost; at the end the"
+                                                                                              + " rules are removed");
     }
 
     /**

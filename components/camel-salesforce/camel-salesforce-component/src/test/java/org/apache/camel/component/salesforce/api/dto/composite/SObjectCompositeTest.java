@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -30,6 +28,8 @@ import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -113,8 +113,10 @@ public class SObjectCompositeTest {
                         StandardCharsets.UTF_8);
 
         final ObjectMapper mapper
-                = JsonUtils.createObjectMapper().copy().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
-                        .configure(SerializationFeature.INDENT_OUTPUT, true);
+                = JsonUtils.createObjectMapper().rebuild()
+                        .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
+                        .enable(SerializationFeature.INDENT_OUTPUT)
+                        .build();
 
         final String serialized = mapper.writerFor(SObjectComposite.class).writeValueAsString(composite);
         assertThat(serialized).as("Should serialize as expected by Salesforce").isEqualTo(expectedJson);

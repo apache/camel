@@ -1060,7 +1060,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * <p/>
      * Data type are automatic turned on if:
      * <ul>
-     * <li>one ore more routes has been explicit configured with input and output types</li>
+     * <li>one or more routes has been explicit configured with input and output types</li>
      * <li>when using rest-dsl with binding turned on</li>
      * </ul>
      * Otherwise data type is default off.

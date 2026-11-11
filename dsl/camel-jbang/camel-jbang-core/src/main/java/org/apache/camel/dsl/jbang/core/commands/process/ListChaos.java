@@ -308,8 +308,8 @@ public class ListChaos extends ProcessWatchCommand {
     }
 
     /**
-     * The exploration running now or the last one (CAMEL-26773): its time, the rules tried, and the baseline before its
-     * first rule.
+     * The exploration running now or the last one (CAMEL-26773): its time, the rules tried, the baseline before its
+     * first rule, and its experiments (CAMEL-26774).
      */
     private void printExploration(JsonObject report) {
         JsonObject exploration = report.getMap("exploration");
@@ -338,16 +338,93 @@ public class ListChaos extends ProcessWatchCommand {
             printer().println("    baseline: taken when the first rule is added");
             return;
         }
+        printer().println("    baseline (before the first rule): " + routeCounts(exploration.getCollection("baseline")));
+        List<Object> experiments = exploration.getCollection("experiments");
+        if (experiments != null && !experiments.isEmpty()) {
+            printer().println("    experiments:");
+            for (Object o : experiments) {
+                printExperiment((JsonObject) o);
+            }
+        }
+    }
+
+    /** An experiment: its verdict and hypothesis, its rules, its expectations, and what the routes did meanwhile. */
+    private void printExperiment(JsonObject experiment) {
+        experimentLines(experiment, "      ").forEach(printer()::println);
+    }
+
+    /**
+     * The lines of an experiment, as camel get chaos --report and camel cmd chaos-experiment print it: its verdict and
+     * hypothesis, its rules and how long it ran, its expectations, what the routes did meanwhile, and its note.
+     *
+     * @param indent the indent of the first line; the others are indented two more
+     */
+    public static List<String> experimentLines(JsonObject experiment, String indent) {
+        List<String> lines = new ArrayList<>();
+        StringBuilder sb = new StringBuilder(indent).append(experiment.getIntegerOrDefault("number", 0)).append(' ')
+                .append(experiment.getString("verdict"));
+        String hypothesis = experiment.getString("hypothesis");
+        if (hypothesis != null) {
+            sb.append("  ").append(hypothesis);
+        }
+        List<Object> rules = experiment.getCollection("rules");
+        sb.append(" (").append(rules == null ? "" : rules.stream().map(String::valueOf).collect(Collectors.joining(", ")))
+                .append(", ");
+        String elapsed = TimeUtils.printDuration(experiment.getLongOrDefault("elapsed", 0));
+        if (experiment.getBooleanOrDefault("open", false)) {
+            sb.append("running for ").append(elapsed);
+        } else {
+            String by = experiment.getString("endedBy");
+            sb.append("deadline".equals(by)
+                    ? "ended at the deadline" : "finished".equals(by) ? "ended with the exploration" : "ended")
+                    .append(" after ").append(elapsed);
+        }
+        lines.add(sb.append(')').toString());
+        String more = indent + "  ";
+        List<Object> expectations = experiment.getCollection("expectations");
+        if (expectations != null) {
+            for (Object o : expectations) {
+                JsonObject x = (JsonObject) o;
+                lines.add(more + "expect " + x.getString("expect") + ": " + x.getString("state") + ", "
+                          + x.getString("value"));
+            }
+        }
+        String reason = experiment.getString("reason");
+        if (reason != null) {
+            lines.add(more + "inconclusive: " + reason);
+        }
+        long lost = experiment.getLongOrDefault("lostAtDeadLetterChannel", 0);
+        if (lost > 0) {
+            lines.add(more + "lost at the dead letter channel: " + lost + (lost == 1 ? " message" : " messages")
+                      + ", handled there without being delivered");
+        }
+        JsonObject alsoFailed = (JsonObject) experiment.get("alsoFailed");
+        if (alsoFailed != null && !alsoFailed.isEmpty()) {
+            StringJoiner also = new StringJoiner(", ");
+            alsoFailed.forEach((route, n) -> also.add(route + " " + n));
+            lines.add(more + "also failed, in no expectation: " + also);
+        }
+        List<Object> routes = experiment.getCollection("routes");
+        if (routes != null && !routes.isEmpty()) {
+            lines.add(more + "routes: " + routeCounts(routes));
+        }
+        String note = experiment.getString("note");
+        if (note != null) {
+            lines.add(more + "note: " + note);
+        }
+        return lines;
+    }
+
+    private static String routeCounts(List<Object> routes) {
         StringJoiner sj = new StringJoiner(", ");
-        List<Object> baseline = exploration.getCollection("baseline");
-        if (baseline != null) {
-            for (Object o : baseline) {
+        if (routes != null) {
+            for (Object o : routes) {
                 JsonObject route = (JsonObject) o;
                 sj.add(route.getString("route") + " " + route.getLongOrDefault("completed", 0) + " completed, "
                        + route.getLongOrDefault("failed", 0) + " failed");
             }
         }
-        printer().println("    baseline (before the first rule): " + (sj.length() == 0 ? "no exchanges" : sj));
+        return sj.length() == 0 ? "no exchanges" : sj.toString();
     }
 
     /**

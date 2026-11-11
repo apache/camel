@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.tui;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -23,6 +24,9 @@ import dev.tamboui.buffer.Buffer;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;
 import dev.tamboui.terminal.Frame;
+import dev.tamboui.text.Span;
+import dev.tamboui.tui.event.MouseButton;
+import dev.tamboui.tui.event.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -65,6 +69,8 @@ class ConfigurationTabRenderTest {
     @Test
     void renderPropertyKeyInCyan() {
         addProperty("camel.main.name", "my-app", "application.properties");
+        // a second row: the first is selected, and the selection highlight hides its colors
+        addProperty("camel.main.shutdownTimeout", "30", "application.properties");
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
 
@@ -75,6 +81,18 @@ class ConfigurationTabRenderTest {
 
         assertTrue(TuiTestHelper.findCellWithColor(buffer, "c", Theme.accent()),
                 "Property key should be rendered in CYAN");
+    }
+
+    @Test
+    void theFirstPropertyIsSelectedSoItsDetailShows() {
+        addProperty("camel.main.name", "my-app", "application.properties");
+        addProperty("camel.main.shutdownTimeout", "30", "application.properties");
+
+        ConfigurationTab tab = new ConfigurationTab(ctx);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
+
+        assertEquals(0, tab.tableState.selected());
+        assertTrue(!rendered.contains("Select a property"), rendered);
     }
 
     @Test
@@ -125,6 +143,8 @@ class ConfigurationTabRenderTest {
     @Test
     void renderSecretValueInDarkGray() {
         addProperty("camel.vault.password", "xxxxxx", "application.properties");
+        // a row before it: the first is selected, and the selection highlight hides its colors
+        addProperty("camel.main.name", "my-app", "application.properties");
 
         ConfigurationTab tab = new ConfigurationTab(ctx);
 
@@ -163,6 +183,46 @@ class ConfigurationTabRenderTest {
 
         prop.location = null;
         assertEquals("", ConfigurationTab.sourceOf(prop));
+    }
+
+    @Test
+    void thePanelTheMouseClicksOrScrollsGetsTheKeys() {
+        addProperty("camel.main.name", "my-app", "application.properties");
+        addProperty("camel.main.shutdownTimeout", "30", "application.properties");
+        addProperty("camel.main.tracing", "false", "application.properties");
+        ConfigurationTab tab = new ConfigurationTab(ctx);
+        Rect area = new Rect(0, 0, 120, 30);
+        String rendered = TuiTestHelper.renderToString(tab, 120, 30);
+        // the detail panel is the second box: the first row is selected, so it has its key as the title
+        int detail = rendered.lines().toList().indexOf(rendered.lines().filter(l -> l.startsWith("╭ camel.main.name"))
+                .findFirst().orElseThrow());
+        int timeout = rendered.lines().toList().indexOf(rendered.lines().filter(l -> l.contains("shutdownTimeout"))
+                .findFirst().orElseThrow());
+
+        // a click on a row selects it, and the keys stay with the table
+        tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 20, timeout), area);
+        assertEquals(1, tab.tableState.selected());
+        assertTrue(footer(tab).contains("detail"), footer(tab));
+
+        // the wheel over the detail gives it the keys, and leaves the row selected
+        tab.handleMouseEvent(MouseEvent.scrollDown(20, detail + 2), area);
+        assertEquals(1, tab.tableState.selected());
+        assertTrue(footer(tab).contains("table"), footer(tab));
+
+        // the wheel over the table selects the next row, and gives the keys back to the table
+        tab.handleMouseEvent(MouseEvent.scrollDown(20, timeout), area);
+        assertEquals(2, tab.tableState.selected());
+        assertTrue(footer(tab).contains("detail"), footer(tab));
+
+        // a click on the detail gives it the keys
+        tab.handleMouseEvent(MouseEvent.press(MouseButton.LEFT, 20, detail + 2), area);
+        assertTrue(footer(tab).contains("table"), footer(tab));
+    }
+
+    private static String footer(ConfigurationTab tab) {
+        List<Span> spans = new ArrayList<>();
+        tab.renderFooter(spans);
+        return spans.stream().map(Span::content).reduce("", String::concat);
     }
 
     private ConfigurationTab.ConfigProperty addProperty(String key, String value, String source) {

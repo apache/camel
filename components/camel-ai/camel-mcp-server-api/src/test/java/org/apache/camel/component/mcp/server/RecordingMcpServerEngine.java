@@ -25,14 +25,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.support.service.ServiceSupport;
 
 /**
- * Mock {@link McpServerEngine} recording the tools and resources published by the bridge, for engine-less bridge tests.
+ * Mock {@link McpServerEngine} recording the tools, resources and prompts published by the bridge, for engine-less
+ * bridge tests.
  */
 public class RecordingMcpServerEngine extends ServiceSupport implements McpServerEngine {
 
     private final Map<String, McpServerTool> tools = new ConcurrentHashMap<>();
     private final Map<String, McpServerResource> resources = new ConcurrentHashMap<>();
+    private final Map<String, McpServerPrompt> prompts = new ConcurrentHashMap<>();
     private final List<String> removed = new CopyOnWriteArrayList<>();
     private final List<String> removedResources = new CopyOnWriteArrayList<>();
+    private final List<String> removedPrompts = new CopyOnWriteArrayList<>();
     private final boolean resourcesSupported;
 
     public RecordingMcpServerEngine() {
@@ -86,6 +89,30 @@ public class RecordingMcpServerEngine extends ServiceSupport implements McpServe
     @Override
     public boolean supportsResources() {
         return resourcesSupported;
+    }
+
+    @Override
+    public void promptAdded(McpServerPrompt prompt) {
+        prompts.put(prompt.name(), prompt);
+    }
+
+    @Override
+    public void promptRemoved(String promptName) {
+        prompts.remove(promptName);
+        removedPrompts.add(promptName);
+    }
+
+    @Override
+    public boolean supportsPrompts() {
+        return true;
+    }
+
+    public Map<String, McpServerPrompt> prompts() {
+        return prompts;
+    }
+
+    public List<String> removedPrompts() {
+        return removedPrompts;
     }
 
     public Map<String, McpServerTool> tools() {

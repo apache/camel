@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -42,6 +40,9 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class SalesforceSecurityHandler implements ProtocolHandler {
 
@@ -57,7 +58,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
     private final SalesforceSession session;
     private final int maxAuthenticationRetries;
     private final int maxContentLength;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builderWithJackson2Defaults().build();
 
     public SalesforceSecurityHandler(SalesforceHttpClient httpClient) {
 
@@ -176,7 +177,7 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
                     List<RestError> errors = Collections.emptyList();
                     try {
                         errors = client.readErrorsFrom(getContentAsInputStream(), objectMapper);
-                    } catch (IOException e) {
+                    } catch (JacksonException e) {
                         LOG.warn("Unable to deserialize errors from response body.");
                     }
                     if (errors.stream().anyMatch(error -> EXPIRED_PASSWORD_CODE.equals(error.getErrorCode()))) {
@@ -218,8 +219,8 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             List<RestError> restErrors = Collections.emptyList();
             if (client != null) {
                 try {
-                    restErrors = client.readErrorsFrom(getContentAsInputStream(), new ObjectMapper());
-                } catch (IOException e) {
+                    restErrors = client.readErrorsFrom(getContentAsInputStream(), objectMapper);
+                } catch (JacksonException e) {
                     LOG.warn("Unable to deserialize errors from response body.");
                 }
             }

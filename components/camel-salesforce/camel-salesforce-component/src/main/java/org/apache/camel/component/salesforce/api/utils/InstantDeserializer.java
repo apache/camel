@@ -18,18 +18,18 @@ package org.apache.camel.component.salesforce.api.utils;
 
 import java.time.Instant;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import tools.jackson.databind.ValueDeserializer;
 
 import static org.apache.camel.component.salesforce.api.utils.DateTimeHandling.ISO_OFFSET_DATE_TIME;
 
-final class InstantDeserializer extends com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer<Instant> {
+final class InstantDeserializer extends tools.jackson.databind.ext.javatime.deser.InstantDeserializer<Instant> {
 
-    static final JsonDeserializer<Instant> INSTANCE = new InstantDeserializer();
+    static final ValueDeserializer<Instant> INSTANCE = new InstantDeserializer();
 
     private static final long serialVersionUID = 1L;
 
     private InstantDeserializer() {
-        super(com.fasterxml.jackson.datatype.jsr310.deser.InstantDeserializer.INSTANT, ISO_OFFSET_DATE_TIME);
+        super(tools.jackson.databind.ext.javatime.deser.InstantDeserializer.INSTANT, ISO_OFFSET_DATE_TIME);
     }
 
 }

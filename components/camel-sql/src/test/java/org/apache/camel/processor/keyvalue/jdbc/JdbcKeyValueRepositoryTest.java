@@ -17,6 +17,7 @@
 package org.apache.camel.processor.keyvalue.jdbc;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -360,5 +361,31 @@ class JdbcKeyValueRepositoryTest {
 
         repository.put("key1", "value1", null);
         assertEquals("value1", repository.get("key1"));
+    }
+
+    @Test
+    void testTtlTooLargeToAddToTheCurrentTimeDoesNotExpire() {
+        // the current time plus this TTL is beyond Long.MAX_VALUE
+        Duration huge = Duration.ofMillis(Long.MAX_VALUE);
+        assertNull(repository.put("key1", "value1", huge));
+        assertNull(repository.putIfAbsent("key2", "value2", huge));
+        repository.put("key3", "value3", huge);
+        assertTrue(repository.replace("key3", "value3", "value3b", huge));
+
+        assertEquals("value1", repository.get("key1"));
+        assertTrue(repository.contains("key1"));
+        assertEquals("value2", repository.putIfAbsent("key2", "other", null));
+        assertEquals("value3b", repository.get("key3"));
+        assertEquals(Set.of("key1", "key2", "key3"), repository.keys());
+        assertEquals(3, repository.size());
+    }
+
+    @Test
+    void testTtlLongerThanLongMaxValueMillisDoesNotExpire() {
+        // Duration.toMillis() overflows for this TTL
+        repository.put("key1", "value1", ChronoUnit.FOREVER.getDuration());
+
+        assertEquals("value1", repository.get("key1"));
+        assertEquals(Set.of("key1"), repository.keys());
     }
 }

@@ -25,6 +25,7 @@ import org.apache.camel.component.http.handler.OAuth2ScopeRequestHandler;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.io.CloseMode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,7 +59,7 @@ public class HttpOAuth2ScopeTest extends BaseHttpTest {
                             exchange1 -> {
                             });
 
-            localServer.close();
+            localServer.close(CloseMode.IMMEDIATE);
 
             assertExchange(exchange);
         }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import dev.tamboui.layout.Constraint;
 import dev.tamboui.layout.Layout;
@@ -71,9 +72,14 @@ final class ChaosSuggestList {
         if (reply != null && reply.getCollection("suggestions") != null) {
             for (Object o : reply.getCollection("suggestions")) {
                 if (o instanceof JsonObject jo && jo.getString("rule") != null) {
+                    // two faults at once (CAMEL-26772): the rules are added together, separated by ;
+                    List<Object> rules = jo.getCollection("rules");
+                    String rule = rules != null && !rules.isEmpty()
+                            ? rules.stream().map(String::valueOf).collect(Collectors.joining("; "))
+                            : jo.getString("rule");
                     items.add(new Item(
                             jo.getString("route"), jo.getString("kind"), jo.getString("title"),
-                            jo.getString("rule"), jo.getString("why"), jo.getBooleanOrDefault("tried", false)));
+                            rule, jo.getString("why"), jo.getBooleanOrDefault("tried", false)));
                 }
             }
         }

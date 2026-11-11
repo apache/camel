@@ -135,8 +135,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
                             + " disable timeout by using 0 or a negative value.")
     private long timeout = 30000;
     @UriParam(label = "producer,advanced", javaType = "java.time.Duration",
-              description = "Offer timeout can be added to the block case when queue is full. You can disable timeout by"
-                            + " using 0 or a negative value.")
+              description = "Offer timeout used when blockWhenFull is enabled and the queue is full. The default 0 blocks"
+                            + " without a timeout.")
     private long offerTimeout;
     @UriParam(label = "producer,advanced",
               description = "Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer"
@@ -528,8 +528,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     }
 
     /**
-     * Offer timeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by
-     * using 0 or a negative value.
+     * Offer timeout (in milliseconds) used when blockWhenFull is enabled and the queue is full. The default 0 blocks
+     * without a timeout.
      */
     public void setOfferTimeout(long offerTimeout) {
         this.offerTimeout = offerTimeout;

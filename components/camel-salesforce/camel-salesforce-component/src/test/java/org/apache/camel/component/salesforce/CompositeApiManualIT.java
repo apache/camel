@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
@@ -42,6 +41,8 @@ import org.apache.camel.test.junit6.params.Test;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
@@ -180,7 +181,7 @@ public class CompositeApiManualIT extends AbstractSalesforceTestBase {
                                     "    }]\n" +
                                     "}\n";
         final String response = testRawComposite(rawComposite);
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = JsonMapper.builder().build();
         SObjectCompositeResponse sObjectCompositeResponse = objectMapper.readValue(
                 response, SObjectCompositeResponse.class);
         assertResponseContains(sObjectCompositeResponse, "done");

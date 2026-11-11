@@ -24,9 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Route;
@@ -44,6 +41,8 @@ import org.apache.camel.util.StringHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * {@link org.apache.camel.spi.RoutePolicy} to run the route in master/slave mode.
@@ -196,9 +195,9 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
             return null;
         }
         try {
-            return new ObjectMapper()
+            return JsonMapper.builderWithJackson2Defaults()
                     .enable(SerializationFeature.INDENT_OUTPUT)
-                    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                    .build()
                     .writeValueAsString(groupListener.getGroup().slaves());
         } catch (Exception e) {
             return null;

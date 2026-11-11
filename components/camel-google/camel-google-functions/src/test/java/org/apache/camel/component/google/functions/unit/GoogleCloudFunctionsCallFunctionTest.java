@@ -226,9 +226,15 @@ class GoogleCloudFunctionsCallFunctionTest extends GoogleCloudFunctionsBaseTest 
     }
 
     @Test
-    void aPojoThePlainObjectMapperCannotMarshalFails() {
-        Exchange exchange = template.request("direct:callFunction",
-                e -> e.getIn().setBody(new Meeting(LocalDate.of(2026, 11, 2))));
+    void aPojoWithAJavaTimeFieldIsSentAsJson() {
+        // the Jackson 2 defaults of the mapper write a date as numbers
+        assertEquals("{\"day\":[2026,11,2]}", sentData(new Meeting(LocalDate.of(2026, 11, 2))));
+    }
+
+    @Test
+    void aPojoJacksonCannotMarshalFails() {
+        // an object without properties: the mapper fails on an empty bean, as a Jackson 2 mapper does
+        Exchange exchange = template.request("direct:callFunction", e -> e.getIn().setBody(new Object()));
 
         InvalidPayloadException cause = assertInstanceOf(InvalidPayloadException.class, exchange.getException());
         assertEquals(String.class, cause.getType());
