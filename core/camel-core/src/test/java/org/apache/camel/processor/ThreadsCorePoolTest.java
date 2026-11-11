@@ -68,7 +68,7 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
                         beforeThreadName = Thread.currentThread().getName();
                     }
                 })
-                        // will use a a custom thread pool with 5 in core and 5 as
+                        // will use a custom thread pool with 5 in core and 5 as
                         // max
                         .threads(5).process(new Processor() {
                             public void process(Exchange exchange) {

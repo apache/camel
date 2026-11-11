@@ -39,7 +39,7 @@ public class ThreadsCoreAndMaxPoolKeepAliveTimeTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        // will use a a custom thread pool with 5 in core and 10 as
+                        // will use a custom thread pool with 5 in core and 10 as
                         // max
                         .threads(5, 10).keepAliveTime(10).timeUnit(TimeUnit.SECONDS).to("mock:result");
             }

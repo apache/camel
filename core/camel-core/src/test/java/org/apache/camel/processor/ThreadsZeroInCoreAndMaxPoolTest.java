@@ -40,7 +40,7 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        // will use a a custom thread pool with -1 in core and 2
+                        // will use a custom thread pool with -1 in core and 2
                         // max
                         .threads(-1, 2).to("mock:result");
             }
