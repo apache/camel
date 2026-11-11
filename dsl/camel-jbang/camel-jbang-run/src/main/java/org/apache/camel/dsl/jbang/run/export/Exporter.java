@@ -830,6 +830,9 @@ abstract class Exporter {
         if (Files.exists(profile)) {
             RuntimeUtil.loadProperties(profileProps, profile);
         }
+        // the run settings repeat some keys of the application.properties, such as camel.server.port
+        Properties appProps = new CamelCaseOrderedProperties();
+        appProps.putAll(profileProps);
         profileProps.putAll(settingsProps);
         prepareApplicationProperties(profileProps);
 
@@ -838,7 +841,10 @@ abstract class Exporter {
             boolean skip = !key.startsWith("camel.main")
                     || "camel.main.routesCompileDirectory".equals(key)
                     || "camel.main.routesReloadEnabled".equals(key);
-            if (skip) {
+            if (skip && appProps.containsKey(key)) {
+                // a key of the application.properties is kept, as a route may refer to it: {{camel.server.port}}
+                profileProps.put(key, appProps.get(key));
+            } else if (skip) {
                 profileProps.remove(key);
             }
         }
