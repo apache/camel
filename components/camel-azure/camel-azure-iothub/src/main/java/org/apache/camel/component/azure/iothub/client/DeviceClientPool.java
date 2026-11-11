@@ -143,18 +143,31 @@ public class DeviceClientPool {
         return d != null && !d.isZero() && !d.isNegative();
     }
 
+    private ScheduledExecutorService getOrCreateEvictionExecutor() {
+        ScheduledExecutorService executor = evictionExecutor;
+        if (executor != null) {
+            return executor;
+        }
+        synchronized (this) {
+            executor = evictionExecutor;
+            if (executor == null) {
+                executor = Executors.newSingleThreadScheduledExecutor(r -> {
+                    Thread t = new Thread(r, "camel-azure-iothub-device-client-evictor");
+                    t.setDaemon(true);
+                    return t;
+                });
+                evictionExecutor = executor;
+            }
+            return executor;
+        }
+    }
+
     public void start() {
         if (!started.compareAndSet(false, true)) {
             return;
         }
-        if (evictionExecutor == null) {
-            evictionExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-                Thread t = new Thread(r, "camel-azure-iothub-device-client-evictor");
-                t.setDaemon(true);
-                return t;
-            });
-        }
-        evictionExecutor.scheduleAtFixedRate(this::evictIdleClients,
+        ScheduledExecutorService executor = getOrCreateEvictionExecutor();
+        executor.scheduleAtFixedRate(this::evictIdleClients,
                 evictionInterval.toMillis(), evictionInterval.toMillis(), TimeUnit.MILLISECONDS);
         LOG.info("DeviceClient eviction enabled. idleTimeout={}s, interval={}s",
                 idleTimeout.getSeconds(), evictionInterval.getSeconds());
@@ -265,10 +278,8 @@ public class DeviceClientPool {
 
             DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
             AtomicReference<PooledClient> acquired = new AtomicReference<>();
-            AtomicBoolean entryChanged = new AtomicBoolean(false);
             pool.computeIfPresent(poolKey, (key, pooled) -> {
                 if (pooled.client != client) {
-                    entryChanged.set(true);
                     return pooled;
                 }
                 pooled.touch(now);
@@ -278,9 +289,6 @@ public class DeviceClientPool {
             });
             if (acquired.get() != null) {
                 return new Lease(this, poolKey, acquired.get());
-            }
-            if (entryChanged.get()) {
-                continue;
             }
             // The pool entry may have been evicted or replaced between creation and the acquire step.
             // Loop back to retry instead of recursing to keep the stack depth constant.
@@ -467,12 +475,8 @@ public class DeviceClientPool {
         }
 
         String poolKey = resolvePoolKey(deviceId, connectionString);
-        if (isCreationInProgress(poolKey)) {
-            LOG.debug("Ignoring disconnect callback for {} while corresponding DeviceClient is still being created", deviceId);
-            return;
-        }
 
-        java.util.concurrent.atomic.AtomicReference<PooledClient> removed = new java.util.concurrent.atomic.AtomicReference<>();
+        AtomicReference<PooledClient> removed = new AtomicReference<>();
         pool.computeIfPresent(poolKey, (key, pooled) -> {
             if (pooled.client != client) {
                 return pooled;
@@ -483,10 +487,12 @@ public class DeviceClientPool {
         });
 
         PooledClient retired = removed.get();
-        if (retired != null && retired.inUse.get() == 0) {
+        if (retired != null) {
             LOG.warn("Evicted DeviceClient for device {} after disconnect. previousStatus={}, reason={}, cause={}",
                     deviceId, context.getPreviousStatus(), context.getNewStatusReason(), context.getCause());
-            closeRetired(retired);
+            if (retired.inUse.get() == 0) {
+                closeRetired(retired);
+            }
         }
     }
 
@@ -514,7 +520,8 @@ public class DeviceClientPool {
 
     private void closeRetired(PooledClient pooled) {
         if (pooled.closed.compareAndSet(false, true)) {
-            closeQuietly("retired", pooled.client, "retired eviction");
+            ScheduledExecutorService executor = getOrCreateEvictionExecutor();
+            executor.execute(() -> closeQuietly("retired", pooled.client, "retired eviction"));
         }
     }
 
