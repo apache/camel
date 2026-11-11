@@ -21,6 +21,8 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.RouteTopologyDumper;
 import org.apache.camel.spi.RouteTopologyDumper.TopologyEdge;
 import org.junit.jupiter.api.Test;
@@ -87,6 +89,17 @@ class DefaultRouteTopologyDumperReplyTest extends ContextTestSupport {
         // the dead letter channel: the message ends there
         assertThat(edges).filteredOn(e -> "dead-orders".equals(e.toRouteId()))
                 .isNotEmpty().allMatch(e -> e.isErrorPath() && !e.reply());
+    }
+
+    @Test
+    void aPatternThatCannotBeResolvedSaysNothing() {
+        // the topology is dumped from the model, so a send pattern with a missing placeholder must not fail the dump
+        RouteDefinition route = new RouteDefinition();
+        route.routeId("not-started");
+        ToDefinition send = new ToDefinition("seda:pricing");
+        send.setPattern("{{missing.pattern}}");
+
+        assertThat(DefaultRouteTopologyDumper.waitsForAnswer(context, route, send, "seda:pricing")).isFalse();
     }
 
     @Test
