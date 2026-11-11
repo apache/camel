@@ -26,7 +26,7 @@ If you're unsure, you can format the pull request title like `[CAMEL-XXX] Fixes 
 - [ ] I have run `mvn clean install -DskipTests` locally from root folder and I have committed all auto-generated changes.
 
 <!--
-You can run the aforementioned command in your module so that the build auto-formats your code. This will also be verified as part of the checks and your PR may be rejected if if there are uncommited changes after running `mvn clean install -DskipTests`.
+You can run the aforementioned command in your module so that the build auto-formats your code. This will also be verified as part of the checks and your PR may be rejected if there are uncommitted changes after running `mvn clean install -DskipTests`.
 
 You can learn more about the contribution guidelines at https://github.com/apache/camel/blob/main/CONTRIBUTING.md
 -->
