@@ -1,0 +1,195 @@
+---
+title: Embedded Cedar authorization
+authors:
+  - "@oscerd"
+reviewers: []
+approvers: []
+creation-date: 2026-11-11
+last-updated: 2026-11-11
+status: implementable
+see-also:
+  - "design/security.adoc"
+  - "https://issues.apache.org/jira/browse/CAMEL-26846"
+  - "https://issues.apache.org/jira/browse/CAMEL-26847"
+replaces: []
+superseded-by: []
+---
+
+== Decision
+
+Implement a preview `camel-cedar` component for embedded authorization through
+`com.cedarpolicy:cedar-java:4.11.0`, using its `uber` classifier to include the
+native library. Start with JVM execution, a producer and an authorization-policy
+bean. AWS Verified Permissions and arbitrary remote policy servers are separate
+integrations; Cedar does not define a general HTTP decision protocol.
+
+Cedar asks whether a principal may perform an action on a resource in a context.
+The application supplies the relevant entities and their attributes and parents.
+It complements SPIFFE identity and can use data selected through OpenFGA; it does
+not replace an external relationship graph or obtain all relevant entities itself.
+
+== Evidence
+
+The feasibility probe used the published Maven Central artifact and its declared
+runtime dependencies. The binding targets Java 17; the tested Camel development
+branch builds on Java 21. The probe ran on Linux amd64 with glibc and Eclipse
+Temurin 21.0.10. No authorization server, credentials or network requests were
+needed during evaluation.
+
+Nine checks passed:
+
+* An explicit permit allows its matching request.
+* A request without a matching permit is denied.
+* A matching forbid overrides a permit.
+* An erroneous forbid can be skipped while a permit allows, with diagnostics.
+* Malformed policy text is rejected.
+* A schema-compatible policy validates.
+* A schema-incompatible attribute reference fails validation.
+* One engine and a policy set kept unchanged produced the expected outcomes for
+  2,000 requests on eight concurrent threads.
+* Malformed entity JSON is rejected.
+
+The concurrency check is evidence for this workload, not a promise that arbitrary
+SDK objects are safe to mutate concurrently. The component must own its policy
+snapshots, never expose the SDK's mutable collections, and create request-scoped
+input and entity data. The Java engine delegates through JNI and has no per-engine
+close operation. Native library loading is JVM-scoped, not an endpoint resource.
+
+=== Preliminary timing
+
+A simple, single-process timing probe used 500 warm-up evaluations followed by
+3,000 requests for a one-rule policy. A separate 500-request comparison supplied
+100 entities. One run, concurrent with a Camel build, recorded:
+
+[cols="3,1",options="header"]
+|===
+| Path | Mean microseconds per operation
+| Reuse Java policy set, authorize | 292
+| Parse policy text for each authorization | 355
+| Explicit SDK native policy cache, authorize | 184
+| Reuse 100 parsed entities, authorize | 920
+| Parse 100 entities for each authorization | 2750
+|===
+
+These are smoke measurements, not JMH results, latency percentiles, or throughput
+claims. Native initialization in that run took about 171 ms. Scheduling and build
+load affected the timings; do not use them as capacity targets. They justify
+loading and validating static policy data once, and leaving repeated entity
+loading to a provider with an explicit lifetime, rather than reparsing all static
+inputs for every exchange.
+
+The optional native cache has JVM-global capacity and eviction behavior. The
+initial implementation should use ordinary parsed policy snapshots without
+changing global SDK cache settings. Adopt the native cache only after a separate
+lifecycle and sustained-load assessment; faster smoke results alone are not a
+reason to introduce global mutable configuration.
+
+== Portability and packaging
+
+Inspection of the released uber JAR found these bundled native libraries:
+
+[cols="2,2,2",options="header"]
+|===
+| Platform | Architectures in artifact | Validation
+| Linux GNU/glibc | amd64, arm64 | amd64 executed; arm64 not executed
+| macOS | amd64, arm64 | Packaging inspected only
+| Windows | amd64 | Packaging inspected only
+| Linux musl, ppc64le, s390x | No matching bundle | Not supported by this artifact
+| GraalVM native image | Separate JNI/resource configuration required | Not validated
+|===
+
+The artifact's bundled targets are not a support claim for untested platforms.
+The initial component documentation must distinguish tested runtime execution
+from packaging inspection and must not advertise native-image support. No
+`native-image` tool was available in the feasibility environment. Unsupported
+platforms must fail at startup with the engine version, operating system and
+architecture and actionable guidance, rather than fail on the first message.
+
+Native loading can require an executable, writable extraction location. Deployment
+images with a read-only filesystem or a non-executable temporary directory need
+an explicit native-library loading plan and a startup check. A stock musl image
+is not interchangeable with the tested glibc image. Testing other operating
+systems or native-image integration belongs to their platform CI, not a local
+Linux test with a changed `os.name` value.
+
+The Java artifact declares Jackson 2, Guava and JNE runtime dependencies. Keep
+Jackson 2 isolated through its normal Java packages alongside Camel's Jackson 3
+usage; do not replace Cedar's serializer with Jackson 3 without upstream support.
+The Cedar artifact and repository declare Apache-2.0. Review the bundled native
+library's third-party notices as part of normal dependency-license validation.
+A published binary is sufficient for Camel builds; consumers should not need a
+Rust or Zig toolchain.
+
+== Component contract
+
+The producer evaluates a configured policy set and preserves the message body.
+A policy bean uses the same evaluator and denies access before its wrapped
+processor runs. Configure principal, action and resource expressions on the
+endpoint or bean, and accept context and entity data through explicitly chosen
+expressions or a provider SPI. The policy, schema and their revision are selected
+by trusted configuration, not a dispatch header.
+
+Expose both the engine decision and an effective authorization outcome. Cedar's
+engine uses default deny, forbid precedence and skip-on-error. The default
+Camel enforcement mode should reject a response containing evaluation errors,
+even when the engine's raw decision is allow. An explicit compatibility mode may
+honor Cedar's native decision, but must retain its diagnostics and clearly
+explain the difference. Do not label an evaluation failure as a policy denial
+or silently allow a failed call. A transport-style `failOpen` option has no role
+in this embedded first version.
+
+Validate policies against the configured schema at startup. Request validation
+and entity parsing must follow that schema where the SDK supports it. A syntax
+check alone does not establish that the policy is compatible with the application's
+entity and action model.
+
+=== Reload and lifecycle
+
+Publish immutable snapshots containing a policy set, schema, static entity data
+if configured, and a content revision. Load, parse, validate and warm a candidate
+before making it current. A failed reload leaves the previous validated snapshot
+active and reports the failure without input, credential or policy contents.
+An exchange uses one coherent snapshot. Reload does not mutate the policy set
+already being evaluated by other exchanges.
+
+Explicit reload is sufficient for the first version. Any optional watcher must
+use Camel-managed resources, stop with the owning service and avoid reading
+resources on every exchange. An entity provider defines its own bounded I/O
+and freshness contract; the Cedar evaluator must not pretend that an old entity
+snapshot guarantees current permissions.
+
+=== Diagnostics and observability
+
+Return a typed result with effective outcome, raw Cedar decision, determining
+policy identifiers, evaluation-error diagnostics and policy revision. Clear
+previous outputs before evaluating another decision. Do not retain a full
+Exchange, token or private key in a result or event. Policy identifiers and
+revisions can appear in explicit diagnostics; principal/resource identifiers,
+raw inputs and policy text must not become metric labels or default log output.
+
+Use the component's normal lifecycle and the shared decision-observation
+contract when available. Avoid adding a second tracing implementation around
+the same call. Bean catalog metadata, generated endpoint/configuration metadata,
+Java/XML/YAML examples and startup validation are part of the initial component.
+
+== Verification for implementation
+
+* Unit tests for input mapping, missing principal/action/resource, body preservation,
+  output clearing and policy-wrapper failure behavior.
+* Real embedded engine tests for permits, default deny, forbid precedence,
+  schema validation, request/entity errors and strict versus native error handling.
+* Concurrent evaluation and reload tests proving that old or new snapshots are
+  coherent and an invalid replacement never becomes active.
+* Native-loading tests on the supported CI targets; document targets that are
+  packaged but not exercised.
+* Reproducible dependency and native-resource inventory. Native-image support
+  requires its own build and runtime tests before being advertised.
+
+== Sources
+
+* https://github.com/cedar-policy/cedar-java/releases/tag/v4.11.0[Java binding release]
+* https://repo.maven.apache.org/maven2/com/cedarpolicy/cedar-java/4.11.0/cedar-java-4.11.0.pom[Published runtime dependencies]
+* https://github.com/cedar-policy/cedar-java/blob/v4.11.0/CedarJava/build.gradle[Released native targets]
+* https://github.com/cedar-policy/cedar-java/blob/v4.11.0/CedarJava/src/main/java/com/cedarpolicy/BasicAuthorizationEngine.java[Engine implementation]
+* https://docs.cedarpolicy.com/auth/authorization.html[Authorization semantics]
+* https://docs.cedarpolicy.com/validation.html[Schema validation]
