@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.plugin;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.aesh.command.CommandDefinition;
@@ -39,6 +40,7 @@ import org.apache.camel.dsl.jbang.core.common.PluginVersionResolver.Unavailable;
 import org.apache.camel.main.download.DependencyDownloader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @CommandDefinition(name = "add", description = "Add new plugin", generateHelp = true,
@@ -84,6 +86,7 @@ public class PluginAdd extends PluginBaseCommand {
         JsonObject pluginConfig = loadConfig();
         JsonObject plugins = pluginConfig.getMap("plugins");
 
+        String[] appliesTo = null;
         Optional<PluginType> camelPlugin = PluginType.findByName(name);
         if (camelPlugin.isPresent()) {
             if (command == null) {
@@ -96,6 +99,7 @@ public class PluginAdd extends PluginBaseCommand {
             if (firstVersion == null) {
                 firstVersion = camelPlugin.get().getFirstVersion();
             }
+            appliesTo = camelPlugin.get().getAppliesTo();
         } else {
             Optional<JsonObject> known = PluginHelper.findKnownPlugin(name);
             if (known.isPresent()) {
@@ -139,6 +143,11 @@ public class PluginAdd extends PluginBaseCommand {
         }
         plugin.put("description",
                 description != null ? description : "Plugin %s called with command %s".formatted(name, command));
+        if (appliesTo != null && appliesTo.length > 0) {
+            JsonArray appliesToArray = new JsonArray();
+            appliesToArray.addAll(Arrays.asList(appliesTo));
+            plugin.put("appliesTo", appliesToArray);
+        }
 
         boolean explicit = gav != null || isVersionGiven();
         if (gav == null && (groupId != null && artifactId != null)) {

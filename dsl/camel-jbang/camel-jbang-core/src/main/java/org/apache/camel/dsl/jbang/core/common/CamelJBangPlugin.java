@@ -40,4 +40,11 @@ public @interface CamelJBangPlugin {
      */
     String firstVersion();
 
+    /**
+     * The commands this plugin contributes to beyond its own command. For example, a plugin that provides a
+     * {@link org.apache.camel.dsl.jbang.run.common.PluginExporter} should declare {@code appliesTo = {"export"}} so it
+     * is loaded during {@code camel export}. Empty means the plugin is only loaded for its own command.
+     */
+    String[] appliesTo() default {};
+
 }
