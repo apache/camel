@@ -125,6 +125,7 @@ public class ODataProducer extends DefaultProducer {
         // Manage Authentication Headers Precedence
         String authHeader = exchange.getMessage().getHeader("Authorization", String.class);
         ODataConfiguration config = endpoint.getConfiguration();
+        boolean generatedAuthorization = false;
 
         if (authHeader == null && config != null) {
             if ("Basic".equalsIgnoreCase(config.getAuthMethod())
@@ -133,8 +134,10 @@ public class ODataProducer extends DefaultProducer {
                 String credentials = config.getAuthUsername() + ":" + config.getAuthPassword();
                 String encoded = Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
                 httpExchange.getMessage().setHeader("Authorization", "Basic " + encoded);
+                generatedAuthorization = true;
             } else if (config.getAuthBearerToken() != null) {
                 httpExchange.getMessage().setHeader("Authorization", "Bearer " + config.getAuthBearerToken());
+                generatedAuthorization = true;
             }
         }
 
@@ -180,6 +183,10 @@ public class ODataProducer extends DefaultProducer {
             return;
         }
 
+        if (generatedAuthorization) {
+            // Endpoint authentication belongs to the internal HTTP request, not the mapped result.
+            httpExchange.getMessage().removeHeader("Authorization");
+        }
         MessageHelper.copyHeaders(httpExchange.getMessage(), exchange.getMessage(), true);
 
         Integer responseCode = httpExchange.getMessage().getHeader(
