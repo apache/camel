@@ -66,7 +66,7 @@ public class BeanIODataFormatSimpleCustomBeanReaderErrorHandlerTest extends Came
 
     @Test
     void testUnmarshalFail() throws Exception {
-        // there should be 1 splitted that failed we get also
+        // there should be 1 split that failed we get also
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedMessageCount(3);
         mock.message(0).body().isInstanceOf(Employee.class);

@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit test for onException with expresion classname with a trailing \n the spring DSL.
+ * Unit test for onException with expression classname with a trailing \n the spring DSL.
  */
 public class SpringOnExceptionNotNormalizedClassNameTest extends ContextTestSupport {
 

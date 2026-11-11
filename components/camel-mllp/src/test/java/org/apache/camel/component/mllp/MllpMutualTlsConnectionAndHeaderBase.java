@@ -92,7 +92,7 @@ public class MllpMutualTlsConnectionAndHeaderBase extends CamelTestSupport {
     /**
      * Creates an SSLContextParameters object with a key and truststore so that mTLS is conducted.
      *
-     * @return           SSLContextParamters with both keystore and truststore paramters.
+     * @return           SSLContextParamters with both keystore and truststore parameters.
      * @throws Exception if anything goes wrong and then should fail the test.
      */
     private SSLContextParameters createSslContextParameters(ClientAuthentication clientAuthentication) throws Exception {

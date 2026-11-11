@@ -70,10 +70,10 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
             @Override
             public void configure() {
                 @SuppressWarnings("resource")
-                // resource will be managed by framework lifecyle
+                // resource will be managed by framework lifecycle
                 CsvDataFormat csv = new CsvDataFormat().setDelimiter('|');
                 @SuppressWarnings("resource")
-                // resource will be managed by framework lifecyle
+                // resource will be managed by framework lifecycle
                 CsvDataFormat csv2 = new CsvDataFormat().setDelimiter(';');
 
                 from("direct:start")

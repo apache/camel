@@ -66,7 +66,7 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
     @Test
     public void testHttpGetWithExplicitStreamClose() throws Exception {
 
-        // We close connections explicitely at the very end of the flow
+        // We close connections explicitly at the very end of the flow
         // (camel doesn't know when the stream is not needed any more)
 
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);

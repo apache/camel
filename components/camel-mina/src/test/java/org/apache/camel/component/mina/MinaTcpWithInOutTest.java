@@ -84,7 +84,7 @@ public class MinaTcpWithInOutTest extends BaseMinaTest {
         latch = new CountDownLatch(1);
         uri = String.format("mina:tcp://localhost:%1$s?textline=true&lazySessionCreation=true", getPort());
 
-        // The server is activated after Camel to check if the lazyness is working
+        // The server is activated after Camel to check if the laziness is working
         MinaReverserServer server = new MinaReverserServer(getPort());
         server.start();
 

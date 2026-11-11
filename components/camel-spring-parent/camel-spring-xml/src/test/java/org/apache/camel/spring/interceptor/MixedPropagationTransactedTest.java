@@ -133,7 +133,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         try {
             template.sendBody("direct:requiredAndNewRollback", "Tiger in Action");
         } catch (RuntimeCamelException e) {
-            // expeced as we fail
+            // expected as we fail
             assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());

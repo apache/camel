@@ -141,7 +141,7 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             assertEquals(expectedResult, allDocuments);
         });
 
-        // fetch one single document  with criterias
+        // fetch one single document  with criteria
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             Map<String, String> criterias = new HashMap<>();
             criterias.put("title", "Elastic");
@@ -153,7 +153,7 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             assertEquals(expectedResult, allDocuments);
         });
 
-        // fetch multiple documents  with criterias
+        // fetch multiple documents  with criteria
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             Map<String, String> criterias = new HashMap<>();
             criterias.put("title", "Elastic");
@@ -165,7 +165,7 @@ public class ElasticsearchRestClientComponentIT extends ElasticsearchRestClientI
             assertEquals(expectedResult, allDocuments);
         });
 
-        // fetch inexisting document with criterias
+        // fetch inexisting document with criteria
         Awaitility.await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
             Map<String, String> criterias = new HashMap<>();
             criterias.put("title", "Apache");

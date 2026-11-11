@@ -50,7 +50,7 @@ public class BindyCountGraphemeTest extends CamelTestSupport {
 
         // camel + man face palming => 2 graphemes
         String firstAndSecondGrapheme = "\uD83D\uDC2A\uD83E\uDD26\uD83C\uDFFC\u200D\u2642\uFE0F";
-        // d with diaresis => 1 grapheme
+        // d with diaeresis => 1 grapheme
         String thirdGrapheme = "d\u0308";
 
         result.expectedMessagesMatches(exchange -> {

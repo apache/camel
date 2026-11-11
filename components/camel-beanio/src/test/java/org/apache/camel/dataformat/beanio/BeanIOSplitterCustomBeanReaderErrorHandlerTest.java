@@ -74,7 +74,7 @@ public class BeanIOSplitterCustomBeanReaderErrorHandlerTest extends CamelTestSup
 
     @Test
     void testSplitFail() throws Exception {
-        // there should be 1 splitted that failed we get also
+        // there should be 1 split that failed we get also
         MockEndpoint mock = getMockEndpoint("mock:beanio-unmarshal");
         mock.expectedMessageCount(3);
         mock.message(0).body().isInstanceOf(Employee.class);

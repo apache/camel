@@ -175,7 +175,7 @@ public class CsvUnmarshalTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             @SuppressWarnings("resource")
-            // resource will be managed by framework lifecyle
+            // resource will be managed by framework lifecycle
             public void configure() {
                 // Default format
                 from("direct:default")

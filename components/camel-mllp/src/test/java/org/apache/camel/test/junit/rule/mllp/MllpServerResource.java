@@ -990,7 +990,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
          *
          * @param  hl7Message HL7 message that is being acknowledged
          *
-         * @return            a HL7 Application Accept Acknowlegdement
+         * @return            a HL7 Application Accept Acknowledgement
          */
         private String generateAcknowledgementMessage(String hl7Message) {
             return generateAcknowledgementMessage(hl7Message, "AA");

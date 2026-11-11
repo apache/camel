@@ -68,7 +68,7 @@ public class AsyncEndpointJmsTXMulticastIT extends AbstractSpringJMSITSupport {
                             beforeThreadName = Thread.currentThread().getName();
                             assertTrue(exchange.isTransacted(), "Exchange should be transacted");
                         })
-                        // if we use mutlicast then we can propagate transactions across
+                        // if we use multicast then we can propagate transactions across
                         .multicast().to("direct:foo");
 
                 from("direct:foo")

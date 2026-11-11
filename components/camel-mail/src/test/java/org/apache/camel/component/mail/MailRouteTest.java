@@ -128,7 +128,7 @@ public class MailRouteTest extends CamelTestSupport {
                 // header value
                 // here we send the mail to 2 receivers. notice we can use a
                 // plain string with semi colon
-                // to seperate the mail addresses
+                // to separate the mail addresses
                 from("direct:a")
                         .setHeader("to", constant(result.getEmail() + "; " + copy.getEmail()))
                         .to(result.uriPrefix(Protocol.smtp)

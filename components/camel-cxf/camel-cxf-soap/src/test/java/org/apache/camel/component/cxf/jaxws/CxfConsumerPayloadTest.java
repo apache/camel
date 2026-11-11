@@ -53,7 +53,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
     protected static final String ELEMENT_NAMESPACE = "http://jaxws.cxf.component.camel.apache.org/";
 
     protected void checkRequest(String expect, String request) {
-        //REVIST use a more reliable comparison to tolerate some namespaces being added to the root element
+        //REVISIT use a more reliable comparison to tolerate some namespaces being added to the root element
         if (expect.equals("ECHO_REQUEST")) {
             assertTrue(request.startsWith(ECHO_REQUEST.substring(0, 66))
                     && request.endsWith(ECHO_REQUEST.substring(67)), "Get a wrong request");

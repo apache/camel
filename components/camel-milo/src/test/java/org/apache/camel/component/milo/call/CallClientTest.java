@@ -108,7 +108,7 @@ public class CallClientTest extends AbstractMiloServerTest {
         cfg.setApplicationName(LocalizedText.english("Apache Camel Milo Server"));
         cfg.setApplicationUri("urn:mock:namespace");
         cfg.setProductUri("urn:org:apache:camel:milo");
-        // FIXME migrate to new certifcate
+        // FIXME migrate to new certificate
         //        cfg.setCertificateManager(new DefaultCertificateManager());
         ////        cfg.setCertificateValidator(new InsecureCertificateValidator());
         //        cfg.setCertificateValidator(new CertificateValidator.InsecureCertificateValidator());

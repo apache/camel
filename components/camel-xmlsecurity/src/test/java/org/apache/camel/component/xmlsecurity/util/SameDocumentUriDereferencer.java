@@ -33,7 +33,7 @@ public final class SameDocumentUriDereferencer implements URIDereferencer {
     private static final URIDereferencer INSTANCE = new SameDocumentUriDereferencer();
 
     private SameDocumentUriDereferencer() {
-        // singelton
+        // singleton
     }
 
     public static URIDereferencer getInstance() {

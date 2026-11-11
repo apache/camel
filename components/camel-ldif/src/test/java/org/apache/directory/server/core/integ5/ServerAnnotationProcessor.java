@@ -165,7 +165,7 @@ public final class ServerAnnotationProcessor {
     }
 
     /**
-     * Returns an LdapServer instance and starts it before returning the instance, infering the configuration from the
+     * Returns an LdapServer instance and starts it before returning the instance, inferring the configuration from the
      * Stack trace
      *
      * @param  directoryService       the directory service
@@ -213,7 +213,7 @@ public final class ServerAnnotationProcessor {
     }
 
     /**
-     * creates an LdapServer and starts before returning the instance, infering the configuration from the Stack trace
+     * creates an LdapServer and starts before returning the instance, inferring the configuration from the Stack trace
      *
      * @return                        a running LdapServer instance
      * @throws ClassNotFoundException If the CreateConsumer class cannot be loaded

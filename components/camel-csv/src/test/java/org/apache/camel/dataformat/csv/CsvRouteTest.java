@@ -163,7 +163,7 @@ public class CsvRouteTest extends CamelTestSupport {
                 from("direct:startMulti").marshal().csv().to("mock:resultMulti");
 
                 @SuppressWarnings("resource")
-                // resource will be managed by framework lifecyle
+                // resource will be managed by framework lifecycle
                 CsvDataFormat customCsv = new CsvDataFormat()
                         .setDelimiter(';')
                         .setHeader(new String[] { "foo", "baz", "bar" })

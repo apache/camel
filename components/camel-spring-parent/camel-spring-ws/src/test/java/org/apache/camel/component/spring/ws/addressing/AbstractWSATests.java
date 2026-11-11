@@ -162,7 +162,7 @@ public abstract class AbstractWSATests extends CamelSpringTestSupport {
 
     /**
      * Provide corresponding results based on channel input. These two abstract methods (channelIn and channelOut)are
-     * bind together tighly.
+     * bind together tightly.
      */
     abstract MessageAddressingProperties channelOut();
 

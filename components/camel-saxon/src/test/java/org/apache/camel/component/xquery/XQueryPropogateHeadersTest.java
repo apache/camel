@@ -22,7 +22,7 @@ import org.apache.camel.test.junit6.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit test to verify that headers can be propogated through this component.
+ * Unit test to verify that headers can be propagated through this component.
  */
 public class XQueryPropogateHeadersTest extends CamelTestSupport {
 
