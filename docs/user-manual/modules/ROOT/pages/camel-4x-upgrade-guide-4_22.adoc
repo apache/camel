@@ -237,6 +237,16 @@ left a directory named after the part before it. A NUL character failed the exch
 OpenSSH server before 10.6, cut the name short there. Remove or replace these characters in the `CamelFileName` header
 or in the `fileName` option before the message reaches the producer.
 
+=== camel-core - Split EIP processes the items again when the watermark cannot be stored
+
+When the resume strategy of a split with watermark tracking fails to store the watermark, the split now fails with that
+exception, and the next split processes the same items again. Before, with `synchronous()`, the split also failed, but
+the watermark was kept in memory anyway, so the next split skipped those items although the watermark was never stored.
+Without `synchronous()`, the exchange never completed (fixed by the same change).
+
+A `watermarkExpression` that throws on an item now fails that item, so `stopOnException`, `maxFailedRecords` and
+`errorThreshold` apply as for any failed item.
+
 == Upgrading from 4.22.1 to 4.22.2
 
 === camel-management - Route group exchange counters count once per entry into the group again
