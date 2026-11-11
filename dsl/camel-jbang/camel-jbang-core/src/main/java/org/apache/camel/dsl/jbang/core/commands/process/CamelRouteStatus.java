@@ -28,6 +28,10 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -41,81 +45,65 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "Get status of Camel routes",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get route",
-                 "  camel get route hello",
-                 "  camel get route --watch" })
+@CommandDefinition(name = "route", description = "Get status of Camel routes", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get route",
+                           "  camel get route hello",
+                           "  camel get route --watch" })
 public class CamelRouteStatus extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @Option(name = "source", hasValue = false, description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--remote" },
-                        description = "Break down counters into remote/total pairs")
+    @Option(name = "remote", hasValue = false, description = "Break down counters into remote/total pairs")
     boolean remote;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @Option(name = "short-uri", hasValue = false, description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter routes by limiting to the given number of rows")
+    @Option(name = "limit", description = "Filter routes by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter-mean" },
-                        description = "Filter routes that must be slower than the given time (ms)")
+    @Option(name = "filter-mean", description = "Filter routes that must be slower than the given time (ms)")
     long mean;
 
-    @CommandLine.Option(names = { "--running" },
-                        description = "Only include running routes")
+    @Option(name = "running", hasValue = false, description = "Only include running routes")
     boolean running;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter routes by id, or url")
+    @OptionList(name = "filter", valueSeparator = OptionList.NO_SEPARATOR, description = "Filter routes by id, or url")
     String[] filter;
 
-    @CommandLine.Option(names = { "--group" },
-                        description = "Filter routes by group")
+    @OptionList(name = "group", valueSeparator = OptionList.NO_SEPARATOR, description = "Filter routes by group")
     String[] group;
 
-    @CommandLine.Option(names = { "--error" },
-                        description = "Shows detailed information for routes that has error status")
+    @Option(name = "error", hasValue = false, description = "Shows detailed information for routes that has error status")
     boolean error;
 
-    @CommandLine.Option(names = { "--description" },
-                        description = "Include description in the ID column (if available)")
+    @Option(name = "description", hasValue = false, description = "Include description in the ID column (if available)")
     boolean description;
 
-    @CommandLine.Option(names = { "--note" },
-                        description = "Include note in the ID column (if available)")
+    @Option(name = "note", hasValue = false, description = "Include note in the ID column (if available)")
     boolean note;
 
-    @CommandLine.Option(names = { "--show-group" },
-                        description = "Include group column")
+    @Option(name = "show-group", hasValue = false, description = "Include group column")
     boolean showGroup;
 
-    @CommandLine.Option(names = { "--checksum" },
-                        description = "Include the checksum and revision of each route: the checksum is the same in every run while the route is not changed, and the revision counts the times a reload changed it")
+    @Option(name = "checksum", hasValue = false,
+            description = "Include the checksum and revision of each route: the checksum is the same in every run while the route is not changed, and the revision counts the times a reload changed it")
     boolean checksum;
 
     public CamelRouteStatus(CamelJBangMain main) {

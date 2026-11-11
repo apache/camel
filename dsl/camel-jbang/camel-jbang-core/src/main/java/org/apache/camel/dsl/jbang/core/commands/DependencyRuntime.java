@@ -21,6 +21,10 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.model.DependencyRuntimeDTO;
 import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
@@ -31,22 +35,21 @@ import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "runtime", description = "Display Camel runtime and version for given Maven project",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel dependency runtime" })
+@CommandDefinition(name = "runtime", description = "Display Camel runtime and version for given Maven project",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel dependency runtime" })
 public class DependencyRuntime extends CamelCommand {
 
-    @CommandLine.Parameters(description = "The pom.xml to analyze", arity = "1", paramLabel = "<pom.xml>")
+    @Argument(required = true, description = "The pom.xml to analyze", paramLabel = "<pom.xml>")
     Path pomXml;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
     public DependencyRuntime(CamelJBangMain main) {

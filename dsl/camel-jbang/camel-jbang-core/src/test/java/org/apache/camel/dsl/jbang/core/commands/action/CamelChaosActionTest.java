@@ -24,13 +24,13 @@ import java.util.Map;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -230,13 +230,13 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     @Test
     void addAndChangeNeedTheirOptions() {
         assertThatThrownBy(() -> command(new CamelChaosAddAction(main()), "orders"))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+                .isInstanceOf(CliException.class);
         assertThatThrownBy(() -> command(new CamelChaosAddAction(main())))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+                .isInstanceOf(CliException.class);
         assertThatThrownBy(() -> command(new CamelChaosChangeAction(main()), "orders", "--rule=endpoint=* drop"))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+                .isInstanceOf(CliException.class);
         assertThatThrownBy(() -> command(new CamelChaosChangeAction(main()), "--id=r1"))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+                .isInstanceOf(CliException.class);
     }
 
     @Test
@@ -464,9 +464,9 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     @Test
     void removeNeedsTheId() {
         assertThatThrownBy(() -> command(new CamelChaosRemoveAction(main()), "orders"))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+                .isInstanceOf(CliException.class);
         assertThatThrownBy(() -> command(new CamelChaosRemoveAction(main())))
-                .isInstanceOf(CommandLine.MissingParameterException.class);
+                .isInstanceOf(CliException.class);
     }
 
     @Test
@@ -640,7 +640,7 @@ class CamelChaosActionTest extends ActionCommandTestSupport {
     }
 
     private static <T extends CamelChaosAction> T command(T command, String... args) {
-        CommandLine.populateCommand(command, args);
+        CommandLineTestHelper.parse(command, args);
         return command;
     }
 }

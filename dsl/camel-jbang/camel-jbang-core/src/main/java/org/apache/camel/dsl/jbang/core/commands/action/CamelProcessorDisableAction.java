@@ -16,16 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "disable-processor",
-                     description = "Disable Camel processor", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd disable-processor --id=myId",
-                             "  camel cmd disable-processor myApp --id=myId" })
+@CommandDefinition(name = "disable-processor", description = "Disable Camel processor", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd disable-processor --id=myId",
+                           "  camel cmd disable-processor myApp --id=myId" })
 public class CamelProcessorDisableAction extends CamelProcessorAction {
 
     public CamelProcessorDisableAction(CamelJBangMain main) {

@@ -23,34 +23,33 @@ import java.util.Optional;
 
 import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.kubernetes.client.dsl.PodResource;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.kubernetes.traits.BaseTrait;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.util.ObjectHelper;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
 
-@Command(name = "logs", description = "Print the logs of a Kubernetes pod", sortOptions = false)
+@CommandDefinition(name = "logs", description = "Print the logs of a Kubernetes pod", generateHelp = true)
 public class KubernetesPodLogs extends KubernetesBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel file to get logs from. Integration name is derived from the file name.",
-                            arity = "0..1", paramLabel = "<file>")
+    @Argument(description = "The Camel file to get logs from. Integration name is derived from the file name.",
+              paramLabel = "<file>")
     protected String filePath;
 
-    @CommandLine.Option(names = { "--label" },
-                        description = "Label name and value used as a pod selector.")
+    @Option(name = "label", description = "Label name and value used as a pod selector.")
     protected String label;
 
-    @CommandLine.Option(names = "--container",
-                        description = "Name identifying the pod container to grab the logs from.")
+    @Option(name = "container", description = "Name identifying the pod container to grab the logs from.")
     protected String container;
 
-    @CommandLine.Option(names = { "--tail" },
-                        defaultValue = "-1",
-                        description = "The number of lines from the end of the logs to show. Defaults to -1 to show all the lines.")
+    @Option(name = "tail",
+            description = "The number of lines from the end of the logs to show. Defaults to -1 to show all the lines.",
+            defaultValue = "-1")
     int tail = -1;
 
     // total timeout of 60s

@@ -19,76 +19,70 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 
-@CommandLine.Command(name = "tui", description = "Camel TUI (use --help to see sub commands)")
+@CommandDefinition(name = "tui", description = "Camel TUI (use --help to see sub commands)", generateHelp = true,
+                   sortOptions = true)
 public class TuiCommand extends CamelCommand {
 
     private ClassLoader classLoader;
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name;
 
-    @CommandLine.Option(names = { "--mcp" },
-                        description = "Enable embedded MCP server for AI agent access to the TUI")
+    @Option(name = "mcp", hasValue = false, description = "Enable embedded MCP server for AI agent access to the TUI")
     boolean mcp;
 
-    @CommandLine.Option(names = { "--mcp-port" },
-                        description = "MCP server port (default: ${DEFAULT-VALUE})",
-                        defaultValue = "8123")
+    @Option(name = "mcp-port", description = "MCP server port (default: ${DEFAULT-VALUE})", defaultValue = "8123")
     int mcpPort = 8123;
 
-    @CommandLine.Option(names = { "--web" },
-                        description = "Enable browser-accessible terminal (WebSocket) server; without an interactive"
-                                      + " terminal it serves browsers only")
+    @Option(name = "web", hasValue = false,
+            description = "Enable browser-accessible terminal (WebSocket) server; without an interactive"
+                          + " terminal it serves browsers only")
     boolean web;
 
-    @CommandLine.Option(names = { "--web-port" },
-                        description = "Web terminal server port (default: ${DEFAULT-VALUE})",
-                        defaultValue = "8090")
+    @Option(name = "web-port", description = "Web terminal server port (default: ${DEFAULT-VALUE})", defaultValue = "8090")
     int webPort = 8090;
 
-    @CommandLine.Option(names = { "--refresh" },
-                        description = "Refresh interval in milliseconds (default: ${DEFAULT-VALUE})",
-                        defaultValue = "100")
+    @Option(name = "refresh", description = "Refresh interval in milliseconds (default: ${DEFAULT-VALUE})",
+            defaultValue = "100")
     long refreshInterval = 100;
 
-    @CommandLine.Option(names = { "--record" },
-                        description = "Play a .tape file in the TUI and record it to an Asciinema .cast file",
-                        arity = "0..1")
+    @Option(name = "record", optionalValue = true,
+            description = "Play a .tape file in the TUI and record it to an Asciinema .cast file")
     String record;
 
-    @CommandLine.Option(names = { "--record-size" },
-                        description = "Size of the recorded terminal for --record, as <cols>x<rows> (default: ${DEFAULT-VALUE})",
-                        defaultValue = "200x50")
+    @Option(name = "record-size",
+            description = "Size of the recorded terminal for --record, as <cols>x<rows> (default: ${DEFAULT-VALUE})",
+            defaultValue = "200x50")
     String recordSize = "200x50";
 
-    @CommandLine.Option(names = { "--record-fps" },
-                        description = "Frames per second captured by --record (default: ${DEFAULT-VALUE})",
-                        defaultValue = "10")
+    @Option(name = "record-fps", description = "Frames per second captured by --record (default: ${DEFAULT-VALUE})",
+            defaultValue = "10")
     int recordFps = 10;
 
-    @CommandLine.Option(names = { "--record-duration" },
-                        description = "Maximum duration in milliseconds captured by --record (default: ${DEFAULT-VALUE})",
-                        defaultValue = "120000")
+    @Option(name = "record-duration",
+            description = "Maximum duration in milliseconds captured by --record (default: ${DEFAULT-VALUE})",
+            defaultValue = "120000")
     int recordDuration = 120000;
 
-    @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme: dark or light (overrides persisted preference for this session)",
-                        completionCandidates = ThemeModeCompletionCandidates.class)
+    @Option(name = "theme", description = "Color theme: dark or light (overrides persisted preference for this session)",
+            completer = ThemeModeCompletionCandidates.class)
     String theme;
 
-    @CommandLine.Option(names = { "--panel-theme" },
-                        description = "Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme"
-                                      + " (overrides the Panel Theme setting for this session)",
-                        completionCandidates = ThemeModeCompletionCandidates.class)
+    @Option(name = "panel-theme", description = "Color theme of the shell (F6) and AI (F8) panels, or 'same' for the main theme"
+                                                + " (overrides the Panel Theme setting for this session)",
+            completer = ThemeModeCompletionCandidates.class)
     String panelTheme;
 
-    @CommandLine.Option(names = { "--defaults" },
-                        description = "Start with the default settings, as a new user sees the TUI; changes last for the"
-                                      + " session and are not saved")
+    @Option(name = "defaults", hasValue = false,
+            description = "Start with the default settings, as a new user sees the TUI; changes last for the"
+                          + " session and are not saved")
     boolean defaults;
 
     public TuiCommand(CamelJBangMain main, ClassLoader classLoader) {
@@ -103,7 +97,7 @@ public class TuiCommand extends CamelCommand {
             requireInteractiveTerminal("camel tui");
         }
         CamelMonitor cmd = new CamelMonitor(getMain(), classLoader);
-        return new CommandLine(cmd).execute(buildArgs().toArray(String[]::new));
+        return new CommandTree(cmd).execute(buildArgs().toArray(String[]::new)).getResultValue();
     }
 
     /**

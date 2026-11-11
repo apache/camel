@@ -19,12 +19,12 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -73,7 +73,7 @@ class TuiCommandThemeOptionsTest {
     void rejectsAnUnknownPanelTheme() {
         CamelMonitor monitor = monitor("--panel-theme=neon");
         assertThatThrownBy(monitor::applyThemeOption)
-                .isInstanceOf(CommandLine.ParameterException.class)
+                .isInstanceOf(CliException.class)
                 .hasMessageContaining("--panel-theme")
                 .hasMessageContaining("'same'")
                 .hasMessageContaining("neon");

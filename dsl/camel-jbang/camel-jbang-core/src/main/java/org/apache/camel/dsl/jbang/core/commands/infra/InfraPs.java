@@ -20,18 +20,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "ps", description = "Displays running services", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel infra ps",
-                             "  camel infra ps kafka" })
+@CommandDefinition(name = "ps", description = "Displays running services", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel infra ps",
+                           "  camel infra ps kafka" })
 public class InfraPs extends InfraBaseCommand {
 
-    @CommandLine.Parameters(description = "Service name", arity = "0..1")
+    @Arguments(description = "Service name")
     List<String> serviceName;
 
     public InfraPs(CamelJBangMain main) {

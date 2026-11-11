@@ -30,6 +30,10 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -60,73 +64,62 @@ import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
 
-@CommandLine.Command(name = "doc",
-                     description = "Shows documentation for kamelet, component, EIP, and other Camel resources",
-                     sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel doc kafka",
-                             "  camel doc timer",
-                             "  camel doc aws-s3-source",
-                             "  camel doc jsonpath",
-                             "  camel doc split",
-                             "  camel doc kafka --example" })
+@CommandDefinition(name = "doc", description = "Shows documentation for kamelet, component, EIP, and other Camel resources",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel doc kafka",
+                           "  camel doc timer",
+                           "  camel doc aws-s3-source",
+                           "  camel doc jsonpath",
+                           "  camel doc split",
+                           "  camel doc kafka --example" })
 public class CatalogDoc extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
-                                          + " (prefix with eip: for an EIP with the name of a component, such as eip:log)",
-                            arity = "1")
+    @Argument(required = true, description = "Name of kamelet, component, dataformat, language, EIP, or other Camel resource"
+                                             + " (prefix with eip: for an EIP with the name of a component, such as eip:log)")
     String name;
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To use a different Camel version than the default version")
+    @Option(name = "camel-version", description = "To use a different Camel version than the default version")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", completer = RuntimeCompletionCandidates.class,
+            converter = RuntimeTypeConverter.class)
     RuntimeType runtime;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
-    @CommandLine.Mixin
+    @Mixin
     QuarkusPlatformMixin quarkusPlatform;
 
-    @CommandLine.Option(names = { "--url" },
-                        description = "Prints the link to the online documentation on the Camel website",
-                        defaultValue = "false")
+    @Option(name = "url", hasValue = false, description = "Prints the link to the online documentation on the Camel website",
+            defaultValue = "false")
     boolean url;
 
-    @CommandLine.Option(names = { "--open-url" },
-                        description = "Opens the online documentation form the Camel website in the web browser",
-                        defaultValue = "false")
+    @Option(name = "open-url", hasValue = false,
+            description = "Opens the online documentation form the Camel website in the web browser", defaultValue = "false")
     boolean openUrl;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter option listed in tables by name, description, or group")
+    @Option(name = "filter", description = "Filter option listed in tables by name, description, or group")
     String filter;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Whether to display component message headers", defaultValue = "false")
+    @Option(name = "header", hasValue = false, description = "Whether to display component message headers",
+            defaultValue = "false")
     boolean headers;
 
-    @CommandLine.Option(names = { "--example" },
-                        description = "Prints a minimal working YAML route snippet for the component", defaultValue = "false")
+    @Option(name = "example", hasValue = false, description = "Prints a minimal working YAML route snippet for the component",
+            defaultValue = "false")
     boolean example;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format: the documentation the MCP tool camel_catalog_doc gives")
+    @Option(name = "json", hasValue = false,
+            description = "Output in JSON Format: the documentation the MCP tool camel_catalog_doc gives")
     boolean jsonOutput;
 
     /** The sides of the body types, as the documentation pages name them. */

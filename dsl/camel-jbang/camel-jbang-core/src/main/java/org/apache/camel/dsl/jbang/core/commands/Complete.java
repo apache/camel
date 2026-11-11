@@ -18,13 +18,15 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.PrintStream;
 
-import picocli.AutoComplete;
-import picocli.CommandLine;
+import org.aesh.command.CommandDefinition;
+import org.aesh.util.completer.ShellCompletionGenerator;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 
-@CommandLine.Command(name = "complete", description = "Generate completion script for bash/zsh",
-                     footer = {
-                             "%nExamples:",
-                             "  source <(camel completion)" })
+@CommandDefinition(name = "completion", description = "Generate completion script for bash/zsh", generateHelp = true,
+                   sortOptions = true,
+                   footer = {
+                           "Examples:",
+                           "  source <(camel completion)" })
 public class Complete extends CamelCommand {
 
     public Complete(CamelJBangMain main) {
@@ -33,9 +35,9 @@ public class Complete extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        String script = AutoComplete.bash(
-                spec.parent().name(),
-                spec.parent().commandLine());
+        CommandTree root = CommandTree.of(this).getParent();
+        String script = ShellCompletionGenerator.forShell(ShellCompletionGenerator.ShellType.BASH)
+                .generate(root.parser(), root.getName());
 
         // not PrintWriter.println: scripts with Windows line separators fail in strange
         // ways!

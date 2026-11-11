@@ -18,24 +18,23 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Stack;
 import java.util.function.Supplier;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
 import org.jline.builtins.ClasspathResourceUtil;
 import org.jline.builtins.Commands;
 import org.jline.builtins.ConfigurationPath;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "nano",
-                     description = "Nano editor to edit file",
-                     footer = "Press Ctrl-X to exit.")
+@CommandDefinition(name = "nano", description = "Nano editor to edit file", generateHelp = true, sortOptions = true,
+                   footer = {
+                           "Press Ctrl-X to exit." })
 public class Nano extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of file", arity = "1",
-                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     private Path filePath; // Defined only for file path completion; the field never used
+    @Argument(required = true, description = "Name of file", paramLabel = "<file>")
     private String file;
 
     public Nano(CamelJBangMain main) {
@@ -52,12 +51,5 @@ public class Nano extends CamelCommand {
             Commands.nano(terminal, System.out, System.err, workDir.get(), new String[] { file }, configPath);
         }
         return 0;
-    }
-
-    static class FileConsumer extends ParameterConsumer<Nano> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, Nano cmd) {
-            cmd.file = args.pop();
-        }
     }
 }

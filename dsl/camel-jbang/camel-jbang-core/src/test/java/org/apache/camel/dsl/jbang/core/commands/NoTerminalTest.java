@@ -22,6 +22,7 @@ import java.time.Duration;
 
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.StopWatch;
@@ -31,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
@@ -168,7 +168,7 @@ class NoTerminalTest {
         int exitCode = -1;
 
         @Override
-        public void postAddCommands(CommandLine commandLine, String[] args) {
+        public void postAddCommands(CommandTree commandLine, String[] args) {
             // the commands of the CLI only
         }
 

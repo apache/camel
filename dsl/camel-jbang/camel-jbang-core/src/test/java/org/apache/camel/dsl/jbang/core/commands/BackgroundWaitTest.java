@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,7 +38,7 @@ class BackgroundWaitTest {
         assertThat(BackgroundWait.parse("1m30s")).isEqualTo(90000);
         assertThat(BackgroundWait.parse("1500")).isEqualTo(1500);
         assertThatThrownBy(() -> BackgroundWait.parse("hello.yaml"))
-                .isInstanceOf(CommandLine.TypeConversionException.class)
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("'hello.yaml' is not a time to wait: use true, false, millis or a duration such as 2m");
         assertThat(BackgroundWait.isValue("10s.yaml")).isFalse();
         assertThat(BackgroundWait.isValue("orders")).isFalse();

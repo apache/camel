@@ -16,28 +16,31 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "chaos-clear",
-                     description = "Remove all chaos rules of running integrations (camel-chaos, for development only)",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nThe rules stay in the report as removed; with --reset the report starts",
-                             "again (no rules, counts or verdict). Without a name it acts on every running",
-                             "integration that has chaos switched on.",
-                             "%nExamples:",
-                             "  camel cmd chaos-clear",
-                             "  camel cmd chaos-clear myApp",
-                             "  camel cmd chaos-clear myApp --reset" })
+@CommandDefinition(name = "chaos-clear",
+                   description = "Remove all chaos rules of running integrations (camel-chaos, for development only)",
+                   generateHelp = true,
+                   footer = {
+                           "The rules stay in the report as removed; with --reset the report starts",
+                           "again (no rules, counts or verdict). Without a name it acts on every running",
+                           "integration that has chaos switched on.",
+                           "",
+                           "Examples:",
+                           "  camel cmd chaos-clear",
+                           "  camel cmd chaos-clear myApp",
+                           "  camel cmd chaos-clear myApp --reset" })
 public class CamelChaosClearAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--reset" },
-                        description = "Also start a new report: the removed rules, the counts per route and the verdict are gone")
+    @Option(name = "reset", hasValue = false,
+            description = "Also start a new report: the removed rules, the counts per route and the verdict are gone")
     boolean reset;
 
     public CamelChaosClearAction(CamelJBangMain main) {

@@ -25,6 +25,10 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -35,38 +39,35 @@ import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "logger",
-                     description = "List or change logging levels", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd logger",
-                             "  camel cmd logger --json",
-                             "  camel cmd logger --logging-level=DEBUG --logger=org.apache.camel" })
+@CommandDefinition(name = "logger", description = "List or change logging levels", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd logger",
+                           "  camel cmd logger --json",
+                           "  camel cmd logger --logging-level=DEBUG --logger=org.apache.camel" })
 public class LoggerAction extends ActionBaseCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-                        description = "To change logging level (${COMPLETION-CANDIDATES})")
+    @Option(name = "logging-level", description = "To change logging level (${COMPLETION-CANDIDATES})",
+            completer = LoggingLevelCompletionCandidates.class)
     String loggingLevel;
 
-    @CommandLine.Option(names = { "--logger" },
-                        description = "The logger name", defaultValue = "root")
+    @Option(name = "logger", description = "The logger name", defaultValue = "root")
     String logger;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output the logging levels in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output the logging levels in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     public LoggerAction(CamelJBangMain main) {

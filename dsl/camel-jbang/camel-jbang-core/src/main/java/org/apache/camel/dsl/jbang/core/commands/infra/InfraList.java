@@ -16,14 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "list", description = "Displays available external services", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel infra list" })
+@CommandDefinition(name = "list", description = "Displays available external services", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel infra list" })
 public class InfraList extends InfraBaseCommand {
 
     public InfraList(CamelJBangMain main) {

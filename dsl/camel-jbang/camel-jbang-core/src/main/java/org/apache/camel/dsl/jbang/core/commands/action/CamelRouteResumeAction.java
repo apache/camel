@@ -16,16 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "resume-route",
-                     description = "Resume Camel routes", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd resume-route --id=myRoute",
-                             "  camel cmd resume-route myApp --id=myRoute" })
+@CommandDefinition(name = "resume-route", description = "Resume Camel routes", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd resume-route --id=myRoute",
+                           "  camel cmd resume-route myApp --id=myRoute" })
 public class CamelRouteResumeAction extends CamelRouteAction {
 
     public CamelRouteResumeAction(CamelJBangMain main) {

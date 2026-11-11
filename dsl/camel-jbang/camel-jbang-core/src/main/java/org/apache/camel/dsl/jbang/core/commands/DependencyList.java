@@ -34,30 +34,30 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.XmlHelper;
 import org.apache.camel.main.util.VersionHelper;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
 
-@CommandLine.Command(name = "list",
-                     description = "Displays all Camel dependencies required to run", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel dependency list hello.java",
-                             "  camel dependency list hello.java --output=gav" })
+@CommandDefinition(name = "list", description = "Displays all Camel dependencies required to run", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel dependency list hello.java",
+                           "  camel dependency list hello.java --output=gav" })
 public class DependencyList extends Export {
 
     protected static final String EXPORT_DIR = CommandLineHelper.CAMEL_JBANG_WORK_DIR + "/export";
 
-    public static class OutputFormatCompletionCandidates implements Iterable<String> {
+    public static class OutputFormatCompletionCandidates extends CompletionCandidates {
 
         public OutputFormatCompletionCandidates() {
         }
@@ -68,8 +68,8 @@ public class DependencyList extends Export {
         }
     }
 
-    @CommandLine.Option(names = { "--output" }, completionCandidates = OutputFormatCompletionCandidates.class,
-                        description = "Output format (${COMPLETION-CANDIDATES})", defaultValue = "gav")
+    @Option(name = "output", description = "Output format (${COMPLETION-CANDIDATES})", defaultValue = "gav",
+            completer = OutputFormatCompletionCandidates.class)
     protected String output;
 
     public DependencyList(CamelJBangMain main) {

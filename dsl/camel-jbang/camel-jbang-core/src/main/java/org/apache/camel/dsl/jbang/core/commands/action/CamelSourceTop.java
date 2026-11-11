@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
@@ -27,33 +31,29 @@ import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "source", description = "List top processors (source) in a running Camel integration", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel top source",
-                 "  camel top source --limit=5",
-                 "  camel top source --json" })
+@CommandDefinition(name = "source", description = "List top processors (source) in a running Camel integration",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel top source",
+                           "  camel top source --limit=5",
+                           "  camel top source --json" })
 public class CamelSourceTop extends ActionWatchCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter processors by limiting to the given number of rows")
+    @Option(name = "limit", description = "Filter processors by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter-mean" },
-                        description = "Filter processors that must be slower than the given time (ms)")
+    @Option(name = "filter-mean", description = "Filter processors that must be slower than the given time (ms)")
     long mean;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

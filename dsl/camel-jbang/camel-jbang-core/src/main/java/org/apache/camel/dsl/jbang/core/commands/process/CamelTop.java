@@ -16,22 +16,21 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "top",
-                     description = "Top status of Camel integrations (use top --help to see sub commands)",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel top",
-                             "  camel top route",
-                             "  camel top processor" })
+@CommandDefinition(name = "top", description = "Top status of Camel integrations (use top --help to see sub commands)",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel top",
+                           "  camel top route",
+                           "  camel top processor" })
 public class CamelTop extends CamelCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
+    @Option(name = "watch", hasValue = false, description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
     public CamelTop(CamelJBangMain main) {

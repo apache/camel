@@ -34,6 +34,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.InstallScriptFetcher;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.ManifestFetcher;
 import org.apache.camel.dsl.jbang.launcher.selfupdate.SelfUpdateCommand;
@@ -42,7 +43,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -128,7 +128,11 @@ class SelfUpdateIntegrationTest {
         Map<String, String> installerEnv = fixture.environment(home);
         SelfUpdateCommand cmd
                 = new SelfUpdateCommand(new CamelJBangMain().withPrinter(printer), fetcher, scriptFetcher, installerEnv);
-        return new CommandLine(cmd).execute(args);
+        try {
+            return new CommandTree(cmd).execute(args).getResultValue();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Test

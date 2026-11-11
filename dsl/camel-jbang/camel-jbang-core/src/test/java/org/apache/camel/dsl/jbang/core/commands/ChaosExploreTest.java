@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,7 +41,7 @@ class ChaosExploreTest {
     @Test
     void camelAskGetsThePlaybookAndTheOptions() {
         ChaosExplore command = new ChaosExplore(new CamelJBangMain());
-        CommandLine.populateCommand(command, "shop", "--budget=30m", "--focus=refunds", "--model=qwen3.6",
+        CommandLineTestHelper.parse(command, "shop", "--budget=30m", "--focus=refunds", "--model=qwen3.6",
                 "--api-type=ollama", "--tools=core", "--show-tools");
 
         Ask ask = command.ask(new CamelProcess(4711, "shop.camel.yaml", null), "shop");
@@ -150,9 +150,9 @@ class ChaosExploreTest {
     @Test
     void saveIsOnByDefault() {
         ChaosExplore command = new ChaosExplore(new CamelJBangMain());
-        CommandLine.populateCommand(command);
+        CommandLineTestHelper.parse(command);
         assertThat(command.save).isTrue();
-        CommandLine.populateCommand(command, "--no-save");
+        CommandLineTestHelper.parse(command, "--no-save");
         assertThat(command.save).isFalse();
     }
 }

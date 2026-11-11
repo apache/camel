@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import picocli.CommandLine;
-
 /**
  * Parses a command line into a command object in a test, as the CLI does before it runs the command. The tests use this
  * instead of the API of the command line parser, so they stay the same when the parser changes.
@@ -38,8 +36,11 @@ public final class CommandLineTestHelper {
      */
     public static <T> T parse(T command, String... args) {
         try {
-            return CommandLine.populateCommand(command, args);
-        } catch (CommandLine.ParameterException e) {
+            new CommandTree(command).parse(args);
+            return command;
+        } catch (CliException e) {
+            throw e;
+        } catch (Exception e) {
             throw new CliException(CliExitCode.USAGE, e.getMessage(), e);
         }
     }

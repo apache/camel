@@ -401,8 +401,6 @@ class DependencyUpdateTest extends CamelCommandBaseTestSupport {
         CommandLineTestHelper.parse(command,
                 "--dir=" + workingDir,
                 java.toAbsolutePath().toString());
-        // picocli also gives the files to the <files> of the export, a command line parser may not
-        command.files.clear();
 
         int exit = command.doCall();
         Assertions.assertEquals(0, exit, printer.getLines().toString());

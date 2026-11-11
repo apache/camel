@@ -28,6 +28,11 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -36,80 +41,71 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "stub", description = "Browse stub endpoints", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel cmd stub",
-                 "  camel cmd stub --browse" })
+@CommandDefinition(name = "stub", description = "Browse stub endpoints", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd stub",
+                           "  camel cmd stub --browse" })
 public class CamelStubAction extends ActionWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .text("name", r -> r.queue)
             .numeric("total", r -> r.size);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by name, or total", defaultValue = "name")
+    @Option(name = "sort", description = "Sort by name, or total", defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter endpoints by queue name")
+    @Option(name = "filter", description = "Filter endpoints by queue name")
     String filter;
 
-    @CommandLine.Option(names = { "--browse" },
-                        description = "Whether to browse messages queued in the stub endpoints")
+    @Option(name = "browse", hasValue = false, description = "Whether to browse messages queued in the stub endpoints")
     boolean browse;
 
-    @CommandLine.Option(names = { "--top" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to browse top (latest) messages queued in the stub endpoints")
+    @Option(name = "top", hasValue = false,
+            description = "Whether to browse top (latest) messages queued in the stub endpoints", defaultValue = "true")
     boolean top = true;
 
-    @CommandLine.Option(names = { "--limit" }, defaultValue = "10",
-                        description = "Filter browsing queues by limiting to the given latest number of messages")
+    @Option(name = "limit", description = "Filter browsing queues by limiting to the given latest number of messages",
+            defaultValue = "10")
     int limit = 10;
 
-    @CommandLine.Option(names = { "--find" },
-                        description = "Find and highlight matching text (ignore case).", arity = "0..*")
+    @OptionList(name = "find", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Find and highlight matching text (ignore case).")
     String[] find;
 
-    @CommandLine.Option(names = { "--grep" },
-                        description = "Filter browsing messages to only output trace matching text (ignore case).",
-                        arity = "0..*")
+    @OptionList(name = "grep", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Filter browsing messages to only output trace matching text (ignore case).")
     String[] grep;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers in traced messages")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers in traced messages",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body in traced messages")
+    @Option(name = "show-body", hasValue = false, description = "Show message body in traced messages", defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Compact output (no empty line separating browsed messages)")
+    @Option(name = "compact", hasValue = false, description = "Compact output (no empty line separating browsed messages)",
+            defaultValue = "true")
     boolean compact = true;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @Option(name = "mask", hasValue = false,
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false, description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

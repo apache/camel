@@ -24,35 +24,34 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.RouteComponents;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.util.FileUtil;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 /**
  * Command to explain Camel routes using AI/LLM services.
  * <p>
  * Supports multiple LLM providers: Ollama, OpenAI, Azure OpenAI, Anthropic, Vertex AI, vLLM, LM Studio, LocalAI, etc.
  */
-@Command(name = "explain",
-         description = "Explain what a Camel route does using AI/LLM",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel explain hello.java",
-                 "  camel explain hello.yaml --format=markdown",
-                 "  camel explain hello.java --model=gpt-4",
-                 "  camel explain hello.yaml --api-type=anthropic" })
+@CommandDefinition(name = "explain", description = "Explain what a Camel route does using AI/LLM", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel explain hello.java",
+                           "  camel explain hello.yaml --format=markdown",
+                           "  camel explain hello.java --model=gpt-4",
+                           "  camel explain hello.yaml --api-type=anthropic" })
 public class Explain extends CamelCommand {
 
-    public static class FormatCompletionCandidates implements Iterable<String> {
+    public static class FormatCompletionCandidates extends CompletionCandidates {
 
         public FormatCompletionCandidates() {
         }
@@ -88,61 +87,48 @@ public class Explain extends CamelCommand {
             "marshal", "unmarshal", "convertBodyTo",
             "enrich", "pollEnrich", "wireTap", "pipeline");
 
-    @Parameters(description = "Route file(s) to explain", arity = "1..*")
+    @Arguments(required = true, description = "Route file(s) to explain")
     List<String> files;
 
-    @Option(names = { "--url" },
+    @Option(name = "url",
             description = "LLM API endpoint URL. Auto-detected from 'camel infra' for Ollama if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars")
     String url;
 
-    @Option(names = { "--api-type" },
+    @Option(name = "api-type",
             description = "API type: 'ollama', 'openai' (OpenAI-compatible), 'anthropic' (Anthropic/Vertex AI), or 'watsonx' (IBM watsonx.ai)")
     LlmClient.ApiType apiType;
 
-    @Option(names = { "--api-key" },
+    @Option(name = "api-key",
             description = "API key for authentication. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(names = { "--model" },
-            description = "Model to use",
-            defaultValue = DEFAULT_MODEL)
+    @Option(name = "model", description = "Model to use", defaultValue = DEFAULT_MODEL)
     String model = DEFAULT_MODEL;
 
-    @Option(names = { "--verbose", "-v" },
-            description = "Include detailed technical information")
+    @Option(name = "verbose", shortName = 'v', hasValue = false, description = "Include detailed technical information")
     boolean verbose;
 
-    @Option(names = { "--format" },
-            completionCandidates = FormatCompletionCandidates.class,
-            description = "Output format (${COMPLETION-CANDIDATES})",
-            defaultValue = "text")
+    @Option(name = "format", description = "Output format (${COMPLETION-CANDIDATES})", defaultValue = "text",
+            completer = FormatCompletionCandidates.class)
     String format = "text";
 
-    @Option(names = { "--timeout" },
-            description = "Timeout in seconds for LLM response",
-            defaultValue = "120")
+    @Option(name = "timeout", description = "Timeout in seconds for LLM response", defaultValue = "120")
     int timeout = 120;
 
-    @Option(names = { "--catalog-context" },
-            description = "Include Camel Catalog descriptions in the prompt")
+    @Option(name = "catalog-context", hasValue = false, description = "Include Camel Catalog descriptions in the prompt")
     boolean catalogContext;
 
-    @Option(names = { "--show-prompt" },
-            description = "Show the prompt sent to the LLM")
+    @Option(name = "show-prompt", hasValue = false, description = "Show the prompt sent to the LLM")
     boolean showPrompt;
 
-    @Option(names = { "--temperature" },
-            description = "Temperature for response generation (0.0-2.0)",
-            defaultValue = "0.7")
+    @Option(name = "temperature", description = "Temperature for response generation (0.0-2.0)", defaultValue = "0.7")
     double temperature = 0.7;
 
-    @Option(names = { "--system-prompt" },
-            description = "Custom system prompt")
+    @Option(name = "system-prompt", description = "Custom system prompt")
     String systemPrompt;
 
-    @Option(names = { "--stream" },
-            description = "Stream the response as it's generated (shows progress)",
-            defaultValue = "true", arity = "0..1", fallbackValue = "true")
+    @Option(name = "stream", hasValue = false, description = "Stream the response as it's generated (shows progress)",
+            defaultValue = "true")
     boolean stream = true;
 
     public Explain(CamelJBangMain main) {

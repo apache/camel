@@ -34,7 +34,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Resolves the dependencies of an export as camel run does for it: boots the integration silently in this JVM, with
  * stubs and without starting the routes, and writes the run settings, which the export reads. It uses the run settings
- * pipeline of this module, so it needs neither picocli nor camel-jbang-core.
+ * pipeline of this module, so it needs neither aesh nor camel-jbang-core.
  * <p>
  * The printer, the plugins (their run customizers and exporters) and what to report when the integration fails to start
  * come from the {@link ExportContext}. Logging is not configured: the export logs as its caller has configured.

@@ -26,7 +26,11 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -35,21 +39,18 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "vault",
-         description = "List secrets from security vaults", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get vault" })
+@CommandDefinition(name = "vault", description = "List secrets from security vaults", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get vault" })
 public class ListVault extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .number("pid", r -> r.pid)
             .text("name", r -> r.name);
 
-    public static class PidNameCompletionCandidates implements Iterable<String> {
+    public static class PidNameCompletionCandidates extends CompletionCandidates {
 
         public PidNameCompletionCandidates() {
         }
@@ -61,12 +62,11 @@ public class ListVault extends ProcessWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration",
-                            arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameCompletionCandidates.class,
-                        description = "Sort by pid, name", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name", defaultValue = "pid",
+            completer = PidNameCompletionCandidates.class)
     String sort;
 
     public ListVault(CamelJBangMain main) {

@@ -835,6 +835,7 @@ abstract class Exporter {
         appProps.putAll(profileProps);
         profileProps.putAll(settingsProps);
         prepareApplicationProperties(profileProps);
+        Map<String, String> userValues = propertiesMap(request.applicationProperties);
 
         for (Map.Entry<Object, Object> entry : settingsProps.entrySet()) {
             String key = entry.getKey().toString();
@@ -843,7 +844,8 @@ abstract class Exporter {
                     || "camel.main.routesReloadEnabled".equals(key);
             if (skip && appProps.containsKey(key)) {
                 // a key of the application.properties is kept, as a route may refer to it: {{camel.server.port}}
-                profileProps.put(key, appProps.get(key));
+                // and a value given with --property overrides the one of the application.properties
+                profileProps.put(key, userValues.getOrDefault(key, appProps.getProperty(key)));
             } else if (skip) {
                 profileProps.remove(key);
             }

@@ -16,12 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.version;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "version",
-                     description = "Manage Camel versions (use version --help to see sub commands)")
+@CommandDefinition(name = "version", description = "Manage Camel versions (use version --help to see sub commands)",
+                   generateHelp = true, sortOptions = true)
 public class VersionCommand extends CamelCommand {
 
     public VersionCommand(CamelJBangMain main) {

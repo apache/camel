@@ -77,7 +77,9 @@ public class KubernetesExportBaseTestSupport extends KubernetesBaseTestSupport {
         var argsArr = Optional.ofNullable(args).orElse(new String[0]);
         var argsLst = new ArrayList<>(Arrays.asList(argsArr));
         argsLst.addAll(Arrays.asList(defaultArgs));
-        KubernetesExport command = new KubernetesExport(new CamelJBangMain(), files);
+        // the files on the command line: aesh empties a list option that is not given (aesh-trial/AeshListInitial.java)
+        argsLst.addAll(Arrays.asList(files));
+        KubernetesExport command = new KubernetesExport(new CamelJBangMain());
         CommandLineTestHelper.parse(command, argsLst.toArray(new String[0]));
         return command;
     }

@@ -26,6 +26,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -33,33 +36,27 @@ import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "count",
-         description = "Get total and failed exchanges",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get count",
-                 "  camel get count --watch" })
+@CommandDefinition(name = "count", description = "Get total and failed exchanges", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get count",
+                           "  camel get count --watch" })
 public class CamelCount extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--total" },
-                        description = "Get the total exchanges from a running integration")
+    @Option(name = "total", hasValue = false, description = "Get the total exchanges from a running integration")
     boolean total;
 
-    @CommandLine.Option(names = { "--fail" },
-                        description = "Get the failed exchanges from a running integration")
+    @Option(name = "fail", hasValue = false, description = "Get the failed exchanges from a running integration")
     boolean fail;
 
     public CamelCount(CamelJBangMain main) {

@@ -24,30 +24,31 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionVisibility;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PluginHelper;
 import org.apache.camel.dsl.jbang.core.common.PluginType;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "get",
-                     description = "Get installed plugins", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel plugin get",
-                             "  camel plugin get --json" })
+@CommandDefinition(name = "get", description = "Get installed plugins", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel plugin get",
+                           "  camel plugin get --json" })
 public class PluginGet extends PluginBaseCommand {
 
     @Deprecated
-    @CommandLine.Option(names = { "--all" }, hidden = true, defaultValue = "false",
-                        description = "DEPRECATED: use 'camel plugin list' instead")
+    @Option(name = "all", hasValue = false, description = "DEPRECATED: use 'camel plugin list' instead", defaultValue = "false",
+            visibility = OptionVisibility.HIDDEN)
     public boolean all;
 
-    @CommandLine.Option(names = { "--repos" }, defaultValue = "false", description = "Display maven repository column")
+    @Option(name = "repos", hasValue = false, description = "Display maven repository column", defaultValue = "false")
     public boolean repos;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     public boolean jsonOutput;
 
     public PluginGet(CamelJBangMain main) {

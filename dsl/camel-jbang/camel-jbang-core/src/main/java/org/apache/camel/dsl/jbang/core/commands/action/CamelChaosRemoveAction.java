@@ -16,30 +16,32 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "chaos-remove",
-                     description = "Remove a chaos rule of a running integration (camel-chaos, for development only)",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nThe rule stays in the report as removed. Use chaos-clear to remove all rules.",
-                             "Without a name or pid, it removes the rule of the only integration that runs,",
-                             "or of the only one with chaos switched on; when that is not clear, it fails",
-                             "with the list of the running integrations (exit code 2).",
-                             "%nExamples:",
-                             "  camel cmd chaos-remove --id=r1",
-                             "  camel cmd chaos-remove myApp --id=r1" })
+@CommandDefinition(name = "chaos-remove",
+                   description = "Remove a chaos rule of a running integration (camel-chaos, for development only)",
+                   generateHelp = true,
+                   footer = {
+                           "The rule stays in the report as removed. Use chaos-clear to remove all rules.",
+                           "Without a name or pid, it removes the rule of the only integration that runs,",
+                           "or of the only one with chaos switched on; when that is not clear, it fails",
+                           "with the list of the running integrations (exit code 2).",
+                           "",
+                           "Examples:",
+                           "  camel cmd chaos-remove --id=r1",
+                           "  camel cmd chaos-remove myApp --id=r1" })
 public class CamelChaosRemoveAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one); without it,"
-                                          + " the only one running, or the only one with chaos switched on",
-                            arity = "0..1")
+    @Argument(description = "Name or pid of the running Camel integration (must match one); without it,"
+                            + " the only one running, or the only one with chaos switched on")
     String name;
 
-    @CommandLine.Option(names = { "--id" }, required = true, description = "The id of the rule, such as r1")
+    @Option(name = "id", description = "The id of the rule, such as r1", required = true)
     String id;
 
     public CamelChaosRemoveAction(CamelJBangMain main) {

@@ -19,7 +19,7 @@ package org.apache.camel.dsl.jbang.core.common;
 import java.util.Iterator;
 import java.util.List;
 
-public class PidNameAgeCompletionCandidates implements Iterable<String> {
+public class PidNameAgeCompletionCandidates extends CompletionCandidates {
 
     public PidNameAgeCompletionCandidates() {
     }

@@ -19,6 +19,11 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.io.File;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
@@ -27,28 +32,23 @@ import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "load",
-                     description = "Loads new source files into an existing Camel", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd load --source=myRoute.yaml" })
+@CommandDefinition(name = "load", description = "Loads new source files into an existing Camel", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd load --source=myRoute.yaml" })
 public class CamelLoadAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Source file(s) to load")
+    @OptionList(name = "source", valueSeparator = OptionList.NO_SEPARATOR, description = "Source file(s) to load")
     List<String> source;
 
-    @CommandLine.Option(names = { "--restart" },
-                        description = "To force restart all routes after loading source files")
+    @Option(name = "restart", hasValue = false, description = "To force restart all routes after loading source files")
     boolean restart;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     public CamelLoadAction(CamelJBangMain main) {

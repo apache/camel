@@ -22,10 +22,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import javax.imageio.ImageIO;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.diagram.RouteDiagramRenderer.DiagramColors;
 import org.apache.camel.diagram.TopologyAsciiRenderer;
 import org.apache.camel.diagram.TopologyErrorFrame;
@@ -47,83 +50,73 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.terminal.impl.TerminalGraphics;
 import org.jline.terminal.impl.TerminalGraphicsManager;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "route-topology", description = "Display inter-route topology connections", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel cmd route-topology",
-                 "  camel cmd route-topology --json",
-                 "  camel cmd route-topology --theme=unicode",
-                 "  camel cmd route-topology --theme=dark",
-                 "  camel cmd route-topology --theme=dark --output=topology.png",
-                 "  camel cmd route-topology hello.yaml bye.yaml" })
+@CommandDefinition(name = "route-topology", description = "Display inter-route topology connections", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd route-topology",
+                           "  camel cmd route-topology --json",
+                           "  camel cmd route-topology --theme=unicode",
+                           "  camel cmd route-topology --theme=dark",
+                           "  camel cmd route-topology --theme=dark --output=topology.png",
+                           "  camel cmd route-topology hello.yaml bye.yaml" })
 public class CamelRouteTopologyAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(
-                            description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
-                                          + "Camel integration",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    @SuppressWarnings("unused") // only declared so picocli offers file-path completion; values go into files instead
-    Path[] filePaths;
-
+    @Arguments(description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
+                             + "Camel integration",
+               paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
-                                      + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). "
-                                      + "Use ascii/unicode for plain text output.")
+    @Option(name = "theme", description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
+                                          + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). "
+                                          + "Use ascii/unicode for plain text output.")
     String theme;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "Save diagram to a file (PNG for image themes, text for ascii theme)")
+    @Option(name = "output", description = "Save diagram to a file (PNG for image themes, text for ascii theme)")
     String output;
 
-    @CommandLine.Option(names = { "--box-width" }, defaultValue = "180",
-                        description = "Width of diagram node boxes")
+    @Option(name = "box-width", description = "Width of diagram node boxes", defaultValue = "180")
     int boxWidth = 180;
 
-    @CommandLine.Option(names = { "--font-size" },
-                        description = "Font size in logical pixels for node text", defaultValue = "12")
+    @Option(name = "font-size", description = "Font size in logical pixels for node text", defaultValue = "12")
     int fontSize;
 
-    @CommandLine.Option(names = { "--description" },
-                        description = "Prefer route description over route id in node labels")
+    @Option(name = "description", hasValue = false, description = "Prefer route description over route id in node labels")
     boolean description;
 
-    @CommandLine.Option(names = { "--metric" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to include live metrics (only possible for a running Camel application)")
+    @Option(name = "metric", hasValue = false,
+            description = "Whether to include live metrics (only possible for a running Camel application)",
+            defaultValue = "true")
     boolean metric;
 
-    @CommandLine.Option(names = { "--external" },
-                        description = "Include external systems (consumers at top, producers at bottom)")
+    @Option(name = "external", hasValue = false,
+            description = "Include external systems (consumers at top, producers at bottom)")
     boolean external;
 
-    @CommandLine.Option(names = { "--errors" },
-                        description = "Draw the error handling: the routes reached only on error in a frame of their own below the"
-                                      + " routes, with where their failures come from (with --theme)")
+    @Option(name = "errors", hasValue = false,
+            description = "Draw the error handling: the routes reached only on error in a frame of their own below the"
+                          + " routes, with where their failures come from (with --theme)")
     boolean errors;
 
-    @CommandLine.Option(names = { "--kamelets" },
-                        description = "Include routes created by Kamelets (hidden by default, only for a running Camel application)")
+    @Option(name = "kamelets", hasValue = false,
+            description = "Include routes created by Kamelets (hidden by default, only for a running Camel application)")
     boolean kamelets;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
-                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    @Option(name = "ignore-loading-error", hasValue = false,
+            description = "Whether to ignore route loading and compilation errors (use this with care!)",
+            defaultValue = "false")
     boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
-                        description = "Whether to compile Java source files and load their routes. By default Java "
-                                      + "routes are read by the Java DSL parser, without compiling them")
+    @Option(name = "compile", hasValue = false,
+            description = "Whether to compile Java source files and load their routes. By default Java "
+                          + "routes are read by the Java DSL parser, without compiling them",
+            defaultValue = "false")
     boolean compile;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private long pid;
@@ -356,13 +349,5 @@ public class CamelRouteTopologyAction extends ActionBaseCommand {
 
     private boolean isUnicodeTheme() {
         return "unicode".equalsIgnoreCase(theme);
-    }
-
-    static class FilesConsumer extends ParameterConsumer<CamelRouteTopologyAction> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, CamelRouteTopologyAction cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
     }
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
 /**
  * Minimal Plugin implementation packaged into a fake jar by {@link FakePluginJar} so that the cache fast path can be
@@ -26,7 +25,7 @@ import picocli.CommandLine;
 public class CachedFakePlugin implements Plugin {
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
         // no-op
     }
 }

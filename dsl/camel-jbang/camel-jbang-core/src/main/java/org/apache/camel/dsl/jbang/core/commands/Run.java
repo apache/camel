@@ -27,9 +27,16 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandLifecycle;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.ai.YamlLoadFailureReport;
@@ -43,9 +50,11 @@ import org.apache.camel.dsl.jbang.core.common.ExampleHelper;
 import org.apache.camel.dsl.jbang.core.common.JavaVersionCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.LauncherHelper;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.OptionalValueParser;
 import org.apache.camel.dsl.jbang.core.common.ProfileCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RunRuntimeTypeConverter;
+import org.apache.camel.dsl.jbang.core.common.StringConverter;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.dsl.jbang.run.ConfiguredRun;
 import org.apache.camel.dsl.jbang.run.ProjectRunner;
@@ -71,26 +80,22 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 import static org.apache.camel.dsl.jbang.run.common.CamelJBangConstants.*;
 
-@Command(name = "run", description = "Run as local Camel integration", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel run hello.java",
-                 "  camel run hello.yaml",
-                 "  camel run *",
-                 "  camel run hello.java --dev",
-                 "  camel run hello.java --port=8080",
-                 "  camel run https://gist.github.com/user/123456",
-                 "  camel run --example",
-                 "  camel run --example=timer-log" })
-public class Run extends CamelCommand {
+@CommandDefinition(name = "run", description = "Run as local Camel integration", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel run hello.java",
+                           "  camel run hello.yaml",
+                           "  camel run *",
+                           "  camel run hello.java --dev",
+                           "  camel run hello.java --port=8080",
+                           "  camel run https://gist.github.com/user/123456",
+                           "  camel run --example",
+                           "  camel run --example=timer-log" })
+public class Run extends CamelCommand implements CommandLifecycle {
 
     public static final String RUN_SETTINGS_FILE = ExportHelper.RUN_SETTINGS_FILE;
     public static final String RUN_PLATFORM_DIR = ProjectRunner.RUN_PLATFORM_DIR;
@@ -117,219 +122,218 @@ public class Run extends CamelCommand {
     private Printer quietPrinter;
     private boolean mcpStdioMode;
 
-    @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run."
-                              + " A Citrus test is run with camel test run.",
-                arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    Path[] filePaths; // Defined only for file path completion; the field never used
-
+    @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run."
+                             + " A Citrus test is run with camel test run.",
+               paramLabel = "<files>")
     public List<String> files = new ArrayList<>();
 
-    @Option(names = { "--runtime" },
-            completionCandidates = RunRuntimeCompletionCandidates.class,
-            defaultValue = "jbang",
-            converter = RunRuntimeTypeConverter.class,
+    @Option(name = "runtime",
             description = "Runtime (${COMPLETION-CANDIDATES}). The jbang runtime runs in-process in the Camel CLI JVM"
                           + " which is fast and intended for prototyping. The other runtimes export to a temporary project"
-                          + " and run in a separate JVM via Maven, similar to a production deployment.")
+                          + " and run in a separate JVM via Maven, similar to a production deployment.",
+            defaultValue = "jbang", completer = RunRuntimeCompletionCandidates.class, converter = RunRuntimeTypeConverter.class)
     RuntimeType runtime = RuntimeType.jbang;
 
-    @Option(names = { "--source-dir" },
+    @Option(name = "source-dir",
             description = "Source directory for dynamically loading Camel file(s) to run. When using this, then files cannot be specified at the same time.")
     String sourceDir;
 
-    @Option(names = { "--data-dir" },
+    @Option(name = "data-dir",
             description = "Folders under the source directory (comma separated) that hold data the routes read or write, not sources: in dev mode a change in them does not reload the routes (such as inbox,archive).")
     String dataDir;
 
-    @Option(names = { "--resource-dir", "--resource-dirs" },
-            description = "Additional resource directories to include on the classpath (recursive, preserving structure)",
-            split = ",")
+    @OptionList(name = "resource-dir", aliases = { "resource-dirs" }, valueSeparator = ',',
+                description = "Additional resource directories to include on the classpath (recursive, preserving structure)")
     List<String> resourceDirs = new ArrayList<>();
 
-    @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
+    @Option(name = "background", hasValue = false, description = "Run in the background", defaultValue = "false")
     public boolean background;
 
-    @Option(names = { "--background-wait" }, defaultValue = "60s", converter = BackgroundWait.Converter.class,
-            parameterConsumer = BackgroundWait.Consumer.class,
+    @Option(name = "background-wait",
             description = "How long to wait for the integration in the background to start, before returning, in millis"
-                          + " or as a duration such as 2m (true waits 60 seconds, false does not wait)")
+                          + " or as a duration such as 2m (true waits 60 seconds, false does not wait)",
+            defaultValue = "60s", optionalValue = true, fallbackValue = "true", converter = BackgroundWait.Converter.class,
+            parser = BackgroundWait.Parser.class)
     public long backgroundWait = BackgroundWait.DEFAULT;
 
-    @Option(names = { "--empty" }, defaultValue = "false", description = "Run an empty Camel without loading source files")
+    @Option(name = "empty", hasValue = false, description = "Run an empty Camel without loading source files",
+            defaultValue = "false")
     public boolean empty;
 
-    @CommandLine.Option(names = {
-            "--java-version",
-            "--java" }, completionCandidates = JavaVersionCompletionCandidates.class,
-                        description = "Java version (${COMPLETION-CANDIDATES})", defaultValue = "21")
+    @Option(name = "java-version", aliases = { "java" }, description = "Java version (${COMPLETION-CANDIDATES})",
+            defaultValue = "21", completer = JavaVersionCompletionCandidates.class)
     protected String javaVersion = "21";
 
-    @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
+    @Option(name = "camel-version", description = "To run using a different Camel version than the default version.")
     String camelVersion;
 
-    @Option(names = { "--camel-spring-boot-version" },
+    @Option(name = "camel-spring-boot-version",
             description = "To run using a different Camel Spring Boot version than the default version.")
     String camelSpringBootVersion;
 
-    @Option(names = { "--kamelets-version" },
-            description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
-    @CommandLine.Mixin
+    @Mixin
     QuarkusPlatformMixin quarkusPlatform = new QuarkusPlatformMixin();
 
-    @Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-            defaultValue = RuntimeType.SPRING_BOOT_VERSION)
+    @Option(name = "spring-boot-version", description = "Spring Boot version", defaultValue = RuntimeType.SPRING_BOOT_VERSION)
     String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
-    @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
-            completionCandidates = ProfileCompletionCandidates.class,
-            description = "Profile to run (${COMPLETION-CANDIDATES}).")
+    @Option(name = "profile", description = "Profile to run (${COMPLETION-CANDIDATES}).", defaultValue = "dev",
+            inherited = true, completer = ProfileCompletionCandidates.class)
     String profile = "dev";
 
-    @Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
-            split = ",")
+    @OptionList(name = "dep", aliases = { "dependency" }, valueSeparator = ',', description = "Add additional dependencies")
     List<String> dependencies = new ArrayList<>();
 
-    @Option(names = { "--gav" }, description = "The Maven group:artifact:version (used during exporting)")
+    @Option(name = "gav", description = "The Maven group:artifact:version (used during exporting)")
     String gav;
 
-    @Option(names = { "--maven-settings" },
+    @Option(name = "maven-settings",
             description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
                           + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
-    @Option(names = { "--maven-settings-security" },
+    @Option(name = "maven-settings-security",
             description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
-    @Option(names = { "--maven-central-enabled" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-            description = "Whether downloading JARs from Maven Central repository is enabled")
+    @Option(name = "maven-central-enabled", hasValue = false,
+            description = "Whether downloading JARs from Maven Central repository is enabled", defaultValue = "true")
     boolean mavenCentralEnabled = true;
 
-    @Option(names = { "--maven-apache-snapshot-enabled" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    @Option(name = "maven-apache-snapshot-enabled", hasValue = false,
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled", defaultValue = "true")
     boolean mavenApacheSnapshotEnabled = true;
 
-    @CommandLine.Mixin
+    @Mixin
     public MavenResolverMixin mavenResolver = new MavenResolverMixin();
 
-    @Option(names = { "--package-scan-jars" }, defaultValue = "false",
-            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
+    @Option(name = "package-scan-jars", hasValue = false,
+            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI",
+            defaultValue = "false")
     boolean packageScanJars;
 
-    @CommandLine.ArgGroup(validate = false, heading = "%nLogging Options:%n")
+    @Mixin
     LoggingOptions loggingOptions = new LoggingOptions();
 
-    @CommandLine.ArgGroup(validate = false, heading = "%nDebug Options:%n")
+    @Mixin
     DebugOptions debugOptions = new DebugOptions();
 
-    @CommandLine.ArgGroup(validate = false, heading = "%nExecution Limit Options:%n")
+    @Mixin
     public ExecutionLimitOptions executionLimitOptions = new ExecutionLimitOptions();
 
-    @CommandLine.ArgGroup(validate = false, heading = "%nServer Options:%n")
+    @Mixin
     ServerOptions serverOptions = new ServerOptions();
 
-    @Option(names = { "--jvm-debug" }, parameterConsumer = DebugConsumer.class, paramLabel = "<true|false|port>",
+    @Option(name = "jvm-debug", optionalValue = true, fallbackValue = "true", converter = JvmDebugConverter.class,
+            parser = JvmDebugParser.class,
             description = "To enable JVM remote debugging on port 4004 by default. The supported values are true to " +
-                          "enable the remote debugging, false to disable the remote debugging or a number to use a custom port")
+                          "enable the remote debugging, false to disable the remote debugging or a number to use a custom port",
+            argument = "true|false|port")
     int jvmDebugPort;
 
-    @Option(names = { "--jvm-args" },
-            description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
+    @Option(name = "jvm-args", description = "Additional JVM arguments (e.g. -Xmx256m -Xms128m)")
     String jvmArgs;
 
-    @Option(names = { "--name" }, defaultValue = "CamelJBang",
+    @Option(name = "name",
             description = "The name of the Camel application. By default the name of the directory when running a whole directory"
-                          + " (--source-dir, or a directory), else the name of the first file")
+                          + " (--source-dir, or a directory), else the name of the first file",
+            defaultValue = "CamelJBang")
     String name;
 
-    @Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @OptionList(name = "exclude", valueSeparator = OptionList.NO_SEPARATOR, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
-    // Logging, execution limit, debug, and server options are defined in their respective @ArgGroup inner classes below
+    // Logging, execution limit, debug, and server options are defined in their respective @Mixin inner classes below
 
-    @Option(names = { "--reload", "--dev" },
+    @Option(name = "reload", aliases = { "dev" }, hasValue = false,
             description = "Enables dev mode (live reload when source files are updated and saved)")
     boolean dev;
 
-    // trace and backlogTrace options are in DebugOptions @ArgGroup
+    // trace and backlogTrace options are in DebugOptions @Mixin
 
-    @Option(names = { "--properties" },
-            description = "comma separated list of properties file" +
-                          " (ex. /path/to/file.properties,/path/to/other.properties")
+    @Option(name = "properties", description = "comma separated list of properties file" +
+                                               " (ex. /path/to/file.properties,/path/to/other.properties")
     public String propertiesFiles;
 
     // the profile properties files that are loaded (application.properties and application-<profile>.properties)
     final Set<Path> profilePropertiesFiles = new HashSet<>();
 
-    @Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Additional properties (override existing)")
     public String[] property;
 
-    @Option(names = { "--stub" }, description = "Stubs all the matching endpoint uri with the given component name or pattern."
-                                                + " Multiple names can be separated by comma."
-                                                + " (all = stub all endpoints, remote = stub only remote components).")
+    @Option(name = "stub", description = "Stubs all the matching endpoint uri with the given component name or pattern."
+                                         + " Multiple names can be separated by comma."
+                                         + " (all = stub all endpoints, remote = stub only remote components).")
     String stub;
 
-    @Option(names = { "--chaos" }, defaultValue = "false", arity = "0..1", paramLabel = "<file>",
-            parameterConsumer = ChaosConsumer.class,
+    @Option(name = "chaos", optionalValue = true, fallbackValue = "true", defaultValue = "false",
+            parser = ChaosParser.class, argument = "file",
             description = "Add camel-chaos, to turn on faults while running (camel cmd chaos-add); on with profile dev,"
                           + " never with prod. With a scenario file (such as --chaos=test/chaos/outage.chaos) its rules are"
                           + " added at startup. A run with chaos ends with exit code 1 when the chaos verdict is FAIL."
                           + " With Quarkus it needs Camel Quarkus on Camel 4.24 or newer")
-    boolean chaos;
+    String chaos = "false";
+
+    // --chaos turns on camel-chaos: true, or a scenario file
+    boolean chaosEnabled;
 
     // the scenario of --chaos=file
     String chaosScenario;
 
-    @Option(names = { "--chaos-report" }, paramLabel = "<file>",
-            description = "Write the chaos report as JSON to this file when the run ends (with --chaos)")
+    @Option(name = "chaos-report", description = "Write the chaos report as JSON to this file when the run ends (with --chaos)",
+            argument = "file")
     String chaosReport;
 
     // the report file of a run with chaos without --chaos-report, read for the verdict and deleted
     private Path chaosReportTemp;
 
-    // jfr and jfrProfile options are in DebugOptions @ArgGroup
+    // jfr and jfrProfile options are in DebugOptions @Mixin
 
-    @Option(names = { "--local-kamelet-dir" },
+    @Option(name = "local-kamelet-dir",
             description = "Local directory (or github link) for loading Kamelets (takes precedence). Multiple directories can be specified separated by comma.")
     String localKameletDir;
 
-    // port, managementPort, console, health, metrics, observe options are in ServerOptions @ArgGroup
+    // port, managementPort, console, health, metrics, observe options are in ServerOptions @Mixin
 
-    @Option(names = { "--modeline" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-            description = "Whether to support JBang style //DEPS to specify additional dependencies")
+    @Option(name = "modeline", hasValue = false,
+            description = "Whether to support JBang style //DEPS to specify additional dependencies", defaultValue = "true")
     boolean modeline = true;
 
-    @Option(names = { "--open-api" }, description = "Adds an OpenAPI spec from the given file (json or yaml file)")
+    @Option(name = "open-api", description = "Adds an OpenAPI spec from the given file (json or yaml file)")
     String openapi;
 
-    @Option(names = { "--code" }, description = "Run the given text or file as Java DSL routes")
+    @Option(name = "code", description = "Run the given text or file as Java DSL routes")
     String code;
 
-    @Option(names = { "--verbose" }, defaultValue = "false",
-            description = "Verbose output of startup activity (dependency resolution and downloading")
+    @Option(name = "verbose", hasValue = false,
+            description = "Verbose output of startup activity (dependency resolution and downloading", defaultValue = "false")
     boolean verbose;
 
-    @Option(names = { "--ignore-loading-error" }, defaultValue = "false",
-            description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    @Option(name = "ignore-loading-error", hasValue = false,
+            description = "Whether to ignore route loading and compilation errors (use this with care!)",
+            defaultValue = "false")
     protected boolean ignoreLoadingError;
 
-    @Option(names = { "--lazy-bean" }, defaultValue = "false",
-            description = "Whether to use lazy bean initialization (can help with complex classloading issues)")
+    @Option(name = "lazy-bean", hasValue = false,
+            description = "Whether to use lazy bean initialization (can help with complex classloading issues)",
+            defaultValue = "false")
     protected boolean lazyBean;
 
-    @Option(names = { "--prompt" }, defaultValue = "false",
-            description = "Allow user to type in required parameters in prompt if not present in application")
+    @Option(name = "prompt", hasValue = false,
+            description = "Allow user to type in required parameters in prompt if not present in application",
+            defaultValue = "false")
     boolean prompt;
 
-    @Option(names = { "--skip-plugins" }, defaultValue = "false",
-            description = "Skip resolving plugin dependencies")
+    @Option(name = "skip-plugins", hasValue = false, description = "Skip resolving plugin dependencies", defaultValue = "false")
     boolean skipPlugins;
 
-    @Option(names = { "--example" },
+    @Option(name = "example", optionalValue = true, parser = ExampleParser.class,
             description = "Run an example by name (timer-log or route/aggregator), list the groups when no name is given, or list one group by its name (route).",
-            arity = "0..1", fallbackValue = "")
+            fallbackValue = "")
     String example;
 
     public Run(CamelJBangMain main) {
@@ -653,7 +657,7 @@ public class Run extends CamelCommand {
             // what the example needs that the run does not do (a model to pull, a key to set): the user does it
             printer().println("Needs: " + needs);
         }
-        if (transformRun || spec == null) {
+        if (transformRun || originalArgs() == null) {
             for (String f : ExampleHelper.getFiles(entry)) {
                 files.add(dir.resolve(f).toString());
             }
@@ -666,7 +670,7 @@ public class Run extends CamelCommand {
         }
 
         printer().println("Example folder: " + dir + " (the files it reads and writes are there)");
-        List<String> cmds = ExampleHelper.runArgs(spec.commandLine().getParseResult().originalArgs(), entry);
+        List<String> cmds = ExampleHelper.runArgs(originalArgs(), entry);
         RunHelper.addCamelCLICommand(cmds);
         if (verbose) {
             printer().println(String.join(" ", cmds));
@@ -949,9 +953,7 @@ public class Run extends CamelCommand {
      * folders also runs with its files (camel run --example).
      */
     private void warnDataDirWithoutSourceDir() {
-        if (dataDir != null && spec != null && spec.commandLine() != null
-                && spec.commandLine().getParseResult() != null
-                && spec.commandLine().getParseResult().hasMatchedOption("--data-dir")) {
+        if (dataDir != null && isOptionGiven("--data-dir")) {
             printer().printWarn("--data-dir=" + dataDir + " has no effect without --source-dir: dev mode then only"
                                 + " watches the given files");
         }
@@ -962,7 +964,7 @@ public class Run extends CamelCommand {
      * gets a report file (a temporary one without --chaos-report), for its verdict when it ends.
      */
     void prepareChaos() throws IOException {
-        if (chaosReport != null && !chaos) {
+        if (chaosReport != null && !chaosEnabled) {
             throw CliException.usage("--chaos-report needs --chaos");
         }
         if (chaosScenario != null) {
@@ -974,7 +976,7 @@ public class Run extends CamelCommand {
         }
         if (chaosReport != null) {
             chaosReport = Path.of(chaosReport).toAbsolutePath().normalize().toString();
-        } else if (chaos && !background && chaosReportTemp == null) {
+        } else if (chaosEnabled && !background && chaosReportTemp == null) {
             Path dir = CommandLineHelper.getCamelDir();
             Files.createDirectories(dir);
             chaosReportTemp = Files.createTempFile(dir, "chaos-report-", ".json");
@@ -989,7 +991,7 @@ public class Run extends CamelCommand {
      * FAIL.
      */
     int withChaosVerdict(int exitCode) {
-        if (!chaos || chaosReport == null) {
+        if (!chaosEnabled || chaosReport == null) {
             return exitCode;
         }
         try {
@@ -1001,11 +1003,30 @@ public class Run extends CamelCommand {
         }
     }
 
+    @Override
+    public void afterParse() {
+        applyChaosOption();
+    }
+
+    /**
+     * --chaos, --chaos=true|false, or --chaos=file with a scenario file (.chaos).
+     */
+    void applyChaosOption() {
+        if (chaos == null || "false".equalsIgnoreCase(chaos)) {
+            chaosEnabled = false;
+        } else if ("true".equalsIgnoreCase(chaos) || chaos.isEmpty()) {
+            chaosEnabled = true;
+        } else {
+            chaosEnabled = true;
+            chaosScenario = chaos;
+        }
+    }
+
     /**
      * --chaos adds camel-chaos, but with profile prod chaos stays off (and chaos-add is refused): said up front.
      */
     void warnChaosOffWithProfileProd() {
-        if (chaos && "prod".equalsIgnoreCase(profile)) {
+        if (chaosEnabled && "prod".equalsIgnoreCase(profile)) {
             printer().printWarn("camel-chaos stays off with profile prod");
         }
     }
@@ -1038,7 +1059,7 @@ public class Run extends CamelCommand {
         request.localKameletDir = localKameletDir;
         request.dev = dev;
         request.stub = stub;
-        request.chaos = chaos;
+        request.chaos = chaosEnabled;
         request.chaosScenario = chaosScenario;
         request.chaosReport = chaosReport;
         request.trace = debugOptions.trace;
@@ -1185,8 +1206,8 @@ public class Run extends CamelCommand {
     // The jbang command that runs this integration in a new JVM.
     List<String> createCamelVersionCommand() {
         List<String> cmds;
-        if (spec != null) {
-            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        if (originalArgs() != null) {
+            cmds = new ArrayList<>(originalArgs());
         } else {
             cmds = new ArrayList<>();
             cmds.add("run");
@@ -1285,8 +1306,8 @@ public class Run extends CamelCommand {
 
     protected int runBackground(KameletMain main) throws Exception {
         List<String> cmds;
-        if (spec != null) {
-            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        if (originalArgs() != null) {
+            cmds = new ArrayList<>(originalArgs());
         } else {
             cmds = new ArrayList<>();
             cmds.add("run");
@@ -1409,8 +1430,8 @@ public class Run extends CamelCommand {
         Files.writeString(Paths.get(fn), content);
 
         List<String> cmds;
-        if (spec != null) {
-            cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
+        if (originalArgs() != null) {
+            cmds = new ArrayList<>(originalArgs());
         } else {
             cmds = new ArrayList<>();
             cmds.add("run");
@@ -1464,7 +1485,7 @@ public class Run extends CamelCommand {
      * {@code camel cmd send --local} and {@code camel transform}).
      */
     boolean keepsPreviousLog() {
-        return spec != null && !transformRun && !transformMessageRun && !scriptRun;
+        return originalArgs() != null && !transformRun && !transformMessageRun && !scriptRun;
     }
 
     private String loadFromCode(String code, String name, boolean file) throws IOException {
@@ -1518,8 +1539,7 @@ public class Run extends CamelCommand {
 
     private boolean isLoggingLevelFromCommandLine() {
         try {
-            var parsed = spec != null && spec.commandLine() != null ? spec.commandLine().getParseResult() : null;
-            return parsed != null && parsed.hasMatchedOption("--logging-level");
+            return isOptionGiven("--logging-level");
         } catch (Exception e) {
             return false;
         }
@@ -1627,181 +1647,132 @@ public class Run extends CamelCommand {
     }
 
     static class LoggingOptions {
-        @Option(names = { "--logging" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                description = "Can be used to turn off logging")
+        @Option(name = "logging", hasValue = false, description = "Can be used to turn off logging", defaultValue = "true")
         boolean logging = true;
 
-        @Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-                defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
+        @Option(name = "logging-level", description = "Logging level (${COMPLETION-CANDIDATES})", defaultValue = "info",
+                completer = LoggingLevelCompletionCandidates.class)
         String loggingLevel;
 
-        @Option(names = { "--logging-color" }, arity = "0..1", fallbackValue = "true",
+        @Option(name = "logging-color", hasValue = false,
                 description = "Use colored logging. Default is auto-detected based on NO_COLOR, CI, FORCE_COLOR environment variables and terminal capabilities")
         boolean loggingColor = EnvironmentHelper.isColorEnabled();
 
-        @Option(names = { "--logging-json" }, defaultValue = "false", description = "Use JSON logging (ECS Layout)")
+        @Option(name = "logging-json", hasValue = false, description = "Use JSON logging (ECS Layout)", defaultValue = "false")
         boolean loggingJson;
 
-        @Option(names = { "--logging-config-path" }, description = "Path to file with custom logging configuration")
+        @Option(name = "logging-config-path", description = "Path to file with custom logging configuration")
         String loggingConfigPath;
 
-        @Option(names = { "--logging-category" },
-                description = "Used for individual logging levels (ex: org.apache.kafka=DEBUG)")
+        @OptionList(name = "logging-category", valueSeparator = OptionList.NO_SEPARATOR,
+                    description = "Used for individual logging levels (ex: org.apache.kafka=DEBUG)")
         List<String> loggingCategory = new ArrayList<>();
     }
 
     static class DebugOptions {
-        @Option(names = { "--jfr" }, defaultValue = "false",
+        @Option(name = "jfr", hasValue = false,
                 description = "Enables Java Flight Recorder, saving a recording to <name>.jfr on exit. "
                               + "Automatically adds JFR support for the runtime and turns on the Camel runtime "
-                              + "instrumentation events (route, processor, exchange, etc.).")
+                              + "instrumentation events (route, processor, exchange, etc.).",
+                defaultValue = "false")
         boolean jfr;
 
-        @Option(names = { "--jfr-profile" },
+        @Option(name = "jfr-profile",
                 description = "Java Flight Recorder settings profile to use (such as default or profile). Implies --jfr.")
         String jfrProfile;
 
-        @Option(names = { "--trace" }, defaultValue = "false",
-                description = "Enables trace logging of the routed messages")
+        @Option(name = "trace", hasValue = false, description = "Enables trace logging of the routed messages",
+                defaultValue = "false")
         boolean trace;
 
-        @Option(names = { "--backlog-trace" }, defaultValue = "false",
-                description = "Enables backlog tracing of the routed messages")
+        @Option(name = "backlog-trace", hasValue = false, description = "Enables backlog tracing of the routed messages",
+                defaultValue = "false")
         boolean backlogTrace;
 
-        @Option(names = { "--open-telemetry-agent" }, defaultValue = "false",
+        @Option(name = "open-telemetry-agent", hasValue = false,
                 description = "Enable OpenTelemetry Java Agent for auto-instrumentation of third-party libraries (HTTP clients, JDBC, Kafka clients, gRPC, etc.). "
-                              + "Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta.")
+                              + "Traces are shown in the TUI Spans tab with Camel spans in cyan and 3rd-party agent spans in magenta.",
+                defaultValue = "false")
         boolean openTelemetryAgent;
 
-        @Option(names = { "--open-telemetry-agent-export" }, defaultValue = "tui",
+        @Option(name = "open-telemetry-agent-export",
                 description = "Where to export OpenTelemetry Agent telemetry: tui (embedded receiver in TUI), "
                               + "otlp (external OTLP collector for traces), or observability (full stack with traces and logs). "
                               + "With otlp, start a trace backend first (e.g. 'camel infra run jaeger'). "
                               + "With observability, start the stack via 'camel infra run observability'. "
-                              + "The value 'jaeger' is deprecated and works as an alias for 'otlp'.")
+                              + "The value 'jaeger' is deprecated and works as an alias for 'otlp'.",
+                defaultValue = "tui")
         String openTelemetryAgentExport = "tui";
     }
 
     public static class ExecutionLimitOptions {
-        @Option(names = { "--max-messages" }, defaultValue = "0",
-                description = "Max number of messages to process before stopping")
+        @Option(name = "max-messages", description = "Max number of messages to process before stopping", defaultValue = "0")
         int maxMessages;
 
-        @Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
+        @Option(name = "max-seconds", description = "Max seconds to run before stopping", defaultValue = "0")
         public int maxSeconds;
 
-        @Option(names = { "--max-idle-seconds" }, defaultValue = "0",
-                description = "For how long time in seconds Camel can be idle before stopping")
+        @Option(name = "max-idle-seconds", description = "For how long time in seconds Camel can be idle before stopping",
+                defaultValue = "0")
         int maxIdleSeconds;
     }
 
     static class ServerOptions {
-        @Option(names = { "--port" },
+        @Option(name = "port",
                 description = "Embeds a local HTTP server on this port (port 8080 by default; use 0 to dynamic assign a free random port number)")
         int port = -1;
 
-        @Option(names = { "--management-port" },
+        @Option(name = "management-port",
                 description = "To use a dedicated port for HTTP management (use 0 to dynamic assign a free random port number)")
         int managementPort = -1;
 
-        @Option(names = { "--console" }, defaultValue = "false",
+        @Option(name = "console", hasValue = false,
                 description = "Developer console on the local HTTP server (port 8080 by default): /q/dev with the jbang"
                               + " and Camel Main runtimes, /actuator/camel with Spring Boot, and /q/camel/dev-console"
-                              + " with Quarkus")
+                              + " with Quarkus",
+                defaultValue = "false")
         boolean console;
 
-        @Option(names = { "--mcp" }, defaultValue = "false",
+        @Option(name = "mcp", hasValue = false,
                 description = "Embed dev/diagnostics MCP tools on the local HTTP management server (/mcp by default). "
                               + "When management shares the main HTTP port, MCP is served on the main server bind address. "
-                              + "Also binds the management server to 127.0.0.1 (affecting health/metrics when --observe is used).")
+                              + "Also binds the management server to 127.0.0.1 (affecting health/metrics when --observe is used).",
+                defaultValue = "false")
         boolean mcp;
 
-        @Option(names = { "--mcp-stdio" }, defaultValue = "false",
+        @Option(name = "mcp-stdio", hasValue = false,
                 description = "Expose tagged ai-tool routes as MCP tools over process stdin/stdout for IDE subprocess "
                               + "integration (no HTTP port). Requires --mcp-tags or camel.server.mcp-tags. "
-                              + "Logging and startup summaries are routed to stderr so stdout carries MCP protocol only.")
+                              + "Logging and startup summaries are routed to stderr so stdout carries MCP protocol only.",
+                defaultValue = "false")
         boolean mcpStdio;
 
-        @Option(names = { "--mcp-tags" },
-                description = "Comma-separated ai-tool tags to expose on the ai-tool MCP server (maps to "
-                              + "camel.server.mcp-tags). Use with --mcp-stdio or when camel.server.mcp-enabled is "
-                              + "configured for HTTP transport. Not used by --mcp (dev/diagnostics MCP).")
+        @Option(name = "mcp-tags", description = "Comma-separated ai-tool tags to expose on the ai-tool MCP server (maps to "
+                                                 + "camel.server.mcp-tags). Use with --mcp-stdio or when camel.server.mcp-enabled is "
+                                                 + "configured for HTTP transport. Not used by --mcp (dev/diagnostics MCP).")
         String mcpTags;
 
-        @Option(names = { "--openapi-ui" }, defaultValue = "false",
-                description = "Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default)")
+        @Option(name = "openapi-ui", hasValue = false,
+                description = "Swagger UI for REST OpenAPI at /q/openapi (OpenAPI document at /q/openapi.json; port 8080 by default)",
+                defaultValue = "false")
         boolean openapiUi;
 
         @Deprecated
-        @Option(names = { "--health" }, defaultValue = "false",
-                description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)")
+        @Option(name = "health", hasValue = false,
+                description = "Deprecated: use --observe instead. Health check at /q/health on local HTTP server (port 8080 by default)",
+                defaultValue = "false")
         boolean health;
 
         @Deprecated
-        @Option(names = { "--metrics" }, defaultValue = "false",
-                description = "Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)")
+        @Option(name = "metrics", hasValue = false,
+                description = "Deprecated: use --observe instead. Metrics (Micrometer and Prometheus) at /q/metrics on local HTTP server (port 8080 by default)",
+                defaultValue = "false")
         boolean metrics;
 
-        @Option(names = { "--observe" }, defaultValue = "false",
-                description = "Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab)")
+        @Option(name = "observe", hasValue = false,
+                description = "Enable observability services (health, metrics, dev console, and lightweight Camel-only tracing in the TUI Spans tab)",
+                defaultValue = "false")
         boolean observe;
-    }
-
-    static class FilesConsumer extends ParameterConsumer<Run> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, Run cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
-    }
-
-    /**
-     * --chaos, --chaos=true|false, or --chaos=file with a scenario file (.chaos): a file that is not a scenario is a
-     * file to run, as in camel run --chaos Shop.java.
-     */
-    static class ChaosConsumer extends ParameterConsumer<Run> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, Run cmd) {
-            String arg = args.isEmpty() ? "" : args.peek();
-            if ("true".equalsIgnoreCase(arg) || "false".equalsIgnoreCase(arg)) {
-                args.pop();
-                cmd.chaos = Boolean.parseBoolean(arg);
-            } else if (arg.endsWith(RunFiles.CHAOS_SCENARIO)) {
-                args.pop();
-                cmd.chaos = true;
-                cmd.chaosScenario = arg;
-            } else {
-                cmd.chaos = true;
-            }
-        }
-
-        @Override
-        protected boolean failIfEmptyArgs() {
-            return false;
-        }
-    }
-
-    static class DebugConsumer extends ParameterConsumer<Run> {
-        private static final Pattern DEBUG_ARG_VALUE_PATTERN = Pattern.compile("\\d+|true|false");
-
-        @Override
-        protected void doConsumeParameters(Stack<String> args, Run cmd) {
-            String arg = args.isEmpty() ? "" : args.peek();
-            if (DEBUG_ARG_VALUE_PATTERN.asPredicate().test(arg)) {
-                // The value matches with the expected format so let's assume that it is a debug argument value
-                args.pop();
-            } else {
-                // Here we assume that the value is not a debug argument value so let's simply enable the debug mode
-                arg = "true";
-            }
-            cmd.jvmDebugPort = parseJvmDebugPort(arg);
-        }
-
-        @Override
-        protected boolean failIfEmptyArgs() {
-            return false;
-        }
     }
 
     private JsonObject loadStatus(long pid) {
@@ -1832,6 +1803,42 @@ public class Run extends CamelCommand {
         }
 
         return super.printer();
+    }
+
+    // --chaos: true, false or a scenario file (.chaos); as the ChaosConsumer on picocli, a file that is not a
+    // scenario is a file to run, as in camel run --chaos Shop.java
+    public static class ChaosParser extends OptionalValueParser {
+        @Override
+        protected boolean isValue(String word) {
+            return "true".equalsIgnoreCase(word) || "false".equalsIgnoreCase(word)
+                    || word.endsWith(RunFiles.CHAOS_SCENARIO);
+        }
+    }
+
+    // --example: the next word is the name of the example unless it is an option, as picocli arity 0..1
+    public static class ExampleParser extends OptionalValueParser {
+        @Override
+        protected boolean isValue(String word) {
+            return !word.startsWith("-");
+        }
+    }
+
+    // --jvm-debug: true (the default port), false, or a port
+    // as the DebugConsumer on picocli, which tests the pattern with find
+    public static class JvmDebugParser extends OptionalValueParser {
+        private static final Pattern VALUE = Pattern.compile("\\d+|true|false");
+
+        @Override
+        protected boolean isValue(String word) {
+            return VALUE.matcher(word).find();
+        }
+    }
+
+    public static class JvmDebugConverter extends StringConverter<Integer> {
+        @Override
+        public Integer convert(String value) {
+            return parseJvmDebugPort(value);
+        }
     }
 
 }

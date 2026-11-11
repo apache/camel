@@ -18,6 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
@@ -26,15 +28,13 @@ import org.apache.camel.util.StopWatch;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
 import org.jline.terminal.Terminal;
-import picocli.CommandLine;
 
 abstract class ActionWatchCommand extends ActionBaseCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
+    @Option(name = "watch", hasValue = false, description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
-    @CommandLine.Mixin
+    @Mixin
     DurationMixin durationOption = new DurationMixin();
 
     private Runnable waitUserTask;

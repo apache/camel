@@ -32,7 +32,7 @@ camel cmd chaos-explore [options]
 | `--url` | LLM API endpoint URL, as for camel ask. Auto-detected if not specified |  | String
 | `--verbose` | Print debug information of the LLM calls |  | boolean
 | `--yes` | Let the AI send messages to endpoints the integration does not have, and run the other calls that camel ask asks for first, without asking |  | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

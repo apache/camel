@@ -16,13 +16,25 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "test",
-                     description = "Manage tests for Camel applications (use test --help to see sub commands)")
+/**
+ * The test commands of Citrus. Citrus 5.1 defines its commands with picocli, so aesh does not parse this command line:
+ * picocli parses and runs it with the commands of Citrus (see {@link TestPlugin#citrus(CamelJBangMain)}), until Citrus
+ * is on aesh too.
+ */
+@CommandDefinition(name = "test", description = "Manage tests for Camel applications (use test --help to see sub commands)",
+                   disableParsing = true)
 public class TestCommand extends CamelCommand {
+
+    @Arguments
+    List<String> args = new ArrayList<>();
 
     public TestCommand(CamelJBangMain main) {
         super(main);
@@ -30,7 +42,6 @@ public class TestCommand extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        // defaults to printing the help message
-        return printHelp();
+        return TestPlugin.citrus(getMain()).execute(args.toArray(String[]::new));
     }
 }

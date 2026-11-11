@@ -42,6 +42,11 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
@@ -51,6 +56,7 @@ import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -70,17 +76,14 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.valueAsStringPretty;
 
-@CommandLine.Command(name = "receive",
-                     description = "Receive and dump messages from remote endpoints", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd receive --endpoint=seda:foo",
-                             "  camel cmd receive --endpoint=seda:foo --timeout=30000" })
+@CommandDefinition(name = "receive", description = "Receive and dump messages from remote endpoints", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd receive --endpoint=seda:foo",
+                           "  camel cmd receive --endpoint=seda:foo --timeout=30000" })
 public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
@@ -88,7 +91,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
 
     private static final RowSort<StatusRow> ORDER = RowSort.<StatusRow> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    public static class PrefixCompletionCandidates implements Iterable<String> {
+    public static class PrefixCompletionCandidates extends CompletionCandidates {
 
         public PrefixCompletionCandidates() {
         }
@@ -99,7 +102,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
         }
     }
 
-    public static class ActionCompletionCandidates implements Iterable<String> {
+    public static class ActionCompletionCandidates extends CompletionCandidates {
 
         public ActionCompletionCandidates() {
         }
@@ -110,7 +113,7 @@ public class CamelReceiveAction extends ActionBaseCommand {
         }
     }
 
-    public static class OutputFormatCompletionCandidates implements Iterable<String> {
+    public static class OutputFormatCompletionCandidates extends CompletionCandidates {
 
         public OutputFormatCompletionCandidates() {
         }
@@ -121,115 +124,110 @@ public class CamelReceiveAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "To use an existing running Camel integration for receiving the message (name or pid)",
-                            arity = "0..1")
+    @Argument(description = "To use an existing running Camel integration for receiving the message (name or pid)")
     String name;
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
-                                      +
-                                      " (ex. /path/to/file.properties,/path/to/other.properties")
+    @Option(name = "properties",
+            description = "comma separated list of properties file (only applicable when NOT using an existing running Camel)"
+                          +
+                          " (ex. /path/to/file.properties,/path/to/other.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Additional properties; override existing (only applicable when NOT using an existing running Camel)")
     String[] property;
 
-    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
-                        defaultValue = "status",
-                        description = "Action to start, stop, clear, status, or dump messages")
+    @Option(name = "action", description = "Action to start, stop, clear, status, or dump messages", defaultValue = "status",
+            completer = ActionCompletionCandidates.class)
     String action;
 
-    @CommandLine.Option(names = { "--endpoint", "--uri" },
-                        description = "Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint)")
+    @Option(name = "endpoint", aliases = { "uri" },
+            description = "Endpoint to receive messages from (can be uri or pattern to refer to existing endpoint)")
     String endpoint;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age for showing status of messages", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age for showing status of messages", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Keep following and outputting new messages (press enter to exit)."
-                                      + " Without an interactive terminal the default is false, unless --duration is given.")
+    @Option(name = "follow", hasValue = false, description = "Keep following and outputting new messages (press enter to exit)."
+                                                             + " Without an interactive terminal the default is false, unless --duration is given.",
+            defaultValue = "true")
     boolean follow = true;
 
-    @CommandLine.Mixin
+    @Mixin
     DurationMixin durationOption = new DurationMixin();
 
-    @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto",
-                        completionCandidates = PrefixCompletionCandidates.class,
-                        description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
+    @Option(name = "prefix",
+            description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.",
+            defaultValue = "auto", completer = PrefixCompletionCandidates.class)
     String prefix = "auto";
 
-    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
-                        description = "The number of messages from the end to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all messages from beginning.")
+    @Option(name = "tail",
+            description = "The number of messages from the end to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all messages from beginning.",
+            defaultValue = "-1")
     int tail = -1;
 
-    @CommandLine.Option(names = { "--since" },
-                        description = "Return messages newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
+    @Option(name = "since",
+            description = "Return messages newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
     String since;
 
-    @CommandLine.Option(names = { "--find" },
-                        description = "Find and highlight matching text (ignore case).", arity = "0..*")
+    @OptionList(name = "find", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Find and highlight matching text (ignore case).")
     String[] find;
 
-    @CommandLine.Option(names = { "--grep" },
-                        description = "Filter messages to only output matching text (ignore case).", arity = "0..*")
+    @OptionList(name = "grep", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Filter messages to only output matching text (ignore case).")
     String[] grep;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
-                        description = "Timeout waiting for message to be received, in millis or as a duration such as 30s")
+    @Option(name = "timeout",
+            description = "Timeout waiting for message to be received, in millis or as a duration such as 30s",
+            defaultValue = "20000", converter = TimeoutConverter.class)
     long timeout = 20000;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in received messages")
+    @Option(name = "show-exchange-properties", hasValue = false, description = "Show exchange properties in received messages",
+            defaultValue = "false")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "false",
-                        description = "Show exchange variables in received messages")
+    @Option(name = "show-exchange-variables", hasValue = false, description = "Show exchange variables in received messages",
+            defaultValue = "false")
     boolean showExchangeVariables;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers in received messages")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers in received messages",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body in received messages")
+    @Option(name = "show-body", hasValue = false, description = "Show message body in received messages", defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--only-body" }, defaultValue = "false",
-                        description = "Show only message body in received messages")
+    @Option(name = "only-body", hasValue = false, description = "Show only message body in received messages",
+            defaultValue = "false")
     boolean onlyBody;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Compact output (no empty line separating messages)")
+    @Option(name = "compact", hasValue = false, description = "Compact output (no empty line separating messages)",
+            defaultValue = "true")
     boolean compact = true;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @Option(name = "short-uri", hasValue = false, description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @Option(name = "mask", hasValue = false,
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false, description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--output" }, completionCandidates = OutputFormatCompletionCandidates.class,
-                        description = "Output format (${COMPLETION-CANDIDATES})")
+    @Option(name = "output", description = "Output format (${COMPLETION-CANDIDATES})",
+            completer = OutputFormatCompletionCandidates.class)
     private String output;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
     private volatile long pid;

@@ -30,7 +30,7 @@ camel log [options]
 | `--startup` | Only shows logs from the starting phase to make it quick to look at how Camel was started. | false | boolean
 | `--tail` | The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning. | -1 | int
 | `--timestamp` | Print timestamp. | true | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

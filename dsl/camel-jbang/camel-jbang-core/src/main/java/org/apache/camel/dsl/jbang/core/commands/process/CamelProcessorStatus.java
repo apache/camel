@@ -29,7 +29,12 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -41,21 +46,18 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "processor", description = "Get status of Camel processors",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get processor",
-                 "  camel get processor --source",
-                 "  camel get processor --watch" })
+@CommandDefinition(name = "processor", description = "Get status of Camel processors", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get processor",
+                           "  camel get processor --source",
+                           "  camel get processor --watch" })
 public class CamelProcessorStatus extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    public static class PidNameCompletionCandidates implements Iterable<String> {
+    public static class PidNameCompletionCandidates extends CompletionCandidates {
 
         public PidNameCompletionCandidates() {
         }
@@ -67,51 +69,41 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameCompletionCandidates.class,
-                        description = "Sort by pid or name", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid or name", defaultValue = "pid",
+            completer = PidNameCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--remote" },
-                        description = "Break down counters into remote/total pairs")
+    @Option(name = "remote", hasValue = false, description = "Break down counters into remote/total pairs")
     boolean remote;
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @Option(name = "source", hasValue = false, description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter routes by limiting to the given number of rows")
+    @Option(name = "limit", description = "Filter routes by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--filter-mean" },
-                        description = "Filter processors that must be slower than the given time (ms)")
+    @Option(name = "filter-mean", description = "Filter processors that must be slower than the given time (ms)")
     long mean;
 
-    @CommandLine.Option(names = { "--running" },
-                        description = "Only include running processors")
+    @Option(name = "running", hasValue = false, description = "Only include running processors")
     boolean running;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter processors by id")
+    @OptionList(name = "filter", valueSeparator = OptionList.NO_SEPARATOR, description = "Filter processors by id")
     String[] filter;
 
-    @CommandLine.Option(names = { "--group" },
-                        description = "Filter processors by group")
+    @OptionList(name = "group", valueSeparator = OptionList.NO_SEPARATOR, description = "Filter processors by group")
     String[] group;
 
-    @CommandLine.Option(names = { "--description" },
-                        description = "Include description in the ID column (if available)")
+    @Option(name = "description", hasValue = false, description = "Include description in the ID column (if available)")
     boolean description;
 
-    @CommandLine.Option(names = { "--note" },
-                        description = "Include note in the ID column (if available)")
+    @Option(name = "note", hasValue = false, description = "Include note in the ID column (if available)")
     boolean note;
 
-    @CommandLine.Option(names = { "--show-group" },
-                        description = "Include group column")
+    @Option(name = "show-group", hasValue = false, description = "Include group column")
     boolean showGroup;
 
     public CamelProcessorStatus(CamelJBangMain main) {

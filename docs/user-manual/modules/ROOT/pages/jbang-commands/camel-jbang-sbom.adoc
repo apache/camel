@@ -77,7 +77,7 @@ camel sbom [options]
 | `--spring-boot-version` | Spring Boot version | 4.1.2 | String
 | `--verbose` | Verbose output of startup activity (dependency resolution and downloading | false | boolean
 | `--yes,-y` | Automatically answer yes to confirmation prompts (e.g. when using --clean-dir) | false | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

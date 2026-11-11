@@ -25,6 +25,9 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfig;
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder;
 import com.github.victools.jsonschema.generator.SchemaVersion;
 import com.github.victools.jsonschema.module.jackson.JacksonSchemaModule;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -34,7 +37,6 @@ import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.IOHelper;
-import picocli.CommandLine;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -54,29 +56,26 @@ import tools.jackson.databind.json.JsonMapper;
  * Exit Codes: - 0: Success - 1: Component not found or dependency download failed - 2: Class not found - 3: Schema
  * generation failed - 4: General error
  */
-@CommandLine.Command(name = "schema",
-                     description = "Create a JSON schema for a given Camel component and Java Object")
+@CommandDefinition(name = "schema", description = "Create a JSON schema for a given Camel component and Java Object",
+                   generateHelp = true, sortOptions = true)
 public class CodeSchemaGenerator extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Camel component name (e.g., 'fhir', 'http', 'jms')", arity = "1")
+    @Argument(index = "0", required = true, description = "Camel component name (e.g., 'fhir', 'http', 'jms')")
     private String camelComponent;
 
-    @CommandLine.Parameters(description = "Fully qualified class name (e.g., 'org.hl7.fhir.r4.model.Patient')", arity = "1")
+    @Argument(index = "1", required = true, description = "Fully qualified class name (e.g., 'org.hl7.fhir.r4.model.Patient')")
     private String fullyQualifiedName;
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "Camel version to use")
+    @org.aesh.command.option.Option(name = "camel-version", description = "Camel version to use")
     private String camelVersion;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "Output file path (default: stdout)")
+    @org.aesh.command.option.Option(name = "output", description = "Output file path (default: stdout)")
     private String outputFile;
 
-    @CommandLine.Option(names = { "--verbose" },
-                        description = "Enable verbose logging")
+    @org.aesh.command.option.Option(name = "verbose", hasValue = false, description = "Enable verbose logging")
     private boolean verbose;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
     public CodeSchemaGenerator(CamelJBangMain main) {

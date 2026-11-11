@@ -24,28 +24,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "copy",
-                     description = "Copies all Camel dependencies required to run to a specific directory", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel dependency copy --output-directory=lib/" })
+@CommandDefinition(name = "copy", description = "Copies all Camel dependencies required to run to a specific directory",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel dependency copy --output-directory=lib/" })
 public class DependencyCopy extends DependencyList {
 
     private static final Set<String> EXCLUDED_GROUP_IDS = Set.of("org.fusesource.jansi", "org.apache.logging.log4j");
 
     private MavenDownloader downloader;
 
-    @CommandLine.Option(names = { "--output-directory" }, description = "Directory where dependencies should be copied",
-                        defaultValue = "lib")
+    @Option(name = "output-directory", description = "Directory where dependencies should be copied", defaultValue = "lib")
     protected String outputDirectory;
 
     private boolean outputDirectoryCreated = false;

@@ -21,15 +21,16 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -92,7 +93,7 @@ class CliRunnerTest {
     void usageErrorAndHelpOfPicocli() {
         CliRunner.CliResult usage = CliRunner.run(List.of("ps", "--no-such-option"));
         assertThat(usage.exitCode()).isEqualTo(CliExitCode.USAGE);
-        assertThat(usage.stderr()).contains("Unknown option: '--no-such-option'");
+        assertThat(usage.stderr()).contains("The option --no-such-option is unknown.");
 
         CliRunner.CliResult help = CliRunner.run(List.of("ps", "--help"));
         assertThat(help.exitCode()).isEqualTo(CliExitCode.OK);
@@ -159,10 +160,10 @@ class CliRunnerTest {
 
     private static class TestMain extends CamelJBangMain {
         @Override
-        public void postAddCommands(CommandLine commandLine, String[] args) {
+        public void postAddCommands(CommandTree commandLine, String[] args) {
             // the commands of the CLI, one that ignores the interrupt, and one that counts its runs
-            commandLine.addSubcommand("busy", new CommandLine(new BusyCommand(this)));
-            commandLine.addSubcommand("count", new CommandLine(new CountCommand(this)));
+            commandLine.addSubcommand("busy", new CommandTree(new BusyCommand(this)));
+            commandLine.addSubcommand("count", new CommandTree(new CountCommand(this)));
         }
 
         @Override
@@ -174,7 +175,7 @@ class CliRunnerTest {
     /**
      * A command that counts its runs in a field that is not an option.
      */
-    @CommandLine.Command(name = "count")
+    @CommandDefinition(name = "count", description = "", generateHelp = true, sortOptions = true)
     static class CountCommand extends CamelCommand {
 
         private int runs;
@@ -199,7 +200,7 @@ class CliRunnerTest {
     /**
      * A command that runs for 3 seconds whatever happens, as one blocked in I/O does.
      */
-    @CommandLine.Command(name = "busy")
+    @CommandDefinition(name = "busy", description = "", generateHelp = true, sortOptions = true)
     static class BusyCommand extends CamelCommand {
 
         BusyCommand(CamelJBangMain main) {

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.process;
 
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
@@ -24,22 +26,19 @@ import org.apache.camel.util.StopWatch;
 import org.jline.jansi.Ansi;
 import org.jline.jansi.AnsiConsole;
 import org.jline.terminal.Terminal;
-import picocli.CommandLine;
 
 /**
  * Base class for commands that can run in watch mode.
  */
 abstract class ProcessWatchCommand extends ProcessBaseCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
+    @Option(name = "watch", hasValue = false, description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     DurationMixin durationOption = new DurationMixin();
 
     protected ProcessWatchCommand(CamelJBangMain main) {

@@ -16,10 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
-import picocli.CommandLine;
+import org.apache.camel.dsl.jbang.core.common.StringConverter;
 
-public class ClusterTypeConverter implements CommandLine.ITypeConverter<String> {
+public class ClusterTypeConverter extends StringConverter<String> {
 
+    @Override
     public String convert(String value) throws Exception {
         // Validate that the value is a valid cluster type
         ClusterType.fromName(value);

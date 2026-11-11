@@ -37,6 +37,10 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
@@ -75,86 +79,75 @@ import org.jline.terminal.impl.TerminalGraphicsManager;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 import org.jline.utils.InfoCmp;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "history",
-                     description = "History of latest completed exchange", sortOptions = false, showDefaultValues = true)
+@CommandDefinition(name = "history", description = "History of latest completed exchange", generateHelp = true)
 public class CamelHistoryAction extends ActionWatchCommand {
 
     private static final int IT_MAX_ROWS = 10;
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--it" },
-                        description = "Interactive mode for enhanced history information")
+    @Option(name = "it", hasValue = false, description = "Interactive mode for enhanced history information")
     boolean it;
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @Option(name = "source", hasValue = false, description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @Option(name = "mask", hasValue = false,
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
-                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    @Option(name = "depth",
+            description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.",
+            defaultValue = "9")
     int depth;
 
-    @CommandLine.Option(names = { "--limit-split" },
-                        description = "Limit Split to a maximum number of entries to be displayed")
+    @Option(name = "limit-split", description = "Limit Split to a maximum number of entries to be displayed")
     int limitSplit;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Print timestamp.")
+    @Option(name = "timestamp", hasValue = false, description = "Print timestamp.", defaultValue = "true")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--ago" },
-                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    @Option(name = "ago", hasValue = false, description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in debug messages")
+    @Option(name = "show-exchange-properties", hasValue = false, description = "Show exchange properties in debug messages",
+            defaultValue = "false")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exchange variables in debug messages")
+    @Option(name = "show-exchange-variables", hasValue = false, description = "Show exchange variables in debug messages",
+            defaultValue = "true")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers in debug messages")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers in debug messages",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body in debug messages")
+    @Option(name = "show-body", hasValue = false, description = "Show message body in debug messages", defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exception and stacktrace for failed messages")
+    @Option(name = "show-exception", hasValue = false, description = "Show exception and stacktrace for failed messages",
+            defaultValue = "true")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false, description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--diagram" },
-                        description = "Display a route diagram with the message path highlighted")
+    @Option(name = "diagram", hasValue = false, description = "Display a route diagram with the message path highlighted")
     boolean diagram;
 
-    @CommandLine.Option(names = { "--theme" }, defaultValue = "unicode",
-                        description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)")
+    @Option(name = "theme", description = "Diagram color theme (ascii, unicode, dark, light, transparent, or custom)",
+            defaultValue = "unicode")
     String theme = "unicode";
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private MessageTableHelper tableHelper;

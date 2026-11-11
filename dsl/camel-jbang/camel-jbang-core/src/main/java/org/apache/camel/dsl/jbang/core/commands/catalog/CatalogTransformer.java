@@ -19,16 +19,15 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.TransformerModel;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "transformer",
-                     description = "List data type transformers from the Camel Catalog", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel catalog transformer" })
+@CommandDefinition(name = "transformer", description = "List data type transformers from the Camel Catalog",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel catalog transformer" })
 public class CatalogTransformer extends CatalogBaseCommand {
 
     public CatalogTransformer(CamelJBangMain main) {

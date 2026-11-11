@@ -18,8 +18,8 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-tui", firstVersion = "4.20.0")
 public class TuiPlugin implements Plugin {
@@ -32,9 +32,9 @@ public class TuiPlugin implements Plugin {
     }
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new CommandLine(new TuiCommand(main, classLoader))
-                .addSubcommand("monitor", new CommandLine(new CamelMonitor(main, classLoader)));
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        var cmd = new CommandTree(new TuiCommand(main, classLoader))
+                .addSubcommand("monitor", new CommandTree(new CamelMonitor(main, classLoader)));
 
         commandLine.addSubcommand("tui", cmd);
     }

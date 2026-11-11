@@ -31,7 +31,7 @@ camel ask [options]
 | `--url` | LLM API endpoint URL. Auto-detected if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars |  | String
 | `--verbose` | Print debug information: HTTP requests, responses, and parsed results |  | boolean
 | `--yes` | Run the calls that ask first without asking: file writes, messages to endpoints the integration does not have, SQL that changes data, code expressions, stopping the integration, and camel commands that change something. For scripts, where there is no terminal to ask on |  | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

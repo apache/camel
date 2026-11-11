@@ -18,21 +18,26 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
+import org.aesh.command.Command;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionVisibility;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CommandMetadataTest {
 
     @Test
-    void commandsOfTheCli() {
+    void commandsOfTheCli() throws Exception {
         List<Map<String, Object>> commands = CommandMetadata.commands();
 
-        // added under another name than the name of its @Command (complete)
+        // added under another name than the name of its @CommandDefinition(name = "", description = "", generateHelp = true, sortOptions = true) (complete)
         Map<String, Object> completion = command(commands, "completion");
         assertThat(completion.get("sourceClass")).isEqualTo(Complete.class.getCanonicalName());
         assertThat(subcommands(command(commands, "get"))).extracting(c -> c.get("name")).contains("group", "route");
@@ -46,7 +51,7 @@ class CommandMetadataTest {
     }
 
     @Test
-    void valuesAsWrittenInTheAnnotations() {
+    void valuesAsWrittenInTheAnnotations() throws Exception {
         List<Map<String, Object>> commands = CommandMetadata.commands();
 
         // not filled in by picocli from the system properties of the JVM
@@ -79,10 +84,12 @@ class CommandMetadataTest {
         // once, not again under its alias
         assertThat(subcommands(foo)).extracting(c -> c.get("name")).containsExactly("bar");
         Map<String, Object> bar = subcommands(foo).get(0);
-        assertThat(bar.get("hidden")).isEqualTo(true);
+        // aesh has no hidden commands (picocli: @Command(hidden = true)); the CLI has none either
+        assertThat(bar.get("hidden")).isEqualTo(false);
         assertThat(bar.get("deprecated")).isEqualTo(true);
         // the option of the parent for its sub-commands is documented with the parent
-        assertThat(options(bar)).extracting(o -> o.get("names")).containsExactly("--name");
+        // (aesh gives every command its help option)
+        assertThat(options(bar)).extracting(o -> o.get("names")).containsExactlyInAnyOrder("-h,--help", "--name");
     }
 
     private static Map<String, Object> command(List<Map<String, Object>> commands, String name) {
@@ -108,41 +115,40 @@ class CommandMetadataTest {
     public static class FooPlugin implements Plugin {
 
         @Override
-        public void customize(CommandLine commandLine, CamelJBangMain main) {
-            commandLine.addSubcommand("foo", new CommandLine(new FooCommand())
-                    .addSubcommand("bar", new CommandLine(new BarCommand())));
+        public void customize(CommandTree commandLine, CamelJBangMain main) {
+            commandLine.addSubcommand("foo", new CommandTree(new FooCommand())
+                    .addSubcommand("bar", new CommandTree(new BarCommand())));
         }
     }
 
-    @CommandLine.Command(name = "foo", description = "The foo commands")
-    public static class FooCommand implements Callable<Integer> {
+    @CommandDefinition(name = "foo", description = "The foo commands", generateHelp = true, sortOptions = true)
+    public static class FooCommand implements Command<CommandInvocation> {
 
-        @CommandLine.Option(names = "--profile", scope = CommandLine.ScopeType.INHERIT, defaultValue = "dev",
-                            description = "Profile")
+        @Option(name = "profile", description = "Profile", defaultValue = "dev", inherited = true)
         String profile;
 
-        @CommandLine.Option(names = "--secret", hidden = true, description = "Not documented")
+        @Option(name = "secret", description = "Not documented", visibility = OptionVisibility.HIDDEN)
         String secret;
 
-        @CommandLine.Option(names = "--label", paramLabel = "<key=value>", required = true, description = "A label")
+        @Option(name = "label", description = "A label", argument = "<key=value>", required = true)
         String label;
 
         @Override
-        public Integer call() {
-            return 0;
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
         }
     }
 
     @Deprecated
-    @CommandLine.Command(name = "bar", aliases = "baz", hidden = true, description = "The bar command")
-    public static class BarCommand implements Callable<Integer> {
+    @CommandDefinition(name = "bar", description = "The bar command", generateHelp = true, sortOptions = true)
+    public static class BarCommand implements Command<CommandInvocation> {
 
-        @CommandLine.Option(names = "--name", description = "The name")
+        @Option(name = "name", description = "The name")
         String name;
 
         @Override
-        public Integer call() {
-            return 0;
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
         }
     }
 }

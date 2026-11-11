@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.ai.ChaosExplorePlaybook;
 import org.apache.camel.dsl.jbang.core.commands.process.ListChaos;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
@@ -37,92 +40,84 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 /**
  * Let there be chaos (CAMEL-26787): the AI of camel ask explores chaos on a running integration by itself, for the
  * budget of the user, and reports at the end.
  */
-@Command(name = "chaos-explore",
-         description = "Let there be chaos: an AI explores by itself how a running integration copes with faults, for a"
-                       + " time budget, and reports what held and what broke",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nThis command starts a chaos exploration with the budget (camel cmd chaos-explore-start), and hands",
-                 "it to the AI of camel ask with a playbook: read the suggestions, run one experiment per call",
-                 "(camel cmd chaos-experiment), read the verdicts, and go on while there is time. The AI asks",
-                 "nothing on the way: starting this command is the consent to the exploration, and camel-chaos",
-                 "removes every rule at the deadline. The AI never changes the routes. When it is done, the",
-                 "exploration is finished, and its report and the journal of the experiments are printed. The exit",
-                 "code is 1 when an experiment failed.",
-                 "%nThe integration needs camel-chaos switched on (camel run --chaos), and remote endpoints are best",
-                 "stubbed (camel run --stub=remote), so the experiments do not reach real systems.",
-                 "%nExamples:",
-                 "  camel cmd chaos-explore",
-                 "  camel cmd chaos-explore myApp --budget=30m --focus=refunds",
-                 "  camel cmd chaos-explore --api-type=anthropic --budget=1h" })
+@CommandDefinition(name = "chaos-explore",
+                   description = "Let there be chaos: an AI explores by itself how a running integration copes with faults, for a"
+                                 + " time budget, and reports what held and what broke",
+                   generateHelp = true,
+                   footer = {
+                           "This command starts a chaos exploration with the budget (camel cmd chaos-explore-start), and hands",
+                           "it to the AI of camel ask with a playbook: read the suggestions, run one experiment per call",
+                           "(camel cmd chaos-experiment), read the verdicts, and go on while there is time. The AI asks",
+                           "nothing on the way: starting this command is the consent to the exploration, and camel-chaos",
+                           "removes every rule at the deadline. The AI never changes the routes. When it is done, the",
+                           "exploration is finished, and its report and the journal of the experiments are printed. The exit",
+                           "code is 1 when an experiment failed.",
+                           "",
+                           "The integration needs camel-chaos switched on (camel run --chaos), and remote endpoints are best",
+                           "stubbed (camel run --stub=remote), so the experiments do not reach real systems.",
+                           "",
+                           "Examples:",
+                           "  camel cmd chaos-explore",
+                           "  camel cmd chaos-explore myApp --budget=30m --focus=refunds",
+                           "  camel cmd chaos-explore --api-type=anthropic --budget=1h" })
 public class ChaosExplore extends CamelCommand {
 
-    @Parameters(description = "Name or pid of the running Camel integration (must match one); without it, the only one"
-                              + " running, or the only one with chaos switched on",
-                arity = "0..1")
+    @Argument(description = "Name or pid of the running Camel integration (must match one); without it, the only one"
+                            + " running, or the only one with chaos switched on")
     String name;
 
-    @Option(names = { "--budget" }, defaultValue = "10m",
-            description = "How long the AI explores, between 10s and 2h")
+    @Option(name = "budget", description = "How long the AI explores, between 10s and 2h", defaultValue = "10m")
     String budget;
 
-    @Option(names = { "--focus" },
-            description = "What to explore, such as a route id (default: all routes)")
+    @Option(name = "focus", description = "What to explore, such as a route id (default: all routes)")
     String focus;
 
-    @Option(names = { "--url" },
-            description = "LLM API endpoint URL, as for camel ask. Auto-detected if not specified")
+    @Option(name = "url", description = "LLM API endpoint URL, as for camel ask. Auto-detected if not specified")
     String url;
 
-    @Option(names = { "--api-type" },
-            description = "API type: 'ollama', 'openai', 'anthropic', or 'watsonx'")
+    @Option(name = "api-type", description = "API type: 'ollama', 'openai', 'anthropic', or 'watsonx'")
     LlmClient.ApiType apiType;
 
-    @Option(names = { "--api-key" },
+    @Option(name = "api-key",
             description = "API key. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(names = { "--model" },
+    @Option(name = "model",
             description = "Model to use. Default: the provider's default; with Ollama the installed model best at"
                           + " tool calling")
     String model;
 
-    @Option(names = { "--timeout" }, defaultValue = "300",
-            description = "Timeout in seconds for one answer of the LLM (an experiment can take minutes)")
+    @Option(name = "timeout", description = "Timeout in seconds for one answer of the LLM (an experiment can take minutes)",
+            defaultValue = "300")
     int timeout = 300;
 
-    @Option(names = { "--max-iterations" }, defaultValue = "100",
-            description = "Maximum number of tool-calling rounds")
+    @Option(name = "max-iterations", description = "Maximum number of tool-calling rounds", defaultValue = "100")
     int maxIterations = 100;
 
-    @Option(names = { "--tools" }, defaultValue = "auto",
-            description = "The tools the model gets: core (a small set, for a local model), full, or auto")
+    @Option(name = "tools", description = "The tools the model gets: core (a small set, for a local model), full, or auto",
+            defaultValue = "auto")
     Ask.ToolSet tools = Ask.ToolSet.auto;
 
-    @Option(names = { "--yes" },
+    @Option(name = "yes", hasValue = false,
             description = "Let the AI send messages to endpoints the integration does not have, and run the other calls"
                           + " that camel ask asks for first, without asking")
     boolean yes;
 
-    @Option(names = { "--show-tools" },
-            description = "Show the tool calls and results as they happen")
+    @Option(name = "show-tools", hasValue = false, description = "Show the tool calls and results as they happen")
     boolean showTools;
 
-    @Option(names = { "--save" }, negatable = true, defaultValue = "true", fallbackValue = "true",
+    @Option(name = "save", hasValue = false, negatable = true,
             description = "Save the report in test/chaos/reports (as markdown, and the journal as JSON), and each"
-                          + " experiment that failed as a scenario in test/chaos, to replay it")
+                          + " experiment that failed as a scenario in test/chaos, to replay it",
+            defaultValue = "true")
     boolean save = true;
 
-    @Option(names = { "--verbose" },
-            description = "Print debug information of the LLM calls")
+    @Option(name = "verbose", hasValue = false, description = "Print debug information of the LLM calls")
     boolean verbose;
 
     public ChaosExplore(CamelJBangMain main) {

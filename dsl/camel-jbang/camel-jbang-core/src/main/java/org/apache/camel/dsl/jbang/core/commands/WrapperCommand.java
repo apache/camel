@@ -24,40 +24,35 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.util.IOHelper;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "wrapper", description = "Install Camel wrapper scripts for version pinning", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel wrapper",
-                 "  camel wrapper --camel-version=4.18.2" })
+@CommandDefinition(name = "wrapper", description = "Install Camel wrapper scripts for version pinning", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel wrapper",
+                           "  camel wrapper --camel-version=4.18.2" })
 public class WrapperCommand extends CamelCommand {
 
     private static final String DEFAULT_REPO_URL = "https://repo1.maven.org/maven2";
     private static final String WRAPPER_PROPERTIES_FILE = "camel-wrapper.properties";
     private static final String CAMEL_DIR = ".camel";
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "Camel version to pin (defaults to current version)")
+    @Option(name = "camel-version", description = "Camel version to pin (defaults to current version)")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--repo-url" },
-                        description = "Maven repository URL for downloading the launcher",
-                        defaultValue = DEFAULT_REPO_URL)
+    @Option(name = "repo-url", description = "Maven repository URL for downloading the launcher",
+            defaultValue = DEFAULT_REPO_URL)
     String repoUrl = DEFAULT_REPO_URL;
 
-    @CommandLine.Option(names = { "--dir", "--directory" },
-                        description = "Directory where wrapper files will be created",
-                        defaultValue = ".")
+    @Option(name = "dir", aliases = { "directory" }, description = "Directory where wrapper files will be created",
+            defaultValue = ".")
     String directory = ".";
 
-    @CommandLine.Option(names = { "--command-name" },
-                        description = "The name of the command to use (camel or camelw)", defaultValue = "camel")
+    @Option(name = "command-name", description = "The name of the command to use (camel or camelw)", defaultValue = "camel")
     String commandName = "camel";
 
     public WrapperCommand(CamelJBangMain main) {

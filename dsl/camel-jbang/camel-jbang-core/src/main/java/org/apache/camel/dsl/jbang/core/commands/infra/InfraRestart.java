@@ -23,38 +23,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "restart",
-                     description = "Restarts a running external service", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel infra restart kafka",
-                             "  camel infra restart kafka --background" })
+@CommandDefinition(name = "restart", description = "Restarts a running external service", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel infra restart kafka",
+                           "  camel infra restart kafka --background" })
 public class InfraRestart extends InfraBaseCommand {
 
-    @CommandLine.Parameters(description = "Service name (and optional implementation)", arity = "1..2")
+    @Arguments(required = true, description = "Service name (and optional implementation)")
     private List<String> serviceName;
 
-    @CommandLine.Option(names = { "--port" },
-                        description = "Override the default port for the service")
+    @Option(name = "port", description = "Override the default port for the service")
     Integer port;
 
-    @CommandLine.Option(names = { "--log" },
-                        description = "Log container output to console")
+    @Option(name = "log", hasValue = false, description = "Log container output to console")
     boolean logToStdout;
 
-    @CommandLine.Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
+    @Option(name = "background", hasValue = false, description = "Run in the background", defaultValue = "false")
     boolean background;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Service properties, ex. --property=ollama.model=qwen2.5:0.5b")
     List<String> serviceProperties = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--kill" },
-                        description = "To force killing the process (SIGKILL) when stopping")
+    @Option(name = "kill", hasValue = false, description = "To force killing the process (SIGKILL) when stopping")
     boolean kill;
 
     public InfraRestart(CamelJBangMain main) {

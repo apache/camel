@@ -19,28 +19,26 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.dsl.jbang.run.common.MavenResolver;
 import org.apache.camel.dsl.jbang.run.common.MavenResolverMixinSpec;
 import org.apache.camel.tooling.maven.MavenDownloader;
-import picocli.CommandLine;
 
 /**
  * Options related to Maven artifact resolution.
  */
 public class MavenResolverMixin implements MavenResolverMixinSpec {
-    @CommandLine.Option(names = {
-            "--download" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to allow automatic downloading JAR dependencies (over the internet)")
+    @Option(name = "download", hasValue = false,
+            description = "Whether to allow automatic downloading JAR dependencies (over the internet)", defaultValue = "true")
     boolean download = true;
 
-    @CommandLine.Option(names = {
-            "--repo",
-            "--repos" }, description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @Option(name = "repo", aliases = { "repos" },
+            description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources",
-                        defaultValue = "false")
+    @Option(name = "fresh", hasValue = false, description = "Make sure we use fresh (i.e. non-cached) resources",
+            defaultValue = "false")
     boolean fresh;
 
     // not an option: set by an export through the Java API, else the camel.extra.repos system property is in use

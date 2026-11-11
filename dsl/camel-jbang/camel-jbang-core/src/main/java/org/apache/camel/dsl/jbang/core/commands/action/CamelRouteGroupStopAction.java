@@ -16,16 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "stop-group",
-                     description = "Stop Camel route groups", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd stop-group --id=myGroup",
-                             "  camel cmd stop-group myApp --id=myGroup" })
+@CommandDefinition(name = "stop-group", description = "Stop Camel route groups", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd stop-group --id=myGroup",
+                           "  camel cmd stop-group myApp --id=myGroup" })
 public class CamelRouteGroupStopAction extends CamelRouteAction {
 
     public CamelRouteGroupStopAction(CamelJBangMain main) {

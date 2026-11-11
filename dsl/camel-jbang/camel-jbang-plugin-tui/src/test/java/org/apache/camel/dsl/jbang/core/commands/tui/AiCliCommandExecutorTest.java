@@ -25,12 +25,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.aesh.command.Command;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.ResourceLock;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -143,15 +146,15 @@ class AiCliCommandExecutorTest {
         // a command runs on new instances of the commands, so the test command is added the way plugins add theirs
         CamelJBangMain main = new CamelJBangMain() {
             @Override
-            public void postAddCommands(CommandLine commandLine, String[] args) {
-                commandLine.addSubcommand("tui-test", new CommandLine(new TuiTestCommand(this)));
+            public void postAddCommands(CommandTree commandLine, String[] args) {
+                commandLine.addSubcommand("tui-test", new CommandTree(new TuiTestCommand(this)));
             }
         };
         Printer originalPrinter = main.getOut();
-        CommandLine commandLine = new CommandLine(main);
+        CommandTree commandLine = new CommandTree(main);
         Field field = CamelJBangMain.class.getDeclaredField("commandLine");
         field.setAccessible(true);
-        CommandLine previous = (CommandLine) field.get(null);
+        CommandTree previous = (CommandTree) field.get(null);
         field.set(null, commandLine);
         try {
             AiCliCommandExecutor.Result result = new AiCliCommandExecutor()
@@ -247,8 +250,8 @@ class AiCliCommandExecutorTest {
         }
     }
 
-    @Command(name = "tui-test")
-    private static final class TuiTestCommand implements Runnable {
+    @CommandDefinition(name = "tui-test", description = "", generateHelp = true, sortOptions = true)
+    private static final class TuiTestCommand implements Command<CommandInvocation> {
 
         private final CamelJBangMain main;
 
@@ -257,8 +260,9 @@ class AiCliCommandExecutorTest {
         }
 
         @Override
-        public void run() {
+        public CommandResult execute(CommandInvocation invocation) {
             main.getOut().println("captured command output");
+            return CommandResult.SUCCESS;
         }
     }
 }

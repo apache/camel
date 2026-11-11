@@ -22,54 +22,57 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.dsl.jbang.core.common.SemanticMediaInput;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectReader;
 import tools.jackson.databind.json.JsonMapper;
 
-@CommandLine.Command(name = "eval", description = "Evaluate a semantic definition or expert operation",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel semantic eval my-app --evaluation=safe --body='Sample message' --json",
-                             "  camel semantic eval my-app --expert=guard --operation=detect --input='Sample message'" })
+@CommandDefinition(name = "eval", description = "Evaluate a semantic definition or expert operation", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel semantic eval my-app --evaluation=safe --body='Sample message' --json",
+                           "  camel semantic eval my-app --expert=guard --operation=detect --input='Sample message'" })
 public class SemanticEvaluate extends SemanticActionCommand {
 
     // Jsoner accepts trailing commas; command input must use strict JSON parsing.
     private static final ObjectReader JSON_VALUE = JsonMapper.builderWithJackson2Defaults().build().readerFor(Object.class)
             .with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
-    @CommandLine.Option(names = "--evaluation", description = "Named semantic definition to evaluate")
+    @Option(name = "evaluation", description = "Named semantic definition to evaluate")
     String evaluation;
 
-    @CommandLine.Option(names = "--body", description = "Sample body (text, file:path, image:path or json:value)")
+    @Option(name = "body", description = "Sample body (text, file:path, image:path or json:value)")
     String body;
 
-    @CommandLine.Option(names = "--header", description = "Sample header (key=value; use json: for a typed value)")
+    @OptionList(name = "header", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Sample header (key=value; use json: for a typed value)")
     List<String> headers;
 
-    @CommandLine.Option(names = "--variable",
-                        description = "Sample exchange-local variable (key=value; use json: for a typed value)")
+    @OptionList(name = "variable", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Sample exchange-local variable (key=value; use json: for a typed value)")
     List<String> variables;
 
-    @CommandLine.Option(names = "--expert", description = "Expert to call directly")
+    @Option(name = "expert", description = "Expert to call directly")
     String expert;
 
-    @CommandLine.Option(names = "--operation", description = "Expert operation to call directly")
+    @Option(name = "operation", description = "Expert operation to call directly")
     String operation;
 
-    @CommandLine.Option(names = "--input", description = "Direct input (text, file:path, image:path or json:value)")
+    @Option(name = "input", description = "Direct input (text, file:path, image:path or json:value)")
     String input;
 
-    @CommandLine.Option(names = "--parameter", description = "Expert parameter (key=value; use json: for a typed value)")
+    @OptionList(name = "parameter", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Expert parameter (key=value; use json: for a typed value)")
     List<String> parameters;
 
-    @CommandLine.Option(names = "--evaluation-timeout", defaultValue = "50000",
-                        description = "Provider evaluation timeout in milliseconds (1-50000)")
+    @Option(name = "evaluation-timeout", description = "Provider evaluation timeout in milliseconds (1-50000)",
+            defaultValue = "50000")
     long evaluationTimeout = 50000;
 
     public SemanticEvaluate(CamelJBangMain main) {

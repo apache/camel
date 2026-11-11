@@ -17,10 +17,12 @@
 package org.apache.camel.dsl.jbang.core.commands.test;
 
 import java.util.Optional;
+import java.util.concurrent.Callable;
 
 import org.apache.camel.catalog.VersionHelper;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
 import org.apache.camel.dsl.jbang.run.common.PluginExporter;
 import org.apache.camel.dsl.jbang.run.common.Printer;
@@ -42,11 +44,19 @@ public class TestPlugin implements Plugin {
     public static final String TEST_DIR = "test";
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        commandLine.addSubcommand("test", new CommandTree(new TestCommand(main)));
+    }
+
+    /**
+     * The test commands of Citrus, which Citrus 5.1 defines with picocli: picocli parses and runs the command line of
+     * camel test.
+     */
+    static CommandLine citrus(CamelJBangMain main) {
         CitrusJBangMain citrus = new CitrusJBangMain();
         citrus.withPrinter(new PipedPrinter(main.getOut()));
 
-        var cmd = new CommandLine(new TestCommand(main))
+        return new CommandLine(new CitrusTests())
                 .addSubcommand("init", new CommandLine(new TestInit(citrus)))
                 .addSubcommand("inspect", new CommandLine(new Inspect(citrus)))
                 .addSubcommand("run", new CommandLine(new Run(citrus)))
@@ -54,10 +64,24 @@ public class TestPlugin implements Plugin {
                 .addSubcommand("agent", new CommandLine(new Agent(citrus))
                         .addSubcommand("start", new CommandLine(new AgentStart(citrus)))
                         .addSubcommand("run", new CommandLine(new AgentRun(citrus)))
-                        .addSubcommand("stop", new CommandLine(new AgentStop(citrus))));
-
-        commandLine.addSubcommand("test", cmd)
+                        .addSubcommand("stop", new CommandLine(new AgentStop(citrus))))
                 .setExecutionStrategy(new CitrusExecutionStrategy(main));
+    }
+
+    @CommandLine.Command(name = "camel test",
+                         description = "Manage tests for Camel applications (use test --help to see sub commands)",
+                         mixinStandardHelpOptions = true)
+    static class CitrusTests implements Callable<Integer> {
+
+        @CommandLine.Spec
+        CommandLine.Model.CommandSpec spec;
+
+        @Override
+        public Integer call() {
+            // defaults to printing the help message
+            spec.commandLine().usage(System.out);
+            return 0;
+        }
     }
 
     @Override

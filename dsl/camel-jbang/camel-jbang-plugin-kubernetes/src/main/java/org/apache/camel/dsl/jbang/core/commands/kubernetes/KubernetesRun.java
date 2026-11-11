@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Stack;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 
@@ -41,6 +40,11 @@ import io.fabric8.kubernetes.client.vertx5.Vertx5HttpClientFactory;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.file.FileSystemOptions;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
@@ -65,225 +69,206 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
-import picocli.CommandLine;
 
 import static org.apache.camel.dsl.jbang.core.commands.kubernetes.KubernetesHelper.getPodPhase;
 
-@CommandLine.Command(name = "run", description = "Run Camel application on Kubernetes", sortOptions = false)
+@CommandDefinition(name = "run", description = "Run Camel application on Kubernetes", generateHelp = true)
 public class KubernetesRun extends KubernetesBaseCommand {
 
-    @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    Path[] filePaths; // Defined only for file path completion; the field never used
-
+    @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
+               paramLabel = "<files>")
     public List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--service-account" }, description = "The service account used to run the application.")
+    @Option(name = "service-account", description = "The service account used to run the application.")
     String serviceAccount;
 
-    @CommandLine.Option(names = { "--prop", "--property" },
-                        description = "Add a runtime property or properties from a file (syntax: [my-key=my-value|file:/path/to/my-conf.properties|/path/to/my-conf.properties].")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a runtime property or properties from a file (syntax: [my-key=my-value|file:/path/to/my-conf.properties|/path/to/my-conf.properties].")
     String[] properties;
 
-    @CommandLine.Option(names = { "--config" },
-                        description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
+    @OptionList(name = "config", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a runtime configuration from a ConfigMap or a Secret (syntax: [configmap|secret]:name[/key], where name represents the configmap/secret name and key optionally represents the configmap/secret key to be filtered).")
     String[] configs;
 
-    @CommandLine.Option(names = { "--resource" },
-                        description = "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
+    @OptionList(name = "resource", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a runtime resource from a Configmap or a Secret (syntax: [configmap|secret]:name[/key][@path], where name represents the configmap/secret name, key optionally represents the configmap/secret key to be filtered and path represents the destination path).")
     String[] resources;
 
-    @CommandLine.Option(names = { "--open-api" }, description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
+    @Option(name = "open-api", description = "Add an OpenAPI spec (syntax: [configmap|file]:name).")
     String openApi;
 
-    @CommandLine.Option(names = { "--env" },
-                        description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
+    @OptionList(name = "env", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Set an environment variable in the integration container, for instance \"-e MY_VAR=my-value\".")
     String[] envVars;
 
-    @CommandLine.Option(names = { "--volume" },
-                        description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
+    @OptionList(name = "volume", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Mount a volume into the integration container, for instance \"-v pvcname:/container/path\".")
     String[] volumes;
 
-    @CommandLine.Option(names = { "--connect" },
-                        description = "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
+    @OptionList(name = "connect", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "A Service that the integration should bind to, specified as [[apigroup/]version:]kind:[namespace/]name.")
     String[] connects;
 
-    @CommandLine.Option(names = { "--annotation" },
-                        description = "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
+    @OptionList(name = "annotation", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add an annotation to the integration. Use name values pairs like \"--annotation my.company=hello\".")
     String[] annotations;
 
-    @CommandLine.Option(names = { "--label" },
-                        description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
+    @OptionList(name = "label", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a label to the integration. Use name values pairs like \"--label my.company=hello\".")
     String[] labels;
 
-    @CommandLine.Option(names = { "--trait" },
-                        description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
+    @OptionList(name = "trait", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Add a trait configuration to the integration. Use name values pairs like \"--trait trait.name.config=hello\".")
     String[] traits;
 
-    @CommandLine.Option(names = { "--wait" }, description = "Wait for the deployment to become ready.")
+    @Option(name = "wait", hasValue = false, description = "Wait for the deployment to become ready.")
     boolean wait;
 
-    @CommandLine.Option(names = { "--logs" }, description = "Print logs after Camel application has been started.")
+    @Option(name = "logs", hasValue = false, description = "Print logs after Camel application has been started.")
     boolean logs;
 
-    @CommandLine.Option(names = { "--reload", "--dev" },
-                        description = "Enables dev mode (live reload when source files are updated and saved)")
+    @Option(name = "reload", aliases = { "dev" }, hasValue = false,
+            description = "Enables dev mode (live reload when source files are updated and saved)")
     boolean dev;
 
-    @CommandLine.Option(names = { "--quiet" }, description = "Quiet output - only show errors for build/deploy.")
+    @Option(name = "quiet", hasValue = false, description = "Quiet output - only show errors for build/deploy.")
     boolean quiet;
 
-    @CommandLine.Option(names = { "--verbose" }, description = "Verbose output of build/deploy progress")
+    @Option(name = "verbose", hasValue = false, description = "Verbose output of build/deploy progress")
     boolean verbose;
 
-    @CommandLine.Option(names = { "--cleanup" },
-                        defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.")
+    @Option(name = "cleanup", hasValue = false,
+            description = "Automatically removes deployment when process is stopped. Only in combination with --dev, --reload option.",
+            defaultValue = "true")
     boolean cleanup = true;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "Just output the generated integration custom resource (supports: yaml or json).")
+    @Option(name = "output", description = "Just output the generated integration custom resource (supports: yaml or json).")
     String output;
 
     // Export options
 
-    @CommandLine.Option(names = { "--image" },
-                        description = "The image name to be built.")
+    @Option(name = "image", description = "The image name to be built.")
     String image;
 
-    @CommandLine.Option(names = { "--image-registry" },
-                        description = "The image registry to hold the app container image.")
+    @Option(name = "image-registry", description = "The image registry to hold the app container image.")
     String imageRegistry;
 
-    @CommandLine.Option(names = { "--image-group" },
-                        description = "The image registry group used to push images to.")
+    @Option(name = "image-group", description = "The image registry group used to push images to.")
     String imageGroup;
 
     // no default value, so that detectCluster() can tell an explicit value from the default
-    @CommandLine.Option(names = { "--image-builder" },
-                        description = "The image builder used to build the container image (e.g. docker, jib, s2i)."
-                                      + " Default is jib, or docker on Minikube unless --disable-auto is set.")
+    @Option(name = "image-builder", description = "The image builder used to build the container image (e.g. docker, jib, s2i)."
+                                                  + " Default is jib, or docker on Minikube unless --disable-auto is set.")
     String imageBuilder;
 
-    @CommandLine.Option(names = { "--cluster-type" },
-                        completionCandidates = ClusterTypeCompletionCandidates.class,
-                        converter = ClusterTypeConverter.class,
-                        description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.")
+    @Option(name = "cluster-type",
+            description = "The target cluster type (${COMPLETION-CANDIDATES}). Special configurations may be applied to different cluster types such as Kind or Minikube.",
+            completer = ClusterTypeCompletionCandidates.class, converter = ClusterTypeConverter.class)
     String clusterType;
 
-    @CommandLine.Option(names = { "--image-build" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to build container image as part of the run.")
+    @Option(name = "image-build", hasValue = false, description = "Whether to build container image as part of the run.",
+            defaultValue = "true")
     boolean imageBuild = true;
 
     // no default value, so that detectCluster() can tell an explicit value from the default
-    @CommandLine.Option(names = { "--image-push" },
-                        description = "Whether to push image to given image registry as part of the run."
-                                      + " Default is true, or false on Minikube with the docker image builder unless --disable-auto is set.")
+    @Option(name = "image-push", hasValue = false,
+            description = "Whether to push image to given image registry as part of the run."
+                          + " Default is true, or false on Minikube with the docker image builder unless --disable-auto is set.")
     Boolean imagePush;
 
-    @CommandLine.Option(names = { "--image-platform" },
-                        description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
+    @OptionList(name = "image-platform", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "List of target platforms. Each platform is defined using os and architecture (e.g. linux/amd64).")
     String[] imagePlatforms;
 
-    @CommandLine.Option(names = { "--base-image" },
-                        description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:<java-version>).")
+    @Option(name = "base-image",
+            description = "The base image that is used to build the container image from (default is mirror.gcr.io/library/eclipse-temurin:<java-version>).")
     String baseImage;
 
-    @CommandLine.Option(names = { "--registry-mirror" },
-                        description = "Optional Docker registry mirror where to pull images from when building the container image.")
+    @Option(name = "registry-mirror",
+            description = "Optional Docker registry mirror where to pull images from when building the container image.")
     String registryMirror;
 
     // Export base options
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--dep", "--dependency" }, description = "Add additional dependencies",
-                        split = ",")
+    @OptionList(name = "dep", aliases = { "dependency" }, valueSeparator = ',', description = "Add additional dependencies")
     List<String> dependencies = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        defaultValue = "quarkus",
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", defaultValue = "quarkus",
+            completer = RuntimeCompletionCandidates.class, converter = RuntimeTypeConverter.class)
     RuntimeType runtime = RuntimeType.quarkus;
 
-    @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")
+    @Option(name = "gav", description = "The Maven group:artifact:version")
     String gav;
 
-    @CommandLine.Option(names = { "--exclude" }, description = "Exclude files by name or pattern")
+    @OptionList(name = "exclude", valueSeparator = OptionList.NO_SEPARATOR, description = "Exclude files by name or pattern")
     List<String> excludes = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--resource-dir", "--resource-dirs" },
-                        description = "Additional resource directories to include in src/main/resources (recursive, preserving structure)",
-                        split = ",")
+    @OptionList(name = "resource-dir", aliases = { "resource-dirs" }, valueSeparator = ',',
+                description = "Additional resource directories to include in src/main/resources (recursive, preserving structure)")
     List<String> resourceDirs = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--package-scan-jars" }, defaultValue = "false",
-                        description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI")
+    @Option(name = "package-scan-jars", hasValue = false,
+            description = "Whether to automatic package scan JARs for custom Spring or Quarkus beans making them available for Camel CLI",
+            defaultValue = "false")
     boolean packageScanJars;
 
-    @CommandLine.Option(names = { "--maven-settings" },
-                        description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
-                                      + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
+    @Option(name = "maven-settings",
+            description = "Optional location of Maven settings.xml file to configure servers, repositories, mirrors and proxies."
+                          + " If set to \"false\", not even the default ~/.m2/settings.xml will be used.")
     String mavenSettings;
 
-    @CommandLine.Option(names = { "--maven-settings-security" },
-                        description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
+    @Option(name = "maven-settings-security",
+            description = "Optional location of Maven settings-security.xml file to decrypt settings.xml")
     String mavenSettingsSecurity;
 
-    @CommandLine.Option(names = { "--maven-central-enabled" }, arity = "0..1", fallbackValue = "true",
-                        description = "Whether downloading JARs from Maven Central repository is enabled")
+    @Option(name = "maven-central-enabled", hasValue = false,
+            description = "Whether downloading JARs from Maven Central repository is enabled")
     boolean mavenCentralEnabled = true;
 
-    @CommandLine.Option(names = { "--maven-apache-snapshot-enabled" }, arity = "0..1", fallbackValue = "true",
-                        description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
+    @Option(name = "maven-apache-snapshot-enabled", hasValue = false,
+            description = "Whether downloading JARs from ASF Maven Snapshot repository is enabled")
     boolean mavenApacheSnapshotEnabled = true;
 
-    @CommandLine.Option(names = { "--java-version", "--java" }, description = "Java version", defaultValue = "21")
+    @Option(name = "java-version", aliases = { "java" }, description = "Java version", defaultValue = "21")
     String javaVersion = "21";
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To export using a different Camel version than the default version.")
+    @Option(name = "camel-version", description = "To export using a different Camel version than the default version.")
     String camelVersion;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version")
+    @Option(name = "kamelets-version", description = "Apache Camel Kamelets version")
     String kameletsVersion;
 
-    @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT,
-                        description = "Profile to export (dev, test, or prod).")
+    @Option(name = "profile", description = "Profile to export (dev, test, or prod).", inherited = true)
     String profile;
 
-    @CommandLine.Option(names = { "--local-kamelet-dir" },
-                        description = "Local directory for loading Kamelets (takes precedence)")
+    @Option(name = "local-kamelet-dir", description = "Local directory for loading Kamelets (takes precedence)")
     String localKameletDir;
 
-    @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = RuntimeType.SPRING_BOOT_VERSION)
+    @Option(name = "spring-boot-version", description = "Spring Boot version", defaultValue = RuntimeType.SPRING_BOOT_VERSION)
     String springBootVersion = RuntimeType.SPRING_BOOT_VERSION;
 
-    @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
+    @Option(name = "camel-spring-boot-version", description = "Camel version to use with Spring Boot")
     String camelSpringBootVersion;
 
-    @CommandLine.Mixin
+    @Mixin
     protected QuarkusPlatformMixin quarkusPlatform;
 
-    @CommandLine.Option(names = { "--package-name" },
-                        description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
-                                      + "Use false to turn off and not include package name in the Java source files.")
+    @Option(name = "package-name",
+            description = "For Java source files should they have the given package name. By default the package name is computed from the Maven GAV. "
+                          + "Use false to turn off and not include package name in the Java source files.")
     String packageName;
 
-    @CommandLine.Option(names = { "--build-property" },
-                        description = "Maven properties, ex. --build-property=prop1=foo")
+    @OptionList(name = "build-property", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Maven properties, ex. --build-property=prop1=foo")
     List<String> buildProperties = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--disable-auto" },
-                        description = "Disable automatic cluster type detection and automatic settings for cluster.")
+    @Option(name = "disable-auto", hasValue = false,
+            description = "Disable automatic cluster type detection and automatic settings for cluster.")
     boolean disableAuto = false;
 
-    @CommandLine.Option(names = { "--skip-plugins" }, defaultValue = "false",
-                        description = "Skip plugins during export")
+    @Option(name = "skip-plugins", hasValue = false, description = "Skip plugins during export", defaultValue = "false")
     boolean skipPlugins = false;
 
     // DevMode/Reload state
@@ -1002,14 +987,6 @@ public class KubernetesRun extends KubernetesBaseCommand {
             return quietPrinter;
         }
         return super.printer();
-    }
-
-    static class FilesConsumer extends ParameterConsumer<KubernetesRun> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, KubernetesRun cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
     }
 
 }

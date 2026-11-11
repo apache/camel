@@ -16,20 +16,21 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "reload",
-                     description = "Trigger reloading Camel", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd reload" })
+@CommandDefinition(name = "reload", description = "Trigger reloading Camel", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd reload" })
 public class CamelReloadAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration. (default selects all)")
     String name = "*";
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     public CamelReloadAction(CamelJBangMain main) {

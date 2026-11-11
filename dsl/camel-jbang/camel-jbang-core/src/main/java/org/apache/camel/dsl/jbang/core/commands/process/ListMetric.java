@@ -27,6 +27,9 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CopyableRow;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
@@ -38,16 +41,13 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "metric",
-         description = "Get metrics (micrometer) of running Camel integrations", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel get metric",
-                 "  camel get metric --filter=timer*",
-                 "  camel get metric --watch" })
+@CommandDefinition(name = "metric", description = "Get metrics (micrometer) of running Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get metric",
+                           "  camel get metric --filter=timer*",
+                           "  camel get metric --watch" })
 public class ListMetric extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = RowSort.<Row> integration(r -> r.pid, r -> r.name, r -> r.uptime);
@@ -56,28 +56,24 @@ public class ListMetric extends ProcessWatchCommand {
             = Comparator.comparing((Row r) -> r.metricName, Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER))
                     .thenComparing(r -> r.metricId, Comparator.nullsFirst(String.CASE_INSENSITIVE_ORDER));
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration",
-                            arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter metric by type, name or tags")
+    @Option(name = "filter", description = "Filter metric by type, name or tags")
     String filter;
 
-    @CommandLine.Option(names = { "--tags" },
-                        description = "Show metric tags", defaultValue = "false")
+    @Option(name = "tags", hasValue = false, description = "Show metric tags", defaultValue = "false")
     boolean tags;
 
-    @CommandLine.Option(names = { "--custom" },
-                        description = "Only show custom metrics", defaultValue = "false")
+    @Option(name = "custom", hasValue = false, description = "Only show custom metrics", defaultValue = "false")
     boolean custom;
 
-    @CommandLine.Option(names = { "--all" },
-                        description = "Whether to show all metrics (also unused with counter being 0)", defaultValue = "false")
+    @Option(name = "all", hasValue = false, description = "Whether to show all metrics (also unused with counter being 0)",
+            defaultValue = "false")
     boolean all;
 
     public ListMetric(CamelJBangMain main) {

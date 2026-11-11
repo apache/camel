@@ -35,6 +35,8 @@ import java.util.stream.Collectors;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelTableColumns;
@@ -46,7 +48,6 @@ import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.artifact.versioning.ComparableVersion;
-import picocli.CommandLine;
 
 /**
  * A command-line tool for listing available update versions for Apache Camel and its runtime variants.
@@ -84,23 +85,21 @@ import picocli.CommandLine;
  * @see org.apache.camel.dsl.jbang.core.commands.CamelCommand
  * @see org.apache.camel.dsl.jbang.core.commands.CamelJBangMain
  */
-@CommandLine.Command(name = "list",
-                     description = "List available update versions for Camel and its runtime variants",
-                     footer = {
-                             "%nExamples:",
-                             "  camel update list" })
+@CommandDefinition(name = "list", description = "List available update versions for Camel and its runtime variants",
+                   generateHelp = true, sortOptions = true,
+                   footer = {
+                           "Examples:",
+                           "  camel update list" })
 public class UpdateList extends CamelCommand {
 
-    @CommandLine.Option(names = { "--repo", "--repos" },
-                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    @Option(name = "repo", aliases = { "repos" },
+            description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--use-cache" },
-                        description = "Use Maven cache")
+    @Option(name = "use-cache", hasValue = false, description = "Use Maven cache")
     boolean useCache;
 
     private static final String CAMEL_UPGRADE_GROUPID = "org.apache.camel.upgrade";

@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
@@ -32,7 +33,6 @@ import org.citrusframework.spi.Resources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 class TestPluginTest {
 
@@ -141,7 +141,7 @@ class TestPluginTest {
     private CamelJBangMain createCamelJBangMain() {
         return new CamelJBangMain() {
             @Override
-            public void postAddCommands(CommandLine commandLine, String[] args) {
+            public void postAddCommands(CommandTree commandLine, String[] args) {
                 TestPlugin plugin = new TestPlugin();
                 plugin.customize(commandLine, this);
 

@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -109,15 +109,15 @@ public class CamelLauncherTest {
     }
 
     private static Set<String> commandsOf(String... args) {
-        List<CommandLine> executed = new ArrayList<>();
+        List<CommandTree> executed = new ArrayList<>();
         CamelLauncherMain main = new CamelLauncherMain() {
             @Override
-            public void preExecute(CommandLine commandLine, String[] args) {
+            public void preExecute(CommandTree commandLine, String[] args) {
                 // no update check
             }
 
             @Override
-            public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+            public void postExecute(CommandTree commandLine, String[] args, int exitCode) {
                 executed.add(commandLine);
             }
 
@@ -142,12 +142,12 @@ public class CamelLauncherTest {
         // jars of the Spring Boot fat-jar.
         CamelLauncherMain main = new CamelLauncherMain();
 
-        CommandLine commandLine = new CommandLine(main);
+        CommandTree commandLine = new CommandTree(main);
         main.postAddCommands(commandLine, new String[] { "tui" });
 
-        CommandLine tui = commandLine.getSubcommands().get("tui");
+        CommandTree tui = commandLine.getSubcommands().get("tui");
         assertNotNull(tui, "tui command should be registered by the launcher");
-        CommandLine monitor = tui.getSubcommands().get("monitor");
+        CommandTree monitor = tui.getSubcommands().get("monitor");
         assertNotNull(monitor, "tui monitor subcommand should be registered");
 
         ClassLoader pluginClassLoader = readClassLoaderField(monitor.getCommand());

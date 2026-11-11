@@ -38,8 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * Exports with the dependency resolver of this module, which this module's tests run without camel-jbang-core and
- * picocli on the classpath.
+ * Exports with the dependency resolver of this module, which this module's tests run without camel-jbang-core and aesh
+ * on the classpath.
  */
 class SilentRunDependencyResolverTest {
 
@@ -65,7 +65,7 @@ class SilentRunDependencyResolverTest {
     void exportsWithoutCamelJBangCore() throws Exception {
         assertThatThrownBy(() -> Class.forName("org.apache.camel.dsl.jbang.core.commands.Run"))
                 .isInstanceOf(ClassNotFoundException.class);
-        assertThatThrownBy(() -> Class.forName("picocli.CommandLine"))
+        assertThatThrownBy(() -> Class.forName("org.aesh.command.Command"))
                 .isInstanceOf(ClassNotFoundException.class);
 
         ExportRequest request = request();

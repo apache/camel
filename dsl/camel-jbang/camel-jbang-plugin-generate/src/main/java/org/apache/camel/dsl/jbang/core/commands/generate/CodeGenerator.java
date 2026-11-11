@@ -16,11 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.generate;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "generate", description = "Generate source code (use --help to see sub commands)")
+@CommandDefinition(name = "generate", description = "Generate source code (use --help to see sub commands)",
+                   generateHelp = true, sortOptions = true)
 public class CodeGenerator extends CamelCommand {
 
     public CodeGenerator(CamelJBangMain main) {

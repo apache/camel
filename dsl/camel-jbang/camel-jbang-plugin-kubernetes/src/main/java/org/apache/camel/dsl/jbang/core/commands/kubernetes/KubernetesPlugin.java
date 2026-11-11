@@ -18,19 +18,19 @@ package org.apache.camel.dsl.jbang.core.commands.kubernetes;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-kubernetes", firstVersion = "4.8.0")
 public class KubernetesPlugin implements Plugin {
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new CommandLine(new KubernetesCommand(main))
-                .addSubcommand("run", new CommandLine(new KubernetesRun(main)))
-                .addSubcommand("export", new CommandLine(new KubernetesExport(main)))
-                .addSubcommand("delete", new CommandLine(new KubernetesDelete(main)))
-                .addSubcommand("logs", new CommandLine(new KubernetesPodLogs(main)));
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        var cmd = new CommandTree(new KubernetesCommand(main))
+                .addSubcommand("run", new CommandTree(new KubernetesRun(main)))
+                .addSubcommand("export", new CommandTree(new KubernetesExport(main)))
+                .addSubcommand("delete", new CommandTree(new KubernetesDelete(main)))
+                .addSubcommand("logs", new CommandTree(new KubernetesPodLogs(main)));
 
         commandLine.addSubcommand("kubernetes", cmd, "k8s");
     }

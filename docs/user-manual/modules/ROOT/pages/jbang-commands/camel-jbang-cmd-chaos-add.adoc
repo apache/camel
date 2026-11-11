@@ -22,7 +22,7 @@ camel cmd chaos-add [options]
 | `--dry-run` | Check the rules without adding them: each in plain words, and what it would hit in the integration now (the sends, polls, routes or steps, with their route) |  | boolean
 | `--rule` | A rule in its one-line text form, as an entry of camel.chaos.rules; can be given more than once |  | List
 | `--timeout` | How long to wait for the integration to answer, in millis or as a duration such as 30s | 10000 | long
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

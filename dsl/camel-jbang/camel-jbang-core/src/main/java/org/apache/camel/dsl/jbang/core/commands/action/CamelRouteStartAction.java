@@ -16,16 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "start-route",
-                     description = "Start Camel routes", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd start-route --id=myRoute",
-                             "  camel cmd start-route myApp --id=myRoute" })
+@CommandDefinition(name = "start-route", description = "Start Camel routes", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd start-route --id=myRoute",
+                           "  camel cmd start-route myApp --id=myRoute" })
 public class CamelRouteStartAction extends CamelRouteAction {
 
     public CamelRouteStartAction(CamelJBangMain main) {

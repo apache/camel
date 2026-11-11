@@ -17,48 +17,49 @@
 package org.apache.camel.dsl.jbang.core.commands;
 
 import java.nio.file.Path;
-import java.util.Stack;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "script", description = "Run Camel integration as shell script for terminal scripting",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel script hello.java",
-                             "  camel script hello.java --max-messages=10" })
+@CommandDefinition(name = "script", description = "Run Camel integration as shell script for terminal scripting",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel script hello.java",
+                           "  camel script hello.java --max-messages=10" })
 public class Script extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name of file", arity = "1",
-                            paramLabel = "<file>", parameterConsumer = FileConsumer.class)
     Path filePath; // Defined only for file path completion; the field never used
+    @Argument(required = true, description = "Name of file", paramLabel = "<file>")
     String file;
 
-    @CommandLine.Option(names = { "--max-messages" }, defaultValue = "0",
-                        description = "Max number of messages to process before stopping")
+    @Option(name = "max-messages", description = "Max number of messages to process before stopping", defaultValue = "0")
     int maxMessages;
 
-    @CommandLine.Option(names = { "--max-seconds" }, defaultValue = "0", description = "Max seconds to run before stopping")
+    @Option(name = "max-seconds", description = "Max seconds to run before stopping", defaultValue = "0")
     int maxSeconds;
 
-    @CommandLine.Option(names = { "--max-idle-seconds" }, defaultValue = "1",
-                        description = "For how long time in seconds Camel can be idle before stopping")
+    @Option(name = "max-idle-seconds", description = "For how long time in seconds Camel can be idle before stopping",
+            defaultValue = "1")
     int maxIdleSeconds;
 
-    @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
-                        description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
+    @Option(name = "logging", hasValue = false,
+            description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)",
+            defaultValue = "false")
     boolean logging;
 
-    @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
-                        defaultValue = "info", description = "Logging level (${COMPLETION-CANDIDATES})")
+    @Option(name = "logging-level", description = "Logging level (${COMPLETION-CANDIDATES})", defaultValue = "info",
+            completer = LoggingLevelCompletionCandidates.class)
     String loggingLevel;
 
-    @CommandLine.Option(names = { "--properties" },
-                        description = "Load properties file for route placeholders (ex. /path/to/file.properties")
+    @Option(name = "properties", description = "Load properties file for route placeholders (ex. /path/to/file.properties")
     String propertiesFiles;
 
-    @CommandLine.Option(names = { "--prop", "--property" }, description = "Additional properties (override existing)")
+    @OptionList(name = "prop", aliases = { "property" }, valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Additional properties (override existing)")
     String[] property;
 
     public Script(CamelJBangMain main) {
@@ -87,13 +88,6 @@ public class Script extends CamelCommand {
         run.property = property;
         run.propertiesFiles = propertiesFiles;
         return run.runScript(file);
-    }
-
-    static class FileConsumer extends ParameterConsumer<Script> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, Script cmd) {
-            cmd.file = args.pop();
-        }
     }
 
 }

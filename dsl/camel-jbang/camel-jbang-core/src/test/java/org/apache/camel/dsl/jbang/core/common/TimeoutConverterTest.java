@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.jbang.core.common;
 
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,7 +40,7 @@ class TimeoutConverterTest {
     @Test
     void anythingElseIsAnInvalidOption() {
         assertThatThrownBy(() -> converter.convert("soon"))
-                .isInstanceOf(CommandLine.TypeConversionException.class)
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("'soon' is not a timeout: use millis, or a duration such as 30s");
     }
 }

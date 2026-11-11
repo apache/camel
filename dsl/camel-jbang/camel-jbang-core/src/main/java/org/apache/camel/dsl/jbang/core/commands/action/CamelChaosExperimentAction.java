@@ -23,6 +23,10 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.cli.connector.RepeatedSend;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.process.ListChaos;
@@ -33,84 +37,79 @@ import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RuntimeHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "chaos-experiment",
-                     description = "Run one chaos experiment in the exploration of a running integration: add its rules,"
-                                   + " send its traffic, wait for the verdict, and end it",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nAn experiment is part of an exploration (camel cmd chaos-explore-start). It tests a",
-                             "hypothesis with rules, one of them with an expectation (expect=) that decides it.",
-                             "The rules are added together, the messages of --feed are sent (as camel cmd send",
-                             "sends them, with --body, --header, --repeat and --interval), and then it waits until",
-                             "the expectations are decided, or --wait is up. The experiment is ended then, its",
-                             "rules are removed, and what came of it is printed: the verdict, the expectations,",
-                             "what the routes did, and the traffic. It stays in the journal of the exploration",
-                             "(camel get chaos --report).",
-                             "%nThe verdict is FAIL when an expectation is unmet (exit code 1), PASS when all are",
-                             "met, and INCONCLUSIVE when it cannot tell: it ended before an expectation was decided",
-                             "(wait longer than the within= of the expectation), its faults never fired, or the",
-                             "route of a met expectation had no messages. --feed can be the id of a route, as the",
-                             "feed: line of camel cmd chaos-suggest has it.",
-                             "%nExamples:",
-                             "  camel cmd chaos-experiment --hypothesis='a failed refund is read again' \\",
-                             "      --rule='route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s' \\",
-                             "      --feed=refunds --body=file:test/chaos/refunds-fails/ --repeat=20 --interval=200ms",
-                             "  camel cmd chaos-experiment myApp --hypothesis='orders survive a payment outage' \\",
-                             "      --rule='endpoint=http:payment* error status=503 until=1m expect=orders:failed<=0 within=70s' \\",
-                             "      --wait=90s",
-                             "  camel cmd chaos-experiment --end --note='stopped by hand'" })
+@CommandDefinition(name = "chaos-experiment",
+                   description = "Run one chaos experiment in the exploration of a running integration: add its rules,"
+                                 + " send its traffic, wait for the verdict, and end it",
+                   generateHelp = true,
+                   footer = {
+                           "An experiment is part of an exploration (camel cmd chaos-explore-start). It tests a",
+                           "hypothesis with rules, one of them with an expectation (expect=) that decides it.",
+                           "The rules are added together, the messages of --feed are sent (as camel cmd send",
+                           "sends them, with --body, --header, --repeat and --interval), and then it waits until",
+                           "the expectations are decided, or --wait is up. The experiment is ended then, its",
+                           "rules are removed, and what came of it is printed: the verdict, the expectations,",
+                           "what the routes did, and the traffic. It stays in the journal of the exploration",
+                           "(camel get chaos --report).",
+                           "",
+                           "The verdict is FAIL when an expectation is unmet (exit code 1), PASS when all are",
+                           "met, and INCONCLUSIVE when it cannot tell: it ended before an expectation was decided",
+                           "(wait longer than the within= of the expectation), its faults never fired, or the",
+                           "route of a met expectation had no messages. --feed can be the id of a route, as the",
+                           "feed: line of camel cmd chaos-suggest has it.",
+                           "",
+                           "Examples:",
+                           "  camel cmd chaos-experiment --hypothesis='a failed refund is read again' \\",
+                           "      --rule='route=refunds error rate=every:5 expect=refunds:failed<=0 within=30s' \\",
+                           "      --feed=refunds --body=file:test/chaos/refunds-fails/ --repeat=20 --interval=200ms",
+                           "  camel cmd chaos-experiment myApp --hypothesis='orders survive a payment outage' \\",
+                           "      --rule='endpoint=http:payment* error status=503 until=1m expect=orders:failed<=0 within=70s' \\",
+                           "      --wait=90s",
+                           "  camel cmd chaos-experiment --end --note='stopped by hand'" })
 public class CamelChaosExperimentAction extends CamelChaosAction {
 
-    @CommandLine.Parameters(description = "Name or pid of the running Camel integration (must match one); without it,"
-                                          + " the only one running, or the only one with chaos switched on",
-                            arity = "0..1")
+    @Argument(description = "Name or pid of the running Camel integration (must match one); without it,"
+                            + " the only one running, or the only one with chaos switched on")
     String name;
 
-    @CommandLine.Option(names = { "--hypothesis" },
-                        description = "What the experiment tests, in a few words, such as 'orders survive a payment outage'")
+    @Option(name = "hypothesis",
+            description = "What the experiment tests, in a few words, such as 'orders survive a payment outage'")
     String hypothesis;
 
-    @CommandLine.Option(names = { "--rule" },
-                        description = "A rule in its one-line text form, as an entry of camel.chaos.rules; can be given more"
-                                      + " than once, and one of them needs an expectation (expect=)")
+    @OptionList(name = "rule", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "A rule in its one-line text form, as an entry of camel.chaos.rules; can be given more"
+                              + " than once, and one of them needs an expectation (expect=)")
     List<String> rules;
 
-    @CommandLine.Option(names = { "--feed" },
-                        description = "The endpoint, or the id of the route, to send the messages of the experiment to;"
-                                      + " a route that serves HTTP gets HTTP requests, or give the path to call, such as"
-                                      + " 'PUT /orders/42'")
+    @Option(name = "feed", description = "The endpoint, or the id of the route, to send the messages of the experiment to;"
+                                         + " a route that serves HTTP gets HTTP requests, or give the path to call, such as"
+                                         + " 'PUT /orders/42'")
     String feed;
 
-    @CommandLine.Option(names = { "--body" },
-                        description = "The body of the messages: text, file:<path>, or file:<folder> for a message per file")
+    @Option(name = "body", description = "The body of the messages: text, file:<path>, or file:<folder> for a message per file")
     String body;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "A header of the messages as key=value; can be given more than once")
+    @OptionList(name = "header", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "A header of the messages as key=value; can be given more than once")
     List<String> headers;
 
-    @CommandLine.Option(names = { "--repeat" },
-                        description = "How many messages to send in all (at most " + RepeatedSend.MAX_MESSAGES + ")")
+    @Option(name = "repeat", description = "How many messages to send in all (at most " + RepeatedSend.MAX_MESSAGES + ")")
     int repeat;
 
-    @CommandLine.Option(names = { "--interval" },
-                        description = "The pause between two messages, such as 200ms, or a range such as 100..500 to draw"
-                                      + " each pause at random (at most 60s)")
+    @Option(name = "interval",
+            description = "The pause between two messages, such as 200ms, or a range such as 100..500 to draw"
+                          + " each pause at random (at most 60s)")
     String interval;
 
-    @CommandLine.Option(names = { "--wait" }, defaultValue = "2m",
-                        description = "The longest wait for the verdict after the messages were sent, and at least the"
-                                      + " within= of the expectations (at most 10m)")
+    @Option(name = "wait", description = "The longest wait for the verdict after the messages were sent, and at least the"
+                                         + " within= of the expectations (at most 10m)",
+            defaultValue = "2m")
     String wait;
 
-    @CommandLine.Option(names = { "--note" },
-                        description = "What to note with the experiment when it ends")
+    @Option(name = "note", description = "What to note with the experiment when it ends")
     String note;
 
-    @CommandLine.Option(names = { "--end" },
-                        description = "End the open experiment (with --note) instead of running a new one")
+    @Option(name = "end", hasValue = false, description = "End the open experiment (with --note) instead of running a new one")
     boolean end;
 
     public CamelChaosExperimentAction(CamelJBangMain main) {

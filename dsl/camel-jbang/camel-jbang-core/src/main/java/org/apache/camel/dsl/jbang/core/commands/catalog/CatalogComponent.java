@@ -19,16 +19,15 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.ComponentModel;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "component",
-                     description = "List components from the Camel Catalog", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel catalog component",
-                             "  camel catalog component --filter=kafka" })
+@CommandDefinition(name = "component", description = "List components from the Camel Catalog", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel catalog component",
+                           "  camel catalog component --filter=kafka" })
 public class CatalogComponent extends CatalogBaseCommand {
 
     public CatalogComponent(CamelJBangMain main) {

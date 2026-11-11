@@ -16,36 +16,24 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Map;
-
+import org.aesh.command.impl.parser.CommandLineParser;
+import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GroupedCommandHelpRendererTest extends CamelCommandBaseTestSupport {
 
-    private CommandLine capturedCommandLine;
+    private CommandTree capturedCommandLine;
 
-    private String captureHelp() {
-        StringWriter sw = new StringWriter();
-        CamelJBangMain main = new CamelJBangMain() {
-            @Override
-            public void quit(int exitCode) {
-            }
-
-            @Override
-            public void postAddCommands(CommandLine commandLine, String[] args) {
-                commandLine.setOut(new PrintWriter(sw));
-                capturedCommandLine = commandLine;
-            }
-        }.withPrinter(printer);
-        main.setDiscoverPlugins(false);
-        main.execute("--help");
-        return sw.toString();
+    private String captureHelp() throws Exception {
+        CamelJBangMain main = new CamelJBangMain().withPrinter(printer);
+        capturedCommandLine = main.createCommandLine(null);
+        CommandLineParser<CommandInvocation> parser = capturedCommandLine.parser();
+        parser.updateAnsiMode(false);
+        return parser.printHelp();
     }
 
     @Test
@@ -87,11 +75,7 @@ public class GroupedCommandHelpRendererTest extends CamelCommandBaseTestSupport 
 
         // Make sure no command quietly goes missing: every registered, non-hidden
         // command should appear somewhere in the grouped output.
-        for (Map.Entry<String, CommandLine> entry : capturedCommandLine.getSubcommands().entrySet()) {
-            if (entry.getValue().getCommandSpec().usageMessage().hidden()) {
-                continue;
-            }
-            String name = entry.getValue().getCommandSpec().name();
+        for (String name : capturedCommandLine.getSubcommands().keySet()) {
             assertTrue(output.contains(name), "Command '" + name + "' is missing from the grouped help output");
         }
     }

@@ -24,17 +24,16 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine.Command;
 
-@Command(name = "group", description = "Top performing route groups",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel top group",
-                 "  camel top group --watch" })
+@CommandDefinition(name = "group", description = "Top performing route groups", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel top group",
+                           "  camel top group --watch" })
 public class CamelRouteGroupTop extends CamelRouteGroupStatus {
 
     public CamelRouteGroupTop(CamelJBangMain main) {

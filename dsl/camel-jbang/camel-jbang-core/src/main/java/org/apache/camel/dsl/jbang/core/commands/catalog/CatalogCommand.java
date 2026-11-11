@@ -16,12 +16,12 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.catalog;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "catalog",
-                     description = "List artifacts from Camel Catalog (use catalog --help to see sub commands)")
+@CommandDefinition(name = "catalog", description = "List artifacts from Camel Catalog (use catalog --help to see sub commands)",
+                   generateHelp = true, sortOptions = true)
 public class CatalogCommand extends CamelCommand {
 
     public CatalogCommand(CamelJBangMain main) {

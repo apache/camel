@@ -24,7 +24,7 @@ camel kubernetes delete [options]
 | `--kube-config` | Path to the kube config file to initialize Kubernetes client |  | String
 | `--name` | The integration name. Use this when the name should not get derived otherwise. |  | String
 | `--namespace,-n` | Namespace to use for all operations |  | String
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

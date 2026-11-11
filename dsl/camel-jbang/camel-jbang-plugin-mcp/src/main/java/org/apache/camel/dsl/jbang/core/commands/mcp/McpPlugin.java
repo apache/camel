@@ -18,14 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands.mcp;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-mcp", firstVersion = "4.21.0")
 public class McpPlugin implements Plugin {
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("mcp", new CommandLine(new McpCommand(main)));
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        commandLine.addSubcommand("mcp", new CommandTree(new McpCommand(main)));
     }
 }

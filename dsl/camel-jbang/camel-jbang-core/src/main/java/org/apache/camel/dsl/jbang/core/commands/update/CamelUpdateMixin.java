@@ -18,6 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.update;
 
 import java.util.List;
 
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.QuarkusExtensionRegistryMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -27,73 +31,63 @@ import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper.QuarkusPlatformBom;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
-import picocli.CommandLine;
 
 public class CamelUpdateMixin {
 
-    @CommandLine.Parameters(description = "The version to which the Camel project should be updated.", arity = "1")
+    @Argument(required = true, description = "The version to which the Camel project should be updated.")
     String version;
 
-    @CommandLine.Option(names = { "--openRewriteVersion" },
-                        description = "The version of OpenRewrite to use during the update process.",
-                        defaultValue = "6.0.4")
+    @Option(name = "openRewriteVersion", description = "The version of OpenRewrite to use during the update process.",
+            defaultValue = "6.0.4")
     String openRewriteVersion;
 
-    @CommandLine.Option(names = { "--camelArtifact" },
-                        description = "The Maven artifact coordinates for the Camel upgrade recipes.",
-                        defaultValue = "camel-upgrade-recipes")
+    @Option(name = "camelArtifact", description = "The Maven artifact coordinates for the Camel upgrade recipes.",
+            defaultValue = "camel-upgrade-recipes")
     String camelArtifactCoordinates;
 
-    @CommandLine.Option(names = { "--camelSpringBootArtifact" },
-                        description = "The Maven artifact coordinates for the Camel Spring Boot upgrade recipes.",
-                        defaultValue = "camel-spring-boot-upgrade-recipes")
+    @Option(name = "camelSpringBootArtifact",
+            description = "The Maven artifact coordinates for the Camel Spring Boot upgrade recipes.",
+            defaultValue = "camel-spring-boot-upgrade-recipes")
     String camelSpringBootArtifactCoordinates;
 
-    @CommandLine.Option(names = { "--debug" },
-                        defaultValue = "false",
-                        description = "Enables debug logging if set to true.")
+    @Option(name = "debug", hasValue = false, description = "Enables debug logging if set to true.", defaultValue = "false")
     boolean debug;
 
-    @CommandLine.Option(names = { "--quarkusMavenPluginVersion" },
-                        description = "The version of the Quarkus Maven plugin to use; the default value is looked up in Quarkus Extension Registry")
+    @Option(name = "quarkusMavenPluginVersion",
+            description = "The version of the Quarkus Maven plugin to use; the default value is looked up in Quarkus Extension Registry")
     String quarkusMavenPluginVersion;
 
-    @CommandLine.Option(names = { "--quarkusMavenPluginGroupId" },
-                        description = "The group ID of the Quarkus Maven plugin.",
-                        defaultValue = "io.quarkus.platform")
+    @Option(name = "quarkusMavenPluginGroupId", description = "The group ID of the Quarkus Maven plugin.",
+            defaultValue = "io.quarkus.platform")
     String quarkusMavenPluginGroupId;
 
-    @CommandLine.Option(names = { "--dryRun" },
-                        description = "If set to true, performs a dry run of the update process without making any changes.",
-                        defaultValue = "false")
+    @Option(name = "dryRun", hasValue = false,
+            description = "If set to true, performs a dry run of the update process without making any changes.",
+            defaultValue = "false")
     boolean dryRun;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        defaultValue = "camel-main",
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", defaultValue = "camel-main",
+            completer = RuntimeCompletionCandidates.class, converter = RuntimeTypeConverter.class)
     RuntimeType runtime = RuntimeType.main;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
-    @CommandLine.Option(names = { "--extraActiveRecipes" },
-                        description = "Comma separated list of recipes to be executed after the Camel one, " +
-                                      "make sure the artifact containing the recipes is added via extraRecipeArtifactCoordinates")
+    @OptionList(name = "extraActiveRecipes", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Comma separated list of recipes to be executed after the Camel one, " +
+                              "make sure the artifact containing the recipes is added via extraRecipeArtifactCoordinates")
     List<String> extraActiveRecipes;
 
-    @CommandLine.Option(names = { "--extraRecipeArtifactCoordinates" },
-                        description = "Comma separated list of artifact coordinates containing extraActiveRecipes, " +
-                                      "ex.my.org:recipes:1.0.0")
+    @OptionList(name = "extraRecipeArtifactCoordinates", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Comma separated list of artifact coordinates containing extraActiveRecipes, " +
+                              "ex.my.org:recipes:1.0.0")
     List<String> extraRecipeArtifactCoordinates;
 
-    @CommandLine.Option(names = { "--upgradeTimeout" },
-                        description = "Time to wait, in seconds, before shutting down the upgrade process",
-                        defaultValue = "240")
+    @Option(name = "upgradeTimeout", description = "Time to wait, in seconds, before shutting down the upgrade process",
+            defaultValue = "240")
     int upgradeTimeout;
 
-    @CommandLine.Mixin
+    @Mixin
     QuarkusExtensionRegistryMixin quarkusExtensionRegistry;
 
     public MavenGav resolveQuarkusMavenPlugin() {

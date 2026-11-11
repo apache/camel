@@ -21,6 +21,9 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -29,36 +32,32 @@ import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.tooling.maven.MavenArtifact;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "hawtio", description = "Launch Hawtio web console", sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel hawtio",
-                 "  camel hawtio --port=8090" })
+@CommandDefinition(name = "hawtio", description = "Launch Hawtio web console", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel hawtio",
+                           "  camel hawtio --port=8090" })
 public class Hawtio extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name;
 
-    @CommandLine.Option(names = { "--version" },
-                        description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
+    @Option(name = "version", description = "Version of the Hawtio web console", defaultValue = HawtioVersion.HAWTIO_VERSION)
     String version = HawtioVersion.HAWTIO_VERSION;
 
-    @CommandLine.Option(names = { "--host" },
-                        description = "Hostname to bind the Hawtio web console to", defaultValue = "127.0.0.1")
+    @Option(name = "host", description = "Hostname to bind the Hawtio web console to", defaultValue = "127.0.0.1")
     String host = "127.0.0.1";
 
     // use port 8888 as 8080 is too commonly used
-    @CommandLine.Option(names = { "--port" },
-                        description = "Port number to use for Hawtio web console (port 8888 by default)", defaultValue = "8888")
+    @Option(name = "port", description = "Port number to use for Hawtio web console (port 8888 by default)",
+            defaultValue = "8888")
     int port = 8888;
 
-    @CommandLine.Option(names = { "--open-url", "--openUrl" }, arity = "0..1", fallbackValue = "true",
-                        description = "To automatic open Hawtio web console in the web browser (without an interactive"
-                                      + " terminal the default is false)",
-                        defaultValue = "true")
+    @Option(name = "open-url", aliases = { "openUrl" }, hasValue = false,
+            description = "To automatic open Hawtio web console in the web browser (without an interactive"
+                          + " terminal the default is false)",
+            defaultValue = "true")
     boolean openUrl = true;
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);

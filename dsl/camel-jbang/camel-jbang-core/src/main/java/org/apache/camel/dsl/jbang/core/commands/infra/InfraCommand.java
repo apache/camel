@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.infra;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "infra",
-                     description = "List and Run external services for testing and prototyping")
+@CommandDefinition(name = "infra", description = "List and Run external services for testing and prototyping",
+                   generateHelp = true, sortOptions = true)
 public class InfraCommand extends InfraBaseCommand {
 
     public InfraCommand(CamelJBangMain main) {

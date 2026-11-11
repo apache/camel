@@ -20,7 +20,7 @@ package org.apache.camel.dsl.jbang.core.commands.exceptionhandler;
 public interface UsageErrorHandler {
 
     /**
-     * @return the exit code when handled, or {@code null} to use the standard picocli diagnostics
+     * @return the exit code when handled, or {@code null} for the standard diagnostics of the CLI
      */
     Integer usageError(String message, String[] args);
 }

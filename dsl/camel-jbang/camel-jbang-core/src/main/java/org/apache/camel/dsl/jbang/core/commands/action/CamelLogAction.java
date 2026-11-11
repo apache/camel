@@ -37,11 +37,17 @@ import java.util.StringJoiner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.run.common.PreviousRun;
@@ -50,16 +56,14 @@ import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "log",
-                     description = "Tail logs from running Camel integrations", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel log hello",
-                             "  camel log *",
-                             "  camel log hello --tail=50",
-                             "  camel log hello --previous" })
+@CommandDefinition(name = "log", description = "Tail logs from running Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel log hello",
+                           "  camel log *",
+                           "  camel log hello --tail=50",
+                           "  camel log hello --previous" })
 public class CamelLogAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
@@ -68,7 +72,7 @@ public class CamelLogAction extends ActionBaseCommand {
     private static final String TIMESTAMP_MAIN = "yyyy-MM-dd HH:mm:ss.SSS";
     private static final String TIMESTAMP_SB = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
-    public static class PrefixCompletionCandidates implements Iterable<String> {
+    public static class PrefixCompletionCandidates extends CompletionCandidates {
 
         public PrefixCompletionCandidates() {
         }
@@ -79,53 +83,55 @@ public class CamelLogAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration, or of the run that ended with --previous. (default selects all)",
-                            arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration, or of the run that ended with --previous. (default selects all)")
     String name = "*";
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Print timestamp.")
+    @Option(name = "timestamp", hasValue = false, description = "Print timestamp.", defaultValue = "true")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Keep following and outputting new log lines (press enter to exit)."
-                                      + " Without an interactive terminal the default is false, unless --duration is given.")
+    @Option(name = "follow", hasValue = false,
+            description = "Keep following and outputting new log lines (press enter to exit)."
+                          + " Without an interactive terminal the default is false, unless --duration is given.",
+            defaultValue = "true")
     boolean follow = true;
 
-    @CommandLine.Mixin
+    @Mixin
     DurationMixin durationOption = new DurationMixin();
 
-    @CommandLine.Option(names = { "--startup" }, defaultValue = "false",
-                        description = "Only shows logs from the starting phase to make it quick to look at how Camel was started.")
+    @Option(name = "startup", hasValue = false,
+            description = "Only shows logs from the starting phase to make it quick to look at how Camel was started.",
+            defaultValue = "false")
     boolean startup;
 
-    @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto", completionCandidates = PrefixCompletionCandidates.class,
-                        description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
+    @Option(name = "prefix",
+            description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.",
+            defaultValue = "auto", completer = PrefixCompletionCandidates.class)
     String prefix = "auto";
 
-    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
-                        description = "The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning.")
+    @Option(name = "tail",
+            description = "The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning.",
+            defaultValue = "-1")
     int tail = -1;
 
-    @CommandLine.Option(names = { "--since" },
-                        description = "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
+    @Option(name = "since",
+            description = "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
     String since;
 
-    @CommandLine.Option(names = { "--find" },
-                        description = "Find and highlight matching text (ignore case).", arity = "0..*")
+    @OptionList(name = "find", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Find and highlight matching text (ignore case).")
     String[] find;
 
-    @CommandLine.Option(names = { "--grep" },
-                        description = "Filter logs to only output lines matching text (ignore case).", arity = "0..*")
+    @OptionList(name = "grep", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Filter logs to only output lines matching text (ignore case).")
     String[] grep;
 
-    @CommandLine.Option(names = { "--previous" }, defaultValue = "false",
-                        description = "Print the log of the previous run of the integration instead: the last run of that name that ended,"
-                                      + " such as one that failed to start (like kubectl logs --previous).")
+    @Option(name = "previous", hasValue = false,
+            description = "Print the log of the previous run of the integration instead: the last run of that name that ended,"
+                          + " such as one that failed to start (like kubectl logs --previous).",
+            defaultValue = "false")
     boolean previous;
 
     String findAnsi;

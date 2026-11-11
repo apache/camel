@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.aesh.command.option.Mixin;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
@@ -27,7 +28,6 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
 /**
  * The {@code camel cmd chaos-*} commands: they send the {@code chaos} action of the CLI connector, which adds, changes
@@ -37,7 +37,7 @@ import picocli.CommandLine;
  */
 abstract class CamelChaosAction extends ActionBaseCommand {
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     protected CamelChaosAction(CamelJBangMain main) {

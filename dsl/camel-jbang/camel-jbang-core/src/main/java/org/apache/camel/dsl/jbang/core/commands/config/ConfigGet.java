@@ -18,31 +18,31 @@ package org.apache.camel.dsl.jbang.core.commands.config;
 
 import java.util.Optional;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "get",
-                     description = "Display user configuration value", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel config get camel-version",
-                             "  camel config get runtime",
-                             "  camel config get runtime --json" })
+@CommandDefinition(name = "get", description = "Display user configuration value", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel config get camel-version",
+                           "  camel config get runtime",
+                           "  camel config get runtime --json" })
 public class ConfigGet extends CamelCommand {
 
-    @CommandLine.Parameters(description = "Configuration key", arity = "1")
+    @Argument(required = true, description = "Configuration key")
     String key;
 
-    @CommandLine.Option(names = { "--global" }, arity = "0..1", fallbackValue = "true",
-                        description = "Use global or local configuration")
+    @Option(name = "global", hasValue = false, description = "Use global or local configuration")
     boolean global = true;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
     public ConfigGet(CamelJBangMain main) {

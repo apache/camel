@@ -16,20 +16,21 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "gc",
-                     description = "Trigger Java Memory Garbage Collector", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd gc" })
+@CommandDefinition(name = "gc", description = "Trigger Java Memory Garbage Collector", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd gc" })
 public class CamelGCAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration. (default selects all)")
     String name = "*";
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     public CamelGCAction(CamelJBangMain main) {

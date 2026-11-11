@@ -28,7 +28,7 @@ camel plugin add [options]
 | `--plugin-config` | Path to a custom plugin configuration file or directory. Only applies to the plugin subcommands; for plugin commands themselves (e.g. 'camel kubernetes'), set CAMEL_CLI_PLUGIN_CONFIG instead. |  | String
 | `--repo,--repos` | Additional maven repositories to use for downloading the plugin (Use commas to separate multiple repositories) |  | String
 | `--version` | Maven artifact version |  | String
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

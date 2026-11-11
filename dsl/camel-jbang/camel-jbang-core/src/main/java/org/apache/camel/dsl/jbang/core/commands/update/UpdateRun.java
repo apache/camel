@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Mixin;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -32,20 +34,18 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.main.download.DownloadException;
 import org.apache.camel.main.download.MavenDependencyDownloader;
-import picocli.CommandLine;
 
 /**
  * Command to update a Camel project to a specified version. This command supports updating projects for different
  * runtimes such as Camel Main, Spring Boot, and Quarkus. It uses Maven and OpenRewrite to apply the necessary updates.
  */
-@CommandLine.Command(name = "run",
-                     description = "Update Camel project",
-                     footer = {
-                             "%nExamples:",
-                             "  camel update run" })
+@CommandDefinition(name = "run", description = "Update Camel project", generateHelp = true, sortOptions = true,
+                   footer = {
+                           "Examples:",
+                           "  camel update run" })
 public class UpdateRun extends CamelCommand {
 
-    @CommandLine.Mixin
+    @Mixin
     private CamelUpdateMixin updateMixin;
 
     // the directory of the Maven project to update

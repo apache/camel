@@ -41,7 +41,7 @@ camel transform message [options]
 | `--template` | The template to use for message transformation (prefix with file: to refer to loading template from file) |  | String
 | `--timeout` | Timeout waiting for message to be transformed, in millis or as a duration such as 30s | 20000 | long
 | `--watch` | Execute periodically and showing output fullscreen |  | boolean
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

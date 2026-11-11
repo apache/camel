@@ -32,11 +32,16 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.ai.ProjectOverview;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
@@ -46,18 +51,16 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "span",
-                     description = "Display OpenTelemetry spans from running Camel integrations",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd span",
-                             "  camel cmd span --sort=duration",
-                             "  camel cmd span --trace=4bb73039",
-                             "  camel cmd span --flat",
-                             "  camel cmd span --filter=kafka" })
+@CommandDefinition(name = "span", description = "Display OpenTelemetry spans from running Camel integrations",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd span",
+                           "  camel cmd span --sort=duration",
+                           "  camel cmd span --trace=4bb73039",
+                           "  camel cmd span --flat",
+                           "  camel cmd span --filter=kafka" })
 public class CamelSpanAction extends ActionBaseCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -68,7 +71,7 @@ public class CamelSpanAction extends ActionBaseCommand {
     // the keys of the order of the traces (see sortTraceSummary)
     private static final List<String> TRACE_ORDER = List.of("trace", "route", "from", "spans", "routes", "status", "duration");
 
-    public static class SortCompletionCandidates implements Iterable<String> {
+    public static class SortCompletionCandidates extends CompletionCandidates {
 
         public SortCompletionCandidates() {
         }
@@ -79,37 +82,32 @@ public class CamelSpanAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--limit" }, defaultValue = "500",
-                        description = "Maximum number of spans to display")
+    @Option(name = "limit", description = "Maximum number of spans to display", defaultValue = "500")
     int limit = 500;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter by trace ID, route, component, or exchange ID (substring match)")
+    @Option(name = "filter", description = "Filter by trace ID, route, component, or exchange ID (substring match)")
     String filter;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = SortCompletionCandidates.class,
-                        description = "Sort by trace, route, from, spans, routes, status, or duration")
+    @Option(name = "sort", description = "Sort by trace, route, from, spans, routes, status, or duration",
+            completer = SortCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--trace" },
-                        description = "Show waterfall view for a specific trace ID (substring match)")
+    @Option(name = "trace", description = "Show waterfall view for a specific trace ID (substring match)")
     String trace;
 
-    @CommandLine.Option(names = { "--flat" },
-                        description = "Show flat list of individual spans instead of grouped traces")
+    @Option(name = "flat", hasValue = false, description = "Show flat list of individual spans instead of grouped traces")
     boolean flat;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output the spans in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output the spans in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

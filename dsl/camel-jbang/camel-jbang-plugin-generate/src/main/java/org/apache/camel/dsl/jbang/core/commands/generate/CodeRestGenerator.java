@@ -29,10 +29,13 @@ import java.util.stream.Stream;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeTypeConverter;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
@@ -44,15 +47,15 @@ import org.apache.logging.log4j.core.config.Configurator;
 import org.openapitools.codegen.ClientOptInput;
 import org.openapitools.codegen.DefaultGenerator;
 import org.openapitools.codegen.config.CodegenConfigurator;
-import picocli.CommandLine;
 
 import static org.openapitools.codegen.CodegenConstants.GENERATE_MODELS;
 import static org.openapitools.codegen.CodegenConstants.SERIALIZABLE_MODEL;
 
-@CommandLine.Command(name = "rest", description = "Generate REST DSL source code from OpenApi specification")
+@CommandDefinition(name = "rest", description = "Generate REST DSL source code from OpenApi specification", generateHelp = true,
+                   sortOptions = true)
 public class CodeRestGenerator extends CamelCommand {
 
-    public static class OpenApiVersionCompletionCandidates implements Iterable<String> {
+    public static class OpenApiVersionCompletionCandidates extends CompletionCandidates {
 
         public OpenApiVersionCompletionCandidates() {
         }
@@ -64,7 +67,7 @@ public class CodeRestGenerator extends CamelCommand {
 
     }
 
-    public static class OpenApiTypeCompletionCandidates implements Iterable<String> {
+    public static class OpenApiTypeCompletionCandidates extends CompletionCandidates {
 
         public OpenApiTypeCompletionCandidates() {
         }
@@ -76,28 +79,24 @@ public class CodeRestGenerator extends CamelCommand {
 
     }
 
-    @CommandLine.Option(names = { "--input" }, required = true, description = "OpenApi specification file name")
+    @Option(name = "input", description = "OpenApi specification file name", required = true)
     private String input;
-    @CommandLine.Option(names = { "--output" }, description = "Output REST DSL file name")
+    @Option(name = "output", description = "Output REST DSL file name")
     private String output;
-    @CommandLine.Option(names = { "--type" }, description = "REST DSL type (YAML or XML)", defaultValue = "yaml",
-                        completionCandidates = OpenApiTypeCompletionCandidates.class)
+    @Option(name = "type", description = "REST DSL type (YAML or XML)", defaultValue = "yaml",
+            completer = OpenApiTypeCompletionCandidates.class)
     private String type;
-    @CommandLine.Option(names = { "--routes" }, description = "Generate routes (only in YAML)")
+    @Option(name = "routes", hasValue = false, description = "Generate routes (only in YAML)")
     private boolean generateRoutes;
-    @CommandLine.Option(names = { "--dto" }, description = "Generate Java Data Objects")
+    @Option(name = "dto", hasValue = false, description = "Generate Java Data Objects")
     private boolean generateDataObjects;
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        defaultValue = "quarkus",
-                        description = "Runtime (${COMPLETION-CANDIDATES})")
+    @Option(name = "runtime", description = "Runtime (${COMPLETION-CANDIDATES})", defaultValue = "quarkus",
+            completer = RuntimeCompletionCandidates.class, converter = RuntimeTypeConverter.class)
     RuntimeType runtime = RuntimeType.quarkus;
-    @CommandLine.Option(names = { "--package" }, description = "Package for generated Java models",
-                        defaultValue = "model")
+    @Option(name = "package", description = "Package for generated Java models", defaultValue = "model")
     private String packageName;
-    @CommandLine.Option(names = { "--openapi-version" }, description = "Openapi specification 3.0 or 3.1",
-                        defaultValue = "3.0", completionCandidates = OpenApiVersionCompletionCandidates.class)
+    @Option(name = "openapi-version", description = "Openapi specification 3.0 or 3.1", defaultValue = "3.0",
+            completer = OpenApiVersionCompletionCandidates.class)
     private String openApiVersion = "3.0";
 
     public CodeRestGenerator(CamelJBangMain main) {

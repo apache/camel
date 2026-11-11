@@ -18,17 +18,17 @@ package org.apache.camel.dsl.jbang.core.commands.generate;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CamelJBangPlugin;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
 
 @CamelJBangPlugin(name = "camel-jbang-plugin-generate", firstVersion = "4.8.0")
 public class GeneratePlugin implements Plugin {
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        var cmd = new CommandLine(new CodeGenerator(main))
-                .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main)))
-                .addSubcommand("schema", new CommandLine(new CodeSchemaGenerator(main)));
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        var cmd = new CommandTree(new CodeGenerator(main))
+                .addSubcommand("rest", new CommandTree(new CodeRestGenerator(main)))
+                .addSubcommand("schema", new CommandTree(new CodeSchemaGenerator(main)));
 
         commandLine.addSubcommand("generate", cmd);
     }

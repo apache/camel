@@ -27,28 +27,29 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.run.common.CamelJBangConstants;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "route", description = "Transform Camel routes to XML, YAML or Java format", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel transform route hello.java --format=yaml",
-                 "  camel transform route hello.xml --format=yaml",
-                 "  camel transform route hello.camel.yaml --format=java" })
+@CommandDefinition(name = "route", description = "Transform Camel routes to XML, YAML or Java format", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel transform route hello.java --format=yaml",
+                           "  camel transform route hello.xml --format=yaml",
+                           "  camel transform route hello.camel.yaml --format=java" })
 public class TransformRoute extends CamelCommand {
 
-    public static class FormatCompletionCandidates implements Iterable<String> {
+    public static class FormatCompletionCandidates extends CompletionCandidates {
 
         public FormatCompletionCandidates() {
         }
@@ -59,41 +60,40 @@ public class TransformRoute extends CamelCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    Path[] filePaths; // Defined only for file path completion; the field never used
-
+    @Arguments(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
+               paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = {
-            "--output" },
-                        description = "File or directory to store transformed files. If none provide then output is printed to console. Use clipboard as name to copy content into clipboard.")
+    @Option(name = "output",
+            description = "File or directory to store transformed files. If none provide then output is printed to console. Use clipboard as name to copy content into clipboard.")
     private String output;
 
-    @CommandLine.Option(names = { "--format" },
-                        completionCandidates = FormatCompletionCandidates.class,
-                        description = "Output format (${COMPLETION-CANDIDATES}), if only yaml files are provided, the format defaults to xml and vice versa."
-                                      + " Java is converted without running the routes, one route builder class per file")
+    @Option(name = "format",
+            description = "Output format (${COMPLETION-CANDIDATES}), if only yaml files are provided, the format defaults to xml and vice versa."
+                          + " Java is converted without running the routes, one route builder class per file",
+            completer = FormatCompletionCandidates.class)
     String format;
 
-    @CommandLine.Option(names = { "--resolve-placeholders" }, defaultValue = "false",
-                        description = "Whether to resolve property placeholders in the dumped output")
+    @Option(name = "resolve-placeholders", hasValue = false,
+            description = "Whether to resolve property placeholders in the dumped output", defaultValue = "false")
     boolean resolvePlaceholders;
 
-    @CommandLine.Option(names = { "--uri-as-parameters" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)")
+    @Option(name = "uri-as-parameters", hasValue = false,
+            description = "Whether to expand URIs into separated key/value parameters (only in use for YAML format)",
+            defaultValue = "true")
     boolean uriAsParameters = true;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" },
-                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    @Option(name = "ignore-loading-error", hasValue = false,
+            description = "Whether to ignore route loading and compilation errors (use this with care!)")
     boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
-                        description = "Compile and run Java routes to transform them. By default Java routes are read "
-                                      + "without compiling them, and compiled only when a route cannot be read that way")
+    @Option(name = "compile", hasValue = false,
+            description = "Compile and run Java routes to transform them. By default Java routes are read "
+                          + "without compiling them, and compiled only when a route cannot be read that way",
+            defaultValue = "false")
     boolean compile;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
     public TransformRoute(CamelJBangMain main) {
@@ -243,14 +243,6 @@ public class TransformRoute extends CamelCommand {
             }
         }
         return null;
-    }
-
-    static class FilesConsumer extends ParameterConsumer<TransformRoute> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, TransformRoute cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
     }
 
 }

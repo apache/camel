@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -26,16 +24,16 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.run.common.Printer;
 import org.apache.camel.dsl.jbang.run.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.run.common.StringPrinter;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
 /**
  * Runs a Camel CLI command in this JVM, as camel ask and the TUI do, and gives what a script running camel gets: the
- * exit code, and stdout and stderr apart. The commands share the printer of {@link CamelJBangMain} and the picocli
- * command tree, so one command runs at a time: the camel shell takes the same {@link #LOCK}.
+ * exit code, and stdout and stderr apart. The commands share the printer of {@link CamelJBangMain} and the command
+ * tree, so one command runs at a time: the camel shell takes the same {@link #LOCK}.
  */
 public final class CliRunner {
 
@@ -104,12 +102,12 @@ public final class CliRunner {
      * @param timeoutMillis how long the command may run, or 0 to wait until it has finished
      */
     public static CliResult run(List<String> args, long timeoutMillis) {
-        CommandLine main = CamelJBangMain.getCommandLine();
+        CommandTree main = CamelJBangMain.getCommandLine();
         if (main == null) {
             throw new IllegalStateException("The Camel CLI is not initialized");
         }
         // new instances of the commands, so that no field keeps the value a run before left in it
-        CommandLine commandLine = ((CamelJBangMain) main.getCommand()).newCommandLine();
+        CommandTree commandLine = ((CamelJBangMain) main.getCommand()).newCommandLine();
         Output output = new Output();
         long start = System.nanoTime();
         if (timeoutMillis <= 0) {
@@ -163,7 +161,7 @@ public final class CliRunner {
         return "";
     }
 
-    private static int execute(CommandLine commandLine, List<String> args, Output output, AtomicBoolean abandoned) {
+    private static int execute(CommandTree commandLine, List<String> args, Output output, AtomicBoolean abandoned) {
         CamelJBangMain main = (CamelJBangMain) commandLine.getCommand();
         synchronized (LOCK) {
             if (abandoned.get()) {
@@ -171,21 +169,13 @@ public final class CliRunner {
                 return CliExitCode.TIMEOUT;
             }
             Printer printer = main.getOut();
-            PrintWriter out = commandLine.getOut();
-            PrintWriter err = commandLine.getErr();
+            // the help and the usage errors are printed with the printer of the CLI too
             main.setOut(output.printer);
-            // picocli prints the help on its out, and a usage error on its err
-            commandLine.setOut(output.helpOut);
-            commandLine.setErr(output.helpErr);
             try {
                 RuntimeUtil.newCommand();
-                return commandLine.execute(args.toArray(String[]::new));
+                return main.run(commandLine, args.toArray(String[]::new));
             } finally {
-                output.helpOut.flush();
-                output.helpErr.flush();
                 main.setOut(printer);
-                commandLine.setOut(out);
-                commandLine.setErr(err);
             }
         }
     }
@@ -195,14 +185,10 @@ public final class CliRunner {
     }
 
     /**
-     * What a command prints: through the printer of the CLI, and the help and usage errors of picocli.
+     * What a command prints: through the printer of the CLI, also the help and the usage errors.
      */
     private static final class Output {
         private final StringPrinter printer = new StringPrinter();
-        private final StringWriter help = new StringWriter();
-        private final StringWriter usage = new StringWriter();
-        private final PrintWriter helpOut = new PrintWriter(help);
-        private final PrintWriter helpErr = new PrintWriter(usage);
         private volatile String extra;
 
         void timedOut(String message) {
@@ -210,8 +196,8 @@ public final class CliRunner {
         }
 
         CliResult result(int code, long elapsedMs, boolean timedOut) {
-            String stdout = join(printer.getStdout(), help.toString().trim());
-            String stderr = join(join(printer.getStderr(), usage.toString().trim()), extra);
+            String stdout = printer.getStdout();
+            String stderr = join(printer.getStderr(), extra);
             return new CliResult(code, stdout, stderr, elapsedMs, timedOut);
         }
 

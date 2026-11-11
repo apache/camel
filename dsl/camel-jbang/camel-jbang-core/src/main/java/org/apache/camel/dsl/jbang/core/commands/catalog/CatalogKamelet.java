@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
@@ -40,15 +43,13 @@ import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "kamelet",
-                     description = "List Kamelets from the Kamelet Catalog", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel catalog kamelet",
-                             "  camel catalog kamelet --type=source",
-                             "  camel catalog kamelet --filter=kafka" })
+@CommandDefinition(name = "kamelet", description = "List Kamelets from the Kamelet Catalog", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel catalog kamelet",
+                           "  camel catalog kamelet --type=source",
+                           "  camel catalog kamelet --filter=kafka" })
 public class CatalogKamelet extends CamelCommand {
 
     private static final List<String> TYPES = List.of("source", "sink", "action");
@@ -60,27 +61,22 @@ public class CatalogKamelet extends CamelCommand {
             .alias("support-level", "level")
             .text("description", r -> r.description);
 
-    @CommandLine.Option(names = { "--sort" },
-                        description = "Sort by name, type, support-level, or description", defaultValue = "name")
+    @Option(name = "sort", description = "Sort by name, type, support-level, or description", defaultValue = "name")
     String sort;
 
-    @CommandLine.Option(names = { "--type", "--filter-type" },
-                        description = "Filter by type: source, sink, or action")
+    @Option(name = "type", aliases = { "filter-type" }, description = "Filter by type: source, sink, or action")
     String filterType;
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter by name or description")
+    @Option(name = "filter", description = "Filter by name or description")
     String filterName;
 
-    @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
+    @Option(name = "kamelets-version", description = "Apache Camel Kamelets version (auto-detected from classpath if not set)")
     String kameletsVersion;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver = new MavenResolverMixin();
 
     public CatalogKamelet(CamelJBangMain main) {

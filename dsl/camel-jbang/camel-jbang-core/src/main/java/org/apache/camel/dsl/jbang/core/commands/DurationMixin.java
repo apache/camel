@@ -16,8 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
-import picocli.CommandLine;
 
 /**
  * The {@code --duration} of a command that watches or follows: how long to keep going. Without it, the command keeps
@@ -25,9 +25,9 @@ import picocli.CommandLine;
  */
 public class DurationMixin {
 
-    @CommandLine.Option(names = { "--duration" }, converter = TimeoutConverter.class,
-                        description = "How long to keep watching or following, in millis or as a duration such as 30s"
-                                      + " (default: until Enter is pressed)")
+    @Option(name = "duration", description = "How long to keep watching or following, in millis or as a duration such as 30s"
+                                             + " (default: until Enter is pressed)",
+            converter = TimeoutConverter.class)
     long duration;
 
     /**

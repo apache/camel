@@ -19,15 +19,14 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.tooling.model.DevConsoleModel;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "dev-console",
-                     description = "List dev-consoles from the Camel Catalog", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel catalog dev-console" })
+@CommandDefinition(name = "dev-console", description = "List dev-consoles from the Camel Catalog", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel catalog dev-console" })
 public class CatalogDevConsole extends CatalogBaseCommand {
 
     public CatalogDevConsole(CamelJBangMain main) {

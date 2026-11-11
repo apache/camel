@@ -16,12 +16,13 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.config;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "config",
-                     description = "Get and set user configuration values (use config --help to see sub commands)")
+@CommandDefinition(name = "config",
+                   description = "Get and set user configuration values (use config --help to see sub commands)",
+                   generateHelp = true, sortOptions = true)
 public class ConfigCommand extends CamelCommand {
 
     public ConfigCommand(CamelJBangMain main) {

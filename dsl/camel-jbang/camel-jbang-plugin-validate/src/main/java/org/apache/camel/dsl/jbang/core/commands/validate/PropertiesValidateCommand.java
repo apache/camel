@@ -23,8 +23,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Stack;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -33,24 +35,21 @@ import org.apache.camel.dsl.jbang.core.commands.ai.SourceValidator;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.util.FileUtil;
-import picocli.CommandLine;
 
 /**
  * Validates application.properties files: every camel.* key against the Camel catalog, so a wrong key such as
  * camel.main.log-level or camel.main.streamCaching is reported before the application fails to start (CAMEL-24698).
  */
-@CommandLine.Command(name = "properties", description = "Validate Camel configuration in properties files")
+@CommandDefinition(name = "properties", description = "Validate Camel configuration in properties files", generateHelp = true,
+                   sortOptions = true)
 public class PropertiesValidateCommand extends CamelCommand {
 
-    @CommandLine.Parameters(description = { "The properties files to validate." },
-                            arity = "1..9",
-                            paramLabel = "<files>",
-                            parameterConsumer = FilesConsumer.class)
+    @Arguments(required = true, description = "The properties files to validate.", paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
-                                      + " camel_validate_source answers")
+    @Option(name = "json", hasValue = false,
+            description = "Output in JSON Format: valid, file and errors of each file, as the MCP tool"
+                          + " camel_validate_source answers")
     boolean jsonOutput;
 
     public PropertiesValidateCommand(CamelJBangMain main) {
@@ -102,11 +101,5 @@ public class PropertiesValidateCommand extends CamelCommand {
     private static boolean matchFile(String name) {
         String ext = FileUtil.onlyExt(name, true);
         return ext != null && "properties".equals(ext.toLowerCase(Locale.ROOT));
-    }
-
-    static class FilesConsumer extends CamelCommand.ParameterConsumer<PropertiesValidateCommand> {
-        protected void doConsumeParameters(Stack<String> args, PropertiesValidateCommand cmd) {
-            cmd.files.add(args.pop());
-        }
     }
 }

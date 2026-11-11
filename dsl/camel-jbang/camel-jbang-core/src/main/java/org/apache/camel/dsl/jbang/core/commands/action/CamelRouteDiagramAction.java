@@ -28,11 +28,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.diagram.RouteDiagramAsciiRenderer;
 import org.apache.camel.diagram.RouteDiagramHelper;
 import org.apache.camel.diagram.RouteDiagramLayoutEngine;
@@ -64,102 +67,91 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.terminal.impl.TerminalGraphics;
 import org.jline.terminal.impl.TerminalGraphicsManager;
 import org.jline.utils.InfoCmp;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "route-diagram", description = "Display Camel route diagram in the terminal", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel cmd route-diagram",
-                 "  camel cmd route-diagram hello.yaml",
-                 "  camel cmd route-diagram hello.yaml bye.yaml" })
+@CommandDefinition(name = "route-diagram", description = "Display Camel route diagram in the terminal", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd route-diagram",
+                           "  camel cmd route-diagram hello.yaml",
+                           "  camel cmd route-diagram hello.yaml bye.yaml" })
 public class CamelRouteDiagramAction extends ActionWatchCommand {
 
     private static final long DUMP_COMPLETION_TIMEOUT_MILLIS = 10000;
 
-    @CommandLine.Parameters(
-                            description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
-                                          + "Camel integration",
-                            arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
-    @SuppressWarnings("unused") // only declared so picocli offers file-path completion; values go into files instead
-    Path[] filePaths;
-
+    @Arguments(description = "Source file name(s) (shell-expanded wildcards), or name/pid of a running "
+                             + "Camel integration",
+               paramLabel = "<files>")
     List<String> files = new ArrayList<>();
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter route by filename or route id")
+    @Option(name = "filter", description = "Filter route by filename or route id")
     String filter;
 
-    @CommandLine.Option(names = { "--width" },
-                        description = "Image width in pixels (0 = auto)", defaultValue = "0")
+    @Option(name = "width", description = "Image width in pixels (0 = auto)", defaultValue = "0")
     int width;
 
-    @CommandLine.Option(names = { "--output" },
-                        description = "Save diagram to a file (PNG for image themes, text for ascii theme)")
+    @Option(name = "output", description = "Save diagram to a file (PNG for image themes, text for ascii theme)")
     String output;
 
-    @CommandLine.Option(names = { "--theme" },
-                        description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
-                                      + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
-                                      + "ANSI color names (e.g. from=seagreen:to=steelblue). "
-                                      + "Use bg= for transparent. Use ascii/unicode for plain text output. "
-                                      + "Can also be set via DIAGRAM_COLORS env var. "
-                                      + "Default: unicode in the terminal, and light when --output is a .png file.")
+    @Option(name = "theme", description = "Color theme preset (dark, light, transparent, ascii, unicode) or custom colors "
+                                          + "(e.g. bg=#1e1e1e:from=#2e7d32:to=#1565c0). Values can be #hex or "
+                                          + "ANSI color names (e.g. from=seagreen:to=steelblue). "
+                                          + "Use bg= for transparent. Use ascii/unicode for plain text output. "
+                                          + "Can also be set via DIAGRAM_COLORS env var. "
+                                          + "Default: unicode in the terminal, and light when --output is a .png file.")
     String theme;
 
-    @CommandLine.Option(names = { "--font-size" },
-                        description = "Font size in logical pixels for node text", defaultValue = "12")
+    @Option(name = "font-size", description = "Font size in logical pixels for node text", defaultValue = "12")
     int fontSize;
 
-    @CommandLine.Option(names = { "--box-width" },
-                        description = "Node box width in logical pixels", defaultValue = "180")
+    @Option(name = "box-width", description = "Node box width in logical pixels", defaultValue = "180")
     int boxWidth;
 
-    @CommandLine.Option(names = { "--node-label" },
-                        description = "What text to display in diagram nodes: code, description, or both (default)",
-                        defaultValue = "both")
+    @Option(name = "node-label", description = "What text to display in diagram nodes: code, description, or both (default)",
+            defaultValue = "both")
     String nodeLabel;
 
-    @CommandLine.Option(names = { "--metric" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to include live metrics (only possible for running Camel application)")
+    @Option(name = "metric", hasValue = false,
+            description = "Whether to include live metrics (only possible for running Camel application)",
+            defaultValue = "true")
     boolean metric;
 
-    @CommandLine.Option(names = { "--body-types" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to show the body types each step has been reached with, on the arrow into"
-                                      + " the step, in an image (only for a running Camel application whose message"
-                                      + " history recorded them, such as in the dev profile)")
+    @Option(name = "body-types", hasValue = false,
+            description = "Whether to show the body types each step has been reached with, on the arrow into"
+                          + " the step, in an image (only for a running Camel application whose message"
+                          + " history recorded them, such as in the dev profile)",
+            defaultValue = "true")
     boolean bodyTypes;
 
-    @CommandLine.Option(names = { "--problems" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Whether to mark the steps that the checks of camel validate find a problem with, and"
-                                      + " say what it is beside the route, in an image of source files")
+    @Option(name = "problems", hasValue = false,
+            description = "Whether to mark the steps that the checks of camel validate find a problem with, and"
+                          + " say what it is beside the route, in an image of source files",
+            defaultValue = "true")
     boolean problems;
 
-    @CommandLine.Option(names = { "--highlight" },
-                        description = "Comma-separated node IDs to highlight in the diagram")
+    @Option(name = "highlight", description = "Comma-separated node IDs to highlight in the diagram")
     String highlight;
 
-    @CommandLine.Option(names = { "--highlight-style" },
-                        description = "Highlight style: success (green) or fail (red)", defaultValue = "success")
+    @Option(name = "highlight-style", description = "Highlight style: success (green) or fail (red)", defaultValue = "success")
     String highlightStyle;
 
-    @CommandLine.Option(names = { "--ignore-loading-error" }, defaultValue = "false",
-                        description = "Whether to ignore route loading and compilation errors (use this with care!)")
+    @Option(name = "ignore-loading-error", hasValue = false,
+            description = "Whether to ignore route loading and compilation errors (use this with care!)",
+            defaultValue = "false")
     boolean ignoreLoadingError;
 
-    @CommandLine.Option(names = { "--compile" }, defaultValue = "false",
-                        description = "Whether to compile Java source files and load their routes. By default Java "
-                                      + "routes are read by the Java DSL parser, without compiling them")
+    @Option(name = "compile", hasValue = false,
+            description = "Whether to compile Java source files and load their routes. By default Java "
+                          + "routes are read by the Java DSL parser, without compiling them",
+            defaultValue = "false")
     boolean compile;
 
-    @CommandLine.Option(names = { "--errors" },
-                        description = "Draw the error handling of each route in a frame below its steps: its onException clauses,"
-                                      + " where its failures go and where it is reached on error from. Without it only the steps"
-                                      + " of the route are drawn")
+    @Option(name = "errors", hasValue = false,
+            description = "Draw the error handling of each route in a frame below its steps: its onException clauses,"
+                          + " where its failures go and where it is reached on error from. Without it only the steps"
+                          + " of the route are drawn")
     boolean errors;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     /**
@@ -555,14 +547,6 @@ public class CamelRouteDiagramAction extends ActionWatchCommand {
         this.metric = false;
         this.problems = true;
         return doCall();
-    }
-
-    static class FilesConsumer extends ParameterConsumer<CamelRouteDiagramAction> {
-        @Override
-        protected void doConsumeParameters(Stack<String> args, CamelRouteDiagramAction cmd) {
-            String arg = args.pop();
-            cmd.files.add(arg);
-        }
     }
 
 }

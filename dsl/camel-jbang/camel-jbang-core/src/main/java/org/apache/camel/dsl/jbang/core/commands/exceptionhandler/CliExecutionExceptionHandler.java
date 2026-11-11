@@ -21,6 +21,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.NoSuchFileException;
 
+import org.aesh.command.parser.CommandLineParserException;
+import org.aesh.command.validator.OptionValidatorException;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -28,11 +30,6 @@ import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
 import org.apache.camel.dsl.jbang.run.common.Printer;
-import picocli.CommandLine;
-import picocli.CommandLine.IExecutionExceptionHandler;
-import picocli.CommandLine.IExitCodeExceptionMapper;
-import picocli.CommandLine.ParameterException;
-import picocli.CommandLine.ParseResult;
 
 /**
  * Ends a command that threw an exception: prints the error on stderr, and returns the exit code from
@@ -45,7 +42,7 @@ import picocli.CommandLine.ParseResult;
  * <p/>
  * A command in JSON mode ({@code --json}) also prints the error as a JSON document on stdout, see {@link JsonOutput}.
  */
-public class CliExecutionExceptionHandler implements IExecutionExceptionHandler, IExitCodeExceptionMapper {
+public class CliExecutionExceptionHandler {
 
     /**
      * The environment variable that prints the stack trace of every error.
@@ -58,40 +55,34 @@ public class CliExecutionExceptionHandler implements IExecutionExceptionHandler,
         this.main = main;
     }
 
-    @Override
-    public int handleExecutionException(Exception ex, CommandLine commandLine, ParseResult parseResult) {
-        return handle(ex, parseResult);
-    }
-
     /**
      * Prints the error on stderr, and returns the exit code.
      *
-     * @param  ex          the exception or error that ended the command
-     * @param  parseResult the parsed command line, to detect {@code --verbose} and JSON mode, or null
-     * @return             the exit code
+     * @param  ex      the exception or error that ended the command
+     * @param  command the command that failed, to detect {@code --verbose} and JSON mode, or null
+     * @return         the exit code
      */
-    public int handle(Throwable ex, ParseResult parseResult) {
+    public int handle(Throwable ex, Object command) {
         int code = getExitCode(ex);
         String message = message(ex);
         Printer printer = main.getOut();
         printer.printErr(message);
-        if (code == CliExitCode.INTERNAL || isVerbose(parseResult)) {
+        if (code == CliExitCode.INTERNAL || isVerbose(command)) {
             printer.printDiagnostic(stackTrace(ex));
         }
-        if (isJsonOutput(parseResult)) {
+        if (isJsonOutput(command)) {
             // a script reads the outcome from stdout
             JsonOutput.printError(printer, code, message);
         }
         return code;
     }
 
-    @Override
     public int getExitCode(Throwable ex) {
         CliException cli = find(ex, CliException.class);
         if (cli != null) {
             return cli.getExitCode();
         }
-        if (ex instanceof ParameterException) {
+        if (ex instanceof CommandLineParserException || ex instanceof OptionValidatorException) {
             return CliExitCode.USAGE;
         }
         if (fileNotFound(ex) != null) {
@@ -144,25 +135,15 @@ public class CliExecutionExceptionHandler implements IExecutionExceptionHandler,
         return null;
     }
 
-    private static boolean isVerbose(ParseResult parseResult) {
+    private static boolean isVerbose(Object command) {
         if ("true".equalsIgnoreCase(System.getenv(DEBUG_ENV))) {
             return true;
         }
-        for (ParseResult pr = parseResult; pr != null; pr = pr.subcommand()) {
-            Object verbose = pr.hasMatchedOption("--verbose") ? pr.matchedOptionValue("--verbose", null) : null;
-            if (Boolean.TRUE.equals(verbose)) {
-                return true;
-            }
-        }
-        return false;
+        return command instanceof CamelCommand c && Boolean.TRUE.equals(c.optionValue("--verbose"));
     }
 
-    private static boolean isJsonOutput(ParseResult parseResult) {
-        ParseResult pr = parseResult;
-        while (pr != null && pr.hasSubcommand()) {
-            pr = pr.subcommand();
-        }
-        return pr != null && pr.commandSpec().userObject() instanceof CamelCommand command && command.isJsonOutput();
+    private static boolean isJsonOutput(Object command) {
+        return command instanceof CamelCommand c && c.isJsonOutput();
     }
 
     private static String stackTrace(Throwable ex) {

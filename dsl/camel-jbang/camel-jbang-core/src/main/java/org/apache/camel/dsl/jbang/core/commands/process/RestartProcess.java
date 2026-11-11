@@ -22,6 +22,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.BackgroundLog;
 import org.apache.camel.dsl.jbang.core.common.CliException;
@@ -33,16 +36,13 @@ import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.dsl.jbang.run.common.PathUtils;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "restart",
-         description = "Restarts running Camel integrations (stop + re-launch)", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel restart hello",
-                 "  camel restart 12345" })
+@CommandDefinition(name = "restart", description = "Restarts running Camel integrations (stop + re-launch)",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel restart hello",
+                           "  camel restart 12345" })
 public class RestartProcess extends ProcessBaseCommand {
 
     /**
@@ -50,12 +50,13 @@ public class RestartProcess extends ProcessBaseCommand {
      */
     private static final int STARTED = 5;
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
+    @Argument(required = true, description = "Name or pid of running Camel integration")
     String name;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "60000", converter = TimeoutConverter.class,
-                        description = "How long to wait for the integration to stop, and again to start, in millis or as a"
-                                      + " duration such as 30s")
+    @Option(name = "timeout",
+            description = "How long to wait for the integration to stop, and again to start, in millis or as a"
+                          + " duration such as 30s",
+            defaultValue = "60000", converter = TimeoutConverter.class)
     long timeout = 60000;
 
     public RestartProcess(CamelJBangMain main) {

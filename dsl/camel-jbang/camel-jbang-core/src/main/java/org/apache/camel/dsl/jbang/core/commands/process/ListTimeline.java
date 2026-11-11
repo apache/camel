@@ -30,8 +30,12 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
 import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
@@ -39,20 +43,19 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "timeline",
-         description = "Get what the routes did per second, the errors, and the failed and slowest exchanges",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nThe integration records the last 5 minutes (the timeline dev console, on in profile dev).",
-                 "%nExamples:",
-                 "  camel get timeline",
-                 "  camel get timeline --seconds=300",
-                 "  camel get timeline --exchanges --sort=elapsed",
-                 "  camel get timeline --errors",
-                 "  camel get timeline --filter=orders --watch" })
+@CommandDefinition(name = "timeline",
+                   description = "Get what the routes did per second, the errors, and the failed and slowest exchanges",
+                   generateHelp = true,
+                   footer = {
+                           "The integration records the last 5 minutes (the timeline dev console, on in profile dev).",
+                           "",
+                           "Examples:",
+                           "  camel get timeline",
+                           "  camel get timeline --seconds=300",
+                           "  camel get timeline --exchanges --sort=elapsed",
+                           "  camel get timeline --errors",
+                           "  camel get timeline --filter=orders --watch" })
 public class ListTimeline extends ProcessWatchCommand {
 
     private static final String SPARK = " ▁▂▃▄▅▆▇█";
@@ -64,7 +67,7 @@ public class ListTimeline extends ProcessWatchCommand {
                     .by("elapsed", Comparator.comparingLong((ExchangeRow r) -> r.elapsed).reversed())
                     .by("since", Comparator.comparingLong((ExchangeRow r) -> r.timestamp).reversed());
 
-    public static class SortCandidates implements Iterable<String> {
+    public static class SortCandidates extends CompletionCandidates {
 
         public SortCandidates() {
         }
@@ -75,40 +78,35 @@ public class ListTimeline extends ProcessWatchCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--seconds" }, defaultValue = "60",
-                        description = "The number of seconds to show, up to the seconds the integration records")
+    @Option(name = "seconds", description = "The number of seconds to show, up to the seconds the integration records",
+            defaultValue = "60")
     int seconds = 60;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter by route ID (pattern)")
+    @Option(name = "filter", description = "Filter by route ID (pattern)")
     String filter;
 
-    @CommandLine.Option(names = { "--exchanges" },
-                        description = "List the exchanges kept per second (the failed, handled and recovered ones and the 3 slowest) instead of the routes")
+    @Option(name = "exchanges", hasValue = false,
+            description = "List the exchanges kept per second (the failed, handled and recovered ones and the 3 slowest) instead of the routes")
     boolean exchanges;
 
-    @CommandLine.Option(names = { "--errors" },
-                        description = "List the errors by route and exception instead of the routes")
+    @Option(name = "errors", hasValue = false, description = "List the errors by route and exception instead of the routes")
     boolean errors;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = SortCandidates.class,
-                        description = "Sort the exchanges by pid, name, age, elapsed (the slowest first), or since (the newest first)",
-                        defaultValue = "since")
+    @Option(name = "sort",
+            description = "Sort the exchanges by pid, name, age, elapsed (the slowest first), or since (the newest first)",
+            defaultValue = "since", completer = SortCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--limit" },
-                        description = "Filter the exchanges by limiting to the given number of rows")
+    @Option(name = "limit", description = "Filter the exchanges by limiting to the given number of rows")
     int limit;
 
-    @CommandLine.Option(names = { "--short-uri" },
-                        description = "List endpoint URI without query parameters (short)")
+    @Option(name = "short-uri", hasValue = false, description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    @CommandLine.Option(names = { "--wide-uri" },
-                        description = "List endpoint URI in full details")
+    @Option(name = "wide-uri", hasValue = false, description = "List endpoint URI in full details")
     boolean wideUri;
 
     public ListTimeline(CamelJBangMain main) {

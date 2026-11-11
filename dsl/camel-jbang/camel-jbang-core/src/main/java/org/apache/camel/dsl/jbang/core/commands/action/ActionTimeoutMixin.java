@@ -16,9 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
-import picocli.CommandLine;
 
 /**
  * The {@code --timeout} of a command that waits for a running integration to answer (see
@@ -26,7 +26,8 @@ import picocli.CommandLine;
  */
 public class ActionTimeoutMixin {
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "10000", converter = TimeoutConverter.class,
-                        description = "How long to wait for the integration to answer, in millis or as a duration such as 30s")
+    @Option(name = "timeout",
+            description = "How long to wait for the integration to answer, in millis or as a duration such as 30s",
+            defaultValue = "10000", converter = TimeoutConverter.class)
     long timeout = ActionClient.DEFAULT_TIMEOUT;
 }

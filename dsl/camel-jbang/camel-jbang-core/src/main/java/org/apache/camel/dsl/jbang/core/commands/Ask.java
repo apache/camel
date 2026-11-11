@@ -24,6 +24,9 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Arguments;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.ai.AnswerChecks;
 import org.apache.camel.dsl.jbang.core.commands.ai.ToolConfirms;
 import org.apache.camel.dsl.jbang.core.common.EnvironmentHelper;
@@ -36,86 +39,73 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 /**
  * Ask a question about a running Camel application using AI with tool calling. The LLM can inspect the live runtime
  * (routes, health, traces, etc.) to provide informed answers.
  */
-@Command(name = "ask",
-         description = "Ask a question about a running Camel application using AI",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel ask \"what routes are running?\"",
-                 "  camel ask \"why is my route failing?\" --name=myApp",
-                 "  camel ask \"show me the route structure\" --api-type=anthropic",
-                 "  camel ask \"are there any blocked exchanges?\" --model=gpt-4",
-                 "  camel ask                                   (interactive chat)" })
+@CommandDefinition(name = "ask", description = "Ask a question about a running Camel application using AI", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel ask \"what routes are running?\"",
+                           "  camel ask \"why is my route failing?\" --name=myApp",
+                           "  camel ask \"show me the route structure\" --api-type=anthropic",
+                           "  camel ask \"are there any blocked exchanges?\" --model=gpt-4",
+                           "  camel ask                                   (interactive chat)" })
 public class Ask extends CamelCommand {
 
     private static final String DEFAULT_MODEL = "llama3.2";
     private static final String NO_PROCESS
             = "No running Camel process connected. Start one with: camel run <file>";
 
-    @Parameters(description = "Question to ask (omit for interactive chat mode)", arity = "0..*")
+    @Arguments(description = "Question to ask (omit for interactive chat mode)")
     List<String> question;
 
-    @Option(names = { "--url" },
+    @Option(name = "url",
             description = "LLM API endpoint URL. Auto-detected if not specified. Also reads AZURE_OPENAI_ENDPOINT or WATSONX_URL env vars")
     String url;
 
-    @Option(names = { "--api-type" },
-            description = "API type: 'ollama', 'openai', 'anthropic', or 'watsonx'")
+    @Option(name = "api-type", description = "API type: 'ollama', 'openai', 'anthropic', or 'watsonx'")
     LlmClient.ApiType apiType;
 
-    @Option(names = { "--api-key" },
+    @Option(name = "api-key",
             description = "API key. Also reads ANTHROPIC_API_KEY, OPENAI_API_KEY, WATSONX_APIKEY, or LLM_API_KEY env vars")
     String apiKey;
 
-    @Option(names = { "--model" },
+    @Option(name = "model",
             description = "Model to use. Default: the provider's default; with Ollama the installed model best at"
                           + " tool calling, such as qwen3.6")
     String model;
 
-    @Option(names = { "--timeout" },
-            description = "Timeout in seconds for LLM response",
-            defaultValue = "120")
+    @Option(name = "timeout", description = "Timeout in seconds for LLM response", defaultValue = "120")
     int timeout = 120;
 
-    @Option(names = { "--name" },
-            description = "Name or PID of the Camel process. Auto-detected when exactly one process is running")
+    @Option(name = "name", description = "Name or PID of the Camel process. Auto-detected when exactly one process is running")
     String nameOrPid;
 
-    @Option(names = { "--max-iterations" },
-            description = "Maximum number of tool-calling rounds",
-            defaultValue = "25")
+    @Option(name = "max-iterations", description = "Maximum number of tool-calling rounds", defaultValue = "25")
     int maxIterations = 25;
 
-    @Option(names = { "--tools" },
+    @Option(name = "tools",
             description = "The tools the model gets: core (a small set, for a local model), full, or auto (core for a"
                           + " local model, full for a hosted one)",
             defaultValue = "auto")
     ToolSet tools = ToolSet.auto;
 
-    @Option(names = { "--yes" },
+    @Option(name = "yes", hasValue = false,
             description = "Run the calls that ask first without asking: file writes, messages to endpoints the"
                           + " integration does not have, SQL that changes data, code expressions, stopping the"
                           + " integration, and camel commands that change something. For scripts, where there is no"
                           + " terminal to ask on")
     boolean yes;
 
-    @Option(names = { "--show-tools" },
-            description = "Show tool calls and results as they happen")
+    @Option(name = "show-tools", hasValue = false, description = "Show tool calls and results as they happen")
     boolean showTools;
 
-    @Option(names = { "--show-stats" },
-            description = "Show token usage and elapsed time after response")
+    @Option(name = "show-stats", hasValue = false, description = "Show token usage and elapsed time after response")
     boolean showStats;
 
-    @Option(names = { "--verbose" },
+    @Option(name = "verbose", hasValue = false,
             description = "Print debug information: HTTP requests, responses, and parsed results")
     boolean verbose;
 

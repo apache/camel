@@ -16,6 +16,9 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ActionClient;
 import org.apache.camel.dsl.jbang.core.common.ActionClient.ActionResult;
@@ -23,39 +26,32 @@ import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "sql",
-                     description = "Execute SQL query on a DataSource", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel cmd sql myApp --query=\"SELECT * FROM orders\"",
-                             "  camel cmd sql myApp --query=\"SELECT * FROM users\" --datasource=myDS --max-rows=50",
-                             "  camel cmd sql myApp --query=\"file:query.sql\"" })
+@CommandDefinition(name = "sql", description = "Execute SQL query on a DataSource", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd sql myApp --query=\"SELECT * FROM orders\"",
+                           "  camel cmd sql myApp --query=\"SELECT * FROM users\" --datasource=myDS --max-rows=50",
+                           "  camel cmd sql myApp --query=\"file:query.sql\"" })
 public class CamelSqlQueryAction extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration",
-                            arity = "1")
+    @Argument(required = true, description = "Name or pid of running Camel integration")
     String name;
 
-    @CommandLine.Option(names = { "--query", "--sql" }, required = true,
-                        description = "The SQL query to execute, or file:<path> to load from a file")
+    @Option(name = "query", aliases = { "sql" }, description = "The SQL query to execute, or file:<path> to load from a file",
+            required = true)
     String query;
 
-    @CommandLine.Option(names = { "--datasource" },
-                        description = "Name of the DataSource bean (auto-detected if only one exists)")
+    @Option(name = "datasource", description = "Name of the DataSource bean (auto-detected if only one exists)")
     String datasource;
 
-    @CommandLine.Option(names = { "--max-rows" }, defaultValue = "100",
-                        description = "Maximum number of rows to return")
+    @Option(name = "max-rows", description = "Maximum number of rows to return", defaultValue = "100")
     int maxRows = 100;
 
-    @CommandLine.Option(names = { "--query-timeout" }, defaultValue = "30",
-                        description = "Query timeout in seconds")
+    @Option(name = "query-timeout", description = "Query timeout in seconds", defaultValue = "30")
     int queryTimeout = 30;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
     public CamelSqlQueryAction(CamelJBangMain main) {

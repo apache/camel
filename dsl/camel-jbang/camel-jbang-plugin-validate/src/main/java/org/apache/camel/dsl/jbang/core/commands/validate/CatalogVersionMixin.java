@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.validate;
 
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
@@ -26,7 +28,6 @@ import org.apache.camel.dsl.jbang.run.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.run.common.QuarkusHelper;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.dsl.yaml.validator.YamlValidator;
-import picocli.CommandLine;
 
 /**
  * The Camel version and runtime a validation answers for (CAMEL-24711): the catalog of that version and runtime, as
@@ -35,21 +36,20 @@ import picocli.CommandLine;
  */
 public class CatalogVersionMixin {
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "Validate against another Camel version than the CLI's own: its catalog and YAML DSL schema")
+    @Option(name = "camel-version",
+            description = "Validate against another Camel version than the CLI's own: its catalog and YAML DSL schema")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--runtime" },
-                        completionCandidates = RuntimeCompletionCandidates.class,
-                        converter = RuntimeTypeConverter.class,
-                        description = "Runtime (${COMPLETION-CANDIDATES}); spring-boot and quarkus use the catalog of that"
-                                      + " runtime, so a component without a starter or extension is an error")
+    @Option(name = "runtime",
+            description = "Runtime (${COMPLETION-CANDIDATES}); spring-boot and quarkus use the catalog of that"
+                          + " runtime, so a component without a starter or extension is an error",
+            completer = RuntimeCompletionCandidates.class, converter = RuntimeTypeConverter.class)
     RuntimeType runtime;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
-    @CommandLine.Mixin
+    @Mixin
     QuarkusPlatformMixin quarkusPlatform;
 
     /** The catalog and the Camel version it answers for. */

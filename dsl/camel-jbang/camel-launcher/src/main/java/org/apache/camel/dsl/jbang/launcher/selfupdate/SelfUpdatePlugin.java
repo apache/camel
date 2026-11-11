@@ -17,13 +17,13 @@
 package org.apache.camel.dsl.jbang.launcher.selfupdate;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.apache.camel.dsl.jbang.core.common.Plugin;
-import picocli.CommandLine;
 
 public class SelfUpdatePlugin implements Plugin {
 
     @Override
-    public void customize(CommandLine commandLine, CamelJBangMain main) {
-        commandLine.addSubcommand("self-update", new CommandLine(new SelfUpdateCommand(main)));
+    public void customize(CommandTree commandLine, CamelJBangMain main) {
+        commandLine.addSubcommand("self-update", new CommandTree(new SelfUpdateCommand(main)));
     }
 }

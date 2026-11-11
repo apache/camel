@@ -27,7 +27,7 @@ camel catalog kamelet [options]
 | `--repo,--repos` | Additional maven repositories for download on-demand (Use commas to separate multiple repositories) |  | String
 | `--sort` | Sort by name, type, support-level, or description | name | String
 | `--type,--filter-type` | Filter by type: source, sink, or action |  | String
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

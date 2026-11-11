@@ -18,42 +18,42 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.util.Locale;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.TimeoutConverter;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "heap-dump", description = "Write a heap dump (.hprof) file for deep memory analysis", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nThe .hprof file can be analyzed with tools like Eclipse MAT, VisualVM, or jhat.",
-                 "%nExamples:",
-                 "  camel cmd heap-dump",
-                 "  camel cmd heap-dump --dump-name=mydump",
-                 "  camel cmd heap-dump --dump-name=mydump --live=false" })
+@CommandDefinition(name = "heap-dump", description = "Write a heap dump (.hprof) file for deep memory analysis",
+                   generateHelp = true,
+                   footer = {
+                           "The .hprof file can be analyzed with tools like Eclipse MAT, VisualVM, or jhat.",
+                           "",
+                           "Examples:",
+                           "  camel cmd heap-dump",
+                           "  camel cmd heap-dump --dump-name=mydump",
+                           "  camel cmd heap-dump --dump-name=mydump --live=false" })
 public class CamelHeapDump extends ActionBaseCommand {
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--dump-name" },
-                        description = "File name for the heap dump (without .hprof extension)")
+    @Option(name = "dump-name", description = "File name for the heap dump (without .hprof extension)")
     String dumpName;
 
-    @CommandLine.Option(names = { "--live" },
-                        description = "Whether to dump only live objects", defaultValue = "true", arity = "0..1",
-                        fallbackValue = "true")
+    @Option(name = "live", hasValue = false, description = "Whether to dump only live objects", defaultValue = "true")
     boolean live = true;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "60000", converter = TimeoutConverter.class,
-                        description = "How long to wait for the heap dump to be written, in millis or as a duration such as 2m")
+    @Option(name = "timeout",
+            description = "How long to wait for the heap dump to be written, in millis or as a duration such as 2m",
+            defaultValue = "60000", converter = TimeoutConverter.class)
     long timeout = 60000;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
     public CamelHeapDump(CamelJBangMain main) {

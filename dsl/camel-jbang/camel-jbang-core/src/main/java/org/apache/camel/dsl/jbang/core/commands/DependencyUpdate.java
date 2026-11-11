@@ -31,6 +31,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.run.common.RuntimeType;
 import org.apache.camel.tooling.maven.MavenGav;
@@ -38,30 +40,24 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.xml.XmlLineNumberParser;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "update",
-                     description = "Updates dependencies in Maven pom.xml or Java source files (JBang style)",
-                     sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel dependency update" })
+@CommandDefinition(name = "update", description = "Updates dependencies in Maven pom.xml or Java source files (JBang style)",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel dependency update" })
 public class DependencyUpdate extends DependencyList {
 
-    @CommandLine.Parameters(description = "Maven pom.xml or Java source files (JBang Style with //DEPS) to have dependencies updated."
-                                          + " Route definition files (YAML, XML) can also be included and will be used as source files"
-                                          + " for dependency resolution.",
-                            arity = "1..*")
+    // aesh allows one @Arguments in a command (aesh #699): the files of DependencyList are the files to update
     public List<Path> targetFiles;
 
-    @CommandLine.Option(names = { "--clean" },
-                        description = "Regenerate list of dependencies (do not keep existing dependencies). Not supported for pom.xml")
+    @Option(name = "clean", hasValue = false,
+            description = "Regenerate list of dependencies (do not keep existing dependencies). Not supported for pom.xml")
     protected boolean clean;
 
-    @CommandLine.Option(names = { "--scan-routes" },
-                        description = "Sync dependencies from route definitions. Only manages org.apache.camel dependencies,"
-                                      + " preserving non-Camel dependencies. Removes unused Camel dependencies.")
+    @Option(name = "scan-routes", hasValue = false,
+            description = "Sync dependencies from route definitions. Only manages org.apache.camel dependencies,"
+                          + " preserving non-Camel dependencies. Removes unused Camel dependencies.")
     protected boolean scanRoutes;
 
     private final List<String> deps = new ArrayList<>();
@@ -79,6 +75,13 @@ public class DependencyUpdate extends DependencyList {
         deps.clear();
         gavs.clear();
         updateTargets.clear();
+
+        targetFiles = files.stream().map(Path::of).toList();
+        files.clear();
+        if (targetFiles.isEmpty()) {
+            printer().printErr("Missing the pom.xml or Java source files to update");
+            return CliExitCode.USAGE;
+        }
 
         if (clean && scanRoutes) {
             printer().printErr("Options --clean and --scan-routes are mutually exclusive");

@@ -24,7 +24,7 @@ camel cmd sql [options]
 | `--max-rows` | Maximum number of rows to return | 100 | int
 | `--query,--sql` | The SQL query to execute, or file:<path> to load from a file |  | String
 | `--query-timeout` | Query timeout in seconds | 30 | int
-| `-h,--help` | Display the help and sub-commands |  | boolean
+| `-h,--help` | Display this help and exit |  | boolean
 |===
 
 

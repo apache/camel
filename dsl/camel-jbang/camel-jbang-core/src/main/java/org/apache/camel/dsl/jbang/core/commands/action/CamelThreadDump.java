@@ -25,8 +25,14 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -35,16 +41,13 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "thread-dump", description = "List threads in a running Camel integration", sortOptions = false,
-         showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel cmd thread-dump",
-                 "  camel cmd thread-dump --trace",
-                 "  camel cmd thread-dump --json" })
+@CommandDefinition(name = "thread-dump", description = "List threads in a running Camel integration", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel cmd thread-dump",
+                           "  camel cmd thread-dump --trace",
+                           "  camel cmd thread-dump --json" })
 public class CamelThreadDump extends ActionWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -52,7 +55,7 @@ public class CamelThreadDump extends ActionWatchCommand {
             .text("name", r -> r.name)
             .text("state", r -> r.state);
 
-    public static class IdNameStateCompletionCandidates implements Iterable<String> {
+    public static class IdNameStateCompletionCandidates extends CompletionCandidates {
 
         public IdNameStateCompletionCandidates() {
         }
@@ -64,7 +67,7 @@ public class CamelThreadDump extends ActionWatchCommand {
 
     }
 
-    public static class StateCompletionCandidates implements Iterable<String> {
+    public static class StateCompletionCandidates extends CompletionCandidates {
 
         public StateCompletionCandidates() {
         }
@@ -76,33 +79,30 @@ public class CamelThreadDump extends ActionWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = IdNameStateCompletionCandidates.class,
-                        description = "Sort by id, name or state", defaultValue = "id")
+    @Option(name = "sort", description = "Sort by id, name or state", defaultValue = "id",
+            completer = IdNameStateCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--filter" },
-                        description = "Filter thread names/ids (use all to include all threads)", defaultValue = "Camel")
+    @OptionList(name = "filter", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Filter thread names/ids (use all to include all threads)", defaultValue = "Camel")
     String[] filters;
 
-    @CommandLine.Option(names = { "--state" }, completionCandidates = StateCompletionCandidates.class,
-                        description = "To only show threads for a given state")
+    @Option(name = "state", description = "To only show threads for a given state", completer = StateCompletionCandidates.class)
     String state;
 
-    @CommandLine.Option(names = { "--trace" },
-                        description = "Include stack-traces", defaultValue = "false")
+    @Option(name = "trace", hasValue = false, description = "Include stack-traces", defaultValue = "false")
     boolean trace;
 
-    @CommandLine.Option(names = { "--depth" },
-                        description = "Max depth of stack-trace", defaultValue = "1")
+    @Option(name = "depth", description = "Max depth of stack-trace", defaultValue = "1")
     int depth;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;

@@ -18,11 +18,14 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
+import org.aesh.command.Command;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.CommandResult;
+import org.aesh.command.invocation.CommandInvocation;
+import org.apache.camel.dsl.jbang.core.common.CommandTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import picocli.CommandLine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -40,7 +43,7 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void aCommandOfTheCliCreatesOnlyItself() {
-        CommandLine commandLine = execute("config", "list");
+        CommandTree commandLine = execute("config", "list");
 
         assertEquals(Set.of("config"), commandLine.getSubcommands().keySet());
         assertEquals(Set.of("get", "list", "set", "unset"),
@@ -56,7 +59,7 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void theHelpOfACommandCreatesOnlyThatCommand() {
-        CommandLine commandLine = execute("config", "--help");
+        CommandTree commandLine = execute("config", "--help");
 
         assertEquals(Set.of("config"), commandLine.getSubcommands().keySet());
         assertTrue(CamelJBangMain.hasOnlyCommand(commandLine, "config", "--help"));
@@ -64,7 +67,7 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
 
     @Test
     public void aCommandOfAPluginCreatesNoCommandOfTheCli() {
-        CommandLine commandLine = execute(new PluginMain(true), "fake", "--help");
+        CommandTree commandLine = execute(new PluginMain(true), "fake", "--help");
 
         assertEquals(Set.of("fake"), commandLine.getSubcommands().keySet());
     }
@@ -78,7 +81,7 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
     @Test
     public void aCommandThatIsNotOfTheCliCreatesAllCommands() {
         // the command of a plugin that is not installed, or a typo, for which picocli suggests the commands it knows
-        CommandLine commandLine = execute("confg", "list");
+        CommandTree commandLine = execute("confg", "list");
 
         assertAllCommands(commandLine);
         assertFalse(CamelJBangMain.hasOnlyCommand(commandLine, "confg", "list"));
@@ -103,11 +106,11 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
         assertAllCommands(main.newCommandLine());
     }
 
-    private CommandLine execute(String... args) {
+    private CommandTree execute(String... args) {
         return execute(new TestMain(), args);
     }
 
-    private CommandLine execute(TestMain main, String... args) {
+    private CommandTree execute(TestMain main, String... args) {
         main.withPrinter(printer);
         main.setDiscoverPlugins(false);
         main.execute(args);
@@ -115,10 +118,10 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
     }
 
     private static class TestMain extends CamelJBangMain {
-        CommandLine executed;
+        CommandTree executed;
 
         @Override
-        public void postExecute(CommandLine commandLine, String[] args, int exitCode) {
+        public void postExecute(CommandTree commandLine, String[] args, int exitCode) {
             executed = commandLine;
         }
 
@@ -142,22 +145,22 @@ class CamelJBangMainOnlyCommandTest extends CamelCommandBaseTestSupport {
         }
 
         @Override
-        public void postAddCommands(CommandLine commandLine, String[] args) {
+        public void postAddCommands(CommandTree commandLine, String[] args) {
             if (addsCommand && "fake".equals(onlyPluginCommand(commandLine, args))) {
-                commandLine.addSubcommand("fake", new CommandLine(new FakeCommand()));
+                commandLine.addSubcommand("fake", new CommandTree(new FakeCommand()));
             }
         }
     }
 
-    @CommandLine.Command(name = "fake", description = "The command of a plugin")
-    static class FakeCommand implements Callable<Integer> {
+    @CommandDefinition(name = "fake", description = "The command of a plugin", generateHelp = true, sortOptions = true)
+    static class FakeCommand implements Command<CommandInvocation> {
         @Override
-        public Integer call() {
-            return 0;
+        public CommandResult execute(CommandInvocation invocation) {
+            return CommandResult.SUCCESS;
         }
     }
 
-    private static void assertAllCommands(CommandLine commandLine) {
+    private static void assertAllCommands(CommandTree commandLine) {
         assertTrue(commandLine.getSubcommands().keySet().containsAll(List.of("config", "get", "run", "shell", "version")),
                 () -> "All commands of the CLI, but was: " + commandLine.getSubcommands().keySet());
     }

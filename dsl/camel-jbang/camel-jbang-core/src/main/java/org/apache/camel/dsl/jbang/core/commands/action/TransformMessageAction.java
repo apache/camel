@@ -22,6 +22,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.MavenResolverMixin;
 import org.apache.camel.dsl.jbang.core.commands.Run;
@@ -39,91 +43,77 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "message",
-                     description = "Transform message from one format to another via an existing running Camel integration",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel transform message --body='Hello World' --language=simple --template='Bye ${body}'" })
+@CommandDefinition(name = "message",
+                   description = "Transform message from one format to another via an existing running Camel integration",
+                   generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel transform message --body='Hello World' --language=simple --template='Bye ${body}'" })
 public class TransformMessageAction extends ActionWatchCommand {
 
-    @CommandLine.Option(names = { "--camel-version" },
-                        description = "To run using a different Camel version than the default version.")
+    @Option(name = "camel-version", description = "To run using a different Camel version than the default version.")
     String camelVersion;
 
-    @CommandLine.Option(names = { "--body" }, required = true,
-                        description = "Message body to send (prefix with file: to refer to loading message body from file)")
+    @Option(name = "body", description = "Message body to send (prefix with file: to refer to loading message body from file)",
+            required = true)
     String body;
 
-    @CommandLine.Option(names = { "--header" },
-                        description = "Message header (key=value)")
+    @OptionList(name = "header", valueSeparator = OptionList.NO_SEPARATOR, description = "Message header (key=value)")
     List<String> headers;
 
-    @CommandLine.Option(names = {
-            "--source" },
-                        description = "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number or :id to refer to the exact location of the EIP to use)")
+    @Option(name = "source",
+            description = "Instead of using external template file then refer to an existing Camel route source with inlined Camel language expression in a route. (use :line-number or :id to refer to the exact location of the EIP to use)")
     private String source;
 
-    @CommandLine.Option(names = {
-            "--language" },
-                        description = "The language to use for message transformation")
+    @Option(name = "language", description = "The language to use for message transformation")
     private String language;
 
-    @CommandLine.Option(names = {
-            "--component" },
-                        description = "The component to use for message transformation")
+    @Option(name = "component", description = "The component to use for message transformation")
     private String component;
 
-    @CommandLine.Option(names = {
-            "--dataformat" },
-                        description = "The dataformat to use for message transformation")
+    @Option(name = "dataformat", description = "The dataformat to use for message transformation")
     private String dataformat;
 
-    @CommandLine.Option(names = {
-            "--template" },
-                        description = "The template to use for message transformation (prefix with file: to refer to loading template from file)")
+    @Option(name = "template",
+            description = "The template to use for message transformation (prefix with file: to refer to loading template from file)")
     private String template;
 
-    @CommandLine.Option(names = { "--option" },
-                        description = "Option for additional configuration of the used language, component or dataformat (key=value)")
+    @OptionList(name = "option", valueSeparator = OptionList.NO_SEPARATOR,
+                description = "Option for additional configuration of the used language, component or dataformat (key=value)")
     List<String> options;
 
-    @CommandLine.Option(names = {
-            "--output" },
-                        description = "File to store output. If none provide then output is printed to console.")
+    @Option(name = "output", description = "File to store output. If none provide then output is printed to console.")
     private String output;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties from the output message")
+    @Option(name = "show-exchange-properties", hasValue = false,
+            description = "Show exchange properties from the output message", defaultValue = "false")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers from the output message")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers from the output message",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body from the output message")
+    @Option(name = "show-body", hasValue = false, description = "Show message body from the output message",
+            defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exception and stacktrace for failed transformation")
+    @Option(name = "show-exception", hasValue = false, description = "Show exception and stacktrace for failed transformation",
+            defaultValue = "true")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--timeout" }, defaultValue = "20000", converter = TimeoutConverter.class,
-                        description = "Timeout waiting for message to be transformed, in millis or as a duration such as 30s")
+    @Option(name = "timeout",
+            description = "Timeout waiting for message to be transformed, in millis or as a duration such as 30s",
+            defaultValue = "20000", converter = TimeoutConverter.class)
     long timeout = 20000;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false, description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
-    @CommandLine.Mixin
+    @Mixin
     MavenResolverMixin mavenResolver;
 
     // the Camel this command started

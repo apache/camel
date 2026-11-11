@@ -26,6 +26,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CliException;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.CommandLineTestHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -33,7 +34,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import picocli.CommandLine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -179,12 +179,11 @@ class VersionListReleasesTest extends CamelCommandBaseTestSupport {
     // the 4.10 to 4.12 releases, without downloading the releases since the catalog
     private VersionList command(String... args) {
         VersionList command = new VersionList(new CamelJBangMain().withPrinter(printer));
-        List<String> all = Stream.concat(Stream.of("--download=false", "--from-version=4.10", "--to-version=4.13"),
-                Arrays.stream(args)).toList();
-        // the last of an option given twice wins, as the arguments say
-        CommandLine cl = new CommandLine(command);
-        cl.setOverwrittenOptionsAllowed(true);
-        cl.parseArgs(all.toArray(String[]::new));
+        // the defaults of the test, unless the arguments give the option (an option given twice is a usage error)
+        Stream<String> defaults = Stream.of("--download=false", "--from-version=4.10", "--to-version=4.13")
+                .filter(d -> Arrays.stream(args).noneMatch(a -> a.startsWith(d.substring(0, d.indexOf('=') + 1))));
+        List<String> all = Stream.concat(defaults, Arrays.stream(args)).toList();
+        CommandLineTestHelper.parse(command, all.toArray(String[]::new));
         return command;
     }
 

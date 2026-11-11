@@ -18,8 +18,10 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 
 import java.util.Iterator;
 
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
+
 /** Picocli tab-completion candidates for {@code --theme}. */
-public class ThemeModeCompletionCandidates implements Iterable<String> {
+public class ThemeModeCompletionCandidates extends CompletionCandidates {
 
     @Override
     public Iterator<String> iterator() {

@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Option;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.CliExitCode;
@@ -37,15 +39,12 @@ import org.apache.camel.tooling.maven.MavenDownloaderImpl;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "doctor", description = "Checks the environment and reports potential issues",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel doctor",
-                 "  camel doctor --json" })
+@CommandDefinition(name = "doctor", description = "Checks the environment and reports potential issues", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel doctor",
+                           "  camel doctor --json" })
 public class Doctor extends CamelCommand {
 
     /**
@@ -61,8 +60,7 @@ public class Doctor extends CamelCommand {
      */
     static final String FAIL = "FAIL";
 
-    @CommandLine.Option(names = { "--json" },
-                        description = "Output in JSON Format: the status (OK, WARN or FAIL) of each check")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format: the status (OK, WARN or FAIL) of each check")
     boolean jsonOutput;
 
     /**

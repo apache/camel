@@ -16,15 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
+import org.aesh.command.CommandDefinition;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "get", description = "List semantic definitions and expert contracts",
-                     sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel semantic get my-app --json",
-                             "  camel semantic get my-app --expert=guard" })
+@CommandDefinition(name = "get", description = "List semantic definitions and expert contracts", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel semantic get my-app --json",
+                           "  camel semantic get my-app --expert=guard" })
 public class SemanticGet extends CamelSemantic {
 
     public SemanticGet(CamelJBangMain main) {

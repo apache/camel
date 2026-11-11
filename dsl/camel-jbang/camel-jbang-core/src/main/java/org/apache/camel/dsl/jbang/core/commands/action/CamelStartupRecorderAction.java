@@ -25,7 +25,12 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -33,31 +38,28 @@ import org.apache.camel.dsl.jbang.core.common.TerminalWidthHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "startup-recorder",
-                     description = "Display startup recording", sortOptions = false, showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel get startup-recorder",
-                             "  camel get startup-recorder --json" })
+@CommandDefinition(name = "startup-recorder", description = "Display startup recording", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel get startup-recorder",
+                           "  camel get startup-recorder --json" })
 public class CamelStartupRecorderAction extends ActionWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
             .numeric("duration", r -> r.duration)
             .text("type", r -> r.type);
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = DurationTypeCompletionCandidates.class,
-                        description = "Sort by duration, or type")
+    @Option(name = "sort", description = "Sort by duration, or type", completer = DurationTypeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
     private volatile long pid;
@@ -146,7 +148,7 @@ public class CamelStartupRecorderAction extends ActionWatchCommand {
         long duration;
     }
 
-    public static class DurationTypeCompletionCandidates implements Iterable<String> {
+    public static class DurationTypeCompletionCandidates extends CompletionCandidates {
 
         public DurationTypeCompletionCandidates() {
         }

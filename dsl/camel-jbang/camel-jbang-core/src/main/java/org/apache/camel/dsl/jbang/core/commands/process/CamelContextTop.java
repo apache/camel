@@ -28,7 +28,11 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Option;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ListingFormat;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.dsl.jbang.core.common.RowSort;
@@ -36,18 +40,14 @@ import org.apache.camel.dsl.jbang.run.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
-import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
 import static org.apache.camel.dsl.jbang.core.common.CamelCommandHelper.extractState;
 
-@Command(name = "context",
-         description = "Top status of Camel integrations",
-         sortOptions = false, showDefaultValues = true,
-         footer = {
-                 "%nExamples:",
-                 "  camel top context",
-                 "  camel top context --watch" })
+@CommandDefinition(name = "context", description = "Top status of Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel top context",
+                           "  camel top context --watch" })
 public class CamelContextTop extends ProcessWatchCommand {
 
     private static final RowSort<Row> ORDER = new RowSort<Row>()
@@ -56,7 +56,7 @@ public class CamelContextTop extends ProcessWatchCommand {
             .by("mem", Comparator.comparingLong((Row r) -> r.heapMemUsed).reversed())
             .numeric("age", r -> r.uptime);
 
-    public static class PidNameMemAgeCompletionCandidates implements Iterable<String> {
+    public static class PidNameMemAgeCompletionCandidates extends CompletionCandidates {
 
         public PidNameMemAgeCompletionCandidates() {
         }
@@ -68,11 +68,11 @@ public class CamelContextTop extends ProcessWatchCommand {
 
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameMemAgeCompletionCandidates.class,
-                        description = "Sort by pid, name, mem, or age", defaultValue = "mem")
+    @Option(name = "sort", description = "Sort by pid, name, mem, or age", defaultValue = "mem",
+            completer = PidNameMemAgeCompletionCandidates.class)
     String sort;
 
     public CamelContextTop(CamelJBangMain main) {

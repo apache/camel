@@ -16,10 +16,11 @@
  */
 package org.apache.camel.dsl.jbang.core.commands;
 
-import picocli.CommandLine;
+import org.aesh.command.CommandDefinition;
 
-@CommandLine.Command(name = "dependency",
-                     description = "Displays all Camel dependencies required to run (use dependency --help to see sub commands)")
+@CommandDefinition(name = "dependency",
+                   description = "Displays all Camel dependencies required to run (use dependency --help to see sub commands)",
+                   generateHelp = true, sortOptions = true)
 public class DependencyCommand extends CamelCommand {
 
     public DependencyCommand(CamelJBangMain main) {

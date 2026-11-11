@@ -1142,6 +1142,30 @@ changes:
 See the https://github.com/mariadb-corporation/mariadb-connector-j/blob/main/CHANGELOG.md[MariaDB Connector/J changelog]
 for the other changes.
 
+=== camel-jbang - the Camel CLI uses aesh instead of picocli
+
+The Camel CLI parses its command lines, prints its help and completes its commands with
+https://github.com/aeshell/aesh[aesh] instead of picocli. The commands and their options are the same. The help looks a
+little different: the default value of an option is on a line of its own (`Default: ...`).
+
+An argument `@file` is no longer replaced by the arguments in that file (picocli did that, such as
+`camel run @args.txt`). Give the arguments on the command line instead, for example `camel run $(cat args.txt)` in a
+shell script.
+
+A plugin of the Camel CLI (an implementation of `org.apache.camel.dsl.jbang.core.common.Plugin`) must be changed and
+built for Camel 4.24:
+
+* `Plugin.customize` takes a `CommandTree` instead of a picocli `CommandLine`. A command is added with
+  `commandLine.addSubcommand("mycommand", new CommandTree(new MyCommand(main)))`.
+* The command classes use the aesh annotations: `@CommandDefinition` instead of `@Command` (the `footer` of the help
+  is an attribute of it), `@Option(name = "my-option")` instead of `@Option(names = "--my-option")` (with
+  `hasValue = false` for a flag), `@OptionList` for an option with several values, `@Argument` or `@Arguments` instead
+  of `@Parameters`, and the aesh `@Mixin`.
+* A class with the completion candidates of an option extends `org.apache.camel.dsl.jbang.core.common.CompletionCandidates`,
+  and is set as the `completer` of the option.
+* A test sets the options of a command with `CommandLineTestHelper.parse(command, args...)` (in the test jar of
+  `camel-jbang-core`) instead of `CommandLine.populateCommand`.
+
 === camel-resilience4j, camel-microprofile-fault-tolerance - a circuit breaker in a doTry
 
 A circuit breaker in the steps of a `doTry` no longer ends that `doTry` for the steps after it. Before, when the

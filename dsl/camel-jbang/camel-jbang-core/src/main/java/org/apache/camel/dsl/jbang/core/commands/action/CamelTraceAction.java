@@ -40,10 +40,16 @@ import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
+import org.aesh.command.CommandDefinition;
+import org.aesh.command.option.Argument;
+import org.aesh.command.option.Mixin;
+import org.aesh.command.option.Option;
+import org.aesh.command.option.OptionList;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.commands.CommandHelper;
 import org.apache.camel.dsl.jbang.core.commands.DurationMixin;
 import org.apache.camel.dsl.jbang.core.common.CliException;
+import org.apache.camel.dsl.jbang.core.common.CompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.JsonOutput;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessFinder.CamelProcess;
@@ -58,15 +64,12 @@ import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.jline.jansi.Ansi;
-import picocli.CommandLine;
 
-@CommandLine.Command(name = "trace",
-                     description = "Tail message traces from running Camel integrations", sortOptions = false,
-                     showDefaultValues = true,
-                     footer = {
-                             "%nExamples:",
-                             "  camel trace hello",
-                             "  camel trace *" })
+@CommandDefinition(name = "trace", description = "Tail message traces from running Camel integrations", generateHelp = true,
+                   footer = {
+                           "Examples:",
+                           "  camel trace hello",
+                           "  camel trace *" })
 public class CamelTraceAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 25;
@@ -75,7 +78,7 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private static final RowSort<StatusRow> ORDER = RowSort.<StatusRow> integration(r -> r.pid, r -> r.name, r -> r.uptime);
 
-    public static class PrefixCompletionCandidates implements Iterable<String> {
+    public static class PrefixCompletionCandidates extends CompletionCandidates {
 
         public PrefixCompletionCandidates() {
         }
@@ -86,7 +89,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
     }
 
-    public static class ActionCompletionCandidates implements Iterable<String> {
+    public static class ActionCompletionCandidates extends CompletionCandidates {
 
         public ActionCompletionCandidates() {
         }
@@ -97,106 +100,102 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
     }
 
-    @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
+    @Argument(description = "Name or pid of running Camel integration. (default selects all)")
     String name = "*";
 
-    @CommandLine.Option(names = { "--action" }, completionCandidates = ActionCompletionCandidates.class,
-                        defaultValue = "status",
-                        description = "Action to start, stop, clear, list status, or dump traces")
+    @Option(name = "action", description = "Action to start, stop, clear, list status, or dump traces", defaultValue = "status",
+            completer = ActionCompletionCandidates.class)
     String action;
 
-    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
-                        description = "Sort by pid, name or age for showing status of tracing", defaultValue = "pid")
+    @Option(name = "sort", description = "Sort by pid, name or age for showing status of tracing", defaultValue = "pid",
+            completer = PidNameAgeCompletionCandidates.class)
     String sort;
 
-    @CommandLine.Option(names = { "--json" }, description = "Output the status of tracing in JSON Format")
+    @Option(name = "json", hasValue = false, description = "Output the status of tracing in JSON Format")
     boolean jsonOutput;
 
-    @CommandLine.Mixin
+    @Mixin
     ActionTimeoutMixin timeoutOption;
 
-    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Print timestamp.")
+    @Option(name = "timestamp", hasValue = false, description = "Print timestamp.", defaultValue = "true")
     boolean timestamp = true;
 
-    @CommandLine.Option(names = { "--ago" },
-                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    @Option(name = "ago", hasValue = false, description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
     boolean ago;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Keep following and outputting new traces (press enter to exit)."
-                                      + " Without an interactive terminal the default is false, unless --duration is given.")
+    @Option(name = "follow", hasValue = false, description = "Keep following and outputting new traces (press enter to exit)."
+                                                             + " Without an interactive terminal the default is false, unless --duration is given.",
+            defaultValue = "true")
     boolean follow = true;
 
-    @CommandLine.Mixin
+    @Mixin
     DurationMixin durationOption = new DurationMixin();
 
-    @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto", completionCandidates = PrefixCompletionCandidates.class,
-                        description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
+    @Option(name = "prefix",
+            description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.",
+            defaultValue = "auto", completer = PrefixCompletionCandidates.class)
     String prefix = "auto";
 
-    @CommandLine.Option(names = { "--source" },
-                        description = "Prefer to display source filename/code instead of IDs")
+    @Option(name = "source", hasValue = false, description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
-                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    @Option(name = "depth",
+            description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.",
+            defaultValue = "9")
     int depth;
 
-    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
-                        description = "The number of traces from the end of the trace to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all traces from beginning.")
+    @Option(name = "tail",
+            description = "The number of traces from the end of the trace to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all traces from beginning.",
+            defaultValue = "-1")
     int tail = -1;
 
-    @CommandLine.Option(names = { "--since" },
-                        description = "Return traces newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
+    @Option(name = "since",
+            description = "Return traces newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
     String since;
 
-    @CommandLine.Option(names = { "--find" },
-                        description = "Find and highlight matching text (ignore case).", arity = "0..*")
+    @OptionList(name = "find", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Find and highlight matching text (ignore case).")
     String[] find;
 
-    @CommandLine.Option(names = { "--grep" },
-                        description = "Filter traces to only output trace matching text (ignore case).", arity = "0..*")
+    @OptionList(name = "grep", valueSeparator = OptionList.NO_SEPARATOR, optionalValue = true,
+                description = "Filter traces to only output trace matching text (ignore case).")
     String[] grep;
 
-    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
-                        description = "Show exchange properties in traced messages")
+    @Option(name = "show-exchange-properties", hasValue = false, description = "Show exchange properties in traced messages",
+            defaultValue = "false")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-exchange-variables" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exchange variables in traced messages")
+    @Option(name = "show-exchange-variables", hasValue = false, description = "Show exchange variables in traced messages",
+            defaultValue = "true")
     boolean showExchangeVariables = true;
 
-    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message headers in traced messages")
+    @Option(name = "show-headers", hasValue = false, description = "Show message headers in traced messages",
+            defaultValue = "true")
     boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show message body in traced messages")
+    @Option(name = "show-body", hasValue = false, description = "Show message body in traced messages", defaultValue = "true")
     boolean showBody = true;
 
-    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Show exception and stacktrace for failed messages")
+    @Option(name = "show-exception", hasValue = false, description = "Show exception and stacktrace for failed messages",
+            defaultValue = "true")
     boolean showException = true;
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Use colored logging")
+    @Option(name = "logging-color", hasValue = false, description = "Use colored logging", defaultValue = "true")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--compact" }, defaultValue = "true", arity = "0..1", fallbackValue = "true",
-                        description = "Compact output (no empty line separating traced messages)")
+    @Option(name = "compact", hasValue = false, description = "Compact output (no empty line separating traced messages)",
+            defaultValue = "true")
     boolean compact = true;
 
-    @CommandLine.Option(names = { "--latest" },
-                        description = "Only output traces from the latest (follow if necessary until complete and exit)")
+    @Option(name = "latest", hasValue = false,
+            description = "Only output traces from the latest (follow if necessary until complete and exit)")
     boolean latest;
 
-    @CommandLine.Option(names = { "--mask" },
-                        description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
+    @Option(name = "mask", hasValue = false,
+            description = "Whether to mask endpoint URIs to avoid printing sensitive information such as password or access keys")
     boolean mask;
 
-    @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon or XML format")
+    @Option(name = "pretty", hasValue = false, description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
     String findAnsi;
