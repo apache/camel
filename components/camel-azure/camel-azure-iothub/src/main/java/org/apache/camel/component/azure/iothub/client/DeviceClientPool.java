@@ -569,7 +569,9 @@ public class DeviceClientPool {
             return;
         }
         if (evictionExecutor != null) {
-            evictionExecutor.shutdownNow();
+            for (Runnable task : evictionExecutor.shutdownNow()) {
+                task.run();
+            }
         }
         creationFutures.clear();
         for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
@@ -597,6 +599,10 @@ public class DeviceClientPool {
             e = e.getCause();
         }
         return Thread.currentThread().isInterrupted();
+    }
+
+    ScheduledExecutorService getEvictionExecutor() {
+        return evictionExecutor;
     }
 
     // ---- test hooks ----

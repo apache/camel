@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.azure.iothub.client;
 
-import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -280,32 +279,33 @@ class DeviceClientPoolTest {
     @Test
     void testShutdownDuringClientOpenDoesNotLeakClient() throws Exception {
         DeviceClient client = mock(DeviceClient.class);
-        CountDownLatch openStarted = new CountDownLatch(1);
-        CountDownLatch allowOpenToFinish = new CountDownLatch(1);
+        CountDownLatch callbackRegistered = new CountDownLatch(1);
+        AtomicReference<Throwable> creatorFailure = new AtomicReference<>();
 
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
-        pool.setDeviceClientFactory((cs, protocol) -> {
-            openStarted.countDown();
-            assertTrue(allowOpenToFinish.await(5, TimeUnit.SECONDS),
-                    "open should be allowed to finish before shutdown proceeds");
-            return client;
-        });
+        doAnswer(invocation -> {
+            callbackRegistered.countDown();
+            pool.shutdown();
+            return null;
+        }).when(client).setConnectionStatusChangeCallback(any(), any());
+
+        pool.setDeviceClientFactory((cs, protocol) -> client);
 
         Thread creator = new Thread(() -> {
             try {
                 pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
-            } catch (RuntimeException e) {
-                assertTrue(e.getCause() instanceof IllegalStateException,
-                        "shutdown should fail creation with an IllegalStateException as the cause");
+            } catch (Throwable t) {
+                creatorFailure.set(t);
             }
         }, "device-client-pool-creator");
         creator.start();
-        assertTrue(openStarted.await(5, TimeUnit.SECONDS), "creator should start creating the client");
-
-        pool.shutdown();
-        allowOpenToFinish.countDown();
+        assertTrue(callbackRegistered.await(5, TimeUnit.SECONDS),
+                "callback registration should run before creation completes");
         creator.join(TimeUnit.SECONDS.toMillis(5));
 
+        assertFalse(creator.isAlive(), "creator should exit after shutdown during callback registration");
+        assertTrue(creatorFailure.get() instanceof IllegalStateException,
+                "shutdown should fail creation with an IllegalStateException");
         assertEquals(0, pool.getActiveClientCount());
         verify(client, times(1)).close();
     }
@@ -404,13 +404,10 @@ class DeviceClientPoolTest {
         DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
         pool.setDeviceClientFactory((cs, protocol) -> client);
 
-        Field executorField = DeviceClientPool.class.getDeclaredField("evictionExecutor");
-        executorField.setAccessible(true);
-
         pool.start();
-        ScheduledExecutorService firstExecutor = (ScheduledExecutorService) executorField.get(pool);
+        ScheduledExecutorService firstExecutor = pool.getEvictionExecutor();
         pool.start();
-        ScheduledExecutorService secondExecutor = (ScheduledExecutorService) executorField.get(pool);
+        ScheduledExecutorService secondExecutor = pool.getEvictionExecutor();
 
         try {
             assertSame(firstExecutor, secondExecutor,
