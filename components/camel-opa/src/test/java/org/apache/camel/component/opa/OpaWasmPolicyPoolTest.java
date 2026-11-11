@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Timeout;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -159,6 +160,108 @@ class OpaWasmPolicyPoolTest {
         assertThatThrownBy(pool::borrow)
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("closed");
+    }
+
+    @Test
+    @Timeout(30)
+    void refusesAQueuedBorrowAfterThePoolCloses() throws Exception {
+        AtomicInteger built = new AtomicInteger();
+        OpaWasmPolicyPool pool = new OpaWasmPolicyPool(() -> {
+            built.incrementAndGet();
+            return mock(OpaPolicy.class);
+        }, 1, 10_000);
+        OpaWasmPolicyPool.Lease held = pool.borrow();
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread waiter = new Thread(() -> {
+            try (OpaWasmPolicyPool.Lease ignored = pool.borrow()) {
+                failure.set(new AssertionError("The closed pool handed out a lease"));
+            } catch (Exception e) {
+                failure.set(e);
+            }
+        });
+        try {
+            waiter.start();
+            await().atMost(10, TimeUnit.SECONDS).until(() -> waiter.getState() == Thread.State.TIMED_WAITING);
+
+            pool.close();
+            held.close();
+            waiter.join(TimeUnit.SECONDS.toMillis(10));
+
+            assertThat(waiter.isAlive()).isFalse();
+            assertThat(failure.get()).isInstanceOf(IllegalStateException.class).hasMessageContaining("closed");
+            assertThat(built).as("the queued borrower did not create another policy after close").hasValue(1);
+        } finally {
+            pool.close();
+            held.close();
+            waiter.interrupt();
+            waiter.join(TimeUnit.SECONDS.toMillis(10));
+        }
+    }
+
+    @Test
+    @Timeout(30)
+    void refusesALeaseWhenThePoolClosesDuringConstruction() throws Exception {
+        CountDownLatch constructing = new CountDownLatch(1);
+        CountDownLatch finishConstruction = new CountDownLatch(1);
+        OpaWasmPolicyPool pool = new OpaWasmPolicyPool(() -> {
+            constructing.countDown();
+            try {
+                if (!finishConstruction.await(10, TimeUnit.SECONDS)) {
+                    throw new IllegalStateException("Timed out waiting to finish policy construction");
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(e);
+            }
+            return mock(OpaPolicy.class);
+        }, 1, 10_000);
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        Thread borrower = new Thread(() -> {
+            try (OpaWasmPolicyPool.Lease ignored = pool.borrow()) {
+                failure.set(new AssertionError("The closed pool handed out a lease"));
+            } catch (Exception e) {
+                failure.set(e);
+            }
+        });
+        try {
+            borrower.start();
+            assertThat(constructing.await(10, TimeUnit.SECONDS)).isTrue();
+
+            pool.close();
+            finishConstruction.countDown();
+            borrower.join(TimeUnit.SECONDS.toMillis(10));
+
+            assertThat(borrower.isAlive()).isFalse();
+            assertThat(failure.get()).isInstanceOf(IllegalStateException.class).hasMessageContaining("closed");
+        } finally {
+            pool.close();
+            finishConstruction.countDown();
+            borrower.interrupt();
+            borrower.join(TimeUnit.SECONDS.toMillis(10));
+        }
+    }
+
+    @Test
+    @Timeout(30)
+    void releasesThePermitWhenConstructionFails() throws Exception {
+        AtomicInteger built = new AtomicInteger();
+        OpaWasmPolicyPool pool = new OpaWasmPolicyPool(() -> {
+            if (built.incrementAndGet() == 1) {
+                throw new IllegalArgumentException("Invalid policy");
+            }
+            return mock(OpaPolicy.class);
+        }, 1, 150);
+        try {
+            assertThatThrownBy(pool::borrow).isInstanceOf(IllegalArgumentException.class);
+            try (OpaWasmPolicyPool.Lease held = pool.borrow()) {
+                assertThatThrownBy(pool::borrow).isInstanceOf(TimeoutException.class);
+            }
+            try (OpaWasmPolicyPool.Lease held = pool.borrow()) {
+                assertThat(built).as("the permit was released exactly once and the instance was reused").hasValue(2);
+            }
+        } finally {
+            pool.close();
+        }
     }
 
     @Test
