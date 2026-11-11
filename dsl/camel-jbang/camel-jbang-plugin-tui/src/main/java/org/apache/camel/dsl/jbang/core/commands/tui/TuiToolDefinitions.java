@@ -140,11 +140,11 @@ final class TuiToolDefinitions {
 
         tools.add(tool(toolDef(
                 "tui_send_keys",
-                "Sends key presses to the TUI. A human is watching the screen, so keys should be paced naturally "
-                                 + "like a skilled user would type. Key names: Enter, Esc, Tab, Backspace, Delete, Up, "
-                                 + "Down, Left, Right, Home, End, PgUp, PgDn, Space, F1-F12, or any single character. "
-                                 + "Modifiers: Ctrl+x, Shift+x, Ctrl+Shift+x. Keys never answer a dialog that asks the "
-                                 + "user to confirm an action (quit, a file write): only the user does.",
+                "Sends key presses to the active tab (not the AI panel's input). A human is watching, so pace "
+                                 + "them as a skilled user types. Key names: Enter, Esc, Tab, Backspace, Delete, Up, Down, "
+                                 + "Left, Right, Home, End, PgUp, PgDn, Space, F1-F12, or any single character. Modifiers: "
+                                 + "Ctrl+x, Shift+x, Ctrl+Shift+x. Keys never answer a dialog that asks the user to "
+                                 + "confirm an action (quit, a file write): only the user does.",
                 Map.of("keys", propDef("array", "Array of key name strings to send"),
                         "delay", propDef("integer",
                                 "Delay in milliseconds between keys (default 150, minimum 80)"),

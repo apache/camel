@@ -65,7 +65,15 @@ class McpFacade {
      * Pending key event queued for injection into the TUI event loop, by an MCP client or a tape. It fires on the first
      * tick at or after fireAt, a {@link MonotonicClock} time.
      */
-    record PendingKey(KeyEvent event, long fireAt) {
+    /**
+     * A key sent to the monitor. One from an MCP client ({@code fromMcp}) is for the active tab: the AI panel's input
+     * takes only what the user types (CAMEL-26864). One from a tape is as the user typed it.
+     */
+    record PendingKey(KeyEvent event, long fireAt, boolean fromMcp) {
+
+        PendingKey(KeyEvent event, long fireAt) {
+            this(event, fireAt, false);
+        }
 
         /** Whether the key fires at the given {@link MonotonicClock} time. */
         boolean isDue(long now) {
@@ -662,7 +670,7 @@ class McpFacade {
         for (String key : keys) {
             KeyEvent ke = parseKey(key);
             if (ke != null) {
-                pendingKeys.add(new PendingKey(ke, fireAt));
+                pendingKeys.add(new PendingKey(ke, fireAt, true));
                 fireAt += delayMs;
                 count++;
             }

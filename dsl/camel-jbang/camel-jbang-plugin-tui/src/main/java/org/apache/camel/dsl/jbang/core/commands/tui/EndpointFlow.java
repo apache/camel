@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.tui;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * The messages that come into an integration and go out of it, for the flow of the Endpoints tab and its rate chart. An
@@ -50,10 +51,22 @@ final class EndpointFlow {
 
     /** The hits of the endpoints of the direction the filter takes, without the hand-offs between its routes. */
     static long total(IntegrationInfo info, String direction, Predicate<EndpointInfo> filter) {
+        return flow(info, direction).filter(filter).mapToLong(ep -> ep.hits).sum();
+    }
+
+    /**
+     * The largest mean body size of the endpoints of the direction, without the hand-offs between its routes, as the
+     * counts of the flow (CAMEL-26864: the avg body chart said out 7 B where the flow said 0 out).
+     */
+    static long meanBodySize(IntegrationInfo info, String direction) {
+        return flow(info, direction).filter(ep -> ep.meanBodySize >= 0).mapToLong(ep -> ep.meanBodySize).max()
+                .orElse(0);
+    }
+
+    private static Stream<EndpointInfo> flow(IntegrationInfo info, String direction) {
         Set<String> handOffs = handOffs(info);
         return info.endpoints.stream()
-                .filter(ep -> direction.equals(ep.direction) && filter.test(ep))
-                .filter(ep -> ep.uri == null || !handOffs.contains(DiagramTopology.endpointKey(ep.uri)))
-                .mapToLong(ep -> ep.hits).sum();
+                .filter(ep -> direction.equals(ep.direction))
+                .filter(ep -> ep.uri == null || !handOffs.contains(DiagramTopology.endpointKey(ep.uri)));
     }
 }

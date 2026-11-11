@@ -268,13 +268,9 @@ class MetricsCollector {
                 endpointRemoteStubSamples, previousEndpointRemoteStubTime,
                 endpointRemoteStubInHistory, endpointRemoteStubOutHistory);
 
-        // Record payload size snapshots (mean body size per direction)
-        long inMeanSize = info.endpoints.stream()
-                .filter(ep -> "in".equals(ep.direction) && ep.meanBodySize >= 0)
-                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
-        long outMeanSize = info.endpoints.stream()
-                .filter(ep -> "out".equals(ep.direction) && ep.meanBodySize >= 0)
-                .mapToLong(ep -> ep.meanBodySize).max().orElse(0);
+        // Record payload size snapshots (mean body size per direction), of what comes in and goes out as above
+        long inMeanSize = EndpointFlow.meanBodySize(info, "in");
+        long outMeanSize = EndpointFlow.meanBodySize(info, "out");
         Long lastSizeTime = previousEndpointSizeTime.get(pid);
         if (lastSizeTime == null || now - lastSizeTime >= 1000) {
             previousEndpointSizeTime.put(pid, now);

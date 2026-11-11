@@ -43,12 +43,29 @@ class EndpointFlowTest {
         assertThat(EndpointFlow.total(info, "out", ep -> true)).isEqualTo(5);
     }
 
-    private static void add(IntegrationInfo info, String routeId, String direction, String uri, long hits) {
+    @Test
+    void theAvgBodyIsOfWhatComesInAndGoesOutAsTheCounts() {
+        // CAMEL-26864: hello sends to direct:seven, which route seven consumes; the flow said 0 out, the avg body 7 B
+        IntegrationInfo info = new IntegrationInfo();
+        add(info, "hello", "in", "timer://tick?period=2000", 123).meanBodySize = 0;
+        add(info, "hello", "out", "direct://seven", 26).meanBodySize = 7;
+        add(info, "seven", "in", "direct://seven", 26).meanBodySize = 7;
+
+        assertThat(EndpointFlow.total(info, "out", ep -> true)).isZero();
+        assertThat(EndpointFlow.meanBodySize(info, "in")).isZero();
+        assertThat(EndpointFlow.meanBodySize(info, "out")).isZero();
+
+        add(info, "seven", "out", "kafka:lucky", 26).meanBodySize = 8;
+        assertThat(EndpointFlow.meanBodySize(info, "out")).isEqualTo(8);
+    }
+
+    private static EndpointInfo add(IntegrationInfo info, String routeId, String direction, String uri, long hits) {
         EndpointInfo ep = new EndpointInfo();
         ep.routeId = routeId;
         ep.direction = direction;
         ep.uri = uri;
         ep.hits = hits;
         info.endpoints.add(ep);
+        return ep;
     }
 }

@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import dev.tamboui.tui.event.KeyCode;
 import dev.tamboui.tui.event.KeyEvent;
 import dev.tamboui.tui.event.KeyModifiers;
+import dev.tamboui.widgets.tabs.TabsState;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -61,6 +62,31 @@ class ConfirmationsTest {
         assertThat(taken).isTrue();
         assertThat(delivered).containsExactly("a", "b");
         assertThat(confirmations.isDelivering()).isFalse();
+    }
+
+    @Test
+    void aKeyOfAnMcpClientIsForTheActiveTabNotTheAiPanelInput() {
+        // CAMEL-26864: tui_send_keys sent Enter while the AI panel was open, and the panel's input took it
+        pending.add(new McpFacade.PendingKey(KeyEvent.ofChar('a'), 0, true));
+        pending.add(due(KeyEvent.ofChar('b')));
+        List<String> fromMcp = new ArrayList<>();
+
+        confirmations.deliverDue(0, key -> {
+            if (confirmations.isDeliveringMcpKey()) {
+                fromMcp.add(key.string());
+            }
+        });
+
+        // a tape plays the keys as the user typed them, into the panel too
+        assertThat(fromMcp).containsExactly("a");
+        assertThat(confirmations.isDeliveringMcpKey()).isFalse();
+
+        // tui_send_keys marks its keys
+        McpFacade facade = new McpFacade(
+                new MonitorContext(new AtomicReference<>(List.of()), new AtomicReference<>(List.of())),
+                new AtomicReference<>(List.of()), null, null, null, null, null, null, null, null, null, pending, null);
+        assertThat(facade.injectKeys(List.of("Enter"), 100)).isEqualTo(1);
+        assertThat(pending.poll().fromMcp()).isTrue();
     }
 
     @Test
@@ -128,8 +154,8 @@ class ConfirmationsTest {
         AtomicBoolean chaosConfirm = new AtomicBoolean(true);
         Confirmations chaos = new Confirmations(pending).add("a confirm dialog of the tab", chaosConfirm::get, () -> true);
         McpFacade facade = new McpFacade(
-                null, new AtomicReference<>(List.of()), null, new RecordingManager(null), null, null, null, null, null,
-                null, null, pending, null);
+                null, new AtomicReference<>(List.of()), new TabsState(0), new RecordingManager(null), null, null, null,
+                null, null, null, null, pending, null);
         facade.setConfirmations(chaos);
         TuiToolRegistry tools = new TuiToolRegistry(facade);
 
@@ -137,7 +163,8 @@ class ConfirmationsTest {
                 .startsWith("Not sent: a confirm dialog of the tab is open").endsWith("(a lone Esc cancels it).");
         assertThat(tools.callSendKeys(Map.of("keys", List.of("Esc", "y")))).startsWith("Not sent");
         assertThat(pending).isEmpty();
-        assertThat(tools.callSendKeys(Map.of("keys", List.of("Esc")))).startsWith("Queued 1 key");
+        assertThat(tools.callSendKeys(Map.of("keys", List.of("Esc")))).startsWith("Queued 1 key")
+                .endsWith("for the Overview tab");
         assertThat(pending).hasSize(1);
     }
 
