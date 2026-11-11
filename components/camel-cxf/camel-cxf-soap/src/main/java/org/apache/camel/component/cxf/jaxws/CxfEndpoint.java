@@ -1211,7 +1211,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (getCamelContext() != null && this.properties != null) {
             try {
                 PropertyBindingSupport.bindProperties(getCamelContext(),
-                        this,
+                // TODO: Why don't we rethrow this exception
                         this.properties);
             } catch (Exception e) {
                 // TODO: Why don't we rethrow this exception
