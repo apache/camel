@@ -19,10 +19,13 @@ package org.apache.camel.component.azure.iothub.client;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -38,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -91,7 +95,7 @@ class DeviceClientPoolTest {
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
         List<DeviceClientPool.Lease> leases = new ArrayList<>();
-        List<java.util.concurrent.Future<?>> futures = new ArrayList<>();
+        List<Future<?>> futures = new ArrayList<>();
 
         for (int i = 0; i < 2; i++) {
             futures.add(executor.submit(() -> {
@@ -107,7 +111,7 @@ class DeviceClientPoolTest {
         releaseFactory.countDown();
         executor.shutdown();
         assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS), "worker tasks did not finish");
-        for (java.util.concurrent.Future<?> future : futures) {
+        for (Future<?> future : futures) {
             future.get();
         }
 
@@ -207,6 +211,41 @@ class DeviceClientPoolTest {
         assertEquals(0, pool.getActiveClientCount());
     }
 
+    @SuppressWarnings("unchecked")
+    private static java.util.Map<String, CompletableFuture<DeviceClient>> accessCreationFutures(DeviceClientPool pool)
+            throws Exception {
+        java.lang.reflect.Field field = DeviceClientPool.class.getDeclaredField("creationFutures");
+        field.setAccessible(true);
+        return (java.util.Map<String, CompletableFuture<DeviceClient>>) field.get(pool);
+    }
+
+    @Test
+    void testCreationErrorCompletesFutureForWaiters() throws Exception {
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        CompletableFuture<DeviceClient> inflight = new CompletableFuture<>();
+        accessCreationFutures(pool).put("h:d", inflight);
+
+        CountDownLatch waiterStarted = new CountDownLatch(1);
+        AtomicReference<Throwable> waiterFailure = new AtomicReference<>();
+        Thread waiter = new Thread(() -> {
+            waiterStarted.countDown();
+            try {
+                pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+            } catch (Throwable t) {
+                waiterFailure.set(t);
+            }
+        }, "device-client-pool-waiter");
+
+        waiter.start();
+        assertTrue(waiterStarted.await(5, TimeUnit.SECONDS), "waiter should start before the in-flight future is completed");
+
+        inflight.completeExceptionally(new NoClassDefFoundError("missing Azure SDK transitive"));
+        waiter.join(TimeUnit.SECONDS.toMillis(5));
+
+        assertFalse(waiter.isAlive(), "waiter should exit once the in-flight future completes exceptionally");
+        assertTrue(waiterFailure.get() instanceof NoClassDefFoundError, "waiter should rethrow the original Error");
+    }
+
     @Test
     void testDisconnectedCallbackEvictsClientImmediately() throws Exception {
         DeviceClient client = mock(DeviceClient.class);
@@ -260,14 +299,70 @@ class DeviceClientPoolTest {
 
         callback.onStatusChanged(context);
 
-        assertEquals(1, pool.getActiveClientCount(), "in-use client should not be evicted on DISCONNECTED");
+        assertEquals(0, pool.getActiveClientCount(), "retired client should be removed immediately on terminal DISCONNECTED");
         verify(client, Mockito.never()).close();
 
         lease.close();
-        assertEquals(1, pool.getActiveClientCount(),
-                "leased client should remain in the pool until it is later evicted or shutdown");
-        verify(client, Mockito.never()).close();
+        assertEquals(0, pool.getActiveClientCount(), "retired client should close only when the final lease is released");
+        verify(client, Mockito.times(1)).close();
+    }
 
+    @Test
+    void testAcquireRetriesWhenEntryIsEvictedBetweenCreateAndAcquire() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        AtomicBoolean removedAfterCreation = new AtomicBoolean(false);
+
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30)) {
+            @Override
+            DeviceClient getOrCreate(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+                DeviceClient created = super.getOrCreate(deviceId, connectionString, protocol);
+                if (removedAfterCreation.compareAndSet(false, true)) {
+                    remove(deviceId, connectionString);
+                }
+                return created;
+            }
+        };
+        pool.setDeviceClientFactory((cs, protocol) -> client);
+
+        try (DeviceClientPool.Lease lease = pool.acquire("d", CS, IotHubClientProtocol.MQTT)) {
+            assertSame(client, lease.getClient());
+            assertEquals(1, pool.getActiveClientCount());
+        }
+
+        assertEquals(1, pool.getActiveClientCount());
+    }
+
+    @Test
+    void testShutdownDuringClientOpenDoesNotLeakClient() throws Exception {
+        DeviceClient client = mock(DeviceClient.class);
+        CountDownLatch openStarted = new CountDownLatch(1);
+        CountDownLatch allowOpenToFinish = new CountDownLatch(1);
+
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
+        pool.setDeviceClientFactory((cs, protocol) -> {
+            openStarted.countDown();
+            assertTrue(allowOpenToFinish.await(5, TimeUnit.SECONDS),
+                    "open should be allowed to finish before shutdown proceeds");
+            return client;
+        });
+
+        Thread creator = new Thread(() -> {
+            try {
+                pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
+            } catch (RuntimeException e) {
+                assertTrue(e.getCause() instanceof IllegalStateException,
+                        "shutdown should fail creation with an IllegalStateException as the cause");
+            }
+        }, "device-client-pool-creator");
+        creator.start();
+        assertTrue(openStarted.await(5, TimeUnit.SECONDS), "creator should start creating the client");
+
+        pool.shutdown();
+        allowOpenToFinish.countDown();
+        creator.join(TimeUnit.SECONDS.toMillis(5));
+
+        assertEquals(0, pool.getActiveClientCount());
+        verify(client, times(1)).close();
     }
 
 }

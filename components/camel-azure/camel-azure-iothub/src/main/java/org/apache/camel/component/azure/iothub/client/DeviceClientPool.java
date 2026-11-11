@@ -43,8 +43,9 @@ import org.slf4j.LoggerFactory;
  *
  * <p>
  * Clients are created lazily, reused across messages, and evicted after an idle timeout. Connection status changes are
- * monitored through the Azure SDK callback, and broken clients are removed by the caller on send failure or disconnect
- * as needed.
+ * monitored through the Azure SDK callback, and disconnected clients are retired automatically; any in-use client is
+ * closed only when the final lease is released. Callers may also remove a client from the pool explicitly during
+ * cleanup.
  * </p>
  */
 public class DeviceClientPool {
@@ -60,6 +61,8 @@ public class DeviceClientPool {
         final DeviceClient client;
         volatile long lastUsed;
         final AtomicInteger inUse = new AtomicInteger();
+        volatile boolean retired;
+        final AtomicBoolean closed = new AtomicBoolean();
 
         PooledClient(DeviceClient client, long nowMillis) {
             this.client = client;
@@ -96,7 +99,7 @@ public class DeviceClientPool {
         }
 
         public DeviceClient client() {
-            return pooled.client;
+            return getClient();
         }
 
         @Override
@@ -106,7 +109,11 @@ public class DeviceClientPool {
             }
             closed = true;
             if (pooled.release()) {
-                pool.touchAndMaybeEvict(poolKey);
+                if (pooled.retired) {
+                    pool.closeRetired(pooled);
+                } else {
+                    pool.touchAndMaybeEvict(poolKey);
+                }
             }
         }
     }
@@ -168,6 +175,11 @@ public class DeviceClientPool {
         if (inFlight == null) {
             CompletableFuture<DeviceClient> createdFuture = creationFutures.get(poolKey);
             try {
+                PooledClient rechecked = pool.get(poolKey);
+                if (rechecked != null) {
+                    createdFuture.complete(rechecked.client);
+                    return rechecked.client;
+                }
                 DeviceClient client = createClient(deviceId, connectionString, protocol);
                 PooledClient pooled = new PooledClient(client, now);
                 PooledClient previous = pool.putIfAbsent(poolKey, pooled);
@@ -177,13 +189,24 @@ public class DeviceClientPool {
                     createdFuture.complete(previous.client);
                     return previous.client;
                 }
+                if (shuttingDown.get()) {
+                    pool.remove(poolKey, pooled);
+                    closeQuietly(deviceId, client, "shutdown after creation");
+                    throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
+                }
                 createdFuture.complete(client);
                 return client;
-            } catch (Exception e) {
-                createdFuture.completeExceptionally(e);
+            } catch (Throwable e) {
+                if (!createdFuture.isDone()) {
+                    createdFuture.completeExceptionally(e);
+                }
                 throw e;
             } finally {
                 creationFutures.remove(poolKey, createdFuture);
+                if (!createdFuture.isDone()) {
+                    createdFuture.completeExceptionally(
+                            new IllegalStateException("DeviceClient creation failed for device: " + deviceId));
+                }
             }
         }
 
@@ -212,61 +235,90 @@ public class DeviceClientPool {
         String poolKey = resolvePoolKey(deviceId, connectionString);
         final long now = nowMillisSupplier.getAsLong();
 
-        AtomicReference<PooledClient> evicted = new AtomicReference<>();
-        PooledClient existing = pool.computeIfPresent(poolKey, (key, pooled) -> {
-            if (pooled.inUse.get() > 0) {
+        for (;;) {
+            AtomicReference<PooledClient> evicted = new AtomicReference<>();
+            PooledClient existing = pool.computeIfPresent(poolKey, (key, pooled) -> {
+                if (pooled.inUse.get() > 0) {
+                    pooled.touch(now);
+                    pooled.acquire();
+                    return pooled;
+                }
+                if ((now - pooled.lastUsed) > idleTimeout.toMillis()) {
+                    evicted.set(pooled);
+                    return null;
+                }
                 pooled.touch(now);
                 pooled.acquire();
                 return pooled;
+            });
+            if (existing != null) {
+                return new Lease(this, poolKey, existing);
             }
-            if ((now - pooled.lastUsed) > idleTimeout.toMillis()) {
-                evicted.set(pooled);
-                return null;
+            if (evicted.get() != null) {
+                closeQuietly(poolKey, evicted.get().client, "idle eviction");
+                continue;
             }
-            pooled.touch(now);
-            pooled.acquire();
-            return pooled;
-        });
-        if (existing != null) {
-            return new Lease(this, poolKey, existing);
-        }
-        if (evicted.get() != null) {
-            closeQuietly(poolKey, evicted.get().client, "idle eviction");
-        }
 
-        DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
-        PooledClient pooled = pool.get(poolKey);
-        if (pooled == null) {
-            throw new IllegalStateException("DeviceClient not present in pool after creation for device: " + deviceId);
+            DeviceClient client = getOrCreate(deviceId, connectionString, protocol);
+            AtomicReference<PooledClient> acquired = new AtomicReference<>();
+            AtomicBoolean entryChanged = new AtomicBoolean(false);
+            pool.computeIfPresent(poolKey, (key, pooled) -> {
+                if (pooled.client != client) {
+                    entryChanged.set(true);
+                    return pooled;
+                }
+                pooled.touch(now);
+                pooled.acquire();
+                acquired.set(pooled);
+                return pooled;
+            });
+            if (acquired.get() != null) {
+                return new Lease(this, poolKey, acquired.get());
+            }
+            if (entryChanged.get()) {
+                continue;
+            }
+            // The pool entry may have been evicted or replaced between creation and the acquire step.
+            // Loop back to retry instead of recursing to keep the stack depth constant.
+            continue;
         }
-        if (pooled.client != client) {
-            throw new IllegalStateException("Pool returned a different client instance for device: " + deviceId);
-        }
-        pooled.touch(now);
-        pooled.acquire();
-        return new Lease(this, poolKey, pooled);
     }
 
     public Lease lease(String deviceId, String connectionString, IotHubClientProtocol protocol) {
         return acquire(deviceId, connectionString, protocol);
     }
 
-    @SuppressWarnings("unused")
-    void remove(String deviceId, String connectionString) {
-        String poolKey = resolvePoolKey(deviceId, connectionString);
-        PooledClient pooled = pool.remove(poolKey);
-        if (pooled != null) {
-            closeQuietly(deviceId, pooled.client, "explicit removal");
-        }
+    private boolean isCreationInProgress(String poolKey) {
+        return creationFutures.containsKey(poolKey);
     }
 
-    @SuppressWarnings({ "unused", "ConstantConditions", "ConstantValue" })
+    private boolean isCreationInProgressForDevice(String deviceId) {
+        if (deviceId == null || deviceId.isBlank()) {
+            return false;
+        }
+        for (String poolKey : creationFutures.keySet()) {
+            if (matchesDeviceId(poolKey, deviceId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void remove(String deviceId, String connectionString) {
+        removePoolEntry(resolvePoolKey(deviceId, connectionString));
+    }
+
     void remove(String deviceId) {
         if (deviceId == null || deviceId.isBlank()) {
             return;
         }
+        if (isCreationInProgressForDevice(deviceId)) {
+            LOG.debug("Skipping removal of in-flight DeviceClient for device {} while creation is still in progress", deviceId);
+            return;
+        }
 
-        PooledClient pooled = pool.remove(deviceId);
+        String directKey = deviceId;
+        PooledClient pooled = pool.remove(directKey);
         if (pooled != null) {
             closeQuietly(deviceId, pooled.client, "explicit removal");
             return;
@@ -280,6 +332,20 @@ public class DeviceClientPool {
                     return;
                 }
             }
+        }
+    }
+
+    private void removePoolEntry(String poolKey) {
+        if (poolKey == null || poolKey.isBlank()) {
+            return;
+        }
+        if (isCreationInProgress(poolKey)) {
+            LOG.debug("Skipping removal of in-flight DeviceClient for device {} while creation is still in progress", poolKey);
+            return;
+        }
+        PooledClient pooled = pool.remove(poolKey);
+        if (pooled != null) {
+            closeQuietly(poolKey, pooled.client, "explicit removal");
         }
     }
 
@@ -347,7 +413,15 @@ public class DeviceClientPool {
     private DeviceClient createClient(String deviceId, String connectionString, IotHubClientProtocol protocol) {
         try {
             DeviceClient client = deviceClientFactory.create(connectionString, protocol);
+            if (shuttingDown.get()) {
+                closeQuietly(deviceId, client, "shutdown while creating");
+                throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
+            }
             client.open(true);
+            if (shuttingDown.get()) {
+                closeQuietly(deviceId, client, "shutdown after open");
+                throw new IllegalStateException("Skipping client creation due to shutdown: " + deviceId);
+            }
             try {
                 // Avoid duplicate desired-property subscriptions: subscribe only if not already subscribed.
                 // The Azure DeviceClient does not expose a way to check, so we rely on only subscribing once per client creation.
@@ -357,10 +431,7 @@ public class DeviceClientPool {
                     if (context == null) {
                         return;
                     }
-                    if (context.getNewStatus()
-                        == IotHubConnectionStatus.DISCONNECTED) {
-                        evictDisconnectedClient(deviceId, connectionString, client, context);
-                    }
+                    evictDisconnectedClient(deviceId, connectionString, client, context);
                 }, null);
             } catch (Exception e) {
                 closeQuietly(deviceId, client, "subscription setup");
@@ -392,31 +463,49 @@ public class DeviceClientPool {
         }
 
         String poolKey = resolvePoolKey(deviceId, connectionString);
-        PooledClient pooled = pool.get(poolKey);
-        if (pooled != null && pooled.inUse.get() == 0 && pooled.client == client && pool.remove(poolKey, pooled)) {
+        if (isCreationInProgress(poolKey)) {
+            LOG.debug("Ignoring disconnect callback for {} while corresponding DeviceClient is still being created", deviceId);
+            return;
+        }
+
+        java.util.concurrent.atomic.AtomicReference<PooledClient> removed = new java.util.concurrent.atomic.AtomicReference<>();
+        pool.computeIfPresent(poolKey, (key, pooled) -> {
+            if (pooled.client != client) {
+                return pooled;
+            }
+            pooled.retired = true;
+            removed.set(pooled);
+            return null;
+        });
+
+        PooledClient retired = removed.get();
+        if (retired != null && retired.inUse.get() == 0) {
             LOG.warn("Evicted DeviceClient for device {} after disconnect. previousStatus={}, reason={}, cause={}",
                     deviceId, context.getPreviousStatus(), context.getNewStatusReason(), context.getCause());
-            closeQuietly(deviceId, client, "connection status changed to DISCONNECTED");
+            closeRetired(retired);
         }
     }
 
     private void touchAndMaybeEvict(String poolKey) {
         long now = nowMillisSupplier.getAsLong();
-        AtomicReference<PooledClient> evicted = new AtomicReference<>();
         pool.computeIfPresent(poolKey, (key, current) -> {
             if (current.inUse.get() > 0) {
                 current.touch(now);
                 return current;
             }
             if ((now - current.lastUsed) > idleTimeout.toMillis()) {
-                evicted.set(current);
+                current.retired = true;
+                closeRetired(current);
                 return null;
             }
             current.touch(now);
             return current;
         });
-        if (evicted.get() != null) {
-            closeQuietly(poolKey, evicted.get().client, "idle eviction");
+    }
+
+    private void closeRetired(PooledClient pooled) {
+        if (pooled.closed.compareAndSet(false, true)) {
+            closeQuietly("retired", pooled.client, "retired eviction");
         }
     }
 
@@ -427,20 +516,17 @@ public class DeviceClientPool {
         long now = nowMillisSupplier.getAsLong();
         for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
             String key = entry.getKey();
-            AtomicReference<PooledClient> evicted = new AtomicReference<>();
             pool.computeIfPresent(key, (k, current) -> {
                 if (current.inUse.get() > 0) {
                     return current;
                 }
                 if ((now - current.lastUsed) > idleTimeout.toMillis()) {
-                    evicted.set(current);
+                    current.retired = true;
+                    closeRetired(current);
                     return null;
                 }
                 return current;
             });
-            if (evicted.get() != null) {
-                closeQuietly(key, evicted.get().client, "idle eviction");
-            }
         }
     }
 
@@ -455,6 +541,7 @@ public class DeviceClientPool {
         if (evictionExecutor != null) {
             evictionExecutor.shutdownNow();
         }
+        creationFutures.clear();
         for (Map.Entry<String, PooledClient> entry : pool.entrySet()) {
             closeQuietly(entry.getKey(), entry.getValue() == null ? null : entry.getValue().client, "shutdown");
         }
