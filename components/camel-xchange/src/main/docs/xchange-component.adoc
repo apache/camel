@@ -58,7 +58,7 @@ For Binance, for example, this would be: `~/.ssh/binance-secret.keys`
 
 ----
 ##
-# This file MUST NEVER be commited to source control. 
+# This file MUST NEVER be committed to source control. 
 # It is therefore added to .gitignore. 
 #
 apiKey = GuRW0*********
