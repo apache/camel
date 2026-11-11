@@ -214,12 +214,21 @@ class DeviceClientPoolTest {
 
     @Test
     void testCreationErrorCompletesFutureForWaiters() throws Exception {
-        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30));
         CountDownLatch factoryStarted = new CountDownLatch(1);
-        CountDownLatch waiterReady = new CountDownLatch(1);
+        CountDownLatch waiterEnteredGetOrCreate = new CountDownLatch(1);
         CountDownLatch allowFactoryToThrow = new CountDownLatch(1);
         AtomicReference<Throwable> creatorFailure = new AtomicReference<>();
         AtomicReference<Throwable> waiterFailure = new AtomicReference<>();
+
+        DeviceClientPool pool = new DeviceClientPool(Duration.ofMinutes(5), Duration.ofSeconds(30)) {
+            @Override
+            DeviceClient getOrCreate(String deviceId, String connectionString, IotHubClientProtocol protocol) {
+                if (Thread.currentThread().getName().equals("device-client-pool-waiter")) {
+                    waiterEnteredGetOrCreate.countDown();
+                }
+                return super.getOrCreate(deviceId, connectionString, protocol);
+            }
+        };
 
         pool.setDeviceClientFactory((cs, protocol) -> {
             factoryStarted.countDown();
@@ -243,7 +252,6 @@ class DeviceClientPoolTest {
         }, "device-client-pool-creator");
 
         Thread waiter = new Thread(() -> {
-            waiterReady.countDown();
             try {
                 pool.getOrCreate("d", CS, IotHubClientProtocol.MQTT);
             } catch (Throwable t) {
@@ -254,7 +262,8 @@ class DeviceClientPoolTest {
         creator.start();
         assertTrue(factoryStarted.await(5, TimeUnit.SECONDS), "creator should start creating the client");
         waiter.start();
-        assertTrue(waiterReady.await(5, TimeUnit.SECONDS), "waiter should start before the factory fails");
+        assertTrue(waiterEnteredGetOrCreate.await(5, TimeUnit.SECONDS),
+                "waiter should enter getOrCreate before the factory fails");
 
         allowFactoryToThrow.countDown();
         creator.join(TimeUnit.SECONDS.toMillis(5));
